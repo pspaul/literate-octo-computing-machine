@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="type-print-in">Queue</entry>
+	<entry key="type-print-out">Print</entry>
+	<entry key="type-pdf-out">PDF</entry>
+
+	<entry key="job-id">Opdracht #</entry>
+
+	<entry key="job-state-pending">In afwachting</entry>
+	<entry key="job-state-held">Vastgehouden</entry>
+	<entry key="job-state-processing">Bezig</entry>
+	<entry key="job-state-stopped">Gestopt</entry>
+	<entry key="job-state-canceled">Geannuleerd</entry>
+	<entry key="job-state-aborted">Afgebroken</entry>
+	<entry key="job-state-completed">Voltooid</entry>
+
+	<entry key="print-in-denied-reason-drm">Geweigerd (DRM)</entry>
+	<entry key="print-in-denied-reason-unknown">Geweigerd (onbekend)</entry>
+
+	<entry key="page">pagina</entry>
+	<entry key="pages">pagina's</entry>
+
+	<entry key="sheet">blad</entry>
+	<entry key="sheets">bladen</entry>
+
+	<entry key="copies">kopieën</entry>
+
+	<entry key="duplex">Dubbelzijdig</entry>
+    <entry key="singlex">Enkelzijdig</entry>
+	<entry key="color">Kleur</entry>
+    <entry key="grayscale">Grijstinten</entry>
+
+	<entry key="prompt-user">Gebruiker</entry>
+	<entry key="prompt-signature">Handtekening</entry>
+	<entry key="prompt-destination">Bestemming</entry>
+
+</properties>

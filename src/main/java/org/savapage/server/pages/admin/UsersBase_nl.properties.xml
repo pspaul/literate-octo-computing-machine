@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title">Gebruikers</entry>
+    <entry key="select-and-sort">Selectie en Sortering</entry>
+
+    <entry key="prompt-id-containing-text">ID</entry>
+    <entry key="prompt-email-containing-text">E-mail</entry>
+
+    <entry key="prompt-user-source">Bron</entry>
+    <entry key="user-source-all">-</entry>
+    <entry key="user-source-internal">Intern</entry>
+    <entry key="user-source-external">Extern</entry>
+
+    <entry key="prompt-user-type">Type</entry>
+    <entry key="user-type-all">-</entry>
+    <entry key="user-type-person">Persoon</entry>
+    <entry key="user-type-abstract">Abstract</entry>
+
+    <entry key="prompt-user-role">Rol</entry>
+    <entry key="user-role-all">-</entry>
+    <entry key="user-role-admin">Beheerder</entry>
+    <entry key="user-role-user">Gebruiker</entry>
+    
+    <entry key="prompt-user-status">Status</entry>
+    <entry key="user-status-all">-</entry>
+    <entry key="user-status-enabled">Ingeschakeld</entry>
+    <entry key="user-status-disabled">Uitgeschakeld</entry>
+
+    <entry key="prompt-user-deleted">Verwijderd</entry>
+    <entry key="user-deleted-all">-</entry>
+    <entry key="user-deleted-n">Actief</entry>
+    <entry key="user-deleted-y">Verwijderd</entry>
+    
+    <entry key="prompt-sort-by">Sortering</entry>
+    <entry key="sort-by-id">Id</entry>
+    <entry key="sort-by-email">E-mail</entry>
+    
+    <entry key="sort-asc">Oplopend</entry>
+    <entry key="sort-desc">Aflopend</entry>        
+    
+    <entry key="button-apply">Toepassen</entry>
+    <entry key="button-default">Standaard</entry>    
+    <entry key="button-new">Nieuw</entry>
+    <entry key="button-report">Rapport</entry>
+    
+</properties>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<ul data-role="listview" data-inset="true" data-theme="a">
+
+	<li data-role="list-divider"><span><wicket:message
+				key="title"/></span></li>
+
+	<li>
+		<div data-role="collapsible" data-collapsed="true">
+
+			<h3>
+				<wicket:message key="select-and-sort"/>
+			</h3>
+
+            <ul data-role="listview" data-inset="true">
+
+                <li>
+
+	                <label for="sp-printer-containing-text"><wicket:message key="prompt-containing-text"/></label>
+	                <input type="text" id="sp-printer-containing-text" value="" maxlength="128" 
+    	                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
+		
+		            <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		            
+		                <legend>
+		                    <wicket:message key="prompt-printer-status"/>
+		                </legend>
+		
+                        <label for="sp-printer-select-status-all"><wicket:message key="printer-status-all"/></label>
+		                <input type="radio" name="sp-printer-select-status" id="sp-printer-select-status-all" value="" checked="checked" /> 
+		                        
+                        <label for="sp-printer-select-status-enabled"><wicket:message key="printer-status-enabled"/></label>
+		                <input type="radio" name="sp-printer-select-status" id="sp-printer-select-status-enabled" value="1"/>
+		                        
+                        <label for="sp-printer-select-status-disabled"><wicket:message key="printer-status-disabled"/></label>
+		                <input type="radio" name="sp-printer-select-status" id="sp-printer-select-status-disabled" value="0"/>
+		                
+		            </fieldset></div>
+		
+                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                    
+                        <legend>
+                            <wicket:message key="prompt-printer-deleted"/>
+                        </legend>
+                        
+                        <input type="radio" name="sp-printer-select-deleted" id="sp-printer-select-deleted-all" value="" /> 
+                        <label for="sp-printer-select-deleted-all"><wicket:message key="printer-deleted-all"/></label>
+                                
+                        <input type="radio" name="sp-printer-select-deleted" id="sp-printer-select-deleted-y" value="1"/>
+                        <label for="sp-printer-select-deleted-y"><wicket:message key="printer-deleted-y"/></label>
+                                
+                        <input type="radio" name="sp-printer-select-deleted" id="sp-printer-select-deleted-n" value="0" checked="checked"/>
+                        <label for="sp-printer-select-deleted-n"><wicket:message key="printer-deleted-n"/></label>
+                        
+                    </fieldset></div>
+		
+                </li>
+                
+                <li>
+		
+		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		                <legend>
+		                    <wicket:message key="prompt-sort-by"/>
+		                </legend>
+		
+		                <input type="radio" name="sp-printer-sort-dir" id="sp-printer-sort-dir-asc" checked="checked" /> 
+		                <label for="sp-printer-sort-dir-asc"><wicket:message key="sort-asc"/></label>
+		                
+		                <input type="radio" name="sp-printer-sort-dir" id="sp-printer-sort-dir-desc"/> 
+		                <label for="sp-printer-sort-dir-desc"><wicket:message key="sort-desc"/></label>
+		                        
+		            </fieldset>
+		
+                </li>
+                
+                <li>
+                    <div data-role="controlgroup" data-type="horizontal">
+						<a href="#" id="button-printers-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+						  <wicket:message key="button-apply"/></a>
+						<a href="#" id="button-printers-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+						  <wicket:message key="button-default"/></a>
+					</div>
+                </li>
+            </ul>
+		</div>
+	</li>
+
+    <li>
+        <div class="ui-mini">
+            <a href="#" target="_blank" title="CUPS" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home"
+                    wicket:id="button-cups"/>             
+            <a href="#" id="button-printer-sync" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+                <wicket:message key="button-sync"/></a>
+        </div>    
+    </li>
+    
+	<li id="sp-printer-list-page"></li>
+
+</ul>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="media-size">Handmatig Papierformaat</entry>    
+    <entry key="cost-per-side">Kosten per papier zijde</entry>
+    <entry key="printer-charge-simple">Eenvoudig</entry>
+    <entry key="printer-charge-media">Geavanceerd</entry>
+    <entry key="button-apply">Toepassen</entry>
+    <entry key="button-cancel">Annuleren</entry>
+</properties>

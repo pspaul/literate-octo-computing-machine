@@ -1,0 +1,41 @@
+<wicket:remove><!-- 
+These fragments are used in WebAppUserPage
+--></wicket:remove>  
+<wicket:fragment wicket:id="stats-pages-total"/>
+<wicket:fragment wicket:id="environmental-impact"/>
+
+<li data-role="list-divider"><wicket:message key="title-financial"/></li>
+<li>
+    <wicket:remove><!--
+    +======================================================================+
+    | http://api.jquerymobile.com/table-reflow/
+    |  ... to use pre-configured  breakpoint, add the ui-responsive class 
+    |  to the table to convert from the stacked presentation to a tabular 
+    |  presentation at 560px (35em)     
+    +======================================================================+
+    --></wicket:remove>  
+    <table data-role="table" data-mode="reflow" class="ui-responsive table-stroke">
+        <thead>
+            <tr>
+                <th data-priority="1"/>
+                <th data-priority="2"/>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th><wicket:message key="balance"/></th>
+                <td wicket:id="balance"/>
+            </tr>
+            <tr>
+                <th><wicket:message key="credit-limit"/></th>
+                <td wicket:id="credit-limit"/>
+            </tr>
+        </tbody>
+    </table>
+    <div>
+	    <a href="#" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-action" id="button-voucher-redeem">
+	        <wicket:message key="button-redeem-voucher"/>
+	    </a>
+    </div>
+    
+</li>

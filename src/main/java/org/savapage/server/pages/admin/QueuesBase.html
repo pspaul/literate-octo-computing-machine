@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<ul data-role="listview" data-inset="true" data-theme="a">
+
+	<li data-role="list-divider"><span><wicket:message
+				key="title"/></span></li>
+
+	<li>
+		<div data-role="collapsible" data-collapsed="true">
+
+			<h3>
+				<wicket:message key="select-and-sort"/>
+			</h3>
+
+            <ul data-role="listview" data-inset="true">
+
+                <li>
+                    <label for="sp-queue-containing-text"><wicket:message key="prompt-containing-text"/></label>
+	                <input type="text" id="sp-queue-containing-text" value="" maxlength="128" 
+	                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
+		
+		            <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		            
+		                <legend>
+		                    <wicket:message key="prompt-queue-trust"/>
+		                </legend>
+		
+		                <input type="radio" name="sp-queue-select-trust" id="sp-queue-select-trust-all" value=""
+		                    checked="checked" /> 
+		                <label for="sp-queue-select-trust-all"><wicket:message key="queue-trust-all"/></label>
+		                        
+		                <input type="radio" name="sp-queue-select-trust" id="sp-queue-select-trust-yes" value="1"/>
+		                <label for="sp-queue-select-trust-yes"><wicket:message key="queue-trusted"/></label>
+		                
+		                <input type="radio" name="sp-queue-select-trust" id="sp-queue-select-trust-no" value="0"/> 
+		                <label for="sp-queue-select-trust-no"><wicket:message
+		                        key="queue-untrusted"/></label>
+		                        
+		            </fieldset></div>
+		            
+                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                    
+                        <legend>
+                            <wicket:message key="prompt-queue-status"/>
+                        </legend>
+        
+                        <input type="radio" name="sp-queue-select-status" id="sp-queue-select-status-all" value="" checked="checked" /> 
+                        <label for="sp-queue-select-status-all"><wicket:message key="queue-status-all"/></label>
+                                
+                        <input type="radio" name="sp-queue-select-status" id="sp-queue-select-status-enabled" value="1"/>
+                        <label for="sp-queue-select-status-enabled"><wicket:message key="queue-status-enabled"/></label>
+                                
+                        <input type="radio" name="sp-queue-select-status" id="sp-queue-select-status-disabled" value="0"/>
+                        <label for="sp-queue-select-status-disabled"><wicket:message key="queue-status-disabled"/></label>
+                        
+                    </fieldset></div>
+		            
+                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                    
+                        <legend>
+                            <wicket:message key="prompt-queue-deleted"/>
+                        </legend>
+                        
+                        <input type="radio" name="sp-queue-select-deleted" id="sp-queue-select-deleted-all" value="" /> 
+                        <label for="sp-queue-select-deleted-all"><wicket:message key="queue-deleted-all"/></label>
+                                
+                        <input type="radio" name="sp-queue-select-deleted" id="sp-queue-select-deleted-y" value="1"/>
+                        <label for="sp-queue-select-deleted-y"><wicket:message key="queue-deleted-y"/></label>
+                                
+                        <input type="radio" name="sp-queue-select-deleted" id="sp-queue-select-deleted-n" value="0" checked="checked"/>
+                        <label for="sp-queue-select-deleted-n"><wicket:message key="queue-deleted-n"/></label>
+                        
+                    </fieldset></div>
+		            		
+                </li>
+                
+                <li>
+		
+		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		                <legend>
+		                    <wicket:message key="prompt-sort-by"/>
+		                </legend>
+		
+                        <label for="sp-queue-sort-dir-asc"><wicket:message key="sort-asc"/></label>
+		                <input type="radio" name="sp-queue-sort-dir" id="sp-queue-sort-dir-asc" checked="checked" /> 
+		                
+                        <label for="sp-queue-sort-dir-desc"><wicket:message key="sort-desc"/></label>
+		                <input type="radio" name="sp-queue-sort-dir" id="sp-queue-sort-dir-desc"/> 
+		                        
+		            </fieldset>
+                </li>
+                
+                <li>
+                    <div data-role="controlgroup" data-type="horizontal">
+						<a href="#" id="button-queues-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+						  <wicket:message key="button-apply"/></a>			
+						<a href="#" id="button-queues-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+						  <wicket:message key="button-default"/></a>
+					</div>
+                </li>
+            </ul>
+
+		</div>
+	</li>
+
+    <li>
+        <div>
+            <a href="#" id="button-create-queue" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit">
+                <wicket:message key="button-new"/>
+            </a>
+        </div>
+    </li>
+    
+	<li id="sp-queue-list-page"></li>
+
+</ul>

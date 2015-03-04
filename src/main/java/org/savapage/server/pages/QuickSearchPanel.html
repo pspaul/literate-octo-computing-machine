@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:panel>
+
+	<label wicket:id="search-label" for="[sp-unique-id]" />
+	
+	<input wicket:id="search-input" id="[sp-unique-id]" 
+        data-type="search" type="text" value="" 
+	    maxlength="128" tabindex="1"  
+	    autofocus autocomplete="off" 
+	    autocorrect="off" autocapitalize="off" spellcheck="false" />
+	    
+	<ul wicket:id="search-filter" id="[sp-unique-id]-filter" 
+	   data-role="listview" data-filter="true" data-input="#[sp-unique-id]"
+	   data-filter-placeholder="[placeholder]" 
+	   data-filter-theme="a" data-inset="true"/>        
+
+</wicket:panel>

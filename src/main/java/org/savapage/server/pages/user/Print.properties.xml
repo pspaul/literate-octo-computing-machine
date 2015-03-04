@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="title">Print</entry>
+	<entry key="search-printer-prompt">Select a printer:</entry>
+    <entry key="search-printer-placeholder">"Name or location..."</entry>
+	<entry key="print-copies">Copies</entry>
+	<entry key="delete-pages-after-print">Delete all pages after printing</entry>
+    <entry key="print-title">Title</entry>
+    <entry key="prompt-letterhead">Letterhead</entry>    
+    <entry key="print-remove-graphics">Remove graphics</entry>    
+	<entry key="print-page-ranges">Enter ranges like: 1-4,6,8-10</entry>
+	<entry key="button-print">Print</entry>
+    <entry key="button-print-and-close">Print &amp; Close</entry>
+	<entry key="button-back">Back</entry>
+    <entry key="button-cancel">Cancel</entry>
+    <entry key="button-ok">OK</entry>
+
+    <entry key="prompt-fast-print-expiry">Fast Print Closing Time</entry>    
+	
+    <entry key="auth-popup-title">Your print job is held for authentication.</entry>
+    <entry key="auth-popup-message">Swipe your card to release ...</entry>
+	
+</properties>

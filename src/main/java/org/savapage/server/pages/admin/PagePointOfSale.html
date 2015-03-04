@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text" autofocus
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+    <h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content">
+
+    <div data-role="tabs" id="sp-pos-tabs" data-active="0">
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#sp-pos-tab-deposit" id="sp-pos-tab-deposit-button" data-ajax="false">
+                    <wicket:message key="tab-deposit"/></a></li>
+                <li><a href="#sp-pos-tab-receipts" id="sp-pos-tab-receipts-button" data-ajax="false">
+                    <wicket:message key="tab-receipts"/></a></li>
+            </ul>
+        </div>
+        
+<wicket:remove><!-- TAB: Deposit --></wicket:remove>
+       
+		<div id="sp-pos-tab-deposit" class="ui-content">
+
+		    <div class="sp-txt-info sp-txt-wrap"><wicket:message key="tab-deposit-info"/></div>
+		    <hr style="color: silver;"/>
+
+		    
+		    <label for="sp-pos-userid"><wicket:message key="prompt-userid"/></label>
+		    <input tabindex="1" type="text" id="sp-pos-userid" value="" maxlength="128" autofocus data-type="search"
+		        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+		    <ul id="sp-pos-userid-filter" data-role="listview" data-filter="true" data-input="#sp-pos-userid"
+		       data-filter-placeholder="Find a User by ID..." data-filter-theme="a" data-inset="true"/>
+		
+		    <label for="sp-pos-amount"><wicket:message key="prompt-amount"/></label>
+		    <table><tr>
+		        <td><span wicket:id="currency-symbol"/>&nbsp;</td>
+		        <td width="100px">
+		            <input tabindex="2" type="text" style="text-align: right;" id="sp-pos-amount-main" 
+		                value="" maxlength="5" pattern="[0-9]*"/>
+		        </td>
+		        <td wicket:id="decimal-separator"/>
+		        <td width="50px">
+		            <input tabindex="2" type="text" id="sp-pos-amount-cents" value="00" maxlength="2" pattern="[0-9]*"/>
+		        </td>
+                <td width="50px"/>
+		        <td class="sp-pos-user-selected">
+		          <wicket:message key="prompt-balance"/>&nbsp;<span id="sp-pos-user-balance"/>
+		        </td>
+		    </tr></table>
+		    
+		    <wicket:enclosure child="option-list-payment-types">
+		        <label for="sp-pos-payment-type"><wicket:message key="prompt-payment-type"/></label>
+		        <select tabindex="3" name="sp-pos-payment-type" id="sp-pos-payment-type" data-native-menu="false" class="ui-mini">
+		            <wicket:remove><!--
+		            NOTE: This option cannot be empty, it MUST have a value to be selectable, 
+		            if not it is just a header.
+		            --></wicket:remove>
+		            <wicket:fragment wicket:id="option-list-payment-types">                        
+		               <option value="the-key" wicket:id="option-payment-type"></option>
+		            </wicket:fragment>
+		        </select>
+		    </wicket:enclosure>
+		
+		    <label for="sp-pos-comment"><wicket:message key="prompt-comment"/></label>
+		    <input tabindex="4" type="text" id="sp-pos-comment" value="" maxlength="255"/>
+		
+            <div class="sp-pos-user-selected">
+            
+                <legend class="sp-txt-wrap"><wicket:message key="prompt-receipt-delivery"/></legend>
+    
+	            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+	            
+                    <label for="sp-pos-receipt-none">&nbsp;-&nbsp;</label>
+                    <input tabindex="5" type="radio" name="sp-pos-receipt-delivery" 
+                       id="sp-pos-receipt-none" value="NONE" checked="checked"/>
+                        
+                    <label for="sp-pos-receipt-as-email" id="sp-pos-receipt-as-email-label"/>
+                    <input tabindex="6" type="radio" name="sp-pos-receipt-delivery" 
+                        id="sp-pos-receipt-as-email" value="EMAIL" /> 
+
+	            </fieldset>
+            </div>
+
+		    <a tabindex="10" id="sp-pos-button-deposit" href="#" 
+		              class="sp-pos-user-selected ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+		        <wicket:message key="button-deposit"/></a>
+		    
+		    <a tabindex="10" id="sp-pos-button-clear" href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
+		        <wicket:message key="button-clear"/></a>
+		        
+		    <a tabindex="10" id="sp-pos-button-back" href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+		        <wicket:message key="button-back"/>        
+		    </a>
+
+		</div>
+		
+<wicket:remove><!-- TAB: Receipts --></wicket:remove>
+
+		<div id="sp-pos-tab-receipts" class="ui-content">
+		
+            <div class="sp-txt-info sp-txt-wrap"><wicket:message key="tab-receipts-info"/></div>
+            <hr style="color: silver;"/>
+ 
+            <label for="sp-pos-quickdate"><wicket:message key="prompt-datetime-offset"/></label>
+            <input tabindex="1" type="text" id="sp-pos-quickdate" value="" maxlength="128" autofocus data-type="search"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" pattern="[0-9]*"/>
+            <ul id="sp-pos-quickdate-filter" data-role="listview" data-filter="true" data-input="#sp-pos-quickdate"
+               data-filter-theme="a" data-inset="true"/>
+
+            <a tabindex="10" href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+                <wicket:message key="button-back"/>        
+            </a>
+   
+		</div>
+    </div>
+
+    
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="user">User</entry>
+    <entry key="internal-user">Internal user</entry>
+    <entry key="user-id">ID</entry>
+	<entry key="user-admin">Administrator</entry>
+	<entry key="user-person">Person</entry>
+	<entry key="user-fullname">Name</entry>
+	<entry key="user-email">Primary email</entry>
+    <entry key="user-email-other">Other emails</entry>
+	<entry key="user-disabled">Disabled</entry>
+	
+    <entry key="user-password">Password</entry>
+    <entry key="user-password-confirm">Confirm</entry>
+
+    <entry key="user-card-number">Card Number</entry>
+    <entry key="user-id-number">ID Number</entry>
+    <entry key="user-pin">PIN (digits only)</entry>
+	
+	<entry key="button-ok">OK</entry>
+	<entry key="button-delete">Delete</entry>
+	<entry key="button-cancel">Cancel</entry>
+    <entry key="button-password">Password</entry>
+
+    <entry key="label-financial">Financial</entry>
+    <entry key="label-balance">Balance</entry>
+    <entry key="label-credit-limit">Credit limit</entry>
+    <entry key="label-credit-limit-none">None</entry>
+    <entry key="label-credit-limit-default">Default</entry>
+    <entry key="label-credit-limit-individual">Individual</entry>
+
+    <entry key="header-delete">Delete</entry>
+
+	<entry key="user-delete-warning">Deleting a user is a destructive action which cannot
+		be undone.</entry>
+
+</properties>

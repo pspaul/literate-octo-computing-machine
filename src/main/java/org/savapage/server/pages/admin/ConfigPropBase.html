@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<ul data-role="listview" data-inset="true" data-theme="a">
+
+	<li data-role="list-divider"><span><wicket:message key="title"/></span></li>
+
+	<li>
+        <div class="sp-txt-warn sp-txt-wrap"><wicket:message key="txt-warning"/></div>
+            
+		<div data-role="collapsible" data-collapsed="true">
+
+			<h3>
+				<wicket:message key="select-and-sort"/>
+			</h3>
+
+            <ul data-role="listview" data-inset="true">
+
+                <li>
+		            <label for="sp-config-containing-text"><wicket:message key="prompt-containing-text"/></label>
+		            <input type="text" id="sp-config-containing-text" value="" maxlength="128" 
+		                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />                
+					
+		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		                <legend>
+		                    <wicket:message key="prompt-sort-by"/>
+		                </legend>
+		
+		                <input type="radio" name="sp-config-sort-dir" id="sp-config-sort-dir-asc" checked="checked" /> 
+		                <label for="sp-config-sort-dir-asc"><wicket:message key="sort-asc"/></label>
+		                
+		                <input type="radio" name="sp-config-sort-dir" id="sp-config-sort-dir-desc"/> 
+		                <label for="sp-config-sort-dir-desc"><wicket:message key="sort-desc"/></label>
+		                        
+		            </fieldset>
+		        </li>
+                <li>
+                    <div data-role="controlgroup" data-type="horizontal">
+                        <a href="#" id="button-configprop-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+                             <wicket:message key="button-apply"/></a>
+                        <a href="#" id="button-configprop-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+                             <wicket:message key="button-default"/></a>
+                    </div>                           
+                </li>
+		    </ul>
+        </div> 
+    </li>
+
+	<li id="sp-config-list-page"></li>
+
+</ul>

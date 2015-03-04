@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="printer-displayname">Weergeven als</entry>
+    <entry key="printer-location">Locatie</entry>
+	<entry key="printer-disabled">Uitgeschakeld</entry>
+    <entry key="printer-deleted">Verwijderen als opdracht-historie is opgeruimd</entry>
+	
+    <entry key="printer-groups">Proxy Printer Groepen</entry>
+	
+    <entry key="printer-cat-rename">Hernoemen</entry>
+	<entry key="printer-newname">Nieuwe naam</entry>
+	<entry key="printer-rename-note">Zorg ervoor dat de nieuwe naam identiek is aan de CUPS
+		printer naam (hoofdlettergevoelig).</entry>
+	<entry key="printer-rename-replace">Vervang (verwijder) bestaande printer met identieke
+		naam</entry>
+
+    <entry key="button-apply">Toepassen</entry>
+	<entry key="button-cancel">Annuleren</entry>
+	<entry key="button-delete">Verwijderen</entry>
+	<entry key="button-rename">Hernoemen</entry>
+    
+    <entry key="printer-rename">Hernoemen</entry>
+    
+</properties>

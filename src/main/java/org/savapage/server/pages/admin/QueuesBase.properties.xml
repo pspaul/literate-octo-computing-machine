@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title">Queues</entry>
+    <entry key="select-and-sort">Select and Sort</entry>
+
+    <entry key="prompt-containing-text">Containing text</entry>
+    
+    <entry key="prompt-queue-trust">Trust</entry>
+    <entry key="queue-trust-all">-</entry>
+    <entry key="queue-trusted">Trusted</entry>
+    <entry key="queue-untrusted">Untrusted</entry>
+
+    <entry key="prompt-queue-status">Status</entry>
+    <entry key="queue-status-all">-</entry>
+    <entry key="queue-status-enabled">Enabled</entry>
+    <entry key="queue-status-disabled">Disabled</entry>
+
+    <entry key="prompt-queue-deleted">Deleted</entry>
+    <entry key="queue-deleted-all">-</entry>
+    <entry key="queue-deleted-y">Deleted</entry>
+    <entry key="queue-deleted-n">Active</entry>
+
+    <entry key="prompt-sort-by">Sort</entry>
+    <entry key="sort-asc">Ascending</entry>
+    <entry key="sort-desc">Descending</entry>    
+
+    <entry key="button-apply">Apply</entry>
+    <entry key="button-default">Default</entry>
+    <entry key="button-new">New</entry>
+</properties>

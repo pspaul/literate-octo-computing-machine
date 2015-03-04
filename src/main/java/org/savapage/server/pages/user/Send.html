@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text" autofocus
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+    <h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content" id="content-send">
+    
+    <label for="send-mailto"><wicket:message key="send-mailto"/></label>
+    <input type="text" id="send-mailto" value="" maxlength="128" autofocus
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    
+    <a href="#" id="button-send-send" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+        <wicket:message key="button-send"/>
+    </a>
+    
+    <a href="#" id="button-send-settings-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+        <wicket:message key="button-default"/>        
+    </a>
+    
+    <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+        <wicket:message key="button-back"/>        
+    </a>
+    
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

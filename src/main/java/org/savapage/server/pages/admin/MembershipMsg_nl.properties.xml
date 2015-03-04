@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="title">{0} Waarschuwing</entry>
+	
+	<entry key="membership-msg">Toegang tot deze pagina is geweigerd vanwege een
+		{0} kwestie. Raadpleeg de status van uw {1} in de "Info"
+		sectie en corrigeer het probleem door een nieuwe {2} te
+		importeren, of door de gebruiker opties te veranderen in de 
+		"Opties" sectie.</entry>
+
+	<entry key="membership-status-expired">{0} Verlopen</entry>
+	
+	<entry key="membership-status-users-exceeded">U heeft momenteel meer gebruikers dan uw {0}
+		toestaat.</entry>
+		
+	<entry key="membership-status-wrong-version">Uw {0} is niet geldig voor de huidige versie van
+		de applicatie.</entry>
+		
+	<entry key="membership-status-wrong-product">Uw {0} is voor product "{1}" en is ongeldig voor
+		deze applicatie. Neem contact op met {2} om het juiste {3} voor deze applicatie te verkrijgen.</entry>
+		
+	<entry key="membership-status-wrong-module">Uw {0} is ongeldig voor de modules in
+		deze applicatie. Neem contact op met {1} om het juiste {2} voor deze applicatie te verkrijgen.</entry>
+		
+	<entry key="membership-status-visit-expired">Bezoek Verlopen</entry>
+
+
+</properties>

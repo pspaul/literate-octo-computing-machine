@@ -1,0 +1,22 @@
+<div data-role="header" id="header-accounttrx" data-theme="b">
+	<h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content" id="content-accounttrx"></div>
+
+<div data-role="footer" id="footer-accounttrx" data-theme="a"
+	data-position="fixed">
+	<div data-role="controlgroup" data-type="horizontal">
+        <a href="#page-main" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+            <wicket:message key="button-back"/>
+        </a>
+        <a href="#" id="button-goto-doclog" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
+            <wicket:message key="button-doclog"/>
+        </a>
+	</div>
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

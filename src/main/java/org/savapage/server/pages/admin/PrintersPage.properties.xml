@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="signal-not-present">not present</entry>
+    <entry key="signal-disabled">disabled</entry>
+    <entry key="signal-active">active</entry>
+    <entry key="signal-deleted">deleted</entry>
+    <entry key="signal-disconnected">disconnected</entry>
+    
+    <entry key="button-edit">Edit</entry>    
+    <entry key="button-log">Log</entry>
+    <entry key="button-cups">CUPS</entry>
+
+    <entry key="printer-groups">Member of Group</entry>
+    
+    <entry key="period">Period</entry>
+    
+    <entry key="job">job</entry>
+    <entry key="page">page</entry>
+    <entry key="sheet">sheet</entry>
+    
+    <entry key="jobs">jobs</entry>
+    <entry key="pages">pages</entry>
+    <entry key="sheets">sheets</entry>
+        
+    <entry key="prompt-allow-access">Allow access for:</entry>
+    <entry key="prompt-deny-access">Deny access for:</entry>
+        
+</properties>

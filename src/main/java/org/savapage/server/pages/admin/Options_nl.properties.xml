@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="title">Opties</entry>
+
+	<entry key="cat-user-source">Gebruikers Bron</entry>
+	<entry key="cat-user-creation">Gebruikers Aanmaken</entry>
+    <entry key="cat-user-authentication">Gebruikers Authenticatie</entry>	
+	<entry key="cat-mail">Mail</entry>
+	<entry key="cat-mail-messages">Berichten</entry>
+
+	<entry key="prompt-mail-test">Verstuur een test-boodschap.
+		Druk op de Test knop nadat u de veranderingen heeft toegepast.
+	</entry>
+	<entry key="mail-test-to">Naar</entry>
+	<entry key="button-mail-test">Test</entry>
+
+	<entry key="cat-backups">Backups</entry>
+	<entry key="cat-backup-location">Backup locatie</entry>
+	<entry key="button-backup-now">Nu backup maken</entry>
+	<entry key="backup-last-run">Laatst uitgevoerde backup</entry>
+
+	<entry key="cat-backup-automatic">Automatische Back-ups</entry>
+	<entry key="backup-automatic-descript">Automatische back-ups maken een wekelijkse
+		momentopname van de systeem database.</entry>
+	<entry key="enable-automatic-backup">Wekelijkse automatische back-ups inschakelen</entry>
+	
+	<entry key="backups-keep-days-prompt">Back-ups bewaren tot</entry>
+    <entry key="backups-keep-days">dagen</entry>
+	
+	<entry key="backup-automatic-old-data-descript">Verwijder oude gegevens na de automatische back-up</entry>
+	
+    <entry key="backup-delete-account-trxs">Verwijder account transacties ouder dan</entry>  
+    <entry key="backup-delete-account-trx-days">dagen</entry>
+    
+	<entry key="backup-delete-doc-logs">Verwijder document logboeken ouder dan</entry>	
+    <entry key="backup-delete-doc-log-days">dagen</entry>
+            	
+	<entry key="backup-delete-app-logs">Verwijder applicatie logboeken ouder dan</entry>
+    <entry key="backup-delete-app-log-days">dagen</entry>
+	
+	<entry key="days">dagen</entry>
+
+	<entry key="cat-advanced">Geavanceerd</entry>
+
+	<entry key="admin-password-reset">Reset wachtwoord interne beheerder</entry>
+	<entry key="password-new">Nieuw wachtwoord</entry>
+	<entry key="password-confirm">Bevestig wachtwoord</entry>
+
+    <entry key="jmx-password-reset">Reset "{0}" wachtwoord</entry>
+    <entry key="jmx-comment">Bewaak de Java VM met een instrument dat voldoet aan de JMX specificatie,
+    zoals Java VisualVM. Maak verbinding met Remote Process:</entry>
+
+	<entry key="button-apply">Toepassen</entry>
+	<entry key="button-cancel">Annuleren</entry>
+	<entry key="button-change-group">Groep wijzigen</entry>
+	<entry key="button-clear">Wissen</entry>
+	<entry key="button-sync-now">Nu synchroniseren</entry>
+	<entry key="button-sync-test">Test</entry>
+
+    <entry key="auth-method-none">-</entry>
+	<entry key="auth-method-unix">Unix</entry>
+	<entry key="auth-method-ldap">LDAP</entry>
+
+    <entry key="ldap-schema-type-open">OpenLDAP</entry>
+    <entry key="ldap-schema-type-apple">Apple</entry>
+	<entry key="ldap-schema-type-activ">Windows</entry>
+	<entry key="ldap-schema-type-edir">Novell</entry>
+
+	<entry key="ldap-host">Host</entry>
+	<entry key="ldap-port">Port</entry>
+	<entry key="ldap-basedn">Base DN</entry>
+	<entry key="ldap-use-ssl">Gebruik SSL</entry>
+	<entry key="ldap-admin-dn">Admin DN</entry>
+	<entry key="ldap-admin-pw">Admin wachtwoord</entry>
+
+    <entry key="ldap-user-fields">LDAP velden voor alternatieve authenticatie</entry>
+    <entry key="ldap-user-id-number-field">ID Nummer</entry>
+    <entry key="ldap-user-card-number-field">Kaart Nummer</entry>
+    
+    <entry key="ldap-card-format">Kaart Formaat</entry>
+    <entry key="ldap-card-format-hex">HEX</entry>
+    <entry key="ldap-card-format-dec">DEC</entry>
+    <entry key="ldap-card-format-lsb">LSB</entry>
+    <entry key="ldap-card-format-msb">MSB</entry>
+
+	<entry key="import-users-from">Importeer gebruikers uit groep</entry>
+	<entry key="user-source-group-select">Selecteer een groep</entry>
+
+	<entry key="all-users">[Alle gebruikers]</entry>
+
+	<entry key="sync-header">Synchronisatie</entry>
+	<entry key="sync-schedule">Nieuwe gebruikers 's nachts importeren</entry>
+	<entry key="sync-user-update">Bijwerken gebruikersgegevens</entry>
+	<entry key="sync-delete-users">Gebruikers verwijderen die niet voorkomen in
+		geselecteerde bron</entry>
+	<entry key="sync-messages">Berichten</entry>
+
+    <entry key="user-auth-mode-name-pw">Gebruikersnaam</entry>
+    <entry key="user-auth-mode-name-pw-dialog">Tonen in Dialoog</entry>
+    
+    <entry key="user-auth-mode-id-number">ID Nummer</entry>
+    <entry key="user-auth-mode-id-number-pin">PIN vereist</entry>
+    <entry key="user-auth-mode-id-number-mask">Invoer maskeren</entry>
+    <entry key="user-auth-mode-id-number-dialog">Tonen in Dialoog</entry>
+        
+    <entry key="user-auth-mode-card-local">Lokale NFC Kaart</entry>
+    <entry key="user-auth-mode-card-local-dialog">Tonen in Dialoog</entry>
+    
+    <entry key="users-pin">PIN</entry>
+    <entry key="users-can-change-pin">Gebruikers mogen hun PIN wijzigen</entry>
+    
+    <entry key="webapp-user-auth-trust-cliapp-auth">Vertrouw User Client</entry>    
+    
+    <entry key="user-auth-mode-card">NFC Kaart</entry>
+    <entry key="user-auth-mode-card-pin">PIN vereist</entry>
+    <entry key="user-auth-mode-card-self-assoc">Zelf Koppelen</entry>
+    
+    <entry key="card-format">Formaat</entry>
+    <entry key="local-card-format-hex">HEX</entry>
+    <entry key="local-card-format-dec">DEC</entry>
+    <entry key="local-card-format-lsb">LSB</entry>
+    <entry key="local-card-format-msb">MSB</entry>
+    
+    <entry key="user-auth-mode-login">Aanmeld Methoden</entry>
+    <entry key="user-auth-mode-default">Standaard Aanmelding</entry>
+    <entry key="user-auth-mode-default-user">Gebruikersnaam</entry>
+    <entry key="user-auth-mode-default-number">ID Nummer</entry>
+    <entry key="user-auth-mode-default-card">Lokale NFC Kaart</entry>
+
+	<entry key="smtp-host">Host</entry>
+	<entry key="smtp-port">Poort</entry>
+    <entry key="smtp-username">Gebruikersnaam</entry>
+    <entry key="smtp-password">Wachtwoord</entry>
+    
+    <entry key="smtp-security-none">-</entry>
+    <entry key="smtp-security-starttls">STARTTLS</entry>
+    <entry key="smtp-security-ssl-tls">SSL/TLS</entry>
+
+	<entry key="mail-from-address">Adres afzender</entry>
+	<entry key="mail-from-name">Naam afzender</entry>
+	<entry key="mail-reply-address">Adres voor beantwoorden</entry>
+	<entry key="mail-reply-name">Naam voor beantwoorden</entry>
+
+	<entry key="on-demand-user-creation">Ad-hoc gebruikers aanmaken</entry>
+	<entry key="on-demand-login">Bij eerste aanmelding</entry>
+	<entry key="on-demand-print">Bij eerste afdruk</entry>
+
+	<entry key="pagometer-reset">Reset Pagometers</entry>
+	<entry key="pagometer-reset-descript">Deze actie zet de tellers van geproduceerde pagina's
+		op nul. Maak een keuze uit één of meer pagometers.</entry>
+	<entry key="pagometer-reset-dashboard">Instrumentenbord</entry>
+	<entry key="pagometer-reset-queues">Wachtrijen</entry>
+	<entry key="pagometer-reset-printers">Proxy Printers</entry>
+	<entry key="pagometer-reset-users">Gebruikers</entry>
+
+	<entry key="locale-header">Taalgebied</entry>
+	<entry key="locale-description">Laat leeg om de systeem standaard "{0}" te accepteren.</entry>
+
+    <entry key="papersize-header">Standaard Papierformaat</entry>
+    <entry key="papersize-description">Kies "standaard" om de systeem standaard "{0}" te accepteren.</entry>
+
+    <entry key="default-papersize-system">standaard</entry>
+    <entry key="default-papersize-letter">Letter</entry>
+    <entry key="default-papersize-a4">A4</entry>
+
+	<entry key="print-in-header">Proxy Printing</entry>
+	<entry key="print-in-encrypted-pdf-descript">Deze optie maakt het mogelijk om 
+		Encrypted PDF documenten naar SafePages af te drukken voor Proxy Printing. 
+		Het exporteren van deze SafePages als PDF is niet toegestaan.
+	</entry>
+	<entry key="print-in-allow-encrypted-pdf">Encrypted PDF toestaan voor Proxy Printing</entry>
+
+    <!--  -->
+    <entry key="converters-header">Converters</entry>
+    <entry key="libreoffice-enable">LibreOffice converter inschakelen</entry>
+    <entry key="xpstopdf-enable">XPS to PDF converter inschakelen</entry>
+    <entry key="installed">geïnstalleerd</entry>
+    <entry key="not-installed">niet geïnstalleerd</entry>
+
+    <!--  -->
+	<entry key="button-config-editor">Configuratie Editor (geavanceerd)</entry>
+
+    <entry key="smartschool-print-enable">Account inschakelen</entry>
+    <entry key="smartschool-print-endpoint">SOAP endpoint</entry>
+    <entry key="smartschool-print-password">Wachtwoord</entry>
+    <entry key="smartschool-print-proxyprinter">Proxy Printer (laat leeg voor WebApp Proxy Print)</entry>
+
+    <entry key="smartschool-on-demand-user-creation">Ad-hoc gebruikers aanmaken</entry>
+    
+    <entry key="smartschool-papercut-enable">Inschakelen</entry>
+    
+    <entry key="smartschool-button-test">Test</entry>
+    <entry key="smartschool-button-stop">Stop</entry>
+    <entry key="smartschool-button-start">Start</entry>
+    <entry key="smartschool-button-start-simulate">Start (simulatie)</entry>
+
+    <entry key="papercut-header-text">PaperCut Integratie</entry>
+    
+    <entry key="papercut-server-text">PaperCut Server</entry>
+    <entry key="papercut-host">Host</entry>
+    <entry key="papercut-port">Poort</entry>
+    <entry key="papercut-token">Token</entry>
+
+    <entry key="papercut-db-text">PaperCut Database</entry>
+    <entry key="papercut-db-url">URL</entry>
+    <entry key="papercut-db-user">Gebruiker</entry>
+    <entry key="papercut-db-password">Wachtwoord</entry>
+
+    <entry key="imap-enable">Gebruikers mogen documenten mailen</entry>
+    <entry key="imap-host">Host</entry>
+    <entry key="imap-port">Poort</entry>
+    <entry key="imap-username">Gebruikersnaam</entry>
+    <entry key="imap-password">Wachtwoord</entry>    
+    <entry key="imap-security-none">-</entry>
+    <entry key="imap-security-starttls">STARTTLS</entry>
+    <entry key="imap-security-ssl-tls">SSL/TLS</entry>    
+    <entry key="imap-folder-inbox">Postvak IN</entry>
+    <entry key="imap-folder-trash">Prullenbak</entry>
+    <entry key="imap-button-test">Test</entry>
+    <entry key="imap-button-stop">Stop</entry>
+    <entry key="imap-button-start">Start</entry>
+    <entry key="imap-max-file-mb">Maximale grootte van bijlage (MB)</entry>
+    <entry key="imap-max-files">Maximum aantal bijlagen</entry>
+
+    <entry key="webprint-enable">Gebruikers mogen documenten uploaden</entry>
+    <entry key="webprint-max-file-mb">Maximale document grootte (MB)</entry>
+    <entry key="webprint-ip-allowed">Toegestane IP adressen</entry>
+
+    <entry key="gcp-enable">Inschakelen</entry>
+    <entry key="gcp-online">On-line</entry>
+    <entry key="gcp-printer">Printer</entry>
+    <entry key="gcp-owner">Eigenaar</entry>
+    <entry key="gcp-state">Status</entry>
+
+    <entry key="gcp-client-id">Client ID</entry>
+    <entry key="gcp-client-secret">Client secret</entry>
+    
+    <entry key="gcp-notifications">Notificaties</entry>
+    
+    <entry key="gcp-mail-after-cancel-legend">Nadat een opdracht is geannuleerd vanwege een onbekend e-mailadres:</entry>    
+    <entry key="gcp-mail-after-cancel">Stuur een e-mail</entry>    
+    <entry key="gcp-mail-after-cancel-subject">Onderwerp</entry>    
+    <entry key="gcp-mail-after-cancel-body">Tekst</entry>    
+    
+    <entry key="button-register">Registreren</entry>
+    <entry key="button-refresh">Vernieuwen</entry>
+    <entry key="button-online">Online</entry>
+    <entry key="button-offline">Offline</entry>
+    <entry key="button-details">Details</entry>
+    <entry key="button-hide">Verbergen</entry>
+
+    <entry key="proxyprint-non-secure">Onveilig Proxy Printen toestaan</entry>
+    <entry key="proxyprint-non-secure-printer-group">Beperk tot Printer Groep (laat leeg om alle printers toe te staan)</entry>
+
+    <entry key="proxyprint-fast-expiry-mins-prompt">SafePages overslaan waarvan tijdstip van aanmaken of vernieuwing ouder is dan</entry>
+    <entry key="proxyprint-fast-expiry-mins">minuten</entry>
+
+    <entry key="proxyprint-hold-expiry-mins-prompt">Vastgehouden opdrachten overslaan waarvan tijdstip van aanmaken of vernieuwing ouder is dan</entry>
+    <entry key="proxyprint-hold-expiry-mins">minuten</entry>
+    
+    <entry key="proxyprint-direct-expiry-secs-prompt">Tijdslimiet voor gebruik NFC card.</entry>
+    <entry key="proxyprint-direct-expiry-secs">seconden</entry>
+    
+    <entry key="proxyprint-general-prompt">Algemeen</entry>
+    <entry key="proxyprint-max-copies">Maximaal aantal kopieën per opdracht</entry>
+
+    <entry key="proxyprint-clear-inbox">SafePages altijd verwijderen na afdrukken</entry>
+
+    <entry key="internal-users-enable">Interne gebruikers</entry>
+    <entry key="internal-users-change-pw">Interne gebruikers mogen hun wachtwoord wijzigen</entry>
+
+    <!-- Financial -->
+    <entry key="cat-financial">Financieel</entry>
+    <entry key="cat-financial-general">Algemeen</entry>
+    <entry key="financial-global-credit-limit">Standaard bestedingslimiet</entry>    
+    <entry key="financial-printer-cost-decimals">Decimalen voor printerkosten</entry>
+    <entry key="financial-decimals-other">Decimalen elders</entry>
+    <entry key="financial-show-currency">Valuta teken weergeven</entry>
+    <entry key="financial-custom-currency">Valuta teken (laat leeg om de systeem standaard "{0}" te accepteren)</entry>
+    <entry key="financial-payment-methods">Een door comma's gescheiden lijst van betaalmethoden (laat leeg als niet vereist)</entry>
+    <entry key="cat-financial-pos">Verkooppunt</entry>
+    <entry key="financial-pos-receipt-header">Kassabon Kopregels</entry>
+    <entry key="cat-financial-vouchers">Vouchers</entry>    
+    <entry key="financial-voucher-card-header">Kopregel</entry>
+    <entry key="financial-voucher-card-footer">Voetregel</entry>
+    <entry key="financial-voucher-card-fontfamily">Lettertype</entry>
+    
+    <!--  -->
+    <entry key="report-fontfamily-header">Rapport Lettertype</entry>
+    <entry key="report-fontfamily-legend">Selecteer het standaard lettertype voor PDF rapporten.</entry>
+
+    <!-- User Client -->
+    <entry key="cliapp-auth-header">User Client authenticatie</entry>    
+    <entry key="cliapp-auth-trust-user-account">Vertrouw systeemgebruiker</entry>
+    <entry key="cliapp-auth-trust-webapp-user-auth">Vertrouw User Web App</entry>
+    <entry key="cliapp-auth-admin-passkey">Admin passkey (laat leeg om uit te schakelen)</entry>
+
+</properties>

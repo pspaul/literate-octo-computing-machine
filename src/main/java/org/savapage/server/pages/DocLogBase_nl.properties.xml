@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="title">Documenten Logboek</entry>
+    <entry key="select-and-sort">Selectie en Sortering</entry>
+    <entry key="select-and-sort-user">Gebruiker</entry>
+    
+    <entry key="prompt-period">Periode</entry>
+    <entry key="prompt-period-from">Van</entry>
+    <entry key="prompt-period-to">Tot</entry>
+    <entry key="title-period-from">Periode van</entry>
+    <entry key="title-period-to">Periode tot</entry>
+    
+    <entry key="prompt-document-name">Document Naam</entry>
+    
+    <entry key="prompt-type">Type</entry>
+    <entry key="type-all">-</entry>
+    <entry key="type-in">In</entry>
+    <entry key="type-out">Uit</entry>
+    <entry key="type-print">Print</entry>
+    <entry key="type-pdf">PDF</entry>
+
+    <entry key="cat-queue">Wachtrij</entry>
+    <entry key="option-all">alles</entry>
+    <entry key="prompt-signature">Handtekening</entry>
+    <entry key="prompt-destination">Bestemming</entry>
+    <entry key="prompt-letterhead">Briefhoofd</entry>
+    <entry key="option-yes">Ja</entry>
+    <entry key="option-no">Nee</entry>
+    <entry key="prompt-author">Auteur</entry>
+    <entry key="prompt-subject">Onderwerp</entry>
+    <entry key="prompt-keywords">Trefwoorden</entry>
+    <entry key="prompt-encryption">Encryptie</entry>
+    <entry key="user-password">Wachtwoord Gebruiker</entry>
+    <entry key="owner-password">Wachtwoord Eigenaar</entry>
+    <entry key="prompt-layout">Layout</entry>
+    <entry key="option-simplex">Simplex</entry>
+    <entry key="option-duplex">Duplex</entry>
+
+    <entry key="prompt-printer">Printer</entry>
+    <entry key="prompt-job-state">Opdracht Toestand</entry>
+    <entry key="option-job-state-active">Actief</entry>
+    <entry key="option-job-state-completed">Voltooid</entry>
+
+    <entry key="prompt-sort-by">Sortering</entry>
+    <entry key="sort-by-name">Naam</entry>
+    <entry key="sort-by-date">Datum</entry>
+    <entry key="sort-by-queue">Wachtrij</entry>
+    <entry key="sort-by-printer">Printer</entry>
+    
+    <entry key="sort-asc">Oplopend</entry>
+    <entry key="sort-desc">Aflopend</entry>        
+    
+    <entry key="button-apply">Toepassen</entry>    
+    <entry key="button-default">Standaard</entry>
+    
+</properties>

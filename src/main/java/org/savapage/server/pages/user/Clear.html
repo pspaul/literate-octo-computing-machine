@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- Safari (Mobile) Browser 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+pattern="[0-9]*"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+    <h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content"  id="content-clear">
+
+    <span class="sp-txt-wrap"><wicket:message key="clear-range"/></span>
+    
+    <fieldset data-role="controlgroup" data-type="vertical">
+
+        <input type="radio" name="clear-pages" id="clear-pages-all" value="clear-pages-all" checked="checked"/>
+        <label for="clear-pages-all"><wicket:message key="clear-all"/></label>
+
+        <input type="radio" name="clear-pages" id="clear-pages-custom" value="clear-pages-custom"/>
+        <label for="clear-pages-custom"><wicket:message key="clear-custom"/></label>
+        
+    </fieldset>
+    
+    <br/>
+    
+    <label for="clear-pages-image-ranges" id="clear-pages-image-ranges-label">
+        <wicket:message key="ranges-help"/></label>
+    <input type="text" name="clear-pages-image-ranges" id="clear-pages-image-ranges" value="" data-clear-btn="true" 
+        pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            
+    <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete" id="button-clear-pages-ok">
+        <wicket:message key="button-clear"/></a> 
+    
+    <a href="#page-scan" data-rel="back" data-direction="reverse"
+		id="button-clear-pages-cancel" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+            <wicket:message key="button-cancel"/></a>
+
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

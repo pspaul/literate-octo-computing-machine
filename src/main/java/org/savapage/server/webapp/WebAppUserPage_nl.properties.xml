@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="file-upload-title">Bestand Uploaden</entry>
+    <entry key="file-upload-file">Bestand</entry>    
+    <entry key="file-upload-supported-docs">Ondersteunde Documenten</entry>
+    <entry key="file-upload-supported-graphics">Ondersteunde Afbeeldingen</entry>
+    <entry key="file-upload-txt-font-family">Lettertype voor platte tekst</entry>
+
+    <entry key="file-upload-types">{0}.</entry>
+    <entry key="file-upload-max-size">Maximale Bestandsgrootte</entry>
+    
+    <entry key="button-file-upload">Uploaden</entry>
+    <entry key="button-file-upload-clear">Wissen</entry>
+    <entry key="button-back">Terug</entry>
+    <entry key="button-password">Wachtwoord</entry>
+    <entry key="button-pin">PIN</entry>
+
+    <entry key="msg-file-upload-busy">Uploaden ...</entry>
+    <entry key="msg-file-upload-success">Bestand met succes geüpload.</entry>
+    <entry key="msg-file-upload-no-file">Geen bestand geüpload.</entry>
+    <entry key="msg-file-process-success">Bestand met succes verwerkt.</entry>
+    <entry key="msg-file-process-error">Er is een fout opgetreden: {0}</entry>
+    <entry key="msg-file-upload-ip-not-allowed">Uploaden is niet mogelijk: uw IP adres is geblokkeerd.</entry>
+
+    <entry key="outbox-title">Vastgehouden Print Opdrachten</entry>    
+    <entry key="button-remove-all">Alles verwijderen</entry>
+    <entry key="button-extend">Verlengen</entry>        
+    
+</properties>

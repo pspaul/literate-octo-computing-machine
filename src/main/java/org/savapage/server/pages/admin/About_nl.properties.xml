@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="title">Info</entry>
+
+	<entry key="cat-version-info">Versie</entry>
+	<entry key="cat-version-info-descript">Versie details over de huidige toepassing. Gelieve
+		deze informatie bij te sluiten wanneer u contact opneemt met support.
+	</entry>
+
+    <entry key="cat-license-info">Licentie</entry>
+    <entry key="license-info-link">Licentie informatie</entry>
+    <entry key="source-code-link">Broncode</entry>
+
+	<entry key="version-build">Versie</entry>
+	<entry key="version-date">Gebouwd op</entry>
+    <entry key="version-db">Database</entry>
+	<entry key="version-db-schema">Database schema</entry>
+
+	<entry key="cat-host-packages">Host Packages</entry>
+    <entry key="cat-host-packages-descript">Raadpleeg de User Manual voor meer informatie.</entry>
+	<entry key="package-required">vereist</entry>
+    <entry key="package-optional">optioneel</entry>
+
+    <entry key="cat-host-system">Host Systeem</entry>
+    <entry key="cat-host-system-descript">Raadpleeg de User Manual voor meer informatie.</entry>
+
+	<entry key="cat-support-info">Support</entry>
+	<entry key="cat-support-info-descript">Als u een probleem of vragen heeft kunt online informatie 
+	        zoeken of contact opnemen met de Community Support Help Desk.</entry>
+
+	<entry key="online-info">Online informatie</entry>
+	<entry key="knowledge-base">Kennisbank</entry>
+    <entry key="helpdesk">Help Desk</entry>
+
+	<entry key="cat-product-news">Product Nieuws</entry>
+	<entry key="cat-product-news-descript">Om u te helpen up-to-date te blijven met
+		product-updates en ander nieuws, wordt het laatste product-nieuws hier
+		weergegeven.
+	</entry>
+
+    <!-- =================================================================== -->
+    <!--                      Community Membership                           -->
+    <!-- =================================================================== -->
+    
+	<entry key="cat-membership-descript">Details over uw {0}.</entry>
+
+	<entry key="membership-status">Status</entry>
+    <entry key="membership-status-valid-visitor">{0} ({1} dagen te gaan)</entry>
+	<entry key="membership-status-exceed">Overschreden</entry>
+	<entry key="membership-status-expired">{0} Verlopen</entry>
+
+	<entry key="membership-status-users-exceeded">U heeft momenteel meer gebruikers dan uw {0}
+		toestaat.</entry>
+		
+	<entry key="membership-status-wrong-version">Uw {0} is niet geldig voor de huidige versie van
+		de applicatie.</entry>
+		
+	<entry key="membership-status-wrong-version-grace-period">Uw {0} is niet geldig voor de huidige versie
+		van de applicatie. U heeft {1} dagen de tijd om de {2} te vernieuwen.</entry>
+		
+	<entry key="membership-status-wrong-product">Uw {0} is voor product "{1}" en is ongeldig voor
+		deze applicatie. Neem contact op met {2} om het juiste {3} voor deze applicatie te verkrijgen.</entry>
+		
+	<entry key="membership-status-wrong-module">Uw {0} is ongeldig voor de modules in
+		deze applicatie. Neem contact op met {1} om het juiste {2} voor deze applicatie te verkrijgen..</entry>
+
+    <entry key="membership-status-visit">{0} : {1} dagen resterend</entry>
+	<entry key="membership-status-visit-expired">{0} Verlopen (sinds {1})</entry>
+
+    <entry key="membership-issuer">Uitgever</entry>
+	<entry key="membership-issue-date">Afgiftedatum</entry>
+	<entry key="membership-valid-till">Geldig tot</entry>
+	<entry key="membership-valid-till-msg">{0} : {1} dagen te gaan</entry>
+	<entry key="membership-expired-msg">{0} ({1} dagen)</entry>
+	<entry key="membership-version">Versie</entry>
+	<entry key="membership-participants">Deelnemers</entry>
+	<entry key="membership-users">Gebruikers</entry>
+
+	<entry key="button-import-membercard">{0} Importeren</entry>
+
+    <!--  -->
+    <entry key="installed">Geïnstalleerd.</entry>
+    <entry key="not-installed">Niet geïnstalleerd.</entry>
+    <entry key="connection-broken">Connectie verbroken.</entry>
+
+    <entry key="jre-os-name">Naam</entry>
+    <entry key="jre-os-version">Versie</entry>
+    <entry key="jre-os-arch">Architectuur</entry>
+
+    <entry key="java.version">Versie</entry>
+    <entry key="java.vm.name">VM naam</entry>
+    
+</properties>

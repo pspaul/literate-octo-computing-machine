@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ul data-role="listview" data-inset="true" data-theme="a">
+
+	<li data-role="list-divider"><wicket:message key="title" /></li>
+
+	<li>
+		<div data-role="collapsible" data-collapsed="true">
+
+			<h3>
+				<wicket:message key="cat-version-info" />
+			</h3>
+			<div class="sp-txt-wrap">
+				<wicket:message key="cat-version-info-descript" />
+			</div>
+
+			<ul data-role="listview" data-inset="true">
+				<li><h3>
+						<wicket:message key="version-build" />
+					</h3>
+					<div class="sp-txt-info" wicket:id="version-build" /></li>
+				<li><h3>
+						<wicket:message key="version-date" />
+					</h3>
+					<div class="sp-txt-info" wicket:id="version-date" /></li>
+				<li><h3>
+						<wicket:message key="version-db" />
+					</h3>
+					<div class="sp-txt-info" wicket:id="version-db" /></li>
+				<li><h3>
+						<wicket:message key="version-db-schema" />
+					</h3>
+					<div class="sp-txt-info" wicket:id="version-db-schema" /></li>
+			</ul>
+		</div>
+	</li>
+    <li>
+        <div data-role="collapsible" data-collapsed="true">
+
+            <h3><wicket:message key="cat-license-info"/></h3>
+                        
+            <ul data-role="listview" data-inset="true">
+            
+                <li>
+                    <h3><span wicket:id="app-license-name"/> is Libre Software</h3>
+                 
+                    <div class="sp-txt-wrap sp-txt-info">
+	                    Licensed under 
+	                    <a class="sp-plain-link" href="https://www.gnu.org/licenses/agpl.html" 
+	                        target="_blank">GNU Affero General Public License (AGPL)</a> version&nbsp;3 as published by 
+	                    the <a class="sp-plain-link" href="http://fsf.org" target="_blank">Free Software Foundation</a>.
+	                </div>
+                </li>
+                                
+                <li>
+                    <h3>Copyright</h3>
+                    <div class="sp-txt-wrap sp-txt-info">
+	                    &copy; 2011-<span wicket:id="current-year"></span> by 
+	                    <a class="sp-plain-link" href="http://www.datraverse.com/en" target="_blank" 
+	                    wicket:id="app-copyright-owner"/>                 
+	                </div>
+                </li>                                    
+            </ul>
+            
+           <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="http://savapage.org" target="_blank">
+               www.savapage.org</a>
+            <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="/docs/licenses/" target="_blank">
+                <wicket:message key="license-info-link" /></a>
+            <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="https://gitorious.org/savapage" target="_blank">
+                <wicket:message key="source-code-link" /></a>
+       </div>
+    </li>
+    
+	<li><div data-role="collapsible" data-collapsed="true">
+
+			<h3 id="cat-membership" wicket:id="cat-membership" />
+
+			<ul data-role="listview" data-inset="true">
+
+				<wicket:fragment wicket:id="membership-details" />
+
+				<li><h3>
+						<wicket:message key="membership-participants" />
+					</h3>
+					<div wicket:id="membership-participants" /></li>
+
+				<li><h3>
+						<wicket:message key="membership-users" />
+					</h3>
+					<div wicket:id="membership-users" /></li>
+
+			</ul>
+			
+            <a href="#page-membercard-upload" wicket:id="button-import-membercard"
+               class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-u"/>
+            
+		</div>
+		
+		</li>
+
+    <li>
+        <div data-role="collapsible" data-collapsed="true">
+
+            <h3>
+                <wicket:message key="cat-support-info" />
+            </h3>
+            <div class="sp-txt-wrap">
+                <wicket:message key="cat-support-info-descript" />
+            </div>
+
+            <ul data-role="listview" data-inset="true">
+                <li><h3>
+                        <wicket:message key="online-info" />
+                    </h3>
+                    <div>
+                        <a class="sp-plain-link" href="http://savapage.org/" target="_blank" data-rel="external">http://savapage.org/</a>
+                    </div></li>
+                <li><h3>
+                        <wicket:message key="helpdesk" />
+                    </h3>
+                    <div>
+                        <a class="sp-plain-link" href="" data-rel="external" target="_blank" wicket:id="savapage-helpdesk-url"/>
+                    </div></li>
+            </ul>
+
+        </div>
+    </li>
+
+    <li>
+        <div data-role="collapsible" data-collapsed="true">
+
+            <h3>Java</h3>
+
+            <table data-role="table" data-mode="reflow"
+                class="ui-responsive table-stroke">
+                <thead>
+                    <tr>
+                        <th data-priority="1" />
+                        <th data-priority="2" />
+                    </tr>
+                </thead>
+                <tbody style="font-family: monospace;">
+                    <tr>
+                        <th><wicket:message key="java.vm.name" /></th>
+                        <td wicket:id="java.vm.name" />
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="java.version" /></th>
+                        <td wicket:id="java.version" />
+                    </tr>
+                    <tr>
+                        <th>Processors</th>
+                        <td wicket:id="jre-available-processors" />
+                    </tr>
+                    <tr>
+                        <th>Max memory</th>
+                        <td wicket:id="jre-max-memory" />
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </li>
+
+    <li>
+        <div data-role="collapsible" data-collapsed="true">
+
+            <h3>
+                <wicket:message key="cat-host-system" />
+            </h3>
+
+            <div class="sp-txt-wrap">
+                <wicket:message key="cat-host-system-descript" />
+            </div>
+
+            <table data-role="table" data-mode="reflow"
+                class="ui-responsive table-stroke">
+                <thead>
+                    <tr>
+                        <th data-priority="1" />
+                        <th data-priority="2" />
+                    </tr>
+                </thead>
+                <tbody style="font-family: monospace;">
+                    <tr>
+                        <th>&nbsp;</th>
+                        <td />
+                    </tr>
+                    <tr>
+                        <th>Operating system</th>
+                        <td />
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="jre-os-name" /></th>
+                        <td wicket:id="jre-os-name" />
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="jre-os-version" /></th>
+                        <td wicket:id="jre-os-version" />
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="jre-os-arch" /></th>
+                        <td wicket:id="jre-os-arch" />
+                    </tr>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <td />
+                    </tr>
+                    <tr>
+                        <th>ulimit</th>
+                        <td />
+                    </tr>
+                    <tr>
+                        <th>open files</th>
+                        <td wicket:id="system-ulimits-nofile" />
+                    </tr>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <td />
+                    </tr>
+                    <tr>
+                        <th>sysctl</th>
+                        <td />
+                    </tr>
+                    <tr wicket:id="sysctl-entry">
+                        <th wicket:id="sysctl-key"></th>
+                        <td wicket:id="sysctl-value" />
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </li>
+
+    <li>
+        <div data-role="collapsible" data-collapsed="true">
+
+            <h3>
+                <wicket:message key="cat-host-packages" />
+            </h3>
+            <div class="sp-txt-wrap">
+                <wicket:message key="cat-host-packages-descript" />
+            </div>
+
+            <ul data-role="listview" data-inset="true">
+                <li><h3>
+                        CUPS (
+                        <wicket:message key="package-required" />
+                        )
+                    </h3>
+                    <div class="sp-txt-info sp-txt-wrap" wicket:id="version-cups" /></li>
+            </ul>
+
+            <ul data-role="listview" data-inset="true">
+                <li><h3>
+                        Ghostscript (
+                        <wicket:message key="package-required" />
+                        )
+                    </h3>
+                    <div class="sp-txt-info sp-txt-wrap"
+                        wicket:id="version-ghostscript" /></li>
+            </ul>
+
+            <ul data-role="listview" data-inset="true">
+                <li><h3>
+                        ImageMagick (
+                        <wicket:message key="package-required" />
+                        )
+                    </h3>
+                    <div class="sp-txt-info sp-txt-wrap"
+                        wicket:id="version-imagemagick" /></li>
+            </ul>
+
+            <ul data-role="listview" data-inset="true">
+                <li><h3>
+                        pdftoppm (
+                        <wicket:message key="package-required" />
+                        )
+                    </h3>
+                    <div class="sp-txt-info sp-txt-wrap" wicket:id="version-pdftoppm" /></li>
+            </ul>
+
+            <ul data-role="listview" data-inset="true">
+                <li><h3>
+                        xpstopdf (
+                        <wicket:message key="package-optional" />
+                        )
+                    </h3>
+                    <div class="sp-txt-info sp-txt-wrap" wicket:id="version-xpstopdf" /></li>
+            </ul>
+
+            <ul data-role="listview" data-inset="true">
+                <li><h3>
+                        LibreOffice (
+                        <wicket:message key="package-optional" />
+                        )
+                    </h3>
+                    <div class="sp-txt-info sp-txt-wrap"
+                        wicket:id="version-libreoffice" /></li>
+            </ul>
+
+        </div>
+    </li>
+
+	<wicket:remove>
+		<!--
+
+    <li><div data-role="collapsible" data-collapsed="true">
+    
+        <h3>Database Size Statistics</h3>
+
+        <div>These statistics can be used to assist estimating database
+            size. The statistics are updated weekly.</div>
+
+        <ul data-role="listview" data-inset="true">
+
+            <li><h3>Statistics last updated</h3>
+                <p>May 1, 2011 1:15:04 AM</p>
+            </li>
+            
+            <li><h3>Print log count</h3>
+                <div class="ui-li-count">818</div>
+            </li>
+
+            <li><h3>Account transaction count</h3>
+                <div class="ui-li-count">868</div>
+            </li>
+        </ul>
+        
+    </div></li>
+-->
+	</wicket:remove>
+
+
+</ul>

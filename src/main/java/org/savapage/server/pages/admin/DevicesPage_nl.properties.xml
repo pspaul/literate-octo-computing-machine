@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="signal-not-present">niet aanwezig</entry>
+    <entry key="signal-disabled">uitgeschakeld</entry>
+    <entry key="signal-active">actief</entry>
+
+    <entry key="signal-connected">Aangesloten: {0}</entry>
+    <entry key="signal-disconnected">Losgekoppeld: {0}</entry>
+    
+    <entry key="proxy-print">Proxy Print</entry>
+    <entry key="proxy-print-single">Enkele Printer</entry>
+    <entry key="proxy-print-group">Printer Groep</entry>
+    
+    <entry key="button-edit">Bewerken</entry>                
+</properties>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<div data-role="header" data-theme="b">
+	<h1 id="user-pin-reset-title"/>
+</div>
+
+<div class="ui-content">
+
+	<ul data-role="listview" data-inset="true">
+	
+	    <li>
+			<h3>
+			    <wicket:message key="pin-reset"/>
+			</h3>	       
+        </li>
+        
+        <li>
+		    <label for="user-pin-reset"> <wicket:message key="pin"/></label> 
+		    <input type="password" id="user-pin-reset" maxlength="8" value=""
+		         autofocus pattern="[0-9]*" tabindex="1"/> 
+		    
+		    <label for="user-pin-reset-confirm"> <wicket:message key="pin-confirm"/></label>
+		    <input type="password" id="user-pin-reset-confirm" maxlength="8" value="" 
+		          pattern="[0-9]*" tabindex="2"/>
+			    
+		</li>
+		
+        <li>
+            <div data-role="controlgroup" data-type="horizontal">
+            
+			    <a href="#" id="button-user-pin-reset" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" tabindex="3">
+                    <wicket:message key="button-apply"/></a>
+			        
+		        <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" data-rel="back" data-direction="reverse"
+		                tabindex="4"><wicket:message key="button-cancel"/></a>	        
+			</div>
+        </li>
+    </ul>
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

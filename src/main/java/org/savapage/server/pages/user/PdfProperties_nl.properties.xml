@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title">PDF</entry>
+    <entry key="pdf-cat-descript">Beschrijving</entry>
+
+    <entry key="pdf-title">Titel</entry>
+    <entry key="pdf-author">Auteur</entry>
+    <entry key="pdf-subject">Onderwerp</entry>
+    <entry key="pdf-keywords">Trefwoorden</entry>
+
+    <entry key="pdf-encryption">Encryptie</entry>
+
+    <entry key="pdf-owner-password">Wachtwoord Eigenaar</entry>
+    <entry key="pdf-user-password">Wachtwoord Gebruiker</entry>
+    <entry key="pdf-restrictions">Restricties</entry>
+    <entry key="pdf-password-confirm">bevestigen</entry>
+
+    <entry key="pdf-cat-security">Beveiliging</entry>
+
+    <entry key="pdf-actions-allowed">Toegestane acties</entry>
+
+    <entry key="pdf-allow-printing">Afdrukken</entry>
+    <entry key="pdf-allow-degraded-printing">Afdrukken met lagere kwaliteit</entry>
+    <entry key="pdf-allow-modify-contents">Pagina uitnemen</entry>
+    <entry key="pdf-allow-modify-annotations">Opmerkingen</entry>
+    <entry key="pdf-allow-assembly">Document samenstellen</entry>
+    <entry key="pdf-allow-copy">Inhoud kopiëren</entry>
+    <entry key="pdf-allow-copy-for-access">Inhoud kopiëren voor toegankelijkheid</entry>
+    <entry key="pdf-allow-fillin">Formuliervelden invullen</entry>
+
+    <entry key="pdf-cat-passwords">Wachtwoorden</entry>
+
+    <entry key="button-pdf-allow-all">Alles toestaan</entry>
+    <entry key="button-pdf-allow-none">Niets toestaan</entry>
+
+    <entry key="prompt-letterhead">Briefhoofd</entry>        
+
+    <entry key="pdf-remove-graphics">Afbeeldingen verwijderen</entry>
+    <entry key="pdf-page-ranges">Voer reeksen in zoals: 1-4,6,8-10</entry>
+
+    <entry key="prompt-apply">Toepassen</entry>        
+
+    <entry key="button-default">Standaard</entry>
+    <entry key="button-download">Downloaden</entry>    
+    <entry key="button-send">Verzenden</entry>
+    <entry key="button-back">Terug</entry>        
+    
+</properties>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:panel>
+
+	<table data-role="table" data-mode="reflow" class="ui-responsive ui-mini table-stroke">
+		<thead>
+			<tr>
+				<th />
+				<th colspan="2"><wicket:message key="one-sided"/></th>
+				<th colspan="2"><wicket:message key="two-sided"/></th>
+			</tr>
+			<tr>
+				<th/>
+				<th data-priority="1"><wicket:message key="grayscale"/></th>
+				<th data-priority="1"><wicket:message key="color"/></th>
+                <th data-priority="2"><wicket:message key="grayscale"/></th>
+                <th data-priority="2"><wicket:message key="color"/></th>
+			</tr>
+		</thead>
+		<tbody>
+            <tr class="sp-printer-cost-media-row" wicket:id="media-row">
+                <td style="vertical-align: middle">
+                    <label for="" wicket:id="media-checkbox-label" value="1"/>
+                    <input class="sp-printer-cost-media" type="checkbox" id="" wicket:id="media-checkbox"/>
+                </td>
+                <td><input class="sp-printer-cost-1-g" type="text" maxlength="" wicket:id="one-sided-grayscale" pattern="[0-9]*"/></td>
+                <td><input class="sp-printer-cost-1-c" type="text" maxlength="" wicket:id="one-sided-color" pattern="[0-9]*"/></td>
+                <td><input class="sp-printer-cost-2-g" type="text" maxlength="" wicket:id="two-sided-grayscale" pattern="[0-9]*"/></td>
+                <td><input class="sp-printer-cost-2-c" type="text" maxlength="" wicket:id="two-sided-color" pattern="[0-9]*"/></td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <a href="#" id="sp-printer-cost-media-less" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-bullets">
+                        <wicket:message key="show-selected-only"/>
+                    </a>
+                    <a href="#" id="sp-printer-cost-media-more" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-plus">
+                        <wicket:message key="show-all"/>
+                    </a>
+                </td>
+            </tr>
+              
+		</tbody>
+	</table>
+
+</wicket:panel>

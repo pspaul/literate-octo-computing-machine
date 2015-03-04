@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="signal-not-present">niet aanwezig</entry>
+    <entry key="signal-disabled">uitgeschakeld</entry>
+    <entry key="signal-active">actief</entry>
+    <entry key="signal-deleted">verwijderd</entry>
+    <entry key="signal-disconnected">losgekoppeld</entry>
+    
+    <entry key="button-edit">Bewerken</entry>
+    <entry key="button-log">Logboek</entry>
+    <entry key="button-cups">CUPS</entry>
+    
+    <entry key="printer-groups">Lid van Groep</entry>
+    
+    <entry key="period">Periode</entry>
+    
+    <entry key="job">opdracht</entry>
+    <entry key="page">pagina</entry>
+    <entry key="sheet">blad</entry>
+    
+    <entry key="jobs">opdrachten</entry>
+    <entry key="pages">pagina's</entry>
+    <entry key="sheets">bladen</entry>
+            
+    <entry key="prompt-allow-access">Toegang toestaan ​​voor:</entry>
+    <entry key="prompt-deny-access">Toegang weigeren voor:</entry>
+            
+</properties>

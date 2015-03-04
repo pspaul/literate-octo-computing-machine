@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:panel>
+
+	<ul data-role="listview" data-inset="true" id="dashboard-system-status">
+
+		<li data-role="list-divider"><wicket:message key="title" /></li>
+
+		<li><wicket:remove>
+				<!--
+    +======================================================================+
+    | http://api.jquerymobile.com/table-reflow/
+    |  ... to use pre-configured  breakpoint, add the ui-responsive class 
+    |  to the table to convert from the stacked presentation to a tabular 
+    |  presentation at 560px (35em)     
+    +======================================================================+
+    -->
+			</wicket:remove>
+			<table data-role="table" data-mode="reflow"
+				class="ui-responsive table-stroke">
+				<thead>
+					<tr>
+						<th data-priority="1" />
+						<th data-priority="2" />
+					</tr>
+				</thead>
+				<tbody>
+                    <tr>
+                        <th wicket:id="membership-org-prompt"/>
+                        <td class="sp-txt-info" wicket:id="membership-org" />
+                    </tr>
+                    <tr>
+                        <th wicket:id="membership-status-prompt" />
+                        <td wicket:id="membership-status" />
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="membership-participants-prompt" /></th>
+                        <td class="sp-txt-info" wicket:id="membership-participants" />
+                    </tr>
+                    
+                    <wicket:enclosure child="membership-valid-till">
+                        <tr>
+                            <th><wicket:message key="membership-valid-till" /></th>
+                            <td wicket:id="membership-valid-till" />
+                        </tr>
+                    </wicket:enclosure>
+
+                    <wicket:enclosure child="membership-valid-days-remaining">
+                        <tr>
+                            <th><wicket:message key="membership-valid-days-remaining" /></th>
+                            <td wicket:id="membership-valid-days-remaining" />
+                        </tr>
+                    </wicket:enclosure>
+                    
+					<tr>
+						<th><wicket:message key="sys-status" /></th>
+						<td wicket:id="sys-status" />
+					</tr>
+					<tr>
+						<th><wicket:message key="sys-uptime" /></th>
+						<td class="sp-txt-info" wicket:id="sys-uptime" />
+					</tr>
+                    <tr>
+                        <th><wicket:message key="users" /></th>
+                        <td class="sp-txt-info" wicket:id="user-count" />
+                    </tr>
+					<wicket:enclosure child="smartschool-print-enabled">
+						<tr>
+							<th>SmartSchool Print</th>
+							<td wicket:id="smartschool-print-enabled" />
+						</tr>
+					</wicket:enclosure>
+					<tr>
+						<th>Google Cloud Print</th>
+						<td wicket:id="gcp-enabled" />
+					</tr>
+					<tr>
+						<th>Mail Print</th>
+						<td wicket:id="mailprint-enabled" />
+					</tr>
+					<tr>
+						<th>Web Print</th>
+						<td wicket:id="webprint-enabled" />
+					</tr>
+					
+                    <tr>
+                        <th><wicket:message key="client-sessions" /></th>
+                        <td class="sp-txt-info" wicket:id="client-sessions" />
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="web-sessions" /></th>
+                        <td class="sp-txt-info" wicket:id="web-sessions" />
+                    </tr>
+					
+					<tr>
+						<th><wicket:message key="recent-errors" /></th>
+						<td wicket:id="error-count" />
+					</tr>
+					<tr>
+						<th><wicket:message key="recent-warnings" /></th>
+						<td wicket:id="warning-count" />
+					</tr>
+                    <wicket:enclosure child="jvm-memory">
+						<tr>
+							<th><wicket:message key="jvm-memory-prompt" /></th>
+							<td wicket:id="jvm-memory" class="sp-txt-wrap sp-txt-info" />
+						</tr>
+					</wicket:enclosure>
+                    <wicket:enclosure child="threads-info">
+	                    <tr>
+	                        <th><wicket:message key="threads-info-prompt" /></th>
+	                        <td wicket:id="threads-info" class="sp-txt-wrap sp-txt-info" />
+	                    </tr>
+                    </wicket:enclosure>
+                    <wicket:enclosure child="connections-info">
+	                    <tr>
+	                        <th><wicket:message key="connections-info-prompt" /></th>
+	                        <td wicket:id="connections-info" class="sp-txt-wrap sp-txt-info" />
+	                    </tr>
+                    </wicket:enclosure>
+                    <wicket:enclosure child="proxy-print-queue-size">
+                        <tr>
+                            <th class="sp-txt-wrap"><wicket:message key="proxy-print-queue" /></th>
+                            <td class="sp-txt-wrap" wicket:id="proxy-print-queue-size" /> 
+                        </tr>
+                    </wicket:enclosure>
+				</tbody>
+			</table></li>
+
+		<wicket:fragment wicket:id="stats-pages-total" />
+
+		<wicket:fragment wicket:id="environmental-impact" />
+
+		<li data-role="list-divider"><wicket:message key="news" /></li>
+		<wicket:fragment wicket:id="savapage-news" />
+
+	</ul>
+</wicket:panel>

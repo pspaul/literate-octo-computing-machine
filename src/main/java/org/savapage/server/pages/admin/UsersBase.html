@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<ul data-role="listview" data-inset="true" data-theme="a">
+
+    <li data-role="list-divider"><span><wicket:message key="title"/></span></li>
+
+    <li>
+        <div data-role="collapsible" data-collapsed="true">
+
+            <h3>
+                <wicket:message key="select-and-sort"/>
+            </h3>
+            
+            <ul data-role="listview" data-inset="true">
+
+                <li>
+
+                    <label for="sp-user-id-containing-text"><wicket:message key="prompt-id-containing-text"/></label>
+	                <input type="text" id="sp-user-id-containing-text" value="" maxlength="128" 
+	                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
+		
+                    <label for="sp-user-email-containing-text"><wicket:message key="prompt-email-containing-text"/></label>
+                    <input type="text" id="sp-user-email-containing-text" value="" maxlength="128" 
+		                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
+	
+                    <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">                    
+                        <legend>
+                            <wicket:message key="prompt-user-source"/>
+                        </legend>
+        
+                        <input type="radio" name="sp-user-select-source" id="sp-user-select-source-all" value="" checked="checked" /> 
+                        <label for="sp-user-select-source-all"><wicket:message key="user-source-all"/></label>
+                                
+                        <input type="radio" name="sp-user-select-source" id="sp-user-select-source-external" value="0"/> 
+                        <label for="sp-user-select-source-external"><wicket:message key="user-source-external"/></label>
+                                                        
+                        <input type="radio" name="sp-user-select-source" id="sp-user-select-source-internal" value="1"/> 
+                        <label for="sp-user-select-source-internal"><wicket:message key="user-source-internal"/></label>                        
+                    </fieldset>
+                    
+		            <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		            
+		                <legend>
+		                    <wicket:message key="prompt-user-type"/>
+		                </legend>
+		
+		                <input type="radio" name="sp-user-select-type" id="sp-user-select-type-all" value=""
+		                    checked="checked" /> 
+		                <label for="sp-user-select-type-all"><wicket:message key="user-type-all"/></label>
+		                        
+		                <input type="radio" name="sp-user-select-type" id="sp-user-select-type-person" value="1"/> 
+		                <label for="sp-user-select-type-person"><wicket:message key="user-type-person"/></label>
+		                
+		                <input type="radio" name="sp-user-select-type" id="sp-user-select-type-abstract" value="0"/> 
+		                <label for="sp-user-select-type-abstract"><wicket:message
+		                        key="user-type-abstract"/></label>
+		                        
+		            </fieldset></div>
+        		    
+        		    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		            
+		                <legend>
+		                    <wicket:message key="prompt-user-role"/>
+		                </legend>
+		
+		                <input type="radio" name="sp-user-select-role" id="sp-user-select-role-all" value=""
+		                    checked="checked" />
+		                <label for="sp-user-select-role-all"><wicket:message key="user-role-all"/></label>
+		                        
+		                <input type="radio" name="sp-user-select-role" id="sp-user-select-role-admin" value="1"/>
+		                <label for="sp-user-select-role-admin"><wicket:message key="user-role-admin"/></label>
+		                
+		                <input type="radio" name="sp-user-select-role" id="sp-user-select-role-user" value="0"/> 
+		                <label for="sp-user-select-role-user"><wicket:message
+		                        key="user-role-user"/></label>
+		                        
+		            </fieldset></div>
+		            
+                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                    
+                        <legend>
+                            <wicket:message key="prompt-user-status"/>
+                        </legend>
+        
+                        <input type="radio" name="sp-user-select-status" id="sp-user-select-status-all" checked="checked" value="" /> 
+                        <label for="sp-user-select-status-all"><wicket:message key="user-status-all"/></label>
+                                
+                        <input type="radio" name="sp-user-select-status" id="sp-user-select-status-enabled" value="1"/>
+                        <label for="sp-user-select-status-enabled"><wicket:message key="user-status-enabled"/></label>
+                                
+                        <input type="radio" name="sp-user-select-status" id="sp-user-select-status-disabled" value="0"/>
+                        <label for="sp-user-select-status-disabled"><wicket:message key="user-status-disabled"/></label>
+                        
+                    </fieldset></div>
+
+                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                    
+                        <legend>
+                            <wicket:message key="prompt-user-deleted"/>
+                        </legend>
+                        
+                        <input type="radio" name="sp-user-select-deleted" id="sp-user-select-deleted-all" value="" /> 
+                        <label for="sp-user-select-deleted-all"><wicket:message key="user-deleted-all"/></label>
+                                
+                        <input type="radio" name="sp-user-select-deleted" id="sp-user-select-deleted-y" value="1"/>
+                        <label for="sp-user-select-deleted-y"><wicket:message key="user-deleted-y"/></label>
+                                
+                        <input type="radio" name="sp-user-select-deleted" id="sp-user-select-deleted-n" value="0" checked="checked"/>
+                        <label for="sp-user-select-deleted-n"><wicket:message key="user-deleted-n"/></label>
+                        
+                    </fieldset></div>
+		            		            
+                </li>
+                
+                <li>
+		            
+		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		                <legend>
+		                    <wicket:message key="prompt-sort-by"/>
+		                </legend>
+		
+		                <input type="radio" name="sp-user-sort-by" id="sp-user-sort-by-id" checked="checked" value="id"/> 
+		                <label for="sp-user-sort-by-id"><wicket:message key="sort-by-id"/></label>
+		                
+		                <input type="radio" name="sp-user-sort-by" id="sp-user-sort-by-email" value="email"/> 
+		                <label for="sp-user-sort-by-email"><wicket:message key="sort-by-email"/></label>
+		                        
+		                <input type="radio" name="sp-user-sort-dir" id="sp-user-sort-dir-asc" checked="checked" /> 
+		                <label for="sp-user-sort-dir-asc"><wicket:message key="sort-asc"/></label>
+		                
+		                <input type="radio" name="sp-user-sort-dir" id="sp-user-sort-dir-desc"/> 
+		                <label for="sp-user-sort-dir-desc"><wicket:message key="sort-desc"/></label>
+		                        
+		            </fieldset>
+		            
+                </li>
+                
+                <li>
+                    <div data-role="controlgroup" data-type="horizontal">
+			            <a href="#" id="button-users-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+			                 <wicket:message key="button-apply"/></a>			
+			            <a href="#" id="button-users-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+			                 <wicket:message key="button-default"/></a>
+                        <a href="#" id="button-users-report" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-grid">
+                            <wicket:message key="button-report"/></a>
+                    </div>                        
+                </li>
+            </ul>
+        </div> 
+    </li>
+
+    <wicket:enclosure child="button-new">
+    <li>
+        <div>
+            <a href="#" id="button-create-user" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit" 
+                wicket:id="button-new"/>
+        </div>    
+    </li>
+    </wicket:enclosure>
+
+    <li id="sp-user-list-page"></li>
+
+</ul>

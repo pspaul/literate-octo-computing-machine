@@ -18,7 +18,7 @@ package builder, and therefore not part of the repository.
     
 Sample content:
 
-<pre>    
+<pre>
 jquery.version=1.11.0
 jquery.mobile.version=1.4.5
 jquery.location=jslib-DEVELOPMENT

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="file-upload-title">Upload File</entry>
+    <entry key="file-upload-file">File</entry>
+    <entry key="file-upload-supported-docs">Supported Documents</entry>
+    <entry key="file-upload-supported-graphics">Supported Graphics</entry>
+    <entry key="file-upload-txt-font-family">Font for plain text</entry>
+    
+    <entry key="file-upload-types">{0}.</entry>
+    <entry key="file-upload-max-size">Max File Size</entry>
+    
+    <entry key="button-file-upload">Upload</entry>
+    <entry key="button-file-upload-clear">Clear</entry>
+    <entry key="button-back">Back</entry>
+    <entry key="button-password">Password</entry>
+    <entry key="button-pin">PIN</entry>
+
+    <entry key="msg-file-upload-busy">Uploading ...</entry>
+    <entry key="msg-file-upload-success">File successfully uploaded.</entry>
+    <entry key="msg-file-upload-no-file">No file uploaded.</entry>
+    <entry key="msg-file-process-success">File successfully processed.</entry>
+    <entry key="msg-file-process-error">An error occurred: {0}</entry>
+    <entry key="msg-file-upload-ip-not-allowed">Upload not possible: your IP address is blocked.</entry>
+
+    <entry key="outbox-title">Hold Print Jobs</entry>    
+    <entry key="button-remove-all">Remove all</entry>    
+    <entry key="button-extend">Extend</entry>        
+    
+</properties>

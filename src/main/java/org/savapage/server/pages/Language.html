@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<div data-role="header" data-theme="b">
+	<h1>
+		<wicket:message key="title"/>
+	</h1>
+</div>
+
+<div class="ui-content" >
+
+	<p>
+		<wicket:message key="select-language"/>
+	</p>
+
+	<div>
+		<ul data-role="listview" data-inset="true" id="language-list">
+			<li><a href="#" id="language#en">English</a></li>
+			<li><a href="#" id="language#nl">Nederlands</a></li>
+		</ul>
+	</div>
+
+	<a href="#page-login" id="button-lang-cancel" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+        <wicket:message key="button-cancel"/>
+    </a>
+
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="since">Since</entry>
+    <entry key="total-pages">Page Totals</entry>
+    <entry key="total-pages-printed-in">Queues</entry>
+    <entry key="total-pages-printed-out">Proxy Printers</entry>
+    <entry key="total-pages-pdf-out">PDF</entry>
+</properties>

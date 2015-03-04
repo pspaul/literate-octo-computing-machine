@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text" autofocus
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+	<h1 class="sp-device-terminal"><wicket:message key="device-terminal"/></h1>
+	<h1 class="sp-device-card-reader"><wicket:message key="device-card-reader"/></h1>
+</div>
+
+<div class="ui-content" id="content-device">
+
+    <ul data-role="listview" data-inset="true">
+    
+        <li>
+            <div class="ui-field-contain">
+	            <label for="sp-device-name"><wicket:message key="device-name"/></label>
+	            <input type="text" id="sp-device-name" value="" maxlength="128" autofocus
+	                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+            
+            <div class="ui-field-contain">
+                <label for="sp-device-hostname"><wicket:message key="device-hostname"/></label>
+                <input type="text" id="sp-device-hostname" value="" maxlength="42"
+                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+            
+            <div class="ui-field-contain sp-device-card-reader">
+	            <label for="sp-device-port"><wicket:message key="device-port"/></label>
+	            <input type="text" id="sp-device-port" value="" maxlength="8"  pattern="[0-9]*"
+	                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+            
+            <div class="ui-field-contain">
+                <label for="sp-device-location"><wicket:message key="device-location"/></label>
+                <input type="text" id="sp-device-location" value="" maxlength="255"
+                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+            
+            <label for="sp-device-notes"><wicket:message key="device-notes"/></label>
+            <textarea id="sp-device-notes" value="" maxlength="255"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+        </li>
+        
+        <li class="sp-device-terminal">        
+	        <label for="" wicket:id="terminal-auto-logout-label"/> 
+	        <input id="" wicket:id="terminal-auto-logout" type="text" value="" 
+	            maxlength="6"  pattern="[0-9]*" autocomplete="off" 
+	            autocorrect="off" autocapitalize="off" spellcheck="false"/>
+        </li>
+        
+        <li>                   
+	        <label for="sp-device-disabled"><wicket:message key="device-disabled"/></label>
+	        <input type="checkbox" id="sp-device-disabled" value="0"/>                        
+        </li>
+                
+    </ul>
+
+    <ul id="sp-device-card-reader-user-auth" data-role="listview" data-inset="true" data-theme="a">
+        <li class="ui-li-has-icon">
+            <img width="16" height="16" src="images/device-terminal-card-reader-16x16.png"/>
+            <div> 
+                <span>Terminal:</span>
+                <span id="sp-device-card-reader-terminal"/>
+            </div>
+        </li>
+    </ul>
+                
+    <ul id="sp-device-function-proxy-print-group" data-role="listview" data-inset="true">
+    
+	    <li>
+		    <label for="sp-device-function-proxy-print">
+		         <span class="sp-device-terminal" ><wicket:message key="device-proxy-print"/></span>
+                    <span class="sp-device-card-reader"><wicket:message key="device-cardreader-print-auth"/></span>
+		    </label>
+		    <input type="checkbox" id="sp-device-function-proxy-print" value="0"/>
+
+        </li>            
+        <li id="sp-device-proxy-print-auth-fields">
+            <fieldset data-role="controlgroup" data-type="vertical">
+            
+                <h3 class="sp-txt-wrap"><wicket:message key="device-proxy-print-mode"/></h3>
+                
+                <label for="" wicket:id="proxy-print.auth-mode-fast-label" /> 
+                <input type="radio" name="" id="" wicket:id="proxy-print.auth-mode-fast" /> 
+                    
+                <label for="" wicket:id="proxy-print.auth-mode-hold-label" /> 
+                <input type="radio" name="" id="" wicket:id="proxy-print.auth-mode-hold" /> 
+
+                <label for="" wicket:id="proxy-print.auth-mode-direct-label" /> 
+                <input type="radio" name="" id="" wicket:id="proxy-print.auth-mode-direct" /> 
+
+                <label for="" wicket:id="proxy-print.auth-mode-fast_hold-label" /> 
+                <input type="radio" name="" id="" wicket:id="proxy-print.auth-mode-fast_hold" /> 
+                    
+                <label for="" wicket:id="proxy-print.auth-mode-fast_direct-label" /> 
+                <input type="radio" name="" id="" wicket:id="proxy-print.auth-mode-fast_direct" /> 
+                    
+            </fieldset>            
+        </li>            
+        <li id="sp-device-proxy-print-group-fields">
+        
+            <h3 class="sp-txt-wrap"><wicket:message key="device-proxy-print-target"/></h3>
+                        
+            <label for="sp-device-proxy-print-printer">
+                <wicket:message key="device-proxy-print-single"/>
+            </label>                 
+            <input type="text" id="sp-device-proxy-print-printer" value="" maxlength="255"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+
+            <label for="sp-device-proxy-print-printer-group">
+                <wicket:message key="device-proxy-print-group"/>
+            </label>                 
+            <input type="text" id="sp-device-proxy-print-printer-group" value="" maxlength="255"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                                
+            
+        </li>
+    </ul>
+            
+    <ul class="sp-device-terminal" data-role="listview" data-inset="true">
+        <li>
+            <fieldset class="sp-device-terminal" data-role="controlgroup" data-type="vertical">
+                <label for="" wicket:id="user-auth-mode-label"/>
+                <input type="checkbox" id="" value="0"  wicket:id="user-auth-mode" />
+            </fieldset>
+        </li>
+        <li class="sp-device-auth-mode-custom-group">
+        
+	        <fieldset id="sp-group-device-auth-mode" data-role="controlgroup" data-type="vertical">
+
+	            <label for="" wicket:id="user-auth-mode-name-label"/>
+	            <input type="checkbox" id="" value="0" 
+	                wicket:id="user-auth-mode-name" />
+	                
+                <label for="" wicket:id="user-auth-mode-id-label"/>
+                <input type="checkbox" id="" value="0" 
+                    wicket:id="user-auth-mode-id" />
+                    
+                <label for="" wicket:id="user-auth-mode-card-local-label"/>
+                <input type="checkbox" id="" value="0" 
+                    wicket:id="user-auth-mode-card-local" />
+
+                <label for="" wicket:id="user-auth-mode-card-network-label"/>
+                <input type="checkbox" id="" value="0" 
+                    wicket:id="user-auth-mode-card-network" />
+
+	        </fieldset>
+        </li>
+                
+        <li class="sp-device-auth-mode-custom-group" id="sp-group-device-auth-mode-id">
+            <h3><wicket:message key="user-auth-mode-id"/></h3>
+            
+            <fieldset data-role="controlgroup" data-type="vertical">
+            
+                <label for="" wicket:id="user-auth-mode-id-mask-label"/>
+                <input type="checkbox" id="" value="0" 
+                    wicket:id="user-auth-mode-id-mask" />
+                    
+                <label for="" wicket:id="user-auth-mode-id-pin-label"/>
+                <input type="checkbox" id="" value="0" 
+                    wicket:id="user-auth-mode-id-pin" />
+                    
+            </fieldset>
+
+        </li>
+               
+        <li class="ui-li-has-icon sp-device-auth-mode-custom-group" 
+            id="sp-group-device-auth-mode-card-network" data-theme="a">
+            
+            <img width="16" height="16" src="images/device-card-reader-terminal-16x16.png"/>
+            
+            <h3><wicket:message key="device-assoc-network-card-reader"/></h3>
+            
+            <input type="text" id="sp-device-assoc-card-reader" value="" maxlength="255"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>            
+            
+        </li>
+        
+        <li class="sp-device-auth-mode-custom-group" id="sp-group-device-auth-mode-card">
+            <h3><wicket:message key="user-auth-mode-card"/></h3>
+                                
+            <fieldset data-role="controlgroup" data-type="vertical">
+
+                <label for="" wicket:id="user-auth-mode-card-pin-label"/>
+                <input type="checkbox" id="" value="0" 
+                    wicket:id="user-auth-mode-card-pin" />
+
+                <label for="" wicket:id="user-auth-mode-card-self-assoc-label"/>
+                <input type="checkbox" id="" value="0" 
+                    wicket:id="user-auth-mode-card-self-assoc" />
+	                
+	        </fieldset>
+	                            
+        </li>
+
+        <li class="sp-device-auth-mode-custom-group" id="sp-group-device-auth-mode-default">
+        
+            <h3><wicket:message key="user-auth-mode-default"/></h3>
+                
+            <fieldset data-role="controlgroup" data-type="vertical">
+            
+                 <label for="" wicket:id="user-auth-mode-default-user-label"/> 
+                 <input type="radio" name="" id="" wicket:id="user-auth-mode-default-user" />
+                  
+                 <label for="" wicket:id="user-auth-mode-default-id-label"/> 
+                 <input type="radio" name="" id="" wicket:id="user-auth-mode-default-id" />
+                  
+                 <label for="" wicket:id="user-auth-mode-default-card-local-label"/> 
+                 <input type="radio" name="" id="" wicket:id="user-auth-mode-default-card-local" />
+
+                 <label for="" wicket:id="user-auth-mode-default-card-network-label"/> 
+                 <input type="radio" name="" id="" wicket:id="user-auth-mode-default-card-network" />
+                 
+            </fieldset>        
+        
+        </li>
+                
+    </ul>
+
+    <ul id="sp-group-device-card-format" data-role="listview" data-inset="true">
+    
+        <li data-theme="a">
+        
+            <h3 class="sp-device-terminal"><wicket:message key="card-format-local"/></h3>
+        
+            <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+            
+                <legend class="sp-device-card-reader sp-txt-wrap"><wicket:message key="card-format"/></legend>
+                
+                <label for="" wicket:id="card-format-hex-label"/> 
+                <input type="radio" name="" id="" wicket:id="card-format-hex" />
+                 
+                <label for="" wicket:id="card-format-dec-label"/> 
+                <input type="radio" name="" id="" wicket:id="card-format-dec" />
+            
+                <label for="" wicket:id="card-format-lsb-label"/> 
+                <input type="radio" name="" id="" wicket:id="card-format-lsb" />
+                 
+                <label for="" wicket:id="card-format-msb-label"/> 
+                <input type="radio" name="" id="" wicket:id="card-format-msb" />
+            
+            </fieldset>                         
+                                     
+        </li>
+    </ul>        
+
+    <div data-role="controlgroup" data-type="horizontal">
+       
+        <a href="#" id="button-save-device" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+            <wicket:message key="button-ok"/></a>
+    
+        <a class="sp-device-edit ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete" href="#" id="button-delete-device"><wicket:message
+                key="button-delete"/></a> 
+                
+        <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+            id="button-cancel-device"><wicket:message key="button-cancel"/></a>                                         
+    </div>
+            
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

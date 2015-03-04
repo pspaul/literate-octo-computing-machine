@@ -1,0 +1,101 @@
+/*! (c) 2011-2015 Datraverse B.V. */
+
+/*
+ * This file is part of the SavaPage project <http://savapage.org>.
+ * Copyright (c) 2011-2015 Datraverse B.V.
+ * Authors: Rijk Ravestein.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * For more information, please contact Datraverse B.V. at this
+ * address: info@datraverse.com
+ */
+
+/* JQM 1.4.1 override */
+.ui-dialog-contain {
+    width: 92.5%;
+    max-width: 500px;
+    /* margin: 10% auto 15px auto; */
+    margin: 5% auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: -15px;
+}
+
+
+.sp-plain-link {
+    color: #74b042 !important;
+    font-weight: normal !important;    
+    text-decoration:none !important;
+}
+
+.sp-amount-min {
+    color: red;
+}
+
+.sp-txt-wrap {
+    white-space: normal;
+}
+
+.sp-txt-info {
+    color: #666666;
+}
+
+.sp-txt-warn {
+    color: #DC5C05;
+}
+
+.sp-txt-error {
+    color: red;
+}
+
+.sp-txt-valid {
+    color: #006600;
+}
+
+.sp-txt-community {
+    color: #74b042;
+}
+
+.sp-txt-internal-user {
+    color: #DC5C05;
+}
+
+.sp-print-in-queue {
+    color: #000099;
+}
+
+.sp-print-out-printer {
+    color: #990000;
+}
+
+.sp-print-out-pdf {
+    color: #006600;
+}
+
+.sp-msg-popup {
+
+}
+
+.sp-msg-popup-error {
+    color: red;
+}
+
+.sp-msg-popup-warn {
+    color: #DC5C05;
+}
+
+.sp-msg-popup-info {
+    color: #666666;
+}

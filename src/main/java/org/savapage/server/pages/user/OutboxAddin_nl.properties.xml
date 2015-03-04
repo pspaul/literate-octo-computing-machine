@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="page">pagina</entry>
+    <entry key="pages">pagina's</entry>
+
+    <entry key="sheet">blad</entry>
+    <entry key="sheets">bladen</entry>
+
+    <entry key="copies">kopieën</entry>
+
+    <entry key="duplex">Dubbelzijdig</entry>
+    <entry key="singlex">Enkelzijdig</entry>
+    <entry key="color">Kleur</entry>
+    <entry key="grayscale">Grijstinten</entry>
+
+    <entry key="button-remove">Verwijderen</entry>
+
+</properties>

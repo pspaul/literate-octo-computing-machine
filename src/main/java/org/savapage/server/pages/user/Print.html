@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text" autofocus
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+pattern="[0-9]*" 
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+    <h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content" id="content-print">
+
+    <ul data-role="listview" data-inset="true">
+    
+        <li data-role="list-divider" id="sp-printer-page-name" data-theme="a">Printer</li>
+    
+        <li>
+            <div data-role="controlgroup" data-type="horizontal" class="ui-mini">
+            
+                <button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">
+                    <span class="sp-txt-wrap sp-print-job-media-sources-info">&nbsp;</span>
+                </button>
+                
+                <button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info"/>
+                
+		        <button class="sp-button-mini-print-color ui-icon-mini-print-color ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
+		        <button class="sp-button-mini-print-mono ui-icon-mini-print-mono ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
+		        <button class="sp-button-mini-print-duplex ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
+		        <button class="sp-button-mini-print-n-up ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
+            </div>
+            
+
+        </li>
+        
+	    <li>
+	        <wicket:fragment wicket:id="quicksearch-printer"/>
+	
+	        <ul class="printer-selected" data-role="listview" data-inset="true">
+	            <li class="ui-li-has-icon sp-txt-wrap" data-icon="gear">
+	               <a href="#" id="button-print-settings" />
+	            </li>
+	        </ul>
+
+            <ul class="printer-fast-print-info" data-role="listview" data-inset="true">
+                <li class="ui-li-has-icon" data-icon="refresh">
+                    <a href="#" id="button-printer-fast-print-renew" title="Push button to refesh.">
+                        <img width="16" height="16" src="/images/device-card-reader-16x16.png"/>
+                        <span class="ui-mini sp-txt-info sp-txt-wrap">
+                            <wicket:message key="prompt-fast-print-expiry"/>
+                        </span>
+                        <span class="ui-li-count" id="printer-fast-print-expiry">hh:ss</span>
+                    </a>
+                </li>
+            </ul>                        
+	    </li>
+    </ul>
+        
+    <ul class="printer-selected" data-role="listview" data-inset="true">
+    
+        <li data-role="list-divider" id="sp-printer-page-name" data-theme="a">Job</li>
+    
+	    <li class="ui-mini">
+<wicket:remove><!-- 
+	        <label for="print-title">
+	            <wicket:message key="print-title"/>:
+	        </label>
+--></wicket:remove>	        
+	        <select class="ui-mini" id="print-title-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
+            <input type="text" data-clear-btn="true" id="print-title" value="" />
+	        
+		    <label for="slider-print-copies">
+		        <wicket:message key="print-copies"/>:
+		    </label>
+		    <input type="range" id="slider-print-copies" wicket:id="slider-print-copies" 
+		          value="1" min="1" max="<var>" />
+		
+			<label for="print-page-ranges">
+			   <wicket:message key="print-page-ranges"/>        
+			</label>
+			<input type="text" data-clear-btn="true" id="print-page-ranges" value="" pattern="[0-9]*"
+			   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+        </li>
+        
+        <li class="ui-mini">
+            <div data-type="horizontal">
+                <label class="ui-mini" for="print-letterhead-list">
+                    <wicket:message key="prompt-letterhead"/>:        
+                </label>
+                <select class="ui-mini" id="print-letterhead-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
+            </div>
+                            
+        </li>
+        
+        <li class="ui-mini">
+	        <div data-role="controlgroup">
+		        <label for="print-remove-graphics">
+		            <wicket:message key="print-remove-graphics"/>        
+		        </label>
+		        <input type="checkbox" id="print-remove-graphics" value="1"/>            
+            </div>
+                    
+            <div data-role="controlgroup">
+                <label for="delete-pages-after-print">
+                    <wicket:message key="delete-pages-after-print"/>        
+                </label>
+                <input type="checkbox" id="delete-pages-after-print" wicket:id="delete-pages-after-print" value="1"/>
+            </div>
+            	    
+	    </li>
+	
+    </ul>
+    
+<wicket:remove><!-- 
+    <a href="#" id="button-print" class="ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
+        <wicket:message key="button-print"/>        
+    </a>
+--></wicket:remove>    
+    <a href="#" id="button-print-and-close" class="ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
+        <wicket:message key="button-print-and-close"/>        
+    </a>
+    
+    <a href="#" data-rel="back" data-direction="reverse" id="button-printer-back"  
+        class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+        <wicket:message key="button-back"/>
+    </a>
+        
+</div>
+
+<wicket:remove><!-- 
+POPUP for Proxy Print Authentication
+--></wicket:remove>  
+<div data-role="popup" id="sp-popup-print-auth" data-theme="a" data-overlay-theme="a" data-dismissible="false" class="ui-content">
+
+	<div id="auth-popup-content-wait" class="ui-corner-bottom ui-content">
+        <p class="sp-txt-info" id="sp-print-auth-countdown" style="position:absolute; right:20px;"/>
+	    <h3 class="ui-title"><wicket:message key="auth-popup-title"/></h3>
+	    
+	    <div id="sp-popup-print-auth-cost" class="sp-txt-warn"/>
+	    
+	    <p><wicket:message key="auth-popup-message"/></p>
+	    <a href="#" id="sp-button-print-auth-cancel" class="ui-btn ui-btn-inline">
+	       <wicket:message key="button-cancel"/>
+	    </a>    
+	</div>
+	
+    <div id="auth-popup-content-msg" class="ui-corner-bottom ui-content">
+        <h3 class="ui-title"><span id="auth-popup-user-msg-title"/></h3>
+        <p id="auth-popup-user-msg"/>
+        <a href="#" data-rel="back" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+           <wicket:message key="button-ok"/>
+        </a>    
+    </div>
+	
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

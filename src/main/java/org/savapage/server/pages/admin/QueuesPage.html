@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<span style="display: none;" class="json-rsp" wicket:id="json-rsp"></span>
+
+<wicket:fragment wicket:id="nav-bar-1"></wicket:fragment>
+<br />
+<div>
+	<ul data-role="listview" data-filter="false">
+		<li wicket:id="queues-view">
+			<h3 wicket:id="urlPath"></h3>
+            <p wicket:id="queue-sparkline" class="sparkline-queue-line"/>
+            <wicket:enclosure child="reserved-queue">
+                <p style="font-family: monospace;" wicket:id="reserved-queue" />
+            </wicket:enclosure>         
+            <wicket:enclosure child="url-default">
+			<p style="font-family: monospace;" wicket:id="url-default"/>
+			<p style="font-family: monospace;" wicket:id="url-windows"/>
+			</wicket:enclosure>
+
+            <wicket:enclosure child="proxy-printer">
+                <p style="font-family: monospace;" class="sp-txt-wrap">
+                    <wicket:message key="proxy-print"/>  &bull; <wicket:message key="proxy-print-direct"/> &bull; <span wicket:id="proxy-printer"/> 
+                </p>
+            </wicket:enclosure>
+            
+			<p style="font-family: monospace; color: darkgreen;"
+				wicket:id="ipAllowed"></p>
+				
+            <div class="sp-txt-wrap" wicket:id="period"/>
+             
+            <div class="sp-txt-wrap" wicket:id="totals"/>
+
+			<p class="ui-li-aside">
+				<strong wicket:id="signal">[?]</strong>
+			</p>
+            <div data-role="controlgroup" data-type="horizontal">
+                <a href="#" data-savapage="the-id"
+                    class="sp-queue-log ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-info"
+                    wicket:id="button-log"/>
+                <wicket:enclosure child="button-edit">
+                <a href="#" data-savapage="the-uid"
+                    class="sp-edit-queue ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-edit"
+                    wicket:id="button-edit"/>
+                </wicket:enclosure>
+			</div>
+		</li>
+	</ul>
+</div>
+<p>&nbsp;</p>
+<wicket:fragment wicket:id="nav-bar-2"></wicket:fragment>

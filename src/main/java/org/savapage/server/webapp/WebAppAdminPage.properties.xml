@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="webapp-title-suffix">Admin</entry>
+	
+	<entry key="membercard-import-title">Import Member Card</entry>
+	<entry key="membercard-import-file">Member Card File</entry>
+	<entry key="button-membercard-import">Import</entry>
+    <entry key="button-membercard-import-clear">Clear</entry>
+	<entry key="button-back">Back</entry>
+
+	<entry key="msg-membercard-import-busy">Uploading Member Card ...</entry>
+	<entry key="msg-membercard-import-success">Member Card successfully installed.</entry>
+	<entry key="msg-membercard-import-no-file">No file imported.</entry>
+	<entry key="msg-membercard-import-file-invalid">Imported file is an invalid Member Card.</entry>
+    
+</properties>

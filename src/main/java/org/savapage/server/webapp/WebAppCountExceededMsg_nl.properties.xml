@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="message">Controleer of er al een browser-sessie actief is.</entry>
+    <entry key="remedy">Ga door met de actieve sessie, of meld u opnieuw aan.</entry>
+    <entry key="button-continue">Doorgaan</entry>
+    <entry key="button-login">Aanmelden</entry>
+
+</properties>

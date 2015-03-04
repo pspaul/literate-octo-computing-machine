@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="title">Document Log</entry>
+    <entry key="select-and-sort">Select and Sort</entry>
+    <entry key="select-and-sort-user">User</entry>
+    <entry key="prompt-period">Period</entry>
+    <entry key="prompt-period-from">From</entry>
+    <entry key="prompt-period-to">To</entry>
+    <entry key="title-period-from">Period from</entry>
+    <entry key="title-period-to">Periode to</entry>
+    
+    <entry key="prompt-document-name">Document Name</entry>
+    
+    <entry key="prompt-type">Type</entry>
+    <entry key="type-all">-</entry>
+    <entry key="type-in">In</entry>
+    <entry key="type-out">Out</entry>
+    <entry key="type-print">Print</entry>
+    <entry key="type-pdf">PDF</entry>
+
+    <entry key="cat-queue">Queue</entry>
+    <entry key="option-all">all</entry>
+    <entry key="prompt-signature">Signature</entry>
+    <entry key="prompt-destination">Destination</entry>
+    <entry key="prompt-letterhead">Letterhead</entry>
+    <entry key="option-yes">Yes</entry>
+    <entry key="option-no">No</entry>
+    <entry key="prompt-author">Author</entry>
+    <entry key="prompt-subject">Subject</entry>
+    <entry key="prompt-keywords">Keywords</entry>
+    <entry key="prompt-encryption">Encryption</entry>
+    <entry key="user-password">User password</entry>
+    <entry key="owner-password">Owner password</entry>
+    <entry key="prompt-layout">Layout</entry>
+    <entry key="option-simplex">Simplex</entry>
+    <entry key="option-duplex">Duplex</entry>
+
+    <entry key="prompt-printer">Printer</entry>
+    <entry key="prompt-job-state">Job State</entry>
+    <entry key="option-job-state-active">Active</entry>
+    <entry key="option-job-state-completed">Completed</entry>
+
+    <entry key="prompt-sort-by">Sort</entry>
+    <entry key="sort-by-name">Name</entry>
+    <entry key="sort-by-date">Date</entry>
+    <entry key="sort-by-queue">Queue</entry>
+    <entry key="sort-by-printer">Printer</entry>
+    
+    <entry key="sort-asc">Ascending</entry>
+    <entry key="sort-desc">Descending</entry>    
+    
+    <entry key="button-apply">Apply</entry>    
+    <entry key="button-default">Default</entry>
+        
+</properties>

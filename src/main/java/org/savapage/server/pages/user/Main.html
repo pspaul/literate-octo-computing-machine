@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<div data-role="header" data-theme="a">
+    <h1 wicket:id="title"></h1>
+    <a href="#" class="poll_button ui-btn ui-btn-inline" id="button-main-poll">.&nbsp;.&nbsp;.</a>
+</div>
+--></wicket:remove>
+  
+<div data-role="header" data-theme="a" class="ui-mini">
+    <h3 class="sp-txt-info" wicket:id="title"/>
+</div>
+
+<div class="ui-content" id="main">
+
+    <div id="page-main-thumbnail-viewport" class="thumbnail_viewport thumbnail_viewport_empty">
+        <div id="page-main-thumbnail-images" class="thumbnail_reel"></div>
+        <div id="thumbnail_nav_l" class="thumbnail_nav thumbnail_nav_l"/>
+        <div id="thumbnail_nav_r" class="thumbnail_nav thumbnail_nav_r"/>
+    </div>
+
+    <style> 
+
+        .ui-icon-main-refresh:after { 
+            background:  url(/glyphicons/glyphicons_081_refresh.png) 50% 50% no-repeat; 
+            background-size: 22px 23px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        
+        .ui-icon-main-print:after { 
+            background:  url(/glyphish-icons/185-printer.png) 50% 50% no-repeat; 
+            background-size: 24px 21px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        
+        .ui-icon-main-clear:after { 
+            background:  url(/glyphicons/glyphicons_016_bin.png) 50% 50% no-repeat; 
+            background-size: 18px 26px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+
+        .ui-icon-main-pdf-properties:after { 
+            background:  url(/glyphicons/glyphicons_258_pdf.png) 100% 100% no-repeat; 
+            background-size: 17px 24px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+
+        .ui-icon-main-letterhead:after {
+            background:  url(/glyphicons/glyphicons_153_more_windows.png) 50% 50% no-repeat; 
+            background-size: 22px 22px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+
+        .ui-icon-main-arr-cut:after {
+            background:  url(/glyfx/cut-selected.png) 50% 50% no-repeat; 
+            background-size: 23px 23px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        
+        .ui-icon-main-arr-paste-right:after {
+            background:  url(/glyfx/paste-selected.png) 50% 50% no-repeat;
+            background-size: 25px 25px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        
+        .ui-icon-main-arr-paste-left:after {
+            background:  url(/glyfx/paste-selected-left.png) 50% 50% no-repeat;
+            background-size: 25px 25px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        .ui-icon-main-arr-select-all:after {
+            background:  url(/glyfx/copy-selected.png) 50% 50% no-repeat;
+            background-size: 25px 25px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        
+        .ui-icon-main-arr-unselect-all:after {
+            background:  url(/glyfx/copy-unselected.png) 50% 50% no-repeat;
+            background-size: 25px 25px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        
+        .ui-icon-main-arr-undo:after {
+            background:  url(/glyfx/undo.png) 50% 50% no-repeat;
+            background-size: 25px 25px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+
+        .ui-icon-main-arr-edit:after {
+            background:  url(/glyphicons/glyphicons_075_sort.png) 50% 50% no-repeat;
+            background-size: 25px 25px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        
+        .ui-icon-main-arr-return:after {
+            background:  url(/glyphish-icons/44-shoebox.png) 50% 50% no-repeat;
+            background-size: 24px 22px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        
+        .ui-icon-main-logout:after {
+            background:  url(/glyphicons/glyphicons_063_power.png) 50% 50% no-repeat;
+            background-size: 22px 23px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+        
+        .ui-icon-main-doclog:after {
+            background:  url(/glyphicons/glyphicons_087_log_book.png) 50% 50% no-repeat;
+            background-size: 22px 24px;
+            -webkit-border-radius: 0 !important;
+            border-radius: 0 !important; 
+        }
+
+
+        .ui-icon-mini-cut:after {background:  url(/glyfx/cut-selected.png) 50% 50% no-repeat; background-size: 16px 16px; }
+        .ui-icon-mini-no-graphics:after {background:  url(/glyphicons/glyphicons_092_tint.png) 50% 50% no-repeat; background-size: 13px 15px; }
+        .ui-icon-mini-letterhead:after { background:  url(/glyphicons/glyphicons_153_more_windows.png) 50% 50% no-repeat; background-size: 14px 14px;}
+        .ui-icon-mini-lock:after { background:  url(/glyphish-icons/54-lock.png) 50% 50% no-repeat; background-size: 12px 14px;}
+        .ui-icon-mini-keys:after { background:  url(/glyphicons/glyphicons_044_keys.png) 50% 50% no-repeat; background-size: 13px 14px;}
+        .ui-icon-mini-n-up:after { background:  url(/glyphicons/glyphicons_154_show_big_thumbnails.png) 50% 50% no-repeat; background-size: 14px 14px;}
+        .ui-icon-mini-duplex:after { background:  url(/glyphicons/glyphicons_351_book_open.png) 50% 50% no-repeat; background-size: 16px 14px;}
+        .ui-icon-mini-print-color:after { background:  url(/silkicons/color_wheel.png) 50% 50% no-repeat; background-size: 16px 16px;}
+        .ui-icon-mini-print-mono:after { background:  url(/glyphicons/glyphicons_091_adjust.png) 50% 50% no-repeat; background-size: 15px 15px;}
+        
+    </style>
+    
+<div class='ui-content'>
+
+    <div id="main-navbar-action" data-role="navbar" data-theme="a" data-grid="c"  
+            style="max-width:480px; margin-left: auto; margin-right: auto; border:0;" 
+            class="ui-bar-c main_action">
+
+        <ul>
+            <li class="main_actions">
+                <a href="#" class="ui-btn ui-btn-icon-top ui-icon-main-pdf-properties" id="button-main-pdf-properties">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-pdf"/></span>
+                </a>
+            </li>
+            <li class="main_actions">
+                <a href="#" class="ui-btn ui-btn-icon-top ui-icon-main-print" id="button-main-print">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-print"/></span>
+                </a>
+            </li>
+            <li class="main_action_base">
+                <a href="#" class="ui-btn ui-btn-icon-top ui-icon-main-letterhead" id="button-main-letterhead">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-letterhead"/></span>
+                </a>
+            </li>
+            <li class="main_actions">
+                <a href="#" class="ui-btn ui-btn-icon-top ui-icon-main-clear" data-dialog="true" id="button-main-clear">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-clear"/></span>
+                </a>
+            </li>
+        </ul>
+        <ul>
+            <li class="main_action_base">
+                <a href="#" class="ui-btn ui-btn-icon-top ui-icon-main-logout" id="button-logout">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-logout"/></span>
+                </a>
+            </li>
+            
+            <li class="main_action_base">
+                <a href="#" class="ui-btn ui-btn-icon-top ui-icon-main-refresh" id="button-main-refresh">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-refresh"/></span>
+                </a>
+            </li>            
+            
+            <li class="main_action_base">
+                <a href="#" class="ui-btn ui-btn-icon-top ui-icon-main-doclog" id="button-main-doclog">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-doclog"/></span>
+                </a>
+            </li>
+            
+            <li class="main_actions">
+                <a href="#" class="ui-btn ui-btn-icon-top ui-icon-main-arr-edit" id="main-arr-edit">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-sort"/></span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div id="main-navbar-arrange" data-role="navbar" data-theme="a" data-grid="c" 
+            style="max-width:480px; margin-left: auto; margin-right: auto; border:0;" 
+            class="ui-bar-c main_action_arrange">
+            
+        <ul class="main_actions main_arr_edit">
+            <li>
+                <a href="#" id="main-arr-cut" class="ui-btn ui-btn-icon-top ui-icon-main-arr-cut">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-cut"/></span>
+                </a>
+             </li>
+            <li class="main_arr_paste">
+                <a href="#" id="main-arr-paste-b" class="ui-btn ui-btn-icon-top ui-icon-main-arr-paste-left">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-paste-before"/></span>
+                </a>
+            </li>
+            <li class="main_arr_paste">
+                <a href="#" id="main-arr-paste-a" class="ui-btn ui-btn-icon-top ui-icon-main-arr-paste-right">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-paste-after"/></span>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="main-arr-delete" class="ui-btn ui-btn-icon-top ui-icon-main-clear">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-clear"/></span>
+                </a>
+            </li>
+        </ul>
+        <ul>
+            <li class="main_actions">
+                <a href="#" id="main-arr-select-all" class="ui-btn ui-btn-icon-top ui-icon-main-arr-select-all">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-select-all"/></span>
+                </a>
+            </li>
+            <li class="main_actions main_arr_edit">
+                <a href="#" id="main-arr-unselect-all" class="ui-btn ui-btn-icon-top ui-icon-main-arr-unselect-all">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-unselect-all"/></span>
+                </a>
+            </li>
+            <li class="main_actions">
+                <a href="#" id="main-arr-undo" class="ui-btn ui-btn-icon-top ui-icon-main-arr-undo">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-undo"/></span>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="main-arr-return" class="ui-btn ui-btn-icon-top ui-icon-main-arr-return">
+                    <span class="sp-nav-button-txt"><wicket:message key="button-inbox"/></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+</div>
+    
+</div>
+
+<div data-role="footer" data-position="fixed">
+
+	<wicket:remove><!--
+	NOTE: 'href' can contain URL to a pre-loaded page like #page-language.
+	E.g. page-letterhead is not preloaded.    
+	--></wicket:remove>
+	
+	<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+	
+        <a href="#page-info" data-dialog="true" id="button-cometd-status" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-info">
+            <wicket:message key="button-about"/></a>
+            
+        <a href="#" data-dialog="true" id="button-mini-user" class="ui-btn ui-btn-inline">
+            <span id="sparkline-user-pie"/>&nbsp;<span class="sp-txt-wrap" id="mini-user-balance"/><!-- &nbsp;<span id="mini-user-name"/>  --></a>
+
+	    <wicket:enclosure child="button-upload">
+	        <a href="#" data-dialog="true" id="button-mini-upload" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-notext ui-icon-arrow-u" wicket:id="button-upload"/>
+	    </wicket:enclosure>
+
+        <a href="#" id="button-mini-outbox" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-clock">
+            <span class="sp-outbox-remaining-time"/>&nbsp;&nbsp;<span class="sp-outbox-jobs"/><span class="sp-outbox-pages"/><span class="sp-outbox-cost"/>
+        </a>
+
+        <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-text ui-icon-none sp-print-job-media-sources-info">&nbsp;</a>
+	    
+	    <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-mini-cut" id="button-mini-cut"><span id="main-page-range-cut"/></a>
+
+        <button id="button-mini-lock" class="sp-main-status-ind ui-icon-mini-lock ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
+        <button id="button-mini-keys" class="sp-main-status-ind ui-icon-mini-keys ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
+        <button id="button-mini-letterhead" class="sp-main-status-ind ui-icon-mini-letterhead ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
+        <button class="sp-button-mini-print-color sp-main-status-ind ui-icon-mini-print-color ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
+        <button class="sp-button-mini-print-mono sp-main-status-ind ui-icon-mini-print-mono ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
+        <button id="button-mini-no-graphics" class="sp-main-status-ind ui-icon-mini-no-graphics ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
+        <button class="sp-button-mini-print-duplex sp-main-status-ind ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
+        <button class="sp-button-mini-print-n-up sp-main-status-ind ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
+
+    </fieldset>
+    
+</div>
+
+<wicket:remove><!-- 
+Welcome Back POPUP with Refresh button.  
+--></wicket:remove>  
+<div data-role="popup" id="sp-popup-wakeup" data-theme="a" data-dismissible="false" class="ui-content">
+    <h3 class="ui-title"><wicket:message key="header-welcome-back"/></h3>
+    <div><wicket:message key="welcome-back-continue"/></div>
+    <a href="#" id="sp-popup-wakeup-refresh" class="ui-btn ui-btn-inline"><wicket:message key="button-continue"/></a>
+</div>
+
+<wicket:remove><!-- 
+POPUP with Page/Job info 
+--></wicket:remove>  
+<div data-role="popup" id="sp-popup-job-info" data-theme="a" class="ui-content">
+
+    <h3 class="ui-title" id="popup-job-info-name"></h3>
+    
+    <fieldset data-role="controlgroup" data-type="vertical">
+    
+        <legend>
+            <span id="popup-job-info-pages-selected"/>/<span id="popup-job-info-pages"/>
+            <wicket:message key="prompt-job-pages"/> 
+            (<span id="popup-job-info-media"/>) 
+            <span class="sp-msg-popup-warn sp-txt-wrap" id="popup-job-info-drm"/> 
+        </legend>
+        
+        <input type="checkbox" id="sp-popup-job-undelete" value="1"/> 
+        <label for="sp-popup-job-undelete"><wicket:message key="prompt-job-undelete"/></label>
+
+		<input type="checkbox" id="sp-popup-job-rotate" value="1"/> 
+		<label for="sp-popup-job-rotate"><wicket:message key="prompt-job-rotate"/></label>
+	    
+    </fieldset>
+    	
+    <a href="#" id="sp-popup-job-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+        <wicket:message key="button-apply"/></a>
+    <a href="#" id="sp-popup-job-delete" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
+        <wicket:message key="button-clear"/></a>
+    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right"/>
+        
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

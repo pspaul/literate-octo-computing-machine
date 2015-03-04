@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+    <h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content" id="letterhead">
+
+    <select id="letterhead-list" data-icon="check" data-iconpos="left" data-native-menu="false"></select>
+    
+    <ul data-role="listview" data-inset="true">
+    
+    <li class="letterhead-actions">
+        <div class="letterhead-actions" id="letterhead-thumbnails"></div>
+    </li>
+    
+    <li class="letterhead-actions letterhead-edit-actions">
+    
+	    <div class="ui-field-contain">
+            <label for="letterhead-name"><wicket:message key="prompt-name"/></label>
+	        <input type="text" id="letterhead-name" value=""
+	           autocomplete="off" autocorrect="off" spellcheck="false"/>
+	    </div>
+	    
+	    <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+	    
+	        <legend class="sp-txt-wrap"><wicket:message key="prompt-position"/></legend>
+	        
+			<input type="radio" name="sp-letterhead-pos" id="sp-letterhead-pos-b"/>
+			<label for="sp-letterhead-pos-b"><wicket:message key="pos-background"/></label>
+	        
+            <input type="radio" name="sp-letterhead-pos" id="sp-letterhead-pos-f" checked="checked"/>
+            <label for="sp-letterhead-pos-f"><wicket:message key="pos-foreground"/></label>
+                        
+	    </fieldset>
+	    
+    </li>
+    
+    <wicket:enclosure child="letterhead-public">
+	    <li class="letterhead-actions letterhead-edit-actions">
+            <div class="ui-field-contain">
+		        <label for="sp-letterhead-public" wicket:id="letterhead-public"/>        
+		        <input type="checkbox" id="sp-letterhead-public" value="1"/>
+		    </div>		    
+	    </li>
+    </wicket:enclosure>
+    
+    <li class="letterhead-actions letterhead-edit-actions">
+        <div data-role="controlgroup" data-type="horizontal">
+		    <a href="#" id="button-letterhead-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+		        <wicket:message key="button-apply"/>    
+		    </a>
+		    <a href="#" id="button-letterhead-delete" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
+		        <wicket:message key="button-delete"/>
+		    </a>
+        </div>
+    </li>
+    </ul>
+        
+    <a href="#" id="button-letterhead-create" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+        <wicket:message key="button-new"/>
+    </a>
+
+    <a href="#" id="button-letterhead-refresh" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh">
+        <wicket:message key="button-refresh"/>
+    </a>
+    
+    <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" data-rel="back" data-direction="reverse">
+        <wicket:message key="button-back"/>
+    </a>
+ 
+    <wicket:remove><!-- FOR FUTURE USE
+
+	    <input type="checkbox" name="letterhead-1st-page-only" id="letterhead-1st-page-only" value="1"  />
+	    <label for="letterhead-1st-page-only"><wicket:message key="1st-page-only">[letterhead-1st-page-only]</wicket:message></label>
+	    
+	    <input type="checkbox" name="letterhead-1st-page-no-repeat" id="letterhead-1st-page-no-repeat" value="1"  />
+	    <label for="letterhead-1st-page-no-repeat"><wicket:message key="1st-page-no-repeat">[letterhead-1st-page-no-repeat]</wicket:message></label>
+	    
+	    <input type="checkbox" name="letterhead-apply-entire" id="letterhead-apply-entire" value="1"  />
+	    <label for="letterhead-apply-entire"><wicket:message key="apply-entire">[letterhead-apply-entire]</wicket:message></label>
+    
+    --></wicket:remove>
+    
+</div>
+
+<wicket:remove><!-- 
+POPUP with Page Image 
+--></wicket:remove>  
+<div data-role="popup" id="sp-popup-letterhead-page" class="sp-img-popup">
+</div>
+
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

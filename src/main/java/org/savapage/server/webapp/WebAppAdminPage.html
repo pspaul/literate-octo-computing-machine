@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+
+<wicket:remove> <!--
+<html xmlns:wicket="http://wicket.apache.org" class="ui-mobile-rendering">
+--></wicket:remove>
+
+<head>
+
+<noscript>
+    <h2>Your browser does not support JavaScript or JavaScript is
+        disabled!</h2>
+    <h3>Please enable JavaScript to run this application.</h3>
+    <hr />
+</noscript>
+
+<title wicket:id="app-name"></title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<wicket:remove> <!--
+Informs the Apple browser that this is a web app. 
+<meta name="apple-mobile-web-app-capable" content="yes">
+--></wicket:remove>
+
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<wicket:remove>
+	<!--  Prevent chaching in IE: http://support.microsoft.com/kb/234067  -->
+</wicket:remove>
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+
+<link rel="shortcut icon" href="/favicon-admin.ico" type="image/x-icon" />
+
+<wicket:remove>
+<!--  
+http://developer.apple.com/library/ios/#DOCUMENTATION/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+http://iconhandbook.co.uk/reference/chart/ios/
+
+sizes="72x72"   : iPad
+sizes="114x114" : iPhone 4+
+sizes="144x144" : iPad 3+
+
+If no sizes attribute is set, the element’s size defaults to 57 x 57.  
+-->
+</wicket:remove>
+<link rel="apple-touch-icon" href="/apple-touch-icon-admin.png"/>
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-admin-72x72.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-admin-114x114.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-admin-144x144.png" />
+
+<wicket:remove>
+	<!-- 
+-->
+</wicket:remove>
+
+</head>
+
+<body>
+    <a id="sp-a-top"/>
+
+	<wicket:remove>
+		<!--  
+        This is the ZERO window with empty background, which is never shown, because 
+        the login window is shown as a first action. See jquery.savapage-admin.js
+        
+        THIS IS REALLY NEEDED for the page after the login to show (why?).
+        
+        -->
+	</wicket:remove>
+
+	<div data-role="dialog" id="page-zero" style="display: none;">
+	<wicket:fragment wicket:id="zero-page-panel"></wicket:fragment>
+	</div>
+
+	<wicket:remove>
+		<!--  Placeholder for pages to load -->
+	</wicket:remove>
+	<div data-role="dialog" data-theme="a" id="page-login"/>
+	<div data-role="page"   data-theme="a" id="page-admin" class="type-home"/>
+	<div data-role="dialog" data-theme="a" id="page-language"/>
+    <div data-role="dialog" data-theme="a" id="page-config-prop"/>
+    <div data-role="dialog" data-theme="a" id="page-user"/>
+    <div data-role="dialog" data-theme="a" id="page-user-pw-reset"/>    
+    <div data-role="dialog" data-theme="a" id="page-queue"/>
+    <div data-role="dialog" data-theme="a" id="page-printer"/>
+    <div data-role="dialog" data-theme="a" id="page-device"/>
+    <div data-role="dialog" data-theme="a" id="page-info"/>
+    <div data-role="dialog" data-theme="a" id="page-point-of-sale"/>
+    <div data-role="dialog" data-theme="a" id="page-voucher-create"/>
+
+	<wicket:remove>
+		<!-- ==============================================================  
+        Dialog for Membership Card file upload must be pre-loaded for the 
+        Wicket handler to work. It does NOT work on injected mobile pages. 
+         ================================================================== -->
+	</wicket:remove>
+	<div data-role="dialog" data-theme="a" id="page-membercard-upload">
+
+		<div data-role="header" data-theme="b" >
+			<h1><wicket:message key="membercard-import-title"/></h1>
+		</div>
+
+		<div class="ui-content">
+			<div wicket:id="memberCardUploadFeedback" id="membercard-import-feedback"
+				class="ui-body ui-body-a"/>
+		    <p>
+				<form wicket:id="memberCardUploadForm" enctype="multipart/form-data">
+					<label for="membercard-import-file"><wicket:message key="membercard-import-file"/></label> 
+					<input id="membercard-import-file" wicket:id="memberCardUpload" type="file" size="50"/>
+    			    <p>
+						<input wicket:id="ajaxSubmit" type="button" data-inline="true" data-icon="check"
+							value="button-membercard-import" id="button-membercard-import-submit" />
+ 							 
+                        <input wicket:id="membercard-import-reset" type="reset" data-inline="true" data-icon="delete"
+                            id="button-membercard-import-reset" value="button-membercard-import-clear"/>
+ 							
+						<a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+							data-rel="back" data-direction="reverse">
+                            <wicket:message key="button-back"/>
+                        </a>
+					</p>
+				</form>
+			</p>
+		</div>
+
+	</div>
+
+<wicket:remove>
+    <!-- ==============================================================  
+     See FileDownloadApiPanel     
+     ================================================================== -->
+</wicket:remove>
+<wicket:fragment wicket:id="file-download-api-panel"></wicket:fragment>
+
+</body>
+</html>

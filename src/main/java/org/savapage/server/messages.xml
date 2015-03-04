@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<!-- Server -->
+	<entry key="WebApp.starting">Starting application server version: {0}</entry>
+
+	<entry key="pub-user-login-success">User "{0}" logged in at {1}</entry>
+	<entry key="pub-admin-login-success">User "{0}" (administrator) logged in at {1}</entry>
+	<entry key="pub-user-logout">User "{0}" logged out at {1}</entry>
+
+	<!-- WebApp User/Admin Client -->
+	
+    <entry key="msg-error">{0}</entry>
+    
+	<entry key="msg-exception">An error occurred, please contact your system
+		administrator.</entry>
+
+    <entry key="msg-invalid-request">Request is invalid.</entry>
+
+	<entry key="exc-letterhead-not-found">Letterhead not found. Please refresh
+		your letterhead	list.</entry>
+	<entry key="exc-letterhead-not-found-login">Letterhead not found. Please login again.</entry>
+
+	<entry key="msg-need-admin-rights">You need to have administrator rights for this
+		function.</entry>
+	<entry key="msg-user-not-authorized">Your session expired or is not available. Please login
+		again.</entry>
+
+    <entry key="msg-email-invalid">Email "{0}" is invalid.</entry>
+
+	<entry key="msg-mail-sent">Mail sent to {0}</entry>
+    <entry key="msg-mail-max-file-size">The PDF is {0} and is not send because the max attachment is {1}. Please download the PDF and use your own email client to send it.</entry>
+	
+	<entry key="msg-page-delete-one">{0} page deleted.</entry>
+    <entry key="msg-page-delete-multiple">{0} pages deleted.</entry>
+
+	<entry key="mail-test-subject">SavaPage Test Mail</entry>
+	
+	<!-- This text should be on one (1) line: line feeds are picked up by the mailer  -->
+	<entry key="mail-test-body">Hi,&#10;&#10;This is a test message from {0}.&#10;--&#10;{1}</entry>
+
+    <entry key="msg-config-prop-not-found">Option "{0}" not found.</entry>
+	<entry key="msg-config-props-error">Value "{0}" is not valid.</entry>
+	<entry key="msg-config-props-applied">Configuration options are applied.</entry>
+	<entry key="msg-config-props-applied-rescheduled">Configuration options are applied and jobs
+		re-scheduled.</entry>
+
+    <entry key="msg-printer-connection-broken">Connection to Proxy Printers is broken.</entry>
+	<entry key="msg-printer-out-of-date">Printer information is out-of-date. Please refresh the
+		printer list.</entry>
+
+	<entry key="msg-user-pdf-out-disabled">You are not allowed to export to PDF.</entry>
+
+	<entry key="msg-pdf-export-drm-error">DRM-restricted SafePages: PDF export is not
+		permitted.</entry>
+
+	<entry key="msg-clear-range-syntax-error">Syntax of page range "{0}" is invalid.</entry>
+    <entry key="msg-print-out-of-range-error">Print range "{0}" exceeds number of pages of document ({1}).</entry>
+	
+    <entry key="msg-print-auth-pending">Another print job is waiting for authentication. Try again later.</entry>
+    <entry key="msg-print-auth-cancel-ok">Print job successfully cancelled.</entry>
+    <entry key="msg-print-auth-cancel-not-found">Print job to cancel not found.</entry>
+
+    <entry key="msg-print-fast-renew-ok">Fast Print Closing Time extended till {0}</entry>
+
+    <entry key="msg-outbox-cleared-none">No print jobs found.</entry>
+    <entry key="msg-outbox-cleared-one">Removed {0} print job.</entry>
+    <entry key="msg-outbox-cleared-multiple">Removed {0} print jobs.</entry>
+
+    <entry key="msg-outbox-extended-none">No print jobs to extend.</entry>
+    <entry key="msg-outbox-extended-one">Extended {0} print job to {1} minutes.</entry>
+    <entry key="msg-outbox-extended-multiple">Extended {0} print jobs to {1} minutes.</entry>
+
+    <entry key="msg-outbox-removed-job">Print job removed.</entry>
+    <entry key="msg-outbox-removed-job-none">No print job found to remove.</entry>    
+
+	<entry key="msg-page-move-one">{0} page moved.</entry>
+    <entry key="msg-page-move-multiple">{0} pages moved.</entry>
+
+	<entry key="msg-job-deleted">Job successfully deleted.</entry>
+	<entry key="msg-job-edited">Job successfully edited.</entry>
+	<entry key="msg-letterhead-edited">Letterhead successfully edited.</entry>
+
+	<entry key="msg-db-backup-busy">Creating backup...</entry>
+	<entry key="msg-tech-error">{0}</entry>
+
+	<entry key="msg-user-sync-busy">Synchronizing users...</entry>
+	<entry key="msg-password-reset-ok">Password has been reset.</entry>
+    <entry key="msg-password-reset-not-allowed">You are not allowed to reset password for user "{0}".</entry>
+    <entry key="msg-password-length-error">Password should be at least {0} characters long.</entry>
+
+    <entry key="msg-pin-reset-ok">PIN has been reset.</entry>
+    <entry key="msg-user-pin-not-numeric">PIN must have digits only.</entry>
+    <entry key="msg-user-pin-length-error-min">PIN should be at least {0} digits long.</entry>
+    <entry key="msg-user-pin-length-error-min-max">PIN should be between {0} and {1} digits long.</entry>
+    <entry key="msg-user-pin-length-error">PIN should be {0} digits long.</entry>
+
+	<entry key="msg-queue-saved-ok">Queue successfully saved.</entry>
+	<entry key="msg-queue-created-ok">Queue successfully created.</entry>
+	<entry key="msg-queue-not-found">Queue "{0}" is not found.</entry>
+	<entry key="msg-queue-duplicate-path">Queue "{0}" already exists.</entry>
+    <entry key="msg-queue-reserved-path">Queue "{0}" is reserved.</entry>
+
+    <entry key="msg-device-saved-ok">Device successfully saved.</entry>
+    <entry key="msg-device-created-ok">Device successfully created.</entry>
+    <entry key="msg-device-deleted-ok">Device successfully deleted.</entry>
+    <entry key="msg-device-delete-reader-in-use">Network Card Reader "{0}" cannot be deleted, because it is used by Terminal "{1}".</entry>
+    <entry key="msg-device-not-found">Device "{0}" is not found.</entry>    
+    <entry key="msg-device-duplicate-name">Device "{0}" already exists.</entry>
+    <entry key="msg-device-port-error">Please enter the IP port.</entry>       
+    <entry key="msg-device-idle-seconds-error">Please enter the Idle Seconds (enter "0" for no auto logout).</entry>        
+    <entry key="msg-device-card-reader-missing">Please enter a Network Card Reader.</entry>
+    <entry key="msg-device-card-reader-not-found">Network Card Reader "{0}" is not found.</entry>
+    <entry key="msg-device-card-reader-reserved-for-terminal">Network Card Reader "{0}" already reserved for Terminal "{1}".</entry>
+    <entry key="msg-device-card-reader-reserved-for-printer">Network Card Reader "{0}" already reserved for Printer "{1}".</entry>
+    <entry key="msg-device-card-reader-reserved-for-printer-group">Network Card Reader "{0}" already reserved for Printer Group "{1}".</entry>
+    
+    <entry key="msg-device-printer-not-found">Proxy Printer "{0}" is not found.</entry>
+    <entry key="msg-device-printer-group-not-found">Proxy Printer Group "{0}" is not found.</entry>
+
+    <entry key="msg-device-single-proxy-printer-needed">Fast Print Mode needs a Single Proxy Printer.</entry>
+    <entry key="msg-device-proxy-printer-or-group-needed">Proxy Print Authentication needs a Single Proxy Printer or Group.</entry>
+
+	<entry key="msg-printer-saved-ok">Proxy Printer successfully saved.</entry>
+	<entry key="msg-printer-not-found">Proxy Printer "{0}" is not found.</entry>
+	
+	<entry key="msg-printer-sync-ok">CUPS synchronization completed successfully.</entry>
+	<entry key="msg-printer-renamed-ok">Proxy Printer "{0}" successfully renamed to "{1}".</entry>
+	<entry key="msg-printer-renamed-delete-ok">Proxy Printer "{0}" successfully renamed to "{1}"
+		(existing Proxy Printer is removed).</entry>
+	<entry key="msg-printer-rename-duplicate">Proxy Printer "{0}" cannot be renamed to "{1}"
+		(Proxy Printer with same name already present).</entry>
+	<entry key="msg-printer-rename-new-name-missing">New printer name is missing.</entry>
+
+	<entry key="msg-user-not-found">User is not found.</entry>
+
+	<entry key="msg-user-saved-ok">User successfully saved.</entry>
+    <entry key="msg-user-created-ok">User successfully created.</entry>
+
+	<entry key="msg-pagometer-reset-ok">Pagometers successfully reset.</entry>
+
+	<entry key="msg-login-install-mode">Application is being installed. Please wait a few
+		minutes and try again.</entry>
+
+	<entry key="msg-login-app-config">Application is being configured. Please wait a few
+		minutes and try again.</entry>
+
+	<entry key="msg-login-as-internal-admin">Application setup is required. Please contact your
+		system administrator.</entry>
+	<entry key="msg-login-no-person">User is not a Person.</entry>
+	<entry key="msg-login-invalid">User Name/Password is invalid.</entry>
+    <entry key="msg-login-invalid-number">ID Number is invalid.</entry>
+    <entry key="msg-login-invalid-pin">PIN is invalid.</entry>
+    <entry key="msg-login-no-pin-available">No PIN available.</entry>
+    <entry key="msg-login-no-password-given">No password given.</entry>
+    <entry key="msg-login-unregistered-card">Card is not registered.</entry>
+    <entry key="msg-card-registered-ok">Card successfully registered.</entry>
+    <entry key="msg-card-unregistered">Card is not registered.</entry>
+
+
+	<entry key="msg-change-internal-admin-password">Please change the default password of the internal
+		admininistrator.</entry>
+
+	<entry key="msg-setup-is-needed">SavaPage needs to be configured and is not ready to use yet.
+	Please go to the Options section and check the settings.</entry>
+
+	<entry key="msg-login-admin-not-present">Administrator does not exist.</entry>
+    <entry key="msg-login-user-not-present">User does not exist.</entry>
+	<entry key="msg-login-denied">Access denied for this user.</entry>
+    <entry key="msg-auth-mode-not-available">Authentication "{0}" is not available.</entry>
+	
+	<entry key="msg-login-no-admin-rights">User is not an administrator.</entry>
+	<entry key="msg-login-disabled">Your access is disabled.</entry>
+	<entry key="msg-login-not-possible">Login is not possible at the moment. Please try again
+		later.</entry>
+    <entry key="msg-login-another-session-active">Another browser session is already active.</entry>
+
+	<entry key="msg-user-home-dir-create-error">SafePages directory could not be created.</entry>
+
+	<entry key="msg-pdf-identical-owner-user-pw">PDF user and owner password must be different.</entry>
+
+	<!-- -->
+	<entry key="msg-membership-exceeded-user-limit">You exceeded your {0} participant limit.
+		You now have limited access to the administrator pages.
+		Reduce the user count or contact {1} for a new {2}.</entry>
+
+	<entry key="msg-membership-expired">Your {0} expired. You now have
+		limited access to the administrator pages. Please contact {1} for a new
+		{2}.</entry>
+
+	<entry key="msg-membership-visit">{0} days remaining in {1} period.</entry>
+
+	<entry key="msg-membership-visit-expired">The {0} period has ended. You now have
+		limited access to the administrator pages. Please contact {1} for a	{2}.
+	</entry>
+
+	<entry key="msg-membership-wrong-product">Your {0} is not valid for this product. Please
+		contact {1} for the right {2}.</entry>
+
+	<entry key="msg-membership-version">Your {0} is not valid for this product version.
+		Please contact {1} to upgrade your {2}.</entry>
+
+	<entry key="msg-membership-version-grace">Your {0} is not valid for this product version.
+		You have {1} days to upgrade your {2}.</entry>
+
+    <entry key="msg-imap-test-passed">Passed IMAP test: ({0}) Inbox and ({1}) Trash messages.</entry>
+    <entry key="msg-imap-test-failed">Failed IMAP test: {0}</entry>
+    <entry key="msg-imap-stopped">IMAP monitoring succesfully stopped.</entry>
+    <entry key="msg-imap-started">IMAP monitoring succesfully started.</entry>
+
+    <entry key="msg-papercut-test-passed">Passed PaperCut test.</entry>
+    <entry key="msg-papercut-test-failed">Failed PaperCut test: {0}</entry>
+
+    <entry key="msg-smartschool-test-passed">Passed SmartSchool test: {0} job(s) waiting.</entry>
+    <entry key="msg-smartschool-test-failed">Failed SmartSchool test: {0}</entry>
+    <entry key="msg-smartschool-stopped">SmartSchool monitoring succesfully stopped.</entry>
+    <entry key="msg-smartschool-started">SmartSchool monitoring succesfully started.</entry>
+    <entry key="msg-smartschool-started-simulation">SmartSchool monitoring started in simulation mode.</entry>
+
+    <entry key="msg-gcp-online">Google Cloud Printer is set Online.</entry>
+    <entry key="msg-gcp-offline">Google Cloud Printer is set Offline.</entry>
+    <entry key="msg-gcp-already-online">Google Cloud Printer is already online.</entry>
+    <entry key="msg-gcp-already-offline">Google Cloud Printer is already offline.</entry>
+    <entry key="msg-gcp-state-mismatch">Google Cloud Printer state "{0}" does not allow this operation.</entry>
+
+    <entry key="msg-voucher-batch-created-ok">There are {0} vouchers created in batch {1}.</entry>
+    
+    <entry key="msg-voucher-batch-deleted-zero">No vouchers to delete in batch {0}.</entry>
+    <entry key="msg-voucher-batch-deleted-one">1 voucher deleted in batch {0}.</entry>
+    <entry key="msg-voucher-batch-deleted-many">{0} vouchers deleted in batch {1}.</entry>
+    
+    <entry key="msg-voucher-batch-expired-zero">No vouchers to expire in batch {0}.</entry>
+    <entry key="msg-voucher-batch-expired-one">Expired 1 voucher in batch {0}.</entry>
+    <entry key="msg-voucher-batch-expired-many">Expired {0} vouchers in batch {1}.</entry>
+    
+    <entry key="msg-voucher-deleted-expired-zero">No expired vouchers to delete.</entry>
+    <entry key="msg-voucher-deleted-expired-one">1 expired voucher deleted.</entry>
+    <entry key="msg-voucher-deleted-expired-many">{0} expired vouchers deleted.</entry>
+
+    <entry key="msg-voucher-redeem-ok">The value of the voucher is successfully added to your balance.</entry>
+    <entry key="msg-voucher-redeem-invalid">User "{0}" tried to redeem invalid voucher "{1}".</entry>
+    <entry key="msg-voucher-redeem-void">Please enter a valid voucher number.</entry>
+
+    <entry key="msg-deposit-funds-ok">Amount successfully added to user account.</entry>
+    <entry key="msg-deposit-funds-receipt-email-ok">Amount successfully added to user account. Receipt send to {0}</entry>
+
+    <entry key="msg-deposit-email-subject">Receipt {0}</entry>
+    <entry key="msg-deposit-email-body">Please find the deposit receipt attached as PDF file.</entry>
+
+    <entry key="msg-pos-receipt-sendmail-ok">Receipt successfully sent to {0}</entry>
+    
+</properties>

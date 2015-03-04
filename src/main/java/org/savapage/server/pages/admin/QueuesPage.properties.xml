@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="proxy-print">Proxy Print</entry>    
+    <entry key="proxy-print-direct">Direct</entry>    
+
+    <entry key="signal-trusted">trusted</entry>
+    <entry key="signal-untrusted">untrusted</entry>
+    <entry key="signal-disabled">disabled</entry>
+    <entry key="signal-deleted">deleted</entry>
+    <entry key="signal-internal">internal</entry>
+    <entry key="signal-reserved">reserved</entry>
+    
+    <entry key="button-edit">Edit</entry>
+    <entry key="button-log">Log</entry>
+    
+    <entry key="period">Period</entry>
+    
+    <entry key="job">job</entry>
+    <entry key="page">page</entry>
+    
+    <entry key="jobs">jobs</entry>
+    <entry key="pages">pages</entry>
+    
+</properties>

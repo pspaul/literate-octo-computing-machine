@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text" autofocus
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+    <h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content">
+
+    <div class="sp-txt-wrap sp-txt-warn"><wicket:message key="voucher-note"/></div>
+    
+    <br/>
+        
+    <label for="voucher-redeem-card-number"><wicket:message key="voucher-number"/></label>
+    <input type="text" id="voucher-redeem-card-number" value="" maxlength="128" autofocus
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    
+    <a href="#" id="button-voucher-redeem-ok" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+        <wicket:message key="button-redeem"/>
+    </a>
+    
+    <a href="#" id="button-voucher-redeem-back" data-rel="back" data-direction="reverse" 
+        class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+        <wicket:message key="button-back"/>        
+    </a>
+    
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

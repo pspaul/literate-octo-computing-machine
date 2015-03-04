@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<div id="dashboard-system-status-addin">
+    <wicket:fragment wicket:id="system-status-panel"/>
+</div>
+
+<ul data-role="listview" data-inset="true">
+	<li data-role="list-divider"><wicket:message key="realtime-activity"/></li>
+	<li>
+		<div id="live-messages" class="sp-live-msg"
+			style="font-size: small; font-weight: normal"></div>
+		<div>
+			<a href="#" id="live-messages-clear" class="ui-btn ui-btn-inline"><wicket:message key="button-clear"/></a>
+        <wicket:remove>
+			<a href="#" id="live-messages-pause" class="ui-btn ui-btn-inline">Pause</a>
+            <a href="#" id="live-messages-resume" class="ui-btn ui-btn-inline" style="display: none;">Resume</a>
+        </wicket:remove>
+		</div>
+	</li>
+
+</ul>

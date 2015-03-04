@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="pin-reset">Reset PIN</entry>
+
+    <entry key="pin">New PIN</entry>
+    <entry key="pin-confirm">Confirm PIN</entry>
+
+    <entry key="button-apply">Apply</entry>
+    <entry key="button-cancel">Cancel</entry>
+    
+</properties>

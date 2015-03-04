@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text" autofocus
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+    <h1><wicket:message key="user"/></h1>
+</div>
+
+<div class="ui-content" id="content-user">
+
+    <ul class="sp-internal-user" data-role="listview" data-inset="true">
+        <li><div wicket:id="internal-user"/></li>
+    </ul>
+       
+    <ul data-role="listview" data-inset="true">
+    
+       <li class="sp-user-edit" data-role="list-divider">
+            <h3 id="user-userid-txt"/>                        
+       </li>
+       
+       <li>
+            <div class="sp-user-create ui-field-contain" >
+	               <label for="user-userid"><wicket:message key="user-id"/></label>
+	               <input type="text" id="user-userid" value="" maxlength="50"
+	                   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+	        </div>
+            <div class="ui-field-contain" >
+                <label for="user-fullname"><wicket:message key="user-fullname"/></label>
+				<input type="text" id="user-fullname" value="" maxlength="128" autofocus
+				    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+			</div>
+				
+       </li>                        
+       <li>
+            <fieldset data-role="controlgroup" data-type="vertical">
+				<label for="user-isadmin"><wicket:message key="user-admin"/></label>
+				<input type="checkbox" id="user-isadmin" value="0" />
+				
+				<label for="user-isperson"><wicket:message key="user-person"/></label>
+				<input type="checkbox" id="user-isperson" value="0" />
+		        
+	            <label for="user-disabled"><wicket:message key="user-disabled"/></label> 
+	            <input type="checkbox" id="user-disabled" value="0" />
+            </fieldset>
+       </li>
+
+       <li>
+            <label for="user-email"><wicket:message key="user-email"/></label>
+            <input type="text" id="user-email" value="" maxlength="128"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                         
+            <label for="user-email-other"><wicket:message key="user-email-other"/></label>
+            <textarea id="user-email-other" autocomplete="off" autocorrect="off" 
+                autocapitalize="off" spellcheck="false"/> 
+                     
+       </li>
+       
+       <li>
+			<label for="user-card-number"><wicket:message key="user-card-number"/></label> 
+			<input type="text" id="user-card-number" maxlength="32" value="" /> 
+			
+			<label for="user-id-number"><wicket:message key="user-id-number"/></label> 
+			<input type="text" id="user-id-number" maxlength="32" value="" /> 
+			
+			<label for="user-pin"><wicket:message key="user-pin"/></label>
+			<input type="password" id="user-pin" maxlength="6" pattern="[0-9]*" value="" />               
+       </li>
+       
+       <li class="sp-user-create">
+	       <label for="user-user-pw"><wicket:message key="user-password"/></label> 
+	       <input type="password" id="user-user-pw" maxlength="32" value="" /> 
+	       
+	       <label for="user-user-pw-confirm"><wicket:message key="user-password-confirm"/></label>
+	       <input type="password" id="user-user-pw-confirm" maxlength="32" value="" />               
+       </li>
+
+       <li data-role="list-divider"><wicket:message key="label-financial"/></li>
+       <li>
+            <label for="user-account-balance"><wicket:message key="label-balance"/></label> 
+            <input type="text" id="user-account-balance" value="" maxlength="10" pattern="[0-9]*" />
+
+			<fieldset class="ui-mini" data-role="controlgroup" data-type="horizontal">
+			
+                <legend><wicket:message key="label-credit-limit"/></legend>
+                			
+                <label for="user-account-credit-limit-none"><wicket:message key="label-credit-limit-none"/></label> 
+                <input type="radio" name="user-account-credit-limit-type" id="user-account-credit-limit-none" 
+                     wicket:id="credit-limit-none" /> 
+                      
+			    <label for="user-account-credit-limit-default"><wicket:message key="label-credit-limit-default"/></label> 
+			    <input type="radio" name="user-account-credit-limit-type" id="user-account-credit-limit-default" 
+			         wicket:id="credit-limit-default" /> 
+			    
+                <label for="user-account-credit-limit-individual"><wicket:message key="label-credit-limit-individual"/></label> 
+                <input type="radio" name="user-account-credit-limit-type" id="user-account-credit-limit-individual" 
+                     wicket:id="credit-limit-individual" /> 
+                      
+			</fieldset>
+       
+            <input type="text" id="user-account-credit-limit-amount" value="" maxlength="10" pattern="[0-9]*" />
+       </li>
+              
+       <li>
+            <div data-role="controlgroup" data-type="horizontal">
+			    <a href="#" id="button-save-user" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"><wicket:message
+			            key="button-ok"/></a> 
+
+                <a  href="#" class="sp-internal-user-edit ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit" 
+                    id="button-user-pw-dialog"><wicket:message key="button-password"/></a>
+                
+			    <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" data-rel="back" data-direction="reverse">
+                    <wicket:message key="button-cancel"/></a>
+            </div>
+       </li>
+    </ul>
+
+    <ul class="sp-user-edit" data-role="listview" data-inset="true">
+    
+       <li data-role="list-divider" data-theme="b"><wicket:message key="header-delete"/></li>
+   
+       <li>
+            <div class="sp-txt-wrap"><wicket:message key="user-delete-warning"/></div>            
+            <div data-role="controlgroup" data-type="horizontal">
+			    <a href="#" id="button-delete-user" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"><wicket:message
+			            key="button-delete"/></a> 
+                <a href="#" data-rel="back" data-direction="reverse"
+                        class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"><wicket:message
+                        key="button-cancel"/></a>
+            </div>
+        </li>
+    </ul>
+        
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>
+<div data-role="popup" data-dismissible="true" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>
+

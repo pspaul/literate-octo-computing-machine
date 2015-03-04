@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:panel>
+	<h3>
+        <wicket:enclosure child="printin-pie">
+            <span wicket:id="printin-pie" class="sparkline-printin-pie"/>&nbsp;        
+        </wicket:enclosure>
+        <wicket:enclosure child="printout-pie">
+            <span wicket:id="printout-pie" class="sparkline-printout-pie"/>&nbsp;        
+        </wicket:enclosure>
+        <wicket:enclosure child="pdfout-pie">
+            <span wicket:id="pdfout-pie" class="sparkline-pdfout-pie"/>&nbsp;        
+        </wicket:enclosure>
+	   <span wicket:id="header"/>
+	</h3>
+    <div class="sp-txt-wrap">
+	   <wicket:message key="prompt-user"/>: <strong wicket:id="user-name"/>
+	</div>
+    <div class="sp-txt-wrap">
+        <wicket:enclosure child="title"><span wicket:id="title" />
+		</wicket:enclosure>
+        <wicket:enclosure child="log-comment"> &bull; <span
+                wicket:id="log-comment" />
+        </wicket:enclosure>
+		<wicket:enclosure child="author"> &bull; <span
+				wicket:id="author" />
+		</wicket:enclosure>
+		<wicket:enclosure child="subject"> &bull; <span
+				wicket:id="subject" />
+		</wicket:enclosure>
+		<wicket:enclosure child="keywords"> &bull; <span
+				wicket:id="keywords" />
+		</wicket:enclosure>
+	</div>
+	<div class="sp-txt-wrap">
+		<wicket:enclosure child="printoutMode"><span 
+		  wicket:id="printoutMode" /> &bull; </wicket:enclosure>
+		<span wicket:id="totals" />
+        <wicket:enclosure child="job-id"> &bull; <wicket:message key="job-id"/><span
+                wicket:id="job-id" /> - <span wicket:id="job-state" />
+        </wicket:enclosure>
+        <wicket:enclosure child="papersize"> &bull; <span
+                wicket:id="papersize" />
+        </wicket:enclosure>
+		<wicket:enclosure child="letterhead"> &bull; <span
+				wicket:id="letterhead" />
+		</wicket:enclosure>
+		<wicket:enclosure child="duplex"> &bull; <span class="sp-txt-valid"
+				wicket:id="duplex" />
+		</wicket:enclosure>
+        <wicket:enclosure child="singlex"> &bull; <span class="sp-txt-info"
+                wicket:id="singlex" />
+        </wicket:enclosure>
+        <wicket:enclosure child="color"> &bull; <span class="sp-txt-warn"
+                wicket:id="color" />
+        </wicket:enclosure>
+        <wicket:enclosure child="grayscale"> &bull; <span class="sp-txt-valid"
+                wicket:id="grayscale" />
+        </wicket:enclosure>
+		<wicket:enclosure child="drm"> &bull; <span class="sp-txt-warn"
+				wicket:id="drm" /> <span wicket:id="print-in-denied-reason-hyphen"/> <span class="sp-txt-error" wicket:id="print-in-denied-reason"/>
+		</wicket:enclosure>
+		<wicket:enclosure child="ownerpw"> &bull; <span
+				wicket:id="ownerpw" />
+		</wicket:enclosure>
+		<wicket:enclosure child="userpw"> &bull; <span
+				wicket:id="userpw" />
+		</wicket:enclosure>
+        <wicket:enclosure child="cost-currency"> &bull; <span wicket:id="cost-currency"/>&nbsp;</wicket:enclosure><wicket:enclosure child="cost"><span wicket:id="cost"/>
+        </wicket:enclosure>
+        
+        <wicket:enclosure child="account-trx"><span
+                wicket:id="account-trx" />
+        </wicket:enclosure>
+        
+	</div>
+	<wicket:enclosure child="signature">
+        <p class="sp-txt-wrap">
+			<wicket:message key="prompt-signature"/>: <span wicket:id="signature" />
+		</p>
+	</wicket:enclosure>
+	<wicket:enclosure child="destination">
+        <p class="sp-txt-wrap">
+			<wicket:message key="prompt-destination"/>: <span wicket:id="destination" />
+		</p>
+	</wicket:enclosure>
+	
+	<p class="ui-li-aside">
+		<span wicket:id="dateCreated"/> 
+	</p>
+	
+</wicket:panel>

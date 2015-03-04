@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<div data-role="header" data-theme="b">
+	<h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content">
+
+    <ul data-role="listview">
+        <li data-role="list-divider">
+             <h3><wicket:message key="header-batch"/></h3>
+        </li>
+        <li>
+            <div class="sp-txt-wrap"><wicket:message key="info-batch"/></div>
+            
+            <div class="ui-field-contain" >
+		        <label for="sp-voucher-create-batch-id"><wicket:message key="prompt-batch"/></label>
+		        <input type="text" id="sp-voucher-create-batch-id" value="" maxlength="32" autofocus
+		           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>	                                
+        </li>
+        
+        <li data-role="list-divider">
+             <h3><wicket:message key="header-vouchers"/></h3>
+        </li>
+        <li>
+            <div class="sp-txt-wrap"><wicket:message key="info-vouchers"/></div>
+
+            <div class="ui-field-contain" >
+	            <label for="sp-voucher-create-number"><wicket:message key="prompt-number"/></label>
+	            <input type="text" id="sp-voucher-create-number" value="" maxlength="8" 
+	               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+                           
+            <div class="ui-field-contain" >
+	            <label for="sp-voucher-create-value"><wicket:message key="prompt-value"/></label>
+	            <input type="text" id="sp-voucher-create-value" value="" maxlength="8" 
+	               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+            
+            <div class="ui-field-contain" >
+	            <label for="sp-voucher-create-expiration"><wicket:message key="prompt-expiry-date"/></label>
+	            <input type="text" id="sp-voucher-create-expiration" value="" maxlength="16" 
+	               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+	        </div>
+        </li>
+        
+        <li data-role="list-divider">
+            <h3><wicket:message key="header-design"/></h3>
+        </li>
+        <li>
+            <div class="sp-txt-wrap"><wicket:message key="info-design"/></div>
+            
+            <div class="ui-mini ui-field-contain">
+                <label for="sp-voucher-card-create-print-format"><wicket:message key="prompt-card-layout"/></label>
+                <select tabindex="-1" id="sp-voucher-card-create-print-format" data-native-menu="false">
+                    <wicket:fragment wicket:id="voucher-card-format-options"/>
+                </select>
+            </div>
+                        
+        </li>        
+        <li>
+
+        <div data-role="controlgroup" data-type="horizontal">
+        
+            <a href="#" id="button-voucher-batch-create-print" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d">
+                 <wicket:message key="button-vouchers"/></a>
+
+			<a href="#" data-rel="back" data-direction="reverse"
+			        class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"><wicket:message
+			        key="button-close"/></a>
+       </div>
+        </li>        
+    </ul>
+
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

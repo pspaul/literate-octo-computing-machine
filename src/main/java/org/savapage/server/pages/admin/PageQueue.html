@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text" autofocus
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+	<h1>/<span id="title-queue"/></h1>
+</div>
+
+<div class="ui-content" id="content-queue">
+
+   <ul data-role="listview" data-inset="true">
+   
+       <li data-role="list-divider" id="queue-header"/>
+        
+       <li>
+            <span id="queue_reserved_section" class="sp-txt-warn">
+            <wicket:message key="queue-reserved"/></span>
+            
+            <div class="ui-field-contain">
+                <label for="queue-url-path"><wicket:message	key="queue-url-path"/></label>
+                <input type="text" id="queue-url-path" value="" maxlength="128" autofocus
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+            
+            <div>
+	            <label for="queue-ip-allowed"><wicket:message key="queue-ip-allowed"/></label>
+	            <input type="text" id="queue-ip-allowed" value="" maxlength="255"
+	                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+            
+            <fieldset data-role="controlgroup" data-type="vertical">
+    
+	            <label for="queue-trusted"><wicket:message key="queue-trusted"/></label>
+	            <input type="checkbox" id="queue-trusted" value="0"/>
+	            
+	            <label for="queue-disabled"><wicket:message key="queue-disabled"/></label>
+	            <input type="checkbox" id="queue-disabled" value="0"/>
+
+            </fieldset>
+            
+            <div class="queue_user-defined-section">
+                <label for="queue-deleted"><wicket:message key="queue-deleted"/></label>
+                <input type="checkbox" id="queue-deleted" value="0"/>
+            </div>
+       </li>
+    </ul>
+    
+	<a href="#" id="button-save-queue" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+	   <wicket:message key="button-ok"/></a>
+
+    <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+         id="button-cancel-queue"><wicket:message key="button-cancel"/></a> 
+            
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

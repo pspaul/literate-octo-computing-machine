@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="a">
+    <h1 data-i18n="header-user"></h1>
+</div>
+
+<div class="ui-content" id="content-user">
+
+    <div>
+        <div class="ui-field-contain">
+            <label for="send-mailto" data-i18n="send-mailto"></label>
+            <input type="text" name="send-mailto" id="user-mailto" value="" maxlength="128"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        </div>
+    </div>
+    
+    <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" data-i18n="button-back"></a>
+    
+    <a href="#" id="button-user-email-default" class="ui-btn ui-btn-inline" data-i18n="button-default"></a>
+
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

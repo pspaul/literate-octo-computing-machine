@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+
+<head>
+
+<noscript>
+	<h2>Your browser does not support JavaScript or JavaScript is
+		disabled!</h2>
+	<h3>Please enable JavaScript to run this application.</h3>
+	<hr />
+</noscript>
+
+<title wicket:id="app-name"></title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<wicket:remove>
+	<!--
+Informs the Apple browser that this is a web app.
+<meta name="apple-mobile-web-app-capable" content="yes">
+-->
+</wicket:remove>
+
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<wicket:remove>
+	<!--  Prevent chaching in IE: http://support.microsoft.com/kb/234067  -->
+</wicket:remove>
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+<wicket:remove>
+	<!--  
+http://developer.apple.com/library/ios/#DOCUMENTATION/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+http://iconhandbook.co.uk/reference/chart/ios/
+
+sizes="72x72"   : iPad
+sizes="114x114" : iPhone 4+
+sizes="144x144" : iPad 3+
+
+If no sizes attribute is set, the element’s size defaults to 57 x 57.  
+-->
+</wicket:remove>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="apple-touch-icon" sizes="72x72"
+	href="/apple-touch-icon-72x72.png" />
+<link rel="apple-touch-icon" sizes="114x114"
+	href="/apple-touch-icon-114x114.png" />
+<link rel="apple-touch-icon" sizes="144x144"
+	href="/apple-touch-icon-144x144.png" />
+
+</head>
+
+<body>
+
+	<div data-role="dialog" data-theme="a" data-close-btn="none">
+
+		<div data-role="header" data-theme="b">
+			<h1 wicket:id="title" />
+		</div>
+
+		<div class="ui-content">
+
+			<ul data-role="listview" data-inset="true">
+				<li>
+					<h2 class="sp-txt-warn sp-txt-wrap">
+						<wicket:message key="message" />
+					</h2>
+					<div class="sp-txt-info sp-txt-wrap">
+						<wicket:message key="remedy" />
+					</div>
+					
+				</li>
+			</ul>
+ 
+			<a href="#" id="button-continue" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-forward">
+				<wicket:message key="button-continue" /></a>
+
+            <a href="#" id="button-login" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home">
+                <wicket:message key="button-login" /></a>
+				
+		</div>
+	</div>
+
+</body>
+
+</html>

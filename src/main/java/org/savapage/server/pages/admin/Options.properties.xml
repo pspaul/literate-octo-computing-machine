@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="title">Options</entry>
+
+	<entry key="cat-user-source">User Source</entry>
+	<entry key="cat-user-creation">User Creation</entry>
+    <entry key="cat-user-authentication">User Authentication</entry>
+	
+	<entry key="cat-mail">Mail</entry>
+	<entry key="cat-mail-messages">Messages</entry>
+
+	<entry key="prompt-mail-test">Send a test message. Press the Test
+		button after you applied the changes.
+	</entry>
+	<entry key="mail-test-to">To</entry>
+	<entry key="button-mail-test">Test</entry>
+
+	<entry key="cat-backups">Backups</entry>
+	<entry key="cat-backup-location">Backup location</entry>
+	<entry key="button-backup-now">Backup now</entry>
+	<entry key="backup-last-run">Backup last run</entry>
+
+	<entry key="cat-backup-automatic">Automatic Backups</entry>
+	<entry key="backup-automatic-descript">Automatic backups create a weekly snapshot of the
+		system's database.</entry>
+	<entry key="enable-automatic-backup">Enable automatic weekly backups</entry>
+	
+	<entry key="backups-keep-days-prompt">Keep backups for</entry>
+    <entry key="backups-keep-days">days</entry>
+	
+	<entry key="backup-automatic-old-data-descript">After the automatic backup delete old data</entry>
+	
+    <entry key="backup-delete-account-trxs">Delete account transactions older than</entry>  
+    <entry key="backup-delete-account-trx-days">days</entry>
+	
+	<entry key="backup-delete-doc-logs">Delete document logs older than</entry>
+    <entry key="backup-delete-doc-log-days">days</entry>
+	
+	<entry key="backup-delete-app-logs">Delete application logs older than</entry>
+    <entry key="backup-delete-app-log-days">days</entry>
+
+	<entry key="days">days</entry>
+
+	<entry key="cat-advanced">Advanced</entry>
+
+	<entry key="admin-password-reset">Reset internal admin password</entry>
+	<entry key="password-new">New password</entry>
+	<entry key="password-confirm">Confirm password</entry>
+
+    <entry key="jmx-password-reset">Reset "{0}" password</entry>
+    <entry key="jmx-comment">Monitor the Java VM with a tool that complies to the JMX specification,
+    like Java VisualVM. Connect to Remote Process:</entry>
+
+	<entry key="button-apply">Apply</entry>
+	<entry key="button-cancel">Cancel</entry>
+	<entry key="button-change-group">Change group</entry>
+	<entry key="button-clear">Clear</entry>
+	<entry key="button-sync-now">Synchronize now</entry>
+	<entry key="button-sync-test">Test</entry>
+
+    <entry key="auth-method-none">-</entry>
+	<entry key="auth-method-unix">Unix</entry>
+	<entry key="auth-method-ldap">LDAP</entry>
+
+	<entry key="ldap-schema-type-open">OpenLDAP</entry>
+    <entry key="ldap-schema-type-apple">Apple</entry>
+	<entry key="ldap-schema-type-activ">Windows</entry>
+	<entry key="ldap-schema-type-edir">Novell</entry>
+
+	<entry key="ldap-host">Host</entry>
+	<entry key="ldap-port">Port</entry>
+	<entry key="ldap-basedn">Base DN</entry>
+	<entry key="ldap-use-ssl">Use SSL</entry>
+	<entry key="ldap-admin-dn">Admin DN</entry>
+	<entry key="ldap-admin-pw">Admin password</entry>
+
+    <entry key="ldap-user-fields">LDAP fields for alternative authentication</entry>
+    <entry key="ldap-user-id-number-field">ID Number</entry>
+    <entry key="ldap-user-card-number-field">Card Number</entry>
+    
+    <entry key="ldap-card-format">Card Format</entry>
+    <entry key="ldap-card-format-hex">HEX</entry>
+    <entry key="ldap-card-format-dec">DEC</entry>
+    <entry key="ldap-card-format-lsb">LSB</entry>
+    <entry key="ldap-card-format-msb">MSB</entry>
+    
+	<entry key="import-users-from">Import users from group</entry>
+	<entry key="user-source-group-select">Select a group</entry>
+
+	<entry key="all-users">[All users]</entry>
+
+	<entry key="sync-header">Synchronization</entry>
+	<entry key="sync-schedule">Import new users overnight</entry>
+	<entry key="sync-user-update">Update user details</entry>
+	<entry key="sync-delete-users">Delete users that do not exist in the selected source</entry>
+	<entry key="sync-messages">Messages</entry>
+
+    <entry key="user-auth-mode-name-pw">Username</entry>
+    <entry key="user-auth-mode-name-pw-dialog">Show in Dialog</entry>
+        
+    <entry key="user-auth-mode-id-number">ID Number</entry>
+    <entry key="user-auth-mode-id-number-pin">Require PIN</entry>
+    <entry key="user-auth-mode-id-number-mask">Mask input</entry>
+    <entry key="user-auth-mode-id-number-dialog">Show in Dialog</entry>
+    
+    <entry key="user-auth-mode-card-local">Local NFC Card</entry>
+    <entry key="user-auth-mode-card-local-dialog">Show in Dialog</entry>
+
+    <entry key="users-pin">PIN</entry>
+    <entry key="users-can-change-pin">Users can change their PIN</entry>
+    
+    <entry key="webapp-user-auth-trust-cliapp-auth">Trust User Client</entry>
+    
+    <entry key="user-auth-mode-card">NFC Card</entry>
+    <entry key="user-auth-mode-card-pin">Require PIN</entry>
+    <entry key="user-auth-mode-card-self-assoc">Self Association</entry>
+
+    <entry key="card-format">Format</entry>
+    <entry key="local-card-format-hex">HEX</entry>
+    <entry key="local-card-format-dec">DEC</entry>
+    <entry key="local-card-format-lsb">LSB</entry>
+    <entry key="local-card-format-msb">MSB</entry>
+
+    <entry key="user-auth-mode-login">Login Methods</entry>
+    <entry key="user-auth-mode-default">Default Login</entry>
+    <entry key="user-auth-mode-default-user">Username</entry>
+    <entry key="user-auth-mode-default-number">ID Number</entry>
+    <entry key="user-auth-mode-default-card">Local NFC Card</entry>
+
+	<entry key="smtp-host">Host</entry>
+	<entry key="smtp-port">Port</entry>
+    <entry key="smtp-username">User Name</entry>
+    <entry key="smtp-password">Password</entry>
+    
+    <entry key="smtp-security-none">-</entry>
+    <entry key="smtp-security-starttls">STARTTLS</entry>
+    <entry key="smtp-security-ssl-tls">SSL/TLS</entry>
+
+	<entry key="mail-from-address">Sender address</entry>
+	<entry key="mail-from-name">Sender name</entry>
+	<entry key="mail-reply-address">Reply to address</entry>
+	<entry key="mail-reply-name">Reply to name</entry>
+
+	<entry key="on-demand-user-creation">On demand user creation</entry>
+	<entry key="on-demand-login">At first login</entry>
+	<entry key="on-demand-print">At first print</entry>
+
+	<entry key="pagometer-reset">Reset Pagometers</entry>
+	<entry key="pagometer-reset-descript">This action resets the counters of produced pages to
+		zero. Please select one or more pagometers to reset.</entry>
+	<entry key="pagometer-reset-dashboard">Dashboard</entry>
+	<entry key="pagometer-reset-queues">Queues</entry>
+	<entry key="pagometer-reset-printers">Proxy Printers</entry>
+	<entry key="pagometer-reset-users">Users</entry>
+
+	<entry key="locale-header">Locale</entry>
+	<entry key="locale-description">Leave empty to accept the system default "{0}".</entry>
+
+    <entry key="papersize-header">Default Paper Size</entry>
+    <entry key="papersize-description">Select "default" to accept the system default "{0}".</entry>
+
+    <entry key="default-papersize-system">default</entry>
+    <entry key="default-papersize-letter">Letter</entry>
+    <entry key="default-papersize-a4">A4</entry>
+
+	<entry key="print-in-header">Proxy Printing</entry>
+	<entry key="print-in-encrypted-pdf-descript">This option allows Encrypted PDF documents to be
+		printed to SafePages for Proxy Printing. Exporting these SafePages as PDF is not allowed.</entry>
+	<entry key="print-in-allow-encrypted-pdf">Allow Encrypted PDF for Proxy Printing</entry>
+
+    <entry key="converters-header">Converters</entry>
+    <entry key="libreoffice-enable">Enable LibreOffice converter</entry>
+    <entry key="xpstopdf-enable">Enable XPS to PDF converter</entry>
+    <entry key="installed">installed</entry>
+    <entry key="not-installed">not installed</entry>
+
+	<entry key="button-config-editor">Configuration Editor (advanced)</entry>
+
+    <entry key="smartschool-print-enable">Enable account</entry>
+    <entry key="smartschool-print-endpoint">SOAP endpoint</entry>
+    <entry key="smartschool-print-password">Password</entry>
+    <entry key="smartschool-print-proxyprinter">Proxy Printer (leave empty for WebApp Proxy Print)</entry>
+
+    <entry key="smartschool-on-demand-user-creation">On demand user creation</entry>
+
+    <entry key="smartschool-papercut-enable">Enable</entry>
+    
+    <entry key="smartschool-button-test">Test</entry>
+    <entry key="smartschool-button-stop">Stop</entry>
+    <entry key="smartschool-button-start">Start</entry>
+    <entry key="smartschool-button-start-simulate">Start (simulate)</entry>
+
+    <entry key="papercut-header-text">PaperCut Integration</entry>
+
+    <entry key="papercut-server-text">PaperCut Server</entry>
+    <entry key="papercut-host">Host</entry>
+    <entry key="papercut-port">Port</entry>
+    <entry key="papercut-token">Token</entry>
+
+    <entry key="papercut-db-text">PaperCut Database</entry>
+    <entry key="papercut-db-url">URL</entry>
+    <entry key="papercut-db-user">User</entry>
+    <entry key="papercut-db-password">Password</entry>
+
+    <entry key="imap-enable">Allow users to mail documents</entry>
+    <entry key="imap-host">Host</entry>
+    <entry key="imap-port">Port</entry>
+    <entry key="imap-username">User Name</entry>
+    <entry key="imap-password">Password</entry>
+    <entry key="imap-security-none">-</entry>
+    <entry key="imap-security-starttls">STARTTLS</entry>
+    <entry key="imap-security-ssl-tls">SSL/TLS</entry>
+    <entry key="imap-folder-inbox">Inbox</entry>
+    <entry key="imap-folder-trash">Trash</entry>
+    <entry key="imap-button-test">Test</entry>
+    <entry key="imap-button-stop">Stop</entry>
+    <entry key="imap-button-start">Start</entry>
+    <entry key="imap-max-file-mb">Maximum attachment size (MB)</entry>
+    <entry key="imap-max-files">Maximum attachments</entry>
+
+    <entry key="webprint-enable">Allow users to upload documents</entry>
+    <entry key="webprint-max-file-mb">Maximum document size (MB)</entry>
+    <entry key="webprint-ip-allowed">IP addresses allowed</entry>
+
+    <entry key="gcp-enable">Enable</entry>
+    <entry key="gcp-online">Online</entry>
+    
+    <entry key="gcp-printer">Printer</entry>
+    <entry key="gcp-owner">Owner</entry>
+    <entry key="gcp-state">State</entry>
+    
+    <entry key="gcp-client-id">Client ID</entry>    
+    <entry key="gcp-client-secret">Client secret</entry>
+    
+    <entry key="gcp-notifications">Notifications</entry>
+        
+    <entry key="gcp-mail-after-cancel-legend">After a job is canceled because of an unknown email address:</entry>    
+    <entry key="gcp-mail-after-cancel">Send email</entry>    
+    <entry key="gcp-mail-after-cancel-subject">Subject</entry>    
+    <entry key="gcp-mail-after-cancel-body">Text</entry>    
+
+    <entry key="button-register">Register</entry>
+    <entry key="button-refresh">Refresh</entry>
+    <entry key="button-online">Online</entry>
+    <entry key="button-offline">Offline</entry>
+    <entry key="button-details">Details</entry>
+    <entry key="button-hide">Hide</entry>
+
+    <entry key="proxyprint-non-secure">Allow Non-Secure Proxy Print</entry>
+    <entry key="proxyprint-non-secure-printer-group">Restrict to Printer Group (leave empty to allow all printers)</entry>
+
+    <entry key="proxyprint-fast-expiry-mins-prompt">Skip SafePages whose time of creation or renewal is older than</entry>
+    <entry key="proxyprint-fast-expiry-mins">minutes</entry>
+
+    <entry key="proxyprint-hold-expiry-mins-prompt">Skip held jobs whose time of creation or renewal is older than</entry>
+    <entry key="proxyprint-hold-expiry-mins">minutes</entry>
+    
+    <entry key="proxyprint-direct-expiry-secs-prompt">Time limit to swipe NFC card.</entry>
+    <entry key="proxyprint-direct-expiry-secs">seconds</entry>
+    
+    <entry key="proxyprint-general-prompt">General</entry>
+    <entry key="proxyprint-max-copies">Maximum number of copies per job</entry>    
+
+    <entry key="proxyprint-clear-inbox">Always remove SafePages after printing</entry>
+
+    <entry key="internal-users-enable">Internal users</entry>
+    <entry key="internal-users-change-pw">Internal users can change their password</entry>
+
+    <!-- Financial -->
+    <entry key="cat-financial">Financial</entry>
+    <entry key="cat-financial-general">General</entry>
+    <entry key="financial-global-credit-limit">Default credit limit</entry>    
+    <entry key="financial-printer-cost-decimals">Printer cost decimals</entry>
+    <entry key="financial-decimals-other">Decimals used elsewhere</entry>
+    <entry key="financial-show-currency">Display currency sign</entry>
+    <entry key="financial-custom-currency">Currency sign (leave empty to accept system default "{0}")</entry>
+    <entry key="financial-payment-methods">A comma separated list of payment methods (leave empty if not required)</entry>
+    <entry key="cat-financial-pos">Point-of-Sale</entry>
+    <entry key="financial-pos-receipt-header">Receipt header text</entry>
+    <entry key="cat-financial-vouchers">Vouchers</entry>
+    <entry key="financial-voucher-card-header">Header</entry>
+    <entry key="financial-voucher-card-footer">Footer</entry>
+    <entry key="financial-voucher-card-fontfamily">Font</entry>
+    
+    <!--  -->
+    <entry key="report-fontfamily-header">Report Font</entry>
+    <entry key="report-fontfamily-legend">Select the default font for PDF reports.</entry>
+    
+    <!-- User Client -->
+    <entry key="cliapp-auth-header">User Client authentication</entry>    
+    <entry key="cliapp-auth-trust-user-account">Trust system user</entry>
+    <entry key="cliapp-auth-trust-webapp-user-auth">Trust User Web App</entry>
+    <entry key="cliapp-auth-admin-passkey">Admin passkey (leave empty to disable)</entry>
+        
+</properties>

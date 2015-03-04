@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<span style="display: none;" class="json-rsp" wicket:id="json-rsp"></span>
+
+<wicket:fragment wicket:id="nav-bar-1"></wicket:fragment>
+<br />
+<div>
+	<ul data-role="listview" data-filter="false">
+		<li class="ui-li-has-icon" wicket:id="devices-view">
+		    <img width="16" height="16" wicket:id="deviceImage"/>
+            <h3 wicket:id="deviceName"/>
+            <wicket:enclosure child="assocCardReader">
+                <p>&larr; <span wicket:id="assocCardReader"/></p><p>&nbsp;</p>
+            </wicket:enclosure>
+            <wicket:enclosure child="assocTerminal">
+                <p>&rarr; <span wicket:id="assocTerminal"/></p><p>&nbsp;</p>
+            </wicket:enclosure>
+            
+            <div class="sp-txt-wrap">
+                <span wicket:id="hostname"/> &bull; <span wicket:id="location"/>
+            </div>
+            
+            <wicket:enclosure child="readerConnectStatus">
+                <div wicket:id="readerConnectStatus"/>
+            </wicket:enclosure>
+            
+            <wicket:enclosure child="printerAuth">
+                <div class="sp-txt-wrap">
+                    <wicket:message key="proxy-print"/> <span wicket:id="printerAuthMode"/> &bull; <wicket:message key="proxy-print-single"/> &bull; <span wicket:id="printerAuth"/> 
+                </div>
+            </wicket:enclosure>
+            <wicket:enclosure child="printerGroupAuth">
+                <div class="sp-txt-wrap">
+                    <wicket:message key="proxy-print"/> <span wicket:id="printerGroupAuthMode"/> &bull; <wicket:message key="proxy-print-group"/> &bull; <span wicket:id="printerGroupAuth"/>
+                </div>
+            </wicket:enclosure>
+            
+			<p class="ui-li-aside">
+				<strong wicket:id="signal"></strong>
+			</p>
+            <div data-role="controlgroup" data-type="horizontal">
+				<a href="#" data-savapage="the-uid" 
+				    class="sp-edit-device ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-edit"
+					wicket:id="button-edit"></a>
+			</div>
+		</li>
+	</ul>
+</div>
+<p>&nbsp;</p>
+<wicket:fragment wicket:id="nav-bar-2"></wicket:fragment>

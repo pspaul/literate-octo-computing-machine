@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title">Proxy Printers</entry>
+    <entry key="select-and-sort">Selectie en Sortering</entry>
+    
+    <entry key="prompt-containing-text">Bevat tekst</entry>
+    
+    <entry key="prompt-printer-status">Status</entry>
+    <entry key="printer-status-all">-</entry>
+    <entry key="printer-status-enabled">Ingeschakeld</entry>
+    <entry key="printer-status-disabled">Uitgeschakeld</entry>
+    
+    <entry key="prompt-printer-deleted">Verwijderd</entry>
+    <entry key="printer-deleted-all">-</entry>
+    <entry key="printer-deleted-n">Actief</entry>
+    <entry key="printer-deleted-y">Verwijderd</entry>
+    
+    <entry key="prompt-sort-by">Sortering</entry>
+    <entry key="sort-asc">Oplopend</entry>
+    <entry key="sort-desc">Aflopend</entry>        
+    
+    <entry key="button-sync">Synchroniseren</entry>    
+    <entry key="button-apply">Toepassen</entry>    
+    <entry key="button-default">Standaard</entry>    
+</properties>

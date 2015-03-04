@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<div data-role="header" data-theme="b">
+	<h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content" id="content-configprop">
+
+    <ul data-role="listview">
+        <li>
+            <h3 id="config-prop-name"></h3>
+                <input type="text" id="config-prop-value" value="" maxlength="512" autofocus />
+                <textarea name="textarea" id="config-prop-value-multiline"/>              
+            <br/>
+            <div data-role="controlgroup" data-type="horizontal">
+			    <a href="#" id="button-save-configprop" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+                        <wicket:message key="button-ok"/></a>
+                <a href="#" data-rel="back" data-direction="reverse"
+			        class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" id="button-cancel-configprop">
+                    <wicket:message key="button-cancel"/></a>
+            </div>            
+        </li>
+    </ul>
+
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

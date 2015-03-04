@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title">PDF</entry>
+    <entry key="pdf-cat-descript">Description</entry>
+
+    <entry key="pdf-title">Title</entry>
+    <entry key="pdf-author">Author</entry>
+    <entry key="pdf-subject">Subject</entry>
+    <entry key="pdf-keywords">Keywords</entry>
+
+    <entry key="pdf-encryption">Encryption</entry>
+
+    <entry key="pdf-owner-password">Owner Password</entry>
+    <entry key="pdf-user-password">User Password</entry>
+    <entry key="pdf-restrictions">Restrictions</entry>
+    <entry key="pdf-password-confirm">confirm</entry>
+
+    <entry key="pdf-cat-security">Security</entry>
+
+    <entry key="pdf-actions-allowed">Actions allowed</entry>
+
+    <entry key="pdf-allow-printing">Printing</entry>
+    <entry key="pdf-allow-degraded-printing">Degraded Printing</entry>
+    <entry key="pdf-allow-modify-contents">Page Extraction</entry>
+    <entry key="pdf-allow-modify-annotations">Commenting</entry>
+    <entry key="pdf-allow-assembly">Document Assembly</entry>
+    <entry key="pdf-allow-copy">Content Copying</entry>
+    <entry key="pdf-allow-copy-for-access">Content Copying for Accessibility</entry>
+    <entry key="pdf-allow-fillin">Filling of form fields</entry>
+
+    <entry key="pdf-cat-passwords">Passwords</entry>
+
+    <entry key="prompt-letterhead">Letterhead</entry>        
+
+    <entry key="prompt-apply">Apply</entry>        
+
+    <entry key="button-pdf-allow-all">Allow all</entry>
+    <entry key="button-pdf-allow-none">Allow none</entry>
+
+    <entry key="pdf-remove-graphics">Remove graphics</entry>    
+    <entry key="pdf-page-ranges">Enter ranges like: 1-4,6,8-10</entry>
+
+    <entry key="button-default">Default</entry>
+    <entry key="button-download">Download</entry>        
+    <entry key="button-send">Send</entry>        
+    <entry key="button-back">Back</entry>        
+    
+</properties>

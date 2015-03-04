@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<div data-role="header" data-theme="b">
+    <h1 id="title-printer-settings"></h1>
+</div>
+
+<div class="ui-content" id="print-settings">
+
+    <ul data-role="listview" data-inset="true">
+    
+        <li>
+            <div data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                <button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-sources-info"/>
+                <button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info"/>
+             </div>
+        </li>
+                            
+        <li class="sp-print-job-scaling">
+        
+            <wicket:message key="page-scaling" />
+                            
+            <div class="ui-mini">
+            
+				<fieldset data-role="controlgroup" data-type="horizontal">
+				
+				    <label for="" wicket:id="page-scaling-crop-label" />
+				    <input type="radio" name="" id="" wicket:id="page-scaling-crop" />
+				    
+				    <label for="" wicket:id="page-scaling-expand-label" />
+				    <input type="radio" name="" id="" wicket:id="page-scaling-expand" />
+				    
+				    <label for="" wicket:id="page-scaling-shrink-label" />
+				    <input type="radio" name="" id="" wicket:id="page-scaling-shrink" />
+				</fieldset>
+           
+		    </div>
+	    
+		</li>
+		
+        <li>    
+		    <div id="printer-options">
+		    <wicket:remove><!--
+		    Placeholder for: <select id="print-opt-i" data-native-menu="false"></select>
+		     --> </wicket:remove>
+		    </div>
+		</li>    
+    </ul>
+
+    <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+        <wicket:message key="button-apply"/>
+    </a>
+    
+    <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle" id="button-print-settings-default">
+        <wicket:message key="button-default"/>
+    </a>
+            
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

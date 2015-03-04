@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:enclosure child="printer-media-source-panel">
+
+<ul data-role="listview" data-inset="true">
+
+<li data-role="list-divider" data-theme="b"><wicket:message key="media-source"/></li>
+    
+<li>
+    <div><wicket:message key="cost-per-side"/></div>
+</li>
+
+<li class="sp-printer-charge-media-sources">
+    <wicket:fragment wicket:id="printer-media-source-panel"/>
+</li>
+
+<li>    
+     <div data-role="controlgroup" data-type="horizontal">     
+        <a href="#" id="button-save-printer-media-sources" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" 
+            tabindex="200">
+            <wicket:message key="button-apply"/>
+        </a>
+    
+        <a href="#" data-rel="back" data-direction="reverse" tabindex="201"
+            class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"><wicket:message
+                key="button-cancel"/></a>
+    </div>                  
+</li>
+
+</ul>
+
+</wicket:enclosure>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<li wicket:id="job-entry">
+    <h3>
+       <span wicket:id="printout-pie" class="sparkline-printout-pie"/>&nbsp;<span wicket:id="printer"/>
+    </h3>
+    
+    <div class="sp-txt-wrap">
+        <wicket:enclosure child="title"><span wicket:id="title" /></wicket:enclosure>
+    </div>
+    
+    <div class="sp-txt-wrap">    
+        <span wicket:id="timeSubmit"/> &bull; <span wicket:id="totals" />        
+        <wicket:enclosure child="papersize"> &bull; <span
+                wicket:id="papersize" />
+        </wicket:enclosure>
+        <wicket:enclosure child="letterhead"> &bull; <span
+                wicket:id="letterhead" />
+        </wicket:enclosure>
+        <wicket:enclosure child="duplex"> &bull; <span class="sp-txt-valid"
+                wicket:id="duplex" />
+        </wicket:enclosure>
+        <wicket:enclosure child="singlex"> &bull; <span class="sp-txt-info"
+                wicket:id="singlex" />
+        </wicket:enclosure>
+        <wicket:enclosure child="color"> &bull; <span class="sp-txt-warn"
+                wicket:id="color" />
+        </wicket:enclosure>
+        <wicket:enclosure child="grayscale"> &bull; <span class="sp-txt-valid"
+                wicket:id="grayscale" />
+        </wicket:enclosure>
+        <wicket:enclosure child="cost"> &bull; <span wicket:id="cost"/></wicket:enclosure>
+        
+    </div>    
+
+	<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
+        <a href="#" data-savapage="the-unique-filename"
+            class="sp-outbox-remove-job ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
+            wicket:id="button-remove"/>	        
+	</div>    
+    
+    <p class="ui-li-aside">
+        <span class="sp-outbox-remaining-time" wicket:id="timeExpiry"/>
+    </p>   
+</li>

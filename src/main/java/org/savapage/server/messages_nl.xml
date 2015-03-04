@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<!-- Server -->
+	<entry key="WebApp.starting">Starten applicatie-server versie: {0}</entry>
+
+	<entry key="pub-user-login-success">Gebruiker "{0}" aangemeld op {1}</entry>
+	<entry key="pub-admin-login-success">Gebruiker "{0}" (beheerder) aangemeld op {1}</entry>
+	<entry key="pub-user-logout">Gebruiker "{0}" afgemeld op {1}</entry>
+
+	<!-- WebApp User/Admin Client -->
+    <entry key="msg-error">{0}</entry>
+    
+	<entry key="msg-exception">Er is een fout opgetreden, neem contact op met uw
+		systeembeheerder.</entry>
+
+    <entry key="msg-invalid-request">Verzoek is ongeldig.</entry>
+
+	<entry key="exc-letterhead-not-found">Briefhoofd is niet gevonden. Vernieuw de
+		lijst met briefhoofden.</entry>
+    <entry key="exc-letterhead-not-found-login">Briefhoofd is niet gevonden. Meld u opnieuw aan.</entry>
+
+	<entry key="msg-need-admin-rights">Voor deze functie heeft u de rechten van een beheerder
+		nodig.</entry>
+	<entry key="msg-user-not-authorized">Uw sessie is verlopen of niet beschikbaar. Meld u
+		opnieuw aan.</entry>
+		
+    <entry key="msg-email-invalid">E-mail "{0}" is ongeldig.</entry>
+		
+	<entry key="msg-mail-sent">Mail verzonden naar {0}</entry>
+    <entry key="msg-mail-max-file-size">PDF is {0}: de maximale bijlage is {1}.</entry>
+    <entry key="msg-mail-max-file-size">De PDF is {0} en is niet verzonden: de maximale bijlage is {1}. Download de PDF en gebruik uw eigen e-mail programma om het te verzenden.</entry>
+	
+    <entry key="msg-page-delete-one">{0} pagina verwijderd.</entry>
+    <entry key="msg-page-delete-multiple">{0} pagina's verwijderd.</entry>
+
+    <entry key="mail-test-subject">SavaPage Test Mail</entry>
+    
+    <!-- This text should be on one (1) line: line feeds are picked up by the mailer  -->
+    <entry key="mail-test-body">Hallo,&#10;&#10;Dit is een test-boodschap van {0}.&#10;--&#10;{1}</entry>
+
+    <entry key="msg-config-prop-not-found">Optie "{0}" is niet gevonden.</entry>
+	<entry key="msg-config-props-error">Waarde "{0}" is ongeldig.</entry>
+	<entry key="msg-config-props-applied">Configuratie-opties zijn toegepast.</entry>
+	<entry key="msg-config-props-applied-rescheduled">Configuratie-opties zijn toegepast en opdrachten
+		opnieuw ingepland.</entry>
+
+    <entry key="msg-printer-connection-broken">Connectie naar Proxy Printers is verbroken.</entry>
+	<entry key="msg-printer-out-of-date">Informatie over de printer is verouderd. Vernieuw de
+		printer-lijst.</entry>
+
+	<entry key="msg-user-pdf-out-disabled">Het is u niet toegestaan om naar PDF te exporteren.</entry>
+
+    <entry key="msg-pdf-export-drm-error">DRM-restricted SafePages: PDF export is niet
+            toegestaan.</entry>
+
+	<entry key="msg-clear-range-syntax-error">Syntax van de pagina-reeks "{0}" is ongeldig.</entry>
+    <entry key="msg-print-out-of-range-error">Afdruk reeks "{0}" overschrijdt aantal pagina's van het document ({1}).</entry>
+	
+    <entry key="msg-print-auth-pending">Een andere afdruk-opdracht wacht op authenticatie. Probeer het later nog een keer.</entry>
+    <entry key="msg-print-auth-cancel-ok">Afdruk-opdracht is met succes geannuleerd.</entry>
+    <entry key="msg-print-auth-cancel-not-found">Te annuleren afdruk-opdracht is niet gevonden.</entry>
+	
+    <entry key="msg-print-fast-renew-ok">Fast Print Closing Time verlengd tot {0}</entry>
+	
+    <entry key="msg-outbox-cleared-none">Geen print opdrachten gevonden.</entry>
+    <entry key="msg-outbox-cleared-one">{0} print opdracht verwijderd.</entry>
+    <entry key="msg-outbox-cleared-multiple">{0} print opdrachten verwijderd.</entry>
+	
+    <entry key="msg-outbox-extended-none">Geen print opdrachten om te verlengen.</entry>
+    <entry key="msg-outbox-extended-one">{0} print opdracht verlengd tot {1} minuten.</entry>
+    <entry key="msg-outbox-extended-multiple">{0} print opdrachten verlengd tot {1} minuten.</entry>
+	
+    <entry key="msg-outbox-removed-job">Print opdracht is verwijderd.</entry>
+    <entry key="msg-outbox-removed-job-none">Geen print opdracht gevonden om te verwijderen.</entry>    
+    
+    <entry key="msg-page-move-one">{0} pagina verplaatst.</entry>
+    <entry key="msg-page-move-multiple">{0} pagina's verplaatst.</entry>
+
+	<entry key="msg-job-deleted">Opdracht is met succes verwijderd.</entry>
+	<entry key="msg-job-edited">Opdracht is met succes bewerkt.</entry>
+	<entry key="msg-letterhead-edited">Briefhoofd is met succes bewerkt.</entry>
+
+	<entry key="msg-db-backup-busy">Backup maken...</entry>
+	<entry key="msg-tech-error">{0}</entry>
+
+	<entry key="msg-user-sync-busy">Synchroniseren gebruikers ...</entry>
+	<entry key="msg-password-reset-ok">Wachtwoord is gereset.</entry>
+    <entry key="msg-password-reset-not-allowed">U mag het wachtwoord voor gebruiker "{0}" niet instellen.</entry>	
+	<entry key="msg-password-length-error">Wachtwoord moet minstens {0} tekens bevatten.</entry>
+
+    <entry key="msg-pin-reset-ok">PIN is gereset.</entry>
+    <entry key="msg-user-pin-not-numeric">PIN mag alleen cijfers bevatten.</entry>
+    <entry key="msg-user-pin-length-error-min">PIN moet minstens {0} cijfers bevatten.</entry>
+    <entry key="msg-user-pin-length-error-min-max">PIN moet tussen de {0} en {1} cijfers bevatten.</entry>
+    <entry key="msg-user-pin-length-error">PIN moet {0} cijfers bevatten.</entry>
+        
+	<entry key="msg-queue-saved-ok">Wachtrij is met succes opgeslagen.</entry>
+	<entry key="msg-queue-created-ok">Wachtrij is met succes aangemaakt.</entry>
+	<entry key="msg-queue-not-found">Wachtrij "{0}" is niet gevonden.</entry>
+	<entry key="msg-queue-duplicate-path">Wachtrij "{0}" bestaat al.</entry>
+    <entry key="msg-queue-reserved-path">Wachtrij "{0}" is gereserveerd.</entry>
+
+    <entry key="msg-device-saved-ok">Apparaat is met succes opgeslagen.</entry>
+    <entry key="msg-device-created-ok">Apparaat is met succes aangemaakt.</entry>
+    <entry key="msg-device-deleted-ok">Apparaat is met succes verwijderd.</entry>
+    <entry key="msg-device-delete-reader-in-use">Network Kaart Lezer "{0}" kan niet verwijderd worden, omdat het wordt gebruikt door Terminal "{1}".</entry>    
+    <entry key="msg-device-not-found">Apparaat "{0}" is niet gevonden.</entry>
+    <entry key="msg-device-duplicate-name">Apparaat "{0}" bestaat al.</entry>
+    <entry key="msg-device-port-error">Voer de IP poort in.</entry>
+    <entry key="msg-device-idle-seconds-error">Voer de Seconden Inactief in (voer "0" in voor niet auto afmelden).</entry>
+    <entry key="msg-device-card-reader-missing">Voer een Netwerk Kaart Lezer in.</entry>
+    <entry key="msg-device-card-reader-not-found">Netwerk Kaart Lezer "{0}" is niet gevonden.</entry>
+    <entry key="msg-device-card-reader-reserved-for-terminal">Network Kaart Lezer "{0}" is al gereserveerd voor Terminal "{1}".</entry>                        
+    <entry key="msg-device-card-reader-reserved-for-printer">Network Kaart Lezer "{0}" is al gereserveerd voor Printer "{1}".</entry>
+    <entry key="msg-device-card-reader-reserved-for-printer-group">Network Kaart Lezer "{0}" is al gereserveerd voor Printer Groep "{1}".</entry>
+    
+    <entry key="msg-device-printer-not-found">Proxy Printer "{0}" is niet gevonden.</entry>    
+    <entry key="msg-device-printer-group-not-found">Proxy Printer Groep "{0}" is niet gevonden.</entry>
+
+    <entry key="msg-device-single-proxy-printer-needed">Fast Print Modus heeft een Enkele Printer nodig.</entry>
+    <entry key="msg-device-proxy-printer-or-group-needed">Proxy Print Authenticatie heeft een Enkele Printer of Groep nodig.</entry>
+
+	<entry key="msg-printer-saved-ok">Proxy Printer is met succes opgeslagen.</entry>
+	<entry key="msg-printer-not-found">Proxy Printer "{0}" is niet gevonden.</entry>
+	
+	<entry key="msg-printer-sync-ok">CUPS synchronisatie is met succes voltooid.</entry>
+	<entry key="msg-printer-renamed-ok">Proxy Printer "{0}" is met succes hernoemd naar "{1}".</entry>
+	<entry key="msg-printer-renamed-delete-ok">Proxy Printer "{0}" is met succes hernoemd naar "{1}"
+		(bestaande Proxy Printer is verwijderd).</entry>
+	<entry key="msg-printer-rename-duplicate">Proxy Printer "{0}" kan niet worden hernoemd naar "{1}"
+		(Proxy Printer met dezelfde naam reeds aanwezig).</entry>
+	<entry key="msg-printer-rename-new-name-missing">Nieuwe naam van de printer ontbreekt.</entry>
+
+    <entry key="msg-user-not-found">Gebruiker is niet gevonden.</entry>
+    
+	<entry key="msg-user-saved-ok">Gebruiker is met succes opgeslagen.</entry>
+    <entry key="msg-user-created-ok">Gebruiker is met succes aangemaakt.</entry>
+	<entry key="msg-pagometer-reset-ok">Pagometers met succes gereset.</entry>
+
+	<entry key="msg-login-install-mode">Applicatie wordt geïnstalleerd. Wacht enkele minuten,
+		en probeer opnieuw.</entry>
+		
+    <entry key="msg-login-app-config">Applicatie wordt geconfigureerd. Wacht enkele minuten,
+        en probeer opnieuw.</entry>
+		
+	<entry key="msg-login-as-internal-admin">De applicatie moet nog worden ingesteld. Neem contact
+		op met uw systeembeheerder.</entry>
+	<entry key="msg-login-no-person">Gebruiker is geen Persoon.</entry>
+	<entry key="msg-login-invalid">Gebruikersnaam/wachtwoord is ongeldig.</entry>
+    <entry key="msg-login-invalid-number">ID Nummer is ongeldig.</entry>
+    <entry key="msg-login-invalid-pin">PIN is ongeldig.</entry>
+    <entry key="msg-login-no-pin-available">Geen PIN beschikbaar.</entry>
+    <entry key="msg-login-no-password-given">Geen wachtwoord opgegeven.</entry> 
+    <entry key="msg-login-unregistered-card">Kaart is niet geregistreerd.</entry>
+    <entry key="msg-card-registered-ok">Kaart is met succes geregistreerd.</entry>
+    <entry key="msg-card-unregistered">Kaart is niet geregistreerd.</entry>
+
+    <entry key="msg-change-internal-admin-password">Verander het standaard wachtwoord van de interne beheerder.</entry>
+
+    <entry key="msg-setup-is-needed">SavaPage moet worden geconfigureerd en is nog niet klaar voor gebruik.
+    Ga naar de sectie "Opties" en controleer de instellingen.</entry>
+
+	<entry key="msg-login-admin-not-present">Beheerder bestaat niet.</entry>
+    <entry key="msg-login-user-not-present">Gebruiker bestaat niet.</entry>
+	
+	<entry key="msg-login-denied">Toegang geweigerd voor deze gebruiker.</entry>
+    <entry key="msg-auth-mode-not-available">Authenticatie "{0}" is niet beschikbaar.</entry>
+	
+	<entry key="msg-login-no-admin-rights">Gebruiker is geen beheerder.</entry>
+	<entry key="msg-login-disabled">Uw toegang is uitgeschakeld.</entry>
+    <entry key="msg-login-not-possible">Op dit moment is aanmelden niet mogelijk. Probeer het later nog een keer.</entry>
+    <entry key="msg-login-another-session-active">Er is al een browser-sessie actief.</entry>
+
+	<entry key="msg-user-home-dir-create-error">SafePages directory kan niet worden aangemaakt.</entry>
+
+	<entry key="msg-pdf-identical-owner-user-pw">PDF wachtwoord van gebruiker en eigenaar moeten
+		verschillend zijn.</entry>
+
+	<!-- -->
+	<entry key="msg-membership-exceeded-user-limit">U heeft de deelnemers limiet
+		van uw {0} overschreden. U heeft beperkte toegang tot
+		de beheer-pagina's. Verminder het aantal gebruikers of neem contact op met 
+		{1} voor een nieuwe {2}.</entry>
+
+	<entry key="msg-membership-expired">Uw {0} is verlopen. U heeft beperkte toegang tot
+		de beheer-pagina's. Neem contact op met {1} voor een nieuwe {2}.</entry>
+
+	<entry key="msg-membership-visit">Nog {0} dagen te gaan in de {1} periode.</entry>
+
+	<entry key="msg-membership-visit-expired">De {0} periode is afgelopen.
+		U heeft beperkte toegang tot de beheer-pagina's. Neem contact op met {1} voor een {2}.</entry>
+
+	<entry key="msg-membership-wrong-product">Uw {0} is niet geldig voor
+		dit product. Neem contact op met {1} voor de juiste {2}.</entry>
+
+	<entry key="msg-membership-version">Uw {0} is niet geldig voor deze versie van de
+		applicatie. Neem contact op met {1} om uw {2} op te	waarderen.</entry>
+
+	<entry key="msg-membership-version-grace">Uw {0} is niet geldig voor deze versie van de
+		applicatie. U heeft {1} dagen om uw {2} op te waarderen.</entry>
+
+    <entry key="msg-imap-test-passed">IMAP test geslaagd: ({0}) Postvak IN en ({1}) Prullenbak berichten.</entry>
+    <entry key="msg-imap-test-failed">IMAP test gefaald: {0}</entry>
+    <entry key="msg-imap-stopped">IMAP toezicht met succes gestopt.</entry>
+    <entry key="msg-imap-started">IMAP toezicht met succes gestart.</entry>
+
+    <entry key="msg-papercut-test-passed">PaperCut test geslaagd.</entry>
+    <entry key="msg-papercut-test-failed">PaperCut test gefaald: {0}</entry>
+
+    <entry key="msg-smartschool-test-passed">SmartSchool geslaagd: {0} job(s) waiting.</entry>
+    <entry key="msg-smartschool-test-failed">SmartSchool gefaald: {0}</entry>
+    <entry key="msg-smartschool-stopped">SmartSchool toezicht met succes gestopt.</entry>
+    <entry key="msg-smartschool-started">SmartSchool toezicht met succes gestart.</entry>
+    <entry key="msg-smartschool-started-simulation">SmartSchool toezicht gestart in simulatie modus.</entry>
+
+    <entry key="msg-gcp-online">Google Cloud Printer is Online gezet.</entry>
+    <entry key="msg-gcp-offline">Google Cloud Printer is  Offline gezet.</entry>
+    <entry key="msg-gcp-already-online">Google Cloud Printer is al Online.</entry>
+    <entry key="msg-gcp-already-offline">Google Cloud Printer is al Offline.</entry>
+    <entry key="msg-gcp-state-mismatch">Google Cloud Printer status "{0}" staat deze operatie niet toe.</entry>
+    
+    <entry key="msg-voucher-batch-created-ok">Er zijn {0} vouchers gemaakt in batch {1}.</entry>
+    
+    <entry key="msg-voucher-batch-deleted-zero">Geen vouchers in batch {0} om te verwijderen .</entry>
+    <entry key="msg-voucher-batch-deleted-one">1 voucher verwijderd in batch {0}.</entry>
+    <entry key="msg-voucher-batch-deleted-many">{0} vouchers verwijderd in batch {0}.</entry>
+    
+    <entry key="msg-voucher-batch-expired-zero">Geen vouchers in batch {0} om te laten vervallen.</entry>
+    <entry key="msg-voucher-batch-expired-one">1 voucher is vervallen in batch {0}.</entry>
+    <entry key="msg-voucher-batch-expired-many">{0} vouchers zijn vervallen in batch {1}.</entry>
+    
+    <entry key="msg-voucher-deleted-expired-zero">Geen vervallen vouchers om te verwijderen.</entry>
+    <entry key="msg-voucher-deleted-expired-one">1 vervallen voucher verwijderd.</entry>
+    <entry key="msg-voucher-deleted-expired-many">{0} vervallen vouchers verwijderd.</entry>
+
+    <entry key="msg-voucher-redeem-ok">De waarde van deze voucher is met succes toegevoegd aan uw saldo.</entry>
+    <entry key="msg-voucher-redeem-invalid">Gebruiker "{0}" probeerde ongeldig voucher "{1}" in te wisselen.</entry>
+    <entry key="msg-voucher-redeem-void">Voer een geldig voucher nummer in.</entry>
+
+    <entry key="msg-deposit-funds-ok">Bedrag is met success toegevoegd aan gebruikersaccount.</entry>
+    <entry key="msg-deposit-funds-receipt-email-ok">Bedrag is met success toegevoegd aan gebruikersaccount. Kassabon verstuurd naar {0}</entry>
+        
+    <entry key="msg-deposit-email-subject">Kassabon {0}</entry>
+    <entry key="msg-deposit-email-body">De kassabon van de storting is bijgevoegd als PDF bestand.</entry>
+    
+    <entry key="msg-pos-receipt-sendmail-ok">Kassabon met succes verstuurd naar {0}</entry>
+
+</properties>

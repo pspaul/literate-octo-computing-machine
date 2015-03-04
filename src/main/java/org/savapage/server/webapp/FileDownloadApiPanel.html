@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:panel>
+
+<wicket:remove> <!--
+NOTE: Method GET is used, because Android native browser cannot handle POST. 
+I.e. the commit on the form is issued twice + the 2nd time the values of the
+hidden input is void.   
+--></wicket:remove>
+
+<form id="sp-file-download-api-form" action="/api" method="get" target="_blank">
+    <input type="hidden" name="request"/>
+    <input type="hidden" name="request-sub"/>
+    <input type="hidden" name="user"/>
+    <input type="hidden" name="data"/>
+</form>
+
+</wicket:panel>

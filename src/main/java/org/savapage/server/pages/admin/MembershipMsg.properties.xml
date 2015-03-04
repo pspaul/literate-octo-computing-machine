@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="title">{0} Warning</entry>
+	
+	<entry key="membership-msg">Access to this page is denied due to a {0} issue.
+		Please review your {1} status in the "About" section and correct
+		the problem by importing a new {2}, or by changing the user
+		options in the "Options" section.</entry>
+
+	<entry key="membership-status-expired">{0} Expired</entry>
+	
+	<entry key="membership-status-users-exceeded">You currently have more users than your {0}
+		allows.</entry>
+		
+	<entry key="membership-status-wrong-version">Your {0} is not valid for the current version of
+		the application.</entry>
+		
+	<entry key="membership-status-wrong-product">Your {0} is for product "{1}" and is not valid for
+		this application. Please contact {2} to get the correct	{3} for this application.</entry>
+		
+	<entry key="membership-status-wrong-module">Your {0} is not valid for the modules in
+		this application. Please contact {1} to get the correct {2} for this application.</entry>
+        
+	<entry key="membership-status-visit-expired">Visit Expired</entry>
+
+
+</properties>

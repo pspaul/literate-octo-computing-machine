@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="type-adjust">Handmatige aanpassing</entry>
+    <entry key="type-deposit">Handmatige transactie</entry>
+    <entry key="type-voucher">Inwisselen Voucher</entry>
+    <entry key="type-print-out">Gebruik Printer</entry>
+    <entry key="type-print-in">Gebruik Wachtrij</entry>
+    
+    <entry key="printed-pages-one">{0} pagina</entry>
+    <entry key="printed-pages-multiple">{0} pagina's</entry>
+
+    <entry key="button-receipt">Kassabon</entry>
+
+    
+</properties>

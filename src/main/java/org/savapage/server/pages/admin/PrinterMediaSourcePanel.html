@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:panel>
+
+	<table data-role="table" data-mode="reflow" class="ui-responsive ui-mini">
+		<thead>
+            <wicket:enclosure child="use-grayscale-as-default">
+                <tr>
+                    <th colspan="5" style="vertical-align: middle">                    
+                        <label for="sp-printer-use-monochrome-as-default">
+                            <wicket:message key="use-grayscale-as-default"/>
+                        </label>
+                        <input type="checkbox" id="sp-printer-use-monochrome-as-default" wicket:id="use-grayscale-as-default"/>                    
+                    </th>
+                </tr>
+            </wicket:enclosure>            
+            
+			<tr>
+                <th>Source</th>
+				<th colspan="2"><span wicket:id="th-one-sided"/><wicket:message key="one-sided"/></th>
+				<th colspan="2"><span wicket:id="th-two-sided"/><wicket:message key="two-sided"/></th>
+			</tr>
+			<tr>
+                <th wicket:id="signal-media-source-auto"/>
+				<th data-priority="1"><span wicket:id="th-grayscale-1"/><wicket:message key="grayscale"/></th>
+				<th data-priority="1"><span wicket:id="th-color-1"/><wicket:message key="color"/></th>
+                <th data-priority="2"><span wicket:id="th-grayscale-2"/><wicket:message key="grayscale"/></th>
+                <th data-priority="2"><span wicket:id="th-color-2"/><wicket:message key="color"/></th>
+			</tr>
+		</thead>
+		<tbody>
+
+            <wicket:enclosure child="media-source-auto-display-name">
+                <tr><td colspan="5"><hr/></td></tr>
+                <tr>
+                    <td style="vertical-align: middle">
+                        <label for="" wicket:id="media-source-checkbox-auto-label" value="1"/>
+                        <input class="sp-printer-media-source" type="checkbox" id="" wicket:id="media-source-checkbox-auto"/>
+                    </td>
+                    <td colspan="2">
+                        <input id="media-source-auto-display" wicket:id="media-source-auto-display-name" type="text" />
+                    </td>
+                </tr>
+            </wicket:enclosure>
+
+            <wicket:fragment wicket:id="media-source-row">
+	            <tr><td colspan="5"><hr/></td></tr>
+	            <tr class="sp-printer-media-source-row">
+	                <td style="vertical-align: middle">
+	                    <label for="" wicket:id="media-source-checkbox-label" value="1"/>
+	                    <input class="sp-printer-media-source" type="checkbox" id="" wicket:id="media-source-checkbox"/>
+	                </td>
+	                <td>
+                        <input class="sp-printer-cost-1-g" type="text" maxlength="" wicket:id="one-sided-grayscale" pattern="[0-9]*"/>
+	                </td>
+	                <td>
+                        <input class="sp-printer-cost-1-c" type="text" maxlength="" wicket:id="one-sided-color" pattern="[0-9]*"/>
+	                </td>
+	                <td>
+                        <input class="sp-printer-cost-2-g" type="text" maxlength="" wicket:id="two-sided-grayscale" pattern="[0-9]*"/>
+	                </td>
+	                <td>
+                        <input class="sp-printer-cost-2-c" type="text" maxlength="" wicket:id="two-sided-color" pattern="[0-9]*"/>
+	                </td>
+	            </tr>
+                <tr>
+	                <td colspan="2">
+	                    <input type="text" wicket:id="media-source-display-name"/>
+	                </td>
+	                <td colspan="3" style="vertical-align: middle; horizontal-align: right;">
+	                    <select id="" data-native-menu="false" class="ui-mini">
+	                        <option value=""><wicket:message key="media-size"/></option>
+                            <wicket:fragment wicket:id="media-source-media-select">
+	                        <option wicket:id="media-source-media"/>
+	                        </wicket:fragment>
+	                    </select>
+	                </td>
+	            </tr>
+            </wicket:fragment>
+
+            <wicket:enclosure child="media-source-manual-display-name">
+	            <tr><td colspan="5"><hr/></td></tr>
+	            <tr>
+	                <td style="vertical-align: middle">
+	                
+                        <label for="" wicket:id="media-source-checkbox-manual-label" value="1"/>
+                        <input class="sp-printer-media-source" type="checkbox" id="" wicket:id="media-source-checkbox-manual"/>
+	                
+	                </td>
+	                <td colspan="2">
+                        <input id="media-source-manual-display" wicket:id="media-source-manual-display-name" type="text" />
+	                </td>
+	            </tr>
+            </wicket:enclosure>            
+
+		</tbody>
+	</table>
+
+</wicket:panel>

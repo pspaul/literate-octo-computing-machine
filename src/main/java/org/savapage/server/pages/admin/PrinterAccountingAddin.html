@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:enclosure child="printer-accounting-panel">
+
+<ul data-role="listview" data-inset="true">
+
+<li data-role="list-divider" data-theme="b"><wicket:message key="media-size"/></li>
+    
+<li>
+    <div><wicket:message key="cost-per-side"/></div>
+    <p/>
+    <fieldset data-role="controlgroup" data-type="horizontal"  class="ui-mini">
+        <label for="sp-printer-charge-simple"><wicket:message key="printer-charge-simple"/></label>
+        <input type="radio" name="sp-printer-charge-type" id="sp-printer-charge-simple" wicket:id="printer-charge-simple" /> 
+        
+        <label for="sp-printer-charge-media"><wicket:message key="printer-charge-media"/></label>
+        <input type="radio" name="sp-printer-charge-type" id="sp-printer-charge-media" wicket:id="printer-charge-media" /> 
+        
+    </fieldset>
+</li>
+
+<li class="sp-printer-charge-simple">
+    <input type="text" id="sp-printer-default-cost" value=""  maxlength="10" wicket:id="printer-simple-cost"
+        pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+</li>
+
+<li class="sp-printer-charge-media">
+        <wicket:fragment wicket:id="printer-accounting-panel"/>
+</li>
+
+<li>    
+     <div data-role="controlgroup" data-type="horizontal">     
+        <a href="#" id="button-save-printer-cost" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" 
+            tabindex="200">
+            <wicket:message key="button-apply"/>
+        </a>
+    
+        <a href="#" data-rel="back" data-direction="reverse" tabindex="201"
+            class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"><wicket:message
+                key="button-cancel"/></a>
+    </div>                  
+</li>
+
+</ul>
+
+</wicket:enclosure>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="type-adjust">Manual adjustment</entry>
+    <entry key="type-deposit">Manual transaction</entry>
+    <entry key="type-voucher">Redeem Voucher</entry>
+    <entry key="type-print-out">Printer Usage</entry>
+    <entry key="type-print-in">Queue Usage</entry>
+    
+    <entry key="printed-pages-one">{0} page</entry>
+    <entry key="printed-pages-multiple">{0} pages</entry>
+    
+    <entry key="button-receipt">Receipt</entry>
+    
+</properties>

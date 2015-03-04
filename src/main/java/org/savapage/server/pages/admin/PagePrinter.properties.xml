@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    
+	<entry key="printer-displayname">Display as</entry>
+	<entry key="printer-location">Location</entry>
+    <entry key="printer-disabled">Disabled</entry>
+	
+    <entry key="printer-deleted">Delete when job history is cleaned</entry>
+	
+    <entry key="printer-groups">Proxy Printer Groups</entry>
+	
+    <entry key="printer-cat-rename">Rename</entry>	
+	<entry key="printer-newname">New name</entry>
+	<entry key="printer-rename-note">Ensure that the new name is identical to the CUPS
+		printer name (case sensitive).</entry>
+	<entry key="printer-rename-replace">Replace (delete) existing printer with identical
+		name</entry>
+
+    <entry key="button-apply">Apply</entry>
+	<entry key="button-cancel">Cancel</entry>
+	<entry key="button-delete">Delete</entry>
+	<entry key="button-rename">Rename</entry>
+
+    <entry key="printer-rename">Rename</entry>
+	
+</properties>

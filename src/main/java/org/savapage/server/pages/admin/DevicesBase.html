@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<ul data-role="listview" data-inset="true" data-theme="a">
+
+	<li data-role="list-divider"><span><wicket:message
+				key="title"/></span></li>
+
+	<li>
+		<div data-role="collapsible" data-collapsed="true">
+
+			<h3>
+				<wicket:message key="select-and-sort"/>
+			</h3>
+
+            <ul data-role="listview" data-inset="true">
+
+                <li>
+
+	                <label for="sp-device-containing-text"><wicket:message key="prompt-containing-text"/></label>
+	                <input type="text" id="sp-device-containing-text" value="" maxlength="128" 
+    	                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
+		
+		            <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		            
+		                <legend>
+		                    <wicket:message key="prompt-device-status"/>
+		                </legend>
+		
+		                <input type="radio" name="sp-device-select-status" id="sp-device-select-status-all" value="" checked="checked" /> 
+		                <label for="sp-device-select-status-all"><wicket:message key="device-status-all"/></label>
+		                        
+		                <input type="radio" name="sp-device-select-status" id="sp-device-select-status-enabled" value="1"/>
+		                <label for="sp-device-select-status-enabled"><wicket:message key="device-status-enabled"/></label>
+		                        
+		                <input type="radio" name="sp-device-select-status" id="sp-device-select-status-disabled" value="0"/>
+		                <label for="sp-device-select-status-disabled"><wicket:message key="device-status-disabled"/></label>
+		                
+		            </fieldset></div>
+		
+                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                    
+                        <legend>
+                            <wicket:message key="prompt-device-type"/>
+                        </legend>
+        
+                        <input type="radio" name="sp-device-select-type" id="sp-device-select-type-all" value="" checked="checked" /> 
+                        <label for="sp-device-select-type-all"><wicket:message key="device-type-all"/></label>
+                                
+                        <input type="radio" name="sp-device-select-type" id="sp-device-select-type-reader" value="1"/>
+                        <label for="sp-device-select-type-reader"><wicket:message key="device-type-reader"/></label>
+                                
+                        <input type="radio" name="sp-device-select-type" id="sp-device-select-type-terminal" value="0"/>
+                        <label for="sp-device-select-type-terminal"><wicket:message key="device-type-terminal"/></label>
+                        
+                    </fieldset></div>
+		
+                </li>
+                
+                <li>
+		
+		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		                <legend>
+		                    <wicket:message key="prompt-sort-by"/>
+		                </legend>
+		
+		                <input type="radio" name="sp-device-sort-dir" id="sp-device-sort-dir-asc" checked="checked" /> 
+		                <label for="sp-device-sort-dir-asc"><wicket:message key="sort-asc"/></label>
+		                
+		                <input type="radio" name="sp-device-sort-dir" id="sp-device-sort-dir-desc"/> 
+		                <label for="sp-device-sort-dir-desc"><wicket:message key="sort-desc"/></label>
+		                        
+		            </fieldset>
+		
+                </li>
+                
+                <li>
+                    <div data-role="controlgroup" data-type="horizontal">
+						<a href="#" id="button-devices-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+                            <wicket:message key="button-apply"/>
+                        </a>
+						<a href="#" id="button-devices-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+                            <wicket:message key="button-default"/>
+                        </a>
+					</div>
+                </li>
+            </ul>
+		</div>
+	</li>
+
+    <li>
+        <div data-role="controlgroup" data-type="horizontal" class="ui-mini">
+            <a href="#" id="button-create-device-terminal" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
+                <wicket:message key="button-new-terminal"/></a>
+                    
+            <a href="#" id="button-create-device-card-reader" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
+                <wicket:message key="button-new-card-reader"/></a>
+        </div>
+    </li>
+    
+	<li id="sp-device-list-page"></li>
+
+</ul>

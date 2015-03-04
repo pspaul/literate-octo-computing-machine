@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title">Afdrukken</entry>
+    <entry key="search-printer-prompt">Kies een printer:</entry>
+    <entry key="search-printer-placeholder">"Naam of locatie..."</entry>
+    <entry key="print-copies">Kopieën</entry>
+    <entry key="print-title">Titel</entry>    
+    <entry key="prompt-letterhead">Briefhoofd</entry>    
+    <entry key="delete-pages-after-print">Verwijder alle pagina's na afdrukken</entry>
+    <entry key="print-remove-graphics">Afbeeldingen verwijderen</entry>
+    <entry key="print-page-ranges">Voer reeksen in zoals: 1-4,6,8-10</entry>
+    <entry key="button-print">Afdrukken</entry>
+    <entry key="button-print-and-close">Afdrukken &amp; Sluiten</entry>    
+    <entry key="button-back">Terug</entry>        
+    <entry key="button-cancel">Annuleren</entry>
+    <entry key="button-ok">OK</entry>
+
+    <entry key="prompt-fast-print-expiry">Fast Print Sluitingstijd</entry>    
+    
+    <entry key="auth-popup-title">Uw afdruk-opdracht is vastgehouden voor authenticatie.</entry>
+    <entry key="auth-popup-message">Beweeg uw kaart langs de lezer om deze vrij te geven ...</entry>
+    
+</properties>

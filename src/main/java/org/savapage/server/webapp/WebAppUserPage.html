@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+
+<head>
+
+<noscript>
+<h2>Your browser does not support JavaScript or JavaScript is
+disabled!</h2>
+<h3>Please enable JavaScript to run this application.</h3>
+<hr />
+</noscript>
+
+<title wicket:id="app-name"/>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<wicket:remove> <!--
+Informs the Apple browser that this is a web app.
+<meta name="apple-mobile-web-app-capable" content="yes">
+--></wicket:remove>
+
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<wicket:remove>
+    <!--  Prevent chaching in IE: http://support.microsoft.com/kb/234067  -->
+</wicket:remove>
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+
+<wicket:remove>
+<!--  
+http://developer.apple.com/library/ios/#DOCUMENTATION/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+http://iconhandbook.co.uk/reference/chart/ios/
+
+sizes="72x72"   : iPad
+sizes="114x114" : iPhone 4+
+sizes="144x144" : iPad 3+
+
+If no sizes attribute is set, the element’s size defaults to 57 x 57.  
+-->
+</wicket:remove>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png" />
+
+<wicket:remove> <!--
+TODO: config for cometd 
+--></wicket:remove>
+<script type="text/javascript">
+    var config = {
+        contextPath: ''
+    };
+</script>
+<wicket:remove> <!-- 
+--></wicket:remove>
+
+</head>
+
+<body>
+
+<wicket:remove><!--  
+This is the ZERO window with empty background, which is never shown, because 
+the login window is shown as a first action. See jquery.savapage.js
+
+THIS IS REALLY NEEDED for the page after the login to show (why?).
+--></wicket:remove>
+<div data-role="dialog" id="page-zero" style="display: none;">
+<wicket:fragment wicket:id="zero-page-panel"></wicket:fragment>
+</div>
+
+<wicket:remove><!--  Placeholder for pages to load --></wicket:remove>
+<div data-role="dialog" data-theme="a" id="page-login"/>
+<div data-role="page"   data-theme="a" id="page-main"/>
+<div data-role="page"   data-theme="a" id="page-browser"/>
+<div data-role="page"   data-theme="a" id="page-doclog"/>
+<div data-role="page"   data-theme="a" id="page-accounttrx"/>
+<div data-role="dialog" data-theme="a" id="page-print"/>
+<div data-role="dialog" data-theme="a" id="page-send"/>
+<div data-role="dialog" data-theme="a" id="page-printer-settings"/>
+<div data-role="dialog" data-theme="a" id="page-pdf-properties"/>
+<div data-role="dialog" data-theme="a" id="page-letterhead"/>
+<div data-role="dialog" data-theme="a" id="page-clear"/>
+<div data-role="dialog" data-theme="a" id="page-language"/>
+<div data-role="dialog" data-theme="a" id="page-user"/>
+<div data-role="dialog" data-theme="a" id="page-user-pw-reset"/>
+<div data-role="dialog" data-theme="a" id="page-user-pin-reset"/>
+<div data-role="dialog" data-theme="a" id="page-voucher-redeem"/>
+<div data-role="dialog" data-theme="a" id="page-info"/>
+
+<div data-role="dialog" data-theme="a" id="page-outbox">
+	<div data-role="header" data-theme="b">
+	    <h1><wicket:message key="outbox-title"/></h1>
+	</div>
+	<div class="ui-content" id="content-outbox">
+        <ul data-role="listview" id="outbox-job-list" data-inset="true"
+           class="ui-listview ui-listview-inset ui-corner-all ui-shadow"/>
+	
+	    <a href="#" id="button-outbox-clear" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
+	        <wicket:message key="button-remove-all"/>
+	    </a>	
+	    <a href="#" id="button-outbox-extend" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-clock">
+	        <wicket:message key="button-extend"/>
+	    </a>		       
+	    <a href="#" id="button-outbox-back" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+	        <wicket:message key="button-back"/>        
+	    </a>
+	</div>
+	
+	<wicket:remove><!-- 
+	THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+	--></wicket:remove>  
+	<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>
+</div>
+
+<div data-role="dialog" data-theme="a" id="page-dashboard">
+
+    <div data-role="header" data-theme="b" >
+        <h1 id="dashboard-title"/>
+    </div>
+     
+	<div class="ui-content">
+	
+	    <ul data-role="listview" id="dashboard-list" data-inset="true"
+	       class="ui-listview ui-listview-inset ui-corner-all ui-shadow"/>
+
+        <div data-role="controlgroup" data-type="horizontal">
+            <wicket:enclosure child="button-user-pw-dialog">                    
+	            <a wicket:id="button-user-pw-dialog" class="sp-internal-user ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit"
+	               href="#" id="button-user-pw-dialog"/>
+            </wicket:enclosure>
+
+            <wicket:enclosure child="button-user-pin-dialog">                    
+                <a wicket:id="button-user-pin-dialog" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit"
+                   href="#" id="button-user-pin-dialog" />
+            </wicket:enclosure>
+                            
+            <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+                <wicket:message key="button-back"/>
+            </a>
+
+        </div>            
+            
+	</div>
+
+	<wicket:remove><!-- 
+	THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+	--></wicket:remove>  
+	<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>
+</div>
+
+<wicket:remove>
+    <!-- ==============================================================  
+     See FileDownloadApiPanel     
+     ================================================================== -->
+</wicket:remove>
+<wicket:fragment wicket:id="file-download-api-panel"></wicket:fragment>
+
+<wicket:remove>
+    <!-- ==============================================================  
+    Dialog for File upload must be pre-loaded for the Wicket 
+    handler to work. It does NOT work on injected mobile pages. 
+     ================================================================== -->
+</wicket:remove>
+<div data-role="dialog" data-theme="a" id="page-file-upload">
+
+    <div data-role="header" data-theme="b" >
+        <h1><wicket:message key="file-upload-title"/></h1>
+    </div>
+
+    <div class="ui-content">
+        <ul data-role="listview" data-inset="true">
+            <li>
+                <h3><wicket:message key="file-upload-supported-docs"/></h3>               
+                <div class="sp-txt-info sp-txt-wrap" wicket:id="file-upload-types-docs"/>
+            </li>
+            <li>
+                <h3><wicket:message key="file-upload-supported-graphics"/></h3>               
+                <div class="sp-txt-info sp-txt-wrap" wicket:id="file-upload-types-graphics"/>
+            </li>
+            <li>
+                <h3><wicket:message key="file-upload-max-size"/></h3>               
+                <div class="sp-txt-info" wicket:id="file-upload-max-size"/>
+            </li>
+        </ul>
+        
+        <div wicket:id="fileUploadFeedback" id="file-upload-feedback"  class="ui-body ui-body-d"/>
+        
+        <form wicket:id="fileUploadForm" enctype="multipart/form-data">
+	        <ul data-role="listview" data-inset="true">
+                <li>
+                    <div class="sp-txt-info sp-txt-wrap"><wicket:message key="file-upload-txt-font-family"/></div>
+                    
+                    <select wicket:id="fileUploadFontSelect" tabindex="-1" id="file-upload-fontfamily" 
+                        class="ui-mini" data-native-menu="false"/>                
+                </li>
+                <li>
+	                <label for="file-upload-file"/> 
+	                <input id="file-upload-file" wicket:id="fileUpload" type="file" 
+		                accept="" size="50"/>
+	            </li>
+	        </ul>
+	        <p>
+	            <input wicket:id="ajaxSubmitFileUpload" type="button" data-inline="true" data-icon="check"
+	                value="button-file-upload" id="button-file-upload-submit" />
+	                 
+	            <input wicket:id="file-upload-reset" type="reset" data-inline="true" data-icon="delete"
+	                id="button-file-upload-reset" value="button-file-upload-clear"/>
+	                
+	            <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+                    <wicket:message key="button-back"/>
+                </a>
+	        </p>
+        </form>
+    </div>
+
+</div>
+
+</body>
+
+</html>

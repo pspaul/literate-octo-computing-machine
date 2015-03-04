@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="device">Device</entry>    
+    <entry key="device-terminal">Terminal</entry>
+    <entry key="device-card-reader">Network Card Reader</entry>
+    
+    <entry key="device-name">Name</entry>
+    <entry key="device-hostname">Host/IP</entry>
+    <entry key="device-port">Port</entry>
+    <entry key="device-location">Location</entry>
+    <entry key="device-notes">Notes</entry>
+    <entry key="device-disabled">Disabled</entry>
+    
+    <entry key="terminal-auto-logout">Idle Seconds before auto logout</entry>
+    
+    <entry key="device-proxy-print">Custom Proxy Print</entry>
+    <entry key="device-cardreader-print-auth">Proxy Print Authentication</entry>
+    
+    <entry key="device-proxy-print-target">Target</entry>
+    <entry key="device-proxy-print-single">Single Printer</entry>
+    <entry key="device-proxy-print-group">Printer Group</entry>
+
+    <entry key="device-proxy-print-mode">Print Mode</entry>
+    <entry key="proxy-print.auth-mode-fast">Fast</entry>
+    <entry key="proxy-print.auth-mode-hold">Hold</entry>
+    <entry key="proxy-print.auth-mode-direct">Direct</entry>
+    <entry key="proxy-print.auth-mode-fast_hold">Fast + Hold</entry>
+    <entry key="proxy-print.auth-mode-fast_direct">Fast + Direct</entry>
+
+    <entry key="card-format">NFC Card Number</entry>
+    <entry key="card-format-local">Local NFC Card Number</entry>
+    <entry key="card-format-hex">HEX</entry>
+    <entry key="card-format-dec">DEC</entry>
+    <entry key="card-format-lsb">LSB</entry>
+    <entry key="card-format-msb">MSB</entry>
+
+    <entry key="user-auth-mode">Custom User Login</entry>
+    
+    <entry key="user-auth-mode-name">Username</entry>
+    <entry key="user-auth-mode-id">ID Number</entry>
+    <entry key="user-auth-mode-card">NFC Card</entry>
+    <entry key="user-auth-mode-card-local">Local NFC Card</entry>
+    <entry key="user-auth-mode-card-network">Network NFC Card</entry>
+
+    <entry key="user-auth-mode-id-pin">Require PIN</entry>
+    <entry key="user-auth-mode-id-mask">Mask input</entry>
+    
+    <entry key="user-auth-mode-card-pin">Require PIN</entry>
+    <entry key="user-auth-mode-card-self-assoc">Self Association</entry>
+
+    <entry key="device-assoc-network-card-reader">Network NFC Card Reader</entry>
+
+    <entry key="user-auth-mode-default">Default Login</entry>
+    <entry key="user-auth-mode-default-user">Username</entry>
+    <entry key="user-auth-mode-default-id">ID Number</entry>
+    <entry key="user-auth-mode-default-card-local">Local NFC Card</entry>
+    <entry key="user-auth-mode-default-card-network">Network NFC Card</entry>
+
+    <entry key="device-delete-warning">Deleting a device is a destructive action
+        which cannot be undone.</entry>
+        
+    <entry key="button-ok">OK</entry>
+    <entry key="button-delete">Delete</entry>
+    <entry key="button-cancel">Cancel</entry>
+</properties>

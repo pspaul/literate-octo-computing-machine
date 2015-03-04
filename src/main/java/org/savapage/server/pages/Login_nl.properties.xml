@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title">Welkom bij {0}</entry>
+    
+    <entry key="login-descript-user">Meld u aan om de applicatie te starten.</entry>
+    <entry key="login-descript-admin">Meld u aan als beheerder.</entry>
+    
+    <entry key="button-login">Aanmelden</entry>
+    <entry key="button-lang">Taal</entry>
+    <entry key="button-about">Info</entry>
+    
+    <entry key="button-ok">OK</entry>
+    <entry key="button-cancel">Annuleren</entry>
+    
+    <entry key="label-user-name">Gebruikersnaam</entry>
+    <entry key="label-password">Wachtwoord</entry>
+    
+    <entry key="label-id-number">ID Nummer</entry>
+    <entry key="label-id-pin">PIN</entry>
+
+    <entry key="label-card-swipe-start">Druk hier om de kaartlezer te activeren.</entry>
+    <entry key="label-card-swipe">Beweeg uw kaart langs de lezer . . .</entry>
+    <entry key="label-card-pin">PIN</entry>
+
+    <entry key="label-card">NFC Kaart</entry>
+    <entry key="label-card-ip">NFC Kaart</entry>
+
+    <entry key="card-assoc-descript">De kaart die u gebruikte is niet gekoppeld aan een gebruikersaccount.
+        Voer uw Gebruikersnaam en Wachtwoord in om het aan uw account te koppelen, of Annuleer deze actie.</entry>
+
+    <entry key="choose-another-method">Aanmelden met</entry>
+    
+</properties>

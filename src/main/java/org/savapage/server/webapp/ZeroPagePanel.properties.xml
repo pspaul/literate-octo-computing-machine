@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="zero-page-title">{0}</entry>
+    <entry key="zero-page-saluation">Your session has expired.</entry>
+    <entry key="button-continue">Continue</entry>
+    
+</properties>

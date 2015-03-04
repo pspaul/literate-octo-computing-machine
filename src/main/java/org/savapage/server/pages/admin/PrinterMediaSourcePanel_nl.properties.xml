@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="media-source">Invoer</entry>
+    <entry key="media-size">Papierformaat</entry>
+    <entry key="one-sided">Enkelzijdig</entry>
+    <entry key="two-sided">Dubbelzijdig</entry>
+    <entry key="grayscale">Z/W</entry>
+    <entry key="color">Kleur</entry>
+    <entry key="default">Standaard</entry>
+    <entry key="show-all">Alles tonen</entry>
+    <entry key="show-selected-only">Alleen geselecteerde tonen</entry>
+    <entry key="use-grayscale-as-default">Gebruik Z/W als standaard</entry>
+</properties>

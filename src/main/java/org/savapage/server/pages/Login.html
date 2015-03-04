@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!--
++===========================================================================+
+| IMPORTANT:
+| Use <div style="display: none;"> to initially HIDE EACH login method.
+| The Web App will take care of visibility.
+|
+| When ALL login methods are initially visible some browsers (native Android)
+| will display only display the bottom part of the dialog.   
++===========================================================================+
+--></wicket:remove>  
+
+<wicket:remove><!-- 
+<imput type="text" autofocus placeholder="Enter your user name" pattern="[0-9]*"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div class="ui-content" id="page-login-content" >
+
+    <h3 class="sp-login-dialog" wicket:id="title"/>
+    <h3 class="sp-login-dialog-assoc" wicket:id="title-assoc"/>
+
+    <div class="sp-login-dialog" wicket:id="login-descript"/>
+
+    <ul data-role="listview" data-inset="true">
+        <li>
+            <div id="sp-div-login-card-assoc" style="display: none;">
+            
+                <span class="sp-txt-wrap"><wicket:message key="card-assoc-descript"/></span>
+                 
+                <hr style="background-color: silver; height: 1px; border: 0; "/>
+                <p>&nbsp;</p>
+                <p class="sp-txt-info" id="sp-login-card-assoc-countdown" style="position:absolute; right:20px;"/>
+	                
+                <div>
+                    <label for="sp-login-user-name-assoc"><wicket:message key="label-user-name"/></label>
+                    <input type="text" id="sp-login-user-name-assoc" value="" maxlength="128"
+                    autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                     
+                    <label for="sp-login-user-password-assoc"><wicket:message key="label-password"/></label> 
+                    <input type="password" id="sp-login-user-password-assoc" value="" />
+                </div>
+                
+                <div data-role="controlgroup" data-type="horizontal">
+                    <a href="#" id="sp-btn-login-card-assoc" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+                        <wicket:message key="button-ok"/>
+                    </a>
+                    <a href="#" id="sp-btn-login-card-assoc-cancel" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+                        <wicket:message key="button-cancel"/>
+                    </a>
+                </div>
+            </div>
+            
+            <div id="sp-div-login-name" style="display: none;">
+
+				<label for="sp-login-user-name"><wicket:message key="label-user-name"/></label>
+				<input type="text" id="sp-login-user-name" value=""	maxlength="128"
+				autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /> 					
+
+				<label for="sp-login-user-password"><wicket:message key="label-password"/></label> 
+				<input type="password" id="sp-login-user-password" value="" />
+                					
+				<div>
+				    <a href="#" id="sp-btn-login-name" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+				        <wicket:message key="button-login"/>
+				    </a>
+			    </div>
+            </div>
+            
+            <div id="sp-div-login-number" style="display: none;">
+
+                <label for="sp-login-id-number"><wicket:message key="label-id-number"/></label>
+                <input wicket:id="login-id-number" type="text" id="sp-login-id-number" value="" maxlength="10"
+                    autofocus pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /> 
+
+                <wicket:enclosure child="login-id-pin">
+	                <label for="sp-login-id-pin"><wicket:message key="label-id-pin"/></label> 
+	                <input wicket:id="login-id-pin" type="password" id="sp-login-id-pin" value="" pattern="[0-9]*" />
+                </wicket:enclosure>
+
+                <div>
+                    <a href="#" id="sp-btn-login-number" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+                        <wicket:message key="button-login"/>
+                    </a>
+                </div>
+            </div>
+            
+            <div id="sp-div-login-card-local" style="display: none;">
+                <div id="sp-login-card-local-number-group" tabindex="0">
+	                <h3 class="sp-txt-info" style="padding: 10px;">
+	                   <span id="sp-login-card-local-focusout"><wicket:message key="label-card-swipe-start"/></span>
+                       <span id="sp-login-card-local-focusin"><wicket:message key="label-card-swipe"/></span>
+	                </h3>
+                    <input type="hidden" id="sp-login-card-local-number" value="" /> 
+                </div>
+                	                
+                <div id="sp-login-card-local-pin-group">
+                
+                    <label for="sp-login-card-local-pin"><wicket:message key="label-card-pin"/></label> 
+                    <input type="password" id="sp-login-card-local-pin" value="" pattern="[0-9]*" />
+                    
+                    <a href="#" id="sp-btn-login-card-local" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+                        <wicket:message key="button-login"/>
+                    </a>
+                </div>
+            </div>
+
+            <div id="sp-div-login-card-ip" style="display: none;">
+            
+                <div id="sp-login-card-ip-number-group">            
+                    <h3 class="sp-txt-info" style="padding: 10px;">(((&bullet;&nbsp;<wicket:message key="label-card-swipe"/></h3>
+                    <input type="hidden" id="sp-login-card-ip-number" value=""/> 
+                </div>
+                
+                <div id="sp-login-card-ip-pin-group">
+                
+                    <label for="sp-login-card-ip-pin"><wicket:message key="label-card-pin"/></label> 
+                    <input type="password" id="sp-login-card-ip-pin" value="" pattern="[0-9]*" />
+
+                    <a href="#" id="sp-btn-login-card-ip" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+                        <wicket:message key="button-login"/>
+                    </a>
+                </div>
+            </div>
+            
+		    <div class="sp-login-dialog" id="sp-login-modes" style="display: none;">
+		    
+		        <br/>
+				<p class="sp-txt-info"><wicket:message key="choose-another-method"/></p>
+
+                <div data-role="controlgroup" data-type="horizontal">
+					<a href="#" id="sp-btn-login-mode-name" class="ui-btn ui-btn-inline ui-mini">
+					   <span class="sp-txt-info"><wicket:message key="label-user-name"/></span>
+					</a>
+					<a href="#" id="sp-btn-login-mode-id" class="ui-btn ui-btn-inline ui-mini">
+					   <span class="sp-txt-info"><wicket:message key="label-id-number"/></span>
+					</a>
+					<a href="#" id="sp-btn-login-mode-card-local" class="ui-btn ui-btn-inline ui-mini">
+					   <span class="sp-txt-info"><wicket:message key="label-card"/></span>
+					</a>
+	                <a href="#" id="sp-btn-login-mode-card-ip" class="ui-btn ui-btn-inline ui-mini">
+	                   <span class="sp-txt-info"><wicket:message key="label-card"/></span>
+	                </a>
+	            </div>
+	            
+		    </div>
+            
+        </li>
+    </ul>
+    
+	<p>
+        <div class="sp-login-dialog" data-role="controlgroup" data-type="horizontal">
+            <a href="#" id="button-app-about" data-dialog="true" class="ui-mini ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
+                <span class="sp-txt-info"><wicket:message key="button-about"/></span></a>
+            <a href="#" id="button-app-language" data-dialog="true" class="ui-mini ui-btn ui-btn-inline ui-btn-icon-left ui-icon-gear">
+                <span class="sp-txt-info"><wicket:message key="button-lang"/></span></a>     
+        </div>  
+	</p>
+
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>

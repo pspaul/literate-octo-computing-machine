@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<div data-role="header" data-theme="b" >
+	<h1>
+		<wicket:message key="title"/>
+	</h1>
+</div>
+
+<div class="ui-content">
+
+	<h3 wicket:id="app-version"/>
+	<p class="sp-txt-wrap">
+		<span wicket:id="app-name"/> is Libre Software.
+	</p> 
+    <p class="sp-txt-wrap">
+		Copyright &copy; 2011-<span wicket:id="current-year"></span> by 
+		<a class="sp-plain-link" href="http://www.datraverse.com/en" 
+		  target="_blank" wicket:id="app-copyright-owner"/>
+    </p>		
+    <p class="sp-txt-wrap">
+		Licensed under 
+        <a class="sp-plain-link" href="https://www.gnu.org/licenses/agpl.html" 
+            target="_blank">GNU Affero General Public License (AGPL)</a> version&nbsp;3 as published by 
+        the <a class="sp-plain-link" href="http://fsf.org" target="_blank">Free Software Foundation</a>.
+    </p>
+
+    <p>    
+       <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="http://savapage.org" target="_blank">
+           www.savapage.org</a>
+	   <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="/docs/licenses/" target="_blank">
+	      <wicket:message key="license-info-link" /></a>
+       <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="https://gitorious.org/savapage" target="_blank">
+           <wicket:message key="source-code-link" /></a>
+    </p>
+
+    <div>	
+	   <a href="#" class="ui-btn ui-btn-inline ui-icon-back ui-btn-icon-left" 
+	       id="button-appinfo-cancel"
+	       data-rel="back" data-direction="reverse">
+	           <wicket:message key="button-back"/></a>
+    </div>
+</div>
+
+
+
+

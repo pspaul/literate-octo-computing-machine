@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<ul data-role="listview" data-inset="true" data-theme="a">
+
+	<li data-role="list-divider"><span><wicket:message key="title"/></span></li>
+
+	<li>
+	    <div class="ui-field-contain">
+	    
+	        <label for="sp-voucher-batch"><wicket:message key="prompt-batch"/></label>
+	        
+	        <select name="sp-voucher-batch" id="sp-voucher-batch" data-native-menu="false">
+	            <wicket:remove><!--
+	            NOTE: This option MUST have a value to be selectable, 
+	            if not it is just a header.
+	            --></wicket:remove> 
+	            <option value="0">- <wicket:message key="option-all"/> -</option>
+	            <wicket:fragment wicket:id="option-list-batch">                        
+	                <option value="the-key" wicket:id="option-batch"></option>
+	            </wicket:fragment>
+	        </select>
+	    </div>
+	    
+		<div data-role="collapsible" data-collapsed="true">
+
+			<h3>
+				<wicket:message key="header-actions"/>
+			</h3>
+
+            <ul data-role="listview" data-inset="true">
+
+		       <li data-role="list-divider">
+		            <h3><wicket:message key="header-batch"/></h3>
+		       </li>
+		       
+               <li>
+                    <div class="sp-voucher-batch-selected ui-mini ui-field-contain">
+                        <label for="sp-voucher-card-print-format"><wicket:message key="prompt-card-layout"/></label>
+                        <select tabindex="-1" id="sp-voucher-card-print-format" data-native-menu="false">
+                            <wicket:fragment wicket:id="voucher-card-format-options"/>
+                        </select>
+                    </div>
+                    
+                    <div class="ui-mini" data-role="controlgroup" data-type="horizontal">
+                    
+                        <a href="#" id="button-voucher-new-batch" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
+                             <wicket:message key="button-new-batch"/></a>
+                           
+                        <a href="#" id="button-voucher-expire-batch" class="sp-voucher-batch-selected ui-btn ui-btn-inline ui-btn-icon-left ui-icon-forbidden">
+                             <wicket:message key="button-expire-batch"/></a>
+                             
+                        <a href="#" id="button-voucher-delete-batch" class="sp-voucher-batch-selected ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
+                             <wicket:message key="button-delete-batch"/></a>
+                             
+                        <a href="#" id="button-voucher-print-batch" class="sp-voucher-batch-selected ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d">
+                             <wicket:message key="button-vouchers"/></a>
+                             
+                    </div>
+                    
+                </li>
+            </ul>
+                            
+            <ul data-role="listview" data-inset="true">
+				<li data-role="list-divider">
+                    <h3><wicket:message key="header-vouchers"/></h3>
+				</li>
+                <li>
+                    <div class="ui-mini">
+                        <a href="#" id="button-voucher-delete-expired" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
+                            <wicket:message key="button-delete-expired"/></a>
+                    </div>
+                                      
+                </li>
+            </ul>
+        </div>
+                                    
+        <div data-role="collapsible" data-collapsed="true">
+
+            <h3><wicket:message key="select-and-sort"/></h3>
+            
+            <ul data-role="listview" data-inset="true">
+            
+                <li>
+                    <label for="sp-voucher-number"><wicket:message key="prompt-number"/></label>
+                    <input type="text" id="sp-voucher-number" value="" maxlength="64" 
+                      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                                      
+                </li>
+                                                    
+                <li>
+                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">                    
+                        <label for="sp-voucher-select-expired-void">-</label>
+                        <input type="radio" name="sp-voucher-select-expired" id="sp-voucher-select-expired-void" checked="checked" value="" /> 
+                                
+                        <label for="sp-voucher-select-expired-no"><wicket:message key="label-valid"/></label>
+                        <input type="radio" name="sp-voucher-select-expired" id="sp-voucher-select-expired-no" value="0"/>
+                        
+                        <label for="sp-voucher-select-expired-yes"><wicket:message key="label-expired"/></label>
+                        <input type="radio" name="sp-voucher-select-expired" id="sp-voucher-select-expired-yes" value="1"/>
+                                
+                    </fieldset></div>                                    
+                </li>
+                
+                <li>
+                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                                        
+                        <label for="sp-voucher-select-used-void">-</label>
+                        <input type="radio" name="sp-voucher-select-used" id="sp-voucher-select-used-void" checked="checked" value="" /> 
+                                
+                        <label for="sp-voucher-select-used-no"><wicket:message key="label-remaining"/></label>
+                        <input type="radio" name="sp-voucher-select-used" id="sp-voucher-select-used-no" value="0"/>
+                        
+                        <label for="sp-voucher-select-used-yes"><wicket:message key="label-used"/></label>
+                        <input type="radio" name="sp-voucher-select-used" id="sp-voucher-select-used-yes" value="1"/>
+                                
+                    </fieldset></div>
+                    
+                </li>
+                
+                <li>
+                    <label for="sp-voucher-user"><wicket:message key="prompt-user"/></label>
+                    <input type="text" id="sp-voucher-user" value="" maxlength="64" 
+                      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
+
+                    <span><wicket:message key="prompt-period"/></span>
+                    
+                    <div class="ui-field-contain">
+                        <label for="sp-voucher-date-from"><wicket:message key="prompt-period-from"/></label>
+                        <input id="sp-voucher-date-from" data-clear-btn="true" />
+                    </div>        
+
+                    <div class="ui-field-contain">
+                        <label for="sp-voucher-date-to"><wicket:message key="prompt-period-to"/></label>                 
+                        <input id="sp-voucher-date-to" data-clear-btn="true" />
+                    </div>                                        
+                </li>
+                
+                <li>
+		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		                <legend>
+		                    <wicket:message key="prompt-sort-by"/>
+		                </legend>
+		
+                        <input type="radio" name="sp-voucher-sort-by" id="sp-voucher-sort-by-number" value="NUMBER" checked="checked"/> 
+                        <label for="sp-voucher-sort-by-number"><wicket:message key="sort-by-number"/></label>
+                                
+		                <input type="radio" name="sp-voucher-sort-by" id="sp-voucher-sort-by-value" value="VALUE"/> 
+		                <label for="sp-voucher-sort-by-value"><wicket:message key="sort-by-value"/></label>
+		                        
+                        <input type="radio" name="sp-voucher-sort-by" id="sp-voucher-sort-by-user" value="USER"/> 
+                        <label for="sp-voucher-sort-by-user"><wicket:message key="sort-by-user"/></label>
+                                
+                        <input type="radio" name="sp-voucher-sort-by" id="sp-voucher-sort-by-date-used" value="DATE_USED"/> 
+                        <label for="sp-voucher-sort-by-date-used"><wicket:message key="sort-by-date-used"/></label>
+                        
+                        <input type="radio" name="sp-voucher-sort-by" id="sp-voucher-sort-by-date-expired" value="DATE_EXPIRED"/> 
+                        <label for="sp-voucher-sort-by-date-expired"><wicket:message key="sort-by-date-expired"/></label>
+                    </fieldset>
+                    
+                    <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                        <legend>
+                            <wicket:message key="prompt-sort-direction"/>
+                        </legend>
+                        
+		                <input type="radio" name="sp-voucher-sort-dir" id="sp-voucher-sort-dir-asc" checked="checked" /> 
+		                <label for="sp-voucher-sort-dir-asc"><wicket:message key="sort-asc"/></label>
+		                
+		                <input type="radio" name="sp-voucher-sort-dir" id="sp-voucher-sort-dir-desc"/> 
+		                <label for="sp-voucher-sort-dir-desc"><wicket:message key="sort-desc"/></label>		                        
+		            </fieldset>		
+                </li>
+                
+            </ul>
+		</div>
+		 
+        <div data-role="controlgroup" data-type="horizontal">
+		    <a href="#" id="button-voucher-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+		        <wicket:message key="button-apply"/></a>
+		    <a href="#" id="button-voucher-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+		        <wicket:message key="button-default"/></a>
+		</div>
+    
+	</li>
+
+	<li id="sp-voucher-list-page"></li>
+
+</ul>

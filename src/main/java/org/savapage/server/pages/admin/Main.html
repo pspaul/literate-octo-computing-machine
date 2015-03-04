@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<div class="ui-content">
+
+	<div class="content-secondary">
+		<!-- -->
+		<div id="jqm-homeheader">
+			<h1 id="jqm-logo">
+				<img src="images/savapage-logo.png" alt="SavaPage" />
+			</h1>
+			<p><wicket:message key="txt-logo-subtext"/></p>
+		</div>
+
+		<p class="intro">
+			<strong><wicket:message key="txt-welcome-salutation"/>.</strong>
+			&nbsp;<wicket:message key="txt-welcome"/>
+		</p>
+
+		<wicket:remove>
+			<!-- NOTE 
+            Using 'href' attribute does NOT work since when, in JavaScript, we 
+            use $(this).attr('href') we get e.g. '../Dashboard' back, so we use
+            the 'name' attribute, which gives us the plain 'Dashboard' back.  
+            -->
+		</wicket:remove>
+
+		<ul data-role="listview" data-inset="true" data-theme="a" id="sp-a-menu">
+        <wicket:remove>
+            <!-- 
+			<li data-role="list-divider">SavaPage</li>
+            -->
+        </wicket:remove>
+			<li data-icon="info"><a class="savapage-detail" name="Dashboard"><wicket:message
+						key="cat-dashboard"/></a></li>
+			<li data-icon="user"><a class="savapage-detail-prev" name="UsersBase"><wicket:message
+						key="cat-users"/></a></li>
+			<li data-icon="gear"><a class="savapage-detail-prev" name="QueuesBase"><wicket:message
+						key="cat-queues"/></a></li>
+			<li data-icon="gear"><a class="savapage-detail-prev" name="PrintersBase"><wicket:message
+						key="cat-printers"/></a></li>
+            <li data-icon="gear"><a class="savapage-detail-prev" name="DevicesBase"><wicket:message
+                        key="cat-devices"/></a></li>
+                        
+			<wicket:remove>
+				<li data-icon="grid"><a class="savapage-detail" name="Reports">Reports</a></li>
+			</wicket:remove>
+			
+			<li data-icon="gear"><a class="savapage-detail" name="Options"><wicket:message
+						key="cat-options"/></a></li>
+						
+            <li data-icon="info"><a class="savapage-detail-prev"
+                name="DocLogBase"><wicket:message key="cat-doclog"/></a></li>
+				
+            <li data-icon="alert"><a class="savapage-detail-prev"
+                name="AppLogBase"><wicket:message key="cat-applog"/></a></li>
+
+			<li data-icon="info"><a class="savapage-detail" name="About"><wicket:message
+						key="cat-about"/></a></li>
+						
+			<li data-icon="power"><a href="#" id="button-logout"><span
+					style="color: brown;"><wicket:message key="button-logout"/></span></a></li>
+		</ul>
+
+	</div>
+	<div class="content-primary" id="sp-a-content" />	
+</div>
+
+<a id="sp-a-footer"/>
+
+<div data-role="footer" class="footer-docs" data-theme="a" data-position="fixed">
+    <div data-role="controlgroup" data-type="horizontal">
+    
+		<a href="#sp-a-top" class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-home">
+		    <wicket:message key="button-top"/></a>
+		    
+		<a href="#sp-a-menu" class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-carat-u">
+		    <wicket:message key="button-menu"/></a>
+
+        <a href="#sp-a-content" id="sp-a-content-button" class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-arrow-u-r">
+            &nbsp;</a>
+
+        <a href="#sp-a-footer" id="sp-a-footer-button" class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-carat-d">
+            &nbsp;</a>
+
+        <a href="#sp-popup-main-action" data-rel="popup"
+             class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-action ui-btn-icon-notext">&nbsp;</a>
+
+        <div data-role="popup" id="sp-popup-main-action" data-theme="b">
+        
+            <ul data-role="listview" data-inset="true" style="min-width:210px;">
+            
+                <li data-icon="gear">
+                   <a class="savapage-detail-prev" name="AccountVoucherBase">
+                       <wicket:message key="vouchers"/></a></li>                             
+                <li data-icon="shop">
+                    <a href="#" id="button-point-of-sale">
+                        <wicket:message key="point-of-sale"/></a></li>                             
+                <li data-icon="gear">
+                   <a class="savapage-detail-prev" name="ConfigPropBase">
+                       <wicket:message key="config-editor"/></a></li>
+                <li data-icon="info">
+                   <a href="/docs/manual/" target="_blank">User Manual</a>
+                </li>
+                <li data-icon="info">
+                   <a href="http://savapage.org/" target="_blank">savapage.org</a>
+                </li>
+                                             
+            </ul>
+        </div>
+                            
+				    
+    </div>                
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>
+ 
