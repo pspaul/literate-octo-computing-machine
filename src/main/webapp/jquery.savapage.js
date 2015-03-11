@@ -201,7 +201,7 @@
                 // See Java class: CometdConnectDto
                 $.cometd.handshake({
                     ext : {
-                        authentication : {
+                        'org.savapage.authn' : {
                             token : token
                         }
                     }
@@ -314,7 +314,7 @@
                 $.cometd.addListener('/meta/handshake', function(handshake) {
 
                     // TODO: to be tested
-                    // var auth = handshake.ext && handshake.ext.authentication;
+                    // var auth = handshake.ext && handshake.ext.'org.savapage.authn';
                     // if (auth && auth.failed === true) {
                     // // Authentication failed, tell the user
                     // alert('Authentication failed!');
