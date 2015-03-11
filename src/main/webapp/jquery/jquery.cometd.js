@@ -17,7 +17,7 @@
 {
     function bind($, org_cometd)
     {
-        // Remap cometd JSON functions to jquery JSON functions
+        // Remap cometd JSON functions to jquery JSON functions.
         org_cometd.JSON.toJSON = JSON.stringify;
         org_cometd.JSON.fromJSON = JSON.parse;
 
@@ -36,7 +36,7 @@
             }
         }
 
-        // Remap toolkit-specific transport calls
+        // Remap toolkit-specific transport calls.
         function LongPollingTransport()
         {
             var _super = new org_cometd.LongPollingTransport();
@@ -50,13 +50,17 @@
                     type: 'POST',
                     contentType: 'application/json;charset=UTF-8',
                     data: packet.body,
+                    global: false,
+                    xhrFields: {
+                        // For asynchronous calls.
+                        withCredentials: true
+                    },
                     beforeSend: function(xhr)
                     {
-                        // Has no effect if the request is not cross domain
-                        // but if it is, allows cookies to be sent to the server.
+                        // For synchronous calls.
                         xhr.withCredentials = true;
                         _setHeaders(xhr, packet.headers);
-                        // Returning false will abort the XHR send
+                        // Returning false will abort the XHR send.
                         return true;
                     },
                     success: packet.onSuccess,
@@ -84,13 +88,13 @@
                     dataType: 'jsonp',
                     jsonp: 'jsonp',
                     data: {
-                        // In callback-polling, the content must be sent via the 'message' parameter
+                        // In callback-polling, the content must be sent via the 'message' parameter.
                         message: packet.body
                     },
                     beforeSend: function(xhr)
                     {
                         _setHeaders(xhr, packet.headers);
-                        // Returning false will abort the XHR send
+                        // Returning false will abort the XHR send.
                         return true;
                     },
                     success: packet.onSuccess,
@@ -104,11 +108,11 @@
             return that;
         }
 
-        $.Cometd = function(name)
+        $.CometD = function(name)
         {
-            var cometd = new org_cometd.Cometd(name);
+            var cometd = new org_cometd.CometD(name);
 
-            // Registration order is important
+            // Registration order is important.
             if (org_cometd.WebSocket)
             {
                 cometd.registerTransport('websocket', new org_cometd.WebSocketTransport());
@@ -119,8 +123,8 @@
             return cometd;
         };
 
-        // The default cometd instance
-        $.cometd = new $.Cometd();
+        // The default cometd instance.
+        $.cometd = new $.CometD();
 
         return $.cometd;
     }

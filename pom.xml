@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>savapage-server</artifactId>
     <groupId>org.savapage</groupId>
-    <version>0.9.7</version>
+    <version>0.9.8</version>
 	<name>SavaPage Server</name>
 	<packaging>war</packaging>
     <licenses>
@@ -15,7 +15,7 @@
     </licenses> 
 	<properties>
 		<wicket.version>6.19.0</wicket.version>
-        <jetty.version>8.1.16.v20140903</jetty.version>
+        <jetty.version>9.2.9.v20150224</jetty.version>
 	</properties>
 	<dependencies>
 		<!-- WICKET DEPENDENCIES -->
@@ -41,7 +41,7 @@
 		<!-- JETTY DEPENDENCIES FOR TESTING -->
 		<dependency>
 			<groupId>org.eclipse.jetty.aggregate</groupId>
-			<artifactId>jetty-all-server</artifactId>
+			<artifactId>jetty-all</artifactId>
 			<version>${jetty.version}</version>
 			<exclusions>
 				<exclusion>
@@ -58,12 +58,12 @@
 		<dependency>
 			<groupId>org.savapage</groupId>
 			<artifactId>savapage-core</artifactId>
-			<version>0.9.7</version>
+			<version>0.9.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cometd.java</groupId>
 			<artifactId>cometd-java-server</artifactId>
-			<version>2.9.1</version>
+			<version>3.0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlrpc</groupId>
@@ -112,19 +112,6 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>${jetty.version}</version>
 				<configuration>
-					<connectors>
-						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-							<port>8080</port>
-							<maxIdleTime>3600000</maxIdleTime>
-						</connector>
-						<connector implementation="org.eclipse.jetty.server.ssl.SslSocketConnector">
-							<port>8443</port>
-							<maxIdleTime>3600000</maxIdleTime>
-							<keystore>${project.build.directory}/test-classes/keystore</keystore>
-							<password>wicket</password>
-							<keyPassword>wicket</keyPassword>
-						</connector>
-					</connectors>
 				</configuration>
 			</plugin>
 			<plugin>

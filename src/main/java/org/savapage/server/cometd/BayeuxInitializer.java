@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -42,40 +42,6 @@ import org.slf4j.LoggerFactory;
  * {@code <servlet-name>initializer</servlet-name>} in {@code web.xml}
  * configuration file.
  * </p>
- * <p>
- * See the documentation for cometd server <a
- * href="http://cometd.org/documentation/2.x/cometd-java/server/configuration">
- * configuration</a>.
- * </p>
- * <p>
- * These are <init-param> settings for the cometd servlet in web.xml file. The
- * following timeout parameters are important:
- * </p>
- * <ul>
- * <li>
- * 'timeout' (default 30000) : time, in milliseconds, that a server will wait
- * for a message before responding to a long poll with an empty response.</li>
- * <li>
- * 'interval' (default 0) : time, in milliseconds, that specifies how long the
- * client must wait between the end of one long poll requests and the start of
- * the next.</li>
- * <li>
- * 'maxInterval' (default 10000) : max period of time, in milliseconds, that the
- * server will wait for a new long poll from a client before that client is
- * considered invalid and is removed.</li>
- * <li>
- * Also see 'maxSessionsPerBrowser'(default 1)</li>
- * </ul>
- * <p>
- * See the documentation for cometd javascript client <a href=
- * "http://cometd.org/documentation/2.x/cometd-javascript/configuration">
- * configuration</a>. Here the following timeout setting is important:
- * </p>
- * <ul>
- * <li>
- * 'maxNetworkDelay' (default 10000) : max number of milliseconds to wait before
- * considering a request to the Bayeux server failed.</li>
- * </ul>
  *
  * @author Datraverse B.V.
  *
@@ -128,7 +94,7 @@ public class BayeuxInitializer extends GenericServlet {
          * authorizers are registered. This can be achieved by using
          * initializers:"
          */
-        bayeux.createIfAbsent(AdminPublisher.CHANNEL_PUBLISH + "/**",
+        bayeux.createChannelIfAbsent(AdminPublisher.CHANNEL_PUBLISH + "/**",
                 new ConfigurableServerChannel.Initializer() {
 
                     @Override

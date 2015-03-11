@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.savapage.common.dto.ClientAppConnectDto;
 import org.savapage.common.dto.CometdConnectDto;
+import org.savapage.core.SpException;
 import org.savapage.core.cometd.CometdClientMixin;
 import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
@@ -163,7 +164,15 @@ public final class ClientAppHandler {
 
         UserAuthToken authToken;
 
-        final String clientIpAddress = SpXmlRpcServlet.getClientIpAddress();
+        String clientIpAddress = SpXmlRpcServlet.getClientIpAddress();
+
+        if (clientIpAddress.equals("127.0.0.1")) {
+        	try {
+				clientIpAddress = ConfigManager.getServerHostAddress();
+			} catch (UnknownHostException e) {
+				throw new SpException(e.getMessage(), e);
+			}
+        }
 
         final ConfigManager cm = ConfigManager.instance();
 

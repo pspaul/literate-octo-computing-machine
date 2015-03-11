@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,16 +27,16 @@ import java.security.KeyStore;
 import java.util.Date;
 import java.util.Properties;
 
-import org.eclipse.jetty.server.AbstractConnector;
+import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.bio.SocketConnector;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.util.thread.ThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.savapage.common.ConfigDefaults;
 import org.savapage.core.config.ConfigManager;
@@ -50,23 +50,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class WebServer {
-
-    /**
-     * When <b>true</b>: connectors are selected that implement efficient NIO
-     * buffers with a non-blocking threading model. <i>These connectors are best
-     * used when there are a many connections that have idle periods.</i>
-     * <p>
-     * When <b>false</b>: connectors are selected that implement a traditional
-     * blocking IO and threading model. Jetty uses Normal JRE sockets and
-     * allocates a thread per connection. Jetty allocates large buffers to
-     * active connections only. <i>You should use this Connector only if NIO is
-     * not available.</i>
-     * </p>
-     * See Jetty <a href=
-     * "https://wiki.eclipse.org/Jetty/Howto/Configure_Connectors#SocketConnector"
-     * >documentation</a>.
-     */
-    private static final boolean USE_NONBLOCKING_NIO = true;
 
     /**
      * The logger.
@@ -164,48 +147,9 @@ public final class WebServer {
             return maxThreads;
         }
 
-        public static int getMaxIdleTimeMsec() {
+        public static int getIdleTimeoutMsec() {
             return MAX_IDLE_TIME_MSEC;
         }
-    }
-
-    /**
-     * Sets the properties and {@link ThreadPool} for the
-     * {@link AbstractConnector}.
-     *
-     * @param connector
-     *            The {@link AbstractConnector}.
-     * @param isSsl
-     *            {@code true} when the connector is an SSL connector.
-     */
-    private static void setConnectorProps(final AbstractConnector connector,
-            final boolean isSsl) {
-
-        final QueuedThreadPool threadPool = new QueuedThreadPool();
-
-        final String poolName;
-
-        if (isSsl) {
-            poolName = "https";
-        } else {
-            poolName = "http";
-        }
-
-        threadPool.setName(poolName);
-
-        threadPool.setMinThreads(ConnectorConfig.getMinThreads());
-        threadPool.setMaxThreads(ConnectorConfig.getMaxThreads());
-        threadPool.setMaxIdleTimeMs(ConnectorConfig.getMaxIdleTimeMsec());
-
-        connector.setMaxIdleTime(ConnectorConfig.getMaxIdleTimeMsec());
-        connector.setThreadPool(threadPool);
-
-        // connector.setAcceptorPriorityOffset(offset);
-        // connector.setLowResourcesMaxIdleTime(maxIdleTime);
-        // connector.setMaxBuffers(maxBuffers);
-        // connector.setRequestBufferSize(requestBufferSize);
-        // connector.setSoLingerTime(soLingerTime);
-
     }
 
     /**
@@ -219,13 +163,6 @@ public final class WebServer {
 
         ConfigManager.setDefaultServerPort(ConfigDefaults.SERVER_PORT);
         ConfigManager.setDefaultServerSslPort(ConfigDefaults.SERVER_SSL_PORT);
-
-        /*
-         * The number of connector acceptors depending on available processors a
-         * connector.
-         */
-        final int numberOfConnectorAcceptors =
-                2 * Runtime.getRuntime().availableProcessors();
 
         /*
          * Passed as -Dserver.home to JVM
@@ -243,49 +180,67 @@ public final class WebServer {
         /*
          * Add a connector for regular port
          */
-        final int serverPort =
-                Integer.parseInt(propsServer.getProperty("server.port",
-                        ConfigDefaults.SERVER_PORT));
+        final int serverPort = Integer.parseInt(propsServer.getProperty(
+                "server.port", ConfigDefaults.SERVER_PORT));
 
-        // final int timeout = (int) Duration.ONE_HOUR.getMilliseconds();
-
-        final Server server = new Server();
-
-        final AbstractConnector connector;
-
-        if (USE_NONBLOCKING_NIO) {
-            connector = new SelectChannelConnector();
-        } else {
-            connector = new SocketConnector();
-        }
-
-        connector.setPort(serverPort);
-        connector.setAcceptors(numberOfConnectorAcceptors);
-        setConnectorProps(connector, false);
-
-        server.addConnector(connector);
+        final int serverPortSsl = Integer.parseInt(propsServer.getProperty(
+                "server.ssl.port", ConfigDefaults.SERVER_SSL_PORT));
 
         /*
-         * Check if a keystore for a SSL certificate is available, and if so,
-         * start a SSL connector on the configured SSL port. By default, the
-         * quickstart comes with a Apache Wicket Quickstart Certificate that
-         * expires about half way september 2021. Do not use this certificate
-         * anywhere important as the passwords are available in the source.
+         *
          */
+        final QueuedThreadPool threadPool = new QueuedThreadPool();
+        final String poolName = "jetty-threadpool";
 
-        // Resource keystore = Resource.newClassPathResource("/keystore");
-        // if (keystore != null && keystore.exists()) {
+        threadPool.setName(poolName);
+        threadPool.setMinThreads(ConnectorConfig.getMinThreads());
+        threadPool.setMaxThreads(ConnectorConfig.getMaxThreads());
+        threadPool.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
+
+        final Server server = new Server(threadPool);
 
         /*
-         * SSL
+         * HttpConfiguration is a collection of configuration information
+         * appropriate for http and https.
+         *
+         * The default scheme for http is <code>http</code> of course, as the
+         * default for secured http is <code>https</code> but we show setting
+         * the scheme to show it can be done.
+         *
+         * The port for secured communication is also set here.
          */
-        final int serverPortSsl =
-                Integer.parseInt(propsServer.getProperty("server.ssl.port",
-                        ConfigDefaults.SERVER_SSL_PORT));
+        final HttpConfiguration httpConfig = new HttpConfiguration();
 
-        connector.setConfidentialPort(serverPortSsl);
+        httpConfig.setSecureScheme("https");
+        httpConfig.setSecurePort(serverPortSsl);
 
-        final SslContextFactory factory = new SslContextFactory();
+        /*
+         * The first server connector we create is the one for http, passing in
+         * the http configuration we configured above so it can get things like
+         * the output buffer size, etc. We also set the port and configure an
+         * idle timeout.
+         */
+        final ServerConnector http = new ServerConnector(server,
+                new HttpConnectionFactory(httpConfig));
+
+        http.setPort(serverPort);
+        http.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
+
+        server.addConnector(http);
+
+        /*
+         * SSL Context Factory for HTTPS and SPDY.
+         *
+         * SSL requires a certificate so we configure a factory for ssl contents
+         * with information pointing to what keystore the ssl connection needs
+         * to know about.
+         *
+         * Much more configuration is available the ssl context, including
+         * things like choosing the particular certificate out of a keystore to
+         * be used.
+         */
+
+        final SslContextFactory sslContextFactory = new SslContextFactory();
 
         if (propsServer.getProperty("server.ssl.keystore") == null) {
 
@@ -295,9 +250,8 @@ public final class WebServer {
              *
              */
             final Properties propsPw = new Properties();
-            istr =
-                    new java.io.FileInputStream(serverHome
-                            + "/data/default-ssl-keystore.pw");
+            istr = new java.io.FileInputStream(serverHome
+                    + "/data/default-ssl-keystore.pw");
             propsPw.load(istr);
             final String pw = propsPw.getProperty("password");
             istr.close();
@@ -305,9 +259,8 @@ public final class WebServer {
             /**
              *
              */
-            istr =
-                    new java.io.FileInputStream(serverHome
-                            + "/data/default-ssl-keystore");
+            istr = new java.io.FileInputStream(serverHome
+                    + "/data/default-ssl-keystore");
             final KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(istr, pw.toCharArray());
             istr.close();
@@ -315,94 +268,113 @@ public final class WebServer {
             /**
              *
              */
-            factory.setKeyStore(ks);
-            factory.setKeyManagerPassword(pw);
+            sslContextFactory.setKeyStore(ks);
+            sslContextFactory.setKeyManagerPassword(pw);
 
         } else {
 
-            final Resource keystore =
-                    Resource.newResource(serverHome + "/"
-                            + propsServer.getProperty("server.ssl.keystore"));
+            final Resource keystore = Resource.newResource(serverHome + "/"
+                    + propsServer.getProperty("server.ssl.keystore"));
 
-            factory.setKeyStoreResource(keystore);
+            sslContextFactory.setKeyStoreResource(keystore);
 
-            factory.setKeyStorePassword(propsServer
+            sslContextFactory.setKeyStorePassword(propsServer
                     .getProperty("server.ssl.keystore-password"));
 
-            factory.setKeyManagerPassword(propsServer
+            sslContextFactory.setKeyManagerPassword(propsServer
                     .getProperty("server.ssl.key-password"));
         }
 
-        final AbstractConnector sslConnector;
+        /*
+         * HTTPS Configuration
+         *
+         * A new HttpConfiguration object is needed for the next connector and
+         * you can pass the old one as an argument to effectively clone the
+         * contents. On this HttpConfiguration object we add a
+         * SecureRequestCustomizer which is how a new connector is able to
+         * resolve the https connection before handing control over to the Jetty
+         * Server.
+         */
+        final HttpConfiguration httpsConfig = new HttpConfiguration(httpConfig);
+        httpsConfig.addCustomizer(new SecureRequestCustomizer());
 
-        if (USE_NONBLOCKING_NIO) {
-            sslConnector = new SslSelectChannelConnector(factory);
-        } else {
-            sslConnector = new SslSocketConnector(factory);
-        }
+        /*
+         * HTTPS connector
+         *
+         * We create a second ServerConnector, passing in the http configuration
+         * we just made along with the previously created ssl context factory.
+         * Next we set the port and a longer idle timeout.
+         */
+        final ServerConnector https = new ServerConnector(server,
+                new SslConnectionFactory(sslContextFactory,
+                        HttpVersion.HTTP_1_1.asString()),
+                new HttpConnectionFactory(httpsConfig));
 
-        sslConnector.setPort(serverPortSsl);
-        sslConnector.setAcceptors(numberOfConnectorAcceptors);
+        https.setPort(serverPortSsl);
+        https.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
 
-        setConnectorProps(sslConnector, true);
-
-        server.addConnector(sslConnector);
+        server.addConnector(https);
 
         LOGGER.info("SSL access has been enabled on port " + serverPortSsl);
 
         /*
-         *
+         * Set a handler
          */
-        final WebAppContext bb = new WebAppContext();
-        bb.setServer(server);
-        bb.setContextPath("/");
+        final WebAppContext webAppContext = new WebAppContext();
 
-        final boolean fDevelopment =
-                (System.getProperty("savapage.war.file") == null);
+        webAppContext.setServer(server);
+        webAppContext.setContextPath("/");
+
+        boolean fDevelopment = (System.getProperty("savapage.war.file") == null);
 
         String pathToWarFile = null;
 
         if (fDevelopment) {
             pathToWarFile = "src/main/webapp";
         } else {
-            pathToWarFile =
-                    serverHome + "/lib/"
-                            + System.getProperty("savapage.war.file");
+            pathToWarFile = serverHome + "/lib/"
+                    + System.getProperty("savapage.war.file");
         }
-        bb.setWar(pathToWarFile);
+        webAppContext.setWar(pathToWarFile);
 
-        server.setHandler(bb);
+        server.setHandler(webAppContext);
 
-        final String serverStartedFile =
-                serverHome + "/logs/" + "server.started.txt";
+        /*
+         *
+         */
+        final String serverStartedFile = serverHome + "/logs/"
+                + "server.started.txt";
 
         int status = 0;
 
         FileWriter writer = null;
 
         try {
-
-            final Date now = new Date();
-
             /*
              * Writing the time we started in a file. This file is monitored by
              * the install script to see when the server has started.
              */
             writer = new FileWriter(serverStartedFile);
 
+            final Date now = new Date();
             writer.write("#" + now.toString() + "\n");
             writer.write(String.valueOf(now.getTime()) + "\n");
-
             writer.flush();
 
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(server));
 
+            /*
+             * Start the server
+             */
             server.start();
+
+            if (!fDevelopment) {
+                server.join();
+            }
 
         } catch (Exception e) {
 
-            LOGGER.error(e.getMessage(), e);
-
+            e.printStackTrace();
             status = 1;
 
         } finally {

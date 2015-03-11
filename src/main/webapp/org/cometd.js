@@ -68,6 +68,7 @@ org.cometd.Utils.setTimeout = function(cometd, funktion, delay)
     {
         try
         {
+            cometd._debug('Invoking timed function', funktion);
             funktion();
         }
         catch (x)
@@ -83,7 +84,7 @@ org.cometd.Utils.clearTimeout = function(timeoutHandle)
 };
 
 /**
- * A registry for transports used by the Cometd object.
+ * A registry for transports used by the CometD object.
  */
 org.cometd.TransportRegistry = function()
 {
@@ -416,7 +417,8 @@ org.cometd.RequestTransport = function()
         var requestId = ++_requestIds;
         var request = {
             id: requestId,
-            metaConnect: false
+            metaConnect: false,
+            envelope: envelope
         };
 
         // Consider the metaConnect requests which should always be present
@@ -549,7 +551,8 @@ org.cometd.RequestTransport = function()
         this._debug('Transport', this.getType(), 'metaConnect send, request', requestId, 'envelope', envelope);
         var request = {
             id: requestId,
-            metaConnect: true
+            metaConnect: true,
+            envelope: envelope
         };
         _transportSend.call(this, envelope, request);
         _metaConnectRequest = request;
@@ -573,13 +576,22 @@ org.cometd.RequestTransport = function()
         for (var i = 0; i < _requests.length; ++i)
         {
             var request = _requests[i];
-            this._debug('Aborting request', request);
-            this.abortXHR(request.xhr);
+            if (request)
+            {
+                this._debug('Aborting request', request);
+                if (!this.abortXHR(request.xhr))
+                {
+                    this.transportFailure(request.envelope, request, {reason: 'abort'});
+                }
+            }
         }
         if (_metaConnectRequest)
         {
             this._debug('Aborting metaConnect request', _metaConnectRequest);
-            this.abortXHR(_metaConnectRequest.xhr);
+            if (!this.abortXHR(_metaConnectRequest.xhr))
+            {
+                this.transportFailure(_metaConnectRequest.envelope, _metaConnectRequest, {reason: 'abort'});
+            }
         }
         this.reset();
     };
@@ -598,13 +610,16 @@ org.cometd.RequestTransport = function()
         {
             try
             {
+                var state = xhr.readyState;
                 xhr.abort();
+                return state !== XMLHttpRequest.UNSENT;
             }
             catch (x)
             {
                 this._debug(x);
             }
         }
+        return false;
     };
 
     _self.xhrStatus = function(xhr)
@@ -693,6 +708,7 @@ org.cometd.LongPollingTransport = function()
                 },
                 onError: function(reason, exception)
                 {
+                    self._debug('Transport', self.getType(), 'received error', reason, exception);
                     _supportsCrossDomain = false;
                     var failure = {
                         reason: reason,
@@ -753,6 +769,15 @@ org.cometd.CallbackPollingTransport = function()
         throw 'Abstract';
     };
 
+    function _failTransportFn(envelope, request, x)
+    {
+        var self = this;
+        return function()
+        {
+            self.transportFailure(envelope, request, 'error', x);
+        };
+    }
+
     _self.transportSend = function(envelope, request)
     {
         var self = this;
@@ -777,13 +802,10 @@ org.cometd.CallbackPollingTransport = function()
             {
                 if (length === 1)
                 {
+                    var x = 'Bayeux message too big (' + urlLength + ' bytes, max is ' + _maxLength + ') ' +
+                            'for transport ' + this.getType();
                     // Keep the semantic of calling response callbacks asynchronously after the request
-                    this.setTimeout(function()
-                    {
-                        self.transportFailure(envelope, request, {
-                            reason: 'Bayeux message too big, max is ' + _maxLength
-                        });
-                    }, 0);
+                    this.setTimeout(_failTransportFn.call(this, envelope, request, x), 0);
                     return;
                 }
 
@@ -926,9 +948,7 @@ org.cometd.WebSocketTransport = function()
         _envelopes = {};
         _timeouts = {};
         _connecting = false;
-        _webSocket = null;
         _connected = false;
-        _successCallback = null;
     };
 
     function _websocketConnect()
@@ -948,10 +968,11 @@ org.cometd.WebSocketTransport = function()
         var url = _cometd.getURL().replace(/^http/, 'ws');
         this._debug('Transport', this.getType(), 'connecting to URL', url);
 
+        var webSocket;
         try
         {
             var protocol = _cometd.getConfiguration().protocol;
-            var webSocket = protocol ? new org.cometd.WebSocket(url, protocol) : new org.cometd.WebSocket(url);
+            webSocket = protocol ? new org.cometd.WebSocket(url, protocol) : new org.cometd.WebSocket(url);
         }
         catch (x)
         {
@@ -1150,8 +1171,8 @@ org.cometd.WebSocketTransport = function()
 
             // Detect if the message is a response to a request we made.
             // If it's a meta message, for sure it's a response; otherwise it's
-            // a publish message and publish responses have the successful field.
-            if (/^\/meta\//.test(message.channel) || message.successful !== undefined)
+            // a publish message and publish responses don't have the data field.
+            if (/^\/meta\//.test(message.channel) || message.data === undefined)
             {
                 if (message.id)
                 {
@@ -1312,7 +1333,7 @@ org.cometd.WebSocketTransport = function()
 };
 
 /**
- * The constructor for a Cometd object, identified by an optional name.
+ * The constructor for a CometD object, identified by an optional name.
  * The default name is the string 'default'.
  * In the rare case a page needs more than one Bayeux conversation,
  * a new instance can be created via:
@@ -1320,10 +1341,10 @@ org.cometd.WebSocketTransport = function()
  * var bayeuxUrl2 = ...;
  *
  * // Dojo style
- * var cometd2 = new dojox.Cometd('another_optional_name');
+ * var cometd2 = new dojox.CometD('another_optional_name');
  *
  * // jQuery style
- * var cometd2 = new $.Cometd('another_optional_name');
+ * var cometd2 = new $.CometD('another_optional_name');
  *
  * cometd2.init({url: bayeuxUrl2});
  * </pre>
@@ -1333,7 +1354,7 @@ org.cometd.WebSocketTransport = function()
 // Be very careful in not changing the function order and pass this file every time through JSLint (http://jslint.com)
 // The only implied globals must be "dojo", "org" and "window", and check that there are no "unused" warnings
 // Failing to pass JSLint may result in shrinkers/minifiers to create an unusable file.
-org.cometd.Cometd = function(name)
+org.cometd.CometD = function(name)
 {
     var _cometd = this;
     var _name = name || 'default';
@@ -1354,6 +1375,7 @@ org.cometd.Cometd = function(name)
     var _handshakeProps;
     var _handshakeCallback;
     var _callbacks = {};
+    var _remoteCalls = {};
     var _reestablish = false;
     var _connected = false;
     var _config = {
@@ -1460,6 +1482,21 @@ org.cometd.Cometd = function(name)
         return typeof value === 'function';
     }
 
+    function _zeroPad(value, length)
+    {
+        var result = '';
+        while (--length > 0)
+        {
+            if (value >= Math.pow(10, length))
+            {
+                break;
+            }
+            result += '0';
+        }
+        result += value;
+        return result;
+    }
+
     function _log(level, args)
     {
         if (window.console)
@@ -1467,6 +1504,9 @@ org.cometd.Cometd = function(name)
             var logger = window.console[level];
             if (_isFunction(logger))
             {
+                var now = new Date();
+                [].splice.call(args, 0, 0, _zeroPad(now.getHours(), 2) + ':' + _zeroPad(now.getMinutes(), 2) + ':' +
+                        _zeroPad(now.getSeconds(), 2) + '.' + _zeroPad(now.getMilliseconds(), 3));
                 logger.apply(window.console, args);
             }
         }
@@ -1615,7 +1655,8 @@ org.cometd.Cometd = function(name)
 
     function _nextMessageId()
     {
-        return ++_messageId;
+        var result = ++_messageId;
+        return '' + result;
     }
 
     function _applyExtension(scope, callback, name, message, outgoing)
@@ -1626,19 +1667,22 @@ org.cometd.Cometd = function(name)
         }
         catch (x)
         {
-            _cometd._debug('Exception during execution of extension', name, x);
-            var exceptionCallback = _cometd.onExtensionException;
-            if (_isFunction(exceptionCallback))
+            var handler = _cometd.onExtensionException;
+            if (_isFunction(handler))
             {
-                _cometd._debug('Invoking extension exception callback', name, x);
+                _cometd._debug('Invoking extension exception handler', name, x);
                 try
                 {
-                    exceptionCallback.call(_cometd, x, name, outgoing, message);
+                    handler.call(_cometd, x, name, outgoing, message);
                 }
                 catch(xx)
                 {
-                    _cometd._info('Exception during execution of exception callback in extension', name, xx);
+                    _cometd._info('Exception during execution of extension exception handler', name, xx);
                 }
+            }
+            else
+            {
+                _cometd._info('Exception during execution of extension', name, x);
             }
             return message;
         }
@@ -1702,19 +1746,22 @@ org.cometd.Cometd = function(name)
                     }
                     catch (x)
                     {
-                        _cometd._debug('Exception during notification', subscription, message, x);
-                        var listenerCallback = _cometd.onListenerException;
-                        if (_isFunction(listenerCallback))
+                        var handler = _cometd.onListenerException;
+                        if (_isFunction(handler))
                         {
-                            _cometd._debug('Invoking listener exception callback', subscription, x);
+                            _cometd._debug('Invoking listener exception handler', subscription, x);
                             try
                             {
-                                listenerCallback.call(_cometd, x, subscription, subscription.listener, message);
+                                handler.call(_cometd, x, subscription, subscription.listener, message);
                             }
                             catch (xx)
                             {
-                                _cometd._info('Exception during execution of listener callback', subscription, xx);
+                                _cometd._info('Exception during execution of listener exception handler', subscription, xx);
                             }
+                        }
+                        else
+                        {
+                            _cometd._info('Exception during execution of listener', subscription, message, x);
                         }
                     }
                 }
@@ -1770,10 +1817,10 @@ org.cometd.Cometd = function(name)
      * Delivers the messages to the CometD server
      * @param sync whether the send is synchronous
      * @param messages the array of messages to send
-     * @param longpoll true if this send is a long poll
+     * @param metaConnect true if this send is on /meta/connect
      * @param extraPath an extra path to append to the Bayeux server URL
      */
-    function _send(sync, messages, longpoll, extraPath)
+    function _send(sync, messages, metaConnect, extraPath)
     {
         // We must be sure that the messages have a clientId.
         // This is not guaranteed since the handshake may take time to return
@@ -1782,20 +1829,11 @@ org.cometd.Cometd = function(name)
         for (var i = 0; i < messages.length; ++i)
         {
             var message = messages[i];
-            var messageId = '' + _nextMessageId();
-            message.id = messageId;
+            var messageId = message.id;
 
             if (_clientId)
             {
                 message.clientId = _clientId;
-            }
-
-            var callback = undefined;
-            if (_isFunction(message._callback))
-            {
-                callback = message._callback;
-                // Remove the callback before calling the extensions
-                delete message._callback;
             }
 
             message = _applyOutgoingExtensions(message);
@@ -1804,13 +1842,10 @@ org.cometd.Cometd = function(name)
                 // Extensions may have modified the message id, but we need to own it.
                 message.id = messageId;
                 messages[i] = message;
-                if (callback)
-                {
-                    _callbacks[messageId] = callback;
-                }
             }
             else
             {
+                delete _callbacks[messageId];
                 messages.splice(i--, 1);
             }
         }
@@ -1846,7 +1881,7 @@ org.cometd.Cometd = function(name)
                 }
                 catch (x)
                 {
-                    _cometd._debug('Exception during handling of messages', x);
+                    _cometd._info('Exception during handling of messages', x);
                 }
             },
             onFailure: function(conduit, messages, failure)
@@ -1859,12 +1894,12 @@ org.cometd.Cometd = function(name)
                 }
                 catch (x)
                 {
-                    _cometd._debug('Exception during handling of failure', x);
+                    _cometd._info('Exception during handling of failure', x);
                 }
             }
         };
         _cometd._debug('Send', envelope);
-        _transport.send(envelope, longpoll);
+        _transport.send(envelope, metaConnect);
     }
 
     function _queueSend(message)
@@ -1908,6 +1943,7 @@ org.cometd.Cometd = function(name)
     function _startBatch()
     {
         ++_batch;
+        _cometd._debug('Starting batch, depth', _batch);
     }
 
     function _flushBatch()
@@ -1929,6 +1965,7 @@ org.cometd.Cometd = function(name)
     function _endBatch()
     {
         --_batch;
+        _cometd._debug('Ending batch, depth', _batch);
         if (_batch < 0)
         {
             throw 'Calls to startBatch() and endBatch() are not paired';
@@ -1947,7 +1984,8 @@ org.cometd.Cometd = function(name)
     {
         if (!_isDisconnected())
         {
-            var message = {
+            var bayeuxMessage = {
+                id: _nextMessageId(),
                 channel: '/meta/connect',
                 connectionType: _transport.getType()
             };
@@ -1958,12 +1996,12 @@ org.cometd.Cometd = function(name)
             // can be notified that the connection has been re-established
             if (!_connected)
             {
-                message.advice = { timeout: 0 };
+                bayeuxMessage.advice = { timeout: 0 };
             }
 
             _setStatus('connecting');
-            _cometd._debug('Connect sent', message);
-            _send(false, [message], true, 'connect');
+            _cometd._debug('Connect sent', bayeuxMessage);
+            _send(false, [bayeuxMessage], true, 'connect');
             _setStatus('connected');
         }
     }
@@ -2012,18 +2050,17 @@ org.cometd.Cometd = function(name)
 
     function _notifyTransportFailure(oldTransport, newTransport, failure)
     {
-        var callback = _cometd.onTransportFailure;
-        if (_isFunction(callback))
+        var handler = _cometd.onTransportException;
+        if (_isFunction(handler))
         {
-            _cometd._debug('Invoking transport failure callback', oldTransport, newTransport, failure);
+            _cometd._debug('Invoking transport exception handler', oldTransport, newTransport, failure);
             try
             {
-                callback.call(_cometd, oldTransport, newTransport, failure);
+                handler.call(_cometd, failure, oldTransport, newTransport);
             }
             catch (x)
             {
-                _cometd._info('Exception during execution of transport failure callback', x);
-
+                _cometd._info('Exception during execution of transport exception handler', x);
             }
         }
     }
@@ -2081,19 +2118,21 @@ org.cometd.Cometd = function(name)
         var transportTypes = _transports.findTransportTypes(version, _crossDomain, url);
 
         var bayeuxMessage = {
+            id: _nextMessageId(),
             version: version,
             minimumVersion: version,
             channel: '/meta/handshake',
             supportedConnectionTypes: transportTypes,
-            _callback: handshakeCallback,
             advice: {
                 timeout: _advice.timeout,
                 interval: _advice.interval
             }
         };
-        // Do not allow the user to mess with the required properties,
-        // so merge first the user properties and *then* the bayeux message
+        // Do not allow the user to override important fields.
         var message = _cometd._mixin(false, {}, _handshakeProps, bayeuxMessage);
+
+        // Save the callback.
+        _cometd._putCallback(message.id, handshakeCallback);
 
         // Pick up the first available transport as initial transport
         // since we don't know if the server supports it
@@ -2132,14 +2171,81 @@ org.cometd.Cometd = function(name)
         });
     }
 
+    function _notifyCallback(callback, message)
+    {
+        try
+        {
+            callback.call(_cometd, message);
+        }
+        catch (x)
+        {
+            var handler = _cometd.onCallbackException;
+            if (_isFunction(handler))
+            {
+                _cometd._debug('Invoking callback exception handler', x);
+                try
+                {
+                    handler.call(_cometd, x, message);
+                }
+                catch (xx)
+                {
+                    _cometd._info('Exception during execution of callback exception handler', xx);
+                }
+            }
+            else
+            {
+                _cometd._info('Exception during execution of message callback', x);
+            }
+        }
+    }
+
+    this._getCallback = function(messageId)
+    {
+        return _callbacks[messageId];
+    };
+
+    this._putCallback = function(messageId, callback)
+    {
+        var result = this._getCallback(messageId);
+        if (_isFunction(callback))
+        {
+            _callbacks[messageId] = callback;
+        }
+        return result;
+    };
+
     function _handleCallback(message)
     {
-        var callback = _callbacks[message.id];
+        var callback = _cometd._getCallback([message.id]);
         if (_isFunction(callback))
         {
             delete _callbacks[message.id];
-            callback.call(_cometd, message);
+            _notifyCallback(callback, message);
         }
+    }
+
+    function _handleRemoteCall(message)
+    {
+        var context = _remoteCalls[message.id];
+        delete _remoteCalls[message.id];
+        _cometd._debug('Handling remote call response for', message, 'with context', context);
+        if (context)
+        {
+            // Clear the timeout, if present.
+            var timeout = context.timeout;
+            if (timeout)
+            {
+                org.cometd.Utils.clearTimeout(timeout);
+            }
+
+            var callback = context.callback;
+            if (_isFunction(callback))
+            {
+                _notifyCallback(callback, message);
+                return true;
+            }
+        }
+        return false;
     }
 
     function _failHandshake(message)
@@ -2158,7 +2264,7 @@ org.cometd.Cometd = function(name)
         }
         else
         {
-            _disconnect(false);
+            _disconnect(true);
         }
     }
 
@@ -2214,7 +2320,7 @@ org.cometd.Cometd = function(name)
                     _delayedConnect();
                     break;
                 case 'none':
-                    _disconnect(false);
+                    _disconnect(true);
                     break;
                 default:
                     throw 'Unrecognized advice action ' + action;
@@ -2273,7 +2379,7 @@ org.cometd.Cometd = function(name)
                 _delayedHandshake();
                 break;
             case 'none':
-                _disconnect(false);
+                _disconnect(true);
                 break;
             default:
                 throw 'Unrecognized advice action' + action;
@@ -2300,6 +2406,7 @@ org.cometd.Cometd = function(name)
                     _delayedConnect();
                     break;
                 case 'none':
+                    // Wait for the /meta/disconnect to arrive.
                     _disconnect(false);
                     break;
                 default:
@@ -2330,6 +2437,7 @@ org.cometd.Cometd = function(name)
     {
         if (message.successful)
         {
+            // Wait for the /meta/connect to arrive.
             _disconnect(false);
             _handleCallback(message);
             _notifyListeners('/meta/disconnect', message);
@@ -2411,35 +2519,40 @@ org.cometd.Cometd = function(name)
 
     function _failMessage(message)
     {
-        _handleCallback(message);
-        _notifyListeners('/meta/publish', message);
-        _notifyListeners('/meta/unsuccessful', message);
+        if (!_handleRemoteCall(message))
+        {
+            _handleCallback(message);
+            _notifyListeners('/meta/publish', message);
+            _notifyListeners('/meta/unsuccessful', message);
+        }
     }
 
     function _messageResponse(message)
     {
-        if (message.successful === undefined)
+        if (message.data !== undefined)
         {
-            if (message.data !== undefined)
+            if (!_handleRemoteCall(message))
             {
-                // It is a plain message, and not a bayeux meta message
                 _notifyListeners(message.channel, message);
-            }
-            else
-            {
-                _cometd._warn('Unknown Bayeux Message', message);
             }
         }
         else
         {
-            if (message.successful)
+            if (message.successful === undefined)
             {
-                _handleCallback(message);
-                _notifyListeners('/meta/publish', message);
+                _cometd._warn('Unknown Bayeux Message', message);
             }
             else
             {
-                _failMessage(message);
+                if (message.successful)
+                {
+                    _handleCallback(message);
+                    _notifyListeners('/meta/publish', message);
+                }
+                else
+                {
+                    _failMessage(message);
+                }
             }
         }
     }
@@ -2766,10 +2879,15 @@ org.cometd.Cometd = function(name)
         }
 
         var bayeuxMessage = {
-            channel: '/meta/disconnect',
-            _callback: disconnectCallback
+            id: _nextMessageId(),
+            channel: '/meta/disconnect'
         };
+        // Do not allow the user to override important fields.
         var message = this._mixin(false, {}, disconnectProps, bayeuxMessage);
+
+        // Save the callback.
+        _cometd._putCallback(message.id, disconnectCallback);
+
         _setStatus('disconnecting');
         _send(sync === true, [message], false, 'disconnect');
     };
@@ -2919,11 +3037,16 @@ org.cometd.Cometd = function(name)
             // races where the server would send a message to the subscribers, but here
             // on the client the subscription has not been added yet to the data structures
             var bayeuxMessage = {
+                id: _nextMessageId(),
                 channel: '/meta/subscribe',
-                subscription: channel,
-                _callback: subscribeCallback
+                subscription: channel
             };
+            // Do not allow the user to override important fields.
             var message = this._mixin(false, {}, subscribeProps, bayeuxMessage);
+
+            // Save the callback.
+            _cometd._putCallback(message.id, subscribeCallback);
+
             _queueSend(message);
         }
 
@@ -2962,11 +3085,16 @@ org.cometd.Cometd = function(name)
         if (!_hasSubscriptions(channel))
         {
             var bayeuxMessage = {
+                id: _nextMessageId(),
                 channel: '/meta/unsubscribe',
-                subscription: channel,
-                _callback: unsubscribeCallback
+                subscription: channel
             };
+            // Do not allow the user to override important fields.
             var message = this._mixin(false, {}, unsubscribeProps, bayeuxMessage);
+
+            // Save the callback.
+            _cometd._putCallback(message.id, unsubscribeCallback);
+
             _queueSend(message);
         }
     };
@@ -3028,12 +3156,86 @@ org.cometd.Cometd = function(name)
         }
 
         var bayeuxMessage = {
+            id: _nextMessageId(),
             channel: channel,
-            data: content,
-            _callback: publishCallback
+            data: content
         };
+        // Do not allow the user to override important fields.
         var message = this._mixin(false, {}, publishProps, bayeuxMessage);
+
+        // Save the callback.
+        _cometd._putCallback(message.id, publishCallback);
+
         _queueSend(message);
+    };
+
+    this.remoteCall = function(target, content, timeout, callback)
+    {
+        if (arguments.length < 1)
+        {
+            throw 'Illegal arguments number: required 1, got ' + arguments.length;
+        }
+        if (!_isString(target))
+        {
+            throw 'Illegal argument type: target must be a string';
+        }
+        if (_isDisconnected())
+        {
+            throw 'Illegal state: already disconnected';
+        }
+
+        if (_isFunction(content))
+        {
+            callback = content;
+            content = {};
+            timeout = _config.maxNetworkDelay;
+        }
+        else if (_isFunction(timeout))
+        {
+            callback = timeout;
+            timeout = _config.maxNetworkDelay;
+        }
+
+        if (typeof timeout !== 'number')
+        {
+            throw 'Illegal argument type: timeout must be a number';
+        }
+
+        if (!target.match(/^\//))
+        {
+            target = '/' + target;
+        }
+        var channel = '/service' + target;
+
+        var bayeuxMessage = {
+            id: _nextMessageId(),
+            channel: channel,
+            data: content
+        };
+
+        var context = {
+            callback: callback
+        };
+        if (timeout > 0)
+        {
+            context.timeout = org.cometd.Utils.setTimeout(_cometd, function()
+            {
+                _cometd._debug('Timing out remote call', bayeuxMessage, 'after', timeout, 'ms');
+                _failMessage({
+                    id: bayeuxMessage.id,
+                    error: '406::timeout',
+                    successful: false,
+                    failure: {
+                        message : bayeuxMessage,
+                        reason: 'Remote Call Timeout'
+                    }
+                });
+            }, timeout);
+            _cometd._debug('Scheduled remote call timeout', bayeuxMessage, 'in', timeout, 'ms');
+        }
+        _remoteCalls[bayeuxMessage.id] = context;
+
+        _queueSend(bayeuxMessage);
     };
 
     /**
@@ -3208,7 +3410,7 @@ org.cometd.Cometd = function(name)
     };
 
     /**
-     * Returns the name assigned to this Cometd object, or the string 'default'
+     * Returns the name assigned to this CometD object, or the string 'default'
      * if no name has been explicitly passed as parameter to the constructor.
      */
     this.getName = function()
@@ -3255,13 +3457,8 @@ org.cometd.Cometd = function(name)
         return this._mixin(true, {}, _advice);
     };
 
-    // WebSocket handling for Firefox, which deploys WebSocket
-    // under the name of MozWebSocket in Firefox 6, 7, 8 and 9
+    // Use an alias to be less dependent on browser's quirks.
     org.cometd.WebSocket = window.WebSocket;
-    if (!org.cometd.WebSocket)
-    {
-        org.cometd.WebSocket = window.MozWebSocket;
-    }
 };
 
 if (typeof define === 'function' && define.amd)

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.cometd.bayeux.Message;
 import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.savapage.core.SpException;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
@@ -42,9 +42,9 @@ import org.savapage.core.msg.JsonUserMsgNotification;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.rfid.RfidNumberFormat;
+import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.util.Messages;
 import org.savapage.server.JsonApiServer;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Datraverse B.V.
  */
-public class ProxyPrintEventService extends AbstractEventService {
+public final class ProxyPrintEventService extends AbstractEventService {
 
     private static final String KEY_EVENT = "event";
     private static final String KEY_DATA = "data";
@@ -129,7 +129,8 @@ public class ProxyPrintEventService extends AbstractEventService {
      * @param remote
      * @param message
      */
-    public void monitorProxyPrintEvent(ServerSession remote, Message message) {
+    public void monitorProxyPrintEvent(final ServerSession remote,
+            final ServerMessage message) {
 
         final Map<String, Object> input = message.getDataAsMap();
 
@@ -252,7 +253,7 @@ public class ProxyPrintEventService extends AbstractEventService {
              * The JavaScript client subscribes to CHANNEL_PUBLISH like this:
              * $.cometd.subscribe('/user/event', function(message) {
              */
-            remote.deliver(getServerSession(), CHANNEL_PUBLISH, jsonEvent, null);
+            remote.deliver(getServerSession(), CHANNEL_PUBLISH, jsonEvent);
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Delivered event [" + jsonEvent + "] for device ["

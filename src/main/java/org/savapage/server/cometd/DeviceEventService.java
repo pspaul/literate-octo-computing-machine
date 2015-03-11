@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.cometd.bayeux.Message;
 import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
@@ -38,8 +38,8 @@ import org.savapage.core.jpa.Device;
 import org.savapage.core.rfid.RfidEvent;
 import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.rfid.RfidReaderManager;
-import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
+import org.savapage.core.services.ServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Datraverse B.V.
  */
-public class DeviceEventService extends AbstractEventService {
+public final class DeviceEventService extends AbstractEventService {
 
     /**
      * The channel this <i>service</i> <strong>subscribes</strong> (listens) to.
@@ -110,7 +110,8 @@ public class DeviceEventService extends AbstractEventService {
      * @param remote
      * @param message
      */
-    public void monitorDeviceEvent(ServerSession remote, Message message) {
+    public void monitorDeviceEvent(final ServerSession remote,
+            final ServerMessage message) {
 
         final String clientIpAddress = getClientIpAddress();
 
@@ -241,7 +242,7 @@ public class DeviceEventService extends AbstractEventService {
              * The JavaScript client subscribes to CHANNEL_PUBLISH like this:
              * $.cometd.subscribe('/user/event', function(message) {
              */
-            remote.deliver(getServerSession(), CHANNEL_PUBLISH, jsonEvent, null);
+            remote.deliver(getServerSession(), CHANNEL_PUBLISH, jsonEvent);
 
             LOGGER.debug("Delivered event for device [" + clientIpAddress + "]");
 
