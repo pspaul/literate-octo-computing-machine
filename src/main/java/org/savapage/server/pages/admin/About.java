@@ -123,8 +123,14 @@ public class About extends AbstractAdminPage {
         add(new Label("current-year", String.valueOf(Calendar.getInstance()
                 .get(Calendar.YEAR))));
 
-        add(new Label("app-copyright-owner",
-                CommunityDictEnum.DATRAVERVE_BV.getWord()));
+        //
+        //
+        labelWrk =
+                new Label("app-copyright-owner-url",
+                        CommunityDictEnum.DATRAVERSE_BV.getWord());
+        labelWrk.add(new AttributeModifier("href",
+                CommunityDictEnum.DATRAVERSE_BV_URL.getWord()));
+        add(labelWrk);
 
         //
         String version;
@@ -480,6 +486,14 @@ public class About extends AbstractAdminPage {
 
         labelWrk = new Label("savapage-helpdesk-url", urlHelpDesk);
         labelWrk.add(new AttributeModifier("href", urlHelpDesk));
+        add(labelWrk);
+
+        //
+        labelWrk =
+                new Label("savapage-source-code-url",
+                        localized("source-code-link"));
+        labelWrk.add(new AttributeModifier("href",
+                CommunityDictEnum.COMMUNITY_SOURCE_CODE_URL.getWord()));
         add(labelWrk);
 
     }
