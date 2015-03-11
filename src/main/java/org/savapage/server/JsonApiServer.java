@@ -5526,14 +5526,17 @@ public final class JsonApiServer extends AbstractPage {
                 /*
                  * Get the "real" username from the alias.
                  */
-                uid =
-                        UserAliasList.instance().getUserName(
-                                userAuthenticator.asDbUserId(authId));
+                if (allowInternalUsersOnly) {
+                    uid = UserAliasList.instance().getUserName(authId);
+                } else {
+                    uid =
+                            UserAliasList.instance().getUserName(
+                                    userAuthenticator.asDbUserId(authId));
+                    uid = userAuthenticator.asDbUserId(uid);
+                }
                 /*
                  * Read real user from database.
                  */
-                uid = userAuthenticator.asDbUserId(uid);
-
                 userDb = userDao.findActiveUserByUserId(uid);
 
             } else if (authMode == UserAuth.Mode.ID) {
@@ -5668,8 +5671,15 @@ public final class JsonApiServer extends AbstractPage {
 
                 } else {
 
-                    User userAuth = userAuthenticator.authenticate(uid, authPw);
-                    isAuthenticated = (userAuth != null);
+                    final User userAuth;
+
+                    if (allowInternalUsersOnly) {
+                        userAuth = null;
+                        isAuthenticated = false;
+                    } else {
+                        userAuth = userAuthenticator.authenticate(uid, authPw);
+                        isAuthenticated = (userAuth != null);
+                    }
 
                     if (!isAuthenticated) {
                         /*
