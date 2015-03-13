@@ -135,6 +135,8 @@ import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.PageImages;
 import org.savapage.core.inbox.PageImages.PageImage;
 import org.savapage.core.inbox.RangeAtom;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
+import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.job.SpJobType;
@@ -2750,10 +2752,21 @@ public final class JsonApiServer extends AbstractPage {
                         .getLocale(), printerName);
 
         if (jsonPrinter == null) {
+
             setApiResult(data, API_RESULT_CODE_ERROR, "msg-printer-out-of-date");
+
         } else {
-            data.put("printer", jsonPrinter);
-            setApiResultOK(data);
+
+            if (jsonPrinter.getMediaSources().isEmpty()) {
+
+                setApiResult(data, API_RESULT_CODE_ERROR,
+                        "msg-printer-no-media-sources-defined", printerName);
+
+            } else {
+                data.put("printer", jsonPrinter);
+                setApiResultOK(data);
+            }
+
         }
         return data;
     }
@@ -2897,9 +2910,11 @@ public final class JsonApiServer extends AbstractPage {
          */
         String ranges = rangesRaw.trim();
 
-        if (!ranges.isEmpty()) {
+        final boolean printEntireInbox = ranges.isEmpty();
+
+        if (!printEntireInbox) {
             /*
-             * remove spaces
+             * Remove inner spaces.
              */
             ranges = ranges.replace(" ", "");
             try {
@@ -2936,15 +2951,27 @@ public final class JsonApiServer extends AbstractPage {
         final JsonNode list = new ObjectMapper().readTree(jsonOptions);
         final Map<String, String> options = new HashMap<String, String>();
 
-        String key = null;
-
         final Iterator<String> iter = list.getFieldNames();
 
+        String keyWlk = null;
+        String valWlk = null;
+
+        boolean isDuplexPrint = false;
+
         while (iter.hasNext()) {
-            key = iter.next();
-            options.put(key, list.get(key).getTextValue());
+
+            keyWlk = iter.next();
+            valWlk = list.get(keyWlk).getTextValue();
+
+            options.put(keyWlk, valWlk);
+
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(key + " = " + list.get(key).getTextValue());
+                LOGGER.trace(keyWlk + " = " + valWlk);
+            }
+
+            if (keyWlk.equals(IppDictJobTemplateAttr.ATTR_SIDES)
+                    && !valWlk.equals(IppKeyword.SIDES_ONE_SIDED)) {
+                isDuplexPrint = true;
             }
         }
 
@@ -2964,8 +2991,15 @@ public final class JsonApiServer extends AbstractPage {
         printReq.setLocale(getSession().getLocale());
         printReq.setIdUser(lockedUser.getId());
 
+        /*
+         * Mantis #246
+         */
+        final boolean chunkVanillaJobs =
+                isDuplexPrint && printEntireInbox && jobs.getJobs().size() > 1
+                        && INBOX_SERVICE.isInboxVanilla(jobs);
+
         PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
-                pageScaling);
+                pageScaling, chunkVanillaJobs);
 
         /*
          * Calculate the printing cost.

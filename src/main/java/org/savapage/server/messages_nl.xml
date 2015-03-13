@@ -49,6 +49,8 @@
     <entry key="msg-printer-connection-broken">Connectie naar Proxy Printers is verbroken.</entry>
 	<entry key="msg-printer-out-of-date">Informatie over de printer is verouderd. Vernieuw de
 		printer-lijst.</entry>
+    <entry key="msg-printer-no-media-sources-defined">Geen papierinvoer gedefinieerd voor printer {0}. 
+        Neem contact op met de applicatiebeheerder.</entry>
 
 	<entry key="msg-user-pdf-out-disabled">Het is u niet toegestaan om naar PDF te exporteren.</entry>
 

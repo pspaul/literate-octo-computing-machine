@@ -3106,13 +3106,19 @@
                     _model.myPrinterReaderName = printer.readerName;
                 }
 
-                $(".sp-print-printer-selected").show();
-                _view.visible($('#content-print .printer-selected'), true);
-                _view.visible($('#content-print .printer-fast-print-info'), false);
-
-                _this.onPrinter(printer.name);
-
-                $("#print-title").focus();
+                if (_this.onPrinter(printer.name)) {
+                	
+	                $(".sp-print-printer-selected").show();
+	                _view.visible($('#content-print .printer-selected'), true);
+	                _view.visible($('#content-print .printer-fast-print-info'), false);
+	                
+	                $("#print-title").focus();
+	                
+                } else {
+	                // An error occurred, re-show available printers...
+	                sel.val('');
+    	            _onQuickPrinterSearch($("#sp-print-qs-printer-filter"), "");                	
+                }
             }
             //
             ;
@@ -4925,7 +4931,7 @@
              *
              */
             _view.pages.print.onPrinter = function(printerName) {
-                var res;
+                var res, retValue = true;
 
                 if (!_model.myPrinter || _model.myPrinter.name !== printerName) {
 
@@ -4935,19 +4941,24 @@
                     });
 
                     if (res.result.code === '0') {
+                    	
                         _model.myPrinter = res.printer;
                         _model.setPrinterDefaults();
                         _model.myFirstPageShowPrintSettings = true;
+                        
+	                    _view.visible($('#button-print-settings'), _model.myPrinter.groups.length > 0);
+    	                _view.showUserPageAsync('#page-printer-settings', 'PrinterSettings');
+    	                
+                    } else {
+                    	retValue = false;
+                    	_view.showApiMsg(res);
                     }
-
-                    _view.visible($('#button-print-settings'), _model.myPrinter.groups.length > 0);
-                    
-                    _view.showUserPageAsync('#page-printer-settings', 'PrinterSettings');
                     
                 }
 
                 _prepareReaderForPrinter();
-
+                
+				return retValue;
             };
 
             /**

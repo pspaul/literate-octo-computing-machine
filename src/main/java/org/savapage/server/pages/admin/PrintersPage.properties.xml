@@ -26,4 +26,6 @@
     <entry key="prompt-allow-access">Allow access for:</entry>
     <entry key="prompt-deny-access">Deny access for:</entry>
         
+    <entry key="printer-needs-configuration">Configuration needed</entry>
+        
 </properties>

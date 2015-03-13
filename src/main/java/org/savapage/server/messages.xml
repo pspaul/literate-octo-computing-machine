@@ -49,6 +49,8 @@
     <entry key="msg-printer-connection-broken">Connection to Proxy Printers is broken.</entry>
 	<entry key="msg-printer-out-of-date">Printer information is out-of-date. Please refresh the
 		printer list.</entry>
+    <entry key="msg-printer-no-media-sources-defined">No media sources defined for printer {0}.
+        Please contact the application administrator.</entry>
 
 	<entry key="msg-user-pdf-out-disabled">You are not allowed to export to PDF.</entry>
 

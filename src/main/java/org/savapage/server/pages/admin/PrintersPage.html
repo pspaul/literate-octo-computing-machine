@@ -11,7 +11,11 @@
             <h3><span wicket:id="displayName"/></h3>
             <p><span wicket:id="printer-pie" class="sparkline-printer-pie"/>&nbsp;<span class="sp-printer-opt-download" wicket:id="printerName"/> &bull; <span class="sp-txt-wrap" wicket:id="deviceUri"/></p>
             <p><span wicket:id="printer-sparkline" class="sparkline-printer-line"/></p>
-            
+
+            <wicket:enclosure child="printer-needs-configuration">
+                <div class="sp-txt-error sp-txt-wrap"><span wicket:id="printer-needs-configuration"/></div>
+            </wicket:enclosure>
+                        
 			<p wicket:id="info"></p>
 			<div class="sp-txt-wrap" wicket:id="period"/> 
             <div class="sp-txt-wrap" wicket:id="totals"/>
@@ -33,7 +37,7 @@
             <wicket:enclosure child="assocTerminal">
                 <div class="sp-txt-wrap">&rarr; <span wicket:id="assocTerminal"/></div>
             </wicket:enclosure>
-            
+
 			<p class="ui-li-aside">
 				<strong wicket:id="signal"></strong>
 			</p>

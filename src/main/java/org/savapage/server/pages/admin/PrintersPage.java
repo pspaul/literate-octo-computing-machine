@@ -55,6 +55,7 @@ import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
@@ -483,6 +484,17 @@ public class PrintersPage extends AbstractAdminListPage {
                     }
                 }
                 item.add(new Label("deviceUri", deviceUriText));
+
+                //
+                final boolean isConfigured =
+                        cupsPrinter == null
+                                || PROXY_PRINT_SERVICE.isPrinterConfigured(
+                                        cupsPrinter, new PrinterAttrLookup(
+                                                printer));
+
+                item.add(createVisibleLabel(!isConfigured,
+                        "printer-needs-configuration",
+                        localized("printer-needs-configuration")));
 
                 //
                 String signalKey = null;

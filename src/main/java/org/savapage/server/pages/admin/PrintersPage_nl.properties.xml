@@ -25,5 +25,7 @@
             
     <entry key="prompt-allow-access">Toegang toestaan ​​voor:</entry>
     <entry key="prompt-deny-access">Toegang weigeren voor:</entry>
+    
+    <entry key="printer-needs-configuration">Configuratie vereist</entry>
             
 </properties>
