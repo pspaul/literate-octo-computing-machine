@@ -2171,7 +2171,7 @@
 
             this.apiResMsg = function(result) {
 
-                var title, cssClass, txt, sel;
+                var title, cssClass, txt, sel, html;
 
                 if (result.code === "9") {
                     /*
@@ -2199,7 +2199,18 @@
 
                 sel = _view.activePage().find('.sp-msg-popup');
 
-                sel.html('<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>' + '<h3 class="ui-title ' + cssClass + '">' + title + '</h3>' + '<p class="sp-txt-wrap ' + cssClass + '">' + txt + '</p>');
+				// remove CR/LF, CR and replace all multiple spaces with one single space 
+				txt = txt.replace(/\r?\n|\r/g,"").replace(/ +(?= )/g,'');
+
+				html = '<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>';
+				html += '<h3 class="ui-title ' + cssClass + '">' + title + '</h3>';
+				html += '<p class="sp-txt-wrap ' + cssClass + '">' + txt + '</p>';
+				html += '<div data-iconpos="none" data-mini="true" data-role="collapsible" data-collapsed="true">';
+				html += '<h3 style="width: 50px;">. . .</h3>';
+				html += '<textarea onclick="this.focus();this.select()" readonly="readonly" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">' + txt + '</textarea>';
+				html += '</div>';
+				 
+                sel.html(html);
                 sel.enhanceWithin().popup("open");
             };
 
