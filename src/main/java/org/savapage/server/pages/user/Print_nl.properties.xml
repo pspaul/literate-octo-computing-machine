@@ -4,12 +4,14 @@
     <entry key="title">Afdrukken</entry>
     <entry key="search-printer-prompt">Kies een printer:</entry>
     <entry key="search-printer-placeholder">"Naam of locatie..."</entry>
-    <entry key="print-copies">Kopieën</entry>
+        
+    <entry key="print-job-scope">Scope</entry>
     <entry key="print-title">Titel</entry>    
     <entry key="prompt-letterhead">Briefhoofd</entry>    
     <entry key="delete-pages-after-print">Verwijder alle pagina's na afdrukken</entry>
     <entry key="print-remove-graphics">Afbeeldingen verwijderen</entry>
-    <entry key="print-page-ranges">Voer reeksen in zoals: 1-4,6,8-10</entry>
+    <entry key="print-page-ranges">Pagina's</entry>
+    <entry key="print-page-ranges-help">Bijvoorbeeld: 1-4,6,8-10</entry>
     <entry key="button-print">Afdrukken</entry>
     <entry key="button-print-and-close">Afdrukken &amp; Sluiten</entry>    
     <entry key="button-back">Terug</entry>        

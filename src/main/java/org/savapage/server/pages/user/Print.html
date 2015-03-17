@@ -61,48 +61,53 @@ pattern="[0-9]*"
     
         <li data-role="list-divider" id="sp-printer-page-name" data-theme="a">Job</li>
     
-	    <li class="ui-mini">
-<wicket:remove><!-- 
-	        <label for="print-title">
-	            <wicket:message key="print-title"/>:
-	        </label>
---></wicket:remove>	        
-	        <select class="ui-mini" id="print-title-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
-            <input type="text" data-clear-btn="true" id="print-title" value="" />
-	        
-		    <label for="slider-print-copies">
-		        <wicket:message key="print-copies"/>:
-		    </label>
-		    <input type="range" id="slider-print-copies" wicket:id="slider-print-copies" 
-		          value="1" min="1" max="<var>" />
-		
-			<label for="print-page-ranges">
-			   <wicket:message key="print-page-ranges"/>        
-			</label>
-			<input type="text" data-clear-btn="true" id="print-page-ranges" value="" pattern="[0-9]*"
-			   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+	    <li data-mini="true">
+	    
+            <div class="ui-field-contain">
+		        <label data-mini="true" for="print-job-list">
+		            <wicket:message key="print-job-scope"/>
+		        </label>
+		        <select data-mini="true" id="print-job-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"/>
+            </div>
+            
+            <div class="ui-field-contain">
+	            <label for="print-title">
+	                <wicket:message key="print-title"/>
+	            </label>
+	            <input type="text" data-clear-btn="true" id="print-title" value="" />
+            </div>
+            	        
+            <div class="ui-field-contain">
+			    <label for="slider-print-copies">
+			        <wicket:message key="print-copies"/>
+			    </label>
+			    <input type="range" id="slider-print-copies" wicket:id="slider-print-copies" 
+			          value="1" min="1" max="<var>" />
+            </div>
+            		
+            <div class="ui-field-contain">
+				<label for="print-page-ranges">
+				   <wicket:message key="print-page-ranges"/>        
+				</label>
+				<input type="text" data-clear-btn="true" id="print-page-ranges" value="" pattern="[0-9]*"
+				   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </div>
 
-        </li>
-        
-        <li class="ui-mini">
-            <div data-type="horizontal">
-                <label class="ui-mini" for="print-letterhead-list">
-                    <wicket:message key="prompt-letterhead"/>:        
+            <div data-mini="true" class="ui-field-contain">
+                <label data-mini="true" for="print-letterhead-list">
+                    <wicket:message key="prompt-letterhead"/>        
                 </label>
-                <select class="ui-mini" id="print-letterhead-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
+                <select data-mini="true" id="print-letterhead-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
             </div>
                             
-        </li>
-        
-        <li class="ui-mini">
-	        <div data-role="controlgroup">
+	        <div data-mini="true" data-role="controlgroup">
 		        <label for="print-remove-graphics">
 		            <wicket:message key="print-remove-graphics"/>        
 		        </label>
 		        <input type="checkbox" id="print-remove-graphics" value="1"/>            
             </div>
                     
-            <div data-role="controlgroup">
+            <div data-mini="true" data-role="controlgroup">
                 <label for="delete-pages-after-print">
                     <wicket:message key="delete-pages-after-print"/>        
                 </label>

@@ -1141,6 +1141,8 @@ public final class JsonApiServer extends AbstractPage {
                 pdfTemp =
                         generatePdfForExport(
                                 lockedUser,
+                                Integer.parseInt(getParmValue(parameters,
+                                        isGetAction, "jobIndex")),
                                 getParmValue(parameters, isGetAction, "ranges"),
                                 getParmValue(parameters, isGetAction,
                                         "graphics").equals(PARM_VALUE_FALSE),
@@ -1399,6 +1401,10 @@ public final class JsonApiServer extends AbstractPage {
                     getParmValue(parameters, isGetAction, "user"),
                     getParmValue(parameters, isGetAction, "pin"));
 
+        case JsonApiDict.REQ_INBOX_IS_VANILLA:
+
+            return reqInboxIsVanilla(requestingUser);
+
         case JsonApiDict.REQ_JOB_DELETE:
 
             return reqInboxJobDelete(requestingUser,
@@ -1482,6 +1488,7 @@ public final class JsonApiServer extends AbstractPage {
                     getParmValue(parameters, isGetAction, "printer"),
                     getParmValue(parameters, isGetAction, "readerName"),
                     getParmValue(parameters, isGetAction, "jobName"),
+                    getParmValue(parameters, isGetAction, "jobIndex"),
                     getParmValue(parameters, isGetAction, "copies"),
                     getParmValue(parameters, isGetAction, "ranges"),
                     PageScalingEnum.valueOf(getParmValue(parameters,
@@ -1638,6 +1645,7 @@ public final class JsonApiServer extends AbstractPage {
             return reqSend(
                     lockedUser,
                     getParmValue(parameters, isGetAction, "mailto"),
+                    getParmValue(parameters, isGetAction, "jobIndex"),
                     getParmValue(parameters, isGetAction, "ranges"),
                     getParmValue(parameters, isGetAction, "graphics").equals(
                             PARM_VALUE_FALSE));
@@ -1700,11 +1708,14 @@ public final class JsonApiServer extends AbstractPage {
      *
      * @param user
      *            The {@link User}.
-     * @param documentPageRangeFilter
+     * @param vanillaJobIndex
+     *            The zero-based index of the vanilla job.
+     * @param pageRangeFilter
      *            The page range filter. For example: '1,2,5-6'. The page
      *            numbers in page range filter refer to one-based page numbers
-     *            of the integrated {@link InboxInfoDto} document. When
-     *            {@code null}, then the full page range is applied.
+     *            of the integrated {@link InboxInfoDto} document OR for a
+     *            single vanilla job. When {@code null}, then the full page
+     *            range is applied.
      * @param removeGraphics
      *            If <code>true</code> graphics are removed (minified to
      *            one-pixel).
@@ -1719,17 +1730,53 @@ public final class JsonApiServer extends AbstractPage {
      * @throws Exception
      */
     private File generatePdfForExport(final User user,
-            final String documentPageRangeFilter, boolean removeGraphics,
-            final DocLog docLog, final String purpose)
-            throws LetterheadNotFoundException, IOException,
-            PostScriptDrmException {
+            final int vanillaJobIndex, final String pageRangeFilter,
+            final boolean removeGraphics, final DocLog docLog,
+            final String purpose) throws LetterheadNotFoundException,
+            IOException, PostScriptDrmException {
 
         final String pdfFile =
                 OutputProducer.createUniqueTempPdfName(user, purpose);
 
+        final String documentPageRangeFilter;
+
+        if (vanillaJobIndex < 0) {
+
+            documentPageRangeFilter = pageRangeFilter;
+
+        } else {
+            /*
+             * Convert job scope to inbox scope.
+             */
+            final InboxInfoDto jobInfo =
+                    INBOX_SERVICE.readInboxInfo(user.getUserId());
+
+            documentPageRangeFilter =
+                    INBOX_SERVICE.toVanillaJobInboxRange(jobInfo,
+                            vanillaJobIndex, INBOX_SERVICE
+                                    .createSortedRangeArray(pageRangeFilter));
+        }
+
         return OutputProducer.instance().generatePdfForExport(user, pdfFile,
                 documentPageRangeFilter, removeGraphics, docLog);
     }
+
+    /**
+     * Converts a sorted {@link RangeAtom} list with page numbers in job context
+     * to a inbox context range string.
+     * <p>
+     * Note: the jobInfo must be vanilla.
+     * </p>
+     *
+     * @param jobInfo
+     *            The {@link InboxInfoDto}.
+     * @param iVanillaJobIndex
+     *            The zero-based vanilla job index in the jobInfo.
+     * @param sortedRangeArrayJob
+     *            The sorted {@link RangeAtom} list with page numbers in job
+     *            context.
+     * @return The range string.
+     */
 
     /**
      *
@@ -2077,7 +2124,7 @@ public final class JsonApiServer extends AbstractPage {
         if (!API_DICTIONARY.isValidRequest(request)) {
             userData = new HashMap<String, Object>();
             return setApiResult(userData, API_RESULT_CODE_ERROR,
-                    "msg-invalid-request");
+                    "msg-invalid-request", request);
         }
 
         if (!API_DICTIONARY.isAuthenticationNeeded(request)) {
@@ -2135,22 +2182,24 @@ public final class JsonApiServer extends AbstractPage {
 
     /**
      *
-     * @param user
+     * @param lockedUser
      * @param mailto
+     * @param jobIndex
+     * @param ranges
+     * @param removeGraphics
      * @return
-     * @throws IOException
      * @throws LetterheadNotFoundException
-     * @throws Exception
+     * @throws IOException
      * @throws MessagingException
-     * @throws CircuitBreakerException
      * @throws InterruptedException
+     * @throws CircuitBreakerException
      * @throws ParseException
      */
     private Map<String, Object> reqSend(final User lockedUser,
-            final String mailto, final String ranges, boolean removeGraphics)
-            throws LetterheadNotFoundException, IOException,
-            MessagingException, InterruptedException, CircuitBreakerException,
-            ParseException {
+            final String mailto, final String jobIndex, final String ranges,
+            boolean removeGraphics) throws LetterheadNotFoundException,
+            IOException, MessagingException, InterruptedException,
+            CircuitBreakerException, ParseException {
 
         final String user = lockedUser.getUserId();
 
@@ -2166,7 +2215,8 @@ public final class JsonApiServer extends AbstractPage {
              * (1) Generate with existing user lock.
              */
             fileAttach =
-                    generatePdfForExport(lockedUser, ranges, removeGraphics,
+                    generatePdfForExport(lockedUser,
+                            Integer.parseInt(jobIndex), ranges, removeGraphics,
                             docLog, "email");
             /*
              * INVARIANT: Since sending the mail is synchronous, file length is
@@ -2858,9 +2908,10 @@ public final class JsonApiServer extends AbstractPage {
      * @param printerName
      * @param readerName
      * @param jobName
+     * @param jobIndex
      * @param copies
      * @param rangesRaw
-     * @param fitToPage
+     * @param pageScaling
      * @param removeGraphics
      * @param clearInbox
      * @param jsonOptions
@@ -2869,10 +2920,10 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqPrint(final User lockedUser,
             final String printerName, final String readerName,
-            final String jobName, final String copies, final String rangesRaw,
-            final PageScalingEnum pageScaling, final boolean removeGraphics,
-            final boolean clearInbox, final String jsonOptions)
-            throws Exception {
+            final String jobName, final String jobIndex, final String copies,
+            final String rangesRaw, final PageScalingEnum pageScaling,
+            final boolean removeGraphics, final boolean clearInbox,
+            final String jsonOptions) throws Exception {
 
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();
@@ -2992,14 +3043,25 @@ public final class JsonApiServer extends AbstractPage {
         printReq.setIdUser(lockedUser.getId());
 
         /*
-         * Mantis #246
+         * Vanilla jobs?
          */
-        final boolean chunkVanillaJobs =
-                isDuplexPrint && printEntireInbox && jobs.getJobs().size() > 1
-                        && INBOX_SERVICE.isInboxVanilla(jobs);
+        final boolean chunkVanillaJobs;
+        final Integer printJobIndex = Integer.parseInt(jobIndex);
+        final Integer iVanillaJob;
+
+        if (printJobIndex.intValue() < 0) {
+            iVanillaJob = null;
+            chunkVanillaJobs =
+                    isDuplexPrint && printEntireInbox
+                            && jobs.getJobs().size() > 1
+                            && INBOX_SERVICE.isInboxVanilla(jobs);
+        } else {
+            iVanillaJob = printJobIndex;
+            chunkVanillaJobs = true;
+        }
 
         PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
-                pageScaling, chunkVanillaJobs);
+                pageScaling, chunkVanillaJobs, iVanillaJob);
 
         /*
          * Calculate the printing cost.
@@ -3115,7 +3177,7 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         /*
-         * Fast proxy Print via outbox?
+         * Hold Print?
          */
         final ProxyPrintAuthModeEnum authModeEnum =
                 DEVICE_SERVICE.getProxyPrintAuthMode(device.getId());
@@ -6668,6 +6730,19 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         return userData;
+    }
+
+    /**
+     *
+     * @return
+     */
+    private Map<String, Object> reqInboxIsVanilla(final String user) {
+
+        final boolean isVanilla =
+                INBOX_SERVICE.isInboxVanilla(INBOX_SERVICE.getInboxInfo(user));
+        final Map<String, Object> userData = new HashMap<String, Object>();
+        userData.put("vanilla", Boolean.valueOf(isVanilla));
+        return setApiResultOK(userData);
     }
 
     /**

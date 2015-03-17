@@ -15,7 +15,7 @@
 	<entry key="msg-exception">Er is een fout opgetreden, neem contact op met uw
 		systeembeheerder.</entry>
 
-    <entry key="msg-invalid-request">Verzoek is ongeldig.</entry>
+    <entry key="msg-invalid-request">Verzoek "{0}" is ongeldig.</entry>
 
 	<entry key="exc-letterhead-not-found">Briefhoofd is niet gevonden. Vernieuw de
 		lijst met briefhoofden.</entry>

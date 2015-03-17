@@ -77,6 +77,7 @@ public class JsonApiDict {
     public static final String REQ_JOB_DELETE = "job-delete";
     public static final String REQ_JOB_EDIT = "job-edit";
     public static final String REQ_JOB_PAGES = "job-pages";
+    public static final String REQ_INBOX_IS_VANILLA = "inbox-is-vanilla";
     public static final String REQ_JQPLOT = "jqplot";
     public static final String REQ_LANGUAGE = "language";
 
@@ -498,6 +499,8 @@ public class JsonApiDict {
         usr(REQ_JOB_DELETE, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_JOB_EDIT, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_JOB_PAGES, DbClaim.NONE, DbAccess.USER_LOCK);
+        usr(REQ_INBOX_IS_VANILLA, DbClaim.NONE, DbAccess.USER_LOCK);
+
         usr(REQ_JQPLOT, DbClaim.NONE, DbAccess.YES);
         non(REQ_LANGUAGE);
         usr(REQ_LETTERHEAD_ATTACH, DbClaim.NONE, DbAccess.USER_LOCK);

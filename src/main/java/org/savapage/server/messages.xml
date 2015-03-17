@@ -16,7 +16,7 @@
 	<entry key="msg-exception">An error occurred, please contact your system
 		administrator.</entry>
 
-    <entry key="msg-invalid-request">Request is invalid.</entry>
+    <entry key="msg-invalid-request">Request "{0}" is invalid.</entry>
 
 	<entry key="exc-letterhead-not-found">Letterhead not found. Please refresh
 		your letterhead	list.</entry>

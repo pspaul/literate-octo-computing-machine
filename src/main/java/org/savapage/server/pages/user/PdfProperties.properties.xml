@@ -4,6 +4,7 @@
     <entry key="title">PDF</entry>
     <entry key="pdf-cat-descript">Description</entry>
 
+    <entry key="pdf-job-scope">Scope</entry>
     <entry key="pdf-title">Title</entry>
     <entry key="pdf-author">Author</entry>
     <entry key="pdf-subject">Subject</entry>
@@ -39,7 +40,8 @@
     <entry key="button-pdf-allow-none">Allow none</entry>
 
     <entry key="pdf-remove-graphics">Remove graphics</entry>    
-    <entry key="pdf-page-ranges">Enter ranges like: 1-4,6,8-10</entry>
+    <entry key="pdf-page-ranges">Pages</entry>
+    <entry key="pdf-page-ranges-help">For example: 1-4,6,8-10</entry>
 
     <entry key="button-default">Default</entry>
     <entry key="button-download">Download</entry>        

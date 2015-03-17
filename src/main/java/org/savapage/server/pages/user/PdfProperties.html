@@ -14,24 +14,61 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
     <ul data-role="listview" data-inset="true">
     
 	    <li>
+            <div class="ui-field-contain">
+                <label data-mini="true" for="pdf-job-list"><wicket:message key="pdf-job-scope"/></label>
+    		    <select data-mini="true" id="pdf-job-list" data-icon="check" data-iconpos="left" data-native-menu="false"/>
+	       </div>
+            <div class="ui-field-contain">
+                <label for="pdf-title"><wicket:message key="pdf-title"/></label>
+                <input data-mini="true" type="text" name="pdf-title" id="pdf-title" data-clear-btn="true" value="" autofocus />
+            </div>
+            
+	        <div class="ui-field-contain">
+	            <label for="pdf-author"><wicket:message key="pdf-author"/></label>
+	            <input type="text" name="pdf-author" id="pdf-author" value=""
+	                autocomplete="off" autocorrect="off" spellcheck="false"/>
+	        </div>
+        
+	        <div data-mini="true" class="ui-field-contain">
+	            <label for="pdf-page-ranges"><wicket:message key="pdf-page-ranges"/></label>
+	            <input type="text" id="pdf-page-ranges" value="" pattern="[0-9]*" data-clear-btn="true"   
+	               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+	        </div>
+	                   
+            <div class="ui-field-contain">
+                <label data-mini="true" for="pdf-letterhead-list">
+                    <wicket:message key="prompt-letterhead"/>   
+                </label>
+                <select data-mini="true" id="pdf-letterhead-list" data-icon="check" data-iconpos="left" data-native-menu="false"></select>
+            </div>  
+                
+	        <div class="ui-field-contain">
+	            <label data-mini="true" for="pdf-remove-graphics"><wicket:message key="pdf-remove-graphics"/></label>
+	            <input data-mini="true" type="checkbox" id="pdf-remove-graphics" value="1"/>
+	        </div>
+        
+	        <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+				<wicket:remove><!-- 
+	            <legend class="sp-txt-wrap">
+	                <wicket:message key="prompt-apply"/>
+	            </legend>
+				--></wicket:remove>  
 	    
-		    <div class="ui-field-contain">
-			    <label for="pdf-title"><wicket:message key="pdf-title"/></label>
-			    <input type="text" name="pdf-title" id="pdf-title" data-clear-btn="true" value="" autofocus />
-			</div>
-			
-		    <select id="pdf-title-list" data-icon="check" data-iconpos="left" data-native-menu="false"></select>
-	
+	            <input type="checkbox" id="pdf-apply-description" value="0"/> 
+	            <label for="pdf-apply-description"><wicket:message key="pdf-cat-descript"/></label>
+	    
+	            <input type="checkbox" id="pdf-apply-security" value="0"/> 
+	            <label for="pdf-apply-security"><wicket:message key="pdf-cat-security"/></label>
+	    
+	            <input type="checkbox" id="pdf-apply-passwords" value="0"/> 
+	            <label for="pdf-apply-passwords"><wicket:message key="pdf-cat-passwords"/></label>
+	                            
+	        </fieldset>
+        
 	    </li>
     
     <li>
     
-        <div class="ui-field-contain">
-       	    <label for="pdf-author"><wicket:message key="pdf-author"/></label>
-	        <input type="text" name="pdf-author" id="pdf-author" value=""
-	            autocomplete="off" autocorrect="off" spellcheck="false"/>
-	    </div>
-	    
 	    <div data-role="collapsible-set" id="pdf-collapsible-set">
 	    
 		    <div data-role="collapsible" data-collapsed="true">
@@ -119,41 +156,6 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 	    
 	    </div>
 	
-	    <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
-	        <legend class="sp-txt-wrap">
-	            <wicket:message key="prompt-apply"/>
-	        </legend>
-	
-	        <input type="checkbox" id="pdf-apply-description" value="0"/> 
-	        <label for="pdf-apply-description"><wicket:message key="pdf-cat-descript"/></label>
-	
-	        <input type="checkbox" id="pdf-apply-security" value="0"/> 
-	        <label for="pdf-apply-security"><wicket:message key="pdf-cat-security"/></label>
-	
-	        <input type="checkbox" id="pdf-apply-passwords" value="0"/> 
-	        <label for="pdf-apply-passwords"><wicket:message key="pdf-cat-passwords"/></label>
-	                        
-	    </fieldset>
-	    
-    </li>
-
-    <li>
-	    <label for="pdf-letterhead-list">
-	        <wicket:message key="prompt-letterhead"/>   
-	    </label>
-	    <select id="pdf-letterhead-list" data-icon="check" data-iconpos="left" data-native-menu="false"></select>
-	
-    </li>
-
-    <li>
-            
-        <label for="pdf-page-ranges"><wicket:message key="pdf-page-ranges"/></label>
-        <input type="text" id="pdf-page-ranges" value="" pattern="[0-9]*" data-clear-btn="true"   
-           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-           
-        <label for="pdf-remove-graphics"><wicket:message key="pdf-remove-graphics"/></label>
-        <input type="checkbox" id="pdf-remove-graphics" value="1"/>
-        
     </li>
 
     </ul>

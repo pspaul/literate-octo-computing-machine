@@ -4,6 +4,7 @@
     <entry key="title">PDF</entry>
     <entry key="pdf-cat-descript">Beschrijving</entry>
 
+    <entry key="pdf-job-scope">Scope</entry>
     <entry key="pdf-title">Titel</entry>
     <entry key="pdf-author">Auteur</entry>
     <entry key="pdf-subject">Onderwerp</entry>
@@ -37,7 +38,8 @@
     <entry key="prompt-letterhead">Briefhoofd</entry>        
 
     <entry key="pdf-remove-graphics">Afbeeldingen verwijderen</entry>
-    <entry key="pdf-page-ranges">Voer reeksen in zoals: 1-4,6,8-10</entry>
+    <entry key="pdf-page-ranges">Pagina's</entry>
+    <entry key="pdf-page-ranges-help">Bijvoorbeeld: 1-4,6,8-10</entry>
 
     <entry key="prompt-apply">Toepassen</entry>        
 
