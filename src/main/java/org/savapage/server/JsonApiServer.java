@@ -764,6 +764,8 @@ public final class JsonApiServer extends AbstractPage {
 
         } catch (Exception e) {
 
+            LOGGER.error(e.getMessage(), e);
+
             if (tempFile != null && tempFile.exists()) {
                 tempFile.delete();
             }
