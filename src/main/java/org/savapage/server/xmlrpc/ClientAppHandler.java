@@ -32,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.savapage.common.dto.ClientAppConnectDto;
 import org.savapage.common.dto.CometdConnectDto;
-import org.savapage.core.SpException;
 import org.savapage.core.cometd.CometdClientMixin;
 import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
@@ -95,19 +94,24 @@ public final class ClientAppHandler {
 
     /**
      *
+     * @param remoteIpAddress
+     *            IP address of remote client.
      * @return
      * @throws MalformedURLException
      * @throws UnknownHostException
      */
-    private static URL getCometdUrl() throws MalformedURLException,
-            UnknownHostException {
-        return new URL("https", ConfigManager.getServerHostAddress(),
+    private static URL getCometdUrl(final String remoteIpAddress)
+            throws MalformedURLException, UnknownHostException {
+        return new URL("https",
+                ConfigManager.getServerHostAddress(remoteIpAddress),
                 Integer.parseInt(ConfigManager.getServerSslPort()),
                 WebApp.MOUNT_PATH_COMETD);
     }
 
     /**
      *
+     * @param remoteIpAddress
+     *            IP address of remote client.
      * @param userId
      *            The unique user id.
      * @return The {@link URL} to open the User WebApp.
@@ -115,15 +119,16 @@ public final class ClientAppHandler {
      * @throws UnknownHostException
      * @throws URISyntaxException
      */
-    private static URL getUserWebAppUrl(final String userId)
-            throws URISyntaxException, MalformedURLException,
-            UnknownHostException {
+    private static URL getUserWebAppUrl(final String remoteIpAddress,
+            final String userId) throws URISyntaxException,
+            MalformedURLException, UnknownHostException {
 
         // TODO: IConfigProp.Key to use SSL (or not).
 
         final URIBuilder builder = new URIBuilder();
 
-        builder.setScheme("http").setHost(ConfigManager.getServerHostAddress())
+        builder.setScheme("http")
+                .setHost(ConfigManager.getServerHostAddress(remoteIpAddress))
                 .setPort(Integer.parseInt(ConfigManager.getServerPort()))
                 .setPath(WebApp.MOUNT_PATH_WEBAPP_USER)
                 .addParameter(WebApp.URL_PARM_USER, userId);
@@ -146,6 +151,8 @@ public final class ClientAppHandler {
     /**
      * Checks if user can be authenticated.
      *
+     * @param remoteIpAddress
+     *            IP address of remote client.
      * @param userId
      *            The unique user id.
      * @param userPassword
@@ -158,22 +165,13 @@ public final class ClientAppHandler {
      *            The admin passkey (can be null or empty).
      * @return {@code null} if user can NOT be authenticated.
      */
-    private static UserAuthToken getUserAuthToken(final String userId,
-            final String userPassword, final String userToken,
-            final String adminPassKey) {
+    private static UserAuthToken getUserAuthToken(final String remoteIpAddress,
+            final String userId, final String userPassword,
+            final String userToken, final String adminPassKey) {
 
         UserAuthToken authToken;
 
-        String clientIpAddress = SpXmlRpcServlet.getClientIpAddress();
-
-        if (clientIpAddress.equals("127.0.0.1")) {
-        	try {
-				clientIpAddress = ConfigManager.getServerHostAddress();
-			} catch (UnknownHostException e) {
-				throw new SpException(e.getMessage(), e);
-			}
-        }
-
+        final String clientIpAddress = remoteIpAddress;
         final ConfigManager cm = ConfigManager.instance();
 
         final boolean isAuth;
@@ -312,9 +310,12 @@ public final class ClientAppHandler {
 
             } else {
 
+                final String remoteIpAddress =
+                        SpXmlRpcServlet.getClientIpAddress();
+
                 final UserAuthToken authToken =
-                        getUserAuthToken(userId, userPassword, userToken,
-                                adminPassKey);
+                        getUserAuthToken(remoteIpAddress, userId, userPassword,
+                                userToken, adminPassKey);
 
                 if (authToken == null) {
 
@@ -327,7 +328,8 @@ public final class ClientAppHandler {
                     dto.setStatus(ClientAppConnectDto.Status.OK);
 
                     dto.setServerTime(new Date().getTime());
-                    dto.setWebAppUrl(getUserWebAppUrl(userId).toString());
+                    dto.setWebAppUrl(getUserWebAppUrl(remoteIpAddress, userId)
+                            .toString());
 
                     final CometdConnectDto cometdConnect =
                             new CometdConnectDto();
@@ -345,7 +347,8 @@ public final class ClientAppHandler {
                     cometdConnect
                             .setChannelSubscribe(UserEventService.CHANNEL_PUBLISH);
 
-                    cometdConnect.setUrl(getCometdUrl().toString());
+                    cometdConnect.setUrl(getCometdUrl(remoteIpAddress)
+                            .toString());
 
                     dto.setCometd(cometdConnect);
                 }
