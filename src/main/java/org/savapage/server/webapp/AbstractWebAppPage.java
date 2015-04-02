@@ -47,9 +47,24 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         IHeaderContributor {
 
     /**
-    *
-    */
+     * .
+     */
     private static final long serialVersionUID = 1L;
+
+    public static final String WEBJARS_PATH_JQUERY_MOBILE_JS =
+            "jquery-mobile/current/jquery.mobile.js";
+
+    public static final String WEBJARS_PATH_JQUERY_MOBILE_CSS =
+            "jquery-mobile/current/jquery.mobile.css";
+
+    public static final String WEBJARS_PATH_JQUERY_SPARKLINE =
+            "jquery.sparkline/current/jquery.sparkline.js";
+
+    public static final String WEBJARS_PATH_JQUERY_JQPLOT_JS =
+            "jqplot/current/jquery.jqplot.js";
+
+    public static final String WEBJARS_PATH_JQUERY_JQPLOT_CSS =
+            "jqplot/current/jquery.jqplot.css";
 
     /**
      * JavaScript libraries available for rendering.
@@ -230,16 +245,6 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
     }
 
     /**
-     *
-     * @param response
-     *            The {@link IHeaderResponser}.
-     * @param url
-     */
-    private void renderCss(final IHeaderResponse response, final String url) {
-        response.render(CssHeaderItem.forUrl(url));
-    }
-
-    /**
      * Returns the 'nocache' URL parameter to be appended to rendered SavaPage
      * files.
      * <p>
@@ -291,45 +296,50 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         /*
          * CSS files
          */
-        renderCss(response, WebApp.getJqueryMobileUrlCss());
+        response.render(WebApp.getWebjarsCssRef(WEBJARS_PATH_JQUERY_MOBILE_CSS));
 
         if (jsToRender.contains(JavaScriptLibrary.JQPLOT)) {
-            renderCss(response, WebApp.getJsLibLocation()
-                    + "jquery.jqplot.min.css");
+            response.render(WebApp
+                    .getWebjarsCssRef(WEBJARS_PATH_JQUERY_JQPLOT_CSS));
         }
 
-        renderCss(response, "jquery.savapage.css" + nocache);
+        response.render(CssHeaderItem.forUrl("jquery.savapage.css" + nocache));
 
         final String specializedCssFile = getSpecializedCssFile();
 
         if (specializedCssFile != null) {
-            renderCss(response, specializedCssFile + nocache);
+            response.render(CssHeaderItem.forUrl(specializedCssFile + nocache));
         }
 
         if (jsToRender.contains(JavaScriptLibrary.MOBIPICK)) {
-            renderCss(response, WebApp.getJqMobiPickLocation() + "mobipick.css");
+            response.render(CssHeaderItem.forUrl(WebApp.getJqMobiPickLocation()
+                    + "mobipick.css"));
         }
 
         /*
          * JS files
          */
         if (!isJqueryCoreRenderedByWicket()) {
-            renderJs(response, WebApp.getJqueryUrlJs());
+            response.render(WebApp
+                    .getWebjarsJsRef(WebApp.WEBJARS_PATH_JQUERY_CORE_JS));
         }
 
         if (jsToRender.contains(JavaScriptLibrary.SPARKLINE)) {
-            renderJs(response, WebApp.getJsLibLocation()
-                    + "jquery.sparkline.min.js");
+            response.render(WebApp
+                    .getWebjarsJsRef(WEBJARS_PATH_JQUERY_SPARKLINE));
         }
 
         if (jsToRender.contains(JavaScriptLibrary.JQPLOT)) {
-            renderJs(response, WebApp.getJsLibLocation()
-                    + "jquery.jqplot.min.js");
+            response.render(WebApp
+                    .getWebjarsJsRef(WEBJARS_PATH_JQUERY_JQPLOT_JS));
 
-            for (String plugin : new String[] { "jqplot.pieRenderer.min.js",
-                    "jqplot.json2.min.js", "jqplot.logAxisRenderer.min.js",
-                    "jqplot.dateAxisRenderer.min.js" }) {
-                renderJs(response, WebApp.getJqPlotPluginLocation() + plugin);
+            for (String plugin : new String[] { "jqplot.pieRenderer.js",
+                    "jqplot.json2.js", "jqplot.logAxisRenderer.js",
+                    "jqplot.dateAxisRenderer.js" }) {
+
+                response.render(WebApp.getWebjarsJsRef(String.format(
+                        "jqplot/current/plugins/%s", plugin)));
+
             }
         }
 
@@ -349,7 +359,7 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
          * Note: render jQuery Mobile AFTER jquery.savapage.js, because the
          * $(document).bind("mobileinit") is implemented in jquery.savapage.js
          */
-        renderJs(response, WebApp.getJqueryMobileUrlJs());
+        response.render(WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_MOBILE_JS));
 
         /*
          * Render after JQM.

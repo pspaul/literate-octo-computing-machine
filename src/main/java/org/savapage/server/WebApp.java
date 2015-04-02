@@ -26,19 +26,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-
 import org.apache.wicket.Session;
 import org.apache.wicket.core.request.mapper.MountedMapper;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.request.resource.UrlResourceReference;
 import org.savapage.common.ConfigDefaults;
 import org.savapage.core.SpException;
 import org.savapage.core.cometd.AdminPublisher;
@@ -64,6 +63,9 @@ import org.savapage.server.webapp.WebAppAdminPosPage;
 import org.savapage.server.webapp.WebAppUserPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.agilecoders.wicket.webjars.WicketWebjars;
+import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceReference;
 
 /**
  * Application object for your web application. If you want to run this
@@ -112,12 +114,13 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
     /**
      *
      */
-    private static Properties theServerProps = new Properties();
+    public static final String WEBJARS_PATH_JQUERY_CORE_JS =
+            "jquery/current/jquery.js";
 
     /**
      *
      */
-    private static Properties thePackageProps = new Properties();
+    private static Properties theServerProps = new Properties();
 
     /**
      *
@@ -330,68 +333,34 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     /**
-     * Gets the value of a package property.
-     *
-     * @param key
-     *            The property key.
-     * @return The property value.
-     */
-    public static String getPackageProperty(final String key) {
-        return thePackageProps.getProperty(key);
-    }
-
-    /**
-     * The location of the JavaScript/jQuery library files.
-     *
-     * @return The location including a trailing '/'.
-     */
-    public static String getJsLibLocation() {
-        return thePackageProps.getProperty("jquery.location") + "/";
-    }
-
-    /**
      * The location of the Mobi Pick jQuery library files.
      *
      * @return The location including a trailing '/'.
      */
     public static String getJqMobiPickLocation() {
-        return getJsLibLocation() + "mobipick/"
-                + thePackageProps.getProperty("jquery.mobipick.version") + "/";
-    }
-
-    /**
-     * The location of the jqPlot plug-in files.
-     *
-     * @return The location including a trailing '/'.
-     */
-    public static String getJqPlotPluginLocation() {
-        return getJsLibLocation() + "plugins/";
+        return "mobipick/";
     }
 
     /**
      *
-     * @return The URL string.
+     * @param namePath
+     * @return
      */
-    public static String getJqueryUrlJs() {
-        return getJsLibLocation() + thePackageProps.getProperty("jquery.js");
+    public static JavaScriptReferenceHeaderItem getWebjarsJsRef(
+            final String namePath) {
+        return JavaScriptHeaderItem
+                .forReference(new WebjarsJavaScriptResourceReference(namePath));
     }
 
     /**
      *
-     * @return The URL string.
+     * @param namePath
+     * @return
      */
-    public static String getJqueryMobileUrlJs() {
-        return getJsLibLocation()
-                + thePackageProps.getProperty("jquery.mobile.js");
-    }
-
-    /**
-     *
-     * @return The URL string.
-     */
-    public static String getJqueryMobileUrlCss() {
-        return getJsLibLocation()
-                + thePackageProps.getProperty("jquery.mobile.css");
+    public static CssReferenceHeaderItem
+            getWebjarsCssRef(final String namePath) {
+        return CssHeaderItem
+                .forReference(new WebjarsJavaScriptResourceReference(namePath));
     }
 
     /**
@@ -415,6 +384,15 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
         java.io.FileInputStream fis = null;
 
         try {
+
+            /*
+             * Configure so the wicket application maps requests for /webjars
+             * and instances of IWebjarsResourceReference to the
+             * /META-INF/resources/webjars directory of all the JARs in the
+             * CLASSPATH.
+             */
+            WicketWebjars.install(this);
+
             /*
              * Mount a page class to a given path
              *
@@ -464,22 +442,10 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
             myRawPrintServer = new RawPrintServer(iRawPrintPort);
             myRawPrintServer.start();
 
-            /*
-             *
-             */
+            //
             IppPrintServer.init();
 
-            /*
-             * Read the properties file for the references to the jQuery
-             * resources to link into the HTML.
-             */
-            ServletContext ctx = getServletContext();
-            thePackageProps.load(ctx
-                    .getResourceAsStream("/WEB-INF/package.properties"));
-
-            /*
-             * After the package props are loaded.
-             */
+            //
             replaceJQueryCore();
 
             /*
@@ -572,15 +538,12 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     private void replaceJQueryCore() {
 
-        /*
-         * Note the "/" prefix before the url !!!
-         */
-        final ResourceReference resource =
-                new UrlResourceReference(Url.parse("/" + getJqueryUrlJs()));
+        final JavaScriptReferenceHeaderItem replacement =
+                getWebjarsJsRef(WEBJARS_PATH_JQUERY_CORE_JS);
 
         addResourceReplacement(
                 (JavaScriptResourceReference) getJavaScriptLibrarySettings()
-                        .getJQueryReference(), resource);
+                        .getJQueryReference(), replacement.getReference());
     }
 
     /**
