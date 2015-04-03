@@ -65,6 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.agilecoders.wicket.webjars.WicketWebjars;
+import de.agilecoders.wicket.webjars.request.resource.WebjarsCssResourceReference;
 import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceReference;
 
 /**
@@ -360,7 +361,7 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
     public static CssReferenceHeaderItem
             getWebjarsCssRef(final String namePath) {
         return CssHeaderItem
-                .forReference(new WebjarsJavaScriptResourceReference(namePath));
+                .forReference(new WebjarsCssResourceReference(namePath));
     }
 
     /**
