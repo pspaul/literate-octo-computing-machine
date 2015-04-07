@@ -1,4 +1,4 @@
-/*! (c) 2011-2015 Datraverse B.V. */
+/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
