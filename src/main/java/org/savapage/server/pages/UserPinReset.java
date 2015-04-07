@@ -53,6 +53,6 @@ public final class UserPinReset extends AbstractAuthPage {
 
     @Override
     protected boolean needMembership() {
-        return true;
+        return false;
     }
 }

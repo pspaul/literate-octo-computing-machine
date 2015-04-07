@@ -6644,14 +6644,14 @@ public final class JsonApiServer extends AbstractPage {
 
         switch (memberCard.getStatus()) {
         case EXCEEDED:
-            setApiResult(userData, API_RESULT_CODE_WARN,
+            setApiResult(userData, API_RESULT_CODE_INFO,
                     "msg-membership-exceeded-user-limit",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
                     CommunityDictEnum.MEMBER_CARD.getWord());
             break;
         case EXPIRED:
-            setApiResult(userData, API_RESULT_CODE_WARN,
+            setApiResult(userData, API_RESULT_CODE_INFO,
                     "msg-membership-expired",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
@@ -6659,12 +6659,12 @@ public final class JsonApiServer extends AbstractPage {
 
             break;
         case VISITOR:
-            setApiResult(userData, API_RESULT_CODE_WARN,
+            setApiResult(userData, API_RESULT_CODE_INFO,
                     "msg-membership-visit", daysLeft.toString(),
                     CommunityDictEnum.VISITOR.getWord());
             break;
         case VISITOR_EXPIRED:
-            setApiResult(userData, API_RESULT_CODE_WARN,
+            setApiResult(userData, API_RESULT_CODE_INFO,
                     "msg-membership-visit-expired",
                     CommunityDictEnum.VISITOR.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
@@ -6672,21 +6672,21 @@ public final class JsonApiServer extends AbstractPage {
             break;
         case WRONG_MODULE:
         case WRONG_COMMUNITY:
-            setApiResult(userData, API_RESULT_CODE_WARN,
+            setApiResult(userData, API_RESULT_CODE_INFO,
                     "msg-membership-wrong-product",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
                     CommunityDictEnum.MEMBER_CARD.getWord());
             break;
         case WRONG_VERSION:
-            setApiResult(userData, API_RESULT_CODE_WARN,
+            setApiResult(userData, API_RESULT_CODE_INFO,
                     "msg-membership-version",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
                     CommunityDictEnum.MEMBER_CARD.getWord());
             break;
         case WRONG_VERSION_WITH_GRACE:
-            setApiResult(userData, API_RESULT_CODE_WARN,
+            setApiResult(userData, API_RESULT_CODE_INFO,
                     "msg-membership-version-grace",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     daysLeft.toString(),

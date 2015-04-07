@@ -36,7 +36,7 @@ public abstract class AbstractAdminPage extends AbstractAuthPage {
 
     @Override
     protected boolean needMembership() {
-        return true;
+        return false;
     }
 
     public AbstractAdminPage() {

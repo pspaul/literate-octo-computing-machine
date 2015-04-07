@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -113,24 +114,28 @@ public class SystemStatusPanel extends Panel {
 
         Label labelWrk;
         String cssColor;
-        String msgKey;
+        String msg;
 
         /*
          *
          */
         if (!cm.isAppReadyToUse()) {
             cssColor = MarkupHelper.CSS_TXT_ERROR;
-            msgKey = "sys-status-setup-needed";
-        } else if (memberCard.isAdminAppBlocked()) {
-            cssColor = MarkupHelper.CSS_TXT_WARN;
-            msgKey = "sys-status-restricted";
+            msg = getLocalizer().getString("sys-status-setup-needed", this);
+        } else if (memberCard.isMembershipDesirable()) {
+            cssColor = MarkupHelper.CSS_TXT_ERROR;
+            msg =
+                    MessageFormat.format(
+                            getLocalizer().getString(
+                                    "sys-status-membercard-missing", this),
+                            CommunityDictEnum.MEMBER_CARD.getWord());
         } else {
             cssColor = MarkupHelper.CSS_TXT_VALID;
-            msgKey = "sys-status-ready";
+            msg = getLocalizer().getString("sys-status-ready", this);
         }
 
-        labelWrk =
-                new Label("sys-status", getLocalizer().getString(msgKey, this));
+        labelWrk = new Label("sys-status", msg);
+
         labelWrk.add(new AttributeModifier("class", cssColor));
         add(labelWrk);
 
@@ -151,6 +156,8 @@ public class SystemStatusPanel extends Panel {
         /*
          * Mail Print
          */
+        String msgKey;
+
         if (ConfigManager.isPrintImapEnabled()) {
 
             msgKey = "enabled";
@@ -358,7 +365,7 @@ public class SystemStatusPanel extends Panel {
 
         case VISITOR_EDITION:
             cssColor = MarkupHelper.CSS_TXT_WARN;
-            memberStat = CommunityDictEnum.VISITOR_EDITION.getWord();
+            memberStat = CommunityDictEnum.VISITING_GUEST.getWord();
             break;
 
         case VALID:
@@ -399,8 +406,7 @@ public class SystemStatusPanel extends Panel {
 
         default:
             throw new SpException(CommunityDictEnum.MEMBERSHIP.getWord()
-                    + " status ["
-                    + memberCard.getStatus() + "] not handled");
+                    + " status [" + memberCard.getStatus() + "] not handled");
         }
 
         //

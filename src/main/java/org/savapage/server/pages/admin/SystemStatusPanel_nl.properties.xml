@@ -18,7 +18,7 @@
     <entry key="sys-status">Systeem status</entry>
     <entry key="sys-status-ready">Klaar voor gebruik</entry>
     <entry key="sys-status-setup-needed">Setup is nodig</entry>
-    <entry key="sys-status-restricted">Beperkte toegang</entry>
+    <entry key="sys-status-membercard-missing">{0} Ontbreekt</entry>
     
     <entry key="membership-participants-prompt">Deelnemers</entry>
     <entry key="membership-status">status</entry>

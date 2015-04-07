@@ -33,7 +33,7 @@ public abstract class AbstractAdminListPage extends AbstractListPage {
 
     @Override
     protected boolean needMembership() {
-        return true;
+        return false;
     }
 
     public AbstractAdminListPage() {

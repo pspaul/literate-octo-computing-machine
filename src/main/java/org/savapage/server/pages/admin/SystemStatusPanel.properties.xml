@@ -18,7 +18,7 @@
     <entry key="sys-status">System status</entry>
     <entry key="sys-status-ready">Ready to use</entry>
     <entry key="sys-status-setup-needed">Setup is needed</entry>
-    <entry key="sys-status-restricted">Restricted access</entry>
+    <entry key="sys-status-membercard-missing">{0} Missing</entry>
 
     <entry key="membership-participants-prompt">Participants</entry>
     <entry key="membership-status">status</entry>

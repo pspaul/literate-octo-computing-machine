@@ -356,14 +356,14 @@ public class About extends AbstractAdminPage {
 
         case VISITOR_EDITION:
             signalColor = MarkupHelper.CSS_TXT_WARN;
-            txtStatus = CommunityDictEnum.VISITOR_EDITION.getWord();
+            txtStatus = CommunityDictEnum.VISITING_GUEST.getWord();
             break;
 
         case VISITOR:
             signalColor = MarkupHelper.CSS_TXT_WARN;
             txtStatus =
                     localized("membership-status-visit",
-                            CommunityDictEnum.VISITOR_EDITION.getWord(),
+                            CommunityDictEnum.VISITING_GUEST.getWord(),
                             memberCard.getDaysLeftInVisitorPeriod(refDate));
             break;
 
@@ -372,7 +372,7 @@ public class About extends AbstractAdminPage {
 
             txtStatus =
                     localized("membership-status-visit-expired",
-                            CommunityDictEnum.VISITOR_EDITION.getWord(),
+                            CommunityDictEnum.VISITING_GUEST.getWord(),
                             localizedDate(DateUtils.addDays(
                                     new Date(),
                                     memberCard.getDaysLeftInVisitorPeriod(

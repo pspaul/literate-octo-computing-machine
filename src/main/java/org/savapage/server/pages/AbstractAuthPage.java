@@ -81,7 +81,7 @@ public abstract class AbstractAuthPage extends AbstractPage {
      * <li>
      * If this page needs a valid membership status (see
      * {@link #needMembership()}), the Admin WebApp must not be blocked (see
-     * {@link MemberCard#isAdminAppBlocked()}.</li>
+     * {@link MemberCard#isMembershipDesirable()}.</li>
      * </ul>
      */
     protected void checkAdminAuthorization() {
@@ -92,7 +92,7 @@ public abstract class AbstractAuthPage extends AbstractPage {
             /*
              * Check membership status, and redirect to message page if needed.
              */
-            if (needMembership() && MemberCard.instance().isAdminAppBlocked()) {
+            if (needMembership() && MemberCard.instance().isMembershipDesirable()) {
                 setResponsePage(MembershipMsg.class);
                 authErr = true;
             }

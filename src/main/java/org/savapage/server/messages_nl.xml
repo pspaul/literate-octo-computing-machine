@@ -180,29 +180,22 @@
 	<entry key="msg-pdf-identical-owner-user-pw">PDF wachtwoord van gebruiker en eigenaar moeten
 		verschillend zijn.</entry>
 
-	<!-- -->
+    <!-- ========================================  -->
+    <!--          Membership messages              -->
+    <!-- ========================================  -->
 	<entry key="msg-membership-exceeded-user-limit">U heeft de deelnemers limiet
-		van uw {0} overschreden. U heeft beperkte toegang tot
-		de beheer-pagina's. Verminder het aantal gebruikers of neem contact op met 
+		van uw {0} overschreden. We nodigen u uit om het aantal gebruikers te verminderen of contact op te nemen met 
 		{1} voor een nieuwe {2}.</entry>
-
-	<entry key="msg-membership-expired">Uw {0} is verlopen. U heeft beperkte toegang tot
-		de beheer-pagina's. Neem contact op met {1} voor een nieuwe {2}.</entry>
-
-	<entry key="msg-membership-visit">Nog {0} dagen te gaan in de {1} periode.</entry>
-
-	<entry key="msg-membership-visit-expired">De {0} periode is afgelopen.
-		U heeft beperkte toegang tot de beheer-pagina's. Neem contact op met {1} voor een {2}.</entry>
-
-	<entry key="msg-membership-wrong-product">Uw {0} is niet geldig voor
-		dit product. Neem contact op met {1} voor de juiste {2}.</entry>
-
+	<entry key="msg-membership-expired">Uw {0} is verlopen. We nodigen u uit om contact op te nemen met {1} voor een nieuwe {2}.</entry>
+	<entry key="msg-membership-visit">U heeft nog {0} dagen te gaan in uw {1} periode.</entry>
+	<entry key="msg-membership-visit-expired">Uw {0} periode is verlopen. We nodigen u uit om contact op te nemen met {1} voor een {2}.</entry>
+	<entry key="msg-membership-wrong-product">Uw {0} is niet geldig voor dit product. We nodigen u uit om contact op te nemen met {1} voor de juiste {2}.</entry>
 	<entry key="msg-membership-version">Uw {0} is niet geldig voor deze versie van de
-		applicatie. Neem contact op met {1} om uw {2} op te	waarderen.</entry>
-
+		applicatie. We nodigen u uit om contact op te nemen met {1} om uw {2} op te	waarderen.</entry>
 	<entry key="msg-membership-version-grace">Uw {0} is niet geldig voor deze versie van de
-		applicatie. U heeft {1} dagen om uw {2} op te waarderen.</entry>
+		applicatie. We nodigen u uit om uw {2} binnen {1} dagen op te waarderen.</entry>
 
+    <!-- ========================================  -->
     <entry key="msg-imap-test-passed">IMAP test geslaagd: ({0}) Postvak IN en ({1}) Prullenbak berichten.</entry>
     <entry key="msg-imap-test-failed">IMAP test gefaald: {0}</entry>
     <entry key="msg-imap-stopped">IMAP toezicht met succes gestopt.</entry>

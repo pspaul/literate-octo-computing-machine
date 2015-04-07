@@ -62,7 +62,7 @@
 		this application. Please contact {1} to acquire the correct {2} for this application.</entry>
 
 	<entry key="membership-status-visit">{0} : {1} days remaining</entry>
-	<entry key="membership-status-visit-expired">{0} Expired (since {0})</entry>
+	<entry key="membership-status-visit-expired">{0} Expired (since {1})</entry>
 
 	<entry key="membership-issuer">Issuer</entry>
     <entry key="membership-issue-date">Issue date</entry>

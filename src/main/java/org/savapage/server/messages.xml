@@ -182,30 +182,22 @@
 
 	<entry key="msg-pdf-identical-owner-user-pw">PDF user and owner password must be different.</entry>
 
-	<!-- -->
+    <!-- ========================================  -->
+    <!--          Membership messages              -->
+    <!-- ========================================  -->
 	<entry key="msg-membership-exceeded-user-limit">You exceeded your {0} participant limit.
-		You now have limited access to the administrator pages.
-		Reduce the user count or contact {1} for a new {2}.</entry>
-
-	<entry key="msg-membership-expired">Your {0} expired. You now have
-		limited access to the administrator pages. Please contact {1} for a new
-		{2}.</entry>
-
-	<entry key="msg-membership-visit">{0} days remaining in {1} period.</entry>
-
-	<entry key="msg-membership-visit-expired">The {0} period has ended. You now have
-		limited access to the administrator pages. Please contact {1} for a	{2}.
-	</entry>
-
-	<entry key="msg-membership-wrong-product">Your {0} is not valid for this product. Please
+		You are invited to reduce the user count or contact {1} for a new {2}.</entry>
+	<entry key="msg-membership-expired">Your {0} expired. You are invited to contact {1} for a new {2}.</entry>
+	<entry key="msg-membership-visit">You have {0} days left in your {1} period.</entry>
+	<entry key="msg-membership-visit-expired">Your {0} period has expired. You are invited to contact {1} for a {2}.</entry>
+	<entry key="msg-membership-wrong-product">Your {0} is not valid for this product. You are invited to 
 		contact {1} for the right {2}.</entry>
-
 	<entry key="msg-membership-version">Your {0} is not valid for this product version.
-		Please contact {1} to upgrade your {2}.</entry>
-
+		You are invited to contact {1} to upgrade your {2}.</entry>
 	<entry key="msg-membership-version-grace">Your {0} is not valid for this product version.
-		You have {1} days to upgrade your {2}.</entry>
+		You are invited to upgrade your {2} within {1} days.</entry>
 
+    <!-- ========================================  -->
     <entry key="msg-imap-test-passed">Passed IMAP test: ({0}) Inbox and ({1}) Trash messages.</entry>
     <entry key="msg-imap-test-failed">Failed IMAP test: {0}</entry>
     <entry key="msg-imap-stopped">IMAP monitoring succesfully stopped.</entry>

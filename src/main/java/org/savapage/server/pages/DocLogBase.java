@@ -220,6 +220,7 @@ public class DocLogBase extends AbstractAuthPage {
 
     @Override
     protected boolean needMembership() {
-        return isAdminRoleContext();
+        //return isAdminRoleContext();
+        return false;
     }
 }
