@@ -23,6 +23,7 @@ package org.savapage.server.pages.user;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.community.CommunityDictEnum;
+import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.services.helpers.InetUtils;
@@ -52,5 +53,17 @@ public class Main extends AbstractUserPage {
 
         addVisible(visible, "button-upload", localized("button-upload"));
 
+        //
+        final MemberCard card = MemberCard.instance();
+        final String memberStatus = card.getStatusUserText(getLocale());
+        final boolean cardDesirable = card.isMembershipDesirable();
+
+        if (card.isVisitorCard()) {
+            addVisible(!cardDesirable, "membership-org", memberStatus);
+        } else {
+            addVisible(true, "membership-org", card.getMemberOrganisation());
+        }
+
+        addVisible(cardDesirable, "membership-status", memberStatus);
     }
 }

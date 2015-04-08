@@ -1,4 +1,4 @@
-/*! (c) 2011-2015 Datraverse B.V. */
+/*! SavaPage | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
@@ -33,9 +33,29 @@
     top: -15px;
 }
 
-
 .sp-plain-link {
     color: #74b042 !important;
+    font-weight: normal !important;    
+    text-decoration:none !important;
+}
+
+.sp-plain-community {
+    color: #74b042 !important;
+    font-weight: normal !important;    
+    text-decoration:none !important;
+}
+.sp-plain-info {
+    color: #666666 !important;
+    font-weight: normal !important;    
+    text-decoration:none !important;
+}
+.sp-plain-warn {
+    color: #DC5C05 !important;
+    font-weight: normal !important;    
+    text-decoration:none !important;
+}
+.sp-plain-error {
+    color: red !important;
     font-weight: normal !important;    
     text-decoration:none !important;
 }

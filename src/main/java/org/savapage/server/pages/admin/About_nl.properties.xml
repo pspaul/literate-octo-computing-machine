@@ -64,7 +64,7 @@
 		deze applicatie. Neem contact op met {2} om het juiste {3} voor deze applicatie te verkrijgen.</entry>
 		
 	<entry key="membership-status-wrong-module">Uw {0} is ongeldig voor de modules in
-		deze applicatie. Neem contact op met {1} om het juiste {2} voor deze applicatie te verkrijgen..</entry>
+		deze applicatie. Neem contact op met {1} om het juiste {2} voor deze applicatie te verkrijgen.</entry>
 
     <entry key="membership-status-visit">{0} : {1} dagen resterend</entry>
 	<entry key="membership-status-visit-expired">{0} Verlopen (sinds {1})</entry>

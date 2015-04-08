@@ -284,6 +284,13 @@
         <button class="sp-button-mini-print-duplex sp-main-status-ind ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
         <button class="sp-button-mini-print-n-up sp-main-status-ind ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
 
+        <wicket:enclosure child="membership-org">
+            <button wicket:id="membership-org" class="ui-btn ui-btn-inline ui-btn-icon-text ui-icon-none sp-plain-info"/>
+        </wicket:enclosure>
+        <wicket:enclosure child="membership-status">        
+        <button wicket:id="membership-status" class="ui-btn ui-btn-inline ui-btn-icon-text ui-icon-none sp-plain-warn"/>
+        </wicket:enclosure>
+
     </fieldset>
     
 </div>
