@@ -1173,6 +1173,8 @@ public final class JsonApiServer extends AbstractPage {
 
             } catch (Exception e) {
 
+                LOGGER.error(e.getMessage(), e);
+
                 if (pdfTemp != null && pdfTemp.exists()) {
                     pdfTemp.delete();
                 }
