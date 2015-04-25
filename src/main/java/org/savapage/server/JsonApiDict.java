@@ -120,6 +120,9 @@ public class JsonApiDict {
 
     public static final String REQ_PING = "ping";
 
+    public static final String REQ_USER_PAYMENT_REQUEST =
+            "user-payment-request";
+
     public static final String REQ_POS_DEPOSIT = "pos-deposit";
     public static final String REQ_POS_RECEIPT_DOWNLOAD =
             "pos-receipt-download";
@@ -532,6 +535,8 @@ public class JsonApiDict {
         usr(REQ_PDF_SET_PROPERTIES, DbClaim.READ, DbAccess.YES);
 
         non(REQ_PING);
+
+        usr(REQ_USER_PAYMENT_REQUEST, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_POS_DEPOSIT, DbClaim.NONE, DbAccess.YES);
         adm(REQ_POS_RECEIPT_DOWNLOAD, DbClaim.READ, DbAccess.YES);

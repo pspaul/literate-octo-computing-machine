@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  */
 package org.savapage.server.webapp;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.VersionInfo;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.AbstractPage;
@@ -51,18 +53,56 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The URL path for custom web files. See {@code web.xml}.
+     */
+    private static final String URL_PATH_CUSTOM_WEB = "/custom/web";
+
+    /**
+     * The URL path for custom web themes.
+     */
+    private static final String URL_PATH_CUSTOM_THEME = URL_PATH_CUSTOM_WEB
+            + "/themes";
+
+    /**
+     * The custom Web App theme file name.
+     */
+    private static final String CUSTOM_THEME_FILE = "custom.min.css";
+
+    /**
+     * .
+     */
     public static final String WEBJARS_PATH_JQUERY_MOBILE_JS =
             "jquery-mobile/current/jquery.mobile.js";
 
+    /**
+     * Stylesheet of the standard jQuery Mobile theme.
+     */
     public static final String WEBJARS_PATH_JQUERY_MOBILE_CSS =
             "jquery-mobile/current/jquery.mobile.css";
 
+    /**
+     * Stylesheet to be used with custom jQuery Mobile theme as produced with <a
+     * href="http://themeroller.jquerymobile.com/">themeroller</a>.
+     */
+    public static final String WEBJARS_PATH_JQUERY_MOBILE_STRUCTURE_CSS =
+            "jquery-mobile/current/jquery.mobile.structure.css";
+
+    /**
+     * .
+     */
     public static final String WEBJARS_PATH_JQUERY_SPARKLINE =
             "jquery.sparkline/current/jquery.sparkline.js";
 
+    /**
+     * .
+     */
     public static final String WEBJARS_PATH_JQUERY_JQPLOT_JS =
             "jqplot/current/jquery.jqplot.js";
 
+    /**
+     * .
+     */
     public static final String WEBJARS_PATH_JQUERY_JQPLOT_CSS =
             "jqplot/current/jquery.jqplot.css";
 
@@ -267,6 +307,14 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
     abstract boolean isJqueryCoreRenderedByWicket();
 
     /**
+     * @return The custom Web App theme @{link File}.
+     */
+    private static File getCustomThemeFile() {
+        return new File(String.format("%s/custom/web/themes/%s",
+                ConfigManager.getServerHome(), CUSTOM_THEME_FILE));
+    }
+
+    /**
      * Adds contributions to the html head.
      * <p>
      * <b>Note</b>:
@@ -294,10 +342,30 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         final Set<JavaScriptLibrary> jsToRender = getJavaScriptToRender();
 
         /*
-         * CSS files
+         * jQuery Mobile CSS files.
          */
-        response.render(WebApp.getWebjarsCssRef(WEBJARS_PATH_JQUERY_MOBILE_CSS));
+        final File customThemeCss = getCustomThemeFile();
 
+        if (customThemeCss.isFile()) {
+
+            response.render(CssHeaderItem.forUrl(String.format("%s/%s%s",
+                    URL_PATH_CUSTOM_THEME, customThemeCss.getName(), nocache)));
+
+            response.render(CssHeaderItem.forUrl(String.format("%s/%s%s",
+                    URL_PATH_CUSTOM_THEME, "jquery.mobile.icons.min.css",
+                    nocache)));
+
+            response.render(WebApp
+                    .getWebjarsCssRef(WEBJARS_PATH_JQUERY_MOBILE_STRUCTURE_CSS));
+
+        } else {
+            response.render(WebApp
+                    .getWebjarsCssRef(WEBJARS_PATH_JQUERY_MOBILE_CSS));
+        }
+
+        /*
+         * Other CSS files.
+         */
         if (jsToRender.contains(JavaScriptLibrary.JQPLOT)) {
             response.render(WebApp
                     .getWebjarsCssRef(WEBJARS_PATH_JQUERY_JQPLOT_CSS));

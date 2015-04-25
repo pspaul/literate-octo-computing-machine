@@ -27,7 +27,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.server.SpSession;
+import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.StatsEnvImpactPanel;
 import org.savapage.server.pages.StatsPageTotalPanel;
@@ -46,7 +48,7 @@ public class UserDashboard extends AbstractUserPage {
      */
     public UserDashboard() {
 
-        //this.openServiceContext();
+        // this.openServiceContext();
         handlePage();
     }
 
@@ -122,6 +124,19 @@ public class UserDashboard extends AbstractUserPage {
 
         helper.addModifyLabelAttr("balance", dto.getBalance(), "class",
                 clazzBalance);
+
+        /*
+         * Is payment gateway available?
+         */
+        final PaymentGatewayPlugin plugin =
+                WebApp.get().getPluginManager().getPaymentGatewayPlugin();
+
+        final boolean isPaymentGateway = plugin != null;
+
+        helper.encloseLabel("currency-symbol", SpSession.getCurrencySymbol(),
+                isPaymentGateway);
+
+        helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
 
     }
 }

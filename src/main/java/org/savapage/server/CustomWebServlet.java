@@ -36,8 +36,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.savapage.core.config.ConfigManager;
 
 /**
- * Delivers static documentation, like the User Manual (DocBook) and the Third
- * Party License Information.
+ * Delivers files for web customization.
  *
  * <p>
  * NOTE: This class is referred in {@code web.xml}.
@@ -46,7 +45,7 @@ import org.savapage.core.config.ConfigManager;
  * @author Datraverse B.V.
  *
  */
-public final class SpDocsServlet extends HttpServlet {
+public final class CustomWebServlet extends HttpServlet {
 
     /**
      *
@@ -56,8 +55,7 @@ public final class SpDocsServlet extends HttpServlet {
     /**
      *
      */
-    private static final String CONTENT_HOME = ConfigManager.getServerHome()
-            + "/data/";
+    private static final String CONTENT_HOME = ConfigManager.getServerHome();
 
     @Override
     protected void doGet(final HttpServletRequest req,
@@ -65,14 +63,6 @@ public final class SpDocsServlet extends HttpServlet {
             IOException {
 
         String reqURI = req.getRequestURI();
-
-        if (reqURI.endsWith("manual") || reqURI.endsWith("licenses")) {
-            return;
-        }
-
-        if (reqURI.endsWith("manual/") || reqURI.endsWith("licenses/")) {
-            reqURI += "index.html";
-        }
 
         InputStream istr = null;
         ByteArrayOutputStream bos = null;

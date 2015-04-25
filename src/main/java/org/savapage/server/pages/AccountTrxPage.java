@@ -83,7 +83,7 @@ public class AccountTrxPage extends AbstractListPage {
             return;
         }
 
-        //this.openServiceContext();
+        // this.openServiceContext();
 
         //
         final String data = getParmValue(POST_PARM_DATA);
@@ -231,6 +231,10 @@ public class AccountTrxPage extends AbstractListPage {
                     key = "type-deposit";
                     break;
 
+                case GATEWAY:
+                    key = "type-gateway";
+                    break;
+
                 case VOUCHER:
                     key = "type-voucher";
                     break;
@@ -295,7 +299,7 @@ public class AccountTrxPage extends AbstractListPage {
                 //
                 final MarkupHelper helper = new MarkupHelper(item);
 
-                final boolean isVisible = (accountTrx.getPosPurchase() != null);
+                final boolean isVisible = accountTrx.getPosPurchase() != null;
 
                 if (isVisible) {
 
@@ -310,16 +314,22 @@ public class AccountTrxPage extends AbstractListPage {
                         helper.discloseLabel("paymentType");
                     }
 
-                    helper.encloseLabel("downloadReceipt",
-                            localized("button-receipt"), isVisible);
+                    if (trxType == AccountTrxTypeEnum.DEPOSIT) {
 
-                    labelWrk = (Label) item.get("downloadReceipt");
-                    labelWrk.add(new AttributeModifier("data-savapage",
-                            accountTrx.getId().toString()));
+                        helper.encloseLabel("downloadReceipt",
+                                localized("button-receipt"), isVisible);
+
+                        labelWrk = (Label) item.get("downloadReceipt");
+                        labelWrk.add(new AttributeModifier("data-savapage",
+                                accountTrx.getId().toString()));
+                    }
 
                 } else {
                     helper.discloseLabel("receiptNumber");
                     helper.discloseLabel("paymentType");
+                }
+
+                if (!isVisible || trxType != AccountTrxTypeEnum.DEPOSIT) {
                     helper.discloseLabel("downloadReceipt");
                 }
 

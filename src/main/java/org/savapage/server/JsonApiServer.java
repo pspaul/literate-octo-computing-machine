@@ -128,6 +128,7 @@ import org.savapage.core.dto.QuickSearchPosPurchaseItemDto;
 import org.savapage.core.dto.QuickSearchPrinterItemDto;
 import org.savapage.core.dto.QuickSearchUserItemDto;
 import org.savapage.core.dto.UserDto;
+import org.savapage.core.dto.UserPaymentRequestDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.img.ImageUrl;
@@ -207,6 +208,8 @@ import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.core.util.Messages;
 import org.savapage.core.util.QuickSearchDate;
+import org.savapage.ext.payment.PaymentGatewayException;
+import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.auth.WebAppUserAuthManager;
@@ -1358,6 +1361,11 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_SMARTSCHOOL_STOP:
 
             return reqSmartSchoolStop();
+
+        case JsonApiDict.REQ_USER_PAYMENT_REQUEST:
+
+            return reqUserPaymentRequest(requestingUser,
+                    getParmValue(parameters, isGetAction, "dto"));
 
         case JsonApiDict.REQ_POS_DEPOSIT:
 
@@ -5060,6 +5068,66 @@ public final class JsonApiServer extends AbstractPage {
 
     /**
      *
+     * @param requestingUser
+     * @param jsonDto
+     * @return
+     * @throws Exception
+     */
+    private Map<String, Object> reqUserPaymentRequest(
+            final String requestingUser, final String jsonDto)
+            throws IOException {
+
+        final Map<String, Object> userData = new HashMap<String, Object>();
+
+        final UserPaymentRequestDto dto =
+                JsonAbstractBase.create(UserPaymentRequestDto.class, jsonDto);
+
+        /*
+         * INVARIANT: Amount MUST be valid.
+         */
+        final String plainAmount =
+                dto.getAmountMain() + "." + dto.getAmountCents();
+
+        if (!BigDecimalUtil.isValid(plainAmount)) {
+            return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    "msg-amount-invalid");
+        }
+
+        final BigDecimal paymentAmount = BigDecimalUtil.valueOf(plainAmount);
+
+        /*
+         * INVARIANT: Amount MUST be GT zero.
+         */
+        if (paymentAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    "msg-amount-must-be positive");
+        }
+
+        try {
+            final String comment =
+                    localize("msg-payment-gateway-comment",
+                            CommunityDictEnum.SAVAPAGE.getWord(),
+                            requestingUser);
+
+            final PaymentGatewayTrx trx =
+                    WebApp.get()
+                            .getPluginManager()
+                            .getPaymentGatewayPlugin()
+                            .startPayment(requestingUser,
+                                    paymentAmount.doubleValue(), comment);
+
+            setApiResultOK(userData);
+            userData.put("paymentUrl", trx.getPaymentUrl().toExternalForm());
+
+        } catch (PaymentGatewayException e) {
+            createApiResult(userData, API_RESULT_CODE_ERROR, "", e.getMessage());
+        }
+
+        return userData;
+    }
+
+    /**
+     *
      * @param jsonDto
      * @return
      * @throws IOException
@@ -5069,7 +5137,7 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqPosDeposit(final String requestingUser,
             final String jsonDto) throws Exception {
 
-        Map<String, Object> userData = new HashMap<String, Object>();
+        final Map<String, Object> userData = new HashMap<String, Object>();
 
         final PosDepositDto dto =
                 JsonAbstractBase.create(PosDepositDto.class, jsonDto);

@@ -40,6 +40,7 @@ import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.savapage.common.ConfigDefaults;
 import org.savapage.core.SpException;
+import org.savapage.core.SpInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
@@ -52,6 +53,7 @@ import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.Messages;
 import org.savapage.server.cometd.AbstractEventService;
+import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.img.ImageServer;
 import org.savapage.server.ios.WebClipServer;
 import org.savapage.server.pages.AbstractPage;
@@ -75,10 +77,10 @@ import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceR
  *
  * @author Datraverse B.V.
  */
-public class WebApp extends WebApplication implements ServiceEntryPoint {
+public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
     /**
-     * Used in web.xml
+     * Used in {@code web.xml}.
      */
     public static final String MOUNT_PATH_COMETD = "/cometd";
 
@@ -149,7 +151,12 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
     /**
      * The RAW Print Server.
      */
-    private RawPrintServer myRawPrintServer = null;
+    private RawPrintServer rawPrintServer = null;
+
+    /**
+     * The {@link ServerPluginManager}.
+     */
+    private ServerPluginManager pluginManager;
 
     /**
      * Return a localized message string. IMPORTANT: The locale from the
@@ -203,7 +210,7 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
      * @param isAdmin
      *            {@code true} when user is an administrator.
      */
-    public final synchronized void onAuthenticatedUser(final String sessionId,
+    public synchronized void onAuthenticatedUser(final String sessionId,
             final String ipAddr, final String user, final boolean isAdmin) {
 
         /*
@@ -261,8 +268,13 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
         /*
          *
          */
-        final String msgKey =
-                isAdmin ? "pub-admin-login-success" : "pub-user-login-success";
+        final String msgKey;
+
+        if (isAdmin) {
+            msgKey = "pub-admin-login-success";
+        } else {
+            msgKey = "pub-user-login-success";
+        }
 
         AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
                 localize(msgKey, user, ipAddr));
@@ -305,6 +317,14 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public static WebApp get() {
         return (WebApp) WebApplication.get();
+    }
+
+    /**
+     *
+     * @return The {@link ServerPluginManager}.
+     */
+    public ServerPluginManager getPluginManager() {
+        return this.pluginManager;
     }
 
     /**
@@ -360,8 +380,8 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public static CssReferenceHeaderItem
             getWebjarsCssRef(final String namePath) {
-        return CssHeaderItem
-                .forReference(new WebjarsCssResourceReference(namePath));
+        return CssHeaderItem.forReference(new WebjarsCssResourceReference(
+                namePath));
     }
 
     /**
@@ -440,8 +460,8 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
                             ConfigManager.SERVER_PROP_PRINTER_RAW_PORT,
                             ConfigManager.PRINTER_RAW_PORT_DEFAULT));
 
-            myRawPrintServer = new RawPrintServer(iRawPrintPort);
-            myRawPrintServer.start();
+            this.rawPrintServer = new RawPrintServer(iRawPrintPort);
+            this.rawPrintServer.start();
 
             //
             IppPrintServer.init();
@@ -474,6 +494,15 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
              */
             ConfigManager.instance().initScheduler();
 
+            /*
+             * Server plug-in manager.
+             */
+            this.pluginManager =
+                    ServerPluginManager
+                            .create(ConfigManager.getServerExtHome());
+
+            SpInfo.instance().log(this.pluginManager.asLoggingInfo());
+
         } catch (Exception e) {
 
             throw new SpException(e.getMessage(), e);
@@ -501,7 +530,7 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
      * @return The home page class for the application.
      */
     @Override
-    public final Class<IppPrintServerHomePage> getHomePage() {
+    public Class<IppPrintServerHomePage> getHomePage() {
         return IppPrintServerHomePage.class;
     }
 
@@ -551,7 +580,7 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
      * @see org.apache.wicket.Application#init()
      */
     @Override
-    public final void init() {
+    public void init() {
 
         super.init();
 
@@ -582,8 +611,7 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     @Override
-    public final Session newSession(final Request request,
-            final Response response) {
+    public Session newSession(final Request request, final Response response) {
 
         final String remoteAddr =
                 ((ServletWebRequest) request).getContainerRequest()
@@ -654,7 +682,7 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     @Override
-    public final void sessionUnbound(final String sessionId) {
+    public void sessionUnbound(final String sessionId) {
 
         super.sessionUnbound(sessionId);
 
@@ -704,7 +732,7 @@ public class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     @Override
-    protected final void onDestroy() {
+    protected void onDestroy() {
     }
 
 }

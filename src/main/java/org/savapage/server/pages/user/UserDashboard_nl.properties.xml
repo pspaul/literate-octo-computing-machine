@@ -9,5 +9,9 @@
     <entry key="balance">Saldo</entry>
     <entry key="credit-limit">Bestedingslimiet</entry>
     <entry key="credit-limit-none">Geen</entry>
+
+    <entry key="prompt-payment-amount">Bedrag overmaken van extern account</entry>
+    <entry key="placeholder-comment">Voor commentaar in</entry>
+    <entry key="button-transfer">Overmaken</entry>
     
 </properties>

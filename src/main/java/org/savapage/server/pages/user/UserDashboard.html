@@ -36,6 +36,28 @@ These fragments are used in WebAppUserPage
 	    <a href="#" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-action" id="button-voucher-redeem">
 	        <wicket:message key="button-redeem-voucher"/>
 	    </a>
-    </div>
-    
+    </div>   
 </li>
+
+<wicket:enclosure child="currency-symbol">
+<li>
+    <span class="sp-txt-info sp-txt-wrap"><wicket:message key="prompt-payment-amount"/></span>
+	<table><tr>
+	    <td><span wicket:id="currency-symbol"/>&nbsp;</td>
+	    <td width="80px">
+	        <input tabindex="2" type="text" style="text-align: right;" id="payment-amount-main" 
+	            value="" maxlength="3" pattern="[0-9]*"/>
+	    </td>
+	    <td wicket:id="decimal-separator"/>
+	    <td width="50px">
+	        <input tabindex="2" type="text" id="payment-amount-cents" value="00" maxlength="2" pattern="[0-9]*"/>
+	    </td>
+	   </tr>
+	</table>
+    <div>
+        <a href="#" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-action" id="button-payment-amount">
+            <wicket:message key="button-transfer"/>
+        </a>
+    </div>   
+</li>
+</wicket:enclosure>

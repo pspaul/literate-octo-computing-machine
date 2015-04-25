@@ -10,4 +10,8 @@
     <entry key="credit-limit">Credit limit</entry>
     <entry key="credit-limit-none">None</entry>
     
+    <entry key="prompt-payment-amount">Transfer amount from external account</entry>
+    <entry key="placeholder-comment">Enter a comment</entry>
+    <entry key="button-transfer">Transfer</entry>
+    
 </properties>

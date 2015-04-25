@@ -1553,6 +1553,9 @@
 		 *
 		 */
 		function PageDashboard(_i18n, _view, _model) {
+			var _this = this
+			//
+			;
 
 			$('#page-dashboard').on('pagecreate', function(event) {
 
@@ -1576,6 +1579,13 @@
 				if ($('#button-redeem-voucher')) {
 					$(this).on('click', '#button-voucher-redeem', null, function() {
 						_view.showUserPage('#page-voucher-redeem', 'AccountVoucherRedeem');
+						return false;
+					});
+				}
+
+				if ($('#button-payment-amount')) {
+					$(this).on('click', '#button-payment-amount', null, function() {
+						_this.onPaymentRequest($('#payment-amount-main').val(), $('#payment-amount-cents').val());
 						return false;
 					});
 				}
@@ -4731,6 +4741,27 @@
 					_model.myShowUserStats = true;
 				}
 				_view.showApiMsg(res);
+			};
+
+			/**
+			 * Callbacks: pageDashboard
+			 */
+			_view.pages.pageDashboard.onPaymentRequest = function(main, cents) {
+				// UserPaymentRequestDto.java
+				var res = _api.call({
+					request : "user-payment-request",
+					dto : JSON.stringify({
+						userId : _model.user.id,
+						amountMain : main,
+						amountCents : cents
+					})
+				});
+
+				if (res.result.code === '0') {
+					window.location.assign(res.paymentUrl);
+				} else {
+					_view.showApiMsg(res);
+				}
 			};
 
 			/**

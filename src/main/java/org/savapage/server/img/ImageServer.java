@@ -75,7 +75,9 @@ public class ImageServer extends WebPage implements ServiceEntryPoint {
 
         final ImageUrl url = getImageUrl(parameters);
 
-        LOGGER.trace(url.composeImageUrl());
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(url.composeImageUrl());
+        }
 
         File file = null;
 

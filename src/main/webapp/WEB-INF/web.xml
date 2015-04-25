@@ -15,6 +15,16 @@
 		<url-pattern>/jsonrpc</url-pattern>
 	</servlet-mapping>
 
+    <servlet>
+        <servlet-name>CallbackServlet</servlet-name>
+        <servlet-class>org.savapage.server.callback.CallbackServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>CallbackServlet</servlet-name>
+        <url-pattern>/callback/*</url-pattern>
+    </servlet-mapping>
+
 	<servlet>
 		<servlet-name>XmlRpcServlet</servlet-name>
 		<!-- SpXmlRpcServlet extends org.apache.xmlrpc.webserver.XmlRpcServlet -->
@@ -71,6 +81,18 @@
 		<servlet-name>savapage-docs</servlet-name>
 		<url-pattern>/docs/*</url-pattern>
 	</servlet-mapping>
+
+    <servlet>
+        <servlet-name>savapage-custom-web</servlet-name>
+        <servlet-class>org.savapage.server.CustomWebServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>savapage-custom-web</servlet-name>
+        <url-pattern>/custom/web/*</url-pattern>
+    </servlet-mapping>
+
 
     <!-- NOTE: async-supported is needed for CometD -->
 	<filter>

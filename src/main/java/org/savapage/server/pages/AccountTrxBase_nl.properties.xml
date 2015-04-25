@@ -13,6 +13,7 @@
     <entry key="type-initial">Initieel</entry>
     <entry key="type-adjust">Aanpassing</entry>    
     <entry key="type-deposit">Transactie</entry>
+    <entry key="type-gateway">Gateway</entry>
     <entry key="type-voucher">Voucher</entry>
     <entry key="type-printout">Printer</entry>
     

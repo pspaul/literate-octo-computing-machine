@@ -244,4 +244,10 @@
 
     <entry key="msg-pos-receipt-sendmail-ok">Receipt successfully sent to {0}</entry>
     
+    <entry key="msg-amount-invalid">Amount is invalid.</entry>
+    <entry key="msg-amount-must-be positive">Amount must be greater that zero.</entry>
+    
+    <entry key="msg-payment-gateway-comment">{0} credit for {1}.</entry>
+    
+    
 </properties>

@@ -242,4 +242,9 @@
     
     <entry key="msg-pos-receipt-sendmail-ok">Kassabon met succes verstuurd naar {0}</entry>
 
+    <entry key="msg-amount-invalid">Bedrag is ongeldig.</entry>
+    <entry key="msg-amount-must-be positive">Bedrag moet groter zijn dan nul.</entry>
+    
+    <entry key="msg-payment-gateway-comment">{0} tegoed voor {1}.</entry>
+
 </properties>

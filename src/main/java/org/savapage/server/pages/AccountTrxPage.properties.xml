@@ -4,6 +4,7 @@
 
     <entry key="type-adjust">Manual adjustment</entry>
     <entry key="type-deposit">Manual transaction</entry>
+    <entry key="type-gateway">Payment Gateway</entry>
     <entry key="type-voucher">Redeem Voucher</entry>
     <entry key="type-print-out">Printer Usage</entry>
     <entry key="type-print-in">Queue Usage</entry>
