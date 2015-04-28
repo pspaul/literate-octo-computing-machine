@@ -65,6 +65,18 @@ public final class SpRequestCycleListener implements IRequestCycleListener {
     @Override
     public IRequestHandler onException(final RequestCycle cycle,
             final Exception ex) {
+
+        final Throwable cause = ex.getCause();
+
+        if (cause != null) {
+            /*
+             * Did user refresh browser (e.g. with F5)?
+             */
+            if (cause instanceof org.eclipse.jetty.io.EofException) {
+                return null;
+            }
+        }
+
         final Logger logger = LoggerFactory.getLogger(this.getClass());
         logger.error(ex.getMessage(), ex);
         return null;

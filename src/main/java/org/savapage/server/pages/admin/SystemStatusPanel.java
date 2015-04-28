@@ -123,7 +123,7 @@ public class SystemStatusPanel extends Panel {
             cssColor = MarkupHelper.CSS_TXT_ERROR;
             msg = getLocalizer().getString("sys-status-setup-needed", this);
         } else if (memberCard.isMembershipDesirable()) {
-            cssColor = MarkupHelper.CSS_TXT_ERROR;
+            cssColor = MarkupHelper.CSS_TXT_WARN;
             msg =
                     MessageFormat.format(
                             getLocalizer().getString(
@@ -335,25 +335,25 @@ public class SystemStatusPanel extends Panel {
         switch (memberCard.getStatus()) {
 
         case EXCEEDED:
-            cssColor = MarkupHelper.CSS_TXT_ERROR;
+            cssColor = MarkupHelper.CSS_TXT_WARN;
             memberStat =
                     getLocalizer()
                             .getString("membership-status-exceeded", this);
             break;
 
         case EXPIRED:
-            cssColor = MarkupHelper.CSS_TXT_ERROR;
+            cssColor = MarkupHelper.CSS_TXT_WARN;
             memberStat =
                     getLocalizer().getString("membership-status-expired", this);
             break;
 
         case VISITOR:
-            cssColor = MarkupHelper.CSS_TXT_WARN;
+            cssColor = MarkupHelper.CSS_TXT_COMMUNITY;
             memberStat = CommunityDictEnum.VISITOR.getWord();
             break;
 
         case VISITOR_EXPIRED:
-            cssColor = MarkupHelper.CSS_TXT_ERROR;
+            cssColor = MarkupHelper.CSS_TXT_WARN;
             memberStat =
                     String.format(
                             "%s (%s)",
@@ -369,11 +369,10 @@ public class SystemStatusPanel extends Panel {
             break;
 
         case VALID:
+            cssColor = MarkupHelper.CSS_TXT_COMMUNITY;
             if (memberCard.isVisitorCard()) {
-                cssColor = MarkupHelper.CSS_TXT_WARN;
                 memberStat = CommunityDictEnum.VISITOR.getWord();
             } else {
-                cssColor = MarkupHelper.CSS_TXT_COMMUNITY;
                 memberStat = CommunityDictEnum.FELLOW.getWord();
             }
             break;
@@ -391,7 +390,7 @@ public class SystemStatusPanel extends Panel {
             break;
 
         case WRONG_VERSION:
-            cssColor = MarkupHelper.CSS_TXT_ERROR;
+            cssColor = MarkupHelper.CSS_TXT_WARN;
             memberStat =
                     getLocalizer().getString("membership-status-wrong-version",
                             this);

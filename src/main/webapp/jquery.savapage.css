@@ -34,11 +34,11 @@
 }
 
 .sp-plain-link {
-	/*
+	/* */
     color: #74b042 !important;
     font-weight: normal !important;    
     text-decoration:none !important;
-    */
+    /* */
 }
 
 .sp-plain-community {
@@ -71,7 +71,9 @@
 }
 
 .sp-txt-info {
-    /* color: #666666; */
+    /* */ 
+    color: #666666; 
+    /* */
 }
 
 .sp-txt-warn {

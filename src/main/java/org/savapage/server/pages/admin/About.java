@@ -303,14 +303,14 @@ public class About extends AbstractAdminPage {
             break;
 
         case WRONG_VERSION:
-            signalColor = MarkupHelper.CSS_TXT_ERROR;
+            signalColor = MarkupHelper.CSS_TXT_WARN;
             txtStatus =
                     localized("membership-status-wrong-version",
                             CommunityDictEnum.MEMBERSHIP.getWord());
             break;
 
         case WRONG_VERSION_WITH_GRACE:
-            signalColor = MarkupHelper.CSS_TXT_ERROR;
+            signalColor = MarkupHelper.CSS_TXT_WARN;
             txtStatus =
                     localized("membership-status-wrong-version-grace-period",
                             CommunityDictEnum.MEMBERSHIP.getWord(),
@@ -320,12 +320,12 @@ public class About extends AbstractAdminPage {
 
         case VALID:
 
+            signalColor = MarkupHelper.CSS_TXT_COMMUNITY;
+
             if (memberCard.isVisitorCard()) {
                 txtStatus = CommunityDictEnum.VISITOR.getWord();
-                signalColor = MarkupHelper.CSS_TXT_WARN;
             } else {
                 txtStatus = CommunityDictEnum.FELLOW.getWord();
-                signalColor = MarkupHelper.CSS_TXT_COMMUNITY;
             }
 
             if (memberCard.getExpirationDate() != null) {
@@ -337,14 +337,14 @@ public class About extends AbstractAdminPage {
             break;
 
         case EXCEEDED:
-            signalColor = MarkupHelper.CSS_TXT_ERROR;
+            signalColor = MarkupHelper.CSS_TXT_WARN;
             txtStatus =
                     localized("membership-status-users-exceeded",
                             CommunityDictEnum.MEMBERSHIP.getWord());
             break;
 
         case EXPIRED:
-            signalColor = MarkupHelper.CSS_TXT_ERROR;
+            signalColor = MarkupHelper.CSS_TXT_WARN;
             txtStatus =
                     localized("membership-status-expired",
                             CommunityDictEnum.MEMBERSHIP.getWord());
@@ -355,12 +355,12 @@ public class About extends AbstractAdminPage {
             break;
 
         case VISITOR_EDITION:
-            signalColor = MarkupHelper.CSS_TXT_WARN;
+            signalColor = MarkupHelper.CSS_TXT_COMMUNITY;
             txtStatus = CommunityDictEnum.VISITING_GUEST.getWord();
             break;
 
         case VISITOR:
-            signalColor = MarkupHelper.CSS_TXT_WARN;
+            signalColor = MarkupHelper.CSS_TXT_COMMUNITY;
             txtStatus =
                     localized("membership-status-visit",
                             CommunityDictEnum.VISITING_GUEST.getWord(),
@@ -368,7 +368,7 @@ public class About extends AbstractAdminPage {
             break;
 
         case VISITOR_EXPIRED:
-            signalColor = MarkupHelper.CSS_TXT_ERROR;
+            signalColor = MarkupHelper.CSS_TXT_WARN;
 
             txtStatus =
                     localized("membership-status-visit-expired",
