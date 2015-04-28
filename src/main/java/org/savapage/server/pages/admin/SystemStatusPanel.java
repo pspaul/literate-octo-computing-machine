@@ -364,7 +364,7 @@ public class SystemStatusPanel extends Panel {
             break;
 
         case VISITOR_EDITION:
-            cssColor = MarkupHelper.CSS_TXT_WARN;
+            cssColor = MarkupHelper.CSS_TXT_COMMUNITY;
             memberStat = CommunityDictEnum.VISITING_GUEST.getWord();
             break;
 
