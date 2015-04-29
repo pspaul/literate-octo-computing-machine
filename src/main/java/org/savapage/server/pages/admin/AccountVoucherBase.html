@@ -161,17 +161,19 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                         <label for="sp-voucher-sort-by-date-expired"><wicket:message key="sort-by-date-expired"/></label>
                     </fieldset>
                     
-                    <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
-                        <legend>
-                            <wicket:message key="prompt-sort-direction"/>
-                        </legend>
-                        
-		                <input type="radio" name="sp-voucher-sort-dir" id="sp-voucher-sort-dir-asc" checked="checked" /> 
-		                <label for="sp-voucher-sort-dir-asc"><wicket:message key="sort-asc"/></label>
-		                
-		                <input type="radio" name="sp-voucher-sort-dir" id="sp-voucher-sort-dir-desc"/> 
-		                <label for="sp-voucher-sort-dir-desc"><wicket:message key="sort-desc"/></label>		                        
-		            </fieldset>		
+                    <div>
+                        <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                            <legend>
+                                <wicket:message key="prompt-sort-direction"/>
+                            </legend>
+                            
+                            <input type="radio" name="sp-voucher-sort-dir" id="sp-voucher-sort-dir-asc" checked="checked" /> 
+                            <label for="sp-voucher-sort-dir-asc"><wicket:message key="sort-asc"/></label>
+                            
+                            <input type="radio" name="sp-voucher-sort-dir" id="sp-voucher-sort-dir-desc"/> 
+                            <label for="sp-voucher-sort-dir-desc"><wicket:message key="sort-desc"/></label>		                        
+                        </fieldset>		
+                    </div>
                 </li>
                 
             </ul>
