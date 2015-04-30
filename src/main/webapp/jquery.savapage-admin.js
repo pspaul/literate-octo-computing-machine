@@ -1105,28 +1105,41 @@
             };
 
             _view.pages.admin.onCreateDeviceTerminal = function() {
-                _model.editDevice = {
-                    id : null,
-                    deviceName : 'untitled',
-                    deviceType : 'TERMINAL',
-                    disabled : false,
-                    attr : {}
-                };
-                _view.pages.device.loadShowAsync(function() {
-                    $('#title-device').html(_model.editDevice.deviceName);
+            	
+                var res = _api.call({
+                    request : 'device-new-terminal',
                 });
+                
+                if (res && res.result.code === '0') {
+                	
+                    _model.editDevice = res.j_device;
+                    
+	                _view.pages.device.loadShowAsync(function() {
+	                    $('#title-device').html(_model.editDevice.deviceName);
+	                });
+                    
+                } else {
+                    _view.showApiMsg(res);
+                }
+                
             };
+            
             _view.pages.admin.onCreateDeviceCardReader = function() {
-                _model.editDevice = {
-                    id : null,
-                    deviceName : 'untitled',
-                    deviceType : 'CARD_READER',
-                    disabled : false,
-                    attr : {}
-                };
-                _view.pages.device.loadShowAsync(function() {
-                    $('#title-device').html(_model.editDevice.deviceName);
+                var res = _api.call({
+                    request : 'device-new-card-reader',
                 });
+                
+                if (res && res.result.code === '0') {
+                	
+                    _model.editDevice = res.j_device;
+                    
+	                _view.pages.device.loadShowAsync(function() {
+	                    $('#title-device').html(_model.editDevice.deviceName);
+	                });
+                    
+                } else {
+                    _view.showApiMsg(res);
+                }
             };
 
             //-------------------------------------------------------

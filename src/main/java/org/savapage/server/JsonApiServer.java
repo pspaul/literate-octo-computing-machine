@@ -1268,6 +1268,14 @@ public final class JsonApiServer extends AbstractPage {
             return reqDeviceGet(requestingUser,
                     getParmValue(parameters, isGetAction, "id"));
 
+        case JsonApiDict.REQ_DEVICE_NEW_CARD_READER:
+
+            return reqDeviceNew(DeviceTypeEnum.CARD_READER);
+
+        case JsonApiDict.REQ_DEVICE_NEW_TERMINAL:
+
+            return reqDeviceNew(DeviceTypeEnum.TERMINAL);
+
         case JsonApiDict.REQ_DEVICE_SET:
 
             return reqDeviceSet(requestingUser,
@@ -4113,6 +4121,41 @@ public final class JsonApiServer extends AbstractPage {
 
     /**
      *
+     * @param deviceType
+     * @return
+     */
+    private Map<String, Object> reqDeviceNew(final DeviceTypeEnum deviceType) {
+
+        final Map<String, Object> userObj = new HashMap<String, Object>();
+
+        userObj.put("deviceType", deviceType.toString());
+        userObj.put("disabled", Boolean.FALSE);
+
+        final HashMap<String, Object> attrMap = new HashMap<>();
+
+        userObj.put("attr", attrMap);
+
+        if (deviceType == DeviceTypeEnum.CARD_READER) {
+            userObj.put(
+                    "port",
+                    Integer.valueOf(ConfigManager.instance().getConfigInt(
+                            Key.DEVICE_CARD_READER_DEFAULT_PORT)));
+
+        } else if (deviceType == DeviceTypeEnum.TERMINAL) {
+
+            attrMap.put(DeviceAttrEnum.WEBAPP_USER_MAX_IDLE_SECS.getDbName(),
+                    "0");
+        }
+
+        final Map<String, Object> userData = new HashMap<String, Object>();
+
+        userData.put("j_device", userObj);
+
+        return setApiResultOK(userData);
+    }
+
+    /**
+     *
      * @param user
      * @param id
      * @return
@@ -4224,7 +4267,7 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         final JsonNode id = list.get("id");
-        final boolean isNew = id.isNull();
+        final boolean isNew = id == null || id.isNull();
         final Date now = new Date();
         final String deviceName = list.get("deviceName").getTextValue();
 

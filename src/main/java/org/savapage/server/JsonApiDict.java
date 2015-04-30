@@ -59,6 +59,11 @@ public class JsonApiDict {
     public static final String REQ_CONSTANTS = "constants";
     public static final String REQ_DB_BACKUP = "db-backup";
     public static final String REQ_DEVICE_DELETE = "device-delete";
+
+    public static final String REQ_DEVICE_NEW_CARD_READER =
+            "device-new-card-reader";
+    public static final String REQ_DEVICE_NEW_TERMINAL = "device-new-terminal";
+
     public static final String REQ_DEVICE_GET = "device-get";
     public static final String REQ_DEVICE_SET = "device-set";
     public static final String REQ_EXIT_EVENT_MONITOR = "exit-event-monitor";
@@ -478,8 +483,13 @@ public class JsonApiDict {
         put(REQ_CONSTANTS, AuthReq.NONE, DbClaim.READ, DbAccess.YES);
         adm(REQ_DB_BACKUP, DbClaim.NONE, DbAccess.NO);
         adm(REQ_DEVICE_DELETE, DbClaim.READ, DbAccess.YES);
+
+        adm(REQ_DEVICE_NEW_CARD_READER, DbClaim.NONE, DbAccess.NO);
+        adm(REQ_DEVICE_NEW_TERMINAL, DbClaim.NONE, DbAccess.NO);
+
         adm(REQ_DEVICE_GET, DbClaim.NONE, DbAccess.YES);
         adm(REQ_DEVICE_SET, DbClaim.READ, DbAccess.YES);
+
         usr(REQ_EXIT_EVENT_MONITOR, DbClaim.NONE, DbAccess.NO);
         adm(REQ_GCP_GET_DETAILS, DbClaim.READ, DbAccess.YES);
         adm(REQ_GCP_ONLINE, DbClaim.READ, DbAccess.YES);
