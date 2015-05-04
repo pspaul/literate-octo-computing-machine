@@ -121,7 +121,7 @@ public final class WebAppUserPage extends AbstractWebAppPage {
     @Override
     protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
-        renderJs(response, getSpecializedJsFile() + nocache);
+        renderJs(response, getSpecializedJsFileName() + nocache);
     }
 
     /**
@@ -292,12 +292,12 @@ public final class WebAppUserPage extends AbstractWebAppPage {
     }
 
     @Override
-    protected String getSpecializedCssFile() {
+    protected String getSpecializedCssFileName() {
         return "jquery.savapage-user.css";
     }
 
     @Override
-    protected String getSpecializedJsFile() {
+    protected String getSpecializedJsFileName() {
         return "jquery.savapage-user.js";
     }
 

@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.savapage.core.SpException;
 import org.savapage.core.SpInfo;
@@ -34,21 +35,11 @@ import org.savapage.core.config.ConfigManager;
 /**
  * This context listener receives notifications when the web application (i.e.
  * the context) is started up or shutdown.
- * <p>
- * NOTE: This class is referred in {@code web.xml}.
- * </p>
- *
- * <pre>
- *  {@code
- * <listener>
- *     <listener-class>org.savapage.server.SpContextListener</listener-class>
- * </listener>
- * }
- * </pre>
  *
  * @author Datraverse B.V.
  */
-public class SpContextListener implements ServletContextListener {
+@WebListener
+public final class SpContextListener implements ServletContextListener {
 
     /**
      * At this point the context is initialized and we can safely send the
@@ -56,16 +47,22 @@ public class SpContextListener implements ServletContextListener {
      * after this event.
      *
      * @param event
+     *            The {@link ServletContextEvent}.
      */
     @Override
-    public final void contextInitialized(final ServletContextEvent event) {
+    public void contextInitialized(final ServletContextEvent event) {
 
         try {
 
             /*
              * Pass server properties to the central WebApp.
              */
-            WebApp.setServerProps(ConfigManager.readServerProperties());
+            WebApp.setServerProps(ConfigManager.loadServerProperties());
+
+            /*
+             * Load web customization properties.
+             */
+            WebApp.loadWebProperties();
 
             /*
              * Initialize the admin publisher. We use the regular port for the
@@ -81,7 +78,7 @@ public class SpContextListener implements ServletContextListener {
     }
 
     @Override
-    public final void contextDestroyed(final ServletContextEvent event) {
+    public void contextDestroyed(final ServletContextEvent event) {
         /*
          * Context is destroyed. As last action we issue a log message.
          */

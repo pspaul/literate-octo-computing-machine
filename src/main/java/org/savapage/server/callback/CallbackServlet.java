@@ -22,14 +22,19 @@
 package org.savapage.server.callback;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.http.HttpStatus;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
@@ -42,14 +47,38 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Callback servlet for Web API providers.
- * <p>
- * See {@code web.xml}.
- * </p>
  *
  * @author Datraverse B.V.
  */
+@WebServlet(name = "CallbackServlet",
+        urlPatterns = { CallbackServlet.SERVLET_URL_PATTERN })
 public final class CallbackServlet extends HttpServlet implements
         ServiceEntryPoint {
+
+    /**
+     * .
+     */
+    private static final String PATH_BASE = "callback";
+
+    /**
+     * .
+     */
+    public static final String SERVLET_URL_PATTERN = "/" + PATH_BASE + "/*";
+
+    /**
+     * .
+     */
+    private static final String SUB_PATH_PAYMENT = "payment";
+
+    /**
+     * .
+     */
+    private static final String SUB_PATH_TEST = "test";
+
+    /**
+     * .
+     */
+    private static final String SUB_PATH_LIVE = "live";
 
     /**
      * The {@link Logger}.
@@ -62,8 +91,24 @@ public final class CallbackServlet extends HttpServlet implements
      */
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public void init() {
+    /**
+     * Gets the callback {@link URL} for a {@link PaymentGatewayPlugin}.
+     *
+     * @param plugin
+     *            The {@link PaymentGatewayPlugin}.
+     * @return The callback {@link URL}.
+     * @throws MalformedURLException
+     *             When format of the URL is invalid.
+     */
+    public static URL getCallBackUrl(final PaymentGatewayPlugin plugin)
+            throws MalformedURLException {
+
+        final String urlBase =
+                ConfigManager.instance().getConfigValue(
+                        Key.EXT_WEBAPI_CALLBACK_URL_BASE);
+
+        return new URL(String.format("%s/%s/%s/%s", urlBase, PATH_BASE,
+                SUB_PATH_PAYMENT, plugin.getClass().getSimpleName()));
     }
 
     /**
@@ -132,13 +177,17 @@ public final class CallbackServlet extends HttpServlet implements
             for (final PaymentGatewayPlugin plugin : pluginManager
                     .getPaymentGatewayPlugins()) {
 
-                if (!plugin.getCallbackSubPath().equals(pathInfo)) {
-                    continue;
-                }
+                // TODO
+
+//                if (!plugin.getCallbackSubPath().equals(pathInfo)) {
+//                    continue;
+//                }
+
+                boolean live = false; // TODO
 
                 final Integer status =
                         plugin.onCallBack(pathInfo, urlQueryString,
-                                httpRequest.getParameterMap());
+                                httpRequest.getParameterMap(), live);
 
                 if (status != null) {
                     daoContext.commit();

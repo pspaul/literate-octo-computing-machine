@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,13 +40,10 @@ import org.savapage.core.config.ConfigManager;
  * Delivers static documentation, like the User Manual (DocBook) and the Third
  * Party License Information.
  *
- * <p>
- * NOTE: This class is referred in {@code web.xml}.
- * </p>
- *
  * @author Datraverse B.V.
  *
  */
+@WebServlet(name = "SpDocsServlet", urlPatterns = { "/docs/*" })
 public final class SpDocsServlet extends HttpServlet {
 
     /**

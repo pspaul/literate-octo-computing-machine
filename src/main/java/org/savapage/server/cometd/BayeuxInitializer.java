@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * @author Datraverse B.V.
  *
  */
-public class BayeuxInitializer extends GenericServlet {
+public final class BayeuxInitializer extends GenericServlet {
 
     /**
      *
@@ -65,11 +65,11 @@ public class BayeuxInitializer extends GenericServlet {
      *             When anything goes wrong.
      */
     @Override
-    public final void init() throws ServletException {
+    public void init() throws ServletException {
 
         LOGGER.trace("INIT");
 
-        BayeuxServer bayeux =
+        final BayeuxServer bayeux =
                 (BayeuxServer) getServletContext().getAttribute(
                         BayeuxServer.ATTRIBUTE);
 
@@ -77,7 +77,7 @@ public class BayeuxInitializer extends GenericServlet {
          * Use our own authenticator, to make sure that only valid users can use
          * our CometD services.
          */
-        BayeuxAuthenticator authenticator = new BayeuxAuthenticator();
+        final BayeuxAuthenticator authenticator = new BayeuxAuthenticator();
         bayeux.setSecurityPolicy(authenticator);
 
         /*
@@ -99,7 +99,7 @@ public class BayeuxInitializer extends GenericServlet {
 
                     @Override
                     public void configureChannel(
-                            ConfigurableServerChannel channel) {
+                            final ConfigurableServerChannel channel) {
                         /*
                          * "This ensures that the authorizer set is not empty,
                          * and that by default (if no other authorizer grants or
@@ -123,12 +123,10 @@ public class BayeuxInitializer extends GenericServlet {
     public void destroy() {
     }
 
-    /**
-     *
-     */
     @Override
-    public void service(ServletRequest request, ServletResponse response)
-            throws ServletException, IOException {
+    public void service(final ServletRequest request,
+            final ServletResponse response) throws ServletException,
+            IOException {
         throw new ServletException();
     }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -125,6 +125,15 @@ public class UserDashboard extends AbstractUserPage {
         helper.addModifyLabelAttr("balance", dto.getBalance(), "class",
                 clazzBalance);
 
+        //
+        helper.addModifyLabelAttr("button-voucher-redeem",
+                localized("button-voucher"), "title",
+                localized("button-title-voucher"));
+
+        helper.addModifyLabelAttr("button-assign-credit",
+                localized("button-assign"), "title",
+                localized("button-title-assign"));
+
         /*
          * Is payment gateway available?
          */
@@ -133,10 +142,13 @@ public class UserDashboard extends AbstractUserPage {
 
         final boolean isPaymentGateway = plugin != null;
 
-        helper.encloseLabel("currency-symbol", SpSession.getCurrencySymbol(),
-                isPaymentGateway);
-
-        helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
-
+        //
+        if (isPaymentGateway) {
+            helper.addModifyLabelAttr("button-transfer-money",
+                    localized("button-transfer"), "title",
+                    localized("button-title-transfer"));
+        } else {
+            helper.discloseLabel("button-transfer-money");
+        }
     }
 }

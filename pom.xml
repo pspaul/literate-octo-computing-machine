@@ -3,19 +3,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>savapage-server</artifactId>
-    <groupId>org.savapage</groupId>
-    <version>0.9.8</version>
+	<groupId>org.savapage</groupId>
+	<version>0.9.8</version>
 	<name>SavaPage Server</name>
 	<packaging>war</packaging>
-    <licenses>
-      <license>
-        <name>GNU Affero General Public License (AGPL)</name>
-        <url>http://www.gnu.org/licenses/agpl-3.0.txt</url>
-      </license>
-    </licenses> 
+	<licenses>
+		<license>
+			<name>GNU Affero General Public License (AGPL)</name>
+			<url>http://www.gnu.org/licenses/agpl-3.0.txt</url>
+		</license>
+	</licenses>
 	<properties>
 		<wicket.version>6.19.0</wicket.version>
-        <jetty.version>9.2.9.v20150224</jetty.version>
+		<jetty.version>9.2.10.v20150310</jetty.version>
 	</properties>
 	<dependencies>
 		<!-- WICKET DEPENDENCIES -->
@@ -51,6 +51,11 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-annotations</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.13</version>
@@ -60,11 +65,11 @@
 			<artifactId>savapage-core</artifactId>
 			<version>0.9.8</version>
 		</dependency>
-        <dependency>
-            <groupId>org.savapage</groupId>
-            <artifactId>savapage-ext</artifactId>
-            <version>0.9.8</version>
-        </dependency>
+		<dependency>
+			<groupId>org.savapage</groupId>
+			<artifactId>savapage-ext</artifactId>
+			<version>0.9.8</version>
+		</dependency>
 		<dependency>
 			<groupId>org.cometd.java</groupId>
 			<artifactId>cometd-java-server</artifactId>
@@ -162,37 +167,37 @@
 					<!-- <optimize>true</optimize> <debug>true</debug> -->
 				</configuration>
 			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8</version>
-                <executions>
-                    <execution>
-                        <id>aggregate</id>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <phase>site</phase>
-                        <configuration>
-                            <!-- Specific configuration for the aggregate report -->
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<id>aggregate</id>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+						<phase>site</phase>
+						<configuration>
+							<!-- Specific configuration for the aggregate report -->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>
                     maven-project-info-reports-plugin
                 </artifactId>
-                <version>2.4</version>
-            </plugin>
+				<version>2.4</version>
+			</plugin>
 		</plugins>
-	</build>	
+	</build>
 	<description>SavaPage is an Enterprise Printing Solution with a Web App for Print Preview, Editing, PDF Creation and Proxy Printing.</description>
 	<organization>
 		<name>Datraverse B.V.</name>

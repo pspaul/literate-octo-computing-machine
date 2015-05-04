@@ -24,7 +24,7 @@
             -->
 		</wicket:remove>
 
-		<ul data-role="listview" data-inset="true" data-theme="a" id="sp-a-menu">
+		<ul data-role="listview" data-inset="true" id="sp-a-menu">
         <wicket:remove>
             <!-- 
 			<li data-role="list-divider">SavaPage</li>
@@ -67,7 +67,8 @@
 
 <a id="sp-a-footer"/>
 
-<div data-role="footer" class="footer-docs" data-theme="a" data-position="fixed">
+<div data-role="footer" class="footer-docs" data-position="fixed">
+
     <div data-role="controlgroup" data-type="horizontal">
     
 		<a href="#sp-a-top" class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-home">
@@ -85,7 +86,7 @@
         <a href="#sp-popup-main-action" data-rel="popup"
              class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-action ui-btn-icon-notext">&nbsp;</a>
 
-        <div data-role="popup" id="sp-popup-main-action" data-theme="b">
+        <div data-role="popup" id="sp-popup-main-action">
         
             <ul data-role="listview" data-inset="true" style="min-width:210px;">
             
@@ -114,5 +115,5 @@
 <wicket:remove><!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
 --></wicket:remove>  
-<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>
+<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
  

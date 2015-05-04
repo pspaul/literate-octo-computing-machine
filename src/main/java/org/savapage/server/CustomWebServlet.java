@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,13 +39,11 @@ import org.savapage.core.config.ConfigManager;
 /**
  * Delivers files for web customization.
  *
- * <p>
- * NOTE: This class is referred in {@code web.xml}.
- * </p>
- *
  * @author Datraverse B.V.
  *
  */
+@WebServlet(name = "CustomWebServlet",
+        urlPatterns = { CustomWebServlet.SERVLET_URL_PATTERN })
 public final class CustomWebServlet extends HttpServlet {
 
     /**
@@ -53,9 +52,24 @@ public final class CustomWebServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
-     *
+     * Base path of custom web files (without leading or trailing '/').
      */
-    private static final String CONTENT_HOME = ConfigManager.getServerHome();
+    public static final String PATH_BASE = "custom/web";
+
+    /**
+     * Base path of custom web themes (without leading or trailing '/').
+     */
+    public static final String PATH_BASE_THEMES = PATH_BASE + "/themes";
+
+    /**
+     * .
+     */
+    public static final String SERVLET_URL_PATTERN = "/" + PATH_BASE + "/*";
+
+    /**
+     * The full file path of the content.
+     */
+    public static final String CONTENT_HOME = ConfigManager.getServerHome();
 
     @Override
     protected void doGet(final HttpServletRequest req,

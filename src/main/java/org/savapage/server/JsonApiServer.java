@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -116,6 +117,7 @@ import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.dto.AccountVoucherBatchDto;
 import org.savapage.core.dto.AccountVoucherRedeemDto;
 import org.savapage.core.dto.JrPageSizeDto;
+import org.savapage.core.dto.MoneyTransferDto;
 import org.savapage.core.dto.PosDepositDto;
 import org.savapage.core.dto.PosDepositReceiptDto;
 import org.savapage.core.dto.PrimaryKeyDto;
@@ -128,7 +130,6 @@ import org.savapage.core.dto.QuickSearchPosPurchaseItemDto;
 import org.savapage.core.dto.QuickSearchPrinterItemDto;
 import org.savapage.core.dto.QuickSearchUserItemDto;
 import org.savapage.core.dto.UserDto;
-import org.savapage.core.dto.UserPaymentRequestDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.img.ImageUrl;
@@ -209,12 +210,14 @@ import org.savapage.core.util.MediaUtils;
 import org.savapage.core.util.Messages;
 import org.savapage.core.util.QuickSearchDate;
 import org.savapage.ext.payment.PaymentGatewayException;
+import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.auth.WebAppUserAuthManager;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.cometd.UserEventService;
+import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.webapp.WebAppTypeEnum;
@@ -1370,9 +1373,9 @@ public final class JsonApiServer extends AbstractPage {
 
             return reqSmartSchoolStop();
 
-        case JsonApiDict.REQ_USER_PAYMENT_REQUEST:
+        case JsonApiDict.REQ_USER_MONEY_TRANSFER_REQUEST:
 
-            return reqUserPaymentRequest(requestingUser,
+            return reqUserMoneyTransfer(requestingUser,
                     getParmValue(parameters, isGetAction, "dto"));
 
         case JsonApiDict.REQ_POS_DEPOSIT:
@@ -5116,14 +5119,14 @@ public final class JsonApiServer extends AbstractPage {
      * @return
      * @throws Exception
      */
-    private Map<String, Object> reqUserPaymentRequest(
+    private Map<String, Object> reqUserMoneyTransfer(
             final String requestingUser, final String jsonDto)
             throws IOException {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
-        final UserPaymentRequestDto dto =
-                JsonAbstractBase.create(UserPaymentRequestDto.class, jsonDto);
+        final MoneyTransferDto dto =
+                JsonAbstractBase.create(MoneyTransferDto.class, jsonDto);
 
         /*
          * INVARIANT: Amount MUST be valid.
@@ -5146,18 +5149,29 @@ public final class JsonApiServer extends AbstractPage {
                     "msg-amount-must-be positive");
         }
 
+        final PaymentGatewayPlugin plugin =
+                WebApp.get().getPluginManager().getPaymentGatewayPlugin();
+
+        if (plugin == null) {
+            throw new IllegalStateException("No payment gateway available.");
+        }
+
         try {
+
             final String comment =
                     localize("msg-payment-gateway-comment",
                             CommunityDictEnum.SAVAPAGE.getWord(),
                             requestingUser);
 
+            final URL callbackUrl = ServerPluginManager.getCallBackUrl(plugin);
+
+            final URL redirectUrl =
+                    ServerPluginManager.getRedirectUrl(dto.getSenderUrl());
+
             final PaymentGatewayTrx trx =
-                    WebApp.get()
-                            .getPluginManager()
-                            .getPaymentGatewayPlugin()
-                            .startPayment(requestingUser,
-                                    paymentAmount.doubleValue(), comment);
+                    plugin.startPayment(requestingUser,
+                            paymentAmount.doubleValue(), comment, callbackUrl,
+                            redirectUrl);
 
             setApiResultOK(userData);
             userData.put("paymentUrl", trx.getPaymentUrl().toExternalForm());
@@ -5171,11 +5185,10 @@ public final class JsonApiServer extends AbstractPage {
 
     /**
      *
+     * @param requestingUser
      * @param jsonDto
      * @return
-     * @throws IOException
-     * @throws MessagingException
-     * @throws JRException
+     * @throws Exception
      */
     private Map<String, Object> reqPosDeposit(final String requestingUser,
             final String jsonDto) throws Exception {
@@ -5185,7 +5198,7 @@ public final class JsonApiServer extends AbstractPage {
         final PosDepositDto dto =
                 JsonAbstractBase.create(PosDepositDto.class, jsonDto);
 
-        AbstractJsonRpcMethodResponse rpcResponse =
+        final AbstractJsonRpcMethodResponse rpcResponse =
                 ACCOUNTING_SERVICE.depositFunds(dto);
 
         if (rpcResponse.isResult()) {

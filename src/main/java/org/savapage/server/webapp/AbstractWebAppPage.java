@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -35,7 +36,7 @@ import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.VersionInfo;
-import org.savapage.core.config.ConfigManager;
+import org.savapage.server.CustomWebServlet;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.AbstractPage;
@@ -52,22 +53,6 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      * .
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The URL path for custom web files. See {@code web.xml}.
-     */
-    private static final String URL_PATH_CUSTOM_WEB = "/custom/web";
-
-    /**
-     * The URL path for custom web themes.
-     */
-    private static final String URL_PATH_CUSTOM_THEME = URL_PATH_CUSTOM_WEB
-            + "/themes";
-
-    /**
-     * The custom Web App theme file name.
-     */
-    private static final String CUSTOM_THEME_FILE = "custom.min.css";
 
     /**
      * .
@@ -169,26 +154,22 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         return !isZeroPanel && (SpSession.get().getAuthWebAppCount() > 0);
     }
 
-    /**
-     *
-     * @return
-     */
     @Override
     protected abstract WebAppTypeEnum getWebAppType();
 
     /**
-     * Gets the specialized CSS filename.
+     * Gets the specialized CSS base filename.
      *
-     * @return {@code null} when no specialized CSS files available (needed).
+     * @return {@code null} when no specialized CSS files are applicable.
      */
-    protected abstract String getSpecializedCssFile();
+    protected abstract String getSpecializedCssFileName();
 
     /**
-     * Gets the specialized JS filename.
+     * Gets the specialized JS base filename.
      *
      * @return The specialized JS filename.
      */
-    protected abstract String getSpecializedJsFile();
+    protected abstract String getSpecializedJsFileName();
 
     /**
      * Gets the JavaScript libraries to render.
@@ -307,11 +288,51 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
     abstract boolean isJqueryCoreRenderedByWicket();
 
     /**
-     * @return The custom Web App theme @{link File}.
+     *
+     * @param key
+     * @param path
+     * @return
      */
-    private static File getCustomThemeFile() {
-        return new File(String.format("%s/custom/web/themes/%s",
-                ConfigManager.getServerHome(), CUSTOM_THEME_FILE));
+    private static File getCssCustomFile(final String key, final String path) {
+
+        if (key == null) {
+            return null;
+        }
+
+        final String cssFile = WebApp.getWebProperty(key);
+
+        if (StringUtils.isBlank(cssFile)) {
+            return null;
+        }
+
+        return new File(String.format("%s/%s/%s",
+                CustomWebServlet.CONTENT_HOME, path, cssFile));
+    }
+
+    /**
+     * @return The jQuery Mobile Theme CSS {@link File}, or {@code null} when
+     *         not applicable.
+     */
+    private File getCssThemeFile() {
+
+        final StringBuilder key = new StringBuilder();
+        key.append("webapp.theme.").append(
+                this.getWebAppType().toString().toLowerCase());
+
+        return getCssCustomFile(key.toString(),
+                CustomWebServlet.PATH_BASE_THEMES);
+    }
+
+    /**
+     * @return The custom CSS {@link File}, or {@code null} when not applicable.
+     */
+    private File getCssCustomFile() {
+        final StringBuilder key = new StringBuilder();
+        key.append("webapp.custom.").append(
+                this.getWebAppType().toString().toLowerCase());
+
+        return getCssCustomFile(key.toString(),
+                CustomWebServlet.PATH_BASE);
     }
 
     /**
@@ -344,16 +365,17 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         /*
          * jQuery Mobile CSS files.
          */
-        final File customThemeCss = getCustomThemeFile();
+        final File customThemeCss = getCssThemeFile();
 
-        if (customThemeCss.isFile()) {
+        if (customThemeCss != null && customThemeCss.isFile()) {
+
+            response.render(CssHeaderItem.forUrl(String.format("/%s/%s%s",
+                    CustomWebServlet.PATH_BASE_THEMES,
+                    customThemeCss.getName(), nocache)));
 
             response.render(CssHeaderItem.forUrl(String.format("%s/%s%s",
-                    URL_PATH_CUSTOM_THEME, customThemeCss.getName(), nocache)));
-
-            response.render(CssHeaderItem.forUrl(String.format("%s/%s%s",
-                    URL_PATH_CUSTOM_THEME, "jquery.mobile.icons.min.css",
-                    nocache)));
+                    CustomWebServlet.PATH_BASE_THEMES,
+                    "jquery.mobile.icons.min.css", nocache)));
 
             response.render(WebApp
                     .getWebjarsCssRef(WEBJARS_PATH_JQUERY_MOBILE_STRUCTURE_CSS));
@@ -366,6 +388,7 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         /*
          * Other CSS files.
          */
+
         if (jsToRender.contains(JavaScriptLibrary.JQPLOT)) {
             response.render(WebApp
                     .getWebjarsCssRef(WEBJARS_PATH_JQUERY_JQPLOT_CSS));
@@ -373,7 +396,7 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
 
         response.render(CssHeaderItem.forUrl("jquery.savapage.css" + nocache));
 
-        final String specializedCssFile = getSpecializedCssFile();
+        final String specializedCssFile = getSpecializedCssFileName();
 
         if (specializedCssFile != null) {
             response.render(CssHeaderItem.forUrl(specializedCssFile + nocache));
@@ -382,6 +405,14 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         if (jsToRender.contains(JavaScriptLibrary.MOBIPICK)) {
             response.render(CssHeaderItem.forUrl(WebApp.getJqMobiPickLocation()
                     + "mobipick.css"));
+        }
+
+        // Custom CSS as last.
+        final File customCss = getCssCustomFile();
+
+        if (customCss != null && customCss.isFile()) {
+            response.render(CssHeaderItem.forUrl(String.format("/%s/%s%s",
+                    CustomWebServlet.PATH_BASE, customCss.getName(), nocache)));
         }
 
         /*

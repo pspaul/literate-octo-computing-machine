@@ -24,6 +24,8 @@ package org.savapage.server.xmlrpc;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebInitParam;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,11 +35,15 @@ import org.apache.xmlrpc.webserver.XmlRpcServlet;
  * Wrapper class for the main {@link XmlRpcServlet} to capture the Client IP
  * Address in a static {@link ThreadLocal} variable.
  * <p>
- * See {@code web.xml}
+ * Note: {@code "enabledForExtensions" = "true"} enables vendor extensions
+ * support for XML-RPC.
  * </p>
  *
  * @author Datraverse B.V.
  */
+@WebServlet(name = "XmlRpcServlet", urlPatterns = { "/xmlrpc" },
+        initParams = { @WebInitParam(name = "enabledForExtensions",
+                value = "true"), })
 public final class SpXmlRpcServlet extends XmlRpcServlet {
 
     private static final long serialVersionUID = 1L;

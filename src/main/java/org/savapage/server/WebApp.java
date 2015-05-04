@@ -21,11 +21,14 @@
  */
 package org.savapage.server;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -95,7 +98,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static final String MOUNT_PATH_WEBAPP_USER = "/user";
 
     /**
-     * URL parameter tp pass user id.
+     * URL parameter to pass user id.
      */
     public static final String URL_PARM_USER = "user";
 
@@ -121,9 +124,19 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             "jquery/current/jquery.js";
 
     /**
+     * Basename of the properties file for web customization.
+     */
+    public static final String FILENAME_WEB_PROPERTIES = "web.properties";
+
+    /**
      *
      */
     private static Properties theServerProps = new Properties();
+
+    /**
+    *
+    */
+    private static Properties theWebProps = new Properties();
 
     /**
      *
@@ -334,6 +347,46 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static void setServerProps(final Properties props) {
         theServerProps = props;
         ConfigManager.setServerProps(props);
+    }
+
+    /**
+     * Get a property from {@link WebApp#FILENAME_WEB_PROPERTIES}.
+     *
+     * @param key
+     *            The key of the property
+     * @return {@code null} when not found.
+     */
+    public static String getWebProperty(final String key) {
+        return theWebProps.getProperty(key);
+    }
+
+    /**
+     * Loads the web properties from file {@link #FILENAME_WEB_PROPERTIES}.
+     *
+     * @throws IOException
+     *             When error loading properties file.
+     */
+    public static void loadWebProperties() throws IOException {
+
+        final StringBuilder builder = new StringBuilder();
+
+        builder.append(ConfigManager.getServerHome()).append("/custom/")
+                .append(FILENAME_WEB_PROPERTIES);
+
+        final File file = new File(builder.toString());
+
+        if (!file.exists()) {
+            return;
+        }
+
+        FileInputStream fis = null;
+
+        try {
+            fis = new FileInputStream(file);
+            theWebProps.load(fis);
+        } finally {
+            IOUtils.closeQuietly(fis);
+        }
     }
 
     /**

@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -36,6 +37,8 @@ import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp;
 import org.savapage.core.dto.UserPaymentGatewayDto;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.services.ServiceContext;
@@ -43,6 +46,7 @@ import org.savapage.ext.ServerPlugin;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayTrx;
+import org.savapage.server.callback.CallbackServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -382,6 +386,44 @@ public final class ServerPluginManager implements PaymentGatewayListener {
                 .getPaymentGatewayPlugins()) {
             plugin.onStop();
         }
+    }
+
+    /**
+     * Gets the {@link URL} of the User Web App used by a Web API to redirect to
+     * after remote Web App dialog is done.
+     *
+     * @param dfaultUrl
+     *            De default URL.
+     * @return The {@link URL}.
+     * @throws MalformedURLException
+     *             When format of the URL is invalid.
+     */
+    public static URL getRedirectUrl(final String dfaultUrl)
+            throws MalformedURLException {
+
+        String urlValue =
+                ConfigManager.instance().getConfigValue(
+                        IConfigProp.Key.EXT_WEBAPI_REDIRECT_URL_WEBAPP_USER);
+
+        if (StringUtils.isBlank(urlValue)) {
+            urlValue = dfaultUrl;
+        }
+
+        return new URL(urlValue);
+    }
+
+    /**
+     * Gets the callback {@link URL} for a {@link PaymentGatewayPlugin}.
+     *
+     * @param plugin
+     *            The {@link PaymentGatewayPlugin}.
+     * @return The callback {@link URL}.
+     * @throws MalformedURLException
+     *             When format of the URL is invalid.
+     */
+    public static URL getCallBackUrl(final PaymentGatewayPlugin plugin)
+            throws MalformedURLException {
+        return CallbackServlet.getCallBackUrl(plugin);
     }
 
 }

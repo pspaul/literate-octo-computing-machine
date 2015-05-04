@@ -1428,6 +1428,29 @@
 		/**
 		 *
 		 */
+		function PageMoneyTransfer(_i18n, _view, _model) {
+			var _this = this
+			//
+			, _selMain = '#money-transfer-main'
+			//
+			, _selCents = '#money-transfer-cents';
+
+			$("#page-money-transfer").on("pagecreate", function(event) {
+
+				$('#button-money-transfer').click(function() {
+					_this.onMoneyTransfer($(_selMain).val(), $($(_selMain)).val());
+					return false;
+				});
+
+			}).on("pagebeforeshow", function(event, ui) {
+				$(_selMain).val('');
+				$($(_selMain)).val('');
+			});
+		}
+
+		/**
+		 *
+		 */
 		function PageOutbox(_i18n, _view, _model) {
 			var _this = this
 			//
@@ -1576,16 +1599,16 @@
 					});
 				}
 
-				if ($('#button-redeem-voucher')) {
-					$(this).on('click', '#button-voucher-redeem', null, function() {
+				if ($('#button-redeem-voucher-page')) {
+					$(this).on('click', '#button-voucher-redeem-page', null, function() {
 						_view.showUserPage('#page-voucher-redeem', 'AccountVoucherRedeem');
 						return false;
 					});
 				}
 
-				if ($('#button-payment-amount')) {
-					$(this).on('click', '#button-payment-amount', null, function() {
-						_this.onPaymentRequest($('#payment-amount-main').val(), $('#payment-amount-cents').val());
+				if ($('#button-transfer-money-page')) {
+					$(this).on('click', '#button-transfer-money-page', null, function() {
+						_view.showUserPage('#page-money-transfer', 'AccountMoneyTransfer');
 						return false;
 					});
 				}
@@ -4746,14 +4769,15 @@
 			/**
 			 * Callbacks: pageDashboard
 			 */
-			_view.pages.pageDashboard.onPaymentRequest = function(main, cents) {
-				// UserPaymentRequestDto.java
+			_view.pages.moneyTransfer.onMoneyTransfer = function(main, cents) {
+				// MoneyTransferDto.java
 				var res = _api.call({
-					request : "user-payment-request",
+					request : "user-money-transfer-request",
 					dto : JSON.stringify({
 						userId : _model.user.id,
 						amountMain : main,
-						amountCents : cents
+						amountCents : cents,
+						senderUrl : window.location.protocol + "//" + window.location.host + window.location.pathname
 					})
 				});
 
@@ -5565,6 +5589,7 @@
 				pagebrowser : new PageBrowser(_i18n, _view, _model),
 				pageDashboard : new PageDashboard(_i18n, _view, _model),
 				voucherRedeem : new PageVoucherRedeem(_i18n, _view, _model),
+				moneyTransfer : new PageMoneyTransfer(_i18n, _view, _model),
 				pdfprop : new PagePdfProp(_i18n, _view, _model),
 				main : new PageMain(_i18n, _view, _model),
 				print : new PagePrint(_i18n, _view, _model, _api),

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ import java.net.UnknownHostException;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,12 +71,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  *
- * <p>
- * See {@code web.xml}
- * </p>
- *
  * @author Datraverse B.V.
+ *
  */
+@WebServlet(name = "JsonRpcServlet", urlPatterns = { "/jsonrpc" })
 public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
 
     /**

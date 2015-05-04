@@ -21,6 +21,7 @@
  */
 package org.savapage.server.plugin.test;
 
+import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 
@@ -52,24 +53,15 @@ public final class TestPlugin implements PaymentGatewayPlugin {
 
     @Override
     public PaymentGatewayTrx startPayment(final String userId,
-            final double amount, final String description) {
+            final double amount, final String description, URL callbackUrl,
+            URL redirectUrl) {
         return null;
     }
 
     @Override
     public Integer onCallBack(final String pathInfo, final String queryString,
-            final Map<String, String[]> parameterMap) {
+            final Map<String, String[]> parameterMap, final boolean live) {
         return Integer.valueOf(0);
-    }
-
-    @Override
-    public String getCallbackUrl() {
-        return null;
-    }
-
-    @Override
-    public String getRedirectUrl() {
-        return null;
     }
 
     @Override
@@ -80,11 +72,6 @@ public final class TestPlugin implements PaymentGatewayPlugin {
     @Override
     public void onInit(final PaymentGatewayListener listener) {
         // noop
-    }
-
-    @Override
-    public String getCallbackSubPath() {
-        return String.format("/%s", this.getClass().getSimpleName());
     }
 
 }

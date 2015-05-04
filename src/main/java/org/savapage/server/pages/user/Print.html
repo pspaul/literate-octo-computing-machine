@@ -14,7 +14,7 @@ pattern="[0-9]*"
 
     <ul data-role="listview" data-inset="true">
     
-        <li data-role="list-divider" id="sp-printer-page-name" data-theme="a">Printer</li>
+        <li data-role="list-divider" id="sp-printer-page-name">Printer</li>
     
         <li>
             <div data-role="controlgroup" data-type="horizontal" class="ui-mini">
@@ -59,7 +59,7 @@ pattern="[0-9]*"
         
     <ul class="printer-selected" data-role="listview" data-inset="true">
     
-        <li data-role="list-divider" id="sp-printer-page-name" data-theme="a">Job</li>
+        <li data-role="list-divider" id="sp-printer-page-name">Job</li>
     
 	    <li data-mini="true">
 	    
@@ -137,7 +137,7 @@ pattern="[0-9]*"
 <wicket:remove><!-- 
 POPUP for Proxy Print Authentication
 --></wicket:remove>  
-<div data-role="popup" id="sp-popup-print-auth" data-theme="a" data-overlay-theme="a" data-dismissible="false" class="ui-content">
+<div data-role="popup" id="sp-popup-print-auth" data-dismissible="false" class="ui-content">
 
 	<div id="auth-popup-content-wait" class="ui-corner-bottom ui-content">
         <p class="sp-txt-info" id="sp-print-auth-countdown" style="position:absolute; right:20px;"/>
@@ -164,4 +164,4 @@ POPUP for Proxy Print Authentication
 <wicket:remove><!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
 --></wicket:remove>  
-<div data-role="popup" data-position-to="window" data-overlay-theme="a" class="sp-msg-popup ui-content"/>
+<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>

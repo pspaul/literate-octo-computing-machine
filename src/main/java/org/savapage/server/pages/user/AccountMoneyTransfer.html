@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text" autofocus
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+    <h1><wicket:message key="title"/></h1>
+</div>
+
+<div class="ui-content">
+
+    <span class="sp-txt-info sp-txt-wrap"><wicket:message key="prompt-transfer-money"/></span>
+    <br/>
+    
+    <table><tr>
+        <td><span wicket:id="currency-symbol"/>&nbsp;</td>
+        <td width="80px">
+            <input tabindex="2" type="text" style="text-align: right;" id="money-transfer-main" 
+                value="" maxlength="3" pattern="[0-9]*"/>
+        </td>
+        <td wicket:id="decimal-separator"/>
+        <td width="50px">
+            <input tabindex="2" type="text" id="money-transfer-cents" value="00" maxlength="2" pattern="[0-9]*"/>
+        </td>
+       </tr>
+    </table>
+    <div>
+        <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-action" id="button-money-transfer">
+            <wicket:message key="button-start"/>
+        </a>
+	    <a href="#" data-rel="back" data-direction="reverse" 
+	        class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+	        <wicket:message key="button-back"/>        
+	    </a>
+    
+    </div>   
+            
+</div>
+
+<wicket:remove><!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+--></wicket:remove>  
+<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>

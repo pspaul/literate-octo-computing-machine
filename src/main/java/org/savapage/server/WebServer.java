@@ -153,6 +153,15 @@ public final class WebServer {
     }
 
     /**
+     * Starts the Web Server.
+     * <p>
+     * References:
+     * </p>
+     * <ul>
+     * <li>Jetty: <a href="See:
+     * https://www.eclipse.org/jetty/documentation/current/using-annotations
+     * .html">Working with Annotations</a></li>
+     * </ul>
      *
      * @param args
      *            The arguments.
@@ -180,11 +189,13 @@ public final class WebServer {
         /*
          * Add a connector for regular port
          */
-        final int serverPort = Integer.parseInt(propsServer.getProperty(
-                "server.port", ConfigDefaults.SERVER_PORT));
+        final int serverPort =
+                Integer.parseInt(propsServer.getProperty("server.port",
+                        ConfigDefaults.SERVER_PORT));
 
-        final int serverPortSsl = Integer.parseInt(propsServer.getProperty(
-                "server.ssl.port", ConfigDefaults.SERVER_SSL_PORT));
+        final int serverPortSsl =
+                Integer.parseInt(propsServer.getProperty("server.ssl.port",
+                        ConfigDefaults.SERVER_SSL_PORT));
 
         /*
          *
@@ -198,6 +209,16 @@ public final class WebServer {
         threadPool.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
 
         final Server server = new Server(threadPool);
+
+        /*
+         * This is needed to enable the Jetty annotations.
+         */
+        org.eclipse.jetty.webapp.Configuration.ClassList classlist =
+                org.eclipse.jetty.webapp.Configuration.ClassList
+                        .setServerDefault(server);
+        classlist.addBefore(
+                "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
+                "org.eclipse.jetty.annotations.AnnotationConfiguration");
 
         /*
          * HttpConfiguration is a collection of configuration information
@@ -220,8 +241,9 @@ public final class WebServer {
          * the output buffer size, etc. We also set the port and configure an
          * idle timeout.
          */
-        final ServerConnector http = new ServerConnector(server,
-                new HttpConnectionFactory(httpConfig));
+        final ServerConnector http =
+                new ServerConnector(server, new HttpConnectionFactory(
+                        httpConfig));
 
         http.setPort(serverPort);
         http.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
@@ -250,8 +272,9 @@ public final class WebServer {
              *
              */
             final Properties propsPw = new Properties();
-            istr = new java.io.FileInputStream(serverHome
-                    + "/data/default-ssl-keystore.pw");
+            istr =
+                    new java.io.FileInputStream(serverHome
+                            + "/data/default-ssl-keystore.pw");
             propsPw.load(istr);
             final String pw = propsPw.getProperty("password");
             istr.close();
@@ -259,8 +282,9 @@ public final class WebServer {
             /**
              *
              */
-            istr = new java.io.FileInputStream(serverHome
-                    + "/data/default-ssl-keystore");
+            istr =
+                    new java.io.FileInputStream(serverHome
+                            + "/data/default-ssl-keystore");
             final KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(istr, pw.toCharArray());
             istr.close();
@@ -273,8 +297,9 @@ public final class WebServer {
 
         } else {
 
-            final Resource keystore = Resource.newResource(serverHome + "/"
-                    + propsServer.getProperty("server.ssl.keystore"));
+            final Resource keystore =
+                    Resource.newResource(serverHome + "/"
+                            + propsServer.getProperty("server.ssl.keystore"));
 
             sslContextFactory.setKeyStoreResource(keystore);
 
@@ -305,10 +330,10 @@ public final class WebServer {
          * we just made along with the previously created ssl context factory.
          * Next we set the port and a longer idle timeout.
          */
-        final ServerConnector https = new ServerConnector(server,
-                new SslConnectionFactory(sslContextFactory,
-                        HttpVersion.HTTP_1_1.asString()),
-                new HttpConnectionFactory(httpsConfig));
+        final ServerConnector https =
+                new ServerConnector(server, new SslConnectionFactory(
+                        sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+                        new HttpConnectionFactory(httpsConfig));
 
         https.setPort(serverPortSsl);
         https.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
@@ -325,25 +350,40 @@ public final class WebServer {
         webAppContext.setServer(server);
         webAppContext.setContextPath("/");
 
-        boolean fDevelopment = (System.getProperty("savapage.war.file") == null);
+        boolean fDevelopment =
+                (System.getProperty("savapage.war.file") == null);
 
         String pathToWarFile = null;
 
         if (fDevelopment) {
             pathToWarFile = "src/main/webapp";
         } else {
-            pathToWarFile = serverHome + "/lib/"
-                    + System.getProperty("savapage.war.file");
+            pathToWarFile =
+                    serverHome + "/lib/"
+                            + System.getProperty("savapage.war.file");
         }
+
         webAppContext.setWar(pathToWarFile);
 
+        /*
+         * This is needed for scanning "discoverable" Jetty annotations. The
+         * "/classes/.*" scan is needed when running in development (Eclipse).
+         * The "/savapage-server-*.jar$" scan in needed for production.
+         */
+        webAppContext.setAttribute(
+                "org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
+                ".*/savapage-server-[^/]*\\.jar$|.*/classes/.*");
+
+        /*
+         * Set the handler.
+         */
         server.setHandler(webAppContext);
 
         /*
          *
          */
-        final String serverStartedFile = serverHome + "/logs/"
-                + "server.started.txt";
+        final String serverStartedFile =
+                serverHome + "/logs/" + "server.started.txt";
 
         int status = 0;
 

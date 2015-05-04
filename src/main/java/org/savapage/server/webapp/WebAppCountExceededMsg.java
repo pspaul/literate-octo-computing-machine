@@ -70,12 +70,12 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
     }
 
     @Override
-    protected String getSpecializedCssFile() {
+    protected String getSpecializedCssFileName() {
         return null;
     }
 
     @Override
-    protected String getSpecializedJsFile() {
+    protected String getSpecializedJsFileName() {
         return "jquery.savapage-exceeded.js";
     }
 
@@ -87,7 +87,7 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
     @Override
     protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
-        renderJs(response, getSpecializedJsFile() + nocache);
+        renderJs(response, getSpecializedJsFileName() + nocache);
     }
 
 }
