@@ -505,20 +505,6 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             mountPackage("/pages/admin", AbstractAdminPage.class);
             mountPackage("/pages/user", AbstractUserPage.class);
 
-            /*
-             * Raw Print Server
-             */
-            final int iRawPrintPort =
-                    Integer.valueOf(theServerProps.getProperty(
-                            ConfigManager.SERVER_PROP_PRINTER_RAW_PORT,
-                            ConfigManager.PRINTER_RAW_PORT_DEFAULT));
-
-            this.rawPrintServer = new RawPrintServer(iRawPrintPort);
-            this.rawPrintServer.start();
-
-            //
-            IppPrintServer.init();
-
             //
             replaceJQueryCore();
 
@@ -555,6 +541,22 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                             .create(ConfigManager.getServerExtHome());
 
             SpInfo.instance().log(this.pluginManager.asLoggingInfo());
+
+            /*
+             * IPP Print Server.
+             */
+            IppPrintServer.init();
+
+            /*
+             * IP Print Server (RAW)
+             */
+            final int iRawPrintPort =
+                    Integer.valueOf(theServerProps.getProperty(
+                            ConfigManager.SERVER_PROP_PRINTER_RAW_PORT,
+                            ConfigManager.PRINTER_RAW_PORT_DEFAULT));
+
+            this.rawPrintServer = new RawPrintServer(iRawPrintPort);
+            this.rawPrintServer.start();
 
         } catch (Exception e) {
 

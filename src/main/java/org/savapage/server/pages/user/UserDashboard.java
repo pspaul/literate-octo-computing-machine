@@ -138,7 +138,7 @@ public class UserDashboard extends AbstractUserPage {
          * Is payment gateway available?
          */
         final PaymentGatewayPlugin plugin =
-                WebApp.get().getPluginManager().getPaymentGatewayPlugin();
+                WebApp.get().getPluginManager().getFirstPaymentGateway();
 
         final boolean isPaymentGateway = plugin != null;
 

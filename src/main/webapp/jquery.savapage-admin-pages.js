@@ -1385,6 +1385,13 @@
                     return false;
                 });
 
+                $(this).on('click', '#button-accounttrx-report', null, function() {
+                    var pnl = _panel.AccountTrxBase;
+                    pnl.v2m(pnl);
+                    _self.onDownload("report", pnl.input, "AccountTrxList");
+                    return true;
+                });
+
                 $(this).on('click', ".sp-download-receipt", null, function() {
                     _self.onDownload("pos-receipt-download", null, $(this).attr('data-savapage'));
                     return false;

@@ -19,12 +19,36 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
+package org.savapage.server.raw;
+
+import org.savapage.core.SpInfo;
 
 /**
- * Callback services for Web API providers.
  *
  * @author Datraverse B.V.
  * @since 0.9.9
  */
-package org.savapage.server.callback;
+public final class RawPrintShutdownHook extends Thread {
 
+    /**
+     * The parent {@link RawPrintServer}.
+     */
+    private final RawPrintServer myServer;
+
+    /**
+     *
+     * @param server
+     *            The parent {@link RawPrintServer}.
+     */
+    public RawPrintShutdownHook(final RawPrintServer server) {
+        super("RawPrintShutdownThread");
+        this.myServer = server;
+    }
+
+    @Override
+    public void run() {
+        SpInfo.instance().log("Shutting down IP Print Server ...");
+        myServer.shutdown();
+        SpInfo.instance().log("... IP Print Server shutdown completed.");
+    }
+}

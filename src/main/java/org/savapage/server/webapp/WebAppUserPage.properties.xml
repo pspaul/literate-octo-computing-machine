@@ -27,5 +27,8 @@
     <entry key="outbox-title">Hold Print Jobs</entry>    
     <entry key="button-remove-all">Remove all</entry>    
     <entry key="button-extend">Extend</entry>        
+
+    <entry key="money-transfer-title">Transfer Money</entry>
+    <entry key="button-start">Start</entry>        
     
 </properties>

@@ -21,7 +21,9 @@
  */
 package org.savapage.server.pages.user;
 
+import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.server.SpSession;
+import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -42,6 +44,12 @@ public class AccountMoneyTransfer extends AbstractUserPage {
 
         helper.addLabel("currency-symbol", SpSession.getCurrencySymbol());
         helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
+
+        final PaymentGatewayPlugin plugin =
+                WebApp.get().getPluginManager().getFirstPaymentGateway();
+
+        helper.addModifyLabelAttr("money-transfer-gateway", "value",
+                plugin.getId());
     }
 
 }

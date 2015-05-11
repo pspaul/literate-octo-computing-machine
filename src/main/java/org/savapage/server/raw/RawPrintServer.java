@@ -25,14 +25,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.PerformanceLogger;
 import org.savapage.core.SpException;
+import org.savapage.core.SpInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
@@ -54,7 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Raw Printer on default port 9100. The port can be set in the
+ * Raw IP Printer on default port 9100. The port can be set in the
  * server.properties file.
  *
  * <p>
@@ -66,7 +71,7 @@ import org.slf4j.LoggerFactory;
  * indeed transferred via the shared printer to the PostScript header.
  * </p>
  */
-public class RawPrintServer extends Thread implements ServiceEntryPoint {
+public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
     /**
      * .
@@ -75,62 +80,94 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
             .getLogger(RawPrintServer.class);
 
     /**
-     * .
+     * The default port number.
      */
-    private static final int SERVER_SOCKET_SO_TIMEOUT = 2000;
+    private static final int DEFAULT_PORT = 9100;
+
+    /**
+     * SO_TIMEOUT with the specified timeout.
+     */
+    private static final int SERVER_SOCKET_SO_TIMEOUT_MSEC = 2000;
+
+    /**
+     * Polling period in milliseconds used to monitor active IP Print requests
+     * to finish.
+     */
+    private static final int POLL_FOR_ACTIVE_REQUESTS_MSEC = 1000;
 
     /**
      * .
      */
-    private final static QueueService QUEUE_SERVICE = ServiceContext
+    private static final QueueService QUEUE_SERVICE = ServiceContext
             .getServiceFactory().getQueueService();
 
-    private boolean myListeningFlag = true;
-    private int myRequestCount = 0;
-    private int myActiveRequestCount = 0;
-    private int port = 9100;
-
-    static private final int END_OF_PRINTJOB = 4;
+    /**
+     * .
+     */
+    private boolean keepAcceptingRequests = true;
 
     /**
-     *
+     * The total number of print job requests.
      */
-    class ShutdownThread extends Thread {
+    private final AtomicInteger totalRequests = new AtomicInteger(0);
 
-        private final RawPrintServer myServer;
+    /**
+     * The total number of active print job requests.
+     */
+    private final AtomicInteger activeRequests = new AtomicInteger(0);
 
-        /**
-         *
-         * @param server
-         */
-        public ShutdownThread(final RawPrintServer server) {
-            super("RawPrintShutdownThread");
-            this.myServer = server;
-        }
+    /**
+     * The port initialized with default value.
+     */
+    private int port = DEFAULT_PORT;
 
-        @Override
-        public void run() {
-            myServer.shutdown();
-        }
-    }
+    /**
+     * The byte in the {@link InputStream} marking the end of the print job.
+     */
+    private static final int BYTE_END_OF_PRINTJOB = 4;
+
+    /**
+     * "Carriage Return" byte.
+     */
+    private static final int BYTE_CR = 13;
+
+    /**
+     * "Line Feed" byte.
+     */
+    private static final int BYTE_LF = 10;
 
     /**
      *
      */
     class SocketServerThread extends Thread {
 
-        private static final int READ_TIMEOUT_MSEC = 10000;
+        /**
+         * Waiting max. 5 seconds while reading the socket.
+         */
+        private static final int READ_TIMEOUT_MSEC = 5000;
 
-        private final java.net.Socket mySocket;
+        /**
+         * The {@link Socket} with the IP Print job input.
+         */
+        private final Socket mySocket;
+
+        /**
+         * The parent {@link RawPrintServer}.
+         */
         private final RawPrintServer myServer;
 
         /**
          *
          * @param socket
+         *            The {@link Socket} with the IP Print job input.
+         * @param server
+         *            The parent {@link RawPrintServer}.
          */
-        public SocketServerThread(java.net.Socket socket,
+        public SocketServerThread(final Socket socket,
                 final RawPrintServer server) {
+
             super("SocketServerThread");
+
             mySocket = socket;
             myServer = server;
         }
@@ -138,13 +175,7 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
         @Override
         public void run() {
 
-            myRequestCount++;
-            myActiveRequestCount++;
-
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("request #" + myRequestCount + " from ["
-                        + mySocket.getInetAddress().getHostAddress() + "]");
-            }
+            myServer.onRequestStart(mySocket);
 
             try {
 
@@ -159,52 +190,63 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
 
                 if (!ConfigManager.isShutdownInProgress()) {
 
-                    final String hostAddress;
-                    if (mySocket == null) {
-                        hostAddress = "?";
+                    final String msg;
+
+                    if (ex instanceof RawPrintException) {
+
+                        msg = ex.getMessage();
+                        LOGGER.warn(msg);
+
                     } else {
-                        hostAddress =
-                                mySocket.getInetAddress().getHostAddress();
+
+                        final String hostAddress;
+
+                        if (mySocket == null) {
+                            hostAddress = "?";
+                        } else {
+                            hostAddress =
+                                    mySocket.getInetAddress().getHostAddress();
+                        }
+
+                        msg =
+                                String.format("%s: %s (IP Print from %s)", ex
+                                        .getClass().getSimpleName(), ex
+                                        .getMessage(), hostAddress);
+
+                        LOGGER.error(msg, ex);
                     }
-
-                    final String msg =
-                            String.format("%s: %s (RAW print from %s)", ex
-                                    .getClass().getSimpleName(), ex
-                                    .getMessage(), hostAddress);
-
-                    LOGGER.error(msg, ex);
 
                     AdminPublisher.instance().publish(PubTopicEnum.USER,
                             PubLevelEnum.ERROR, msg);
                 }
-            }
-
-            try {
+            } finally {
                 // All data exchanged: close socket
-                mySocket.close();
-            } catch (IOException ex) {
-                LOGGER.error(ex.getMessage());
+                IOUtils.closeQuietly(mySocket);
             }
 
-            // ------------------------------------------
-            myActiveRequestCount--;
-            LOGGER.debug("request #" + myRequestCount + " ended");
+            myServer.onRequestFinish();
         }
     }
 
     /**
      *
      * @param iPort
+     *            The port to listen to.
      */
-    public RawPrintServer(int iPort) {
+    public RawPrintServer(final int iPort) {
         this.port = iPort;
     }
 
     /**
+     * Reads a line (delimited with CR, LF or {@link #BYTE_END_OF_PRINTJOB}.
      *
      * @param istr
+     *            {@link InputStream} to read the line from.
+     * @param ostr
+     *            {@link OutputStream} to write the resulting line to.
      * @return {@code null} when nothing to read.
      * @throws IOException
+     *             When read or write error.
      */
     private static String readLine(final InputStream istr,
             final OutputStream ostr) throws IOException {
@@ -220,8 +262,8 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
                 line = "";
             }
 
-            if ((iByte == 10) || (iByte == 13) || (END_OF_PRINTJOB == iByte)) {
-                // istr.read();
+            if ((iByte == BYTE_LF) || (iByte == BYTE_CR)
+                    || (BYTE_END_OF_PRINTJOB == iByte)) {
                 break;
             }
 
@@ -242,9 +284,13 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
      * @param socket
      *            The socket to read the print job data from.
      * @throws IOException
-     *             When data brings NO PostScript file.
+     *             When connectivity failure.
+     * @throws RawPrintException
+     *             When no content received (within time), or content is not
+     *             PostScript.
      */
-    private void readAndPrint(final Socket socket) throws IOException {
+    private void readAndPrint(final Socket socket) throws IOException,
+            RawPrintException {
 
         final Date perfStartTime = PerformanceLogger.startTime();
 
@@ -288,7 +334,10 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
         //
 
         final InputStream istr = socket.getInputStream();
-        LOGGER.debug("read print job...");
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("read print job...");
+        }
 
         String title = null;
         String userid = null;
@@ -308,11 +357,17 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
          */
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        String strline = readLine(istr, bos);
+        String strline = null;
+
+        try {
+            strline = readLine(istr, bos);
+        } catch (SocketTimeoutException e) {
+            throw new RawPrintException("No IP Print data received from ["
+                    + originatorIp + "]", e);
+        }
 
         /*
-         * Just a ping... when does this happen?
-         * See Mantis #529
+         * Just a ping... when does this happen? See Mantis #529
          */
         if (strline == null) {
             if (LOGGER.isTraceEnabled()) {
@@ -322,8 +377,10 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
         }
 
         if (!strline.startsWith(DocContent.HEADER_PS)) {
+
             consumeWithoutProcessing(istr);
-            throw new IOException("Raw Print job from [" + originatorIp
+
+            throw new RawPrintException("IP Print data from [" + originatorIp
                     + "] is not PostScript. Header ["
                     + StringUtils.substring(strline, 0, 10) + "]");
         }
@@ -365,7 +422,7 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
 
             consumeWithoutProcessing(istr);
 
-            throw new IOException("Raw Print job from [" + originatorIp
+            throw new IOException("IP Print job from [" + originatorIp
                     + "] has no [" + PFX_TITLE + "] and/or [" + PFX_USERID
                     + "]");
         }
@@ -451,65 +508,88 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
     }
 
     /**
+     * Strips leading/trailing parenthesis from a string.
      *
      * @param content
-     * @return
+     *            The string to strip.
+     * @return The stripped string.
      */
-    private String stripParentheses(String content) {
+    private String stripParentheses(final String content) {
         return StringUtils.removeEnd(
                 StringUtils.removeStart(content.trim(), "("), ")");
     }
 
     /**
      * Consumes the (rest of) the full input stream, without processing it, so
-     * the client is fooled that everything is OK, even when things went wrong
-     * :-)
-     *
+     * the client is fooled that everything is OK, even when things went wrong.
      * If we would NOT do this, the client will try again-and-again, flooding
      * the server with requests.
+     * <p>
+     * Note: Any {@link IOException} is trace logged.
+     * </p>
      *
-     * @throws IOException
-     *
+     * @param istr
+     *            The {@link InputStream} to consume.
      */
-    private void consumeWithoutProcessing(InputStream istr) throws IOException {
+    private void consumeWithoutProcessing(final InputStream istr) {
+
         byte[] bytes = new byte[1024];
-        while (istr.read(bytes) > -1) {
-            // no code intended
+
+        try {
+            while (istr.read(bytes) > -1) {
+                continue;
+            }
+        } catch (IOException e) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("consumeWithoutProcessing error: "
+                        + e.getMessage());
+            }
         }
     }
 
     @Override
     public void run() {
 
-        Runtime.getRuntime().addShutdownHook(new ShutdownThread(this));
+        Runtime.getRuntime().addShutdownHook(new RawPrintShutdownHook(this));
 
-        java.net.ServerSocket serverSocket = null;
+        final ServerSocket serverSocket;
 
         try {
             /*
-             * from Javadoc: "The maximum queue length for incoming connection
+             * From Javadoc: "The maximum queue length for incoming connection
              * indications (a request to connect) is set to <code>50</code>. If
              * a connection indication arrives when the queue is full, the
              * connection is refused."
              */
-            serverSocket = new java.net.ServerSocket(this.port);
+            serverSocket = new ServerSocket(this.port);
 
-            serverSocket.setSoTimeout(SERVER_SOCKET_SO_TIMEOUT);
+            /**
+             * A call to accept() for this ServerSocket will block for only
+             * SERVER_SOCKET_SO_TIMEOUT_MSEC amount of time. If the timeout
+             * expires, a java.net.SocketTimeoutException is raised, though the
+             * ServerSocket is still valid.
+             */
+            serverSocket.setSoTimeout(SERVER_SOCKET_SO_TIMEOUT_MSEC);
 
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             throw new SpException(ex);
         }
 
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("listening on port " + this.port + " ...");
-        }
+        SpInfo.instance().log(
+                String.format("IP Print Server started listening on port %d.",
+                        this.port));
 
-        while (myListeningFlag) {
+        while (this.keepAcceptingRequests) {
+
             try {
-                java.net.Socket socket = serverSocket.accept();
-                SocketServerThread st = new SocketServerThread(socket, this);
+
+                final Socket socket = serverSocket.accept();
+                final SocketServerThread st =
+                        new SocketServerThread(socket, this);
+
                 st.start();
-            } catch (java.net.SocketTimeoutException ex) {
+
+            } catch (SocketTimeoutException ex) {
                 continue;
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
@@ -517,42 +597,65 @@ public class RawPrintServer extends Thread implements ServiceEntryPoint {
             }
         }
 
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        IOUtils.closeQuietly(serverSocket);
     }
 
     /**
      *
-     * @return
+     * @return The port number.
      */
     public int getPort() {
         return port;
     }
 
     /**
+     * Increments the number of (active) print job requests.
      *
+     * @param client
+     *            The client socket.
+     */
+    protected void onRequestStart(final Socket client) {
+
+        this.totalRequests.incrementAndGet();
+        this.activeRequests.incrementAndGet();
+
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("request #" + this.totalRequests.get() + " from ["
+                    + client.getInetAddress().getHostAddress() + "]");
+        }
+
+    }
+
+    /**
+     * Decrements the number of active print job requests.
+     */
+    protected void onRequestFinish() {
+        this.activeRequests.decrementAndGet();
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("request #" + this.totalRequests.get() + " ended");
+        }
+
+    }
+
+    /**
+     * Closes the IP Print service.
      */
     public void shutdown() {
 
-        LOGGER.info("Shutting down Raw Print Server ...");
+        this.keepAcceptingRequests = false;
 
-        myListeningFlag = false;
         /*
          * Waiting for active requests to finish.
          */
-        while (myActiveRequestCount > 0) {
+        while (this.activeRequests.get() > 0) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(POLL_FOR_ACTIVE_REQUESTS_MSEC);
             } catch (InterruptedException ex) {
-                LOGGER.error(ex.getMessage(), ex);
+                LOGGER.warn("IP Print Server is interrupted.");
                 break;
             }
         }
-
-        LOGGER.info("Raw Print Server shutdown completed.");
     }
 
 }

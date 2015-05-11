@@ -79,6 +79,7 @@ public final class SpContextListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
+
         /*
          * Context is destroyed. As last action we issue a log message.
          */
@@ -89,7 +90,7 @@ public final class SpContextListener implements ServletContextListener {
         } catch (Exception e) {
             SpInfo.instance().log(e.getMessage());
         }
-        SpInfo.instance().logDestroy("Server shutdown. Bye!");
+
     }
 
 }

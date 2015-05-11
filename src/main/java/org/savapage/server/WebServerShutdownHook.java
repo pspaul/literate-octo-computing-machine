@@ -19,12 +19,54 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
+package org.savapage.server;
+
+import org.eclipse.jetty.server.Server;
+import org.savapage.core.SpInfo;
 
 /**
- * Callback services for Web API providers.
  *
  * @author Datraverse B.V.
  * @since 0.9.9
  */
-package org.savapage.server.callback;
+public final class WebServerShutdownHook extends Thread {
 
+    /**
+    *
+    */
+    private final Server myServer;
+
+    /**
+     * The constructor.
+     *
+     * @param server
+     *            The {@link Server}.
+     */
+    public WebServerShutdownHook(final Server server) {
+        super("WebServerShutdownHook");
+        myServer = server;
+    }
+
+    @Override
+    public void run() {
+
+        SpInfo.instance().log("Shutting down Web Server...");
+
+        try {
+
+            myServer.stop();
+            myServer.join();
+
+            SpInfo.instance().log("... Web Server shutdown completed.");
+            SpInfo.instance().log("Bye!");
+
+        } catch (Exception e) {
+
+            SpInfo.instance().log(
+                    e.getClass().getSimpleName() + " : " + e.getMessage());
+
+            System.exit(1);
+        }
+    }
+
+}

@@ -19,12 +19,47 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
+package org.savapage.server.raw;
 
 /**
- * Callback services for Web API providers.
  *
  * @author Datraverse B.V.
  * @since 0.9.9
  */
-package org.savapage.server.callback;
+public class RawPrintException extends Exception {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Constructs a new {@link RawPrintException} without a message.
+     *
+     */
+    private RawPrintException() {
+        super("");
+    }
+
+    /**
+     * Constructs a new {@link RawPrintException}.
+     *
+     * @param message
+     *            The detail message.
+     */
+    public RawPrintException(final String message) {
+        super(message);
+    }
+
+    /**
+     * Constructs a new {@link RawPrintException}.
+     *
+     * @param message
+     *            The detail message.
+     * @param cause
+     *            The cause.
+     */
+    public RawPrintException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+}

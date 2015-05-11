@@ -60,48 +60,6 @@ public final class WebServer {
     /**
      *
      */
-    static class ShutdownThread extends Thread {
-
-        /**
-         *
-         */
-        private final Server myServer;
-
-        /**
-         * The constructor.
-         *
-         * @param server
-         *            The {@link Server}.
-         */
-        public ShutdownThread(final Server server) {
-            super("ShutdownThread");
-            myServer = server;
-        }
-
-        @Override
-        public void run() {
-
-            LOGGER.info("Shutting down SavaPage server...");
-
-            try {
-
-                myServer.stop();
-                myServer.join();
-
-                LOGGER.info("SavaPage server shutdown completed");
-
-            } catch (Exception e) {
-
-                LOGGER.warn(e.getMessage());
-
-                System.exit(1);
-            }
-        }
-    }
-
-    /**
-     *
-     */
     private WebServer() {
     }
 
@@ -401,7 +359,8 @@ public final class WebServer {
             writer.write(String.valueOf(now.getTime()) + "\n");
             writer.flush();
 
-            Runtime.getRuntime().addShutdownHook(new ShutdownThread(server));
+            Runtime.getRuntime().addShutdownHook(
+                    new WebServerShutdownHook(server));
 
             /*
              * Start the server

@@ -13,7 +13,7 @@
     <entry key="type-initial">Initial</entry>
     <entry key="type-adjust">Adjustment</entry>    
     <entry key="type-deposit">Transaction</entry>
-    <entry key="type-gateway">Gateway</entry>
+    <entry key="type-transfer">Transfer</entry>
     <entry key="type-voucher">Voucher</entry>
     <entry key="type-printout">Printer</entry>
 
@@ -32,4 +32,6 @@
     
     <entry key="button-apply">Apply</entry>    
     <entry key="button-default">Default</entry>    
+    <entry key="button-report">Report</entry>
+        
 </properties>

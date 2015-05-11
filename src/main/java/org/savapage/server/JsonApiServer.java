@@ -23,7 +23,6 @@ package org.savapage.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.ParseException;
@@ -109,7 +108,6 @@ import org.savapage.core.dao.helpers.PrintModeEnum;
 import org.savapage.core.dao.helpers.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.UserAttrEnum;
-import org.savapage.core.dao.helpers.UserPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.dto.AbstractDto;
@@ -177,10 +175,11 @@ import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.print.smartschool.SmartSchoolPrintMonitor;
-import org.savapage.core.reports.AbstractJrDesign;
 import org.savapage.core.reports.JrPosDepositReceipt;
-import org.savapage.core.reports.JrUserDataSource;
 import org.savapage.core.reports.JrVoucherPageDesign;
+import org.savapage.core.reports.impl.AccountTrxListReport;
+import org.savapage.core.reports.impl.ReportCreator;
+import org.savapage.core.reports.impl.UserListReport;
 import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.services.AccountVoucherService;
 import org.savapage.core.services.AccountingService;
@@ -726,7 +725,7 @@ public final class JsonApiServer extends AbstractPage {
 
         final String fileName = ConfigManager.getAppTmpDir() + "/" + baseName;
 
-        final File tempFile = new File(fileName);
+        final File tempPdfFile = new File(fileName);
 
         IRequestHandler requestHandler = null;
 
@@ -736,28 +735,28 @@ public final class JsonApiServer extends AbstractPage {
 
             case JsonApiDict.REQ_ACCOUNT_VOUCHER_BATCH_PRINT:
                 requestHandler =
-                        exportVoucherBatchPrint(tempFile,
+                        exportVoucherBatchPrint(tempPdfFile,
                                 parameters.get(JsonApiDict.PARM_REQ_SUB)
                                         .toString());
                 break;
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
                 requestHandler =
-                        exportPosPurchaseReceipt(tempFile,
+                        exportPosPurchaseReceipt(tempPdfFile,
                                 parameters.get(JsonApiDict.PARM_REQ_SUB)
                                         .toLongObject(), requestingUser, false);
                 break;
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD_USER:
                 requestHandler =
-                        exportPosPurchaseReceipt(tempFile,
+                        exportPosPurchaseReceipt(tempPdfFile,
                                 parameters.get(JsonApiDict.PARM_REQ_SUB)
                                         .toLongObject(), requestingUser, true);
                 break;
 
             case JsonApiDict.REQ_REPORT:
                 requestHandler =
-                        exportReport(tempFile,
+                        exportReport(tempPdfFile,
                                 parameters.get(JsonApiDict.PARM_REQ_SUB)
                                         .toString(),
                                 parameters.get(JsonApiDict.PARM_DATA)
@@ -772,8 +771,8 @@ public final class JsonApiServer extends AbstractPage {
 
             LOGGER.error(e.getMessage(), e);
 
-            if (tempFile != null && tempFile.exists()) {
-                tempFile.delete();
+            if (tempPdfFile != null && tempPdfFile.exists()) {
+                tempPdfFile.delete();
             }
 
             requestHandler =
@@ -813,6 +812,8 @@ public final class JsonApiServer extends AbstractPage {
             final Long accountTrxDbId, final String requestingUser,
             boolean isUserRequest) throws JRException {
 
+        final Locale reportLocale = ConfigManager.getDefaultLocale();
+
         final PosDepositReceiptDto receipt =
                 ACCOUNTING_SERVICE.createPosDepositReceiptDto(accountTrxDbId);
 
@@ -842,12 +843,12 @@ public final class JsonApiServer extends AbstractPage {
                                 pageSizeDto,
                                 ConfigManager
                                         .getConfigFontFamily(Key.REPORTS_PDF_INTERNAL_FONT_FAMILY),
-                                ServiceContext.getLocale()));
+                                reportLocale));
 
         //
         final JasperPrint jasperPrint =
                 JasperFillManager.fillReport(jasperReport, JrPosDepositReceipt
-                        .getParameters(receipt, ServiceContext.getLocale()),
+                        .getParameters(receipt, reportLocale),
                         new JREmptyDataSource());
 
         JasperExportManager.exportReportToPdfFile(jasperPrint,
@@ -984,6 +985,8 @@ public final class JsonApiServer extends AbstractPage {
     private IRequestHandler exportVoucherBatchPrint(final File tempFile,
             final String jsonDto) throws JRException {
 
+        final Locale reportlocale = ConfigManager.getDefaultLocale();
+
         final VoucherBatchPrintDto dto =
                 AbstractDto.create(VoucherBatchPrintDto.class, jsonDto);
 
@@ -992,7 +995,7 @@ public final class JsonApiServer extends AbstractPage {
                         .getConfigFontFamily(Key.FINANCIAL_VOUCHER_CARD_FONT_FAMILY);
 
         final JasperDesign design =
-                dto.getDesign().createDesign(font, getLocale());
+                dto.getDesign().createDesign(font, reportlocale);
 
         final ConfigManager cm = ConfigManager.instance();
 
@@ -1008,7 +1011,7 @@ public final class JsonApiServer extends AbstractPage {
         JasperPrint jasperPrint =
                 JasperFillManager.fillReport(jasperReport, parameters,
                         JrVoucherPageDesign.createDataSource(dto.getBatchId(),
-                                getLocale()));
+                                reportlocale));
 
         JasperExportManager.exportReportToPdfFile(jasperPrint,
                 tempFile.getAbsolutePath());
@@ -1033,8 +1036,11 @@ public final class JsonApiServer extends AbstractPage {
      * {@link IRequestHandler}.
      * </p>
      *
-     * @param parameters
-     *            The {@link PageParameters}.
+     * @param tempPdfFile
+     *            The temporary PDF {@link File}.
+     * @param reportId
+     *            The unique report ID
+     * @param jsonData
      * @param requestingUser
      * @param isGetAction
      *            {@code true} if this is a GET action, {@code false} when a
@@ -1042,62 +1048,29 @@ public final class JsonApiServer extends AbstractPage {
      * @return
      * @throws JRException
      */
-    private IRequestHandler exportReport(final File tempFile,
+    private IRequestHandler exportReport(final File tempPdfFile,
             final String reportId, final String jsonData,
             final String requestingUser, final boolean isGetAction)
             throws JRException {
 
-        final String REPORT_ID_USERLIST = "UserList";
-
         final Locale locale = getSession().getLocale();
-        final String resourceBundleBaseName =
-                AbstractJrDesign.getResourceBundleBaseName();
 
-        final InputStream istr = AbstractJrDesign.getJrxmlAsStream(reportId);
+        final ReportCreator report;
 
-        final JasperReport jasperReport =
-                JasperCompileManager.compileReport(istr);
-
-        final String fontName =
-                ConfigManager.getConfigFontFamily(
-                        Key.REPORTS_PDF_INTERNAL_FONT_FAMILY).getJrName();
-
-        jasperReport.getDefaultStyle().setFontName(fontName);
-
-        final Map<String, Object> reportParameters = new HashMap<>();
-
-        reportParameters.put("REPORT_LOCALE", locale);
-        reportParameters.put("REPORT_RESOURCE_BUNDLE",
-                ResourceBundle.getBundle(resourceBundleBaseName, locale));
-
-        reportParameters.put("SP_APP_VERSION",
-                ConfigManager.getAppNameVersion());
-        reportParameters.put("SP_REPORT_ACTOR", requestingUser);
-        reportParameters.put("SP_REPORT_IMAGE",
-                AbstractJrDesign.getHeaderImage());
-
-        final UserPagerReq req = UserPagerReq.read(jsonData);
-
-        JrUserDataSource dataSource = null;
-
-        if (reportId.equals(REPORT_ID_USERLIST)) {
-            dataSource = new JrUserDataSource(req, locale);
+        if (reportId.equals(AccountTrxListReport.REPORT_ID)) {
+            report = new AccountTrxListReport(requestingUser, jsonData, locale);
+        } else if (reportId.equals(UserListReport.REPORT_ID)) {
+            report = new UserListReport(requestingUser, jsonData, locale);
         } else {
-            throw new SpException("Report [" + reportId + "] is NOT supported");
+            throw new UnsupportedOperationException("Report [" + reportId
+                    + "] is NOT supported");
         }
 
-        reportParameters
-                .put("SP_DATA_SELECTION", dataSource.getSelectionInfo());
+        report.create(tempPdfFile);
 
-        final JasperPrint jasperPrint =
-                JasperFillManager.fillReport(jasperReport, reportParameters,
-                        dataSource);
-
-        JasperExportManager.exportReportToPdfFile(jasperPrint,
-                tempFile.getAbsolutePath());
-
+        //
         final ResourceStreamRequestHandler handler =
-                new DownloadRequestHandler(tempFile);
+                new DownloadRequestHandler(tempPdfFile);
 
         final String userFriendlyFilename = reportId + ".pdf";
 
@@ -5149,15 +5122,19 @@ public final class JsonApiServer extends AbstractPage {
                     "msg-amount-must-be positive");
         }
 
+        /*
+         * INVARIANT: plugin must be available.
+         */
         final PaymentGatewayPlugin plugin =
-                WebApp.get().getPluginManager().getPaymentGatewayPlugin();
+                WebApp.get().getPluginManager()
+                        .getPaymentGateway(dto.getGatewayId());
 
         if (plugin == null) {
-            throw new IllegalStateException("No payment gateway available.");
+            throw new IllegalStateException("Payment gateway \""
+                    + dto.getGatewayId() + "\" is not available.");
         }
 
         try {
-
             final String comment =
                     localize("msg-payment-gateway-comment",
                             CommunityDictEnum.SAVAPAGE.getWord(),
@@ -5175,6 +5152,12 @@ public final class JsonApiServer extends AbstractPage {
 
             setApiResultOK(userData);
             userData.put("paymentUrl", trx.getPaymentUrl().toExternalForm());
+
+        } catch (IOException e) {
+
+            final StringBuilder err = new StringBuilder();
+            err.append("Communication error: ").append(e.getMessage());
+            createApiResult(userData, API_RESULT_CODE_ERROR, "", err.toString());
 
         } catch (PaymentGatewayException e) {
             createApiResult(userData, API_RESULT_CODE_ERROR, "", e.getMessage());
@@ -7421,7 +7404,7 @@ public final class JsonApiServer extends AbstractPage {
          *
          */
         ResourceBundle rcBundle =
-                Messages.loadResource(getClass(), "i18n", locale);
+                Messages.loadXmlResource(getClass(), "i18n", locale);
 
         Set<String> keySet = rcBundle.keySet();
         for (final String key : keySet) {

@@ -43,6 +43,7 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.time.Duration;
 import org.savapage.core.SpException;
+import org.savapage.core.SpInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
@@ -104,11 +105,10 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
      *
      */
     public static void init() {
+        SpInfo.instance().log("IPP Print Server started.");
     }
 
     /**
-     *
-     * @author rijk
      *
      */
     private static class IppResourceStream extends AbstractResourceStream {

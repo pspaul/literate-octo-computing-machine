@@ -21,6 +21,8 @@
  */
 
 /**
- *
+ * @author Datraverse B.V.
+ * @since 0.9.9
  */
 package org.savapage.server.ext;
+

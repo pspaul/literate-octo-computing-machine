@@ -31,17 +31,26 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.savapage.core.cometd.AdminPublisher;
+import org.savapage.core.cometd.PubLevelEnum;
+import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.dto.UserPaymentGatewayDto;
 import org.savapage.core.jpa.Account;
+import org.savapage.core.jpa.User;
+import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.CurrencyUtil;
+import org.savapage.core.util.Messages;
 import org.savapage.ext.ServerPlugin;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
@@ -55,7 +64,7 @@ import org.slf4j.LoggerFactory;
  * instantiating each plug-in with the properties found.
  *
  * @author Datraverse B.V.
- *
+ * @since 0.9.9
  */
 public final class ServerPluginManager implements PaymentGatewayListener {
 
@@ -83,17 +92,35 @@ public final class ServerPluginManager implements PaymentGatewayListener {
             + "class";
 
     /**
-     * The loaded {@link PaymentGatewayPlugin} objects.
+     * Property key for plug-in ID.
      */
-    private final ArrayList<PaymentGatewayPlugin> paymentGatewayPlugins =
-            new ArrayList<PaymentGatewayPlugin>();
+    private static final String PROP_KEY_PLUGIN_ID = PROP_KEY_PLUGIN_PFX + "id";
+
+    /**
+     * Property key for plug-in enable switch.
+     */
+    private static final String PROP_KEY_PLUGIN_ENABLE = PROP_KEY_PLUGIN_PFX
+            + "enable";
+
+    /**
+     * Property key for plug-in live switch.
+     */
+    private static final String PROP_KEY_PLUGIN_LIVE = PROP_KEY_PLUGIN_PFX
+            + "live";
 
     /**
      *
-     * @return The loaded {@link PaymentGatewayPlugin} objects.
      */
-    public ArrayList<PaymentGatewayPlugin> getPaymentGatewayPlugins() {
-        return paymentGatewayPlugins;
+    private final Map<String, PaymentGatewayPlugin> paymentPlugins =
+            new HashMap<>();
+
+    /**
+     *
+     * @return The {@link Map} of (@link {@link PaymentGatewayPlugin} instances
+     *         by unique ID.
+     */
+    public Map<String, PaymentGatewayPlugin> getPaymentPlugins() {
+        return paymentPlugins;
     }
 
     /**
@@ -107,11 +134,30 @@ public final class ServerPluginManager implements PaymentGatewayListener {
      * @throws IOException
      *             If an error occurs when loading the properties file.
      */
-    private void loadPlugin(final InputStream istr, final String istrName)
+    private boolean loadPlugin(final InputStream istr, final String istrName)
             throws IOException {
 
+        // Load
         final Properties props = new Properties();
         props.load(istr);
+
+        // Enabled?
+        if (!Boolean.parseBoolean(props.getProperty(PROP_KEY_PLUGIN_ENABLE,
+                Boolean.FALSE.toString()))) {
+            LOGGER.warn(String.format("Plugin [%s] is disabled.", istrName));
+            return false;
+        }
+
+        /*
+         * Checking invariants.
+         */
+        final String pluginId = props.getProperty(PROP_KEY_PLUGIN_ID);
+
+        if (StringUtils.isBlank(pluginId)) {
+            LOGGER.warn(String.format("Plugin [%s]: plugin ID missing.",
+                    istrName));
+            return false;
+        }
 
         //
         final String pluginName = props.getProperty(PROP_KEY_PLUGIN_NAME);
@@ -119,15 +165,21 @@ public final class ServerPluginManager implements PaymentGatewayListener {
         if (StringUtils.isBlank(pluginName)) {
             LOGGER.warn(String.format("Plugin [%s]: plugin name missing.",
                     istrName));
-            return;
+            return false;
         }
 
+        //
+        final boolean pluginLive =
+                Boolean.parseBoolean(props.getProperty(PROP_KEY_PLUGIN_LIVE,
+                        Boolean.FALSE.toString()));
+
+        //
         final String pluginClassName = props.getProperty(PROP_KEY_PLUGIN_CLASS);
 
         if (StringUtils.isBlank(pluginClassName)) {
             LOGGER.warn(String.format("Plugin [%s]: plugin class missing.",
                     istrName));
-            return;
+            return false;
         }
 
         final Class<?> clazz;
@@ -135,7 +187,7 @@ public final class ServerPluginManager implements PaymentGatewayListener {
             clazz = Class.forName(pluginClassName);
         } catch (ClassNotFoundException e) {
             LOGGER.error(String.format("Class %s not found", pluginClassName));
-            return;
+            return false;
         }
 
         final Constructor<?> ctor;
@@ -154,10 +206,10 @@ public final class ServerPluginManager implements PaymentGatewayListener {
                 final PaymentGatewayPlugin paymentPlugin =
                         (PaymentGatewayPlugin) plugin;
 
-                paymentPlugin.onInit(props);
+                paymentPlugin.onInit(pluginId, pluginName, pluginLive, props);
                 paymentPlugin.onInit(this);
 
-                paymentGatewayPlugins.add(paymentPlugin);
+                paymentPlugins.put(pluginId, paymentPlugin);
 
             } else {
 
@@ -175,9 +227,10 @@ public final class ServerPluginManager implements PaymentGatewayListener {
                 | InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             LOGGER.error(e.getMessage());
-            return;
+            return false;
         }
 
+        return true;
     }
 
     /**
@@ -232,12 +285,23 @@ public final class ServerPluginManager implements PaymentGatewayListener {
      *
      * @return The {@link PaymentGatewayPlugin}, or {@code null} when not found.
      */
-    public PaymentGatewayPlugin getPaymentGatewayPlugin() {
+    public PaymentGatewayPlugin getFirstPaymentGateway() {
 
-        if (this.paymentGatewayPlugins.isEmpty()) {
-            return null;
+        for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
+                .entrySet()) {
+            return entry.getValue();
         }
-        return this.paymentGatewayPlugins.get(0);
+
+        return null;
+    }
+
+    /**
+     * Gets the {@link PaymentGatewayPlugin} by its ID.
+     *
+     * @return The {@link PaymentGatewayPlugin}, or {@code null} when not found.
+     */
+    public PaymentGatewayPlugin getPaymentGateway(final String gatewayId) {
+        return this.paymentPlugins.get(gatewayId);
     }
 
     /**
@@ -302,14 +366,43 @@ public final class ServerPluginManager implements PaymentGatewayListener {
         }
     }
 
+    /**
+     *
+     * @param level
+     * @param msg
+     */
+    private static void
+            publishEvent(final PubLevelEnum level, final String msg) {
+        AdminPublisher.instance().publish(PubTopicEnum.PAYMENT_GATEWAY, level,
+                msg);
+    }
+
     @Override
     public void onPaymentCancelled(final PaymentGatewayTrx trx) {
+
+        publishEvent(
+                PubLevelEnum.WARN,
+                localize("payment-cancelled", trx.getUserId(), trx
+                        .getGatewayId(), String.format("%s%.2f", CurrencyUtil
+                        .getCurrencySymbol(ConfigManager.getDefaultLocale()),
+                        trx.getAmount())));
         onPaymentTrxReceived(trx, "CANCELLED");
+        PaymentGatewayLogger.instance().onPaymentCancelled(trx);
     }
 
     @Override
     public void onPaymentExpired(final PaymentGatewayTrx trx) {
+
+        publishEvent(
+                PubLevelEnum.WARN,
+                localize("payment-expired", trx.getGatewayId(), String.format(
+                        "%s%.2f", CurrencyUtil.getCurrencySymbol(ConfigManager
+                                .getDefaultLocale()), trx.getAmount()), trx
+                        .getUserId()));
+
         onPaymentTrxReceived(trx, "EXPIRED");
+
+        PaymentGatewayLogger.instance().onPaymentExpired(trx);
     }
 
     @Override
@@ -329,8 +422,23 @@ public final class ServerPluginManager implements PaymentGatewayListener {
         // TODO
         final Account orphanedPaymentAccount = null;
 
-        ServiceContext.getServiceFactory().getAccountingService()
-                .acceptFundsFromGateway(dto, orphanedPaymentAccount);
+        final User lockedUser =
+                ServiceContext.getDaoContext().getUserDao()
+                        .lockByUserId(dto.getUserId());
+
+        final AccountingService service =
+                ServiceContext.getServiceFactory().getAccountingService();
+
+        service.acceptFundsFromGateway(lockedUser, dto, orphanedPaymentAccount);
+
+        publishEvent(
+                PubLevelEnum.CLEAR,
+                localize("payment-transferred", trx.getUserId(), String.format(
+                        "%s%.2f", CurrencyUtil.getCurrencySymbol(ConfigManager
+                                .getDefaultLocale()), trx.getAmount()), trx
+                        .getGatewayId()));
+
+        PaymentGatewayLogger.instance().onPaymentPaid(trx);
     }
 
     @Override
@@ -349,17 +457,19 @@ public final class ServerPluginManager implements PaymentGatewayListener {
                 "+----------------------------"
                         + "--------------------------------------------+";
 
-        builder.append("Loaded plugins [")
-                .append(this.getPaymentGatewayPlugins().size()).append("]");
+        builder.append("Loaded plugins [").append(this.paymentPlugins.size())
+                .append("]");
 
-        if (!this.getPaymentGatewayPlugins().isEmpty()) {
+        if (!this.paymentPlugins.isEmpty()) {
+
             builder.append('\n').append(delim);
 
-            for (final PaymentGatewayPlugin plugin : this
-                    .getPaymentGatewayPlugins()) {
+            for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
+                    .entrySet()) {
 
                 builder.append("\n| ").append(
-                        String.format("[%s]", plugin.getClass().getName()));
+                        String.format("[%s]", entry.getValue().getClass()
+                                .getName()));
             }
 
             builder.append('\n').append(delim);
@@ -372,9 +482,10 @@ public final class ServerPluginManager implements PaymentGatewayListener {
      * Starts all plug-ins.
      */
     public void start() {
-        for (final PaymentGatewayPlugin plugin : this
-                .getPaymentGatewayPlugins()) {
-            plugin.onStart();
+
+        for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
+                .entrySet()) {
+            entry.getValue().onStart();
         }
     }
 
@@ -382,9 +493,9 @@ public final class ServerPluginManager implements PaymentGatewayListener {
      * Stops all plug-ins.
      */
     public void stop() {
-        for (final PaymentGatewayPlugin plugin : this
-                .getPaymentGatewayPlugins()) {
-            plugin.onStop();
+        for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
+                .entrySet()) {
+            entry.getValue().onStop();
         }
     }
 
@@ -424,6 +535,22 @@ public final class ServerPluginManager implements PaymentGatewayListener {
     public static URL getCallBackUrl(final PaymentGatewayPlugin plugin)
             throws MalformedURLException {
         return CallbackServlet.getCallBackUrl(plugin);
+    }
+
+    /**
+     * Return a localized message string using the default locale of the
+     * application.
+     *
+     * @param key
+     *            The key of the message.
+     * @param args
+     *            The placeholder arguments for the message template.
+     *
+     * @return The message text.
+     */
+    private String localize(final String key, final String... args) {
+        return Messages.getMessage(getClass(),
+                ConfigManager.getDefaultLocale(), key, args);
     }
 
 }

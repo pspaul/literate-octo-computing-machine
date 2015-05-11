@@ -44,6 +44,16 @@ public final class TestPlugin implements PaymentGatewayPlugin {
     }
 
     @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String getName() {
+        return "Test Plugin";
+    }
+
+    @Override
     public void onStart() {
     }
 
@@ -59,19 +69,26 @@ public final class TestPlugin implements PaymentGatewayPlugin {
     }
 
     @Override
-    public Integer onCallBack(final String pathInfo, final String queryString,
-            final Map<String, String[]> parameterMap, final boolean live) {
+    public Integer onCallBack(final Map<String, String[]> parameterMap,
+            final boolean live) {
         return Integer.valueOf(0);
     }
 
     @Override
-    public void onInit(final Properties props) {
+    public void onInit(final String id, final String name, final boolean live,
+            final Properties props) {
         // noop
     }
 
     @Override
     public void onInit(final PaymentGatewayListener listener) {
         // noop
+    }
+
+    @Override
+    public boolean isLive() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

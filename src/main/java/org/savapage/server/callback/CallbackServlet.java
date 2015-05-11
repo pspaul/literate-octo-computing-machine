@@ -32,13 +32,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
-import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.server.WebApp;
 import org.savapage.server.ext.ServerPluginManager;
@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * Callback servlet for Web API providers.
  *
  * @author Datraverse B.V.
+ * @since 0.9.9
  */
 @WebServlet(name = "CallbackServlet",
         urlPatterns = { CallbackServlet.SERVLET_URL_PATTERN })
@@ -68,17 +69,17 @@ public final class CallbackServlet extends HttpServlet implements
     /**
      * .
      */
-    private static final String SUB_PATH_PAYMENT = "payment";
+    private static final String SUB_PATH_0_PAYMENT = "payment";
 
     /**
      * .
      */
-    private static final String SUB_PATH_TEST = "test";
+    private static final String SUB_PATH_1_TEST = "test";
 
     /**
      * .
      */
-    private static final String SUB_PATH_LIVE = "live";
+    private static final String SUB_PATH_1_LIVE = "live";
 
     /**
      * The {@link Logger}.
@@ -103,12 +104,54 @@ public final class CallbackServlet extends HttpServlet implements
     public static URL getCallBackUrl(final PaymentGatewayPlugin plugin)
             throws MalformedURLException {
 
+        final StringBuilder url = new StringBuilder();
+
         final String urlBase =
                 ConfigManager.instance().getConfigValue(
                         Key.EXT_WEBAPI_CALLBACK_URL_BASE);
 
-        return new URL(String.format("%s/%s/%s/%s", urlBase, PATH_BASE,
-                SUB_PATH_PAYMENT, plugin.getClass().getSimpleName()));
+        if (StringUtils.isBlank(urlBase)) {
+            throw new IllegalStateException(
+                    "WebAPI callback URL base is not specified.");
+        }
+
+        url.append(urlBase).append('/').append(PATH_BASE).append('/')
+                .append(SUB_PATH_0_PAYMENT).append('/');
+
+        if (plugin.isLive()) {
+            url.append(SUB_PATH_1_LIVE);
+        } else {
+            url.append(SUB_PATH_1_TEST);
+        }
+
+        url.append('/').append(plugin.getId());
+
+        return new URL(url.toString());
+    }
+
+    /**
+     * Chunks the pathinfo from an {@link HttpServletRequest} into an array of
+     * sub paths.
+     *
+     * @param httpRequest
+     *            The {@link HttpServletRequest}.
+     * @return {@code null} when the pathInfo is not valid.
+     */
+    private static String[] chunkPathInfo(final HttpServletRequest httpRequest) {
+
+        final String[] pathChunks =
+                StringUtils.split(httpRequest.getPathInfo(), '/');
+
+        if (pathChunks != null && pathChunks.length == 3
+                && pathChunks[0].equals(SUB_PATH_0_PAYMENT)) {
+
+            if (pathChunks[1].equals(SUB_PATH_1_LIVE)
+                    || pathChunks[1].equals(SUB_PATH_1_TEST)) {
+                return pathChunks;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -155,63 +198,63 @@ public final class CallbackServlet extends HttpServlet implements
             LOGGER.trace(builder.toString());
         }
 
-        /**
-         *
-         */
-        ServiceContext.open();
-
-        final DaoContext daoContext = ServiceContext.getDaoContext();
-
-        /*
-         * Find a plug-in to handle the request: the first plug-in will do.
-         */
-        final ServerPluginManager pluginManager =
-                WebApp.get().getPluginManager();
-
         Integer httpStatus = null;
 
-        daoContext.beginTransaction();
+        final String[] pathChunks = chunkPathInfo(httpRequest);
 
-        try {
+        if (pathChunks != null) {
 
-            for (final PaymentGatewayPlugin plugin : pluginManager
-                    .getPaymentGatewayPlugins()) {
+            /*
+             * Find a plug-in to handle the request: the first plug-in will do.
+             */
+            final ServerPluginManager pluginManager =
+                    WebApp.get().getPluginManager();
 
-                // TODO
+            final PaymentGatewayPlugin plugin =
+                    pluginManager.getPaymentPlugins().get(pathChunks[2]);
 
-//                if (!plugin.getCallbackSubPath().equals(pathInfo)) {
-//                    continue;
-//                }
+            if (plugin != null) {
 
-                boolean live = false; // TODO
+                ServiceContext.open();
 
-                final Integer status =
-                        plugin.onCallBack(pathInfo, urlQueryString,
-                                httpRequest.getParameterMap(), live);
+                final DaoContext daoContext = ServiceContext.getDaoContext();
 
-                if (status != null) {
-                    daoContext.commit();
-                    httpStatus = status;
-                    break;
+                daoContext.beginTransaction();
+
+                try {
+
+                    httpStatus =
+                            plugin.onCallBack(httpRequest.getParameterMap(),
+                                    pathChunks[1].equals(SUB_PATH_1_LIVE));
+
+                    if (httpStatus != null) {
+                        daoContext.commit();
+                    }
+
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                    throw new ServletException(e.getMessage(), e);
+
+                } finally {
+                    daoContext.rollback();
+                    ServiceContext.close();
                 }
+
             }
-
-        } catch (PaymentGatewayException e) {
-
-            throw new ServletException(e.getMessage(), e);
-
-        } finally {
-            daoContext.rollback();
-            ServiceContext.close();
         }
 
         if (httpStatus == null) {
             httpStatus = Integer.valueOf(HttpStatus.OK_200);
             LOGGER.warn(String.format("%s [%s] not handled: return [%d]",
                     pathInfo, urlQueryString, httpStatus.intValue()));
+        } else {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(String.format("%s [%s] handled: return [%d]",
+                        pathInfo, urlQueryString, httpStatus.intValue()));
+            }
         }
 
-        return httpStatus;
+        return httpStatus.intValue();
     }
 
     @Override

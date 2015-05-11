@@ -1098,6 +1098,12 @@
 					return false;
 				});
 
+                $(this).on('click', '#button-accounttrx-report', null, function() {
+                    _panel.v2m(_panel);
+					_api.download("report", _panel.input, "AccountTrxList");                    
+                    return true;
+                });
+
 				$(this).on('click', '#button-goto-doclog', null, function() {
 					_view.showUserPageAsync('#page-doclog', 'DocLog');
 					return false;
@@ -1438,13 +1444,13 @@
 			$("#page-money-transfer").on("pagecreate", function(event) {
 
 				$('#button-money-transfer').click(function() {
-					_this.onMoneyTransfer($(_selMain).val(), $($(_selMain)).val());
+					_this.onMoneyTransfer($('#money-transfer-gateway').val(), $(_selMain).val(), $(_selCents).val());
 					return false;
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
 				$(_selMain).val('');
-				$($(_selMain)).val('');
+				$(_selCents).val('');
 			});
 		}
 
@@ -1608,7 +1614,14 @@
 
 				if ($('#button-transfer-money-page')) {
 					$(this).on('click', '#button-transfer-money-page', null, function() {
-						_view.showUserPage('#page-money-transfer', 'AccountMoneyTransfer');
+						// The transfer page is a fixed part of WebAppUserPage.html
+						// (we only refresh the content)
+						var pageId = '#page-money-transfer', html = _view.getUserPageHtml('AccountMoneyTransfer');
+						_view.changePage(pageId);
+						if (html) {
+							$('#page-money-transfer-content').html(html);
+							$(pageId).enhanceWithin();
+						}
 						return false;
 					});
 				}
@@ -4769,12 +4782,13 @@
 			/**
 			 * Callbacks: pageDashboard
 			 */
-			_view.pages.moneyTransfer.onMoneyTransfer = function(main, cents) {
+			_view.pages.moneyTransfer.onMoneyTransfer = function(gatewayId, main, cents) {
 				// MoneyTransferDto.java
 				var res = _api.call({
 					request : "user-money-transfer-request",
 					dto : JSON.stringify({
 						userId : _model.user.id,
+						gatewayId : gatewayId,
 						amountMain : main,
 						amountCents : cents,
 						senderUrl : window.location.protocol + "//" + window.location.host + window.location.pathname
