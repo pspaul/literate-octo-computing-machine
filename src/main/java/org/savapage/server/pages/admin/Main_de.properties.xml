@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="txt-logo-subtext">Ein Freie Druckumgebung für Desktops, Smartphones und Tablets.</entry>
+	<entry key="txt-welcome-salutation">Willkommen</entry>
+	<entry key="txt-welcome">Dies ist der Ort für Administratoren zur Konfiguration und
+	 Berating von SavaPage.</entry>
+
+	<entry key="cat-dashboard">Armaturenbrett</entry>
+	<entry key="cat-users">Benutzer</entry>
+	<entry key="cat-queues">Queues</entry>
+	<entry key="cat-printers">Proxy Printers</entry>
+    <entry key="cat-devices">Geräte</entry>
+	<entry key="cat-reports">Berichte</entry>
+	<entry key="cat-options">Optionen</entry>
+	<entry key="cat-applog">Logbuch</entry>
+    <entry key="cat-doclog">Unterlagen</entry>	
+	<entry key="cat-about">Info</entry>
+
+	<entry key="button-logout">Ausloggen</entry>
+    <entry key="button-top">Top</entry>
+    <entry key="button-menu">Menü</entry>
+    
+    <entry key="vouchers">Vouchers</entry>    
+    <entry key="point-of-sale">Verkaufsstelle</entry>
+    <entry key="config-editor">Configuration Editor</entry>
+    
+</properties>

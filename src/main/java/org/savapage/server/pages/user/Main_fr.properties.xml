@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title">{0}</entry>
+    <entry key="button-apply">Appliquer</entry>
+    <entry key="button-close">Fermer</entry>
+    <entry key="button-doclog">Registre</entry>
+    <entry key="button-download">Télécharger</entry>
+    <entry key="button-send">envoyer</entry>
+    <entry key="button-letterhead">Stationnaire</entry>
+    <entry key="button-pdf">PDF</entry>
+    <entry key="button-sort">Faire le tri</entry>
+    <entry key="button-print">Impression</entry>
+    <entry key="button-refresh">Rafraîchir</entry>
+    <entry key="button-clear">Delete</entry>
+    <entry key="button-logout">Se Déconnecter</entry>
+    
+    <entry key="button-upload">Télécharger</entry>
+    
+    <entry key="button-cut">Coupe</entry>    
+    <entry key="button-paste-before">Coller ::</entry>    
+    <entry key="button-paste-after">:: Coller</entry>    
+    <entry key="button-select-all">Tout sélectionner</entry>    
+    <entry key="button-unselect-all">Tout déselectionner</entry>    
+    <entry key="button-undo">Défaire</entry>    
+    <entry key="button-inbox">Inbox</entry> 
+    <entry key="button-about">A propos</entry>
+     
+    <entry key="prompt-job-pages">pages</entry>
+    <entry key="prompt-job-undelete">Annuler la page supprimer</entry>
+    <entry key="prompt-job-rotate">Tourner</entry>
+        
+    <entry key="header-welcome-back">Nous saluons le retour!</entry>
+    <entry key="welcome-back-continue">S'il vous plaît appuyez sur le bouton ci-dessous pour continuer.</entry>
+    <entry key="button-continue">Continue</entry>
+    
+</properties>
