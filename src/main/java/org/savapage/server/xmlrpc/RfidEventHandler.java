@@ -51,6 +51,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.services.UserService;
+import org.savapage.core.util.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,17 +222,17 @@ public class RfidEventHandler implements ServiceEntryPoint {
      * @param cardNumber
      *            The card number.
      */
-    private static void onCardReaderUnknown(final Map<String, Object> map,
+    private void onCardReaderUnknown(final Map<String, Object> map,
             final String clientIpAddress, final String cardNumber) {
 
-        final String msg =
-                "Card " + cardNumber
-                        + " swiped at unregistered network reader "
-                        + clientIpAddress;
+        final String key = "rfid-card-swipe-reader-unknown";
 
-        ADMIN_PUBLISHER.publish(PubTopicEnum.NFC, PubLevelEnum.WARN, msg);
+        ADMIN_PUBLISHER.publish(PubTopicEnum.NFC, PubLevelEnum.WARN, Messages
+                .getSystemMessage(this.getClass(), key, cardNumber,
+                        clientIpAddress));
 
-        LOGGER.warn(msg);
+        LOGGER.warn(Messages.getLogFileMessage(this.getClass(), key,
+                cardNumber, clientIpAddress));
 
         map.put(KEY_MESSAGE, "Unknown Card Reader [" + clientIpAddress + "]");
     }
@@ -247,16 +248,17 @@ public class RfidEventHandler implements ServiceEntryPoint {
      * @param cardNumber
      *            The card number.
      */
-    private static void onCardReaderDisabled(final Map<String, Object> map,
+    private void onCardReaderDisabled(final Map<String, Object> map,
             final String clientIpAddress, final String cardNumber) {
 
-        final String msg =
-                "Card " + cardNumber + " swiped at disabled network reader "
-                        + clientIpAddress;
+        final String key = "rfid-card-swipe-reader-disabled";
 
-        ADMIN_PUBLISHER.publish(PubTopicEnum.NFC, PubLevelEnum.WARN, msg);
+        ADMIN_PUBLISHER.publish(PubTopicEnum.NFC, PubLevelEnum.WARN, Messages
+                .getSystemMessage(this.getClass(), key, cardNumber,
+                        clientIpAddress));
 
-        LOGGER.warn(msg);
+        LOGGER.warn(Messages.getLogFileMessage(this.getClass(), key,
+                cardNumber, clientIpAddress));
 
         map.put(KEY_MESSAGE, "Disabled Card Reader [" + clientIpAddress + "]");
     }
@@ -315,14 +317,10 @@ public class RfidEventHandler implements ServiceEntryPoint {
      * @throws InterruptedException
      *             When thread is interrupted.
      */
-    private static Integer onCardSwipe(final Map<String, Object> map,
+    private Integer onCardSwipe(final Map<String, Object> map,
             final String clientIpAddress, final String cardNumber,
             final Device cardReader) throws ProxyPrintException,
             InterruptedException {
-
-        String msg =
-                "Card " + cardNumber + " swiped at network reader "
-                        + clientIpAddress;
 
         /*
          * Check if Card Reader supports Fast|Hold Print.
@@ -338,21 +336,26 @@ public class RfidEventHandler implements ServiceEntryPoint {
 
         final boolean doHoldFastProxyPrint;
 
+        String key = "rfid-card-swipe";
+
         if (isFastProxyPrintSupported || isHoldReleasePrintSupported) {
 
             doHoldFastProxyPrint = !isDirectAuthReqPending(cardReader);
 
             if (doHoldFastProxyPrint) {
-                msg += " (proxy print release)";
+                key = "rfid-card-swipe-print-release";
             }
 
         } else {
             doHoldFastProxyPrint = false;
         }
 
-        ADMIN_PUBLISHER.publish(PubTopicEnum.NFC, PubLevelEnum.INFO, msg);
+        ADMIN_PUBLISHER.publish(PubTopicEnum.NFC, PubLevelEnum.INFO, Messages
+                .getSystemMessage(this.getClass(), key, cardNumber,
+                        clientIpAddress));
 
-        LOGGER.debug(msg);
+        LOGGER.debug(Messages.getLogFileMessage(this.getClass(), key,
+                cardNumber, clientIpAddress));
 
         /*
          * Find the user of the card.
@@ -360,8 +363,10 @@ public class RfidEventHandler implements ServiceEntryPoint {
         final User user = USER_SERVICE.findUserByCardNumber(cardNumber);
 
         if (user == null) {
-            throw new ProxyPrintException("No user found for card ["
-                    + cardNumber + "]");
+            key = "rfid-card-swipe-no-user";
+            throw new ProxyPrintException(
+                    Messages.getSystemMessage(this.getClass(), key, cardNumber),
+                    Messages.getLogFileMessage(this.getClass(), key, cardNumber));
         }
 
         /*
@@ -379,10 +384,12 @@ public class RfidEventHandler implements ServiceEntryPoint {
 
             if (!PROXYPRINT_AUTHMANAGER.isAuthPendingForUser(user.getId())) {
 
-                throw new ProxyPrintException(
-                        "Pending print request for user [" + user.getUserId()
-                                + "] of card [" + cardNumber
-                                + "] not found or expired.");
+                key = "rfid-card-swipe-no-request";
+
+                throw new ProxyPrintException(Messages.getSystemMessage(
+                        this.getClass(), key, user.getUserId(), cardNumber),
+                        Messages.getLogFileMessage(this.getClass(), key,
+                                user.getUserId(), cardNumber));
             }
 
             /*
@@ -437,7 +444,7 @@ public class RfidEventHandler implements ServiceEntryPoint {
      * @throws ProxyPrintException
      *             When logical proxy print errors.
      */
-    private static void doHoldFastProxyPrint(final Map<String, Object> map,
+    private void doHoldFastProxyPrint(final Map<String, Object> map,
             final String clientIpAddress, final String cardNumber,
             final Device cardReader, final User user,
             final boolean isHoldPrintSupported) throws ProxyPrintException {
@@ -481,8 +488,14 @@ public class RfidEventHandler implements ServiceEntryPoint {
                             cardNumber);
 
             if (nPagesFastPrinted == 0 && nPagesHoldReleased == 0) {
-                throw new ProxyPrintException("User [" + user.getUserId()
-                        + "] has no pages for proxy printing.");
+
+                final String key = "rfid-card-swipe-no-pages";
+
+                throw new ProxyPrintException(Messages.getSystemMessage(
+                        this.getClass(), key, user.getUserId()),
+                        Messages.getLogFileMessage(this.getClass(), key,
+                                user.getUserId()));
+
             }
 
             nPages += nPagesFastPrinted;

@@ -19,7 +19,7 @@
     <entry key="label-id-number">Numéro d'identification</entry>
     <entry key="label-id-pin">PIN</entry>
 
-    <entry key="label-card-swipe-start">Press here to activate the card reader.</entry>
+    <entry key="label-card-swipe-start">Appuyez ici pour activer le lecteur de carte.</entry>
     <entry key="label-card-swipe">Glissez votre carte . . .</entry>
     <entry key="label-card-pin">PIN</entry>
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="rfid-card-swipe">Carte {0} utilisé au lecteur de réseau {1}</entry>
+    <entry key="rfid-card-swipe-print-release">Carte {0} utilisé au lecteur de réseau {1} (proxy print release)</entry>
+    <entry key="rfid-card-swipe-reader-unknown">Carte {0} utilisé au lecteur de réseau inconnu {1}</entry>
+    <entry key="rfid-card-swipe-reader-disabled">Carte {0} utilisé au lecteur réseau désactivée {1}</entry>
+
+    <entry key="rfid-card-swipe-no-user">Aucun utilisateur trouvé pour la carte {0}</entry>
+    <entry key="rfid-card-swipe-no-request">Dans l'attente de la demande d'impression pour l'utilisateur "{0}" carte {1} c'est introuvable ou expiré.</entry>
+    <entry key="rfid-card-swipe-no-pages">Utilisateur "{0}" n'a pas de pages pour proxy printing.</entry>
+
+</properties>
