@@ -5147,6 +5147,7 @@ public final class JsonApiServer extends AbstractPage {
 
             final PaymentGatewayTrx trx =
                     plugin.startPayment(requestingUser,
+                            ConfigManager.getAppCurrency(),
                             paymentAmount.doubleValue(), comment, callbackUrl,
                             redirectUrl);
 

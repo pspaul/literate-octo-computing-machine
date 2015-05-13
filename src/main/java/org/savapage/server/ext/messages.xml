@@ -4,6 +4,7 @@
 
     <entry key="payment-cancelled">User "{0}" cancelled "{1}" payment of {2}.</entry>
     <entry key="payment-expired">Transfer of {0} via "{1}" of user "{2}" is expired.</entry>       
+    <entry key="payment-acknowledged">Transfer of {0} via "{1}" of user "{2}" is acknowledged.</entry>
     <entry key="payment-transferred">User "{0}" transferred "{1}" via {2}.</entry>
 
 </properties>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="paymentgateway-warning">Payment Gateway [{0}] API {1} error: {2} (return {3}).</entry>
+    <entry key="paymentgateway-exception">Payment Gateway [{0}] API {1} - {2} : {3}</entry>
+
+</properties>

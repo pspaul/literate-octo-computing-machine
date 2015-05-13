@@ -21,7 +21,9 @@
  */
 package org.savapage.server.plugin.test;
 
+import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Currency;
 import java.util.Map;
 import java.util.Properties;
 
@@ -63,15 +65,16 @@ public final class TestPlugin implements PaymentGatewayPlugin {
 
     @Override
     public PaymentGatewayTrx startPayment(final String userId,
-            final double amount, final String description, URL callbackUrl,
-            URL redirectUrl) {
+            final Currency currency, final double amount,
+            final String description, URL callbackUrl, URL redirectUrl) {
         return null;
     }
 
     @Override
-    public Integer onCallBack(final Map<String, String[]> parameterMap,
-            final boolean live) {
-        return Integer.valueOf(0);
+    public CallbackResponse onCallBack(
+            final Map<String, String[]> parameterMap, final boolean live,
+            final Currency currency, final PrintWriter response) {
+        return new CallbackResponse(0);
     }
 
     @Override

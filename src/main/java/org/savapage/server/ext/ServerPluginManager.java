@@ -406,6 +406,21 @@ public final class ServerPluginManager implements PaymentGatewayListener {
     }
 
     @Override
+    public void onPaymentAcknowledged(final PaymentGatewayTrx trx) {
+
+        onPaymentTrxReceived(trx, "ACKNOWLEDGED");
+
+        publishEvent(
+                PubLevelEnum.INFO,
+                localize("payment-acknowledged", String.format("%s%.2f",
+                        CurrencyUtil.getCurrencySymbol(ConfigManager
+                                .getDefaultLocale()), trx.getAmount()), trx
+                        .getGatewayId(), trx.getUserId()));
+
+        PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
+    }
+
+    @Override
     public void onPaymentPaid(final PaymentGatewayTrx trx) {
 
         onPaymentTrxReceived(trx, "PAID");
@@ -417,7 +432,7 @@ public final class ServerPluginManager implements PaymentGatewayListener {
         dto.setUserId(trx.getUserId());
         dto.setGatewayId(trx.getGatewayId());
         dto.setTransactionId(trx.getTransactionId());
-        dto.setPaymentType(trx.getPaymentType());
+        dto.setPaymentMethod(trx.getPaymentMethod().toString());
 
         // TODO
         final Account orphanedPaymentAccount = null;

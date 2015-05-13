@@ -22,6 +22,7 @@
 package org.savapage.server.callback;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map.Entry;
@@ -34,12 +35,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
+import org.savapage.core.cometd.AdminPublisher;
+import org.savapage.core.cometd.PubLevelEnum;
+import org.savapage.core.cometd.PubTopicEnum;
+import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
+import org.savapage.core.util.AppLogHelper;
+import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
+import org.savapage.ext.payment.PaymentGatewayPlugin.CallbackResponse;
 import org.savapage.server.WebApp;
 import org.savapage.server.ext.ServerPluginManager;
 import org.slf4j.Logger;
@@ -161,7 +169,7 @@ public final class CallbackServlet extends HttpServlet implements
      * @throws IOException
      * @throws ServletException
      */
-    private int onCallback(final HttpServletRequest httpRequest,
+    private void onCallback(final HttpServletRequest httpRequest,
             final HttpServletResponse httpResponse) throws IOException,
             ServletException {
 
@@ -198,7 +206,8 @@ public final class CallbackServlet extends HttpServlet implements
             LOGGER.trace(builder.toString());
         }
 
-        Integer httpStatus = null;
+        CallbackResponse callbackResponse =
+                new CallbackResponse(HttpStatus.OK_200);
 
         final String[] pathChunks = chunkPathInfo(httpRequest);
 
@@ -215,46 +224,80 @@ public final class CallbackServlet extends HttpServlet implements
 
             if (plugin != null) {
 
+                final PrintWriter writer =
+                        new PrintWriter(httpResponse.getOutputStream(), true);
+
+                ReadWriteLockEnum.DATABASE_READONLY.setReadLock(true);
                 ServiceContext.open();
-
                 final DaoContext daoContext = ServiceContext.getDaoContext();
-
                 daoContext.beginTransaction();
 
                 try {
 
-                    httpStatus =
+                    callbackResponse =
                             plugin.onCallBack(httpRequest.getParameterMap(),
-                                    pathChunks[1].equals(SUB_PATH_1_LIVE));
+                                    pathChunks[1].equals(SUB_PATH_1_LIVE),
+                                    ConfigManager.getAppCurrency(), writer);
 
-                    if (httpStatus != null) {
-                        daoContext.commit();
-                    }
+                    daoContext.commit();
+
+                } catch (PaymentGatewayException e) {
+                    /*
+                     * WARNING: do NOT expose the urlQueryString in the logging,
+                     * since (depending on the plug-in) it could contain
+                     * sensitive (secret) data.
+                     */
+                    final String msg =
+                            AppLogHelper.logWarning(getClass(),
+                                    "paymentgateway-warning", plugin.getId(),
+                                    pathInfo, e.getMessage(), String
+                                            .valueOf(callbackResponse
+                                                    .getHttpStatus()));
+
+                    AdminPublisher.instance().publish(
+                            PubTopicEnum.PAYMENT_GATEWAY, PubLevelEnum.WARN,
+                            msg);
 
                 } catch (Exception e) {
+
                     LOGGER.error(e.getMessage(), e);
+
+                    /*
+                     * WARNING: see warning above.
+                     */
+                    final String msg =
+                            AppLogHelper.logError(getClass(),
+                                    "paymentgateway-exception", plugin.getId(),
+                                    pathInfo, e.getClass().getSimpleName(),
+                                    e.getMessage());
+
+                    AdminPublisher.instance().publish(
+                            PubTopicEnum.PAYMENT_GATEWAY, PubLevelEnum.ERROR,
+                            msg);
+
                     throw new ServletException(e.getMessage(), e);
 
                 } finally {
                     daoContext.rollback();
                     ServiceContext.close();
+                    ReadWriteLockEnum.DATABASE_READONLY.setReadLock(false);
                 }
 
+                // Important: flush anything left in the buffer!
+                writer.flush();
             }
         }
 
-        if (httpStatus == null) {
-            httpStatus = Integer.valueOf(HttpStatus.OK_200);
-            LOGGER.warn(String.format("%s [%s] not handled: return [%d]",
-                    pathInfo, urlQueryString, httpStatus.intValue()));
-        } else {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(String.format("%s [%s] handled: return [%d]",
-                        pathInfo, urlQueryString, httpStatus.intValue()));
-            }
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(String.format("%s [%s] handled: return [%d]",
+                    pathInfo, urlQueryString, callbackResponse.getHttpStatus()));
         }
 
-        return httpStatus.intValue();
+        if (StringUtils.isNotBlank(callbackResponse.getContentType())) {
+            httpResponse.setContentType(callbackResponse.getContentType());
+        }
+
+        httpResponse.setStatus(callbackResponse.getHttpStatus());
     }
 
     @Override
@@ -262,7 +305,7 @@ public final class CallbackServlet extends HttpServlet implements
             final HttpServletResponse httpResponse) throws IOException,
             ServletException {
 
-        httpResponse.setStatus(onCallback(httpRequest, httpResponse));
+        onCallback(httpRequest, httpResponse);
     }
 
     @Override
@@ -270,7 +313,7 @@ public final class CallbackServlet extends HttpServlet implements
             final HttpServletResponse httpResponse) throws IOException,
             ServletException {
 
-        httpResponse.setStatus(onCallback(httpRequest, httpResponse));
+        onCallback(httpRequest, httpResponse);
     }
 
 }

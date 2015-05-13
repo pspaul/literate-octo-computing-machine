@@ -27,6 +27,7 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayTrx;
+import org.savapage.ext.payment.PaymentMethodEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,8 +124,14 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener {
         msg.append('\t').append(trx.getGatewayId());
         msg.append('\t').append(trx.getTransactionId());
         msg.append('\t').append(mode);
-        msg.append('\t')
-                .append(StringUtils.defaultString(trx.getPaymentType()));
+
+        msg.append('\t').append(trx.getPaymentMethod().toString());
+        if (trx.getPaymentMethod() == PaymentMethodEnum.OTHER) {
+            msg.append(" (")
+                    .append(StringUtils.defaultString(trx
+                            .getPaymentMethodOther())).append(')');
+        }
+
         msg.append('\t').append(trx.getStatus());
         msg.append('\t').append(trx.getUserId());
         msg.append('\t').append(trx.getAmount());
@@ -150,6 +157,11 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener {
 
     @Override
     public void onPaymentRefunded(final PaymentGatewayTrx trx) {
+        onPaymentTrx(trx);
+    }
+
+    @Override
+    public void onPaymentAcknowledged(final PaymentGatewayTrx trx) {
         onPaymentTrx(trx);
     }
 
