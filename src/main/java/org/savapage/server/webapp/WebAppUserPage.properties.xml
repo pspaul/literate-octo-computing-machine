@@ -29,6 +29,8 @@
     <entry key="button-extend">Extend</entry>        
 
     <entry key="money-transfer-title">Transfer Money</entry>
+    <entry key="bitcoin-transfer-title">Bitcoin Payment</entry>
+    
     <entry key="button-start">Start</entry>        
     
 </properties>

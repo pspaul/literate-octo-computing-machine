@@ -28,6 +28,7 @@ import org.savapage.core.SpException;
 import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
+import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
@@ -135,12 +136,12 @@ public class UserDashboard extends AbstractUserPage {
                 localized("button-title-assign"));
 
         /*
-         * Is payment gateway available?
+         * Is Generic Payment Gateway available?
          */
-        final PaymentGatewayPlugin plugin =
-                WebApp.get().getPluginManager().getFirstPaymentGateway();
+        PaymentGatewayPlugin plugin =
+                WebApp.get().getPluginManager().getGenericPaymentGateway();
 
-        final boolean isPaymentGateway = plugin != null;
+        boolean isPaymentGateway = plugin != null;
 
         //
         if (isPaymentGateway) {
@@ -150,5 +151,24 @@ public class UserDashboard extends AbstractUserPage {
         } else {
             helper.discloseLabel("button-transfer-money");
         }
+
+        /*
+         * Is Bitcoin Payment Gateway available?
+         */
+        plugin =
+                WebApp.get().getPluginManager()
+                        .getExternalPaymentGateway(PaymentMethodEnum.BITCOIN);
+
+        isPaymentGateway = plugin != null;
+
+        //
+        if (isPaymentGateway) {
+            helper.addModifyLabelAttr("button-transfer-bitcoin",
+                    localized("button-bitcoin"), "title",
+                    localized("button-title-bitcoin"));
+        } else {
+            helper.discloseLabel("button-transfer-bitcoin");
+        }
+
     }
 }

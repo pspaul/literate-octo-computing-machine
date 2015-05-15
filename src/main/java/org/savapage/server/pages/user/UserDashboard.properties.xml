@@ -6,10 +6,12 @@
     
     <entry key="button-voucher">Voucher</entry>
     <entry key="button-transfer">Transfer</entry>
+    <entry key="button-bitcoin">Bitcoin</entry>
     <entry key="button-assign">Assign</entry>
 
     <entry key="button-title-voucher">Redeem a voucher.</entry>
     <entry key="button-title-transfer">Increment balance by transferring money from a bank account.</entry>
+    <entry key="button-title-bitcoin">Increment balance with a Bitcoin transaction.</entry>
     <entry key="button-title-assign">Assign credit to another user.</entry>
     
     <entry key="title-financial">Financial</entry>

@@ -46,7 +46,7 @@ public class AccountMoneyTransfer extends AbstractUserPage {
         helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
 
         final PaymentGatewayPlugin plugin =
-                WebApp.get().getPluginManager().getFirstPaymentGateway();
+                WebApp.get().getPluginManager().getGenericPaymentGateway();
 
         helper.addModifyLabelAttr("money-transfer-gateway", "value",
                 plugin.getId());

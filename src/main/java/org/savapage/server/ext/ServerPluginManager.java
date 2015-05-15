@@ -55,6 +55,7 @@ import org.savapage.ext.ServerPlugin;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayTrx;
+import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.server.callback.CallbackServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -281,15 +282,39 @@ public final class ServerPluginManager implements PaymentGatewayListener {
     }
 
     /**
-     * Gets the first {@link PaymentGatewayPlugin}.
+     * Gets the first generic {@link PaymentGatewayPlugin}.
      *
      * @return The {@link PaymentGatewayPlugin}, or {@code null} when not found.
      */
-    public PaymentGatewayPlugin getFirstPaymentGateway() {
+    public PaymentGatewayPlugin getGenericPaymentGateway() {
 
         for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
                 .entrySet()) {
-            return entry.getValue();
+            if (entry.getValue().getExternalPaymentMethods().isEmpty()) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the first {@link PaymentGatewayPlugin} with an external
+     * {@link PaymentMethodEnum}.
+     *
+     * @param paymentMethod
+     *            The {@link PaymentMethodEnum}.
+     * @return The {@link PaymentGatewayPlugin}, or {@code null} when not found.
+     */
+    public PaymentGatewayPlugin getExternalPaymentGateway(
+            final PaymentMethodEnum paymentMethod) {
+
+        for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
+                .entrySet()) {
+
+            if (entry.getValue().getExternalPaymentMethods()
+                    .contains(paymentMethod)) {
+                return entry.getValue();
+            }
         }
 
         return null;

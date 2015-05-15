@@ -68,7 +68,7 @@ public final class ServerPluginTestCase {
 
         Assert.assertTrue("All plugins must be created", plugins.size() == 1);
 
-        final Object plugin = manager.getFirstPaymentGateway();
+        final Object plugin = manager.getGenericPaymentGateway();
 
         Assert.assertTrue("Plugin instance must be the right class",
                 (plugin instanceof TestPlugin));

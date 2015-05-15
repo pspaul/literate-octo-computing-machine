@@ -1098,11 +1098,11 @@
 					return false;
 				});
 
-                $(this).on('click', '#button-accounttrx-report', null, function() {
-                    _panel.v2m(_panel);
-					_api.download("report", _panel.input, "AccountTrxList");                    
-                    return true;
-                });
+				$(this).on('click', '#button-accounttrx-report', null, function() {
+					_panel.v2m(_panel);
+					_api.download("report", _panel.input, "AccountTrxList");
+					return true;
+				});
 
 				$(this).on('click', '#button-goto-doclog', null, function() {
 					_view.showUserPageAsync('#page-doclog', 'DocLog');
@@ -1620,6 +1620,20 @@
 						_view.changePage(pageId);
 						if (html) {
 							$('#page-money-transfer-content').html(html);
+							$(pageId).enhanceWithin();
+						}
+						return false;
+					});
+				}
+
+				if ($('#button-transfer-money-page')) {
+					$(this).on('click', '#button-transfer-bitcoin-page', null, function() {
+						// The transfer page is a fixed part of WebAppUserPage.html
+						// (we only refresh the content)
+						var pageId = '#page-bitcoin-transfer', html = _view.getUserPageHtml('AccountBitcoinTransfer');
+						_view.changePage(pageId);
+						if (html) {
+							$('#page-bitcoin-transfer-content').html(html);
 							$(pageId).enhanceWithin();
 						}
 						return false;

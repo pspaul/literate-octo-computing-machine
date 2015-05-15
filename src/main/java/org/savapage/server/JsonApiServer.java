@@ -210,6 +210,7 @@ import org.savapage.core.util.Messages;
 import org.savapage.core.util.QuickSearchDate;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
+import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
@@ -5145,11 +5146,17 @@ public final class JsonApiServer extends AbstractPage {
             final URL redirectUrl =
                     ServerPluginManager.getRedirectUrl(dto.getSenderUrl());
 
+            final PaymentRequest req = new PaymentRequest();
+
+            req.setAmount(paymentAmount.doubleValue());
+            req.setCallbackUrl(callbackUrl);
+            req.setCurrency(ConfigManager.getAppCurrency());
+            req.setDescription(comment);
+            req.setRedirectUrl(redirectUrl);
+            req.setUserId(requestingUser);
+
             final PaymentGatewayTrx trx =
-                    plugin.startPayment(requestingUser,
-                            ConfigManager.getAppCurrency(),
-                            paymentAmount.doubleValue(), comment, callbackUrl,
-                            redirectUrl);
+                    plugin.onPaymentRequest(req);
 
             setApiResultOK(userData);
             userData.put("paymentUrl", trx.getPaymentUrl().toExternalForm());

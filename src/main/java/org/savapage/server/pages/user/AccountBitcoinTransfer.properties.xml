@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="prompt-transfer-bitcoin">Transfer money from Bitcoin.</entry>
+    <entry key="button-start">Start</entry>
+    <entry key="button-back">Back</entry>
+        
+</properties>

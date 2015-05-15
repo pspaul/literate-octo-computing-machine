@@ -28,6 +28,7 @@
     <entry key="button-extend">Verlengen</entry>        
     
     <entry key="money-transfer-title">Geld Overboeken</entry>
-    <entry key="button-start">Start</entry>        
+    <entry key="bitcoin-transfer-title">Bitcoin Betaling</entry>
+    <entry key="button-start">Start</entry>
         
 </properties>

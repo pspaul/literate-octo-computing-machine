@@ -22,14 +22,16 @@
 package org.savapage.server.plugin.test;
 
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Currency;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayTrx;
+import org.savapage.ext.payment.PaymentMethodEnum;
 
 /**
  *
@@ -56,6 +58,11 @@ public final class TestPlugin implements PaymentGatewayPlugin {
     }
 
     @Override
+    public Set<PaymentMethodEnum> getExternalPaymentMethods() {
+        return new HashSet<>();
+    }
+
+    @Override
     public void onStart() {
     }
 
@@ -64,9 +71,7 @@ public final class TestPlugin implements PaymentGatewayPlugin {
     }
 
     @Override
-    public PaymentGatewayTrx startPayment(final String userId,
-            final Currency currency, final double amount,
-            final String description, URL callbackUrl, URL redirectUrl) {
+    public PaymentGatewayTrx onPaymentRequest(final PaymentRequest req) {
         return null;
     }
 
