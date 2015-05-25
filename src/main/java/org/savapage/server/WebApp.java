@@ -518,6 +518,17 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                     ConfigManager.getAppVersionBuild());
 
             /*
+             * Web server.
+             */
+            final StringBuilder logMsg = new StringBuilder();
+            logMsg.append("Web Server started on port ").append(
+                    WebServer.getServerPort());
+            logMsg.append(" and ").append(WebServer.getServerPortSsl())
+                    .append(" (SSL)");
+
+            SpInfo.instance().log(logMsg.toString());
+
+            /*
              *
              */
             final Long maxnetworkdelay =

@@ -58,6 +58,32 @@ public final class WebServer {
             .getLogger(WebServer.class);
 
     /**
+     * .
+     */
+    private static int serverPort;
+
+    /**
+     * .
+     */
+    private static int serverPortSsl;
+
+    /**
+     *
+     * @return The server port.
+     */
+    public static int getServerPort() {
+        return serverPort;
+    }
+
+    /**
+     *
+     * @return The server SSL port.
+     */
+    public static int getServerPortSsl() {
+        return serverPortSsl;
+    }
+
+    /**
      *
      */
     private WebServer() {
@@ -147,11 +173,11 @@ public final class WebServer {
         /*
          * Add a connector for regular port
          */
-        final int serverPort =
+        serverPort =
                 Integer.parseInt(propsServer.getProperty("server.port",
                         ConfigDefaults.SERVER_PORT));
 
-        final int serverPortSsl =
+        serverPortSsl =
                 Integer.parseInt(propsServer.getProperty("server.ssl.port",
                         ConfigDefaults.SERVER_SSL_PORT));
 
@@ -221,6 +247,28 @@ public final class WebServer {
          */
 
         final SslContextFactory sslContextFactory = new SslContextFactory();
+
+        // Mantis #562
+        sslContextFactory.addExcludeCipherSuites(
+        //
+        // weak
+                "TLS_RSA_WITH_RC4_128_MD5",
+                // weak
+                "TLS_RSA_WITH_RC4_128_SHA",
+                // insecure
+                "TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
+                // weak
+                "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
+                // insecure
+                "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256",
+                // insecure
+                "TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA",
+                // insecure
+                "TLS_DHE_RSA_WITH_AES_256_CBC_SHA",
+                // insecure
+                "TLS_DHE_RSA_WITH_AES_256_CBC_SHA256"
+        //
+                );
 
         if (propsServer.getProperty("server.ssl.keystore") == null) {
 
@@ -297,8 +345,6 @@ public final class WebServer {
         https.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
 
         server.addConnector(https);
-
-        LOGGER.info("SSL access has been enabled on port " + serverPortSsl);
 
         /*
          * Set a handler
