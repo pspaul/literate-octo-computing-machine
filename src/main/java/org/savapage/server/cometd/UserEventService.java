@@ -943,7 +943,7 @@ public final class UserEventService extends AbstractEventService {
                 if (isWebAppClient) {
                     JsonApiServer.addUserStats(userData, lockedUser,
                             ServiceContext.getLocale(),
-                            ServiceContext.getCurrencySymbol());
+                            ServiceContext.getAppCurrencySymbol());
                 }
             }
 
@@ -1034,7 +1034,7 @@ public final class UserEventService extends AbstractEventService {
 
             JsonApiServer.addUserStats(eventData, user,
                     ServiceContext.getLocale(),
-                    ServiceContext.getCurrencySymbol());
+                    ServiceContext.getAppCurrencySymbol());
 
         } finally {
             ServiceContext.close();

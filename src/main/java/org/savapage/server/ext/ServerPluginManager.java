@@ -31,7 +31,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -39,23 +41,41 @@ import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.savapage.core.SpException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
+import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.AccountTrxDao;
+import org.savapage.core.dao.DaoContext;
+import org.savapage.core.dao.UserAttrDao;
+import org.savapage.core.dao.helpers.UserAttrEnum;
 import org.savapage.core.dto.UserPaymentGatewayDto;
 import org.savapage.core.jpa.Account;
+import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.User;
+import org.savapage.core.jpa.UserAccount;
+import org.savapage.core.jpa.UserAttr;
+import org.savapage.core.services.AccountingException;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
+import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.ServerPlugin;
+import org.savapage.ext.payment.PaymentGateway;
+import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.payment.PaymentMethodEnum;
+import org.savapage.ext.payment.bitcoin.BitcoinGateway;
+import org.savapage.ext.payment.bitcoin.BitcoinGatewayListener;
+import org.savapage.ext.payment.bitcoin.BitcoinGatewayTrx;
+import org.savapage.ext.payment.bitcoin.BitcoinWalletInfo;
 import org.savapage.server.callback.CallbackServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,13 +87,45 @@ import org.slf4j.LoggerFactory;
  * @author Datraverse B.V.
  * @since 0.9.9
  */
-public final class ServerPluginManager implements PaymentGatewayListener {
+public final class ServerPluginManager implements PaymentGatewayListener,
+        BitcoinGatewayListener {
 
     /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ServerPluginManager.class);
+
+    /**
+     * The number of satoshi in one (1) BTC.
+     */
+    private static final BigDecimal SATOSHIS_IN_BTC = BigDecimal
+            .valueOf(BitcoinUtil.SATOSHIS_IN_BTC);
+
+    /**
+     * .
+     */
+    private static final String STAT_ACKNOWLEDGED = "ACKNOWLEDGED";
+
+    /**
+     * .
+     */
+    private static final String STAT_CONFIRMED = "CONFIRMED";
+
+    /**
+     * .
+     */
+    private static final String STAT_CANCELLED = "CANCELLED";
+
+    /**
+     * .
+     */
+    private static final String STAT_EXPIRED = "EXPIRED";
+
+    /**
+     *
+     */
+    private static final String CURRENCY_CODE_BTC = "BTC";
 
     /**
      * Property key prefix.
@@ -110,10 +162,25 @@ public final class ServerPluginManager implements PaymentGatewayListener {
             + "live";
 
     /**
-     *
+     * All {@link PaymentGatewayPlugin} instances.
      */
     private final Map<String, PaymentGatewayPlugin> paymentPlugins =
             new HashMap<>();
+
+    /**
+     * Subset of {@link #paymentPlugins}.
+     */
+    private final Map<String, PaymentGateway> paymentGateways = new HashMap<>();
+
+    /**
+     * Subset of {@link #paymentPlugins}.
+     */
+    private final Map<String, BitcoinGateway> bitcoinGateways = new HashMap<>();
+
+    /**
+     *
+     */
+    private BitcoinWalletInfo walletInfoCache;
 
     /**
      *
@@ -122,6 +189,72 @@ public final class ServerPluginManager implements PaymentGatewayListener {
      */
     public Map<String, PaymentGatewayPlugin> getPaymentPlugins() {
         return paymentPlugins;
+    }
+
+    /**
+     *
+     * @throws IOException
+     * @throws PaymentGatewayException
+     */
+    public void refreshWalletInfoCache() throws PaymentGatewayException,
+            IOException {
+
+        final BitcoinGateway gateway = this.getBitcoinGateway();
+
+        if (gateway == null) {
+            return;
+        }
+
+        synchronized (this) {
+            this.walletInfoCache =
+                    gateway.getWalletInfo(ConfigManager.getAppCurrency());
+        }
+    }
+
+    /**
+     *
+     * @return {@code true} if the {@link #walletInfoCache} is expired or
+     *         {@code null}.
+     */
+    private boolean isWalletInfoCacheExpired() {
+
+        if (this.walletInfoCache == null) {
+            return true;
+        }
+
+        long timeRef = this.walletInfoCache.getDate().getTime();
+
+        timeRef +=
+                ConfigManager.instance().getConfigLong(
+                        Key.WEBAPP_ADMIN_BITCOIN_WALLET_CACHE_EXPIRY_SECS)
+                        * DateUtil.DURATION_MSEC_SECOND;
+
+        return timeRef < new Date().getTime();
+    }
+
+    /**
+     * Gets a deep copy of the cached bitcoin wallet info.
+     *
+     * @return A deep copy of the cached {@link BitcoinWalletInfo}.
+     * @throws IOException
+     * @throws PaymentGatewayException
+     */
+    public BitcoinWalletInfo getWalletInfoCache(final BitcoinGateway gateway,
+            final boolean refresh) throws PaymentGatewayException, IOException {
+
+        synchronized (this) {
+
+            if (refresh || isWalletInfoCacheExpired()) {
+                this.walletInfoCache =
+                        gateway.getWalletInfo(ConfigManager.getAppCurrency());
+            }
+
+            try {
+                return (BitcoinWalletInfo) this.walletInfoCache.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new SpException(e.getMessage(), e);
+            }
+        }
     }
 
     /**
@@ -142,7 +275,9 @@ public final class ServerPluginManager implements PaymentGatewayListener {
         final Properties props = new Properties();
         props.load(istr);
 
-        // Enabled?
+        /*
+         * Enabled?
+         */
         if (!Boolean.parseBoolean(props.getProperty(PROP_KEY_PLUGIN_ENABLE,
                 Boolean.FALSE.toString()))) {
             LOGGER.warn(String.format("Plugin [%s] is disabled.", istrName));
@@ -200,17 +335,29 @@ public final class ServerPluginManager implements PaymentGatewayListener {
 
             final String pluginType;
 
-            if (plugin instanceof PaymentGatewayPlugin) {
+            if (plugin instanceof PaymentGateway) {
 
-                pluginType = PaymentGatewayPlugin.class.getSimpleName();
+                pluginType = PaymentGateway.class.getSimpleName();
 
-                final PaymentGatewayPlugin paymentPlugin =
-                        (PaymentGatewayPlugin) plugin;
+                final PaymentGateway paymentPlugin = (PaymentGateway) plugin;
 
                 paymentPlugin.onInit(pluginId, pluginName, pluginLive, props);
                 paymentPlugin.onInit(this);
 
                 paymentPlugins.put(pluginId, paymentPlugin);
+                paymentGateways.put(pluginId, paymentPlugin);
+
+            } else if (plugin instanceof BitcoinGateway) {
+
+                pluginType = BitcoinGateway.class.getSimpleName();
+
+                final BitcoinGateway paymentPlugin = (BitcoinGateway) plugin;
+
+                paymentPlugin.onInit(pluginId, pluginName, pluginLive, props);
+                paymentPlugin.onInit(this);
+
+                paymentPlugins.put(pluginId, paymentPlugin);
+                bitcoinGateways.put(pluginId, paymentPlugin);
 
             } else {
 
@@ -282,15 +429,40 @@ public final class ServerPluginManager implements PaymentGatewayListener {
     }
 
     /**
-     * Gets the first generic {@link PaymentGatewayPlugin}.
-     *
-     * @return The {@link PaymentGatewayPlugin}, or {@code null} when not found.
+     * @return {@code true} is Financial system is enabled.
      */
-    public PaymentGatewayPlugin getGenericPaymentGateway() {
+    private static boolean isFinEnabled() {
+        return StringUtils.isNotBlank(ConfigManager.getAppCurrencyCode());
+    }
 
-        for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
-                .entrySet()) {
-            if (entry.getValue().getExternalPaymentMethods().isEmpty()) {
+    /**
+     * Gets the first generic {@link PaymentGateway}.
+     *
+     * @return The {@link PaymentGateway}, or {@code null} when not found.
+     */
+    public PaymentGateway getGenericPaymentGateway() {
+
+        if (isFinEnabled()) {
+            for (final Entry<String, PaymentGateway> entry : this.paymentGateways
+                    .entrySet()) {
+                if (entry.getValue().getExternalPaymentMethods().isEmpty()) {
+                    return entry.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the first {@link BitcoinGateway}.
+     *
+     * @return The {@link PaymentGateway}, or {@code null} when not found.
+     */
+    public BitcoinGateway getBitcoinGateway() {
+
+        if (isFinEnabled()) {
+            for (final Entry<String, BitcoinGateway> entry : this.bitcoinGateways
+                    .entrySet()) {
                 return entry.getValue();
             }
         }
@@ -298,17 +470,17 @@ public final class ServerPluginManager implements PaymentGatewayListener {
     }
 
     /**
-     * Gets the first {@link PaymentGatewayPlugin} with an external
+     * Gets the first {@link PaymentGateway} with an external
      * {@link PaymentMethodEnum}.
      *
      * @param paymentMethod
      *            The {@link PaymentMethodEnum}.
-     * @return The {@link PaymentGatewayPlugin}, or {@code null} when not found.
+     * @return The {@link PaymentGateway}, or {@code null} when not found.
      */
-    public PaymentGatewayPlugin getExternalPaymentGateway(
+    public PaymentGateway getExternalPaymentGateway(
             final PaymentMethodEnum paymentMethod) {
 
-        for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
+        for (final Entry<String, PaymentGateway> entry : this.paymentGateways
                 .entrySet()) {
 
             if (entry.getValue().getExternalPaymentMethods()
@@ -382,12 +554,27 @@ public final class ServerPluginManager implements PaymentGatewayListener {
      * @param status
      *            The status text.
      */
-    private void onPaymentTrxReceived(final PaymentGatewayTrx trx,
+    private void logPaymentTrxReceived(final PaymentGatewayTrx trx,
             final String status) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("User [%s] Trx [%s] Amount [%.2f] [%s]",
                     trx.getUserId(), trx.getTransactionId(), trx.getAmount(),
                     status));
+        }
+    }
+
+    /**
+     *
+     * @param trx
+     *            The {@link PaymentGatewayTrx} received.
+     * @param status
+     *            The status text.
+     */
+    private void logPaymentTrxReceived(final BitcoinGatewayTrx trx,
+            final String status, final String userId) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("User [%s] Trx [%s] Satoshi [%d] [%s]",
+                    userId, trx.getTransactionId(), trx.getSatoshi(), status));
         }
     }
 
@@ -409,9 +596,9 @@ public final class ServerPluginManager implements PaymentGatewayListener {
                 PubLevelEnum.WARN,
                 localize("payment-cancelled", trx.getUserId(), trx
                         .getGatewayId(), String.format("%s%.2f", CurrencyUtil
-                        .getCurrencySymbol(ConfigManager.getDefaultLocale()),
-                        trx.getAmount())));
-        onPaymentTrxReceived(trx, "CANCELLED");
+                        .getCurrencySymbol(trx.getCurrencyCode(),
+                                trx.getCurrencyCode()), trx.getAmount())));
+        logPaymentTrxReceived(trx, STAT_CANCELLED);
         PaymentGatewayLogger.instance().onPaymentCancelled(trx);
     }
 
@@ -421,43 +608,300 @@ public final class ServerPluginManager implements PaymentGatewayListener {
         publishEvent(
                 PubLevelEnum.WARN,
                 localize("payment-expired", trx.getGatewayId(), String.format(
-                        "%s%.2f", CurrencyUtil.getCurrencySymbol(ConfigManager
-                                .getDefaultLocale()), trx.getAmount()), trx
-                        .getUserId()));
+                        "%s%.2f", CurrencyUtil.getCurrencySymbol(
+                                trx.getCurrencyCode(), trx.getCurrencyCode()),
+                        trx.getAmount()), trx.getUserId()));
 
-        onPaymentTrxReceived(trx, "EXPIRED");
+        logPaymentTrxReceived(trx, STAT_EXPIRED);
 
         PaymentGatewayLogger.instance().onPaymentExpired(trx);
     }
 
-    @Override
-    public void onPaymentAcknowledged(final PaymentGatewayTrx trx) {
-
-        onPaymentTrxReceived(trx, "ACKNOWLEDGED");
-
-        publishEvent(
-                PubLevelEnum.INFO,
-                localize("payment-acknowledged", String.format("%s%.2f",
-                        CurrencyUtil.getCurrencySymbol(ConfigManager
-                                .getDefaultLocale()), trx.getAmount()), trx
-                        .getGatewayId(), trx.getUserId()));
-
-        PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
-    }
-
-    @Override
-    public void onPaymentPaid(final PaymentGatewayTrx trx) {
-
-        onPaymentTrxReceived(trx, "PAID");
+    /**
+     * Creates the Bitcoin transaction DTO.
+     *
+     * @param trx
+     *            The {@link BitcoinGatewayTrx}.
+     * @param userId
+     *            The unique user id.
+     * @param isAck
+     *            {@code true} if the payment is acknowledged.
+     * @return The {@link UserPaymentGatewayDto}.
+     */
+    private static UserPaymentGatewayDto createDtoFromTrx(
+            final BitcoinGatewayTrx trx, final String userId,
+            final boolean isAck) {
 
         final UserPaymentGatewayDto dto = new UserPaymentGatewayDto();
 
-        dto.setAmount(new BigDecimal(trx.getAmount()));
-        dto.setComment(trx.getComment());
+        dto.setConfirmations(trx.getConfirmations());
+        dto.setCurrencyCode(trx.getExchangeCurrencyCode());
+        dto.setExchangeRate(BigDecimal.valueOf(trx.getExchangeRate()));
+        dto.setGatewayId(trx.getGatewayId());
+        dto.setPaymentMethod(PaymentMethodEnum.BITCOIN.toString());
+        dto.setPaymentMethodAddress(trx.getTransactionAddress());
+        dto.setPaymentMethodAmount(BigDecimal.valueOf(trx.getSatoshi()).divide(
+                SATOSHIS_IN_BTC));
+        dto.setPaymentMethodCurrency(CURRENCY_CODE_BTC);
+        dto.setPaymentMethodDetails(null);
+        dto.setPaymentMethodFee(BigDecimal.ZERO);
+        dto.setTransactionId(trx.getTransactionId());
+        dto.setUserId(userId);
+
+        if (isAck) {
+            dto.setAmount(dto.getPaymentMethodAmount().multiply(
+                    BigDecimal.valueOf(trx.getExchangeRate())));
+
+        } else {
+            dto.setAmount(BigDecimal.ZERO);
+        }
+
+        dto.setComment(null);
+        dto.setPaymentMethodOther(null);
+
+        return dto;
+    }
+
+    /**
+     *
+     * @param trx
+     *            The {@link BitcoinGatewayTrx}.
+     * @param isAck
+     *            {@code true} if the payment is acknowledged.
+     * @throws PaymentGatewayException
+     */
+    private void onBitcoinPayment(final BitcoinGatewayTrx trx,
+            final boolean isAck) throws PaymentGatewayException {
+
+        final DaoContext daoCtx = ServiceContext.getDaoContext();
+
+        final UserAttrDao userAttrDao = daoCtx.getUserAttrDao();
+        final AccountTrxDao accountTrxDao = daoCtx.getAccountTrxDao();
+
+        /*
+         * Find and lock User.
+         */
+        final User trxUser;
+
+        /*
+         * Find User by Bitcoin ADDRESS in UserAttr.
+         */
+        final UserAttr attr =
+                userAttrDao.findByNameValue(
+                        UserAttrEnum.BITCOIN_PAYMENT_ADDRESS,
+                        trx.getTransactionAddress());
+
+        /*
+         * Find User by Bitcoin TRANSACTION in AccountTrx.
+         */
+        final AccountTrx accountTrx =
+                accountTrxDao.findByExtId(trx.getTransactionId());
+
+        if (accountTrx != null) {
+
+            trxUser = accountTrx.getAccount().getMembers().get(0).getUser();
+
+        } else if (attr != null) {
+
+            trxUser = attr.getUser();
+
+        } else {
+
+            /*
+             * Find User by Bitcoin ADDRESS in AccountTrx. Did user reused
+             * bitcoin address to make an extra payment?
+             */
+            final List<AccountTrx> list =
+                    accountTrxDao.findByExtMethodAddress(trx
+                            .getTransactionAddress());
+
+            if (list.isEmpty()) {
+
+                trxUser = null;
+
+            } else {
+
+                final List<UserAccount> userAccounts =
+                        list.get(0).getAccount().getMembers();
+
+                if (userAccounts == null || userAccounts.isEmpty()) {
+                    trxUser = null;
+                } else {
+                    trxUser = userAccounts.get(0).getUser();
+                }
+
+            }
+        }
+
+        /*
+         * INVARIANT: User must be found.
+         */
+        final Account orphanedPaymentAccount;
+
+        if (trxUser == null) {
+
+            // TODO
+            orphanedPaymentAccount = null;
+
+            // TODO: for now...
+            throw new PaymentGatewayException(
+                    "No user found for bitcoin adress or transaction.");
+
+        } else {
+            orphanedPaymentAccount = null;
+        }
+
+        /*
+         * Lock User.
+         */
+        final User lockedUser = daoCtx.getUserDao().lock(trxUser.getId());
+
+        final String userId = lockedUser.getUserId();
+
+        /*
+         *
+         */
+        final UserPaymentGatewayDto dto = createDtoFromTrx(trx, userId, isAck);
+
+        final AccountingService accountingService =
+                ServiceContext.getServiceFactory().getAccountingService();
+
+        if (accountTrx == null) {
+
+            if (isAck) {
+                accountingService.acceptFundsFromGateway(lockedUser, dto,
+                        orphanedPaymentAccount);
+            } else {
+                accountingService
+                        .acceptPendingFundsFromGateway(lockedUser, dto);
+            }
+
+        } else {
+
+            try {
+                if (isAck) {
+                    accountingService.acknowledgePendingFundsFromGateway(
+                            accountTrx, dto);
+                } else {
+                    accountingService.updatePendingFundsFromGateway(accountTrx,
+                            dto);
+                }
+            } catch (AccountingException e) {
+                throw new PaymentGatewayException(e.getMessage(), e);
+            }
+        }
+
+        /*
+         * Delete used Bitcoin address from the UserAttr.
+         */
+        if (attr != null) {
+            userAttrDao.delete(attr);
+        }
+
+        /*
+         * Notifications and logging.
+         */
+        final String statusMsg;
+        final String msgKey;
+
+        if (isAck) {
+            statusMsg = STAT_ACKNOWLEDGED;
+            msgKey = "payment-confirmed-acknowledged";
+            PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
+        } else {
+            statusMsg = STAT_CONFIRMED;
+            msgKey = "payment-confirmed";
+            PaymentGatewayLogger.instance().onPaymentConfirmed(trx);
+        }
+
+        publishEvent(
+                PubLevelEnum.INFO,
+                localize(msgKey,
+                //
+                        String.format("%s %s (%s %s)", CURRENCY_CODE_BTC, dto
+                                .getPaymentMethodAmount().toPlainString(), dto
+                                .getCurrencyCode(), dto.getAmount()
+                                .toPlainString()),
+                        //
+                        trx.getGatewayId(), userId, String.valueOf(trx
+                                .getConfirmations())));
+
+        logPaymentTrxReceived(trx, statusMsg, userId);
+    }
+
+    @Override
+    public void onPaymentConfirmed(final BitcoinGatewayTrx trx)
+            throws PaymentGatewayException {
+        onBitcoinPayment(trx, false);
+    }
+
+    @Override
+    public void onPaymentAcknowledged(final BitcoinGatewayTrx trx)
+            throws PaymentGatewayException {
+        onBitcoinPayment(trx, true);
+    }
+
+    @Override
+    public void onPaymentPending(final PaymentGatewayTrx trx) {
+
+        logPaymentTrxReceived(trx, STAT_CONFIRMED);
+        publishEvent(
+                PubLevelEnum.INFO,
+                localize("payment-confirmed", String.format("%s%.2f",
+                        CurrencyUtil.getCurrencySymbol(trx.getCurrencyCode(),
+                                trx.getCurrencyCode()), trx.getAmount()), trx
+                        .getGatewayId(), trx.getUserId(), String.valueOf(trx
+                        .getConfirmations())));
+
+        PaymentGatewayLogger.instance().onPaymentPending(trx);
+    }
+
+    @Override
+    public void onPaymentAcknowledged(final PaymentGatewayTrx trx)
+            throws PaymentGatewayException {
+
+        logPaymentTrxReceived(trx, STAT_ACKNOWLEDGED);
+
+        final UserPaymentGatewayDto dto = new UserPaymentGatewayDto();
+
+        /*
+         * INVARIANT: currency code must be identical to App Currency.
+         */
+        if (!ConfigManager.getAppCurrency().getCurrencyCode()
+                .equals(trx.getCurrencyCode())) {
+            throw new PaymentGatewayException(
+                    String.format("Currency code %s is not supported.",
+                            trx.getCurrencyCode()));
+        }
+
+        dto.setCurrencyCode(trx.getCurrencyCode());
+
+        dto.setPaymentMethodCurrency(trx.getExchangeCurrencyCode());
+        dto.setExchangeRate(trx.getExchangeRate());
+        dto.setPaymentMethodFee(trx.getFee());
+
+        /*
+         * Calculate amount in App Currency.
+         */
+        dto.setAmount(trx.getAmount().subtract(trx.getFee())
+                .divide(trx.getExchangeRate()));
+
+        /*
+         * Trx identifications.
+         */
         dto.setUserId(trx.getUserId());
         dto.setGatewayId(trx.getGatewayId());
         dto.setTransactionId(trx.getTransactionId());
         dto.setPaymentMethod(trx.getPaymentMethod().toString());
+        dto.setPaymentMethodAddress(trx.getTransactionAccount());
+
+        /*
+         * Other...
+         */
+        dto.setComment(trx.getComment());
+        dto.setPaymentMethodAmount(trx.getAmount());
+        dto.setPaymentMethodDetails(trx.getDetails());
+        dto.setPaymentMethodOther(trx.getPaymentMethodOther());
 
         // TODO
         final Account orphanedPaymentAccount = null;
@@ -473,12 +917,12 @@ public final class ServerPluginManager implements PaymentGatewayListener {
 
         publishEvent(
                 PubLevelEnum.CLEAR,
-                localize("payment-transferred", trx.getUserId(), String.format(
-                        "%s%.2f", CurrencyUtil.getCurrencySymbol(ConfigManager
-                                .getDefaultLocale()), trx.getAmount()), trx
-                        .getGatewayId()));
+                localize("payment-acknowledged", String.format("%s%.2f",
+                        CurrencyUtil.getCurrencySymbol(trx.getCurrencyCode(),
+                                trx.getCurrencyCode()), trx.getAmount()), trx
+                        .getGatewayId(), trx.getUserId()));
 
-        PaymentGatewayLogger.instance().onPaymentPaid(trx);
+        PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
     }
 
     @Override
@@ -491,6 +935,8 @@ public final class ServerPluginManager implements PaymentGatewayListener {
      * @return String for logging signatures of loaded plug-ins.
      */
     public String asLoggingInfo() {
+
+        final String appCurrencyCode = ConfigManager.getAppCurrencyCode();
 
         final StringBuilder builder = new StringBuilder();
         final String delim =
@@ -510,6 +956,20 @@ public final class ServerPluginManager implements PaymentGatewayListener {
                 builder.append("\n| ").append(
                         String.format("[%s]", entry.getValue().getClass()
                                 .getName()));
+
+                builder.append(" [");
+
+                if (StringUtils.isBlank(appCurrencyCode)) {
+                    builder.append("no application currency");
+                } else {
+                    builder.append(appCurrencyCode);
+
+                    if (!entry.getValue().isCurrencySupported(appCurrencyCode)) {
+                        builder.append(" not supported");
+                    }
+                }
+
+                builder.append("]");
             }
 
             builder.append('\n').append(delim);

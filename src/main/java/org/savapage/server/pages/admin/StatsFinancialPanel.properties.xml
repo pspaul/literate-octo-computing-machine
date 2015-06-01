@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title-financial-totals">Financial</entry>
+    <entry key="accounts">Accounts</entry>
+    <entry key="debit">Debit</entry>
+    <entry key="credit">Credit</entry>
+    <entry key="date">Date</entry>
+    <entry key="button-refresh">Refresh</entry>
+</properties>

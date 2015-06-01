@@ -576,7 +576,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         }
 
         SpInfo.instance().log(
-                String.format("IP Print Server started listening on port %d.",
+                String.format("IP Print Server started on port %d.",
                         this.port));
 
         while (this.keepAcceptingRequests) {

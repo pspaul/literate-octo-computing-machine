@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:panel>
+    <li data-role="list-divider"><wicket:message key="title-financial-totals"/></li>
+    
+    <li>
+		<wicket:remove><!--
+		+======================================================================+
+		| http://api.jquerymobile.com/table-reflow/
+        |  ... to use pre-configured  breakpoint, add the ui-responsive class 
+        |  to the table to convert from the stacked presentation to a tabular 
+        |  presentation at 560px (35em)		
+		+======================================================================+
+		--></wicket:remove>  
+        <table data-role="table" data-mode="reflow" class="ui-responsive table-stroke">
+            <thead>
+	            <tr>
+                    <th data-priority="1"><wicket:message key="accounts"/></th>
+                    <th data-priority="1"><wicket:message key="debit"/></th>
+                    <th data-priority="1"><wicket:message key="credit"/></th>
+	            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td wicket:id="currency-code"/>
+                    <td class="sp-txt-info" wicket:id="accounts-deb-sum"/>
+                    <td class="sp-txt-warn" wicket:id="accounts-crd-sum"/>
+                </tr>
+                <tr>
+                    <td>Min</td>
+                    <td class="sp-txt-info" wicket:id="accounts-deb-min"/>
+                    <td class="sp-txt-warn" wicket:id="accounts-crd-min"/>
+                </tr>
+                <tr>
+                    <td>Max</td>
+                    <td class="sp-txt-info" wicket:id="accounts-deb-max"/>
+                    <td class="sp-txt-warn" wicket:id="accounts-crd-max"/>
+                </tr>
+                <tr>
+                    <td>Avg</td>
+                    <td class="sp-txt-info" wicket:id="accounts-deb-avg"/>
+                    <td class="sp-txt-warn" wicket:id="accounts-crd-avg"/>
+                </tr>
+                <tr>
+                    <td>Count</td>
+                    <td class="sp-txt-info" wicket:id="accounts-deb-cnt"/>
+                    <td class="sp-txt-warn" wicket:id="accounts-crd-cnt"/>
+                </tr>
+<wicket:enclosure child="bitcoin-wallet-cur-code">                
+                <tr>
+                    <th data-priority="1">Bitcoin Wallet</th>
+                    <th data-priority="1"><wicket:message key="debit"/></th>
+                    <th data-priority="1"><wicket:message key="date"/></th>
+                </tr>
+                <tr>
+                    <td wicket:id="bitcoin-wallet-cur-code"/>
+                    <td class="sp-txt-info" wicket:id="bitcoin-wallet-cur"/>
+                    <td class="sp-txt-info" wicket:id="bitcoin-wallet-datetime"/>
+                </tr>
+                <tr>
+                    <td>BTC</td>
+                    <td class="sp-txt-info" wicket:id="bitcoin-wallet-btc"/>
+                    <td class="sp-txt-info">
+                        <a href="#" id="button-bitcoin-wallet-refresh" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh ui-mini">
+                            <wicket:message key="button-refresh"/>
+                        </a>
+                        
+                    </td>
+                </tr>
+</wicket:enclosure>
+<wicket:enclosure child="bitcoin-wallet-msg">                
+                <tr>
+                    <td class="sp-txt-warn sp-txt-wrap" colspan="3" wicket:id="bitcoin-wallet-msg"/>
+                </tr>
+</wicket:enclosure>                
+            </tbody>
+        </table>
+    </li>
+
+</wicket:panel>

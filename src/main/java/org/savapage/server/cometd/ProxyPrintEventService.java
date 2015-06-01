@@ -395,7 +395,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
 
                     JsonApiServer.addUserStats(eventData, lockedUser,
                             ServiceContext.getLocale(),
-                            ServiceContext.getCurrencySymbol());
+                            ServiceContext.getAppCurrencySymbol());
 
                     /*
                      *

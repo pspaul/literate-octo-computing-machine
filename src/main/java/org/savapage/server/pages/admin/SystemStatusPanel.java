@@ -576,6 +576,14 @@ public class SystemStatusPanel extends Panel {
         pageTotalPanel.populate();
 
         /*
+         * Financial Totals.
+         */
+        StatsFinancialPanel finTotalPanel =
+                new StatsFinancialPanel("stats-financial-totals");
+        add(finTotalPanel);
+        finTotalPanel.populate();
+
+        /*
          * Environmental Impact.
          */
         Double esu =

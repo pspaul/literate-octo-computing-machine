@@ -54,6 +54,7 @@
 
 	<entry key="button-apply">Toepassen</entry>
 	<entry key="button-cancel">Annuleren</entry>
+    <entry key="button-change">Wijzigen</entry>
 	<entry key="button-change-group">Groep wijzigen</entry>
 	<entry key="button-clear">Wissen</entry>
 	<entry key="button-sync-now">Nu synchroniseren</entry>
@@ -279,6 +280,7 @@
     <entry key="financial-decimals-other">Decimalen elders</entry>
     <entry key="financial-show-currency">Valuta teken weergeven</entry>
     <entry key="financial-custom-currency">Valuta teken (laat leeg om de systeem standaard "{0}" te accepteren)</entry>
+    <entry key="financial-currency-code">Valuta code</entry>
     <entry key="financial-payment-methods">Een door comma's gescheiden lijst van betaalmethoden (laat leeg als niet vereist)</entry>
     <entry key="cat-financial-pos">Verkooppunt</entry>
     <entry key="financial-pos-receipt-header">Kassabon Kopregels</entry>

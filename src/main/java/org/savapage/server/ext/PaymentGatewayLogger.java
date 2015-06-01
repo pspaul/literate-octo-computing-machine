@@ -28,6 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.payment.PaymentMethodEnum;
+import org.savapage.ext.payment.bitcoin.BitcoinGatewayListener;
+import org.savapage.ext.payment.bitcoin.BitcoinGatewayTrx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +40,8 @@ import org.slf4j.LoggerFactory;
  *
  * @since 0.9.9
  */
-public final class PaymentGatewayLogger implements PaymentGatewayListener {
+public final class PaymentGatewayLogger implements PaymentGatewayListener,
+        BitcoinGatewayListener {
 
     /**
      * .
@@ -123,19 +126,56 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener {
         msg.append(formattedDateTime());
         msg.append('\t').append(trx.getGatewayId());
         msg.append('\t').append(trx.getTransactionId());
+        msg.append('\t').append(
+                StringUtils.defaultString(trx.getTransactionAccount()));
         msg.append('\t').append(mode);
 
-        msg.append('\t').append(trx.getPaymentMethod().toString());
-        if (trx.getPaymentMethod() == PaymentMethodEnum.OTHER) {
-            msg.append(" (")
-                    .append(StringUtils.defaultString(trx
-                            .getPaymentMethodOther())).append(')');
+        if (trx.getPaymentMethod() != null) {
+
+            msg.append('\t').append(trx.getPaymentMethod().toString());
+
+            if (trx.getPaymentMethod() == PaymentMethodEnum.OTHER) {
+                msg.append(" (")
+                        .append(StringUtils.defaultString(trx
+                                .getPaymentMethodOther())).append(')');
+            }
+
         }
 
         msg.append('\t').append(trx.getStatus());
         msg.append('\t').append(trx.getUserId());
         msg.append('\t').append(trx.getAmount());
-        msg.append('\t').append(trx.getComment());
+        msg.append('\t').append(StringUtils.defaultString(trx.getComment()));
+
+        LOGGER.info(msg.toString());
+    }
+
+    /**
+     *
+     * @param trx
+     *            The {@link PaymentGatewayTrx}.
+     * @param status
+     *            The status.
+     */
+    private void onPaymentTrx(final BitcoinGatewayTrx trx, final String status) {
+
+        if (!isEnabled()) {
+            return;
+        }
+
+        final String mode = MODE_LIVE;
+
+        final StringBuilder msg = new StringBuilder(STRING_BUILDER_CAPACITY);
+
+        msg.append(formattedDateTime());
+        msg.append('\t').append(trx.getGatewayId());
+        msg.append('\t').append(trx.getTransactionId());
+        msg.append('\t').append(trx.getTransactionAddress());
+        msg.append('\t').append(mode);
+        msg.append('\t').append(PaymentMethodEnum.BITCOIN.toString());
+        msg.append('\t').append(status);
+        msg.append('\t').append(StringUtils.defaultString(trx.getUserId()));
+        msg.append('\t').append(trx.getSatoshi());
 
         LOGGER.info(msg.toString());
     }
@@ -151,7 +191,7 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener {
     }
 
     @Override
-    public void onPaymentPaid(final PaymentGatewayTrx trx) {
+    public void onPaymentPending(final PaymentGatewayTrx trx) {
         onPaymentTrx(trx);
     }
 
@@ -163,6 +203,16 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener {
     @Override
     public void onPaymentAcknowledged(final PaymentGatewayTrx trx) {
         onPaymentTrx(trx);
+    }
+
+    @Override
+    public void onPaymentAcknowledged(BitcoinGatewayTrx trx) {
+        onPaymentTrx(trx, "ACKNOWLEDGED");
+    }
+
+    @Override
+    public void onPaymentConfirmed(BitcoinGatewayTrx trx) {
+        onPaymentTrx(trx, "CONFIRMED");
     }
 
 }

@@ -23,6 +23,7 @@ package org.savapage.server.plugin.test;
 
 import java.net.URL;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Assert;
@@ -68,10 +69,11 @@ public final class ServerPluginTestCase {
 
         Assert.assertTrue("All plugins must be created", plugins.size() == 1);
 
-        final Object plugin = manager.getGenericPaymentGateway();
-
-        Assert.assertTrue("Plugin instance must be the right class",
-                (plugin instanceof TestPlugin));
+        for (final Entry<String, PaymentGatewayPlugin> entry : plugins
+                .entrySet()) {
+            Assert.assertTrue("Plugin instance must be the right class",
+                    (entry.getValue() instanceof TestPlugin));
+        }
 
     }
 }

@@ -36,14 +36,24 @@ import javax.imageio.ImageIO;
 
 import net.iharder.Base64;
 
-import org.savapage.core.SpException;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.DaoContext;
+import org.savapage.core.dao.UserAttrDao;
+import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.helpers.AppLogLevelEnum;
+import org.savapage.core.dao.helpers.UserAttrEnum;
+import org.savapage.core.jpa.UserAttr;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
-import org.savapage.ext.payment.PaymentMethodEnum;
+import org.savapage.ext.payment.PaymentGatewayTrx;
+import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.pages.MessageContent;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -69,33 +79,25 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        final PaymentGatewayPlugin plugin =
-                WebApp.get().getPluginManager()
-                        .getExternalPaymentGateway(PaymentMethodEnum.BITCOIN);
+        final BitcoinGateway plugin =
+                WebApp.get().getPluginManager().getBitcoinGateway();
 
         //
         helper.addModifyLabelAttr("money-transfer-gateway", "value",
                 plugin.getId());
 
         //
-        final PaymentRequest req = new PaymentRequest();
+        final String userId = SpSession.get().getUser().getUserId();
 
-        req.setUserId(SpSession.get().getUser().getUserId());
+        final DaoContext daoCtx = ServiceContext.getDaoContext();
+        daoCtx.beginTransaction();
 
         try {
-            req.setCallbackUrl(ServerPluginManager.getCallBackUrl(plugin));
 
-            // final PaymentGatewayTrx trx = plugin.onPaymentRequest(req);
-            // final String address = trx.getTransactionId();
-
-            // A dummy test address.
-            final String address =
-                    "x552730a80zze8a13595f612b"
-                            + "eaf736a820efff07943477zzzd1dz99a7ef3b0z";
+            final String address = getBitcoinAddress(daoCtx, plugin, userId);
 
             final String message =
-                    String.format("Increment SavaPage account of %s.",
-                            req.getUserId());
+                    String.format("Increment SavaPage account of %s.", userId);
 
             StringBuilder builder = new StringBuilder();
 
@@ -117,10 +119,75 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
                     localized("button-start"), "href", uri.toString());
             helper.addLabel("bitcoin-trx-id", address);
 
-        } catch (URISyntaxException | IOException | WriterException e) {
-            throw new SpException(e.getMessage());
+        } catch (URISyntaxException | IOException | WriterException
+                | PaymentGatewayException e) {
+
+            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
+                    e.getMessage()));
+
+        } finally {
+            // Release the user lock.
+            daoCtx.rollback();
         }
 
+    }
+
+    /**
+     *
+     * @param daoCtx
+     * @param plugin
+     * @param userId
+     * @return
+     * @throws IOException
+     * @throws PaymentGatewayException
+     */
+    private static String getBitcoinAddress(final DaoContext daoCtx,
+            final PaymentGatewayPlugin plugin, final String userId)
+            throws IOException, PaymentGatewayException {
+
+        final UserDao userDao = daoCtx.getUserDao();
+        final UserAttrDao userAttrDao = daoCtx.getUserAttrDao();
+
+        final String address;
+
+        /*
+         * Lock the user.
+         */
+        final org.savapage.core.jpa.User user = userDao.lockByUserId(userId);
+
+        /*
+         * Use assigned bitcoin address when present.
+         */
+        final UserAttr bitcoinAddr =
+                userAttrDao.findByName(user,
+                        UserAttrEnum.BITCOIN_PAYMENT_ADDRESS);
+
+        if (bitcoinAddr == null) {
+
+            /*
+             * Create bitcoin address and save as User attribute.
+             */
+            final PaymentRequest req = new PaymentRequest();
+            req.setUserId(userId);
+            req.setCallbackUrl(ServerPluginManager.getCallBackUrl(plugin));
+            req.setCurrency(ConfigManager.getAppCurrency());
+
+            final PaymentGatewayTrx trx = plugin.onPaymentRequest(req);
+            address = trx.getTransactionId();
+
+            final UserAttr attr = new UserAttr();
+            attr.setName(UserAttrEnum.BITCOIN_PAYMENT_ADDRESS.getName());
+            attr.setUser(user);
+            attr.setValue(address);
+            userAttrDao.create(attr);
+
+            daoCtx.commit();
+
+        } else {
+            address = bitcoinAddr.getValue();
+        }
+
+        return address;
     }
 
     /**

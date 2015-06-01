@@ -4,7 +4,9 @@
 
 	<entry key="payment-cancelled">Gebruiker "{0}" heeft "{1}" betaling van {2} afgebroken.</entry>
     <entry key="payment-expired">Overboeking van {0} via "{1}" van gebruiker "{2}" is verlopen.</entry>
-    <entry key="payment-acknowledged">Overboeking van {0} via "{1}" van gebruiker "{2}" is bevestigd.</entry>
-    <entry key="payment-transferred">Gebruiker "{0}" heeft {1} overgemaakt via "{2}".</entry>
+    <entry key="payment-acknowledged">Overboeking van {0} via "{1}" van gebruiker "{2}" is erkend.</entry>
+    
+    <entry key="payment-confirmed-acknowledged">Overboeking van {0} via "{1}" van gebruiker "{2}" is erkend ({3}).</entry>
+    <entry key="payment-confirmed">Overboeking van {0} via "{1}" van gebruiker "{2}" is bevestigd ({3}).</entry>
 
 </properties>

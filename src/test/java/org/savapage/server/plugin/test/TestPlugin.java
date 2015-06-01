@@ -21,6 +21,7 @@
  */
 package org.savapage.server.plugin.test;
 
+import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.util.Currency;
 import java.util.HashSet;
@@ -28,8 +29,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayListener;
-import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.payment.PaymentMethodEnum;
 
@@ -38,7 +39,7 @@ import org.savapage.ext.payment.PaymentMethodEnum;
  * @author Datraverse B.V.
  *
  */
-public final class TestPlugin implements PaymentGatewayPlugin {
+public final class TestPlugin implements PaymentGateway {
 
     /**
      *
@@ -78,7 +79,8 @@ public final class TestPlugin implements PaymentGatewayPlugin {
     @Override
     public CallbackResponse onCallBack(
             final Map<String, String[]> parameterMap, final boolean live,
-            final Currency currency, final PrintWriter response) {
+            final Currency currency, final BufferedReader request,
+            final PrintWriter response) {
         return new CallbackResponse(0);
     }
 
@@ -95,8 +97,12 @@ public final class TestPlugin implements PaymentGatewayPlugin {
 
     @Override
     public boolean isLive() {
-        // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public boolean isCurrencySupported(String currencyCode) {
+        return true;
     }
 
 }

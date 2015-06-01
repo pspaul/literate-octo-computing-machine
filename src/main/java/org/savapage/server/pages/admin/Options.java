@@ -209,7 +209,6 @@ public class Options extends AbstractAdminPage {
         labelledCheckbox("webapp-user-auth-trust-cliapp-auth",
                 IConfigProp.Key.WEBAPP_USER_AUTH_TRUST_CLIAPP_AUTH);
 
-
         //
         labelledRadio("user-auth-mode-default", "-user",
                 IConfigProp.Key.AUTH_MODE_DEFAULT, IConfigProp.AUTH_MODE_V_NAME);
@@ -368,16 +367,16 @@ public class Options extends AbstractAdminPage {
 
         labelledCheckbox("gcp-enable", IConfigProp.Key.GCP_ENABLE);
 
-        addTextInput("gcp-client-id", GcpPrinter.getOAuthClientId());
-        addTextInput("gcp-client-secret", GcpPrinter.getOAuthClientSecret());
-        addTextInput("gcp-printer-name", GcpPrinter.getPrinterName());
+        helper.addTextInput("gcp-client-id", GcpPrinter.getOAuthClientId());
+        helper.addTextInput("gcp-client-secret",
+                GcpPrinter.getOAuthClientSecret());
+        helper.addTextInput("gcp-printer-name", GcpPrinter.getPrinterName());
 
         addCheckbox("gcp-mail-after-cancel-enable",
                 cm.isConfigValue(Key.GCP_JOB_OWNER_UNKNOWN_CANCEL_MAIL_ENABLE));
 
-        addTextInput(
-                "gcp-mail-after-cancel-subject",
-                cm.getConfigValue(Key.GCP_JOB_OWNER_UNKNOWN_CANCEL_MAIL_SUBJECT));
+        helper.addTextInput("gcp-mail-after-cancel-subject", cm
+                .getConfigValue(Key.GCP_JOB_OWNER_UNKNOWN_CANCEL_MAIL_SUBJECT));
 
         add(new Label("gcp-mail-after-cancel-body", ConfigManager.instance()
                 .getConfigValue(Key.GCP_JOB_OWNER_UNKNOWN_CANCEL_MAIL_BODY)));
@@ -431,7 +430,7 @@ public class Options extends AbstractAdminPage {
                 IConfigProp.Key.FINANCIAL_USER_BALANCE_DECIMALS);
 
         labelledCheckbox("financial-show-currency",
-                Key.USER_FIN_CURRENTCY_SYMBOL_SHOWS);
+                Key.USER_FIN_CURRENCY_SYMBOL_SHOWS);
 
         tagInput("financial-custom-currency",
                 Key.USER_FIN_CURRENCY_SYMBOL_CUSTOM);
@@ -439,6 +438,8 @@ public class Options extends AbstractAdminPage {
         add(new Label("financial-custom-currency-label", MessageFormat.format(
                 getLocalizer().getString("financial-custom-currency", this),
                 ConfigManager.getDefaultCurrencySymbol())));
+
+        tagInput("financial-currency-code", Key.FINANCIAL_GLOBAL_CURRENCY_CODE);
 
         // POS
 

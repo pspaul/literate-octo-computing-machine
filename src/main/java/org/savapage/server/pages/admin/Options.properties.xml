@@ -55,6 +55,7 @@
 
 	<entry key="button-apply">Apply</entry>
 	<entry key="button-cancel">Cancel</entry>
+    <entry key="button-change">Change</entry>
 	<entry key="button-change-group">Change group</entry>
 	<entry key="button-clear">Clear</entry>
 	<entry key="button-sync-now">Synchronize now</entry>
@@ -276,6 +277,7 @@
     <entry key="financial-decimals-other">Decimals used elsewhere</entry>
     <entry key="financial-show-currency">Display currency sign</entry>
     <entry key="financial-custom-currency">Currency sign (leave empty to accept system default "{0}")</entry>
+    <entry key="financial-currency-code">Currency code</entry>
     <entry key="financial-payment-methods">A comma separated list of payment methods (leave empty if not required)</entry>
     <entry key="cat-financial-pos">Point-of-Sale</entry>
     <entry key="financial-pos-receipt-header">Receipt header text</entry>

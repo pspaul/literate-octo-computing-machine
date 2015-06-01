@@ -21,11 +21,11 @@
  */
 package org.savapage.server.callback;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -163,23 +163,28 @@ public final class CallbackServlet extends HttpServlet implements
     }
 
     /**
+     * Handles the callback.
      *
      * @param httpRequest
+     *            The {@link HttpServletRequest}.
      * @param httpResponse
+     *            The {@link HttpServletResponse}.
+     * @param isPostRequest
+     *            {@code true} when callback is a POST request.
      * @throws IOException
+     *             if an input or output error is detected when the servlet
+     *             handles the GET request.
+     *
      * @throws ServletException
+     *             if the request for the GET could not be handled.
      */
-    private void onCallback(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse) throws IOException,
-            ServletException {
+    private void
+            onCallback(final HttpServletRequest httpRequest,
+                    final HttpServletResponse httpResponse,
+                    final boolean isPostRequest) throws IOException,
+                    ServletException {
 
         final String pathInfo = httpRequest.getPathInfo();
-
-        String urlQueryString = httpRequest.getQueryString();
-
-        if (httpRequest.getQueryString() == null) {
-            urlQueryString = "";
-        }
 
         if (LOGGER.isTraceEnabled()) {
 
@@ -191,17 +196,11 @@ public final class CallbackServlet extends HttpServlet implements
                 builder.append(pathInfo);
             }
 
-            if (urlQueryString != null) {
-                builder.append(" [").append(urlQueryString).append(']');
-            }
-
-            for (final Entry<String, String[]> entry : httpRequest
-                    .getParameterMap().entrySet()) {
-                builder.append("\n").append(entry.getKey()).append(" :");
-                for (final String value : entry.getValue()) {
-                    builder.append(" [").append(value).append("]");
-                }
-            }
+            /*
+             * CAUTION: do NOT log the httpRequest.getParameterMap() and
+             * httpRequest.getQueryString() since they may contain sensitive
+             * data (passwords, etc).
+             */
 
             LOGGER.trace(builder.toString());
         }
@@ -234,16 +233,31 @@ public final class CallbackServlet extends HttpServlet implements
 
                 try {
 
+                    final BufferedReader reader;
+
+                    if (isPostRequest) {
+                        /*
+                         * Do NOT get the reader to prevent
+                         * IllegalStateException when getting the calling
+                         * httpRequest.getParameterMap() later on: all data is
+                         * passed in POST parameters.
+                         */
+                        reader = null;
+                    } else {
+                        reader = httpRequest.getReader();
+                    }
+
                     callbackResponse =
                             plugin.onCallBack(httpRequest.getParameterMap(),
                                     pathChunks[1].equals(SUB_PATH_1_LIVE),
-                                    ConfigManager.getAppCurrency(), writer);
+                                    ConfigManager.getAppCurrency(), reader,
+                                    writer);
 
                     daoContext.commit();
 
                 } catch (PaymentGatewayException e) {
                     /*
-                     * WARNING: do NOT expose the urlQueryString in the logging,
+                     * CAUTION: do NOT expose the urlQueryString in the logging,
                      * since (depending on the plug-in) it could contain
                      * sensitive (secret) data.
                      */
@@ -283,14 +297,14 @@ public final class CallbackServlet extends HttpServlet implements
                     ReadWriteLockEnum.DATABASE_READONLY.setReadLock(false);
                 }
 
-                // Important: flush anything left in the buffer!
+                // IMPORTANT: flush anything left in the buffer!
                 writer.flush();
             }
         }
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace(String.format("%s [%s] handled: return [%d]",
-                    pathInfo, urlQueryString, callbackResponse.getHttpStatus()));
+            LOGGER.trace(String.format("%s handled: return [%d]", pathInfo,
+                    callbackResponse.getHttpStatus()));
         }
 
         if (StringUtils.isNotBlank(callbackResponse.getContentType())) {
@@ -305,7 +319,7 @@ public final class CallbackServlet extends HttpServlet implements
             final HttpServletResponse httpResponse) throws IOException,
             ServletException {
 
-        onCallback(httpRequest, httpResponse);
+        onCallback(httpRequest, httpResponse, false);
     }
 
     @Override
@@ -313,7 +327,6 @@ public final class CallbackServlet extends HttpServlet implements
             final HttpServletResponse httpResponse) throws IOException,
             ServletException {
 
-        onCallback(httpRequest, httpResponse);
+        onCallback(httpRequest, httpResponse, true);
     }
-
 }

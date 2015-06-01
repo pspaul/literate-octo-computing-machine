@@ -42,10 +42,10 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.helpers.PrintInDeniedReasonEnum;
 import org.savapage.core.jpa.Account;
-import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.util.BigDecimalUtil;
-import org.savapage.server.SpSession;
+import org.savapage.core.util.CurrencyUtil;
 
 /**
  *
@@ -65,11 +65,6 @@ public class DocLogItemPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The currency symbol of the current Locale.
-     */
-    private final String currencySymbol;
-
-    /**
      * Number of currency decimals to display.
      */
     private final int currencyDecimals;
@@ -83,7 +78,6 @@ public class DocLogItemPanel extends Panel {
 
         super(id, model);
 
-        this.currencySymbol = SpSession.getCurrencySymbol();
         this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
     }
 
@@ -175,9 +169,11 @@ public class DocLogItemPanel extends Panel {
                     builder.append(accountParent.getName()).append('\\');
                 }
 
-                builder.append(account.getName()).append(" ")
-                        .append(this.currencySymbol)
-                        .append(localizedDecimal(trx.getAmount()));
+                builder.append(account.getName())
+                        .append(" ")
+                        .append(CurrencyUtil.getCurrencySymbol(
+                                trx.getCurrencyCode(), trx.getCurrencyCode()))
+                        .append(" ").append(localizedDecimal(trx.getAmount()));
 
                 builder.append(" (").append(trx.getTransactionWeight())
                         .append(')');
@@ -276,8 +272,11 @@ public class DocLogItemPanel extends Panel {
 
                 mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
                 mapVisible.put("job-id", obj.getJobId().toString());
-                mapVisible.put("cost-currency", this.currencySymbol);
-                mapVisible.put("cost", localizedDecimal(obj.getCost()));
+
+                if (obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
+                    mapVisible.put("cost-currency", obj.getCurrencyCode());
+                    mapVisible.put("cost", localizedDecimal(obj.getCost()));
+                }
 
                 String sfx = null;
                 switch (obj.getJobState()) {

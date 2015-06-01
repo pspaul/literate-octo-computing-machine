@@ -22,13 +22,14 @@
 package org.savapage.server.pages.user;
 
 import java.text.ParseException;
+import java.util.Currency;
 
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
-import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
@@ -138,10 +139,16 @@ public class UserDashboard extends AbstractUserPage {
         /*
          * Is Generic Payment Gateway available?
          */
+        final Currency appCurrency = ConfigManager.getAppCurrency();
+
         PaymentGatewayPlugin plugin =
                 WebApp.get().getPluginManager().getGenericPaymentGateway();
 
-        boolean isPaymentGateway = plugin != null;
+        boolean isPaymentGateway =
+                plugin != null
+                        && appCurrency != null
+                        && plugin.isCurrencySupported(appCurrency
+                                .getCurrencyCode());
 
         //
         if (isPaymentGateway) {
@@ -155,11 +162,13 @@ public class UserDashboard extends AbstractUserPage {
         /*
          * Is Bitcoin Payment Gateway available?
          */
-        plugin =
-                WebApp.get().getPluginManager()
-                        .getExternalPaymentGateway(PaymentMethodEnum.BITCOIN);
+        plugin = WebApp.get().getPluginManager().getBitcoinGateway();
 
-        isPaymentGateway = plugin != null;
+        isPaymentGateway =
+                plugin != null
+                        && appCurrency != null
+                        && plugin.isCurrencySupported(appCurrency
+                                .getCurrencyCode());
 
         //
         if (isPaymentGateway) {

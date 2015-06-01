@@ -1318,7 +1318,6 @@
                  * Generic loading
                  */
                 $('.savapage-detail').click(function() {
-                    // var wClass = $(this).attr('name');
                     _loadPanel($(this).attr('name'));
                     return false;
                 });
@@ -1848,6 +1847,12 @@
                     _self.onApplyFinancialGeneral();
                     return false;
                 });
+
+                $(this).on('click', "#change-financial-currency-code", null, function() {
+                    _self.onChangeFinancialCurrencyCode();
+                    return false;
+                });                
+                
                 $(this).on('click', "#apply-financial-pos", null, function() {
                     _self.onApplyFinancialPos();
                     return false;
@@ -1975,18 +1980,15 @@
                     _model.pubMsgStack = [];
                     $('#live-messages').html('');
                     return false;
-                    // }).on('click', "#live-messages-pause", null, function() {
-                    // _model.pubMsgPause = true;
-                    // $('#live-messages-resume').show();
-                    // $('#live-messages-pause').hide();
-                    // return false;
-                    // }).on('click', "#live-messages-resume", null, function() {
-                    // _model.pubMsgPause = false;
-                    // $('#live-messages-resume').hide();
-                    // $('#live-messages-pause').show();
-                    // return false;
                 });
 
+                $(this).on('click', '#button-bitcoin-wallet-refresh', null, function() {
+                    _self.onBitcoinWalletRefresh();
+					_panelCur.refreshSysStatus();
+                    return false;
+                });
+		
+		
             });
             /*
              * IMPORTANT

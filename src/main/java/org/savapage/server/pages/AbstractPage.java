@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -106,7 +106,6 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
      * {@link DaoContext} and to CLOSE the {@link ServiceContext}.
      * </p>
      */
-    // protected final void openServiceContext() {
     private void openServiceContext() {
         ServiceContext.open();
         serviceContextOpened = true;

@@ -69,6 +69,7 @@ public class DocLogItem {
     private String comment;
     private String deliveryProtocol;
 
+    private String currencyCode;
     private BigDecimal cost;
 
     private String humanReadableByteCount;
@@ -266,8 +267,8 @@ public class DocLogItem {
         public List<DocLogItem> getListChunk(EntityManager em,
                 final Long userId, final DocLogPagerReq req) {
 
-            final PrintOutDao printOutDAO = ServiceContext
-                    .getDaoContext().getPrintOutDao();
+            final PrintOutDao printOutDAO =
+                    ServiceContext.getDaoContext().getPrintOutDao();
 
             String jpql = getSelectString(em, false, userId, req);
 
@@ -349,6 +350,11 @@ public class DocLogItem {
                     log.setTransactions(new ArrayList<AccountTrx>());
                 } else {
                     log.setTransactions(docLog.getTransactions());
+                }
+
+                if (!log.getTransactions().isEmpty()) {
+                    log.setCurrencyCode(log.getTransactions().get(0)
+                            .getCurrencyCode());
                 }
 
                 log.setHumanReadableByteCount(NumberUtil
@@ -1125,6 +1131,14 @@ public class DocLogItem {
 
     public void setPrintMode(PrintModeEnum printMode) {
         this.printMode = printMode;
+    }
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
     }
 
     public BigDecimal getCost() {

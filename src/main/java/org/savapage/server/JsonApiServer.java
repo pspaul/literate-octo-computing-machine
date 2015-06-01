@@ -1215,6 +1215,9 @@ public final class JsonApiServer extends AbstractPage {
             return reqVoucherRedeem(requestingUser,
                     getParmValue(parameters, isGetAction, "cardNumber"));
 
+        case JsonApiDict.REQ_BITCOIN_WALLET_REFRESH:
+            return reqBitcoinWalletRefresh();
+
         case JsonApiDict.REQ_CARD_IS_REGISTERED:
             return reqCardIsRegistered(getParmValue(parameters, isGetAction,
                     "card"));
@@ -2565,7 +2568,7 @@ public final class JsonApiServer extends AbstractPage {
             if (cm.isConfigBigDecimal(configKey)) {
                 value =
                         BigDecimalUtil.toPlainString(value, getSession()
-                                .getLocale(), false, true);
+                                .getLocale(), true);
             }
 
             /*
@@ -3327,6 +3330,20 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         return userData;
+    }
+
+    /**
+     *
+     * @return
+     * @throws IOException
+     * @throws PaymentGatewayException
+     */
+    private Map<String, Object> reqBitcoinWalletRefresh() throws PaymentGatewayException, IOException {
+
+        final Map<String, Object> userData = new HashMap<String, Object>();
+
+        WebApp.get().getPluginManager().refreshWalletInfoCache();
+        return setApiResultOK(userData);
     }
 
     /**

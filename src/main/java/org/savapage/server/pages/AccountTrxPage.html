@@ -13,29 +13,56 @@
                     &bull; <span wicket:id="receiptNumber"/>
                 </wicket:enclosure>                                        
             </h3>
+
+            <div class="sp-txt-wrap">            
             
-            <span wicket:id="balance"/> &bull; <span wicket:id="amount"/>
-            
-            <wicket:enclosure child="paymentType">
-                &bull; <span wicket:id="paymentType"/>
-            </wicket:enclosure>
-            
-            <wicket:enclosure child="printOut">
-                &bull; <span wicket:id="printOut"/>
-            </wicket:enclosure>
-            
-            <wicket:enclosure child="comment">
-                <div class="sp-txt-wrap" style="font-style: italic;" wicket:id="comment"></div>
-            </wicket:enclosure>
-            
-            <wicket:enclosure child="downloadReceipt">
-                <div>
-                    <a href="#" data-savapage="the-db-id"
-                        class="sp-download-receipt ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d"
-                        wicket:id="downloadReceipt"/>
-                </div>                    
-            </wicket:enclosure>
-            
+	            <span wicket:id="balance"/> &bull; <span wicket:id="amount"/>
+	            
+	            <wicket:enclosure child="paymentMethod">
+	                &bull; <span wicket:id="paymentMethod"/>
+	            </wicket:enclosure>
+	            
+	            <wicket:enclosure child="paymentMethodAddress">
+	                &bull; <span wicket:id="paymentMethodAddress"/>
+	            </wicket:enclosure>
+	            
+	            <wicket:enclosure child="extId">
+	                &bull; <span wicket:id="extId"/>
+	            </wicket:enclosure>
+	
+	            <wicket:enclosure child="bitcoinAddress">
+	                &bull; <a wicket:id="bitcoinAddress" target="_blank"/>
+	            </wicket:enclosure>
+	            
+	            <wicket:enclosure child="bitcoinTrxHash">
+	                &bull; <a wicket:id="bitcoinTrxHash" target="_blank"/>
+	            </wicket:enclosure>
+	
+	            
+	            <wicket:enclosure child="printOut">
+	                &bull; <span wicket:id="printOut"/>
+	            </wicket:enclosure>
+	            
+	            <wicket:enclosure child="comment">
+	                <div style="font-style: italic;" wicket:id="comment"></div>
+	            </wicket:enclosure>
+	
+	            <wicket:enclosure child="extAmount">
+	                &bull; <span style="font-size: small;" wicket:id="extAmount"/>
+	            </wicket:enclosure>
+	            
+	            <wicket:enclosure child="extDetails">
+	                &bull; <span style="font-size: small;" wicket:id="extDetails"/>
+	            </wicket:enclosure>
+	            
+	            <wicket:enclosure child="downloadReceipt">
+	                <div>
+	                    <a href="#" data-savapage="the-db-id"
+	                        class="sp-download-receipt ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d"
+	                        wicket:id="downloadReceipt"/>
+	                </div>                    
+	            </wicket:enclosure>
+            </div>            
             <p class="ui-li-aside"><span wicket:id="trxDate"/><br><span wicket:id="trxActor"/></p>
         </li>
     </ul>

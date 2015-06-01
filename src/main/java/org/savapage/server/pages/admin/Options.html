@@ -1037,6 +1037,23 @@ pattern="[0-9]*"
             <h3>
                 <wicket:message key="cat-financial" />
             </h3>
+            
+            <ul data-role="listview" data-inset="true">
+            
+                <li>
+                    <h3><wicket:message key="financial-currency-code"/></h3>
+                    
+                    <input type="text" id="" value="" wicket:id="financial-currency-code" maxlength="3"  
+                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+                    <div>
+                        <a href="#" id="change-financial-currency-code" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+                            <wicket:message key="button-change" /></a>
+                    </div>
+                    
+                </li>
+            </ul>
+                                        
             <ul data-role="listview" data-inset="true">
                 <li>
                     <h3><wicket:message key="cat-financial-general"/></h3>

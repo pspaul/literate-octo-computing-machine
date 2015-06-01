@@ -2,7 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-    <entry key="prompt-transfer-bitcoin">Geld overboeken met Bitcoin.</entry>
+    <entry key="prompt-transfer-bitcoin">Stuur uw Bitcoin betaling naar:</entry>
     <entry key="button-start">Start</entry>
     <entry key="button-back">Terug</entry>
         
