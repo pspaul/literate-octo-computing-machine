@@ -105,7 +105,9 @@
 					_model.user.id = data.id;
 
 					_model.language = data.language;
-					_model.setAuthToken(data.id, data.authtoken, _model.language);
+					_model.country = data.country;
+
+					_model.setAuthToken(data.id, data.authtoken, _model.language, _model.country);
 
 					/*
 					 * This is the token used for CometD authentication.
@@ -160,9 +162,7 @@
 			 */
 			this.init = function() {
 
-				var res
-				//
-				, language
+				var res, language, country
 				//
 				, authModeRequest = _util.getUrlParam('login');
 
@@ -203,10 +203,16 @@
 				if (!language) {
 					language = _model.authToken.language || '';
 				}
+				
+				country = _util.getUrlParam('country');
+				if (!country) {
+					country = _model.authToken.country || '';
+				}
 
 				res = _api.call({
 					request : 'language',
-					language : language
+					language : language,
+					country : country
 				});
 
 				i18nRefresh(res);
@@ -270,19 +276,21 @@
 			/**
 			 * Callbacks: page LANGUAGE
 			 */
-			_view.pages.language.onSelectLanguage(function(lang) {
+			_view.pages.language.onSelectLocale(function(lang, country) {
 				/*
 				 * This call sets the locale for the current session and returns
 				 * strings needed for off-line mode.
 				 */
 				var res = _api.call({
 					request : 'language',
-					'language' : lang
+					language : lang,
+					country : country
 				});
 
 				if (res.result.code === "0") {
 
 					_model.setLanguage(lang);
+					_model.setCountry(country);
 
 					i18nRefresh(res);
 
@@ -1190,7 +1198,8 @@
 				;
 
 				dto.id = _model.editPrinter.id;
-				dto.locale = _model.locale;
+				dto.language = _model.language;
+				dto.country = _model.country;
 
 				if (selDefaultMonochrome) {
 					dto.defaultMonochrome = _view.isCbChecked(selDefaultMonochrome);
@@ -1279,7 +1288,10 @@
 				;
 
 				dto.id = _model.editPrinter.id;
-				dto.locale = _model.locale;
+				
+				dto.language = _model.language;
+				dto.country = _model.country;
+				
 				dto.chargeType = _view.getRadioValue('sp-printer-charge-type');
 				dto.defaultCost = $('#sp-printer-default-cost').val();
 				dto.mediaCost = [];
@@ -1464,7 +1476,11 @@
 			//
 			, _LOC_AUTH_TOKEN = 'sp.auth.admin.token'
 			//
-			, _LOC_LANG = 'sp.admin.language';
+			, _LOC_LANG = 'sp.admin.language'
+			//
+			, _LOC_COUNTRY = 'sp.admin.country'
+			//
+			;
 
 			this.MAX_PUB_MSG = 20;
 
@@ -1506,7 +1522,11 @@
 				if (window.localStorage[item] !== null) {
 					this.authToken.language = window.localStorage[item];
 				}
-
+				
+				item = _LOC_COUNTRY;
+				if (window.localStorage[item] !== null) {
+					this.authToken.country = window.localStorage[item];
+				}
 			};
 
 			this.setLanguage = function(lang) {
@@ -1514,7 +1534,12 @@
 				window.localStorage[_LOC_LANG] = lang;
 			};
 
-			this.setAuthToken = function(user, token, language) {
+			this.setCountry = function(country) {
+				this.authToken.country = country;
+				window.localStorage[_LOC_COUNTRY] = country;
+			};
+			
+			this.setAuthToken = function(user, token, language, country) {
 				var item;
 
 				item = _LOC_AUTH_NAME;
@@ -1528,6 +1553,9 @@
 				if (language) {
 					this.setLanguage(language);
 				}
+				if (country) {
+					this.setCountry(country);
+				}				
 			};
 
 		};

@@ -354,7 +354,9 @@ public final class UserEventService extends AbstractEventService {
         final Long pageOffset = (Long) input.get("page-offset");
         final String uniqueUrlValue = (String) input.get("unique-url-value");
         final Boolean base64 = (Boolean) input.get("base64");
-        final Locale locale = new Locale((String) input.get("language"));
+
+        final Locale locale = this.getLocale(input, "language", "country");
+
         final Long msgPrevTime = (Long) input.get("msg-prev-time");
         final Boolean webAppClient = (Boolean) input.get("webAppClient");
 

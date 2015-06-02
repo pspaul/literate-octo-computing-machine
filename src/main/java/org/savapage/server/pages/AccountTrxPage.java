@@ -44,6 +44,7 @@ import org.savapage.core.jpa.PrintIn;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.core.util.CurrencyUtil;
 import org.savapage.server.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,8 +187,9 @@ public class AccountTrxPage extends AbstractListPage {
 
                 //
                 final String currencySymbol =
-                        String.format("%s ", StringUtils
-                                .defaultString(accountTrx.getCurrencyCode()));
+                        String.format("%s ", CurrencyUtil.getCurrencySymbol(
+                                accountTrx.getCurrencyCode(), getSession()
+                                        .getLocale()));
 
                 final String amount;
                 final String balance;
@@ -412,7 +414,10 @@ public class AccountTrxPage extends AbstractListPage {
                                 accountTrx.getAmount().compareTo(
                                         BigDecimal.ZERO) == 0;
 
-                        ext.append(accountTrx.getExtCurrencyCode()).append(" ");
+                        ext.append(
+                                CurrencyUtil.getCurrencySymbol(
+                                        accountTrx.getExtCurrencyCode(),
+                                        getSession().getLocale())).append(" ");
 
                         if (isExtBitcoin) {
                             ext.append(BigDecimalUtil.localize(

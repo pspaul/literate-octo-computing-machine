@@ -1268,21 +1268,26 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_LANGUAGE:
 
             String language = getParmValue(parameters, isGetAction, "language");
+            String country = getParmValue(parameters, isGetAction, "country");
 
             if (language == null || language.trim().isEmpty()) {
 
                 language = getSession().getLocale().getLanguage();
+                country = getSession().getLocale().getCountry();
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("using default language [" + language
-                            + "] for user [" + requestingUser + "]");
+                    LOGGER.debug(String.format(
+                            "using default language [%s] country [%s] "
+                                    + "for user [%s]", language, country,
+                            requestingUser));
                 }
             } else {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("language [" + language + "]");
+                    LOGGER.debug(String.format("language [%s] country [%s]",
+                            language, country));
                 }
             }
-            return reqLanguage(language);
+            return reqLanguage(language, country);
 
         case JsonApiDict.REQ_LOGIN:
 
@@ -6514,6 +6519,7 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("internal", userDb.getInternal());
         userData.put("systime", Long.valueOf(new Date().getTime()));
         userData.put("language", getSession().getLocale().getLanguage());
+        userData.put("country", getSession().getLocale().getCountry());
         userData.put("mail", USER_SERVICE.getPrimaryEmailAddress(userDb));
 
         if (authToken != null) {
@@ -7303,7 +7309,7 @@ public final class JsonApiServer extends AbstractPage {
          * Setting values for existing i18n keys. These keys must be present in
          * the i18n_<language>.properties files.
          */
-        Map<String, Object> i18nValues = new HashMap<String, Object>();
+        final Map<String, Object> i18nValues = new HashMap<String, Object>();
 
         // deprecated
         userData.put("i18n_values", i18nValues);
@@ -7335,7 +7341,7 @@ public final class JsonApiServer extends AbstractPage {
         /*
          *
          */
-        ConfigManager cm = ConfigManager.instance();
+        final ConfigManager cm = ConfigManager.instance();
 
         userData.put("cardLocalMaxMsecs",
                 cm.getConfigInt(Key.WEBAPP_CARD_LOCAL_KEYSTROKES_MAX_MSECS));
@@ -7352,26 +7358,21 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("watchdogTimeoutSecs",
                 cm.getConfigInt(Key.WEBAPP_WATCHDOG_TIMEOUT_SECS));
 
-        /*
-         *
-         */
+        //
         userData.put("cometdToken", CometdClientMixin.SHARED_DEVICE_TOKEN);
 
         userData.put("cometdMaxNetworkDelay",
                 AbstractEventService.getMaxNetworkDelay());
 
-        /*
-         *
-         */
-        userData.put("locale", getSession().getLocale().toLanguageTag());
+        //
         userData.put("systime", Long.valueOf(new Date().getTime()));
 
         return userData;
     }
 
     /**
-     * Sets the language of the Web App, and the {@link Locale} in the
-     * {@link SpSession}.
+     * Sets the language (translation) of the Web App, and the {@link Locale} in
+     * the {@link SpSession}.
      * <p>
      * For the session {@link Locale} we adopt the country/region code from the
      * Browser, if the language setting of the Browser is the same as the
@@ -7385,59 +7386,68 @@ public final class JsonApiServer extends AbstractPage {
      * @param language
      *            The selected language for the Web App. This value is also used
      *            for the language setting in the session {@link Locale}.
+     * @param country
+     *            The selected country for the Web App. This value is also used
+     *            for the country setting in the session {@link Locale}.
      * @return
      * @throws IOException
      */
-    private Map<String, Object> reqLanguage(final String language)
-            throws IOException {
+    private Map<String, Object> reqLanguage(final String language,
+            final String country) throws IOException {
 
-        Map<String, Object> userData = new HashMap<String, Object>();
+        final Map<String, Object> userData = new HashMap<String, Object>();
 
         /*
          * Straight values.
          */
         setApiResultOK(userData);
 
-        Map<String, Object> i18n = new HashMap<String, Object>();
+        final Map<String, Object> i18n = new HashMap<String, Object>();
 
         /*
          * Set the new locale, for the strings to return AND for the current
          * session.
          */
-        Locale.Builder localeBuilder = new Locale.Builder();
+        final Locale.Builder localeBuilder = new Locale.Builder();
+
         localeBuilder.setLanguage(language);
 
-        /*
-         * We adopt the country/region code from the Browser, if the language
-         * setting of the Browser is the same as the SELECTED language in the
-         * SavaPage Web App.
-         *
-         * The country/region in our session locale is used (as default) when
-         * determining the Currency Symbol. If country/region in missing in the
-         * session locale
-         */
-        final Locale localeReq = getRequestCycle().getRequest().getLocale();
-        if (localeReq.getLanguage().equalsIgnoreCase(language)) {
-            localeBuilder.setRegion(localeReq.getCountry());
+        if (StringUtils.isNotBlank(country)) {
+
+            localeBuilder.setRegion(country);
+
+        } else {
+            /*
+             * We adopt the country/region code from the Browser, if the
+             * language setting of the Browser is the same as the SELECTED
+             * language in the SavaPage Web App.
+             */
+            final Locale localeReq = getRequestCycle().getRequest().getLocale();
+
+            if (localeReq.getLanguage().equalsIgnoreCase(language)) {
+                localeBuilder.setRegion(localeReq.getCountry());
+            }
         }
 
         //
-        Locale locale = localeBuilder.build();
+        final Locale locale = localeBuilder.build();
         SpSession.get().setLocale(locale);
 
         /*
          *
          */
-        ResourceBundle rcBundle =
+        final ResourceBundle rcBundle =
                 Messages.loadXmlResource(getClass(), "i18n", locale);
 
-        Set<String> keySet = rcBundle.keySet();
+        final Set<String> keySet = rcBundle.keySet();
+
         for (final String key : keySet) {
             i18n.put(key, rcBundle.getString(key));
         }
 
         userData.put("i18n", i18n);
         userData.put("language", locale.getLanguage());
+        userData.put("country", locale.getCountry());
 
         return userData;
     }

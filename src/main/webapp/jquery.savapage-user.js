@@ -158,12 +158,13 @@
 			 * between clients).
 			 * </p>
 			 */
-			this.poll = function(language) {
+			this.poll = function(language, country) {
 				_longPollPending = true;
 				//this.onWaitingForEvent();
 				try {
 					$.cometd.publish('/service/device', {
-						language : language
+						language : language,
+						country : country
 					});
 				} catch (err) {
 					this.onException(err);
@@ -266,7 +267,7 @@
 			 * between clients).
 			 * </p>
 			 */
-			this.poll = function(idUser, printerName, readerName, language) {
+			this.poll = function(idUser, printerName, readerName, language, country) {
 
 				if (!_longPollPending) {
 
@@ -281,7 +282,8 @@
 							idUser : idUser,
 							printerName : printerName,
 							readerName : readerName,
-							language : language
+							language : language,
+							country : country
 						});
 					} catch (err) {
 						_longPollPending = false;
@@ -418,7 +420,7 @@
 			 * between clients).
 			 * </p>
 			 */
-			this.poll = function(userid, pagecount, uniqueUrlVal, prevMsgTime, language, base64) {
+			this.poll = function(userid, pagecount, uniqueUrlVal, prevMsgTime, language, country, base64) {
 
 				if (!_longPollStartTime) {
 					_longPollStartTime = new Date().getTime();
@@ -430,6 +432,7 @@
 							'unique-url-value' : uniqueUrlVal,
 							'msg-prev-time' : prevMsgTime,
 							language : language,
+							country : country,
 							base64 : base64,
 							webAppClient : true
 						});
@@ -3273,6 +3276,8 @@
 			//
 			, _LOC_LANG = 'sp.user.language'
 			//
+			, _LOC_COUNTRY = 'sp.user.country'
+			//
 			;
 
 			this.MediaMatchEnum = {
@@ -3648,6 +3653,11 @@
 				if (window.localStorage[item] !== null) {
 					this.authToken.language = window.localStorage[item];
 				}
+				
+				item = _LOC_COUNTRY;
+				if (window.localStorage[item] !== null) {
+					this.authToken.country = window.localStorage[item];
+				}
 
 			};
 
@@ -3656,7 +3666,12 @@
 				window.localStorage[_LOC_LANG] = lang;
 			};
 
-			this.setAuthToken = function(user, token, language) {
+			this.setCountry = function(country) {
+				this.authToken.country = country;
+				window.localStorage[_LOC_COUNTRY] = country;
+			};
+			
+			this.setAuthToken = function(user, token, language, country) {
 				var item;
 
 				item = _LOC_AUTH_NAME;
@@ -3669,7 +3684,10 @@
 
 				if (language) {
 					this.setLanguage(language);
-				}
+				}				
+				if (country) {
+					this.setCountry(country);
+				}				
 			};
 
 			/**
@@ -3927,7 +3945,9 @@
 				_model.user.fullname = loginRes.fullname;
 
 				_model.language = loginRes.language;
-				_model.setAuthToken(loginRes.id, loginRes.authtoken, _model.language);
+				_model.country = loginRes.country;
+				
+				_model.setAuthToken(loginRes.id, loginRes.authtoken, _model.language, _model.country);
 
 				/*
 				 * This is the token used for CometD authentication. See: Java
@@ -4057,7 +4077,7 @@
 			 *
 			 */
 			this.init = function() {
-				var res, language
+				var res, language, country
 				//
 				, authModeRequest = _util.getUrlParam('login');
 
@@ -4106,10 +4126,15 @@
 				if (!language) {
 					language = _model.authToken.language || '';
 				}
+				country = _util.getUrlParam('country');
+				if (!country) {
+					country = _model.authToken.country || '';
+				}
 
 				res = _api.call({
 					request : 'language',
-					language : language
+					language : language,
+					country : country
 				});
 
 				i18nRefresh(res);
@@ -4588,7 +4613,7 @@
 				_cometd.stop();
 			};
 			_deviceEvent.onPollInvitation = function() {
-				_deviceEvent.poll(_model.language);
+				_deviceEvent.poll(_model.language, _model.country);
 			};
 
 			//_deviceEvent.onEventIgnored = function() {
@@ -4691,7 +4716,9 @@
 			};
 
 			_userEvent.onPollInvitation = function() {
-				_userEvent.poll(_model.user.id, _model.getPageCount(), _model.uniqueImgUrlValue, _model.prevMsgTime, _model.language, _view.imgBase64);
+				_userEvent.poll(_model.user.id, _model.getPageCount(), 
+					_model.uniqueImgUrlValue, _model.prevMsgTime, 
+					_model.language, _model.country, _view.imgBase64);
 			};
 
 			/*
@@ -4705,19 +4732,21 @@
 			/**
 			 * Callbacks: page language
 			 */
-			_view.pages.language.onSelectLanguage(function(lang) {
+			_view.pages.language.onSelectLocale(function(lang, country) {
 				/*
 				 * This call sets the locale for the current session and returns
 				 * strings needed for off-line mode.
 				 */
 				var res = _api.call({
-					'request' : 'language',
-					'language' : lang
+					request : 'language',
+					language : lang,
+					country : country
 				});
 
 				if (res.result.code === "0") {
 
 					_model.setLanguage(lang);
+					_model.setCountry(country);
 
 					i18nRefresh(res);
 					/*
@@ -4977,7 +5006,8 @@
 					_view.pages.print.clearInput();
 					_model.closePrintDlg = isClose;
 
-					_proxyprintEvent.poll(_model.user.key_id, _model.myPrinter.name, _model.myPrinterReaderName, _model.language);
+					_proxyprintEvent.poll(_model.user.key_id, _model.myPrinter.name, _model.myPrinterReaderName, 
+						_model.language, _model.country);
 
 					_view.visible($('#auth-popup-content-wait'), true);
 					_view.visible($('#auth-popup-content-msg'), false);
@@ -5370,7 +5400,7 @@
 					 * will not show.
 					 */
 					_view.message(res.result.txt);
-					_model.setAuthToken(null, null);
+					_model.setAuthToken(null, null, null);
 				}
 
 				_view.pages.main.onClose();

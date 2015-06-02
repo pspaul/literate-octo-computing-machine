@@ -21,9 +21,15 @@
  */
 package org.savapage.server.cometd;
 
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.server.AbstractService;
 import org.savapage.core.services.ServiceEntryPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Encapsulation of CometD {@link AbstractService}.
@@ -33,6 +39,12 @@ import org.savapage.core.services.ServiceEntryPoint;
  */
 public abstract class AbstractEventService extends AbstractService implements
         ServiceEntryPoint {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(AbstractEventService.class);
 
     /**
      *
@@ -96,6 +108,37 @@ public abstract class AbstractEventService extends AbstractService implements
      */
     protected final String getClientIpAddress() {
         return getBayeux().getContext().getRemoteAddress().getHostString();
+    }
+
+    /**
+     * Get the {@link Locale} from input map.
+     *
+     * @param input
+     *            The input map.
+     * @param keyLanguage
+     *            The key of language value.
+     * @param keyCountry
+     *            The key of country value.
+     * @return The {@link Locale}.
+     */
+    protected Locale getLocale(final Map<String, Object> input,
+            final String keyLanguage, final String keyCountry) {
+
+        final String language = (String) input.get(keyLanguage);
+        final String country = (String) input.get(keyCountry);
+
+        try {
+            if (StringUtils.isBlank(country)) {
+                return new Locale(language);
+            }
+            return new Locale(language, country);
+        } catch (Exception e) {
+            LOGGER.warn(String.format(
+                    "Locale cannot be created for %s %s (falling back to %s)",
+                    language, StringUtils.defaultString(country), Locale
+                            .getDefault().toString()));
+            return Locale.getDefault();
+        }
     }
 
     /**

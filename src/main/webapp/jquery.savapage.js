@@ -1152,7 +1152,7 @@
 		 */
 		_ns.PageLanguage = function(_i18n, _view) {
 
-			var _page, _self, _onSelectLanguage;
+			var _page, _self, _onSelectLocale;
 
 			_page = new _ns.Page(_i18n, _view, '#page-language', 'Language');
 			_self = _ns.derive(_page);
@@ -1160,8 +1160,8 @@
 			/**
 			 *
 			 */
-			_self.onSelectLanguage = function(foo) {
-				_onSelectLanguage = foo;
+			_self.onSelectLocale = function(foo) {
+				_onSelectLocale = foo;
 			};
 
 			/**
@@ -1170,12 +1170,7 @@
 			$(_self.id()).on('pagecreate', function(event) {
 
 				$('#language-list').on('click', null, null, function(event) {
-					var str, lang;
-					str = $(event.target).attr('id');
-					lang = str.substr(str.indexOf("#") + 1);
-
-					_onSelectLanguage(lang);
-
+					_onSelectLocale($(event.target).attr('data-language'), $(event.target).attr('data-country'));
 					$('#button-lang-cancel').click();
 					return false;
 				});

@@ -68,7 +68,7 @@ public class DocLogPage extends AbstractListPage {
         final String data = getParmValue(POST_PARM_DATA);
         LOGGER.trace("data : " + data);
 
-        DocLogPagerReq req = DocLogPagerReq.read(data);
+        final DocLogPagerReq req = DocLogPagerReq.read(data);
 
         final DocLogDao.Type docType = req.getSelect().getDocType();
 
@@ -89,7 +89,7 @@ public class DocLogPage extends AbstractListPage {
         /*
          *
          */
-        //this.openServiceContext();
+        // this.openServiceContext();
         final EntityManager em = DaoContextImpl.peekEntityManager();
 
         final DocLogItem.AbstractQuery query = DocLogItem.createQuery(docType);
@@ -99,7 +99,7 @@ public class DocLogPage extends AbstractListPage {
         /*
          * Display the requested page.
          */
-        List<DocLogItem> entryList = query.getListChunk(em, userId, req);
+        final List<DocLogItem> entryList = query.getListChunk(em, userId, req);
 
         add(new PropertyListView<DocLogItem>("doc-entry-view", entryList) {
             private static final long serialVersionUID = 1L;
@@ -110,7 +110,7 @@ public class DocLogPage extends AbstractListPage {
                 /*
                  * Step 1: Create panel and add to page.
                  */
-                DocLogItemPanel panel =
+                final DocLogItemPanel panel =
                         new DocLogItemPanel("doc-entry", item.getModel());
 
                 item.add(panel);

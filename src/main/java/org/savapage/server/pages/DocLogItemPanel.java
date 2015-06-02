@@ -274,7 +274,9 @@ public class DocLogItemPanel extends Panel {
                 mapVisible.put("job-id", obj.getJobId().toString());
 
                 if (obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
-                    mapVisible.put("cost-currency", obj.getCurrencyCode());
+                    mapVisible.put("cost-currency", CurrencyUtil
+                            .getCurrencySymbol(obj.getCurrencyCode(),
+                                    getSession().getLocale()));
                     mapVisible.put("cost", localizedDecimal(obj.getCost()));
                 }
 
@@ -377,7 +379,7 @@ public class DocLogItemPanel extends Panel {
         /*
          * Hide/Show
          */
-        for (Map.Entry<String, String> entry : mapVisible.entrySet()) {
+        for (final Map.Entry<String, String> entry : mapVisible.entrySet()) {
 
             if (entry.getValue() == null) {
                 entry.setValue("");
