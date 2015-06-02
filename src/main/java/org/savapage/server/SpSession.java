@@ -99,13 +99,13 @@ public class SpSession extends WebSession {
     }
 
     /**
-     * @deprecated Gets the Application's currency symbol.
+     * Gets the Application's currency symbol according to the session
+     * {@link Locale} .
      *
      * @return The currency symbol.
      */
-    @Deprecated
-    public static String getCurrencySymbol() {
-        return ConfigManager.getAppCurrencyCode();
+    public static String getAppCurrencySymbol() {
+        return ConfigManager.getAppCurrencySymbol(get().getLocale());
     }
 
     /**

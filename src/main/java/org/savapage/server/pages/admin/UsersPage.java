@@ -107,9 +107,9 @@ public class UsersPage extends AbstractAdminListPage {
      */
     public UsersPage() {
 
-        //this.openServiceContext();
+        // this.openServiceContext();
 
-        this.currencySymbol = SpSession.getCurrencySymbol();
+        this.currencySymbol = SpSession.getAppCurrencySymbol();
         this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
 
         /*
@@ -278,9 +278,8 @@ public class UsersPage extends AbstractAdminListPage {
                  */
                 mapVisible.put("balance-currency", myCurrencySymbol);
 
-                item.add(new Label("balance-amount",
-                        ACCOUNTING_SERVICE.getFormattedUserBalance(user,
-                                locale, null)));
+                item.add(new Label("balance-amount", ACCOUNTING_SERVICE
+                        .getFormattedUserBalance(user, locale, null)));
 
                 /*
                  * Period + Totals

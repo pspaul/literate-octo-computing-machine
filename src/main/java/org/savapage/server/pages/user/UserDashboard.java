@@ -95,7 +95,7 @@ public class UserDashboard extends AbstractUserPage {
                         .getAccountingService()
                         .getAccountDisplayInfo(user,
                                 ServiceContext.getLocale(),
-                                SpSession.getCurrencySymbol());
+                                SpSession.getAppCurrencySymbol());
 
         // ------------------
         String creditLimit = dto.getCreditLimit();

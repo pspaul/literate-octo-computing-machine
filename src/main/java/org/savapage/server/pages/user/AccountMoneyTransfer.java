@@ -42,7 +42,7 @@ public class AccountMoneyTransfer extends AbstractUserPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        helper.addLabel("currency-symbol", SpSession.getCurrencySymbol());
+        helper.addLabel("currency-symbol", SpSession.getAppCurrencySymbol());
         helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
 
         final PaymentGatewayPlugin plugin =

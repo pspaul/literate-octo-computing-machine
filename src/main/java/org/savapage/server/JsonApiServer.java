@@ -2279,7 +2279,7 @@ public final class JsonApiServer extends AbstractPage {
                 DOC_LOG_SERVICE.logDocOut(lockedUser, docLog.getDocOut());
 
                 addUserStats(userData, lockedUser, this.getSession()
-                        .getLocale(), SpSession.getCurrencySymbol());
+                        .getLocale(), SpSession.getAppCurrencySymbol());
 
                 setApiResult(userData, API_RESULT_CODE_OK, "msg-mail-sent",
                         mailto);
@@ -2332,7 +2332,7 @@ public final class JsonApiServer extends AbstractPage {
                 String.valueOf(jobCount));
 
         addUserStats(userData, lockedUser, this.getSession().getLocale(),
-                SpSession.getCurrencySymbol());
+                SpSession.getAppCurrencySymbol());
 
         return userData;
     }
@@ -2361,7 +2361,7 @@ public final class JsonApiServer extends AbstractPage {
         setApiResult(userData, API_RESULT_CODE_OK, msgKey);
 
         addUserStats(userData, lockedUser, this.getSession().getLocale(),
-                SpSession.getCurrencySymbol());
+                SpSession.getAppCurrencySymbol());
 
         return userData;
     }
@@ -2395,7 +2395,7 @@ public final class JsonApiServer extends AbstractPage {
                 String.valueOf(jobCount), String.valueOf(minutes));
 
         addUserStats(userData, lockedUser, this.getSession().getLocale(),
-                SpSession.getCurrencySymbol());
+                SpSession.getAppCurrencySymbol());
 
         return userData;
     }
@@ -3066,7 +3066,7 @@ public final class JsonApiServer extends AbstractPage {
         /*
          * Calculate the printing cost.
          */
-        final String currencySymbol = SpSession.getCurrencySymbol();
+        final String currencySymbol = SpSession.getAppCurrencySymbol();
 
         final BigDecimal cost;
 
@@ -3338,7 +3338,8 @@ public final class JsonApiServer extends AbstractPage {
      * @throws IOException
      * @throws PaymentGatewayException
      */
-    private Map<String, Object> reqBitcoinWalletRefresh() throws PaymentGatewayException, IOException {
+    private Map<String, Object> reqBitcoinWalletRefresh()
+            throws PaymentGatewayException, IOException {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
@@ -3408,7 +3409,7 @@ public final class JsonApiServer extends AbstractPage {
         final LocaleHelper localeHelper =
                 new LocaleHelper(SpSession.get().getLocale());
 
-        final String currencySymbol = SpSession.getCurrencySymbol();
+        final String currencySymbol = SpSession.getAppCurrencySymbol();
         final int balanceDecimals = ConfigManager.getUserBalanceDecimals();
 
         QuickSearchPosPurchaseItemDto itemWlk;
@@ -3462,7 +3463,7 @@ public final class JsonApiServer extends AbstractPage {
         final QuickSearchFilterDto dto =
                 AbstractDto.create(QuickSearchFilterDto.class, json);
 
-        final String currencySymbol = SpSession.getCurrencySymbol();
+        final String currencySymbol = SpSession.getAppCurrencySymbol();
 
         final UserDao.ListFilter filter = new UserDao.ListFilter();
 
@@ -5038,7 +5039,7 @@ public final class JsonApiServer extends AbstractPage {
                     userId);
         } else {
             addUserStats(userData, user, this.getSession().getLocale(),
-                    SpSession.getCurrencySymbol());
+                    SpSession.getAppCurrencySymbol());
             setApiResultOK(userData);
         }
         return userData;
@@ -5172,8 +5173,7 @@ public final class JsonApiServer extends AbstractPage {
             req.setRedirectUrl(redirectUrl);
             req.setUserId(requestingUser);
 
-            final PaymentGatewayTrx trx =
-                    plugin.onPaymentRequest(req);
+            final PaymentGatewayTrx trx = plugin.onPaymentRequest(req);
 
             setApiResultOK(userData);
             userData.put("paymentUrl", trx.getPaymentUrl().toExternalForm());
@@ -6539,7 +6539,7 @@ public final class JsonApiServer extends AbstractPage {
         if (!isAdminOnlyLogin) {
 
             addUserStats(userData, userDb, this.getSession().getLocale(),
-                    SpSession.getCurrencySymbol());
+                    SpSession.getAppCurrencySymbol());
 
             /*
              * Make sure that any User Web App long poll for this user is

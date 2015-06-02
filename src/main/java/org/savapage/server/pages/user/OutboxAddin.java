@@ -216,7 +216,7 @@ public class OutboxAddin extends AbstractUserPage {
          * Show the OutboxInfo.
          */
         outboxService.applyLocaleInfo(outboxInfo, session.getLocale(),
-                SpSession.getCurrencySymbol());
+                SpSession.getAppCurrencySymbol());
 
         final List<OutboxJob> entryList = new ArrayList<>();
 

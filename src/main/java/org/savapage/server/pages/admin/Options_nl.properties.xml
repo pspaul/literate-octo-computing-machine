@@ -278,8 +278,6 @@
     <entry key="financial-global-credit-limit">Standaard bestedingslimiet</entry>    
     <entry key="financial-printer-cost-decimals">Decimalen voor printerkosten</entry>
     <entry key="financial-decimals-other">Decimalen elders</entry>
-    <entry key="financial-show-currency">Valuta teken weergeven</entry>
-    <entry key="financial-custom-currency">Valuta teken (laat leeg om de systeem standaard "{0}" te accepteren)</entry>
     <entry key="financial-currency-code">Valuta code</entry>
     <entry key="financial-payment-methods">Een door comma's gescheiden lijst van betaalmethoden (laat leeg als niet vereist)</entry>
     <entry key="cat-financial-pos">Verkooppunt</entry>

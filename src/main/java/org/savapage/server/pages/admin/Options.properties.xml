@@ -275,8 +275,6 @@
     <entry key="financial-global-credit-limit">Default credit limit</entry>    
     <entry key="financial-printer-cost-decimals">Printer cost decimals</entry>
     <entry key="financial-decimals-other">Decimals used elsewhere</entry>
-    <entry key="financial-show-currency">Display currency sign</entry>
-    <entry key="financial-custom-currency">Currency sign (leave empty to accept system default "{0}")</entry>
     <entry key="financial-currency-code">Currency code</entry>
     <entry key="financial-payment-methods">A comma separated list of payment methods (leave empty if not required)</entry>
     <entry key="cat-financial-pos">Point-of-Sale</entry>

@@ -646,18 +646,8 @@
 			};
 
 			_view.pages.admin.onApplyFinancialGeneral = function() {
-				var props = {}
-				//
-				, enabled = _view.isCbChecked($("#user\\.fin\\.currency-symbol\\.show"))
-				//
-				;
+				var props = {};
 				_fillConfigPropsText(props, ["financial.global.credit-limit", "financial.printer.cost-decimals", "financial.user.balance-decimals"]);
-
-				props['user.fin.currency-symbol.show'] = enabled ? 'Y' : 'N';
-
-				if (enabled) {
-					_fillConfigPropsText(props, ['user.fin.currency-symbol.custom']);
-				}
 				_saveConfigProps(props);
 			};
 

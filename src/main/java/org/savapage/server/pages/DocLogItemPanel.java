@@ -172,7 +172,7 @@ public class DocLogItemPanel extends Panel {
                 builder.append(account.getName())
                         .append(" ")
                         .append(CurrencyUtil.getCurrencySymbol(
-                                trx.getCurrencyCode(), trx.getCurrencyCode()))
+                                trx.getCurrencyCode(), getLocale()))
                         .append(" ").append(localizedDecimal(trx.getAmount()));
 
                 builder.append(" (").append(trx.getTransactionWeight())

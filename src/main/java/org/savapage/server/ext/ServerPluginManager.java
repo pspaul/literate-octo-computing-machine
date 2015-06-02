@@ -34,6 +34,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -594,10 +595,15 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
         publishEvent(
                 PubLevelEnum.WARN,
-                localize("payment-cancelled", trx.getUserId(), trx
-                        .getGatewayId(), String.format("%s%.2f", CurrencyUtil
-                        .getCurrencySymbol(trx.getCurrencyCode(),
-                                trx.getCurrencyCode()), trx.getAmount())));
+                localize(
+                        "payment-cancelled",
+                        trx.getUserId(),
+                        trx.getGatewayId(),
+                        String.format(
+                                "%s%.2f",
+                                CurrencyUtil.getCurrencySymbol(
+                                        trx.getCurrencyCode(),
+                                        Locale.getDefault()), trx.getAmount())));
         logPaymentTrxReceived(trx, STAT_CANCELLED);
         PaymentGatewayLogger.instance().onPaymentCancelled(trx);
     }
@@ -607,10 +613,15 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
         publishEvent(
                 PubLevelEnum.WARN,
-                localize("payment-expired", trx.getGatewayId(), String.format(
-                        "%s%.2f", CurrencyUtil.getCurrencySymbol(
-                                trx.getCurrencyCode(), trx.getCurrencyCode()),
-                        trx.getAmount()), trx.getUserId()));
+                localize(
+                        "payment-expired",
+                        trx.getGatewayId(),
+                        String.format(
+                                "%s%.2f",
+                                CurrencyUtil.getCurrencySymbol(
+                                        trx.getCurrencyCode(),
+                                        Locale.getDefault()), trx.getAmount()),
+                        trx.getUserId()));
 
         logPaymentTrxReceived(trx, STAT_EXPIRED);
 
@@ -847,11 +858,15 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         logPaymentTrxReceived(trx, STAT_CONFIRMED);
         publishEvent(
                 PubLevelEnum.INFO,
-                localize("payment-confirmed", String.format("%s%.2f",
-                        CurrencyUtil.getCurrencySymbol(trx.getCurrencyCode(),
-                                trx.getCurrencyCode()), trx.getAmount()), trx
-                        .getGatewayId(), trx.getUserId(), String.valueOf(trx
-                        .getConfirmations())));
+                localize(
+                        "payment-confirmed",
+                        String.format(
+                                "%s%.2f",
+                                CurrencyUtil.getCurrencySymbol(
+                                        trx.getCurrencyCode(),
+                                        Locale.getDefault()), trx.getAmount()),
+                        trx.getGatewayId(), trx.getUserId(),
+                        String.valueOf(trx.getConfirmations())));
 
         PaymentGatewayLogger.instance().onPaymentPending(trx);
     }
@@ -917,10 +932,14 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
         publishEvent(
                 PubLevelEnum.CLEAR,
-                localize("payment-acknowledged", String.format("%s%.2f",
-                        CurrencyUtil.getCurrencySymbol(trx.getCurrencyCode(),
-                                trx.getCurrencyCode()), trx.getAmount()), trx
-                        .getGatewayId(), trx.getUserId()));
+                localize(
+                        "payment-acknowledged",
+                        String.format(
+                                "%s%.2f",
+                                CurrencyUtil.getCurrencySymbol(
+                                        trx.getCurrencyCode(),
+                                        Locale.getDefault()), trx.getAmount()),
+                        trx.getGatewayId(), trx.getUserId()));
 
         PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
     }

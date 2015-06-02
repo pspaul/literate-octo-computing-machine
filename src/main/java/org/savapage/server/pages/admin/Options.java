@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -428,16 +428,6 @@ public class Options extends AbstractAdminPage {
 
         labelledInput("financial-decimals-other",
                 IConfigProp.Key.FINANCIAL_USER_BALANCE_DECIMALS);
-
-        labelledCheckbox("financial-show-currency",
-                Key.USER_FIN_CURRENCY_SYMBOL_SHOWS);
-
-        tagInput("financial-custom-currency",
-                Key.USER_FIN_CURRENCY_SYMBOL_CUSTOM);
-
-        add(new Label("financial-custom-currency-label", MessageFormat.format(
-                getLocalizer().getString("financial-custom-currency", this),
-                ConfigManager.getDefaultCurrencySymbol())));
 
         tagInput("financial-currency-code", Key.FINANCIAL_GLOBAL_CURRENCY_CODE);
 
