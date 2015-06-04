@@ -22,16 +22,24 @@
 package org.savapage.server.pages.user;
 
 import java.text.ParseException;
-import java.util.Currency;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
+import org.savapage.ext.payment.PaymentMethodInfo;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.StatsEnvImpactPanel;
 import org.savapage.server.pages.StatsPageTotalPanel;
@@ -137,47 +145,78 @@ public class UserDashboard extends AbstractUserPage {
                 localized("button-title-assign"));
 
         /*
-         * Is Generic Payment Gateway available?
+         * Payment Gateways
          */
-        final Currency appCurrency = ConfigManager.getAppCurrency();
+        final String appCurrencyCode = ConfigManager.getAppCurrencyCode();
 
-        PaymentGatewayPlugin plugin =
-                WebApp.get().getPluginManager().getGenericPaymentGateway();
-
-        boolean isPaymentGateway =
-                plugin != null
-                        && appCurrency != null
-                        && plugin.isCurrencySupported(appCurrency
-                                .getCurrencyCode());
-
-        //
-        if (isPaymentGateway) {
-            helper.addModifyLabelAttr("button-transfer-money",
-                    localized("button-transfer"), "title",
-                    localized("button-title-transfer"));
-        } else {
-            helper.discloseLabel("button-transfer-money");
-        }
+        final ServerPluginManager pluginMgr = WebApp.get().getPluginManager();
 
         /*
-         * Is Bitcoin Payment Gateway available?
+         * Bitcoin Gateway?
          */
-        plugin = WebApp.get().getPluginManager().getBitcoinGateway();
+        final PaymentGatewayPlugin bitcoinPlugin =
+                pluginMgr.getBitcoinGateway();
 
-        isPaymentGateway =
-                plugin != null
-                        && appCurrency != null
-                        && plugin.isCurrencySupported(appCurrency
-                                .getCurrencyCode());
+        final boolean isBitcoinGateway =
+                bitcoinPlugin != null
+                        && bitcoinPlugin.isCurrencySupported(appCurrencyCode);
 
-        //
-        if (isPaymentGateway) {
-            helper.addModifyLabelAttr("button-transfer-bitcoin",
-                    localized("button-bitcoin"), "title",
-                    localized("button-title-bitcoin"));
+        if (isBitcoinGateway) {
+
+            final Label labelWrk = new Label("button-transfer-bitcoin");
+            labelWrk.add(new AttributeModifier("title",
+                    localized("button-title-bitcoin")));
+            add(labelWrk);
+
         } else {
             helper.discloseLabel("button-transfer-bitcoin");
         }
+
+        /*
+         * External Gateway?
+         */
+        final PaymentGateway externalPlugin =
+                pluginMgr.getExternalPaymentGateway();
+
+        final boolean isExternalGateway =
+                externalPlugin != null
+                        && externalPlugin.isCurrencySupported(appCurrencyCode);
+
+        //
+        if (!isExternalGateway) {
+            helper.discloseLabel("button-transfer-money");
+            return;
+        }
+
+        final List<PaymentMethodInfo> list =
+                new ArrayList<PaymentMethodInfo>(externalPlugin
+                        .getExternalPaymentMethods().values());
+
+        add(new PropertyListView<PaymentMethodInfo>("money-transfer-methods",
+                list) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(final ListItem<PaymentMethodInfo> item) {
+
+                final PaymentMethodInfo info = item.getModelObject();
+
+                final Label labelWrk = new Label("money-transfer-method", "");
+
+                labelWrk.add(new AttributeModifier("src", info
+                        .getUrlImageNormal().toExternalForm()));
+
+                labelWrk.add(new AttributeModifier("data-payment-gateway",
+                        externalPlugin.getId()));
+
+                labelWrk.add(new AttributeModifier("data-payment-method",
+                        info.getMethod().toString()));
+
+                item.add(labelWrk);
+            }
+
+        });
 
     }
 }

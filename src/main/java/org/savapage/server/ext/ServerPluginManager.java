@@ -266,6 +266,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      *            The {@link InputStream} of the {@link Properties} file.
      * @param istrName
      *            The name used for logging.
+     * @return {@code true} when plug-in was successfully loaded.
      * @throws IOException
      *             If an error occurs when loading the properties file.
      */
@@ -374,8 +375,12 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
         } catch (NoSuchMethodException | SecurityException
                 | InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException e) {
-            LOGGER.error(e.getMessage());
+                | IllegalArgumentException | InvocationTargetException
+                | PaymentGatewayException e) {
+
+            LOGGER.error(String.format("Plugin [%s] could not be loaded: %s",
+                    clazz.getSimpleName(), e.getMessage()));
+
             return false;
         }
 
@@ -396,11 +401,6 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                     + pluginHome.getAbsolutePath() + "]");
         }
 
-        if (!pluginHome.isDirectory()) {
-            LOGGER.error(pluginHome + " is not a directory");
-            return;
-        }
-
         final File[] files = pluginHome.listFiles(new FilenameFilter() {
 
             @Override
@@ -408,6 +408,12 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 return FilenameUtils.isExtension(name, "properties");
             }
         });
+
+        if (files == null) {
+            LOGGER.error(String.format("Plugin home [%s] is not a directory.",
+                    pluginHome.getAbsolutePath()));
+            return;
+        }
 
         for (final File file : files) {
 
@@ -457,7 +463,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     /**
      * Gets the first {@link BitcoinGateway}.
      *
-     * @return The {@link PaymentGateway}, or {@code null} when not found.
+     * @return The {@link BitcoinGateway}, or {@code null} when not found.
      */
     public BitcoinGateway getBitcoinGateway() {
 
@@ -471,21 +477,17 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     }
 
     /**
-     * Gets the first {@link PaymentGateway} with an external
+     * Gets the first {@link PaymentGateway} with at least one (1) external
      * {@link PaymentMethodEnum}.
      *
-     * @param paymentMethod
-     *            The {@link PaymentMethodEnum}.
      * @return The {@link PaymentGateway}, or {@code null} when not found.
      */
-    public PaymentGateway getExternalPaymentGateway(
-            final PaymentMethodEnum paymentMethod) {
+    public PaymentGateway getExternalPaymentGateway() {
 
         for (final Entry<String, PaymentGateway> entry : this.paymentGateways
                 .entrySet()) {
 
-            if (entry.getValue().getExternalPaymentMethods()
-                    .contains(paymentMethod)) {
+            if (!entry.getValue().getExternalPaymentMethods().isEmpty()) {
                 return entry.getValue();
             }
         }
@@ -496,6 +498,8 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     /**
      * Gets the {@link PaymentGatewayPlugin} by its ID.
      *
+     * @param gatewayId
+     *            ID of the gateway.
      * @return The {@link PaymentGatewayPlugin}, or {@code null} when not found.
      */
     public PaymentGatewayPlugin getPaymentGateway(final String gatewayId) {

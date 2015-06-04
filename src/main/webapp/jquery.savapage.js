@@ -2045,8 +2045,8 @@
 			 * @param page
 			 *            The Wicket class
 			 */
-			this.getUserPageHtml = function(page) {
-				return this.getPageHtml('user/' + page);
+			this.getUserPageHtml = function(page, data) {
+				return this.getPageHtml('user/' + page, data);
 			};
 
 			/**

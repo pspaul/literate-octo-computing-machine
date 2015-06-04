@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.user;
 
+import org.apache.wicket.request.IRequestParameters;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
@@ -40,16 +41,24 @@ public class AccountMoneyTransfer extends AbstractUserPage {
      */
     public AccountMoneyTransfer() {
 
+        final IRequestParameters parms =
+                getRequestCycle().getRequest().getPostParameters();
+
+        final String gatewayId = parms.getParameterValue("gateway").toString();
+        final String method = parms.getParameterValue("method").toString();
+
+        final PaymentGatewayPlugin plugin =
+                WebApp.get().getPluginManager().getPaymentGateway(gatewayId);
+
+        //
         final MarkupHelper helper = new MarkupHelper(this);
 
         helper.addLabel("currency-symbol", SpSession.getAppCurrencySymbol());
         helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
 
-        final PaymentGatewayPlugin plugin =
-                WebApp.get().getPluginManager().getGenericPaymentGateway();
-
         helper.addModifyLabelAttr("money-transfer-gateway", "value",
                 plugin.getId());
+
     }
 
 }

@@ -38,18 +38,23 @@ These fragments are used in WebAppUserPage
         <a href="#" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-plus" 
             wicket:id="button-voucher-redeem" id="button-voucher-redeem-page" title=""/>
             
-        <wicket:enclosure child="button-transfer-money">
-            <a href="#" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-plus" 
-                wicket:id="button-transfer-money" id="button-transfer-money-page" title=""/>
-        </wicket:enclosure>
-
-        <wicket:enclosure child="button-transfer-bitcoin">
-            <a href="#" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-plus" 
-                wicket:id="button-transfer-bitcoin" id="button-transfer-bitcoin-page" title=""/>
-        </wicket:enclosure>
-             
         <a href="#" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-minus" 
             wicket:id="button-assign-credit" id="button-assign-credit-page" title=""/>
             
-    </div>   
+    </div>
+    <h3><wicket:message key="button-transfer"/></h3>
+    <div data-role="controlgroup" data-type="horizontal">
+    
+        <span wicket:id="money-transfer-methods">
+            <img wicket:id="money-transfer-method" class="sp-transfer-money-img" src="" data-payment-gateway="" data-payment-method=""/>
+        </span>                
+    
+        <wicket:enclosure child="button-transfer-bitcoin">
+            <img wicket:id="button-transfer-bitcoin" id="button-transfer-bitcoin-page" src="https://www.mollie.com/images/payscreen/methods/bitcoin.png"/>
+            <a href="#" id="" title=""/>
+        </wicket:enclosure>
+                        
+    </div>    
+
+       
 </li>

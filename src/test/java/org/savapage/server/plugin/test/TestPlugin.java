@@ -24,15 +24,15 @@ package org.savapage.server.plugin.test;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.util.Currency;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.payment.PaymentMethodEnum;
+import org.savapage.ext.payment.PaymentMethodInfo;
 
 /**
  *
@@ -59,8 +59,9 @@ public final class TestPlugin implements PaymentGateway {
     }
 
     @Override
-    public Set<PaymentMethodEnum> getExternalPaymentMethods() {
-        return new HashSet<>();
+    public Map<PaymentMethodEnum, PaymentMethodInfo>
+            getExternalPaymentMethods() {
+        return new HashMap<>();
     }
 
     @Override

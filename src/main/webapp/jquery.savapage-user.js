@@ -1615,11 +1615,17 @@
 					});
 				}
 
-				if ($('#button-transfer-money-page')) {
-					$(this).on('click', '#button-transfer-money-page', null, function() {
+				if ($('.sp-transfer-money-img')) {
+					$(this).on('click', '.sp-transfer-money-img', null, function() {
 						// The transfer page is a fixed part of WebAppUserPage.html
 						// (we only refresh the content)
-						var pageId = '#page-money-transfer', html = _view.getUserPageHtml('AccountMoneyTransfer');
+						var pageId = '#page-money-transfer'
+						//
+						, data = {gateway : $(this).attr('data-payment-gateway'), method : $(this).attr('data-payment-method')}
+						//
+						, html = _view.getUserPageHtml('AccountMoneyTransfer', data)
+						//
+						;
 						_view.changePage(pageId);
 						if (html) {
 							$('#page-money-transfer-content').html(html);
@@ -1629,7 +1635,7 @@
 					});
 				}
 
-				if ($('#button-transfer-money-page')) {
+				if ($('#button-transfer-bitcoin-page')) {
 					$(this).on('click', '#button-transfer-bitcoin-page', null, function() {
 						// The transfer page is a fixed part of WebAppUserPage.html
 						// (we only refresh the content)
