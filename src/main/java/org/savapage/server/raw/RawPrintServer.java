@@ -142,7 +142,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
     class SocketServerThread extends Thread {
 
         /**
-         * Waiting max. 5 seconds while reading the socket.
+         * Waiting max. 5 seconds while reading the socket for meaningful data.
          */
         private static final int READ_TIMEOUT_MSEC = 5000;
 
@@ -362,8 +362,10 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         try {
             strline = readLine(istr, bos);
         } catch (SocketTimeoutException e) {
-            throw new RawPrintException("No IP Print data received from ["
-                    + originatorIp + "]", e);
+            throw new RawPrintException(
+                    String.format("No IP Print data received from "
+                            + "[%s] within [%d] msec.", originatorIp,
+                            SocketServerThread.READ_TIMEOUT_MSEC));
         }
 
         /*
@@ -575,8 +577,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             throw new SpException(ex);
         }
 
-        SpInfo.instance().log(
-                String.format("IP Print Server started on port %d.",
+        SpInfo.instance()
+                .log(String.format("IP Print Server started on port %d.",
                         this.port));
 
         while (this.keepAcceptingRequests) {
