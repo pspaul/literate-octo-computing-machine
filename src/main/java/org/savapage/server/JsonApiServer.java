@@ -115,7 +115,6 @@ import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.dto.AccountVoucherBatchDto;
 import org.savapage.core.dto.AccountVoucherRedeemDto;
 import org.savapage.core.dto.JrPageSizeDto;
-import org.savapage.core.dto.MoneyTransferDto;
 import org.savapage.core.dto.PosDepositDto;
 import org.savapage.core.dto.PosDepositReceiptDto;
 import org.savapage.core.dto.PrimaryKeyDto;
@@ -217,6 +216,7 @@ import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.auth.WebAppUserAuthManager;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.cometd.UserEventService;
+import org.savapage.server.dto.MoneyTransferDto;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.StatsPageTotalPanel;
@@ -5154,8 +5154,9 @@ public final class JsonApiServer extends AbstractPage {
                         .getPaymentGateway(dto.getGatewayId());
 
         if (plugin == null) {
-            throw new IllegalStateException("Payment gateway \""
-                    + dto.getGatewayId() + "\" is not available.");
+            throw new IllegalStateException(String.format(
+                    "Payment gateway \"%s\" is not available.",
+                    dto.getGatewayId()));
         }
 
         try {
@@ -5171,6 +5172,7 @@ public final class JsonApiServer extends AbstractPage {
 
             final PaymentRequest req = new PaymentRequest();
 
+            req.setMethod(dto.getMethod());
             req.setAmount(paymentAmount.doubleValue());
             req.setCallbackUrl(callbackUrl);
             req.setCurrency(ConfigManager.getAppCurrency());

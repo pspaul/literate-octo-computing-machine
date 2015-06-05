@@ -2,7 +2,13 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-    <entry key="prompt-transfer-money">Transfer money from external account.</entry>
+    <entry key="prompt-transfer-money">Transfer money from {0}.</entry>
     <entry key="placeholder-comment">Enter a comment</entry>
+
+    <entry key="prompt-payment-fee-amount">{0} {1} cost is charged to your account.</entry>
+    <entry key="prompt-payment-fee-perc">{0}% cost is charged to your account.</entry>
+    <entry key="prompt-payment-fee-amount-perc">{0} {1} + {2}% costs are charged to your account.</entry>
+
+    <entry key="prompt-payment-min-amount">Minimum amount {0} {1}</entry>
         
 </properties>

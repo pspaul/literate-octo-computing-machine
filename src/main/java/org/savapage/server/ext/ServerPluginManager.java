@@ -496,6 +496,21 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     }
 
     /**
+     * Gets the {@link PaymentGateway} by its ID.
+     *
+     * @param gatewayId
+     *            ID of the gateway.
+     * @return The {@link PaymentGateway}, or {@code null} when not found.
+     */
+    public PaymentGateway getExternalPaymentGateway(final String gatewayId) {
+        final PaymentGatewayPlugin plugin = this.getPaymentGateway(gatewayId);
+        if (plugin instanceof PaymentGateway) {
+            return (PaymentGateway) plugin;
+        }
+        return null;
+    }
+
+    /**
      * Gets the {@link PaymentGatewayPlugin} by its ID.
      *
      * @param gatewayId

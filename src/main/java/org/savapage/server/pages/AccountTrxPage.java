@@ -45,7 +45,9 @@ import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
+import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.server.SpSession;
+import org.savapage.server.WebApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,8 +228,22 @@ public class AccountTrxPage extends AbstractListPage {
                 item.add(labelWrk);
 
                 //
+                PaymentMethodEnum extPaymentMethod = null;
+
+                if (accountTrx.getExtMethod() != null) {
+                    try {
+                        extPaymentMethod =
+                                PaymentMethodEnum.valueOf(accountTrx
+                                        .getExtMethod());
+                    } catch (Exception e) {
+                        // noop
+                    }
+                }
+
+                //
                 String printOutInfo = null;
                 String comment = accountTrx.getComment();
+                String imageSrc = null;
 
                 //
                 String msgKey;
@@ -248,6 +264,13 @@ public class AccountTrxPage extends AbstractListPage {
                     break;
 
                 case GATEWAY:
+
+                    if (extPaymentMethod != null) {
+                        imageSrc =
+                                WebApp.getPaymentMethodImgUrl(extPaymentMethod,
+                                        false);
+                    }
+
                     key = "type-gateway";
                     break;
 
@@ -313,13 +336,23 @@ public class AccountTrxPage extends AbstractListPage {
                         StringUtils.isNotBlank(accountTrx.getExtCurrencyCode())
                                 && accountTrx.getExtCurrencyCode()
                                         .equals("BTC");
+                //
+                final MarkupHelper helper = new MarkupHelper(item);
+
+                if (StringUtils.isBlank(imageSrc)) {
+                    helper.discloseLabel("trxImage");
+                } else {
+                    labelWrk =
+                            MarkupHelper.createEncloseLabel("trxImage", "",
+                                    true);
+                    labelWrk.add(new AttributeModifier("src", imageSrc));
+                    item.add(labelWrk);
+                }
 
                 //
                 item.add(new Label("trxType", localized(key)));
 
                 //
-                final MarkupHelper helper = new MarkupHelper(item);
-
                 final boolean isVisible = accountTrx.getPosPurchase() != null;
 
                 if (isVisible) {

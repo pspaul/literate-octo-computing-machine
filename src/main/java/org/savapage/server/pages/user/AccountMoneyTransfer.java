@@ -21,10 +21,21 @@
  */
 package org.savapage.server.pages.user;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.IRequestParameters;
-import org.savapage.ext.payment.PaymentGatewayPlugin;
+import org.savapage.core.SpException;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.ext.payment.PaymentGateway;
+import org.savapage.ext.payment.PaymentMethodEnum;
+import org.savapage.ext.payment.PaymentMethodInfo;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -41,24 +52,121 @@ public class AccountMoneyTransfer extends AbstractUserPage {
      */
     public AccountMoneyTransfer() {
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
         final IRequestParameters parms =
                 getRequestCycle().getRequest().getPostParameters();
 
         final String gatewayId = parms.getParameterValue("gateway").toString();
-        final String method = parms.getParameterValue("method").toString();
+        final String methodName = parms.getParameterValue("method").toString();
 
-        final PaymentGatewayPlugin plugin =
-                WebApp.get().getPluginManager().getPaymentGateway(gatewayId);
+        final PaymentMethodEnum method = PaymentMethodEnum.valueOf(methodName);
+
+        final ServerPluginManager pluginMgr = WebApp.get().getPluginManager();
+        final PaymentGateway gateway =
+                pluginMgr.getExternalPaymentGateway(gatewayId);
+
+        final PaymentMethodInfo methodInfo =
+                gateway.getExternalPaymentMethods().get(method);
+
+        methodInfo.getMinAmount();
+
+        final String currencySymbol = SpSession.getAppCurrencySymbol();
+        final int amountDecimals = ConfigManager.getUserBalanceDecimals();
 
         //
-        final MarkupHelper helper = new MarkupHelper(this);
+        helper.addModifyLabelAttr("img-payment-method", "", "src",
+                WebApp.getPaymentMethodImgUrl(method, true));
 
-        helper.addLabel("currency-symbol", SpSession.getAppCurrencySymbol());
+        //
+        try {
+
+            BigDecimal decimalWrk;
+
+            final String amount;
+            final String perc;
+
+            decimalWrk = methodInfo.getFeeAmount();
+
+            if (decimalWrk == null
+                    || decimalWrk.compareTo(BigDecimal.ZERO) == 0) {
+                amount = null;
+            } else {
+                amount =
+                        BigDecimalUtil.localize(decimalWrk, amountDecimals,
+                                getLocale(), true);
+            }
+
+            //
+            decimalWrk = methodInfo.getFeePercentage();
+
+            if (decimalWrk == null
+                    || decimalWrk.compareTo(BigDecimal.ZERO) == 0) {
+                perc = null;
+            } else {
+                perc =
+                        BigDecimalUtil.localize(
+                                decimalWrk.multiply(BigDecimal.valueOf(100)),
+                                getLocale(), true);
+
+            }
+
+            if (amount == null && perc == null) {
+
+                helper.discloseLabel("payment-costs");
+
+            } else {
+
+                final String prompt;
+
+                if (amount == null) {
+                    prompt = localized("prompt-payment-fee-perc", perc);
+                } else if (perc == null) {
+                    prompt =
+                            localized("prompt-payment-fee-amount",
+                                    currencySymbol, amount);
+                } else {
+                    prompt =
+                            localized("prompt-payment-fee-amount-perc",
+                                    currencySymbol, amount, perc);
+                }
+                helper.encloseLabel("payment-costs", prompt, true);
+            }
+
+            //
+            decimalWrk = methodInfo.getMinAmount();
+
+            if (decimalWrk == null) {
+                helper.discloseLabel("payment-min-amount");
+            } else {
+                helper.encloseLabel(
+                        "payment-min-amount",
+                        localized("prompt-payment-min-amount", currencySymbol,
+                                BigDecimalUtil.localize(decimalWrk,
+                                        amountDecimals, getLocale(), true)),
+                        true);
+            }
+
+        } catch (ParseException e) {
+            throw new SpException(e.getMessage(), e);
+        }
+
+        helper.addLabel(
+                "prompt-transfer-money",
+                localized("prompt-transfer-money", method.toString()
+                        .toLowerCase()));
+
+        //
+        helper.addLabel("currency-symbol", currencySymbol);
         helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
 
-        helper.addModifyLabelAttr("money-transfer-gateway", "value",
-                plugin.getId());
+        final Label labelWrk = new Label("money-transfer-gateway", "");
+
+        labelWrk.add(new AttributeModifier("data-payment-gateway", gatewayId));
+
+        labelWrk.add(new AttributeModifier("data-payment-method", methodName));
+
+        add(labelWrk);
 
     }
-
 }

@@ -2,7 +2,13 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-    <entry key="prompt-transfer-money">Geld overboeken van externe rekening.</entry>
-    <entry key="placeholder-comment">Voor commentaar in</entry>    
+    <entry key="prompt-transfer-money">Geld overboeken van {0}.</entry>
+    <entry key="placeholder-comment">Voor commentaar in</entry>
+        
+    <entry key="prompt-payment-fee-amount">{0} {1} kosten wordt in rekening gebracht.</entry>
+    <entry key="prompt-payment-fee-perc">{0}% kosten wordt in rekening gebracht.</entry>
+    <entry key="prompt-payment-fee-amount-perc">{0} {1} + {2}% kosten worden in rekening gebracht.</entry>
+
+    <entry key="prompt-payment-min-amount">Minimum bedrag {0} {1}</entry>
         
 </properties>

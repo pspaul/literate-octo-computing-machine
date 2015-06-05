@@ -57,6 +57,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.util.NumberUtil;
+import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -363,7 +364,10 @@ public class PrintersPage extends AbstractAdminListPage {
                 }
 
                 labelWrk = new Label("printerImage", "");
-                labelWrk.add(new AttributeModifier("src", "/images/" + imageSrc));
+
+                labelWrk.add(new AttributeModifier("src", String.format(
+                        "%s/%s", WebApp.PATH_IMAGES, imageSrc)));
+
                 item.add(labelWrk);
 
                 String assocTerminal = null;

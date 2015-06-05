@@ -7,7 +7,11 @@
 <div>
     <ul data-role="listview" data-filter="false">
         <li wicket:id="log-entry-view">
+            
             <h3>
+                <wicket:enclosure child="trxImage">
+                    <img height="28" wicket:id="trxImage"/>&nbsp;
+                </wicket:enclosure>
                 <span wicket:id="trxType"/>
                 <wicket:enclosure child="receiptNumber">
                     &bull; <span wicket:id="receiptNumber"/>

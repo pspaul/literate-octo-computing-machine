@@ -1,19 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<span class="sp-txt-info sp-txt-wrap"><wicket:message key="prompt-transfer-money"/></span>
-<br/>
+<input type="hidden" id="money-transfer-gateway"
+    wicket:id="money-transfer-gateway" data-payment-gateway=""
+    data-payment-method="" />
 
-<input type="hidden" id="money-transfer-gateway" wicket:id="money-transfer-gateway" value="?" />
+<table border="0" >
+<tr>
+<td style="padding-right: 10px;">
+<img wicket:id="img-payment-method" src="" />
+</td>
+<td valign="middle">
 
-<table><tr>
-    <td><span wicket:id="currency-symbol"/>&nbsp;</td>
-    <td width="80px">
-        <input tabindex="2" type="text" style="text-align: right;" id="money-transfer-main" 
-            value="" maxlength="3" pattern="[0-9]*"/>
-    </td>
-    <td wicket:id="decimal-separator"/>
-    <td width="50px">
-        <input tabindex="2" type="text" id="money-transfer-cents" value="00" maxlength="2" pattern="[0-9]*"/>
-    </td>
-   </tr>
+    <span class="sp-txt-info sp-txt-wrap" wicket:id="prompt-transfer-money" />
+    
+    <wicket:enclosure child="payment-min-amount">
+    <div class="sp-txt-valid sp-txt-wrap" wicket:id="payment-min-amount" />
+    </wicket:enclosure>
+    
+    <wicket:enclosure child="payment-costs">
+    <div class="sp-txt-warn sp-txt-wrap" wicket:id="payment-costs" />
+    </wicket:enclosure>
+    
+</td>
+</tr>
+</table>
+
+<table>
+	<tr>
+		<td><span wicket:id="currency-symbol" />&nbsp;</td>
+		<td width="80px"><input tabindex="2" type="text"
+			style="text-align: right;" id="money-transfer-main" value=""
+			maxlength="3" pattern="[0-9]*" /></td>
+		<td wicket:id="decimal-separator" />
+		<td width="50px"><input tabindex="2" type="text"
+			id="money-transfer-cents" value="00" maxlength="2" pattern="[0-9]*" />
+		</td>
+	</tr>
 </table>

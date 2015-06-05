@@ -1447,7 +1447,10 @@
 			$("#page-money-transfer").on("pagecreate", function(event) {
 
 				$('#button-money-transfer').click(function() {
-					_this.onMoneyTransfer($('#money-transfer-gateway').val(), $(_selMain).val(), $(_selCents).val());
+					var hidden = $('#money-transfer-gateway');
+					_this.onMoneyTransfer(
+						hidden.attr('data-payment-gateway'), hidden.attr('data-payment-method'),					
+						$(_selMain).val(), $(_selCents).val());
 					return false;
 				});
 
@@ -4831,13 +4834,14 @@
 			/**
 			 * Callbacks: pageDashboard
 			 */
-			_view.pages.moneyTransfer.onMoneyTransfer = function(gatewayId, main, cents) {
+			_view.pages.moneyTransfer.onMoneyTransfer = function(gatewayId, method, main, cents) {
 				// MoneyTransferDto.java
 				var res = _api.call({
 					request : "user-money-transfer-request",
 					dto : JSON.stringify({
 						userId : _model.user.id,
 						gatewayId : gatewayId,
+						method : method,
 						amountMain : main,
 						amountCents : cents,
 						senderUrl : window.location.protocol + "//" + window.location.host + window.location.pathname

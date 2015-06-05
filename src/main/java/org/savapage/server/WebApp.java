@@ -55,6 +55,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.Messages;
+import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.img.ImageServer;
@@ -124,6 +125,16 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             "jquery/current/jquery.js";
 
     /**
+     *
+     */
+    public static final String PATH_IMAGES = "/images";
+
+    /**
+     *
+     */
+    public static final String PATH_IMAGES_PAYMENT = PATH_IMAGES + "/payment";
+
+    /**
      * Basename of the properties file for web customization.
      */
     public static final String FILENAME_WEB_PROPERTIES = "web.properties";
@@ -184,6 +195,34 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     private String localize(final String key, final String... args) {
         return Messages.getMessage(getClass(), key, args);
+    }
+
+    /**
+     * Gets the relative PNG image URL of the payment method.
+     * <p>
+     * The name of the PNG file is EQ to the lower case enum value of the
+     * payment method. For a bigger image "@2x" is appended.
+     * </p>
+     *
+     * @param method
+     *            The {@link PaymentMethodEnum}.
+     * @param bigger
+     *            {@code true} for bigger image.
+     * @return The relative URL as string.
+     */
+    public static String getPaymentMethodImgUrl(final PaymentMethodEnum method,
+            final boolean bigger) {
+
+        final StringBuilder url =
+                new StringBuilder().append(PATH_IMAGES_PAYMENT).append("/")
+                        .append(method.toString().toLowerCase());
+
+        if (bigger) {
+            url.append("@2x");
+        }
+        url.append(".png");
+
+        return url.toString();
     }
 
     /**

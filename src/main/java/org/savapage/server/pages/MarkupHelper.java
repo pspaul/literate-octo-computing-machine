@@ -46,7 +46,7 @@ import org.apache.wicket.markup.html.basic.Label;
  * @author Datraverse B.V.
  *
  */
-public class MarkupHelper {
+public final class MarkupHelper {
 
     public static final String CSS_AMOUNT_MIN = "sp-amount-min";
 
@@ -55,7 +55,7 @@ public class MarkupHelper {
     public static final String CSS_TXT_INFO = "sp-txt-info";
     public static final String CSS_TXT_VALID = "sp-txt-valid";
 
-    public static final String CSS_TXT_COMMUNITY= "sp-txt-community";
+    public static final String CSS_TXT_COMMUNITY = "sp-txt-community";
 
     public static final String CSS_TXT_WRAP = "sp-txt-wrap";
 
@@ -104,7 +104,7 @@ public class MarkupHelper {
      *
      * @return The localizer object
      */
-    public final Localizer getLocalizer() {
+    public Localizer getLocalizer() {
         return container.getApplication().getResourceSettings().getLocalizer();
     }
 
@@ -117,7 +117,7 @@ public class MarkupHelper {
      *            The values to fill the placeholders
      * @return The localized string.
      */
-    public final String localized(final String key, final Object... objects) {
+    public String localized(final String key, final Object... objects) {
         return MessageFormat.format(getLocalizer().getString(key, container),
                 objects);
     }
@@ -129,7 +129,7 @@ public class MarkupHelper {
      *            The key from the XML resource file
      * @return The localized string.
      */
-    protected final String localized(final String key) {
+    private String localized(final String key) {
         return getLocalizer().getString(key, container);
     }
 
@@ -140,7 +140,7 @@ public class MarkupHelper {
      * @param number
      * @return The localized string.
      */
-    public final String localizedNumber(final long number) {
+    public String localizedNumber(final long number) {
         return fmNumber.format(number);
     }
 
@@ -152,7 +152,7 @@ public class MarkupHelper {
      *            The date.
      * @return The localized date string.
      */
-    public final String localizedDate(final Date date) {
+    public String localizedDate(final Date date) {
         return dfLongDate.format(date);
     }
 
@@ -166,7 +166,7 @@ public class MarkupHelper {
      *            Number of digits for the fraction.
      * @return The localized string.
      */
-    public final String localizedNumber(final double number,
+    public String localizedNumber(final double number,
             final int maxFractionDigits) {
         NumberFormat fm =
                 NumberFormat.getInstance(container.getSession().getLocale());
@@ -309,7 +309,7 @@ public class MarkupHelper {
      * @param text
      *            The value of the HTML 'value' attribute.
      */
-    public final void addLabel(final String wicketId, final String text) {
+    public void addLabel(final String wicketId, final String text) {
         Label labelWrk = new Label(wicketId, text);
         add(labelWrk);
     }
@@ -322,7 +322,7 @@ public class MarkupHelper {
      * @param value
      *            The value of the HTML 'value' attribute.
      */
-    public final void addTextInput(final String wicketId, final String value) {
+    public void addTextInput(final String wicketId, final String value) {
         Label labelWrk = new Label(wicketId);
         labelWrk.add(new AttributeModifier("value", value));
         add(labelWrk);
@@ -338,7 +338,7 @@ public class MarkupHelper {
      * @param value
      *            The value of the attribute.
      */
-    public final void addModifyLabelAttr(final String wicketId,
+    public void addModifyLabelAttr(final String wicketId,
             final String attribute, final String value) {
         Label labelWrk = new Label(wicketId);
         labelWrk.add(new AttributeModifier(attribute, value));
@@ -357,8 +357,8 @@ public class MarkupHelper {
      * @param value
      *            The value of the attribute.
      */
-    public final void addModifyLabelAttr(final String wicketId,
-            final String label, final String attribute, final String value) {
+    public void addModifyLabelAttr(final String wicketId, final String label,
+            final String attribute, final String value) {
         Label labelWrk = new Label(wicketId, label);
         labelWrk.add(new AttributeModifier(attribute, value));
         add(labelWrk);
@@ -374,7 +374,7 @@ public class MarkupHelper {
      * @param value
      *            The value of the attribute.
      */
-    public final void addAppendLabelAttr(final String wicketId,
+    public void addAppendLabelAttr(final String wicketId,
             final String attribute, final String value) {
         Label labelWrk = new Label(wicketId);
         labelWrk.add(new AttributeAppender(attribute, " " + value.trim()));
@@ -393,8 +393,8 @@ public class MarkupHelper {
      * @param value
      *            The value of the attribute.
      */
-    public final void addAppendLabelAttr(final String wicketId,
-            final String label, final String attribute, final String value) {
+    public void addAppendLabelAttr(final String wicketId, final String label,
+            final String attribute, final String value) {
         Label labelWrk = new Label(wicketId, label);
         labelWrk.add(new AttributeAppender(attribute, " " + value.trim()));
         add(labelWrk);
@@ -406,7 +406,7 @@ public class MarkupHelper {
      * @param wicketId
      *            The {@code wicket:id} of the HTML entity.
      */
-    public final void discloseLabel(final String wicketId) {
+    public void discloseLabel(final String wicketId) {
         encloseLabel(wicketId, null, false);
     }
 
@@ -421,7 +421,7 @@ public class MarkupHelper {
      *            {@code true} when label should be enclosed.
      * @return The label
      */
-    public final Label encloseLabel(final String wicketId, final String value,
+    public Label encloseLabel(final String wicketId, final String value,
             final boolean enclose) {
 
         final Label label = createEncloseLabel(wicketId, value, enclose);

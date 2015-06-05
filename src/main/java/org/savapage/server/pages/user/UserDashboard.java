@@ -35,8 +35,9 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.ext.payment.PaymentGateway;
-import org.savapage.ext.payment.PaymentGatewayPlugin;
+import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.ext.payment.PaymentMethodInfo;
+import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.ext.ServerPluginManager;
@@ -154,8 +155,7 @@ public class UserDashboard extends AbstractUserPage {
         /*
          * Bitcoin Gateway?
          */
-        final PaymentGatewayPlugin bitcoinPlugin =
-                pluginMgr.getBitcoinGateway();
+        final BitcoinGateway bitcoinPlugin = pluginMgr.getBitcoinGateway();
 
         final boolean isBitcoinGateway =
                 bitcoinPlugin != null
@@ -163,13 +163,18 @@ public class UserDashboard extends AbstractUserPage {
 
         if (isBitcoinGateway) {
 
-            final Label labelWrk = new Label("button-transfer-bitcoin");
+            final Label labelWrk = new Label("img-transfer-bitcoin");
+
             labelWrk.add(new AttributeModifier("title",
                     localized("button-title-bitcoin")));
+
+            labelWrk.add(new AttributeModifier("src", WebApp
+                    .getPaymentMethodImgUrl(PaymentMethodEnum.BITCOIN, false)));
+
             add(labelWrk);
 
         } else {
-            helper.discloseLabel("button-transfer-bitcoin");
+            helper.discloseLabel("img-transfer-bitcoin");
         }
 
         /*
@@ -182,9 +187,7 @@ public class UserDashboard extends AbstractUserPage {
                 externalPlugin != null
                         && externalPlugin.isCurrencySupported(appCurrencyCode);
 
-        //
         if (!isExternalGateway) {
-            helper.discloseLabel("button-transfer-money");
             return;
         }
 
@@ -192,8 +195,7 @@ public class UserDashboard extends AbstractUserPage {
                 new ArrayList<PaymentMethodInfo>(externalPlugin
                         .getExternalPaymentMethods().values());
 
-        add(new PropertyListView<PaymentMethodInfo>("money-transfer-methods",
-                list) {
+        add(new PropertyListView<PaymentMethodInfo>("payment-methods", list) {
 
             private static final long serialVersionUID = 1L;
 
@@ -202,16 +204,20 @@ public class UserDashboard extends AbstractUserPage {
 
                 final PaymentMethodInfo info = item.getModelObject();
 
-                final Label labelWrk = new Label("money-transfer-method", "");
+                final Label labelWrk = new Label("img-payment-method", "");
 
-                labelWrk.add(new AttributeModifier("src", info
-                        .getUrlImageNormal().toExternalForm()));
+                labelWrk.add(new AttributeModifier("src", WebApp
+                        .getPaymentMethodImgUrl(info.getMethod(), false)));
+
+                labelWrk.add(new AttributeModifier("title", localized(
+                        "button-title-transfer", info.getMethod().toString()
+                                .toLowerCase())));
 
                 labelWrk.add(new AttributeModifier("data-payment-gateway",
                         externalPlugin.getId()));
 
-                labelWrk.add(new AttributeModifier("data-payment-method",
-                        info.getMethod().toString()));
+                labelWrk.add(new AttributeModifier("data-payment-method", info
+                        .getMethod().toString()));
 
                 item.add(labelWrk);
             }

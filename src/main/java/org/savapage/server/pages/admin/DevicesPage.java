@@ -44,6 +44,7 @@ import org.savapage.core.jpa.PrinterGroupMember;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.RfIdReaderService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,7 +153,7 @@ public class DevicesPage extends AbstractAdminListPage {
      */
     public DevicesPage() {
 
-        //this.openServiceContext();
+        // this.openServiceContext();
 
         final RfIdReaderService rfidReaderService =
                 ServiceContext.getServiceFactory().getRfIdReaderService();
@@ -179,9 +180,8 @@ public class DevicesPage extends AbstractAdminListPage {
         filter.setDisabled(req.getSelect().getDisabled());
 
         //
-        final DeviceDao deviceDAO = ServiceContext.getDaoContext()
-                .getDeviceDao();
-
+        final DeviceDao deviceDAO =
+                ServiceContext.getDaoContext().getDeviceDao();
 
         final long devicesCount = deviceDAO.getListCount(filter);
 
@@ -397,7 +397,8 @@ public class DevicesPage extends AbstractAdminListPage {
                 }
 
                 labelWrk = new Label("deviceImage", "");
-                labelWrk.add(new AttributeModifier("src", "/images/" + imageSrc));
+                labelWrk.add(new AttributeModifier("src", String.format(
+                        "%s/%s", WebApp.PATH_IMAGES, imageSrc)));
                 item.add(labelWrk);
 
                 /*
