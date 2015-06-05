@@ -42,7 +42,10 @@ These fragments are used in WebAppUserPage
             wicket:id="button-assign-credit" id="button-assign-credit-page" title=""/>
             
     </div>
-    <h3><wicket:message key="header-transfer"/></h3>
+    
+    <wicket:enclosure child="header-transfer">
+       <h3 wicket:id="header-transfer"/>
+    </wicket:enclosure>
     
     <div class="sp-txt-wrap">
     

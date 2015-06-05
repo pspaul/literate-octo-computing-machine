@@ -152,6 +152,8 @@ public class UserDashboard extends AbstractUserPage {
 
         final ServerPluginManager pluginMgr = WebApp.get().getPluginManager();
 
+        int methodCount = 0;
+
         /*
          * Bitcoin Gateway?
          */
@@ -173,6 +175,8 @@ public class UserDashboard extends AbstractUserPage {
 
             add(labelWrk);
 
+            methodCount++;
+
         } else {
             helper.discloseLabel("img-transfer-bitcoin");
         }
@@ -187,13 +191,13 @@ public class UserDashboard extends AbstractUserPage {
                 externalPlugin != null
                         && externalPlugin.isCurrencySupported(appCurrencyCode);
 
-        if (!isExternalGateway) {
-            return;
+        final List<PaymentMethodInfo> list = new ArrayList<PaymentMethodInfo>();
+
+        if (isExternalGateway) {
+            list.addAll(externalPlugin.getExternalPaymentMethods().values());
         }
 
-        final List<PaymentMethodInfo> list =
-                new ArrayList<PaymentMethodInfo>(externalPlugin
-                        .getExternalPaymentMethods().values());
+        methodCount += list.size();
 
         add(new PropertyListView<PaymentMethodInfo>("payment-methods", list) {
 
@@ -223,6 +227,9 @@ public class UserDashboard extends AbstractUserPage {
             }
 
         });
+
+        helper.encloseLabel("header-transfer", localized("header-transfer"),
+                methodCount > 0);
 
     }
 }
