@@ -115,6 +115,7 @@ public final class StatsFinancialPanel extends Panel {
 
             helper.encloseLabel("bitcoin-wallet-cur", "-", true);
             helper.encloseLabel("bitcoin-wallet-btc", "-", true);
+            helper.encloseLabel("bitcoin-wallet-datetime", "-", true);
             helper.encloseLabel("bitcoin-wallet-msg", e.getMessage(), true);
             return;
         }

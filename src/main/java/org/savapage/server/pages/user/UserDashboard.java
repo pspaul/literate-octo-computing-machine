@@ -32,9 +32,11 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.helpers.AppLogLevelEnum;
 import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.ext.payment.PaymentGateway;
+import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.ext.payment.PaymentMethodInfo;
 import org.savapage.ext.payment.bitcoin.BitcoinGateway;
@@ -42,6 +44,7 @@ import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.pages.MessageContent;
 import org.savapage.server.pages.StatsEnvImpactPanel;
 import org.savapage.server.pages.StatsPageTotalPanel;
 
@@ -184,17 +187,28 @@ public class UserDashboard extends AbstractUserPage {
         /*
          * External Gateway?
          */
-        final PaymentGateway externalPlugin =
-                pluginMgr.getExternalPaymentGateway();
-
-        final boolean isExternalGateway =
-                externalPlugin != null
-                        && externalPlugin.isCurrencySupported(appCurrencyCode);
-
         final List<PaymentMethodInfo> list = new ArrayList<PaymentMethodInfo>();
 
-        if (isExternalGateway) {
-            list.addAll(externalPlugin.getExternalPaymentMethods().values());
+        final boolean isExternalGateway;
+
+        final PaymentGateway externalPlugin;
+
+        try {
+            externalPlugin = pluginMgr.getExternalPaymentGateway();
+
+            isExternalGateway =
+                    externalPlugin != null
+                            && externalPlugin
+                                    .isCurrencySupported(appCurrencyCode);
+
+            if (isExternalGateway) {
+                list.addAll(externalPlugin.getExternalPaymentMethods().values());
+            }
+
+        } catch (PaymentGatewayException e) {
+            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
+                    e.getMessage()));
+            return;
         }
 
         methodCount += list.size();

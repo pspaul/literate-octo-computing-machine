@@ -86,6 +86,10 @@ public final class TestPlugin implements PaymentGateway {
     }
 
     @Override
+    public void onCallBackCommitted(final Object pluginObject) {
+    }
+
+    @Override
     public void onInit(final String id, final String name, final boolean live,
             final Properties props) {
         // noop

@@ -21,10 +21,12 @@
  */
 package org.savapage.server.ext;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.savapage.ext.ServerPlugin;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.payment.PaymentMethodEnum;
@@ -206,13 +208,20 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
     }
 
     @Override
-    public void onPaymentAcknowledged(BitcoinGatewayTrx trx) {
+    public void onPaymentAcknowledged(final BitcoinGatewayTrx trx) {
         onPaymentTrx(trx, "ACKNOWLEDGED");
     }
 
     @Override
-    public void onPaymentConfirmed(BitcoinGatewayTrx trx) {
+    public void onPaymentConfirmed(final BitcoinGatewayTrx trx) {
         onPaymentTrx(trx, "CONFIRMED");
+    }
+
+    @Override
+    public void onPluginException(final ServerPlugin plugin,
+            final IOException ex) {
+        LOGGER.error(String.format("%s in plug-in [%s]: %s", ex.getClass()
+                .getSimpleName(), plugin.getId(), ex.getMessage()));
     }
 
 }

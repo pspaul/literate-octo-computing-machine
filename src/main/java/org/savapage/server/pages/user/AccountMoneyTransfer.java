@@ -29,14 +29,17 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.IRequestParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.helpers.AppLogLevelEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.ext.payment.PaymentGateway;
+import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.ext.payment.PaymentMethodInfo;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.pages.MessageContent;
 
 /**
  *
@@ -66,8 +69,15 @@ public class AccountMoneyTransfer extends AbstractUserPage {
         final PaymentGateway gateway =
                 pluginMgr.getExternalPaymentGateway(gatewayId);
 
-        final PaymentMethodInfo methodInfo =
-                gateway.getExternalPaymentMethods().get(method);
+        final PaymentMethodInfo methodInfo;
+
+        try {
+            methodInfo = gateway.getExternalPaymentMethods().get(method);
+        } catch (PaymentGatewayException e) {
+            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
+                    e.getMessage()));
+            return;
+        }
 
         methodInfo.getMinAmount();
 

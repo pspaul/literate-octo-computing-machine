@@ -590,6 +590,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                     ServerPluginManager
                             .create(ConfigManager.getServerExtHome());
 
+            this.pluginManager.start();
+
             SpInfo.instance().log(this.pluginManager.asLoggingInfo());
 
             /*
@@ -838,6 +840,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
     @Override
     protected void onDestroy() {
+        this.pluginManager.stop();
     }
 
 }

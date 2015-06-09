@@ -255,6 +255,11 @@ public final class CallbackServlet extends HttpServlet implements
 
                     daoContext.commit();
 
+                    if (callbackResponse.getPluginObject() != null) {
+                        plugin.onCallBackCommitted(callbackResponse
+                                .getPluginObject());
+                    }
+
                 } catch (PaymentGatewayException e) {
                     /*
                      * CAUTION: do NOT expose the urlQueryString in the logging,

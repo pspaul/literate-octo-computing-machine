@@ -52,6 +52,7 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.AccountTrxDao;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.UserAttrDao;
+import org.savapage.core.dao.helpers.AppLogLevelEnum;
 import org.savapage.core.dao.helpers.UserAttrEnum;
 import org.savapage.core.dto.UserPaymentGatewayDto;
 import org.savapage.core.jpa.Account;
@@ -62,6 +63,7 @@ import org.savapage.core.jpa.UserAttr;
 import org.savapage.core.services.AccountingException;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
 import org.savapage.core.util.DateUtil;
@@ -446,8 +448,10 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      * Gets the first generic {@link PaymentGateway}.
      *
      * @return The {@link PaymentGateway}, or {@code null} when not found.
+     * @throws PaymentGatewayException
      */
-    public PaymentGateway getGenericPaymentGateway() {
+    public PaymentGateway getGenericPaymentGateway()
+            throws PaymentGatewayException {
 
         if (isFinEnabled()) {
             for (final Entry<String, PaymentGateway> entry : this.paymentGateways
@@ -481,8 +485,10 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      * {@link PaymentMethodEnum}.
      *
      * @return The {@link PaymentGateway}, or {@code null} when not found.
+     * @throws PaymentGatewayException
      */
-    public PaymentGateway getExternalPaymentGateway() {
+    public PaymentGateway getExternalPaymentGateway()
+            throws PaymentGatewayException {
 
         for (final Entry<String, PaymentGateway> entry : this.paymentGateways
                 .entrySet()) {
@@ -607,6 +613,34 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             publishEvent(final PubLevelEnum level, final String msg) {
         AdminPublisher.instance().publish(PubTopicEnum.PAYMENT_GATEWAY, level,
                 msg);
+    }
+
+    /**
+     *
+     * @param level
+     * @param msg
+     */
+    private static void publishAndLogEvent(final PubLevelEnum level,
+            final String msg) {
+
+        final AppLogLevelEnum logLevel;
+
+        switch (level) {
+        case ERROR:
+            logLevel = AppLogLevelEnum.ERROR;
+            break;
+        case WARN:
+            logLevel = AppLogLevelEnum.WARN;
+            break;
+        case INFO:
+            // no break intended
+        default:
+            logLevel = AppLogLevelEnum.INFO;
+            break;
+        }
+
+        AppLogHelper.log(logLevel, msg);
+        publishEvent(level, msg);
     }
 
     @Override
@@ -1016,14 +1050,25 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         return builder.toString();
     }
 
+    @Override
+    public void onPluginException(final ServerPlugin plugin,
+            final IOException ex) {
+        publishAndLogEvent(PubLevelEnum.ERROR, String.format(
+                "%s in plug-in [%s]: %s", ex.getClass().getSimpleName(),
+                plugin.getId(), ex.getMessage()));
+    }
+
     /**
      * Starts all plug-ins.
      */
     public void start() {
-
         for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
                 .entrySet()) {
-            entry.getValue().onStart();
+            try {
+                entry.getValue().onStart();
+            } catch (PaymentGatewayException e) {
+                publishAndLogEvent(PubLevelEnum.ERROR, e.getMessage());
+            }
         }
     }
 
@@ -1033,7 +1078,11 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     public void stop() {
         for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
                 .entrySet()) {
-            entry.getValue().onStop();
+            try {
+                entry.getValue().onStop();
+            } catch (PaymentGatewayException e) {
+                publishAndLogEvent(PubLevelEnum.ERROR, e.getMessage());
+            }
         }
     }
 
