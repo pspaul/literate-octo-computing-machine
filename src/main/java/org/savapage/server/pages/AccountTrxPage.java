@@ -387,13 +387,7 @@ public class AccountTrxPage extends AbstractListPage {
 
                 if (isExtBitcoin) {
 
-                    helper.discloseLabel("bitcoinAddress");
-
-                    // helper.addModifyLabelAttr("bitcoinAddress", accountTrx
-                    // .getExtMethodAddress(), "href", MessageFormat
-                    // .format(bitcoinUrlPatternAddr,
-                    // accountTrx.getExtMethodAddress()));
-
+                    helper.discloseLabel("bitcoinAddress"); // not now
                     helper.discloseLabel("paymentMethodAddress");
 
                     if (StringUtils.isBlank(bitcoinUrlPatternTrx)) {
@@ -406,8 +400,9 @@ public class AccountTrxPage extends AbstractListPage {
                     } else {
                         helper.discloseLabel("extId");
 
-                        helper.addModifyLabelAttr("bitcoinTrxHash", accountTrx
-                                .getExtId(), "href", MessageFormat.format(
+                        helper.addModifyLabelAttr("bitcoinTrxHash", StringUtils
+                                .abbreviateMiddle(accountTrx.getExtId(), "...",
+                                        13), "href", MessageFormat.format(
                                 bitcoinUrlPatternTrx, accountTrx.getExtId()));
 
                     }
