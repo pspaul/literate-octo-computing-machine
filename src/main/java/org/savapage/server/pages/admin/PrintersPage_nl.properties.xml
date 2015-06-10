@@ -27,5 +27,7 @@
     <entry key="prompt-deny-access">Toegang weigeren voor:</entry>
     
     <entry key="printer-needs-configuration">Configuratie vereist</entry>
+
+    <entry key="ipp-connect-error">IPP connectie-fout [{0}]. Controleer of CUPS correct is geconfigureerd.</entry>
             
 </properties>

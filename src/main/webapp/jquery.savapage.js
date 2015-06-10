@@ -588,15 +588,18 @@
 						data : jsonData
 					}
 				}).done(function(html) {
-					$(jqId).html(html).enhanceWithin();
-					if (panel.onOutput) {
-						panel.onOutput(panel, $.parseJSON($(jqId + ' .json-rsp').text()));
+					var json;					
+					$(jqId).html(html).enhanceWithin();			
+ 					json = $(jqId + ' .json-rsp').text();										
+					if (panel.onOutput && json) {						
+						panel.onOutput(panel, $.parseJSON(json));
 					}
 				}).fail(function() {
 					_ns.PanelCommon.onDisconnected();
 				}).always(function() {
 					$.mobile.loading("hide");
 				});
+				
 			},
 
 			/**

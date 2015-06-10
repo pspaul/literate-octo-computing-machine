@@ -27,5 +27,7 @@
     <entry key="prompt-deny-access">Deny access for:</entry>
         
     <entry key="printer-needs-configuration">Configuration needed</entry>
+
+    <entry key="ipp-connect-error">IPP connection error [{0}]. Please check if CUPS is configured correctly.</entry>
         
 </properties>
