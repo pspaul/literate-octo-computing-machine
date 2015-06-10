@@ -23,6 +23,7 @@ package org.savapage.server.pages.admin;
 
 import java.text.ParseException;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
@@ -54,25 +55,21 @@ public class PrinterAccountingAddin extends AbstractAdminPage {
      */
     public PrinterAccountingAddin() {
 
-        //this.openServiceContext();
+        final Long printerId =
+                getRequestCycle().getRequest().getPostParameters()
+                        .getParameterValue("id").toLong();
 
-        try {
+        handlePage(printerId);
 
-            final Long printerId =
-                    getRequestCycle().getRequest().getPostParameters()
-                            .getParameterValue("id").toLong();
-
-            handlePage(printerId);
-
-        } finally {
-
-        }
     }
 
     /**
      *
      */
     private void handlePage(Long printerId) {
+
+        add(new Label("cost-per-side", localized("cost-per-side",
+                ConfigManager.getAppCurrencyCode())));
 
         final Printer printer =
                 ServiceContext.getDaoContext().getPrinterDao()

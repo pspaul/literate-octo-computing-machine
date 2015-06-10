@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.markup.html.basic.Label;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
@@ -47,25 +49,20 @@ public class PrinterMediaSourceAddin extends AbstractAdminPage {
      */
     public PrinterMediaSourceAddin() {
 
-        //this.openServiceContext();
+        final Long printerId =
+                getRequestCycle().getRequest().getPostParameters()
+                        .getParameterValue("id").toLong();
 
-        try {
-
-            final Long printerId =
-                    getRequestCycle().getRequest().getPostParameters()
-                            .getParameterValue("id").toLong();
-
-            handlePage(printerId);
-
-        } finally {
-
-        }
+        handlePage(printerId);
     }
 
     /**
      *
      */
     private void handlePage(Long printerId) {
+
+        add(new Label("cost-per-side", localized("cost-per-side",
+                ConfigManager.getAppCurrencyCode())));
 
         final Printer printer =
                 ServiceContext.getDaoContext().getPrinterDao()
