@@ -712,12 +712,13 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         dto.setTransactionId(trx.getTransactionId());
         dto.setUserId(userId);
 
-        if (isAck) {
-            dto.setAmount(dto.getPaymentMethodAmount().multiply(
-                    BigDecimal.valueOf(trx.getExchangeRate())));
+        dto.setAmount(dto.getPaymentMethodAmount().multiply(
+                BigDecimal.valueOf(trx.getExchangeRate())));
 
+        if (isAck) {
+            dto.setAmountAcknowledged(dto.getAmount());
         } else {
-            dto.setAmount(BigDecimal.ZERO);
+            dto.setAmountAcknowledged(BigDecimal.ZERO);
         }
 
         dto.setComment(null);
@@ -949,10 +950,12 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         dto.setPaymentMethodFee(trx.getFee());
 
         /*
-         * Calculate amount in App Currency.
+         * Calculate amount in App Currency and acknowledge.
          */
         dto.setAmount(trx.getAmount().subtract(trx.getFee())
                 .divide(trx.getExchangeRate()));
+
+        dto.setAmountAcknowledged(dto.getAmount());
 
         /*
          * Trx identifications.
