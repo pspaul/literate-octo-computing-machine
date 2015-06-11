@@ -23,6 +23,7 @@ package org.savapage.server.jsonrpc;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Currency;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
@@ -49,6 +50,7 @@ import org.savapage.core.json.rpc.JsonRpcMethodParser;
 import org.savapage.core.json.rpc.JsonRpcMethodResult;
 import org.savapage.core.json.rpc.ParamsPaging;
 import org.savapage.core.json.rpc.impl.ParamsAddInternalUser;
+import org.savapage.core.json.rpc.impl.ParamsChangeBaseCurrency;
 import org.savapage.core.json.rpc.impl.ParamsPrinterAccessControl;
 import org.savapage.core.json.rpc.impl.ParamsPrinterSnmp;
 import org.savapage.core.json.rpc.impl.ParamsSetUserGroupProperties;
@@ -57,6 +59,7 @@ import org.savapage.core.json.rpc.impl.ParamsSingleFilterList;
 import org.savapage.core.json.rpc.impl.ParamsSourceGroupMembers;
 import org.savapage.core.json.rpc.impl.ParamsUniqueName;
 import org.savapage.core.json.rpc.impl.ResultUserGroupAccess;
+import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
@@ -86,6 +89,12 @@ public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
     private static final long serialVersionUID = 1L;
 
     private static final String LOOPBACK_ADDRESS = "127.0.0.1";
+
+    /**
+     * .
+     */
+    private static final AccountingService ACCOUNTING_SERVICE = ServiceContext
+            .getServiceFactory().getAccountingService();
 
     /**
      * .
@@ -151,6 +160,24 @@ public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
         httpResponse.getOutputStream().print(jsonOut);
         httpResponse.setContentType(JsonRpcConfig.INTERNET_MEDIA_TYPE);
 
+    }
+
+    /**
+     * Locks or unlocks the database.
+     *
+     * @param methodName
+     *            The {@link JsonRpcMethodName}.
+     * @param lock
+     *            {@code true==lock, false==unlock}.
+     */
+    private static void setDatabaseLock(final JsonRpcMethodName methodName,
+            final boolean lock) {
+
+        if (methodName == JsonRpcMethodName.CHANGE_BASE_CURRENCY) {
+            ReadWriteLockEnum.DATABASE_READONLY.setWriteLock(lock);
+        } else {
+            ReadWriteLockEnum.DATABASE_READONLY.setReadLock(lock);
+        }
     }
 
     /**
@@ -286,7 +313,7 @@ public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
 
         final DaoContext daoContext = ServiceContext.getDaoContext();
 
-        ReadWriteLockEnum.DATABASE_READONLY.setReadLock(true);
+        setDatabaseLock(methodName, true);
 
         AbstractJsonRpcMessage rpcResponse = null;
 
@@ -312,6 +339,23 @@ public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
                         USER_GROUP_SERVICE.addUserGroup(batchCommitter,
                                 methodParser.getParams(ParamsUniqueName.class)
                                         .getUniqueName());
+                break;
+
+            case CHANGE_BASE_CURRENCY:
+
+                final ParamsChangeBaseCurrency parmsChangeBaseCurrency =
+                        methodParser.getParams(ParamsChangeBaseCurrency.class);
+
+                batchCommitter = createBatchCommitter();
+
+                rpcResponse =
+                        ACCOUNTING_SERVICE.changeBaseCurrency(batchCommitter,
+                                Currency.getInstance(parmsChangeBaseCurrency
+                                        .getCurrencyCodeFrom()), Currency
+                                        .getInstance(parmsChangeBaseCurrency
+                                                .getCurrencyCodeTo()),
+                                parmsChangeBaseCurrency.getExchangeRate());
+
                 break;
 
             case DELETE_USER:
@@ -476,8 +520,10 @@ public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
 
         } finally {
 
-            // first statement
-            ReadWriteLockEnum.DATABASE_READONLY.setReadLock(false);
+            /*
+             * First statement.
+             */
+            setDatabaseLock(methodName, false);
 
             if (batchCommitter == null) {
                 daoContext.rollback();
