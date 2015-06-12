@@ -7,4 +7,16 @@
     <entry key="credit">Credit</entry>
     <entry key="date">Date</entry>
     <entry key="button-refresh">Refresh</entry>
+    
+    <entry key="accounts-min">Min</entry>
+    <entry key="accounts-max">Max</entry>
+    <entry key="accounts-avg">Avg</entry>
+    <entry key="accounts-count">Count</entry>
+    
+    <entry key="bitcoin-wallet">Bitcoin Wallet</entry>
+    <entry key="bitcoin-addresses">Addresses</entry>
+    <entry key="bitcoin-addresses-total">Total</entry>
+    <entry key="bitcoin-addresses-open">Open</entry>
+    <entry key="bitcoin-addresses-payments">Payments</entry>    
+    
 </properties>

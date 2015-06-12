@@ -17,56 +17,71 @@
 	            <tr>
                     <th data-priority="1"><wicket:message key="accounts"/></th>
                     <th data-priority="1"><wicket:message key="debit"/></th>
-                    <th data-priority="1"><wicket:message key="credit"/></th>
+                    <th colspan="2" data-priority="1"><wicket:message key="credit"/></th>
 	            </tr>
             </thead>
             <tbody>
                 <tr>
                     <td wicket:id="currency-code"/>
                     <td class="sp-txt-info" wicket:id="accounts-deb-sum"/>
-                    <td class="sp-txt-warn" wicket:id="accounts-crd-sum"/>
+                    <td colspan="2" class="sp-txt-warn" wicket:id="accounts-crd-sum"/>
                 </tr>
                 <tr>
-                    <td>Min</td>
+                    <td><wicket:message key="accounts-min"/></td>
                     <td class="sp-txt-info" wicket:id="accounts-deb-min"/>
-                    <td class="sp-txt-warn" wicket:id="accounts-crd-min"/>
+                    <td colspan="2" class="sp-txt-warn" wicket:id="accounts-crd-min"/>
                 </tr>
                 <tr>
-                    <td>Max</td>
+                    <td><wicket:message key="accounts-max"/></td>
                     <td class="sp-txt-info" wicket:id="accounts-deb-max"/>
-                    <td class="sp-txt-warn" wicket:id="accounts-crd-max"/>
+                    <td colspan="2" class="sp-txt-warn" wicket:id="accounts-crd-max"/>
                 </tr>
                 <tr>
-                    <td>Avg</td>
+                    <td><wicket:message key="accounts-avg"/></td>
                     <td class="sp-txt-info" wicket:id="accounts-deb-avg"/>
-                    <td class="sp-txt-warn" wicket:id="accounts-crd-avg"/>
+                    <td colspan="2" class="sp-txt-warn" wicket:id="accounts-crd-avg"/>
                 </tr>
                 <tr>
-                    <td>Count</td>
+                    <td><wicket:message key="accounts-count"/></td>
                     <td class="sp-txt-info" wicket:id="accounts-deb-cnt"/>
-                    <td class="sp-txt-warn" wicket:id="accounts-crd-cnt"/>
+                    <td colspan="2" class="sp-txt-warn" wicket:id="accounts-crd-cnt"/>
                 </tr>
 <wicket:enclosure child="bitcoin-wallet-cur-code">                
                 <tr>
-                    <th data-priority="1">Bitcoin Wallet</th>
+                    <th data-priority="1"><wicket:message key="bitcoin-wallet"/></th>
                     <th data-priority="1"><wicket:message key="debit"/></th>
-                    <th data-priority="1"><wicket:message key="date"/></th>
+                    <th colspan="2" data-priority="1"><wicket:message key="date"/></th>
                 </tr>
                 <tr>
                     <td wicket:id="bitcoin-wallet-cur-code"/>
                     <td class="sp-txt-info" wicket:id="bitcoin-wallet-cur"/>
-                    <td class="sp-txt-info" wicket:id="bitcoin-wallet-datetime"/>
+                    <td colspan="2" class="sp-txt-info" wicket:id="bitcoin-wallet-datetime"/>
                 </tr>
                 <tr>
                     <td>BTC</td>
                     <td class="sp-txt-info" wicket:id="bitcoin-wallet-btc"/>
-                    <td class="sp-txt-info">
+                    <td colspan="2"/>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://blockchain.info/wallet/65086000-03b6-4355-a5ab-698151bf7db0"
+                            target="_blank"><wicket:message key="bitcoin-addresses"/></a>
+                    </td>
+                    <th data-priority="1"><wicket:message key="bitcoin-addresses-total"/></th>
+                    <th data-priority="1"><wicket:message key="bitcoin-addresses-payments"/></th>
+                    <th data-priority="1"><wicket:message key="bitcoin-addresses-open"/></th>
+                </tr>
+                <tr>
+                    <td>
                         <a href="#" id="button-bitcoin-wallet-refresh" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh ui-mini">
                             <wicket:message key="button-refresh"/>
-                        </a>
-                        
+                        </a>                    
                     </td>
+                    <td class="sp-txt-info" wicket:id="bitcoin-wallet-addr"/>
+                    <td class="sp-txt-info" wicket:id="bitcoin-wallet-addr-received"/>
+                    <td class="sp-txt-info" wicket:id="bitcoin-wallet-addr-open"/>
                 </tr>
+                
 </wicket:enclosure>
 <wicket:enclosure child="bitcoin-wallet-msg">                
                 <tr>

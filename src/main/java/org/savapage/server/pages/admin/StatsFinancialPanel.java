@@ -53,6 +53,8 @@ public final class StatsFinancialPanel extends Panel {
      */
     private static final long serialVersionUID = 1L;
 
+    private static final String VALUE_NOT_FOUND = "-";
+
     /**
      *
      * @param id
@@ -113,9 +115,10 @@ public final class StatsFinancialPanel extends Panel {
 
         } catch (PaymentGatewayException | IOException e) {
 
-            helper.encloseLabel("bitcoin-wallet-cur", "-", true);
-            helper.encloseLabel("bitcoin-wallet-btc", "-", true);
-            helper.encloseLabel("bitcoin-wallet-datetime", "-", true);
+            helper.encloseLabel("bitcoin-wallet-cur", VALUE_NOT_FOUND, true);
+            helper.encloseLabel("bitcoin-wallet-btc", VALUE_NOT_FOUND, true);
+            helper.encloseLabel("bitcoin-wallet-datetime", VALUE_NOT_FOUND,
+                    true);
             helper.encloseLabel("bitcoin-wallet-msg", e.getMessage(), true);
             return;
         }
@@ -140,6 +143,32 @@ public final class StatsFinancialPanel extends Panel {
 
         helper.addLabel("bitcoin-wallet-datetime",
                 DateUtil.formattedDateTime(wallet.getDate()));
+
+        String count;
+
+        //
+        if (wallet.getAddressCount() == null) {
+            count = VALUE_NOT_FOUND;
+        } else {
+            count = wallet.getAddressCount().toString();
+        }
+        helper.addLabel("bitcoin-wallet-addr", count);
+
+        //
+        if (wallet.getAddressCountOpen() == null) {
+            count = VALUE_NOT_FOUND;
+        } else {
+            count = wallet.getAddressCountOpen().toString();
+        }
+        helper.addLabel("bitcoin-wallet-addr-open", count);
+
+        //
+        if (wallet.getAddressCountReceived() == null) {
+            count = VALUE_NOT_FOUND;
+        } else {
+            count = wallet.getAddressCountReceived().toString();
+        }
+        helper.addLabel("bitcoin-wallet-addr-received", count);
 
     }
 }

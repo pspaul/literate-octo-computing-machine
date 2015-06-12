@@ -31,7 +31,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -210,7 +209,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
         synchronized (this) {
             this.walletInfoCache =
-                    gateway.getWalletInfo(ConfigManager.getAppCurrency());
+                    gateway.getWalletInfo(ConfigManager.getAppCurrency(), false);
         }
     }
 
@@ -232,7 +231,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                         Key.WEBAPP_ADMIN_BITCOIN_WALLET_CACHE_EXPIRY_SECS)
                         * DateUtil.DURATION_MSEC_SECOND;
 
-        return timeRef < new Date().getTime();
+        return timeRef < System.currentTimeMillis();
     }
 
     /**
@@ -249,7 +248,8 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
             if (refresh || isWalletInfoCacheExpired()) {
                 this.walletInfoCache =
-                        gateway.getWalletInfo(ConfigManager.getAppCurrency());
+                        gateway.getWalletInfo(ConfigManager.getAppCurrency(),
+                                false);
             }
 
             try {
@@ -773,8 +773,13 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         } else {
 
             /*
-             * Find User by Bitcoin ADDRESS in AccountTrx. Did user reused
-             * bitcoin address to make an extra payment?
+             *
+             * User reused bitcoin address to make an extra payment ...
+             *
+             * ... or ...
+             *
+             * A payment was send from the Wallet and an earlier payment address
+             * was used to pay.
              */
             final List<AccountTrx> list =
                     accountTrxDao.findByExtMethodAddress(trx
@@ -794,27 +799,34 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 } else {
                     trxUser = userAccounts.get(0).getUser();
                 }
-
             }
+
+            final StringBuilder msg = new StringBuilder(128);
+
+            msg.append("Ignored unknown bitcoin transaction ").append(
+                    trx.getTransactionId());
+
+            if (trxUser == null) {
+                msg.append(trx.getTransactionId()).append(" and adress ")
+                        .append(trx.getTransactionAddress());
+            } else {
+                msg.append(trx.getTransactionId())
+                        .append(" because adress ")
+                        .append(trx.getTransactionAddress())
+                        .append(" is already consumed by user \"")
+                        .append(trxUser.getUserId())
+                        .append("\" (this might be the result of "
+                                + "a payment from the wallet, "
+                                + "or an extra payment send by the user)");
+            }
+
+            msg.append(": ").append(trx.getSatoshi()).append(" satoshi, ")
+                    .append(trx.getConfirmations()).append(" confirmations.");
+
+            throw new PaymentGatewayException(msg.toString());
         }
 
-        /*
-         * INVARIANT: User must be found.
-         */
-        final Account orphanedPaymentAccount;
-
-        if (trxUser == null) {
-
-            // TODO
-            orphanedPaymentAccount = null;
-
-            // TODO: for now...
-            throw new PaymentGatewayException(
-                    "No user found for bitcoin adress or transaction.");
-
-        } else {
-            orphanedPaymentAccount = null;
-        }
+        final Account orphanedPaymentAccount = null;
 
         /*
          * Lock User.
