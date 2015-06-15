@@ -27,8 +27,10 @@ import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.ext.ServerPlugin;
+import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayTrx;
+import org.savapage.ext.payment.PaymentGatewayTrxEvent;
 import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.ext.payment.bitcoin.BitcoinGatewayListener;
 import org.savapage.ext.payment.bitcoin.BitcoinGatewayTrx;
@@ -51,6 +53,24 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PaymentGatewayLogger.class);
 
+    /**
+     * .
+     */
+    private static final String STAT_TRUSTED = "TRUSTED";
+
+    /**
+     * .
+     */
+    private static final String STAT_ACKNOWLEDGED = "ACKNOWLEDGED";
+
+    /**
+     * .
+     */
+    private static final String STAT_CONFIRMED = "CONFIRMED";
+
+    /**
+     * .
+     */
     private static final String DATEFORMAT_PATTERN = "yyyy-MM-dd'\t'HH:mm:ss.S";
 
     /**
@@ -109,10 +129,10 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
      * @param trx
      *            The {@link PaymentGatewayTrx}.
      */
-    private void onPaymentTrx(final PaymentGatewayTrx trx) {
+    private PaymentGatewayTrxEvent onPaymentTrx(final PaymentGatewayTrx trx) {
 
         if (!isEnabled()) {
-            return;
+            return null;
         }
 
         final String mode;
@@ -150,6 +170,8 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
         msg.append('\t').append(StringUtils.defaultString(trx.getComment()));
 
         LOGGER.info(msg.toString());
+
+        return null;
     }
 
     /**
@@ -159,10 +181,11 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
      * @param status
      *            The status.
      */
-    private void onPaymentTrx(final BitcoinGatewayTrx trx, final String status) {
+    private PaymentGatewayTrxEvent onPaymentTrx(final BitcoinGatewayTrx trx,
+            final String status) {
 
         if (!isEnabled()) {
-            return;
+            return null;
         }
 
         final String mode = MODE_LIVE;
@@ -180,41 +203,62 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
         msg.append('\t').append(trx.getSatoshi());
 
         LOGGER.info(msg.toString());
+
+        return null;
     }
 
     @Override
-    public void onPaymentCancelled(final PaymentGatewayTrx trx) {
-        onPaymentTrx(trx);
+    public PaymentGatewayTrxEvent
+            onPaymentCancelled(final PaymentGatewayTrx trx) {
+        return onPaymentTrx(trx);
+
     }
 
     @Override
-    public void onPaymentExpired(final PaymentGatewayTrx trx) {
-        onPaymentTrx(trx);
+    public PaymentGatewayTrxEvent onPaymentExpired(final PaymentGatewayTrx trx) {
+        return onPaymentTrx(trx);
     }
 
     @Override
-    public void onPaymentPending(final PaymentGatewayTrx trx) {
-        onPaymentTrx(trx);
+    public PaymentGatewayTrxEvent onPaymentPending(final PaymentGatewayTrx trx) {
+        return onPaymentTrx(trx);
     }
 
     @Override
-    public void onPaymentRefunded(final PaymentGatewayTrx trx) {
-        onPaymentTrx(trx);
+    public PaymentGatewayTrxEvent
+            onPaymentRefunded(final PaymentGatewayTrx trx) {
+        return onPaymentTrx(trx);
     }
 
     @Override
-    public void onPaymentAcknowledged(final PaymentGatewayTrx trx) {
-        onPaymentTrx(trx);
+    public PaymentGatewayTrxEvent onPaymentAcknowledged(
+            final PaymentGatewayTrx trx) {
+        return onPaymentTrx(trx);
     }
 
     @Override
-    public void onPaymentAcknowledged(final BitcoinGatewayTrx trx) {
-        onPaymentTrx(trx, "ACKNOWLEDGED");
+    public void onPaymentCommitted(final PaymentGatewayTrxEvent event)
+            throws PaymentGatewayException {
+        // noop
     }
 
     @Override
-    public void onPaymentConfirmed(final BitcoinGatewayTrx trx) {
-        onPaymentTrx(trx, "CONFIRMED");
+    public PaymentGatewayTrxEvent
+            onPaymentConfirmed(final BitcoinGatewayTrx trx) {
+
+        final String statusMsg;
+
+        if (trx.isTrusted()) {
+            statusMsg = STAT_TRUSTED;
+        } else if (trx.isAcknowledged()) {
+            statusMsg = STAT_ACKNOWLEDGED;
+        } else {
+            statusMsg = STAT_CONFIRMED;
+        }
+
+        this.onPaymentTrx(trx, statusMsg);
+
+        return null;
     }
 
     @Override

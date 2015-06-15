@@ -59,6 +59,7 @@ import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserAccount;
 import org.savapage.core.jpa.UserAttr;
+import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.services.AccountingException;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
@@ -73,6 +74,7 @@ import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayTrx;
+import org.savapage.ext.payment.PaymentGatewayTrxEvent;
 import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.ext.payment.bitcoin.BitcoinGatewayListener;
@@ -107,6 +109,11 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     /**
      * .
      */
+    private static final String STAT_TRUSTED = "TRUSTED";
+
+    /**
+     * .
+     */
     private static final String STAT_ACKNOWLEDGED = "ACKNOWLEDGED";
 
     /**
@@ -123,11 +130,6 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      * .
      */
     private static final String STAT_EXPIRED = "EXPIRED";
-
-    /**
-     *
-     */
-    private static final String CURRENCY_CODE_BTC = "BTC";
 
     /**
      * Property key prefix.
@@ -644,7 +646,8 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     }
 
     @Override
-    public void onPaymentCancelled(final PaymentGatewayTrx trx) {
+    public PaymentGatewayTrxEvent
+            onPaymentCancelled(final PaymentGatewayTrx trx) {
 
         publishEvent(
                 PubLevelEnum.WARN,
@@ -659,10 +662,18 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                                         Locale.getDefault()), trx.getAmount())));
         logPaymentTrxReceived(trx, STAT_CANCELLED);
         PaymentGatewayLogger.instance().onPaymentCancelled(trx);
+
+        //
+        final PaymentGatewayTrxEvent trxEvent = new PaymentGatewayTrxEvent();
+
+        trxEvent.setUserId(trx.getUserId());
+        trxEvent.setBalanceUpdate(false);
+
+        return trxEvent;
     }
 
     @Override
-    public void onPaymentExpired(final PaymentGatewayTrx trx) {
+    public PaymentGatewayTrxEvent onPaymentExpired(final PaymentGatewayTrx trx) {
 
         publishEvent(
                 PubLevelEnum.WARN,
@@ -679,6 +690,14 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         logPaymentTrxReceived(trx, STAT_EXPIRED);
 
         PaymentGatewayLogger.instance().onPaymentExpired(trx);
+
+        //
+        final PaymentGatewayTrxEvent trxEvent = new PaymentGatewayTrxEvent();
+
+        trxEvent.setUserId(trx.getUserId());
+        trxEvent.setBalanceUpdate(false);
+
+        return trxEvent;
     }
 
     /**
@@ -688,13 +707,13 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      *            The {@link BitcoinGatewayTrx}.
      * @param userId
      *            The unique user id.
-     * @param isAck
+     * @param isTrusted
      *            {@code true} if the payment is acknowledged.
      * @return The {@link UserPaymentGatewayDto}.
      */
     private static UserPaymentGatewayDto createDtoFromTrx(
             final BitcoinGatewayTrx trx, final String userId,
-            final boolean isAck) {
+            final boolean isTrusted) {
 
         final UserPaymentGatewayDto dto = new UserPaymentGatewayDto();
 
@@ -706,7 +725,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         dto.setPaymentMethodAddress(trx.getTransactionAddress());
         dto.setPaymentMethodAmount(BigDecimal.valueOf(trx.getSatoshi()).divide(
                 SATOSHIS_IN_BTC));
-        dto.setPaymentMethodCurrency(CURRENCY_CODE_BTC);
+        dto.setPaymentMethodCurrency(CurrencyUtil.BITCOIN_CURRENCY_CODE);
         dto.setPaymentMethodDetails(null);
         dto.setPaymentMethodFee(BigDecimal.ZERO);
         dto.setTransactionId(trx.getTransactionId());
@@ -715,7 +734,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         dto.setAmount(dto.getPaymentMethodAmount().multiply(
                 BigDecimal.valueOf(trx.getExchangeRate())));
 
-        if (isAck) {
+        if (isTrusted) {
             dto.setAmountAcknowledged(dto.getAmount());
         } else {
             dto.setAmountAcknowledged(BigDecimal.ZERO);
@@ -727,16 +746,10 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         return dto;
     }
 
-    /**
-     *
-     * @param trx
-     *            The {@link BitcoinGatewayTrx}.
-     * @param isAck
-     *            {@code true} if the payment is acknowledged.
-     * @throws PaymentGatewayException
-     */
-    private void onBitcoinPayment(final BitcoinGatewayTrx trx,
-            final boolean isAck) throws PaymentGatewayException {
+    @Override
+    public PaymentGatewayTrxEvent
+            onPaymentConfirmed(final BitcoinGatewayTrx trx)
+                    throws PaymentGatewayException {
 
         final DaoContext daoCtx = ServiceContext.getDaoContext();
 
@@ -826,7 +839,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             throw new PaymentGatewayException(msg.toString());
         }
 
-        final Account orphanedPaymentAccount = null;
+        final Account orphanedPaymentAccount = null; // TODO
 
         /*
          * Lock User.
@@ -838,31 +851,57 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         /*
          *
          */
-        final UserPaymentGatewayDto dto = createDtoFromTrx(trx, userId, isAck);
+        final boolean isBalanceUpdate;
+
+        final UserPaymentGatewayDto dto =
+                createDtoFromTrx(trx, userId, trx.isAcknowledged());
 
         final AccountingService accountingService =
                 ServiceContext.getServiceFactory().getAccountingService();
 
+        final String baseCurrencyAmount;
+
         if (accountTrx == null) {
 
-            if (isAck) {
+            baseCurrencyAmount = dto.getAmount().toPlainString();
+
+            isBalanceUpdate = trx.isAcknowledged();
+
+            if (isBalanceUpdate) {
+
                 accountingService.acceptFundsFromGateway(lockedUser, dto,
                         orphanedPaymentAccount);
+
             } else {
                 accountingService
-                        .acceptPendingFundsFromGateway(lockedUser, dto);
+                        .createPendingFundsFromGateway(lockedUser, dto);
             }
 
         } else {
 
+            final boolean isAmountPending =
+                    accountTrx.getAmount().compareTo(BigDecimal.ZERO) == 0;
+
+            isBalanceUpdate = trx.isAcknowledged() && isAmountPending;
+
             try {
-                if (isAck) {
-                    accountingService.acknowledgePendingFundsFromGateway(
-                            accountTrx, dto);
-                } else {
-                    accountingService.updatePendingFundsFromGateway(accountTrx,
+
+                if (isBalanceUpdate) {
+
+                    baseCurrencyAmount = dto.getAmount().toPlainString();
+
+                    accountingService.acceptPendingFundsFromGateway(accountTrx,
                             dto);
+
+                } else {
+
+                    baseCurrencyAmount = accountTrx.getAmount().toPlainString();
+
+                    accountTrx.setExtConfirmations(dto.getConfirmations());
+                    accountTrxDao.update(accountTrx);
+
                 }
+
             } catch (AccountingException e) {
                 throw new PaymentGatewayException(e.getMessage(), e);
             }
@@ -878,48 +917,61 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         /*
          * Notifications and logging.
          */
+
+        PaymentGatewayLogger.instance().onPaymentConfirmed(trx);
+
         final String statusMsg;
         final String msgKey;
 
-        if (isAck) {
+        final PubLevelEnum pubLevel;
+
+        if (trx.isTrusted()) {
+            statusMsg = STAT_TRUSTED;
+            msgKey = "payment-status-trusted";
+            pubLevel = PubLevelEnum.CLEAR;
+        } else if (trx.isAcknowledged()) {
             statusMsg = STAT_ACKNOWLEDGED;
-            msgKey = "payment-confirmed-acknowledged";
-            PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
+            msgKey = "payment-status-acknowledged";
+            pubLevel = PubLevelEnum.CLEAR;
         } else {
             statusMsg = STAT_CONFIRMED;
-            msgKey = "payment-confirmed";
-            PaymentGatewayLogger.instance().onPaymentConfirmed(trx);
+            msgKey = "payment-status-pending";
+            pubLevel = PubLevelEnum.WARN;
         }
 
         publishEvent(
-                PubLevelEnum.INFO,
-                localize(msgKey,
+                pubLevel,
+                localize("payment-confirmed",
                 //
-                        String.format("%s %s (%s %s)", CURRENCY_CODE_BTC, dto
-                                .getPaymentMethodAmount().toPlainString(), dto
-                                .getCurrencyCode(), dto.getAmount()
-                                .toPlainString()),
+                        String.format("%s %s (%s %s)",
+                                CurrencyUtil.BITCOIN_CURRENCY_CODE, dto
+                                        .getPaymentMethodAmount()
+                                        .toPlainString(),
+                                dto.getCurrencyCode(), baseCurrencyAmount),
                         //
-                        trx.getGatewayId(), userId, String.valueOf(trx
-                                .getConfirmations())));
+                        trx.getGatewayId(),
+                        //
+                        userId,
+                        //
+                        String.valueOf(trx.getConfirmations()),
+                        //
+                        localize(msgKey)
+                //
+                ));
 
         logPaymentTrxReceived(trx, statusMsg, userId);
+
+        //
+        final PaymentGatewayTrxEvent trxEvent = new PaymentGatewayTrxEvent();
+
+        trxEvent.setUserId(userId);
+        trxEvent.setBalanceUpdate(isBalanceUpdate);
+
+        return trxEvent;
     }
 
     @Override
-    public void onPaymentConfirmed(final BitcoinGatewayTrx trx)
-            throws PaymentGatewayException {
-        onBitcoinPayment(trx, false);
-    }
-
-    @Override
-    public void onPaymentAcknowledged(final BitcoinGatewayTrx trx)
-            throws PaymentGatewayException {
-        onBitcoinPayment(trx, true);
-    }
-
-    @Override
-    public void onPaymentPending(final PaymentGatewayTrx trx) {
+    public PaymentGatewayTrxEvent onPaymentPending(final PaymentGatewayTrx trx) {
 
         logPaymentTrxReceived(trx, STAT_CONFIRMED);
         publishEvent(
@@ -935,11 +987,28 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                         String.valueOf(trx.getConfirmations())));
 
         PaymentGatewayLogger.instance().onPaymentPending(trx);
+
+        //
+        final PaymentGatewayTrxEvent trxEvent = new PaymentGatewayTrxEvent();
+
+        trxEvent.setUserId(trx.getUserId());
+        trxEvent.setBalanceUpdate(false);
+
+        return trxEvent;
     }
 
     @Override
-    public void onPaymentAcknowledged(final PaymentGatewayTrx trx)
+    public void onPaymentCommitted(final PaymentGatewayTrxEvent event)
             throws PaymentGatewayException {
+
+        if (event.isBalanceUpdate()) {
+            sendAccountInfoUserMsg(event.getUserId());
+        }
+    }
+
+    @Override
+    public PaymentGatewayTrxEvent onPaymentAcknowledged(
+            final PaymentGatewayTrx trx) throws PaymentGatewayException {
 
         logPaymentTrxReceived(trx, STAT_ACKNOWLEDGED);
 
@@ -1010,10 +1079,19 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                         trx.getGatewayId(), trx.getUserId()));
 
         PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
+
+        //
+        final PaymentGatewayTrxEvent trxEvent = new PaymentGatewayTrxEvent();
+
+        trxEvent.setUserId(trx.getUserId());
+        trxEvent.setBalanceUpdate(true);
+
+        return trxEvent;
     }
 
     @Override
-    public void onPaymentRefunded(final PaymentGatewayTrx trx) {
+    public PaymentGatewayTrxEvent
+            onPaymentRefunded(final PaymentGatewayTrx trx) {
         throw new UnsupportedOperationException("not supported yet");
     }
 
@@ -1153,6 +1231,24 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     private String localize(final String key, final String... args) {
         return Messages.getMessage(getClass(),
                 ConfigManager.getDefaultLocale(), key, args);
+    }
+
+    /**
+     * Sends a message to user Web App to notify a change of account balance.
+     *
+     * @param userId
+     *            The unique user id.
+     */
+    private static void sendAccountInfoUserMsg(final String userId) {
+        if (UserMsgIndicator.isSafePagesDirPresent(userId)) {
+            try {
+                UserMsgIndicator.write(userId,
+                        ServiceContext.getTransactionDate(),
+                        UserMsgIndicator.Msg.ACCOUNT_INFO, null);
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
     }
 
 }

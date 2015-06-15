@@ -43,6 +43,7 @@ import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
 import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.server.SpSession;
@@ -72,11 +73,6 @@ public class AccountTrxPage extends AbstractListPage {
      * ODD number.
      */
     private static final int MAX_PAGES_IN_NAVBAR = 5;
-
-    /**
-     * .
-     */
-    private static final int BITCOIN_DECIMALS = 8;
 
     private final class AccountTrxListView extends PropertyListView<AccountTrx> {
 
@@ -272,7 +268,8 @@ public class AccountTrxPage extends AbstractListPage {
 
             final boolean isExtBitcoin =
                     StringUtils.isNotBlank(accountTrx.getExtCurrencyCode())
-                            && accountTrx.getExtCurrencyCode().equals("BTC");
+                            && accountTrx.getExtCurrencyCode().equals(
+                                    CurrencyUtil.BITCOIN_CURRENCY_CODE);
             //
             final MarkupHelper helper = new MarkupHelper(item);
 
@@ -381,8 +378,8 @@ public class AccountTrxPage extends AbstractListPage {
                                     getSession().getLocale())).append(" ");
 
                     if (isExtBitcoin) {
-                        ext.append(BigDecimalUtil.localize(
-                                accountTrx.getExtAmount(), BITCOIN_DECIMALS,
+                        ext.append(BigDecimalUtil.localize(accountTrx
+                                .getExtAmount(), BitcoinUtil.BTC_DECIMALS,
                                 getSession().getLocale(), true));
                     } else {
                         ext.append(BigDecimalUtil.localize(
@@ -398,8 +395,8 @@ public class AccountTrxPage extends AbstractListPage {
                         ext.append(" -/- ");
 
                         if (isExtBitcoin) {
-                            ext.append(BigDecimalUtil.localize(
-                                    accountTrx.getExtFee(), BITCOIN_DECIMALS,
+                            ext.append(BigDecimalUtil.localize(accountTrx
+                                    .getExtFee(), BitcoinUtil.BTC_DECIMALS,
                                     getSession().getLocale(), true));
                         } else {
                             ext.append(BigDecimalUtil.localize(accountTrx

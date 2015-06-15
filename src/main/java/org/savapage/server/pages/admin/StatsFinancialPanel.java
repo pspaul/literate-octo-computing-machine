@@ -33,6 +33,7 @@ import org.savapage.core.dto.FinancialDisplayInfoDto;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.DateUtil;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.bitcoin.BitcoinGateway;
@@ -125,7 +126,7 @@ public final class StatsFinancialPanel extends Panel {
 
         final BigDecimal btc =
                 BigDecimal.valueOf(wallet.getSatoshiBalance()).divide(
-                        BigDecimal.valueOf(100000000));
+                        BigDecimal.valueOf(BitcoinUtil.SATOSHIS_IN_BTC));
 
         final BigDecimal cur =
                 btc.multiply(BigDecimal.valueOf(wallet.getBitcoinExchangeRate()));
@@ -169,6 +170,26 @@ public final class StatsFinancialPanel extends Panel {
             count = wallet.getAddressCountReceived().toString();
         }
         helper.addLabel("bitcoin-wallet-addr-received", count);
+
+        //
+        final String walletHeaderTxt =
+                this.getLocalizer().getString("bitcoin-wallet", this);
+
+        final StringBuilder walletHeader = new StringBuilder(128);
+
+        if (wallet.getWebPageUrl() == null) {
+            walletHeader.append(walletHeaderTxt);
+        } else {
+            walletHeader.append("<a href=\"")
+                    .append(wallet.getWebPageUrl().toString()).append("\">")
+                    .append(walletHeaderTxt).append("</a>");
+        }
+
+        final Label walletLabel =
+                new Label("bitcoin-wallet-link", walletHeader.toString());
+        walletLabel.setEscapeModelStrings(false);
+
+        add(walletLabel);
 
     }
 }

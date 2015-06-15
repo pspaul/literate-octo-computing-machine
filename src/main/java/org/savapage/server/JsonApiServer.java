@@ -5502,8 +5502,6 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqUserSet(final String jsonUser)
             throws IOException {
 
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
         final Map<String, Object> userData = new HashMap<String, Object>();
 
         final UserDto userDto =
