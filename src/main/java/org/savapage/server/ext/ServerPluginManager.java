@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -215,14 +216,23 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         }
     }
 
-    /**
-     *
+/**
+     * @param baseCurrency The base {@link Currency).
      * @return {@code true} if the {@link #walletInfoCache} is expired or
      *         {@code null}.
      */
-    private boolean isWalletInfoCacheExpired() {
+    private boolean isWalletInfoCacheExpired(final Currency baseCurrency) {
 
         if (this.walletInfoCache == null) {
+            return true;
+        }
+
+        /*
+         * Did base currency change?
+         */
+        if (baseCurrency != null
+                && !this.walletInfoCache.getCurrencyCode().equals(
+                        baseCurrency.getCurrencyCode())) {
             return true;
         }
 
@@ -248,10 +258,11 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
         synchronized (this) {
 
-            if (refresh || isWalletInfoCacheExpired()) {
+            final Currency baseCurrency = ConfigManager.getAppCurrency();
+
+            if (refresh || isWalletInfoCacheExpired(baseCurrency)) {
                 this.walletInfoCache =
-                        gateway.getWalletInfo(ConfigManager.getAppCurrency(),
-                                false);
+                        gateway.getWalletInfo(baseCurrency, false);
             }
 
             try {

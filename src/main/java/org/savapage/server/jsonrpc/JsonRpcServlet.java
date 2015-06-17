@@ -33,14 +33,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
+import org.savapage.core.cometd.AdminPublisher;
+import org.savapage.core.cometd.PubLevelEnum;
+import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DaoContext;
+import org.savapage.core.dao.helpers.AppLogLevelEnum;
 import org.savapage.core.dao.helpers.DaoBatchCommitter;
 import org.savapage.core.dao.helpers.JsonUserGroupAccess;
 import org.savapage.core.jpa.Entity;
 import org.savapage.core.json.rpc.AbstractJsonRpcMessage;
+import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.json.rpc.JsonRpcConfig;
 import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.JsonRpcError.Code;
@@ -49,6 +55,7 @@ import org.savapage.core.json.rpc.JsonRpcMethodName;
 import org.savapage.core.json.rpc.JsonRpcMethodParser;
 import org.savapage.core.json.rpc.JsonRpcMethodResult;
 import org.savapage.core.json.rpc.ParamsPaging;
+import org.savapage.core.json.rpc.ResultDataBasic;
 import org.savapage.core.json.rpc.impl.ParamsAddInternalUser;
 import org.savapage.core.json.rpc.impl.ParamsChangeBaseCurrency;
 import org.savapage.core.json.rpc.impl.ParamsPrinterAccessControl;
@@ -67,6 +74,7 @@ import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
 import org.savapage.core.snmp.SnmpConnectException;
+import org.savapage.core.util.AppLogHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +86,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  *
  */
 @WebServlet(name = "JsonRpcServlet", urlPatterns = { "/jsonrpc" })
-public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
+public final class JsonRpcServlet extends HttpServlet implements
+        ServiceEntryPoint {
 
     /**
      *
@@ -125,22 +134,23 @@ public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
     }
 
     /**
+     * Creates a method exception.
      *
-     * @param e
-     * @param reason
-     * @return
+     * @param ex
+     *            The {@link Exception}.
+     * @return The {@link JsonRpcMethodError}.
      */
-    private JsonRpcMethodError createMethodException(Exception e) {
+    private JsonRpcMethodError createMethodException(final Exception ex) {
 
-        LOGGER.error(e.getMessage(), e);
+        LOGGER.error(ex.getMessage(), ex);
 
         return JsonRpcMethodError.createBasicError(
                 JsonRpcError.Code.INTERNAL_ERROR, "Server exception: "
-                        + e.getClass().getSimpleName(), e.getMessage());
+                        + ex.getClass().getSimpleName(), ex.getMessage());
     }
 
     @Override
-    public final void doPost(final HttpServletRequest httpRequest,
+    public void doPost(final HttpServletRequest httpRequest,
             final HttpServletResponse httpResponse) throws IOException,
             ServletException {
 
@@ -347,6 +357,7 @@ public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
                         methodParser.getParams(ParamsChangeBaseCurrency.class);
 
                 batchCommitter = createBatchCommitter();
+                batchCommitter.setTest(parmsChangeBaseCurrency.isTest());
 
                 rpcResponse =
                         ACCOUNTING_SERVICE.changeBaseCurrency(batchCommitter,
@@ -536,7 +547,80 @@ public class JsonRpcServlet extends HttpServlet implements ServiceEntryPoint {
 
         rpcResponse.setId(methodParser.getId());
 
+        logResponse(methodName, rpcResponse);
+
         return rpcResponse;
+    }
+
+    /**
+     *
+     * @param methodName
+     *            The {@link JsonRpcMethodName}.
+     * @param rpcResponse
+     *            The {@link AbstractJsonRpcMessage}.
+     */
+    private static void logResponse(final JsonRpcMethodName methodName,
+            final AbstractJsonRpcMessage rpcResponse) {
+
+        final PubLevelEnum level;
+        final String msg;
+
+        if (rpcResponse instanceof AbstractJsonRpcMethodResponse) {
+
+            AbstractJsonRpcMethodResponse methodRsp =
+                    (AbstractJsonRpcMethodResponse) rpcResponse;
+
+            if (methodRsp.isError()) {
+                level = PubLevelEnum.ERROR;
+                msg = methodRsp.asError().getError().getMessage();
+            } else {
+                level = PubLevelEnum.INFO;
+                final ResultDataBasic data =
+                        methodRsp.asResult().getResult()
+                                .data(ResultDataBasic.class);
+                msg = data.getMessage();
+            }
+
+        } else if (rpcResponse instanceof JsonRpcMethodError) {
+
+            JsonRpcMethodError error = (JsonRpcMethodError) rpcResponse;
+
+            msg = error.getError().getMessage();
+            level = PubLevelEnum.ERROR;
+
+        } else {
+            msg = null;
+            level = PubLevelEnum.INFO;
+        }
+
+        final StringBuilder msgTxt =
+                new StringBuilder().append("Server Command [").append(
+                        methodName.getMethodName()).append("]");
+
+        if (StringUtils.isNotBlank(msg)) {
+            msgTxt.append(": ").append(msg);
+        }
+
+        AdminPublisher.instance().publish(PubTopicEnum.SERVER_COMMAND, level,
+                msgTxt.toString());
+
+        final AppLogLevelEnum logLevel;
+
+        switch (level) {
+        case ERROR:
+            logLevel = AppLogLevelEnum.ERROR;
+            break;
+        case WARN:
+            logLevel = AppLogLevelEnum.WARN;
+            break;
+        case INFO:
+            // no break intended
+        default:
+            logLevel = AppLogLevelEnum.INFO;
+            break;
+        }
+
+        AppLogHelper.log(logLevel, msgTxt.toString());
     }
 
     /**
