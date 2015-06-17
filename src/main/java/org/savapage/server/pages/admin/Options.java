@@ -429,7 +429,24 @@ public class Options extends AbstractAdminPage {
         labelledInput("financial-decimals-other",
                 IConfigProp.Key.FINANCIAL_USER_BALANCE_DECIMALS);
 
-        tagInput("financial-currency-code", Key.FINANCIAL_GLOBAL_CURRENCY_CODE);
+        //
+        boolean disableCurrencyChange =
+                ConfigManager.instance().isAppReadyToUse();
+
+        final Label labelCurrency =
+                tagInput("financial-currency-code",
+                        Key.FINANCIAL_GLOBAL_CURRENCY_CODE);
+
+        if (disableCurrencyChange) {
+            labelCurrency.add(new AttributeModifier("disabled", "disabled"));
+        }
+
+        helper.encloseLabel("button-change-financial-currency-code",
+                localized("button-change"), !disableCurrencyChange);
+
+        helper.encloseLabel("financial-currency-code-help",
+                localized("financial-currency-code-help"),
+                disableCurrencyChange);
 
         // POS
 
@@ -674,26 +691,48 @@ public class Options extends AbstractAdminPage {
     }
 
     /**
+     * Adds an input label for {@link IConfigProp.Key}.
      *
+     * @param id
+     *            The label id.
+     * @param key
+     *            The {@link IConfigProp.Key}.
+     * @param value
+     *            The value.
+     * @return The added {@link Label}.
      */
-    private void tagInput(final String id, final IConfigProp.Key key,
+    private Label tagInput(final String id, final IConfigProp.Key key,
             final String value) {
         Label labelWrk = new Label(id);
         labelWrk.add(new AttributeModifier("id", ConfigManager.instance()
                 .getConfigKey(key)));
         labelWrk.add(new AttributeModifier("value", value));
         add(labelWrk);
+        return labelWrk;
     }
 
     /**
+     * Adds an input label for {@link IConfigProp.Key}.
      *
+     * @param id
+     *            The label id.
+     * @param key
+     *            The {@link IConfigProp.Key}.
+     * @return The added {@link Label}.
      */
-    private void tagInput(final String id, final IConfigProp.Key key) {
-        tagInput(id, key, ConfigManager.instance().getConfigValue(key));
+    private Label tagInput(final String id, final IConfigProp.Key key) {
+        return tagInput(id, key, ConfigManager.instance().getConfigValue(key));
     }
 
     /**
+     * Adds an textarea label for {@link IConfigProp.Key}.
      *
+     * @param id
+     *            The label id.
+     * @param key
+     *            The {@link IConfigProp.Key}.
+     * @param value
+     *            The value.
      */
     private void tagTextarea(final String id, final IConfigProp.Key key,
             final String value) {

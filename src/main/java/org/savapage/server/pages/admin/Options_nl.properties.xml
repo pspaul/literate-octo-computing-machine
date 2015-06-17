@@ -278,7 +278,10 @@
     <entry key="financial-global-credit-limit">Standaard bestedingslimiet</entry>    
     <entry key="financial-printer-cost-decimals">Decimalen voor printerkosten</entry>
     <entry key="financial-decimals-other">Decimalen elders</entry>
+    
     <entry key="financial-currency-code">Valuta code</entry>
+    <entry key="financial-currency-code-help">Gebruik de server command line interface om de valuta te wijzigen.</entry>
+    
     <entry key="financial-payment-methods">Een door comma's gescheiden lijst van betaalmethoden (laat leeg als niet vereist)</entry>
     <entry key="cat-financial-pos">Verkooppunt</entry>
     <entry key="financial-pos-receipt-header">Kassabon Kopregels</entry>

@@ -275,7 +275,10 @@
     <entry key="financial-global-credit-limit">Default credit limit</entry>    
     <entry key="financial-printer-cost-decimals">Printer cost decimals</entry>
     <entry key="financial-decimals-other">Decimals used elsewhere</entry>
+    
     <entry key="financial-currency-code">Currency code</entry>
+    <entry key="financial-currency-code-help">Use the server command line interface to change the currency.</entry>
+    
     <entry key="financial-payment-methods">A comma separated list of payment methods (leave empty if not required)</entry>
     <entry key="cat-financial-pos">Point-of-Sale</entry>
     <entry key="financial-pos-receipt-header">Receipt header text</entry>
