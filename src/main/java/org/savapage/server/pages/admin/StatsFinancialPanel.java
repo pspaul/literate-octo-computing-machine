@@ -181,8 +181,9 @@ public final class StatsFinancialPanel extends Panel {
             walletHeader.append(walletHeaderTxt);
         } else {
             walletHeader.append("<a href=\"")
-                    .append(wallet.getWebPageUrl().toString()).append("\">")
-                    .append(walletHeaderTxt).append("</a>");
+                    .append(wallet.getWebPageUrl().toString())
+                    .append("\" target=\"_blank\">").append(walletHeaderTxt)
+                    .append("</a>");
         }
 
         final Label walletLabel =

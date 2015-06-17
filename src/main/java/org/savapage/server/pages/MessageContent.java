@@ -44,22 +44,25 @@ public class MessageContent extends AbstractPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        final String clazz;
+        final StringBuilder clazz =
+                new StringBuilder().append(MarkupHelper.CSS_TXT_WRAP).append(
+                        " ");
+
         switch (level) {
         case ERROR:
-            clazz = MarkupHelper.CSS_TXT_ERROR;
+            clazz.append(MarkupHelper.CSS_TXT_ERROR);
             break;
 
         case WARN:
-            clazz = MarkupHelper.CSS_TXT_WARN;
+            clazz.append(MarkupHelper.CSS_TXT_WARN);
             break;
 
         default:
-            clazz = MarkupHelper.CSS_TXT_INFO;
+            clazz.append(MarkupHelper.CSS_TXT_INFO);
             break;
         }
 
-        helper.addModifyLabelAttr("msg", msg, "class", clazz);
+        helper.addModifyLabelAttr("msg", msg, "class", clazz.toString());
     }
 
 }
