@@ -4876,7 +4876,8 @@
 					}
 					_view.showApiMsg(res);
 				} else {
-					_view.message(_i18n.format('msg-email-invalid', [mailto]));
+					// Use a "quoted string" since mailto can be empty.
+					_view.message(_i18n.format('msg-email-invalid', ['"' + mailto + '"']));
 				}
 			};
 
