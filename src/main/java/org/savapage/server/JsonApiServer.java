@@ -2416,7 +2416,14 @@ public final class JsonApiServer extends AbstractPage {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
-        final int nPages = INBOX_SERVICE.deletePages(user, ranges);
+        final int nPages;
+
+        try {
+            nPages = INBOX_SERVICE.deletePages(user, ranges);
+        } catch (IllegalArgumentException e) {
+            return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    "msg-clear-range-syntax-error", ranges);
+        }
 
         final String msgKey;
 
