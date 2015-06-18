@@ -21,18 +21,15 @@
  */
 package org.savapage.server.dto;
 
+import org.savapage.core.dao.helpers.AccountTrxTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentMethodEnum;
 
 /**
- * Information for a {@link PosPurchase} deposit.
+ * Information for a {@link AccountTrxTypeEnum#GATEWAY} deposit.
  *
  * @author Datraverse B.V.
- *
- */
-/**
- * @author rijk
  *
  */
 public final class MoneyTransferDto extends AbstractDto {

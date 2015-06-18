@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.helpers.AppLogLevelEnum;
 import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.services.ServiceContext;
@@ -72,6 +73,8 @@ public class UserDashboard extends AbstractUserPage {
      * @throws ParseException
      */
     private void handlePage() {
+
+        final ConfigManager cm = ConfigManager.instance();
 
         final MarkupHelper helper = new MarkupHelper(this);
 
@@ -139,14 +142,27 @@ public class UserDashboard extends AbstractUserPage {
         helper.addModifyLabelAttr("balance", dto.getBalance(), "class",
                 clazzBalance);
 
-        //
-        helper.addModifyLabelAttr("button-voucher-redeem",
-                localized("button-voucher"), "title",
-                localized("button-title-voucher"));
+        // Redeem voucher?
+        final Label labelVoucherRedeem =
+                MarkupHelper.createEncloseLabel("button-voucher-redeem",
+                        localized("button-voucher"),
+                        cm.isConfigValue(Key.FINANCIAL_USER_VOUCHERS_ENABLE));
 
-        helper.addModifyLabelAttr("button-assign-credit",
-                localized("button-assign"), "title",
-                localized("button-title-assign"));
+        add(MarkupHelper.appendLabelAttr(labelVoucherRedeem, "title",
+                localized("button-title-voucher")));
+
+        // Credit transfer?
+        final boolean enableTransferCredit =
+                dto.getStatus() == AccountDisplayInfoDto.Status.DEBIT
+                        && cm.isConfigValue(Key.FINANCIAL_USER_TRANSFER_ENABLE);
+
+        final Label labelTransferCredit =
+                MarkupHelper.createEncloseLabel("button-transfer-credit",
+                        localized("button-transfer-to-user"),
+                        enableTransferCredit);
+
+        add(MarkupHelper.appendLabelAttr(labelTransferCredit, "title",
+                localized("button-title-transfer-to-user")));
 
         /*
          * Payment Gateways

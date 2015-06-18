@@ -125,6 +125,8 @@ public class JsonApiDict {
 
     public static final String REQ_PING = "ping";
 
+    public static final String REQ_USER_CREDIT_TRANSFER =
+            "user-credit-transfer";
     public static final String REQ_USER_MONEY_TRANSFER_REQUEST =
             "user-money-transfer-request";
 
@@ -549,7 +551,9 @@ public class JsonApiDict {
 
         non(REQ_PING);
 
+        usr(REQ_USER_CREDIT_TRANSFER, DbClaim.READ, DbAccess.USER_LOCK);
         usr(REQ_USER_MONEY_TRANSFER_REQUEST, DbClaim.READ, DbAccess.YES);
+
         adm(REQ_BITCOIN_WALLET_REFRESH, DbClaim.NONE, DbAccess.NO);
 
         adm(REQ_POS_DEPOSIT, DbClaim.NONE, DbAccess.YES);

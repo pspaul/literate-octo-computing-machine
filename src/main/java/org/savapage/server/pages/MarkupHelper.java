@@ -376,9 +376,25 @@ public final class MarkupHelper {
      */
     public void addAppendLabelAttr(final String wicketId,
             final String attribute, final String value) {
-        Label labelWrk = new Label(wicketId);
-        labelWrk.add(new AttributeAppender(attribute, " " + value.trim()));
-        add(labelWrk);
+        add(appendLabelAttr(new Label(wicketId), attribute, value));
+    }
+
+    /**
+     * Appends a value to a label attribute.
+     *
+     * @param label
+     *            The {@link Label}.
+     * @param attribute
+     *            The name of the attribute
+     * @param value
+     *            The value of the attribute.
+     * @return The {@link Label}.
+     */
+    public static Label appendLabelAttr(final Label label,
+            final String attribute, final String value) {
+        label.add(new AttributeAppender(attribute, String.format(" %s",
+                value.trim())));
+        return label;
     }
 
     /**

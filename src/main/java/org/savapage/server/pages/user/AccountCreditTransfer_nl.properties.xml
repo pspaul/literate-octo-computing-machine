@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="title">Saldo Overdragen</entry>
+	
+    <entry key="prompt-available">Beschikbaar</entry>
+    <entry key="prompt-amount">Bedrag</entry>
+    <entry key="prompt-to-user">Naar gebruiker</entry>
+    <entry key="prompt-comment">Commentaar</entry>
+
+	<entry key="button-transfer">Overdragen</entry>
+	<entry key="button-back">Terug</entry>
+
+</properties>

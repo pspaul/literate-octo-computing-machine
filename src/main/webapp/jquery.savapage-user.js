@@ -1430,7 +1430,39 @@
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
-				$("#voucher-redeem-number").val("");
+				$("#voucher-redeem-card-number").val("");
+			});
+		}
+
+		/**
+		 *
+		 */
+		function PageCreditTransfer(_i18n, _view, _model) {
+			var _this = this
+			//
+			, _selMain = '#money-credit-transfer-main'
+			//
+			, _selCents = '#money-credit-transfer-cents'
+			//
+			;
+
+			$("#page-credit-transfer").on("pagecreate", function(event) {
+
+				$('#button-transfer-credit-ok').click(function() {
+					if (_this.onTransferCredit($('#money-credit-transfer-user').val(), $(_selMain).val(), $(_selCents).val(), $('#money-credit-transfer-comment').val())) {
+						$('#page-credit-transfer a[data-rel=back]').click();
+					}
+					return false;
+				});
+
+			}).on("pagebeforeshow", function(event, ui) {
+				
+				$('#page-credit-transfer input').val('');
+				$(_selCents).val('00');
+				$('#credit-transfer-available').text(_model.user.stats.accountInfo.balance);
+				
+			}).on("pageshow", function(event, ui) {
+				$(_selMain).focus();
 			});
 		}
 
@@ -1442,21 +1474,20 @@
 			//
 			, _selMain = '#money-transfer-main'
 			//
-			, _selCents = '#money-transfer-cents';
+			, _selCents = '#money-transfer-cents'
+			//
+			;
 
 			$("#page-money-transfer").on("pagecreate", function(event) {
 
 				$('#button-money-transfer').click(function() {
 					var hidden = $('#money-transfer-gateway');
-					_this.onMoneyTransfer(
-						hidden.attr('data-payment-gateway'), hidden.attr('data-payment-method'),					
-						$(_selMain).val(), $(_selCents).val());
+					_this.onMoneyTransfer(hidden.attr('data-payment-gateway'), hidden.attr('data-payment-method'), $(_selMain).val(), $(_selCents).val());
 					return false;
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
-				$(_selMain).val('');
-				$(_selCents).val('');
+				$('#page-money-transfer input').val('');
 			});
 		}
 
@@ -1611,9 +1642,16 @@
 					});
 				}
 
-				if ($('#button-redeem-voucher-page')) {
+				if ($('#button-voucher-redeem-page')) {
 					$(this).on('click', '#button-voucher-redeem-page', null, function() {
 						_view.showUserPage('#page-voucher-redeem', 'AccountVoucherRedeem');
+						return false;
+					});
+				}
+
+				if ($('#button-transfer-credit-page')) {
+					$(this).on('click', '#button-transfer-credit-page', null, function() {
+						_view.showUserPage('#page-credit-transfer', 'AccountCreditTransfer');
 						return false;
 					});
 				}
@@ -1624,7 +1662,10 @@
 						// (we only refresh the content)
 						var pageId = '#page-money-transfer'
 						//
-						, data = {gateway : $(this).attr('data-payment-gateway'), method : $(this).attr('data-payment-method')}
+						, data = {
+							gateway : $(this).attr('data-payment-gateway'),
+							method : $(this).attr('data-payment-method')
+						}
 						//
 						, html = _view.getUserPageHtml('AccountMoneyTransfer', data)
 						//
@@ -3662,7 +3703,7 @@
 				if (window.localStorage[item] !== null) {
 					this.authToken.language = window.localStorage[item];
 				}
-				
+
 				item = _LOC_COUNTRY;
 				if (window.localStorage[item] !== null) {
 					this.authToken.country = window.localStorage[item];
@@ -3679,7 +3720,7 @@
 				this.authToken.country = country;
 				window.localStorage[_LOC_COUNTRY] = country;
 			};
-			
+
 			this.setAuthToken = function(user, token, language, country) {
 				var item;
 
@@ -3693,10 +3734,10 @@
 
 				if (language) {
 					this.setLanguage(language);
-				}				
+				}
 				if (country) {
 					this.setCountry(country);
-				}				
+				}
 			};
 
 			/**
@@ -3955,7 +3996,7 @@
 
 				_model.language = loginRes.language;
 				_model.country = loginRes.country;
-				
+
 				_model.setAuthToken(loginRes.id, loginRes.authtoken, _model.language, _model.country);
 
 				/*
@@ -4725,9 +4766,7 @@
 			};
 
 			_userEvent.onPollInvitation = function() {
-				_userEvent.poll(_model.user.id, _model.getPageCount(), 
-					_model.uniqueImgUrlValue, _model.prevMsgTime, 
-					_model.language, _model.country, _view.imgBase64);
+				_userEvent.poll(_model.user.id, _model.getPageCount(), _model.uniqueImgUrlValue, _model.prevMsgTime, _model.language, _model.country, _view.imgBase64);
 			};
 
 			/*
@@ -4792,6 +4831,30 @@
 					$("#button-voucher-redeem-back").click();
 				}
 				_view.showApiMsg(res);
+			};
+
+			/**
+			 * Callbacks: page credit transfer
+			 */
+			_view.pages.creditTransfer.onTransferCredit = function(userTo, amountMain, amountCents, comment) {
+
+				// UserCreditTransferDto.java
+				var res = _api.call({
+					request : "user-credit-transfer",
+					dto : JSON.stringify({
+						userFrom : _model.user.id,
+						userTo : userTo,
+						amountMain : amountMain,
+						amountCents : amountCents,
+						comment : comment
+					})
+				}),
+				//
+				isOk = res.result.code === "0"
+				//
+				;
+				_view.showApiMsg(res);
+				return isOk;
 			};
 
 			/**
@@ -5017,8 +5080,7 @@
 					_view.pages.print.clearInput();
 					_model.closePrintDlg = isClose;
 
-					_proxyprintEvent.poll(_model.user.key_id, _model.myPrinter.name, _model.myPrinterReaderName, 
-						_model.language, _model.country);
+					_proxyprintEvent.poll(_model.user.key_id, _model.myPrinter.name, _model.myPrinterReaderName, _model.language, _model.country);
 
 					_view.visible($('#auth-popup-content-wait'), true);
 					_view.visible($('#auth-popup-content-msg'), false);
@@ -5658,6 +5720,7 @@
 				pagebrowser : new PageBrowser(_i18n, _view, _model),
 				pageDashboard : new PageDashboard(_i18n, _view, _model),
 				voucherRedeem : new PageVoucherRedeem(_i18n, _view, _model),
+				creditTransfer : new PageCreditTransfer(_i18n, _view, _model),
 				moneyTransfer : new PageMoneyTransfer(_i18n, _view, _model),
 				pdfprop : new PagePdfProp(_i18n, _view, _model),
 				main : new PageMain(_i18n, _view, _model),

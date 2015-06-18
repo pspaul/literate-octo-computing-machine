@@ -126,6 +126,7 @@ import org.savapage.core.dto.QuickSearchItemDto;
 import org.savapage.core.dto.QuickSearchPosPurchaseItemDto;
 import org.savapage.core.dto.QuickSearchPrinterItemDto;
 import org.savapage.core.dto.QuickSearchUserItemDto;
+import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.UserDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
@@ -1354,6 +1355,13 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_SMARTSCHOOL_STOP:
 
             return reqSmartSchoolStop();
+
+        case JsonApiDict.REQ_USER_CREDIT_TRANSFER:
+
+            return apiResultFromBasicRpcResponse(ACCOUNTING_SERVICE
+                    .transferUserCredit(JsonAbstractBase.create(
+                            UserCreditTransferDto.class,
+                            getParmValue(parameters, isGetAction, "dto"))));
 
         case JsonApiDict.REQ_USER_MONEY_TRANSFER_REQUEST:
 
@@ -5117,6 +5125,37 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
+     * Creates an API result from {@link AbstractJsonRpcMethodResponse}
+     * containing either {@link ResultDataBasic} or {@link ErrorDataBasic}
+     *
+     * @param rpcResponse
+     *            The {@link AbstractJsonRpcMethodResponse}.
+     * @return
+     */
+    private static Map<String, Object> apiResultFromBasicRpcResponse(
+            final AbstractJsonRpcMethodResponse rpcResponse) {
+
+        final Map<String, Object> userData = new HashMap<String, Object>();
+
+        if (rpcResponse.isResult()) {
+
+            final ResultDataBasic result =
+                    rpcResponse.asResult().getResult()
+                            .data(ResultDataBasic.class);
+
+            setApiResultMsgOK(userData, null, result.getMessage());
+
+        } else {
+
+            final ErrorDataBasic error =
+                    rpcResponse.asError().getError().data(ErrorDataBasic.class);
+
+            setApiResultMsgError(userData, "", error.getReason());
+        }
+        return userData;
+    }
+
+    /**
      *
      * @param requestingUser
      * @param jsonDto
@@ -5548,20 +5587,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqUserDelete(final String id,
             final String userid) throws IOException {
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final AbstractJsonRpcMethodResponse rpcResponse =
-                USER_SERVICE.deleteUser(userid);
-
-        if (rpcResponse.isResult()) {
-            setApiResultMsgOK(userData, null, rpcResponse.asResult()
-                    .getResult().data(ResultDataBasic.class).getMessage());
-        } else {
-            setApiResultMsgError(userData, "", rpcResponse.asError().getError()
-                    .data(ErrorDataBasic.class).getReason());
-        }
-        return userData;
+        return apiResultFromBasicRpcResponse(USER_SERVICE.deleteUser(userid));
     }
 
     /**

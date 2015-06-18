@@ -233,7 +233,7 @@
     <entry key="msg-voucher-redeem-ok">De waarde van deze voucher is met succes toegevoegd aan uw saldo.</entry>
     <entry key="msg-voucher-redeem-invalid">Gebruiker "{0}" probeerde ongeldig voucher "{1}" in te wisselen.</entry>
     <entry key="msg-voucher-redeem-void">Voer een geldig voucher nummer in.</entry>
-
+  
     <entry key="msg-deposit-funds-ok">Bedrag is met success toegevoegd aan gebruikersaccount.</entry>
     <entry key="msg-deposit-funds-receipt-email-ok">Bedrag is met success toegevoegd aan gebruikersaccount. Kassabon verstuurd naar {0}</entry>
         

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="title">Transfer Credit</entry>
+	
+    <entry key="prompt-available">Available</entry>
+    <entry key="prompt-amount">Amount</entry>
+    <entry key="prompt-to-user">To user</entry>
+    <entry key="prompt-comment">Comment</entry>
+
+	<entry key="button-transfer">Transfer</entry>
+	<entry key="button-back">Back</entry>
+
+</properties>

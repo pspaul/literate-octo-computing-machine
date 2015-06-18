@@ -5,12 +5,12 @@
     <entry key="title">{0}</entry>
     
     <entry key="button-voucher">Voucher</entry>
-    <entry key="button-assign">Toewijzen</entry>
+    <entry key="button-transfer-to-user">Overdragen</entry>
     
     <entry key="button-title-voucher">Wissel een voucher in.</entry>
     <entry key="button-title-transfer">Hoog saldo op door geld over te boeken van "{0}".</entry>
     <entry key="button-title-bitcoin">Hoog saldo op door een Bitcoin transactie.</entry>
-    <entry key="button-title-assign">Wijs saldo toe aan een andere gebruiker.</entry>
+    <entry key="button-title-transfer-to-user">Saldo overdragen naar een andere gebruiker.</entry>
     
     <entry key="header-transfer">Overboeken</entry>
     
