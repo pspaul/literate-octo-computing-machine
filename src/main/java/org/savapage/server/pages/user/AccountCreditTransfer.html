@@ -37,10 +37,12 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
         <input type="text" id="money-credit-transfer-user" value=""  data-clear-btn="true"   
            autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="2" />
 
-        <label for="money-credit-transfer-comment"><wicket:message key="prompt-comment"/></label>
+<wicket:enclosure child="prompt-comment">
+        <label wicket:id="prompt-comment" for="money-credit-transfer-comment"/>
         <input type="text" id="money-credit-transfer-comment" value=""  data-clear-btn="true"   
            autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="3" />
-    
+</wicket:enclosure>
+
     <div>
 	    <a href="#" id="button-transfer-credit-ok" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" tabindex="4" >
 	        <wicket:message key="button-transfer"/>

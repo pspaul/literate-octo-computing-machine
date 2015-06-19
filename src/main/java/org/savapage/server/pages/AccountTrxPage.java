@@ -210,6 +210,10 @@ public class AccountTrxPage extends AbstractListPage {
                 key = "type-gateway";
                 break;
 
+            case TRANSFER:
+                key = "type-transfer";
+                break;
+
             case VOUCHER:
                 key = "type-voucher";
                 break;
@@ -283,7 +287,16 @@ public class AccountTrxPage extends AbstractListPage {
             }
 
             //
-            item.add(new Label("trxType", localized(key)));
+            final boolean isGatewayPaymentMethodInHeader =
+                    trxType == AccountTrxTypeEnum.GATEWAY
+                            && extPaymentMethod != null;
+
+            if (isGatewayPaymentMethodInHeader) {
+                item.add(new Label("trxType", extPaymentMethod.toString()
+                        .toLowerCase()));
+            } else {
+                item.add(new Label("trxType", localized(key)));
+            }
 
             //
             final boolean isVisible = accountTrx.getPosPurchase() != null;
@@ -313,8 +326,12 @@ public class AccountTrxPage extends AbstractListPage {
 
             } else {
                 helper.discloseLabel("receiptNumber");
-                helper.encloseLabel("paymentMethod", accountTrx.getExtMethod(),
-                        trxType == AccountTrxTypeEnum.GATEWAY);
+                helper.encloseLabel(
+                        "paymentMethod",
+                        accountTrx.getExtMethod(),
+                        !isGatewayPaymentMethodInHeader
+                                && StringUtils.isNotBlank(accountTrx
+                                        .getExtMethod()));
             }
 
             if (isExtBitcoin) {

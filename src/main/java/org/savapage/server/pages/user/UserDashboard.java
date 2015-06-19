@@ -258,7 +258,7 @@ public class UserDashboard extends AbstractUserPage {
 
         });
 
-        helper.encloseLabel("header-transfer", localized("header-transfer"),
+        helper.encloseLabel("header-gateway", localized("header-gateway"),
                 methodCount > 0);
 
     }

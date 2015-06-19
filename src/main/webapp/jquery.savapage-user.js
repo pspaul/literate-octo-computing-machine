@@ -1450,7 +1450,8 @@
 
 				$('#button-transfer-credit-ok').click(function() {
 					if (_this.onTransferCredit($('#money-credit-transfer-user').val(), $(_selMain).val(), $(_selCents).val(), $('#money-credit-transfer-comment').val())) {
-						$('#page-credit-transfer a[data-rel=back]').click();
+						// Back to main window, this will start user event monitoring (picking up the account balance change).
+						_view.changePage($('#page-main'));						
 					}
 					return false;
 				});

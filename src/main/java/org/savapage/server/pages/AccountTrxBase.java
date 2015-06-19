@@ -129,6 +129,8 @@ public final class AccountTrxBase extends AbstractAuthPage {
                 AccountTrxTypeEnum.DEPOSIT.toString());
         helper.addModifyLabelAttr("accounttrx-select-type-gateway", "value",
                 AccountTrxTypeEnum.GATEWAY.toString());
+        helper.addModifyLabelAttr("accounttrx-select-type-transfer", "value",
+                AccountTrxTypeEnum.TRANSFER.toString());
         helper.addModifyLabelAttr("accounttrx-select-type-voucher", "value",
                 AccountTrxTypeEnum.VOUCHER.toString());
         helper.addModifyLabelAttr("accounttrx-select-type-printout", "value",

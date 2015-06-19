@@ -12,8 +12,9 @@
     <entry key="type-all">-</entry>
     <entry key="type-initial">Initieel</entry>
     <entry key="type-adjust">Aanpassing</entry>    
-    <entry key="type-deposit">Transactie</entry>
-    <entry key="type-transfer">Overboeking</entry>
+    <entry key="type-deposit">Storting</entry>
+    <entry key="type-gateway">Extern</entry>
+    <entry key="type-transfer">Overdracht</entry>
     <entry key="type-voucher">Voucher</entry>
     <entry key="type-printout">Printer</entry>
     

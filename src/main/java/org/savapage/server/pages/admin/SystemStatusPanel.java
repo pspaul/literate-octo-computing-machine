@@ -30,6 +30,7 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Date;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -655,8 +656,6 @@ public class SystemStatusPanel extends Panel {
                         HttpGet request = null;
 
                         try {
-                            // url = new URL("malformed://url-exception-test");
-
                             final String url = URL_SAVAPAGE_NEWS;
 
                             final HttpClient client =
@@ -672,6 +671,8 @@ public class SystemStatusPanel extends Panel {
                                     .setConnectTimeout(
                                             RETRIEVE_NEWS_TIMEOUT_MSEC)
                                     .setSocketTimeout(
+                                            RETRIEVE_NEWS_TIMEOUT_MSEC)
+                                    .setConnectionRequestTimeout(
                                             RETRIEVE_NEWS_TIMEOUT_MSEC).build());
 
                             final HttpResponse response =
@@ -723,13 +724,7 @@ public class SystemStatusPanel extends Panel {
                                 request.reset();
                             }
 
-                            try {
-                                if (reader != null) {
-                                    reader.close();
-                                }
-                            } catch (IOException e) {
-                                LOGGER.error(e.getMessage(), e);
-                            }
+                            IOUtils.closeQuietly(reader);
                         }
                         return html;
                     }

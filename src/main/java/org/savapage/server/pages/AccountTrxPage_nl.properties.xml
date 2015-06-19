@@ -4,7 +4,8 @@
 
     <entry key="type-adjust">Handmatige aanpassing</entry>
     <entry key="type-deposit">Handmatige transactie</entry>
-    <entry key="type-gateway">Payment Gateway</entry>
+    <entry key="type-gateway">Extern</entry>
+    <entry key="type-transfer">Overdracht</entry>
     <entry key="type-voucher">Inwisselen Voucher</entry>
     <entry key="type-print-out">Gebruik Printer</entry>
     <entry key="type-print-in">Gebruik Wachtrij</entry>

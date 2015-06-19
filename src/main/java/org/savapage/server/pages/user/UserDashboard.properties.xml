@@ -12,7 +12,7 @@
     <entry key="button-title-bitcoin">Increment balance with a Bitcoin transaction.</entry>    
     <entry key="button-title-transfer-to-user">Transfer credit to another user.</entry>
 
-    <entry key="header-transfer">Transfer</entry>
+    <entry key="header-gateway">Use an external account to increment your balance:</entry>
     
     <entry key="title-financial">Financial</entry>
     <entry key="balance">Balance</entry>

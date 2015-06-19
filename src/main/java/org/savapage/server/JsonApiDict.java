@@ -551,7 +551,7 @@ public class JsonApiDict {
 
         non(REQ_PING);
 
-        usr(REQ_USER_CREDIT_TRANSFER, DbClaim.READ, DbAccess.USER_LOCK);
+        usr(REQ_USER_CREDIT_TRANSFER, DbClaim.READ, DbAccess.YES);
         usr(REQ_USER_MONEY_TRANSFER_REQUEST, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_BITCOIN_WALLET_REFRESH, DbClaim.NONE, DbAccess.NO);

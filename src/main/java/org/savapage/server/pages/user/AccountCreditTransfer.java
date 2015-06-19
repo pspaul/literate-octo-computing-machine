@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.user;
 
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -43,6 +45,12 @@ public class AccountCreditTransfer extends AbstractUserPage {
 
         helper.addLabel("currency-symbol", currencySymbol);
         helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
+
+        helper.encloseLabel(
+                "prompt-comment",
+                localized("prompt-comment"),
+                ConfigManager.instance().isConfigValue(
+                        Key.FINANCIAL_USER_TRANSFER_ENABLE_COMMENTS));
 
     }
 }

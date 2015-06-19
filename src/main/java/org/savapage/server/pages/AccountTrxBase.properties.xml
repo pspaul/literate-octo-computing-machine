@@ -12,8 +12,10 @@
     <entry key="type-all">-</entry>
     <entry key="type-initial">Initial</entry>
     <entry key="type-adjust">Adjustment</entry>    
-    <entry key="type-deposit">Transaction</entry>
+    <entry key="type-deposit">Deposit</entry>
+    <entry key="type-gateway">External</entry>
     <entry key="type-transfer">Transfer</entry>
+    
     <entry key="type-voucher">Voucher</entry>
     <entry key="type-printout">Printer</entry>
 

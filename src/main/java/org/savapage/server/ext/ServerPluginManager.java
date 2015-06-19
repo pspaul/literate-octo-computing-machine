@@ -1013,7 +1013,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             throws PaymentGatewayException {
 
         if (event.isBalanceUpdate()) {
-            sendAccountInfoUserMsg(event.getUserId());
+            UserMsgIndicator.notifyAccountInfoEvent(event.getUserId());
         }
     }
 
@@ -1242,24 +1242,6 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     private String localize(final String key, final String... args) {
         return Messages.getMessage(getClass(),
                 ConfigManager.getDefaultLocale(), key, args);
-    }
-
-    /**
-     * Sends a message to user Web App to notify a change of account balance.
-     *
-     * @param userId
-     *            The unique user id.
-     */
-    private static void sendAccountInfoUserMsg(final String userId) {
-        if (UserMsgIndicator.isSafePagesDirPresent(userId)) {
-            try {
-                UserMsgIndicator.write(userId,
-                        ServiceContext.getTransactionDate(),
-                        UserMsgIndicator.Msg.ACCOUNT_INFO, null);
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
     }
 
 }

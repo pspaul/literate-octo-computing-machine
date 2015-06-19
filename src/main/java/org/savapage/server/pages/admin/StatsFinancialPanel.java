@@ -106,6 +106,9 @@ public final class StatsFinancialPanel extends Panel {
             return;
         }
 
+        final String walletHeaderTxt =
+                this.getLocalizer().getString("bitcoin-wallet", this);
+
         final BitcoinWalletInfo wallet;
 
         try {
@@ -120,7 +123,14 @@ public final class StatsFinancialPanel extends Panel {
             helper.encloseLabel("bitcoin-wallet-btc", VALUE_NOT_FOUND, true);
             helper.encloseLabel("bitcoin-wallet-datetime", VALUE_NOT_FOUND,
                     true);
+            helper.encloseLabel("bitcoin-wallet-addr", VALUE_NOT_FOUND, true);
+            helper.encloseLabel("bitcoin-wallet-addr-open", VALUE_NOT_FOUND,
+                    true);
+            helper.encloseLabel("bitcoin-wallet-addr-received",
+                    VALUE_NOT_FOUND, true);
             helper.encloseLabel("bitcoin-wallet-msg", e.getMessage(), true);
+            helper.addLabel("bitcoin-wallet-link", walletHeaderTxt);
+
             return;
         }
 
@@ -172,9 +182,6 @@ public final class StatsFinancialPanel extends Panel {
         helper.addLabel("bitcoin-wallet-addr-received", count);
 
         //
-        final String walletHeaderTxt =
-                this.getLocalizer().getString("bitcoin-wallet", this);
-
         final StringBuilder walletHeader = new StringBuilder(128);
 
         if (wallet.getWebPageUrl() == null) {

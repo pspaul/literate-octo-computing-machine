@@ -12,7 +12,7 @@
     <entry key="button-title-bitcoin">Hoog saldo op door een Bitcoin transactie.</entry>
     <entry key="button-title-transfer-to-user">Saldo overdragen naar een andere gebruiker.</entry>
     
-    <entry key="header-transfer">Overboeken</entry>
+    <entry key="header-gateway">Gebruik een externe rekening om uw saldo op te hogen:</entry>
     
     <entry key="title-financial">Financieel</entry>
     <entry key="balance">Saldo</entry>
