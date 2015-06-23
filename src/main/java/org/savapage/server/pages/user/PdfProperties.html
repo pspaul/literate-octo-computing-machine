@@ -25,7 +25,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             
 	        <div class="ui-field-contain">
 	            <label for="pdf-author"><wicket:message key="pdf-author"/></label>
-	            <input type="text" name="pdf-author" id="pdf-author" value=""
+	            <input type="text" name="pdf-author" id="pdf-author" value="" data-clear-btn="true"
 	                autocomplete="off" autocorrect="off" spellcheck="false"/>
 	        </div>
         
@@ -139,18 +139,16 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 			    <h3><wicket:message key="pdf-cat-passwords"/></h3>
 			
 			    <label for="pdf-pw-user"><wicket:message key="pdf-user-password"/></label>
-			    <input class="sp-pdf-apply-src" type="password" id="pdf-pw-user" maxlength="32" value=""/>
+			    <input class="sp-pdf-apply-src" type="password" id="pdf-pw-user" maxlength="32" value="" data-clear-btn="true"/>
 	            		    
    			    <label for="pdf-pw-user-c"><wicket:message key="pdf-password-confirm"/></label>
-       		    <input type="password" id="pdf-pw-user-c" maxlength="32" value=""/>
+       		    <input type="password" id="pdf-pw-user-c" maxlength="32" value="" data-clear-btn="true"/>
 			         
-			    <p> 
-       			    <label for="pdf-pw-owner"><wicket:message key="pdf-owner-password"/></label>
-		     	    <input class="sp-pdf-apply-src" type="password" id="pdf-pw-owner" maxlength="32" value=""/>
+   			    <label for="pdf-pw-owner"><wicket:message key="pdf-owner-password"/></label>
+	     	    <input class="sp-pdf-apply-src" type="password" id="pdf-pw-owner" maxlength="32" value="" data-clear-btn="true"/>
 
-   				    <label for="pdf-pw-owner-c"><wicket:message key="pdf-password-confirm"/></label>
-       			    <input type="password" id="pdf-pw-owner-c" maxlength="32" value=""/>
-			    </p>
+			    <label for="pdf-pw-owner-c"><wicket:message key="pdf-password-confirm"/></label>
+   			    <input type="password" id="pdf-pw-owner-c" maxlength="32" value="" data-clear-btn="true"/>
 		    
 		    </div>
 	    

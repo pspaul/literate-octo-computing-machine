@@ -35,11 +35,11 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 	                
                 <div>
                     <label for="sp-login-user-name-assoc"><wicket:message key="label-user-name"/></label>
-                    <input type="text" id="sp-login-user-name-assoc" value="" maxlength="128"
+                    <input type="text" id="sp-login-user-name-assoc" value="" maxlength="128" data-clear-btn="true"
                     autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
                      
                     <label for="sp-login-user-password-assoc"><wicket:message key="label-password"/></label> 
-                    <input type="password" id="sp-login-user-password-assoc" value="" />
+                    <input type="password" id="sp-login-user-password-assoc" value="" data-clear-btn="true"/>
                 </div>
                 
                 <div data-role="controlgroup" data-type="horizontal">
@@ -55,11 +55,11 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             <div id="sp-div-login-name" style="display: none;">
 
 				<label for="sp-login-user-name"><wicket:message key="label-user-name"/></label>
-				<input type="text" id="sp-login-user-name" value=""	maxlength="128"
+				<input type="text" id="sp-login-user-name" value=""	maxlength="128" data-clear-btn="true"
 				autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /> 					
 
 				<label for="sp-login-user-password"><wicket:message key="label-password"/></label> 
-				<input type="password" id="sp-login-user-password" value="" />
+				<input type="password" id="sp-login-user-password" value="" data-clear-btn="true"/>
                 					
 				<div>
 				    <a href="#" id="sp-btn-login-name" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
@@ -71,12 +71,12 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             <div id="sp-div-login-number" style="display: none;">
 
                 <label for="sp-login-id-number"><wicket:message key="label-id-number"/></label>
-                <input wicket:id="login-id-number" type="text" id="sp-login-id-number" value="" maxlength="10"
+                <input wicket:id="login-id-number" type="text" id="sp-login-id-number" value="" maxlength="10" data-clear-btn="true"
                     autofocus pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /> 
 
                 <wicket:enclosure child="login-id-pin">
 	                <label for="sp-login-id-pin"><wicket:message key="label-id-pin"/></label> 
-	                <input wicket:id="login-id-pin" type="password" id="sp-login-id-pin" value="" pattern="[0-9]*" />
+	                <input wicket:id="login-id-pin" type="password" id="sp-login-id-pin" value="" pattern="[0-9]*" data-clear-btn="true"/>
                 </wicket:enclosure>
 
                 <div>
@@ -98,7 +98,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                 <div id="sp-login-card-local-pin-group">
                 
                     <label for="sp-login-card-local-pin"><wicket:message key="label-card-pin"/></label> 
-                    <input type="password" id="sp-login-card-local-pin" value="" pattern="[0-9]*" />
+                    <input type="password" id="sp-login-card-local-pin" value="" pattern="[0-9]*" data-clear-btn="true"/>
                     
                     <a href="#" id="sp-btn-login-card-local" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
                         <wicket:message key="button-login"/>
@@ -116,7 +116,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                 <div id="sp-login-card-ip-pin-group">
                 
                     <label for="sp-login-card-ip-pin"><wicket:message key="label-card-pin"/></label> 
-                    <input type="password" id="sp-login-card-ip-pin" value="" pattern="[0-9]*" />
+                    <input type="password" id="sp-login-card-ip-pin" value="" pattern="[0-9]*" data-clear-btn="true"/>
 
                     <a href="#" id="sp-btn-login-card-ip" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
                         <wicket:message key="button-login"/>
