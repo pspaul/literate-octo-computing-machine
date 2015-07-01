@@ -520,8 +520,15 @@ public class RfidEventHandler implements ServiceEntryPoint {
             builder.append("s");
         }
 
-        builder.append(" to printer [")
-                .append(cardReader.getPrinter().getPrinterName()).append("].");
+        if (cardReader.getPrinter() != null) {
+            builder.append(" to printer [")
+                    .append(cardReader.getPrinter().getPrinterName())
+                    .append("].");
+        } else if (cardReader.getPrinterGroup() != null) {
+            builder.append(" to printergroup [")
+                    .append(cardReader.getPrinterGroup().getDisplayName())
+                    .append("].");
+        }
 
         map.put(KEY_MESSAGE, builder.toString());
     }
