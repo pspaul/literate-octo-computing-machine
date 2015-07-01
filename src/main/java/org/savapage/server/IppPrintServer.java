@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
+import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.resource.AbstractResourceStream;
@@ -167,6 +169,35 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         final HttpServletRequest request =
                 (HttpServletRequest) requestCycle.getRequest()
                         .getContainerRequest();
+
+        if (LOGGER.isDebugEnabled()) {
+
+            final StringBuilder log = new StringBuilder(256).append('\n');
+            final Enumeration<String> headerNames = request.getHeaderNames();
+
+            while (headerNames.hasMoreElements()) {
+
+                final String name = headerNames.nextElement();
+                final Enumeration<String> nameHeader = request.getHeaders(name);
+
+                log.append("Header [").append(name).append("]:");
+
+                while (nameHeader.hasMoreElements()) {
+                    log.append(" [").append(nameHeader.nextElement())
+                            .append("]");
+                }
+                log.append('\n');
+            }
+
+            for (final NamedPair namedPair : parameters.getAllNamed()) {
+                log.append("Parameter [").append(namedPair.getKey())
+                        .append("] = [").append(namedPair.getValue())
+                        .append("]\n");
+            }
+
+            LOGGER.debug(log.toString());
+
+        }
 
         final HttpServletResponse response =
                 (HttpServletResponse) requestCycle.getResponse()
@@ -410,16 +441,18 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
         final int width = 10;
 
-        String msg = "";
+        final StringBuilder msg = new StringBuilder(1024);
+
         int i = 0;
         for (byte b : bos.toByteArray()) {
+
             if (i % width == 0) {
-                msg += "\n";
+                msg.append("\n");
             }
-            msg += String.format("0x%02X ", b);
+            msg.append(String.format("0x%02X ", b));
             i++;
         }
-        LOGGER.trace(msg);
+        LOGGER.trace(msg.toString());
     }
 
     /**
@@ -434,18 +467,20 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         response.setContentType(CONTENT_TYPE_PPD);
         response.setStatus(HttpServletResponse.SC_OK);
 
-        File file = ConfigManager.getPpdFile();
+        final File file = ConfigManager.getPpdFile();
 
         if (!file.exists()) {
             throw new SpException("PPD file [" + file.getAbsolutePath()
                     + "] does NOT exist");
         }
 
-        IResourceStream resourceStream = new FileResourceStream(file);
-        ResourceStreamRequestHandler handler =
+        final IResourceStream resourceStream = new FileResourceStream(file);
+        final ResourceStreamRequestHandler handler =
                 new ResourceStreamRequestHandler(resourceStream);
+
         handler.setContentDisposition(ContentDisposition.INLINE);
         handler.setCacheDuration(Duration.NONE);
+
         getRequestCycle().scheduleRequestHandlerAfterCurrent(handler);
     }
 
