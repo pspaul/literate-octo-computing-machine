@@ -1109,7 +1109,6 @@ pattern="[0-9]*"
                 <li>
                     <h3><wicket:message key="cat-financial-vouchers"/></h3>
                     <br/>
-
                     <label class="sp-txt-wrap" for="" wicket:id="financial-voucher-card-header-label" />
                     <input type="text" id="" value="" wicket:id="financial-voucher-card-header" maxlength="128"  
                             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
@@ -1122,11 +1121,38 @@ pattern="[0-9]*"
                     <select tabindex="-1" id="sp-financial-voucher-card-fontfamily" data-native-menu="false">
                         <wicket:fragment wicket:id="voucher-fontfamily-options"/>
                     </select>
-                    
+                    <br/>
+                    <label for="the-config-key"
+                        wicket:id="financial-user-vouchers-enable-label" /> 
+                    <input type="checkbox" id="the-config-key" value="0"
+                        wicket:id="financial-user-vouchers-enable" />
+
                     <div>
                         <a href="#" id="apply-financial-vouchers" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
                             <wicket:message key="button-apply" /></a>
                     </div>
+                </li>
+            </ul>
+            <ul data-role="listview" data-inset="true">
+                <li>
+                    <h3><wicket:message key="cat-financial-user-transfers"/></h3>
+                    
+                    <label for="the-config-key"
+                        wicket:id="financial-user-transfer-enable-label" /> 
+                    <input type="checkbox" id="the-config-key" value="0"
+                        wicket:id="financial-user-transfer-enable" />
+
+                    <div class="financial-user-transfers-enabled">
+	                    <label for="the-config-key"
+	                        wicket:id="financial-user-transfer-enable-comments-label" /> 
+	                    <input type="checkbox" id="the-config-key" value="0"
+	                        wicket:id="financial-user-transfer-enable-comments" />
+                    </div>
+                    <div>
+                        <a href="#" id="apply-financial-user-transfers" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+                            <wicket:message key="button-apply" /></a>
+                    </div>
+                    
                 </li>
             </ul>
         </div>

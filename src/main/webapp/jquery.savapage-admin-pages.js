@@ -1857,9 +1857,19 @@
                     _self.onApplyFinancialPos();
                     return false;
                 });
+                
                 $(this).on('click', "#apply-financial-vouchers", null, function() {
                     _self.onApplyFinancialVouchers($("#sp-financial-voucher-card-fontfamily").val());
                     return false;
+                });
+                                
+                $(this).on('click', "#apply-financial-user-transfers", null, function() {
+                    _self.onApplyFinancialUserTransfers();
+                    return false;
+                });
+
+                $(this).on('change', "input:checkbox[id='financial.user.transfers.enable']", null, function(e) {
+                    _panel.Options.onFinancialUserTransfersEnabled(_view.isCbChecked($(this)));
                 });
 
                 $(this).on('click', '#apply-user-create', null, function() {

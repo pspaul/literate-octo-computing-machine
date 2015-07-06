@@ -285,10 +285,17 @@
     <entry key="financial-payment-methods">Een door comma's gescheiden lijst van betaalmethoden (laat leeg als niet vereist)</entry>
     <entry key="cat-financial-pos">Verkooppunt</entry>
     <entry key="financial-pos-receipt-header">Kassabon Kopregels</entry>
-    <entry key="cat-financial-vouchers">Vouchers</entry>    
+    
+    <entry key="cat-financial-vouchers">Vouchers</entry>
+    <entry key="financial-user-vouchers-enable">Gebruikers toestaan vouchers in te wisselen</entry> 
+        
     <entry key="financial-voucher-card-header">Kopregel</entry>
     <entry key="financial-voucher-card-footer">Voetregel</entry>
     <entry key="financial-voucher-card-fontfamily">Lettertype</entry>
+
+    <entry key="cat-financial-user-transfers">Bedragen overdragen</entry>    
+    <entry key="financial-user-transfer-enable">Gebruikers toestaan bedragen naar andere gebruikers over te dragen</entry> 
+    <entry key="financial-user-transfer-enable-comments">Gebruikers toestaan om commentaar toe te voegen bij handmatige overdrachten</entry> 
     
     <!--  -->
     <entry key="report-fontfamily-header">Rapport Lettertype</entry>

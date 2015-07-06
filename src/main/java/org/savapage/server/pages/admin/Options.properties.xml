@@ -282,10 +282,16 @@
     <entry key="financial-payment-methods">A comma separated list of payment methods (leave empty if not required)</entry>
     <entry key="cat-financial-pos">Point-of-Sale</entry>
     <entry key="financial-pos-receipt-header">Receipt header text</entry>
+    
     <entry key="cat-financial-vouchers">Vouchers</entry>
+    <entry key="financial-user-vouchers-enable">Allow users to redeem vouchers</entry> 
     <entry key="financial-voucher-card-header">Header</entry>
     <entry key="financial-voucher-card-footer">Footer</entry>
     <entry key="financial-voucher-card-fontfamily">Font</entry>
+    
+    <entry key="cat-financial-user-transfers">Transfer funds</entry>    
+    <entry key="financial-user-transfer-enable">Allow users to transfer funds to other users</entry> 
+    <entry key="financial-user-transfer-enable-comments">Allow users to add comments to manual transfers</entry> 
     
     <!--  -->
     <entry key="report-fontfamily-header">Report Font</entry>

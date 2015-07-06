@@ -203,7 +203,7 @@
 				if (!language) {
 					language = _model.authToken.language || '';
 				}
-				
+
 				country = _util.getUrlParam('country');
 				if (!country) {
 					country = _model.authToken.country || '';
@@ -677,7 +677,14 @@
 				var props = {
 					"financial.voucher.card-font-family" : cardFontFamily
 				};
+				_fillConfigPropsYN(props, ['financial.user.vouchers.enable']);
 				_fillConfigPropsText(props, ["financial.voucher.card-header", "financial.voucher.card-footer"]);
+				_saveConfigProps(props);
+			};
+
+			_view.pages.admin.onApplyFinancialUserTransfers = function() {
+				var props = {};
+				_fillConfigPropsYN(props, ['financial.user.transfers.enable', 'financial.user.transfers.enable-comments']);
 				_saveConfigProps(props);
 			};
 
@@ -720,9 +727,9 @@
 			_view.pages.admin.onBitcoinWalletRefresh = function() {
 				_view.showApiMsg(_api.call({
 					request : 'bitcoin-wallet-refresh'
-				})); 
+				}));
 			};
-			
+
 			_view.pages.admin.onPagometerReset = function() {
 				var scope = []
 				//
@@ -1288,10 +1295,10 @@
 				;
 
 				dto.id = _model.editPrinter.id;
-				
+
 				dto.language = _model.language;
 				dto.country = _model.country;
-				
+
 				dto.chargeType = _view.getRadioValue('sp-printer-charge-type');
 				dto.defaultCost = $('#sp-printer-default-cost').val();
 				dto.mediaCost = [];
@@ -1522,7 +1529,7 @@
 				if (window.localStorage[item] !== null) {
 					this.authToken.language = window.localStorage[item];
 				}
-				
+
 				item = _LOC_COUNTRY;
 				if (window.localStorage[item] !== null) {
 					this.authToken.country = window.localStorage[item];
@@ -1538,7 +1545,7 @@
 				this.authToken.country = country;
 				window.localStorage[_LOC_COUNTRY] = country;
 			};
-			
+
 			this.setAuthToken = function(user, token, language, country) {
 				var item;
 
@@ -1555,7 +1562,7 @@
 				}
 				if (country) {
 					this.setCountry(country);
-				}				
+				}
 			};
 
 		};

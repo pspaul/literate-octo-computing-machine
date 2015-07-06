@@ -458,11 +458,21 @@ public class Options extends AbstractAdminPage {
 
         // Vouchers
 
+        labelledCheckbox("financial-user-vouchers-enable",
+                IConfigProp.Key.FINANCIAL_USER_VOUCHERS_ENABLE);
+
         labelledInput("financial-voucher-card-header",
                 IConfigProp.Key.FINANCIAL_VOUCHER_CARD_HEADER);
 
         labelledInput("financial-voucher-card-footer",
                 IConfigProp.Key.FINANCIAL_VOUCHER_CARD_FOOTER);
+
+        //
+        labelledCheckbox("financial-user-transfer-enable",
+                IConfigProp.Key.FINANCIAL_USER_TRANSFER_ENABLE);
+
+        labelledCheckbox("financial-user-transfer-enable-comments",
+                IConfigProp.Key.FINANCIAL_USER_TRANSFER_ENABLE_COMMENTS);
 
         /*
          * Report Font Family.
