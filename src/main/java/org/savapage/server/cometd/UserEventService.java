@@ -908,8 +908,22 @@ public final class UserEventService extends AbstractEventService {
         daoContext.beginTransaction();
 
         try {
-
-            lockedUser = daoContext.getUserDao().lockByUserId(userName);
+            if (ConfigManager.isDbInternal()) {
+                /*
+                 * #575: Be less strict on internal Apache Derby database by NOT
+                 * locking the user, since multiple row locks of same user leads
+                 * to random deadlocks in Fast Print Release scenario's.
+                 */
+                lockedUser =
+                        daoContext.getUserDao()
+                                .findActiveUserByUserId(userName);
+            } else {
+                /*
+                 * #575: PostgreSQL handles same user concurrent row locking
+                 * just fine :-)
+                 */
+                lockedUser = daoContext.getUserDao().lockByUserId(userName);
+            }
 
             if (lockedUser == null) {
                 throw new UserNotFoundException("user [" + userName
