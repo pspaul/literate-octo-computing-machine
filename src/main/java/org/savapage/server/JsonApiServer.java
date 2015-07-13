@@ -2095,7 +2095,9 @@ public final class JsonApiServer extends AbstractPage {
         } else {
 
             if (!isShutdown) {
-                LOGGER.warn(exception.getMessage());
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn(exception.getMessage());
+                }
             }
         }
 

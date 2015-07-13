@@ -92,7 +92,8 @@ public abstract class AbstractAuthPage extends AbstractPage {
             /*
              * Check membership status, and redirect to message page if needed.
              */
-            if (needMembership() && MemberCard.instance().isMembershipDesirable()) {
+            if (needMembership()
+                    && MemberCard.instance().isMembershipDesirable()) {
                 setResponsePage(MembershipMsg.class);
                 authErr = true;
             }
@@ -128,7 +129,10 @@ public abstract class AbstractAuthPage extends AbstractPage {
     public AbstractAuthPage() {
 
         final RequestCycle requestCycle = getRequestCycle();
-        LOGGER.trace(requestCycle.getRequest().getClientUrl().toString());
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(requestCycle.getRequest().getClientUrl().toString());
+        }
 
         String message = null;
 
@@ -145,7 +149,11 @@ public abstract class AbstractAuthPage extends AbstractPage {
         authErrorHandled = (message != null);
 
         if (authErrorHandled) {
-            LOGGER.debug(message);
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(message);
+            }
+
             this.setResponsePage(NotAuthorized.class);
             /*
              * Setting the response page will not be in effect immediately, so

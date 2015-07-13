@@ -204,9 +204,11 @@ public final class WebAppUserPage extends AbstractWebAppPage {
             final InternalFontFamilyEnum preferredFont =
                     ((WebAppUserPage) this.getParent()).getSelectedUploadFont();
 
-            LOGGER.trace("User [" + user.getUserId() + "] uploaded file ["
-                    + uploadedFile.getContentType() + "] ["
-                    + uploadedFile.getClientFileName() + "]");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("User [" + user.getUserId() + "] uploaded file ["
+                        + uploadedFile.getContentType() + "] ["
+                        + uploadedFile.getClientFileName() + "]");
+            }
 
             ServiceContext.open();
 
@@ -220,9 +222,12 @@ public final class WebAppUserPage extends AbstractWebAppPage {
                     contentType =
                             DocContent.getContentTypeFromFile(uploadedFile
                                     .getClientFileName());
-                    LOGGER.warn("No content type found for ["
-                            + uploadedFile.getContentType() + "], using ["
-                            + contentType + "] based on file extension.");
+
+                    if (LOGGER.isWarnEnabled()) {
+                        LOGGER.warn("No content type found for ["
+                                + uploadedFile.getContentType() + "], using ["
+                                + contentType + "] based on file extension.");
+                    }
                 }
 
                 final DocContentPrintReq docContentPrintReq =
@@ -406,9 +411,7 @@ public final class WebAppUserPage extends AbstractWebAppPage {
                     final Form<?> form) {
 
                 // info(getLocalizer().getString("msg-file-upload-busy", this));
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Uploading file ...");
-                }
+                LOGGER.info("Uploading file ...");
 
                 /*
                  * ajax-update the feedback panel

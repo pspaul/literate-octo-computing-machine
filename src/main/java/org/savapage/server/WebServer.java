@@ -431,7 +431,9 @@ public final class WebServer {
 
         if (status == 0) {
 
-            LOGGER.info("server [" + server.getState() + "]");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("server [" + server.getState() + "]");
+            }
 
             if (fDevelopment) {
                 System.out

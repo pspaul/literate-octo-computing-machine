@@ -239,10 +239,11 @@ public final class WebAppAdminPage extends AbstractWebAppPage {
                         info(getLocalizer().getString(
                                 "msg-membercard-import-file-invalid", this));
 
-                        LOGGER.info(uploadedFile.getClientFileName()
-                                + " is not a valid "
-                                + CommunityDictEnum.MEMBER_CARD.getWord());
-
+                        if (LOGGER.isInfoEnabled()) {
+                            LOGGER.info(uploadedFile.getClientFileName()
+                                    + " is not a valid "
+                                    + CommunityDictEnum.MEMBER_CARD.getWord());
+                        }
                         // + " File-Size: "
                         // +
                         // Bytes.bytes(uploadedFile.getSize()).toString());

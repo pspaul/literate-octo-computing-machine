@@ -53,9 +53,14 @@ public class ImageReqHandlerBase64 extends TextRequestHandler {
      * @param file
      */
     public ImageReqHandlerBase64(File file) {
+
         super(CONTENT_TYPE_BASE64, "UTF-8", getBase64(file));
+
         this.file = file;
-        LOGGER.trace("handle image file [" + file.getAbsolutePath() + "]");
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("handle image file [" + file.getAbsolutePath() + "]");
+        }
     }
 
     /**
@@ -83,15 +88,19 @@ public class ImageReqHandlerBase64 extends TextRequestHandler {
     protected void releaseFile(File image) {
         if (image.exists()) {
             if (image.delete()) {
-                LOGGER.trace("deleted image file [" + image.getAbsolutePath()
-                        + "]");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("deleted image file ["
+                            + image.getAbsolutePath() + "]");
+                }
             } else {
                 LOGGER.error("delete of image file [" + image.getAbsolutePath()
                         + "] FAILED");
             }
         } else {
-            LOGGER.warn("image file to be deleted [" + image.getAbsolutePath()
-                    + "] does NOT exist");
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("image file to be deleted ["
+                        + image.getAbsolutePath() + "] does NOT exist");
+            }
         }
     }
 
@@ -100,7 +109,9 @@ public class ImageReqHandlerBase64 extends TextRequestHandler {
         if (file != null) {
             releaseFile(file);
         } else {
-            LOGGER.warn("no image file to delete");
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("no image file to delete");
+            }
         }
         super.detach(requestCycle);
     }

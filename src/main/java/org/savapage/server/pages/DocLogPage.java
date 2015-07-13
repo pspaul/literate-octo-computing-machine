@@ -66,7 +66,10 @@ public class DocLogPage extends AbstractListPage {
         }
 
         final String data = getParmValue(POST_PARM_DATA);
-        LOGGER.trace("data : " + data);
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("data : " + data);
+        }
 
         final DocLogPagerReq req = DocLogPagerReq.read(data);
 

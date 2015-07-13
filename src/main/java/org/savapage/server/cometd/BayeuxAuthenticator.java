@@ -101,8 +101,10 @@ public final class BayeuxAuthenticator extends DefaultSecurityPolicy implements
                         .get(CometdConnectDto.SERVER_MSG_ATTR_AUTH));
 
         if (authentication == null) {
-            LOGGER.warn("handshake EXT_FIELD without "
-                    + CometdConnectDto.SERVER_MSG_ATTR_AUTH);
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("handshake EXT_FIELD without "
+                        + CometdConnectDto.SERVER_MSG_ATTR_AUTH);
+            }
             return false;
         }
         /*

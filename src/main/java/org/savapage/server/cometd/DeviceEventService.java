@@ -157,8 +157,11 @@ public final class DeviceEventService extends AbstractEventService {
                     ServiceContext.getServiceFactory().getDeviceService()
                             .createRfidNumberFormat(readerDevice, lookup);
 
-            LOGGER.trace("START reader [" + readerIpAddress
-                    + "] event monitoring for device [" + clientIpAddress + "]");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("START reader [" + readerIpAddress
+                        + "] event monitoring for device [" + clientIpAddress
+                        + "]");
+            }
 
             /*
              * Mantis #328
@@ -171,22 +174,27 @@ public final class DeviceEventService extends AbstractEventService {
                         return;
                     }
 
-                    LOGGER.debug("Listener removed (timeout) " + "for reader ["
-                            + readerIpAddress
-                            + "] event monitoring for device ["
-                            + clientIpAddress + "]");
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Listener removed (timeout) "
+                                + "for reader [" + readerIpAddress
+                                + "] event monitoring for device ["
+                                + clientIpAddress + "]");
+                    }
+
                     try {
 
                         RfidReaderManager.reportEvent(readerIpAddress,
                                 new RfidEvent(RfidEvent.EventEnum.VOID));
 
                     } catch (InterruptedException e) {
-                        LOGGER.info("Listener removed (timeout) "
-                                + "for reader [" + readerIpAddress
-                                + "] event for device [" + clientIpAddress
-                                + "]. RfidReaderManager reportEvent(VOID) "
-                                + "failed because interrupted: "
-                                + e.getMessage());
+                        if (LOGGER.isInfoEnabled()) {
+                            LOGGER.info("Listener removed (timeout) "
+                                    + "for reader [" + readerIpAddress
+                                    + "] event for device [" + clientIpAddress
+                                    + "]. RfidReaderManager reportEvent(VOID) "
+                                    + "failed because interrupted: "
+                                    + e.getMessage());
+                        }
                     }
                 }
             });
@@ -202,8 +210,12 @@ public final class DeviceEventService extends AbstractEventService {
                 eventData = new HashMap<String, Object>();
                 eventData.put("event", "");
             }
-            LOGGER.trace("STOP reader [" + readerIpAddress
-                    + "] event monitoring for device [" + clientIpAddress + "]");
+
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("STOP reader [" + readerIpAddress
+                        + "] event monitoring for device [" + clientIpAddress
+                        + "]");
+            }
 
         } catch (InterruptedException e) {
 
@@ -244,7 +256,10 @@ public final class DeviceEventService extends AbstractEventService {
              */
             remote.deliver(getServerSession(), CHANNEL_PUBLISH, jsonEvent);
 
-            LOGGER.debug("Delivered event for device [" + clientIpAddress + "]");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Delivered event for device [" + clientIpAddress
+                        + "]");
+            }
 
         } catch (Exception e) {
 

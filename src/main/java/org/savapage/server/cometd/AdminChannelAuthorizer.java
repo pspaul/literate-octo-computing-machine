@@ -57,7 +57,10 @@ public final class AdminChannelAuthorizer implements Authorizer {
                         .isParentOf(channel);
 
         if (!isAdminChannel) {
-            LOGGER.warn("authorization for channel [" + channel + "] ignored");
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("authorization for channel [" + channel
+                        + "] ignored");
+            }
             return Result.ignore();
         }
 

@@ -46,9 +46,14 @@ public class ImageReqHandler extends ResourceStreamRequestHandler {
      * @param file
      */
     public ImageReqHandler(File file) {
+
         super(new FileResourceStream(file));
+
         this.file = file;
-        LOGGER.trace("handle image file [" + file.getAbsolutePath() + "]");
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("handle image file [" + file.getAbsolutePath() + "]");
+        }
     }
 
     /**
@@ -59,15 +64,21 @@ public class ImageReqHandler extends ResourceStreamRequestHandler {
     protected void releaseFile(File image) {
         if (image.exists()) {
             if (image.delete()) {
-                LOGGER.trace("deleted image file [" + image.getAbsolutePath()
-                        + "]");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("deleted image file ["
+                            + image.getAbsolutePath() + "]");
+                }
             } else {
-                LOGGER.warn("delete of image file [" + image.getAbsolutePath()
-                        + "] FAILED");
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("delete of image file ["
+                            + image.getAbsolutePath() + "] FAILED");
+                }
             }
         } else {
-            LOGGER.warn("image file to be deleted [" + image.getAbsolutePath()
-                    + "] does NOT exist");
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("image file to be deleted ["
+                        + image.getAbsolutePath() + "] does NOT exist");
+            }
         }
 
     }
@@ -77,7 +88,9 @@ public class ImageReqHandler extends ResourceStreamRequestHandler {
         if (file != null) {
             releaseFile(file);
         } else {
-            LOGGER.warn("no image file to delete");
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("no image file to delete");
+            }
         }
         super.detach(requestCycle);
     }

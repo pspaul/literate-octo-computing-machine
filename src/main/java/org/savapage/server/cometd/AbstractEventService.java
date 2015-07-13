@@ -133,10 +133,12 @@ public abstract class AbstractEventService extends AbstractService implements
             }
             return new Locale(language, country);
         } catch (Exception e) {
-            LOGGER.warn(String.format(
-                    "Locale cannot be created for %s %s (falling back to %s)",
-                    language, StringUtils.defaultString(country), Locale
-                            .getDefault().toString()));
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn(String
+                        .format("Locale cannot be created for %s %s (falling back to %s)",
+                                language, StringUtils.defaultString(country),
+                                Locale.getDefault().toString()));
+            }
             return Locale.getDefault();
         }
     }

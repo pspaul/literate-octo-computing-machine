@@ -119,7 +119,7 @@ public class ConfigPropPage extends AbstractAdminListPage {
      */
     public ConfigPropPage() {
 
-        //this.openServiceContext();
+        // this.openServiceContext();
 
         Req req = readReq();
 
@@ -188,7 +188,10 @@ public class ConfigPropPage extends AbstractAdminListPage {
     private Req readReq() {
 
         final String data = getParmValue(POST_PARM_DATA);
-        LOGGER.trace("data : " + data);
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("data : " + data);
+        }
 
         Req req = null;
 

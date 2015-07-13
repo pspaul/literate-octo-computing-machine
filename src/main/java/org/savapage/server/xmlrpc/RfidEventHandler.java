@@ -168,7 +168,9 @@ public class RfidEventHandler implements ServiceEntryPoint {
 
             map.put(KEY_MESSAGE, ex.getMessage());
 
-            LOGGER.info(ex.getMessage());
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info(ex.getMessage());
+            }
 
         } catch (Exception ex) {
 
@@ -231,8 +233,10 @@ public class RfidEventHandler implements ServiceEntryPoint {
                 .getSystemMessage(this.getClass(), key, cardNumber,
                         clientIpAddress));
 
-        LOGGER.warn(Messages.getLogFileMessage(this.getClass(), key,
-                cardNumber, clientIpAddress));
+        if (LOGGER.isWarnEnabled()) {
+            LOGGER.warn(Messages.getLogFileMessage(this.getClass(), key,
+                    cardNumber, clientIpAddress));
+        }
 
         map.put(KEY_MESSAGE, "Unknown Card Reader [" + clientIpAddress + "]");
     }
@@ -257,8 +261,10 @@ public class RfidEventHandler implements ServiceEntryPoint {
                 .getSystemMessage(this.getClass(), key, cardNumber,
                         clientIpAddress));
 
-        LOGGER.warn(Messages.getLogFileMessage(this.getClass(), key,
-                cardNumber, clientIpAddress));
+        if (LOGGER.isWarnEnabled()) {
+            LOGGER.warn(Messages.getLogFileMessage(this.getClass(), key,
+                    cardNumber, clientIpAddress));
+        }
 
         map.put(KEY_MESSAGE, "Disabled Card Reader [" + clientIpAddress + "]");
     }
@@ -354,8 +360,10 @@ public class RfidEventHandler implements ServiceEntryPoint {
                 .getSystemMessage(this.getClass(), key, cardNumber,
                         clientIpAddress));
 
+        if (LOGGER.isWarnEnabled()) {
         LOGGER.debug(Messages.getLogFileMessage(this.getClass(), key,
                 cardNumber, clientIpAddress));
+        }
 
         /*
          * Find the user of the card.
