@@ -3101,6 +3101,7 @@ public final class JsonApiServer extends AbstractPage {
             costParms.setDuplex(printReq.isDuplex());
             costParms.setGrayscale(printReq.isGrayscale());
             costParms.setNumberOfCopies(printReq.getNumberOfCopies());
+            costParms.setPagesPerSide(printReq.getNup());
 
             cost =
                     ACCOUNTING_SERVICE.calcProxyPrintCost(
