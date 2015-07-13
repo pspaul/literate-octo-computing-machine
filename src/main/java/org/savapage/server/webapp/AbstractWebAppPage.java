@@ -22,7 +22,6 @@
 package org.savapage.server.webapp;
 
 import java.io.File;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
@@ -276,7 +275,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      * @return the URL parameter.
      */
     protected final String getNoCacheUrlParm() {
-        return "?" + new Date().getTime();
+        return new StringBuilder().append("?").append(
+                System.currentTimeMillis()).toString();
     }
 
     /**
@@ -331,8 +331,7 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         key.append("webapp.custom.").append(
                 this.getWebAppType().toString().toLowerCase());
 
-        return getCssCustomFile(key.toString(),
-                CustomWebServlet.PATH_BASE);
+        return getCssCustomFile(key.toString(), CustomWebServlet.PATH_BASE);
     }
 
     /**

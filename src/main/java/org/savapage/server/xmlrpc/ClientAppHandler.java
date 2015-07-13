@@ -26,7 +26,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -316,7 +315,7 @@ public final class ClientAppHandler {
                     dto.setUserAuthToken(authToken.getToken());
                     dto.setStatus(ClientAppConnectDto.Status.OK);
 
-                    dto.setServerTime(new Date().getTime());
+                    dto.setServerTime(System.currentTimeMillis());
                     dto.setWebAppUrl(getUserWebAppUrl(userId).toString());
 
                     final CometdConnectDto cometdConnect =

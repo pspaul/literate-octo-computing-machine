@@ -832,7 +832,7 @@ public final class UserEventService extends AbstractEventService {
                     break;
                 }
 
-                final long msecNow = new Date().getTime();
+                final long msecNow = System.currentTimeMillis();
                 final long timeElapsed =
                         msecNow + MSECS_WAIT_BETWEEN_POLLS - msecStart;
 
@@ -1069,7 +1069,7 @@ public final class UserEventService extends AbstractEventService {
         final Map<String, Object> eventData = new HashMap<String, Object>();
         final JsonUserMsgNotification json = new JsonUserMsgNotification();
 
-        json.setMsgTime(new Date().getTime());
+        json.setMsgTime(System.currentTimeMillis());
 
         eventData.put(KEY_DATA, json);
         eventData.put(KEY_EVENT, UserEventEnum.ACCOUNT);
@@ -1086,7 +1086,8 @@ public final class UserEventService extends AbstractEventService {
 
         final Map<String, Object> eventData = new HashMap<String, Object>();
         final JsonUserMsgNotification json = new JsonUserMsgNotification();
-        json.setMsgTime(new Date().getTime());
+
+        json.setMsgTime(System.currentTimeMillis());
 
         eventData.put(KEY_EVENT, UserEventEnum.NULL);
         eventData.put(KEY_DATA, json);

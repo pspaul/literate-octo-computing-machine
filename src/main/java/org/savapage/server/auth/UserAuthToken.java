@@ -68,7 +68,7 @@ public final class UserAuthToken {
         this.user = user;
         this.adminOnly = adminOnly;
         this.token = java.util.UUID.randomUUID().toString();
-        this.createTime = new Date().getTime();
+        this.createTime = System.currentTimeMillis();
     }
 
     public String getToken() {

@@ -5448,7 +5448,7 @@ public final class JsonApiServer extends AbstractPage {
         final AccountVoucherRedeemDto dto = new AccountVoucherRedeemDto();
 
         dto.setCardNumber(cardNumber);
-        dto.setRedeemDate(new Date().getTime());
+        dto.setRedeemDate(System.currentTimeMillis());
         dto.setUserId(requestingUser);
 
         final AbstractJsonRpcMethodResponse rpcResponse =
@@ -6551,7 +6551,7 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("fullname", userDb.getFullName());
         userData.put("admin", userDb.getAdmin());
         userData.put("internal", userDb.getInternal());
-        userData.put("systime", Long.valueOf(new Date().getTime()));
+        userData.put("systime", Long.valueOf(System.currentTimeMillis()));
         userData.put("language", getSession().getLocale().getLanguage());
         userData.put("country", getSession().getLocale().getCountry());
         userData.put("mail", USER_SERVICE.getPrimaryEmailAddress(userDb));
@@ -7399,7 +7399,7 @@ public final class JsonApiServer extends AbstractPage {
                 AbstractEventService.getMaxNetworkDelay());
 
         //
-        userData.put("systime", Long.valueOf(new Date().getTime()));
+        userData.put("systime", Long.valueOf(System.currentTimeMillis()));
 
         return userData;
     }

@@ -21,7 +21,6 @@
  */
 package org.savapage.server.cometd;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -403,7 +402,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
                     eventData.put(KEY_EVENT, EVENT_PRINTED);
                     JsonUserMsgNotification json =
                             new JsonUserMsgNotification();
-                    json.setMsgTime(new Date().getTime());
+                    json.setMsgTime(System.currentTimeMillis());
                     eventData.put(KEY_DATA, json);
 
                     /*
