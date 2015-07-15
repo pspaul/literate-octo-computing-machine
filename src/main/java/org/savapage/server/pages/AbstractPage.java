@@ -404,13 +404,13 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
 
     /**
      *
-     * @return
+     * @return {@code blank} when no User-Agent found.
      */
     protected String getUserAgent() {
-        HttpServletRequest request =
+        final HttpServletRequest request =
                 (HttpServletRequest) getRequestCycle().getRequest()
                         .getContainerRequest();
-        return request.getHeader("User-Agent");
+        return StringUtils.defaultString(request.getHeader("User-Agent"));
     }
 
     /**
