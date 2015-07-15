@@ -14,8 +14,8 @@
 		</license>
 	</licenses>
 	<properties>
-		<wicket.version>6.19.0</wicket.version>
-		<jetty.version>9.2.11.v20150529</jetty.version>
+		<wicket.version>6.20.0</wicket.version>
+		<jetty.version>9.2.12.v20150709</jetty.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>		
 	</properties>
