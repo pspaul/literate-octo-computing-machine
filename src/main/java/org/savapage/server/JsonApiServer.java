@@ -76,7 +76,6 @@ import org.apache.wicket.util.time.Duration;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.LetterheadNotFoundException;
-import org.savapage.core.OutputProducer;
 import org.savapage.core.PerformanceLogger;
 import org.savapage.core.PostScriptDrmException;
 import org.savapage.core.SpException;
@@ -132,6 +131,7 @@ import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.img.ImageUrl;
 import org.savapage.core.inbox.InboxInfoDto;
+import org.savapage.core.inbox.OutputProducer;
 import org.savapage.core.inbox.PageImages;
 import org.savapage.core.inbox.PageImages.PageImage;
 import org.savapage.core.inbox.RangeAtom;
@@ -186,6 +186,7 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.DocLogService;
+import org.savapage.core.services.EmailService;
 import org.savapage.core.services.InboxService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.PrinterService;
@@ -193,6 +194,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
+import org.savapage.core.services.helpers.EmailMsgParms;
 import org.savapage.core.services.helpers.IppLogger;
 import org.savapage.core.services.helpers.PageScalingEnum;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
@@ -256,6 +258,12 @@ public final class JsonApiServer extends AbstractPage {
     */
     private static final DeviceService DEVICE_SERVICE = ServiceContext
             .getServiceFactory().getDeviceService();
+
+    /**
+     * .
+     */
+    private static final EmailService EMAIL_SERVICE = ServiceContext
+            .getServiceFactory().getEmailService();
 
     /**
      *
@@ -876,8 +884,6 @@ public final class JsonApiServer extends AbstractPage {
             boolean isUserRequest) throws JRException, MessagingException,
             IOException, InterruptedException, CircuitBreakerException {
 
-        final OutputProducer outputProducer = OutputProducer.instance();
-
         final File tempPdfFile =
                 new File(OutputProducer.createUniqueTempPdfName(requestingUser,
                         "deposit-receipt"));
@@ -887,14 +893,20 @@ public final class JsonApiServer extends AbstractPage {
                     createPosPurchaseReceipt(tempPdfFile, accountTrxDbId,
                             requestingUser, isUserRequest);
 
-            final String toName = null;
             final String subject =
                     localize("msg-deposit-email-subject",
                             receipt.getReceiptNumber());
             final String body = localize("msg-deposit-email-body");
 
-            outputProducer.sendEmail(toAddress, toName, subject, body,
-                    tempPdfFile, getUserFriendlyFilename(receipt));
+            final EmailMsgParms emailParms = new EmailMsgParms();
+
+            emailParms.setToAddress(toAddress);
+            emailParms.setSubject(subject);
+            emailParms.setBody(body);
+            emailParms.setFileAttach(tempPdfFile);
+            emailParms.setFileName(getUserFriendlyFilename(receipt));
+
+            EMAIL_SERVICE.writeEmail(emailParms);
 
         } finally {
             if (tempPdfFile != null && tempPdfFile.exists()) {
@@ -2282,8 +2294,17 @@ public final class JsonApiServer extends AbstractPage {
                 /*
                  * (3) Send email.
                  */
-                OutputProducer.instance().sendEmail(mailto, user, subject,
-                        body, fileAttach, fileName);
+
+                final EmailMsgParms emailParms = new EmailMsgParms();
+
+                emailParms.setToAddress(mailto);
+                emailParms.setToName(user);
+                emailParms.setSubject(subject);
+                emailParms.setBody(body);
+                emailParms.setFileAttach(fileAttach);
+                emailParms.setFileName(fileName);
+
+                EMAIL_SERVICE.writeEmail(emailParms);
 
                 /*
                  * (4) Log in database
@@ -3542,8 +3563,14 @@ public final class JsonApiServer extends AbstractPage {
                                 + ConfigManager.getAppVersion());
 
         try {
-            OutputProducer.instance().sendEmail(mailto, null, subject, body,
-                    null, null);
+
+            final EmailMsgParms emailParms = new EmailMsgParms();
+
+            emailParms.setToAddress(mailto);
+            emailParms.setSubject(subject);
+            emailParms.setBody(body);
+
+            EMAIL_SERVICE.sendEmail(emailParms);
 
             setApiResult(userData, API_RESULT_CODE_OK, "msg-mail-sent", mailto);
 
