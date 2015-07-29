@@ -76,14 +76,6 @@
 		 */
 
 		/*
-		 * IMPORTANT: Disable the websocket transport before doing the handshake.
-		 * Google Chrome uses WebSockets, but this produces Invoking
-		 * event#monitorUserEven bursts after an event is reported back.
-		 */
-		$.cometd.websocketEnabled = false;
-		$.cometd.unregisterTransport('websocket');
-
-		/*
 		 * When the jQuery Mobile starts to execute, it triggers a mobileinit
 		 * event on the document object, to which you can bind to apply overrides to
 		 * jQuery Mobile's defaults.
