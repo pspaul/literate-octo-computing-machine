@@ -1493,9 +1493,16 @@
 
 			this.pubMsgStack = [];
 
+			/**
+			 * Escape special characters to HTML entities.
+			 */
+			this.textAsHtml = function (text) {
+				return $("<dummy/>").text(text).html();
+			};
+
 			this.pubMsgAsHtml = function(data) {
 				var sfx = (data.level === "ERROR") ? "error" : (data.level === "WARN") ? "warn" : (data.level === "INFO") ? "info" : "valid";
-				return "<div class='sp-txt-wrap sp-txt-" + sfx + "'>" + data.time + ' | ' + data.msg + '<div>';
+				return "<div class='sp-txt-wrap sp-txt-" + sfx + "'>" + this.textAsHtml(data.time + ' | ' + data.msg) + '<div>';
 			};
 
 			this.user = new _ns.User();
