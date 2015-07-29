@@ -157,7 +157,7 @@ public class QueuesPage extends AbstractAdminListPage {
      */
     public QueuesPage() {
 
-        //this.openServiceContext();
+        // this.openServiceContext();
 
         final Req req = readReq();
 
@@ -188,12 +188,15 @@ public class QueuesPage extends AbstractAdminListPage {
             }
         }
 
-        final String server =
-                serverName + ":" + WebApp.getServerPort()
-                        + WebApp.MOUNT_PATH_PRINTERS;
+        final String urlDefault =
+                new StringBuilder().append("ipps://").append(serverName)
+                        .append(":").append(WebApp.getServerSslPort())
+                        .append(WebApp.MOUNT_PATH_PRINTERS).toString();
 
-        final String urlDefault = "&nbsp;ipp://" + server;
-        final String urlWindows = "http://" + server;
+        final String urlWindows =
+                new StringBuilder().append("http://").append(serverName)
+                .append(":").append(WebApp.getServerPort())
+                .append(WebApp.MOUNT_PATH_PRINTERS).toString();
 
         /*
          * Display the requested page.
