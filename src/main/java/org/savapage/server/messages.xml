@@ -38,7 +38,7 @@
 	<entry key="mail-test-subject">SavaPage Test Mail</entry>
 	
 	<!-- This text should be on one (1) line: line feeds are picked up by the mailer  -->
-	<entry key="mail-test-body">Hi,&#10;&#10;This is a test message from {0}.&#10;--&#10;{1}</entry>
+	<entry key="mail-test-body">Hi,&#60;p&#62;This is a test message from {0}.&#60;/p&#62;--&#60;br&#62;{1}</entry>
 
     <entry key="msg-config-prop-not-found">Option "{0}" not found.</entry>
 	<entry key="msg-config-props-error">Value "{0}" is not valid.</entry>
@@ -237,7 +237,7 @@
     <entry key="msg-voucher-redeem-void">Please enter a valid voucher number.</entry>
 
     <entry key="msg-deposit-funds-ok">Amount successfully added to user account.</entry>
-    <entry key="msg-deposit-funds-receipt-email-ok">Amount successfully added to user account. Receipt send to {0}</entry>
+    <entry key="msg-deposit-funds-receipt-email-ok">Amount successfully added to user account. Receipt sent to {0}</entry>
 
     <entry key="msg-deposit-email-subject">Receipt {0}</entry>
     <entry key="msg-deposit-email-body">Please find the deposit receipt attached as PDF file.</entry>

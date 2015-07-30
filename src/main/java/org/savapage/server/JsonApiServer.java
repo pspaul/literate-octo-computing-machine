@@ -194,11 +194,11 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
-import org.savapage.core.services.helpers.EmailMsgParms;
 import org.savapage.core.services.helpers.IppLogger;
 import org.savapage.core.services.helpers.PageScalingEnum;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
 import org.savapage.core.services.helpers.UserAuth;
+import org.savapage.core.services.helpers.email.EmailMsgParms;
 import org.savapage.core.services.impl.InboxServiceImpl;
 import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.users.IUserSource;
@@ -902,7 +902,7 @@ public final class JsonApiServer extends AbstractPage {
 
             emailParms.setToAddress(toAddress);
             emailParms.setSubject(subject);
-            emailParms.setBody(body);
+            emailParms.setBodyFromTemplate(subject, body);
             emailParms.setFileAttach(tempPdfFile);
             emailParms.setFileName(getUserFriendlyFilename(receipt));
 
@@ -2281,10 +2281,14 @@ public final class JsonApiServer extends AbstractPage {
 
                 final String subject = fileName;
                 final String body =
-                        "Hi,\n\nHere are the SafePages attached from " + user
-                                + ".\n\n--\n"
-                                + CommunityDictEnum.SAVAPAGE.getWord() + " "
-                                + ConfigManager.getAppVersion();
+                        new StringBuilder()
+                                .append("Hi,<p>Here are the SafePages "
+                                        + "attached from ").append(user)
+                                .append(".</p>--<br/>")
+                                .append(CommunityDictEnum.SAVAPAGE.getWord())
+                                .append(" ")
+                                .append(ConfigManager.getAppVersion())
+                                .toString();
 
                 /*
                  * (2) Unlock the user BEFORE sending the email.
@@ -2300,7 +2304,7 @@ public final class JsonApiServer extends AbstractPage {
                 emailParms.setToAddress(mailto);
                 emailParms.setToName(user);
                 emailParms.setSubject(subject);
-                emailParms.setBody(body);
+                emailParms.setBodyFromTemplate(fileName, body);
                 emailParms.setFileAttach(fileAttach);
                 emailParms.setFileName(fileName);
 
@@ -3568,7 +3572,7 @@ public final class JsonApiServer extends AbstractPage {
 
             emailParms.setToAddress(mailto);
             emailParms.setSubject(subject);
-            emailParms.setBody(body);
+            emailParms.setBodyFromTemplate(subject, body);
 
             EMAIL_SERVICE.sendEmail(emailParms);
 
