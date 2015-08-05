@@ -129,7 +129,7 @@ import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.UserDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
-import org.savapage.core.img.ImageUrl;
+import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.OutputProducer;
 import org.savapage.core.inbox.PageImages;

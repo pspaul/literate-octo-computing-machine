@@ -53,7 +53,7 @@ import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.impl.DaoContextImpl;
-import org.savapage.core.img.ImageUrl;
+import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.inbox.PageImages;
 import org.savapage.core.inbox.PageImages.PageImage;
 import org.savapage.core.jpa.PrintIn;

@@ -28,7 +28,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.img.ImageUrl;
+import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.inbox.OutputProducer;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
