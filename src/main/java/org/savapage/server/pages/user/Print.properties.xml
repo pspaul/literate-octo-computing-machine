@@ -9,8 +9,11 @@
 
     <entry key="print-job-scope">Scope</entry>
     <entry key="print-title">Title</entry>
-    <entry key="prompt-letterhead">Letterhead</entry>    
+    <entry key="prompt-letterhead">Letterhead</entry>
+        
     <entry key="print-remove-graphics">Remove graphics</entry>    
+    <entry key="print-ecoprint">Eco Print</entry>
+        
     <entry key="print-page-ranges">Pages</entry>
     <entry key="print-page-ranges-help">For example: 1-4,6,8-10</entry>
 	<entry key="button-print">Print</entry>

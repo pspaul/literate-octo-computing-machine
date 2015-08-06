@@ -1141,6 +1141,8 @@ public final class JsonApiServer extends AbstractPage {
                                 getParmValue(parameters, isGetAction, "ranges"),
                                 getParmValue(parameters, isGetAction,
                                         "graphics").equals(PARM_VALUE_FALSE),
+                                getParmValue(parameters, isGetAction,
+                                        "ecoprint").equals(PARM_VALUE_FALSE),
                                 docLog, "download");
 
                 /*
@@ -1508,6 +1510,9 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_PRINTER_PRINT:
 
+            System.out
+                    .println(getParmValue(parameters, isGetAction, "ecoprint"));
+
             return reqPrint(
                     lockedUser,
                     getParmValue(parameters, isGetAction, "printer"),
@@ -1520,6 +1525,8 @@ public final class JsonApiServer extends AbstractPage {
                             isGetAction, "pageScaling")),
                     getParmValue(parameters, isGetAction, "graphics").equals(
                             PARM_VALUE_FALSE),
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "ecoprint")),
                     getParmValue(parameters, isGetAction, "clear").equals(
                             PARM_VALUE_TRUE),
                     getParmValue(parameters, isGetAction, "options"));
@@ -1673,6 +1680,8 @@ public final class JsonApiServer extends AbstractPage {
                     getParmValue(parameters, isGetAction, "jobIndex"),
                     getParmValue(parameters, isGetAction, "ranges"),
                     getParmValue(parameters, isGetAction, "graphics").equals(
+                            PARM_VALUE_FALSE),
+                    getParmValue(parameters, isGetAction, "ecoprint").equals(
                             PARM_VALUE_FALSE));
 
         case JsonApiDict.REQ_QUEUE_GET:
@@ -1744,6 +1753,8 @@ public final class JsonApiServer extends AbstractPage {
      * @param removeGraphics
      *            If <code>true</code> graphics are removed (minified to
      *            one-pixel).
+     * @param ecoPdf
+     *            <code>true</code> if Eco PDF is to be generated.
      * @param docLog
      * @param purpose
      *            A simple tag to insert into the filename (to add some
@@ -1756,9 +1767,10 @@ public final class JsonApiServer extends AbstractPage {
      */
     private File generatePdfForExport(final User user,
             final int vanillaJobIndex, final String pageRangeFilter,
-            final boolean removeGraphics, final DocLog docLog,
-            final String purpose) throws LetterheadNotFoundException,
-            IOException, PostScriptDrmException {
+            final boolean removeGraphics, final boolean ecoPdf,
+            final DocLog docLog, final String purpose)
+            throws LetterheadNotFoundException, IOException,
+            PostScriptDrmException {
 
         final String pdfFile =
                 OutputProducer.createUniqueTempPdfName(user, purpose);
@@ -1783,7 +1795,7 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         return OutputProducer.instance().generatePdfForExport(user, pdfFile,
-                documentPageRangeFilter, removeGraphics, docLog);
+                documentPageRangeFilter, removeGraphics, ecoPdf, docLog);
     }
 
     /**
@@ -2214,6 +2226,8 @@ public final class JsonApiServer extends AbstractPage {
      * @param jobIndex
      * @param ranges
      * @param removeGraphics
+     * @param ecoPdf
+     *            <code>true</code> if Eco PDF is to be generated.
      * @return
      * @throws LetterheadNotFoundException
      * @throws IOException
@@ -2224,9 +2238,10 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqSend(final User lockedUser,
             final String mailto, final String jobIndex, final String ranges,
-            boolean removeGraphics) throws LetterheadNotFoundException,
-            IOException, MessagingException, InterruptedException,
-            CircuitBreakerException, ParseException {
+            final boolean removeGraphics, final boolean ecoPdf)
+            throws LetterheadNotFoundException, IOException,
+            MessagingException, InterruptedException, CircuitBreakerException,
+            ParseException {
 
         final String user = lockedUser.getUserId();
 
@@ -2244,7 +2259,7 @@ public final class JsonApiServer extends AbstractPage {
             fileAttach =
                     generatePdfForExport(lockedUser,
                             Integer.parseInt(jobIndex), ranges, removeGraphics,
-                            docLog, "email");
+                            ecoPdf, docLog, "email");
             /*
              * INVARIANT: Since sending the mail is synchronous, file length is
              * important and MUST be less than criterion.
@@ -2969,8 +2984,9 @@ public final class JsonApiServer extends AbstractPage {
             final String printerName, final String readerName,
             final String jobName, final String jobIndex, final String copies,
             final String rangesRaw, final PageScalingEnum pageScaling,
-            final boolean removeGraphics, final boolean clearInbox,
-            final String jsonOptions) throws Exception {
+            final boolean removeGraphics, final boolean ecoPrint,
+            final boolean clearInbox, final String jsonOptions)
+            throws Exception {
 
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();
@@ -3086,6 +3102,7 @@ public final class JsonApiServer extends AbstractPage {
         printReq.setOptionValues(options);
         printReq.setPrinterName(printerName);
         printReq.setRemoveGraphics(removeGraphics);
+        printReq.setEcoPrint(ecoPrint);
         printReq.setLocale(getSession().getLocale());
         printReq.setIdUser(lockedUser.getId());
 

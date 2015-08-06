@@ -38,6 +38,8 @@
     <entry key="prompt-letterhead">Briefhoofd</entry>        
 
     <entry key="pdf-remove-graphics">Afbeeldingen verwijderen</entry>
+    <entry key="pdf-ecoprint">Eco Print</entry>    
+    
     <entry key="pdf-page-ranges">Pagina's</entry>
     <entry key="pdf-page-ranges-help">Bijvoorbeeld: 1-4,6,8-10</entry>
 

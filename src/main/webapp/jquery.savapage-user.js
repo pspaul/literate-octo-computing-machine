@@ -1554,7 +1554,7 @@
 			$("#page-send").on("pagecreate", function(event) {
 
 				$('#button-send-send').click(function() {
-					_this.onSend($('#send-mailto').val(), _model.pdfPageRanges, _model.removeGraphics);
+					_this.onSend($('#send-mailto').val(), _model.pdfPageRanges, _model.removeGraphics, _model.ecoprint);
 					$('#pdf-page-ranges').val('');
 					return false;
 				});
@@ -3214,6 +3214,11 @@
 				}
 			}
 			//
+			, _onPrint = function(isClose) {
+					_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, 
+						_view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")));				
+			}
+			//
 			;
 
 			// this.onShow()
@@ -3250,12 +3255,12 @@
 				});
 
 				$('#button-print').click(function(e) {
-					_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), false, _view.isCbChecked($("#print-remove-graphics")));
+					_onPrint(false); 
 					return false;
 				});
 
 				$('#button-print-and-close').click(function(e) {
-					_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), true, _view.isCbChecked($("#print-remove-graphics")));
+					_onPrint(true); 
 					return false;
 				});
 
@@ -3893,20 +3898,25 @@
 			//
 			, _timeoutAuthPrint, _countdownAuthPrint, _clearTimeoutAuthPrint
 			//
-			,
+			
 			/**
 			 *
 			 */
-			_saveRemoveGraphics = function(sel) {
+			, _saveRemoveGraphics = function(sel) {
 				_model.removeGraphics = _view.isCbChecked($(sel));
 				_view.visible($('#button-mini-no-graphics'), _model.removeGraphics);
 			}
-			//
-			,
 			/**
 			 *
 			 */
-			_checkVanillaJobs = function() {
+			, _saveEcoprint = function(sel) {
+				_model.ecoprint = _view.isCbChecked($(sel));
+				_view.visible($('#button-mini-ecoprint'), _model.ecoprint);
+			}			
+			/**
+			 *
+			 */
+			, _checkVanillaJobs = function() {
 
 				var res = _api.call({
 					request : 'inbox-is-vanilla',
@@ -3939,6 +3949,7 @@
 				_model.myPrintTitle = $('#print-title').val();
 				_saveSelectedletterhead('#print-letterhead-list');
 				_saveRemoveGraphics('#print-remove-graphics');
+				_saveEcoprint('#print-ecoprint');
 
 				// Check IPP attributes value
 				ippAttrVal = _model.myPrinterOpt['print-color-mode'];
@@ -4914,7 +4925,7 @@
 			/**
 			 * Callbacks: page send
 			 */
-			_view.pages.send.onSend = function(mailto, ranges, removeGraphics) {
+			_view.pages.send.onSend = function(mailto, ranges, removeGraphics, ecoprint) {
 
 				var res;
 
@@ -4924,7 +4935,8 @@
 						mailto : mailto,
 						jobIndex : _model.pdfJobIndex,
 						ranges : ranges,
-						graphics : ( removeGraphics ? '0' : '1')
+						graphics : ( removeGraphics ? '0' : '1'),
+						ecoprint : ( ecoprint ? '0' : '1')
 					});
 					if (res.result.code === "0") {
 						_model.user.stats = res.stats;
@@ -4950,6 +4962,7 @@
 				$('#pdf-title').val(_model.myInboxTitle);
 
 				_view.checkCb('#pdf-remove-graphics', _model.removeGraphics);
+				_view.checkCb('#pdf-ecoprint', _model.ecoprint);
 			};
 
 			/**
@@ -4963,6 +4976,7 @@
 
 				_saveSelectedletterhead('#pdf-letterhead-list');
 				_saveRemoveGraphics('#pdf-remove-graphics');
+				_saveEcoprint('#pdf-ecoprint');
 
 				_model.pdfPageRanges = $('#pdf-page-ranges').val();
 
@@ -4980,6 +4994,7 @@
 			_view.pages.pdfprop.onDownload = function() {
 
 				_saveRemoveGraphics('#pdf-remove-graphics');
+				_saveEcoprint('#pdf-ecoprint');
 
 				if (!_saveSelectedletterhead('#pdf-letterhead-list', true)) {
 					return false;
@@ -4987,7 +5002,7 @@
 				if (!_savePdfProps()) {
 					return false;
 				}
-				window.location.assign(_api.getUrl4Pdf($('#pdf-page-ranges').val(), _model.removeGraphics, _model.pdfJobIndex));
+				window.location.assign(_api.getUrl4Pdf($('#pdf-page-ranges').val(), _model.removeGraphics, _model.ecoprint, _model.pdfJobIndex));
 				$('#pdf-page-ranges').val('');
 				_model.myShowUserStatsGet = true;
 				return true;
@@ -5035,7 +5050,7 @@
 			/**
 			 * Callbacks: page print
 			 */
-			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics) {
+			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint) {
 
 				var res
 				//
@@ -5064,6 +5079,7 @@
 					copies : $('#slider-print-copies').val(),
 					ranges : $('#print-page-ranges').val(),
 					graphics : graphics,
+					ecoprint : ecoprint,
 					clear : clear,
 					options : JSON.stringify(_model.myPrinterOpt)
 				});
@@ -5215,6 +5231,8 @@
 				_prepareReaderForPrinter();
 
 				_view.checkCb('#print-remove-graphics', _model.removeGraphics);
+				_view.checkCb('#print-ecoprint', _model.ecoprint);
+				
 				_this.setLetterheadMenu('#print-letterhead-list');
 				_this.setJobScopeMenu('#print-job-list');
 

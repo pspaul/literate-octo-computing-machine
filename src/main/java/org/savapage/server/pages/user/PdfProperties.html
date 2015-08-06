@@ -45,8 +45,12 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 	        <div class="ui-field-contain">
 	            <label data-mini="true" for="pdf-remove-graphics"><wicket:message key="pdf-remove-graphics"/></label>
 	            <input data-mini="true" type="checkbox" id="pdf-remove-graphics" value="1"/>
-	        </div>
-        
+<wicket:enclosure child="pdf-ecoprint">
+                <label data-mini="true" for="pdf-ecoprint"><wicket:message key="pdf-ecoprint"/></label>
+                <input data-mini="true" type="checkbox" wicket:id="pdf-ecoprint" id="pdf-ecoprint" value="1"/>
+</wicket:enclosure>       
+            </div>
+
 	        <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
 				<wicket:remove><!-- 
 	            <legend class="sp-txt-wrap">

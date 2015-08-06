@@ -46,17 +46,14 @@ public class Print extends AbstractUserPage {
     public Print() {
 
         final MarkupHelper helper = new MarkupHelper(this);
+        final ConfigManager cm = ConfigManager.instance();
 
-        helper.addModifyLabelAttr(
-                "slider-print-copies",
-                "max",
-                ConfigManager.instance().getConfigValue(
-                        Key.WEBAPP_USER_PROXY_PRINT_MAX_COPIES));
+        helper.addModifyLabelAttr("slider-print-copies", "max",
+                cm.getConfigValue(Key.WEBAPP_USER_PROXY_PRINT_MAX_COPIES));
 
         final Label label = new Label("delete-pages-after-print");
 
-        if (ConfigManager.instance().isConfigValue(
-                Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX)) {
+        if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX)) {
             label.add(new AttributeModifier("checked", "checked"));
             label.add(new AttributeModifier("disabled", "disabled"));
         }
@@ -69,8 +66,10 @@ public class Print extends AbstractUserPage {
         add(panel);
 
         panel.populate("sp-print-qs-printer", "",
-        // getLocalizer().getString("search-printer-prompt", this),
                 getLocalizer().getString("search-printer-placeholder", this));
-    }
 
+        //
+        helper.encloseLabel("print-ecoprint", "",
+                cm.isConfigValue(Key.ECO_PRINT_ENABLE));
+    }
 }

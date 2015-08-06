@@ -106,6 +106,15 @@ pattern="[0-9]*"
 		        </label>
 		        <input type="checkbox" id="print-remove-graphics" value="1"/>            
             </div>
+
+<wicket:enclosure child="print-ecoprint">
+            <div data-mini="true" data-role="controlgroup">
+                <label for="print-ecoprint">
+                    <wicket:message key="print-ecoprint"/> 
+                </label>
+                <input type="checkbox" wicket:id="print-ecoprint" id="print-ecoprint" value="1"/>            
+            </div>
+</wicket:enclosure>
                     
             <div data-mini="true" data-role="controlgroup">
                 <label for="delete-pages-after-print">
