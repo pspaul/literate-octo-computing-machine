@@ -1612,9 +1612,7 @@
 		 *
 		 */
 		function PageDashboard(_i18n, _view, _model) {
-			var _this = this
-			//
-			;
+			//var _this = this;
 
 			$('#page-dashboard').on('pagecreate', function(event) {
 
@@ -3919,7 +3917,7 @@
 			, _checkVanillaJobs = function() {
 
 				var res = _api.call({
-					request : 'inbox-is-vanilla',
+					request : 'inbox-is-vanilla'
 				}), isOk = res.result.code === '0';
 
 				if (isOk) {
@@ -4332,8 +4330,8 @@
 					res = _api.call({
 						request : 'letterhead-get',
 						id : $('#letterhead-list').val(),
-						pub : ( pub ? '1' : '0'),
-						base64 : (_view.imgBase64 ? '1' : '0')
+						pub : pub,
+						base64 : _view.imgBase64
 					});
 
 					// _view.showApiMsg(res);
@@ -4935,8 +4933,8 @@
 						mailto : mailto,
 						jobIndex : _model.pdfJobIndex,
 						ranges : ranges,
-						graphics : ( removeGraphics ? '0' : '1'),
-						ecoprint : ( ecoprint ? '0' : '1')
+						removeGraphics : removeGraphics,
+						ecoprint : ecoprint
 					});
 					if (res.result.code === "0") {
 						_model.user.stats = res.stats;
@@ -5052,15 +5050,7 @@
 			 */
 			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint) {
 
-				var res
-				//
-				, clear = ( isClear ? '1' : '0')
-				//
-				, graphics = ( removeGraphics ? '0' : '1')
-				//
-				, sel, cost, visible
-				//
-				;
+				var res, sel, cost, visible;
 
 				if (_saveSelectedletterhead('#print-letterhead-list')) {
 					return;
@@ -5078,9 +5068,9 @@
 					pageScaling : _model.printPageScaling,
 					copies : $('#slider-print-copies').val(),
 					ranges : $('#print-page-ranges').val(),
-					graphics : graphics,
+					removeGraphics : removeGraphics,
 					ecoprint : ecoprint,
-					clear : clear,
+					clear : isClear,
 					options : JSON.stringify(_model.myPrinterOpt)
 				});
 
@@ -5361,7 +5351,7 @@
 						res = _api.call({
 							'request' : 'letterhead-attach',
 							'id' : letterheadIdx,
-							pub : ( pub ? '1' : '0')
+							pub : pub
 						});
 					}
 				}
@@ -5404,9 +5394,9 @@
 				var pub = _view.pages.letterhead.getSelected().pub
 				//
 				, res = _api.call({
-					'request' : 'letterhead-delete',
-					'id' : id,
-					pub : ( pub ? '1' : '0')
+					request : 'letterhead-delete',
+					id : id,
+					pub : pub
 				});
 				_view.showApiMsg(res);
 				if (res.result.code === '0') {
@@ -5588,7 +5578,7 @@
 					request : 'job-pages',
 					'first-detail-page' : nPage,
 					'unique-url-value' : _model.uniqueImgUrlValue,
-					base64 : (_view.imgBase64 ? '1' : '0')
+					base64 : _view.imgBase64
 				});
 				if (data.result.code === '0') {
 					_handleSafePageEvent(data);
@@ -5774,12 +5764,8 @@
 			};
 
 			$(window).on('beforeunload', function() {
-				// NOT returning anything will not show the unload dialog.
-				/*
-				 if (!_ns.isRestartWebApp) {
-				 return document.title;
-				 }
-				 */
+				// By NOT returning anything the unload dialog will not show.
+				$.noop();				
 			}).on('unload', function() {
 				_api.removeCallbacks();
 				_api.call({

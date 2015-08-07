@@ -552,7 +552,7 @@
 
 				var res = _api.call({
 					request : 'gcp-set-details',
-					enabled : ( enabled ? '1' : '0'),
+					enabled : enabled,
 					clientId : $('#gcp-client-id').val(),
 					clientSecret : $('#gcp-client-secret').val(),
 					printerName : $('#gcp-printer-name').val()
@@ -568,7 +568,7 @@
 			_view.pages.admin.onApplyGcpNotification = function() {
 				var res = _api.call({
 					request : 'gcp-set-notifications',
-					enabled : (_view.isCbChecked($('#gcp-mail-after-cancel-enable')) ? '1' : '0'),
+					enabled : _view.isCbChecked($('#gcp-mail-after-cancel-enable')),
 					emailSubject : $('#gcp-mail-after-cancel-subject').val(),
 					emailBody : $('#gcp-mail-after-cancel-body').val()
 				});
@@ -587,7 +587,7 @@
 			_view.pages.admin.onApplyGcpOnline = function(_panel, online) {
 				var res = _api.call({
 					request : 'gcp-online',
-					online : online ? '1' : '0'
+					online : online
 				});
 
 				_view.showApiMsg(res);
@@ -1094,7 +1094,7 @@
 			_view.pages.admin.onCreateDeviceTerminal = function() {
 
 				var res = _api.call({
-					request : 'device-new-terminal',
+					request : 'device-new-terminal'
 				});
 
 				if (res && res.result.code === '0') {
@@ -1113,7 +1113,7 @@
 
 			_view.pages.admin.onCreateDeviceCardReader = function() {
 				var res = _api.call({
-					request : 'device-new-card-reader',
+					request : 'device-new-card-reader'
 				});
 
 				if (res && res.result.code === '0') {
@@ -1627,12 +1627,8 @@
 			};
 
 			$(window).on('beforeunload', function() {
-				// NOT returning anything will not show the unload dialog.
-				/*
-				 if (!_ns.isRestartWebApp) {
-				 return document.title;
-				 }
-				 */
+				// By NOT returning anything the unload dialog will not show.
+				$.noop();				
 			}).on('unload', function() {
 				_api.removeCallbacks();
 				_api.call({

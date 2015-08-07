@@ -423,7 +423,7 @@
 			this.getUrl4Pdf = function(ranges, removeGraphics, ecoprint, jobIndex) {
 				// number of milliseconds since 1970/01/01
 				var d = new Date();
-				return '/api?request=pdf&user=' + _user.id + '&jobIndex=' + jobIndex + '&ranges=' + ranges + '&graphics=' + ( removeGraphics ? '0' : '1') + '&ecoprint=' + ( ecoprint ? '0' : '1')+ '&unique=' + d.getTime().toString();
+				return '/api?request=pdf&user=' + _user.id + '&jobIndex=' + jobIndex + '&ranges=' + ranges + '&removeGraphics=' + removeGraphics + '&ecoprint=' + ecoprint + '&unique=' + d.getTime().toString();
 			};
 
 			/**
@@ -1918,7 +1918,7 @@
 				var res = _api.call({
 					request : 'jqplot',
 					chartType : chartType,
-					isGlobal : ( isGlobal ? '1' : '0')
+					isGlobal : isGlobal
 				});
 				_view.showApiMsg(res);
 				return res.chartData;

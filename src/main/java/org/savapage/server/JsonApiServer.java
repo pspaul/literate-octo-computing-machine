@@ -320,15 +320,6 @@ public final class JsonApiServer extends AbstractPage {
     /**
      *
      */
-    private static final String PARM_VALUE_FALSE = "0";
-    /**
-     *
-     */
-    private static final String PARM_VALUE_TRUE = "1";
-
-    /**
-     *
-     */
     private static final String API_RESULT_CODE_OK = "0";
 
     /**
@@ -1139,11 +1130,11 @@ public final class JsonApiServer extends AbstractPage {
                                 Integer.parseInt(getParmValue(parameters,
                                         isGetAction, "jobIndex")),
                                 getParmValue(parameters, isGetAction, "ranges"),
-                                getParmValue(parameters, isGetAction,
-                                        "graphics").equals(PARM_VALUE_FALSE),
-                                getParmValue(parameters, isGetAction,
-                                        "ecoprint").equals(PARM_VALUE_FALSE),
-                                docLog, "download");
+                                Boolean.parseBoolean(getParmValue(parameters,
+                                        isGetAction, "removeGraphics")),
+                                Boolean.parseBoolean(getParmValue(parameters,
+                                        isGetAction, "ecoprint")), docLog,
+                                "download");
 
                 /*
                  * (2) Write log to database.
@@ -1447,19 +1438,18 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_JOB_PAGES:
 
-            return reqInboxJobPages(
-                    requestingUser,
+            return reqInboxJobPages(requestingUser,
                     getParmValue(parameters, isGetAction, "first-detail-page"),
                     getParmValue(parameters, isGetAction, "unique-url-value"),
-                    getParmValue(parameters, isGetAction, "base64").equals(
-                            PARM_VALUE_TRUE));
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "base64")));
 
         case JsonApiDict.REQ_JQPLOT:
 
             return reqJqPlot(
                     getParmValue(parameters, isGetAction, "chartType"),
-                    getParmValue(parameters, isGetAction, "isGlobal").equals(
-                            PARM_VALUE_TRUE), mySessionUser);
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "isGlobal")), mySessionUser);
 
         case JsonApiDict.REQ_OUTBOX_CLEAR:
 
@@ -1513,8 +1503,7 @@ public final class JsonApiServer extends AbstractPage {
             System.out
                     .println(getParmValue(parameters, isGetAction, "ecoprint"));
 
-            return reqPrint(
-                    lockedUser,
+            return reqPrint(lockedUser,
                     getParmValue(parameters, isGetAction, "printer"),
                     getParmValue(parameters, isGetAction, "readerName"),
                     getParmValue(parameters, isGetAction, "jobName"),
@@ -1523,12 +1512,11 @@ public final class JsonApiServer extends AbstractPage {
                     getParmValue(parameters, isGetAction, "ranges"),
                     PageScalingEnum.valueOf(getParmValue(parameters,
                             isGetAction, "pageScaling")),
-                    getParmValue(parameters, isGetAction, "graphics").equals(
-                            PARM_VALUE_FALSE),
                     Boolean.parseBoolean(getParmValue(parameters, isGetAction,
-                            "ecoprint")),
-                    getParmValue(parameters, isGetAction, "clear").equals(
-                            PARM_VALUE_TRUE),
+                            "removeGraphics")),
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "ecoprint")), Boolean.parseBoolean(getParmValue(
+                            parameters, isGetAction, "clear")),
                     getParmValue(parameters, isGetAction, "options"));
 
         case JsonApiDict.REQ_PRINT_AUTH_CANCEL:
@@ -1576,20 +1564,18 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_LETTERHEAD_ATTACH:
 
-            INBOX_SERVICE.attachLetterhead(
-                    mySessionUser,
-                    getParmValue(parameters, isGetAction, "id"),
-                    getParmValue(parameters, isGetAction, "pub").equals(
-                            PARM_VALUE_TRUE));
+            INBOX_SERVICE.attachLetterhead(mySessionUser,
+                    getParmValue(parameters, isGetAction, "id"), Boolean
+                            .parseBoolean(getParmValue(parameters, isGetAction,
+                                    "pub")));
             return createApiResultOK();
 
         case JsonApiDict.REQ_LETTERHEAD_DELETE:
 
-            return reqLetterheadDelete(
-                    mySessionUser,
+            return reqLetterheadDelete(mySessionUser,
                     getParmValue(parameters, isGetAction, "id"),
-                    getParmValue(parameters, isGetAction, "pub").equals(
-                            PARM_VALUE_TRUE));
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "pub")));
 
         case JsonApiDict.REQ_LETTERHEAD_DETACH:
 
@@ -1609,12 +1595,10 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_LETTERHEAD_GET:
 
             return setApiResultOK(INBOX_SERVICE.getLetterheadDetails(
-                    mySessionUser,
-                    getParmValue(parameters, isGetAction, "id"),
-                    getParmValue(parameters, isGetAction, "pub").equals(
-                            PARM_VALUE_TRUE),
-                    getParmValue(parameters, isGetAction, "base64").equals(
-                            PARM_VALUE_TRUE)));
+                    mySessionUser, getParmValue(parameters, isGetAction, "id"),
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "pub")), Boolean.parseBoolean(getParmValue(
+                            parameters, isGetAction, "base64"))));
 
         case JsonApiDict.REQ_LETTERHEAD_SET:
 
@@ -1628,10 +1612,9 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_GCP_ONLINE:
 
-            return reqGcpOnline(
-                    mySessionUser,
-                    getParmValue(parameters, isGetAction, "online").equals(
-                            PARM_VALUE_TRUE));
+            return reqGcpOnline(mySessionUser,
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "online")));
 
         case JsonApiDict.REQ_GCP_REGISTER:
 
@@ -1642,31 +1625,28 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_GCP_SET_DETAILS:
 
-            return reqGcpSetDetails(
-                    mySessionUser,
-                    getParmValue(parameters, isGetAction, "enabled").equals(
-                            PARM_VALUE_TRUE),
+            return reqGcpSetDetails(mySessionUser,
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "enabled")),
                     getParmValue(parameters, isGetAction, "clientId"),
                     getParmValue(parameters, isGetAction, "clientSecret"),
                     getParmValue(parameters, isGetAction, "printerName"));
 
         case JsonApiDict.REQ_GCP_SET_NOTIFICATIONS:
 
-            return reqGcpSetNotifications(
-                    mySessionUser,
-                    getParmValue(parameters, isGetAction, "enabled").equals(
-                            PARM_VALUE_TRUE),
+            return reqGcpSetNotifications(mySessionUser,
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "enabled")),
                     getParmValue(parameters, isGetAction, "emailSubject"),
                     getParmValue(parameters, isGetAction, "emailBody"));
 
         case JsonApiDict.REQ_GET_EVENT:
 
-            return reqGetEvent(
-                    requestingUser,
+            return reqGetEvent(requestingUser,
                     getParmValue(parameters, isGetAction, "page-offset"),
                     getParmValue(parameters, isGetAction, "unique-url-value"),
-                    getParmValue(parameters, isGetAction, "base64").equals(
-                            PARM_VALUE_TRUE));
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "base64")));
 
         case JsonApiDict.REQ_PING:
 
@@ -1674,15 +1654,14 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_SEND:
 
-            return reqSend(
-                    lockedUser,
+            return reqSend(lockedUser,
                     getParmValue(parameters, isGetAction, "mailto"),
                     getParmValue(parameters, isGetAction, "jobIndex"),
                     getParmValue(parameters, isGetAction, "ranges"),
-                    getParmValue(parameters, isGetAction, "graphics").equals(
-                            PARM_VALUE_FALSE),
-                    getParmValue(parameters, isGetAction, "ecoprint").equals(
-                            PARM_VALUE_FALSE));
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "removeGraphics")),
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "ecoprint")));
 
         case JsonApiDict.REQ_QUEUE_GET:
 
