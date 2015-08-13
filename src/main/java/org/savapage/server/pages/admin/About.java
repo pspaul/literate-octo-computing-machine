@@ -160,8 +160,7 @@ public class About extends AbstractAdminPage {
         installed = StringUtils.isNotBlank(version);
 
         if (!installed) {
-            version = localized("connection-broken");
-            colorInstalled = MarkupHelper.CSS_TXT_ERROR;
+            version = localized("version-unknown");
         }
 
         final String cupsApiVersion = PROXY_PRINT_SERVICE.getCupsApiVersion();

@@ -83,7 +83,7 @@
     <!--  -->
     <entry key="installed">Geïnstalleerd.</entry>
     <entry key="not-installed">Niet geïnstalleerd.</entry>
-    <entry key="connection-broken">Connectie verbroken.</entry>
+    <entry key="version-unknown">Versie onbekend.</entry>
 
     <entry key="jre-os-name">Naam</entry>
     <entry key="jre-os-version">Versie</entry>

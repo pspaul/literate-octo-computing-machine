@@ -77,9 +77,8 @@
 
     <entry key="installed">Installed.</entry>
     <entry key="not-installed">Not installed.</entry>
-    
-    <entry key="connection-broken">Connection broken.</entry>
-    
+    <entry key="version-unknown">Version unknown.</entry>
+        
     <entry key="jre-os-name">Name</entry>
     <entry key="jre-os-version">Version</entry>
     <entry key="jre-os-arch">Architecture</entry>
