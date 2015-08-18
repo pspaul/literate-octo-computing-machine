@@ -33,6 +33,7 @@
     
     <entry key="enabled">Ingeschakeld</entry>
     <entry key="disabled">Uitgeschakeld</entry>
+    <entry key="blocked">Geblokkeerd</entry>
     
     <entry key="circuit-closed">Online</entry>
     <entry key="circuit-damaged">Defect</entry>
@@ -42,6 +43,9 @@
     <entry key="offline">Offline</entry>
     <entry key="not-found">Niet gevonden</entry>
     <entry key="not-configured">Niet geconfigureerd</entry>
+    
+    <entry key="flipswitch-on">Aan</entry>
+    <entry key="flipswitch-off">Uit</entry>
     
     <entry key="news">Nieuws</entry>
     <entry key="news-not-available">Geen nieuws beschikbaar.</entry>

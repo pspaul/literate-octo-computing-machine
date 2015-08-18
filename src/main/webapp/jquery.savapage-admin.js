@@ -511,6 +511,12 @@
 				_saveConfigProps(props);
 			};
 
+			_view.pages.admin.onFlipswitchWebPrint = function(enabled) {
+				var props = {};
+				props['web-print.enable'] = enabled ? 'Y' : 'N';
+				_saveConfigProps(props);
+			};
+
 			_view.pages.admin.onApplyWebPrint = function(enabled) {
 				var props = {};
 				props['web-print.enable'] = enabled ? 'Y' : 'N';
@@ -699,10 +705,20 @@
 			};
 
 			_view.pages.admin.onFlatRequest = function(request) {
-				_view.showApiMsg(_api.call({
+				var res = _api.call({
 					request : request
-				}));
+				});
+				_view.showApiMsg(res);
+				return res;
 			};
+
+			_view.pages.admin.onPaymentGatewayOnline = function (bitcoin, online) {
+				_view.showApiMsg(_api.call({
+					request : "payment-gateway-online",
+					bitcoin : bitcoin,
+					online : online
+				}));
+			}; 
 
 			_view.pages.admin.onApplyUserCreate = function() {
 				var props = {};
@@ -1496,7 +1512,7 @@
 			/**
 			 * Escape special characters to HTML entities.
 			 */
-			this.textAsHtml = function (text) {
+			this.textAsHtml = function(text) {
 				return $("<dummy/>").text(text).html();
 			};
 
@@ -1628,7 +1644,7 @@
 
 			$(window).on('beforeunload', function() {
 				// By NOT returning anything the unload dialog will not show.
-				$.noop();				
+				$.noop();
 			}).on('unload', function() {
 				_api.removeCallbacks();
 				_api.call({

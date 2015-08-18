@@ -32,6 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.SpException;
+import org.savapage.core.circuitbreaker.CircuitStateEnum;
+import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
@@ -39,6 +41,8 @@ import org.savapage.core.doc.OfficeToPdf;
 import org.savapage.core.doc.XpsToPdf;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.print.gcp.GcpPrinter;
+import org.savapage.core.print.imap.ImapPrinter;
+import org.savapage.core.print.smartschool.SmartSchoolPrinter;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.server.pages.FontOptionsPanel;
@@ -248,6 +252,11 @@ public class Options extends AbstractAdminPage {
          */
         final String headerId = "smartschool-print-header";
 
+        String msgKey;
+        String cssColor = null;
+        String msgText = null;
+        Label labelWrk;
+
         if (ConfigManager.isSmartSchoolPrintModuleActivated()) {
 
             helper.encloseLabel(headerId, "SmartSchool Print", true);
@@ -318,12 +327,66 @@ public class Options extends AbstractAdminPage {
             labelledInput("papercut-db-password",
                     IConfigProp.Key.PAPERCUT_DB_PASSWORD);
 
+            //
+            if (SmartSchoolPrinter.isBlocked()) {
+                msgKey = "blocked";
+                cssColor = MarkupHelper.CSS_TXT_WARN;
+            } else {
+                msgKey = null;
+
+                final CircuitStateEnum circuitState =
+                        ConfigManager.getCircuitBreaker(
+                                CircuitBreakerEnum.SMARTSCHOOL_CONNECTION)
+                                .getCircuitState();
+
+                switch (circuitState) {
+
+                case CLOSED:
+                    break;
+
+                case DAMAGED:
+                    msgKey = "circuit-damaged";
+                    cssColor = MarkupHelper.CSS_TXT_ERROR;
+                    break;
+
+                case HALF_OPEN:
+                    // no break intended
+                case OPEN:
+                    msgKey = "circuit-open";
+                    cssColor = MarkupHelper.CSS_TXT_WARN;
+                    break;
+
+                default:
+                    throw new SpException("Oops we missed "
+                            + CircuitStateEnum.class.getSimpleName()
+                            + " value [" + circuitState.toString() + "]");
+                }
+            }
+
+            if (msgKey == null) {
+                msgText = "";
+            } else {
+                msgText = getLocalizer().getString(msgKey, this);
+            }
+
+            labelWrk =
+                    helper.encloseLabel("smartschool-print-status", msgText,
+                            true);
+
+            MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
+
+            labelWrk =
+                    helper.addCheckbox("flipswitch-smartschool-online",
+                            SmartSchoolPrinter.isOnline());
+
+            setFlipswitchOnOffText(labelWrk);
+
         } else {
             helper.discloseLabel(headerId);
         }
 
         /*
-         *
+         * Mail Print.
          */
         labelledCheckbox("imap-enable", IConfigProp.Key.PRINT_IMAP_ENABLE);
 
@@ -351,8 +414,52 @@ public class Options extends AbstractAdminPage {
                 IConfigProp.Key.PRINT_IMAP_MAX_FILE_MB);
         labelledInput("imap-max-files", IConfigProp.Key.PRINT_IMAP_MAX_FILES);
 
+        msgKey = null;
+
+        final CircuitStateEnum circuitState =
+                ConfigManager.getCircuitBreaker(
+                        CircuitBreakerEnum.MAILPRINT_CONNECTION)
+                        .getCircuitState();
+
+        switch (circuitState) {
+
+        case CLOSED:
+            break;
+
+        case DAMAGED:
+            msgKey = "circuit-damaged";
+            cssColor = MarkupHelper.CSS_TXT_ERROR;
+            break;
+
+        case HALF_OPEN:
+            // no break intended
+        case OPEN:
+            msgKey = "circuit-open";
+            cssColor = MarkupHelper.CSS_TXT_WARN;
+            break;
+
+        default:
+            throw new SpException("Oops we missed "
+                    + CircuitStateEnum.class.getSimpleName() + " value ["
+                    + circuitState.toString() + "]");
+        }
+
+        if (msgKey == null) {
+            msgText = "";
+        } else {
+            msgText = getLocalizer().getString(msgKey, this);
+        }
+
+        labelWrk = helper.encloseLabel("mailprint-status", msgText, true);
+        MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
+
+        labelWrk =
+                helper.addCheckbox("flipswitch-mailprint-online",
+                        ImapPrinter.isOnline());
+        setFlipswitchOnOffText(labelWrk);
+
         /*
-         *
+         * Web Print
          */
         labelledCheckbox("webprint-enable", IConfigProp.Key.WEB_PRINT_ENABLE);
         labelledInput("webprint-max-file-mb",
@@ -361,7 +468,7 @@ public class Options extends AbstractAdminPage {
                 IConfigProp.Key.WEB_PRINT_LIMIT_IP_ADDRESSES);
 
         /*
-         *
+         * Google Cloud Print.
          */
         final ConfigManager cm = ConfigManager.instance();
 
@@ -389,14 +496,13 @@ public class Options extends AbstractAdminPage {
         boolean enabled = ConfigManager.isGcpEnabled();
         final GcpPrinter.State gcpStatus = GcpPrinter.getState();
 
-        String cssColor;
         if (enabled && gcpStatus == GcpPrinter.State.ON_LINE) {
             cssColor = MarkupHelper.CSS_TXT_VALID;
         } else {
             cssColor = MarkupHelper.CSS_TXT_WARN;
         }
 
-        Label labelWrk =
+        labelWrk =
                 new Label("gcp-summary-printer-state-display",
                         GcpPrinter.localized(enabled, gcpStatus));
         labelWrk.add(new AttributeModifier("class", cssColor));
@@ -859,6 +965,20 @@ public class Options extends AbstractAdminPage {
 
         labelledRadio(wicketIdBase, wicketIdSuffix, attrName, attrValue,
                 checked);
+    }
+
+    /**
+     * Sets the on/off texts for a Flipswitch.
+     *
+     * @param label
+     *            The flipswitch {@link Label}.
+     */
+    private void setFlipswitchOnOffText(final Label label) {
+
+        MarkupHelper.modifyLabelAttr(label, "data-on-text", getLocalizer()
+                .getString("flipswitch-on", this));
+        MarkupHelper.modifyLabelAttr(label, "data-off-text", getLocalizer()
+                .getString("flipswitch-off", this));
     }
 
 }

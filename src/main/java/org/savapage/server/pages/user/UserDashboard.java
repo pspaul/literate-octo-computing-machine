@@ -179,7 +179,7 @@ public class UserDashboard extends AbstractUserPage {
         final BitcoinGateway bitcoinPlugin = pluginMgr.getBitcoinGateway();
 
         final boolean isBitcoinGateway =
-                bitcoinPlugin != null
+                bitcoinPlugin != null && bitcoinPlugin.isOnline()
                         && bitcoinPlugin.isCurrencySupported(appCurrencyCode);
 
         if (isBitcoinGateway) {
@@ -214,6 +214,7 @@ public class UserDashboard extends AbstractUserPage {
 
             isExternalGateway =
                     externalPlugin != null
+                            && externalPlugin.isOnline()
                             && externalPlugin
                                     .isCurrencySupported(appCurrencyCode);
 

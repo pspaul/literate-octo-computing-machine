@@ -2230,7 +2230,6 @@
 			 */
 			this.checkCb = function(sel, isChecked) {
 				$(sel).prop("checked", isChecked).checkboxradio("refresh");
-				//@JQ-1.9.1
 			};
 
 			/**
@@ -2253,9 +2252,7 @@
 			this.checkRadio = function(name, id) {
 				var sel = $('input[name="' + name + '"]');
 				sel.prop('checked', false);
-				//@JQ-1.9.1
 				$('#' + id).prop('checked', true);
-				//@JQ-1.9.1
 				sel.checkboxradio("refresh");
 			};
 

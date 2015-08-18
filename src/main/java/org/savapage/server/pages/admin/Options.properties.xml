@@ -4,6 +4,13 @@
 
 	<entry key="title">Options</entry>
 
+    <entry key="flipswitch-on">On</entry>
+    <entry key="flipswitch-off">Off</entry>
+
+    <entry key="circuit-damaged">Damaged</entry>
+    <entry key="circuit-open">Connection broken</entry>    
+    <entry key="blocked">Blocked</entry>
+
 	<entry key="cat-user-source">User Source</entry>
 	<entry key="cat-user-creation">User Creation</entry>
     <entry key="cat-user-authentication">User Authentication</entry>

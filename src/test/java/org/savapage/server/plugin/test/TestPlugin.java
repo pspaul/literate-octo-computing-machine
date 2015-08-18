@@ -91,7 +91,7 @@ public final class TestPlugin implements PaymentGateway {
 
     @Override
     public void onInit(final String id, final String name, final boolean live,
-            final Properties props) {
+            boolean online, final Properties props) {
         // noop
     }
 
@@ -110,4 +110,13 @@ public final class TestPlugin implements PaymentGateway {
         return true;
     }
 
+    @Override
+    public boolean isOnline() {
+        return true;
+    }
+
+    @Override
+    public void setOnline(boolean online) {
+        // noop
+    }
 }

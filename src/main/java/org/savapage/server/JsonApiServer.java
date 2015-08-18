@@ -171,10 +171,12 @@ import org.savapage.core.print.gcp.GcpClient;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.gcp.GcpRegisterPrinterRsp;
 import org.savapage.core.print.imap.ImapListener;
+import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.print.smartschool.SmartSchoolPrintMonitor;
+import org.savapage.core.print.smartschool.SmartSchoolPrinter;
 import org.savapage.core.reports.JrPosDepositReceipt;
 import org.savapage.core.reports.JrVoucherPageDesign;
 import org.savapage.core.reports.impl.AccountTrxListReport;
@@ -1344,6 +1346,13 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_PAPERCUT_TEST:
 
             return reqPaperCutTest();
+
+        case JsonApiDict.REQ_PAYMENT_GATEWAY_ONLINE:
+
+            return reqPaymentGatewayOnline(Boolean.parseBoolean(getParmValue(
+                    parameters, isGetAction, "bitcoin")),
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "online")));
 
         case JsonApiDict.REQ_SMARTSCHOOL_TEST:
 
@@ -2574,6 +2583,8 @@ public final class JsonApiServer extends AbstractPage {
             LOGGER.trace("jsonProps: " + jsonProps);
         }
 
+        String msgKey = "msg-config-props-applied";
+
         final JsonNode list;
 
         try {
@@ -2585,6 +2596,8 @@ public final class JsonApiServer extends AbstractPage {
         final ConfigManager cm = ConfigManager.instance();
 
         final Iterator<String> iter = list.getFieldNames();
+
+        boolean isSmartSchoolUpdate = false;
 
         boolean isValid = true;
         int nJobsRescheduled = 0;
@@ -2619,10 +2632,13 @@ public final class JsonApiServer extends AbstractPage {
                 return userData;
             }
 
-            IConfigProp.ValidationResult res = cm.validate(configKey, value);
+            final IConfigProp.ValidationResult res =
+                    cm.validate(configKey, value);
             isValid = res.isValid();
 
             if (isValid) {
+
+                boolean preValue = false;
 
                 switch (configKey) {
 
@@ -2650,15 +2666,32 @@ public final class JsonApiServer extends AbstractPage {
                     SpJobScheduler.instance().scheduleJobs(configKey);
                     nJobsRescheduled++;
                     break;
-
+                case PRINT_IMAP_ENABLE:
+                    preValue = cm.isConfigValue(configKey);
+                    break;
                 default:
                     break;
                 }
 
-                ConfigManager.instance().updateConfigKey(configKey, value,
-                        requestingUser);
+                /*
+                 * TODO: This updates the cache while database is not committed
+                 * yet! When database transaction is rollback back the cache is
+                 * dirty.
+                 */
+                cm.updateConfigKey(configKey, value, requestingUser);
 
                 nValid++;
+
+                if (configKey == Key.PRINT_IMAP_ENABLE && preValue
+                        && !cm.isConfigValue(configKey)) {
+                    if (SpJobScheduler.interruptImapListener()) {
+                        msgKey = "msg-config-props-applied-mail-print-stopped";
+                    }
+
+                } else if (configKey == Key.SMARTSCHOOL_1_ENABLE
+                        || configKey == Key.SMARTSCHOOL_2_ENABLE) {
+                    isSmartSchoolUpdate = true;
+                }
 
             } else {
                 setApiResult(userData, API_RESULT_CODE_ERROR,
@@ -2672,11 +2705,18 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         if (isValid) {
-            final String msg =
-                    (nJobsRescheduled == 0) ? "msg-config-props-applied"
-                            : "msg-config-props-applied-rescheduled";
 
-            setApiResult(userData, API_RESULT_CODE_OK, msg);
+            if (nJobsRescheduled > 0) {
+                msgKey = "msg-config-props-applied-rescheduled";
+            } else if (isSmartSchoolUpdate
+                    && !ConfigManager.isSmartSchoolPrintActiveAndEnabled()
+                    && SmartSchoolPrinter.isOnline()) {
+                if (SpJobScheduler.interruptSmartSchoolPoller()) {
+                    msgKey = "msg-config-props-applied-smartschool-stopped";
+                }
+            }
+
+            setApiResult(userData, API_RESULT_CODE_OK, msgKey);
         }
 
         return userData;
@@ -3626,10 +3666,20 @@ public final class JsonApiServer extends AbstractPage {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
-        if (ConfigManager.isPrintImapEnabled()) {
-            SpJobScheduler.instance().scheduleOneShotImapListener(1L);
+        if (!ConfigManager.isPrintImapEnabled()) {
+            return setApiResultOK(userData);
         }
-        return setApiResult(userData, API_RESULT_CODE_OK, "msg-imap-started");
+
+        final String msgKey;
+
+        if (ImapPrinter.isOnline()) {
+            msgKey = "msg-imap-started-already";
+        } else {
+            SpJobScheduler.instance().scheduleOneShotImapListener(1L);
+            msgKey = "msg-imap-started";
+        }
+
+        return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
     }
 
     /**
@@ -3639,10 +3689,14 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqImapStop() {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
+        final String msgKey;
 
-        SpJobScheduler.interruptImapListener();
-
-        return setApiResult(userData, API_RESULT_CODE_OK, "msg-imap-stopped");
+        if (SpJobScheduler.interruptImapListener()) {
+            msgKey = "msg-imap-stopped";
+        } else {
+            msgKey = "msg-imap-stopped-already";
+        }
+        return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
     }
 
     /**
@@ -3719,7 +3773,29 @@ public final class JsonApiServer extends AbstractPage {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
-        if (ConfigManager.isSmartSchoolPrintActiveAndEnabled()) {
+        final String msgKey;
+
+        if (!ConfigManager.isSmartSchoolPrintActiveAndEnabled()) {
+            return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    "msg-smartschool-accounts-disabled");
+        }
+
+        SmartSchoolPrinter.setBlocked(MemberCard.instance()
+                .isMembershipDesirable());
+
+        if (SmartSchoolPrinter.isBlocked()) {
+
+            return setApiResult(userData, API_RESULT_CODE_WARN,
+                    "msg-smartschool-blocked",
+                    CommunityDictEnum.SAVAPAGE.getWord(),
+                    CommunityDictEnum.MEMBERSHIP.getWord());
+        }
+
+        if (SmartSchoolPrinter.isOnline()) {
+
+            msgKey = "msg-smartschool-started-already";
+
+        } else {
 
             if (simulate) {
                 SmartSchoolPrintMonitor.resetJobTickerCounter();
@@ -3727,16 +3803,13 @@ public final class JsonApiServer extends AbstractPage {
 
             SpJobScheduler.instance().scheduleOneShotSmartSchoolPrintMonitor(
                     simulate, 1L);
+
+            if (simulate) {
+                msgKey = "msg-smartschool-started-simulation";
+            } else {
+                msgKey = "msg-smartschool-started";
+            }
         }
-
-        final String msgKey;
-
-        if (simulate) {
-            msgKey = "msg-smartschool-started-simulation";
-        } else {
-            msgKey = "msg-smartschool-started";
-        }
-
         return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
     }
 
@@ -3748,10 +3821,53 @@ public final class JsonApiServer extends AbstractPage {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
-        SpJobScheduler.interruptSmartSchoolPoller();
+        final String msgKey;
 
-        return setApiResult(userData, API_RESULT_CODE_OK,
-                "msg-smartschool-stopped");
+        if (SpJobScheduler.interruptSmartSchoolPoller()) {
+            msgKey = "msg-smartschool-stopped";
+        } else {
+            msgKey = "msg-smartschool-stopped-already";
+        }
+        return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
+    }
+
+    /**
+     *
+     * @return
+     * @throws PaymentGatewayException
+     */
+    private Map<String, Object> reqPaymentGatewayOnline(final boolean bitcoin,
+            final boolean online) throws PaymentGatewayException {
+
+        final Map<String, Object> userData = new HashMap<String, Object>();
+
+        final ServerPluginManager manager = WebApp.get().getPluginManager();
+
+        final PaymentGatewayPlugin plugin;
+
+        if (bitcoin) {
+            plugin = manager.getBitcoinGateway();
+        } else {
+            plugin = manager.getExternalPaymentGateway();
+        }
+
+        if (plugin != null) {
+
+            plugin.setOnline(online);
+
+            final String key;
+            if (online) {
+                key = "msg-payment-gateway-online";
+            } else {
+                key = "msg-payment-gateway-offline";
+            }
+
+            return setApiResult(userData, API_RESULT_CODE_OK, key,
+                    plugin.getName());
+        }
+
+        return setApiResult(userData, API_RESULT_CODE_ERROR,
+                "msg-payment-gateway-not-found");
     }
 
     /**

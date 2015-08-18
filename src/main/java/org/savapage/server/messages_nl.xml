@@ -9,6 +9,10 @@
 	<entry key="pub-admin-login-success">Gebruiker "{0}" (beheerder) aangemeld op {1}</entry>
 	<entry key="pub-user-logout">Gebruiker "{0}" afgemeld op {1}</entry>
 
+    <!--   -->
+    <entry key="circuit-damaged">Defect</entry>
+    <entry key="circuit-open">Connectie verbroken</entry>       
+    
 	<!-- WebApp User/Admin Client -->
     <entry key="msg-error">{0}</entry>
     
@@ -45,6 +49,8 @@
 	<entry key="msg-config-props-applied">Configuratie-opties zijn toegepast.</entry>
 	<entry key="msg-config-props-applied-rescheduled">Configuratie-opties zijn toegepast en opdrachten
 		opnieuw ingepland.</entry>
+    <entry key="msg-config-props-applied-mail-print-stopped">Configuratie-opties zijn toegepast en Mail Print is gestopt.</entry>
+    <entry key="msg-config-props-applied-smartschool-stopped">Configuratie-opties zijn toegepast en SmartSchool toezicht is gestopt.</entry>
 
     <entry key="msg-printer-connection-broken">Connectie naar Proxy Printers is verbroken.</entry>
 	<entry key="msg-printer-out-of-date">Informatie over de printer is verouderd. Vernieuw de
@@ -200,6 +206,8 @@
     <entry key="msg-imap-test-failed">IMAP test gefaald: {0}</entry>
     <entry key="msg-imap-stopped">IMAP toezicht met succes gestopt.</entry>
     <entry key="msg-imap-started">IMAP toezicht met succes gestart.</entry>
+    <entry key="msg-imap-stopped-already">IMAP toezicht is al gestopt.</entry>
+    <entry key="msg-imap-started-already">IMAP toezicht is al gestart.</entry>
 
     <entry key="msg-papercut-test-passed">PaperCut test geslaagd.</entry>
     <entry key="msg-papercut-test-failed">PaperCut test gefaald: {0}</entry>
@@ -209,12 +217,20 @@
     <entry key="msg-smartschool-stopped">SmartSchool toezicht met succes gestopt.</entry>
     <entry key="msg-smartschool-started">SmartSchool toezicht met succes gestart.</entry>
     <entry key="msg-smartschool-started-simulation">SmartSchool toezicht gestart in simulatie modus.</entry>
+    <entry key="msg-smartschool-blocked">SmartSchool toezicht is geblokkeerd: controleer uw {0} {1}.</entry>
+    <entry key="msg-smartschool-stopped-already">SmartSchool toezicht is al gestopt.</entry>
+    <entry key="msg-smartschool-started-already">SmartSchool toezicht is al gestart.</entry>
+    <entry key="msg-smartschool-accounts-disabled">SmartSchool accounts zijn uitgeschakeld.</entry>
 
     <entry key="msg-gcp-online">Google Cloud Printer is Online gezet.</entry>
     <entry key="msg-gcp-offline">Google Cloud Printer is  Offline gezet.</entry>
     <entry key="msg-gcp-already-online">Google Cloud Printer is al Online.</entry>
     <entry key="msg-gcp-already-offline">Google Cloud Printer is al Offline.</entry>
     <entry key="msg-gcp-state-mismatch">Google Cloud Printer status "{0}" staat deze operatie niet toe.</entry>
+
+    <entry key="msg-payment-gateway-online">{0} is Online gezet.</entry>
+    <entry key="msg-payment-gateway-offline">{0} is  Offline gezet.</entry>
+    <entry key="msg-payment-gateway-not-found">Payment Gateway is niet gevonden.</entry>
     
     <entry key="msg-voucher-batch-created-ok">Er zijn {0} vouchers gemaakt in batch {1}.</entry>
     

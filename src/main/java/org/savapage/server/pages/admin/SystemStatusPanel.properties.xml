@@ -33,6 +33,7 @@
 
     <entry key="enabled">Enabled</entry>
     <entry key="disabled">Disabled</entry>
+    <entry key="blocked">Blocked</entry>
     
     <entry key="circuit-closed">Online</entry>
     <entry key="circuit-damaged">Damaged</entry>
@@ -42,6 +43,9 @@
     <entry key="offline">Offline</entry>
     <entry key="not-found">Not found</entry>    
     <entry key="not-configured">Not configured</entry>
+
+    <entry key="flipswitch-on">On</entry>
+    <entry key="flipswitch-off">Off</entry>
 
     <entry key="news">News</entry>
     <entry key="news-not-available">No news available.</entry>

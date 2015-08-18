@@ -607,16 +607,16 @@ pattern="[0-9]*"
                         <a href="#" id="test-smartschool" class="smartschool-print-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info"> <wicket:message
                             key="smartschool-button-test" /></a>
                             
-                        <a href="#" id="stop-smartschool" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
-                            <wicket:message key="smartschool-button-stop" /></a>
-                                 
-                        <a href="#" class="smartschool-print-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
-                            id="start-smartschool"> <wicket:message key="smartschool-button-start" /></a>
-
                         <a href="#" class="smartschool-print-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
                             id="start-smartschool-simulate"> <wicket:message key="smartschool-button-start-simulate" /></a>
                           
                     </div>
+                    <div class="smartschool-print-enabled">  
+                     <input type="checkbox" class="flipswitch-smartschool-online" 
+                          wicket:id="flipswitch-smartschool-online"
+                          data-role="flipswitch" data-on-text="On" data-off-text="Off"/>                                                   
+                     <span style="margin-left: 10px; vertical-align: middle;" wicket:id="smartschool-print-status" />                          
+                    </div>                          
                 </li>
 
             </ul>
@@ -893,20 +893,19 @@ pattern="[0-9]*"
 				</li>
 
 				<li>
-                    <div data-role="controlgroup" data-type="horizontal">
-                    
+                    <div data-role="controlgroup" data-type="horizontal">                    
 						<a href="#" id="apply-imap" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 						  <wicket:message key="button-apply" /></a>
 						  
                         <a href="#" id="test-imap" class="imap-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info"> <wicket:message
 								key="imap-button-test" /></a>
-								
-                        <a href="#" id="stop-imap" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
-                            <wicket:message key="imap-button-stop" /></a>
-								 
-                        <a href="#" class="imap-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
-							id="start-imap"> <wicket:message key="imap-button-start" /></a>
-					</div>
+                    </div>
+                    <div class="imap-enabled">                                                         
+                        <input type="checkbox" class="flipswitch-mailprint-online"
+                            wicket:id="flipswitch-mailprint-online"
+                            data-role="flipswitch" data-on-text="On" data-off-text="Off"/>                                                 
+                        <span style="margin-left: 20px; vertical-align: middle;" wicket:id="mailprint-status" />                            
+                    </div>
 				</li>
 
 			</ul>

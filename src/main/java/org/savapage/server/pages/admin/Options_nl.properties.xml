@@ -4,6 +4,13 @@
 
 	<entry key="title">Opties</entry>
 
+    <entry key="flipswitch-on">Aan</entry>
+    <entry key="flipswitch-off">Uit</entry>
+    
+    <entry key="circuit-damaged">Defect</entry>
+    <entry key="circuit-open">Connectie verbroken</entry>    
+    <entry key="blocked">Geblokkeerd</entry>
+    
 	<entry key="cat-user-source">Gebruikers Bron</entry>
 	<entry key="cat-user-creation">Gebruikers Aanmaken</entry>
     <entry key="cat-user-authentication">Gebruikers Authenticatie</entry>	

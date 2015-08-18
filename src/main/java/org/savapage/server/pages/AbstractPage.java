@@ -560,7 +560,7 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
     /**
      * @deprecated Adds a checkbox.
      *             <p>
-     *             Use {@link MarkupHelper#tagCheckbox(String, String, boolean)}
+     *             Use {@link MarkupHelper#addCheckbox(String, String, boolean)}
      *             .
      *             </p>
      *

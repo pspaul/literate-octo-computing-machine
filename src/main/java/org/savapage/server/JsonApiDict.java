@@ -119,6 +119,9 @@ public class JsonApiDict {
     public static final String REQ_PAGE_DELETE = "page-delete";
     public static final String REQ_PAGE_MOVE = "page-move";
 
+    public static final String REQ_PAYMENT_GATEWAY_ONLINE =
+            "payment-gateway-online";
+
     public static final String REQ_PDF = "pdf";
     public static final String REQ_PDF_GET_PROPERTIES = "pdf-get-properties";
     public static final String REQ_PDF_SET_PROPERTIES = "pdf-set-properties";
@@ -562,6 +565,8 @@ public class JsonApiDict {
         adm(REQ_POS_RECEIPT_SENDMAIL, DbClaim.READ, DbAccess.YES);
         adm(REQ_POS_DEPOSIT_QUICK_SEARCH, DbClaim.READ, DbAccess.YES);
 
+        adm(REQ_PAYMENT_GATEWAY_ONLINE, DbClaim.NONE, DbAccess.NO);
+
         usr(REQ_PRINT_AUTH_CANCEL, DbClaim.NONE, DbAccess.NO);
         usr(REQ_PRINT_FAST_RENEW, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_PRINTER_DETAIL, DbClaim.NONE, DbAccess.YES);
@@ -580,6 +585,7 @@ public class JsonApiDict {
         adm(REQ_REPORT, DbClaim.READ, DbAccess.YES);
         adm(REQ_RESET_ADMIN_PASSWORD, DbClaim.NONE, DbAccess.NO);
         adm(REQ_RESET_JMX_PASSWORD, DbClaim.NONE, DbAccess.NO);
+
         usr(REQ_RESET_USER_PASSWORD, DbClaim.READ, DbAccess.USER_LOCK);
         usr(REQ_RESET_USER_PIN, DbClaim.READ, DbAccess.USER_LOCK);
         usr(REQ_SEND, DbClaim.READ, DbAccess.USER_LOCK);

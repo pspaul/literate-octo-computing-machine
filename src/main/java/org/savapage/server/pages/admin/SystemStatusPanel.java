@@ -55,15 +55,23 @@ import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.helpers.AppLogLevelEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.print.gcp.GcpPrinter;
+import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
+import org.savapage.core.print.smartschool.SmartSchoolPrinter;
 import org.savapage.core.services.AppLogService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.NumberUtil;
+import org.savapage.ext.payment.PaymentGateway;
+import org.savapage.ext.payment.PaymentGatewayException;
+import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.server.WebApp;
 import org.savapage.server.cometd.UserEventService;
+import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.pages.MessageContent;
 import org.savapage.server.pages.StatsEnvImpactPanel;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.slf4j.Logger;
@@ -158,11 +166,13 @@ public class SystemStatusPanel extends Panel {
          * Mail Print
          */
         String msgKey;
+        String msgText;
 
-        if (ConfigManager.isPrintImapEnabled()) {
+        final boolean isMailPrintEnabled = ConfigManager.isPrintImapEnabled();
 
-            msgKey = "enabled";
-            cssColor = MarkupHelper.CSS_TXT_VALID;
+        if (isMailPrintEnabled) {
+
+            msgKey = null;
 
             final CircuitStateEnum circuitState =
                     ConfigManager.getCircuitBreaker(
@@ -172,8 +182,6 @@ public class SystemStatusPanel extends Panel {
             switch (circuitState) {
 
             case CLOSED:
-                msgKey = "circuit-closed";
-                cssColor = MarkupHelper.CSS_TXT_VALID;
                 break;
 
             case DAMAGED:
@@ -194,38 +202,35 @@ public class SystemStatusPanel extends Panel {
                         + circuitState.toString() + "]");
             }
 
-        } else {
-            msgKey = "disabled";
-            cssColor = MarkupHelper.CSS_TXT_WARN;
-        }
-        labelWrk =
-                new Label("mailprint-enabled", getLocalizer().getString(msgKey,
-                        this));
-        labelWrk.add(new AttributeModifier("class", cssColor));
-        add(labelWrk);
+            if (msgKey == null) {
+                msgText = "";
+            } else {
+                msgText = getLocalizer().getString(msgKey, this);
+            }
 
-        /*
-         * Web Print
-         */
-        if (ConfigManager.isWebPrintEnabled()) {
-            msgKey = "online";
-            cssColor = MarkupHelper.CSS_TXT_VALID;
+            labelWrk = helper.encloseLabel("mailprint-status", msgText, true);
+            MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
+
+            labelWrk =
+                    helper.addCheckbox("flipswitch-mailprint-online",
+                            ImapPrinter.isOnline());
+            setFlipswitchOnOffText(labelWrk);
+
         } else {
-            msgKey = "offline";
-            cssColor = MarkupHelper.CSS_TXT_WARN;
+
+            helper.discloseLabel("mailprint-status");
         }
-        labelWrk =
-                new Label("webprint-enabled", getLocalizer().getString(msgKey,
-                        this));
-        labelWrk.add(new AttributeModifier("class", cssColor));
-        add(labelWrk);
 
         /*
          * Google Cloud Print
          */
+
         if (ConfigManager.isGcpEnabled()) {
 
             final GcpPrinter.State gcpStatus = GcpPrinter.getState();
+            final boolean isGcpOnline = GcpPrinter.State.ON_LINE == gcpStatus;
+
+            msgKey = null;
 
             switch (gcpStatus) {
             case NOT_CONFIGURED:
@@ -237,37 +242,94 @@ public class SystemStatusPanel extends Panel {
                 cssColor = MarkupHelper.CSS_TXT_WARN;
                 break;
             case OFF_LINE:
-                msgKey = "offline";
-                cssColor = MarkupHelper.CSS_TXT_WARN;
-                break;
             case ON_LINE:
-                msgKey = "online";
-                cssColor = MarkupHelper.CSS_TXT_VALID;
                 break;
             default:
                 throw new SpException("Unhandled GcpPrinter.Status ["
                         + gcpStatus + "]");
             }
 
+            if (msgKey == null) {
+                msgText = "";
+            } else {
+                msgText = getLocalizer().getString(msgKey, this);
+            }
+
+            labelWrk = helper.encloseLabel("gcp-status", msgText, true);
+
+            if (msgKey != null) {
+                MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
+            }
+
+            labelWrk = helper.addCheckbox("flipswitch-gcp-online", isGcpOnline);
+            setFlipswitchOnOffText(labelWrk);
+
         } else {
-            msgKey = "disabled";
-            cssColor = MarkupHelper.CSS_TXT_WARN;
+            helper.discloseLabel("gcp-status");
         }
 
-        labelWrk =
-                new Label("gcp-enabled", getLocalizer().getString(msgKey, this));
-        labelWrk.add(new AttributeModifier("class", cssColor));
-        add(labelWrk);
+        /*
+         * Payment Gateways
+         */
+        final ServerPluginManager pluginMgr = WebApp.get().getPluginManager();
 
         /*
-         * SmartSchool Print
+         * Bitcoin Gateway?
          */
-        if (ConfigManager.isSmartSchoolPrintModuleActivated()) {
+        final BitcoinGateway bitcoinPlugin = pluginMgr.getBitcoinGateway();
 
-            if (ConfigManager.isSmartSchoolPrintEnabled()) {
+        if (bitcoinPlugin == null) {
 
-                msgKey = "enabled";
-                cssColor = MarkupHelper.CSS_TXT_VALID;
+            helper.discloseLabel("payment-plugin-bitcoin");
+
+        } else {
+
+            helper.encloseLabel("payment-plugin-bitcoin",
+                    bitcoinPlugin.getName(), true);
+
+            labelWrk =
+                    helper.addCheckbox(
+                            "flipswitch-payment-plugin-bitcoin-online",
+                            bitcoinPlugin.isOnline());
+            setFlipswitchOnOffText(labelWrk);
+        }
+
+        /*
+         * External Gateway?
+         */
+        try {
+            final PaymentGateway externalPlugin =
+                    pluginMgr.getExternalPaymentGateway();
+
+            if (externalPlugin == null) {
+                helper.discloseLabel("payment-plugin-generic");
+            } else {
+                helper.encloseLabel("payment-plugin-generic",
+                        externalPlugin.getName(), true);
+                labelWrk =
+                        helper.addCheckbox(
+                                "flipswitch-payment-plugin-generic-online",
+                                externalPlugin.isOnline());
+
+                setFlipswitchOnOffText(labelWrk);
+            }
+
+        } catch (PaymentGatewayException e) {
+            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
+                    e.getMessage()));
+            return;
+        }
+
+        /*
+         * SmartSchool Print.
+         */
+        if (ConfigManager.isSmartSchoolPrintActiveAndEnabled()) {
+
+            if (SmartSchoolPrinter.isBlocked()) {
+                msgKey = "blocked";
+                cssColor = MarkupHelper.CSS_TXT_WARN;
+            } else {
+                msgKey = null;
 
                 final CircuitStateEnum circuitState =
                         ConfigManager.getCircuitBreaker(
@@ -277,8 +339,6 @@ public class SystemStatusPanel extends Panel {
                 switch (circuitState) {
 
                 case CLOSED:
-                    msgKey = "circuit-closed";
-                    cssColor = MarkupHelper.CSS_TXT_VALID;
                     break;
 
                 case DAMAGED:
@@ -298,20 +358,38 @@ public class SystemStatusPanel extends Panel {
                             + CircuitStateEnum.class.getSimpleName()
                             + " value [" + circuitState.toString() + "]");
                 }
+            }
 
+            if (msgKey == null) {
+                msgText = "";
             } else {
-                msgKey = "disabled";
-                cssColor = MarkupHelper.CSS_TXT_WARN;
+                msgText = getLocalizer().getString(msgKey, this);
             }
 
             labelWrk =
-                    helper.encloseLabel("smartschool-print-enabled",
-                            getLocalizer().getString(msgKey, this), true);
-            labelWrk.add(new AttributeModifier("class", cssColor));
+                    helper.encloseLabel("smartschool-print-status", msgText,
+                            true);
+
+            MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
+
+            labelWrk =
+                    helper.addCheckbox("flipswitch-smartschool-online",
+                            SmartSchoolPrinter.isOnline());
+
+            setFlipswitchOnOffText(labelWrk);
 
         } else {
-            helper.discloseLabel("smartschool-print-enabled");
+            helper.discloseLabel("smartschool-print-status");
         }
+
+        /*
+         * Web Print
+         */
+        labelWrk =
+                helper.addCheckbox("flipswitch-webprint-online",
+                        ConfigManager.isWebPrintEnabled());
+        setFlipswitchOnOffText(labelWrk);
+        add(labelWrk);
 
         /*
          *
@@ -620,6 +698,20 @@ public class SystemStatusPanel extends Panel {
 
         add(labelNews);
 
+    }
+
+    /**
+     * Sets the on/off texts for a Flipswitch.
+     *
+     * @param label
+     *            The flipswitch {@link Label}.
+     */
+    private void setFlipswitchOnOffText(final Label label) {
+
+        MarkupHelper.modifyLabelAttr(label, "data-on-text", getLocalizer()
+                .getString("flipswitch-on", this));
+        MarkupHelper.modifyLabelAttr(label, "data-off-text", getLocalizer()
+                .getString("flipswitch-off", this));
     }
 
     /**

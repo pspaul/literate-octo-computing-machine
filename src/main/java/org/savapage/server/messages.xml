@@ -9,6 +9,10 @@
 	<entry key="pub-admin-login-success">User "{0}" (administrator) logged in at {1}</entry>
 	<entry key="pub-user-logout">User "{0}" logged out at {1}</entry>
 
+    <!--   --> 
+    <entry key="circuit-damaged">Damaged</entry>
+    <entry key="circuit-open">Connection broken</entry>    
+
 	<!-- WebApp User/Admin Client -->
 	
     <entry key="msg-error">{0}</entry>
@@ -45,6 +49,8 @@
 	<entry key="msg-config-props-applied">Configuration options are applied.</entry>
 	<entry key="msg-config-props-applied-rescheduled">Configuration options are applied and jobs
 		re-scheduled.</entry>
+    <entry key="msg-config-props-applied-mail-print-stopped">Configuration options are applied and Mail Print is stopped.</entry>
+    <entry key="msg-config-props-applied-smartschool-stopped">Configuration options are applied and SmartSchool monitoring is stopped.</entry>
 
     <entry key="msg-printer-connection-broken">Connection to Proxy Printers is broken.</entry>
 	<entry key="msg-printer-out-of-date">Printer information is out-of-date. Please refresh the
@@ -202,6 +208,8 @@
     <entry key="msg-imap-test-failed">Failed IMAP test: {0}</entry>
     <entry key="msg-imap-stopped">IMAP monitoring succesfully stopped.</entry>
     <entry key="msg-imap-started">IMAP monitoring succesfully started.</entry>
+    <entry key="msg-imap-stopped-already">IMAP monitoring already stopped.</entry>
+    <entry key="msg-imap-started-already">IMAP monitoring already started.</entry>
 
     <entry key="msg-papercut-test-passed">Passed PaperCut test.</entry>
     <entry key="msg-papercut-test-failed">Failed PaperCut test: {0}</entry>
@@ -211,12 +219,20 @@
     <entry key="msg-smartschool-stopped">SmartSchool monitoring succesfully stopped.</entry>
     <entry key="msg-smartschool-started">SmartSchool monitoring succesfully started.</entry>
     <entry key="msg-smartschool-started-simulation">SmartSchool monitoring started in simulation mode.</entry>
+    <entry key="msg-smartschool-blocked">SmartSchool monitoring is blocked: check your {0} {1}.</entry>
+    <entry key="msg-smartschool-stopped-already">SmartSchool monitoring already stopped.</entry>
+    <entry key="msg-smartschool-started-already">SmartSchool monitoring already started.</entry>
+    <entry key="msg-smartschool-accounts-disabled">SmartSchool accounts are disabled.</entry>
 
     <entry key="msg-gcp-online">Google Cloud Printer is set Online.</entry>
     <entry key="msg-gcp-offline">Google Cloud Printer is set Offline.</entry>
     <entry key="msg-gcp-already-online">Google Cloud Printer is already online.</entry>
     <entry key="msg-gcp-already-offline">Google Cloud Printer is already offline.</entry>
     <entry key="msg-gcp-state-mismatch">Google Cloud Printer state "{0}" does not allow this operation.</entry>
+
+    <entry key="msg-payment-gateway-online">{0} is set Online.</entry>
+    <entry key="msg-payment-gateway-offline">{0} is set Offline.</entry>    
+    <entry key="msg-payment-gateway-not-found">Payment Gateway not found.</entry>
 
     <entry key="msg-voucher-batch-created-ok">There are {0} vouchers created in batch {1}.</entry>
     

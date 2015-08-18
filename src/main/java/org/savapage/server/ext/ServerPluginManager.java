@@ -161,6 +161,12 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             + "enable";
 
     /**
+     * Property key for plug-in online switch.
+     */
+    private static final String PROP_KEY_PLUGIN_ONLINE = PROP_KEY_PLUGIN_PFX
+            + "online";
+
+    /**
      * Property key for plug-in live switch.
      */
     private static final String PROP_KEY_PLUGIN_LIVE = PROP_KEY_PLUGIN_PFX
@@ -326,6 +332,10 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 Boolean.parseBoolean(props.getProperty(PROP_KEY_PLUGIN_LIVE,
                         Boolean.FALSE.toString()));
 
+        final boolean pluginOnline =
+                Boolean.parseBoolean(props.getProperty(PROP_KEY_PLUGIN_ONLINE,
+                        Boolean.TRUE.toString()));
+
         //
         final String pluginClassName = props.getProperty(PROP_KEY_PLUGIN_CLASS);
 
@@ -358,7 +368,8 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
                 final PaymentGateway paymentPlugin = (PaymentGateway) plugin;
 
-                paymentPlugin.onInit(pluginId, pluginName, pluginLive, props);
+                paymentPlugin.onInit(pluginId, pluginName, pluginLive,
+                        pluginOnline, props);
                 paymentPlugin.onInit(this);
 
                 paymentPlugins.put(pluginId, paymentPlugin);
@@ -370,7 +381,8 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
                 final BitcoinGateway paymentPlugin = (BitcoinGateway) plugin;
 
-                paymentPlugin.onInit(pluginId, pluginName, pluginLive, props);
+                paymentPlugin.onInit(pluginId, pluginName, pluginLive,
+                        pluginOnline, props);
                 paymentPlugin.onInit(this);
 
                 paymentPlugins.put(pluginId, paymentPlugin);
@@ -455,26 +467,6 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      */
     private static boolean isFinEnabled() {
         return StringUtils.isNotBlank(ConfigManager.getAppCurrencyCode());
-    }
-
-    /**
-     * Gets the first generic {@link PaymentGateway}.
-     *
-     * @return The {@link PaymentGateway}, or {@code null} when not found.
-     * @throws PaymentGatewayException
-     */
-    public PaymentGateway getGenericPaymentGateway()
-            throws PaymentGatewayException {
-
-        if (isFinEnabled()) {
-            for (final Entry<String, PaymentGateway> entry : this.paymentGateways
-                    .entrySet()) {
-                if (entry.getValue().getExternalPaymentMethods().isEmpty()) {
-                    return entry.getValue();
-                }
-            }
-        }
-        return null;
     }
 
     /**
