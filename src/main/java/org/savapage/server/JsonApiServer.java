@@ -3720,6 +3720,7 @@ public final class JsonApiServer extends AbstractPage {
         if (error == null) {
             error =
                     PaperCutDbProxy.create(
+                            cm.getConfigValue(Key.PAPERCUT_DB_JDBC_DRIVER),
                             cm.getConfigValue(Key.PAPERCUT_DB_JDBC_URL),
                             cm.getConfigValue(Key.PAPERCUT_DB_USER),
                             cm.getConfigValue(Key.PAPERCUT_DB_PASSWORD), false)

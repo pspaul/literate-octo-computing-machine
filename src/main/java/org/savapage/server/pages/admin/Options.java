@@ -321,6 +321,8 @@ public class Options extends AbstractAdminPage {
                     IConfigProp.Key.PAPERCUT_SERVER_AUTH_TOKEN);
 
             //
+            labelledInput("papercut-db-driver",
+                    IConfigProp.Key.PAPERCUT_DB_JDBC_DRIVER);
             labelledInput("papercut-db-url",
                     IConfigProp.Key.PAPERCUT_DB_JDBC_URL);
             labelledInput("papercut-db-user", IConfigProp.Key.PAPERCUT_DB_USER);

@@ -208,6 +208,7 @@
     <entry key="papercut-token">Token</entry>
 
     <entry key="papercut-db-text">PaperCut Database</entry>
+    <entry key="papercut-db-driver">Driver</entry>
     <entry key="papercut-db-url">URL</entry>
     <entry key="papercut-db-user">User</entry>
     <entry key="papercut-db-password">Password</entry>
