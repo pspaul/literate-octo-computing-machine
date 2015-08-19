@@ -1437,7 +1437,7 @@
 			, _selCents = '#money-credit-transfer-cents'
 			//
 			;
-
+			
 			$("#page-credit-transfer").on("pagecreate", function(event) {
 
 				$('#button-transfer-credit-ok').click(function() {
@@ -1463,7 +1463,7 @@
 		 *
 		 */
 		function PageMoneyTransfer(_i18n, _view, _model) {
-			var _this = this
+			var _this = this, _isInit = false 
 			//
 			, _selMain = '#money-transfer-main'
 			//
@@ -1471,17 +1471,16 @@
 			//
 			;
 
-			$("#page-money-transfer").on("pagecreate", function(event) {
-
+			this.onRefreshContent = function (html) {
+				
+				$('#page-money-transfer-content').html(html);
+				$('#page-money-transfer').enhanceWithin();
 				$('#button-money-transfer').click(function() {
 					var hidden = $('#money-transfer-gateway');
 					_this.onMoneyTransfer(hidden.attr('data-payment-gateway'), hidden.attr('data-payment-method'), $(_selMain).val(), $(_selCents).val());
 					return false;
 				});
-
-			}).on("pagebeforeshow", function(event, ui) {
-				$('#page-money-transfer input').val('');
-			});
+			};
 		}
 
 		/**
@@ -1663,8 +1662,7 @@
 						;
 						_view.changePage(pageId);
 						if (html) {
-							$('#page-money-transfer-content').html(html);
-							$(pageId).enhanceWithin();
+							_view.pages.moneyTransfer.onRefreshContent(html);
 						}
 						return false;
 					});

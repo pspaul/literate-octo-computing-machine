@@ -10,5 +10,10 @@
     <entry key="prompt-payment-fee-amount-perc">{0} {1} + {2}% costs are charged to your account.</entry>
 
     <entry key="prompt-payment-min-amount">Minimum amount {0} {1}</entry>
+
+    <entry key="button-back">Back</entry>        
+    <entry key="button-start">Start</entry>        
+
+    <entry key="msg-payment-disabled">{0} payments are currently not possible.</entry>
         
 </properties>

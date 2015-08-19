@@ -659,7 +659,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                         trx.getUserId(),
                         trx.getGatewayId(),
                         String.format(
-                                "%s%.2f",
+                                "%s %.2f",
                                 CurrencyUtil.getCurrencySymbol(
                                         trx.getCurrencyCode(),
                                         Locale.getDefault()), trx.getAmount())));
@@ -684,7 +684,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                         "payment-expired",
                         trx.getGatewayId(),
                         String.format(
-                                "%s%.2f",
+                                "%s %.2f",
                                 CurrencyUtil.getCurrencySymbol(
                                         trx.getCurrencyCode(),
                                         Locale.getDefault()), trx.getAmount()),
@@ -982,7 +982,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 localize(
                         "payment-confirmed",
                         String.format(
-                                "%s%.2f",
+                                "%s %.2f",
                                 CurrencyUtil.getCurrencySymbol(
                                         trx.getCurrencyCode(),
                                         Locale.getDefault()), trx.getAmount()),
@@ -1075,7 +1075,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 localize(
                         "payment-acknowledged",
                         String.format(
-                                "%s%.2f",
+                                "%s %.2f",
                                 CurrencyUtil.getCurrencySymbol(
                                         trx.getCurrencyCode(),
                                         Locale.getDefault()), trx.getAmount()),

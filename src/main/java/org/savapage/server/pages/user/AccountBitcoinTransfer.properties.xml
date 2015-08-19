@@ -6,4 +6,6 @@
     <entry key="button-start">Start</entry>
     <entry key="button-back">Back</entry>
         
+    <entry key="msg-bitcoin-disabled">Bitcoin payments are currently not possible.</entry>
+        
 </properties>

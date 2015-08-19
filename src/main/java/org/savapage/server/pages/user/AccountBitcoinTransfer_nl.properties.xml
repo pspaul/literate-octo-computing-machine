@@ -5,5 +5,7 @@
     <entry key="prompt-transfer-bitcoin">Stuur uw Bitcoin betaling naar:</entry>
     <entry key="button-start">Start</entry>
     <entry key="button-back">Terug</entry>
+
+    <entry key="msg-bitcoin-disabled">Bitcoin betalingen zijn op dit moment niet mogelijk.</entry>
         
 </properties>

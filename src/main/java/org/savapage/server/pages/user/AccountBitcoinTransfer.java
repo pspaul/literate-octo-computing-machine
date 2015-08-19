@@ -77,10 +77,16 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
      */
     public AccountBitcoinTransfer() {
 
-        final MarkupHelper helper = new MarkupHelper(this);
-
         final BitcoinGateway plugin =
                 WebApp.get().getPluginManager().getBitcoinGateway();
+
+        if (!plugin.isOnline()) {
+            setResponsePage(new MessageContent(AppLogLevelEnum.INFO,
+                    this.localized("msg-bitcoin-disabled")));
+            return;
+        }
+
+        final MarkupHelper helper = new MarkupHelper(this);
 
         //
         helper.addModifyLabelAttr("money-transfer-gateway", "value",

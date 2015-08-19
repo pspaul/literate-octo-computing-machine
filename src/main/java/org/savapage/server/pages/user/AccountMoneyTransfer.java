@@ -55,8 +55,6 @@ public class AccountMoneyTransfer extends AbstractUserPage {
      */
     public AccountMoneyTransfer() {
 
-        final MarkupHelper helper = new MarkupHelper(this);
-
         final IRequestParameters parms =
                 getRequestCycle().getRequest().getPostParameters();
 
@@ -69,6 +67,14 @@ public class AccountMoneyTransfer extends AbstractUserPage {
         final PaymentGateway gateway =
                 pluginMgr.getExternalPaymentGateway(gatewayId);
 
+
+        if (!gateway.isOnline()) {
+            setResponsePage(new MessageContent(AppLogLevelEnum.INFO,
+                    this.localized("msg-payment-disabled", method.toString())));
+            return;
+        }
+
+
         final PaymentMethodInfo methodInfo;
 
         try {
@@ -78,6 +84,8 @@ public class AccountMoneyTransfer extends AbstractUserPage {
                     e.getMessage()));
             return;
         }
+
+        final MarkupHelper helper = new MarkupHelper(this);
 
         methodInfo.getMinAmount();
 

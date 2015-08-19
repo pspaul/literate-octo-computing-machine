@@ -10,5 +10,10 @@
     <entry key="prompt-payment-fee-amount-perc">{0} {1} + {2}% kosten worden in rekening gebracht.</entry>
 
     <entry key="prompt-payment-min-amount">Minimum bedrag {0} {1}</entry>
+
+    <entry key="button-back">Terug</entry>        
+    <entry key="button-start">Start</entry>        
+
+    <entry key="msg-payment-disabled">{0} betalingen zijn op dit moment niet mogelijk.</entry>
         
 </properties>
