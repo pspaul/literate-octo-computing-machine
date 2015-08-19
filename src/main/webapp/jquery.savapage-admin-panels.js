@@ -548,26 +548,26 @@
 				}
 			},
 
+			/**
+			 * Retrieves plot data and shows them.
+			 * @return true when success, false when connection errors.
+			 */
 			showPlots : function(my) {
-				var _view = _ns.PanelCommon.view
-				//
-				, xydata = _view.jqPlotData('dashboard-xychart', true)
-				//
-				, piedata = _view.jqPlotData('dashboard-piechart', true)
-				//
-				;
-
+				var _view = _ns.PanelCommon.view, xydata, piedata;
+				
+				xydata = _view.jqPlotData('dashboard-xychart', true);
 				if (!xydata) {
-					return;
-				}
-				my.xychart = _view.showXyChart('dashboard-xychart', xydata);
-
-				//-------
+					return false;
+				}				
+				piedata = _view.jqPlotData('dashboard-piechart', true);
 				if (!piedata) {
-					return;
+					return false;
 				}
+
+				my.xychart = _view.showXyChart('dashboard-xychart', xydata);
 				my.piechart = _view.showPieChart('dashboard-piechart', piedata);
 
+				return true;
 			},
 
 			/*
@@ -644,9 +644,12 @@
 					$(window).scrollTop(scrollTop);
 
 					/*
-					 * Show them.
+					 * Show the plots.
 					 */
-					my.showPlots(my);
+					if (!my.showPlots(my)) {
+						// Failure (and disconnected): stop the timer!
+						my.onUnload(my);						
+					}
 				}
 			},
 
@@ -672,13 +675,12 @@
 					$('#live-messages').append('<div>&nbsp;</div>');
 				}
 
-				my.showPlots(my);
-
-				/*
-				 * Interval timer: refresh of part.
-				 */
-				my.timeout = window.setInterval(my.refreshSysStatus, my.REFRESH_MSEC);
-
+				if (my.showPlots(my)) {
+					/*
+				 	* Interval timer: refresh of part.
+				 	*/
+					my.timeout = window.setInterval(my.refreshSysStatus, my.REFRESH_MSEC);
+				}
 			},
 
 			onResize : function(my) {
