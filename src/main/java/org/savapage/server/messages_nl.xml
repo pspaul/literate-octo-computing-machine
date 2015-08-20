@@ -231,6 +231,7 @@
     <entry key="msg-payment-gateway-online">{0} is Online gezet.</entry>
     <entry key="msg-payment-gateway-offline">{0} is  Offline gezet.</entry>
     <entry key="msg-payment-gateway-not-found">Payment Gateway is niet gevonden.</entry>
+    <entry key="msg-payment-method-not-possible">{0} betalingen zijn op dit moment niet mogelijk.</entry>
     
     <entry key="msg-voucher-batch-created-ok">Er zijn {0} vouchers gemaakt in batch {1}.</entry>
     

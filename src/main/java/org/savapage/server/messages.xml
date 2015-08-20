@@ -232,7 +232,8 @@
 
     <entry key="msg-payment-gateway-online">{0} is set Online.</entry>
     <entry key="msg-payment-gateway-offline">{0} is set Offline.</entry>    
-    <entry key="msg-payment-gateway-not-found">Payment Gateway not found.</entry>
+    <entry key="msg-payment-gateway-not-found">Payment Gateway not found.</entry>    
+    <entry key="msg-payment-method-not-possible">{0} payments are currently not possible.</entry>
 
     <entry key="msg-voucher-batch-created-ok">There are {0} vouchers created in batch {1}.</entry>
     

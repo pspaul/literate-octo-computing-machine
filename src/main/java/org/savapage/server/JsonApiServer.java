@@ -5350,6 +5350,10 @@ public final class JsonApiServer extends AbstractPage {
             throw new IllegalStateException(String.format(
                     "Payment gateway \"%s\" is not available.",
                     dto.getGatewayId()));
+        } else if (!plugin.isOnline()) {
+            return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    "msg-payment-method-not-possible", dto.getMethod()
+                            .toString());
         }
 
         try {
