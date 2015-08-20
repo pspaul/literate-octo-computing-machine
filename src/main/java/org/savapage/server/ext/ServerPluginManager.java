@@ -55,7 +55,6 @@ import org.savapage.core.dao.UserAttrDao;
 import org.savapage.core.dao.helpers.AppLogLevelEnum;
 import org.savapage.core.dao.helpers.UserAttrEnum;
 import org.savapage.core.dto.UserPaymentGatewayDto;
-import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserAccount;
@@ -789,13 +788,21 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         } else {
 
             /*
+             * Bitcoin address and transactions are NOT found in our database.
              *
-             * User reused bitcoin address to make an extra payment ...
+             * Possible reasons:
              *
-             * ... or ...
+             * (1) User reused a bitcoin address, that was issued earlier, to
+             * make an extra payment ...
              *
-             * A payment was send from the Wallet and an earlier payment address
-             * was used to pay.
+             * (2) An outgoing payment was done from the Wallet and an earlier
+             * incoming payment address was used to pay. Note: this situation
+             * will not occur here because when this happens this method will
+             * not be called.
+             */
+
+            /*
+             * Prepare message and throw exception.
              */
             final List<AccountTrx> list =
                     accountTrxDao.findByExtMethodAddress(trx
@@ -842,8 +849,6 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             throw new PaymentGatewayException(msg.toString());
         }
 
-        final Account orphanedPaymentAccount = null; // TODO
-
         /*
          * Lock User.
          */
@@ -871,9 +876,11 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             isBalanceUpdate = trx.isAcknowledged();
 
             if (isBalanceUpdate) {
-
-                accountingService.acceptFundsFromGateway(lockedUser, dto,
-                        orphanedPaymentAccount);
+                /*
+                 * Note: orphanedPaymentAccount is irrelevant since at this
+                 * point User is known.
+                 */
+                accountingService.acceptFundsFromGateway(lockedUser, dto, null);
 
             } else {
                 accountingService
@@ -1004,7 +1011,8 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     public void onPaymentCommitted(final PaymentGatewayTrxEvent event)
             throws PaymentGatewayException {
 
-        if (event.isBalanceUpdate()) {
+        if (event.isBalanceUpdate()
+                && StringUtils.isNotBlank(event.getUserId())) {
             UserMsgIndicator.notifyAccountInfoEvent(event.getUserId());
         }
     }
@@ -1058,27 +1066,36 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         dto.setPaymentMethodDetails(trx.getDetails());
         dto.setPaymentMethodOther(trx.getPaymentMethodOther());
 
-        // TODO
-        final Account orphanedPaymentAccount = null;
-
+        /*
+         * INVARIANT: User must exist.
+         */
         final User lockedUser =
                 ServiceContext.getDaoContext().getUserDao()
                         .lockByUserId(dto.getUserId());
 
+        final String formattedAmount =
+                String.format("%s %.2f", CurrencyUtil.getCurrencySymbol(
+                        trx.getCurrencyCode(), Locale.getDefault()), trx
+                        .getAmount());
+
+        if (lockedUser == null) {
+            throw new PaymentGatewayException(this.localize(
+                    "payment-ignored-user-unknown", trx.getGatewayId(),
+                    trx.getTransactionId(), formattedAmount, trx.getUserId()));
+        }
+
         final AccountingService service =
                 ServiceContext.getServiceFactory().getAccountingService();
 
-        service.acceptFundsFromGateway(lockedUser, dto, orphanedPaymentAccount);
+        /*
+         * Note: orphanedPaymentAccount is irrelevant since at this point User
+         * is known.
+         */
+        service.acceptFundsFromGateway(lockedUser, dto, null);
 
         publishEvent(
                 PubLevelEnum.CLEAR,
-                localize(
-                        "payment-acknowledged",
-                        String.format(
-                                "%s %.2f",
-                                CurrencyUtil.getCurrencySymbol(
-                                        trx.getCurrencyCode(),
-                                        Locale.getDefault()), trx.getAmount()),
+                localize("payment-acknowledged", formattedAmount,
                         trx.getGatewayId(), trx.getUserId()));
 
         PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
