@@ -1463,7 +1463,7 @@
 		 *
 		 */
 		function PageMoneyTransfer(_i18n, _view, _model) {
-			var _this = this, _isInit = false 
+			var _this = this
 			//
 			, _selMain = '#money-transfer-main'
 			//
@@ -1472,10 +1472,11 @@
 			;
 
 			this.onRefreshContent = function (html) {
-				
+				var button = '#button-money-transfer';
+				$(button).off('click');
 				$('#page-money-transfer-content').html(html);
 				$('#page-money-transfer').enhanceWithin();
-				$('#button-money-transfer').click(function() {
+				$(button).on('click', function() {
 					var hidden = $('#money-transfer-gateway');
 					_this.onMoneyTransfer(hidden.attr('data-payment-gateway'), hidden.attr('data-payment-method'), $(_selMain).val(), $(_selCents).val());
 					return false;
