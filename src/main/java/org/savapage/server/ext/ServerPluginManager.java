@@ -796,9 +796,10 @@ public final class ServerPluginManager implements PaymentGatewayListener,
              * make an extra payment ...
              *
              * (2) An outgoing payment was done from the Wallet and an earlier
-             * incoming payment address was used to pay. Note: this situation
-             * will not occur here because when this happens this method will
-             * not be called.
+             * incoming payment address was used to pay. NOTE: negative satoshi
+             * amounts will (probably) be ignored by the Bitcoin Gateway plug-in
+             * and not be notified here, but positive satoshi artifacts of
+             * payments from the Wallet WILL be notified.
              */
 
             /*
