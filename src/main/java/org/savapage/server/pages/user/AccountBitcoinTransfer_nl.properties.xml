@@ -3,6 +3,8 @@
 <properties>
 
     <entry key="prompt-transfer-bitcoin">Stuur uw Bitcoin betaling naar:</entry>
+    <entry key="prompt-onetime-use">Dit adres is voor eenmalig gebruik. Een tweede betaling op dit adres wordt niet geaccepteerd.</entry>
+
     <entry key="button-start">Start</entry>
     <entry key="button-back">Terug</entry>
 

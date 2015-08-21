@@ -2,7 +2,9 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-    <entry key="prompt-transfer-bitcoin">To pay with bitcoin please send to:</entry>
+    <entry key="prompt-transfer-bitcoin">To pay with Bitcoin please send to:</entry>
+    <entry key="prompt-onetime-use">This address is for one-time use. A second payment at this address is not accepted.</entry>
+    
     <entry key="button-start">Start</entry>
     <entry key="button-back">Back</entry>
         

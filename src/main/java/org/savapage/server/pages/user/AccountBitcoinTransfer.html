@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<span class="sp-txt-info sp-txt-wrap"><wicket:message
-		key="prompt-transfer-bitcoin" /></span>
+<span class="sp-txt-info sp-txt-wrap"><wicket:message key="prompt-transfer-bitcoin" /></span>
 <br />
 
 <input type="hidden" id="money-transfer-gateway"
@@ -10,7 +9,8 @@
 <img style="display: block; margin-left: auto; margin-right: auto; "
 	src="" wicket:id="qr-code" />
 
-<center><p style="font-size: 8pt;" wicket:id="bitcoin-trx-id"/></center>
+<center><span style="font-size: 10pt;" wicket:id="bitcoin-trx-id"/></center>
+<p style="font-size: 10pt;" class="sp-txt-info sp-text-wrap"><wicket:message key="prompt-onetime-use"/></p>
 <br/>
 <div>
 	<a href="bitcoin:adress?message=the%20message" wicket:id="bitcoin-uri-button"
