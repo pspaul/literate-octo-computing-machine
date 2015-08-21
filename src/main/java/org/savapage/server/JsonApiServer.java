@@ -3857,11 +3857,21 @@ public final class JsonApiServer extends AbstractPage {
             plugin.setOnline(online);
 
             final String key;
+
+            final PubLevelEnum pubLevel;
             if (online) {
                 key = "msg-payment-gateway-online";
+                pubLevel = PubLevelEnum.CLEAR;
             } else {
                 key = "msg-payment-gateway-offline";
+                pubLevel = PubLevelEnum.WARN;
             }
+
+            final String systemMsg =
+                    AppLogHelper.logInfo(getClass(), key, plugin.getName());
+
+            AdminPublisher.instance().publish(PubTopicEnum.PAYMENT_GATEWAY,
+                    pubLevel, systemMsg);
 
             return setApiResult(userData, API_RESULT_CODE_OK, key,
                     plugin.getName());
