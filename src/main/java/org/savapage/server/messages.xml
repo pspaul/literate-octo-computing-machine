@@ -50,7 +50,7 @@
 	<entry key="msg-config-props-applied-rescheduled">Configuration options are applied and jobs
 		re-scheduled.</entry>
     <entry key="msg-config-props-applied-mail-print-stopped">Configuration options are applied and Mail Print is stopped.</entry>
-    <entry key="msg-config-props-applied-smartschool-stopped">Configuration options are applied and SmartSchool monitoring is stopped.</entry>
+    <entry key="msg-config-props-applied-smartschool-stopped">Configuration options are applied and Smartschool monitoring is stopped.</entry>
 
     <entry key="msg-printer-connection-broken">Connection to Proxy Printers is broken.</entry>
 	<entry key="msg-printer-out-of-date">Printer information is out-of-date. Please refresh the
@@ -214,15 +214,15 @@
     <entry key="msg-papercut-test-passed">Passed PaperCut test.</entry>
     <entry key="msg-papercut-test-failed">Failed PaperCut test: {0}</entry>
 
-    <entry key="msg-smartschool-test-passed">Passed SmartSchool test: {0} job(s) waiting.</entry>
-    <entry key="msg-smartschool-test-failed">Failed SmartSchool test: {0}</entry>
-    <entry key="msg-smartschool-stopped">SmartSchool monitoring succesfully stopped.</entry>
-    <entry key="msg-smartschool-started">SmartSchool monitoring succesfully started.</entry>
-    <entry key="msg-smartschool-started-simulation">SmartSchool monitoring started in simulation mode.</entry>
-    <entry key="msg-smartschool-blocked">SmartSchool monitoring is blocked: check your {0} {1}.</entry>
-    <entry key="msg-smartschool-stopped-already">SmartSchool monitoring already stopped.</entry>
-    <entry key="msg-smartschool-started-already">SmartSchool monitoring already started.</entry>
-    <entry key="msg-smartschool-accounts-disabled">SmartSchool accounts are disabled.</entry>
+    <entry key="msg-smartschool-test-passed">Passed Smartschool test: {0} job(s) waiting.</entry>
+    <entry key="msg-smartschool-test-failed">Failed Smartschool test: {0}</entry>
+    <entry key="msg-smartschool-stopped">Smartschool monitoring succesfully stopped.</entry>
+    <entry key="msg-smartschool-started">Smartschool monitoring succesfully started.</entry>
+    <entry key="msg-smartschool-started-simulation">Smartschool monitoring started in simulation mode.</entry>
+    <entry key="msg-smartschool-blocked">Smartschool monitoring is blocked: check your {0} {1}.</entry>
+    <entry key="msg-smartschool-stopped-already">Smartschool monitoring already stopped.</entry>
+    <entry key="msg-smartschool-started-already">Smartschool monitoring already started.</entry>
+    <entry key="msg-smartschool-accounts-disabled">Smartschool accounts are disabled.</entry>
 
     <entry key="msg-gcp-online">Google Cloud Printer is set Online.</entry>
     <entry key="msg-gcp-offline">Google Cloud Printer is set Offline.</entry>

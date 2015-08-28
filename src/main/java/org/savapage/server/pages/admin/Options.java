@@ -43,6 +43,7 @@ import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.smartschool.SmartSchoolPrinter;
+import org.savapage.core.services.helpers.ExternalSupplierEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.server.pages.FontOptionsPanel;
@@ -259,7 +260,10 @@ public class Options extends AbstractAdminPage {
 
         if (ConfigManager.isSmartSchoolPrintModuleActivated()) {
 
-            helper.encloseLabel(headerId, "SmartSchool Print", true);
+            helper.encloseLabel(
+                    headerId,
+                    String.format("%s Print",
+                            ExternalSupplierEnum.SMARTSCHOOL.getUiText()), true);
 
             IConfigProp.Key keyWlk;
 
@@ -284,6 +288,12 @@ public class Options extends AbstractAdminPage {
                     "smartschool-print-proxyprinter", keyWlk);
             tagInput("smartschool-print-proxyprinter-1", keyWlk);
 
+            keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_CHARGE_TO_STUDENTS;
+            tagLabel("smartschool-print-charge-to-students-label-1",
+                    "smartschool-print-charge-to-students", keyWlk);
+            tagCheckbox("smartschool-print-charge-to-students-1", keyWlk);
+
             // SmartSchool #2
             keyWlk = IConfigProp.Key.SMARTSCHOOL_2_ENABLE;
             tagLabel("smartschool-print-enable-label-2",
@@ -304,6 +314,12 @@ public class Options extends AbstractAdminPage {
             tagLabel("smartschool-print-proxyprinter-label-2",
                     "smartschool-print-proxyprinter", keyWlk);
             tagInput("smartschool-print-proxyprinter-2", keyWlk);
+
+            keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_CHARGE_TO_STUDENTS;
+            tagLabel("smartschool-print-charge-to-students-label-2",
+                    "smartschool-print-charge-to-students", keyWlk);
+            tagCheckbox("smartschool-print-charge-to-students-2", keyWlk);
 
             //
             keyWlk = IConfigProp.Key.SMARTSCHOOL_USER_INSERT_LAZY_PRINT;

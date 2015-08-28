@@ -194,6 +194,7 @@
     <entry key="smartschool-print-endpoint">SOAP endpoint</entry>
     <entry key="smartschool-print-password">Wachtwoord</entry>
     <entry key="smartschool-print-proxyprinter">Proxy Printer (laat leeg voor WebApp Proxy Print)</entry>
+    <entry key="smartschool-print-charge-to-students">Kosten verrekenen met studenten</entry>
 
     <entry key="smartschool-on-demand-user-creation">Ad-hoc gebruikers aanmaken</entry>
     

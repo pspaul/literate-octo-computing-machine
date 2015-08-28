@@ -321,7 +321,7 @@ public class SystemStatusPanel extends Panel {
         }
 
         /*
-         * SmartSchool Print.
+         * Smartschool Print.
          */
         if (ConfigManager.isSmartSchoolPrintActiveAndEnabled()) {
 
