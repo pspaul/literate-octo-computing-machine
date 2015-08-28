@@ -60,6 +60,8 @@ import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.img.ImageServer;
 import org.savapage.server.ios.WebClipServer;
+import org.savapage.server.ipp.IppPrintServer;
+import org.savapage.server.ipp.IppPrintServerHomePage;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.admin.AbstractAdminPage;
 import org.savapage.server.pages.user.AbstractUserPage;
@@ -386,6 +388,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static void setServerProps(final Properties props) {
         theServerProps = props;
         ConfigManager.setServerProps(props);
+        ConfigManager.setWebAppAdminPath(MOUNT_PATH_WEBAPP_ADMIN);
     }
 
     /**

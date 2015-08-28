@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server;
+package org.savapage.server.ipp;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,6 +58,7 @@ import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
+import org.savapage.server.WebApp;
 import org.savapage.server.webapp.WebAppUserPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

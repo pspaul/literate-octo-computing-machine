@@ -19,9 +19,10 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server;
+package org.savapage.server.ipp;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.server.WebApp;
 
 /**
  * An extension of {@link IppPrintServer} WITHOUT any added-value, except for

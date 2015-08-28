@@ -28,12 +28,15 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -379,9 +382,26 @@ public final class WebServer {
                 ".*/savapage-server-[^/]*\\.jar$|.*/classes/.*");
 
         /*
-         * Set the handler.
+         *
          */
-        server.setHandler(webAppContext);
+        final boolean forceSSL = false; // For future use.
+
+        final Handler[] handlerArray;
+
+        if (forceSSL) {
+            handlerArray = new Handler[] { new SecuredRedirectHandler(),
+                    webAppContext };
+        } else {
+            handlerArray = new Handler[] { webAppContext };
+        }
+
+        final HandlerList handlerList = new HandlerList();
+        handlerList.setHandlers(handlerArray);
+
+        /*
+         * Set the handler(s).
+         */
+        server.setHandler(handlerList);
 
         /*
          *
