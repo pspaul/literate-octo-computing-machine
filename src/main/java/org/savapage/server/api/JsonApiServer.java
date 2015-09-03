@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server;
+package org.savapage.server.api;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +59,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
@@ -69,7 +68,6 @@ import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
-import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.resource.StringBufferResourceStream;
 import org.apache.wicket.util.time.Duration;
@@ -216,6 +214,8 @@ import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
 import org.savapage.ext.payment.PaymentGatewayTrx;
+import org.savapage.server.SpSession;
+import org.savapage.server.WebApp;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.auth.WebAppUserAuthManager;
@@ -347,94 +347,6 @@ public final class JsonApiServer extends AbstractPage {
     private static final String USER_ROLE_ADMIN = "admin";
 
     // private static final String USER_ROLE_USER = "user";
-
-    /**
-     * Our own handler to control the release of transient files used for
-     * streaming (like JPEG images to display in a webpage and PDF files to
-     * download.
-     */
-    private static abstract class AbstractFileRequestHandler extends
-            ResourceStreamRequestHandler {
-
-        private final String user;
-        private final File file;
-
-        /**
-         *
-         * @param user
-         *            The userId.
-         * @param file
-         *            The file to stream.
-         */
-        public AbstractFileRequestHandler(final String user, File file) {
-            super(new FileResourceStream(file));
-            this.file = file;
-            this.user = user;
-        }
-
-        /**
-         * The actual release of the file to be implemented by any concrete
-         * subclass.
-         *
-         * @param user
-         *            The userId.
-         * @param file
-         *            The file to stream.
-         */
-        protected abstract void releaseFile(final String user, File file);
-
-        @Override
-        public void detach(IRequestCycle requestCycle) {
-            releaseFile(user, file);
-            super.detach(requestCycle);
-        }
-    }
-
-    /**
-     * Wrapper for downloaded PDF file.
-     */
-    private static class PdfFileRequestHandler extends
-            AbstractFileRequestHandler {
-
-        /**
-         *
-         * @param user
-         *            The userId.
-         * @param file
-         *            The file to stream.
-         */
-        public PdfFileRequestHandler(String user, File file) {
-            super(user, file);
-        }
-
-        @Override
-        protected void releaseFile(String user, File file) {
-            OutputProducer.instance().releasePdf(file);
-        }
-    }
-
-    /**
-     * Wrapper for file download.
-     */
-    private static class DownloadRequestHandler extends
-            AbstractFileRequestHandler {
-
-        /**
-         *
-         * @param user
-         *            The userId.
-         * @param file
-         *            The file to stream.
-         */
-        public DownloadRequestHandler(File file) {
-            super(null, file);
-        }
-
-        @Override
-        protected void releaseFile(String user, File file) {
-            file.delete();
-        }
-    }
 
     /**
      *
@@ -1508,9 +1420,6 @@ public final class JsonApiServer extends AbstractPage {
             return reqPrinterList(requestingUser);
 
         case JsonApiDict.REQ_PRINTER_PRINT:
-
-            System.out
-                    .println(getParmValue(parameters, isGetAction, "ecoprint"));
 
             return reqPrint(lockedUser,
                     getParmValue(parameters, isGetAction, "printer"),
@@ -4595,6 +4504,10 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         jpaDevice.setCardReader(jpaCardReader);
+
+        if (jpaCardReader != null) {
+            jpaCardReader.setCardReaderTerminal(jpaDevice);
+        }
 
         /*
          * Screening and determination of attribute values.

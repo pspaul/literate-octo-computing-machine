@@ -45,7 +45,7 @@ import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.Messages;
-import org.savapage.server.JsonApiServer;
+import org.savapage.server.api.JsonApiServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

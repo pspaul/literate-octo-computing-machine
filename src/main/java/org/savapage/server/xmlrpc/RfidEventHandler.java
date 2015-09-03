@@ -155,8 +155,12 @@ public class RfidEventHandler implements ServiceEntryPoint {
 
                 onCardReaderDisabled(map, clientIpAddress, cardNumber);
 
+            } else if (cardReader.getCardReaderTerminal() == null) {
+                rc =
+                        onCardSwipePrint(map, clientIpAddress, cardNumber,
+                                cardReader);
             } else {
-                rc = onCardSwipe(map, clientIpAddress, cardNumber, cardReader);
+                rc = onCardSwipeAuth(map, clientIpAddress, cardNumber);
             }
 
         } catch (ProxyPrintException ex) {
@@ -306,7 +310,56 @@ public class RfidEventHandler implements ServiceEntryPoint {
     }
 
     /**
-     * Handles a card swipe on a card reader.
+     * Handles a card swipe on a card reader for terminal authentication.
+     *
+     * @param map
+     *            The map with the {@link #KEY_RC} and {@link #KEY_MESSAGE}
+     *            value.
+     * @param clientIpAddress
+     *            The client IP address.
+     * @param cardNumber
+     *            The card number.
+     * @throws InterruptedException
+     */
+    private Integer onCardSwipeAuth(final Map<String, Object> map,
+            final String clientIpAddress, final String cardNumber)
+            throws InterruptedException {
+
+        String key = "rfid-card-swipe";
+
+        ADMIN_PUBLISHER.publish(PubTopicEnum.NFC, PubLevelEnum.INFO, Messages
+                .getSystemMessage(this.getClass(), key, cardNumber,
+                        clientIpAddress));
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(Messages.getLogFileMessage(this.getClass(), key,
+                    cardNumber, clientIpAddress));
+        }
+
+        final User user = USER_SERVICE.findUserByCardNumber(cardNumber);
+
+        RfidReaderManager.reportEvent(clientIpAddress, new RfidEvent(
+                RfidEvent.EventEnum.CARD_SWIPE, cardNumber));
+
+        final String userId;
+
+        if (user == null) {
+            userId = "?";
+        } else {
+            userId = user.getUserId();
+        }
+
+        final StringBuilder msg = new StringBuilder(96);
+        msg.append("User [");
+        msg.append(userId).append("] authenticated.");
+
+        map.put(KEY_MESSAGE, msg.toString());
+
+        return RC_ACCEPT;
+    }
+
+    /**
+     * Handles a card swipe on a card reader for printing.
      *
      * @param map
      *            The map with the {@link #KEY_RC} and {@link #KEY_MESSAGE}
@@ -323,7 +376,7 @@ public class RfidEventHandler implements ServiceEntryPoint {
      * @throws InterruptedException
      *             When thread is interrupted.
      */
-    private Integer onCardSwipe(final Map<String, Object> map,
+    private Integer onCardSwipePrint(final Map<String, Object> map,
             final String clientIpAddress, final String cardNumber,
             final Device cardReader) throws ProxyPrintException,
             InterruptedException {
@@ -360,9 +413,9 @@ public class RfidEventHandler implements ServiceEntryPoint {
                 .getSystemMessage(this.getClass(), key, cardNumber,
                         clientIpAddress));
 
-        if (LOGGER.isWarnEnabled()) {
-        LOGGER.debug(Messages.getLogFileMessage(this.getClass(), key,
-                cardNumber, clientIpAddress));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(Messages.getLogFileMessage(this.getClass(), key,
+                    cardNumber, clientIpAddress));
         }
 
         /*

@@ -95,6 +95,8 @@
 			//
 			, _onEvent
 			//
+			, _subscription
+			//
 			;
 
 			// this.onCardSwipe()
@@ -132,10 +134,26 @@
 			 * </p>
 			 */
 			this.addListener = function() {
-				_cometd.addListener('/device/event', _onEvent);
+				
+				if (!_subscription) {
+					_longPollPending = false;
+					_subscription = _cometd.addListener('/device/event', _onEvent);
+				}			
 				// Get things started: invite to do a poll
 				this.onPollInvitation();
 			};
+
+			/*
+			 *
+			 */
+			this.removeListener = function() {
+				if (_subscription) {
+					_cometd.removeListener(_subscription);
+					_subscription = null;
+				}
+				_longPollPending = false;
+			};
+
 
 			/**
 			 * The long poll as 'publish' to the '/service/device' channel.
@@ -414,9 +432,9 @@
 			 */
 			this.poll = function(userid, pagecount, uniqueUrlVal, prevMsgTime, language, country, base64) {
 
-				if (!_longPollStartTime) {
+				if (!_longPollStartTime && userid) {								
 					_longPollStartTime = new Date().getTime();
-					this.onWaitingForEvent();
+					this.onWaitingForEvent();				
 					try {
 						$.cometd.publish('/service/user', {
 							user : userid,
@@ -4245,7 +4263,7 @@
 					if (_model.user.loggedIn) {
 
 						if (_model.authCardIp) {
-							_cometd.stop();
+							_deviceEvent.removeListener();
 						}
 
 						_initUser(data);
@@ -4589,8 +4607,8 @@
 			// -----------------------------
 			_changeIcon = function(icon) {
 				if (icon !== _iconCur) {
-					$("#button-cometd-status").addClass("ui-icon-" + icon).removeClass("ui-icon-" + _iconCur);
-					_iconCur = icon;
+					$("#button-cometd-status").buttonMarkup({ icon: icon });
+					_iconCur = icon;					
 				}
 			};
 
@@ -4614,8 +4632,6 @@
 				_changeIcon("alert");
 			};
 			_cometd.onReconnect = function() {
-				//_changeIcon(_userEvent.getLongPollPending() ? "check" :
-				// "plus");
 				if (_userEvent.isLongPollPending()) {
 					_changeIcon("check");
 				} else {
@@ -4648,9 +4664,6 @@
 				/*
 				* #327: We handle this message as redundant: no action needed.
 				*/
-				//_changeIcon("forbidden");
-				//alert(JSON.stringify(message));
-				//_this.onWakeUp();
 				$.noop();
 			};
 
@@ -4666,11 +4679,6 @@
 			_deviceEvent.onPollInvitation = function() {
 				_deviceEvent.poll(_model.language, _model.country);
 			};
-
-			//_deviceEvent.onEventIgnored = function() {
-			//};
-			//_deviceEvent.onWaitingForEvent = function() {
-			//};
 
 			_deviceEvent.onException = function(msg) {
 				_view.message(msg);

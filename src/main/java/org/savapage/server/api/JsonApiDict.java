@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server;
+package org.savapage.server.api;
 
 import java.util.HashMap;
 import java.util.Map;

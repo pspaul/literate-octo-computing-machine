@@ -252,7 +252,7 @@ public final class DeviceEventService extends AbstractEventService {
 
             /*
              * The JavaScript client subscribes to CHANNEL_PUBLISH like this:
-             * $.cometd.subscribe('/user/event', function(message) {
+             * $.cometd.subscribe('/device/event', function(message) {
              */
             remote.deliver(getServerSession(), CHANNEL_PUBLISH, jsonEvent);
 

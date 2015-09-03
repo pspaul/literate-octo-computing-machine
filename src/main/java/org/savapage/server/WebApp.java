@@ -56,6 +56,7 @@ import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.payment.PaymentMethodEnum;
+import org.savapage.server.api.JsonApiServer;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.img.ImageServer;

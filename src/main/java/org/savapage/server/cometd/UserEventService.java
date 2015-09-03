@@ -66,7 +66,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.users.AbstractUserSource;
 import org.savapage.core.util.AppLogHelper;
-import org.savapage.server.JsonApiServer;
+import org.savapage.server.api.JsonApiServer;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
 import org.slf4j.Logger;
