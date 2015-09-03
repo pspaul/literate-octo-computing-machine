@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>savapage-server</artifactId>
 	<groupId>org.savapage</groupId>
-	<version>0.9.9</version>
+	<version>0.9.10</version>
 	<name>SavaPage Server</name>
 	<packaging>war</packaging>
 	<licenses>
@@ -65,12 +65,12 @@
 		<dependency>
 			<groupId>org.savapage</groupId>
 			<artifactId>savapage-core</artifactId>
-			<version>0.9.9</version>
+			<version>0.9.10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.savapage</groupId>
 			<artifactId>savapage-ext</artifactId>
-			<version>0.9.9</version>
+			<version>0.9.10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cometd.java</groupId>
