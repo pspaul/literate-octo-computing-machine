@@ -3331,12 +3331,15 @@ public final class JsonApiServer extends AbstractPage {
      * @throws IOException
      * @throws PaymentGatewayException
      */
-    private Map<String, Object> reqBitcoinWalletRefresh()
-            throws PaymentGatewayException, IOException {
+    private Map<String, Object> reqBitcoinWalletRefresh() {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
-        WebApp.get().getPluginManager().refreshWalletInfoCache();
+        try {
+            WebApp.get().getPluginManager().refreshWalletInfoCache();
+        } catch (PaymentGatewayException | IOException e) {
+            return setApiResultMsgError(userData, "", e.getMessage());
+        }
         return setApiResultOK(userData);
     }
 
