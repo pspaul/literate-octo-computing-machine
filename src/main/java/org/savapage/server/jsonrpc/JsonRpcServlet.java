@@ -55,7 +55,6 @@ import org.savapage.core.json.rpc.JsonRpcMethodName;
 import org.savapage.core.json.rpc.JsonRpcMethodParser;
 import org.savapage.core.json.rpc.JsonRpcMethodResult;
 import org.savapage.core.json.rpc.ParamsPaging;
-import org.savapage.core.json.rpc.ResultDataBasic;
 import org.savapage.core.json.rpc.impl.ParamsAddInternalUser;
 import org.savapage.core.json.rpc.impl.ParamsChangeBaseCurrency;
 import org.savapage.core.json.rpc.impl.ParamsPrinterAccessControl;
@@ -575,10 +574,7 @@ public final class JsonRpcServlet extends HttpServlet implements
                 msg = methodRsp.asError().getError().getMessage();
             } else {
                 level = PubLevelEnum.INFO;
-                final ResultDataBasic data =
-                        methodRsp.asResult().getResult()
-                                .data(ResultDataBasic.class);
-                msg = data.getMessage();
+                msg = null;
             }
 
         } else if (rpcResponse instanceof JsonRpcMethodError) {
@@ -594,8 +590,8 @@ public final class JsonRpcServlet extends HttpServlet implements
         }
 
         final StringBuilder msgTxt =
-                new StringBuilder().append("Server Command [").append(
-                        methodName.getMethodName()).append("]");
+                new StringBuilder().append("Server Command \"")
+                        .append(methodName.getMethodName()).append("\"");
 
         if (StringUtils.isNotBlank(msg)) {
             msgTxt.append(": ").append(msg);
