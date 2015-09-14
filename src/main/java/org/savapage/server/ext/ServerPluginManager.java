@@ -704,13 +704,17 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
     /**
      * Creates the Bitcoin transaction DTO.
+     * <p>
+     * Note: when the payment is trusted, we use the amount from the
+     * {@link BitcoinGatewayTrx}, if not trusted we use amount zero.
+     * </p>
      *
      * @param trx
      *            The {@link BitcoinGatewayTrx}.
      * @param userId
      *            The unique user id.
      * @param isTrusted
-     *            {@code true} if the payment is acknowledged.
+     *            {@code true} if the payment is trusted.
      * @return The {@link UserPaymentGatewayDto}.
      */
     private static UserPaymentGatewayDto createDtoFromTrx(
@@ -862,6 +866,11 @@ public final class ServerPluginManager implements PaymentGatewayListener,
          */
         final boolean isBalanceUpdate;
 
+        /*
+         * Note: when the trx is acknowledged, we create the DTO as trusted. If
+         * acknowledgment is configured at zero (0) confirmations, it is quick
+         * and will result in an almost immediate re-charge of user balance.
+         */
         final UserPaymentGatewayDto dto =
                 createDtoFromTrx(trx, userId, trx.isAcknowledged());
 
