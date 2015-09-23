@@ -2458,7 +2458,10 @@ public final class JsonApiServer extends AbstractPage {
             }
         }
 
-        if ((key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER)
+        if ((key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
+                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER
+                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
+                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE)
                 && StringUtils.isNotBlank(value)) {
 
             final PrinterDao printerDao =

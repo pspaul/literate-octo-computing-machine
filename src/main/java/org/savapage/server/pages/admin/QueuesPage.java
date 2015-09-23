@@ -195,8 +195,8 @@ public class QueuesPage extends AbstractAdminListPage {
 
         final String urlWindows =
                 new StringBuilder().append("http://").append(serverName)
-                .append(":").append(WebApp.getServerPort())
-                .append(WebApp.MOUNT_PATH_PRINTERS).toString();
+                        .append(":").append(WebApp.getServerPort())
+                        .append(WebApp.MOUNT_PATH_PRINTERS).toString();
 
         /*
          * Display the requested page.
@@ -367,6 +367,14 @@ public class QueuesPage extends AbstractAdminListPage {
                     if (cm.isConfigValue(Key.SMARTSCHOOL_1_ENABLE)) {
                         builder.append(cm
                                 .getConfigValue(Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER));
+
+                        final String grayscalePrinter =
+                                cm.getConfigValue(Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE);
+
+                        if (StringUtils.isNotBlank(grayscalePrinter)) {
+                            builder.append(" (").append(grayscalePrinter)
+                                    .append(")");
+                        }
                     }
 
                     if (cm.isConfigValue(Key.SMARTSCHOOL_2_ENABLE)) {
@@ -375,6 +383,14 @@ public class QueuesPage extends AbstractAdminListPage {
                         }
                         builder.append(cm
                                 .getConfigValue(Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER));
+
+                        final String grayscalePrinter =
+                                cm.getConfigValue(Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE);
+
+                        if (StringUtils.isNotBlank(grayscalePrinter)) {
+                            builder.append(" (").append(grayscalePrinter)
+                                    .append(")");
+                        }
                     }
 
                     proxyPrinterNames = builder.toString();

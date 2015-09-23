@@ -289,6 +289,12 @@ public class Options extends AbstractAdminPage {
             tagInput("smartschool-print-proxyprinter-1", keyWlk);
 
             keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
+            tagLabel("smartschool-print-proxyprinter-grayscale-label-1",
+                    "smartschool-print-proxyprinter-grayscale", keyWlk);
+            tagInput("smartschool-print-proxyprinter-grayscale-1", keyWlk);
+
+            keyWlk =
                     IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_CHARGE_TO_STUDENTS;
             tagLabel("smartschool-print-charge-to-students-label-1",
                     "smartschool-print-charge-to-students", keyWlk);
@@ -314,6 +320,12 @@ public class Options extends AbstractAdminPage {
             tagLabel("smartschool-print-proxyprinter-label-2",
                     "smartschool-print-proxyprinter", keyWlk);
             tagInput("smartschool-print-proxyprinter-2", keyWlk);
+
+            keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
+            tagLabel("smartschool-print-proxyprinter-grayscale-label-2",
+                    "smartschool-print-proxyprinter-grayscale", keyWlk);
+            tagInput("smartschool-print-proxyprinter-grayscale-2", keyWlk);
 
             keyWlk =
                     IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_CHARGE_TO_STUDENTS;

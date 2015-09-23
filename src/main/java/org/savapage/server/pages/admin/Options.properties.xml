@@ -189,7 +189,8 @@
     <entry key="smartschool-print-enable">Enable account</entry>
     <entry key="smartschool-print-endpoint">SOAP endpoint</entry>
     <entry key="smartschool-print-password">Password</entry>
-    <entry key="smartschool-print-proxyprinter">Proxy Printer (leave empty for WebApp Proxy Print)</entry>
+    <entry key="smartschool-print-proxyprinter">Proxy Printer for all jobs (leave empty for WebApp Proxy Print)</entry>
+    <entry key="smartschool-print-proxyprinter-grayscale">printer for grayscale jobs (optional)</entry>
     <entry key="smartschool-print-charge-to-students">Charge costs to students</entry>
 
     <entry key="smartschool-on-demand-user-creation">On demand user creation</entry>

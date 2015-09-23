@@ -535,11 +535,13 @@
 				_fillConfigPropsYN(props, ['smartschool.user.insert.lazy-print']);
 
 				if (enable1) {
-					_fillConfigPropsText(props, ['smartschool.1.soap.print.endpoint.url', 'smartschool.1.soap.print.endpoint.password', 'smartschool.1.soap.print.proxy-printer']);
+					_fillConfigPropsText(props, ['smartschool.1.soap.print.endpoint.url', 'smartschool.1.soap.print.endpoint.password', 
+						'smartschool.1.soap.print.proxy-printer', 'smartschool.1.soap.print.proxy-printer-grayscale']);
 					_fillConfigPropsYN(props, ['smartschool.1.soap.print.charge-to-students']);					
 				}
 				if (enable2) {
-					_fillConfigPropsText(props, ['smartschool.2.soap.print.endpoint.url', 'smartschool.2.soap.print.endpoint.password', 'smartschool.2.soap.print.proxy-printer']);
+					_fillConfigPropsText(props, ['smartschool.2.soap.print.endpoint.url', 'smartschool.2.soap.print.endpoint.password',
+						 'smartschool.2.soap.print.proxy-printer', 'smartschool.2.soap.print.proxy-printer-grayscale']);
 					_fillConfigPropsYN(props, ['smartschool.2.soap.print.charge-to-students']);					
 				}
 				_saveConfigProps(props);
