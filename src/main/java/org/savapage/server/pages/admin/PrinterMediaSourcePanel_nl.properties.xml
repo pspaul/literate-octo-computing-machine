@@ -11,4 +11,5 @@
     <entry key="show-all">Alles tonen</entry>
     <entry key="show-selected-only">Alleen geselecteerde tonen</entry>
     <entry key="use-grayscale-as-default">Gebruik Z/W als standaard</entry>
+    <entry key="client-side-monochrome-conversion">Voer Z/W conversie lokaal uit</entry>
 </properties>

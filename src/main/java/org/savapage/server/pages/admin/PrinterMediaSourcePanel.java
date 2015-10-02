@@ -463,7 +463,25 @@ public class PrinterMediaSourcePanel extends Panel {
             }
         }
 
-        //
+        add(labelWrk);
+
+        /*
+         * Client-side monochrome conversion.
+         */
+        final String labelClientSideMonochrome =
+                "client-side-monochrome-conversion";
+
+        labelWrk =
+                helper.encloseLabel(labelClientSideMonochrome, "",
+                        isColorPrinter);
+
+        // Checked?
+        if (isColorPrinter && printer.getAttributes() != null) {
+            if (PRINTER_SERVICE.isClientSideMonochrome(printer)) {
+                labelWrk.add(new AttributeModifier("checked", "checked"));
+            }
+        }
+
         add(labelWrk);
 
     }

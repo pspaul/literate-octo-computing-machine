@@ -10,5 +10,6 @@
     <entry key="default">Default</entry>
     <entry key="show-all">Show all</entry>
     <entry key="show-selected-only">Show selected only</entry>
-    <entry key="use-grayscale-as-default">Use B/W as default</entry>
+    <entry key="use-grayscale-as-default">Use B/W as default</entry>    
+    <entry key="client-side-monochrome-conversion">Perform B/W conversion locally</entry>
 </properties>
