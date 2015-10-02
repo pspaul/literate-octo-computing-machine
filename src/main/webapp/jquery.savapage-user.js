@@ -5007,7 +5007,8 @@
 				if (!_savePdfProps()) {
 					return false;
 				}
-				window.location.assign(_api.getUrl4Pdf($('#pdf-page-ranges').val(), _model.removeGraphics, _model.ecoprint, _model.pdfJobIndex));
+				window.location.assign(_api.getUrl4Pdf($('#pdf-page-ranges').val(), _model.removeGraphics,
+					_model.ecoprint, _view.isCbChecked($('#pdf-grayscale')), _model.pdfJobIndex));
 				$('#pdf-page-ranges').val('');
 				_model.myShowUserStatsGet = true;
 				return true;

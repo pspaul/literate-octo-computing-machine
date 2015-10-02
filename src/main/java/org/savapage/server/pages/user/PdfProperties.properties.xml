@@ -41,7 +41,8 @@
 
     <entry key="pdf-remove-graphics">Remove graphics</entry>    
     <entry key="pdf-ecoprint">Eco Print</entry>
-        
+    <entry key="pdf-grayscale">Grayscale</entry>
+    
     <entry key="pdf-page-ranges">Pages</entry>
     <entry key="pdf-page-ranges-help">For example: 1-4,6,8-10</entry>
 

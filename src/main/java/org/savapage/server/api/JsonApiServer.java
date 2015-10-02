@@ -1047,8 +1047,10 @@ public final class JsonApiServer extends AbstractPage {
                                 Boolean.parseBoolean(getParmValue(parameters,
                                         isGetAction, "removeGraphics")),
                                 Boolean.parseBoolean(getParmValue(parameters,
-                                        isGetAction, "ecoprint")), docLog,
-                                "download");
+                                        isGetAction, "ecoprint")), Boolean
+                                        .parseBoolean(getParmValue(parameters,
+                                                isGetAction, "grayscale")),
+                                docLog, "download");
 
                 /*
                  * (2) Write log to database.
@@ -1579,7 +1581,8 @@ public final class JsonApiServer extends AbstractPage {
                     Boolean.parseBoolean(getParmValue(parameters, isGetAction,
                             "removeGraphics")),
                     Boolean.parseBoolean(getParmValue(parameters, isGetAction,
-                            "ecoprint")));
+                            "ecoprint")), Boolean.parseBoolean(getParmValue(
+                            parameters, isGetAction, "grayscale")));
 
         case JsonApiDict.REQ_QUEUE_GET:
 
@@ -1652,6 +1655,8 @@ public final class JsonApiServer extends AbstractPage {
      *            one-pixel).
      * @param ecoPdf
      *            <code>true</code> if Eco PDF is to be generated.
+     * @param grayscale
+     *            <code>true</code> if Grayscale PDF is to be generated.
      * @param docLog
      * @param purpose
      *            A simple tag to insert into the filename (to add some
@@ -1665,7 +1670,7 @@ public final class JsonApiServer extends AbstractPage {
     private File generatePdfForExport(final User user,
             final int vanillaJobIndex, final String pageRangeFilter,
             final boolean removeGraphics, final boolean ecoPdf,
-            final DocLog docLog, final String purpose)
+            final boolean grayscale, final DocLog docLog, final String purpose)
             throws LetterheadNotFoundException, IOException,
             PostScriptDrmException {
 
@@ -1692,7 +1697,8 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         return OutputProducer.instance().generatePdfForExport(user, pdfFile,
-                documentPageRangeFilter, removeGraphics, ecoPdf, docLog);
+                documentPageRangeFilter, removeGraphics, ecoPdf, grayscale,
+                docLog);
     }
 
     /**
@@ -2125,6 +2131,8 @@ public final class JsonApiServer extends AbstractPage {
      * @param removeGraphics
      * @param ecoPdf
      *            <code>true</code> if Eco PDF is to be generated.
+     * @param grayscale
+     *            <code>true</code> if Grayscale PDF is to be generated.
      * @return
      * @throws LetterheadNotFoundException
      * @throws IOException
@@ -2135,10 +2143,10 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqSend(final User lockedUser,
             final String mailto, final String jobIndex, final String ranges,
-            final boolean removeGraphics, final boolean ecoPdf)
-            throws LetterheadNotFoundException, IOException,
-            MessagingException, InterruptedException, CircuitBreakerException,
-            ParseException {
+            final boolean removeGraphics, final boolean ecoPdf,
+            final boolean grayscale) throws LetterheadNotFoundException,
+            IOException, MessagingException, InterruptedException,
+            CircuitBreakerException, ParseException {
 
         final String user = lockedUser.getUserId();
 
@@ -2156,7 +2164,7 @@ public final class JsonApiServer extends AbstractPage {
             fileAttach =
                     generatePdfForExport(lockedUser,
                             Integer.parseInt(jobIndex), ranges, removeGraphics,
-                            ecoPdf, docLog, "email");
+                            ecoPdf, grayscale, docLog, "email");
             /*
              * INVARIANT: Since sending the mail is synchronous, file length is
              * important and MUST be less than criterion.
@@ -2460,8 +2468,7 @@ public final class JsonApiServer extends AbstractPage {
 
         if ((key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
                 || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER
-                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
-                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE)
+                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE)
                 && StringUtils.isNotBlank(value)) {
 
             final PrinterDao printerDao =
