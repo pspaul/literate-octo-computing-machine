@@ -286,13 +286,13 @@ public final class JsonApiServer extends AbstractPage {
             .getServiceFactory().getOutboxService();
 
     /**
-    *
-    */
+     * .
+     */
     private static final PrinterService PRINTER_SERVICE = ServiceContext
             .getServiceFactory().getPrinterService();
 
     /**
-     *
+     * .
      */
     private static final ProxyPrintService PROXY_PRINT_SERVICE = ServiceContext
             .getServiceFactory().getProxyPrintService();
@@ -1655,7 +1655,7 @@ public final class JsonApiServer extends AbstractPage {
      *            one-pixel).
      * @param ecoPdf
      *            <code>true</code> if Eco PDF is to be generated.
-     * @param grayscale
+     * @param grayscalePdf
      *            <code>true</code> if Grayscale PDF is to be generated.
      * @param docLog
      * @param purpose
@@ -1670,9 +1670,9 @@ public final class JsonApiServer extends AbstractPage {
     private File generatePdfForExport(final User user,
             final int vanillaJobIndex, final String pageRangeFilter,
             final boolean removeGraphics, final boolean ecoPdf,
-            final boolean grayscale, final DocLog docLog, final String purpose)
-            throws LetterheadNotFoundException, IOException,
-            PostScriptDrmException {
+            final boolean grayscalePdf, final DocLog docLog,
+            final String purpose) throws LetterheadNotFoundException,
+            IOException, PostScriptDrmException {
 
         final String pdfFile =
                 OutputProducer.createUniqueTempPdfName(user, purpose);
@@ -1697,7 +1697,7 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         return OutputProducer.instance().generatePdfForExport(user, pdfFile,
-                documentPageRangeFilter, removeGraphics, ecoPdf, grayscale,
+                documentPageRangeFilter, removeGraphics, ecoPdf, grayscalePdf,
                 docLog);
     }
 
@@ -2131,7 +2131,7 @@ public final class JsonApiServer extends AbstractPage {
      * @param removeGraphics
      * @param ecoPdf
      *            <code>true</code> if Eco PDF is to be generated.
-     * @param grayscale
+     * @param grayscalePdf
      *            <code>true</code> if Grayscale PDF is to be generated.
      * @return
      * @throws LetterheadNotFoundException
@@ -2144,7 +2144,7 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqSend(final User lockedUser,
             final String mailto, final String jobIndex, final String ranges,
             final boolean removeGraphics, final boolean ecoPdf,
-            final boolean grayscale) throws LetterheadNotFoundException,
+            final boolean grayscalePdf) throws LetterheadNotFoundException,
             IOException, MessagingException, InterruptedException,
             CircuitBreakerException, ParseException {
 
@@ -2164,7 +2164,7 @@ public final class JsonApiServer extends AbstractPage {
             fileAttach =
                     generatePdfForExport(lockedUser,
                             Integer.parseInt(jobIndex), ranges, removeGraphics,
-                            ecoPdf, grayscale, docLog, "email");
+                            ecoPdf, grayscalePdf, docLog, "email");
             /*
              * INVARIANT: Since sending the mail is synchronous, file length is
              * important and MUST be less than criterion.
@@ -3043,6 +3043,10 @@ public final class JsonApiServer extends AbstractPage {
         printReq.setEcoPrint(ecoPrint);
         printReq.setLocale(getSession().getLocale());
         printReq.setIdUser(lockedUser.getId());
+
+        printReq.setConvertToGrayscale(printReq.isGrayscale()
+                && PROXY_PRINT_SERVICE.isColorPrinter(printerName)
+                && PRINTER_SERVICE.isClientSideMonochrome(printer));
 
         /*
          * Vanilla jobs?
