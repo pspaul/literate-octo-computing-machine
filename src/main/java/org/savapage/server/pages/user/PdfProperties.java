@@ -22,7 +22,6 @@
 package org.savapage.server.pages.user;
 
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -40,11 +39,10 @@ public class PdfProperties extends AbstractUserPage {
     public PdfProperties() {
 
         final MarkupHelper helper = new MarkupHelper(this);
-        final ConfigManager cm = ConfigManager.instance();
 
         //
         helper.encloseLabel("pdf-ecoprint", "",
-                cm.isConfigValue(Key.ECO_PRINT_ENABLE));
+                ConfigManager.isEcoPrintEnabled());
     }
 
 }

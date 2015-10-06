@@ -70,6 +70,6 @@ public class Print extends AbstractUserPage {
 
         //
         helper.encloseLabel("print-ecoprint", "",
-                cm.isConfigValue(Key.ECO_PRINT_ENABLE));
+                ConfigManager.isEcoPrintEnabled());
     }
 }
