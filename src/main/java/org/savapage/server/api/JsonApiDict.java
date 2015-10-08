@@ -182,6 +182,7 @@ public class JsonApiDict {
     public static final String REQ_USER_DELETE = "user-delete";
     public static final String REQ_USER_GET = "user-get";
     public static final String REQ_USER_GET_STATS = "user-get-stats";
+    public static final String REQ_USER_LAZY_ECOPRINT = "user-lazy-ecoprint";
     public static final String REQ_USER_NOTIFY_ACCOUNT_CHANGE =
             "user-notify-account-change";
     public static final String REQ_USER_QUICK_SEARCH = "user-quick-search";
@@ -589,6 +590,8 @@ public class JsonApiDict {
         usr(REQ_RESET_USER_PASSWORD, DbClaim.READ, DbAccess.USER_LOCK);
         usr(REQ_RESET_USER_PIN, DbClaim.READ, DbAccess.USER_LOCK);
         usr(REQ_SEND, DbClaim.READ, DbAccess.USER_LOCK);
+        usr(REQ_USER_LAZY_ECOPRINT, DbClaim.NONE, DbAccess.USER_LOCK);
+
         adm(REQ_USER_DELETE, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_GET, DbClaim.READ, DbAccess.YES);
         usr(REQ_USER_GET_STATS, DbClaim.READ, DbAccess.YES);

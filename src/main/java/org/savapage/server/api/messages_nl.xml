@@ -10,6 +10,8 @@
 
     <entry key="msg-invalid-request">Verzoek "{0}" is ongeldig.</entry>
 
+    <entry key="msg-ecoprint-pending">Eco Print wordt voorbereid bezig. Wacht een moment en probeer opnieuw.</entry>
+
 	<entry key="exc-letterhead-not-found">Briefhoofd is niet gevonden. Vernieuw de
 		lijst met briefhoofden.</entry>
     <entry key="exc-letterhead-not-found-login">Briefhoofd is niet gevonden. Meld u opnieuw aan.</entry>

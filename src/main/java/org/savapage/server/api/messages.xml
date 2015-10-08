@@ -11,6 +11,8 @@
 
     <entry key="msg-invalid-request">Request "{0}" is invalid.</entry>
 
+    <entry key="msg-ecoprint-pending">Eco Print is being prepared. Please wait a moment and try again.</entry>
+
 	<entry key="exc-letterhead-not-found">Letterhead not found. Please refresh
 		your letterhead	list.</entry>
 	<entry key="exc-letterhead-not-found-login">Letterhead not found. Please login again.</entry>

@@ -127,6 +127,8 @@ import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.UserDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
+import org.savapage.core.imaging.EcoPrintPdfTask;
+import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.OutputProducer;
@@ -1584,6 +1586,13 @@ public final class JsonApiServer extends AbstractPage {
                             "ecoprint")), Boolean.parseBoolean(getParmValue(
                             parameters, isGetAction, "grayscale")));
 
+        case JsonApiDict.REQ_USER_LAZY_ECOPRINT:
+
+            return reqUserLazyEcoPrint(lockedUser,
+                    Integer.parseInt(getParmValue(parameters, isGetAction,
+                            "jobIndex")),
+                    getParmValue(parameters, isGetAction, "ranges"));
+
         case JsonApiDict.REQ_QUEUE_GET:
 
             return reqQueueGet(requestingUser,
@@ -1643,7 +1652,8 @@ public final class JsonApiServer extends AbstractPage {
      * @param user
      *            The {@link User}.
      * @param vanillaJobIndex
-     *            The zero-based index of the vanilla job.
+     *            The zero-based index of the vanilla job. If this index is LT
+     *            zero the pageRangeFilter refers to the integrated document.
      * @param pageRangeFilter
      *            The page range filter. For example: '1,2,5-6'. The page
      *            numbers in page range filter refer to one-based page numbers
@@ -1665,17 +1675,48 @@ public final class JsonApiServer extends AbstractPage {
      * @throws PostScriptDrmException
      * @throws IOException
      * @throws LetterheadNotFoundException
-     * @throws Exception
+     * @throws EcoPrintPdfTaskPendingException
+     *             When {@link EcoPrintPdfTask} objects needed for this PDF are
+     *             pending.
      */
     private File generatePdfForExport(final User user,
             final int vanillaJobIndex, final String pageRangeFilter,
             final boolean removeGraphics, final boolean ecoPdf,
             final boolean grayscalePdf, final DocLog docLog,
             final String purpose) throws LetterheadNotFoundException,
-            IOException, PostScriptDrmException {
+            IOException, PostScriptDrmException,
+            EcoPrintPdfTaskPendingException {
 
         final String pdfFile =
                 OutputProducer.createUniqueTempPdfName(user, purpose);
+
+        final String documentPageRangeFilter =
+                calcDocumentPageRangeFilter(user, vanillaJobIndex,
+                        pageRangeFilter);
+
+        return OutputProducer.instance().generatePdfForExport(user, pdfFile,
+                documentPageRangeFilter, removeGraphics, ecoPdf, grayscalePdf,
+                docLog);
+    }
+
+    /**
+     * Calculates the integrated document page filter for a {@link User}.
+     *
+     * @param user
+     *            The {@link User}.
+     * @param vanillaJobIndex
+     *            The zero-based index of the vanilla job. If this index is LT
+     *            zero the pageRangeFilter refers to the integrated document.
+     * @param pageRangeFilter
+     *            The page range filter. For example: '1,2,5-6'. The page
+     *            numbers in page range filter refer to one-based page numbers
+     *            of the integrated {@link InboxInfoDto} document OR for a
+     *            single vanilla job. When {@code null}, then the full page
+     *            range is applied.
+     * @return The integrated document page filter.
+     */
+    private String calcDocumentPageRangeFilter(final User user,
+            final int vanillaJobIndex, final String pageRangeFilter) {
 
         final String documentPageRangeFilter;
 
@@ -1696,27 +1737,57 @@ public final class JsonApiServer extends AbstractPage {
                                     .createSortedRangeArray(pageRangeFilter));
         }
 
-        return OutputProducer.instance().generatePdfForExport(user, pdfFile,
-                documentPageRangeFilter, removeGraphics, ecoPdf, grayscalePdf,
-                docLog);
+        return documentPageRangeFilter;
     }
 
     /**
-     * Converts a sorted {@link RangeAtom} list with page numbers in job context
-     * to a inbox context range string.
+     * Lazy executes background tasks for creating shadow EcoPrint PDFs.
      * <p>
-     * Note: the jobInfo must be vanilla.
+     * See {@link EcoPrintPdfTask}.
      * </p>
      *
-     * @param jobInfo
-     *            The {@link InboxInfoDto}.
-     * @param iVanillaJobIndex
-     *            The zero-based vanilla job index in the jobInfo.
-     * @param sortedRangeArrayJob
-     *            The sorted {@link RangeAtom} list with page numbers in job
-     *            context.
-     * @return The range string.
+     * @param lockedUser
+     * @param vanillaJobIndex
+     *            The zero-based index of the vanilla job. If this index is LT
+     *            zero the pageRangeFilter refers to the integrated document.
+     * @param pageRangeFilter
+     *            The page range filter. For example: '1,2,5-6'. The page
+     *            numbers in page range filter refer to one-based page numbers
+     *            of the integrated {@link InboxInfoDto} document OR for a
+     *            single vanilla job. When {@code null}, then the full page
+     *            range is applied.
+     * @return
      */
+    private Map<String, Object> reqUserLazyEcoPrint(final User lockedUser,
+            final int vanillaJobIndex, final String pageRangeFilter) {
+
+        final String documentPageRangeFilter =
+                calcDocumentPageRangeFilter(lockedUser, vanillaJobIndex,
+                        pageRangeFilter);
+        /*
+         * Get the (filtered) jobs.
+         */
+        InboxInfoDto inboxInfo =
+                INBOX_SERVICE.getInboxInfo(lockedUser.getUserId());
+
+        if (StringUtils.isNotBlank(documentPageRangeFilter)) {
+            inboxInfo =
+                    INBOX_SERVICE.filterInboxInfoPages(inboxInfo,
+                            documentPageRangeFilter);
+        }
+
+        final int nTasksWaiting =
+                INBOX_SERVICE.lazyStartEcoPrintPdfTasks(
+                        ConfigManager.getUserHomeDir(lockedUser.getUserId()),
+                        inboxInfo);
+
+        if (nTasksWaiting > 0) {
+            return setApiResult(new HashMap<String, Object>(),
+                    API_RESULT_CODE_INFO, "msg-ecoprint-pending");
+        }
+
+        return createApiResultOK();
+    }
 
     /**
      *
@@ -2249,6 +2320,10 @@ public final class JsonApiServer extends AbstractPage {
 
             setApiResult(userData, API_RESULT_CODE_ERROR,
                     "msg-pdf-export-drm-error");
+
+        } catch (EcoPrintPdfTaskPendingException e) {
+
+            setApiResult(userData, API_RESULT_CODE_INFO, "msg-ecoprint-pending");
 
         } finally {
 
@@ -3040,7 +3115,7 @@ public final class JsonApiServer extends AbstractPage {
         printReq.setOptionValues(options);
         printReq.setPrinterName(printerName);
         printReq.setRemoveGraphics(removeGraphics);
-        printReq.setEcoPrint(ecoPrint);
+        printReq.setEcoPrintShadow(ecoPrint);
         printReq.setLocale(getSession().getLocale());
         printReq.setIdUser(lockedUser.getId());
 
@@ -3193,8 +3268,12 @@ public final class JsonApiServer extends AbstractPage {
 
             printReq.setPrintMode(PrintModeEnum.HOLD);
 
-            OUTBOX_SERVICE.proxyPrintInbox(lockedUser, printReq);
-
+            try {
+                OUTBOX_SERVICE.proxyPrintInbox(lockedUser, printReq);
+            } catch (EcoPrintPdfTaskPendingException e) {
+                return setApiResult(data, API_RESULT_CODE_INFO,
+                        "msg-ecoprint-pending");
+            }
             setApiResultMsg(data, printReq);
 
             addUserStats(data, lockedUser, getSession().getLocale(),

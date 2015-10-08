@@ -134,11 +134,11 @@
 			 * </p>
 			 */
 			this.addListener = function() {
-				
+
 				if (!_subscription) {
 					_longPollPending = false;
 					_subscription = _cometd.addListener('/device/event', _onEvent);
-				}			
+				}
 				// Get things started: invite to do a poll
 				this.onPollInvitation();
 			};
@@ -153,7 +153,6 @@
 				}
 				_longPollPending = false;
 			};
-
 
 			/**
 			 * The long poll as 'publish' to the '/service/device' channel.
@@ -432,9 +431,9 @@
 			 */
 			this.poll = function(userid, pagecount, uniqueUrlVal, prevMsgTime, language, country, base64) {
 
-				if (!_longPollStartTime && userid) {								
+				if (!_longPollStartTime && userid) {
 					_longPollStartTime = new Date().getTime();
-					this.onWaitingForEvent();				
+					this.onWaitingForEvent();
 					try {
 						$.cometd.publish('/service/user', {
 							user : userid,
@@ -1455,23 +1454,23 @@
 			, _selCents = '#money-credit-transfer-cents'
 			//
 			;
-			
+
 			$("#page-credit-transfer").on("pagecreate", function(event) {
 
 				$('#button-transfer-credit-ok').click(function() {
 					if (_this.onTransferCredit($('#money-credit-transfer-user').val(), $(_selMain).val(), $(_selCents).val(), $('#money-credit-transfer-comment').val())) {
 						// Back to main window, this will start user event monitoring (picking up the account balance change).
-						_view.changePage($('#page-main'));						
+						_view.changePage($('#page-main'));
 					}
 					return false;
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
-				
+
 				$('#page-credit-transfer input').val('');
 				$(_selCents).val('00');
 				$('#credit-transfer-available').text(_model.user.stats.accountInfo.balance);
-				
+
 			}).on("pageshow", function(event, ui) {
 				$(_selMain).focus();
 			});
@@ -1489,7 +1488,7 @@
 			//
 			;
 
-			this.onRefreshContent = function (html) {
+			this.onRefreshContent = function(html) {
 				var button = '#button-money-transfer';
 				$(button).off('click');
 				$('#page-money-transfer-content').html(html);
@@ -3230,8 +3229,7 @@
 			}
 			//
 			, _onPrint = function(isClose) {
-					_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, 
-						_view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")));				
+				_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")));
 			}
 			//
 			;
@@ -3270,12 +3268,12 @@
 				});
 
 				$('#button-print').click(function(e) {
-					_onPrint(false); 
+					_onPrint(false);
 					return false;
 				});
 
 				$('#button-print-and-close').click(function(e) {
-					_onPrint(true); 
+					_onPrint(true);
 					return false;
 				});
 
@@ -3897,7 +3895,7 @@
 			//
 			, _adaptLetterheadPage
 			//
-			, _refreshLetterheadList, _saveSelectedletterhead, _savePdfProps
+			, _refreshLetterheadList, _saveSelectedletterhead, _savePdfProps, _userLazyEcoPrint
 			//
 			, _handleSafePageEvent
 			/*
@@ -3913,31 +3911,27 @@
 			//
 			, _timeoutAuthPrint, _countdownAuthPrint, _clearTimeoutAuthPrint
 			//
-			
+
 			/**
 			 *
-			 */
-			, _saveRemoveGraphics = function(sel) {
+			 */, _saveRemoveGraphics = function(sel) {
 				_model.removeGraphics = _view.isCbChecked($(sel));
 				_view.visible($('#button-mini-no-graphics'), _model.removeGraphics);
 			}
 			/**
 			 *
-			 */
-			, _saveEcoprint = function(sel) {
+			 */, _saveEcoprint = function(sel) {
 				_model.ecoprint = _view.isCbChecked($(sel));
 				_view.visible($('#button-mini-ecoprint'), _model.ecoprint);
-			}			
+			}
 			/**
 			 *
-			 */
-			, _savePdfGrayscale = function(sel) {
+			 */, _savePdfGrayscale = function(sel) {
 				_model.pdfGrayscale = _view.isCbChecked($(sel));
-			}			
+			}
 			/**
 			 *
-			 */
-			, _checkVanillaJobs = function() {
+			 */, _checkVanillaJobs = function() {
 
 				var res = _api.call({
 					request : 'inbox-is-vanilla'
@@ -3971,7 +3965,7 @@
 				_saveSelectedletterhead('#print-letterhead-list');
 				_saveRemoveGraphics('#print-remove-graphics');
 				_saveEcoprint('#print-ecoprint');
-				
+
 				// Check IPP attributes value
 				ippAttrVal = _model.myPrinterOpt['print-color-mode'];
 				isColor = ippAttrVal && ippAttrVal === 'color';
@@ -4613,8 +4607,10 @@
 			// -----------------------------
 			_changeIcon = function(icon) {
 				if (icon !== _iconCur) {
-					$("#button-cometd-status").buttonMarkup({ icon: icon });
-					_iconCur = icon;					
+					$("#button-cometd-status").buttonMarkup({
+						icon : icon
+					});
+					_iconCur = icon;
 				}
 			};
 
@@ -4668,8 +4664,8 @@
 			 */
 			_cometd.onUnsuccessful = function(message) {
 				/*
-				* #327: We handle this message as redundant: no action needed.
-				*/
+				 * #327: We handle this message as redundant: no action needed.
+				 */
 				$.noop();
 			};
 
@@ -5002,10 +4998,12 @@
 			};
 
 			/**
-			 * @return true if PDF props saved ok, false is an error occurred.
+			 * @return true if pre-conditions are OK, false is an error occurred.
 			 */
 			_view.pages.pdfprop.onDownload = function() {
 
+				var pageRanges = $('#pdf-page-ranges').val();
+				
 				_saveRemoveGraphics('#pdf-remove-graphics');
 				_saveEcoprint('#pdf-ecoprint');
 				_savePdfGrayscale('#pdf-grayscale');
@@ -5015,9 +5013,12 @@
 				}
 				if (!_savePdfProps()) {
 					return false;
+				}				
+				if (_model.ecoprint && !_userLazyEcoPrint(_model.pdfJobIndex, pageRanges)) {
+					return false;
 				}
-				window.location.assign(_api.getUrl4Pdf($('#pdf-page-ranges').val(), _model.removeGraphics,
-					_model.ecoprint, _model.pdfGrayscale, _model.pdfJobIndex));
+				//
+				window.location.assign(_api.getUrl4Pdf(pageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfGrayscale, _model.pdfJobIndex));
 				$('#pdf-page-ranges').val('');
 				_model.myShowUserStatsGet = true;
 				return true;
@@ -5239,7 +5240,7 @@
 
 				_view.checkCb('#print-remove-graphics', _model.removeGraphics);
 				_view.checkCb('#print-ecoprint', _model.ecoprint);
-				
+
 				_this.setLetterheadMenu('#print-letterhead-list');
 				_this.setJobScopeMenu('#print-job-list');
 
@@ -5308,6 +5309,22 @@
 					_this.setLetterheadMenu('#letterhead-list');
 					_adaptLetterheadPage();
 				}
+			};
+
+			/**
+			 *
+			 */
+			_userLazyEcoPrint = function(jobIndex, ranges) {
+				var res = _api.call({
+					request : 'user-lazy-ecoprint',
+					jobIndex : jobIndex,
+					ranges : ranges
+				});
+				if (res.result.code === "0") {
+					return true;
+				}
+				_view.showApiMsg(res);
+				return false;
 			};
 
 			/**
@@ -5782,7 +5799,7 @@
 
 			$(window).on('beforeunload', function() {
 				// By NOT returning anything the unload dialog will not show.
-				$.noop();				
+				$.noop();
 			}).on('unload', function() {
 				_api.removeCallbacks();
 				_api.call({
