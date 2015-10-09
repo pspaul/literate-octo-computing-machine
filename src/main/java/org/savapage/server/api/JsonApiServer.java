@@ -3160,6 +3160,8 @@ public final class JsonApiServer extends AbstractPage {
              * the cost.
              */
             costParms.setDuplex(printReq.isDuplex());
+            costParms.setEcoPrint(printReq.isEcoPrintShadow()
+                    || printReq.isEcoPrint());
             costParms.setGrayscale(printReq.isGrayscale());
             costParms.setNumberOfCopies(printReq.getNumberOfCopies());
             costParms.setPagesPerSide(printReq.getNup());

@@ -145,6 +145,8 @@ public class OutboxAddin extends AbstractUserPage {
             mapVisible.put("color", null);
             mapVisible.put("grayscale", null);
             mapVisible.put("cost", null);
+            mapVisible.put("removeGraphics", null);
+            mapVisible.put("ecoPrint", null);
 
             /*
              *
@@ -163,7 +165,14 @@ public class OutboxAddin extends AbstractUserPage {
                 mapVisible.put("color", localized("color"));
             }
 
-            // mapVisible.put("papersize", obj.get);
+            if (job.isRemoveGraphics()) {
+                mapVisible.put("removeGraphics", localized("graphics-removed"));
+            }
+            if (job.isEcoPrint()) {
+                mapVisible.put("ecoPrint", "Eco Print");
+            }
+
+            //mapVisible.put("papersize", );
 
             mapVisible.put("cost", job.getLocaleInfo().getCost());
 
@@ -188,7 +197,7 @@ public class OutboxAddin extends AbstractUserPage {
      */
     public OutboxAddin() {
 
-        //this.openServiceContext();
+        // this.openServiceContext();
 
         final OutboxService outboxService =
                 ServiceContext.getServiceFactory().getOutboxService();

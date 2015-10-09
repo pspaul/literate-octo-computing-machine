@@ -69,7 +69,24 @@ public class Print extends AbstractUserPage {
                 getLocalizer().getString("search-printer-placeholder", this));
 
         //
+        helper.addLabel("print-remove-graphics-label", localized("print-remove-graphics"));
+
+        //
         helper.encloseLabel("print-ecoprint", "",
                 ConfigManager.isEcoPrintEnabled());
+
+        final Integer discount =
+                cm.getConfigInt(Key.ECO_PRINT_DISCOUNT_PERC, 0);
+
+        final String ecoPrintLabel;
+
+        if (discount.intValue() > 0) {
+            ecoPrintLabel = localized("print-ecoprint-with-discount", discount);
+        } else {
+            ecoPrintLabel = localized("print-ecoprint");
+        }
+
+        helper.addLabel("print-ecoprint-label", ecoPrintLabel);
+
     }
 }

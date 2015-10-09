@@ -100,22 +100,24 @@ pattern="[0-9]*"
                 <select data-mini="true" id="print-letterhead-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
             </div>
                             
-	        <div data-mini="true" data-role="controlgroup">
-		        <label for="print-remove-graphics">
-		            <wicket:message key="print-remove-graphics"/>        
-		        </label>
-		        <input type="checkbox" id="print-remove-graphics" value="1"/>            
-            </div>
-
 <wicket:enclosure child="print-ecoprint">
             <div data-mini="true" data-role="controlgroup">
                 <label for="print-ecoprint">
-                    <wicket:message key="print-ecoprint"/> 
-                </label>
+                    &nbsp;&nbsp;<img height="12" src="/glyphicons/glyphicons_001_leaf.png"/>&nbsp;&nbsp;                
+                    <span wicket:id="print-ecoprint-label"/>
+                </label> 
                 <input type="checkbox" wicket:id="print-ecoprint" id="print-ecoprint" value="1"/>            
             </div>
 </wicket:enclosure>
                     
+            <div data-mini="true" data-role="controlgroup">
+                <label for="print-remove-graphics">
+                    &nbsp;&nbsp;<img height="12" src="/glyphicons/glyphicons_092_tint.png"/>&nbsp;&nbsp;                
+                    <span wicket:id="print-remove-graphics-label"/>
+                </label>
+                <input type="checkbox" id="print-remove-graphics" value="1"/>            
+            </div>
+
             <div data-mini="true" data-role="controlgroup">
                 <label for="delete-pages-after-print">
                     <wicket:message key="delete-pages-after-print"/>        

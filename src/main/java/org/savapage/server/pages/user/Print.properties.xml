@@ -13,6 +13,7 @@
         
     <entry key="print-remove-graphics">Remove graphics</entry>    
     <entry key="print-ecoprint">Eco Print</entry>
+    <entry key="print-ecoprint-with-discount">Eco Print • {0}% discount</entry>    
         
     <entry key="print-page-ranges">Pages</entry>
     <entry key="print-page-ranges-help">For example: 1-4,6,8-10</entry>
