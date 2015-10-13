@@ -2293,7 +2293,6 @@ public final class JsonApiServer extends AbstractPage {
                 final EmailMsgParms emailParms = new EmailMsgParms();
 
                 emailParms.setToAddress(mailto);
-                emailParms.setToName(user);
                 emailParms.setSubject(subject);
                 emailParms.setBodyFromTemplate(fileName, body);
                 emailParms.setFileAttach(fileAttach);
