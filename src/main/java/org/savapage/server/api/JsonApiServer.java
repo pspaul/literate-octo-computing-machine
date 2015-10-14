@@ -3187,7 +3187,12 @@ public final class JsonApiServer extends AbstractPage {
 
             printReq.setPrintMode(PrintModeEnum.PUSH);
 
-            PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, printReq);
+            try {
+                PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, printReq);
+            } catch (EcoPrintPdfTaskPendingException e) {
+                return setApiResult(data, API_RESULT_CODE_INFO,
+                        "msg-ecoprint-pending");
+            }
 
             setApiResultMsg(data, printReq);
 
