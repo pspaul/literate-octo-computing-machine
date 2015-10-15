@@ -26,6 +26,7 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.List;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -42,6 +43,7 @@ import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.ExternalSupplierEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
@@ -274,6 +276,30 @@ public class AccountTrxPage extends AbstractListPage {
                     StringUtils.isNotBlank(accountTrx.getExtCurrencyCode())
                             && accountTrx.getExtCurrencyCode().equals(
                                     CurrencyUtil.BITCOIN_CURRENCY_CODE);
+
+            //
+            String extSupplier = null;
+
+            if (docLog != null) {
+
+                extSupplier =
+                        StringUtils.defaultString(docLog.getExternalSupplier());
+
+                if (StringUtils.isNotBlank(extSupplier)
+                        && EnumUtils.isValidEnum(ExternalSupplierEnum.class,
+                                extSupplier)) {
+
+                    final ExternalSupplierEnum extSupplierEnum =
+                            ExternalSupplierEnum.valueOf(extSupplier);
+                    extSupplier = extSupplierEnum.getUiText();
+
+                    imageSrc = WebApp.getExtSupplierEnumImgUrl(extSupplierEnum);
+
+                } else {
+                    extSupplier = null;
+                }
+            }
+
             //
             final MarkupHelper helper = new MarkupHelper(item);
 
@@ -297,6 +323,9 @@ public class AccountTrxPage extends AbstractListPage {
             } else {
                 item.add(new Label("trxType", localized(key)));
             }
+
+            //
+            helper.encloseLabel("extSupplier", extSupplier, extSupplier != null);
 
             //
             final boolean isVisible = accountTrx.getPosPurchase() != null;

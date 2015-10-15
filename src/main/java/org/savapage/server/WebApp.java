@@ -53,6 +53,7 @@ import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.jpa.tools.DatabaseTypeEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
+import org.savapage.core.services.helpers.ExternalSupplierEnum;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.payment.PaymentMethodEnum;
@@ -136,6 +137,12 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *
      */
     public static final String PATH_IMAGES_PAYMENT = PATH_IMAGES + "/payment";
+
+    /**
+    *
+    */
+    public static final String PATH_IMAGES_EXT_SUPPLIER = PATH_IMAGES
+            + "/ext-supplier";
 
     /**
      * Basename of the properties file for web customization.
@@ -224,6 +231,23 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             url.append("@2x");
         }
         url.append(".png");
+
+        return url.toString();
+    }
+
+    /**
+     * Gets the relative image URL of an {@link ExternalSupplierEnum}.
+     *
+     * @param extSupplierEnum
+     *            The {@link ExternalSupplierEnum}.
+     * @return The relative URL as string.
+     */
+    public static String getExtSupplierEnumImgUrl(
+            final ExternalSupplierEnum extSupplierEnum) {
+
+        final StringBuilder url =
+                new StringBuilder().append(PATH_IMAGES_EXT_SUPPLIER)
+                        .append("/").append(extSupplierEnum.getImageFileName());
 
         return url.toString();
     }
