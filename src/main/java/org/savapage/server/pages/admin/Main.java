@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.savapage.server.pages.CommunityStatusFooterPanel;
+
 /**
  *
  * @author Datraverse B.V.
@@ -38,6 +40,7 @@ public class Main extends AbstractAdminPage {
      *
      */
     public Main() {
+        add(new CommunityStatusFooterPanel("community-status-footer-panel"));
     }
 
 }
