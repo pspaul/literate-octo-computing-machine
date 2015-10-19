@@ -41,6 +41,7 @@
     <entry key="prompt-job-state">Job State</entry>
     <entry key="option-job-state-active">Active</entry>
     <entry key="option-job-state-completed">Completed</entry>
+    <entry key="option-job-state-unfinished">Unfinished</entry>
 
     <entry key="prompt-sort-by">Sort</entry>
     <entry key="sort-by-name">Name</entry>

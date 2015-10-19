@@ -42,6 +42,7 @@
     <entry key="prompt-job-state">Opdracht Toestand</entry>
     <entry key="option-job-state-active">Actief</entry>
     <entry key="option-job-state-completed">Voltooid</entry>
+    <entry key="option-job-state-unfinished">Onvoltooid</entry>
 
     <entry key="prompt-sort-by">Sortering</entry>
     <entry key="sort-by-name">Naam</entry>
