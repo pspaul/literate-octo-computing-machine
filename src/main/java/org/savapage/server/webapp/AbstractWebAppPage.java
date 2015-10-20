@@ -275,8 +275,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      * @return the URL parameter.
      */
     protected final String getNoCacheUrlParm() {
-        return new StringBuilder().append("?").append(
-                System.currentTimeMillis()).toString();
+        return new StringBuilder().append("?")
+                .append(System.currentTimeMillis()).toString();
     }
 
     /**
@@ -431,9 +431,9 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
             response.render(WebApp
                     .getWebjarsJsRef(WEBJARS_PATH_JQUERY_JQPLOT_JS));
 
-            for (String plugin : new String[] { "jqplot.pieRenderer.js",
-                    "jqplot.json2.js", "jqplot.logAxisRenderer.js",
-                    "jqplot.dateAxisRenderer.js" }) {
+            for (String plugin : new String[] { "jqplot.highlighter.js",
+                    "jqplot.pieRenderer.js", "jqplot.json2.js",
+                    "jqplot.logAxisRenderer.js", "jqplot.dateAxisRenderer.js" }) {
 
                 response.render(WebApp.getWebjarsJsRef(String.format(
                         "jqplot/current/plugins/%s", plugin)));

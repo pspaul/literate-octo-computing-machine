@@ -588,10 +588,10 @@
 						data : jsonData
 					}
 				}).done(function(html) {
-					var json;					
-					$(jqId).html(html).enhanceWithin();			
- 					json = $(jqId + ' .json-rsp').text();										
-					if (panel.onOutput && json) {						
+					var json;
+					$(jqId).html(html).enhanceWithin();
+					json = $(jqId + ' .json-rsp').text();
+					if (panel.onOutput && json) {
 						panel.onOutput(panel, $.parseJSON(json));
 					}
 				}).fail(function() {
@@ -599,7 +599,7 @@
 				}).always(function() {
 					$.mobile.loading("hide");
 				});
-				
+
 			},
 
 			/**
@@ -1868,6 +1868,10 @@
 					title : {
 						//text : xydata.optionObj.title.text,
 						show : false
+					},
+					highlighter : {
+						show : true,
+						sizeAdjust : 7.5
 					}
 				});
 			};
@@ -1906,6 +1910,11 @@
 					title : {
 						//text : piedata.optionObj.title.text,
 						show : false
+					},
+					highlighter : {
+						show : true,
+						useAxesFormatters : false,
+						tooltipFormatString : '%s'
 					}
 				});
 
