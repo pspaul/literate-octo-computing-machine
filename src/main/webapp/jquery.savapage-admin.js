@@ -559,6 +559,15 @@
 				_saveConfigProps(props);
 			};
 
+			_view.pages.admin.onApplySmartSchoolPaperCutStudentCostCsv = function(timeFrom, timeTo, klassen) {
+				// SmartSchoolCostPeriodDto
+				_api.download("smartschool-papercut-student-cost-csv", null, JSON.stringify({
+					timeFrom : timeFrom,
+					timeTo : timeTo,
+					klassen : klassen
+				}));				
+			};
+
 			_view.pages.admin.onApplyGcpEnable = function(_panel, enabled) {
 
 				var res = _api.call({

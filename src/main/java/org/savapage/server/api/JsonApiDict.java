@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -93,6 +93,9 @@ public class JsonApiDict {
     public static final String REQ_SMARTSCHOOL_START_SIMULATE =
             "smartschool-start-simulate";
     public static final String REQ_SMARTSCHOOL_STOP = "smartschool-stop";
+
+    public static final String REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV =
+            "smartschool-papercut-student-cost-csv";
 
     public static final String REQ_LETTERHEAD_ATTACH = "letterhead-attach";
     public static final String REQ_LETTERHEAD_DELETE = "letterhead-delete";
@@ -412,6 +415,7 @@ public class JsonApiDict {
         case REQ_POS_RECEIPT_DOWNLOAD:
         case REQ_POS_RECEIPT_DOWNLOAD_USER:
         case REQ_PRINTER_OPT_DOWNLOAD:
+        case REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
             return true;
         default:
             return false;
@@ -517,6 +521,8 @@ public class JsonApiDict {
         adm(REQ_SMARTSCHOOL_START, DbClaim.NONE, DbAccess.NO);
         adm(REQ_SMARTSCHOOL_START_SIMULATE, DbClaim.NONE, DbAccess.NO);
         adm(REQ_SMARTSCHOOL_STOP, DbClaim.NONE, DbAccess.NO);
+        adm(REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV, DbClaim.NONE,
+                DbAccess.NO);
 
         usr(REQ_JOB_DELETE, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_JOB_EDIT, DbClaim.NONE, DbAccess.USER_LOCK);

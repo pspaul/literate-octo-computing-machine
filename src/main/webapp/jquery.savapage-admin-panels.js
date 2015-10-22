@@ -986,6 +986,10 @@
 				
 				$('.user-source-group-display').show();
 				$('.user-source-group-edit').hide();
+
+				_view.mobipick($("#sp-smartschool-papercut-student-cost-date-from"));
+				_view.mobipick($("#sp-smartschool-papercut-student-cost-date-to"));
+
 			}
 		};
 

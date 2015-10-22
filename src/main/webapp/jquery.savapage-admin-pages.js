@@ -1746,6 +1746,24 @@
 					}
 				});
 
+				$(this).on('click', '#apply-smartschool-papercut-student-cost-csv', null, function() {
+					var	sel = $('#sp-smartschool-papercut-student-cost-date-from'),
+					from = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null, to,
+					klassen = $('#sp-smartschool-papercut-student-cost-klassen').val();	
+					
+					sel = $('#sp-smartschool-papercut-student-cost-date-to');
+					to = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
+
+					if (klassen.length > 0) {
+						klassen = klassen.split(" ");
+					} else {
+						klassen = null;
+					}
+					_self.onApplySmartSchoolPaperCutStudentCostCsv(from, to, klassen);
+					return false;
+				});
+
+
 				$(this).on('change', "input:checkbox[id='flipswitch-webprint-online']", null, function(e) {
 					_self.onFlipswitchWebPrint($(this).is(':checked'));
 				});

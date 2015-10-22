@@ -175,6 +175,7 @@ import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
+import org.savapage.core.print.smartschool.SmartSchoolCostPeriodDto;
 import org.savapage.core.print.smartschool.SmartSchoolPrintMonitor;
 import org.savapage.core.print.smartschool.SmartSchoolPrinter;
 import org.savapage.core.reports.JrPosDepositReceipt;
@@ -481,7 +482,9 @@ public final class JsonApiServer extends AbstractPage {
                 case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD_USER:
                     // no break intended
                 case JsonApiDict.REQ_REPORT:
-                    handleExportPdf(requestId, parameters, requestingUser,
+                    // no break intended
+                case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
+                    handleExportFile(requestId, parameters, requestingUser,
                             isGetAction);
                     break;
 
@@ -627,22 +630,23 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
+     * Handles export request.
      *
      * @param request
      * @param parameters
      * @param requestingUser
      * @param isGetAction
      */
-    private void handleExportPdf(final String request,
+    private void handleExportFile(final String request,
             final PageParameters parameters, final String requestingUser,
             final boolean isGetAction) {
 
         final String baseName =
-                "report-" + UUID.randomUUID().toString() + ".pdf";
+                "export-" + UUID.randomUUID().toString() + ".tmp";
 
         final String fileName = ConfigManager.getAppTmpDir() + "/" + baseName;
 
-        final File tempPdfFile = new File(fileName);
+        final File tempExportFile = new File(fileName);
 
         IRequestHandler requestHandler = null;
 
@@ -652,34 +656,43 @@ public final class JsonApiServer extends AbstractPage {
 
             case JsonApiDict.REQ_ACCOUNT_VOUCHER_BATCH_PRINT:
                 requestHandler =
-                        exportVoucherBatchPrint(tempPdfFile,
+                        exportVoucherBatchPrint(tempExportFile,
                                 parameters.get(JsonApiDict.PARM_REQ_SUB)
                                         .toString());
                 break;
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
                 requestHandler =
-                        exportPosPurchaseReceipt(tempPdfFile,
-                                parameters.get(JsonApiDict.PARM_REQ_SUB)
-                                        .toLongObject(), requestingUser, false);
+                        exportPosPurchaseReceipt(tempExportFile, parameters
+                                .get(JsonApiDict.PARM_REQ_SUB).toLongObject(),
+                                requestingUser, false);
                 break;
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD_USER:
                 requestHandler =
-                        exportPosPurchaseReceipt(tempPdfFile,
-                                parameters.get(JsonApiDict.PARM_REQ_SUB)
-                                        .toLongObject(), requestingUser, true);
+                        exportPosPurchaseReceipt(tempExportFile, parameters
+                                .get(JsonApiDict.PARM_REQ_SUB).toLongObject(),
+                                requestingUser, true);
                 break;
 
             case JsonApiDict.REQ_REPORT:
                 requestHandler =
-                        exportReport(tempPdfFile,
+                        exportReport(tempExportFile,
                                 parameters.get(JsonApiDict.PARM_REQ_SUB)
                                         .toString(),
                                 parameters.get(JsonApiDict.PARM_DATA)
                                         .toString(), requestingUser,
                                 isGetAction);
                 break;
+
+            case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
+                requestHandler =
+                        exportSmartschoolPapercutStudentCost(tempExportFile,
+                                parameters.get(JsonApiDict.PARM_REQ_SUB)
+                                        .toString(), requestingUser);
+
+                break;
+
             default:
                 throw new SpException("request [" + request + "] not supported");
             }
@@ -688,8 +701,8 @@ public final class JsonApiServer extends AbstractPage {
 
             LOGGER.error(e.getMessage(), e);
 
-            if (tempPdfFile != null && tempPdfFile.exists()) {
-                tempPdfFile.delete();
+            if (tempExportFile != null && tempExportFile.exists()) {
+                tempExportFile.delete();
             }
 
             requestHandler =
@@ -997,6 +1010,44 @@ public final class JsonApiServer extends AbstractPage {
 
         handler.setContentDisposition(ContentDisposition.ATTACHMENT);
         handler.setFileName(userFriendlyFilename);
+        handler.setCacheDuration(Duration.NONE);
+
+        return handler;
+    }
+
+    /**
+     * <p>
+     * Handles the {@link JsonApiDict#REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV}
+     * request by returning the {@link IRequestHandler}.
+     * </p>
+     *
+     * @param tempCsvFile
+     *            The temporary CSV {@link File}.
+     * @param jsonData
+     * @param requestingUser
+     * @return
+     * @throws IOException
+     */
+    private IRequestHandler exportSmartschoolPapercutStudentCost(
+            final File tempCsvFile,
+            final String jsonData, final String requestingUser
+            ) throws IOException {
+
+        final SmartSchoolCostPeriodDto dto =
+                AbstractDto.create(SmartSchoolCostPeriodDto.class, jsonData);
+
+        ServiceContext
+                .getServiceFactory()
+                .getPaperCutService()
+                .createSmartschoolStudentCostCsv(
+                        PaperCutDbProxy.create(ConfigManager.instance(), true),
+                        tempCsvFile, dto);
+
+        final DownloadRequestHandler handler =
+                new DownloadRequestHandler(tempCsvFile);
+
+        handler.setContentDisposition(ContentDisposition.ATTACHMENT);
+        handler.setFileName("smartschool-papercut-student-cost.csv");
         handler.setCacheDuration(Duration.NONE);
 
         return handler;
@@ -3720,22 +3771,10 @@ public final class JsonApiServer extends AbstractPage {
 
         final ConfigManager cm = ConfigManager.instance();
 
-        String error =
-                PaperCutServerProxy.create(
-                        cm.getConfigValue(Key.PAPERCUT_SERVER_HOST),
-                        cm.getConfigInt(Key.PAPERCUT_SERVER_PORT),
-                        cm.getConfigValue(Key.PAPERCUT_XMLRPC_URL_PATH),
-                        cm.getConfigValue(Key.PAPERCUT_SERVER_AUTH_TOKEN),
-                        false).testConnection();
+        String error = PaperCutServerProxy.create(cm, false).testConnection();
 
         if (error == null) {
-            error =
-                    PaperCutDbProxy.create(
-                            cm.getConfigValue(Key.PAPERCUT_DB_JDBC_DRIVER),
-                            cm.getConfigValue(Key.PAPERCUT_DB_JDBC_URL),
-                            cm.getConfigValue(Key.PAPERCUT_DB_USER),
-                            cm.getConfigValue(Key.PAPERCUT_DB_PASSWORD), false)
-                            .testConnection();
+            error = PaperCutDbProxy.create(cm, false).testConnection();
         }
 
         if (error == null) {

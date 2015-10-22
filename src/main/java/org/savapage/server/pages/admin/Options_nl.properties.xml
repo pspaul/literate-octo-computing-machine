@@ -64,6 +64,7 @@
     <entry key="button-change">Wijzigen</entry>
 	<entry key="button-change-group">Groep wijzigen</entry>
 	<entry key="button-clear">Wissen</entry>
+    <entry key="button-download">Download</entry>
 	<entry key="button-sync-now">Nu synchroniseren</entry>
 	<entry key="button-sync-test">Test</entry>
 
@@ -206,6 +207,11 @@
     <entry key="smartschool-button-start">Start</entry>
     <entry key="smartschool-button-start-simulate">Start (simulatie)</entry>
 
+    <entry key="smartschool-papercut-exports-header">Exports</entry>
+    <entry key="smartschool-student-invoicing-header">Facturering voor Studenten</entry>
+    <entry key="smartschool-student-invoicing-legend">Een CSV export van afdrukkosten totalen voor studenten binnen een periode.</entry>
+    <entry key="smartschool-student-invoicing-classes-prompt">Een door spaties gescheiden lijst van Klassen (laat leeg om alles te selecteren)</entry>
+
     <entry key="papercut-header-text">PaperCut Integratie</entry>
     
     <entry key="papercut-server-text">PaperCut Server</entry>
@@ -218,6 +224,9 @@
     <entry key="papercut-db-url">URL</entry>
     <entry key="papercut-db-user">Gebruiker</entry>
     <entry key="papercut-db-password">Wachtwoord</entry>
+
+    <entry key="prompt-period-from">Van</entry>
+    <entry key="prompt-period-to">Tot</entry>
 
     <entry key="imap-enable">Gebruikers mogen documenten mailen</entry>
     <entry key="imap-host">Host</entry>

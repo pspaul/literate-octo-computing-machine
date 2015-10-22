@@ -19,8 +19,7 @@
 	<entry key="cat-mail-messages">Messages</entry>
 
 	<entry key="prompt-mail-test">Send a test message. Press the Test
-		button after you applied the changes.
-	</entry>
+		button after you applied the changes.</entry>    		
 	<entry key="mail-test-to">To</entry>
 	<entry key="button-mail-test">Test</entry>
 
@@ -65,6 +64,7 @@
     <entry key="button-change">Change</entry>
 	<entry key="button-change-group">Change group</entry>
 	<entry key="button-clear">Clear</entry>
+    <entry key="button-download">Download</entry>
 	<entry key="button-sync-now">Synchronize now</entry>
 	<entry key="button-sync-test">Test</entry>
 
@@ -201,6 +201,11 @@
     <entry key="smartschool-button-stop">Stop</entry>
     <entry key="smartschool-button-start">Start</entry>
     <entry key="smartschool-button-start-simulate">Start (simulate)</entry>
+    
+    <entry key="smartschool-papercut-exports-header">Exports</entry>
+    <entry key="smartschool-student-invoicing-header">Student Invoicing</entry>
+    <entry key="smartschool-student-invoicing-legend">A CSV export of printing cost totals for students within a time period.</entry>
+    <entry key="smartschool-student-invoicing-classes-prompt">A space separated list of Classes (leave empty to select all)</entry>
 
     <entry key="papercut-header-text">PaperCut Integration</entry>
 
@@ -214,6 +219,9 @@
     <entry key="papercut-db-url">URL</entry>
     <entry key="papercut-db-user">User</entry>
     <entry key="papercut-db-password">Password</entry>
+
+    <entry key="prompt-period-from">From</entry>
+    <entry key="prompt-period-to">To</entry>
 
     <entry key="imap-enable">Allow users to mail documents</entry>
     <entry key="imap-host">Host</entry>
