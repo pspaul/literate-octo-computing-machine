@@ -3157,6 +3157,8 @@ public final class JsonApiServer extends AbstractPage {
          */
         final ProxyPrintInboxReq printReq = new ProxyPrintInboxReq();
 
+        printReq.setCollate(true); // TODO
+
         printReq.setClearPages(clearInbox);
         printReq.setJobName(jobName);
         printReq.setPageRanges(ranges);

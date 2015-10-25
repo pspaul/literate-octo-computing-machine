@@ -250,14 +250,17 @@ public class AccountTrxPage extends AbstractListPage {
 
                 key = "type-print-out";
 
-                if (docLog.getNumberOfPages() == 1) {
+                final int totalPages =
+                        printOut.getNumberOfCopies().intValue()
+                                * docLog.getNumberOfPages().intValue();
+
+                if (totalPages == 1) {
                     msgKey = "printed-pages-one";
                 } else {
                     msgKey = "printed-pages-multiple";
                 }
 
-                printOutInfo =
-                        localized(msgKey, docLog.getNumberOfPages().toString());
+                printOutInfo = localized(msgKey, String.valueOf(totalPages));
 
                 comment = printOut.getPrinter().getDisplayName();
 
