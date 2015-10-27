@@ -288,11 +288,22 @@ public class Options extends AbstractAdminPage {
                     "smartschool-print-proxyprinter", keyWlk);
             tagInput("smartschool-print-proxyprinter-1", keyWlk);
 
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
+            tagLabel("smartschool-print-proxyprinter-duplex-label-1",
+                    "smartschool-print-proxyprinter-duplex", keyWlk);
+            tagInput("smartschool-print-proxyprinter-duplex-1", keyWlk);
+
             keyWlk =
                     IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
             tagLabel("smartschool-print-proxyprinter-grayscale-label-1",
                     "smartschool-print-proxyprinter-grayscale", keyWlk);
             tagInput("smartschool-print-proxyprinter-grayscale-1", keyWlk);
+
+            keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
+            tagLabel("smartschool-print-proxyprinter-grayscale-duplex-label-1",
+                    "smartschool-print-proxyprinter-grayscale-duplex", keyWlk);
+            tagInput("smartschool-print-proxyprinter-grayscale-duplex-1", keyWlk);
 
             keyWlk =
                     IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_CHARGE_TO_STUDENTS;
@@ -321,11 +332,22 @@ public class Options extends AbstractAdminPage {
                     "smartschool-print-proxyprinter", keyWlk);
             tagInput("smartschool-print-proxyprinter-2", keyWlk);
 
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
+            tagLabel("smartschool-print-proxyprinter-duplex-label-2",
+                    "smartschool-print-proxyprinter-duplex", keyWlk);
+            tagInput("smartschool-print-proxyprinter-duplex-2", keyWlk);
+
             keyWlk =
                     IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
             tagLabel("smartschool-print-proxyprinter-grayscale-label-2",
                     "smartschool-print-proxyprinter-grayscale", keyWlk);
             tagInput("smartschool-print-proxyprinter-grayscale-2", keyWlk);
+
+            keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
+            tagLabel("smartschool-print-proxyprinter-grayscale-duplex-label-2",
+                    "smartschool-print-proxyprinter-grayscale-duplex", keyWlk);
+            tagInput("smartschool-print-proxyprinter-grayscale-duplex-2", keyWlk);
 
             keyWlk =
                     IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_CHARGE_TO_STUDENTS;

@@ -1029,9 +1029,8 @@ public final class JsonApiServer extends AbstractPage {
      * @throws IOException
      */
     private IRequestHandler exportSmartschoolPapercutStudentCost(
-            final File tempCsvFile,
-            final String jsonData, final String requestingUser
-            ) throws IOException {
+            final File tempCsvFile, final String jsonData,
+            final String requestingUser) throws IOException {
 
         final SmartSchoolCostPeriodDto dto =
                 AbstractDto.create(SmartSchoolCostPeriodDto.class, jsonData);
@@ -2591,17 +2590,24 @@ public final class JsonApiServer extends AbstractPage {
             }
         }
 
-        if ((key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
+        if (key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
+                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX
+                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
+                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX
                 || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER
-                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE)
-                && StringUtils.isNotBlank(value)) {
+                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_DUPLEX
+                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
+                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX) {
 
-            final PrinterDao printerDao =
-                    ServiceContext.getDaoContext().getPrinterDao();
+            if (StringUtils.isNotBlank(value)) {
 
-            if (printerDao.findByName(value) == null) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
-                        "msg-printer-not-found", value);
+                final PrinterDao printerDao =
+                        ServiceContext.getDaoContext().getPrinterDao();
+
+                if (printerDao.findByName(value) == null) {
+                    return setApiResult(userData, API_RESULT_CODE_ERROR,
+                            "msg-printer-not-found", value);
+                }
             }
         }
 
