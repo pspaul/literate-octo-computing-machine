@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -136,24 +136,24 @@ public final class CupsEventHandler implements ServiceEntryPoint {
             MemberCard.instance().validateContent(apiId, apiKey);
 
             /*
-             * We are interested in end-state only.
+             * CAUTION: The SavaPage CUPS notifier passes job state
+             * notifications from CUPS. CUPS notifies repeatedly (every second),
+             * even when there is NO state change.
              */
             final IppJobStateEnum ippState = IppJobStateEnum.asEnum(jobState);
 
-            if (completedTime != null
-                    && ippState != IppJobStateEnum.IPP_JOB_HELD
-                    && ippState != IppJobStateEnum.IPP_JOB_PENDING
-                    && ippState != IppJobStateEnum.IPP_JOB_PROCESSING) {
+            final ProxyPrintJobStatusCups jobStatus =
+                    new ProxyPrintJobStatusCups(printerName, jobId, jobName,
+                            ippState);
 
-                final ProxyPrintJobStatusCups jobStatus =
-                        new ProxyPrintJobStatusCups(printerName, jobId,
-                                jobName, ippState);
+            jobStatus.setCupsCreationTime(creationTime);
+            jobStatus.setCupsCompletedTime(completedTime);
 
-                jobStatus.setCupsCreationTime(creationTime);
-                jobStatus.setCupsCompletedTime(completedTime);
-
-                ProxyPrintJobStatusMonitor.notify(jobStatus);
-            }
+            /*
+             * We pass the job status to the monitor who detect and handle state
+             * changes.
+             */
+            ProxyPrintJobStatusMonitor.notify(jobStatus);
 
             //
             rc = 0;
@@ -199,8 +199,8 @@ public final class CupsEventHandler implements ServiceEntryPoint {
      * @return
      */
     public Map<String, Object> printerEvent(final String apiId,
-            final String apiKey, final String event,
-            final String printer_name, final Integer printer_state) {
+            final String apiKey, final String event, final String printer_name,
+            final Integer printer_state) {
 
         final Map<String, Object> map = new HashMap<String, Object>();
 
