@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -46,7 +46,6 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
-import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
@@ -266,7 +265,9 @@ public final class WebAppUserPage extends AbstractWebAppPage {
             return;
         }
 
-        add(new Label("app-name", CommunityDictEnum.SAVAPAGE.getWord()));
+        final String appTitle = getWebAppTitle(null);
+
+        add(new Label("app-title", appTitle));
 
         addZeroPagePanel(WebAppTypeEnum.USER);
 

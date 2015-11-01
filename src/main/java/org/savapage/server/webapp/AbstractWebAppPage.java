@@ -35,6 +35,8 @@ import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.VersionInfo;
+import org.savapage.core.community.CommunityDictEnum;
+import org.savapage.core.community.MemberCard;
 import org.savapage.server.CustomWebServlet;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
@@ -108,6 +110,30 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      *
      */
     protected AbstractWebAppPage() {
+    }
+
+    /**
+     *
+     * @param suffix
+     * @return
+     */
+    protected static String getWebAppTitle(final String suffix) {
+
+        final StringBuilder title = new StringBuilder();
+
+        title.append(CommunityDictEnum.SAVAPAGE.getWord());
+
+        final String organisation =
+                MemberCard.instance().getMemberOrganisation();
+
+        if (StringUtils.isNotBlank(organisation)) {
+            title.append(" :: ").append(organisation);
+        }
+
+        if (StringUtils.isNotBlank(suffix)) {
+            title.append(" :: ").append(suffix);
+        }
+        return title.toString();
     }
 
     /**

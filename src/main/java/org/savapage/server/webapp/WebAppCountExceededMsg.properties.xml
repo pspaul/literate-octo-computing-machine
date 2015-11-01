@@ -3,7 +3,7 @@
 <properties>
 
 	<entry key="message">Check if a browser session is already active.</entry>
-    <entry key="remedy">Continue with the active session, or login again.</entry>
+    <entry key="remedy">Close this tab, or login again.</entry>
     <entry key="button-continue">Continue</entry>
     <entry key="button-login">Login</entry>
      

@@ -145,15 +145,6 @@
                     return true;
                 });
 
-                /**
-                 * http://www.dotnetvishal.com/2013/01/close-current-browser-tab-using.html
-                 */
-                $('#button-continue').click(function() {
-                    var win = window.open('', '_self');
-                    win.close();
-                    return false;
-                });
-
             };
         };
 

@@ -49,7 +49,7 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
      */
     public WebAppCountExceededMsg(final PageParameters parameters) {
         super(parameters);
-        add(new Label("app-name", CommunityDictEnum.SAVAPAGE.getWord()));
+        add(new Label("app-title", getWebAppTitle(null)));
         add(new Label("title", CommunityDictEnum.SAVAPAGE.getWord()));
     }
 

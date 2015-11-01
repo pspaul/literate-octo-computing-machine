@@ -89,10 +89,14 @@ public final class WebAppAdminPage extends AbstractWebAppPage {
             return;
         }
 
+        final String appTitle =
+                getWebAppTitle(getLocalizer().getString("webapp-title-suffix",
+                        this));
+
         addZeroPagePanel(WebAppTypeEnum.ADMIN);
 
-        add(new Label("app-name", CommunityDictEnum.SAVAPAGE.getWord() + " :: "
-                + getLocalizer().getString("webapp-title-suffix", this)));
+        add(new Label("app-title", appTitle));
+
         memberCardUploadMarkup();
 
         addFileDownloadApiPanel();

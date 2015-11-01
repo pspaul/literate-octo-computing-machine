@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ import java.util.Set;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.community.CommunityDictEnum;
 
 /**
  *
@@ -49,10 +48,14 @@ public final class WebAppAdminPosPage extends AbstractWebAppPage {
     public WebAppAdminPosPage(final PageParameters parameters) {
 
         super(parameters);
+
+        final String appTitle =
+                getWebAppTitle(getLocalizer().getString("webapp-title-suffix",
+                        this));
+
         addZeroPagePanel(WebAppTypeEnum.POS);
 
-        add(new Label("app-name", CommunityDictEnum.SAVAPAGE.getWord() + " :: "
-                + getLocalizer().getString("webapp-title-suffix", this)));
+        add(new Label("app-title", appTitle));
 
         addFileDownloadApiPanel();
     }

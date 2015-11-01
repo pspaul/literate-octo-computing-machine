@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,6 @@
  */
 package org.savapage.server.pages.user;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.services.helpers.InetUtils;
@@ -41,8 +39,6 @@ public class Main extends AbstractUserPage {
      *
      */
     public Main() {
-
-        add(new Label("title", CommunityDictEnum.SAVAPAGE.getWord()));
 
         boolean visible =
                 (ConfigManager.isWebPrintEnabled() && InetUtils
