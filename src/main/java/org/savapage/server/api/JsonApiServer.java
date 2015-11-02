@@ -84,6 +84,7 @@ import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
+import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
@@ -3868,6 +3869,13 @@ public final class JsonApiServer extends AbstractPage {
             } else {
                 msgKey = "msg-smartschool-started";
             }
+
+            /*
+             * Have a retry and close relevant circuits.
+             */
+            ConfigManager.getCircuitBreaker(
+                    CircuitBreakerEnum.SMARTSCHOOL_CONNECTION).closeCircuit();
+
         }
         return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
     }

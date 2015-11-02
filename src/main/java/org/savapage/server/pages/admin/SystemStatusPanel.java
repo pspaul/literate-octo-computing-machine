@@ -572,20 +572,20 @@ public class SystemStatusPanel extends Panel {
         /*
          * JVM memory.
          *
-         * max: the maximum amount of memory that the virtual machine will
+         * Max: the maximum amount of memory that the virtual machine will
          * attempt to use.
          *
-         * total: the total amount of memory currently available for current and
+         * Total: the total amount of memory currently available for current and
          * future objects.
          *
-         * free: an approximation to the total amount of memory currently
+         * Free: an approximation to the total amount of memory currently
          * available for future allocated objects.
          */
         final String memoryInfo;
 
         if (showTechInfo) {
             memoryInfo =
-                    String.format("%s max, %s total, %s free", NumberUtil
+                    String.format("%s Max • %s Total • %s Free", NumberUtil
                             .humanReadableByteCount(Runtime.getRuntime()
                                     .maxMemory(), true), NumberUtil
                             .humanReadableByteCount(Runtime.getRuntime()
@@ -618,16 +618,11 @@ public class SystemStatusPanel extends Panel {
 
         if (showTechInfo) {
 
-            final int serviceCount = ServiceContext.getOpenCount() - 1;
-            final int daoCount = DaoContextImpl.getOpenCount() - 1;
+            connectionInfo =
+                    String.format("%d (%d) • services (database)",
+                            ServiceContext.getOpenCount(),
+                            DaoContextImpl.getOpenCount());
 
-            if (serviceCount == daoCount) {
-                connectionInfo = String.valueOf(daoCount);
-            } else {
-                connectionInfo =
-                        String.format("%d (%d)", DaoContextImpl.getOpenCount(),
-                                ServiceContext.getOpenCount());
-            }
         } else {
             connectionInfo = "";
         }
