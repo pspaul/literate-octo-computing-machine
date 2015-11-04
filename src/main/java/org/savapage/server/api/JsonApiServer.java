@@ -484,6 +484,8 @@ public final class JsonApiServer extends AbstractPage {
                     // no break intended
                 case JsonApiDict.REQ_REPORT:
                     // no break intended
+                case JsonApiDict.REQ_REPORT_USER:
+                    // no break intended
                 case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
                     handleExportFile(requestId, parameters, requestingUser,
                             isGetAction);
@@ -663,27 +665,25 @@ public final class JsonApiServer extends AbstractPage {
                 break;
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
-                requestHandler =
-                        exportPosPurchaseReceipt(tempExportFile, parameters
-                                .get(JsonApiDict.PARM_REQ_SUB).toLongObject(),
-                                requestingUser, false);
-                break;
-
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD_USER:
                 requestHandler =
-                        exportPosPurchaseReceipt(tempExportFile, parameters
-                                .get(JsonApiDict.PARM_REQ_SUB).toLongObject(),
-                                requestingUser, true);
+                        exportPosPurchaseReceipt(
+                                tempExportFile,
+                                parameters.get(JsonApiDict.PARM_REQ_SUB)
+                                        .toLongObject(),
+                                requestingUser,
+                                request.equals(JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD));
                 break;
 
             case JsonApiDict.REQ_REPORT:
+            case JsonApiDict.REQ_REPORT_USER:
                 requestHandler =
                         exportReport(tempExportFile,
                                 parameters.get(JsonApiDict.PARM_REQ_SUB)
                                         .toString(),
                                 parameters.get(JsonApiDict.PARM_DATA)
                                         .toString(), requestingUser,
-                                isGetAction);
+                                request.equals(JsonApiDict.REQ_REPORT));
                 break;
 
             case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
@@ -732,8 +732,8 @@ public final class JsonApiServer extends AbstractPage {
      *            The database primary key of the {@link AccountTrx}.
      * @param requestingUser
      *            The requesting userid.
-     * @param isUserRequest
-     *            {@code true} if this is a request from a user.
+     * @param requestingUserAdmin
+     *            {@code true} if requesting user is an administrator.
      * @return The {@link PosDepositReceiptDto} with all the deposit
      *         information.
      * @throws JRException
@@ -741,7 +741,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private PosDepositReceiptDto createPosPurchaseReceipt(final File pdfFile,
             final Long accountTrxDbId, final String requestingUser,
-            boolean isUserRequest) throws JRException {
+            final boolean requestingUserAdmin) throws JRException {
 
         final Locale reportLocale = ConfigManager.getDefaultLocale();
 
@@ -749,9 +749,9 @@ public final class JsonApiServer extends AbstractPage {
                 ACCOUNTING_SERVICE.createPosDepositReceiptDto(accountTrxDbId);
 
         /*
-         * INVARIANT:
+         * INVARIANT: A user can only create his own receipts.
          */
-        if (isUserRequest && !receipt.getUserId().equals(requestingUser)) {
+        if (!requestingUserAdmin && !receipt.getUserId().equals(requestingUser)) {
             throw new SpException("User [" + requestingUser
                     + "] is not autherized to access receipt of user ["
                     + receipt.getUserId() + "].");
@@ -793,7 +793,8 @@ public final class JsonApiServer extends AbstractPage {
      * @param accountTrxDbId
      * @param toAddress
      * @param requestingUser
-     * @param isUserRequest
+     * @param isAdminRequest
+     *            {@code true} if this is a request from an administrator.
      * @throws JRException
      * @throws MessagingException
      * @throws IOException
@@ -802,7 +803,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private void mailDepositReceipt(final Long accountTrxDbId,
             final String toAddress, final String requestingUser,
-            boolean isUserRequest) throws JRException, MessagingException,
+            boolean isAdminRequest) throws JRException, MessagingException,
             IOException, InterruptedException, CircuitBreakerException {
 
         final File tempPdfFile =
@@ -812,7 +813,7 @@ public final class JsonApiServer extends AbstractPage {
 
             final PosDepositReceiptDto receipt =
                     createPosPurchaseReceipt(tempPdfFile, accountTrxDbId,
-                            requestingUser, isUserRequest);
+                            requestingUser, isAdminRequest);
 
             final String subject =
                     localize("msg-deposit-email-subject",
@@ -889,17 +890,18 @@ public final class JsonApiServer extends AbstractPage {
      * @param tempFile
      * @param accountTrxDbId
      * @param requestingUser
-     * @param isUserRequest
+     * @param requestingUserAdmin
+     *            {@code true} if requesting user is an administrator.
      * @return
      * @throws JRException
      */
     private IRequestHandler exportPosPurchaseReceipt(final File tempFile,
             final Long accountTrxDbId, final String requestingUser,
-            boolean isUserRequest) throws JRException {
+            final boolean requestingUserAdmin) throws JRException {
 
         final PosDepositReceiptDto receipt =
                 createPosPurchaseReceipt(tempFile, accountTrxDbId,
-                        requestingUser, isUserRequest);
+                        requestingUser, requestingUserAdmin);
 
         final ResourceStreamRequestHandler handler =
                 new DownloadRequestHandler(tempFile);
@@ -976,16 +978,18 @@ public final class JsonApiServer extends AbstractPage {
      * @param reportId
      *            The unique report ID
      * @param jsonData
+     *            The JSON data string.
      * @param requestingUser
-     * @param isGetAction
-     *            {@code true} if this is a GET action, {@code false} when a
-     *            POST.
-     * @return
+     *            The requesting user.
+     * @param requestingUserAdmin
+     *            {@code true} if requesting user is an administrator.
+     * @return The {@link IRequestHandler}.
      * @throws JRException
+     *             When Jasper Report error.
      */
     private IRequestHandler exportReport(final File tempPdfFile,
             final String reportId, final String jsonData,
-            final String requestingUser, final boolean isGetAction)
+            final String requestingUser, final boolean requestingUserAdmin)
             throws JRException {
 
         final Locale locale = getSession().getLocale();
@@ -993,9 +997,17 @@ public final class JsonApiServer extends AbstractPage {
         final ReportCreator report;
 
         if (reportId.equals(AccountTrxListReport.REPORT_ID)) {
-            report = new AccountTrxListReport(requestingUser, jsonData, locale);
+
+            report =
+                    new AccountTrxListReport(requestingUser,
+                            requestingUserAdmin, jsonData, locale);
+
         } else if (reportId.equals(UserListReport.REPORT_ID)) {
-            report = new UserListReport(requestingUser, jsonData, locale);
+
+            report =
+                    new UserListReport(requestingUser, requestingUserAdmin,
+                            jsonData, locale);
+
         } else {
             throw new UnsupportedOperationException("Report [" + reportId
                     + "] is NOT supported");
@@ -5536,6 +5548,7 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
+     * An administrator sending email to a POS Receipt.
      *
      * @param json
      * @return
@@ -5564,7 +5577,7 @@ public final class JsonApiServer extends AbstractPage {
 
         final String email = USER_SERVICE.getPrimaryEmailAddress(user);
 
-        mailDepositReceipt(dto.getKey(), email, requestingUser, false);
+        mailDepositReceipt(dto.getKey(), email, requestingUser, true);
 
         setApiResult(data, API_RESULT_CODE_OK, "msg-pos-receipt-sendmail-ok",
                 email);

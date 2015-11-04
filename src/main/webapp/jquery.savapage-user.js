@@ -1112,7 +1112,7 @@
 
 				$(this).on('click', '#button-accounttrx-report', null, function() {
 					_panel.v2m(_panel);
-					_api.download("report", _panel.input, "AccountTrxList");
+					_api.download("report-user", _panel.input, "AccountTrxList");
 					return true;
 				});
 

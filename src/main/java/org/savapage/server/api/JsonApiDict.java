@@ -145,6 +145,9 @@ public class JsonApiDict {
     public static final String REQ_POS_RECEIPT_DOWNLOAD_USER =
             "pos-receipt-download-user";
 
+    /**
+     * An administrator sending email to a POS Receipt.
+     */
     public static final String REQ_POS_RECEIPT_SENDMAIL =
             "pos-receipt-sendmail";
 
@@ -176,6 +179,7 @@ public class JsonApiDict {
     public static final String REQ_QUEUE_SET = "queue-set";
 
     public static final String REQ_REPORT = "report";
+    public static final String REQ_REPORT_USER = "report-user";
 
     public static final String REQ_RESET_JMX_PASSWORD = "reset-jmx-pw";
     public static final String REQ_RESET_ADMIN_PASSWORD = "reset-admin-pw";
@@ -411,6 +415,7 @@ public class JsonApiDict {
 
         case REQ_PDF:
         case REQ_REPORT:
+        case REQ_REPORT_USER:
         case REQ_ACCOUNT_VOUCHER_BATCH_PRINT:
         case REQ_POS_RECEIPT_DOWNLOAD:
         case REQ_POS_RECEIPT_DOWNLOAD_USER:
@@ -567,8 +572,10 @@ public class JsonApiDict {
         adm(REQ_BITCOIN_WALLET_REFRESH, DbClaim.NONE, DbAccess.NO);
 
         adm(REQ_POS_DEPOSIT, DbClaim.NONE, DbAccess.YES);
+
         adm(REQ_POS_RECEIPT_DOWNLOAD, DbClaim.READ, DbAccess.YES);
         usr(REQ_POS_RECEIPT_DOWNLOAD_USER, DbClaim.READ, DbAccess.YES);
+
         adm(REQ_POS_RECEIPT_SENDMAIL, DbClaim.READ, DbAccess.YES);
         adm(REQ_POS_DEPOSIT_QUICK_SEARCH, DbClaim.READ, DbAccess.YES);
 
@@ -589,7 +596,10 @@ public class JsonApiDict {
         adm(REQ_PRINTER_SYNC, DbClaim.READ, DbAccess.YES);
         adm(REQ_QUEUE_GET, DbClaim.NONE, DbAccess.YES);
         adm(REQ_QUEUE_SET, DbClaim.READ, DbAccess.YES);
+
         adm(REQ_REPORT, DbClaim.READ, DbAccess.YES);
+        usr(REQ_REPORT_USER, DbClaim.READ, DbAccess.YES);
+
         adm(REQ_RESET_ADMIN_PASSWORD, DbClaim.NONE, DbAccess.NO);
         adm(REQ_RESET_JMX_PASSWORD, DbClaim.NONE, DbAccess.NO);
 
