@@ -31,20 +31,30 @@ public enum WebAppTypeEnum {
     /**
      * The Admin WebApp.
      */
-    ADMIN,
+    ADMIN("Admin"),
 
     /**
      * The Point-of-Sale WebApp.
      */
-    POS,
+    POS("Pos"),
 
     /**
      * The User WebApp.
      */
-    USER,
+    USER("User"),
 
     /**
      * The WebApp type is undefined (unknown).
      */
-    UNDEFINED
+    UNDEFINED("Unknown");
+
+    private final String uiText;
+
+    private WebAppTypeEnum(final String uiText) {
+        this.uiText = uiText;
+    }
+
+    public String getUiText() {
+        return uiText;
+    }
 }

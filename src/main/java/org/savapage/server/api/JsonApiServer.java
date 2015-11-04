@@ -5853,6 +5853,34 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
+     * Handle login failure.
+     *
+     * @param userData
+     *            The data returned to the user.
+     * @param msgKeyAdminPublish
+     *            When {@code null} no admin message is published.
+     * @param args
+     *            The arguments of the message
+     * @return The userData input.
+     */
+    private Map<String, Object> onLoginFailed(
+            final Map<String, Object> userData,
+            final String msgKeyAdminPublish, final String... args) {
+
+        if (StringUtils.isNotBlank(msgKeyAdminPublish)) {
+
+            final String msg =
+                    AppLogHelper.logWarning(getClass(), msgKeyAdminPublish,
+                            args);
+
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.WARN, msg);
+        }
+
+        return setApiResult(userData, API_RESULT_CODE_ERROR, "msg-login-failed");
+    }
+
+    /**
      * Handles a new login request for both the User and Admin WebApp.
      * <p>
      * When an assocCardNumber (not null) is passed, the User is authenticated
@@ -5899,8 +5927,7 @@ public final class JsonApiServer extends AbstractPage {
          */
         if (authMode == UserAuth.Mode.NAME) {
             if (StringUtils.isBlank(authPw)) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
-                        "msg-login-no-password-given");
+                return onLoginFailed(userData, null);
             }
         }
 
@@ -5931,7 +5958,7 @@ public final class JsonApiServer extends AbstractPage {
         /*
          * This is the place to set the WebAppType session attribute.
          */
-        WebAppTypeEnum webAppType;
+        final WebAppTypeEnum webAppType;
 
         if (isAdminOnlyLogin) {
             webAppType = WebAppTypeEnum.ADMIN;
@@ -6007,8 +6034,9 @@ public final class JsonApiServer extends AbstractPage {
                     /*
                      * INVARIANT: internal admin password must be correct.
                      */
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
-                            "msg-login-invalid");
+                    return onLoginFailed(userData,
+                            "msg-login-invalid-password",
+                            webAppType.getUiText(), authId);
                 }
 
             } else {
@@ -6016,8 +6044,8 @@ public final class JsonApiServer extends AbstractPage {
                  * INVARIANT: internal admin is NOT allowed to login to the User
                  * WebApp.
                  */
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
-                        "msg-login-denied");
+                return onLoginFailed(userData, "msg-login-denied",
+                        webAppType.getUiText(), authId);
             }
 
         } else {
@@ -6048,8 +6076,8 @@ public final class JsonApiServer extends AbstractPage {
                  * INVARIANT: User MUST be present in database.
                  */
                 if (userDb == null) {
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
-                            "msg-login-invalid-number");
+                    return onLoginFailed(userData, "msg-login-invalid-number",
+                            webAppType.getUiText(), authId);
                 }
                 uid = userDb.getUserId();
 
@@ -6090,8 +6118,9 @@ public final class JsonApiServer extends AbstractPage {
                      * INVARIANT: User MUST exist to login to Admin WebApp (no
                      * lazy user insert allowed in this case)
                      */
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
-                            "msg-login-admin-not-present");
+                    return onLoginFailed(userData,
+                            "msg-login-user-not-present",
+                            webAppType.getUiText(), authId);
                 }
 
                 if (allowInternalUsersOnly) {
@@ -6099,8 +6128,9 @@ public final class JsonApiServer extends AbstractPage {
                      * INVARIANT: User MUST exist to login when NO external user
                      * source (no lazy user insert allowed in this case).
                      */
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
-                            "msg-login-user-not-present");
+                    return onLoginFailed(userData,
+                            "msg-login-user-not-present",
+                            webAppType.getUiText(), authId);
                 }
 
                 if (!isLazyUserInsert) {
@@ -6108,8 +6138,9 @@ public final class JsonApiServer extends AbstractPage {
                      * INVARIANT: User MUST exist to login when lazy user insert
                      * is disabled.
                      */
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
-                            "msg-login-user-not-present");
+                    return onLoginFailed(userData,
+                            "msg-login-user-not-present",
+                            webAppType.getUiText(), authId);
                 }
 
             } else {
@@ -6119,16 +6150,16 @@ public final class JsonApiServer extends AbstractPage {
                      * INVARIANT: User MUST have admin rights to login to Admin
                      * WebApp.
                      */
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
-                            "msg-login-no-admin-rights");
+                    return onLoginFailed(userData, "msg-login-no-admin-rights",
+                            webAppType.getUiText(), userDb.getUserId());
                 }
 
                 if (!userDb.getPerson()) {
                     /*
                      * INVARIANT: User MUST be a Person to login.
                      */
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
-                            "msg-login-no-person");
+                    return onLoginFailed(userData, "msg-login-no-person",
+                            webAppType.getUiText(), userDb.getUserId());
                 }
 
                 final Date onDate = new Date();
@@ -6138,8 +6169,8 @@ public final class JsonApiServer extends AbstractPage {
                      * INVARIANT: User MUST be active (enabled) at moment of
                      * login.
                      */
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
-                            "msg-login-disabled");
+                    return onLoginFailed(userData, "msg-login-disabled",
+                            webAppType.getUiText(), userDb.getUserId());
                 }
 
                 /*
@@ -6164,8 +6195,9 @@ public final class JsonApiServer extends AbstractPage {
                         /*
                          * INVARIANT: Password of Internal User must be correct.
                          */
-                        return setApiResult(userData, API_RESULT_CODE_ERROR,
-                                "msg-login-invalid");
+                        return onLoginFailed(userData,
+                                "msg-login-invalid-password",
+                                webAppType.getUiText(), userDb.getUserId());
                     }
 
                     // No lazy insert for internal user.
@@ -6186,8 +6218,9 @@ public final class JsonApiServer extends AbstractPage {
                         /*
                          * INVARIANT: Password of External User must be correct.
                          */
-                        return setApiResult(userData, API_RESULT_CODE_ERROR,
-                                "msg-login-invalid");
+                        return onLoginFailed(userData,
+                                "msg-login-invalid-password",
+                                webAppType.getUiText(), uid);
                     }
 
                     /**
@@ -6244,8 +6277,9 @@ public final class JsonApiServer extends AbstractPage {
                         /*
                          * INVARIANT: PIN can NOT be empty.
                          */
-                        return setApiResult(userData, API_RESULT_CODE_ERROR,
-                                "msg-login-no-pin-available");
+                        return onLoginFailed(userData,
+                                "msg-login-no-pin-available",
+                                webAppType.getUiText(), authId);
                     }
 
                     final String encryptedPin =
@@ -6264,8 +6298,8 @@ public final class JsonApiServer extends AbstractPage {
                     /*
                      * INVARIANT: PIN must be correct.
                      */
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
-                            "msg-login-invalid-pin");
+                    return onLoginFailed(userData, "msg-login-invalid-pin",
+                            webAppType.getUiText(), authId);
                 }
             }
 
@@ -6326,8 +6360,8 @@ public final class JsonApiServer extends AbstractPage {
          * Deny access, when the user is still not found in the database.
          */
         if (userDb == null) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
-                    "msg-login-user-not-present");
+            return onLoginFailed(userData, "msg-login-user-not-present",
+                    webAppType.getUiText(), uid);
         }
 
         final UserAuthToken authToken =
@@ -6653,7 +6687,7 @@ public final class JsonApiServer extends AbstractPage {
                         + "] denied: user NOT found.");
             }
 
-            setApiResult(userData, API_RESULT_CODE_ERROR, "msg-login-invalid");
+            onLoginFailed(userData, null);
         }
 
         return true;
@@ -6718,7 +6752,7 @@ public final class JsonApiServer extends AbstractPage {
                         + "] denied: user NOT found.");
             }
 
-            setApiResult(userData, API_RESULT_CODE_ERROR, "msg-login-invalid");
+            onLoginFailed(userData, null);
         }
 
         return userData;

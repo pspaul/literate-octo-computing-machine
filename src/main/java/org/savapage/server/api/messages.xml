@@ -147,16 +147,10 @@
 
 	<entry key="msg-login-as-internal-admin">Application setup is required. Please contact your
 		system administrator.</entry>
-	<entry key="msg-login-no-person">User is not a Person.</entry>
-	<entry key="msg-login-invalid">User Name/Password is invalid.</entry>
-    <entry key="msg-login-invalid-number">ID Number is invalid.</entry>
-    <entry key="msg-login-invalid-pin">PIN is invalid.</entry>
-    <entry key="msg-login-no-pin-available">No PIN available.</entry>
-    <entry key="msg-login-no-password-given">No password given.</entry>
+    <entry key="msg-login-failed">Authentication failed.</entry>
     <entry key="msg-login-unregistered-card">Card is not registered.</entry>
     <entry key="msg-card-registered-ok">Card successfully registered.</entry>
     <entry key="msg-card-unregistered">Card is not registered.</entry>
-
 
 	<entry key="msg-change-internal-admin-password">Please change the default password of the internal
 		admininistrator.</entry>
@@ -164,13 +158,8 @@
 	<entry key="msg-setup-is-needed">SavaPage needs to be configured and is not ready to use yet.
 	Please go to the Options section and check the settings.</entry>
 
-	<entry key="msg-login-admin-not-present">Administrator does not exist.</entry>
-    <entry key="msg-login-user-not-present">User does not exist.</entry>
-	<entry key="msg-login-denied">Access denied for this user.</entry>
     <entry key="msg-auth-mode-not-available">Authentication "{0}" is not available.</entry>
 	
-	<entry key="msg-login-no-admin-rights">User is not an administrator.</entry>
-	<entry key="msg-login-disabled">Your access is disabled.</entry>
 	<entry key="msg-login-not-possible">Login is not possible at the moment. Please try again
 		later.</entry>
     <entry key="msg-login-another-session-active">Another browser session is already active.</entry>
@@ -178,6 +167,16 @@
 	<entry key="msg-user-home-dir-create-error">SafePages directory could not be created.</entry>
 
 	<entry key="msg-pdf-identical-owner-user-pw">PDF user and owner password must be different.</entry>
+
+    <entry key="msg-login-no-pin-available">{0} WebApp Login: no PIN available for number {1}.</entry>
+    <entry key="msg-login-disabled">{0} WebApp Login: user "{1}" is disabled.</entry>
+    <entry key="msg-login-no-person">{0} WebApp Login: user "{1}" is not a Person.</entry>
+    <entry key="msg-login-no-admin-rights">{0} WebApp Login: user "{1}" is not an administrator.</entry>
+    <entry key="msg-login-user-not-present">{0} WebApp Login: user "{1}" does not exist.</entry>
+    <entry key="msg-login-denied">{0} WebApp Login: access denied for user "{1}".</entry>
+    <entry key="msg-login-invalid-password">{0} WebApp Login: password from "{1}" is invalid.</entry>
+    <entry key="msg-login-invalid-number">{0} WebApp Login: ID Number "{1}" is invalid.</entry>
+    <entry key="msg-login-invalid-pin">{0} WebApp Login: invalid PIN for ID Number "{1}".</entry>
 
     <!-- ========================================  -->
     <!--          Membership messages              -->
@@ -256,6 +255,5 @@
     <entry key="msg-amount-must-be positive">Amount must be greater that zero.</entry>
     
     <entry key="msg-payment-gateway-comment">{0} credit for {1}.</entry>
-    
     
 </properties>
