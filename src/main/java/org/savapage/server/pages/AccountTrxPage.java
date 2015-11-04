@@ -179,6 +179,11 @@ public class AccountTrxPage extends AbstractListPage {
             }
 
             //
+            //
+            final boolean showDocLogTitle =
+                    ConfigManager.instance().isConfigValue(
+                            Key.WEBAPP_DOCLOG_SHOW_DOC_TITLE);
+
             String printOutInfo = null;
             String comment = accountTrx.getComment();
             String imageSrc = null;
@@ -226,7 +231,9 @@ public class AccountTrxPage extends AbstractListPage {
 
                 final StringBuilder cmt = new StringBuilder();
 
-                cmt.append("(").append(docLog.getTitle()).append(")");
+                if (showDocLogTitle) {
+                    cmt.append("(").append(docLog.getTitle()).append(")");
+                }
 
                 if (docLog.getNumberOfPages() == 1) {
                     msgKey = "printed-pages-one";
@@ -264,7 +271,8 @@ public class AccountTrxPage extends AbstractListPage {
 
                 comment = printOut.getPrinter().getDisplayName();
 
-                if (StringUtils.isNotBlank(docLog.getTitle())) {
+                if (showDocLogTitle
+                        && StringUtils.isNotBlank(docLog.getTitle())) {
                     comment += " (" + docLog.getTitle() + ")";
                 }
 
