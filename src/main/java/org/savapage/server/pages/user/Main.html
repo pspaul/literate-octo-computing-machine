@@ -247,11 +247,13 @@
 	
 	<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
 	
-        <a href="#page-info" data-dialog="true" id="button-cometd-status" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-info">
+        <a href="#" id="button-cometd-status" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-notext ui-icon-info">&nbsp;</a>
+
+        <a href="#page-info" id="button-about" data-dialog="true" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-text">
             <wicket:message key="button-about"/></a>
             
         <a href="#" data-dialog="true" id="button-mini-user" class="ui-btn ui-btn-inline">
-            <span id="sparkline-user-pie"/>&nbsp;<span class="sp-txt-wrap" id="mini-user-balance"/><!-- &nbsp;<span id="mini-user-name"/>  --></a>
+            <span id="sparkline-user-pie"/>&nbsp;<span class="sp-txt-wrap" id="mini-user-balance"/>&nbsp;<span class="sp-plain-info">&bull;</span>&nbsp;<span class="sp-txt-info" id="mini-user-name"/></a>
 
 	    <wicket:enclosure child="button-upload">
 	        <a href="#" data-dialog="true" id="button-mini-upload" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-notext ui-icon-arrow-u" wicket:id="button-upload"/>

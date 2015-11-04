@@ -2485,7 +2485,7 @@
 					e.preventDefault();
 				});
 				// Button on fixed footer
-				$('#button-cometd-status').click(function() {
+				$('#button-about').click(function() {
 					_view.showPageAsync('#page-info', 'AppAbout');
 					return false;
 				});
@@ -3996,9 +3996,7 @@
 			};
 
 			_tbIndUser = function() {
-				// suppressed for now
-				//$('#mini-user-name').html(_model.user.id);
-				$.noop();
+				$('#mini-user-name').html(_model.user.id);
 			};
 
 			_initUser = function(loginRes) {
@@ -4605,8 +4603,9 @@
 			// -----------------------------
 			// Call-back: polling
 			// -----------------------------
-			_changeIcon = function(icon) {
+			_changeIcon = function(icon, title) {
 				if (icon !== _iconCur) {
+					$("#button-cometd-status").attr('title', title ? title : '');
 					$("#button-cometd-status").buttonMarkup({
 						icon : icon
 					});
@@ -4616,11 +4615,11 @@
 
 			//--------------------------------------------------
 			_userEvent.onWaitingForEvent = function() {
-				_changeIcon("check");
+				_changeIcon("check", 'Watching events . . .');
 			};
 
 			_cometd.onConnecting = function() {
-				_changeIcon("recycle");
+				_changeIcon("recycle", 'Connecting . . .');
 			};
 
 			_cometd.onHandshakeSuccess = function() {
@@ -4631,19 +4630,19 @@
 				}
 			};
 			_cometd.onHandshakeFailure = function() {
-				_changeIcon("alert");
+				_changeIcon("alert", 'Handshake failure.');
 			};
 			_cometd.onReconnect = function() {
 				if (_userEvent.isLongPollPending()) {
-					_changeIcon("check");
+					_changeIcon("check", 'Watching events . . .');
 				} else {
-					_changeIcon("plus");
+					_changeIcon("plus", 'Start event watch . . .');
 					_userEvent.onPollInvitation();
 				}
 			};
 
 			_cometd.onConnectionBroken = function() {
-				_changeIcon("delete");
+				_changeIcon("delete", 'Connection is broken.');
 				if (_model.user.loggedIn) {
 					_this.onWakeUp();
 				}
@@ -4652,11 +4651,11 @@
 				/*
 				 * IMPORTANT: This is end-state in Google Chrome.
 				 */
-				_changeIcon("minus");
+				_changeIcon("minus", 'Connection is closed.');
 			};
 
 			_cometd.onDisconnecting = function() {
-				_changeIcon("clock");
+				_changeIcon("clock", 'Disconnecting . . .');
 			};
 
 			/*
