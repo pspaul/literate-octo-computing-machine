@@ -4130,7 +4130,7 @@ public final class JsonApiServer extends AbstractPage {
         final User jpaUser = userDao.findActiveUserByUserId(user);
 
         USER_SERVICE.setUserAttrValue(jpaUser, UserAttrEnum.PIN,
-                CryptoUser.encryptUserPin(jpaUser.getId(), pin));
+                CryptoUser.encryptUserAttr(jpaUser.getId(), pin));
 
         jpaUser.setModifiedBy(requestingUser);
         jpaUser.setModifiedDate(new Date());
@@ -6301,7 +6301,7 @@ public final class JsonApiServer extends AbstractPage {
                     String pin = "";
                     if (encryptedPin != null) {
                         pin =
-                                CryptoUser.decryptUserPin(userDb.getId(),
+                                CryptoUser.decryptUserAttr(userDb.getId(),
                                         encryptedPin);
                     }
                     isAuthenticated = pin.equals(authPw);

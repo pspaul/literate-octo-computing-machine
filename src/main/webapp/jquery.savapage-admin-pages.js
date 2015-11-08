@@ -117,6 +117,7 @@
 				$('#user-card-number').val(_model.editUser.card);
 				$('#user-id-number').val(_model.editUser.id);
 				$('#user-pin').val(_model.editUser.pin);
+				$('#user-uuid').val(_model.editUser.uuid);
 
 				$('#user-user-pw').val('');
 				$('#user-user-pw-confirm').val('');

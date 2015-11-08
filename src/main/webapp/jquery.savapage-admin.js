@@ -897,6 +897,7 @@
 				_model.editUser.card = $('#user-card-number').val();
 				_model.editUser.id = $('#user-id-number').val();
 				_model.editUser.pin = $('#user-pin').val();
+				_model.editUser.uuid = $('#user-uuid').val();
 
 				res = _api.call({
 					request : 'user-set',

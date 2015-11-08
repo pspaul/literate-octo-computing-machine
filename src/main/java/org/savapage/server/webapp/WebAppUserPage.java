@@ -59,7 +59,7 @@ import org.savapage.core.print.server.DocContentPrintException;
 import org.savapage.core.print.server.DocContentPrintReq;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.helpers.InetUtils;
+import org.savapage.core.util.InetUtils;
 import org.savapage.server.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

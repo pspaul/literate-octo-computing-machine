@@ -19,37 +19,8 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.pages.user;
-
-import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
-import org.savapage.core.util.InetUtils;
-import org.savapage.server.pages.CommunityStatusFooterPanel;
 
 /**
  *
- * @author Datraverse B.V.
- *
  */
-public class Main extends AbstractUserPage {
-
-    private static final long serialVersionUID = 1L;
-
-    /**
-     *
-     */
-    public Main() {
-
-        boolean visible =
-                (ConfigManager.isWebPrintEnabled() && InetUtils
-                        .isIp4AddrInCidrRanges(
-                                ConfigManager.instance().getConfigValue(
-                                        Key.WEB_PRINT_LIMIT_IP_ADDRESSES),
-                                getClientIpAddr()));
-
-        addVisible(visible, "button-upload", localized("button-upload"));
-
-        //
-        add(new CommunityStatusFooterPanel("community-status-footer-panel"));
-    }
-}
+package org.savapage.server.ipp;

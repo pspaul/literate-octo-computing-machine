@@ -45,6 +45,7 @@ import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.smartschool.SmartSchoolPrinter;
 import org.savapage.core.services.helpers.ExternalSupplierEnum;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
@@ -649,7 +650,7 @@ public class Options extends AbstractAdminPage {
 
         try {
             jmcRemoteProcess =
-                    ConfigManager.getServerHostAddress() + ":"
+                    InetUtils.getServerHostAddress() + ":"
                             + JmxRemoteProperties.getPort();
         } catch (UnknownHostException e) {
             throw new SpException("Server IP address could not be found", e);

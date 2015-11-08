@@ -93,9 +93,14 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static final String MOUNT_PATH_COMETD = "/cometd";
 
     /**
-     * Used in this class to set mountPage().
+     * The URL path for "printers" as used in {@link #MOUNT_PATH_PRINTERS}.
      */
-    public static final String MOUNT_PATH_PRINTERS = "/printers";
+    public static final String PATH_PRINTERS = "printers";
+
+    /**
+     * Used in this class to set mountPage() for {@link WebApp#PATH_PRINTERS}.
+     */
+    public static final String MOUNT_PATH_PRINTERS = "/" + PATH_PRINTERS;
 
     /**
      * Used in this class to set mountPage().

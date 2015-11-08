@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
@@ -55,9 +55,13 @@ import org.savapage.core.ipp.operation.AbstractIppOperation;
 import org.savapage.core.ipp.operation.IppMessageMixin;
 import org.savapage.core.ipp.operation.IppOperationId;
 import org.savapage.core.jpa.IppQueue;
+import org.savapage.core.jpa.User;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
+import org.savapage.core.services.UserService;
+import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.InetUtils;
 import org.savapage.server.WebApp;
 import org.savapage.server.webapp.WebAppUserPage;
 import org.slf4j.Logger;
@@ -105,6 +109,12 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
             .getServiceFactory().getQueueService();
 
     /**
+    *
+    */
+    private final static UserService USER_SERVICE = ServiceContext
+            .getServiceFactory().getUserService();
+
+    /**
      *
      */
     public static void init() {
@@ -123,7 +133,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
         private final InputStream istr;
 
-        IppResourceStream(InputStream istr) {
+        IppResourceStream(final InputStream istr) {
             this.istr = istr;
         }
 
@@ -152,6 +162,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         /**
          *
          * @param istr
+         *            The {@link InputStream}.
          */
         public SpStreamRequestHandler(final InputStream istr) {
             super(new IppResourceStream(istr));
@@ -162,6 +173,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
     /**
      *
      * @param parameters
+     *            The {@link PageParameters}.
      */
     public IppPrintServer(final PageParameters parameters) {
 
@@ -172,32 +184,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
                         .getContainerRequest();
 
         if (LOGGER.isDebugEnabled()) {
-
-            final StringBuilder log = new StringBuilder(256).append('\n');
-            final Enumeration<String> headerNames = request.getHeaderNames();
-
-            while (headerNames.hasMoreElements()) {
-
-                final String name = headerNames.nextElement();
-                final Enumeration<String> nameHeader = request.getHeaders(name);
-
-                log.append("Header [").append(name).append("]:");
-
-                while (nameHeader.hasMoreElements()) {
-                    log.append(" [").append(nameHeader.nextElement())
-                            .append("]");
-                }
-                log.append('\n');
-            }
-
-            for (final NamedPair namedPair : parameters.getAllNamed()) {
-                log.append("Parameter [").append(namedPair.getKey())
-                        .append("] = [").append(namedPair.getValue())
-                        .append("]\n");
-            }
-
-            LOGGER.debug(log.toString());
-
+            logDebug(request, parameters);
         }
 
         final HttpServletResponse response =
@@ -205,13 +192,6 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
                         .getContainerResponse();
 
         final String contentTypeReq = request.getContentType();
-
-        if (LOGGER.isDebugEnabled()) {
-
-            LOGGER.debug("Request [" + request.getRequestURL().toString()
-                    + "] From [" + request.getRemoteAddr() + "] Bytes ["
-                    + request.getContentLength() + "]");
-        }
 
         /*
          * Request for a PPD file: do NOT deliver the file, since the effect
@@ -227,6 +207,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
             }
             return;
         }
+
         /*
          * Redirect to /user page for content types other than IPP_CONTENT_TYPE.
          */
@@ -239,7 +220,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         }
 
         /*
-         * OK, we can handle the IPP request
+         * OK, we can handle the IPP request.
          */
         response.setContentType(IppMessageMixin.CONTENT_TYPE_IPP);
         response.setStatus(HttpServletResponse.SC_OK);
@@ -249,15 +230,15 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         try {
 
             final String remoteAddr = request.getRemoteAddr();
-            final String authenticatedWebAppUser =
-                    WebApp.getAuthUserByIpAddr(remoteAddr);
 
             /*
-             * Get the Queue from the URI.
+             * Get the Queue from the URL.
              */
-            final URI uri = new URI(request.getRequestURL().toString());
+            final IppPrintServerUrlParms serverPageParms =
+                    new IppPrintServerUrlParms(Url.parse(request
+                            .getRequestURL().toString()));
 
-            final String requestedQueueUrlPath = createIppQueuePath(uri);
+            final String requestedQueueUrlPath = serverPageParms.getPrinter();
 
             /*
              * Reserved queue?
@@ -289,11 +270,42 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
                 hasPrintAccessToQueue = false;
 
+            } else if (reservedQueueEnum != ReservedIppQueueEnum.IPP_PRINT_INTERNET
+                    && InetUtils.isPublicAddress(remoteAddr)) {
+
+                hasPrintAccessToQueue = false;
+
             } else {
 
                 hasPrintAccessToQueue =
                         QUEUE_SERVICE.hasClientIpAccessToQueue(queue,
-                                uri.toString(), remoteAddr);
+                                serverPageParms.getPrinter(), remoteAddr);
+            }
+
+            /*
+             *
+             */
+            final String trustedIppClientUserId;
+
+            if (!hasPrintAccessToQueue) {
+
+                trustedIppClientUserId = null;
+
+            } else if (reservedQueueEnum == ReservedIppQueueEnum.IPP_PRINT_INTERNET) {
+
+                final User remoteInternetUser =
+                        USER_SERVICE.findUserByNumberUuid(
+                                serverPageParms.getUserNumber(),
+                                serverPageParms.getUserUuid());
+
+                if (remoteInternetUser == null) {
+                    trustedIppClientUserId = null;
+                } else {
+                    trustedIppClientUserId = remoteInternetUser.getUserId();
+                }
+
+            } else {
+                trustedIppClientUserId = WebApp.getAuthUserByIpAddr(remoteAddr);
             }
 
             /*
@@ -302,12 +314,9 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
             final IppOperationId ippOperationId =
-                    AbstractIppOperation
-                            .handle(remoteAddr, uri, queue,
-                                    requestedQueueUrlPath,
-                                    request.getInputStream(), bos,
-                                    hasPrintAccessToQueue,
-                                    authenticatedWebAppUser);
+                    AbstractIppOperation.handle(remoteAddr, queue,
+                            requestedQueueUrlPath, request.getInputStream(),
+                            bos, hasPrintAccessToQueue, trustedIppClientUserId);
 
             /*
              *
@@ -384,7 +393,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
                  * Prevent continuous messaging when IPP client keeps retrying
                  * with same result.
                  */
-                Thread.sleep(5 * 1000);
+                Thread.sleep(5 * DateUtil.DURATION_MSEC_SECOND);
 
             } catch (InterruptedException e1) {
                 // noop
@@ -402,58 +411,6 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
             ServiceContext.close();
         }
 
-    }
-
-    /**
-     * Creates the IppQueue path from the URI of the IPP request.
-     *
-     * @param uri
-     *            The URI of the IPP request
-     * @return The IppQueue path.
-     */
-    private String createIppQueuePath(final URI uri) {
-
-        /*
-         * Strip mount path.
-         */
-        String path = uri.getPath().replace(WebApp.MOUNT_PATH_PRINTERS, "");
-
-        /*
-         * Strip leading and trailing "/" when present.
-         */
-        if (path.startsWith("/")) {
-            path = path.substring(1);
-        }
-        if (path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
-        }
-
-        return path;
-    }
-
-    /**
-     * Writes a pretty printed byte trace of the raw output stream to the log
-     * file.
-     *
-     * @param bos
-     *            The output stream.
-     */
-    private void logIppOutputTrace(final ByteArrayOutputStream bos) {
-
-        final int width = 10;
-
-        final StringBuilder msg = new StringBuilder(1024);
-
-        int i = 0;
-        for (byte b : bos.toByteArray()) {
-
-            if (i % width == 0) {
-                msg.append("\n");
-            }
-            msg.append(String.format("0x%02X ", b));
-            i++;
-        }
-        LOGGER.trace(msg.toString());
     }
 
     /**
@@ -483,6 +440,70 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         handler.setCacheDuration(Duration.NONE);
 
         getRequestCycle().scheduleRequestHandlerAfterCurrent(handler);
+    }
+
+    /**
+     * Debug Log the request and parameters.
+     *
+     * @param request
+     * @param parameters
+     */
+    private static void logDebug(final HttpServletRequest request,
+            final PageParameters parameters) {
+
+        final StringBuilder log = new StringBuilder(256).append('\n');
+
+        log.append("Request [").append(request.getRequestURL().toString())
+                .append("] From [").append(request.getRemoteAddr())
+                .append("] Bytes [").append(request.getContentLength())
+                .append("]\n");
+
+        final Enumeration<String> headerNames = request.getHeaderNames();
+
+        while (headerNames.hasMoreElements()) {
+
+            final String name = headerNames.nextElement();
+            final Enumeration<String> nameHeader = request.getHeaders(name);
+
+            log.append("Header [").append(name).append("]:");
+
+            while (nameHeader.hasMoreElements()) {
+                log.append(" [").append(nameHeader.nextElement()).append("]");
+            }
+            log.append('\n');
+        }
+
+        for (final NamedPair namedPair : parameters.getAllNamed()) {
+            log.append("Parameter [").append(namedPair.getKey())
+                    .append("] = [").append(namedPair.getValue()).append("]\n");
+        }
+
+        LOGGER.debug(log.toString());
+    }
+
+    /**
+     * Writes a pretty printed byte trace of the raw output stream to the log
+     * file.
+     *
+     * @param bos
+     *            The output stream.
+     */
+    private static void logIppOutputTrace(final ByteArrayOutputStream bos) {
+
+        final int width = 10;
+
+        final StringBuilder msg = new StringBuilder(1024);
+
+        int i = 0;
+        for (byte b : bos.toByteArray()) {
+
+            if (i % width == 0) {
+                msg.append("\n");
+            }
+            msg.append(String.format("0x%02X ", b));
+            i++;
+        }
+        LOGGER.trace(msg.toString());
     }
 
 }

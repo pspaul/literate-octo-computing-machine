@@ -40,6 +40,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.users.InternalUserAuthenticator;
 import org.savapage.core.users.UserAliasList;
+import org.savapage.core.util.InetUtils;
 import org.savapage.server.WebApp;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
@@ -99,7 +100,7 @@ public final class ClientAppHandler {
      */
     private static URL getCometdUrl() throws MalformedURLException,
             UnknownHostException {
-        return new URL("https", ConfigManager.getServerHostAddress(),
+        return new URL("https", InetUtils.getServerHostAddress(),
                 Integer.parseInt(ConfigManager.getServerSslPort()),
                 WebApp.MOUNT_PATH_COMETD);
     }
@@ -121,7 +122,7 @@ public final class ClientAppHandler {
 
         final URIBuilder builder = new URIBuilder();
 
-        builder.setScheme("http").setHost(ConfigManager.getServerHostAddress())
+        builder.setScheme("http").setHost(InetUtils.getServerHostAddress())
                 .setPort(Integer.parseInt(ConfigManager.getServerPort()))
                 .setPath(WebApp.MOUNT_PATH_WEBAPP_USER)
                 .addParameter(WebApp.URL_PARM_USER, userId);

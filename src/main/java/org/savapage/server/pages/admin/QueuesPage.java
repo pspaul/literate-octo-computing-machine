@@ -45,6 +45,7 @@ import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
@@ -182,7 +183,7 @@ public class QueuesPage extends AbstractAdminListPage {
 
         if (serverName == null || serverName.trim().isEmpty()) {
             try {
-                serverName = ConfigManager.getServerHostAddress();
+                serverName = InetUtils.getServerHostAddress();
             } catch (UnknownHostException e) {
                 serverName = "[?????]";
             }
@@ -194,8 +195,8 @@ public class QueuesPage extends AbstractAdminListPage {
                         .append(WebApp.MOUNT_PATH_PRINTERS).toString();
 
         final String urlWindows =
-                new StringBuilder().append("http://").append(serverName)
-                        .append(":").append(WebApp.getServerPort())
+                new StringBuilder().append("https://").append(serverName)
+                        .append(":").append(WebApp.getServerSslPort())
                         .append(WebApp.MOUNT_PATH_PRINTERS).toString();
 
         /*
@@ -334,6 +335,7 @@ public class QueuesPage extends AbstractAdminListPage {
                 } else {
                     switch (reservedQueue) {
                     case IPP_PRINT:
+                    case IPP_PRINT_INTERNET:
                         reservedText =
                                 reservedQueue.getUiText()
                                         + " ("

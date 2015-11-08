@@ -74,6 +74,7 @@ import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
 import org.savapage.core.snmp.SnmpConnectException;
 import org.savapage.core.util.AppLogHelper;
+import org.savapage.core.util.InetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -211,7 +212,7 @@ public final class JsonRpcServlet extends HttpServlet implements
          */
         final String serverAdress;
         try {
-            serverAdress = ConfigManager.getServerHostAddress();
+            serverAdress = InetUtils.getServerHostAddress();
         } catch (UnknownHostException e1) {
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INTERNAL_ERROR, "Access denied.",
