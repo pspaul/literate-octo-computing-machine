@@ -81,7 +81,6 @@
 	<entry key="msg-job-edited">Job successfully edited.</entry>
 	<entry key="msg-letterhead-edited">Letterhead successfully edited.</entry>
 
-	<entry key="msg-db-backup-busy">Creating backup...</entry>
 	<entry key="msg-tech-error">{0}</entry>
 
 	<entry key="msg-user-sync-busy">Synchronizing users...</entry>

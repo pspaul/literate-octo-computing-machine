@@ -140,7 +140,6 @@ import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.job.SpJobScheduler;
-import org.savapage.core.job.SpJobType;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.ConfigProperty;
@@ -220,6 +219,8 @@ import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.api.request.ApiRequestHandler;
+import org.savapage.server.api.request.ApiResultCodeEnum;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.auth.WebAppUserAuthManager;
@@ -322,28 +323,6 @@ public final class JsonApiServer extends AbstractPage {
      *
      */
     private static final JsonApiDict API_DICTIONARY = new JsonApiDict();
-
-    /**
-     *
-     */
-    private static final String API_RESULT_CODE_OK = "0";
-
-    /**
-     *
-     */
-    private static final String API_RESULT_CODE_INFO = "1";
-    /**
-     *
-     */
-    private static final String API_RESULT_CODE_WARN = "2";
-    /**
-     *
-     */
-    private static final String API_RESULT_CODE_ERROR = "3";
-    /**
-     *
-     */
-    private static final String API_RESULT_CODE_UNAUTH = "9";
 
     /**
      *
@@ -1386,10 +1365,6 @@ public final class JsonApiServer extends AbstractPage {
             return reqJmxPasswordReset(getParmValue(parameters, isGetAction,
                     "password"));
 
-        case JsonApiDict.REQ_DB_BACKUP:
-
-            return reqDbBackup(requestingUser);
-
         case JsonApiDict.REQ_PAGOMETER_RESET:
 
             return reqPagometerReset(requestingUser,
@@ -1574,7 +1549,7 @@ public final class JsonApiServer extends AbstractPage {
                 return createApiResultOK();
             } catch (PostScriptDrmException e) {
                 return setApiResult(new HashMap<String, Object>(),
-                        API_RESULT_CODE_ERROR, "msg-pdf-export-drm-error");
+                        ApiResultCodeEnum.ERROR, "msg-pdf-export-drm-error");
             }
 
         case JsonApiDict.REQ_LETTERHEAD_GET:
@@ -1705,7 +1680,15 @@ public final class JsonApiServer extends AbstractPage {
                             .equalsIgnoreCase("Y"));
 
         default:
-            throw new SpException("Request [" + request + "] NOT supported");
+
+            final ApiRequestHandler apiReqHandler =
+                    API_DICTIONARY.createApiRequest(request);
+
+            if (apiReqHandler == null) {
+                throw new SpException("Request [" + request + "] NOT supported");
+            }
+            return apiReqHandler.process(parameters, isGetAction,
+                    requestingUser, lockedUser);
         }
 
     }
@@ -1846,7 +1829,7 @@ public final class JsonApiServer extends AbstractPage {
 
         if (nTasksWaiting > 0) {
             return setApiResult(new HashMap<String, Object>(),
-                    API_RESULT_CODE_INFO, "msg-ecoprint-pending");
+                    ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
         }
 
         return createApiResultOK();
@@ -1952,7 +1935,7 @@ public final class JsonApiServer extends AbstractPage {
      * @return
      */
     private boolean isApiResultOK(final Map<String, Object> data) {
-        return isApiResultCode(data, API_RESULT_CODE_OK);
+        return isApiResultCode(data, ApiResultCodeEnum.OK);
     }
 
     /**
@@ -1961,19 +1944,21 @@ public final class JsonApiServer extends AbstractPage {
      * @return
      */
     private boolean isApiResultError(final Map<String, Object> data) {
-        return isApiResultCode(data, API_RESULT_CODE_ERROR);
+        return isApiResultCode(data, ApiResultCodeEnum.ERROR);
     }
 
     /**
      *
      * @param data
+     * @param code
+     *            The {@link #ApiResultCodeEnum}.
      * @return
      */
     private boolean isApiResultCode(final Map<String, Object> data,
-            final String code) {
+            final ApiResultCodeEnum code) {
         @SuppressWarnings("unchecked")
         Map<String, Object> result = (Map<String, Object>) data.get("result");
-        return result.get("code").equals(code);
+        return result.get("code").equals(code.getValue());
     }
 
     /**
@@ -1982,9 +1967,7 @@ public final class JsonApiServer extends AbstractPage {
      * @param out
      *            The Map to put the result on.
      * @param code
-     *            One of the following codes: {@link #API_RESULT_CODE_OK},
-     *            {@link #API_RESULT_CODE_INFO}, {@link #API_RESULT_CODE_WARN},
-     *            {@link #API_RESULT_CODE_ERROR}
+     *            The {@link #ApiResultCodeEnum}.
      * @param msg
      *            The key of the message
      * @param txt
@@ -1993,13 +1976,13 @@ public final class JsonApiServer extends AbstractPage {
      *
      */
     private static Map<String, Object> createApiResult(
-            final Map<String, Object> out, final String code, final String msg,
-            final String txt) {
+            final Map<String, Object> out, final ApiResultCodeEnum code,
+            final String msg, final String txt) {
 
         Map<String, Object> result = new HashMap<String, Object>();
         out.put("result", result);
 
-        result.put("code", code);
+        result.put("code", code.getValue());
         if (msg != null) {
             result.put("msg", msg);
         }
@@ -2010,17 +1993,17 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * Sets the {@link #API_RESULT_CODE_OK} result on parameter {@code out}.
+     * Sets the {@link #ApiResultCodeEnum.OK} result on parameter {@code out}.
      *
      * @param out
      * @return the {@code out} parameter.
      */
     private Map<String, Object> setApiResultOK(final Map<String, Object> out) {
-        return createApiResult(out, API_RESULT_CODE_OK, null, null);
+        return createApiResult(out, ApiResultCodeEnum.OK, null, null);
     }
 
     /**
-     * Creates and {@link #API_RESULT_CODE_OK} API result.
+     * Creates and {@link #ApiResultCodeEnum.OK} API result.
      *
      * @return The API response with the OK result.
      */
@@ -2034,16 +2017,14 @@ public final class JsonApiServer extends AbstractPage {
      * @param out
      *            The Map to put the result on.
      * @param code
-     *            One og the following codes: {@link #API_RESULT_CODE_OK},
-     *            {@link #API_RESULT_CODE_INFO}, {@link #API_RESULT_CODE_WARN},
-     *            {@link #API_RESULT_CODE_ERROR}
+     *            The {@link #ApiResultCodeEnum}.
      * @param key
      *            The key of the message
      * @return the {@code out} parameter.
      *
      */
     private Map<String, Object> setApiResult(final Map<String, Object> out,
-            final String code, final String key) {
+            final ApiResultCodeEnum code, final String key) {
         return createApiResult(out, code, key, localize(key));
     }
 
@@ -2060,19 +2041,19 @@ public final class JsonApiServer extends AbstractPage {
     public static Map<String, Object> setApiResultMsg(
             final Map<String, Object> out, ProxyPrintInboxReq printReq) {
 
-        String code;
+        final ApiResultCodeEnum code;
         switch (printReq.getStatus()) {
         case ERROR_PRINTER_NOT_FOUND:
-            code = API_RESULT_CODE_ERROR;
+            code = ApiResultCodeEnum.ERROR;
             break;
         case PRINTED:
-            code = API_RESULT_CODE_OK;
+            code = ApiResultCodeEnum.OK;
             break;
         case WAITING_FOR_RELEASE:
-            code = API_RESULT_CODE_OK;
+            code = ApiResultCodeEnum.OK;
             break;
         default:
-            code = API_RESULT_CODE_WARN;
+            code = ApiResultCodeEnum.WARN;
         }
 
         out.put("requestStatus", printReq.getStatus().toString());
@@ -2090,7 +2071,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     public static Map<String, Object> setApiResultMsgError(
             final Map<String, Object> out, final String key, final String msg) {
-        return createApiResult(out, API_RESULT_CODE_ERROR, key, msg);
+        return createApiResult(out, ApiResultCodeEnum.ERROR, key, msg);
     }
 
     /**
@@ -2102,7 +2083,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     public static Map<String, Object> setApiResultMsgOK(
             final Map<String, Object> out, final String key, final String msg) {
-        return createApiResult(out, API_RESULT_CODE_OK, key, msg);
+        return createApiResult(out, ApiResultCodeEnum.OK, key, msg);
     }
 
     /**
@@ -2111,9 +2092,7 @@ public final class JsonApiServer extends AbstractPage {
      * @param out
      *            The Map to put the result on.
      * @param code
-     *            One og the following codes: {@link #API_RESULT_CODE_OK},
-     *            {@link #API_RESULT_CODE_INFO}, {@link #API_RESULT_CODE_WARN},
-     *            {@link #API_RESULT_CODE_ERROR}
+     *            The {@link #ApiResultCodeEnum}.
      * @param key
      *            The key of the message
      * @param args
@@ -2121,7 +2100,8 @@ public final class JsonApiServer extends AbstractPage {
      * @return the {@code out} parameter.
      */
     private Map<String, Object> setApiResult(final Map<String, Object> out,
-            final String code, final String key, final String... args) {
+            final ApiResultCodeEnum code, final String key,
+            final String... args) {
         return createApiResult(out, code, key, localize(key, args));
     }
 
@@ -2163,7 +2143,7 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         return createApiResult(new HashMap<String, Object>(),
-                API_RESULT_CODE_ERROR, msgKey, msg);
+                ApiResultCodeEnum.ERROR, msgKey, msg);
     }
 
     /**
@@ -2176,7 +2156,7 @@ public final class JsonApiServer extends AbstractPage {
     private boolean hasAdminRights(Map<String, Object> userData) {
 
         if (!SpSession.get().isAdmin()) {
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-need-admin-rights");
             return false;
         }
@@ -2199,7 +2179,7 @@ public final class JsonApiServer extends AbstractPage {
 
         if (!API_DICTIONARY.isValidRequest(request)) {
             userData = new HashMap<String, Object>();
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-invalid-request", request);
         }
 
@@ -2249,7 +2229,7 @@ public final class JsonApiServer extends AbstractPage {
             }
         } else {
             userData = new HashMap<String, Object>();
-            setApiResult(userData, API_RESULT_CODE_UNAUTH,
+            setApiResult(userData, ApiResultCodeEnum.UNAUTH,
                     "msg-user-not-authorized");
         }
 
@@ -2320,7 +2300,7 @@ public final class JsonApiServer extends AbstractPage {
 
                 setApiResult(
                         userData,
-                        API_RESULT_CODE_WARN,
+                        ApiResultCodeEnum.WARN,
                         "msg-mail-max-file-size",
                         BigDecimalUtil.localize(fileMb, 2, this.getSession()
                                 .getLocale(), true)
@@ -2374,18 +2354,19 @@ public final class JsonApiServer extends AbstractPage {
                 addUserStats(userData, lockedUser, this.getSession()
                         .getLocale(), SpSession.getAppCurrencySymbol());
 
-                setApiResult(userData, API_RESULT_CODE_OK, "msg-mail-sent",
+                setApiResult(userData, ApiResultCodeEnum.OK, "msg-mail-sent",
                         mailto);
             }
 
         } catch (PostScriptDrmException e) {
 
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-pdf-export-drm-error");
 
         } catch (EcoPrintPdfTaskPendingException e) {
 
-            setApiResult(userData, API_RESULT_CODE_INFO, "msg-ecoprint-pending");
+            setApiResult(userData, ApiResultCodeEnum.INFO,
+                    "msg-ecoprint-pending");
 
         } finally {
 
@@ -2425,7 +2406,7 @@ public final class JsonApiServer extends AbstractPage {
             msgKey = "msg-outbox-cleared-multiple";
         }
 
-        setApiResult(userData, API_RESULT_CODE_OK, msgKey,
+        setApiResult(userData, ApiResultCodeEnum.OK, msgKey,
                 String.valueOf(jobCount));
 
         addUserStats(userData, lockedUser, this.getSession().getLocale(),
@@ -2455,7 +2436,7 @@ public final class JsonApiServer extends AbstractPage {
             msgKey = "msg-outbox-removed-job-none";
         }
 
-        setApiResult(userData, API_RESULT_CODE_OK, msgKey);
+        setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
 
         addUserStats(userData, lockedUser, this.getSession().getLocale(),
                 SpSession.getAppCurrencySymbol());
@@ -2488,7 +2469,7 @@ public final class JsonApiServer extends AbstractPage {
             msgKey = "msg-outbox-extended-multiple";
         }
 
-        setApiResult(userData, API_RESULT_CODE_OK, msgKey,
+        setApiResult(userData, ApiResultCodeEnum.OK, msgKey,
                 String.valueOf(jobCount), String.valueOf(minutes));
 
         addUserStats(userData, lockedUser, this.getSession().getLocale(),
@@ -2513,7 +2494,7 @@ public final class JsonApiServer extends AbstractPage {
         try {
             nPages = INBOX_SERVICE.deletePages(user, ranges);
         } catch (IllegalArgumentException e) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-clear-range-syntax-error", ranges);
         }
 
@@ -2525,7 +2506,7 @@ public final class JsonApiServer extends AbstractPage {
             msgKey = "msg-page-delete-multiple";
         }
 
-        return setApiResult(userData, API_RESULT_CODE_OK, msgKey,
+        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey,
                 String.valueOf(nPages));
     }
 
@@ -2566,7 +2547,7 @@ public final class JsonApiServer extends AbstractPage {
 
         if (StringUtils.isNotBlank(pwOwner) && StringUtils.isNotBlank(pwUser)
                 && pwOwner.equals(pwUser)) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-pdf-identical-owner-user-pw");
         } else {
             USER_SERVICE.setPdfProperties(user, pdfProp);
@@ -2598,7 +2579,7 @@ public final class JsonApiServer extends AbstractPage {
                             .findByName(value);
 
             if (jpaPrinterGroup == null) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-device-printer-group-not-found", value);
             }
         }
@@ -2618,7 +2599,7 @@ public final class JsonApiServer extends AbstractPage {
                         ServiceContext.getDaoContext().getPrinterDao();
 
                 if (printerDao.findByName(value) == null) {
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
                             "msg-printer-not-found", value);
                 }
             }
@@ -2757,7 +2738,7 @@ public final class JsonApiServer extends AbstractPage {
                 }
 
             } else {
-                setApiResult(userData, API_RESULT_CODE_ERROR,
+                setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-config-props-error", value);
             }
 
@@ -2779,7 +2760,7 @@ public final class JsonApiServer extends AbstractPage {
                 }
             }
 
-            setApiResult(userData, API_RESULT_CODE_OK, msgKey);
+            setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
         }
 
         return userData;
@@ -2819,7 +2800,7 @@ public final class JsonApiServer extends AbstractPage {
         final Map<String, Object> data = new HashMap<String, Object>();
 
         if (!PROXY_PRINT_SERVICE.isConnectedToCups()) {
-            return setApiResult(data, API_RESULT_CODE_ERROR,
+            return setApiResult(data, ApiResultCodeEnum.ERROR,
                     "msg-printer-connection-broken");
         }
 
@@ -2937,7 +2918,7 @@ public final class JsonApiServer extends AbstractPage {
         final Map<String, Object> data = new HashMap<String, Object>();
 
         if (!PROXY_PRINT_SERVICE.isConnectedToCups()) {
-            return setApiResult(data, API_RESULT_CODE_ERROR,
+            return setApiResult(data, ApiResultCodeEnum.ERROR,
                     "msg-printer-connection-broken");
         }
 
@@ -2947,13 +2928,14 @@ public final class JsonApiServer extends AbstractPage {
 
         if (jsonPrinter == null) {
 
-            setApiResult(data, API_RESULT_CODE_ERROR, "msg-printer-out-of-date");
+            setApiResult(data, ApiResultCodeEnum.ERROR,
+                    "msg-printer-out-of-date");
 
         } else {
 
             if (jsonPrinter.getMediaSources().isEmpty()) {
 
-                setApiResult(data, API_RESULT_CODE_ERROR,
+                setApiResult(data, ApiResultCodeEnum.ERROR,
                         "msg-printer-no-media-sources-defined", printerName);
 
             } else {
@@ -2978,10 +2960,10 @@ public final class JsonApiServer extends AbstractPage {
         final Map<String, Object> data = new HashMap<String, Object>();
 
         if (ProxyPrintAuthManager.cancelRequest(idUser, printerName)) {
-            return setApiResult(data, API_RESULT_CODE_OK,
+            return setApiResult(data, ApiResultCodeEnum.OK,
                     "msg-print-auth-cancel-ok");
         } else {
-            return setApiResult(data, API_RESULT_CODE_WARN,
+            return setApiResult(data, ApiResultCodeEnum.WARN,
                     "msg-print-auth-cancel-not-found");
         }
     }
@@ -3007,7 +2989,7 @@ public final class JsonApiServer extends AbstractPage {
 
         data.put("expiry", expiry);
 
-        return setApiResult(data, API_RESULT_CODE_OK,
+        return setApiResult(data, ApiResultCodeEnum.OK,
                 "msg-print-fast-renew-ok", expiry);
     }
 
@@ -3083,7 +3065,7 @@ public final class JsonApiServer extends AbstractPage {
                             lockedUser, printerName,
                             ServiceContext.getTransactionDate());
         } catch (ProxyPrintException e) {
-            return setApiResult(data, API_RESULT_CODE_ERROR, e.getMessage());
+            return setApiResult(data, ApiResultCodeEnum.ERROR, e.getMessage());
         }
 
         // Example: {"media.type":"Plain","Resolution":"300x300dpi"}
@@ -3126,7 +3108,7 @@ public final class JsonApiServer extends AbstractPage {
                  */
                 ranges = RangeAtom.asText(rangeAtoms);
             } catch (Exception e) {
-                return setApiResult(data, API_RESULT_CODE_ERROR,
+                return setApiResult(data, ApiResultCodeEnum.ERROR,
                         "msg-clear-range-syntax-error", ranges);
             }
         }
@@ -3136,7 +3118,7 @@ public final class JsonApiServer extends AbstractPage {
          * pages.
          */
         if (nPagesPrinted > nPagesTot) {
-            return setApiResult(data, API_RESULT_CODE_ERROR,
+            return setApiResult(data, ApiResultCodeEnum.ERROR,
                     "msg-print-out-of-range-error", ranges,
                     String.valueOf(nPagesTot));
         }
@@ -3244,7 +3226,7 @@ public final class JsonApiServer extends AbstractPage {
                             printReq.getJobChunkInfo());
 
         } catch (ProxyPrintException e) {
-            return createApiResult(data, API_RESULT_CODE_WARN, "",
+            return createApiResult(data, ApiResultCodeEnum.WARN, "",
                     e.getMessage());
         }
 
@@ -3262,7 +3244,7 @@ public final class JsonApiServer extends AbstractPage {
             try {
                 PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, printReq);
             } catch (EcoPrintPdfTaskPendingException e) {
-                return setApiResult(data, API_RESULT_CODE_INFO,
+                return setApiResult(data, ApiResultCodeEnum.INFO,
                         "msg-ecoprint-pending");
             }
 
@@ -3349,7 +3331,7 @@ public final class JsonApiServer extends AbstractPage {
             try {
                 OUTBOX_SERVICE.proxyPrintInbox(lockedUser, printReq);
             } catch (EcoPrintPdfTaskPendingException e) {
-                return setApiResult(data, API_RESULT_CODE_INFO,
+                return setApiResult(data, ApiResultCodeEnum.INFO,
                         "msg-ecoprint-pending");
             }
             setApiResultMsg(data, printReq);
@@ -3387,7 +3369,7 @@ public final class JsonApiServer extends AbstractPage {
 
         } else {
 
-            setApiResult(data, API_RESULT_CODE_WARN, "msg-print-auth-pending");
+            setApiResult(data, ApiResultCodeEnum.WARN, "msg-print-auth-pending");
         }
 
         return data;
@@ -3419,7 +3401,7 @@ public final class JsonApiServer extends AbstractPage {
             msgKey = "msg-page-move-multiple";
         }
 
-        return setApiResult(userData, API_RESULT_CODE_OK, msgKey,
+        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey,
                 String.valueOf(nPages));
     }
 
@@ -3469,29 +3451,7 @@ public final class JsonApiServer extends AbstractPage {
         resetPagometers(resetBy, resetDashboard, resetQueues, resetPrinters,
                 resetUsers);
 
-        setApiResult(userData, API_RESULT_CODE_OK, "msg-pagometer-reset-ok");
-
-        return userData;
-    }
-
-    /**
-     * @param user
-     * @return
-     */
-    private Map<String, Object> reqDbBackup(final String user) {
-
-        Map<String, Object> userData = new HashMap<String, Object>();
-
-        try {
-            SpJobScheduler.instance().scheduleOneShotJob(SpJobType.DB_BACKUP,
-                    1L);
-
-            setApiResult(userData, API_RESULT_CODE_OK, "msg-db-backup-busy");
-
-        } catch (Exception e) {
-            setApiResult(userData, API_RESULT_CODE_ERROR, "msg-tech-error",
-                    e.getMessage());
-        }
+        setApiResult(userData, ApiResultCodeEnum.OK, "msg-pagometer-reset-ok");
 
         return userData;
     }
@@ -3527,10 +3487,10 @@ public final class JsonApiServer extends AbstractPage {
             SpJobScheduler.instance().scheduleOneShotUserSync(isTest,
                     deleteUsers);
 
-            setApiResult(data, API_RESULT_CODE_OK, "msg-user-sync-busy");
+            setApiResult(data, ApiResultCodeEnum.OK, "msg-user-sync-busy");
 
         } catch (Exception e) {
-            setApiResult(data, API_RESULT_CODE_ERROR, "msg-tech-error",
+            setApiResult(data, ApiResultCodeEnum.ERROR, "msg-tech-error",
                     e.getMessage());
         }
 
@@ -3695,7 +3655,8 @@ public final class JsonApiServer extends AbstractPage {
 
             EMAIL_SERVICE.sendEmail(emailParms);
 
-            setApiResult(userData, API_RESULT_CODE_OK, "msg-mail-sent", mailto);
+            setApiResult(userData, ApiResultCodeEnum.OK, "msg-mail-sent",
+                    mailto);
 
         } catch (MessagingException | IOException | InterruptedException
                 | CircuitBreakerException e) {
@@ -3705,7 +3666,7 @@ public final class JsonApiServer extends AbstractPage {
             if (e.getCause() != null) {
                 msg += " (" + e.getCause().getMessage() + ")";
             }
-            setApiResult(userData, API_RESULT_CODE_ERROR, "msg-error", msg);
+            setApiResult(userData, ApiResultCodeEnum.ERROR, "msg-error", msg);
         }
 
         return userData;
@@ -3725,7 +3686,7 @@ public final class JsonApiServer extends AbstractPage {
 
             ImapListener.test(nMessagesInbox, nMessagesTrash);
 
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-imap-test-passed", nMessagesInbox.toString(),
                     nMessagesTrash.toString());
 
@@ -3734,7 +3695,7 @@ public final class JsonApiServer extends AbstractPage {
             if (msg == null) {
                 msg = "connection error.";
             }
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-imap-test-failed", msg);
         }
 
@@ -3762,7 +3723,7 @@ public final class JsonApiServer extends AbstractPage {
             msgKey = "msg-imap-started";
         }
 
-        return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
+        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
     }
 
     /**
@@ -3779,7 +3740,7 @@ public final class JsonApiServer extends AbstractPage {
         } else {
             msgKey = "msg-imap-stopped-already";
         }
-        return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
+        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
     }
 
     /**
@@ -3799,10 +3760,10 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         if (error == null) {
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-papercut-test-passed");
         } else {
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-papercut-test-failed", error);
         }
 
@@ -3822,7 +3783,7 @@ public final class JsonApiServer extends AbstractPage {
 
             SmartSchoolPrintMonitor.testConnection(nMessagesInbox);
 
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-smartschool-test-passed", nMessagesInbox.toString());
 
         } catch (Exception e) {
@@ -3830,7 +3791,7 @@ public final class JsonApiServer extends AbstractPage {
             if (msg == null) {
                 msg = "connection error.";
             }
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-smartschool-test-failed", msg);
         }
 
@@ -3848,7 +3809,7 @@ public final class JsonApiServer extends AbstractPage {
         final String msgKey;
 
         if (!ConfigManager.isSmartSchoolPrintActiveAndEnabled()) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-smartschool-accounts-disabled");
         }
 
@@ -3857,7 +3818,7 @@ public final class JsonApiServer extends AbstractPage {
 
         if (SmartSchoolPrinter.isBlocked()) {
 
-            return setApiResult(userData, API_RESULT_CODE_WARN,
+            return setApiResult(userData, ApiResultCodeEnum.WARN,
                     "msg-smartschool-blocked",
                     CommunityDictEnum.SAVAPAGE.getWord(),
                     CommunityDictEnum.MEMBERSHIP.getWord());
@@ -3889,7 +3850,7 @@ public final class JsonApiServer extends AbstractPage {
                     CircuitBreakerEnum.SMARTSCHOOL_CONNECTION).closeCircuit();
 
         }
-        return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
+        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
     }
 
     /**
@@ -3907,7 +3868,7 @@ public final class JsonApiServer extends AbstractPage {
         } else {
             msgKey = "msg-smartschool-stopped-already";
         }
-        return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
+        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
     }
 
     /**
@@ -3951,11 +3912,11 @@ public final class JsonApiServer extends AbstractPage {
             AdminPublisher.instance().publish(PubTopicEnum.PAYMENT_GATEWAY,
                     pubLevel, systemMsg);
 
-            return setApiResult(userData, API_RESULT_CODE_OK, key,
+            return setApiResult(userData, ApiResultCodeEnum.OK, key,
                     plugin.getName());
         }
 
-        return setApiResult(userData, API_RESULT_CODE_ERROR,
+        return setApiResult(userData, ApiResultCodeEnum.ERROR,
                 "msg-payment-gateway-not-found");
     }
 
@@ -3975,7 +3936,7 @@ public final class JsonApiServer extends AbstractPage {
                         Key.INTERNAL_USERS_PW_LENGTH_MIN);
 
         if (password.length() < minPwLength) {
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-password-length-error", String.valueOf(minPwLength));
             return false;
         }
@@ -3998,7 +3959,7 @@ public final class JsonApiServer extends AbstractPage {
 
         JmxRemoteProperties.setAdminPassword(password);
 
-        setApiResult(userData, API_RESULT_CODE_OK, "msg-password-reset-ok");
+        setApiResult(userData, ApiResultCodeEnum.OK, "msg-password-reset-ok");
 
         return userData;
     }
@@ -4017,7 +3978,7 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         ConfigManager.instance().setInternalAdminPassword(password);
-        setApiResult(userData, API_RESULT_CODE_OK, "msg-password-reset-ok");
+        setApiResult(userData, ApiResultCodeEnum.OK, "msg-password-reset-ok");
 
         return userData;
     }
@@ -4041,7 +4002,7 @@ public final class JsonApiServer extends AbstractPage {
          * INVARIANT: internal Admin is NOT a database User.
          */
         if (ConfigManager.isInternalAdmin(iuser)) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-password-reset-not-allowed", iuser);
         }
 
@@ -4060,7 +4021,7 @@ public final class JsonApiServer extends AbstractPage {
         final User jpaUser = userDao.findActiveUserByUserId(iuser);
 
         if (!jpaUser.getInternal()) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-password-reset-not-allowed", iuser);
         }
 
@@ -4074,7 +4035,7 @@ public final class JsonApiServer extends AbstractPage {
 
         userDao.update(jpaUser);
 
-        setApiResult(userData, API_RESULT_CODE_OK, "msg-password-reset-ok");
+        setApiResult(userData, ApiResultCodeEnum.OK, "msg-password-reset-ok");
 
         return userData;
     }
@@ -4137,7 +4098,7 @@ public final class JsonApiServer extends AbstractPage {
 
         userDao.update(jpaUser);
 
-        setApiResult(userData, API_RESULT_CODE_OK, "msg-pin-reset-ok");
+        setApiResult(userData, ApiResultCodeEnum.OK, "msg-pin-reset-ok");
 
         return userData;
     }
@@ -4160,7 +4121,7 @@ public final class JsonApiServer extends AbstractPage {
 
         if (queue == null) {
 
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-queue-not-found", id);
 
         } else {
@@ -4272,7 +4233,7 @@ public final class JsonApiServer extends AbstractPage {
 
         if (isDuplicate) {
 
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-queue-duplicate-path", urlPath);
 
         } else {
@@ -4286,14 +4247,14 @@ public final class JsonApiServer extends AbstractPage {
 
                 if (QUEUE_SERVICE.isReservedQueue(urlPath)) {
 
-                    setApiResult(userData, API_RESULT_CODE_ERROR,
+                    setApiResult(userData, ApiResultCodeEnum.ERROR,
                             "msg-queue-reserved-path", urlPath);
 
                 } else {
 
                     ippQueueDao.create(jpaQueue);
 
-                    setApiResult(userData, API_RESULT_CODE_OK,
+                    setApiResult(userData, ApiResultCodeEnum.OK,
                             "msg-queue-created-ok");
                 }
 
@@ -4313,7 +4274,8 @@ public final class JsonApiServer extends AbstractPage {
 
                 ippQueueDao.update(jpaQueue);
 
-                setApiResult(userData, API_RESULT_CODE_OK, "msg-queue-saved-ok");
+                setApiResult(userData, ApiResultCodeEnum.OK,
+                        "msg-queue-saved-ok");
             }
         }
         return userData;
@@ -4341,14 +4303,14 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         if (device.getCardReaderTerminal() != null) {
-            return setApiResult(userData, API_RESULT_CODE_INFO,
+            return setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-device-delete-reader-in-use", device.getDisplayName(),
                     device.getCardReaderTerminal().getDisplayName());
         }
 
         deviceDao.delete(device);
 
-        return setApiResult(userData, API_RESULT_CODE_OK,
+        return setApiResult(userData, ApiResultCodeEnum.OK,
                 "msg-device-deleted-ok");
     }
 
@@ -4421,7 +4383,7 @@ public final class JsonApiServer extends AbstractPage {
         final Device device = deviceDao.findById(Long.valueOf(id));
 
         if (device == null) {
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-device-not-found", id);
         } else {
             Map<String, Object> userObj = new HashMap<String, Object>();
@@ -4560,7 +4522,7 @@ public final class JsonApiServer extends AbstractPage {
 
         if (isDuplicate) {
 
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-device-duplicate-name", deviceName);
 
         }
@@ -4578,7 +4540,7 @@ public final class JsonApiServer extends AbstractPage {
         if (deviceDao.isCardReader(jpaDevice)) {
             JsonNode jsonPort = list.get("port");
             if (jsonPort == null || jsonPort.getIntValue() <= 0) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-device-port-error");
             }
             iPort = jsonPort.getIntValue();
@@ -4622,7 +4584,7 @@ public final class JsonApiServer extends AbstractPage {
              * INVARIANT: Card Reader must be specified.
              */
             if (StringUtils.isBlank(cardReaderName)) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-device-card-reader-missing");
             }
 
@@ -4632,7 +4594,7 @@ public final class JsonApiServer extends AbstractPage {
              * INVARIANT: Card Reader must exist.
              */
             if (jpaCardReader == null) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-device-card-reader-not-found", cardReaderName);
             }
 
@@ -4646,7 +4608,7 @@ public final class JsonApiServer extends AbstractPage {
                 if (isNew
                         || !jpaDevice.getId().equals(
                                 jpaCardReaderTerminal.getId())) {
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
                             "msg-device-card-reader-reserved-for-terminal",
                             cardReaderName,
                             jpaCardReaderTerminal.getDisplayName());
@@ -4658,13 +4620,13 @@ public final class JsonApiServer extends AbstractPage {
              * Authenticator.
              */
             if (jpaCardReader.getPrinter() != null) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-device-card-reader-reserved-for-printer",
                         cardReaderName, jpaCardReader.getPrinter()
                                 .getPrinterName());
             }
             if (jpaCardReader.getPrinterGroup() != null) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-device-card-reader-reserved-for-printer-group",
                         cardReaderName, jpaCardReader.getPrinterGroup()
                                 .getDisplayName());
@@ -4701,7 +4663,7 @@ public final class JsonApiServer extends AbstractPage {
                 if (attrKey.equals(DeviceAttrEnum.WEBAPP_USER_MAX_IDLE_SECS
                         .getDbName()) && !StringUtils.isNumeric(attrValue)) {
 
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
                             "msg-device-idle-seconds-error");
                 }
 
@@ -4752,7 +4714,7 @@ public final class JsonApiServer extends AbstractPage {
             }
 
             if (printerGroup == null && printerName == null) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-device-proxy-printer-or-group-needed");
             }
 
@@ -4763,7 +4725,7 @@ public final class JsonApiServer extends AbstractPage {
                  * printer group is irrelevant for FAST proxy print.
                  */
                 if (printerName == null || printerGroup != null) {
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
                             "msg-device-single-proxy-printer-needed");
                 }
 
@@ -4774,11 +4736,11 @@ public final class JsonApiServer extends AbstractPage {
                  * INVARIANT: FAST proxy print MUST target a SINGLE printer.
                  */
                 if (printerGroup != null && printerName == null) {
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
                             "msg-device-single-proxy-printer-needed");
                 }
             } else if (printerGroup != null && printerName != null) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-device-proxy-printer-or-group-needed");
             }
 
@@ -4802,7 +4764,7 @@ public final class JsonApiServer extends AbstractPage {
                     jpaPrinterWlk = printerDao.findByName(printerName);
 
                     if (jpaPrinterWlk == null) {
-                        return setApiResult(userData, API_RESULT_CODE_ERROR,
+                        return setApiResult(userData, ApiResultCodeEnum.ERROR,
                                 "msg-device-printer-not-found", printerName);
                     }
                 }
@@ -4829,7 +4791,7 @@ public final class JsonApiServer extends AbstractPage {
                             printerGroupDao.findByName(printerGroup);
 
                     if (jpaPrinterGroupWlk == null) {
-                        return setApiResult(userData, API_RESULT_CODE_ERROR,
+                        return setApiResult(userData, ApiResultCodeEnum.ERROR,
                                 "msg-device-printer-group-not-found",
                                 printerGroup);
                     }
@@ -4893,7 +4855,7 @@ public final class JsonApiServer extends AbstractPage {
         /*
          *
          */
-        setApiResult(userData, API_RESULT_CODE_OK, resultMsgKey);
+        setApiResult(userData, ApiResultCodeEnum.OK, resultMsgKey);
         return userData;
     }
 
@@ -4915,7 +4877,7 @@ public final class JsonApiServer extends AbstractPage {
         final Printer printer = printerDao.findById(Long.valueOf(id));
 
         if (printer == null) {
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-printer-not-found", id);
         } else {
             final ProxyPrinterDto dto =
@@ -4954,7 +4916,7 @@ public final class JsonApiServer extends AbstractPage {
         final Boolean replaceDuplicate = list.get("replace").getBooleanValue();
 
         if (StringUtils.isBlank(newName)) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-printer-rename-new-name-missing");
         }
 
@@ -4974,7 +4936,7 @@ public final class JsonApiServer extends AbstractPage {
             if (!replaceDuplicate
                     && printerDao.countPrintOuts(printerDuplicate.getId()) > 0) {
 
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-printer-rename-duplicate", oldName, newName);
             }
 
@@ -5024,7 +4986,7 @@ public final class JsonApiServer extends AbstractPage {
             msgKey = "msg-printer-renamed-delete-ok";
         }
 
-        return setApiResult(userData, API_RESULT_CODE_OK, msgKey, oldName,
+        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey, oldName,
                 newName);
     }
 
@@ -5055,13 +5017,13 @@ public final class JsonApiServer extends AbstractPage {
          * INVARIANT: printer MUST exist.
          */
         if (jpaPrinter == null) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-printer-not-found", String.valueOf(id));
         }
 
         PROXY_PRINT_SERVICE.setProxyPrinterProps(jpaPrinter, dto);
 
-        setApiResult(userData, API_RESULT_CODE_OK, "msg-printer-saved-ok");
+        setApiResult(userData, ApiResultCodeEnum.OK, "msg-printer-saved-ok");
 
         return userData;
     }
@@ -5093,7 +5055,7 @@ public final class JsonApiServer extends AbstractPage {
          * INVARIANT: printer MUST exist.
          */
         if (jpaPrinter == null) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-printer-not-found", String.valueOf(id));
         }
 
@@ -5104,7 +5066,7 @@ public final class JsonApiServer extends AbstractPage {
                 PROXY_PRINT_SERVICE.setProxyPrinterCostMedia(jpaPrinter, dto);
 
         if (rpcResponse.isResult()) {
-            setApiResult(userData, API_RESULT_CODE_OK, "msg-printer-saved-ok");
+            setApiResult(userData, ApiResultCodeEnum.OK, "msg-printer-saved-ok");
         } else {
             setApiResultMsgError(userData, "", rpcResponse.asError().getError()
                     .data(ErrorDataBasic.class).getReason());
@@ -5141,7 +5103,7 @@ public final class JsonApiServer extends AbstractPage {
          * INVARIANT: printer MUST exist.
          */
         if (jpaPrinter == null) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-printer-not-found", String.valueOf(id));
         }
 
@@ -5153,7 +5115,7 @@ public final class JsonApiServer extends AbstractPage {
                         dto);
 
         if (rpcResponse.isResult()) {
-            setApiResult(userData, API_RESULT_CODE_OK, "msg-printer-saved-ok");
+            setApiResult(userData, ApiResultCodeEnum.OK, "msg-printer-saved-ok");
         } else {
             setApiResultMsgError(userData, "", rpcResponse.asError().getError()
                     .data(ErrorDataBasic.class).getReason());
@@ -5174,7 +5136,7 @@ public final class JsonApiServer extends AbstractPage {
         final Map<String, Object> data = new HashMap<String, Object>();
 
         if (!PROXY_PRINT_SERVICE.isConnectedToCups()) {
-            return setApiResult(data, API_RESULT_CODE_ERROR,
+            return setApiResult(data, ApiResultCodeEnum.ERROR,
                     "msg-printer-connection-broken");
         }
 
@@ -5183,7 +5145,7 @@ public final class JsonApiServer extends AbstractPage {
          */
         PROXY_PRINT_SERVICE.initPrinterCache();
 
-        return setApiResult(data, API_RESULT_CODE_OK, "msg-printer-sync-ok");
+        return setApiResult(data, ApiResultCodeEnum.OK, "msg-printer-sync-ok");
     }
 
     /**
@@ -5209,7 +5171,7 @@ public final class JsonApiServer extends AbstractPage {
         final ConfigProperty prop = dao.findByName(name);
 
         if (prop == null) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-config-prop-not-found", name);
         }
 
@@ -5218,7 +5180,7 @@ public final class JsonApiServer extends AbstractPage {
          */
         final Key key = cm.getConfigKey(name);
         if (key == null) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-config-prop-not-found", name);
         }
 
@@ -5267,8 +5229,8 @@ public final class JsonApiServer extends AbstractPage {
 
         if (user == null) {
 
-            setApiResult(userData, API_RESULT_CODE_ERROR, "msg-user-not-found",
-                    userId);
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
+                    "msg-user-not-found", userId);
 
         } else {
 
@@ -5294,8 +5256,8 @@ public final class JsonApiServer extends AbstractPage {
         final User user = userDao.findActiveUserByUserId(userId);
 
         if (user == null) {
-            setApiResult(userData, API_RESULT_CODE_ERROR, "msg-user-not-found",
-                    userId);
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
+                    "msg-user-not-found", userId);
         } else {
             addUserStats(userData, user, this.getSession().getLocale(),
                     SpSession.getAppCurrencySymbol());
@@ -5337,21 +5299,21 @@ public final class JsonApiServer extends AbstractPage {
 
         if (!StringUtils.isNumeric(pin)) {
 
-            setApiResult(userData, API_RESULT_CODE_ERROR,
+            setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-user-pin-not-numeric");
 
         } else if (pin.length() < lengthMin
                 || (lengthMax > 0 && pin.length() > lengthMax)) {
 
             if (lengthMin == lengthMax) {
-                setApiResult(userData, API_RESULT_CODE_ERROR,
+                setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-user-pin-length-error", String.valueOf(lengthMin));
             } else if (lengthMax == 0) {
-                setApiResult(userData, API_RESULT_CODE_ERROR,
+                setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-user-pin-length-error-min",
                         String.valueOf(lengthMin));
             } else {
-                setApiResult(userData, API_RESULT_CODE_ERROR,
+                setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-user-pin-length-error-min-max",
                         String.valueOf(lengthMin), String.valueOf(lengthMax));
             }
@@ -5417,7 +5379,7 @@ public final class JsonApiServer extends AbstractPage {
                 dto.getAmountMain() + "." + dto.getAmountCents();
 
         if (!BigDecimalUtil.isValid(plainAmount)) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-amount-invalid");
         }
 
@@ -5427,7 +5389,7 @@ public final class JsonApiServer extends AbstractPage {
          * INVARIANT: Amount MUST be GT zero.
          */
         if (paymentAmount.compareTo(BigDecimal.ZERO) <= 0) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-amount-must-be positive");
         }
 
@@ -5443,7 +5405,7 @@ public final class JsonApiServer extends AbstractPage {
                     "Payment gateway \"%s\" is not available.",
                     dto.getGatewayId()));
         } else if (!plugin.isOnline()) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-payment-method-not-possible", dto.getMethod()
                             .toString());
         }
@@ -5478,10 +5440,12 @@ public final class JsonApiServer extends AbstractPage {
 
             final StringBuilder err = new StringBuilder();
             err.append("Communication error: ").append(e.getMessage());
-            createApiResult(userData, API_RESULT_CODE_ERROR, "", err.toString());
+            createApiResult(userData, ApiResultCodeEnum.ERROR, "",
+                    err.toString());
 
         } catch (PaymentGatewayException e) {
-            createApiResult(userData, API_RESULT_CODE_ERROR, "", e.getMessage());
+            createApiResult(userData, ApiResultCodeEnum.ERROR, "",
+                    e.getMessage());
         }
 
         return userData;
@@ -5522,7 +5486,7 @@ public final class JsonApiServer extends AbstractPage {
                  */
                 ServiceContext.getDaoContext().commit();
 
-                setApiResult(userData, API_RESULT_CODE_OK,
+                setApiResult(userData, ApiResultCodeEnum.OK,
                         "msg-deposit-funds-receipt-email-ok",
                         dto.getUserEmail());
 
@@ -5534,7 +5498,7 @@ public final class JsonApiServer extends AbstractPage {
             case NONE:
                 // no break intended
             default:
-                setApiResult(userData, API_RESULT_CODE_OK,
+                setApiResult(userData, ApiResultCodeEnum.OK,
                         "msg-deposit-funds-ok");
                 break;
             }
@@ -5579,7 +5543,7 @@ public final class JsonApiServer extends AbstractPage {
 
         mailDepositReceipt(dto.getKey(), email, requestingUser, true);
 
-        setApiResult(data, API_RESULT_CODE_OK, "msg-pos-receipt-sendmail-ok",
+        setApiResult(data, ApiResultCodeEnum.OK, "msg-pos-receipt-sendmail-ok",
                 email);
 
         return data;
@@ -5603,7 +5567,7 @@ public final class JsonApiServer extends AbstractPage {
                 ACCOUNT_VOUCHER_SERVICE.createBatch(dto);
 
         if (rpcResponse.isResult()) {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-batch-created-ok", dto.getNumber().toString(),
                     dto.getBatchId());
         } else {
@@ -5628,13 +5592,13 @@ public final class JsonApiServer extends AbstractPage {
                         .deleteBatch(batch);
 
         if (nDeleted == 0) {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-batch-deleted-zero", batch);
         } else if (nDeleted == 1) {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-batch-deleted-one", batch);
         } else {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-batch-deleted-many", nDeleted.toString(),
                     batch);
         }
@@ -5657,13 +5621,13 @@ public final class JsonApiServer extends AbstractPage {
                         .expireBatch(batch, expiryToday);
 
         if (nExpired == 0) {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-batch-expired-zero", batch);
         } else if (nExpired == 1) {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-batch-expired-one", batch);
         } else {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-batch-expired-many", nExpired.toString(),
                     batch);
         }
@@ -5684,7 +5648,7 @@ public final class JsonApiServer extends AbstractPage {
          * A blank card number is not considered a trial.
          */
         if (StringUtils.isBlank(cardNumber)) {
-            return setApiResult(userData, API_RESULT_CODE_WARN,
+            return setApiResult(userData, ApiResultCodeEnum.WARN,
                     "msg-voucher-redeem-void");
         }
 
@@ -5699,7 +5663,8 @@ public final class JsonApiServer extends AbstractPage {
 
         if (rpcResponse.isResult()) {
 
-            setApiResult(userData, API_RESULT_CODE_OK, "msg-voucher-redeem-ok");
+            setApiResult(userData, ApiResultCodeEnum.OK,
+                    "msg-voucher-redeem-ok");
 
         } else {
 
@@ -5741,13 +5706,13 @@ public final class JsonApiServer extends AbstractPage {
                         .deleteExpired(expiryToday);
 
         if (nDeleted == 0) {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-deleted-expired-zero");
         } else if (nDeleted == 1) {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-deleted-expired-one");
         } else {
-            setApiResult(userData, API_RESULT_CODE_OK,
+            setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-deleted-expired-many", nDeleted.toString());
         }
         return userData;
@@ -5811,7 +5776,7 @@ public final class JsonApiServer extends AbstractPage {
                 msgKeyOk = "msg-user-saved-ok";
             }
 
-            setApiResult(userData, API_RESULT_CODE_OK, msgKeyOk);
+            setApiResult(userData, ApiResultCodeEnum.OK, msgKeyOk);
 
         } else {
             setApiResultMsgError(userData, "", rpcResponse.asError().getError()
@@ -5890,7 +5855,8 @@ public final class JsonApiServer extends AbstractPage {
                     PubLevelEnum.WARN, msg);
         }
 
-        return setApiResult(userData, API_RESULT_CODE_ERROR, "msg-login-failed");
+        return setApiResult(userData, ApiResultCodeEnum.ERROR,
+                "msg-login-failed");
     }
 
     /**
@@ -5953,7 +5919,7 @@ public final class JsonApiServer extends AbstractPage {
                 new UserAuth(terminal, null, isAdminOnlyLogin);
 
         if (!theUserAuth.isAuthModeAllowed(authMode)) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-auth-mode-not-available", authMode.toString());
         }
 
@@ -6115,7 +6081,7 @@ public final class JsonApiServer extends AbstractPage {
                     userData.put("authCardSelfAssoc",
                             Boolean.valueOf(theUserAuth.isAuthCardSelfAssoc()));
 
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
                             "msg-login-unregistered-card");
                 }
                 uid = userDb.getUserId();
@@ -6329,7 +6295,7 @@ public final class JsonApiServer extends AbstractPage {
                 try {
                     USER_SERVICE.lazyUserHomeDir(uid);
                 } catch (IOException e) {
-                    return setApiResult(userData, API_RESULT_CODE_ERROR,
+                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
                             "msg-user-home-dir-create-error");
                 }
             }
@@ -6347,7 +6313,7 @@ public final class JsonApiServer extends AbstractPage {
             /*
              * Do NOT grant a login, just associate the card.
              */
-            return setApiResult(userData, API_RESULT_CODE_INFO,
+            return setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-card-registered-ok");
         }
 
@@ -6356,10 +6322,10 @@ public final class JsonApiServer extends AbstractPage {
          */
         if (isAdminOnlyLogin) {
             if (!cm.isSetupCompleted()) {
-                setApiResult(userData, API_RESULT_CODE_WARN,
+                setApiResult(userData, ApiResultCodeEnum.WARN,
                         "msg-setup-is-needed");
             } else if (cm.doesInternalAdminHasDefaultPassword()) {
-                setApiResult(userData, API_RESULT_CODE_WARN,
+                setApiResult(userData, ApiResultCodeEnum.WARN,
                         "msg-change-internal-admin-password");
             } else {
                 setApiResultMembershipMsg(userData);
@@ -6476,7 +6442,7 @@ public final class JsonApiServer extends AbstractPage {
         final boolean isMobile = isMobileBrowser();
 
         if (!isMobile && SpSession.get().getAuthWebAppCount() != 0) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-login-another-session-active");
         }
 
@@ -6484,7 +6450,7 @@ public final class JsonApiServer extends AbstractPage {
          * INVARIANT: The application SHOULD be initialized.
          */
         if (!cm.isInitialized()) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-login-not-possible");
         }
 
@@ -6494,11 +6460,11 @@ public final class JsonApiServer extends AbstractPage {
          */
         if (!cm.isSetupCompleted()) {
             if (!isAdminOnlyLogin || authMode != UserAuth.Mode.NAME) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-login-install-mode");
             }
             if (!ConfigManager.isInternalAdmin(authId)) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-login-as-internal-admin");
             }
         }
@@ -6509,7 +6475,7 @@ public final class JsonApiServer extends AbstractPage {
          */
         if (!cm.isAppReadyToUse()) {
             if (!isAdminOnlyLogin) {
-                return setApiResult(userData, API_RESULT_CODE_ERROR,
+                return setApiResult(userData, ApiResultCodeEnum.ERROR,
                         "msg-login-app-config");
             }
         }
@@ -6833,6 +6799,13 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("country", getSession().getLocale().getCountry());
         userData.put("mail", USER_SERVICE.getPrimaryEmailAddress(userDb));
 
+        userData.put("number", StringUtils.defaultString(USER_SERVICE
+                .getPrimaryIdNumber(userDb)));
+
+        userData.put("uuid", CryptoUser.decryptUserAttr(userDb.getId(),
+                StringUtils.defaultString(USER_SERVICE.findUserAttrValue(
+                        userDb, UserAttrEnum.UUID))));
+
         if (authToken != null) {
             userData.put("authtoken", authToken.getToken());
         }
@@ -7095,14 +7068,14 @@ public final class JsonApiServer extends AbstractPage {
 
         switch (memberCard.getStatus()) {
         case EXCEEDED:
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-membership-exceeded-user-limit",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
                     CommunityDictEnum.MEMBER_CARD.getWord());
             break;
         case EXPIRED:
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-membership-expired",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
@@ -7110,12 +7083,12 @@ public final class JsonApiServer extends AbstractPage {
 
             break;
         case VISITOR:
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-membership-visit", daysLeft.toString(),
                     CommunityDictEnum.VISITOR.getWord());
             break;
         case VISITOR_EXPIRED:
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-membership-visit-expired",
                     CommunityDictEnum.VISITOR.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
@@ -7123,21 +7096,21 @@ public final class JsonApiServer extends AbstractPage {
             break;
         case WRONG_MODULE:
         case WRONG_COMMUNITY:
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-membership-wrong-product",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
                     CommunityDictEnum.MEMBER_CARD.getWord());
             break;
         case WRONG_VERSION:
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-membership-version",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
                     CommunityDictEnum.MEMBER_CARD.getWord());
             break;
         case WRONG_VERSION_WITH_GRACE:
-            setApiResult(userData, API_RESULT_CODE_INFO,
+            setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-membership-version-grace",
                     CommunityDictEnum.MEMBERSHIP.getWord(),
                     daysLeft.toString(),
@@ -7208,7 +7181,7 @@ public final class JsonApiServer extends AbstractPage {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
-        return setApiResult(userData, API_RESULT_CODE_OK, "msg-job-deleted");
+        return setApiResult(userData, ApiResultCodeEnum.OK, "msg-job-deleted");
     }
 
     /**
@@ -7240,7 +7213,7 @@ public final class JsonApiServer extends AbstractPage {
          * INVARIANT: GCP printer MUST be present.
          */
         if (!GcpPrinter.isPresent()) {
-            return setApiResult(userData, API_RESULT_CODE_ERROR,
+            return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-gcp-state-mismatch", GcpPrinter.getState().toString());
         }
 
@@ -7285,7 +7258,7 @@ public final class JsonApiServer extends AbstractPage {
         /*
          *
          */
-        return setApiResult(userData, API_RESULT_CODE_OK, msgKey);
+        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
     }
 
     /**
@@ -7332,7 +7305,7 @@ public final class JsonApiServer extends AbstractPage {
         cm.updateConfigKey(Key.GCP_JOB_OWNER_UNKNOWN_CANCEL_MAIL_BODY,
                 emailBody, user.getUserId());
 
-        return setApiResult(userData, API_RESULT_CODE_OK,
+        return setApiResult(userData, ApiResultCodeEnum.OK,
                 "msg-config-props-applied");
     }
 
@@ -7390,7 +7363,7 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("displayState",
                 GcpPrinter.localized(ConfigManager.isGcpEnabled(), stateNext));
 
-        return setApiResult(userData, API_RESULT_CODE_OK,
+        return setApiResult(userData, ApiResultCodeEnum.OK,
                 "msg-config-props-applied");
     }
 
@@ -7460,7 +7433,7 @@ public final class JsonApiServer extends AbstractPage {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
-        return setApiResult(userData, API_RESULT_CODE_OK,
+        return setApiResult(userData, ApiResultCodeEnum.OK,
                 "msg-letterhead-edited");
     }
 
@@ -7497,7 +7470,7 @@ public final class JsonApiServer extends AbstractPage {
                 list.get("undelete").getBooleanValue());
 
         final Map<String, Object> userData = new HashMap<String, Object>();
-        return setApiResult(userData, API_RESULT_CODE_OK, "msg-job-edited");
+        return setApiResult(userData, ApiResultCodeEnum.OK, "msg-job-edited");
     }
 
     /**

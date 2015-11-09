@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <!-- ReqDbBackup -->
+
+    <entry key="msg-db-backup-busy">Backup maken...</entry>
+    <entry key="msg-tech-error">{0}</entry>	
+    
+</properties>

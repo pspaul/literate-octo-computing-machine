@@ -15,6 +15,7 @@
     <entry key="button-back">Terug</entry>
     <entry key="button-password">Wachtwoord</entry>
     <entry key="button-pin">PIN</entry>
+    <entry key="button-uuid">UUID</entry>
 
     <entry key="msg-file-upload-busy">Uploaden ...</entry>
     <entry key="msg-file-upload-success">Bestand met succes geüpload.</entry>

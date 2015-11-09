@@ -857,20 +857,21 @@
 			setVisibility : function(my) {
 				var _view = _ns.PanelCommon.view;
 
-				$('.sp-doclog-cat').hide();
+				$('.sp-doclog-cat-out').hide();
+				$('.sp-doclog-cat-pdf').hide();
+				$('.sp-doclog-cat-queue').hide();
+				$('.sp-doclog-cat-printer').hide();
 
 				if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-in')) {
-					$('#sp-doclog-cat-queue').show();
-					$('#sp-doclog-sort-by-queue-cat').show();
+					$('.sp-doclog-cat-queue').show();
 				} else if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-out')) {
-					$('#sp-doclog-cat-out').show();
+					$('.sp-doclog-cat-out').show();
 				} else if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-pdf')) {
-					$('#sp-doclog-cat-out').show();
-					$('#sp-doclog-cat-pdf').show();
+					$('.sp-doclog-cat-out').show();
+					$('.sp-doclog-cat-pdf').show();
 				} else if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-print')) {
-					$('#sp-doclog-cat-out').show();
-					$('#sp-doclog-cat-printer').show();
-					$('#sp-doclog-sort-by-printer-cat').show();
+					$('.sp-doclog-cat-out').show();
+					$('.sp-doclog-cat-printer').show();
 				}
 			},
 

@@ -22,6 +22,7 @@
 	<entry key="button-delete">Delete</entry>
 	<entry key="button-cancel">Cancel</entry>
     <entry key="button-password">Password</entry>
+    <entry key="button-generate">Generate</entry>
 
     <entry key="label-financial">Financial</entry>
     <entry key="label-balance">Balance</entry>

@@ -1626,6 +1626,39 @@
 		}
 
 		/**
+		 * Constructor
+		 */
+		function PageUserUuid(_i18n, _view, _model) {
+
+			var _page = new _ns.Page(_i18n, _view, '#page-user-uuid', 'UserUuid')
+			//
+			, _self = _ns.derive(_page)
+			//
+			;
+
+			_self.onGenerateUuid = null;
+
+			/**
+			 *
+			 */
+			$(_self.id()).on('pagecreate', function(event) {
+				
+				$('#button-user-generate-uuid').click(function(e) {
+					if (_self.onGenerateUuid) {
+						_self.onGenerateUuid();
+					}
+					return false;
+				});
+
+			}).on('pagebeforeshow', function(event, ui) {
+				$('#sp-user-printer-uri-number').html(_model.user.number);
+				$('#sp-user-printer-uri-uuid').html(_model.user.uuid);
+			});
+			
+			return _self;
+		}
+
+		/**
 		 *
 		 */
 		function PageDashboard(_i18n, _view, _model) {
@@ -1641,11 +1674,20 @@
 						return false;
 					});
 				}
+				
 				if ($('#button-user-pin-dialog')) {
 					$(this).on('click', '#button-user-pin-dialog', null, function() {
 						_view.showPageAsync('#page-user-pin-reset', 'UserPinReset', function() {
 							$('#user-pin-reset-title').html(_model.user.id);
 						});
+						return false;
+					});
+				}
+
+				if ($('#button-user-uuid-dialog')) {
+					$(this).on('click', '#button-user-uuid-dialog', null, function() {
+						_view.showUserPage('#page-user-uuid', 'UserUuid');
+						$('#user-uuid-title').html(_model.user.id);						
 						return false;
 					});
 				}
@@ -4009,6 +4051,9 @@
 
 				_model.user.key_id = loginRes.key_id;
 				_model.user.id = loginRes.id;
+				_model.user.uuid = loginRes.uuid;
+				_model.user.number = loginRes.number;
+				
 				_model.user.fullname = loginRes.fullname;
 
 				_model.language = loginRes.language;
@@ -4236,6 +4281,11 @@
 					_ns.restartWebApp();
 					return false;
 				});
+
+				$(document).on('click', '.sp-collapse', null, function() {
+					$(this).closest('[data-role=collapsible]').collapsible('collapse');
+					return false;
+				});				
 
 			};
 
@@ -5762,6 +5812,7 @@
 				print_settings : new PagePrintSettings(_i18n, _view, _model),
 				fileUpload : new PageFileUpload(_i18n, _view, _model),
 				userPinReset : new PageUserPinReset(_i18n, _view, _model),
+				userUuid : new PageUserUuid(_i18n, _view, _model),
 				userPwReset : new _ns.PageUserPasswordReset(_i18n, _view, _model)
 			};
 

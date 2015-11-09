@@ -16,6 +16,7 @@
     <entry key="button-back">Back</entry>
     <entry key="button-password">Password</entry>
     <entry key="button-pin">PIN</entry>
+    <entry key="button-uuid">UUID</entry>
 
     <entry key="msg-file-upload-busy">Uploading ...</entry>
     <entry key="msg-file-upload-success">File successfully uploaded.</entry>

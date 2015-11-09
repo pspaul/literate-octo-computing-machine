@@ -81,7 +81,6 @@
 	<entry key="msg-job-edited">Opdracht is met succes bewerkt.</entry>
 	<entry key="msg-letterhead-edited">Briefhoofd is met succes bewerkt.</entry>
 
-	<entry key="msg-db-backup-busy">Backup maken...</entry>
 	<entry key="msg-tech-error">{0}</entry>
 
 	<entry key="msg-user-sync-busy">Synchroniseren gebruikers ...</entry>

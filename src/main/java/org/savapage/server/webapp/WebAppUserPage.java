@@ -295,6 +295,11 @@ public final class WebAppUserPage extends AbstractWebAppPage {
                 ConfigManager.instance().isConfigValue(Key.USER_CAN_CHANGE_PIN),
                 "button-user-pin-dialog", localized("button-pin"));
 
+        addVisible(
+                ConfigManager.instance()
+                        .isConfigValue(Key.USER_CAN_CHANGE_UUID),
+                "button-user-uuid-dialog", localized("button-uuid"));
+
     }
 
     @Override

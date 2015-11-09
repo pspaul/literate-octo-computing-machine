@@ -24,8 +24,12 @@ package org.savapage.server.api;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.savapage.core.SpException;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.server.api.request.ApiRequestHandler;
+import org.savapage.server.api.request.ReqDbBackup;
+import org.savapage.server.api.request.ReqGenerateUuid;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.
@@ -197,6 +201,8 @@ public class JsonApiDict {
     public static final String REQ_USER_SOURCE_GROUPS = "user-source-groups";
     public static final String REQ_USER_SYNC = "user-sync";
 
+    public static final String REQ_GENERATE_UUID = "generate-uuid";
+
     /**
      */
     public enum DbClaim {
@@ -246,12 +252,31 @@ public class JsonApiDict {
         final AuthReq authReq;
         final DbAccess dbAccess;
         final DbClaim dbClaim;
+        final Class<? extends ApiRequestHandler> handler;
 
+        /**
+         * @deprecated
+         * @param authReq
+         * @param dbClaim
+         * @param dbAccess
+         */
+        @Deprecated
         private Req(AuthReq authReq, DbClaim dbClaim, DbAccess dbAccess) {
             this.dbAccess = dbAccess;
             this.dbClaim = dbClaim;
             this.authReq = authReq;
+            this.handler = null;
         }
+
+        private Req(AuthReq authReq,
+                Class<? extends ApiRequestHandler> handler, DbClaim dbClaim,
+                DbAccess dbAccess) {
+            this.dbAccess = dbAccess;
+            this.dbClaim = dbClaim;
+            this.authReq = authReq;
+            this.handler = handler;
+        }
+
     };
 
     /**
@@ -293,8 +318,26 @@ public class JsonApiDict {
         dict.put(key, new Req(AuthReq.ADMIN, dbClaim, dbAccess));
     }
 
+    /**
+     *
+     * @param key
+     * @param handler
+     * @param dbClaim
+     * @param dbAccess
+     */
+    private void adm(final String key,
+            final Class<? extends ApiRequestHandler> handler, DbClaim dbClaim,
+            DbAccess dbAccess) {
+        dict.put(key, new Req(AuthReq.ADMIN, handler, dbClaim, dbAccess));
+    }
+
     private void non(final String key) {
         dict.put(key, new Req(AuthReq.NONE, DbClaim.NONE, DbAccess.NO));
+    }
+
+    private void non(final String key,
+            final Class<? extends ApiRequestHandler> handler) {
+        dict.put(key, new Req(AuthReq.NONE, handler, DbClaim.NONE, DbAccess.NO));
     }
 
     /**
@@ -499,7 +542,9 @@ public class JsonApiDict {
         adm(REQ_CONFIG_GET_PROP, DbClaim.READ, DbAccess.YES);
         adm(REQ_CONFIG_SET_PROPS, DbClaim.READ, DbAccess.YES);
         put(REQ_CONSTANTS, AuthReq.NONE, DbClaim.READ, DbAccess.YES);
-        adm(REQ_DB_BACKUP, DbClaim.NONE, DbAccess.NO);
+
+        adm(REQ_DB_BACKUP, ReqDbBackup.class, DbClaim.NONE, DbAccess.NO);
+
         adm(REQ_DEVICE_DELETE, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_DEVICE_NEW_CARD_READER, DbClaim.NONE, DbAccess.NO);
@@ -565,6 +610,7 @@ public class JsonApiDict {
         usr(REQ_PDF_SET_PROPERTIES, DbClaim.READ, DbAccess.YES);
 
         non(REQ_PING);
+        non(REQ_GENERATE_UUID, ReqGenerateUuid.class);
 
         usr(REQ_USER_CREDIT_TRANSFER, DbClaim.READ, DbAccess.YES);
         usr(REQ_USER_MONEY_TRANSFER_REQUEST, DbClaim.READ, DbAccess.YES);
@@ -618,4 +664,25 @@ public class JsonApiDict {
         adm(REQ_USER_SYNC, DbClaim.NONE, DbAccess.NO);
     }
 
+    /**
+     * Creates a request handler.
+     *
+     * @param request
+     *            The request id.
+     * @return The {@link ApiRequestHandler}.
+     */
+    public ApiRequestHandler createApiRequest(final String request) {
+
+        final Req req = this.dict.get(request);
+
+        if (req.handler == null) {
+            return null;
+        }
+
+        try {
+            return req.handler.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SpException(e.getMessage(), e);
+        }
+    }
 }

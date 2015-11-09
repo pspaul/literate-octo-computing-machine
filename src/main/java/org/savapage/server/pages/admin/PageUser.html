@@ -68,9 +68,12 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 			<label for="user-pin"><wicket:message key="user-pin"/></label>
 			<input type="password" id="user-pin" maxlength="6" pattern="[0-9]*" value="" />
 
-            <div data-role="collapsible" data-collapsed="true" data-mini="true">
+            <div id="user-uuid-collapsible" data-role="collapsible" data-collapsed="true" data-mini="true">
                 <h3>UUID</h3>
-                <input type="text" id="user-uuid" maxlength="36" value="" /> 
+                <input type="text" id="user-uuid" maxlength="36" value="" />
+                <a href="#" id="button-user-generate-uuid" 
+                    class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+                    <wicket:message key="button-generate"/></a> 
             </div>			               
        </li>
        

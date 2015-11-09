@@ -50,17 +50,16 @@
 			//
 			;
 
-			// -------------------------------------------------------------
-			// DOCUMENTATION for Callback Functions
-			// Do NOT remove the commented documentation block below
-			// -------------------------------------------------------------
-			// _self.onSaveUser = null;
-			// _self.DeleteUser = null;
-
 			/**
 			 *
 			 */
 			$(_self.id()).on('pagecreate', function(event) {
+
+
+				$(this).on('click', '#button-user-generate-uuid', null, function() {
+					_self.onGenerateUserUuid();
+					return false;
+				});
 
 				$(this).on('click', '#button-save-user', null, function() {
 					_self.onSaveUser();
@@ -137,6 +136,8 @@
 					$('#user-userid').focus();
 				}
 
+			}).on('pageshow', function(event, ui) {
+				$('#user-uuid-collapsible').collapsible('collapse');
 			});
 			return _self;
 			// IMPORTANT
@@ -151,13 +152,6 @@
 			var _page = new _ns.Page(_i18n, _view, '#page-voucher-create', 'admin.PageAccountVoucherCreate')
 			//
 			, _self = _ns.derive(_page);
-
-			// -------------------------------------------------------------
-			// DOCUMENTATION for Callback Functions
-			// Do NOT remove the commented documentation block below
-			// -------------------------------------------------------------
-			// _self.onCreateBatch = null;
-			// _self.onCreateBatchExit = null;
 
 			/**
 			 *
@@ -209,12 +203,6 @@
 			var _page = new _ns.Page(_i18n, _view, '#page-config-prop', 'admin.PageConfigProp')
 			//
 			, _self = _ns.derive(_page);
-
-			// -------------------------------------------------------------
-			// DOCUMENTATION for Callback Functions
-			// Do NOT remove the commented documentation block below
-			// -------------------------------------------------------------
-			// _self.onSave = null;
 
 			/**
 			 *
@@ -291,12 +279,6 @@
 			, _CARD_FORMAT_ATTR = ['.format', '.first-byte']
 			//
 			;
-
-			// -------------------------------------------------------------
-			// DOCUMENTATION for Callback Functions
-			// Do NOT remove the commented documentation block below
-			// -------------------------------------------------------------
-			// _self.onSaveDevice = null;
 
 			_onAuthModeEnabled = function() {
 				var authUser = _view.isCbChecked($("#auth-mode\\.name"))
@@ -658,12 +640,6 @@
 			//
 			;
 
-			// -------------------------------------------------------------
-			// DOCUMENTATION for Callback Functions
-			// Do NOT remove the commented documentation block below
-			// -------------------------------------------------------------
-			// _self.onSaveQueue = null;
-
 			/**
 			 *
 			 */
@@ -717,12 +693,6 @@
 			//
 			, _onChangeChargeType, _showAllMediaRows;
 
-			// -------------------------------------------------------------
-			// DOCUMENTATION for Callback Functions
-			// Do NOT remove the commented documentation block below
-			// -------------------------------------------------------------
-			// _self.onSavePrinter = null;
-			// _self.onRenamePrinter = null;
 
 			_onChangeChargeType = function(chargeType) {
 				var isSimple = (chargeType === 'SIMPLE');
@@ -931,37 +901,6 @@
 				// _loadPanel('ConfigPropBase');
 				// _loadPanel("AccountVoucherBase");
 			};
-
-			// -------------------------------------------------------------
-			// DOCUMENTATION for Callback Functions
-			// Do NOT remove the commented documentation block below
-			// -------------------------------------------------------------
-			// _self.onApplyAuth = null;
-			// _self.onApplySmtp = null;
-			// _self.onApplyMail = null;
-			// _self.onApplyUserCreate = null;
-			// _self.onApplyLocale = null;
-			// _self.onApplyBackupAuto = null;
-			// _self.onAdminPwReset = null;
-			// _self.onBackupNow = null;
-			// _self.onEditUser = null;
-			// _self.onEditConfigProp = null;
-			// _self.onCreateQueue = null;
-			// _self.onEditQueue = null;
-			// _self.onEditPrinter = null;
-			// _self.onPrinterSynchr = null;
-			// _self.onUserSourceGroupAll = null;
-			// _self.onUserSourceGroupApply = null;
-			// _self.onUserSourceGroupCancel = null;
-			// _self.onUserSourceGroupEdit = null;
-			// _self.onUserSyncApply = null;
-			// _self.onUserSyncNow = null;
-			// _self.onUserSyncTest = null;
-			// _self.onPagometerReset = null;
-			// _self.onVoucherDeleteBatch
-			// _self.onVoucherExpireBatch
-			// _self.onVoucherDeleteExpired
-			// _self.onDownload
 
 			/*
 			 * The map of panels. The key is the Java Wicket class. Each key has

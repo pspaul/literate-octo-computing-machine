@@ -309,8 +309,9 @@ public class QueuesPage extends AbstractAdminListPage {
                 final MarkupHelper helper = new MarkupHelper(item);
 
                 if (reservedQueue == null
-                        || (reservedQueue != ReservedIppQueueEnum.RAW_PRINT && reservedQueue
-                                .isDriverPrint())) {
+                        || (reservedQueue != ReservedIppQueueEnum.RAW_PRINT
+                                && reservedQueue != ReservedIppQueueEnum.IPP_PRINT_INTERNET && reservedQueue
+                                    .isDriverPrint())) {
 
                     helper.encloseLabel("url-default",
                             urlDefault + "/" + queue.getUrlPath(), true)
@@ -465,13 +466,6 @@ public class QueuesPage extends AbstractAdminListPage {
                  * be picked up in JavaScript for editing.
                  */
                 if (reservedQueue == null || reservedQueue.isDriverPrint()) {
-                    // labelWrk =
-                    // new Label("button-edit", getLocalizer().getString(
-                    // "button-edit", this));
-                    // labelWrk.add(new AttributeModifier("data-savapage", queue
-                    // .getId()));
-                    // item.add(labelWrk);
-
                     helper.encloseLabel("button-edit",
                             getLocalizer().getString("button-edit", this), true)
                             .add(new AttributeModifier("data-savapage", queue

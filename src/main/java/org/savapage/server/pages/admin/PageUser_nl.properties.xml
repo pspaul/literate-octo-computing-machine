@@ -22,6 +22,7 @@
 	<entry key="button-delete">Verwijderen</entry>
 	<entry key="button-cancel">Annuleren</entry>
     <entry key="button-password">Wachtwoord</entry>
+    <entry key="button-generate">Genereren</entry>
 
     <entry key="label-financial">Financieel</entry>
     <entry key="label-balance">Saldo</entry>

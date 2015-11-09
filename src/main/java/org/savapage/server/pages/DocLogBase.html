@@ -78,7 +78,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                     </div>
                 </li>
 		                
-                <li class="sp-doclog-cat" id="sp-doclog-cat-queue">
+                <li class="sp-doclog-cat-queue">
                     <div class="ui-field-contain">
 						<label for="sp-print-in-queue"><wicket:message key="cat-queue"/></label>
 						<select name="sp-print-in-queue" id="sp-print-in-queue" data-native-menu="false"  class="ui-mini">
@@ -94,7 +94,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                     </div>						                    
                 </li>
 
-                <li class="sp-doclog-cat" id="sp-doclog-cat-out">
+                <li class="sp-doclog-cat-out">
                     <div>
                     
                         <wicket:remove><!-- 
@@ -123,7 +123,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 	
 	                    </fieldset>
 
-                        <ul data-role="listview" data-inset="true" class="sp-doclog-cat" id="sp-doclog-cat-pdf">
+                        <ul data-role="listview" data-inset="true" class="sp-doclog-cat-pdf">
                             <li>
                             
 	                            <label for="sp-pdf-out-author"><wicket:message key="prompt-author"/></label>
@@ -163,7 +163,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                             </li>
                                 
                         </ul>
-                        <ul data-role="listview" data-inset="true" class="sp-doclog-cat" id="sp-doclog-cat-printer">
+                        <ul data-role="listview" data-inset="true" class="sp-doclog-cat-printer">
                             <li>
                                 <label for="sp-print-out-printer"><wicket:message key="prompt-printer"/></label>
                                 <select name="sp-print-out-printer" id="sp-print-out-printer" data-native-menu="false">
@@ -220,15 +220,11 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 		                <input type="radio" name="sp-doclog-sort-by" id="sp-doclog-sort-by-name" value="name"/> 
 		                <label for="sp-doclog-sort-by-name"><wicket:message key="sort-by-name"/></label>
 		                        
-                        <div class="sp-doclog-cat" id="sp-doclog-sort-by-queue-cat">
-                            <input type="radio" name="sp-doclog-sort-by" id="sp-doclog-sort-by-queue" value="queue"/> 
-                            <label for="sp-doclog-sort-by-queue"><wicket:message key="sort-by-queue"/></label>
-                        </div>
+                        <input class="sp-doclog-cat-queue" type="radio" name="sp-doclog-sort-by" id="sp-doclog-sort-by-queue" value="queue"/> 
+                        <label class="sp-doclog-cat-queue" for="sp-doclog-sort-by-queue"><wicket:message key="sort-by-queue"/></label>
                         
-                        <div class="sp-doclog-cat" id="sp-doclog-sort-by-printer-cat">
-                            <input type="radio" name="sp-doclog-sort-by" id="sp-doclog-sort-by-printer" value="printer"/> 
-                            <label for="sp-doclog-sort-by-printer"><wicket:message key="sort-by-printer"/></label>
-                        </div>
+                        <input class="sp-doclog-cat-printer" type="radio" name="sp-doclog-sort-by" id="sp-doclog-sort-by-printer" value="printer"/> 
+                        <label class="sp-doclog-cat-printer" for="sp-doclog-sort-by-printer"><wicket:message key="sort-by-printer"/></label>
                         
 		                <input type="radio" name="sp-doclog-sort-dir" id="sp-doclog-sort-dir-asc" checked="checked" /> 
 		                <label for="sp-doclog-sort-dir-asc"><wicket:message key="sort-asc"/></label>
@@ -247,7 +243,10 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 			
 						<a href="#" id="button-doclog-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
 						     <wicket:message key="button-default"/></a>
-                    </div>					     
+						     
+                        <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</a>                             
+                    </div>                    
+                    					     
                 </li>
             </ul>
 		</div> 

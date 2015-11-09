@@ -236,6 +236,11 @@
 					_view.changePage($('#page-login'));
 				});
 
+				$(document).on('click', '.sp-collapse', null, function() {
+					$(this).closest('[data-role=collapsible]').collapsible('collapse');
+					return false;
+				});				
+
 			};
 
 			/**
@@ -850,6 +855,18 @@
 					_view.pages.user.loadShowAsync(function() {
 						$('#user-userid-txt').html(_model.editUser.userName);
 					});
+				} else {
+					_view.showApiMsg(res);
+				}
+			};
+
+			_view.pages.user.onGenerateUserUuid = function() {
+				var res = _api.call({
+					request : 'generate-uuid'
+				});
+				if (res.result.code === '0') {
+					_model.editUser.uuid = res.dto.uuid;
+					$('#user-uuid').val(_model.editUser.uuid);
 				} else {
 					_view.showApiMsg(res);
 				}
