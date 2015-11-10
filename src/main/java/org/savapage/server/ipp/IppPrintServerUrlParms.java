@@ -21,6 +21,8 @@
  */
 package org.savapage.server.ipp;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,12 +71,26 @@ public final class IppPrintServerUrlParms {
     private final UUID userUuid;
 
     /**
+     * URL as delivered by Wicket.
+     */
+    private final Url url;
+
+    /**
+     * Base URI as delivered by
+     * {@link #IppPrintServerUrlParms(String, String, String, UUID)};
+     */
+    private final String uriBase;
+
+    /**
      * Create from Wicket {@link Url}.
      *
      * @param url
      *            The {@link Url}.
      */
     public IppPrintServerUrlParms(final Url url) {
+
+        this.url = url;
+        this.uriBase = null;
 
         final UrlPathPageParametersEncoder encoder =
                 new UrlPathPageParametersEncoder();
@@ -119,9 +135,25 @@ public final class IppPrintServerUrlParms {
          * was found.
          */
         this.printer = StringUtils.defaultString(tmpPrinter);
-
         this.userNumber = tmpUserNumber;
         this.userUuid = tmpUserUuid;
+    }
+
+    /**
+     *
+     * @param printerPath
+     * @param userNumber
+     * @param userUuid
+     */
+    public IppPrintServerUrlParms(final String uriBase,
+            final String printerPath, final String userNumber,
+            final UUID userUuid) {
+
+        this.uriBase = uriBase;
+        this.printer = StringUtils.defaultString(printerPath);
+        this.userNumber = userNumber;
+        this.userUuid = userUuid;
+        this.url = null;
     }
 
     /**
@@ -148,4 +180,26 @@ public final class IppPrintServerUrlParms {
         return userUuid;
     }
 
+    /**
+     *
+     * @return The {@link URI} representation.
+     * @throws URISyntaxException
+     *             When URI syntax errors.
+     */
+    public URI asUri() throws URISyntaxException {
+
+        if (this.url != null) {
+            return new URI(this.url.toString());
+        }
+
+        final StringBuilder builder = new StringBuilder();
+
+        builder.append(this.uriBase).append('/').append(PARM_PRINTERS)
+                .append('/').append(this.printer).append('/')
+                .append(PARM_USER_NUMBER).append('/').append(this.userNumber)
+                .append('/').append(PARM_USER_UUID).append('/')
+                .append(this.userUuid);
+
+        return new URI(builder.toString());
+    }
 }

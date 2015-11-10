@@ -28,6 +28,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -295,11 +296,12 @@ public final class WebAppUserPage extends AbstractWebAppPage {
                 ConfigManager.instance().isConfigValue(Key.USER_CAN_CHANGE_PIN),
                 "button-user-pin-dialog", localized("button-pin"));
 
-        addVisible(
-                ConfigManager.instance()
-                        .isConfigValue(Key.USER_CAN_CHANGE_UUID),
-                "button-user-uuid-dialog", localized("button-uuid"));
+        final boolean hasUriBase =
+                StringUtils.isNotBlank(ConfigManager.instance().getConfigValue(
+                        Key.IPP_INTERNET_PRINTER_URI_BASE));
 
+        addVisible(hasUriBase, "button-user-internet-printer-dialog",
+                localized("button-internet-printer"));
     }
 
     @Override

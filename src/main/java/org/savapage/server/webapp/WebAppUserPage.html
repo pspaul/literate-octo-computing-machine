@@ -86,7 +86,6 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 <div data-role="dialog" data-theme="a" id="page-user"/>
 <div data-role="dialog" data-theme="a" id="page-user-pw-reset"/>
 <div data-role="dialog" data-theme="a" id="page-user-pin-reset"/>
-<div data-role="dialog" data-theme="a" id="page-user-uuid"/>
 <div data-role="dialog" data-theme="a" id="page-voucher-redeem"/>
 <div data-role="dialog" data-theme="a" id="page-credit-transfer"/>
 <div data-role="dialog" data-theme="a" id="page-info"/>
@@ -138,9 +137,9 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
                    href="#" id="button-user-pin-dialog" />
             </wicket:enclosure>
                             
-            <wicket:enclosure child="button-user-uuid-dialog">                    
-                <a wicket:id="button-user-uuid-dialog" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit"
-                   href="#" id="button-user-uuid-dialog" />
+            <wicket:enclosure child="button-user-internet-printer-dialog">                    
+                <a wicket:id="button-user-internet-printer-dialog" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-cloud"
+                   href="#" id="button-user-internet-printer-dialog" />
             </wicket:enclosure>
                             
             <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
@@ -185,6 +184,32 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
     <div class="ui-content">
 
         <div id="page-bitcoin-transfer-content"/>
+
+    </div>
+    
+    <wicket:remove><!-- 
+    THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+    --></wicket:remove>  
+    <div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+</div>
+
+
+<div data-role="dialog" data-theme="a" id="page-user-internet-printer">
+
+    <div data-role="header" data-theme="b">
+        <h1><wicket:message key="internet-printer-title"/></h1>
+    </div>
+    
+    <div class="ui-content">
+
+        <div id="page-user-internet-printer-content"/>
+
+	<div data-role="controlgroup" data-type="horizontal">
+	
+       <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" data-rel="back" data-direction="reverse"
+           tabindex="3"><wicket:message key="button-back"/></a>
+	       
+	</div>
 
     </div>
     

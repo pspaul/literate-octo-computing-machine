@@ -60,17 +60,18 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
        
        <li>
 			<label for="user-card-number"><wicket:message key="user-card-number"/></label> 
-			<input type="text" id="user-card-number" maxlength="32" value="" /> 
+			<input type="text" id="user-card-number" maxlength="32" value="" data-clear-btn="true"/> 
 			
 			<label for="user-id-number"><wicket:message key="user-id-number"/></label> 
-			<input type="text" id="user-id-number" maxlength="32" value="" /> 
+			<input type="text" id="user-id-number" maxlength="32" value="" data-clear-btn="true"/> 
 			
 			<label for="user-pin"><wicket:message key="user-pin"/></label>
-			<input type="password" id="user-pin" maxlength="6" pattern="[0-9]*" value="" />
+			<input type="password" id="user-pin" maxlength="6" pattern="[0-9]*" value="" data-clear-btn="true" />
 
             <div id="user-uuid-collapsible" data-role="collapsible" data-collapsed="true" data-mini="true">
                 <h3>UUID</h3>
-                <input type="text" id="user-uuid" maxlength="36" value="" />
+                <input type="text" id="user-uuid" maxlength="36" value="" data-clear-btn="true" 
+                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
                 <a href="#" id="button-user-generate-uuid" 
                     class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-recycle">
                     <wicket:message key="button-generate"/></a> 

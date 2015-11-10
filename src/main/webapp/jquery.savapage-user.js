@@ -1628,33 +1628,9 @@
 		/**
 		 * Constructor
 		 */
-		function PageUserUuid(_i18n, _view, _model) {
-
-			var _page = new _ns.Page(_i18n, _view, '#page-user-uuid', 'UserUuid')
-			//
-			, _self = _ns.derive(_page)
-			//
-			;
-
-			_self.onGenerateUuid = null;
-
-			/**
-			 *
-			 */
-			$(_self.id()).on('pagecreate', function(event) {
-				
-				$('#button-user-generate-uuid').click(function(e) {
-					if (_self.onGenerateUuid) {
-						_self.onGenerateUuid();
-					}
-					return false;
-				});
-
-			}).on('pagebeforeshow', function(event, ui) {
-				$('#sp-user-printer-uri-number').html(_model.user.number);
-				$('#sp-user-printer-uri-uuid').html(_model.user.uuid);
-			});
-			
+		function PageUserInternetPrinter(_i18n, _view, _model) {
+			var _page = new _ns.Page(_i18n, _view, '#page-user-internet-printer', 'UserInternetPrinter')
+			, _self = _ns.derive(_page);
 			return _self;
 		}
 
@@ -1674,7 +1650,7 @@
 						return false;
 					});
 				}
-				
+
 				if ($('#button-user-pin-dialog')) {
 					$(this).on('click', '#button-user-pin-dialog', null, function() {
 						_view.showPageAsync('#page-user-pin-reset', 'UserPinReset', function() {
@@ -1684,10 +1660,21 @@
 					});
 				}
 
-				if ($('#button-user-uuid-dialog')) {
-					$(this).on('click', '#button-user-uuid-dialog', null, function() {
-						_view.showUserPage('#page-user-uuid', 'UserUuid');
-						$('#user-uuid-title').html(_model.user.id);						
+				if ($('#button-user-internet-printer-dialog')) {
+					$(this).on('click', '#button-user-internet-printer-dialog', null, function() {
+						// The UUID page is a fixed part of WebAppUserPage.html
+						// (we only refresh the content)
+						var pageId = '#page-user-internet-printer'
+						//
+						, html = _view.getUserPageHtml('UserInternetPrinter')
+						//
+						;
+						_view.changePage(pageId);
+						if (html) {
+							$('#page-user-internet-printer-content').html(html);
+							$(pageId).enhanceWithin();
+						}
+
 						return false;
 					});
 				}
@@ -4053,7 +4040,7 @@
 				_model.user.id = loginRes.id;
 				_model.user.uuid = loginRes.uuid;
 				_model.user.number = loginRes.number;
-				
+
 				_model.user.fullname = loginRes.fullname;
 
 				_model.language = loginRes.language;
@@ -4285,7 +4272,7 @@
 				$(document).on('click', '.sp-collapse', null, function() {
 					$(this).closest('[data-role=collapsible]').collapsible('collapse');
 					return false;
-				});				
+				});
 
 			};
 
@@ -5052,7 +5039,7 @@
 			_view.pages.pdfprop.onDownload = function() {
 
 				var pageRanges = $('#pdf-page-ranges').val();
-				
+
 				_saveRemoveGraphics('#pdf-remove-graphics');
 				_saveEcoprint('#pdf-ecoprint');
 				_savePdfGrayscale('#pdf-grayscale');
@@ -5062,7 +5049,7 @@
 				}
 				if (!_savePdfProps()) {
 					return false;
-				}				
+				}
 				if (_model.ecoprint && !_userLazyEcoPrint(_model.pdfJobIndex, pageRanges)) {
 					return false;
 				}
@@ -5812,7 +5799,7 @@
 				print_settings : new PagePrintSettings(_i18n, _view, _model),
 				fileUpload : new PageFileUpload(_i18n, _view, _model),
 				userPinReset : new PageUserPinReset(_i18n, _view, _model),
-				userUuid : new PageUserUuid(_i18n, _view, _model),
+				userInternetPrinter : new PageUserInternetPrinter(_i18n, _view, _model),
 				userPwReset : new _ns.PageUserPasswordReset(_i18n, _view, _model)
 			};
 

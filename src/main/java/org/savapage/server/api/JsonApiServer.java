@@ -6802,9 +6802,10 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("number", StringUtils.defaultString(USER_SERVICE
                 .getPrimaryIdNumber(userDb)));
 
-        userData.put("uuid", CryptoUser.decryptUserAttr(userDb.getId(),
-                StringUtils.defaultString(USER_SERVICE.findUserAttrValue(
-                        userDb, UserAttrEnum.UUID))));
+        if (!isAdminOnlyLogin) {
+            userData.put("uuid", USER_SERVICE.lazyAddUserAttrUuid(userDb)
+                    .toString());
+        }
 
         if (authToken != null) {
             userData.put("authtoken", authToken.getToken());
