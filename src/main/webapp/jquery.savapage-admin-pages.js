@@ -1703,6 +1703,9 @@
 					return false;
 				});
 
+				$(this).on('change', "input:checkbox[id='flipswitch-internetprint-online']", null, function(e) {
+					_self.onFlipswitchInternetPrint($(this).is(':checked'));
+				});
 
 				$(this).on('change', "input:checkbox[id='flipswitch-webprint-online']", null, function(e) {
 					_self.onFlipswitchWebPrint($(this).is(':checked'));
@@ -1742,6 +1745,11 @@
 
 				$(this).on('click', '#apply-webprint', null, function() {
 					_self.onApplyWebPrint(_view.isCbChecked($('#web-print\\.enable')));
+					return false;
+				});
+
+				$(this).on('click', '#apply-internetprint', null, function() {
+					_self.onApplyInternetPrint();
 					return false;
 				});
 

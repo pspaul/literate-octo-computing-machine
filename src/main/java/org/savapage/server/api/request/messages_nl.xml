@@ -6,5 +6,17 @@
 
     <entry key="msg-db-backup-busy">Backup maken...</entry>
     <entry key="msg-tech-error">{0}</entry>	
+
+    <!-- ReqQueueEnable -->
+    <entry key="msg-queue-urlpath-not-found">Wachtrij "{0}" is niet gevonden.</entry>
+     
+    <entry key="msg-queue-enabled">Wachtrij "{0}" is ingeschakeld.</entry> 
+    <entry key="msg-queue-disabled">Wachtrij "{0}" is uitgeschakeld.</entry>
+
+    <entry key="msg-queue-enabled-pub">Wachtrij "{0}" is ingeschakeld door gebruiker "{1}".</entry> 
+    <entry key="msg-queue-disabled-pub">Wachtrij "{0}" is uitgeschakeld door gebruiker "{1}".</entry>     
+     
+    <entry key="msg-queue-enabled-already">Wachtrij "{0}" was al ingeschakeld.</entry> 
+    <entry key="msg-queue-disabled-already">Wachtrij "{0}" was al uitgeschakeld.</entry> 
     
 </properties>

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
@@ -49,23 +50,27 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     private final Map<String, Object> userData = new HashMap<String, Object>();
 
+    private RequestCycle requestCycle;
+    private PageParameters pageParameters;
+    private boolean isGetAction;
+
     @Override
-    public final Map<String, Object> process(
+    public final Map<String, Object> process(final RequestCycle requestCycle,
             final PageParameters parameters, final boolean isGetAction,
             final String requestingUser, final User lockedUser)
             throws Exception {
 
-        onRequest(parameters, isGetAction, requestingUser, lockedUser);
+        this.requestCycle = requestCycle;
+        this.pageParameters = parameters;
+        this.isGetAction = isGetAction;
+
+        onRequest(requestingUser, lockedUser);
         return this.getResponseMap();
     }
 
     /**
      * Notifies the API request.
      *
-     * @param parameters
-     *            The {@link PageParameters}.
-     * @param isGetAction
-     *            {@code true} when this is an HTML GET request.
      * @param requestingUser
      *            The user if of the requesting user.
      * @param lockedUser
@@ -73,8 +78,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @throws Exception
      *             When an unexpected error is encountered.
      */
-    protected abstract void onRequest(final PageParameters parameters,
-            final boolean isGetAction, final String requestingUser,
+    protected abstract void onRequest(final String requestingUser,
             final User lockedUser) throws Exception;
 
     /**
@@ -187,6 +191,25 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     protected final void setApiResultOk() {
         createApiResult(ApiResultCodeEnum.OK, null, null);
+    }
+
+    /**
+     * Gets the POST or GET parameter value.
+     *
+     * @param parm
+     *            The parameter name.
+     * @return The parameter value.
+     */
+    protected final String getParmValue(final String parm) {
+
+        if (this.isGetAction) {
+            return this.pageParameters.get(parm).toString();
+        }
+        /*
+         * Get the POST-ed parameter.
+         */
+        return this.requestCycle.getRequest().getPostParameters()
+                .getParameterValue(parm).toString();
     }
 
 }

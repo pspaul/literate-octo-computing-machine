@@ -250,6 +250,8 @@
     <entry key="webprint-max-file-mb">Maximale document grootte (MB)</entry>
     <entry key="webprint-ip-allowed">Toegestane IP adressen</entry>
 
+    <entry key="prompt-internetprint-base-uri">IPP protocol://authority van de Internet Printer Device URI:</entry>
+
     <entry key="gcp-enable">Inschakelen</entry>
     <entry key="gcp-online">On-line</entry>
     <entry key="gcp-printer">Printer</entry>

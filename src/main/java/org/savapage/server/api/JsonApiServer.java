@@ -1687,8 +1687,9 @@ public final class JsonApiServer extends AbstractPage {
             if (apiReqHandler == null) {
                 throw new SpException("Request [" + request + "] NOT supported");
             }
-            return apiReqHandler.process(parameters, isGetAction,
-                    requestingUser, lockedUser);
+
+            return apiReqHandler.process(RequestCycle.get(), parameters,
+                    isGetAction, requestingUser, lockedUser);
         }
 
     }

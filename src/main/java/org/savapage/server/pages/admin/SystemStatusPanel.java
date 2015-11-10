@@ -56,12 +56,14 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.helpers.AppLogLevelEnum;
+import org.savapage.core.dao.helpers.ReservedIppQueueEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
 import org.savapage.core.print.smartschool.SmartSchoolPrinter;
 import org.savapage.core.services.AppLogService;
+import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.payment.PaymentGateway;
@@ -95,10 +97,16 @@ public class SystemStatusPanel extends Panel {
             .getLogger(SystemStatusPanel.class);
 
     /**
-     *
+     * .
      */
     private static final AppLogService APP_LOG_SERVICE = ServiceContext
             .getServiceFactory().getAppLogService();
+
+    /**
+     * .
+     */
+    private static final QueueService QUEUE_SERVICE = ServiceContext
+            .getServiceFactory().getQueueService();
 
     /**
      * @param panelId
@@ -388,6 +396,17 @@ public class SystemStatusPanel extends Panel {
         labelWrk =
                 helper.addCheckbox("flipswitch-webprint-online",
                         ConfigManager.isWebPrintEnabled());
+        setFlipswitchOnOffText(labelWrk);
+        add(labelWrk);
+
+        /*
+         * Internet Print
+         */
+        labelWrk =
+                helper.addCheckbox(
+                        "flipswitch-internetprint-online",
+                        QUEUE_SERVICE
+                                .isQueueEnabled(ReservedIppQueueEnum.IPP_PRINT_INTERNET));
         setFlipswitchOnOffText(labelWrk);
         add(labelWrk);
 

@@ -24,7 +24,6 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
 
@@ -56,9 +55,9 @@ public final class ReqGenerateUuid extends ApiRequestMixin {
     }
 
     @Override
-    protected void onRequest(final PageParameters parameters,
-            final boolean isGetAction, final String requestingUser,
-            final User lockedUser) throws IOException {
+    protected void
+            onRequest(final String requestingUser, final User lockedUser)
+                    throws IOException {
 
         final DtoRsp rsp = new DtoRsp();
         rsp.setUuid(UUID.randomUUID().toString());

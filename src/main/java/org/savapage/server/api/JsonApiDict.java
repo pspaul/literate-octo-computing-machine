@@ -30,6 +30,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
+import org.savapage.server.api.request.ReqQueueEnable;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.
@@ -179,6 +180,7 @@ public class JsonApiDict {
 
     public static final String REQ_PRINTER_SYNC = "printer-sync";
 
+    public static final String REQ_QUEUE_ENABLE = "queue-enable";
     public static final String REQ_QUEUE_GET = "queue-get";
     public static final String REQ_QUEUE_SET = "queue-set";
 
@@ -308,12 +310,13 @@ public class JsonApiDict {
     }
 
     /**
-     * Puts a administrator's {@link Req} in the dictionary.
+     * @deprecated Puts a administrator's {@link Req} in the dictionary.
      *
      * @param key
      * @param dbClaim
      * @param dbAccess
      */
+    @Deprecated
     private void adm(final String key, DbClaim dbClaim, DbAccess dbAccess) {
         dict.put(key, new Req(AuthReq.ADMIN, dbClaim, dbAccess));
     }
@@ -642,6 +645,7 @@ public class JsonApiDict {
         adm(REQ_PRINTER_SYNC, DbClaim.READ, DbAccess.YES);
         adm(REQ_QUEUE_GET, DbClaim.NONE, DbAccess.YES);
         adm(REQ_QUEUE_SET, DbClaim.READ, DbAccess.YES);
+        adm(REQ_QUEUE_ENABLE, ReqQueueEnable.class, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_REPORT, DbClaim.READ, DbAccess.YES);
         usr(REQ_REPORT_USER, DbClaim.READ, DbAccess.YES);

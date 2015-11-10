@@ -245,6 +245,8 @@
     <entry key="webprint-max-file-mb">Maximum document size (MB)</entry>
     <entry key="webprint-ip-allowed">IP addresses allowed</entry>
 
+    <entry key="prompt-internetprint-base-uri">IPP protocol://authority of the Internet Printer Device URI:</entry>
+
     <entry key="gcp-enable">Enable</entry>
     <entry key="gcp-online">Online</entry>
     

@@ -23,6 +23,7 @@ package org.savapage.server.api.request;
 
 import java.util.Map;
 
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.jpa.User;
 
@@ -36,6 +37,8 @@ public interface ApiRequestHandler {
     /**
      * Processes an JSON API request.
      *
+     * @param requestCycle
+     *            The {@link RequestCycle}.
      * @param parameters
      *            The {@link PageParameters}.
      * @param isGetAction
@@ -48,7 +51,8 @@ public interface ApiRequestHandler {
      * @throws Exception
      *             When an unexpected error is encountered.
      */
-    Map<String, Object> process(PageParameters parameters, boolean isGetAction,
+    Map<String, Object> process(RequestCycle requestCycle,
+            PageParameters parameters, boolean isGetAction,
             String requestingUser, User lockedUser) throws Exception;
 
 }

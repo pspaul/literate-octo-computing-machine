@@ -23,7 +23,6 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.job.SpJobType;
 import org.savapage.core.jpa.User;
@@ -37,9 +36,9 @@ import org.savapage.core.jpa.User;
 public final class ReqDbBackup extends ApiRequestMixin {
 
     @Override
-    protected void onRequest(final PageParameters parameters,
-            final boolean isGetAction, final String requestingUser,
-            final User lockedUser) throws IOException {
+    protected void
+            onRequest(final String requestingUser, final User lockedUser)
+                    throws IOException {
 
         try {
             SpJobScheduler.instance().scheduleOneShotJob(SpJobType.DB_BACKUP,

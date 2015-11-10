@@ -58,6 +58,7 @@
 				propNames.forEach(function(name) {
 					props[name] = _view.isCheckedYN($('#' + name.replace(/\./g, '\\.')));
 				});
+				return props;
 			};
 
 			/**
@@ -67,6 +68,7 @@
 				propNames.forEach(function(name) {
 					props[name] = _view.getRadioValue(name);
 				});
+				return props;
 			};
 
 			/**
@@ -76,6 +78,7 @@
 				propNames.forEach(function(name) {
 					props[name] = $('#' + name.replace(/\./g, '\\.')).val();
 				});
+				return props;
 			};
 
 			/**
@@ -239,7 +242,7 @@
 				$(document).on('click', '.sp-collapse', null, function() {
 					$(this).closest('[data-role=collapsible]').collapsible('collapse');
 					return false;
-				});				
+				});
 
 			};
 
@@ -522,6 +525,18 @@
 				_saveConfigProps(props);
 			};
 
+			_view.pages.admin.onFlipswitchInternetPrint = function(enabled) {
+				var res = _api.call({
+					request : 'queue-enable',
+					dto : JSON.stringify({
+						urlPath : 'internet',
+						enabled : enabled
+					})
+				});
+				_view.showApiMsg(res);
+				return (res.result.code === '0');
+			};
+
 			_view.pages.admin.onApplyWebPrint = function(enabled) {
 				var props = {};
 				props['web-print.enable'] = enabled ? 'Y' : 'N';
@@ -529,6 +544,10 @@
 					_fillConfigPropsText(props, ['web-print.max-file-mb', 'web-print.limit-ip-addresses']);
 				}
 				_saveConfigProps(props);
+			};
+
+			_view.pages.admin.onApplyInternetPrint = function() {
+				_saveConfigProps(_fillConfigPropsText({}, ['ipp.internet-printer.uri-base']));
 			};
 
 			_view.pages.admin.onApplySmartSchool = function(enable1, enable2) {
@@ -540,24 +559,12 @@
 				_fillConfigPropsYN(props, ['smartschool.user.insert.lazy-print']);
 
 				if (enable1) {
-					_fillConfigPropsText(props, ['smartschool.1.soap.print.endpoint.url',
-						'smartschool.1.soap.print.endpoint.password', 
-						'smartschool.1.soap.print.proxy-printer', 
-						'smartschool.1.soap.print.proxy-printer-duplex', 
-						'smartschool.1.soap.print.proxy-printer-grayscale',
-						'smartschool.1.soap.print.proxy-printer-grayscale-duplex'
-						]);
-					_fillConfigPropsYN(props, ['smartschool.1.soap.print.charge-to-students']);					
+					_fillConfigPropsText(props, ['smartschool.1.soap.print.endpoint.url', 'smartschool.1.soap.print.endpoint.password', 'smartschool.1.soap.print.proxy-printer', 'smartschool.1.soap.print.proxy-printer-duplex', 'smartschool.1.soap.print.proxy-printer-grayscale', 'smartschool.1.soap.print.proxy-printer-grayscale-duplex']);
+					_fillConfigPropsYN(props, ['smartschool.1.soap.print.charge-to-students']);
 				}
 				if (enable2) {
-					_fillConfigPropsText(props, ['smartschool.2.soap.print.endpoint.url', 
-						 'smartschool.2.soap.print.endpoint.password',
-						 'smartschool.2.soap.print.proxy-printer', 
-						 'smartschool.2.soap.print.proxy-printer-duplex', 
-						 'smartschool.2.soap.print.proxy-printer-grayscale',
-						 'smartschool.2.soap.print.proxy-printer-grayscale-duplex'
-						 ]);
-					_fillConfigPropsYN(props, ['smartschool.2.soap.print.charge-to-students']);					
+					_fillConfigPropsText(props, ['smartschool.2.soap.print.endpoint.url', 'smartschool.2.soap.print.endpoint.password', 'smartschool.2.soap.print.proxy-printer', 'smartschool.2.soap.print.proxy-printer-duplex', 'smartschool.2.soap.print.proxy-printer-grayscale', 'smartschool.2.soap.print.proxy-printer-grayscale-duplex']);
+					_fillConfigPropsYN(props, ['smartschool.2.soap.print.charge-to-students']);
 				}
 				_saveConfigProps(props);
 			};
@@ -568,8 +575,7 @@
 				props['smartschool.papercut.enable'] = enable ? 'Y' : 'N';
 
 				if (enable) {
-					_fillConfigPropsText(props, ['papercut.server.host', 'papercut.server.port', 'papercut.webservices.auth-token', 
-						'papercut.db.jdbc-driver', 'papercut.db.jdbc-url', 'papercut.db.user', 'papercut.db.password']);
+					_fillConfigPropsText(props, ['papercut.server.host', 'papercut.server.port', 'papercut.webservices.auth-token', 'papercut.db.jdbc-driver', 'papercut.db.jdbc-url', 'papercut.db.user', 'papercut.db.password']);
 				}
 				_saveConfigProps(props);
 			};
@@ -580,7 +586,7 @@
 					timeFrom : timeFrom,
 					timeTo : timeTo,
 					klassen : klassen
-				}));				
+				}));
 			};
 
 			_view.pages.admin.onApplyGcpEnable = function(_panel, enabled) {
@@ -741,13 +747,13 @@
 				return res;
 			};
 
-			_view.pages.admin.onPaymentGatewayOnline = function (bitcoin, online) {
+			_view.pages.admin.onPaymentGatewayOnline = function(bitcoin, online) {
 				_view.showApiMsg(_api.call({
 					request : "payment-gateway-online",
 					bitcoin : bitcoin,
 					online : online
 				}));
-			}; 
+			};
 
 			_view.pages.admin.onApplyUserCreate = function() {
 				var props = {};
@@ -1275,7 +1281,7 @@
 				if (selClientSideMonochrome) {
 					dto.clientSideMonochrome = _view.isCbChecked(selClientSideMonochrome);
 				}
-				
+
 				if (sourceAuto) {
 					dto.auto = {
 						active : true,

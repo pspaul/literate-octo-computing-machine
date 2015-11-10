@@ -7,4 +7,17 @@
     <entry key="msg-db-backup-busy">Creating backup...</entry>
     <entry key="msg-tech-error">{0}</entry>	
     
+    <!-- ReqQueueEnable -->
+    
+    <entry key="msg-queue-urlpath-not-found">Queue "{0}" is not found.</entry> 
+    
+    <entry key="msg-queue-enabled">Queue "{0}" is enabled.</entry> 
+    <entry key="msg-queue-disabled">Queue "{0}" is disabled.</entry>    
+    
+    <entry key="msg-queue-enabled-pub">Queue "{0}" is enabled by user "{1}".</entry> 
+    <entry key="msg-queue-disabled-pub">Queue "{0}" is disabled by user "{1}".</entry>     
+     
+    <entry key="msg-queue-enabled-already">Queue "{0}" was already enabled.</entry> 
+    <entry key="msg-queue-disabled-already">Queue "{0}" was already disabled.</entry>     
+    
 </properties>

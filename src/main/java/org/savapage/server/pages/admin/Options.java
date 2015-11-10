@@ -520,11 +520,18 @@ public class Options extends AbstractAdminPage {
         labelledInput("webprint-ip-allowed",
                 IConfigProp.Key.WEB_PRINT_LIMIT_IP_ADDRESSES);
 
+
+        final ConfigManager cm = ConfigManager.instance();
+
+        /*
+         * Internet Print
+         */
+        tagInput("internetprint-base-uri",
+                IConfigProp.Key.IPP_INTERNET_PRINTER_URI_BASE);
+
         /*
          * Google Cloud Print.
          */
-        final ConfigManager cm = ConfigManager.instance();
-
         labelledCheckbox("gcp-enable", IConfigProp.Key.GCP_ENABLE);
 
         helper.addTextInput("gcp-client-id", GcpPrinter.getOAuthClientId());
