@@ -6286,7 +6286,7 @@ public final class JsonApiServer extends AbstractPage {
             /*
              * Lazy create user home directory
              */
-            if (!isAdminOnlyLogin && userDb != null) {
+            if (!isInternalAdmin && userDb != null) {
 
                 /*
                  * Ad-hoc user lock
