@@ -2,12 +2,16 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
+    <entry key="msg-single-parm">{0}</entry> 
+
+
     <!-- ReqDbBackup -->
 
     <entry key="msg-db-backup-busy">Backup maken...</entry>
-    <entry key="msg-tech-error">{0}</entry>	
+
 
     <!-- ReqQueueEnable -->
+    
     <entry key="msg-queue-urlpath-not-found">Wachtrij "{0}" is niet gevonden.</entry>
      
     <entry key="msg-queue-enabled">Wachtrij "{0}" is ingeschakeld.</entry> 
@@ -18,5 +22,16 @@
      
     <entry key="msg-queue-enabled-already">Wachtrij "{0}" was al ingeschakeld.</entry> 
     <entry key="msg-queue-disabled-already">Wachtrij "{0}" was al uitgeschakeld.</entry> 
+
+    <!-- ReqQueueGet -->
+      
+    <entry key="msg-queue-not-found">Wachtrij "{0}" is niet gevonden.</entry>
+
+    <!-- ReqPrinterPrint -->
+
+    <entry key="msg-clear-range-syntax-error">Syntax van de pagina-reeks "{0}" is ongeldig.</entry>
+    <entry key="msg-print-out-of-range-error">Afdruk reeks "{0}" overschrijdt aantal pagina's van het document ({1}).</entry>
+    <entry key="msg-ecoprint-pending">Eco Print wordt voorbereid bezig. Wacht een moment en probeer opnieuw.</entry>
+    <entry key="msg-print-auth-pending">Een andere afdruk-opdracht wacht op authenticatie. Probeer het later nog een keer.</entry>
     
 </properties>

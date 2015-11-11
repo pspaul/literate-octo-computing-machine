@@ -102,9 +102,7 @@ import org.savapage.core.dao.helpers.AccountTrxTypeEnum;
 import org.savapage.core.dao.helpers.DeviceAttrEnum;
 import org.savapage.core.dao.helpers.DeviceTypeEnum;
 import org.savapage.core.dao.helpers.DocLogProtocolEnum;
-import org.savapage.core.dao.helpers.PrintModeEnum;
 import org.savapage.core.dao.helpers.ProxyPrintAuthModeEnum;
-import org.savapage.core.dao.helpers.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.UserAttrEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.doc.DocContent;
@@ -135,9 +133,6 @@ import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.OutputProducer;
 import org.savapage.core.inbox.PageImages;
 import org.savapage.core.inbox.PageImages.PageImage;
-import org.savapage.core.inbox.RangeAtom;
-import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
-import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
@@ -173,7 +168,6 @@ import org.savapage.core.print.gcp.GcpRegisterPrinterRsp;
 import org.savapage.core.print.imap.ImapListener;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
-import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.print.smartschool.SmartSchoolCostPeriodDto;
 import org.savapage.core.print.smartschool.SmartSchoolPrintMonitor;
@@ -192,17 +186,13 @@ import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.EmailService;
 import org.savapage.core.services.InboxService;
 import org.savapage.core.services.OutboxService;
-import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.services.helpers.IppLogger;
-import org.savapage.core.services.helpers.PageScalingEnum;
-import org.savapage.core.services.helpers.ProxyPrintCostParms;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.services.helpers.email.EmailMsgParms;
-import org.savapage.core.services.impl.InboxServiceImpl;
 import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.users.IUserSource;
 import org.savapage.core.users.InternalUserAuthenticator;
@@ -289,12 +279,6 @@ public final class JsonApiServer extends AbstractPage {
      */
     private static final OutboxService OUTBOX_SERVICE = ServiceContext
             .getServiceFactory().getOutboxService();
-
-    /**
-     * .
-     */
-    private static final PrinterService PRINTER_SERVICE = ServiceContext
-            .getServiceFactory().getPrinterService();
 
     /**
      * .
@@ -1461,24 +1445,6 @@ public final class JsonApiServer extends AbstractPage {
 
             return reqPrinterList(requestingUser);
 
-        case JsonApiDict.REQ_PRINTER_PRINT:
-
-            return reqPrint(lockedUser,
-                    getParmValue(parameters, isGetAction, "printer"),
-                    getParmValue(parameters, isGetAction, "readerName"),
-                    getParmValue(parameters, isGetAction, "jobName"),
-                    getParmValue(parameters, isGetAction, "jobIndex"),
-                    getParmValue(parameters, isGetAction, "copies"),
-                    getParmValue(parameters, isGetAction, "ranges"),
-                    PageScalingEnum.valueOf(getParmValue(parameters,
-                            isGetAction, "pageScaling")),
-                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
-                            "removeGraphics")),
-                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
-                            "ecoprint")), Boolean.parseBoolean(getParmValue(
-                            parameters, isGetAction, "clear")),
-                    getParmValue(parameters, isGetAction, "options"));
-
         case JsonApiDict.REQ_PRINT_AUTH_CANCEL:
             return reqPrintAuthCancel(Long.parseLong(getParmValue(parameters,
                     isGetAction, "idUser")),
@@ -1630,11 +1596,6 @@ public final class JsonApiServer extends AbstractPage {
                     Integer.parseInt(getParmValue(parameters, isGetAction,
                             "jobIndex")),
                     getParmValue(parameters, isGetAction, "ranges"));
-
-        case JsonApiDict.REQ_QUEUE_GET:
-
-            return reqQueueGet(requestingUser,
-                    getParmValue(parameters, isGetAction, "id"));
 
         case JsonApiDict.REQ_QUEUE_SET:
 
@@ -3025,358 +2986,6 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * Handles a Proxy Print request.
-     *
-     * IMPORTANT: The printing transaction MUST be guarded by
-     * {@link ConfigManager#readPrintOutLock()}. This is managed via
-     * {@link JsonApiDict#getPrintOutLockNeeded(String)}.
-     *
-     * @param lockedUser
-     * @param printerName
-     * @param readerName
-     * @param jobName
-     * @param jobIndex
-     * @param copies
-     * @param rangesRaw
-     * @param pageScaling
-     * @param removeGraphics
-     * @param clearInbox
-     * @param jsonOptions
-     * @return
-     * @throws Exception
-     */
-    private Map<String, Object> reqPrint(final User lockedUser,
-            final String printerName, final String readerName,
-            final String jobName, final String jobIndex, final String copies,
-            final String rangesRaw, final PageScalingEnum pageScaling,
-            final boolean removeGraphics, final boolean ecoPrint,
-            final boolean clearInbox, final String jsonOptions)
-            throws Exception {
-
-        final DeviceDao deviceDao =
-                ServiceContext.getDaoContext().getDeviceDao();
-
-        final Map<String, Object> data = new HashMap<String, Object>();
-
-        final Printer printer;
-
-        try {
-            printer =
-                    PROXY_PRINT_SERVICE.getValidateProxyPrinterAccess(
-                            lockedUser, printerName,
-                            ServiceContext.getTransactionDate());
-        } catch (ProxyPrintException e) {
-            return setApiResult(data, ApiResultCodeEnum.ERROR, e.getMessage());
-        }
-
-        // Example: {"media.type":"Plain","Resolution":"300x300dpi"}
-
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("printer [" + printerName + "] reader [" + readerName
-                    + "] copies [" + copies + "] ranges [" + rangesRaw
-                    + "] clear [" + clearInbox + "] JSON options: "
-                    + jsonOptions);
-        }
-
-        final InboxInfoDto jobs =
-                INBOX_SERVICE.getInboxInfo(lockedUser.getUserId());
-
-        final int nPagesTot = INBOX_SERVICE.calcNumberOfPagesInJobs(jobs);
-        int nPagesPrinted = nPagesTot;
-
-        /*
-         * Validate the ranges.
-         */
-        String ranges = rangesRaw.trim();
-
-        final boolean printEntireInbox = ranges.isEmpty();
-
-        if (!printEntireInbox) {
-            /*
-             * Remove inner spaces.
-             */
-            ranges = ranges.replace(" ", "");
-            try {
-                final List<RangeAtom> rangeAtoms =
-                        INBOX_SERVICE.createSortedRangeArray(ranges);
-
-                nPagesPrinted =
-                        InboxServiceImpl.calcSelectedDocPages(rangeAtoms,
-                                nPagesTot);
-                /*
-                 * This gives the SORTED ranges as string: CUPS cannot handle
-                 * ranges like '7-8,5,2' but needs '2,5,7-8'
-                 */
-                ranges = RangeAtom.asText(rangeAtoms);
-            } catch (Exception e) {
-                return setApiResult(data, ApiResultCodeEnum.ERROR,
-                        "msg-clear-range-syntax-error", ranges);
-            }
-        }
-
-        /*
-         * INVARIANT: number of printed pages can NOT exceed total number of
-         * pages.
-         */
-        if (nPagesPrinted > nPagesTot) {
-            return setApiResult(data, ApiResultCodeEnum.ERROR,
-                    "msg-print-out-of-range-error", ranges,
-                    String.valueOf(nPagesTot));
-        }
-
-        /*
-         * Collect the user printer options.
-         */
-        final JsonNode list = new ObjectMapper().readTree(jsonOptions);
-        final Map<String, String> options = new HashMap<String, String>();
-
-        final Iterator<String> iter = list.getFieldNames();
-
-        String keyWlk = null;
-        String valWlk = null;
-
-        boolean isDuplexPrint = false;
-
-        while (iter.hasNext()) {
-
-            keyWlk = iter.next();
-            valWlk = list.get(keyWlk).getTextValue();
-
-            options.put(keyWlk, valWlk);
-
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(keyWlk + " = " + valWlk);
-            }
-
-            if (keyWlk.equals(IppDictJobTemplateAttr.ATTR_SIDES)
-                    && !valWlk.equals(IppKeyword.SIDES_ONE_SIDED)) {
-                isDuplexPrint = true;
-            }
-        }
-
-        /*
-         * Create the proxy print request, and chunk it.
-         */
-        final ProxyPrintInboxReq printReq = new ProxyPrintInboxReq();
-
-        printReq.setCollate(true); // TODO
-
-        printReq.setClearPages(clearInbox);
-        printReq.setJobName(jobName);
-        printReq.setPageRanges(ranges);
-        printReq.setNumberOfCopies(Integer.parseInt(copies));
-        printReq.setNumberOfPages(nPagesPrinted);
-        printReq.setOptionValues(options);
-        printReq.setPrinterName(printerName);
-        printReq.setRemoveGraphics(removeGraphics);
-        printReq.setEcoPrintShadow(ecoPrint);
-        printReq.setLocale(getSession().getLocale());
-        printReq.setIdUser(lockedUser.getId());
-
-        printReq.setConvertToGrayscale(printReq.isGrayscale()
-                && PROXY_PRINT_SERVICE.isColorPrinter(printerName)
-                && PRINTER_SERVICE.isClientSideMonochrome(printer));
-
-        /*
-         * Vanilla jobs?
-         */
-        final boolean chunkVanillaJobs;
-        final Integer printJobIndex = Integer.parseInt(jobIndex);
-        final Integer iVanillaJob;
-
-        if (printJobIndex.intValue() < 0) {
-            iVanillaJob = null;
-            chunkVanillaJobs =
-                    isDuplexPrint && printEntireInbox
-                            && jobs.getJobs().size() > 1
-                            && INBOX_SERVICE.isInboxVanilla(jobs);
-        } else {
-            iVanillaJob = printJobIndex;
-            chunkVanillaJobs = true;
-        }
-
-        PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
-                pageScaling, chunkVanillaJobs, iVanillaJob);
-
-        /*
-         * Calculate the printing cost.
-         */
-        final String currencySymbol = SpSession.getAppCurrencySymbol();
-
-        final BigDecimal cost;
-
-        try {
-
-            final ProxyPrintCostParms costParms = new ProxyPrintCostParms();
-
-            /*
-             * Set the common parameters for all print job chunks, and calculate
-             * the cost.
-             */
-            costParms.setDuplex(printReq.isDuplex());
-            costParms.setEcoPrint(printReq.isEcoPrintShadow()
-                    || printReq.isEcoPrint());
-            costParms.setGrayscale(printReq.isGrayscale());
-            costParms.setNumberOfCopies(printReq.getNumberOfCopies());
-            costParms.setPagesPerSide(printReq.getNup());
-
-            cost =
-                    ACCOUNTING_SERVICE.calcProxyPrintCost(
-                            ServiceContext.getLocale(), currencySymbol,
-                            lockedUser, printer, costParms,
-                            printReq.getJobChunkInfo());
-
-        } catch (ProxyPrintException e) {
-            return createApiResult(data, ApiResultCodeEnum.WARN, "",
-                    e.getMessage());
-        }
-
-        printReq.setCost(cost);
-
-        final String localizedCost = localizedPrinterCost(cost, null);
-
-        /*
-         * Direct Proxy Print?
-         */
-        if (readerName == null) {
-
-            printReq.setPrintMode(PrintModeEnum.PUSH);
-
-            try {
-                PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, printReq);
-            } catch (EcoPrintPdfTaskPendingException e) {
-                return setApiResult(data, ApiResultCodeEnum.INFO,
-                        "msg-ecoprint-pending");
-            }
-
-            setApiResultMsg(data, printReq);
-
-            if (printReq.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
-
-                addUserStats(data, lockedUser, getSession().getLocale(),
-                        currencySymbol);
-            }
-
-            return data;
-        }
-
-        /*
-         * Proxy Print Authentication is needed (secure printing).
-         */
-        final Device device = deviceDao.findByName(readerName);
-
-        /*
-         * INVARIANT: Device MUST exits.
-         */
-        if (device == null) {
-            throw new SpException("Reader Device [" + readerName
-                    + "] NOT found");
-        }
-        /*
-         * INVARIANT: Device MUST be enabled.
-         */
-        if (device.getDisabled()) {
-            throw new SpException("Device [" + readerName + "] is disabled");
-        }
-
-        /*
-         * INVARIANT: Device MUST be a reader.
-         */
-        if (!deviceDao.isCardReader(device)) {
-            throw new SpException("Device [" + readerName
-                    + "] is NOT a Card Reader");
-        }
-
-        /*
-         * INVARIANT: Reader MUST have Printer restriction.
-         */
-        if (!deviceDao.hasPrinterRestriction(device)) {
-            throw new SpException("Reader [" + readerName
-                    + "] does not have associated Printer(s).");
-        }
-
-        /*
-         * INVARIANT: Reader MUST have Printer restriction.
-         */
-        if (device.getPrinter() == null) {
-
-            if (!PRINTER_SERVICE.checkDeviceSecurity(printer,
-                    DeviceTypeEnum.CARD_READER, device)) {
-
-                throw new SpException("Reader [" + readerName
-                        + "] does not have associated Printer(s).");
-            }
-        }
-
-        /*
-         * Accounting.
-         */
-        if (StringUtils.isNotBlank(localizedCost)) {
-            data.put("formattedCost", localizedCost);
-
-            if (StringUtils.isNotBlank(localizedCost)) {
-                data.put("currencySymbol", currencySymbol);
-            }
-        }
-
-        /*
-         * Hold Print?
-         */
-        final ProxyPrintAuthModeEnum authModeEnum =
-                DEVICE_SERVICE.getProxyPrintAuthMode(device.getId());
-
-        if (authModeEnum.isHoldRelease()) {
-
-            printReq.setPrintMode(PrintModeEnum.HOLD);
-
-            try {
-                OUTBOX_SERVICE.proxyPrintInbox(lockedUser, printReq);
-            } catch (EcoPrintPdfTaskPendingException e) {
-                return setApiResult(data, ApiResultCodeEnum.INFO,
-                        "msg-ecoprint-pending");
-            }
-            setApiResultMsg(data, printReq);
-
-            addUserStats(data, lockedUser, getSession().getLocale(),
-                    currencySymbol);
-
-            /*
-             * Since the job is present in the outbox we can honor the clearIbox
-             * request.
-             */
-            if (clearInbox) {
-                INBOX_SERVICE.deleteAllPages(lockedUser.getUserId());
-            }
-
-            return data;
-        }
-
-        /*
-         * User WebApp Authenticated Proxy Print.
-         */
-        printReq.setPrintMode(PrintModeEnum.AUTH);
-        printReq.setStatus(ProxyPrintInboxReq.Status.NEEDS_AUTH);
-
-        if (ProxyPrintAuthManager.submitRequest(printerName,
-                device.getHostname(), printReq)) {
-            /*
-             * Signal NEEDS_AUTH
-             */
-            data.put("requestStatus", printReq.getStatus().toString());
-            data.put("printAuthExpirySecs", ConfigManager.instance()
-                    .getConfigInt(Key.PROXY_PRINT_DIRECT_EXPIRY_SECS));
-
-            setApiResultOK(data);
-
-        } else {
-
-            setApiResult(data, ApiResultCodeEnum.WARN, "msg-print-auth-pending");
-        }
-
-        return data;
-    }
-
-    /**
      *
      * @param user
      * @param ranges
@@ -4100,65 +3709,6 @@ public final class JsonApiServer extends AbstractPage {
         userDao.update(jpaUser);
 
         setApiResult(userData, ApiResultCodeEnum.OK, "msg-pin-reset-ok");
-
-        return userData;
-    }
-
-    /**
-     *
-     * @param user
-     * @param urlPath
-     * @return
-     */
-    private Map<String, Object>
-            reqQueueGet(final String userId, final String id) {
-
-        final IppQueueDao ippQueueDao =
-                ServiceContext.getDaoContext().getIppQueueDao();
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final IppQueue queue = ippQueueDao.findById(Long.valueOf(id));
-
-        if (queue == null) {
-
-            setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-queue-not-found", id);
-
-        } else {
-
-            final Map<String, Object> userObj = new HashMap<String, Object>();
-
-            userObj.put("id", queue.getId());
-            userObj.put("urlpath", queue.getUrlPath());
-            userObj.put("ipallowed", queue.getIpAllowed());
-            userObj.put("trusted", queue.getTrusted());
-            userObj.put("disabled", queue.getDisabled());
-            userObj.put("deleted", queue.getDeleted());
-
-            String reserved = null;
-            String uiText;
-
-            final ReservedIppQueueEnum reservedQueue =
-                    QUEUE_SERVICE.getReservedQueue(queue.getUrlPath());
-
-            if (reservedQueue != null) {
-                reserved = reservedQueue.getUiText();
-                uiText = reservedQueue.getUiText();
-                if (reservedQueue == ReservedIppQueueEnum.RAW_PRINT) {
-                    uiText += " Port " + ConfigManager.getRawPrinterPort();
-                }
-            } else {
-                uiText = ReservedIppQueueEnum.IPP_PRINT.getUiText();
-            }
-
-            userObj.put("reserved", reserved);
-            userObj.put("uiText", uiText);
-
-            userData.put("j_queue", userObj);
-
-            setApiResultOK(userData);
-        }
 
         return userData;
     }

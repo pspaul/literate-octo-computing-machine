@@ -1629,8 +1629,7 @@
 		 * Constructor
 		 */
 		function PageUserInternetPrinter(_i18n, _view, _model) {
-			var _page = new _ns.Page(_i18n, _view, '#page-user-internet-printer', 'UserInternetPrinter')
-			, _self = _ns.derive(_page);
+			var _page = new _ns.Page(_i18n, _view, '#page-user-internet-printer', 'UserInternetPrinter'), _self = _ns.derive(_page);
 			return _self;
 		}
 
@@ -3258,7 +3257,33 @@
 			}
 			//
 			, _onPrint = function(isClose) {
-				_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")));
+				_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, 
+					_view.isCbChecked($("#print-remove-graphics")), 
+					_view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")));
+			}
+			//
+			, _setVisibility = function() {
+
+				var selCollate = $(".print-collate"), copies = parseInt($('#slider-print-copies').val(), 10);
+
+				if (copies > 1) {
+
+					selCollate.show();
+
+					if ($("#print-collate").is(':checked')) {
+						$('.print_collate_sheet_1_1').html('1');
+						$('.print_collate_sheet_1_2').html('2');
+						$('.print_collate_sheet_2_1').html('1');
+						$('.print_collate_sheet_2_2').html('2');
+					} else {
+						$('.print_collate_sheet_1_1').html('1');
+						$('.print_collate_sheet_1_2').html('1');
+						$('.print_collate_sheet_2_1').html('2');
+						$('.print_collate_sheet_2_2').html('2');
+					}
+				} else {
+					selCollate.hide();
+				}
 			}
 			//
 			;
@@ -3294,6 +3319,14 @@
 
 				$(this).on('click', '#sp-print-qs-printer-filter li', null, function() {
 					_onSelectPrinter($(this), filterablePrinter);
+				});
+
+				$("#print-collate").on("change", null, null, function(event, ui) {
+					_setVisibility();
+				});
+
+				$('#slider-print-copies').change(function() {
+					_setVisibility();
 				});
 
 				$('#button-print').click(function(e) {
@@ -3341,6 +3374,7 @@
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
+				_setVisibility();
 				_this.onShow();
 				if (_fastPrintAvailable) {
 					_this.onFastProxyPrintRenew(false);
@@ -5102,9 +5136,9 @@
 			/**
 			 * Callbacks: page print
 			 */
-			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint) {
+			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint, collate) {
 
-				var res, sel, cost, visible;
+				var res, sel, cost, visible, dto;
 
 				if (_saveSelectedletterhead('#print-letterhead-list')) {
 					return;
@@ -5113,19 +5147,22 @@
 				_model.myPrintTitle = $('#print-title').val();
 
 				res = _api.call({
-					user : _model.user.id,
 					request : 'printer-print',
-					printer : _model.myPrinter.name,
-					readerName : _model.myPrinterReaderName,
-					jobName : _model.myPrintTitle,
-					jobIndex : _model.printJobIndex,
-					pageScaling : _model.printPageScaling,
-					copies : $('#slider-print-copies').val(),
-					ranges : $('#print-page-ranges').val(),
-					removeGraphics : removeGraphics,
-					ecoprint : ecoprint,
-					clear : isClear,
-					options : JSON.stringify(_model.myPrinterOpt)
+					dto : JSON.stringify({
+						user : _model.user.id,
+						printer : _model.myPrinter.name,
+						readerName : _model.myPrinterReaderName,
+						jobName : _model.myPrintTitle,
+						jobIndex : _model.printJobIndex,
+						pageScaling : _model.printPageScaling,
+						copies : parseInt($('#slider-print-copies').val(), 10),
+						ranges : $('#print-page-ranges').val(),
+						collate : collate,
+						removeGraphics : removeGraphics,
+						ecoprint : ecoprint,
+						clear : isClear,						
+						options : _model.myPrinterOpt
+					})
 				});
 
 				if (res.requestStatus === 'NEEDS_AUTH') {

@@ -82,7 +82,7 @@ pattern="[0-9]*"
 			        <wicket:message key="print-copies"/>
 			    </label>
 			    <input type="range" id="slider-print-copies" wicket:id="slider-print-copies" 
-			          value="1" min="1" max="<var>" />
+			          value="1" min="1" max="<var>" /> 			          
             </div>
             		
             <div class="ui-field-contain">
@@ -99,7 +99,7 @@ pattern="[0-9]*"
                 </label>
                 <select data-mini="true" id="print-letterhead-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
             </div>
-                            
+            
 <wicket:enclosure child="print-ecoprint">
             <div data-mini="true" data-role="controlgroup">
                 <label for="print-ecoprint">
@@ -116,6 +116,23 @@ pattern="[0-9]*"
                     <span wicket:id="print-remove-graphics-label"/>
                 </label>
                 <input type="checkbox" id="print-remove-graphics" value="1"/>            
+            </div>
+
+            <div data-mini="true" data-role="controlgroup" class="print-collate">
+                <label for="print-collate">
+                    <table><tr>
+                        <td>Collate&nbsp;</td>
+                        <td>
+                            <div class="print_collate_sheet_next  print_collate_sheet_1_2">2</div>
+                            <div class="print_collate_sheet_first print_collate_sheet_1_1">1</div>
+                        </td>
+                        <td>
+                            <div class="print_collate_sheet_next  print_collate_sheet_2_2">2</div>
+                            <div class="print_collate_sheet_first print_collate_sheet_2_1">1</div>
+                        </td>
+                    </tr></table>
+                </label> 
+                <input type="checkbox" id="print-collate" value="1" checked />            
             </div>
 
             <div data-mini="true" data-role="controlgroup">

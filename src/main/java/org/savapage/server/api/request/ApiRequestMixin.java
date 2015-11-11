@@ -23,6 +23,7 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -48,7 +49,8 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     /**
      *
      */
-    private final Map<String, Object> userData = new HashMap<String, Object>();
+    private final Map<String, Object> responseMap =
+            new HashMap<String, Object>();
 
     private RequestCycle requestCycle;
     private PageParameters pageParameters;
@@ -86,7 +88,24 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @return The response {@link Map}.
      */
     private Map<String, Object> getResponseMap() {
-        return userData;
+        return responseMap;
+    }
+
+    /**
+     * @deprecated
+     * @return The response {@link Map}.
+     */
+    @Deprecated
+    protected final Map<String, Object> getUserData() {
+        return responseMap;
+    }
+
+    /**
+     *
+     * @return The {@link Locale}.
+     */
+    protected final Locale getLocale() {
+        return ServiceContext.getLocale();
     }
 
     /**
@@ -156,6 +175,19 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
         if (txt != null) {
             result.put(RSP_KEY_TXT, txt);
         }
+    }
+
+    /**
+     * Sets the API result with a single text message.
+     *
+     * @param code
+     *            The {@link ApiResultCodeEnum}.
+     * @param text
+     *            The message text
+     */
+    protected final void setApiResultText(final ApiResultCodeEnum code,
+            final String text) {
+        createApiResult(code, "msg-single-parm", text);
     }
 
     /**

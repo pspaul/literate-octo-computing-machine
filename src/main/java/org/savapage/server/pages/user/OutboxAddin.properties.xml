@@ -9,6 +9,7 @@
     <entry key="sheets">sheets</entry>
 
     <entry key="copies">copies</entry>
+    <entry key="collate">Collate</entry>
     
     <entry key="duplex">Duplex</entry>
     <entry key="singlex">Simplex</entry>

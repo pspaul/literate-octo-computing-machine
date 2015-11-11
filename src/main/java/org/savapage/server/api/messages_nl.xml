@@ -55,9 +55,6 @@
             toegestaan.</entry>
 
 	<entry key="msg-clear-range-syntax-error">Syntax van de pagina-reeks "{0}" is ongeldig.</entry>
-    <entry key="msg-print-out-of-range-error">Afdruk reeks "{0}" overschrijdt aantal pagina's van het document ({1}).</entry>
-	
-    <entry key="msg-print-auth-pending">Een andere afdruk-opdracht wacht op authenticatie. Probeer het later nog een keer.</entry>
     <entry key="msg-print-auth-cancel-ok">Afdruk-opdracht is met succes geannuleerd.</entry>
     <entry key="msg-print-auth-cancel-not-found">Te annuleren afdruk-opdracht is niet gevonden.</entry>
 	
@@ -96,7 +93,6 @@
         
 	<entry key="msg-queue-saved-ok">Wachtrij is met succes opgeslagen.</entry>
 	<entry key="msg-queue-created-ok">Wachtrij is met succes aangemaakt.</entry>
-	<entry key="msg-queue-not-found">Wachtrij "{0}" is niet gevonden.</entry>
 	<entry key="msg-queue-duplicate-path">Wachtrij "{0}" bestaat al.</entry>
     <entry key="msg-queue-reserved-path">Wachtrij "{0}" is gereserveerd.</entry>
 

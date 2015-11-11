@@ -30,7 +30,9 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
+import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqQueueEnable;
+import org.savapage.server.api.request.ReqQueueGet;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.
@@ -299,14 +301,29 @@ public class JsonApiDict {
     }
 
     /**
-     * Puts a user's {@link Req} in the dictionary.
+     * @deprecated Puts a user's {@link Req} in the dictionary.
      *
      * @param key
      * @param dbClaim
      * @param dbAccess
      */
+    @Deprecated
     private void usr(final String key, DbClaim dbClaim, DbAccess dbAccess) {
         dict.put(key, new Req(AuthReq.USER, dbClaim, dbAccess));
+    }
+
+    /**
+     * Puts a user's {@link Req} in the dictionary.
+     *
+     * @param key
+     * @param handler
+     * @param dbClaim
+     * @param dbAccess
+     */
+    private void usr(final String key,
+            final Class<? extends ApiRequestHandler> handler, DbClaim dbClaim,
+            DbAccess dbAccess) {
+        dict.put(key, new Req(AuthReq.USER, handler, dbClaim, dbAccess));
     }
 
     /**
@@ -636,14 +653,15 @@ public class JsonApiDict {
         adm(REQ_PRINTER_GET, DbClaim.NONE, DbAccess.YES);
         usr(REQ_PRINTER_LIST, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_OPT_DOWNLOAD, DbClaim.NONE, DbAccess.YES);
-        usr(REQ_PRINTER_PRINT, DbClaim.READ, DbAccess.USER_LOCK);
+        usr(REQ_PRINTER_PRINT, ReqPrinterPrint.class, DbClaim.READ,
+                DbAccess.USER_LOCK);
         usr(REQ_PRINTER_QUICK_SEARCH, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET_MEDIA_COST, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET_MEDIA_SOURCES, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_RENAME, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SYNC, DbClaim.READ, DbAccess.YES);
-        adm(REQ_QUEUE_GET, DbClaim.NONE, DbAccess.YES);
+        adm(REQ_QUEUE_GET, ReqQueueGet.class, DbClaim.NONE, DbAccess.YES);
         adm(REQ_QUEUE_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_QUEUE_ENABLE, ReqQueueEnable.class, DbClaim.READ, DbAccess.YES);
 

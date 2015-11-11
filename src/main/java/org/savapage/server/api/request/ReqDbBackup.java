@@ -47,8 +47,7 @@ public final class ReqDbBackup extends ApiRequestMixin {
             setApiResult(ApiResultCodeEnum.OK, "msg-db-backup-busy");
 
         } catch (Exception e) {
-            setApiResult(ApiResultCodeEnum.ERROR, "msg-tech-error",
-                    e.getMessage());
+            setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
         }
     }
 

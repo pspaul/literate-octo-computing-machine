@@ -203,4 +203,34 @@ a:hover.poll_button {
     /* Good browsers */
     opacity: 0.3;
 }
+
+.print_collate_sheet_first {
+    width:15px;
+    height:18px;
+    background-color:white;
+    border:1px silver solid;
+    font-size: 11px;
+    text-align: right; 
+    margin-top: -10px;
+    padding: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px; 
+}
+.print_collate_sheet_next { 	
+    width:15px;
+    height:18px;
+    background-color:white;
+    border:1px silver solid;
+    font-size: 11px;
+    text-align: right; 
+    margin-left: 9px;
+    padding: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px; 
+}
+
 /* end-of-file */

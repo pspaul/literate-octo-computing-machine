@@ -2,10 +2,12 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
+    <entry key="msg-single-parm">{0}</entry> 
+
 	<!-- ReqDbBackup -->
 
     <entry key="msg-db-backup-busy">Creating backup...</entry>
-    <entry key="msg-tech-error">{0}</entry>	
+
     
     <!-- ReqQueueEnable -->
     
@@ -19,5 +21,16 @@
      
     <entry key="msg-queue-enabled-already">Queue "{0}" was already enabled.</entry> 
     <entry key="msg-queue-disabled-already">Queue "{0}" was already disabled.</entry>     
+
+    <!-- ReqQueueGet -->
+      
+    <entry key="msg-queue-not-found">Queue "{0}" is not found.</entry>
+
+    <!-- ReqPrinterPrint -->
+    
+    <entry key="msg-ecoprint-pending">Eco Print is being prepared. Please wait a moment and try again.</entry>
+    <entry key="msg-clear-range-syntax-error">Syntax of page range "{0}" is invalid.</entry>
+    <entry key="msg-print-out-of-range-error">Print range "{0}" exceeds number of pages of document ({1}).</entry>    
+    <entry key="msg-print-auth-pending">Another print job is waiting for authentication. Try again later.</entry>
     
 </properties>

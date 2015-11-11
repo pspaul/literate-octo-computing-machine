@@ -1044,9 +1044,12 @@
 					id : null,
 					urlpath : 'untitled',
 					ipallowed : '',
-					trusted : true,
+					trusted : false,
 					disabled : false,
-					deleted : false
+					deleted : false,
+					uiText : 'Untitled',
+            		reserved : null,
+            		fixedTrust : false					
 				};
 				_view.pages.queue.loadShowAsync(function() {
 					$('#title-queue').html(_model.editQueue.urlpath);
@@ -1056,10 +1059,12 @@
 			_view.pages.admin.onEditQueue = function(id) {
 				var res = _api.call({
 					request : 'queue-get',
-					id : id
+					dto : JSON.stringify({
+						id : id
+					})
 				});
 				if (res && res.result.code === '0') {
-					_model.editQueue = res.j_queue;
+					_model.editQueue = res.dto;
 					_view.pages.queue.loadShowAsync(function() {
 						$('#title-queue').html(_model.editQueue.urlpath);
 					});
@@ -1072,10 +1077,10 @@
 
 				_model.editQueue.urlpath = $('#queue-url-path').val();
 				_model.editQueue.ipallowed = $('#queue-ip-allowed').val();
-				_model.editQueue.trusted = $('#queue-trusted').is(':checked');
 				_model.editQueue.disabled = $('#queue-disabled').is(':checked');
 				_model.editQueue.deleted = $('#queue-deleted').is(':checked');
-
+				_model.editQueue.trusted = $('#queue-trusted').is(':checked');
+ 
 				var res = _api.call({
 					request : 'queue-set',
 					j_queue : JSON.stringify(_model.editQueue)

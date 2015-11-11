@@ -55,9 +55,7 @@
 		permitted.</entry>
 
 	<entry key="msg-clear-range-syntax-error">Syntax of page range "{0}" is invalid.</entry>
-    <entry key="msg-print-out-of-range-error">Print range "{0}" exceeds number of pages of document ({1}).</entry>
 	
-    <entry key="msg-print-auth-pending">Another print job is waiting for authentication. Try again later.</entry>
     <entry key="msg-print-auth-cancel-ok">Print job successfully cancelled.</entry>
     <entry key="msg-print-auth-cancel-not-found">Print job to cancel not found.</entry>
 
@@ -96,7 +94,6 @@
 
 	<entry key="msg-queue-saved-ok">Queue successfully saved.</entry>
 	<entry key="msg-queue-created-ok">Queue successfully created.</entry>
-	<entry key="msg-queue-not-found">Queue "{0}" is not found.</entry>
 	<entry key="msg-queue-duplicate-path">Queue "{0}" already exists.</entry>
     <entry key="msg-queue-reserved-path">Queue "{0}" is reserved.</entry>
 

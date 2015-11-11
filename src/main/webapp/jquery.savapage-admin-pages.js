@@ -55,7 +55,6 @@
 			 */
 			$(_self.id()).on('pagecreate', function(event) {
 
-
 				$(this).on('click', '#button-user-generate-uuid', null, function() {
 					_self.onGenerateUserUuid();
 					return false;
@@ -254,7 +253,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,                                                       _this = this
+			//,                                                        _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//
@@ -671,9 +670,9 @@
 
 				$('#queue-header').text(_model.editQueue.uiText);
 
-				_view.visible($('.queue_user-defined-section'), !reserved);
-				_view.enable($('#queue-url-path'), !reserved);
-
+				_view.visible($('.queue_user-defined-section'), !reserved && _model.editQueue.id !== null);
+				$('#queue-url-path').textinput( reserved ? "disable" : "enable");
+				$('#queue-trusted').checkboxradio(_model.editQueue.fixedTrust ? "disable" : "enable");
 			});
 			/*
 			 * IMPORTANT
@@ -692,7 +691,6 @@
 			, _self = _ns.derive(_page)
 			//
 			, _onChangeChargeType, _showAllMediaRows;
-
 
 			_onChangeChargeType = function(chargeType) {
 				var isSimple = (chargeType === 'SIMPLE');
@@ -1648,7 +1646,7 @@
 				$(this).on('change', "input:checkbox[id='flipswitch-payment-plugin-bitcoin-online']", null, function(e) {
 					_self.onPaymentGatewayOnline(true, $(this).is(':checked'));
 				});
-				
+
 				$(this).on('change', "input:checkbox[id='flipswitch-payment-plugin-generic-online']", null, function(e) {
 					_self.onPaymentGatewayOnline(false, $(this).is(':checked'));
 				});
@@ -1681,16 +1679,14 @@
 					var isChecked = $(this).is(':checked'), res = _self.onFlatRequest( isChecked ? 'smartschool-start' : 'smartschool-stop');
 					if (!res || res.result.code !== '0') {
 						$(this).prop("checked", !isChecked);
-						// This triggers 'change' event again :-)	
-						$(this).flipswitch( "refresh" );						
+						// This triggers 'change' event again :-)
+						$(this).flipswitch("refresh");
 					}
 				});
 
 				$(this).on('click', '#apply-smartschool-papercut-student-cost-csv', null, function() {
-					var	sel = $('#sp-smartschool-papercut-student-cost-date-from'),
-					from = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null, to,
-					klassen = $('#sp-smartschool-papercut-student-cost-klassen').val();	
-					
+					var sel = $('#sp-smartschool-papercut-student-cost-date-from'), from = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null, to, klassen = $('#sp-smartschool-papercut-student-cost-klassen').val();
+
 					sel = $('#sp-smartschool-papercut-student-cost-date-to');
 					to = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
 

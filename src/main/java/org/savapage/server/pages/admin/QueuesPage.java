@@ -313,12 +313,17 @@ public class QueuesPage extends AbstractAdminListPage {
                                 && reservedQueue != ReservedIppQueueEnum.IPP_PRINT_INTERNET && reservedQueue
                                     .isDriverPrint())) {
 
-                    helper.encloseLabel("url-default",
-                            urlDefault + "/" + queue.getUrlPath(), true)
+                    helper.encloseLabel(
+                            "url-default",
+                            String.format("%s/%s", urlDefault,
+                                    queue.getUrlPath()), true)
                             .setEscapeModelStrings(false);
 
-                    helper.encloseLabel("url-windows",
-                            urlWindows + "/" + queue.getUrlPath(), true)
+                    // For now, do NOT show the Windows URL.
+                    helper.encloseLabel(
+                            "url-windows",
+                            String.format("%s/%s", urlWindows,
+                                    queue.getUrlPath()), false)
                             .setEscapeModelStrings(false);
 
                 } else {

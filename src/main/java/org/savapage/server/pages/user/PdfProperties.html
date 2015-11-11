@@ -49,14 +49,17 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                     <wicket:message key="pdf-ecoprint"/>
                 </label>
                 <input data-mini="true" type="checkbox" wicket:id="pdf-ecoprint" id="pdf-ecoprint" value="1"/>
-</wicket:enclosure>       
+</wicket:enclosure>
+       
                 <label data-mini="true" for="pdf-remove-graphics">
                     &nbsp;&nbsp;<img height="12" src="/glyphicons/glyphicons_092_tint.png"/>&nbsp;&nbsp;                
                     <wicket:message key="pdf-remove-graphics"/>
                 </label>
                 <input data-mini="true" type="checkbox" id="pdf-remove-graphics" value="1"/>
                 
-                <label data-mini="true" for="pdf-grayscale"><wicket:message key="pdf-grayscale"/></label>
+                <label data-mini="true" for="pdf-grayscale">
+                    &nbsp;&nbsp;<img height="12" src="/glyphicons/glyphicons_091_adjust.png"/>&nbsp;&nbsp;                
+                <wicket:message key="pdf-grayscale"/></label>
                 <input data-mini="true" type="checkbox" id="pdf-grayscale" value="1"/>
             </div>
 
