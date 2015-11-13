@@ -28,7 +28,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -41,6 +40,7 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -285,23 +285,14 @@ public final class WebAppUserPage extends AbstractWebAppPage {
         addFileDownloadApiPanel();
 
         /*
-         *
+         * NOTE: Since Wicket 7 a panel is needed to make <wicket:enclosure>
+         * work.
          */
-        addVisible(
-                ConfigManager.instance().isConfigValue(
-                        Key.INTERNAL_USERS_CAN_CHANGE_PW),
-                "button-user-pw-dialog", localized("button-password"));
+        final UserDashboardPanel dashboardPanel =
+                new UserDashboardPanel("page-dashboard-panel");
 
-        addVisible(
-                ConfigManager.instance().isConfigValue(Key.USER_CAN_CHANGE_PIN),
-                "button-user-pin-dialog", localized("button-pin"));
-
-        final boolean hasUriBase =
-                StringUtils.isNotBlank(ConfigManager.instance().getConfigValue(
-                        Key.IPP_INTERNET_PRINTER_URI_BASE));
-
-        addVisible(hasUriBase, "button-user-internet-printer-dialog",
-                localized("button-internet-printer"));
+        add(dashboardPanel);
+        dashboardPanel.populate();
     }
 
     @Override
@@ -402,6 +393,15 @@ public final class WebAppUserPage extends AbstractWebAppPage {
                                     final InternalFontFamilyEnum object,
                                     final int index) {
                                 return object.toString();
+                            }
+
+                            @Override
+                            public
+                                    InternalFontFamilyEnum
+                                    getObject(
+                                            String arg0,
+                                            IModel<? extends List<? extends InternalFontFamilyEnum>> arg1) {
+                                return InternalFontFamilyEnum.valueOf(arg0);
                             }
                         });
 

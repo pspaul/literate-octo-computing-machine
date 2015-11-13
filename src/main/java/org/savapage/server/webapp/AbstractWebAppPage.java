@@ -110,6 +110,7 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      *
      */
     protected AbstractWebAppPage() {
+        super();
     }
 
     /**
@@ -142,6 +143,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      *            The {@link PageParameters}.
      */
     protected AbstractWebAppPage(final PageParameters parameters) {
+
+        super(parameters);
 
         SpSession.get().setWebAppType(this.getWebAppType());
 

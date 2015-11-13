@@ -873,7 +873,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
     @Override
     protected void onDestroy() {
-        this.pluginManager.stop();
+        if (this.pluginManager != null) {
+            this.pluginManager.stop();
+        }
     }
 
 }

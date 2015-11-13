@@ -82,7 +82,7 @@ public class PrinterAccountingPanel extends Panel {
          * @param id
          * @param list
          */
-        public MediaCostView(String id, List<? extends IppMediaCostDto> list,
+        public MediaCostView(String id, List<IppMediaCostDto> list,
                 final boolean isColorPrinter, final boolean isDuplexPrinter) {
             super(id, list);
             this.helper = new MarkupHelper(this);

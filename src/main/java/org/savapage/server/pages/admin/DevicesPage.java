@@ -22,6 +22,7 @@
 package org.savapage.server.pages.admin;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,8 +49,6 @@ import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  *

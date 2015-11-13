@@ -90,6 +90,22 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
     private Date perfStartTime;
 
     /**
+     *
+     * @param parameters
+     */
+    protected AbstractPage() {
+        super();
+    }
+
+    /**
+     *
+     * @param parameters
+     */
+    protected AbstractPage(final PageParameters parameters) {
+        super(parameters);
+    }
+
+    /**
      * Opens the {@link ServiceContext} with the {@link Locale} of the session.
      * <p>
      * When needed, this method MUST be called in the <b>constructor</b> of the

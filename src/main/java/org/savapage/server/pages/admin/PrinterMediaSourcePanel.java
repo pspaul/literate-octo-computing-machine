@@ -85,7 +85,7 @@ public class PrinterMediaSourcePanel extends Panel {
         private static final long serialVersionUID = 1L;
 
         public MediaListView(String id,
-                List<? extends JsonProxyPrinterOptChoice> list,
+                List<JsonProxyPrinterOptChoice> list,
                 final String media) {
 
             super(id, list);
@@ -135,7 +135,7 @@ public class PrinterMediaSourcePanel extends Panel {
          * @param isDuplexPrinter
          */
         public MediaSourceListView(final String id,
-                final List<? extends IppMediaSourceCostDto> mediaSourceList,
+                final List<IppMediaSourceCostDto> mediaSourceList,
                 List<JsonProxyPrinterOptChoice> mediaList,
                 final boolean isColorPrinter, final boolean isDuplexPrinter) {
 

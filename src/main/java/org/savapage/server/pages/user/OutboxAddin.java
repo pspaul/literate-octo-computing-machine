@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ public class OutboxAddin extends AbstractUserPage {
          * @param id
          * @param list
          */
-        public OutboxJobView(String id, List<? extends OutboxJob> list) {
+        public OutboxJobView(String id, List<OutboxJob> list) {
             super(id, list);
         }
 

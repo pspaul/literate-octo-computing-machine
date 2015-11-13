@@ -14,9 +14,6 @@
     <entry key="button-file-upload-clear">Wissen</entry>
     <entry key="button-back">Terug</entry>
     <entry key="button-renew">Vernieuwen</entry>
-    <entry key="button-password">Wachtwoord</entry>
-    <entry key="button-pin">PIN</entry>
-    <entry key="button-internet-printer">Internet Printer</entry>
 
     <entry key="msg-file-upload-busy">Uploaden ...</entry>
     <entry key="msg-file-upload-success">Bestand met succes geüpload.</entry>

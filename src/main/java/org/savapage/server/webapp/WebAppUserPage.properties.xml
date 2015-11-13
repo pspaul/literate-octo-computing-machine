@@ -15,9 +15,6 @@
     <entry key="button-file-upload-clear">Clear</entry>
     <entry key="button-back">Back</entry>
     <entry key="button-renew">Renew</entry>
-    <entry key="button-password">Password</entry>
-    <entry key="button-pin">PIN</entry>
-    <entry key="button-internet-printer">Internet Printer</entry>
 
     <entry key="msg-file-upload-busy">Uploading ...</entry>
     <entry key="msg-file-upload-success">File successfully uploaded.</entry>
