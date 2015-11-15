@@ -146,8 +146,6 @@
                 // NOTE: authCardSelfAssoc is DISABLED
                 _view.pages.login.setAuthMode(res.authName, res.authId, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, null, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
-                _i18n.initValues(res.i18n_values);
-
                 language = _util.getUrlParam('language');
                 if (!language) {
                     language = _model.authToken.language || '';

@@ -22,6 +22,8 @@
     <entry key="title-warning">Warning</entry>
     <entry key="title-info">Info</entry>
 
+    <entry key="msg-password-mismatch">Passwords do not match.</entry>
+
 	<!-- ================================================================= -->
 	<!-- Admin -->
 	<!-- ================================================================= -->

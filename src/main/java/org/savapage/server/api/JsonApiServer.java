@@ -7141,18 +7141,7 @@ public final class JsonApiServer extends AbstractPage {
          */
         userData.put("img_base64", false);
 
-        /*
-         * Setting values for existing i18n keys. These keys must be present in
-         * the i18n_<language>.properties files.
-         */
-        final Map<String, Object> i18nValues = new HashMap<String, Object>();
-
-        // deprecated
-        userData.put("i18n_values", i18nValues);
-
-        /*
-         *
-         */
+        //
         final UserAuth userAuth =
                 new UserAuth(getHostTerminal(), authModeReq, getWebAppType()
                         .equals(WebAppTypeEnum.ADMIN));
@@ -7174,9 +7163,6 @@ public final class JsonApiServer extends AbstractPage {
             userData.put("maxIdleSeconds", maxIdleSeconds);
         }
 
-        /*
-         *
-         */
         final ConfigManager cm = ConfigManager.instance();
 
         userData.put("cardLocalMaxMsecs",

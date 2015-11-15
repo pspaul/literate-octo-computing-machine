@@ -200,8 +200,6 @@
 				// Configures CometD (without starting it)
 				_cometd.configure(res.cometdMaxNetworkDelay);
 
-				_i18n.initValues(res.i18n_values);
-
 				language = _util.getUrlParam('language');
 				if (!language) {
 					language = _model.authToken.language || '';

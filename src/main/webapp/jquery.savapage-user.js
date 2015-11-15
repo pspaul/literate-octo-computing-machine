@@ -4241,11 +4241,6 @@
 				_cometdMaxNetworkDelay = res.cometdMaxNetworkDelay;
 				_cometd.configure(_cometdMaxNetworkDelay);
 
-				/*
-				 *
-				 */
-				_i18n.initValues(res.i18n_values);
-
 				_model.authCardIp = res.authCardIp;
 				_model.cometdDeviceToken = res.cometdToken;
 				_model.maxIdleSeconds = res.maxIdleSeconds;
