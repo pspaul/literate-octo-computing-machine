@@ -309,9 +309,9 @@ public class QueuesPage extends AbstractAdminListPage {
                 final MarkupHelper helper = new MarkupHelper(item);
 
                 if (reservedQueue == null
-                        || (reservedQueue != ReservedIppQueueEnum.RAW_PRINT
-                                && reservedQueue != ReservedIppQueueEnum.IPP_PRINT_INTERNET && reservedQueue
-                                    .isDriverPrint())) {
+                        || (reservedQueue.isDriverPrint()
+                                && reservedQueue != ReservedIppQueueEnum.RAW_PRINT
+                                && reservedQueue != ReservedIppQueueEnum.IPP_PRINT_INTERNET && reservedQueue != ReservedIppQueueEnum.AIRPRINT)) {
 
                     helper.encloseLabel(
                             "url-default",
@@ -334,31 +334,27 @@ public class QueuesPage extends AbstractAdminListPage {
                 /*
                  *
                  */
-                final String reservedText;
+                final StringBuilder reservedText = new StringBuilder();
 
                 if (reservedQueue == null) {
-                    reservedText = ReservedIppQueueEnum.IPP_PRINT.getUiText();
+                    reservedText.append(ReservedIppQueueEnum.IPP_PRINT
+                            .getUiText());
                 } else {
-                    switch (reservedQueue) {
-                    case IPP_PRINT:
-                    case IPP_PRINT_INTERNET:
-                        reservedText =
-                                reservedQueue.getUiText()
-                                        + " ("
-                                        + getLocalizer().getString(
-                                                "signal-reserved", this) + ")";
-                        break;
-                    case RAW_PRINT:
-                        reservedText =
-                                reservedQueue.getUiText() + " Port "
-                                        + ConfigManager.getRawPrinterPort();
-                        break;
-                    default:
-                        reservedText = reservedQueue.getUiText();
-                        break;
+                    reservedText.append(reservedQueue.getUiText());
+
+                    if (reservedQueue == ReservedIppQueueEnum.RAW_PRINT) {
+                        reservedText.append(" Port ").append(
+                                ConfigManager.getRawPrinterPort());
                     }
+
+                    reservedText
+                            .append(" (")
+                            .append(getLocalizer().getString("signal-reserved",
+                                    this)).append(")");
+
                 }
-                helper.encloseLabel("reserved-queue", reservedText, true);
+                helper.encloseLabel("reserved-queue", reservedText.toString(),
+                        true);
 
                 /*
                  *
