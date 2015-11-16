@@ -69,6 +69,7 @@ public class Options extends AbstractAdminPage {
     public Options() {
 
         final MarkupHelper helper = new MarkupHelper(this);
+        final ConfigManager cm = ConfigManager.instance();
 
         /*
          *
@@ -520,8 +521,19 @@ public class Options extends AbstractAdminPage {
         labelledInput("webprint-ip-allowed",
                 IConfigProp.Key.WEB_PRINT_LIMIT_IP_ADDRESSES);
 
+        /*
+         * Eco Print
+         */
+        labelledCheckbox("ecoprint-enable", IConfigProp.Key.ECO_PRINT_ENABLE);
 
-        final ConfigManager cm = ConfigManager.instance();
+        labelledInput("ecoprint-discount-perc",
+                IConfigProp.Key.ECO_PRINT_DISCOUNT_PERC);
+
+        labelledInput("ecoprint-auto-threshold-page-count",
+                IConfigProp.Key.ECO_PRINT_AUTO_THRESHOLD_SHADOW_PAGE_COUNT);
+
+        labelledInput("ecoprint-resolution-dpi",
+                IConfigProp.Key.ECO_PRINT_RESOLUTION_DPI);
 
         /*
          * Internet Print

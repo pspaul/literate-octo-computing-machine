@@ -921,6 +921,11 @@
 				_view.visible($('.webprint-enabled'), enabled);
 			},
 
+			onEcoPrintEnabled : function(enabled) {
+				var _view = _ns.PanelCommon.view;
+				_view.visible($('.ecoprint-enabled'), enabled);
+			},
+
 			onSmartSchoolEnabled : function(enabled1, enabled2) {
 				var _view = _ns.PanelCommon.view;
 				_view.visible($('.smartschool-1-print-enabled'), enabled1);
@@ -976,6 +981,7 @@
 				my.onPrintImapEnabled(_view.isCbChecked($('#print\\.imap\\.enable')));
 				my.onProxyPrintEnabled(_view.isCbChecked($('#proxy-print\\.non-secure')));
 				my.onWebPrintEnabled(_view.isCbChecked($('#web-print\\.enable')));
+				my.onEcoPrintEnabled(_view.isCbChecked($('#eco-print\\.enable')));
 
 				my.onSmartSchoolEnabled(_view.isCbChecked($('#smartschool\\.1\\.enable')), _view.isCbChecked($('#smartschool\\.2\\.enable')));
 				my.onSmartSchoolPaperCutEnabled(_view.isCbChecked($('#smartschool\\.papercut\\.enable')));

@@ -250,6 +250,11 @@
     <entry key="webprint-max-file-mb">Maximale document grootte (MB)</entry>
     <entry key="webprint-ip-allowed">Toegestane IP adressen</entry>
 
+    <entry key="ecoprint-enable">Gebruikers mogen Eco Print toepassen</entry>
+    <entry key="ecoprint-discount-perc">Proxy Printing Kortingspercentage</entry>
+    <entry key="ecoprint-auto-threshold-page-count">Maximale document grootte (pagina's) voor automatisch filteren</entry>
+    <entry key="ecoprint-resolution-dpi">Resolutie DPI</entry>
+
     <entry key="prompt-internetprint-base-uri">IPP protocol://authority van de Internet Printer Device URI:</entry>
 
     <entry key="gcp-enable">Inschakelen</entry>

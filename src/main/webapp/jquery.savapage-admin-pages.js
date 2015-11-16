@@ -1711,6 +1711,10 @@
 					_panel.Options.onWebPrintEnabled($(this).is(':checked'));
 				});
 
+				$(this).on('change', "input:checkbox[id='eco-print.enable']", null, function(e) {
+					_panel.Options.onEcoPrintEnabled($(this).is(':checked'));
+				});
+
 				$(this).on('change', "input:checkbox[id='smartschool.1.enable']", null, function(e) {
 					_panel.Options.onSmartSchoolEnabled(_view.isCbChecked($(this)), _view.isCbChecked($('#smartschool\\.2\\.enable')));
 				});
@@ -1741,6 +1745,11 @@
 
 				$(this).on('click', '#apply-webprint', null, function() {
 					_self.onApplyWebPrint(_view.isCbChecked($('#web-print\\.enable')));
+					return false;
+				});
+
+				$(this).on('click', '#apply-ecoprint', null, function() {
+					_self.onApplyEcoPrint(_view.isCbChecked($('#eco-print\\.enable')));
 					return false;
 				});
 

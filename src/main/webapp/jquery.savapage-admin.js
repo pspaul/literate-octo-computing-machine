@@ -544,6 +544,15 @@
 				_saveConfigProps(props);
 			};
 
+			_view.pages.admin.onApplyEcoPrint = function(enabled) {
+				var props = {};
+				props['eco-print.enable'] = enabled ? 'Y' : 'N';
+				if (enabled) {
+					_fillConfigPropsText(props, ['eco-print.discount-percent', 'eco-print.auto-threshold.page-count', 'eco-print.resolution-dpi']);
+				}
+				_saveConfigProps(props);
+			};
+
 			_view.pages.admin.onApplyInternetPrint = function() {
 				_saveConfigProps(_fillConfigPropsText({}, ['ipp.internet-printer.uri-base']));
 			};

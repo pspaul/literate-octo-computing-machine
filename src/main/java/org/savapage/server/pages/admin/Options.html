@@ -1046,8 +1046,6 @@ pattern="[0-9]*"
         </div>
     </li>
 
-
-
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 
@@ -1126,6 +1124,47 @@ pattern="[0-9]*"
 
 		</div>
 	</li>
+
+    <li>
+        <div data-role="collapsible" data-collapsed="true">
+
+            <h3>Eco Print</h3>
+
+            <ul data-role="listview" data-inset="true">
+
+                <li>
+                    <label for="ecoprint-enable" wicket:id="ecoprint-enable-label" />
+                    <input type="checkbox" id="ecoprint-enable" value="0"
+                        wicket:id="ecoprint-enable" />
+                </li>
+
+                <li class="ecoprint-enabled">
+                
+                    <label for="" wicket:id="ecoprint-discount-perc-label" class="sp-txt-wrap"/>
+                    <input type="text" id="" value="" wicket:id="ecoprint-discount-perc"
+                        autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="2"
+                        pattern="[0-9]*" spellcheck="false" />
+
+                    <label for="" wicket:id="ecoprint-auto-threshold-page-count-label" class="sp-txt-wrap"/>
+                    <input type="text" id="" value="" wicket:id="ecoprint-auto-threshold-page-count"
+                        autocomplete="off" autocorrect="off" autocapitalize="off" 
+                        pattern="[0-9]*" spellcheck="false" />                        
+
+                    <label for="" wicket:id="ecoprint-resolution-dpi-label" class="sp-txt-wrap"/>
+                    <input type="text" id="" value="" wicket:id="ecoprint-resolution-dpi"
+                        autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="3"
+                        pattern="[0-9]*" spellcheck="false" />
+                </li>
+                
+                <li>
+                    <div>
+                        <a href="#" id="apply-ecoprint" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"> 
+                          <wicket:message key="button-apply" /></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </li>
 
     <li>
         <div data-role="collapsible" data-collapsed="true">
