@@ -1571,7 +1571,7 @@
 			$("#page-send").on("pagecreate", function(event) {
 
 				$('#button-send-send').click(function() {
-					_this.onSend($('#send-mailto').val(), _model.pdfPageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfGrayscale);
+					_this.onSend($('#send-mailto').val(), _model.pdfPageRanges, _model.removeGraphics, _model.ecoprint);
 					$('#pdf-page-ranges').val('');
 					return false;
 				});
@@ -3989,11 +3989,6 @@
 			}
 			/**
 			 *
-			 */, _savePdfGrayscale = function(sel) {
-				_model.pdfGrayscale = _view.isCbChecked($(sel));
-			}
-			/**
-			 *
 			 */, _checkVanillaJobs = function() {
 
 				var res = _api.call({
@@ -4997,7 +4992,7 @@
 			/**
 			 * Callbacks: page send
 			 */
-			_view.pages.send.onSend = function(mailto, ranges, removeGraphics, ecoprint, grayscale) {
+			_view.pages.send.onSend = function(mailto, ranges, removeGraphics, ecoprint) {
 
 				var res;
 
@@ -5008,8 +5003,7 @@
 						jobIndex : _model.pdfJobIndex,
 						ranges : ranges,
 						removeGraphics : removeGraphics,
-						ecoprint : ecoprint,
-						grayscale : grayscale
+						ecoprint : ecoprint
 					});
 					if (res.result.code === "0") {
 						_model.user.stats = res.stats;
@@ -5050,7 +5044,6 @@
 				_saveSelectedletterhead('#pdf-letterhead-list');
 				_saveRemoveGraphics('#pdf-remove-graphics');
 				_saveEcoprint('#pdf-ecoprint');
-				_savePdfGrayscale('#pdf-grayscale');
 
 				_model.pdfPageRanges = $('#pdf-page-ranges').val();
 
@@ -5071,7 +5064,6 @@
 
 				_saveRemoveGraphics('#pdf-remove-graphics');
 				_saveEcoprint('#pdf-ecoprint');
-				_savePdfGrayscale('#pdf-grayscale');
 
 				if (!_saveSelectedletterhead('#pdf-letterhead-list', true)) {
 					return false;
@@ -5083,7 +5075,7 @@
 					return false;
 				}
 				//
-				window.location.assign(_api.getUrl4Pdf(pageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfGrayscale, _model.pdfJobIndex));
+				window.location.assign(_api.getUrl4Pdf(pageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfJobIndex));
 				$('#pdf-page-ranges').val('');
 				_model.myShowUserStatsGet = true;
 				return true;

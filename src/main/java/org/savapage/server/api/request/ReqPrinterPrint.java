@@ -355,10 +355,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setLocale(this.getLocale());
         printReq.setIdUser(lockedUser.getId());
 
-        printReq.setConvertToGrayscale(printReq.isGrayscale()
-                && PROXY_PRINT_SERVICE.isColorPrinter(dtoReq.getPrinter())
-                && PRINTER_SERVICE.isClientSideMonochrome(printer));
-
         /*
          * Vanilla jobs?
          */

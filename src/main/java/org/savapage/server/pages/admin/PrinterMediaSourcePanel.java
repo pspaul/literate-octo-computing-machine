@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -84,8 +84,7 @@ public class PrinterMediaSourcePanel extends Panel {
          */
         private static final long serialVersionUID = 1L;
 
-        public MediaListView(String id,
-                List<JsonProxyPrinterOptChoice> list,
+        public MediaListView(String id, List<JsonProxyPrinterOptChoice> list,
                 final String media) {
 
             super(id, list);
@@ -459,25 +458,6 @@ public class PrinterMediaSourcePanel extends Panel {
             if (colorModeDefault != null
                     && colorModeDefault
                             .equalsIgnoreCase(IppKeyword.PRINT_COLOR_MODE_MONOCHROME)) {
-                labelWrk.add(new AttributeModifier("checked", "checked"));
-            }
-        }
-
-        add(labelWrk);
-
-        /*
-         * Client-side monochrome conversion.
-         */
-        final String labelClientSideMonochrome =
-                "client-side-monochrome-conversion";
-
-        labelWrk =
-                helper.encloseLabel(labelClientSideMonochrome, "",
-                        isColorPrinter);
-
-        // Checked?
-        if (isColorPrinter && printer.getAttributes() != null) {
-            if (PRINTER_SERVICE.isClientSideMonochrome(printer)) {
                 labelWrk.add(new AttributeModifier("checked", "checked"));
             }
         }
