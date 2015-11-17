@@ -24,12 +24,16 @@
 	<entry key="sheet">blad</entry>
 	<entry key="sheets">bladen</entry>
 
+    <entry key="collated">gecollationeerde</entry>
+    <entry key="uncollated">ongecollationeerde</entry>
 	<entry key="copies">kopieën</entry>
-
+	
 	<entry key="duplex">Dubbelzijdig</entry>
     <entry key="singlex">Enkelzijdig</entry>
 	<entry key="color">Kleur</entry>
     <entry key="grayscale">Grijstinten</entry>
+
+    <entry key="graphics-removed">Afbeeldingen verwijderd</entry>
 
 	<entry key="prompt-user">Gebruiker</entry>
 	<entry key="prompt-signature">Handtekening</entry>

@@ -85,6 +85,10 @@ public class DocLogItem {
     private Boolean duplex;
     private Boolean grayscale;
 
+    private Boolean collateCopies;
+    private Boolean ecoPrint;
+    private Boolean removeGraphics;
+
     private Integer jobId;
     private IppJobStateEnum jobState;
     private Boolean encrypted;
@@ -413,6 +417,9 @@ public class DocLogItem {
                     log.setLetterhead(docOut.getLetterhead() != null
                             && docOut.getLetterhead().booleanValue());
 
+                    log.setEcoPrint(docOut.getEcoPrint());
+                    log.setRemoveGraphics(docOut.getRemoveGraphics());
+
                     final PrintOut printOut = docOut.getPrintOut();
                     final PdfOut pdfOut = docOut.getPdfOut();
 
@@ -423,6 +430,7 @@ public class DocLogItem {
 
                         log.setDuplex(printOut.getDuplex());
                         log.setGrayscale(printOut.getGrayscale());
+                        log.setCollateCopies(printOut.getCollateCopies());
 
                         log.setPaperSize(printOut.getPaperSize());
                         log.setJobId(printOut.getCupsJobId());
@@ -1016,6 +1024,30 @@ public class DocLogItem {
 
     public void setGrayscale(Boolean grayscale) {
         this.grayscale = grayscale;
+    }
+
+    public Boolean getCollateCopies() {
+        return collateCopies;
+    }
+
+    public void setCollateCopies(Boolean collateCopies) {
+        this.collateCopies = collateCopies;
+    }
+
+    public Boolean getEcoPrint() {
+        return ecoPrint;
+    }
+
+    public void setEcoPrint(Boolean ecoPrint) {
+        this.ecoPrint = ecoPrint;
+    }
+
+    public Boolean getRemoveGraphics() {
+        return removeGraphics;
+    }
+
+    public void setRemoveGraphics(Boolean removeGraphics) {
+        this.removeGraphics = removeGraphics;
     }
 
     public String getAuthor() {

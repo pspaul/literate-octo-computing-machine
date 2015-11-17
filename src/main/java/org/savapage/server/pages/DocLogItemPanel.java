@@ -138,6 +138,11 @@ public class DocLogItemPanel extends Panel {
         mapVisible.put("job-state", null);
         mapVisible.put("print-in-denied-reason-hyphen", null);
         mapVisible.put("print-in-denied-reason", null);
+
+        mapVisible.put("collateCopies", null);
+        mapVisible.put("ecoPrint", null);
+        mapVisible.put("removeGraphics", null);
+
         String cssJobState = null;
 
         //
@@ -348,33 +353,54 @@ public class DocLogItemPanel extends Panel {
         /*
          * Totals
          */
-        String totals = "";
+        final StringBuilder totals = new StringBuilder();
 
         //
         String key = null;
+
         int total = obj.getTotalPages();
         int copies = obj.getCopies();
+
         //
-        totals += localizedNumber(total);
+        totals.append(localizedNumber(total));
         key = (total == 1) ? "page" : "pages";
-        totals += " " + localized(key);
+        totals.append(" ").append(localized(key));
 
         //
         if (copies > 1) {
-            totals += ", " + copies + " " + localized("copies");
+            totals.append(", ").append(copies).append(" ");
+            if (obj.getCollateCopies() != null) {
+                if (obj.getCollateCopies()) {
+                    key = "collated";
+                } else {
+                    key = "uncollated";
+                }
+                totals.append(localized(key)).append(" ");
+            }
+
+            totals.append(localized("copies"));
         }
 
         //
         total = obj.getTotalSheets();
         if (total > 0) {
             key = (total == 1) ? "sheet" : "sheets";
-            totals += " (" + total + " " + localized(key) + ")";
+            totals.append(" (").append(total).append(" ")
+                    .append(localized(key)).append(")");
         }
 
         //
-        totals += ", " + obj.getHumanReadableByteCount();
+        totals.append(", ").append(obj.getHumanReadableByteCount());
 
-        add(new Label("totals", totals));
+        add(new Label("totals", totals.toString()));
+
+        if (obj.getEcoPrint() != null && obj.getEcoPrint()) {
+            mapVisible.put("ecoPrint", "EcoPrint");
+        }
+
+        if (obj.getRemoveGraphics() != null && obj.getRemoveGraphics()) {
+            mapVisible.put("removeGraphics", localized("graphics-removed"));
+        }
 
         /*
          * Hide/Show

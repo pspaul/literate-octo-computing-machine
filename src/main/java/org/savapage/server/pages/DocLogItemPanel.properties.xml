@@ -24,12 +24,16 @@
     <entry key="sheet">sheet</entry>
     <entry key="sheets">sheets</entry>
 
+    <entry key="collated">collated</entry>
+    <entry key="uncollated">uncollated</entry>    
     <entry key="copies">copies</entry>
     
     <entry key="duplex">Duplex</entry>
     <entry key="singlex">Simplex</entry>
     <entry key="color">Color</entry>
     <entry key="grayscale">Grayscale</entry>
+    
+    <entry key="graphics-removed">Graphics removed</entry>
     
     <entry key="prompt-user">User</entry>
     <entry key="prompt-signature">Signature</entry>
