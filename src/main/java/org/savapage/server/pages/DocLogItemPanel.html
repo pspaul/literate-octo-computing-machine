@@ -37,7 +37,9 @@
 		  wicket:id="printoutMode" /> &bull; </wicket:enclosure>
 		<span wicket:id="totals" />
         <wicket:enclosure child="job-id"> &bull; <wicket:message key="job-id"/><span
-                wicket:id="job-id" /> - <span wicket:id="job-state" />
+                wicket:id="job-id" /> &bull; <span wicket:id="job-state" />
+        </wicket:enclosure>
+        <wicket:enclosure child="job-completed-date"> &bull; <span wicket:id="job-completed-date" />
         </wicket:enclosure>
         <wicket:enclosure child="papersize"> &bull; <span
                 wicket:id="papersize" />

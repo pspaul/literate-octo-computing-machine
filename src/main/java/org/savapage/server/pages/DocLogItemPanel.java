@@ -59,6 +59,9 @@ public class DocLogItemPanel extends Panel {
     private final DateFormat dfShortDateTime = DateFormat.getDateTimeInstance(
             DateFormat.SHORT, DateFormat.SHORT, getSession().getLocale());
 
+    private final DateFormat dfShortTime = DateFormat.getTimeInstance(
+            DateFormat.SHORT, getSession().getLocale());
+
     /**
      *
      */
@@ -136,9 +139,9 @@ public class DocLogItemPanel extends Panel {
         mapVisible.put("account-trx", null);
         mapVisible.put("job-id", null);
         mapVisible.put("job-state", null);
+        mapVisible.put("job-completed-date", null);
         mapVisible.put("print-in-denied-reason-hyphen", null);
         mapVisible.put("print-in-denied-reason", null);
-
         mapVisible.put("collateCopies", null);
         mapVisible.put("ecoPrint", null);
         mapVisible.put("removeGraphics", null);
@@ -319,6 +322,10 @@ public class DocLogItemPanel extends Panel {
 
                 if (sfx != null) {
                     mapVisible.put("job-state", localized("job-state-" + sfx));
+                    if (obj.getCompletedDate() != null) {
+                        mapVisible.put("job-completed-date",
+                                localizedShortTime(obj.getCompletedDate()));
+                    }
                 }
 
                 final String sparklineData =
@@ -485,6 +492,18 @@ public class DocLogItemPanel extends Panel {
      */
     protected final String localizedShortDateTime(final Date date) {
         return dfShortDateTime.format(date);
+    }
+
+    /**
+     * Gets as localized short time string of a Date. The locale of the
+     * current session is used.
+     *
+     * @param date
+     *            The date.
+     * @return The localized short time string.
+     */
+    protected final String localizedShortTime(final Date date) {
+        return dfShortTime.format(date);
     }
 
     /**

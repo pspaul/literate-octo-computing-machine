@@ -49,6 +49,7 @@ import org.savapage.core.jpa.PrintIn;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.WebApp;
 
@@ -65,6 +66,7 @@ public class DocLogItem {
     private String header;
     private DocLogDao.Type docType;
     private Date createdDate;
+    private Date completedDate;
     private String title;
     private String comment;
     private String deliveryProtocol;
@@ -151,6 +153,14 @@ public class DocLogItem {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Date getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(Date completedDate) {
+        this.completedDate = completedDate;
     }
 
     public String getHumanReadableByteCount() {
@@ -440,6 +450,12 @@ public class DocLogItem {
 
                         log.setPrintMode(PrintModeEnum.valueOf(printOut
                                 .getPrintMode()));
+
+                        if (printOut.getCupsCompletedTime() != null) {
+                            log.setCompletedDate(new Date(printOut
+                                    .getCupsCompletedTime()
+                                    * DateUtil.DURATION_MSEC_SECOND));
+                        }
 
                     } else if (pdfOut != null) {
 
