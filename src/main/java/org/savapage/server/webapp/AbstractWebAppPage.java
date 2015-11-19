@@ -40,6 +40,7 @@ import org.savapage.core.community.MemberCard;
 import org.savapage.server.CustomWebServlet;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.pages.AbstractPage;
 
 /**
@@ -159,8 +160,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
     /**
      * Checks if the WebApp count is exceeded.
      * <p>
-     * Note: we do NOT check on mobile browsers, i.e. we always return
-     * {@code false} in this case.
+     * Note: we do NOT check on mobile and Mac OS X Safari browsers, i.e. we
+     * always return {@code false} in this case.
      * </p>
      *
      * @param parameters
@@ -170,9 +171,10 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
     protected final boolean isWebAppCountExceeded(
             final PageParameters parameters) {
 
-        final boolean isMobile = isMobileBrowser();
+        final UserAgentHelper userAgentHelper = createUserAgentHelper();
 
-        if (isMobile) {
+        if (userAgentHelper.isMobileBrowser()
+                || userAgentHelper.isSafariBrowserMacOsX()) {
             return false;
         }
 

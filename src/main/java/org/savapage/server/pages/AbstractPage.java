@@ -29,7 +29,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,6 +40,7 @@ import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.server.SpSession;
+import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -419,112 +419,13 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
     }
 
     /**
-     *
-     * @return {@code blank} when no User-Agent found.
+     * @return The {@link UserAgentHelper}.
      */
-    protected String getUserAgent() {
+    protected UserAgentHelper createUserAgentHelper() {
         final HttpServletRequest request =
                 (HttpServletRequest) getRequestCycle().getRequest()
                         .getContainerRequest();
-        return StringUtils.defaultString(request.getHeader("User-Agent"));
-    }
-
-    /**
-     * Checks if the WebApp is run from Safari Mobile.
-     *
-     * <p>
-     * This is the user-agent string from Safari Mobile on iPad:
-     * </p>
-     *
-     * <pre>
-     * mozilla/5.0 (ipad; cpu os 6_1_3 like mac os x) applewebkit/536.26 (khtml, like gecko) version/6.0 mobile/10b329 safari/8536.25
-     * </pre>
-     *
-     * <p>
-     * This is the user-agent string from Dolphin on iPad:
-     * </p>
-     *
-     * <pre>
-     * mozilla/5.0 (ipad; cpu os 6_1_3 like mac os x) applewebkit/536.26 (khtml, like gecko) version/5.1 mobile/9b206 safari/7534.48.3
-     * </pre>
-     *
-     * <p>
-     * This is the user-agent string from Google Chrome on iPad:
-     * </p>
-     *
-     * <pre>
-     * mozilla/5.0 (ipad; cpu os 6_1_3 like mac os x) applewebkit/536.26 (khtml, like gecko) crios/26.0.1410.53 mobile/10b329 safari/8536.25
-     * </pre>
-     *
-     * <p>
-     * This is the user-agent string from Mercury on iPad: we can use "mercury"
-     * substring as identifier. However, same problems as Safari Mobile.
-     * </p>
-     *
-     * <pre>
-     * mozilla/5.0 (ipad; cpu os 6_0_1 like mac os x) applewebkit/536.26 (khtml, like gecko) mercury/7.4.2 mobile/10a523 safari/8536.25
-     * </pre>
-     *
-     * <p>
-     * Nexus S Google Phone
-     * </p>
-     *
-     * <pre>
-     * mozilla/5.0 (linux; u; android 4.1.2; nl-nl; nexus s build/jzo54k) applewebkit/534.30 (khtml, like gecko) version/4.0 mobile safari/534.30
-     * </pre>
-     *
-     * <p>
-     * HTC Desire
-     * </p>
-     *
-     * <pre>
-     * Mozilla/5.0 (Linux; U; Android 2.2.2; nl-nl; Desire_A8181 Build/FRG83G) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1
-     * </pre>
-     *
-     * @return {@code true} when User Agent shows that client is a mobile Safari
-     *         browser.
-     */
-    protected final boolean isMobileSafariBrowser() {
-        /*
-         * Bring to lower case.
-         */
-        String userAgent = getUserAgent().toLowerCase();
-
-        if (StringUtils.isBlank(userAgent)) {
-            return false;
-        }
-
-        return !userAgent.contains("crios")
-                && !userAgent.contains("android")
-                && !userAgent.contains("linux")
-                && (userAgent.contains("iphone") || userAgent.contains("ipod")
-                        || (userAgent.contains("ipad")) || (userAgent
-                        .contains("mobile") && userAgent.contains("safari")));
-    }
-
-    /**
-     * Checks if the WebApp is run from a mobile device.
-     *
-     * @return {@code true} when User Agent shows that client is a mobile
-     *         browser.
-     */
-    protected final boolean isMobileBrowser() {
-        /*
-         * Bring to lower case.
-         */
-        final String userAgent = getUserAgent().toLowerCase();
-
-        if (StringUtils.isBlank(userAgent)) {
-            return false;
-        }
-
-        final boolean mobile =
-                userAgent.contains("android") || userAgent.contains("mobile")
-                        || userAgent.contains("iphone")
-                        || userAgent.contains("ipod")
-                        || userAgent.contains("ipad");
-
-        return mobile;
+        return new UserAgentHelper(request);
     }
 
     /**

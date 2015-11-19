@@ -5953,14 +5953,16 @@ public final class JsonApiServer extends AbstractPage {
             final String assocCardNumber, final boolean isAdminOnlyLogin)
             throws IOException {
 
+        final UserAgentHelper userAgentHelper = createUserAgentHelper();
+
         /*
          * Browser diagnostics.
          */
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Browser detection for [" + authId + "] Mobile ["
-                    + isMobileBrowser() + "] Mobile Safari ["
-                    + isMobileSafariBrowser() + "] UserAgent ["
-                    + getUserAgent() + "]");
+                    + userAgentHelper.isMobileBrowser() + "] Mobile Safari ["
+                    + userAgentHelper.isSafariBrowserMobile() + "] UserAgent ["
+                    + userAgentHelper.getUserAgentHeader() + "]");
         }
 
         /*
@@ -5978,12 +5980,12 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         /*
-         * INVARIANT: Only one (1) authenticated session allowed for desktop
-         * computers.
+         * INVARIANT: Only one (1) authenticated session allowed for (non Mac OS
+         * X Safari) desktop computers.
          */
-        final boolean isMobile = isMobileBrowser();
-
-        if (!isMobile && SpSession.get().getAuthWebAppCount() != 0) {
+        if (!userAgentHelper.isMobileBrowser()
+                && !userAgentHelper.isSafariBrowserMacOsX()
+                && SpSession.get().getAuthWebAppCount() != 0) {
             return setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-login-another-session-active");
         }
