@@ -41,5 +41,6 @@
 	<entry key="msg-print-polling-start">Waiting for print jobs started ...</entry>
 	<entry key="msg-print-polling-stop">Waiting for print jobs stopped.</entry>
 	<entry key="msg-pdf-identical-owner-user-pw">PDF user and owner password must be different.</entry>
+    <entry key="msg-select-single-pdf-filter">Selection of multiple PDF filters is not supported: please select one filter.</entry>
 
 </properties>

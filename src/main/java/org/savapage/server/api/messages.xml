@@ -12,6 +12,7 @@
     <entry key="msg-invalid-request">Request "{0}" is invalid.</entry>
 
     <entry key="msg-ecoprint-pending">Eco Print is being prepared. Please wait a moment and try again.</entry>
+    <entry key="msg-select-single-pdf-filter">Selection of multiple PDF filters is not supported: please select one filter.</entry>
 
 	<entry key="exc-letterhead-not-found">Letterhead not found. Please refresh
 		your letterhead	list.</entry>

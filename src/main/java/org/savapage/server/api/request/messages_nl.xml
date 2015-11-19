@@ -32,6 +32,7 @@
     <entry key="msg-clear-range-syntax-error">Syntax van de pagina-reeks "{0}" is ongeldig.</entry>
     <entry key="msg-print-out-of-range-error">Afdruk reeks "{0}" overschrijdt aantal pagina's van het document ({1}).</entry>
     <entry key="msg-ecoprint-pending">Eco Print wordt voorbereid bezig. Wacht een moment en probeer opnieuw.</entry>
+    <entry key="msg-select-single-pdf-filter">Selectie van meerdere PDF filters wordt niet ondersteund: selecteer één filter.</entry>
     <entry key="msg-print-auth-pending">Een andere afdruk-opdracht wacht op authenticatie. Probeer het later nog een keer.</entry>
     
 </properties>

@@ -5065,6 +5065,11 @@
 				_saveRemoveGraphics('#pdf-remove-graphics');
 				_saveEcoprint('#pdf-ecoprint');
 
+				if (_model.removeGraphics && _model.ecoprint) {
+					_view.message(_i18n.format('msg-select-single-pdf-filter', null));
+					return false;				
+				}
+
 				if (!_saveSelectedletterhead('#pdf-letterhead-list', true)) {
 					return false;
 				}

@@ -28,9 +28,10 @@
 
     <!-- ReqPrinterPrint -->
     
-    <entry key="msg-ecoprint-pending">Eco Print is being prepared. Please wait a moment and try again.</entry>
     <entry key="msg-clear-range-syntax-error">Syntax of page range "{0}" is invalid.</entry>
     <entry key="msg-print-out-of-range-error">Print range "{0}" exceeds number of pages of document ({1}).</entry>    
+    <entry key="msg-ecoprint-pending">Eco Print is being prepared. Please wait a moment and try again.</entry>
+    <entry key="msg-select-single-pdf-filter">Selection of multiple PDF filters is not supported: please select one filter.</entry>
     <entry key="msg-print-auth-pending">Another print job is waiting for authentication. Try again later.</entry>
     
 </properties>

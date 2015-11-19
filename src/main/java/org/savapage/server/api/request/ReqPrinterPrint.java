@@ -260,6 +260,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             LOGGER.trace(DtoReq.prettyPrint(getParmValue("dto")));
         }
 
+        if (dtoReq.getRemoveGraphics() != null && dtoReq.getRemoveGraphics()
+                && dtoReq.getEcoprint() != null && dtoReq.getEcoprint()) {
+            setApiResult(ApiResultCodeEnum.INFO, "msg-select-single-pdf-filter");
+            return;
+        }
+
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();
 

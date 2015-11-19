@@ -1043,82 +1043,83 @@ public final class JsonApiServer extends AbstractPage {
     private IRequestHandler handleExportSafePages(final User lockedUser,
             final PageParameters parameters, final boolean isGetAction) {
 
-        IRequestHandler requestHandler = null;
+        final boolean removeGraphics =
+                Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                        "removeGraphics"));
+
+        final boolean ecoPrint =
+                Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                        "ecoprint"));
+
+        if (removeGraphics && ecoPrint) {
+            return new TextRequestHandler("text/html", "UTF-8",
+                    "<h3 style='color: gray;'>"
+                            + localize("msg-select-single-pdf-filter") + "</h3>");
+        }
 
         if (USER_SERVICE.isUserPdfOutDisabled(lockedUser, new Date())) {
+            return new TextRequestHandler("text/html", "UTF-8",
+                    "<h2 style='color: red;'>"
+                            + localize("msg-user-pdf-out-disabled") + "</h2>");
+        }
+
+        IRequestHandler requestHandler = null;
+
+        File pdfTemp = null;
+
+        try {
+
+            final DocLog docLog = new DocLog();
 
             /*
-             * Stream HTML (error)
+             * (1) Generate the PDF
              */
+            pdfTemp =
+                    generatePdfForExport(lockedUser,
+                            Integer.parseInt(getParmValue(parameters,
+                                    isGetAction, "jobIndex")),
+                            getParmValue(parameters, isGetAction, "ranges"),
+                            removeGraphics, ecoPrint, docLog, "download");
+
+            /*
+             * (2) Write log to database.
+             */
+            docLog.setDeliveryProtocol(DocLogProtocolEnum.HTTP.getDbName());
+            docLog.getDocOut().setDestination(getRemoteAddr());
+
+            DOC_LOG_SERVICE.logDocOut(lockedUser, docLog.getDocOut());
+
+            /*
+             * Stream PDF
+             */
+            ResourceStreamRequestHandler handler =
+                    new PdfFileRequestHandler(lockedUser.getUserId(), pdfTemp);
+
+            handler.setContentDisposition(ContentDisposition.ATTACHMENT);
+            handler.setFileName(createMeaningfullPdfFileName(docLog));
+            handler.setCacheDuration(Duration.NONE);
+
+            requestHandler = handler;
+
+        } catch (Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            if (pdfTemp != null && pdfTemp.exists()) {
+                pdfTemp.delete();
+            }
+
+            String msg = null;
+
+            if (e instanceof LetterheadNotFoundException) {
+                msg = localize("exc-letterhead-not-found-login");
+            } else {
+                msg = e.getMessage();
+            }
+
             requestHandler =
                     new TextRequestHandler("text/html", "UTF-8",
-                            "<h2 style='color: red;'>"
-                                    + localize("msg-user-pdf-out-disabled")
-                                    + "</h2>");
-        } else {
-
-            File pdfTemp = null;
-
-            try {
-
-                final DocLog docLog = new DocLog();
-
-                /*
-                 * (1) Generate the PDF
-                 */
-                pdfTemp =
-                        generatePdfForExport(
-                                lockedUser,
-                                Integer.parseInt(getParmValue(parameters,
-                                        isGetAction, "jobIndex")),
-                                getParmValue(parameters, isGetAction, "ranges"),
-                                Boolean.parseBoolean(getParmValue(parameters,
-                                        isGetAction, "removeGraphics")),
-                                Boolean.parseBoolean(getParmValue(parameters,
-                                        isGetAction, "ecoprint")), docLog,
-                                "download");
-
-                /*
-                 * (2) Write log to database.
-                 */
-                docLog.setDeliveryProtocol(DocLogProtocolEnum.HTTP.getDbName());
-                docLog.getDocOut().setDestination(getRemoteAddr());
-
-                DOC_LOG_SERVICE.logDocOut(lockedUser, docLog.getDocOut());
-
-                /*
-                 * Stream PDF
-                 */
-                ResourceStreamRequestHandler handler =
-                        new PdfFileRequestHandler(lockedUser.getUserId(),
-                                pdfTemp);
-
-                handler.setContentDisposition(ContentDisposition.ATTACHMENT);
-                handler.setFileName(createMeaningfullPdfFileName(docLog));
-                handler.setCacheDuration(Duration.NONE);
-
-                requestHandler = handler;
-
-            } catch (Exception e) {
-
-                LOGGER.error(e.getMessage(), e);
-
-                if (pdfTemp != null && pdfTemp.exists()) {
-                    pdfTemp.delete();
-                }
-
-                String msg = null;
-
-                if (e instanceof LetterheadNotFoundException) {
-                    msg = localize("exc-letterhead-not-found-login");
-                } else {
-                    msg = e.getMessage();
-                }
-
-                requestHandler =
-                        new TextRequestHandler("text/html", "UTF-8",
-                                "<h2 style='color: red;'>" + msg + "</h2>");
-            }
+                            "<h2 style='color: red;'>" + msg + "</h2>");
         }
 
         return requestHandler;
@@ -2215,9 +2216,14 @@ public final class JsonApiServer extends AbstractPage {
             MessagingException, InterruptedException, CircuitBreakerException,
             ParseException {
 
-        final String user = lockedUser.getUserId();
-
         final Map<String, Object> userData = new HashMap<String, Object>();
+
+        if (removeGraphics && ecoPdf) {
+            return setApiResult(userData, ApiResultCodeEnum.INFO,
+                    "msg-select-single-pdf-filter");
+        }
+
+        final String user = lockedUser.getUserId();
 
         File fileAttach = null;
 
