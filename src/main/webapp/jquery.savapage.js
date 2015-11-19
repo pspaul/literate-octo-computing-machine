@@ -148,8 +148,7 @@
 		 * Constructor for the CometD connectivity wrapper.
 		 *
 		 * Use configure() at the start of the application. Use start() to start
-		 * the
-		 * after successful login. Use stop() to stop after logout.
+		 * the after successful login. Use stop() to stop after logout.
 		 */
 		_ns.Cometd = function() {
 
@@ -292,6 +291,15 @@
 				 * communication,
 				 * you need to call handshake()"
 				 */
+
+				/*
+				 * IMPORTANT: Because websocket is not supported yet by SavaPage server,
+				 * we disable websocket transport (before doing the CometD handshake).
+				 * This makes sure that CometD will not spill effort to try WebSockets
+				 * and fall back to long-polling (because WebSockets fails).
+				 */
+				$.cometd.websocketEnabled = false;
+				$.cometd.unregisterTransport('websocket');
 
 				/*
 				 * See:
