@@ -117,6 +117,9 @@
     <entry key="user-auth-mode-card-local">Lokale NFC Kaart</entry>
     <entry key="user-auth-mode-card-local-dialog">Tonen in Dialoog</entry>
     
+    <entry key="authentication-persistence">Persistentie</entry>
+    <entry key="browser-local-storage">Browser Local Storage</entry>
+    
     <entry key="users-pin">PIN</entry>
     <entry key="users-can-change-pin">Gebruikers mogen hun PIN wijzigen</entry>
     

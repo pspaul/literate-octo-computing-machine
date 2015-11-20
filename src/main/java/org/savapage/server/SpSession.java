@@ -65,10 +65,22 @@ public class SpSession extends WebSession {
 
     /**
      *
+     */
+    private long creationTime;
+
+    /**
+    *
+    */
+    private long lastValidateTime;
+
+    /**
+     *
      * @param request
      */
     public SpSession(Request request) {
         super(request);
+        this.creationTime = System.currentTimeMillis();
+        this.lastValidateTime = creationTime;
     }
 
     /**
@@ -147,12 +159,30 @@ public class SpSession extends WebSession {
     }
 
     /**
+     * Checks if session is expired, and touches the validated time.
+     *
+     * @param timeToLive
+     *            Max duration (msec) of session before it expires.
+     * @return {@code true} when session expired.
+     */
+    public synchronized boolean checkTouchExpired(final long timeToLive) {
+
+        final long currentTime = System.currentTimeMillis();
+        final boolean expired =
+                currentTime - this.lastValidateTime > timeToLive;
+        this.lastValidateTime = currentTime;
+        return expired;
+    }
+
+    /**
      * This sets the session {@link User} object to {@code null} and decrements
      * the authenticated webapp counter.
      */
     public synchronized void logout() {
         setUser(null);
         decrementAuthWebApp();
+        this.creationTime = System.currentTimeMillis();
+        this.lastValidateTime = this.creationTime;
     }
 
     /**

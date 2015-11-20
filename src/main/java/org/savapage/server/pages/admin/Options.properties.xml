@@ -116,6 +116,9 @@
     <entry key="user-auth-mode-card-local">Local NFC Card</entry>
     <entry key="user-auth-mode-card-local-dialog">Show in Dialog</entry>
 
+    <entry key="authentication-persistence">Persistence</entry>
+    <entry key="browser-local-storage">Browser Local Storage</entry>
+
     <entry key="users-pin">PIN</entry>
     <entry key="users-can-change-pin">Users can change their PIN</entry>
     

@@ -199,6 +199,7 @@ import org.savapage.core.users.InternalUserAuthenticator;
 import org.savapage.core.users.UserAliasList;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.core.util.Messages;
@@ -1054,7 +1055,8 @@ public final class JsonApiServer extends AbstractPage {
         if (removeGraphics && ecoPrint) {
             return new TextRequestHandler("text/html", "UTF-8",
                     "<h3 style='color: gray;'>"
-                            + localize("msg-select-single-pdf-filter") + "</h3>");
+                            + localize("msg-select-single-pdf-filter")
+                            + "</h3>");
         }
 
         if (USER_SERVICE.isUserPdfOutDisabled(lockedUser, new Date())) {
@@ -2120,6 +2122,34 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
+     *
+     * @param session
+     * @return
+     */
+    private boolean checkTouchSessionExpired(final SpSession session) {
+
+        if (isAuthTokenLoginEnabled()) {
+            return false;
+        }
+
+        if (session == null) {
+            return true;
+        }
+
+        final IConfigProp.Key configKey;
+
+        if (session.getWebAppType() == WebAppTypeEnum.ADMIN) {
+            configKey = IConfigProp.Key.WEB_LOGIN_ADMIN_SESSION_TIMOUT_MINS;
+        } else {
+            configKey = IConfigProp.Key.WEB_LOGIN_USER_SESSION_TIMEOUT_MINS;
+        }
+
+        final int minutes = ConfigManager.instance().getConfigInt(configKey);
+
+        return session.checkTouchExpired(DateUtil.DURATION_MSEC_MINUTE * minutes);
+    }
+
+    /**
      * Checks if the request is valid and the user is authorized to perform the
      * API.
      *
@@ -2127,9 +2157,10 @@ public final class JsonApiServer extends AbstractPage {
      *            The user id.
      * @return {@code null} if user is authorized, otherwise a Map object
      *         containing the error message.
+     * @throws IOException
      */
     private Map<String, Object> checkValidAndAuthorized(final String request,
-            final String uid) {
+            final String uid) throws IOException {
 
         Map<String, Object> userData = null;
 
@@ -2143,16 +2174,29 @@ public final class JsonApiServer extends AbstractPage {
             return null;
         }
 
-        SpSession session = SpSession.get();
+        final SpSession session = SpSession.get();
 
-        boolean authorized = false;
+        final boolean authorized;
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Checking user in session from application ["
                     + session.getApplication().getClass().toString() + "]");
         }
 
-        if (session.isAuthenticated()) {
+        if (checkTouchSessionExpired(session)) {
+
+            authorized = false;
+
+            final String userId;
+            if (session.getUser() == null) {
+                userId = null;
+            } else {
+                userId = session.getUser().getUserId();
+            }
+
+            this.stopReplaceSession(session, userId);
+
+        } else if (session.isAuthenticated()) {
 
             if (session.getUser().getUserId().equals(uid)) {
 
@@ -2163,13 +2207,19 @@ public final class JsonApiServer extends AbstractPage {
                 }
 
             } else {
+                authorized = false;
+
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("request [" + request + "]: user [" + uid
                             + "] is NOT the owner " + "of this session ["
                             + session.getId() + "]");
                 }
             }
+
         } else {
+
+            authorized = false;
+
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("request [" + request
                         + "]: NO user authenticated in session ["
@@ -5891,8 +5941,13 @@ public final class JsonApiServer extends AbstractPage {
                     webAppType.getUiText(), uid);
         }
 
-        final UserAuthToken authToken =
-                reqLoginLazyCreateAuthToken(uid, isAdminOnlyLogin);
+        final UserAuthToken authToken;
+
+        if (isAuthTokenLoginEnabled()) {
+            authToken = reqLoginLazyCreateAuthToken(uid, isAdminOnlyLogin);
+        } else {
+            authToken = null;
+        }
 
         onUserLoginGranted(userData, session, isAdminOnlyLogin, uid, userDb,
                 authToken);
@@ -5910,6 +5965,15 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         return userData;
+    }
+
+    /**
+     *
+     * @return
+     */
+    private static boolean isAuthTokenLoginEnabled() {
+        return ConfigManager.instance().isConfigValue(
+                Key.WEB_LOGIN_AUTHTOKEN_ENABLE);
     }
 
     /**
@@ -5971,15 +6035,12 @@ public final class JsonApiServer extends AbstractPage {
                     + userAgentHelper.getUserAgentHeader() + "]");
         }
 
-        /*
-         *
-         */
         final Map<String, Object> userData = new HashMap<String, Object>();
 
         final ConfigManager cm = ConfigManager.instance();
+        final SpSession session = SpSession.get();
 
         if (LOGGER.isTraceEnabled()) {
-            final SpSession session = SpSession.get();
             String testLog = "Session [" + session.getId() + "]";
             testLog += " WebAppCount [" + session.getAuthWebAppCount() + "]";
             LOGGER.trace(testLog);
@@ -6030,27 +6091,47 @@ public final class JsonApiServer extends AbstractPage {
             }
         }
 
-        final boolean isCliAppAuthApplied;
+        //
+        final boolean isAuthTokenLoginEnabled = isAuthTokenLoginEnabled();
 
-        if (authMode == UserAuth.Mode.NAME && StringUtils.isBlank(authPw)) {
-            isCliAppAuthApplied =
-                    this.reqLoginAuthTokenCliApp(userData, authId,
-                            this.getClientIpAddr(), isAdminOnlyLogin);
+        /*
+         * If user authentication token is disabled we fall back to the user in
+         * the active session.
+         */
+        if (!isAuthTokenLoginEnabled && session.getUser() != null) {
+
+            onUserLoginGranted(userData, session, isAdminOnlyLogin, session
+                    .getUser().getUserId(), session.getUser(), null);
+
+            setApiResultOK(userData);
+
         } else {
-            isCliAppAuthApplied = false;
-        }
 
-        if (!isCliAppAuthApplied) {
+            //
+            final boolean isCliAppAuthApplied;
 
-            if (authMode == UserAuth.Mode.NAME && StringUtils.isBlank(authPw)
-                    && StringUtils.isNotBlank(authToken)) {
-
-                reqLoginAuthTokenWebApp(userData, authId, authToken,
-                        isAdminOnlyLogin);
-
+            if (isAuthTokenLoginEnabled && authMode == UserAuth.Mode.NAME
+                    && StringUtils.isBlank(authPw)) {
+                isCliAppAuthApplied =
+                        this.reqLoginAuthTokenCliApp(userData, authId,
+                                this.getClientIpAddr(), isAdminOnlyLogin);
             } else {
-                reqLoginNew(userData, authMode, authId, authPw,
-                        assocCardNumber, isAdminOnlyLogin);
+                isCliAppAuthApplied = false;
+            }
+
+            if (!isCliAppAuthApplied) {
+
+                if (isAuthTokenLoginEnabled && authMode == UserAuth.Mode.NAME
+                        && StringUtils.isBlank(authPw)
+                        && StringUtils.isNotBlank(authToken)) {
+
+                    reqLoginAuthTokenWebApp(userData, authId, authToken,
+                            isAdminOnlyLogin);
+
+                } else {
+                    reqLoginNew(userData, authMode, authId, authPw,
+                            assocCardNumber, isAdminOnlyLogin);
+                }
             }
         }
 
@@ -6070,16 +6151,26 @@ public final class JsonApiServer extends AbstractPage {
      */
     private void setSessionTimeoutSeconds(boolean isAdminSession) {
 
-        Request request = RequestCycle.get().getRequest();
+        final Request request = RequestCycle.get().getRequest();
 
         if (request instanceof WebRequest) {
 
-            ServletWebRequest wr = (ServletWebRequest) request;
-            HttpSession session = wr.getContainerRequest().getSession();
+            final ServletWebRequest wr = (ServletWebRequest) request;
+            final HttpSession session = wr.getContainerRequest().getSession();
 
-            if (session != null) {
+            if (session == null) {
+                return;
+            }
 
-                IConfigProp.Key configKey;
+            final int minutes;
+
+            if (isAuthTokenLoginEnabled()) {
+
+                minutes = 0;
+
+            } else {
+
+                final IConfigProp.Key configKey;
 
                 if (isAdminSession) {
                     configKey =
@@ -6089,12 +6180,10 @@ public final class JsonApiServer extends AbstractPage {
                             IConfigProp.Key.WEB_LOGIN_USER_SESSION_TIMEOUT_MINS;
                 }
 
-                int minutes = ConfigManager.instance().getConfigInt(configKey);
+                minutes = ConfigManager.instance().getConfigInt(configKey);
 
-                if (minutes >= 0) {
-                    session.setMaxInactiveInterval(minutes * 60);
-                }
             }
+            session.setMaxInactiveInterval(minutes * DateUtil.SECONDS_IN_MINUTE);
         }
     }
 
@@ -6114,10 +6203,11 @@ public final class JsonApiServer extends AbstractPage {
                         isAdminOnlyLogin);
 
         if (authToken == null || authToken.isAdminOnly() != isAdminOnlyLogin) {
+
             authToken = new UserAuthToken(userId, isAdminOnlyLogin);
+
             WebAppUserAuthManager.instance().putUserAuthToken(authToken,
                     isAdminOnlyLogin);
-
         }
 
         return authToken;
@@ -6238,18 +6328,19 @@ public final class JsonApiServer extends AbstractPage {
             throws IOException {
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Login [" + uid + "] with WebApp AuthToken.");
+            LOGGER.trace(String
+                    .format("Login [%s] with WebApp AuthToken.", uid));
         }
 
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
-        User userDb = null;
 
         final WebAppUserAuthManager userAuthManager =
                 WebAppUserAuthManager.instance();
 
         final UserAuthToken authTokenObj =
                 userAuthManager.getUserAuthToken(authtoken, isAdminOnly);
+
+        final User userDb;
 
         if (authTokenObj != null && uid.equals(authTokenObj.getUser())
                 && authTokenObj.isAdminOnly() == isAdminOnly) {
@@ -6260,25 +6351,32 @@ public final class JsonApiServer extends AbstractPage {
                 userDb = userDao.findActiveUserByUserId(uid);
             }
 
+        } else {
+            userDb = null;
         }
 
         if (userDb != null) {
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("WebApp AuthToken Login [" + uid + "] granted.");
+                LOGGER.trace(String.format(
+                        "WebApp AuthToken Login [%s] granted.", uid));
             }
 
             final SpSession session = SpSession.get();
+
             session.setUser(userDb);
+
             onUserLoginGranted(userData, session, isAdminOnly, uid,
                     session.getUser(), authTokenObj);
+
             setApiResultOK(userData);
 
         } else {
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("WebApp AuthToken Login [" + uid
-                        + "] denied: user NOT found.");
+                LOGGER.trace(String.format(
+                        "WebApp AuthToken Login [%s] denied: user NOT found.",
+                        uid));
             }
 
             onLoginFailed(userData, null);
@@ -6330,8 +6428,12 @@ public final class JsonApiServer extends AbstractPage {
      * to the Admin WebApp.
      *
      * @param userData
+     * @param session
+     * @param isAdminOnlyLogin
      * @param uid
      * @param userDb
+     * @param authToken
+     *            {@code null} when not available.
      * @throws IOException
      */
     private void onUserLoginGranted(final Map<String, Object> userData,
@@ -6409,31 +6511,18 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * Logs out by replacing the underlying (Web)Session, invalidating the
-     * current one and creating a new one. Also sends the
-     * {@link UserMsgIndicator.Msg#STOP_POLL_REQ} message.
-     * <p>
-     * After the invalidate() the Wicket framework calls
-     * {@link WebApp#sessionUnbound(String)} : this method publishes the logout
-     * message.
-     * </p>
+     * Stops and replaces the underlying (Web)Session, invalidating the current
+     * one and creating a new one. NOTE: relevant data of the current session is
+     * copied.
      *
-     * @param lockedUser
-     * @param authToken
-     *            The authorization token (can be {@code null}).
-     * @return The OK message.
+     * @param session
+     *            The {@link SpSession}.
+     * @param userId
      * @throws IOException
      */
-    private Map<String, Object> reqLogout(final String userId,
-            final String authToken) throws IOException {
-
-        ClientAppUserAuthManager.removeUserAuthToken(this.getClientIpAddr());
-
-        WebAppUserAuthManager.instance().removeUserAuthToken(authToken,
-                this.isAdminRoleContext());
-
-        final SpSession session = SpSession.get();
-
+    private void
+            stopReplaceSession(final SpSession session, final String userId)
+                    throws IOException {
         /*
          * Save the critical session attribute.
          */
@@ -6460,13 +6549,37 @@ public final class JsonApiServer extends AbstractPage {
          * Make sure that all User Web App long polls for this user are
          * interrupted.
          */
-        if (this.getWebAppType() == WebAppTypeEnum.USER) {
+        if (userId != null && this.getWebAppType() == WebAppTypeEnum.USER) {
             interruptPendingLongPolls(userId);
         }
+    }
 
-        /*
-         * We are OK.
-         */
+    /**
+     * Logs out by replacing the underlying (Web)Session, invalidating the
+     * current one and creating a new one. Also sends the
+     * {@link UserMsgIndicator.Msg#STOP_POLL_REQ} message.
+     * <p>
+     * After the invalidate() the Wicket framework calls
+     * {@link WebApp#sessionUnbound(String)} : this method publishes the logout
+     * message.
+     * </p>
+     *
+     * @param lockedUser
+     * @param authToken
+     *            The authorization token (can be {@code null}).
+     * @return The OK message.
+     * @throws IOException
+     */
+    private Map<String, Object> reqLogout(final String userId,
+            final String authToken) throws IOException {
+
+        ClientAppUserAuthManager.removeUserAuthToken(this.getClientIpAddr());
+
+        WebAppUserAuthManager.instance().removeUserAuthToken(authToken,
+                this.isAdminRoleContext());
+
+        this.stopReplaceSession(SpSession.get(), userId);
+
         return createApiResultOK();
     }
 

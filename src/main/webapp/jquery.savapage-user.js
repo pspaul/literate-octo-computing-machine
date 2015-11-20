@@ -3845,6 +3845,7 @@
 				this.myPrinterOpt = {};
 				this.myJobsDrm = false;
 				this.myJobs = [];
+				this.myTotPages = 0;
 				this.myJobPages = [];
 				this.myCutPages = {};
 				this.myPrinter = null;

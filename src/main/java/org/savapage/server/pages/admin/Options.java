@@ -209,6 +209,10 @@ public class Options extends AbstractAdminPage {
                 IConfigProp.CARD_NUMBER_FIRSTBYTE_V_MSB);
 
         //
+        labelledCheckbox("browser-local-storage",
+                IConfigProp.Key.WEB_LOGIN_AUTHTOKEN_ENABLE);
+
+        //
         labelledCheckbox("users-can-change-pin",
                 IConfigProp.Key.USER_CAN_CHANGE_PIN);
 
@@ -290,7 +294,8 @@ public class Options extends AbstractAdminPage {
                     "smartschool-print-proxyprinter", keyWlk);
             tagInput("smartschool-print-proxyprinter-1", keyWlk);
 
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
+            keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
             tagLabel("smartschool-print-proxyprinter-duplex-label-1",
                     "smartschool-print-proxyprinter-duplex", keyWlk);
             tagInput("smartschool-print-proxyprinter-duplex-1", keyWlk);
@@ -305,7 +310,8 @@ public class Options extends AbstractAdminPage {
                     IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
             tagLabel("smartschool-print-proxyprinter-grayscale-duplex-label-1",
                     "smartschool-print-proxyprinter-grayscale-duplex", keyWlk);
-            tagInput("smartschool-print-proxyprinter-grayscale-duplex-1", keyWlk);
+            tagInput("smartschool-print-proxyprinter-grayscale-duplex-1",
+                    keyWlk);
 
             keyWlk =
                     IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_CHARGE_TO_STUDENTS;
@@ -334,7 +340,8 @@ public class Options extends AbstractAdminPage {
                     "smartschool-print-proxyprinter", keyWlk);
             tagInput("smartschool-print-proxyprinter-2", keyWlk);
 
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
+            keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
             tagLabel("smartschool-print-proxyprinter-duplex-label-2",
                     "smartschool-print-proxyprinter-duplex", keyWlk);
             tagInput("smartschool-print-proxyprinter-duplex-2", keyWlk);
@@ -349,7 +356,8 @@ public class Options extends AbstractAdminPage {
                     IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
             tagLabel("smartschool-print-proxyprinter-grayscale-duplex-label-2",
                     "smartschool-print-proxyprinter-grayscale-duplex", keyWlk);
-            tagInput("smartschool-print-proxyprinter-grayscale-duplex-2", keyWlk);
+            tagInput("smartschool-print-proxyprinter-grayscale-duplex-2",
+                    keyWlk);
 
             keyWlk =
                     IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_CHARGE_TO_STUDENTS;

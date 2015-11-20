@@ -238,7 +238,18 @@ public class JsonApiDict {
      *
      */
     public enum AuthReq {
-        NONE, USER, ADMIN
+        /**
+         * No authentication required.
+         */
+        NONE,
+        /**
+         * User authentication required.
+         */
+        USER,
+        /**
+         * Admin authentication required.
+         */
+        ADMIN
     }
 
     /**
