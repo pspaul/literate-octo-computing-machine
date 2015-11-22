@@ -99,13 +99,6 @@
 			//
 			;
 
-			// this.onCardSwipe()
-			// this.onEventIgnored
-			// this.onEventError()
-			// this.onPollInvitation()
-			// this.onWaitingForEvent()
-			// this.onException()
-
 			/**
 			 * NOTE: use _this instead of this.
 			 */
@@ -215,8 +208,6 @@
 			//
 			;
 
-			// this.onException();
-
 			/**
 			 * NOTE: use _this instead of this.
 			 */
@@ -322,13 +313,6 @@
 			, _subscription
 			//
 			;
-
-			// this.onJobEvent()
-			// this.onEventIgnored
-			// this.onEventError()
-			// this.onPollInvitation()
-			// this.onWaitingForEvent()
-			// this.onException();
 
 			/**
 			 * NOTE: use _this instead of this.
@@ -1834,19 +1818,6 @@
 			// for now ...
 			this.id = '#page-main';
 
-			// this.onCreated = null;
-			// this.onLogout = null;
-			// this.onClose = null;
-			// this.onPollToggle = null;
-			// this.onShow = null;
-			// this.onHide = null;
-			// this.onRefreshPages = null;
-			// this.onExpandPage = null;
-			// this.onPageMove = null;
-			// this.onPageDelete = null;
-			// this.onPopupJobApply = null;
-			// this.onPopupJobDelete = null;
-
 			/**
 			 * Clears all traces of previous editing.
 			 */
@@ -3287,12 +3258,6 @@
 			}
 			//
 			;
-
-			// this.onShow()
-			// this.onHide()
-			// this.onPrint()
-			// this.onPrinter()
-			// this.onSettings()
 
 			this.clearInput = function() {
 				$('#slider-print-copies').val(1).slider("refresh");
@@ -5131,7 +5096,7 @@
 			 */
 			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint, collate) {
 
-				var res, sel, cost, visible, dto;
+				var res, sel, cost, visible;
 
 				if (_saveSelectedletterhead('#print-letterhead-list')) {
 					return;

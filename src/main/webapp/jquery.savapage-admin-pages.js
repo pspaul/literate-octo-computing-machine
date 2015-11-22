@@ -253,7 +253,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,                                                        _this = this
+			//,  _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//

@@ -770,7 +770,7 @@
 
 			_view.pages.admin.onApplyUserAuthModeLocal = function() {
 				var props = {};
-				_fillConfigPropsYN(props, ['auth-mode.name', 'auth-mode.name.show', 'auth-mode.id', 'auth-mode.id.show', 'auth-mode.id.is-masked', 'auth-mode.id.pin-required', 'auth-mode.card-local', 'auth-mode.card-local.show', 'auth-mode.card.pin-required', 'auth-mode.card.self-association', 'user.can-change-pin', 'webapp.user.auth.trust-cliapp-auth']);
+				_fillConfigPropsYN(props, ['web-login.authtoken.enable', 'auth-mode.name', 'auth-mode.name.show', 'auth-mode.id', 'auth-mode.id.show', 'auth-mode.id.is-masked', 'auth-mode.id.pin-required', 'auth-mode.card-local', 'auth-mode.card-local.show', 'auth-mode.card.pin-required', 'auth-mode.card.self-association', 'user.can-change-pin', 'webapp.user.auth.trust-cliapp-auth']);
 				_fillConfigPropsRadio(props, ['auth-mode-default', 'card.number.format', 'card.number.first-byte']);
 				_saveConfigProps(props);
 			};

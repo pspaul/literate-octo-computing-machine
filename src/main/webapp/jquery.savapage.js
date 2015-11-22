@@ -160,19 +160,6 @@
 			// TODO: _isOn is ambiguous and needs rework
 			, _isOn = false;
 
-			// -------------------------------------------------------------
-			// DOCUMENTATION for Callback Functions
-			// Do NOT remove the commented documentation block below
-			// -------------------------------------------------------------
-			// _self.onConnecting = null;
-			// _self.onDisconnecting = null;
-			// _self.onHandshakeSuccess = null;
-			// _self.onHandshakeFailure = null;
-			// _self.onConnectionClosed = null;
-			// _self.onReconnect = null;
-			// _self.onConnectionBroken = null;
-			// _self.onUnsuccessful = null;
-
 			/**
 			 * Public function to toggle on/off (start/stop)
 			 */
