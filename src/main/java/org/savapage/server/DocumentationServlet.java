@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
  */
 package org.savapage.server;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.savapage.core.config.ConfigManager;
 
@@ -43,8 +44,8 @@ import org.savapage.core.config.ConfigManager;
  * @author Datraverse B.V.
  *
  */
-@WebServlet(name = "SpDocsServlet", urlPatterns = { "/docs/*" })
-public final class SpDocsServlet extends HttpServlet {
+@WebServlet(name = "DocumentationServlet", urlPatterns = { "/docs/*" })
+public final class DocumentationServlet extends HttpServlet {
 
     /**
      *
@@ -52,10 +53,15 @@ public final class SpDocsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
+     * .
+     */
+    private static final int BUFFER_SIZE = 1014;
+
+    /**
      *
      */
     private static final String CONTENT_HOME = ConfigManager.getServerHome()
-            + "/data/";
+            + "/data";
 
     @Override
     protected void doGet(final HttpServletRequest req,
@@ -73,39 +79,43 @@ public final class SpDocsServlet extends HttpServlet {
         }
 
         InputStream istr = null;
-        ByteArrayOutputStream bos = null;
 
         try {
 
-            final File file = new File(CONTENT_HOME + reqURI);
-            bos = new ByteArrayOutputStream();
+            final OutputStream ostr = resp.getOutputStream();
+
+            final File file =
+                    new File(String.format("%s/%s", CONTENT_HOME, reqURI));
 
             if (file.exists()) {
 
+                resp.setContentType(WebApplication.get().getMimeType(reqURI));
+                resp.setContentLength((int) file.length());
+
                 istr = new FileInputStream(file);
-                final byte[] aByte = new byte[2048];
+                final byte[] aByte = new byte[BUFFER_SIZE];
 
                 int nBytes = istr.read(aByte);
+
                 while (-1 < nBytes) {
-                    bos.write(aByte, 0, nBytes);
+                    ostr.write(aByte, 0, nBytes);
                     nBytes = istr.read(aByte);
                 }
             } else {
-                bos.write(String.format("%s: not found", reqURI).getBytes());
+
+                final byte[] msg =
+                        String.format("%s: not found", reqURI).getBytes();
+
+                resp.setContentType(WebApplication.get().getMimeType("x.txt"));
+                resp.setContentLength(msg.length);
+
+                ostr.write(msg);
             }
 
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.setContentType(WebApplication.get().getMimeType(reqURI));
-            resp.setContentLength(bos.size());
-            resp.getOutputStream().write(bos.toByteArray());
 
         } finally {
-            if (bos != null) {
-                bos.close();
-            }
-            if (istr != null) {
-                istr.close();
-            }
+            IOUtils.closeQuietly(istr);
         }
     }
 }

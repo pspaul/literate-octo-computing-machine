@@ -46,6 +46,7 @@ import org.savapage.core.system.SystemInfo;
 import org.savapage.core.system.SystemInfo.SysctlEnum;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.pages.PrinterDriverDownloadPanel;
 
 /**
  *
@@ -494,6 +495,12 @@ public class About extends AbstractAdminPage {
         labelWrk.add(new AttributeModifier("href",
                 CommunityDictEnum.COMMUNITY_SOURCE_CODE_URL.getWord()));
         add(labelWrk);
+
+        //
+        final PrinterDriverDownloadPanel downloadPanel =
+                new PrinterDriverDownloadPanel("printerdriver-download-panel");
+        add(downloadPanel);
+        downloadPanel.populate();
 
     }
 }

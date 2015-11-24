@@ -41,6 +41,7 @@ release.properties
 
 /.classpath
 /.project
+/client.home
 /server.home
 /derby.log
 /.checkstyle

@@ -522,7 +522,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * <p>
      * NOTE: DocBook generated HTML chunks (and Maven site generated HTML) are
      * handled by <savapage-docs> servletname, see web.xml and
-     * {@link SpDocsServlet}.
+     * {@link DocumentationServlet}.
      * </p>
      */
     private void myInitialize() {

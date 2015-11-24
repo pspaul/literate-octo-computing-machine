@@ -21,11 +21,11 @@
  */
 package org.savapage.server;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.savapage.core.config.ConfigManager;
 
@@ -50,6 +51,11 @@ public final class CustomWebServlet extends HttpServlet {
      *
      */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * .
+     */
+    private static final int BUFFER_SIZE = 1014;
 
     /**
      * Base path of custom web files (without leading or trailing '/').
@@ -76,42 +82,45 @@ public final class CustomWebServlet extends HttpServlet {
             final HttpServletResponse resp) throws ServletException,
             IOException {
 
-        String reqURI = req.getRequestURI();
+        final String reqURI = req.getRequestURI();
 
         InputStream istr = null;
-        ByteArrayOutputStream bos = null;
 
         try {
 
+            final OutputStream ostr = resp.getOutputStream();
+
             final File file = new File(CONTENT_HOME + reqURI);
-            bos = new ByteArrayOutputStream();
 
             if (file.exists()) {
 
+                resp.setContentType(WebApplication.get().getMimeType(reqURI));
+                resp.setContentLength((int) file.length());
+
                 istr = new FileInputStream(file);
-                final byte[] aByte = new byte[2048];
+                final byte[] aByte = new byte[BUFFER_SIZE];
 
                 int nBytes = istr.read(aByte);
                 while (-1 < nBytes) {
-                    bos.write(aByte, 0, nBytes);
+                    ostr.write(aByte, 0, nBytes);
                     nBytes = istr.read(aByte);
                 }
+
             } else {
-                bos.write(String.format("%s: not found", reqURI).getBytes());
+
+                final byte[] msg =
+                        String.format("%s: not found", reqURI).getBytes();
+
+                resp.setContentType(WebApplication.get().getMimeType("x.txt"));
+                resp.setContentLength(msg.length);
+
+                ostr.write(msg);
             }
 
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.setContentType(WebApplication.get().getMimeType(reqURI));
-            resp.setContentLength(bos.size());
-            resp.getOutputStream().write(bos.toByteArray());
 
         } finally {
-            if (bos != null) {
-                bos.close();
-            }
-            if (istr != null) {
-                istr.close();
-            }
+            IOUtils.closeQuietly(istr);
         }
     }
 }
