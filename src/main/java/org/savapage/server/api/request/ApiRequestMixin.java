@@ -101,11 +101,17 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     }
 
     /**
-     *
      * @return The {@link Locale}.
      */
     protected final Locale getLocale() {
         return ServiceContext.getLocale();
+    }
+
+    /**
+     * @return The currency symbol according to the {@link Locale}.
+     */
+    protected final String getCurrencySymbol() {
+        return ServiceContext.getAppCurrencySymbol();
     }
 
     /**

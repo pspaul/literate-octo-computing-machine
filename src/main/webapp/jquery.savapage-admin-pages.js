@@ -146,6 +146,41 @@
 		/**
 		 * Constructor
 		 */
+		_ns.PageSharedAccount = function(_i18n, _view, _model) {
+
+			var _page = new _ns.Page(_i18n, _view, '#page-shared-account', 'admin.PageSharedAccount')
+			//
+			, _self = _ns.derive(_page)
+			//
+			;
+
+			/**
+			 *
+			 */
+			$(_self.id()).on('pagecreate', function(event) {
+
+				$(this).on('click', '#button-save-shared-account', null, function() {
+					_self.onSaveSharedAccount();
+					return false;
+				});
+
+			}).on("pagebeforeshow", function(event, ui) {
+				
+				$('#shared-account-name').val(_model.editAccount.name);
+				$('#shared-account-balance').val(_model.editAccount.balance);
+				$('#shared-account-name-parent').val(_model.editAccount.parentName);
+				$('#shared-account-notes').val(_model.editAccount.notes);
+
+				_view.visible($('.shared-account_user-defined-section'), _model.editAccount.id !== null);
+				_view.checkCb('#shared-account-deleted', _model.editAccount.deleted);
+			});
+			return _self;
+		};
+
+		// =========================================================================
+		/**
+		 * Constructor
+		 */
 		_ns.PageAccountVoucherCreate = function(_i18n, _view, _model) {
 
 			var _page = new _ns.Page(_i18n, _view, '#page-voucher-create', 'admin.PageAccountVoucherCreate')
@@ -917,6 +952,11 @@
 				About : {},
 
 				/*
+				 * Account
+				 */
+				SharedAccountsBase : _ns.PanelSharedAccountsBase,
+
+				/*
 				 * AccountTrx (common for Admin and User WebApp)
 				 */
 				AccountTrxBase : _ns.PanelAccountTrxBase,
@@ -988,6 +1028,10 @@
 			};
 			_self.refreshQueues = function() {
 				var pnl = _panel.QueuesBase;
+				pnl.refresh(pnl);
+			};
+			_self.refreshSharedAccounts = function() {
+				var pnl = _panel.SharedAccountsBase;
 				pnl.refresh(pnl);
 			};
 			_self.refreshDevices = function() {
@@ -1301,6 +1345,57 @@
 				 */
 
 				/*
+				 * Accounts Panel
+				 */
+				$(this).on('click', '.sp-edit-shared-account', null, function() {
+					_self.onEditSharedAccount($(this).attr('data-savapage'));
+					return false;
+				});
+
+				$(this).on('click', '.sp-account-log', null, function() {
+					var pnl = _panel.DocLogBase;
+					pnl.applyDefaults(_panel.DocLogBase);
+					pnl.input.select.account_id = $(this).attr('data-savapage');
+					// skipBeforeLoad
+					pnl.refresh(pnl, true);
+					return false;
+				});
+
+				$(this).on('click', '.sp-account-transaction', null, function() {
+					var pnl = _panel.AccountTrxBase;
+					pnl.applyDefaults(pnl);
+					pnl.input.select.account_id = $(this).attr('data-savapage');
+					// skipBeforeLoad
+					pnl.refresh(pnl, true);
+					return false;
+				});
+
+				$(this).on('click', "#button-create-account", null, function() {
+					_self.onCreateSharedAccount();
+					return false;
+				});
+
+				$(this).on('click', '#button-accounts-apply', null, function() {
+					var pnl = _panel.SharedAccountsBase;
+					pnl.page(pnl, 1);
+					return false;
+				});
+
+				$(this).on('click', '#button-accounts-default', null, function() {
+					var pnl = _panel.SharedAccountsBase;
+					pnl.applyDefaults(pnl);
+					pnl.m2v(pnl);
+					return false;
+				});
+
+				$(this).on('click', '#button-accounts-report', null, function() {
+					var pnl = _panel.SharedAccountsBase;
+					pnl.v2m(pnl);
+					_self.onDownload("report", pnl.input, "AccountList");
+					return true;
+				});
+
+				/*
 				 * AccountTrx Panel
 				 */
 				$(this).on('click', '#button-accounttrx-apply', null, function() {
@@ -1529,6 +1624,7 @@
 					_self.onDownload("report", pnl.input, "UserList");
 					return true;
 				});
+
 
 				/*
 				 * Queues Panel

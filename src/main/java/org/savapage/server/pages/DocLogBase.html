@@ -6,6 +6,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 --></wicket:remove> 
  
 <input type="hidden" value="the-user-id" id="sp-doclog-hidden-user-id" wicket:id="hidden-user-id"/>
+<input type="hidden" value="the-account-id" id="sp-doclog-hidden-account-id" wicket:id="hidden-account-id"/>
 
 <ul data-role="listview" data-inset="true">
 
@@ -14,6 +15,9 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 		    <wicket:enclosure child="select-and-sort-user"> 
 		        - <wicket:message key="select-and-sort-user"/>: <span wicket:id="select-and-sort-user" />
 		    </wicket:enclosure>
+            <wicket:enclosure child="select-and-sort-account"> 
+                - <wicket:message key="select-and-sort-account"/>: <span wicket:id="select-and-sort-account" />
+            </wicket:enclosure>
 	    </span>                             
 	</li>
 

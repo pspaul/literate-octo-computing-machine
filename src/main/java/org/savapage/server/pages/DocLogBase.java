@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,8 +23,6 @@ package org.savapage.server.pages;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -33,7 +31,7 @@ import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
-import org.savapage.core.dao.impl.DaoContextImpl;
+import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
@@ -65,8 +63,6 @@ public class DocLogBase extends AbstractAuthPage {
             checkAdminAuthorization();
         }
 
-        //this.openServiceContext();
-
         handlePage();
     }
 
@@ -81,15 +77,20 @@ public class DocLogBase extends AbstractAuthPage {
         DocLogPagerReq req = DocLogPagerReq.read(data);
 
         Long userId = null;
+        Long accountId = null;
 
         final boolean adminWebApp = isAdminRoleContext();
 
         boolean userNameVisible = false;
+        boolean accountNameVisible = false;
 
         if (adminWebApp) {
 
             userId = req.getSelect().getUserId();
             userNameVisible = (userId != null);
+
+            accountId = req.getSelect().getAccountId();
+            accountNameVisible = (accountId != null);
 
         } else {
             /*
@@ -100,16 +101,19 @@ public class DocLogBase extends AbstractAuthPage {
         }
 
         //
-        final EntityManager em = DaoContextImpl.peekEntityManager();
-
-        //
         String userName = null;
+        String accountName = null;
 
         if (userNameVisible) {
             final User user =
                     ServiceContext.getDaoContext().getUserDao()
                             .findById(userId);
             userName = user.getUserId();
+        } else if (accountNameVisible) {
+            final Account account =
+                    ServiceContext.getDaoContext().getAccountDao()
+                            .findById(accountId);
+            accountName = account.getName();
         }
 
         //
@@ -123,7 +127,18 @@ public class DocLogBase extends AbstractAuthPage {
         add(hiddenLabel);
 
         //
-        MarkupHelper helper = new MarkupHelper(this);
+        hiddenLabel = new Label("hidden-account-id");
+        hiddenValue = "";
+
+        if (accountId != null) {
+            hiddenValue = accountId.toString();
+        }
+        hiddenLabel.add(new AttributeModifier("value", hiddenValue));
+        add(hiddenLabel);
+
+        //
+        final MarkupHelper helper = new MarkupHelper(this);
+
         final String attribute = "value";
 
         helper.addModifyLabelAttr("select-type-all", attribute,
@@ -137,18 +152,10 @@ public class DocLogBase extends AbstractAuthPage {
         helper.addModifyLabelAttr("select-type-print", attribute,
                 DocLogDao.Type.PRINT.toString());
 
-        /*
-         *
-         */
-        final boolean isVisible = userNameVisible;
-        add(new Label("select-and-sort-user", userName) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean isVisible() {
-                return isVisible;
-            }
-        });
+        //
+        helper.encloseLabel("select-and-sort-user", userName, userNameVisible);
+        helper.encloseLabel("select-and-sort-account", accountName,
+                accountNameVisible);
 
         /*
          * Option list: Queues
@@ -165,7 +172,7 @@ public class DocLogBase extends AbstractAuthPage {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem<IppQueue> item) {
+            protected void populateItem(final ListItem<IppQueue> item) {
                 final IppQueue queue = item.getModel().getObject();
                 final Label label =
                         new Label("option-queue", "/" + queue.getUrlPath());
@@ -190,7 +197,7 @@ public class DocLogBase extends AbstractAuthPage {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem<Printer> item) {
+            protected void populateItem(final ListItem<Printer> item) {
                 final Printer printer = item.getModel().getObject();
                 final Label label =
                         new Label("option-printer", printer.getDisplayName());
@@ -220,7 +227,7 @@ public class DocLogBase extends AbstractAuthPage {
 
     @Override
     protected boolean needMembership() {
-        //return isAdminRoleContext();
+        // return isAdminRoleContext();
         return false;
     }
 }

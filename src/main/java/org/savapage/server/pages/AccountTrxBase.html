@@ -6,12 +6,16 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 --></wicket:remove>  
 
 <input type="hidden" value="the-user-id" id="sp-accounttrx-hidden-user-id" wicket:id="hidden-user-id"/>
+<input type="hidden" value="the-account-id" id="sp-accounttrx-hidden-account-id" wicket:id="hidden-account-id"/>
 
 <ul data-role="listview" data-inset="true">
 
     <li data-role="list-divider"><wicket:message key="title"/>
         <wicket:enclosure child="select-and-sort-user"> 
             - <wicket:message key="select-and-sort-user"/>: <span wicket:id="select-and-sort-user" />
+        </wicket:enclosure>                             
+        <wicket:enclosure child="select-and-sort-account"> 
+            - <wicket:message key="select-and-sort-account"/>: <span wicket:id="select-and-sort-account" />
         </wicket:enclosure>                             
     </li>
 
@@ -65,10 +69,14 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                         <input type="radio" name="sp-accounttrx-select-type" id="sp-accounttrx-select-type-voucher" 
                             wicket:id="accounttrx-select-type-voucher" value="enum"/> 
                         
-                        <label for="sp-accounttrx-select-type-printout"><wicket:message key="type-printout"/></label>
-						<input type="radio" name="sp-accounttrx-select-type" id="sp-accounttrx-select-type-printout" 
-						wicket:id="accounttrx-select-type-printout" value="enum"/> 
+                        <label for="sp-accounttrx-select-type-printin"><wicket:message key="type-printin"/></label>
+						<input type="radio" name="sp-accounttrx-select-type" id="sp-accounttrx-select-type-printin" 
+						wicket:id="accounttrx-select-type-printin" value="enum"/> 
 		
+                        <label for="sp-accounttrx-select-type-printout"><wicket:message key="type-printout"/></label>
+                        <input type="radio" name="sp-accounttrx-select-type" id="sp-accounttrx-select-type-printout" 
+                        wicket:id="accounttrx-select-type-printout" value="enum"/> 
+        
 					</fieldset>
 
                 </li>

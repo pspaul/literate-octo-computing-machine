@@ -76,25 +76,18 @@ import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.pages.StatsEnvImpactPanel;
 import org.savapage.server.pages.StatsPageTotalPanel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
-public class SystemStatusPanel extends Panel {
+public final class SystemStatusPanel extends Panel {
 
     /**
-     *
+     * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     *
-     */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(SystemStatusPanel.class);
 
     /**
      * .
@@ -119,10 +112,7 @@ public class SystemStatusPanel extends Panel {
     /**
      *
      */
-    /**
-     *
-     */
-    public final void populate() {
+    public void populate() {
 
         final MarkupHelper helper = new MarkupHelper(this);
 

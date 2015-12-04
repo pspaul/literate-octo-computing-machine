@@ -28,6 +28,8 @@ import org.savapage.core.SpException;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.server.api.request.ApiRequestHandler;
+import org.savapage.server.api.request.ReqAccountGet;
+import org.savapage.server.api.request.ReqAccountSet;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqPrinterPrint;
@@ -185,6 +187,9 @@ public class JsonApiDict {
     public static final String REQ_QUEUE_ENABLE = "queue-enable";
     public static final String REQ_QUEUE_GET = "queue-get";
     public static final String REQ_QUEUE_SET = "queue-set";
+
+    public static final String REQ_ACCOUNT_GET = "account-get";
+    public static final String REQ_ACCOUNT_SET = "account-set";
 
     public static final String REQ_REPORT = "report";
     public static final String REQ_REPORT_USER = "report-user";
@@ -672,9 +677,13 @@ public class JsonApiDict {
         adm(REQ_PRINTER_SET_MEDIA_SOURCES, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_RENAME, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SYNC, DbClaim.READ, DbAccess.YES);
+
         adm(REQ_QUEUE_GET, ReqQueueGet.class, DbClaim.NONE, DbAccess.YES);
         adm(REQ_QUEUE_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_QUEUE_ENABLE, ReqQueueEnable.class, DbClaim.READ, DbAccess.YES);
+
+        adm(REQ_ACCOUNT_GET, ReqAccountGet.class, DbClaim.NONE, DbAccess.YES);
+        adm(REQ_ACCOUNT_SET, ReqAccountSet.class, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_REPORT, DbClaim.READ, DbAccess.YES);
         usr(REQ_REPORT_USER, DbClaim.READ, DbAccess.YES);

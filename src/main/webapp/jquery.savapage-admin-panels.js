@@ -1505,4 +1505,141 @@
 			}
 		};
 
+		/**
+		 *
+		 */
+		_ns.PanelSharedAccountsBase = {
+
+			applyDefaults : function(my) {
+
+				my.input.page = 1;
+				my.input.maxResults = 10;
+
+				my.input.select.name_text = null;
+				// Boolean
+				my.input.select.deleted = false;
+				// Boolean
+				my.input.sort.ascending = true;
+			},
+
+			beforeload : function(my) {
+				$.noop();
+			},
+
+			afterload : function(my) {
+				my.m2v(my);
+				my.page(my, my.input.page);
+			},
+
+			m2v : function(my) {
+				var val, id
+				//
+				, _view = _ns.PanelCommon.view
+				//
+				;
+
+				$('#sp-shared-account-name-containing-text').val(my.input.select.name_text);
+
+				val = my.input.select.deleted;
+				_view.checkRadioValue('sp-shared-account-select-deleted', val === null ? "" : ( val ? "1" : "0"));
+
+				//
+				id = 'sp-shared-account-sort-dir';
+				_view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+
+			},
+
+			v2m : function(my) {
+
+				var val, sel, present
+				//
+				, _view = _ns.PanelCommon.view
+				//
+				;
+
+				val = _view.getRadioValue('sp-shared-account-select-deleted');
+				my.input.select.deleted = (val === "" ? null : (val === "1"));
+
+				sel = $('#sp-shared-account-name-containing-text');
+				present = (sel.val().length > 0);
+				my.input.select.name_text = ( present ? sel.val() : null);
+
+				my.input.sort.field = _view.getRadioValue('sp-shared-account-sort-by');
+				my.input.sort.ascending = _view.isRadioIdSelected('sp-shared-account-sort-dir', 'sp-shared-account-sort-dir-asc');
+			},
+
+			// JSON input
+			input : {
+
+				page : 1,
+				maxResults : 10,
+
+				select : {
+					name_text : null,
+					deleted : false
+				},
+				sort : {
+					field : 'name', // name
+					ascending : true
+				}
+			},
+
+			// JSON output
+			output : {
+				lastPage : null,
+				nextPage : null,
+				prevPage : null
+			},
+
+			refresh : function(my, skipBeforeLoad) {
+				_ns.PanelCommon.refreshPanelAdmin('SharedAccountsBase', skipBeforeLoad);
+			},
+
+			// show page
+			page : function(my, nPage) {
+				_ns.PanelCommon.onValidPage(function() {
+					my.input.page = nPage;
+					my.v2m(my);
+					_ns.PanelCommon.loadListPageAdmin(my, 'SharedAccountsPage', '#sp-shared-account-list-page');
+				});
+			},
+
+			getInput : function(my) {
+				return my.input;
+			},
+
+			onOutput : function(my, output) {
+
+				var _view = _ns.PanelCommon.view;
+
+				my.output = output;
+				/*
+				 * NOTICE the $().one() construct. Since the page get
+				 * reloaded all the time, we want a single-shot binding.
+				 */
+				$(".sp-shared-accounts-page").one('click', null, function() {
+					my.page(my, parseInt($(this).text(), 10));
+					/*
+					 * return false so URL is not followed.
+					 */
+					return false;
+				});
+				$(".sp-shared-accounts-page-next").one('click', null, function() {
+					my.page(my, my.output.nextPage);
+					/*
+					 * return false so URL is not followed.
+					 */
+					return false;
+				});
+				$(".sp-shared-accounts-page-prev").one('click', null, function() {
+					my.page(my, my.output.prevPage);
+					/*
+					 * return false so URL is not followed.
+					 */
+					return false;
+				});
+
+			}
+		};
+
 	}(jQuery, this, this.document, JSON, this.org.savapage));

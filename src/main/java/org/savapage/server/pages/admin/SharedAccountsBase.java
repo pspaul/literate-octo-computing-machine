@@ -21,12 +21,14 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.savapage.core.config.ConfigManager;
+
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class DevicesBase extends AbstractAdminPage {
+public class SharedAccountsBase extends AbstractAdminPage {
 
     /**
      * Version for serialization.
@@ -36,7 +38,9 @@ public final class DevicesBase extends AbstractAdminPage {
     /**
      *
      */
-    public DevicesBase() {
+    public SharedAccountsBase() {
 
+        addVisible(ConfigManager.isInternalUsersEnabled(), "button-new",
+                localized("button-new"));
     }
 }

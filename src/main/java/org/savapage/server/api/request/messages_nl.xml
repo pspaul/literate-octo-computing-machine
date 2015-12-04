@@ -4,11 +4,13 @@
 
     <entry key="msg-single-parm">{0}</entry> 
 
+    <!-- ReqAccountGet -->
+      
+    <entry key="msg-account-not-found">Account "{0}" is niet gevonden.</entry>
 
     <!-- ReqDbBackup -->
 
     <entry key="msg-db-backup-busy">Backup maken...</entry>
-
 
     <!-- ReqQueueEnable -->
     

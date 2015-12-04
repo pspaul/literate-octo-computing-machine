@@ -26,7 +26,7 @@ package org.savapage.server.pages.admin;
  * @author Rijk Ravestein
  *
  */
-public final class DevicesBase extends AbstractAdminPage {
+public final class PageSharedAccount extends AbstractAdminPage {
 
     /**
      * Version for serialization.
@@ -36,7 +36,7 @@ public final class DevicesBase extends AbstractAdminPage {
     /**
      *
      */
-    public DevicesBase() {
-
+    public PageSharedAccount() {
     }
+
 }

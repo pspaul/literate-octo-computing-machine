@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,10 +39,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
-public class AppLogPage extends AbstractAdminListPage {
+public final class AppLogPage extends AbstractAdminListPage {
 
+    /**
+     * Version for serialization.
+     */
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOGGER = LoggerFactory
@@ -74,7 +78,7 @@ public class AppLogPage extends AbstractAdminListPage {
                     + "] text [" + filter.getContainingText() + "]");
         }
 
-        //this.openServiceContext();
+        // this.openServiceContext();
         //
         final AppLogDao appLogDao =
                 ServiceContext.getDaoContext().getAppLogDao();

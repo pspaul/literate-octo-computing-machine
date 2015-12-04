@@ -515,7 +515,9 @@ public class AccountTrxPage extends AbstractListPage {
                     + filter.getDateFrom() + "] dateTo [" + filter.getDateTo()
                     + "] text [" + filter.getContainingCommentText() + "]");
         }
+
         Long userId = null;
+        Long accountId = null;
 
         /*
          * isAdminWebAppContext() sometimes returns null. Why !?
@@ -523,7 +525,10 @@ public class AccountTrxPage extends AbstractListPage {
         final boolean adminWebApp = isAdminRoleContext();
 
         if (adminWebApp) {
+
             userId = req.getSelect().getUserId();
+            accountId = req.getSelect().getAccountId();
+
         } else {
             /*
              * If we are called in a User WebApp context we ALWAYS use the user
@@ -533,6 +538,7 @@ public class AccountTrxPage extends AbstractListPage {
         }
 
         filter.setUserId(userId);
+        filter.setAccountId(accountId);
 
         //
         final AccountTrxDao accountTrxDao =

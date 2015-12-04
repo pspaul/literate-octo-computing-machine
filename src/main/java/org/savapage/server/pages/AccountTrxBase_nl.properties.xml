@@ -5,6 +5,7 @@
     <entry key="title">Transacties</entry>
     <entry key="select-and-sort">Selectie en Sortering</entry>
     <entry key="select-and-sort-user">Gebruiker</entry>
+    <entry key="select-and-sort-account">Account</entry>
     
     <entry key="prompt-comment-containing-text">Commentaar bevat tekst</entry>
     
@@ -16,6 +17,7 @@
     <entry key="type-gateway">Extern</entry>
     <entry key="type-transfer">Overdracht</entry>
     <entry key="type-voucher">Voucher</entry>
+    <entry key="type-printin">Wachtrij</entry>
     <entry key="type-printout">Printer</entry>
     
     <entry key="prompt-period">Periode</entry>

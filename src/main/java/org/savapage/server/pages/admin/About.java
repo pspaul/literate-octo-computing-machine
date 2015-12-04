@@ -50,10 +50,10 @@ import org.savapage.server.pages.PrinterDriverDownloadPanel;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
-public class About extends AbstractAdminPage {
+public final class About extends AbstractAdminPage {
 
     /**
      * .
@@ -62,7 +62,7 @@ public class About extends AbstractAdminPage {
             .getServiceFactory().getProxyPrintService();
 
     /**
-     *
+     * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
 

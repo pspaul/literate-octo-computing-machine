@@ -28,10 +28,14 @@ import org.savapage.server.pages.AbstractAuthPage;
  * checks the SpSession to see if the user is administrator and authorized to
  * see the pages.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 public abstract class AbstractAdminPage extends AbstractAuthPage {
 
+    /**
+     * Version for serialization.
+     */
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -39,6 +43,9 @@ public abstract class AbstractAdminPage extends AbstractAuthPage {
         return false;
     }
 
+    /**
+     *
+     */
     public AbstractAdminPage() {
 
         if (isAuthErrorHandled()) {

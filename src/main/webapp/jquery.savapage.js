@@ -624,6 +624,7 @@
 				my.input.maxResults = 10;
 
 				my.input.select.user_id = null;
+				my.input.select.account_id = null;
 
 				my.input.select.text = null;
 
@@ -684,6 +685,11 @@
 				my.input.select.user_id = ( present ? val : null);
 
 				//
+				val = $('#sp-accounttrx-hidden-account-id').val();
+				present = (val.length > 0);
+				my.input.select.account_id = ( present ? val : null);
+
+				//
 				val = _view.getRadioValue('sp-accounttrx-select-type');
 				present = (val.length > 0);
 				my.input.select.trxType = ( present ? val : null);
@@ -708,6 +714,7 @@
 				maxResults : 10,
 				select : {
 					user_id : null,
+					account_id : null,
 					// See Java: org.savapage.core.jpa.AccountTrx.TrxType
 					trxType : null,
 					date_from : null,
@@ -787,6 +794,9 @@
 			clearHiddenUserid : function() {
 				$('#sp-doclog-hidden-user-id').val("");
 				$("#sp-doclog-user-title").html("");
+				
+				$('#sp-doclog-hidden-account-id').val("");
+				$("#sp-doclog-account-title").html("");
 			},
 
 			/*
@@ -802,6 +812,9 @@
 				 * is used. In Admin WebApp value of field below is used.
 				 */
 				my.input.select.user_id = null;
+				
+				//
+				my.input.select.account_id = null;
 
 				// ALL, IN, OUT, PDF, PRINT
 				my.input.select.doc_type = "ALL";
@@ -936,6 +949,11 @@
 				present = (val.length > 0);
 				my.input.select.user_id = ( present ? val : null);
 
+				//
+				val = $('#sp-doclog-hidden-account-id').val();
+				present = (val.length > 0);
+				my.input.select.account_id = ( present ? val : null);
+				
 				//
 				date = _view.mobipickGetDate(sel);
 				present = (sel.val().length > 0);

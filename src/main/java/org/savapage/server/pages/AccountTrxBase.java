@@ -25,6 +25,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
 import org.savapage.core.dao.helpers.AccountTrxTypeEnum;
+import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.SpSession;
@@ -75,9 +76,10 @@ public final class AccountTrxBase extends AbstractAuthPage {
 
         final String data = getParmValue(POST_PARM_DATA);
 
-        AccountTrxPagerReq req = AccountTrxPagerReq.read(data);
+        final AccountTrxPagerReq req = AccountTrxPagerReq.read(data);
 
         Long userId = null;
+        Long accountId = null;
 
         /*
          * isAdminWebAppContext() sometimes returns null. Why !?
@@ -85,11 +87,15 @@ public final class AccountTrxBase extends AbstractAuthPage {
         final boolean adminWebApp = isAdminRoleContext();
 
         boolean userNameVisible = false;
+        boolean accountNameVisible = false;
 
         if (adminWebApp) {
 
             userId = req.getSelect().getUserId();
             userNameVisible = (userId != null);
+
+            accountId = req.getSelect().getAccountId();
+            accountNameVisible = (accountId != null);
 
         } else {
             /*
@@ -101,12 +107,18 @@ public final class AccountTrxBase extends AbstractAuthPage {
 
         //
         String userName = null;
+        String accountName = null;
 
         if (userNameVisible) {
             final User user =
                     ServiceContext.getDaoContext().getUserDao()
                             .findById(userId);
             userName = user.getUserId();
+        } else if (accountNameVisible) {
+            final Account account =
+                    ServiceContext.getDaoContext().getAccountDao()
+                            .findById(accountId);
+            accountName = account.getName();
         }
 
         //
@@ -120,7 +132,18 @@ public final class AccountTrxBase extends AbstractAuthPage {
         add(hiddenLabel);
 
         //
-        MarkupHelper helper = new MarkupHelper(this);
+        hiddenLabel = new Label("hidden-account-id");
+        hiddenValue = "";
+
+        if (accountId != null) {
+            hiddenValue = accountId.toString();
+        }
+        hiddenLabel.add(new AttributeModifier("value", hiddenValue));
+        add(hiddenLabel);
+
+        //
+        final MarkupHelper helper = new MarkupHelper(this);
+
         helper.addModifyLabelAttr("accounttrx-select-type-initial", "value",
                 AccountTrxTypeEnum.INITIAL.toString());
         helper.addModifyLabelAttr("accounttrx-select-type-adjust", "value",
@@ -133,21 +156,15 @@ public final class AccountTrxBase extends AbstractAuthPage {
                 AccountTrxTypeEnum.TRANSFER.toString());
         helper.addModifyLabelAttr("accounttrx-select-type-voucher", "value",
                 AccountTrxTypeEnum.VOUCHER.toString());
+        helper.addModifyLabelAttr("accounttrx-select-type-printin", "value",
+                AccountTrxTypeEnum.PRINT_IN.toString());
         helper.addModifyLabelAttr("accounttrx-select-type-printout", "value",
                 AccountTrxTypeEnum.PRINT_OUT.toString());
 
-        /*
-         *
-         */
-        final boolean isVisible = userNameVisible;
-        add(new Label("select-and-sort-user", userName) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean isVisible() {
-                return isVisible;
-            }
-        });
+        //
+        helper.encloseLabel("select-and-sort-user", userName, userNameVisible);
+        helper.encloseLabel("select-and-sort-account", accountName,
+                accountNameVisible);
     }
 
 }

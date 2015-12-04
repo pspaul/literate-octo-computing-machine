@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title-account">Account</entry>
+    <entry key="label-account-name">Name</entry>
+    <entry key="label-account-name-parent">Parent Account</entry>
+    <entry key="label-balance">Balance</entry>
+    <entry key="label-account-notes">Notes</entry>
+	<entry key="label-account-deleted">Delete when transaction and job history is cleaned</entry>
+	<entry key="button-ok">OK</entry>
+	<entry key="button-cancel">Cancel</entry>
+	
+    <entry key="label-account-delete-warning">Deleting an account is a destructive action which cannot
+        be undone.</entry>
+	
+</properties>

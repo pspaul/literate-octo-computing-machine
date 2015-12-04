@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text"
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<ul data-role="listview" data-inset="true">
+
+    <li data-role="list-divider"><span><wicket:message key="title"/></span></li>
+
+    <li>
+        <div data-role="collapsible" data-collapsed="true">
+
+            <h3>
+                <wicket:message key="select-and-sort"/>
+            </h3>
+            
+            <ul data-role="listview" data-inset="true">
+
+                <li>
+
+                    <label for="sp-shared-account-name-containing-text"><wicket:message key="prompt-name-containing-text"/></label>
+	                <input type="text" id="sp-shared-account-name-containing-text" value="" maxlength="128" data-clear-btn="true" 
+	                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
+		                    
+                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                    
+                        <legend>
+                            <wicket:message key="prompt-account-deleted"/>
+                        </legend>
+                        
+                        <input type="radio" name="sp-shared-account-select-deleted" id="sp-shared-account-select-deleted-all" value="" /> 
+                        <label for="sp-shared-account-select-deleted-all"><wicket:message key="account-deleted-all"/></label>
+                                
+                        <input type="radio" name="sp-shared-account-select-deleted" id="sp-shared-account-select-deleted-y" value="1"/>
+                        <label for="sp-shared-account-select-deleted-y"><wicket:message key="account-deleted-y"/></label>
+                                
+                        <input type="radio" name="sp-shared-account-select-deleted" id="sp-shared-account-select-deleted-n" value="0" checked="checked"/>
+                        <label for="sp-shared-account-select-deleted-n"><wicket:message key="account-deleted-n"/></label>
+                        
+                    </fieldset></div>
+		            		            
+                </li>
+                
+                <li>
+		            
+		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+		                <legend>
+		                    <wicket:message key="prompt-sort-by"/>
+		                </legend>
+				                        
+		                <input type="radio" name="sp-shared-account-sort-dir" id="sp-shared-account-sort-dir-asc" checked="checked" /> 
+		                <label for="sp-shared-account-sort-dir-asc"><wicket:message key="sort-asc"/></label>
+		                
+		                <input type="radio" name="sp-shared-account-sort-dir" id="sp-shared-account-sort-dir-desc"/> 
+		                <label for="sp-shared-account-sort-dir-desc"><wicket:message key="sort-desc"/></label>
+		                        
+		            </fieldset>
+		            
+                </li>
+                
+                <li>
+                    <div data-role="controlgroup" data-type="horizontal">
+			            <a href="#" id="button-accounts-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+			                 <wicket:message key="button-apply"/></a>			
+			            <a href="#" id="button-accounts-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+			                 <wicket:message key="button-default"/></a>
+                        <a href="#" id="button-accounts-report" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-grid ui-state-disabled" >
+                            <wicket:message key="button-report"/></a>
+                        <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</a>                             
+                    </div>                        
+                </li>
+            </ul>
+        </div> 
+    </li>
+
+    <wicket:enclosure child="button-new">
+    <li>
+        <div>
+            <a href="#" id="button-create-account" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit" 
+                wicket:id="button-new"/>
+        </div>    
+    </li>
+    </wicket:enclosure>
+
+    <li id="sp-shared-account-list-page"></li>
+
+</ul>

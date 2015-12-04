@@ -10,6 +10,8 @@
 
 	<entry key="cat-dashboard">Dashboard</entry>
 	<entry key="cat-users">Users</entry>
+    <entry key="cat-groups">Groups</entry>
+    <entry key="cat-accounts">Accounts</entry>
 	<entry key="cat-queues">Queues</entry>
 	<entry key="cat-printers">Proxy Printers</entry>
     <entry key="cat-devices">Devices</entry>

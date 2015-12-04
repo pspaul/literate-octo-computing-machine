@@ -58,7 +58,7 @@ import org.savapage.server.WebApp;
  * @author Datraverse B.V.
  *
  */
-public class DocLogItem {
+public final class DocLogItem {
 
     private String userId;
     private String userName;
@@ -205,7 +205,7 @@ public class DocLogItem {
 
             final StringBuilder jpql = new StringBuilder();
 
-            jpql.append(getSelectCommon(count));
+            jpql.append(getSelectCommon(count, req));
 
             //
             final String join = getExtraJoin();
@@ -245,16 +245,17 @@ public class DocLogItem {
 
             final String jpql = getSelectString(em, true, userId, req);
 
-            Query query = em.createQuery(jpql);
+            final Query query = em.createQuery(jpql);
 
             final Date dayFrom = req.getSelect().dateFrom();
             final Date dayTo = req.getSelect().dateTo();
             final String titleText = req.getSelect().getDocName();
+            final Long accountId = req.getSelect().getAccountId();
 
-            setParmsCommon(query, userId, dayFrom, dayTo, titleText);
+            setParmsCommon(query, userId, accountId, dayFrom, dayTo, titleText);
             setExtraParms(query, req);
 
-            Number countResult = (Number) query.getSingleResult();
+            final Number countResult = (Number) query.getSingleResult();
             return countResult.longValue();
         }
 
@@ -320,8 +321,9 @@ public class DocLogItem {
             final Date dayFrom = req.getSelect().dateFrom();
             final Date dayTo = req.getSelect().dateTo();
             final String titleText = req.getSelect().getDocName();
+            final Long accountId = req.getSelect().getAccountId();
 
-            setParmsCommon(query, userId, dayFrom, dayTo, titleText);
+            setParmsCommon(query, userId, accountId, dayFrom, dayTo, titleText);
             setExtraParms(query, req);
 
             Integer startPosition = req.calcStartPosition();
@@ -482,7 +484,8 @@ public class DocLogItem {
         /**
          *
          */
-        protected final String getSelectCommon(final boolean count) {
+        protected final String getSelectCommon(final boolean count,
+                final DocLogPagerReq req) {
 
             final StringBuilder jpql = new StringBuilder();
 
@@ -494,7 +497,12 @@ public class DocLogItem {
                 jpql.append("D");
             }
 
-            jpql.append(" FROM DocLog D JOIN D.user U");
+            if (req.getSelect().getAccountId() != null) {
+                jpql.append(" FROM AccountTrx TRX JOIN TRX.docLog D");
+
+            } else {
+                jpql.append(" FROM DocLog D JOIN D.user U");
+            }
 
             return jpql.toString();
         }
@@ -515,6 +523,14 @@ public class DocLogItem {
             int nWhere = 0;
 
             final StringBuilder where = new StringBuilder();
+
+            if (req.getSelect().getAccountId() != null) {
+                if (nWhere > 0) {
+                    where.append(" AND ");
+                }
+                nWhere++;
+                where.append("TRX.id = :accountId");
+            }
 
             if (userId != null) {
                 if (nWhere > 0) {
@@ -559,16 +575,20 @@ public class DocLogItem {
          *
          * @param query
          * @param userId
+         * @param accountId
          * @param dayFrom
          * @param dayTo
          * @param titleText
          */
         protected final void setParmsCommon(final Query query,
-                final Long userId, final Date dayFrom, final Date dayTo,
-                final String titleText) {
+                final Long userId, final Long accountId, final Date dayFrom,
+                final Date dayTo, final String titleText) {
 
             if (userId != null) {
                 query.setParameter("userId", userId);
+            }
+            if (accountId != null) {
+                query.setParameter("accountId", accountId);
             }
             if (dayFrom != null) {
                 query.setParameter("dayFrom", dayFrom);

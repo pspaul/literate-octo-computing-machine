@@ -51,11 +51,14 @@ import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
-public class PrinterMediaSourcePanel extends Panel {
+public final class PrinterMediaSourcePanel extends Panel {
 
+    /**
+     * Version for serialization.
+     */
     private static final long serialVersionUID = 1L;
 
     private static final AccountingService ACCOUNTING_SERVICE = ServiceContext

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,10 +34,14 @@ import org.savapage.core.services.ServiceContext;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
-public class AccountVoucherPage extends AbstractAdminListPage {
+public final class AccountVoucherPage extends AbstractAdminListPage {
 
+    /**
+     * Version for serialization.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -65,7 +69,7 @@ public class AccountVoucherPage extends AbstractAdminListPage {
         filter.setDateTo(req.getSelect().dateTo());
         filter.setDateNow(new Date());
 
-        //this.openServiceContext();
+        // this.openServiceContext();
 
         //
         final AccountVoucherDao accountVoucherDao =

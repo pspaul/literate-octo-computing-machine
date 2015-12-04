@@ -1046,6 +1046,62 @@
 				}
 			};
 
+			//-------------------------------------------------------
+			_view.pages.admin.onCreateSharedAccount = function() {
+				_model.editAccount = {
+					id : null,
+					name : '',	
+					balance : 0,			
+					deleted : false
+				};
+				_view.pages.sharedAccount.loadShowAsync(function() {
+					$('#title-account').html(_model.editQueue.name);
+				});
+			};
+			
+			_view.pages.admin.onEditSharedAccount = function(id) {
+				
+				var res = _api.call({
+					request : 'account-get',
+					dto : JSON.stringify({
+						id : id
+					})
+				});
+				
+				if (res && res.result.code === '0') {
+					_model.editAccount = res.dto;
+					_view.pages.sharedAccount.loadShowAsync(function() {
+						$('#title-account').html(_model.editAccount.name);
+					});
+				} else {
+					_view.showApiMsg(res);
+				}
+			};
+			
+			_view.pages.sharedAccount.onSaveSharedAccount = function() {
+				
+				_model.editAccount.name = $('#shared-account-name').val();
+				_model.editAccount.parentName = $('#shared-account-name-parent').val();
+				_model.editAccount.notes = $('#shared-account-notes').val();
+				_model.editAccount.deleted = $('#shared-account-deleted').is(':checked');
+  
+				var res = _api.call({
+					request : 'account-set',
+					dto : JSON.stringify(_model.editAccount)
+				});
+
+				_view.showApiMsg(res);
+
+				/*
+				 * Refresh, so any change is displayed
+				 */
+				if (res.result.code === '0') {
+					_view.changePage($('#page-admin'));
+					_view.pages.admin.refreshSharedAccounts();
+				}
+			};
+						
+			//-------------------------------------------------------
 			_view.pages.admin.onCreateQueue = function() {
 				_model.editQueue = {
 					id : null,
@@ -1669,6 +1725,7 @@
 			_view.pages = {
 				language : new _ns.PageLanguage(_i18n, _view, _model),
 				login : new _ns.PageLogin(_i18n, _view, _api),
+				sharedAccount : new _ns.PageSharedAccount(_i18n, _view, _model),
 				admin : new _ns.PageAdmin(_i18n, _view, _model),
 				membercard_upload : new _ns.PageMemberCardUpload(_i18n, _view, _model),
 				user : new _ns.PageUser(_i18n, _view, _model),

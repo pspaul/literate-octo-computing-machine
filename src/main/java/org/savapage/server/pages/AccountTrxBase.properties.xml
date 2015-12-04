@@ -5,6 +5,7 @@
     <entry key="title">Transactions</entry>
     <entry key="select-and-sort">Select and Sort</entry>
     <entry key="select-and-sort-user">User</entry>
+    <entry key="select-and-sort-account">Account</entry>
     
     <entry key="prompt-comment-containing-text">Comment containing text</entry>
     
@@ -14,9 +15,9 @@
     <entry key="type-adjust">Adjustment</entry>    
     <entry key="type-deposit">Deposit</entry>
     <entry key="type-gateway">External</entry>
-    <entry key="type-transfer">Transfer</entry>
-    
+    <entry key="type-transfer">Transfer</entry>    
     <entry key="type-voucher">Voucher</entry>
+    <entry key="type-printin">Queue</entry>
     <entry key="type-printout">Printer</entry>
 
     <entry key="prompt-period">Period</entry>

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2015 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,11 +28,14 @@ import org.savapage.core.dao.helpers.ProxyPrintAuthModeEnum;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
-public class PageDevice extends AbstractAdminPage {
+public final class PageDevice extends AbstractAdminPage {
 
+    /**
+     * Version for serialization.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -111,7 +114,6 @@ public class PageDevice extends AbstractAdminPage {
                 IConfigProp.AUTH_MODE_V_CARD_LOCAL, false);
         labelledRadio(wicketIdBase, "-card-network", attrName,
                 IConfigProp.AUTH_MODE_V_CARD_IP, false);
-
     }
 
 }

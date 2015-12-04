@@ -29,12 +29,13 @@ import org.savapage.core.services.ServiceContext;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
-public class PrinterMediaSourceAddin extends AbstractAdminPage {
+public final class PrinterMediaSourceAddin extends AbstractAdminPage {
 
     /**
-     *
+     * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
 
@@ -59,7 +60,7 @@ public class PrinterMediaSourceAddin extends AbstractAdminPage {
     /**
      *
      */
-    private void handlePage(Long printerId) {
+    private void handlePage(final Long printerId) {
 
         add(new Label("cost-per-side", localized("cost-per-side",
                 ConfigManager.getAppCurrencyCode())));

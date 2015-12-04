@@ -10,6 +10,8 @@
 
 	<entry key="cat-dashboard">Instrumentenbord</entry>
 	<entry key="cat-users">Gebruikers</entry>
+    <entry key="cat-groups">Groepen</entry>
+    <entry key="cat-accounts">Accounts</entry>
 	<entry key="cat-queues">Wachtrijen</entry>
 	<entry key="cat-printers">Proxy Printers</entry>
     <entry key="cat-devices">Apparaten</entry>
