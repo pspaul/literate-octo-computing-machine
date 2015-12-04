@@ -1062,7 +1062,7 @@
 			_view.pages.admin.onEditSharedAccount = function(id) {
 				
 				var res = _api.call({
-					request : 'account-get',
+					request : 'shared-account-get',
 					dto : JSON.stringify({
 						id : id
 					})
@@ -1086,7 +1086,7 @@
 				_model.editAccount.deleted = $('#shared-account-deleted').is(':checked');
   
 				var res = _api.call({
-					request : 'account-set',
+					request : 'shared-account-set',
 					dto : JSON.stringify(_model.editAccount)
 				});
 

@@ -35,7 +35,7 @@ import org.savapage.core.services.ServiceContext;
  * @author Rijk Ravestein
  *
  */
-public final class ReqAccountGet extends ApiRequestMixin {
+public final class ReqSharedAccountGet extends ApiRequestMixin {
 
     /**
      *

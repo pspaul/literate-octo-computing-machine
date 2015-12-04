@@ -28,13 +28,13 @@ import org.savapage.core.SpException;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.server.api.request.ApiRequestHandler;
-import org.savapage.server.api.request.ReqAccountGet;
-import org.savapage.server.api.request.ReqAccountSet;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqQueueEnable;
 import org.savapage.server.api.request.ReqQueueGet;
+import org.savapage.server.api.request.ReqSharedAccountGet;
+import org.savapage.server.api.request.ReqSharedAccountSet;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.
@@ -188,8 +188,8 @@ public class JsonApiDict {
     public static final String REQ_QUEUE_GET = "queue-get";
     public static final String REQ_QUEUE_SET = "queue-set";
 
-    public static final String REQ_ACCOUNT_GET = "account-get";
-    public static final String REQ_ACCOUNT_SET = "account-set";
+    public static final String REQ_SHARED_ACCOUNT_GET = "shared-account-get";
+    public static final String REQ_SHARED_ACCOUNT_SET = "shared-account-set";
 
     public static final String REQ_REPORT = "report";
     public static final String REQ_REPORT_USER = "report-user";
@@ -682,8 +682,10 @@ public class JsonApiDict {
         adm(REQ_QUEUE_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_QUEUE_ENABLE, ReqQueueEnable.class, DbClaim.READ, DbAccess.YES);
 
-        adm(REQ_ACCOUNT_GET, ReqAccountGet.class, DbClaim.NONE, DbAccess.YES);
-        adm(REQ_ACCOUNT_SET, ReqAccountSet.class, DbClaim.READ, DbAccess.YES);
+        adm(REQ_SHARED_ACCOUNT_GET, ReqSharedAccountGet.class, DbClaim.NONE,
+                DbAccess.YES);
+        adm(REQ_SHARED_ACCOUNT_SET, ReqSharedAccountSet.class, DbClaim.READ,
+                DbAccess.YES);
 
         adm(REQ_REPORT, DbClaim.READ, DbAccess.YES);
         usr(REQ_REPORT_USER, DbClaim.READ, DbAccess.YES);
