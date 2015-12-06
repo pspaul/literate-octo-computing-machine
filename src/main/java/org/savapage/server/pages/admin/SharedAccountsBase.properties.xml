@@ -4,12 +4,12 @@
     <entry key="title">Accounts</entry>
     <entry key="select-and-sort">Select and Sort</entry>
 
-    <entry key="prompt-name-containing-text">Naam</entry>
+    <entry key="prompt-name-containing-text">Name</entry>
         
-    <entry key="prompt-account-deleted">Verwijderd</entry>
+    <entry key="prompt-account-deleted">Deleted</entry>
     <entry key="account-deleted-all">-</entry>
-    <entry key="account-deleted-n">Actief</entry>
-    <entry key="account-deleted-y">Verwijderd</entry>
+    <entry key="account-deleted-n">Active</entry>
+    <entry key="account-deleted-y">Deleted</entry>
     
     <entry key="prompt-sort-by">Sort</entry>
     

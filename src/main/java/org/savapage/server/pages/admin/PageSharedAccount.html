@@ -18,6 +18,14 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 	       <input type="text" id="shared-account-name" value="" maxlength="255" autofocus
 	           autocomplete="on" autocorrect="off" autocapitalize="off" spellcheck="false"/>
         </li>
+        <li data-role="list-divider"><wicket:message key="label-account-name-parent"/></li>
+        <li>    
+           <input type="text" id="shared-account-name-parent" value="" maxlength="255" autofocus
+               autocomplete="on" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+        </li>
+     </ul>
+     
+    <ul data-role="listview" data-inset="true">
         <li>    
            <label for="shared-account-balance"><wicket:message key="label-balance"/></label> 
            <input type="text" id="shared-account-balance" value="" maxlength="10" pattern="[0-9]*" />
@@ -25,24 +33,14 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
            <label for="shared-account-notes"><wicket:message key="label-account-notes"/></label>
                 <textarea id="shared-account-notes" autocomplete="off" autocorrect="off" 
                     autocapitalize="off" spellcheck="false"/>
-        </li>
-        <li data-role="list-divider"><wicket:message key="label-account-name-parent"/></li>
-        <li>	
-	       <input type="text" id="shared-account-name-parent" value="" maxlength="255" autofocus
-	           autocomplete="on" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-       </li>
-    </ul>
-   
-    <ul data-role="listview" data-inset="true">                                
-       <li>
-            <div class="shared-account_user-defined-section">
-                <span class="sp-txt-wrap"><wicket:message key="label-account-delete-warning"/></span>           
+
+           <div class="shared-account_user-defined-section">                                
                 <label for="shared-account-deleted"><wicket:message key="label-account-deleted"/></label>
                 <input type="checkbox" id="shared-account-deleted" value="0"/>
-            </div>
-       </li>
+           </div>                    
+        </li>
     </ul>
-    
+       
 	<a href="#" id="button-save-shared-account" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 	   <wicket:message key="button-ok"/></a>
 

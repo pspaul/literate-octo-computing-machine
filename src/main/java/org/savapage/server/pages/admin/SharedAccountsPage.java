@@ -266,19 +266,9 @@ public final class SharedAccountsPage extends AbstractAdminListPage {
                  * Set the uid in 'data-savapage' attribute, so it can be picked
                  * up in JavaScript for editing.
                  */
-                final boolean visible = !account.getDeleted();
-
                 labelWrk =
                         new Label("button-edit", getLocalizer().getString(
-                                "button-edit", this)) {
-
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            public boolean isVisible() {
-                                return visible;
-                            }
-                        };
+                                "button-edit", this));
 
                 labelWrk.add(new AttributeModifier("data-savapage", account
                         .getId()));
