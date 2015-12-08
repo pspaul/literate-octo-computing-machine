@@ -198,6 +198,11 @@
     <entry key="smartschool-print-proxyprinter-grayscale-duplex">grayscale duplex printer (optioneel)</entry>
     <entry key="smartschool-print-charge-to-students">Charge costs to students</entry>
 
+    <entry key="smartschool-print-node-enable">Enable Clustering</entry>
+    <entry key="smartschool-print-node-proxy-enable">Enable Proxy</entry>
+    <entry key="smartschool-print-node-id">Node ID</entry>
+    <entry key="smartschool-print-node-proxy-endpoint">Proxy endpoint (for retrieving jobs)</entry>
+
     <entry key="smartschool-on-demand-user-creation">On demand user creation</entry>
 
     <entry key="smartschool-papercut-enable">Enable</entry>

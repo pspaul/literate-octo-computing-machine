@@ -554,11 +554,11 @@
 			 */
 			showPlots : function(my) {
 				var _view = _ns.PanelCommon.view, xydata, piedata;
-				
+
 				xydata = _view.jqPlotData('dashboard-xychart', true);
 				if (!xydata) {
 					return false;
-				}				
+				}
 				piedata = _view.jqPlotData('dashboard-piechart', true);
 				if (!piedata) {
 					return false;
@@ -648,7 +648,7 @@
 					 */
 					if (!my.showPlots(my)) {
 						// Failure (and disconnected): stop the timer!
-						my.onUnload(my);						
+						my.onUnload(my);
 					}
 				}
 			},
@@ -677,8 +677,8 @@
 
 				if (my.showPlots(my)) {
 					/*
-				 	* Interval timer: refresh of part.
-				 	*/
+					 * Interval timer: refresh of part.
+					 */
 					my.timeout = window.setInterval(my.refreshSysStatus, my.REFRESH_MSEC);
 				}
 			},
@@ -933,6 +933,18 @@
 				_view.visible($('.smartschool-print-enabled'), enabled1 || enabled2);
 			},
 
+			onSmartSchoolNodeEnabled : function(enabled1, enabled2) {
+				var _view = _ns.PanelCommon.view;
+				_view.visible($('.smartschool-1-print-node-enabled'), enabled1);
+				_view.visible($('.smartschool-2-print-node-enabled'), enabled2);
+			},
+
+			onSmartSchoolNodeProxyEnabled : function(enabled1, enabled2) {
+				var _view = _ns.PanelCommon.view;
+				_view.visible($('.smartschool-1-print-node-proxy-enabled'), !enabled1);
+				_view.visible($('.smartschool-2-print-node-proxy-enabled'), !enabled2);
+			},
+
 			onSmartSchoolPaperCutEnabled : function(enabled) {
 				var _view = _ns.PanelCommon.view;
 				_view.visible($('.smartschool-papercut-enabled'), enabled);
@@ -984,12 +996,14 @@
 				my.onEcoPrintEnabled(_view.isCbChecked($('#eco-print\\.enable')));
 
 				my.onSmartSchoolEnabled(_view.isCbChecked($('#smartschool\\.1\\.enable')), _view.isCbChecked($('#smartschool\\.2\\.enable')));
+				my.onSmartSchoolNodeEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.enable')), _view.isCbChecked($('#smartschool\\.2\\.soap\\.print\\.node\\.enable')));
+				my.onSmartSchoolNodeProxyEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.proxy\\.enable')), _view.isCbChecked($('#smartschool\\.2\\.soap\\.print\\.proxy\\.node\\.enable')));
 				my.onSmartSchoolPaperCutEnabled(_view.isCbChecked($('#smartschool\\.papercut\\.enable')));
 
 				my.onGcpRefresh(my);
 
 				my.onFinancialUserTransfersEnabled(_view.isCbChecked($('#financial\\.user\\.transfers\\.enable')));
-				
+
 				$('.user-source-group-display').show();
 				$('.user-source-group-edit').hide();
 

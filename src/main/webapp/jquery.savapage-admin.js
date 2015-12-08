@@ -566,12 +566,18 @@
 				_fillConfigPropsYN(props, ['smartschool.user.insert.lazy-print']);
 
 				if (enable1) {
-					_fillConfigPropsText(props, ['smartschool.1.soap.print.endpoint.url', 'smartschool.1.soap.print.endpoint.password', 'smartschool.1.soap.print.proxy-printer', 'smartschool.1.soap.print.proxy-printer-duplex', 'smartschool.1.soap.print.proxy-printer-grayscale', 'smartschool.1.soap.print.proxy-printer-grayscale-duplex']);
-					_fillConfigPropsYN(props, ['smartschool.1.soap.print.charge-to-students']);
+					_fillConfigPropsText(props, ['smartschool.1.soap.print.endpoint.url', 'smartschool.1.soap.print.endpoint.password', 
+						'smartschool.1.soap.print.proxy-printer', 'smartschool.1.soap.print.proxy-printer-duplex', 
+						'smartschool.1.soap.print.proxy-printer-grayscale', 'smartschool.1.soap.print.proxy-printer-grayscale-duplex',
+						'smartschool.1.soap.print.node.id', 'smartschool.1.soap.print.node.proxy.endpoint.url']);
+					_fillConfigPropsYN(props, ['smartschool.1.soap.print.charge-to-students', 'smartschool.1.soap.print.node.enable', 'smartschool.1.soap.print.node.proxy.enable']);
 				}
 				if (enable2) {
-					_fillConfigPropsText(props, ['smartschool.2.soap.print.endpoint.url', 'smartschool.2.soap.print.endpoint.password', 'smartschool.2.soap.print.proxy-printer', 'smartschool.2.soap.print.proxy-printer-duplex', 'smartschool.2.soap.print.proxy-printer-grayscale', 'smartschool.2.soap.print.proxy-printer-grayscale-duplex']);
-					_fillConfigPropsYN(props, ['smartschool.2.soap.print.charge-to-students']);
+					_fillConfigPropsText(props, ['smartschool.2.soap.print.endpoint.url', 'smartschool.2.soap.print.endpoint.password', 
+						'smartschool.2.soap.print.proxy-printer', 'smartschool.2.soap.print.proxy-printer-duplex', 
+						'smartschool.2.soap.print.proxy-printer-grayscale', 'smartschool.2.soap.print.proxy-printer-grayscale-duplex',
+						'smartschool.2.soap.print.node.id', 'smartschool.2.soap.print.node.proxy.endpoint.url']);
+					_fillConfigPropsYN(props, ['smartschool.2.soap.print.charge-to-students', 'smartschool.2.soap.print.node.enable', 'smartschool.2.soap.print.node.proxy.enable']);
 				}
 				_saveConfigProps(props);
 			};

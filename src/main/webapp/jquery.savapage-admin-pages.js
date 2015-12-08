@@ -1819,6 +1819,21 @@
 					_panel.Options.onSmartSchoolEnabled(_view.isCbChecked($('#smartschool\\.1\\.enable')), _view.isCbChecked($(this)));
 				});
 
+				$(this).on('change', "input:checkbox[id='smartschool.1.soap.print.node.enable']", null, function(e) {
+					_panel.Options.onSmartSchoolNodeEnabled(_view.isCbChecked($(this)), _view.isCbChecked($('#smartschool\\.2\\.soap\\.print\\.node\\.enable')));
+				});
+				$(this).on('change', "input:checkbox[id='smartschool.2.soap.print.node.enable']", null, function(e) {
+					_panel.Options.onSmartSchoolNodeEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.enable')), _view.isCbChecked($(this)));
+				});
+
+				$(this).on('change', "input:checkbox[id='smartschool.1.soap.print.node.proxy.enable']", null, function(e) {
+					_panel.Options.onSmartSchoolNodeProxyEnabled(_view.isCbChecked($(this)), _view.isCbChecked($('#smartschool\\.2\\.soap\\.print\\.node\\.proxy\\.enable')));
+				});
+				$(this).on('change', "input:checkbox[id='smartschool.2.soap.print.node.proxy.enable']", null, function(e) {
+					_panel.Options.onSmartSchoolNodeProxyEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.proxy\\.enable')), _view.isCbChecked($(this)));
+				});
+
+
 				$(this).on('change', "input:checkbox[id='smartschool.papercut.enable']", null, function(e) {
 					_panel.Options.onSmartSchoolPaperCutEnabled($(this).is(':checked'));
 				});

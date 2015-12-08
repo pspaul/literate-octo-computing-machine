@@ -203,6 +203,11 @@
     <entry key="smartschool-print-proxyprinter-grayscale-duplex">z/w duplex printer (optioneel)</entry>
     <entry key="smartschool-print-charge-to-students">Kosten verrekenen met studenten</entry>
 
+    <entry key="smartschool-print-node-enable">Clustering inschakelen</entry>
+    <entry key="smartschool-print-node-proxy-enable">Proxy inschakelen</entry>
+    <entry key="smartschool-print-node-id">Node ID</entry>
+    <entry key="smartschool-print-node-proxy-endpoint">Proxy endpoint (voor ophalen opdrachten)</entry>
+
     <entry key="smartschool-on-demand-user-creation">Ad-hoc gebruikers aanmaken</entry>
     
     <entry key="smartschool-papercut-enable">Inschakelen</entry>

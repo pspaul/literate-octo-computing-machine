@@ -323,6 +323,29 @@ public final class Options extends AbstractAdminPage {
                     "smartschool-print-charge-to-students", keyWlk);
             tagCheckbox("smartschool-print-charge-to-students-1", keyWlk);
 
+            //
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_ENABLE;
+            tagLabel("smartschool-print-node-enable-label-1",
+                    "smartschool-print-node-enable", keyWlk);
+            tagCheckbox("smartschool-print-node-enable-1", keyWlk);
+
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_PROXY_ENABLE;
+            tagLabel("smartschool-print-node-proxy-enable-label-1",
+                    "smartschool-print-node-proxy-enable", keyWlk);
+            tagCheckbox("smartschool-print-node-proxy-enable-1", keyWlk);
+
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_ID;
+            tagLabel("smartschool-print-node-id-label-1",
+                    "smartschool-print-node-id", keyWlk);
+            tagInput("smartschool-print-node-id-1", keyWlk);
+
+            keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_PROXY_ENDPOINT_URL;
+            tagLabel("smartschool-print-node-proxy-endpoint-label-1",
+                    "smartschool-print-node-proxy-endpoint", keyWlk);
+            tagInput("smartschool-print-node-proxy-endpoint-1", keyWlk);
+
+
             // SmartSchool #2
             keyWlk = IConfigProp.Key.SMARTSCHOOL_2_ENABLE;
             tagLabel("smartschool-print-enable-label-2",
@@ -368,6 +391,28 @@ public final class Options extends AbstractAdminPage {
             tagLabel("smartschool-print-charge-to-students-label-2",
                     "smartschool-print-charge-to-students", keyWlk);
             tagCheckbox("smartschool-print-charge-to-students-2", keyWlk);
+
+            //
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_ENABLE;
+            tagLabel("smartschool-print-node-enable-label-2",
+                    "smartschool-print-node-enable", keyWlk);
+            tagCheckbox("smartschool-print-node-enable-2", keyWlk);
+
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_PROXY_ENABLE;
+            tagLabel("smartschool-print-node-proxy-enable-label-2",
+                    "smartschool-print-node-proxy-enable", keyWlk);
+            tagCheckbox("smartschool-print-node-proxy-enable-2", keyWlk);
+
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_ID;
+            tagLabel("smartschool-print-node-id-label-2",
+                    "smartschool-print-node-id", keyWlk);
+            tagInput("smartschool-print-node-id-2", keyWlk);
+
+            keyWlk =
+                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_PROXY_ENDPOINT_URL;
+            tagLabel("smartschool-print-node-proxy-endpoint-label-2",
+                    "smartschool-print-node-proxy-endpoint", keyWlk);
+            tagInput("smartschool-print-node-proxy-endpoint-2", keyWlk);
 
             //
             keyWlk = IConfigProp.Key.SMARTSCHOOL_USER_INSERT_LAZY_PRINT;

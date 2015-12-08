@@ -566,37 +566,71 @@ pattern="[0-9]*"
                 
 	                <div class="smartschool-1-print-enabled">
 	
-                        <br/>
-	                    <label for="" wicket:id="smartschool-print-endpoint-label-1"/>
-	                    <input type="text" id="" value="" wicket:id="smartschool-print-endpoint-1"
-	                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        <ul data-role="listview" data-inset="true">
+                        
+	                        <li>                        
+		                    <label for="" wicket:id="smartschool-print-endpoint-label-1"/>
+		                    <input type="text" id="" value="" wicket:id="smartschool-print-endpoint-1"
+		                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+		
+		                    <label for="" wicket:id="smartschool-print-password-label-1" />
+		                    <input type="password" id="" wicket:id="smartschool-print-password-1" value="" autocomplete="off"
+		                        autocorrect="off" autocapitalize="off" spellcheck="false" />
+		                        
+                            <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-node-enable-label-1" />
+                            <input type="checkbox" id="smartschool-print-node-enable-1" value="0" data-mini="true"
+                                wicket:id="smartschool-print-node-enable-1" />                            
+
+                            <div class="smartschool-1-print-node-enabled">
+                                <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-node-proxy-enable-label-1" />
+                                <input type="checkbox" id="smartschool-print-node-proxy-enable-1" value="0" data-mini="true"
+                                    wicket:id="smartschool-print-node-proxy-enable-1" />                                                                                                    
+                            </div>
+                                                        
+                            <ul data-role="listview" data-inset="true" class="smartschool-1-print-node-enabled">
+                                <li>
+                                
+                                <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-node-id-label-1"/>
+                                <input type="text" id="" value="" wicket:id="smartschool-print-node-id-1"
+                                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />                                 
+                                        
+                                <div class="smartschool-1-print-node-proxy-enabled">                                
+                                    <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-node-proxy-endpoint-label-1"/>
+                                    <input type="text" id="" value="" wicket:id="smartschool-print-node-proxy-endpoint-1"
+                                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                                </div>
+    
+                                </li>
+                            </ul>                            
+                            
+                            </li>                        
+                        
+	                        <li>
+		                    <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-label-1" />
+		                    <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-1"
+		                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
 	
-	                    <label for="" wicket:id="smartschool-print-password-label-1" />
-	                    <input type="password" id="" wicket:id="smartschool-print-password-1" value="" autocomplete="off"
-	                        autocorrect="off" autocapitalize="off" spellcheck="false" />
-	                        
-                        <br/>
-	                    <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-label-1" />
-	                    <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-1"
-	                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-
-                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-duplex-label-1" data-mini="true" />
-                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-duplex-1" data-mini="true"
-                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-                            
-                        <br/>
-                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-grayscale-label-1" data-mini="true"/>
-                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-grayscale-1" data-mini="true"
-                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-
-                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-grayscale-duplex-label-1" data-mini="true"/>
-                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-grayscale-duplex-1" data-mini="true"
-                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-                            
-                        <br/>
-	                    <label for="" wicket:id="smartschool-print-charge-to-students-label-1"/>
-	                    <input type="checkbox" id="smartschool-print-charge-to-students" value="0" data-mini="true" 
-	                        wicket:id="smartschool-print-charge-to-students-1" />
+	                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-duplex-label-1" data-mini="true" />
+	                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-duplex-1" data-mini="true"
+	                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        
+	                        <br/>
+	                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-grayscale-label-1" data-mini="true"/>
+	                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-grayscale-1" data-mini="true"
+	                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+	
+	                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-grayscale-duplex-label-1" data-mini="true"/>
+	                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-grayscale-duplex-1" data-mini="true"
+	                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />                            
+                            </li>
+                        
+	                        <li>
+		                    <label for="" wicket:id="smartschool-print-charge-to-students-label-1"/>
+		                    <input type="checkbox" id="smartschool-print-charge-to-students" value="0" data-mini="true" 
+		                        wicket:id="smartschool-print-charge-to-students-1" />	                        
+                            </li>
+                        
+                        </ul>                
                 
                     </div>                            
                 </li>
@@ -608,38 +642,73 @@ pattern="[0-9]*"
                 
                     <div class="smartschool-2-print-enabled">
     
-                        <br/>
-                        <label for="" wicket:id="smartschool-print-endpoint-label-2"/>
-                        <input type="text" id="" value="" wicket:id="smartschool-print-endpoint-2"
-                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-    
-                        <label for="" wicket:id="smartschool-print-password-label-2" />
-                        <input type="password" id="" wicket:id="smartschool-print-password-2" value="" autocomplete="off"
-                            autocorrect="off" autocapitalize="off" spellcheck="false" />
-    
-                        <br/>
-                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-label-2" />
-                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-2"
-                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        <ul data-role="listview" data-inset="true">
+                        
+                            <li>
+	                        <label for="" wicket:id="smartschool-print-endpoint-label-2"/>
+	                        <input type="text" id="" value="" wicket:id="smartschool-print-endpoint-2"
+	                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+	    
+	                        <label for="" wicket:id="smartschool-print-password-label-2" />
+	                        <input type="password" id="" wicket:id="smartschool-print-password-2" value="" autocomplete="off"
+	                            autocorrect="off" autocapitalize="off" spellcheck="false" />
+	                            
+                            <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-node-enable-label-2" />
+                            <input type="checkbox" id="smartschool-print-node-enable-2" value="0" data-mini="true"
+                                wicket:id="smartschool-print-node-enable-2" />
 
-                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-duplex-label-2" data-mini="true" />
-                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-duplex-2" data-mini="true"
-                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                            <div class="smartschool-2-print-node-enabled">
+                                <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-node-proxy-enable-label-2" />
+                                <input type="checkbox" id="smartschool-print-node-proxy-enable-2" value="0" data-mini="true"
+                                    wicket:id="smartschool-print-node-proxy-enable-2" />                                                                                                    
+                            </div>
+
+                            <ul data-role="listview" data-inset="true" class="smartschool-2-print-node-enabled">
+                                <li>
+                                
+                                <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-node-id-label-2"/>
+                                <input type="text" id="" value="" wicket:id="smartschool-print-node-id-2"
+                                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />                                 
+                                        
+                                <div class="smartschool-2-print-node-proxy-enabled">                                
+                                    <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-node-proxy-endpoint-label-2"/>
+                                    <input type="text" id="" value="" wicket:id="smartschool-print-node-proxy-endpoint-2"
+                                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                                </div>
+                                
+                                </li>
+                        
+                            </ul>
                             
-                        <br/>
-                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-grayscale-label-2" data-mini="true" />
-                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-grayscale-2" data-mini="true"
-                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+	                        </li>
+                                               
+                            <li>
+                            <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-label-2" />
+                            <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-2"
+                                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
 
-                        <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-grayscale-duplex-label-2" data-mini="true"/>
-                        <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-grayscale-duplex-2" data-mini="true"
-                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                            <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-duplex-label-2" data-mini="true" />
+                            <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-duplex-2" data-mini="true"
+                                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                            
+                            <br/>
+                            <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-grayscale-label-2" data-mini="true" />
+                            <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-grayscale-2" data-mini="true"
+                                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
 
-                        <br/>
-                        <label for="" wicket:id="smartschool-print-charge-to-students-label-2" />
-                        <input type="checkbox" id="smartschool-print-charge-to-students" value="0" data-mini="true"
-                            wicket:id="smartschool-print-charge-to-students-2" />
-                
+                            <label class="sp-txt-wrap" for="" wicket:id="smartschool-print-proxyprinter-grayscale-duplex-label-2" data-mini="true"/>
+                            <input type="text" id="" value="" wicket:id="smartschool-print-proxyprinter-grayscale-duplex-2" data-mini="true"
+                                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+                            </li>
+                       
+                            <li>
+                            <label for="" wicket:id="smartschool-print-charge-to-students-label-2" />
+                            <input type="checkbox" id="smartschool-print-charge-to-students" value="0" data-mini="true"
+                                wicket:id="smartschool-print-charge-to-students-2" />
+                            </li>
+                        </ul>
+                                        
                     </div>                            
                 </li>
 
