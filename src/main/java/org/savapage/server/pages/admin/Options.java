@@ -280,7 +280,7 @@ public final class Options extends AbstractAdminPage {
             // SmartSchool #1
             keyWlk = IConfigProp.Key.SMARTSCHOOL_1_ENABLE;
             tagLabel("smartschool-print-enable-label-1",
-                    "smartschool-print-enable", keyWlk);
+                    "smartschool-print-enable-1", keyWlk);
             tagCheckbox("smartschool-print-enable-1", keyWlk);
 
             keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_ENDPOINT_URL;
@@ -349,7 +349,7 @@ public final class Options extends AbstractAdminPage {
             // SmartSchool #2
             keyWlk = IConfigProp.Key.SMARTSCHOOL_2_ENABLE;
             tagLabel("smartschool-print-enable-label-2",
-                    "smartschool-print-enable", keyWlk);
+                    "smartschool-print-enable-2", keyWlk);
             tagCheckbox("smartschool-print-enable-2", keyWlk);
 
             keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_ENDPOINT_URL;

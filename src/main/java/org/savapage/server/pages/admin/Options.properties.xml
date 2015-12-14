@@ -189,7 +189,8 @@
 
 	<entry key="button-config-editor">Configuration Editor (advanced)</entry>
 
-    <entry key="smartschool-print-enable">Enable account</entry>
+    <entry key="smartschool-print-enable-1">Enable Account 1</entry>
+    <entry key="smartschool-print-enable-2">Enable Account 2</entry>
     <entry key="smartschool-print-endpoint">SOAP endpoint</entry>
     <entry key="smartschool-print-password">Password</entry>
     <entry key="smartschool-print-proxyprinter">Proxy Printer for all jobs (leave empty for WebApp Proxy Print)</entry>
