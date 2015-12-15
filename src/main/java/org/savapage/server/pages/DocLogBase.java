@@ -175,7 +175,8 @@ public class DocLogBase extends AbstractAuthPage {
             protected void populateItem(final ListItem<IppQueue> item) {
                 final IppQueue queue = item.getModel().getObject();
                 final Label label =
-                        new Label("option-queue", "/" + queue.getUrlPath());
+                        new Label("option-queue", String.format("/%s",
+                                queue.getUrlPath()));
                 label.add(new AttributeModifier("value", queue.getId()));
                 item.add(label);
             }

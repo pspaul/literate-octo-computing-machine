@@ -4,13 +4,10 @@
     <entry key="title">Gebruikers</entry>
     <entry key="select-and-sort">Selectie en Sortering</entry>
 
+    <entry key="prompt-group">Groep</entry>
+    
     <entry key="prompt-id-containing-text">ID</entry>
     <entry key="prompt-email-containing-text">E-mail</entry>
-
-    <entry key="prompt-user-source">Bron</entry>
-    <entry key="user-source-all">-</entry>
-    <entry key="user-source-internal">Intern</entry>
-    <entry key="user-source-external">Extern</entry>
 
     <entry key="prompt-user-type">Type</entry>
     <entry key="user-type-all">-</entry>

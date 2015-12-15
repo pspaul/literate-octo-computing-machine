@@ -38,6 +38,8 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.UserGroupDao;
+import org.savapage.core.dao.helpers.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserPagerReq;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.AccountingService;
@@ -133,9 +135,27 @@ public final class UsersPage extends AbstractAdminListPage {
 
         final UserDao.ListFilter filter = new UserDao.ListFilter();
 
+        //
+        final Long userGroupId = req.getSelect().getUserGroupId();
+
+        if (userGroupId != null) {
+
+            final UserGroupDao userGroupDao =
+                    ServiceContext.getDaoContext().getUserGroupDao();
+
+            final ReservedUserGroupEnum reservedGroup =
+                    userGroupDao.findReservedGroup(userGroupId);
+
+            if (reservedGroup == null) {
+                filter.setUserGroupId(req.getSelect().getUserGroupId());
+            } else {
+                filter.setInternal(reservedGroup.isInternalExternal());
+            }
+        }
+
+        //
         filter.setContainingIdText(req.getSelect().getIdContainingText());
         filter.setContainingEmailText(req.getSelect().getEmailContainingText());
-        filter.setInternal(req.getSelect().getInternal());
         filter.setAdmin(req.getSelect().getAdmin());
         filter.setPerson(req.getSelect().getPerson());
         filter.setDisabled(req.getSelect().getDisabled());
@@ -406,5 +426,4 @@ public final class UsersPage extends AbstractAdminListPage {
         createNavBarResponse(req, userCount, MAX_PAGES_IN_NAVBAR,
                 "sp-users-page", new String[] { "nav-bar-1", "nav-bar-2" });
     }
-
 }

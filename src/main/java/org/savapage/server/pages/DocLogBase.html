@@ -31,7 +31,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             <ul data-role="listview" data-inset="true">
 
                 <li>
-        
+                    <div class="ui-field-contain">
                     <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
                     
                         <legend>
@@ -58,14 +58,15 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                         <input type="radio" name="sp-doclog-select-type" id="sp-doclog-select-type-print" 
                             wicket:id="select-type-print" value=""/> 
 
-                    </fieldset>
+                    </fieldset></div>
         
                 </li>
                 
                 <li>
-
-	                <label for="sp-doclog-document-name"><wicket:message key="prompt-document-name"/></label>
-	                <input type="text" id="sp-doclog-document-name" value="" maxlength="128" data-clear-btn="true"/>                
+                    <div class="ui-field-contain">
+	                   <label for="sp-doclog-document-name"><span class="sp-txt-wrap"><wicket:message key="prompt-document-name"/></span></label>
+	                   <input type="text" id="sp-doclog-document-name" value="" maxlength="128" data-clear-btn="true"/>
+	                </div>                
 		         </li>
 		         
                 <li>
@@ -107,10 +108,12 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
                         --></wicket:remove>
                         
-                        <label for="sp-doc-out-destination"><wicket:message key="prompt-destination"/></label>
-                        <input type="text" id="sp-doc-out-destination" value="" maxlength="128" 
-                             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-                        
+                        <div class="ui-field-contain">
+	                        <label for="sp-doc-out-destination"><wicket:message key="prompt-destination"/></label>
+	                        <input type="text" id="sp-doc-out-destination" value="" maxlength="128" 
+	                             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                        <div class="ui-field-contain">                        
 	                    <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
                             <legend>
                                 <wicket:message key="prompt-letterhead"/>
@@ -125,22 +128,26 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                             <label for="sp-doc-out-lh-n"><wicket:message key="option-no"/></label>
 	                        <input type="radio" name="sp-doc-out-lh" id="sp-doc-out-lh-n" value="0"/> 
 	
-	                    </fieldset>
+	                    </fieldset></div>
 
                         <ul data-role="listview" data-inset="true" class="sp-doclog-cat-pdf">
+                        
                             <li>
-                            
-	                            <label for="sp-pdf-out-author"><wicket:message key="prompt-author"/></label>
-	                            <input type="text" id="sp-pdf-out-author" value="" maxlength="128" />
-	                                
-	                            <label for="sp-pdf-out-subject"><wicket:message key="prompt-subject"/></label>
-	                            <input type="text" id="sp-pdf-out-subject" value="" maxlength="128" />
-	
-	                            <label for="sp-pdf-out-keywords"><wicket:message key="prompt-keywords"/></label>
-	                            <input type="text" id="sp-pdf-out-keywords" value="" maxlength="128" 
-	                              autocapitalize="off"/>
-                                
+                                <div class="ui-field-contain">    
+	                               <label for="sp-pdf-out-author"><wicket:message key="prompt-author"/></label>
+	                               <input type="text" id="sp-pdf-out-author" value="" maxlength="128" />
+	                            </div>
+                                <div class="ui-field-contain">	                                
+		                            <label for="sp-pdf-out-subject"><wicket:message key="prompt-subject"/></label>
+		                            <input type="text" id="sp-pdf-out-subject" value="" maxlength="128" />
+                                </div>
+                                <div class="ui-field-contain">		
+		                            <label for="sp-pdf-out-keywords"><wicket:message key="prompt-keywords"/></label>
+		                            <input type="text" id="sp-pdf-out-keywords" value="" maxlength="128" 
+		                              autocapitalize="off"/>
+                                </div>
    
+		                        <div class="ui-field-contain">
 		                        <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
 		                            <legend>
                                         <wicket:message key="prompt-encryption"/>
@@ -156,19 +163,22 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                                     <label for="sp-pdf-out-encryp-n"><wicket:message key="option-no"/></label>
                                     <input type="radio" name="sp-pdf-out-encrypt" id="sp-pdf-out-encryp-n" value="0"/> 
                                     
-		                        </fieldset>
-		                        
-                                <label for="sp-pdf-out-pw-user"><wicket:message key="user-password"/></label>
-                                <input type="password" id="sp-pdf-out-pw-user" value="" maxlength="255" />
-                                
-                                <label for="sp-pdf-out-pw-owner"><wicket:message key="owner-password"/></label>
-                                <input type="password" id="sp-pdf-out-pw-owner" value="" maxlength="255" />
-                                    
+		                        </fieldset></div>
+
+                                <div class="ui-field-contain">    		                        
+	                                <label for="sp-pdf-out-pw-user"><wicket:message key="user-password"/></label>
+	                                <input type="password" id="sp-pdf-out-pw-user" value="" maxlength="255" />
+	                            </div>
+	                            <div class="ui-field-contain">
+	                                <label for="sp-pdf-out-pw-owner"><wicket:message key="owner-password"/></label>
+	                                <input type="password" id="sp-pdf-out-pw-owner" value="" maxlength="255" />
+                                </div>    
                             </li>
                                 
                         </ul>
                         <ul data-role="listview" data-inset="true" class="sp-doclog-cat-printer">
                             <li>
+                                <div class="ui-field-contain">                                                        
                                 <label for="sp-print-out-printer"><wicket:message key="prompt-printer"/></label>
                                 <select name="sp-print-out-printer" id="sp-print-out-printer" data-native-menu="false">
 	                                <wicket:remove><!--
@@ -179,16 +189,18 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                                     <wicket:fragment wicket:id="option-list-printers">                        
                                         <option value="the-key" wicket:id="option-printer"></option>
                                     </wicket:fragment>
-                                </select>
+                                </select></div>
                        
+                                <div class="ui-field-contain">
                                 <label for="sp-print-out-state"><wicket:message key="prompt-job-state"/></label>
                                 <select name="sp-print-out-state" id="sp-print-out-state" data-native-menu="false">
                                    <option value="0">- <wicket:message key="option-all"/> -</option>
                                    <option value="1"><wicket:message key="option-job-state-active"/></option>
                                    <option value="2"><wicket:message key="option-job-state-unfinished"/></option>
                                    <option value="3"><wicket:message key="option-job-state-completed"/></option>                                   
-                                </select>
+                                </select></div>
 			                        
+                                <div class="ui-field-contain">
                                 <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
                                     <legend>
                                         <wicket:message key="prompt-layout"/>
@@ -204,7 +216,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                                     <label for="sp-print-out-duplex-y"><wicket:message key="option-duplex"/></label>
                                     <input type="radio" name="sp-print-out-duplex" id="sp-print-out-duplex-y" value="1"/> 
             
-                                </fieldset>
+                                </fieldset></div>
                             </li>
                         </ul>
                     </div>
@@ -212,6 +224,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                 
 		                
                 <li>
+                    <div class="ui-field-contain">
 		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
 		            
 		                <legend>
@@ -236,7 +249,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 		                <input type="radio" name="sp-doclog-sort-dir" id="sp-doclog-sort-dir-desc"/> 
 		                <label for="sp-doclog-sort-dir-desc"><wicket:message key="sort-desc"/></label>
 		                        
-		            </fieldset>
+		            </fieldset></div>
 		
                 </li>
                 

@@ -4,13 +4,10 @@
     <entry key="title">Users</entry>
     <entry key="select-and-sort">Select and Sort</entry>
 
+    <entry key="prompt-group">Group</entry>
+
     <entry key="prompt-id-containing-text">ID</entry>
     <entry key="prompt-email-containing-text">Email</entry>
-
-    <entry key="prompt-user-source">Source</entry>
-    <entry key="user-source-all">-</entry>
-    <entry key="user-source-internal">Internal</entry>
-    <entry key="user-source-external">External</entry>
 
     <entry key="prompt-user-type">Type</entry>
     <entry key="user-type-all">-</entry>

@@ -1005,16 +1005,12 @@
 				 *
 				 */
 				QueuesBase : _ns.PanelQueuesBase,
-
-				/*
-				 *
-				 */
+				//
 				Reports : {},
-
-				/*
-				 *
-				 */
-				UsersBase : _ns.PanelUsersBase
+				//
+				UsersBase : _ns.PanelUsersBase,
+				//
+				UserGroupsBase : _ns.PanelUserGroupsBase
 
 			};
 
@@ -1354,7 +1350,7 @@
 
 				$(this).on('click', '.sp-account-log', null, function() {
 					var pnl = _panel.DocLogBase;
-					pnl.applyDefaults(_panel.DocLogBase);
+					pnl.applyDefaults(pnl);
 					pnl.input.select.account_id = $(this).attr('data-savapage');
 					// skipBeforeLoad
 					pnl.refresh(pnl, true);
@@ -1584,7 +1580,7 @@
 
 				$(this).on('click', '.sp-user-log', null, function() {
 					var pnl = _panel.DocLogBase;
-					pnl.applyDefaults(_panel.DocLogBase);
+					pnl.applyDefaults(pnl);
 					pnl.input.select.user_id = $(this).attr('data-savapage');
 					// skipBeforeLoad
 					pnl.refresh(pnl, true);
@@ -1625,6 +1621,47 @@
 					return true;
 				});
 
+				/*
+				 * UserGroups Panel
+				 */
+				$(this).on('click', '.sp-edit-user-group', null, function() {
+					//_self.onEditUserGroup($(this).attr('data-savapage'));
+					return false;
+				});
+
+				$(this).on('click', '.sp-user-group-users', null, function() {
+					var pnl = _panel.UsersBase;
+					pnl.applyDefaults(pnl);
+					pnl.input.select.usergroup_id = $(this).attr('data-savapage');
+					// skipBeforeLoad
+					pnl.refresh(pnl, true);
+					return false;
+				});
+
+				$(this).on('click', "#button-add-remove-user-groups", null, function() {
+					//_self.onAddRemoveUserGroups();
+					return false;
+				});
+
+				$(this).on('click', '#button-user-groups-apply', null, function() {
+					var pnl = _panel.UserGroupsBase;
+					pnl.page(pnl, 1);
+					return false;
+				});
+
+				$(this).on('click', '#button-user-groups-default', null, function() {
+					var pnl = _panel.UserGroupsBase;
+					pnl.applyDefaults(pnl);
+					pnl.m2v(pnl);
+					return false;
+				});
+
+				$(this).on('click', '#button-user-groups-report', null, function() {
+					var pnl = _panel.UserGroupsBase;
+					pnl.v2m(pnl);
+					_self.onDownload("report", pnl.input, "UserGroupsList");
+					return true;
+				});
 
 				/*
 				 * Queues Panel

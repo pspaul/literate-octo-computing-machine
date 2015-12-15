@@ -1339,7 +1339,8 @@
 				my.input.select.id_text = null;
 				my.input.select.email_text = null;
 
-				my.input.select.internal = null;
+				my.input.select.usergroup_id = null;
+				
 				// Boolean
 				my.input.select.admin = null;
 				// Boolean
@@ -1373,9 +1374,8 @@
 				$('#sp-user-id-containing-text').val(my.input.select.id_text);
 				$('#sp-user-email-containing-text').val(my.input.select.email_text);
 
-				val = my.input.select.internal;
-				_view.checkRadioValue('sp-user-select-source', val === null ? "" : ( val ? "1" : "0"));
-
+				$('#sp-user-select-group').val(my.input.select.usergroup_id).selectmenu('refresh');
+				
 				val = my.input.select.person;
 				_view.checkRadioValue('sp-user-select-type', val === null ? "" : ( val ? "1" : "0"));
 
@@ -1406,9 +1406,6 @@
 				//
 				;
 
-				val = _view.getRadioValue('sp-user-select-source');
-				my.input.select.internal = (val === "" ? null : (val === "1"));
-
 				val = _view.getRadioValue('sp-user-select-type');
 				my.input.select.person = (val === "" ? null : (val === "1"));
 
@@ -1429,6 +1426,10 @@
 				present = (sel.val().length > 0);
 				my.input.select.email_text = ( present ? sel.val() : null);
 
+				sel = $('#sp-user-select-group');
+				present = (sel.val() !== "0");
+				my.input.select.usergroup_id = present ? sel.val() : null;
+
 				my.input.sort.field = _view.getRadioValue('sp-user-sort-by');
 				my.input.sort.ascending = _view.isRadioIdSelected('sp-user-sort-dir', 'sp-user-sort-dir-asc');
 			},
@@ -1442,7 +1443,6 @@
 				select : {
 					id_text : null,
 					email_text : null,
-					internal : null,
 					admin : null,
 					person : null,
 					disabled : null,
@@ -1646,6 +1646,132 @@
 					return false;
 				});
 				$(".sp-shared-accounts-page-prev").one('click', null, function() {
+					my.page(my, my.output.prevPage);
+					/*
+					 * return false so URL is not followed.
+					 */
+					return false;
+				});
+
+			}
+		};
+
+		/**
+		 *
+		 */
+		_ns.PanelUserGroupsBase = {
+
+			applyDefaults : function(my) {
+
+				my.input.page = 1;
+				my.input.maxResults = 10;
+
+				my.input.select.name_text = null;
+				// Boolean
+				my.input.sort.ascending = true;
+			},
+
+			beforeload : function(my) {
+				$.noop();
+			},
+
+			afterload : function(my) {
+				my.m2v(my);
+				my.page(my, my.input.page);
+			},
+
+			m2v : function(my) {
+				var val, id
+				//
+				, _view = _ns.PanelCommon.view
+				//
+				;
+
+				$('#sp-user-group-name-containing-text').val(my.input.select.name_text);
+
+				//
+				id = 'sp-user-group-sort-dir';
+				_view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+
+			},
+
+			v2m : function(my) {
+
+				var val, sel, present
+				//
+				, _view = _ns.PanelCommon.view
+				//
+				;
+
+				sel = $('#sp-user-group-name-containing-text');
+				present = (sel.val().length > 0);
+				my.input.select.name_text = ( present ? sel.val() : null);
+
+				my.input.sort.ascending = _view.isRadioIdSelected('sp-user-group-sort-dir', 'sp-user-group-sort-dir-asc');
+			},
+
+			// JSON input
+			input : {
+
+				page : 1,
+				maxResults : 10,
+
+				select : {
+					name_text : null
+				},
+				sort : {
+					ascending : true
+				}
+			},
+
+			// JSON output
+			output : {
+				lastPage : null,
+				nextPage : null,
+				prevPage : null
+			},
+
+			refresh : function(my, skipBeforeLoad) {
+				_ns.PanelCommon.refreshPanelAdmin('UserGroupsBase', skipBeforeLoad);
+			},
+
+			// show page
+			page : function(my, nPage) {
+				_ns.PanelCommon.onValidPage(function() {
+					my.input.page = nPage;
+					my.v2m(my);
+					_ns.PanelCommon.loadListPageAdmin(my, 'UserGroupsPage', '#sp-user-group-list-page');
+				});
+			},
+
+			getInput : function(my) {
+				return my.input;
+			},
+
+			onOutput : function(my, output) {
+
+				var _view = _ns.PanelCommon.view;
+
+				my.output = output;
+				/*
+				 * NOTICE the $().one() construct. Since the page get
+				 * reloaded all the time, we want a single-shot binding.
+				 */
+				$(".sp-user-groups-page").one('click', null, function() {
+					my.page(my, parseInt($(this).text(), 10));
+					/*
+					 * return false so URL is not followed.
+					 */
+					return false;
+				});
+				$(".sp-user-groups-page-next").one('click', null, function() {
+					my.page(my, my.output.nextPage);
+					/*
+					 * return false so URL is not followed.
+					 */
+					return false;
+				});
+				$(".sp-user-groups-page-prev").one('click', null, function() {
 					my.page(my, my.output.prevPage);
 					/*
 					 * return false so URL is not followed.

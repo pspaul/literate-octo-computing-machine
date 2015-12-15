@@ -21,7 +21,16 @@
  */
 package org.savapage.server.pages.admin;
 
+import java.util.List;
+
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.UserGroupDao;
+import org.savapage.core.jpa.UserGroup;
+import org.savapage.core.services.ServiceContext;
 
 /**
  *
@@ -42,5 +51,29 @@ public final class UsersBase extends AbstractAdminPage {
 
         addVisible(ConfigManager.isInternalUsersEnabled(), "button-new",
                 localized("button-new"));
+
+        //
+        final UserGroupDao userGroupDao =
+                ServiceContext.getDaoContext().getUserGroupDao();
+
+        final List<UserGroup> groupList =
+                userGroupDao.getListChunk(new UserGroupDao.ListFilter(), null,
+                        null, UserGroupDao.Field.NAME, true);
+
+        add(new PropertyListView<UserGroup>("option-list-groups", groupList) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(final ListItem<UserGroup> item) {
+                final UserGroup group = item.getModel().getObject();
+                final Label label =
+                        new Label("option-group", group.getGroupName());
+                label.add(new AttributeModifier("value", group.getId()));
+                item.add(label);
+            }
+
+        });
+
     }
 }

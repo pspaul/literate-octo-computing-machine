@@ -20,12 +20,13 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             <ul data-role="listview" data-inset="true">
 
                 <li>
-
-	                <label for="sp-printer-containing-text"><wicket:message key="prompt-containing-text"/></label>
-	                <input type="text" id="sp-printer-containing-text" value="" maxlength="128" data-clear-btn="true" 
-    	                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
-		
-		            <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                    <div class="ui-field-contain">
+		                <label for="sp-printer-containing-text"><wicket:message key="prompt-containing-text"/></label>
+		                <input type="text" id="sp-printer-containing-text" value="" maxlength="128" data-clear-btn="true" 
+	    	                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
+                    </div>		
+		            <div class="ui-field-contain">
+		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
 		            
 		                <legend>
 		                    <wicket:message key="prompt-printer-status"/>
@@ -42,7 +43,8 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 		                
 		            </fieldset></div>
 		
-                    <div><fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
+                    <div class="ui-field-contain">
+                    <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
                     
                         <legend>
                             <wicket:message key="prompt-printer-deleted"/>
@@ -62,7 +64,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                 </li>
                 
                 <li>
-		
+		            <div class="ui-field-contain">  
 		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
 		                <legend>
 		                    <wicket:message key="prompt-sort-by"/>
@@ -74,8 +76,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 		                <input type="radio" name="sp-printer-sort-dir" id="sp-printer-sort-dir-desc"/> 
 		                <label for="sp-printer-sort-dir-desc"><wicket:message key="sort-desc"/></label>
 		                        
-		            </fieldset>
-		
+		            </fieldset></div>		
                 </li>
                 
                 <li>
