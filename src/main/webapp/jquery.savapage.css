@@ -123,3 +123,13 @@
 .sp-msg-popup-info {
     color: #666666;
 }
+
+.ui-btn.sp-tooltip-btn,
+.ui-btn.sp-tooltip-btn:hover,
+.ui-btn.sp-tooltip-btn:active {
+    background: none;
+    border: 0;
+    opacity: 0.4;
+}
+
+

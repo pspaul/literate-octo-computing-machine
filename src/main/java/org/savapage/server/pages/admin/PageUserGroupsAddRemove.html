@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wicket:remove><!-- 
+<imput type="text" autofocus
+autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+--></wicket:remove>  
+
+<div data-role="header" data-theme="b">
+    <h1><wicket:message key="title"/></h1>
+</div>
+<div class="ui-content">
+    <wicket:remove><!-- 
+    To be filled by JavaScript: see UserGroupsAddRemoveAddIn.java/html  
+    --></wicket:remove>  
+    <div id="sp-user-groups-add-remove-addin"/>
+    <div>    
+        <a href="#" id="button-user-groups-add-remove-ok" 
+            class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+            <wicket:message key="button-ok"/></a>                                   
+        <a href="#" data-rel="back" data-direction="reverse" 
+            class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+            <wicket:message key="button-cancel"/></a>
+    </div>
+</div>                              
+<wicket:remove>
+    <!-- ==============================================================  
+    Dialog for Membership Card file upload must be pre-loaded for the 
+    Wicket handler to work. It does NOT work on injected mobile pages. 
+     ================================================================== -->
+</wicket:remove>
+<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>

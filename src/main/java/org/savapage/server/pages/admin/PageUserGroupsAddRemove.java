@@ -21,14 +21,12 @@
  */
 package org.savapage.server.pages.admin;
 
-import org.savapage.server.pages.TooltipPanel;
-
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public class UserGroupsBase extends AbstractAdminPage {
+public final class PageUserGroupsAddRemove extends AbstractAdminPage {
 
     /**
      * Version for serialization.
@@ -38,11 +36,7 @@ public class UserGroupsBase extends AbstractAdminPage {
     /**
      *
      */
-    public UserGroupsBase() {
-
-        final TooltipPanel tooltip = new TooltipPanel("tooltip-add-remove");
-        tooltip.populate(localized("tooltip-add-remove"));
-
-        add(tooltip);
+    public PageUserGroupsAddRemove() {
     }
+
 }

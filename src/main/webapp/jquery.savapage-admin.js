@@ -566,17 +566,11 @@
 				_fillConfigPropsYN(props, ['smartschool.user.insert.lazy-print']);
 
 				if (enable1) {
-					_fillConfigPropsText(props, ['smartschool.1.soap.print.endpoint.url', 'smartschool.1.soap.print.endpoint.password', 
-						'smartschool.1.soap.print.proxy-printer', 'smartschool.1.soap.print.proxy-printer-duplex', 
-						'smartschool.1.soap.print.proxy-printer-grayscale', 'smartschool.1.soap.print.proxy-printer-grayscale-duplex',
-						'smartschool.1.soap.print.node.id', 'smartschool.1.soap.print.node.proxy.endpoint.url']);
+					_fillConfigPropsText(props, ['smartschool.1.soap.print.endpoint.url', 'smartschool.1.soap.print.endpoint.password', 'smartschool.1.soap.print.proxy-printer', 'smartschool.1.soap.print.proxy-printer-duplex', 'smartschool.1.soap.print.proxy-printer-grayscale', 'smartschool.1.soap.print.proxy-printer-grayscale-duplex', 'smartschool.1.soap.print.node.id', 'smartschool.1.soap.print.node.proxy.endpoint.url']);
 					_fillConfigPropsYN(props, ['smartschool.1.soap.print.charge-to-students', 'smartschool.1.soap.print.node.enable', 'smartschool.1.soap.print.node.proxy.enable']);
 				}
 				if (enable2) {
-					_fillConfigPropsText(props, ['smartschool.2.soap.print.endpoint.url', 'smartschool.2.soap.print.endpoint.password', 
-						'smartschool.2.soap.print.proxy-printer', 'smartschool.2.soap.print.proxy-printer-duplex', 
-						'smartschool.2.soap.print.proxy-printer-grayscale', 'smartschool.2.soap.print.proxy-printer-grayscale-duplex',
-						'smartschool.2.soap.print.node.id', 'smartschool.2.soap.print.node.proxy.endpoint.url']);
+					_fillConfigPropsText(props, ['smartschool.2.soap.print.endpoint.url', 'smartschool.2.soap.print.endpoint.password', 'smartschool.2.soap.print.proxy-printer', 'smartschool.2.soap.print.proxy-printer-duplex', 'smartschool.2.soap.print.proxy-printer-grayscale', 'smartschool.2.soap.print.proxy-printer-grayscale-duplex', 'smartschool.2.soap.print.node.id', 'smartschool.2.soap.print.node.proxy.endpoint.url']);
 					_fillConfigPropsYN(props, ['smartschool.2.soap.print.charge-to-students', 'smartschool.2.soap.print.node.enable', 'smartschool.2.soap.print.node.proxy.enable']);
 				}
 				_saveConfigProps(props);
@@ -864,6 +858,10 @@
 				_view.pages.user.loadShowAsync();
 			};
 
+			_view.pages.admin.onShowAddRemoveUserGroups = function() {
+				_view.pages.userGroupsAddRemove.loadShowAsync();
+			};
+
 			_view.pages.admin.onEditUser = function(uid) {
 				var res = _api.call({
 					request : 'user-get',
@@ -888,6 +886,22 @@
 					$('#user-uuid').val(_model.editUser.uuid);
 				} else {
 					_view.showApiMsg(res);
+				}
+			};
+
+			_view.pages.userGroupsAddRemove.onUserGroupsAddRemove = function(added, removed) {
+
+				var res = _api.call({
+					request : 'usergroups-add-remove',
+					dto : JSON.stringify({
+						groupsAdded : added,
+						groupsRemoved : removed
+					})
+				});
+				_view.showApiMsg(res);
+				if (res.result.code === '0') {
+					_view.changePage($('#page-admin'));
+					_view.pages.admin.refreshUserGroups();
 				}
 			};
 
@@ -1056,24 +1070,24 @@
 			_view.pages.admin.onCreateSharedAccount = function() {
 				_model.editAccount = {
 					id : null,
-					name : '',	
-					balance : 0,			
+					name : '',
+					balance : 0,
 					deleted : false
 				};
 				_view.pages.sharedAccount.loadShowAsync(function() {
 					$('#title-account').html(_model.editQueue.name);
 				});
 			};
-			
+
 			_view.pages.admin.onEditSharedAccount = function(id) {
-				
+
 				var res = _api.call({
 					request : 'shared-account-get',
 					dto : JSON.stringify({
 						id : id
 					})
 				});
-				
+
 				if (res && res.result.code === '0') {
 					_model.editAccount = res.dto;
 					_view.pages.sharedAccount.loadShowAsync(function() {
@@ -1083,14 +1097,14 @@
 					_view.showApiMsg(res);
 				}
 			};
-			
+
 			_view.pages.sharedAccount.onSaveSharedAccount = function() {
-				
+
 				_model.editAccount.name = $('#shared-account-name').val();
 				_model.editAccount.parentName = $('#shared-account-name-parent').val();
 				_model.editAccount.notes = $('#shared-account-notes').val();
 				_model.editAccount.deleted = $('#shared-account-deleted').is(':checked');
-  
+
 				var res = _api.call({
 					request : 'shared-account-set',
 					dto : JSON.stringify(_model.editAccount)
@@ -1106,7 +1120,7 @@
 					_view.pages.admin.refreshSharedAccounts();
 				}
 			};
-						
+
 			//-------------------------------------------------------
 			_view.pages.admin.onCreateQueue = function() {
 				_model.editQueue = {
@@ -1117,8 +1131,8 @@
 					disabled : false,
 					deleted : false,
 					uiText : 'Untitled',
-            		reserved : null,
-            		fixedTrust : false					
+					reserved : null,
+					fixedTrust : false
 				};
 				_view.pages.queue.loadShowAsync(function() {
 					$('#title-queue').html(_model.editQueue.urlpath);
@@ -1149,7 +1163,7 @@
 				_model.editQueue.disabled = $('#queue-disabled').is(':checked');
 				_model.editQueue.deleted = $('#queue-deleted').is(':checked');
 				_model.editQueue.trusted = $('#queue-trusted').is(':checked');
- 
+
 				var res = _api.call({
 					request : 'queue-set',
 					j_queue : JSON.stringify(_model.editQueue)
@@ -1735,6 +1749,7 @@
 				admin : new _ns.PageAdmin(_i18n, _view, _model),
 				membercard_upload : new _ns.PageMemberCardUpload(_i18n, _view, _model),
 				user : new _ns.PageUser(_i18n, _view, _model),
+				userGroupsAddRemove : new _ns.PageUserGroupsAddRemove(_i18n, _view, _model),
 				userPwReset : new _ns.PageUserPasswordReset(_i18n, _view, _model),
 				configProp : new _ns.PageConfigProp(_i18n, _view, _model),
 				queue : new _ns.PageQueue(_i18n, _view, _model),

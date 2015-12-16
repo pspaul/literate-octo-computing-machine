@@ -35,6 +35,7 @@ import org.savapage.server.api.request.ReqQueueEnable;
 import org.savapage.server.api.request.ReqQueueGet;
 import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountSet;
+import org.savapage.server.api.request.ReqUserGroupsAddRemove;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.
@@ -209,6 +210,9 @@ public class JsonApiDict {
     public static final String REQ_USER_SET = "user-set";
     public static final String REQ_USER_SOURCE_GROUPS = "user-source-groups";
     public static final String REQ_USER_SYNC = "user-sync";
+
+    public static final String REQ_USERGROUPS_ADD_REMOVE =
+            "usergroups-add-remove";
 
     public static final String REQ_GENERATE_UUID = "generate-uuid";
 
@@ -706,6 +710,10 @@ public class JsonApiDict {
         adm(REQ_USER_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_SOURCE_GROUPS, DbClaim.NONE, DbAccess.NO);
         adm(REQ_USER_SYNC, DbClaim.NONE, DbAccess.NO);
+
+        adm(REQ_USERGROUPS_ADD_REMOVE, ReqUserGroupsAddRemove.class,
+                DbClaim.READ, DbAccess.YES);
+
     }
 
     /**

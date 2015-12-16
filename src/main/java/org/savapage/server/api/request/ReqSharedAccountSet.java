@@ -27,9 +27,6 @@ import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.SharedAccountDisplayInfoDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
-import org.savapage.core.json.rpc.ErrorDataBasic;
-import org.savapage.core.json.rpc.JsonRpcError;
-import org.savapage.core.json.rpc.ResultDataBasic;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
 
@@ -55,21 +52,7 @@ public final class ReqSharedAccountSet extends ApiRequestMixin {
         final AbstractJsonRpcMethodResponse rpcResponse =
                 service.lazyUpdateSharedAccount(dto);
 
-        if (rpcResponse.isResult()) {
-
-            final ResultDataBasic result =
-                    rpcResponse.asResult().getResult()
-                            .data(ResultDataBasic.class);
-
-            setApiResultText(ApiResultCodeEnum.OK, result.getMessage());
-
-        } else {
-
-            final JsonRpcError error = rpcResponse.asError().getError();
-            final ErrorDataBasic errorData = error.data(ErrorDataBasic.class);
-
-            setApiResultText(ApiResultCodeEnum.ERROR, errorData.getReason());
-        }
+        this.setApiResultText(rpcResponse);
     }
 
 }

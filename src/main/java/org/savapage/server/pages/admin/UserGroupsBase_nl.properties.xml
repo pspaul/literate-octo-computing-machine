@@ -12,7 +12,10 @@
     <entry key="sort-desc">Aflopend</entry>        
     
     <entry key="button-apply">Toepassen</entry>
-    <entry key="button-default">Standaard</entry>    
-    <entry key="button-add-remove">Toevoegen/Verwijderen</entry>
-    <entry key="button-report">Rapport</entry>    
+    <entry key="button-default">Standaard</entry>
+        
+    <entry key="button-add-remove">Toevoegen &amp; Verwijderen</entry>
+    <entry key="tooltip-add-remove">Groepen zijn verzamelingen van gebruikers. U kunt groepen toevoegen en verwijderen zoals gedefinieerd in de Gebruikers Bron.</entry>
+
+    <entry key="button-report">Rapport</entry>
 </properties>

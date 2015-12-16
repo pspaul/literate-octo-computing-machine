@@ -13,6 +13,9 @@
     
     <entry key="button-apply">Apply</entry>
     <entry key="button-default">Default</entry>
-    <entry key="button-add-remove">Add/Remove</entry>
+    
+    <entry key="button-add-remove">Add &amp; Remove</entry>    
+    <entry key="tooltip-add-remove">Groups are collections of users. You can add and remove groups as defined in the User Source.</entry>
+    
     <entry key="button-report">Report</entry>
 </properties>

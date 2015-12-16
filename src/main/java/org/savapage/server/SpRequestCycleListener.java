@@ -77,6 +77,13 @@ public final class SpRequestCycleListener implements IRequestCycleListener {
             }
         }
 
+        /*
+         * An exception gets around the decrement of the AuthWeb counter. That
+         * is why we do it here, so we can continue with F5 (refresh page),
+         * which is convenient at development.
+         */
+        SpSession.get().decrementAuthWebApp();
+
         final Logger logger = LoggerFactory.getLogger(this.getClass());
         logger.error(ex.getMessage(), ex);
         return null;

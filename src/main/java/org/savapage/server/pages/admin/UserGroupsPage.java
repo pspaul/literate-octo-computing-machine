@@ -87,8 +87,6 @@ public final class UserGroupsPage extends AbstractAdminListPage {
                 userGroupDao.getListChunk(filter, req.calcStartPosition(),
                         req.getMaxResults(), sortField, sortAscending);
 
-        // final Locale locale = getSession().getLocale();
-
         //
         add(new PropertyListView<UserGroup>("user-groups-view", entryList) {
 

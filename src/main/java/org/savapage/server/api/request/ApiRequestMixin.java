@@ -30,6 +30,10 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
+import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
+import org.savapage.core.json.rpc.ErrorDataBasic;
+import org.savapage.core.json.rpc.JsonRpcError;
+import org.savapage.core.json.rpc.ResultDataBasic;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.Messages;
 
@@ -135,7 +139,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      *            The key of the message.
      * @return The message text.
      */
-    private String localize(final String key) {
+    protected final String localize(final String key) {
         return Messages.getMessage(getClass(), ServiceContext.getLocale(), key,
                 (String[]) null);
     }
@@ -148,7 +152,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      *            The key of the message.
      * @return The message text.
      */
-    private String localize(final String key, final String... args) {
+    protected final String localize(final String key, final String... args) {
         return Messages.getMessage(getClass(), ServiceContext.getLocale(), key,
                 args);
     }
@@ -194,6 +198,43 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     protected final void setApiResultText(final ApiResultCodeEnum code,
             final String text) {
         createApiResult(code, "msg-single-parm", text);
+    }
+
+    /**
+     * @param rpcResponse
+     *            The {@link AbstractJsonRpcMethodResponse}.
+     * @return {@code true} when result is OK.
+     */
+    protected final boolean isApiResultOk(
+            final AbstractJsonRpcMethodResponse rpcResponse) {
+        return rpcResponse.isResult();
+    }
+
+    /**
+     * Sets the API result from JSOn method response.
+     *
+     * @param rpcResponse
+     *            The {@link AbstractJsonRpcMethodResponse}.
+     */
+    protected final void setApiResultText(
+            final AbstractJsonRpcMethodResponse rpcResponse) {
+
+        if (rpcResponse.isResult()) {
+
+            final ResultDataBasic result =
+                    rpcResponse.asResult().getResult()
+                            .data(ResultDataBasic.class);
+
+            this.setApiResultText(ApiResultCodeEnum.OK, result.getMessage());
+
+        } else {
+
+            final JsonRpcError error = rpcResponse.asError().getError();
+            final ErrorDataBasic errorData = error.data(ErrorDataBasic.class);
+
+            this.setApiResultText(ApiResultCodeEnum.ERROR,
+                    errorData.getReason());
+        }
     }
 
     /**

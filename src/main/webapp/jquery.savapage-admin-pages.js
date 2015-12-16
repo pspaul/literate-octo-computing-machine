@@ -50,9 +50,6 @@
 			//
 			;
 
-			/**
-			 *
-			 */
 			$(_self.id()).on('pagecreate', function(event) {
 
 				$(this).on('click', '#button-user-generate-uuid', null, function() {
@@ -146,6 +143,58 @@
 		/**
 		 * Constructor
 		 */
+		_ns.PageUserGroupsAddRemove = function(_i18n, _view, _model) {
+
+			var _page = new _ns.Page(_i18n, _view, '#page-user-groups-add-remove', 'admin.PageUserGroupsAddRemove')
+			//
+			, _self = _ns.derive(_page)
+			//
+			//,        _this = this
+			//
+			, _resize = function() {
+				var width = $('#sp-user-groups-add-remove-addin').width();
+				$('.sp-select-user-groups').width(width);
+			}
+			//
+			, _getSelected = function(id) {
+				// It took some time to find out how to return an array object :-((
+				// "new Array[]" does NOT work.
+				var values = new Object(), i = 0;
+				$.each($("select[id='" + id + "']"), function() {
+					values[i++] = $(this).val();
+				});
+				return values[0];
+			}
+			//
+			;
+
+			$(_self.id()).on('pagecreate', function(event) {
+
+				$(window).resize(function() {
+					_resize();
+				});
+
+				$(this).on('click', '#button-user-groups-add-remove-ok', null, function() {
+					_self.onUserGroupsAddRemove(_getSelected('sp-select-user-groups-to-add'), _getSelected('sp-select-user-groups-to-remove'));
+					return false;
+				});
+
+			}).on("pagebeforeshow", function(event, ui) {
+				var addin = $('#sp-user-groups-add-remove-addin'), data = {};
+				addin.html(_view.getAdminPageHtml('UserGroupsAddRemoveAddIn', data)).enhanceWithin();
+			}).on('pageshow', function(event, ui) {
+				_resize();
+			});
+			/*
+			 * IMPORTANT
+			 */
+			return _self;
+		};
+
+		// =========================================================================
+		/**
+		 * Constructor
+		 */
 		_ns.PageSharedAccount = function(_i18n, _view, _model) {
 
 			var _page = new _ns.Page(_i18n, _view, '#page-shared-account', 'admin.PageSharedAccount')
@@ -154,9 +203,6 @@
 			//
 			;
 
-			/**
-			 *
-			 */
 			$(_self.id()).on('pagecreate', function(event) {
 
 				$(this).on('click', '#button-save-shared-account', null, function() {
@@ -165,7 +211,7 @@
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
-				
+
 				$('#shared-account-name').val(_model.editAccount.name);
 				$('#shared-account-balance').val(_model.editAccount.balance);
 				$('#shared-account-name-parent').val(_model.editAccount.parentName);
@@ -288,7 +334,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,  _this = this
+			//,         _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//
@@ -674,9 +720,6 @@
 			//
 			;
 
-			/**
-			 *
-			 */
 			$(_self.id()).on('pagecreate', function(event) {
 
 				$(this).on('click', '#button-save-queue', null, function() {
@@ -1016,6 +1059,10 @@
 
 			_self.refreshUsers = function() {
 				var pnl = _panel.UsersBase;
+				pnl.refresh(pnl);
+			};
+			_self.refreshUserGroups = function() {
+				var pnl = _panel.UserGroupsBase;
 				pnl.refresh(pnl);
 			};
 			_self.refreshConfigProps = function() {
@@ -1638,8 +1685,8 @@
 					return false;
 				});
 
-				$(this).on('click', "#button-add-remove-user-groups", null, function() {
-					//_self.onAddRemoveUserGroups();
+				$(this).on('click', "#button-show-add-remove-user-groups", null, function() {
+					_self.onShowAddRemoveUserGroups();
 					return false;
 				});
 
@@ -1869,7 +1916,6 @@
 				$(this).on('change', "input:checkbox[id='smartschool.2.soap.print.node.proxy.enable']", null, function(e) {
 					_panel.Options.onSmartSchoolNodeProxyEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.proxy\\.enable')), _view.isCbChecked($(this)));
 				});
-
 
 				$(this).on('change', "input:checkbox[id='smartschool.papercut.enable']", null, function(e) {
 					_panel.Options.onSmartSchoolPaperCutEnabled($(this).is(':checked'));
