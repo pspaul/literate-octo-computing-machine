@@ -39,7 +39,7 @@
     <entry key="msg-print-auth-pending">Another print job is waiting for authentication. Try again later.</entry>
     
     <!-- ReqUserGroupsAddRemove -->
-    <entry key="msg-no-groups">Enter groups to add or remove.</entry>
+    <entry key="msg-no-groups">Select groups to add or remove.</entry>
     <entry key="msg-groups-added">Groups added: {0}.</entry>
     <entry key="msg-groups-removed">Groups removed: {0}.</entry>
     

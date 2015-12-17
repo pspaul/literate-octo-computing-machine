@@ -44,8 +44,10 @@ import org.savapage.core.dao.helpers.PrintInDeniedReasonEnum;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
+import org.savapage.core.services.helpers.ExternalSupplierStatusEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
+import org.savapage.server.WebApp;
 
 /**
  *
@@ -145,7 +147,41 @@ public class DocLogItemPanel extends Panel {
         mapVisible.put("collateCopies", null);
         mapVisible.put("ecoPrint", null);
         mapVisible.put("removeGraphics", null);
+        mapVisible.put("extSupplier", null);
 
+        MarkupHelper helper = new MarkupHelper(this);
+
+        //
+        final String extSupplierImgUrl;
+
+        if (obj.getExtSupplier() != null) {
+            mapVisible.put("extSupplier", obj.getExtSupplier().getUiText());
+            extSupplierImgUrl =
+                    WebApp.getExtSupplierEnumImgUrl(obj.getExtSupplier());
+        } else {
+            extSupplierImgUrl = null;
+        }
+
+        if (StringUtils.isBlank(extSupplierImgUrl)) {
+            helper.discloseLabel("extSupplierImg");
+        } else {
+            helper.encloseLabel("extSupplierImg", "", true).add(
+                    new AttributeModifier("src", extSupplierImgUrl));
+        }
+
+        //
+        final ExternalSupplierStatusEnum extSupplierStatus =
+                obj.getExtSupplierStatus();
+
+        if (extSupplierStatus == null) {
+            helper.discloseLabel("extStatus");
+        } else {
+            addVisible(true, "extStatus",
+                    extSupplierStatus.uiText(getLocale()),
+                    MarkupHelper.getCssTxtClass(extSupplierStatus));
+        }
+
+        //
         String cssJobState = null;
 
         //
@@ -289,36 +325,32 @@ public class DocLogItemPanel extends Panel {
                 }
 
                 String sfx = null;
+
                 switch (obj.getJobState()) {
                 case IPP_JOB_ABORTED:
-                    cssJobState = MarkupHelper.CSS_TXT_ERROR;
                     sfx = "aborted";
                     break;
                 case IPP_JOB_CANCELED:
-                    cssJobState = MarkupHelper.CSS_TXT_ERROR;
                     sfx = "canceled";
                     break;
                 case IPP_JOB_COMPLETED:
-                    cssJobState = MarkupHelper.CSS_TXT_VALID;
                     sfx = "completed";
                     break;
                 case IPP_JOB_HELD:
-                    cssJobState = MarkupHelper.CSS_TXT_WARN;
                     sfx = "held";
                     break;
                 case IPP_JOB_PENDING:
-                    cssJobState = MarkupHelper.CSS_TXT_WARN;
                     sfx = "pending";
                     break;
                 case IPP_JOB_PROCESSING:
-                    cssJobState = MarkupHelper.CSS_TXT_WARN;
                     sfx = "processing";
                     break;
                 case IPP_JOB_STOPPED:
-                    cssJobState = MarkupHelper.CSS_TXT_ERROR;
                     sfx = "stopped";
                     break;
                 }
+
+                cssJobState = MarkupHelper.getCssTxtClass(obj.getJobState());
 
                 if (sfx != null) {
                     mapVisible.put("job-state", localized("job-state-" + sfx));
@@ -495,8 +527,8 @@ public class DocLogItemPanel extends Panel {
     }
 
     /**
-     * Gets as localized short time string of a Date. The locale of the
-     * current session is used.
+     * Gets as localized short time string of a Date. The locale of the current
+     * session is used.
      *
      * @param date
      *            The date.

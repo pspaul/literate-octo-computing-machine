@@ -74,7 +74,9 @@
 		<wicket:enclosure child="userpw"> &bull; <span
 				wicket:id="userpw" />
 		</wicket:enclosure>
-        <wicket:enclosure child="cost-currency"> &bull; <span wicket:id="cost-currency"/>&nbsp;</wicket:enclosure><wicket:enclosure child="cost"><span wicket:id="cost"/>
+        <wicket:enclosure child="cost-currency"> &bull; <span wicket:id="cost-currency"/>&nbsp;</wicket:enclosure>
+        <wicket:enclosure child="cost">
+            <span wicket:id="cost"/>
         </wicket:enclosure>
         
         <wicket:enclosure child="account-trx"><span
@@ -92,6 +94,20 @@
 			<wicket:message key="prompt-destination"/>: <span wicket:id="destination" />
 		</p>
 	</wicket:enclosure>
+
+    <wicket:enclosure child="extSupplier">
+        <p class="sp-txt-wrap">
+                <wicket:enclosure child="extSupplierImg">
+                    <img wicket:id="extSupplierImg" src="" height="12"/>
+                </wicket:enclosure>                      
+                <wicket:enclosure child="extSupplier">
+                    <span style="font-size: small;" wicket:id="extSupplier"/>
+                </wicket:enclosure>                                
+                <wicket:enclosure child="extStatus">
+                    &bull; <span style="font-size: small;" wicket:id="extStatus"/>
+                </wicket:enclosure>                                
+        </p>
+    </wicket:enclosure>	
 	
 	<p class="ui-li-aside">
 		<span wicket:id="dateCreated"/> 

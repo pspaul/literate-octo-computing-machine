@@ -33,6 +33,8 @@ import org.apache.wicket.Localizer;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
+import org.savapage.core.ipp.IppJobStateEnum;
+import org.savapage.core.services.helpers.ExternalSupplierStatusEnum;
 
 /**
  * Helper methods for a {@link MarkupContainer}.
@@ -533,6 +535,62 @@ public final class MarkupHelper {
                 return enclose;
             }
         };
+    }
+
+    /**
+     * Gets CSS_TXT_* class of enum value.
+     *
+     * @param status
+     *            The {@link ExternalSupplierStatusEnum}.
+     * @return the CSS_TXT_* class of the enum value.
+     */
+    public static String
+            getCssTxtClass(final ExternalSupplierStatusEnum status) {
+
+        switch (status) {
+
+        case COMPLETED:
+            return CSS_TXT_VALID;
+
+        case PENDING:
+        case PENDING_EXT:
+            return CSS_TXT_WARN;
+
+        case CANCELLED:
+        case EXPIRED:
+        case ERROR:
+        default:
+            return CSS_TXT_ERROR;
+        }
+
+    }
+
+    /**
+     * Gets CSS_TXT_* class of enum value.
+     *
+     * @param status
+     *            The {@link IppJobStateEnum}.
+     * @return the CSS_TXT_* class of the enum value.
+     */
+    public static String getCssTxtClass(final IppJobStateEnum state) {
+        switch (state) {
+        case IPP_JOB_ABORTED:
+        case IPP_JOB_STOPPED:
+        case IPP_JOB_CANCELED:
+            return CSS_TXT_ERROR;
+
+        case IPP_JOB_COMPLETED:
+            return CSS_TXT_VALID;
+
+        case IPP_JOB_HELD:
+        case IPP_JOB_PENDING:
+        case IPP_JOB_PROCESSING:
+            return CSS_TXT_WARN;
+
+        default:
+            return "";
+        }
+
     }
 
 }

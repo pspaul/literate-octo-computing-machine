@@ -26,9 +26,9 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.List;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
@@ -42,8 +42,10 @@ import org.savapage.core.dao.helpers.AccountTrxTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.PrintOut;
+import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.ExternalSupplierEnum;
+import org.savapage.core.services.helpers.ExternalSupplierStatusEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
@@ -58,6 +60,9 @@ import org.slf4j.LoggerFactory;
  * @author Datraverse B.V.
  */
 public class AccountTrxPage extends AbstractListPage {
+
+    private static final DocLogService DOC_LOG_SERVICE = ServiceContext
+            .getServiceFactory().getDocLogService();
 
     /**
      *
@@ -108,6 +113,7 @@ public class AccountTrxPage extends AbstractListPage {
 
         @Override
         protected void populateItem(final ListItem<AccountTrx> item) {
+
             final AccountTrx accountTrx = item.getModelObject();
             final DocLog docLog = accountTrx.getDocLog();
 
@@ -288,28 +294,22 @@ public class AccountTrxPage extends AbstractListPage {
                             && accountTrx.getExtCurrencyCode().equals(
                                     CurrencyUtil.BITCOIN_CURRENCY_CODE);
 
-            //
-            String extSupplier = null;
+            // External supplier
+            final ExternalSupplierEnum extSupplierEnum =
+                    DOC_LOG_SERVICE.getExtSupplier(docLog);
 
-            if (docLog != null) {
+            final String extSupplier;
 
-                extSupplier =
-                        StringUtils.defaultString(docLog.getExternalSupplier());
-
-                if (StringUtils.isNotBlank(extSupplier)
-                        && EnumUtils.isValidEnum(ExternalSupplierEnum.class,
-                                extSupplier)) {
-
-                    final ExternalSupplierEnum extSupplierEnum =
-                            ExternalSupplierEnum.valueOf(extSupplier);
-                    extSupplier = extSupplierEnum.getUiText();
-
-                    imageSrc = WebApp.getExtSupplierEnumImgUrl(extSupplierEnum);
-
-                } else {
-                    extSupplier = null;
-                }
+            if (extSupplierEnum == null) {
+                extSupplier = null;
+            } else {
+                extSupplier = extSupplierEnum.getUiText();
+                imageSrc = WebApp.getExtSupplierEnumImgUrl(extSupplierEnum);
             }
+
+            // External supplier status
+            final ExternalSupplierStatusEnum extSupplierStatus =
+                    DOC_LOG_SERVICE.getExtSupplierStatus(docLog);
 
             //
             final MarkupHelper helper = new MarkupHelper(item);
@@ -337,6 +337,15 @@ public class AccountTrxPage extends AbstractListPage {
 
             //
             helper.encloseLabel("extSupplier", extSupplier, extSupplier != null);
+
+            if (extSupplierStatus == null) {
+                helper.discloseLabel("extStatus");
+            } else {
+                helper.encloseLabel("extStatus",
+                        extSupplierStatus.uiText(getLocale()), true).add(
+                        new AttributeAppender("class", MarkupHelper
+                                .getCssTxtClass(extSupplierStatus)));
+            }
 
             //
             final boolean isVisible = accountTrx.getPosPurchase() != null;

@@ -31,6 +31,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.PrintOutDao;
@@ -47,8 +48,11 @@ import org.savapage.core.jpa.DocOut;
 import org.savapage.core.jpa.PdfOut;
 import org.savapage.core.jpa.PrintIn;
 import org.savapage.core.jpa.PrintOut;
+import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.ExternalSupplierEnum;
+import org.savapage.core.services.helpers.ExternalSupplierStatusEnum;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.WebApp;
@@ -59,6 +63,9 @@ import org.savapage.server.WebApp;
  *
  */
 public final class DocLogItem {
+
+    private ExternalSupplierEnum extSupplier;
+    private ExternalSupplierStatusEnum extSupplierStatus;
 
     private String userId;
     private String userName;
@@ -106,6 +113,23 @@ public final class DocLogItem {
     private Boolean ownerPw;
 
     private List<AccountTrx> transactions;
+
+    public ExternalSupplierEnum getExtSupplier() {
+        return extSupplier;
+    }
+
+    public void setExtSupplier(ExternalSupplierEnum extSupplier) {
+        this.extSupplier = extSupplier;
+    }
+
+    public ExternalSupplierStatusEnum getExtSupplierStatus() {
+        return extSupplierStatus;
+    }
+
+    public void setExtSupplierStatus(
+            ExternalSupplierStatusEnum extSupplierStatus) {
+        this.extSupplierStatus = extSupplierStatus;
+    }
 
     public List<AccountTrx> getTransactions() {
         return transactions;
@@ -336,6 +360,8 @@ public final class DocLogItem {
                 query.setMaxResults(maxResults);
             }
 
+            final DocLogService docLogService =
+                    ServiceContext.getServiceFactory().getDocLogService();
             final QueueService queueService =
                     ServiceContext.getServiceFactory().getQueueService();
 
@@ -344,6 +370,10 @@ public final class DocLogItem {
             for (final DocLog docLog : ((List<DocLog>) query.getResultList())) {
 
                 DocLogItem log = new DocLogItem();
+
+                log.setExtSupplier(docLogService.getExtSupplier(docLog));
+                log.setExtSupplierStatus(docLogService
+                        .getExtSupplierStatus(docLog));
 
                 log.setUserId(docLog.getUser().getUserId());
                 log.setUserName(docLog.getUser().getFullName());
@@ -366,7 +396,9 @@ public final class DocLogItem {
                     log.setTransactions(docLog.getTransactions());
                 }
 
-                if (!log.getTransactions().isEmpty()) {
+                if (log.getTransactions().isEmpty()) {
+                    log.setCurrencyCode(ConfigManager.getAppCurrencyCode());
+                } else {
                     log.setCurrencyCode(log.getTransactions().get(0)
                             .getCurrencyCode());
                 }
