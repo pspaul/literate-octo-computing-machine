@@ -242,14 +242,17 @@ public class AccountTrxPage extends AbstractListPage {
                     cmt.append("(").append(docLog.getTitle()).append(")");
                 }
 
-                if (docLog.getNumberOfPages() == 1) {
+                int totalPagesIn =
+                        docLog.getNumberOfPages().intValue()
+                                * accountTrx.getTransactionWeight().intValue();
+
+                if (totalPagesIn == 1) {
                     msgKey = "printed-pages-one";
                 } else {
                     msgKey = "printed-pages-multiple";
                 }
 
-                printOutInfo =
-                        localized(msgKey, docLog.getNumberOfPages().toString());
+                printOutInfo = localized(msgKey, String.valueOf(totalPagesIn));
 
                 comment = cmt.toString();
 
@@ -264,17 +267,17 @@ public class AccountTrxPage extends AbstractListPage {
 
                 key = "type-print-out";
 
-                final int totalPages =
-                        printOut.getNumberOfCopies().intValue()
-                                * docLog.getNumberOfPages().intValue();
+                int totalPagesOut =
+                        docLog.getNumberOfPages().intValue()
+                                * accountTrx.getTransactionWeight().intValue();
 
-                if (totalPages == 1) {
+                if (totalPagesOut == 1) {
                     msgKey = "printed-pages-one";
                 } else {
                     msgKey = "printed-pages-multiple";
                 }
 
-                printOutInfo = localized(msgKey, String.valueOf(totalPages));
+                printOutInfo = localized(msgKey, String.valueOf(totalPagesOut));
 
                 comment = printOut.getPrinter().getDisplayName();
 
