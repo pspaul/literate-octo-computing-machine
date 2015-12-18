@@ -29,7 +29,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.IRequestParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.dao.helpers.AppLogLevelEnum;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;

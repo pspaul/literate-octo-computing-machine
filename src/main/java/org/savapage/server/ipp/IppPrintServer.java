@@ -50,7 +50,7 @@ import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.dao.helpers.ReservedIppQueueEnum;
+import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.ipp.operation.AbstractIppOperation;
 import org.savapage.core.ipp.operation.IppMessageMixin;
 import org.savapage.core.ipp.operation.IppOperationId;

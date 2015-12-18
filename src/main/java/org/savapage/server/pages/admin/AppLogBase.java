@@ -21,7 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
-import org.savapage.core.dao.helpers.AppLogLevelEnum;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**

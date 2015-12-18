@@ -23,8 +23,8 @@ package org.savapage.server.pages.admin;
 
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.dao.DeviceAttrDao;
-import org.savapage.core.dao.helpers.DeviceAttrEnum;
-import org.savapage.core.dao.helpers.ProxyPrintAuthModeEnum;
+import org.savapage.core.dao.enums.DeviceAttrEnum;
+import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 
 /**
  *

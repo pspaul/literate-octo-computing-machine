@@ -21,7 +21,7 @@
  */
 package org.savapage.server.pages;
 
-import org.savapage.core.dao.helpers.AppLogLevelEnum;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
 
 /**
  * A message in simple HTML.

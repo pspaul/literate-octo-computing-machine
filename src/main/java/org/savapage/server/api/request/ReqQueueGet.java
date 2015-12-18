@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.IppQueueDao;
-import org.savapage.core.dao.helpers.ReservedIppQueueEnum;
+import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.User;

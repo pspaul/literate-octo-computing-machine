@@ -23,8 +23,8 @@ package org.savapage.server.pages;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.savapage.core.dao.enums.AccountTrxTypeEnum;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
-import org.savapage.core.dao.helpers.AccountTrxTypeEnum;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;

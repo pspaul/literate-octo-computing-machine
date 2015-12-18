@@ -33,8 +33,8 @@ import org.apache.wicket.Localizer;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
+import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
-import org.savapage.core.services.helpers.ExternalSupplierStatusEnum;
 
 /**
  * Helper methods for a {@link MarkupContainer}.

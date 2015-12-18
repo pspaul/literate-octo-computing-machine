@@ -35,11 +35,14 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.PrintOutDao;
+import org.savapage.core.dao.enums.DaoEnumHelper;
+import org.savapage.core.dao.enums.DocLogProtocolEnum;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
+import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
+import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
+import org.savapage.core.dao.enums.PrintModeEnum;
+import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
-import org.savapage.core.dao.helpers.DocLogProtocolEnum;
-import org.savapage.core.dao.helpers.PrintInDeniedReasonEnum;
-import org.savapage.core.dao.helpers.PrintModeEnum;
-import org.savapage.core.dao.helpers.ReservedIppQueueEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocIn;
@@ -51,8 +54,6 @@ import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.helpers.ExternalSupplierEnum;
-import org.savapage.core.services.helpers.ExternalSupplierStatusEnum;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.WebApp;
@@ -371,8 +372,8 @@ public final class DocLogItem {
 
                 DocLogItem log = new DocLogItem();
 
-                log.setExtSupplier(docLogService.getExtSupplier(docLog));
-                log.setExtSupplierStatus(docLogService
+                log.setExtSupplier(DaoEnumHelper.getExtSupplier(docLog));
+                log.setExtSupplierStatus(DaoEnumHelper
                         .getExtSupplierStatus(docLog));
 
                 log.setUserId(docLog.getUser().getUserId());

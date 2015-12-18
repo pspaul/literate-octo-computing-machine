@@ -37,15 +37,16 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.AccountTrxDao;
 import org.savapage.core.dao.AccountTrxDao.ListFilter;
+import org.savapage.core.dao.enums.AccountTrxTypeEnum;
+import org.savapage.core.dao.enums.DaoEnumHelper;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
+import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
-import org.savapage.core.dao.helpers.AccountTrxTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.helpers.ExternalSupplierEnum;
-import org.savapage.core.services.helpers.ExternalSupplierStatusEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
@@ -142,9 +143,9 @@ public class AccountTrxPage extends AbstractListPage {
 
             try {
                 amount =
-                        BigDecimalUtil.localize(accountTrx.getAmount(),
-                                this.balanceDecimals, getSession().getLocale(),
-                                currencySymbol, true);
+                        BigDecimalUtil.localizeMinimalPrecision(
+                                accountTrx.getAmount(), this.balanceDecimals,
+                                getSession().getLocale(), currencySymbol, true);
 
                 balance =
                         BigDecimalUtil.localize(accountTrx.getBalance(),
@@ -296,7 +297,7 @@ public class AccountTrxPage extends AbstractListPage {
 
             // External supplier
             final ExternalSupplierEnum extSupplierEnum =
-                    DOC_LOG_SERVICE.getExtSupplier(docLog);
+                    DaoEnumHelper.getExtSupplier(docLog);
 
             final String extSupplier;
 
@@ -309,7 +310,7 @@ public class AccountTrxPage extends AbstractListPage {
 
             // External supplier status
             final ExternalSupplierStatusEnum extSupplierStatus =
-                    DOC_LOG_SERVICE.getExtSupplierStatus(docLog);
+                    DaoEnumHelper.getExtSupplierStatus(docLog);
 
             //
             final MarkupHelper helper = new MarkupHelper(item);

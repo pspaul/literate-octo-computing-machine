@@ -29,7 +29,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.savapage.core.dao.AppLogDao;
 import org.savapage.core.dao.AppLogDao.ListFilter;
-import org.savapage.core.dao.helpers.AppLogLevelEnum;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.helpers.AppLogPagerReq;
 import org.savapage.core.jpa.AppLog;
 import org.savapage.core.services.ServiceContext;

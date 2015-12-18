@@ -21,7 +21,7 @@
  */
 package org.savapage.server.dto;
 
-import org.savapage.core.dao.helpers.AccountTrxTypeEnum;
+import org.savapage.core.dao.enums.AccountTrxTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentMethodEnum;
