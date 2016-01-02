@@ -234,11 +234,26 @@ public class AccountTrxPage extends AbstractListPage {
 
             case PRINT_IN:
 
+                /*
+                 * PRINT_IN account transactions are tied to a DocLog/PrintOut
+                 * when the print was released by an external system (PaperCut).
+                 *
+                 * PRINT_IN account transactions are tied to a DocLog/PrintIn
+                 * when the print was is pending (on hold) in an external system
+                 * (PaperCut).
+                 */
                 key = "type-print-in";
 
                 final StringBuilder cmt = new StringBuilder();
 
+                if (printOut != null) {
+                    cmt.append(printOut.getPrinter().getDisplayName());
+                }
+
                 if (showDocLogTitle) {
+                    if (printOut != null) {
+                        cmt.append(" ");
+                    }
                     cmt.append("(").append(docLog.getTitle()).append(")");
                 }
 
@@ -283,7 +298,7 @@ public class AccountTrxPage extends AbstractListPage {
 
                 if (showDocLogTitle
                         && StringUtils.isNotBlank(docLog.getTitle())) {
-                    comment += " (" + docLog.getTitle() + ")";
+                    comment += String.format(" (%s)", docLog.getTitle());
                 }
 
                 break;
