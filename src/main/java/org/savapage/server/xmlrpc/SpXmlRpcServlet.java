@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,6 +29,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.metadata.XmlRpcSystemImpl;
+import org.apache.xmlrpc.server.PropertyHandlerMapping;
+import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.apache.xmlrpc.webserver.XmlRpcServlet;
 
 /**
@@ -48,8 +52,14 @@ public final class SpXmlRpcServlet extends XmlRpcServlet {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String HANDLER_KEY_ADMIN = "admin";
+    private static final String HANDLER_KEY_CLIENT = "client";
+    private static final String HANDLER_KEY_CUPS_EVENT = "cups-event";
+    private static final String HANDLER_KEY_RFID_EVENT = "rfid-event";
+
     private static ThreadLocal<String> clientIpAddress = new ThreadLocal<>();
     private static ThreadLocal<Boolean> isSslConnection = new ThreadLocal<>();
+
 
     /**
      * Gets the IP address of the client.
@@ -70,6 +80,28 @@ public final class SpXmlRpcServlet extends XmlRpcServlet {
      */
     public static boolean isSslConnection() {
         return isSslConnection.get().booleanValue();
+    }
+
+    @Override
+    protected XmlRpcHandlerMapping newXmlRpcHandlerMapping()
+            throws XmlRpcException {
+
+        final PropertyHandlerMapping mapping =
+                new PropertyHandlerMapping();
+
+        mapping.addHandler(HANDLER_KEY_ADMIN, AdminHandler.class);
+        mapping.addHandler(HANDLER_KEY_CLIENT, ClientAppHandler.class);
+        mapping.addHandler(HANDLER_KEY_CUPS_EVENT, CupsEventHandler.class);
+        mapping.addHandler(HANDLER_KEY_RFID_EVENT, RfidEventHandler.class);
+
+        /*
+         * This call configures the XML-RPC server for introspection (i.e. it
+         * implements introspection methods under the XML-RPC system.
+         * namespace).
+         */
+        XmlRpcSystemImpl.addSystemHandler(mapping);
+
+        return mapping;
     }
 
     @Override
