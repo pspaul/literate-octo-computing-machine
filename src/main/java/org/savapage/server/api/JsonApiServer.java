@@ -2146,7 +2146,8 @@ public final class JsonApiServer extends AbstractPage {
 
         final int minutes = ConfigManager.instance().getConfigInt(configKey);
 
-        return session.checkTouchExpired(DateUtil.DURATION_MSEC_MINUTE * minutes);
+        return session.checkTouchExpired(DateUtil.DURATION_MSEC_MINUTE
+                * minutes);
     }
 
     /**
@@ -5969,7 +5970,8 @@ public final class JsonApiServer extends AbstractPage {
 
     /**
      *
-     * @return
+     * @return {@code true} when login via browser local storage auth token is
+     *         enabled.
      */
     private static boolean isAuthTokenLoginEnabled() {
         return ConfigManager.instance().isConfigValue(
@@ -6095,15 +6097,30 @@ public final class JsonApiServer extends AbstractPage {
         final boolean isAuthTokenLoginEnabled = isAuthTokenLoginEnabled();
 
         /*
-         * If user authentication token is disabled we fall back to the user in
-         * the active session.
+         * If user authentication token (browser local storage) is disabled or
+         * user was authenticated by OneTimeAuthToken, we fall back to the user
+         * in the active session.
          */
-        if (!isAuthTokenLoginEnabled && session.getUser() != null) {
+        if ((!isAuthTokenLoginEnabled || session.isOneTimeAuthToken())
+                && session.getUser() != null) {
 
-            onUserLoginGranted(userData, session, isAdminOnlyLogin, session
-                    .getUser().getUserId(), session.getUser(), null);
+            /*
+             * INVARIANT: User must exist in database.
+             */
+            final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
-            setApiResultOK(userData);
+            // We need the JPA attached User.
+            final User userDb =
+                    userDao.findActiveUserByUserId(session.getUser()
+                            .getUserId());
+
+            if (userDb == null) {
+                onLoginFailed(userData, null);
+            } else {
+                onUserLoginGranted(userData, session, isAdminOnlyLogin, session
+                        .getUser().getUserId(), userDb, null);
+                setApiResultOK(userData);
+            }
 
         } else {
 

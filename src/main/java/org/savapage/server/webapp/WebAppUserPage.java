@@ -50,6 +50,7 @@ import org.apache.wicket.util.lang.Bytes;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.crypto.OneTimeAuthToken;
 import org.savapage.core.dao.enums.DocLogProtocolEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.doc.DocContent;
@@ -73,6 +74,9 @@ import org.slf4j.LoggerFactory;
 public final class WebAppUserPage extends AbstractWebAppPage {
 
     private static final long serialVersionUID = 1L;
+
+    private final static String PAGE_PARM_AUTH_TOKEN = "auth_token";
+    private final static String PAGE_PARM_AUTH_TOKEN_USERID = "auth_user";
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(WebAppUserPage.class);
@@ -253,6 +257,56 @@ public final class WebAppUserPage extends AbstractWebAppPage {
     }
 
     /**
+     * Check if a {@link OneTimeAuthToken} is present and, when valid,
+     * authenticates by putting the {@link User} in the {@link SpSession}.
+     *
+     * @param parameters
+     *            The {@link PageParameters}.
+     */
+    private void checkOneTimeAuthToken(final PageParameters parameters) {
+
+        final String token =
+                this.getParmValue(parameters, false, PAGE_PARM_AUTH_TOKEN);
+
+        final String userid =
+                this.getParmValue(parameters, false,
+                        PAGE_PARM_AUTH_TOKEN_USERID);
+
+        if (userid == null || token == null) {
+            return;
+        }
+
+        final User sessionUser = SpSession.get().getUser();
+
+        if (sessionUser != null && sessionUser.getUserId().equals(userid)) {
+            return;
+        }
+
+        final long msecExpiry =
+                ConfigManager.instance().getConfigLong(
+                        Key.WEB_LOGIN_TTP_TOKEN_EXPIRY_MSECS);
+
+        if (!OneTimeAuthToken.isTokenValid(userid, token, msecExpiry)) {
+            return;
+        }
+
+        final User authUser =
+                ServiceContext.getDaoContext().getUserDao()
+                        .findActiveUserByUserId(userid);
+
+        if (authUser == null) {
+            return;
+        }
+
+        SpSession.get().setUser(authUser, true);
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(String.format(
+                    "User [%s] authenticated with token: %s", userid, token));
+        }
+    }
+
+    /**
      *
      * @param parameters
      *            The {@link PageParameters}.
@@ -265,6 +319,8 @@ public final class WebAppUserPage extends AbstractWebAppPage {
             setResponsePage(WebAppCountExceededMsg.class);
             return;
         }
+
+        checkOneTimeAuthToken(parameters);
 
         final String appTitle = getWebAppTitle(null);
 

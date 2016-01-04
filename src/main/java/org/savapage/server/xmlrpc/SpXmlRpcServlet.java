@@ -56,10 +56,10 @@ public final class SpXmlRpcServlet extends XmlRpcServlet {
     private static final String HANDLER_KEY_CLIENT = "client";
     private static final String HANDLER_KEY_CUPS_EVENT = "cups-event";
     private static final String HANDLER_KEY_RFID_EVENT = "rfid-event";
+    private static final String HANDLER_KEY_ONE_TIME_AUTH = "onetime-auth";
 
     private static ThreadLocal<String> clientIpAddress = new ThreadLocal<>();
     private static ThreadLocal<Boolean> isSslConnection = new ThreadLocal<>();
-
 
     /**
      * Gets the IP address of the client.
@@ -86,13 +86,13 @@ public final class SpXmlRpcServlet extends XmlRpcServlet {
     protected XmlRpcHandlerMapping newXmlRpcHandlerMapping()
             throws XmlRpcException {
 
-        final PropertyHandlerMapping mapping =
-                new PropertyHandlerMapping();
+        final PropertyHandlerMapping mapping = new PropertyHandlerMapping();
 
         mapping.addHandler(HANDLER_KEY_ADMIN, AdminHandler.class);
         mapping.addHandler(HANDLER_KEY_CLIENT, ClientAppHandler.class);
         mapping.addHandler(HANDLER_KEY_CUPS_EVENT, CupsEventHandler.class);
         mapping.addHandler(HANDLER_KEY_RFID_EVENT, RfidEventHandler.class);
+        mapping.addHandler(HANDLER_KEY_ONE_TIME_AUTH, OneTimeAuthHandler.class);
 
         /*
          * This call configures the XML-RPC server for introspection (i.e. it
