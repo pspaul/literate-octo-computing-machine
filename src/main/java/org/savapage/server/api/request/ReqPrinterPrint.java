@@ -390,18 +390,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         try {
 
-            final ProxyPrintCostParms costParms = new ProxyPrintCostParms();
-
             /*
              * Set the common parameters for all print job chunks, and calculate
              * the cost.
              */
-            costParms.setDuplex(printReq.isDuplex());
-            costParms.setEcoPrint(printReq.isEcoPrintShadow()
-                    || printReq.isEcoPrint());
-            costParms.setGrayscale(printReq.isGrayscale());
-            costParms.setNumberOfCopies(printReq.getNumberOfCopies());
-            costParms.setPagesPerSide(printReq.getNup());
+            final ProxyPrintCostParms costParms =
+                    printReq.createProxyPrintCostParms();
 
             cost =
                     ACCOUNTING_SERVICE.calcProxyPrintCost(
