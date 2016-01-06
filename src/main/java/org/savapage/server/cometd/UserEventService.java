@@ -244,7 +244,10 @@ public final class UserEventService extends AbstractEventService {
                      */
                     break;
 
+                default:
+                    break;
                 }
+
             }
         }
 
@@ -768,30 +771,43 @@ public final class UserEventService extends AbstractEventService {
                                             messageDate);
                             break;
 
+                        case PRINT_OUT_HOLD:
+                            returnData =
+                                    createNullMsg(user, isWebAppClient, locale);
+                            break;
+
                         case STOP_POLL_REQ:
-
-                            // See Mantis #515
-                            if (isWebAppClient) {
-
-                                if (clientIpAddress == null
-                                        || msgIndicator.getSenderId().equals(
-                                                clientIpAddress)) {
-
-                                    returnData =
-                                            createNullMsg(user, isWebAppClient,
-                                                    locale);
-
-                                } else {
-                                    if (LOGGER.isTraceEnabled()) {
-                                        LOGGER.trace("Ignored message ["
-                                                + msgIndicator.getMessage()
-                                                + "] from ["
-                                                + msgIndicator.getSenderId()
-                                                + "] since we are ["
-                                                + clientIpAddress + "]");
-                                    }
-                                }
+                            /*
+                             * This messages is meant for WebApp clients only.
+                             * See Mantis #515.
+                             */
+                            if (!isWebAppClient) {
+                                break;
                             }
+
+                            final String senderId = msgIndicator.getSenderId();
+
+                            if (clientIpAddress == null
+                                    || (senderId != null && senderId
+                                            .equals(clientIpAddress))) {
+
+                                returnData =
+                                        createNullMsg(user, isWebAppClient,
+                                                locale);
+                                break;
+                            }
+
+                            if (LOGGER.isWarnEnabled()) {
+                                LOGGER.warn("Ignored message ["
+                                        + msgIndicator.getMessage()
+                                        + "] from ["
+                                        + msgIndicator.getSenderId()
+                                        + "] since we are [" + clientIpAddress
+                                        + "]");
+                            }
+                            break;
+
+                        default:
                             break;
                         }
                     }
@@ -1015,6 +1031,8 @@ public final class UserEventService extends AbstractEventService {
 
                 userData.put(KEY_EVENT, UserEventEnum.PRINT_MSG);
                 userData.put(KEY_DATA, json);
+
+                addUserStats(userData, userName, locale);
 
             } finally {
                 ServiceContext.close();

@@ -51,7 +51,6 @@ import org.savapage.core.jpa.DocOut;
 import org.savapage.core.jpa.PdfOut;
 import org.savapage.core.jpa.PrintIn;
 import org.savapage.core.jpa.PrintOut;
-import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.DateUtil;
@@ -361,8 +360,6 @@ public final class DocLogItem {
                 query.setMaxResults(maxResults);
             }
 
-            final DocLogService docLogService =
-                    ServiceContext.getServiceFactory().getDocLogService();
             final QueueService queueService =
                     ServiceContext.getServiceFactory().getQueueService();
 

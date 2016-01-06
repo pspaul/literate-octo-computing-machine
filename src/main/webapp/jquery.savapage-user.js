@@ -319,11 +319,9 @@
 			 */
 			_onEvent = function(message) {
 
-				var res;
+				var res = $.parseJSON(message.data);
 
 				_longPollStartTime = null;
-
-				res = $.parseJSON(message.data);
 
 				if (!_paused) {
 
@@ -349,19 +347,15 @@
 
 						if (res.event === "PRINT_MSG") {
 							_this.onMsgEvent(res.data);
-						} else if (res.event === "ACCOUNT") {
-							_this.onNullEvent(res.data);
 							_this.onAccountEvent(res.stats);
-						} else if (res.event === "NULL") {
+						} else if (res.event === "ACCOUNT" || res.event === "NULL") {
 							_this.onNullEvent(res.data);
 							_this.onAccountEvent(res.stats);
 						}
-
-						_this.onPollInvitation();
-
+												
+						_this.onPollInvitation();						
 					}
-					//} else {
-					//_this.onEventIgnored();
+
 				}
 			};
 
