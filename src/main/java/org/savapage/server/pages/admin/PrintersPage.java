@@ -53,12 +53,14 @@ import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.PrinterGroupMember;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
+import org.savapage.core.papercut.PaperCutHelper;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
+import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
@@ -196,7 +198,7 @@ public final class PrintersPage extends AbstractAdminListPage {
 
         private String getProxyPrintAuthMode(final Device device) {
 
-            String proxyPrintAuthMode = "";
+            final StringBuilder proxyPrintAuthMode = new StringBuilder();
 
             final ProxyPrintAuthModeEnum authModeEnum =
                     DEVICE_SERVICE.getProxyPrintAuthMode(device.getId());
@@ -205,23 +207,23 @@ public final class PrintersPage extends AbstractAdminListPage {
 
                 switch (authModeEnum) {
                 case DIRECT:
-                    proxyPrintAuthMode += "Direct";
+                    proxyPrintAuthMode.append("Direct");
                     break;
 
                 case FAST:
-                    proxyPrintAuthMode += "Fast";
+                    proxyPrintAuthMode.append("Fast");
                     break;
 
                 case FAST_DIRECT:
-                    proxyPrintAuthMode += "Fast &bull; Direct";
+                    proxyPrintAuthMode.append("Fast &bull; Direct");
                     break;
 
                 case FAST_HOLD:
-                    proxyPrintAuthMode += "Fast &bull; Hold";
+                    proxyPrintAuthMode.append("Fast &bull; Hold");
                     break;
 
                 case HOLD:
-                    proxyPrintAuthMode += "Hold";
+                    proxyPrintAuthMode.append("Hold");
                     break;
 
                 default:
@@ -229,7 +231,7 @@ public final class PrintersPage extends AbstractAdminListPage {
                             + authModeEnum + "]");
                 }
             }
-            return proxyPrintAuthMode;
+            return proxyPrintAuthMode.toString();
         }
 
         @Override
@@ -258,6 +260,7 @@ public final class PrintersPage extends AbstractAdminListPage {
                     new JsonRollingTimeSeries<>(TimeSeriesInterval.DAY, 30, 0);
 
             series.clear();
+
             try {
                 series.init(observationTime, PRINTER_SERVICE.getAttributeValue(
                         printer, PrinterAttrEnum.PRINT_OUT_ROLLING_DAY_PAGES));
@@ -432,14 +435,29 @@ public final class PrintersPage extends AbstractAdminListPage {
                             .getPrinterName());
 
             String deviceUriText = "";
+            String deviceUriImgUrl = null;
 
             if (cupsPrinter != null) {
                 final URI deviceUri = cupsPrinter.getDeviceUri();
                 if (deviceUri != null) {
                     deviceUriText = deviceUri.toString();
+                    if (PaperCutHelper.isPaperCutPrinter(deviceUri)) {
+                        deviceUriImgUrl =
+                                WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT);
+                    }
                 }
             }
+
             item.add(new Label("deviceUri", deviceUriText));
+
+            //
+            labelWrk =
+                    createVisibleLabel(deviceUriImgUrl != null, "deviceUriImg",
+                            "");
+            if (deviceUriImgUrl != null) {
+                labelWrk.add(new AttributeModifier("src", deviceUriImgUrl));
+            }
+            item.add(labelWrk);
 
             //
             final boolean isConfigured =

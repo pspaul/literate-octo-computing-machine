@@ -8,16 +8,28 @@
 	<ul data-role="listview" data-filter="false">
 		<li class="ui-li-has-icon" wicket:id="printers-view">
             <img width="16" height="16" wicket:id="printerImage"/>
-            <h3><span wicket:id="displayName"/></h3>
-            <p><span wicket:id="printer-pie" class="sparkline-printer-pie"/>&nbsp;<span class="sp-printer-opt-download" wicket:id="printerName"/> &bull; <span class="sp-txt-wrap" wicket:id="deviceUri"/></p>
-            <p><span wicket:id="printer-sparkline" class="sparkline-printer-line"/></p>
+            <h3>
+                <span wicket:id="displayName"/>
+            </h3>
+            <p><span wicket:id="printer-pie" class="sparkline-printer-pie"/>&nbsp;<span class="sp-printer-opt-download" wicket:id="printerName"/> &bull;
+                <span class="sp-txt-wrap" wicket:id="deviceUri"/>
+                </p>
+            <p>
+                <span wicket:id="printer-sparkline" class="sparkline-printer-line"/>
+            </p>
 
             <wicket:enclosure child="printer-needs-configuration">
                 <div class="sp-txt-error sp-txt-wrap"><span wicket:id="printer-needs-configuration"/></div>
             </wicket:enclosure>
                         
 			<p wicket:id="info"></p>
-			<div class="sp-txt-wrap" wicket:id="period"/> 
+            
+			<div class="sp-txt-wrap">
+                <wicket:enclosure child="deviceUriImg">
+                    <img wicket:id="deviceUriImg" src="" height="12"/>
+                </wicket:enclosure>                                             
+                <span wicket:id="period"/>
+			</div> 
             <div class="sp-txt-wrap" wicket:id="totals"/>
             <wicket:enclosure child="printerGroups">
                 <br/>
