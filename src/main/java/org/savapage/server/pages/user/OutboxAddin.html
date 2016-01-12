@@ -6,11 +6,19 @@
 			wicket:id="printer" />
 	</h3>
 
-	<div class="sp-txt-wrap">
-		<wicket:enclosure child="title">
-			<span wicket:id="title" />
-		</wicket:enclosure>
-	</div>
+    <div class="sp-txt-wrap">
+        <wicket:enclosure child="title">
+            <span wicket:id="title" />
+        </wicket:enclosure>
+        <wicket:enclosure child="extSupplier"> &bull;
+                <wicket:enclosure child="extSupplierImg">
+                    <img wicket:id="extSupplierImg" src="" height="12"/>
+                </wicket:enclosure>                      
+                <wicket:enclosure child="extSupplier">
+                    <span wicket:id="extSupplier"/>
+                </wicket:enclosure>
+        </wicket:enclosure>             
+    </div>
 
 	<div class="sp-txt-wrap">
 		<span wicket:id="timeSubmit" /> &bull; <span wicket:id="totals" />

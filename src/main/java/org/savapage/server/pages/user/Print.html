@@ -29,12 +29,14 @@ pattern="[0-9]*"
 		        <button class="sp-button-mini-print-mono ui-icon-mini-print-mono ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
 		        <button class="sp-button-mini-print-duplex ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
 		        <button class="sp-button-mini-print-n-up ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
-            </div>
-            
 
-        </li>
-        
-	    <li>
+<wicket:remove><!-- 
+                <a href="#" id="button-print-delegation" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-user">
+                    <wicket:message key="button-delegation"/>
+                </a>                
+--></wicket:remove>
+            </div>
+                   
 	        <wicket:fragment wicket:id="quicksearch-printer"/>
 	
 	        <ul class="printer-selected" data-role="listview" data-inset="true">
@@ -53,7 +55,8 @@ pattern="[0-9]*"
                         <span class="ui-li-count" id="printer-fast-print-expiry">hh:ss</span>
                     </a>
                 </li>
-            </ul>                        
+            </ul>
+            
 	    </li>
     </ul>
         
@@ -141,7 +144,7 @@ pattern="[0-9]*"
                 </label>
                 <input type="checkbox" id="delete-pages-after-print" wicket:id="delete-pages-after-print" value="1"/>
             </div>
-            	    
+
 	    </li>
 	
     </ul>

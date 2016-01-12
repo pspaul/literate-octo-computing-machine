@@ -54,6 +54,7 @@ import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.jpa.tools.DatabaseTypeEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
+import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.payment.PaymentMethodEnum;
@@ -144,10 +145,16 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static final String PATH_IMAGES_PAYMENT = PATH_IMAGES + "/payment";
 
     /**
-    *
+    * .
     */
     public static final String PATH_IMAGES_EXT_SUPPLIER = PATH_IMAGES
             + "/ext-supplier";
+
+    /**
+    * .
+    */
+    public static final String PATH_IMAGES_THIRDPARTY = PATH_IMAGES
+            + "/thirdparty";
 
     /**
      * Basename of the properties file for web customization.
@@ -252,6 +259,23 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
         final StringBuilder url =
                 new StringBuilder().append(PATH_IMAGES_EXT_SUPPLIER)
+                        .append("/").append(extSupplierEnum.getImageFileName());
+
+        return url.toString();
+    }
+
+    /**
+     * Gets the relative image URL of an {@link ThirdPartyEnum}.
+     *
+     * @param extSupplierEnum
+     *            The {@link ThirdPartyEnum}.
+     * @return The relative URL as string.
+     */
+    public static String getThirdPartyEnumImgUrl(
+            final ThirdPartyEnum extSupplierEnum) {
+
+        final StringBuilder url =
+                new StringBuilder().append(PATH_IMAGES_THIRDPARTY)
                         .append("/").append(extSupplierEnum.getImageFileName());
 
         return url.toString();

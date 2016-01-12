@@ -352,8 +352,8 @@
 							_this.onNullEvent(res.data);
 							_this.onAccountEvent(res.stats);
 						}
-												
-						_this.onPollInvitation();						
+
+						_this.onPollInvitation();
 					}
 
 				}
@@ -922,6 +922,7 @@
 					image.addClass('active');
 					// detailedScanImageInBrowser();
 				});
+				
 				$("#browser-nav-right").click(function() {
 					navRight();
 					return false;
@@ -2781,6 +2782,12 @@
 					return false;
 				});
 
+				// TEST
+				$('#button-print-delegation').click(function() {
+					_view.showPageAsync('#page-print-delegation', 'PagePrintDelegation');
+					return false;
+				});
+
 				// Last, but not least!!
 				_this.onCreated();
 
@@ -3145,8 +3152,8 @@
 
 				if (res.result.code === '0') {
 
-					_quickPrinterCache = res.items;
-					_fastPrintAvailable = res.fastPrintAvailable;
+					_quickPrinterCache = res.dto.items;
+					_fastPrintAvailable = res.dto.fastPrintAvailable;
 
 					if (_fastPrintAvailable && _model.myFirstPageShowPrint) {
 						_this.onFastProxyPrintRenew(false);
@@ -3222,9 +3229,7 @@
 			}
 			//
 			, _onPrint = function(isClose) {
-				_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, 
-					_view.isCbChecked($("#print-remove-graphics")), 
-					_view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")));
+				_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")));
 			}
 			//
 			, _setVisibility = function() {
@@ -3287,6 +3292,13 @@
 				$('#slider-print-copies').change(function() {
 					_setVisibility();
 				});
+
+				/* 
+				$('#button-print-delegation').click(function() {
+					_this.onShowPrintDelegation();
+					return false;
+				});
+				*/
 
 				$('#button-print').click(function(e) {
 					_onPrint(false);
@@ -5027,7 +5039,7 @@
 
 				if (_model.removeGraphics && _model.ecoprint) {
 					_view.message(_i18n.format('msg-select-single-pdf-filter', null));
-					return false;				
+					return false;
 				}
 
 				if (!_saveSelectedletterhead('#pdf-letterhead-list', true)) {
@@ -5112,7 +5124,7 @@
 						collate : collate,
 						removeGraphics : removeGraphics,
 						ecoprint : ecoprint,
-						clear : isClear,						
+						clear : isClear,
 						options : _model.myPrinterOpt
 					})
 				});
@@ -5236,6 +5248,10 @@
 					}
 				}
 				_view.showUserPageAsync('#page-printer-settings', 'PrinterSettings');
+			};
+
+			_view.pages.print.onShowPrintDelegation = function() {
+				_view.showPageAsync('#page-print-delegation', 'PagePrintDelegation');
 			};
 
 			_view.pages.print.onClearPrinter = function() {
@@ -5785,6 +5801,7 @@
 				pdfprop : new PagePdfProp(_i18n, _view, _model),
 				main : new PageMain(_i18n, _view, _model),
 				print : new PagePrint(_i18n, _view, _model, _api),
+				printDelegation : new _ns.PagePrintDelegation(_i18n, _view, _model, _api),
 				print_settings : new PagePrintSettings(_i18n, _view, _model),
 				fileUpload : new PageFileUpload(_i18n, _view, _model),
 				userPinReset : new PageUserPinReset(_i18n, _view, _model),

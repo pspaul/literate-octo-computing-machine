@@ -156,16 +156,6 @@
 				$('.sp-select-user-groups').width(width);
 			}
 			//
-			, _getSelected = function(id) {
-				// It took some time to find out how to return an array object :-((
-				// "new Array[]" does NOT work.
-				var values = new Object(), i = 0;
-				$.each($("select[id='" + id + "']"), function() {
-					values[i++] = $(this).val();
-				});
-				return values[0];
-			}
-			//
 			;
 
 			$(_self.id()).on('pagecreate', function(event) {
@@ -175,7 +165,8 @@
 				});
 
 				$(this).on('click', '#button-user-groups-add-remove-ok', null, function() {
-					_self.onUserGroupsAddRemove(_getSelected('sp-select-user-groups-to-add'), _getSelected('sp-select-user-groups-to-remove'));
+					_self.onUserGroupsAddRemove(_view.selectedValues('sp-select-user-groups-to-add'), 
+						_view.selectedValues('sp-select-user-groups-to-remove'));
 					return false;
 				});
 

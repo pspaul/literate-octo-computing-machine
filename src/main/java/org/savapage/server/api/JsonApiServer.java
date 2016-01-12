@@ -120,7 +120,6 @@ import org.savapage.core.dto.ProxyPrinterMediaSourcesDto;
 import org.savapage.core.dto.QuickSearchFilterDto;
 import org.savapage.core.dto.QuickSearchItemDto;
 import org.savapage.core.dto.QuickSearchPosPurchaseItemDto;
-import org.savapage.core.dto.QuickSearchPrinterItemDto;
 import org.savapage.core.dto.QuickSearchUserItemDto;
 import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.UserDto;
@@ -148,7 +147,6 @@ import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonAbstractBase;
-import org.savapage.core.json.JsonPrinter;
 import org.savapage.core.json.JsonPrinterDetail;
 import org.savapage.core.json.JsonPrinterList;
 import org.savapage.core.json.PdfProperties;
@@ -1453,12 +1451,6 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_PRINT_FAST_RENEW:
             return reqPrintFastRenew(requestingUser);
-
-        case JsonApiDict.REQ_PRINTER_QUICK_SEARCH:
-
-            return reqPrinterQuickSearch(
-                    getParmValue(parameters, isGetAction, "dto"),
-                    requestingUser);
 
         case JsonApiDict.REQ_PRINTER_RENAME:
 
@@ -2817,102 +2809,6 @@ public final class JsonApiServer extends AbstractPage {
         final JsonPrinterList jsonPrinterList = getUserPrinterList(userName);
 
         data.put("data", jsonPrinterList);
-        return setApiResultOK(data);
-    }
-
-    /**
-     *
-     * @param json
-     *            The JSON request.
-     * @param userName
-     *            The requesting user.
-     * @return
-     */
-    private Map<String, Object> reqPrinterQuickSearch(final String json,
-            final String userName) throws Exception {
-
-        final Map<String, Object> data = new HashMap<String, Object>();
-
-        final QuickSearchFilterDto dto =
-                AbstractDto.create(QuickSearchFilterDto.class, json);
-
-        final List<QuickSearchItemDto> items = new ArrayList<>();
-
-        final JsonPrinterList jsonPrinterList = getUserPrinterList(userName);
-
-        final int maxItems = dto.getMaxResults().intValue();
-
-        final String filter = dto.getFilter().toLowerCase();
-
-        /*
-         * First iteration to collect the items, fastPrintAvaliable.
-         */
-        final Iterator<JsonPrinter> iter = jsonPrinterList.getList().iterator();
-
-        // Is printer with Fast Proxy Print available?
-        Boolean fastPrintAvailable = null;
-
-        while (iter.hasNext()) {
-
-            final JsonPrinter printer = iter.next();
-
-            if (printer.getAuthMode() != null && printer.getAuthMode().isFast()) {
-                fastPrintAvailable = Boolean.TRUE;
-            }
-
-            final String location = printer.getLocation();
-
-            if (StringUtils.isEmpty(filter)
-                    || printer.getAlias().toLowerCase().contains(filter)
-                    || (StringUtils.isNotBlank(location) && location
-                            .toLowerCase().contains(filter))) {
-
-                if (items.size() < maxItems) {
-
-                    final QuickSearchPrinterItemDto itemWlk =
-                            new QuickSearchPrinterItemDto();
-
-                    itemWlk.setKey(printer.getDbKey());
-                    itemWlk.setText(printer.getAlias());
-                    itemWlk.setPrinter(printer);
-
-                    items.add(itemWlk);
-                } else {
-                    break;
-                }
-            }
-        }
-
-        /*
-         * We need to know if there are any "Fast Release" printers available
-         * (even if not part of this search list). So, if fastPrintAvaliable was
-         * NOT collected iterate the remainder of the list.
-         *
-         * Reason: the client may want to display a button to extend the Fast
-         * Print Closing Time.
-         */
-        if (fastPrintAvailable == null) {
-
-            fastPrintAvailable = Boolean.FALSE;
-
-            while (iter.hasNext()) {
-
-                final JsonPrinter printer = iter.next();
-
-                if (printer.getAuthMode() != null
-                        && printer.getAuthMode().isFast()) {
-                    fastPrintAvailable = Boolean.TRUE;
-                    break;
-                }
-            }
-        }
-
-        /*
-         *
-         */
-        data.put("items", items);
-        data.put("fastPrintAvailable", fastPrintAvailable);
-
         return setApiResultOK(data);
     }
 

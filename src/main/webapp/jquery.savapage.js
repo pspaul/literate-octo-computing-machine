@@ -2256,6 +2256,13 @@
 			};
 
 			/**
+			 * Toggles a checkbox button.
+			 */
+			this.toggleCb = function(sel) {
+				this.checkCb(sel, !this.isCbChecked(sel));
+			};
+
+			/**
 			 * Returns boolean.
 			 */
 			this.isCbChecked = function(sel) {
@@ -2301,6 +2308,24 @@
 				return ($("input:radio[name='" + name + "']:checked").attr('id') === id);
 			};
 
+			/**
+			 * Get array with selected values from (multiple) "select" element.
+			 */
+			this.selectedValues = function(id) {
+				// It took some time to find out how to return an array object :-((
+				// "new Array[]" does NOT work.
+				var values = new Object(), i = 0;
+				$.each($("select[id='" + id + "']"), function() {
+					values[i++] = $(this).val();
+				});
+				return values[0];
+			};
+
+			this.countSelectedValues = function(id) {
+				var val = this.selectedValues(id);
+				return val ? val.length : 0;
+			};
+
 			this.showApiMsg = function(res) {
 				if (res && res.result) {
 					this.apiResMsg(res.result);
@@ -2337,7 +2362,7 @@
 			};
 
 			/**
-			 * Enables/Disables jQuery selector.
+			 * Enables/Disables jQuery selector (this does not work for radio buttons).
 			 */
 			this.enable = function(jqsel, enable) {
 				var attr = "disabled";
@@ -2346,6 +2371,10 @@
 				} else {
 					jqsel.attr(attr, "");
 				}
+			};
+
+			this.enableCheckboxRadio = function(jqsel, enable) {
+				jqsel.checkboxradio( enable ? 'enable' : 'disable');
 			};
 
 			/**

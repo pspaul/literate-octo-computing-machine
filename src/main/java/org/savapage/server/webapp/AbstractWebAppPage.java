@@ -479,8 +479,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
             renderJs(response, "jquery/jquery.cometd.js");
         }
 
-        renderJs(response, "savapage.js" + nocache);
-        renderJs(response, "jquery.savapage.js" + nocache);
+        renderJs(response, String.format("%s%s", "savapage.js", nocache));
+        renderJs(response, String.format("%s%s", "jquery.savapage.js", nocache));
 
         renderWebAppTypeJsFiles(response, nocache);
 
@@ -494,9 +494,12 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
          * Render after JQM.
          */
         if (jsToRender.contains(JavaScriptLibrary.MOBIPICK)) {
-            renderJs(response, WebApp.getJqMobiPickLocation() + "xdate.js");
-            renderJs(response, WebApp.getJqMobiPickLocation() + "xdate.i18n.js");
-            renderJs(response, WebApp.getJqMobiPickLocation() + "mobipick.js");
+            renderJs(response, String.format("%s%s",
+                    WebApp.getJqMobiPickLocation(), "xdate.js"));
+            renderJs(response, String.format("%s%s",
+                    WebApp.getJqMobiPickLocation(), "xdate.i18n.js"));
+            renderJs(response, String.format("%s%s",
+                    WebApp.getJqMobiPickLocation(), "mobipick.js"));
         }
     }
 

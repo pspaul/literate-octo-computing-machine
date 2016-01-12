@@ -125,7 +125,10 @@ public final class WebAppUserPage extends AbstractWebAppPage {
     @Override
     protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
-        renderJs(response, getSpecializedJsFileName() + nocache);
+        renderJs(response, String.format("%s%s",
+                "jquery.savapage-page-print-delegation.js", nocache));
+        renderJs(response,
+                String.format("%s%s", getSpecializedJsFileName(), nocache));
     }
 
     /**

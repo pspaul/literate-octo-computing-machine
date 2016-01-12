@@ -30,7 +30,10 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
+import org.savapage.core.dao.UserGroupMemberDao;
+import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserGroupPagerReq;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
@@ -73,7 +76,15 @@ public final class UserGroupsPage extends AbstractAdminListPage {
 
         final UserGroupDao.ListFilter filter = new UserGroupDao.ListFilter();
 
+        final UserGroupMemberDao.GroupFilter groupFilter =
+                new UserGroupMemberDao.GroupFilter();
+
+        final UserGroupMemberDao groupMemberDao =
+                ServiceContext.getDaoContext().getUserGroupMemberDao();
+
         filter.setContainingText(req.getSelect().getNameContainingText());
+
+        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
         final UserGroupDao userGroupDao =
                 ServiceContext.getDaoContext().getUserGroupDao();
@@ -126,7 +137,21 @@ public final class UserGroupsPage extends AbstractAdminListPage {
 
                 item.add(new Label("groupName", userGroup.getGroupName()));
 
-                labelWrk = new Label("signal", "0");
+                //
+                final ReservedUserGroupEnum reservedGroup =
+                        ReservedUserGroupEnum.fromDbName(userGroup
+                                .getGroupName());
+
+                final long userCount;
+
+                if (reservedGroup == null) {
+                    groupFilter.setGroupId(userGroup.getId());
+                    userCount = groupMemberDao.getUserCount(groupFilter);
+                } else {
+                    userCount = userDao.countActiveUsers(reservedGroup);
+                }
+
+                labelWrk = new Label("signal", String.valueOf(userCount));
                 item.add(labelWrk);
 
                 /*

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="title">Print Delegatie</entry>
+    
+    <entry key="header-delegator">Delegatiegever</entry>
+    <entry key="header-account">Account</entry>
+    
+    <entry key="label-add-groups">Groepen toevoegen</entry>
+    <entry key="label-add-users">Gebruikers toevoegen</entry>
+    <entry key="label-edit">Bewerken</entry>
+        
+    <entry key="label-group">Groep</entry>
+    <entry key="label-groups">Groepen</entry>
+    <entry key="label-user">Gebruiker</entry>
+    <entry key="label-users">Gebruikers</entry>
+    <entry key="label-shared">Gedeeld</entry>
+        
+    <entry key="button-select-all">Alles selecteren</entry>
+    <entry key="button-deselect-all">Alles deselecteren</entry>
+    <entry key="button-remove-selected">Verwijderen</entry>
+    <entry key="button-close">Sluiten</entry>        
+    
+    <entry key="button-apply">Toepassen</entry>
+    <entry key="button-add">Toevoegen</entry>
+    
+</properties>

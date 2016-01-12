@@ -31,10 +31,13 @@ import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqPrinterPrint;
+import org.savapage.server.api.request.ReqPrinterQuickSearch;
 import org.savapage.server.api.request.ReqQueueEnable;
 import org.savapage.server.api.request.ReqQueueGet;
 import org.savapage.server.api.request.ReqSharedAccountGet;
+import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
+import org.savapage.server.api.request.ReqUserGroupQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
 
 /**
@@ -177,6 +180,7 @@ public class JsonApiDict {
     public static final String REQ_PRINTER_RENAME = "printer-rename";
     public static final String REQ_PRINTER_QUICK_SEARCH =
             "printer-quick-search";
+
     public static final String REQ_PRINTER_SET = "printer-set";
     public static final String REQ_PRINTER_SET_MEDIA_COST =
             "printer-set-media-cost";
@@ -191,6 +195,7 @@ public class JsonApiDict {
 
     public static final String REQ_SHARED_ACCOUNT_GET = "shared-account-get";
     public static final String REQ_SHARED_ACCOUNT_SET = "shared-account-set";
+    public static final String REQ_SHARED_ACCOUNT_QUICK_SEARCH = "shared-account-quick-search";
 
     public static final String REQ_REPORT = "report";
     public static final String REQ_REPORT_USER = "report-user";
@@ -213,6 +218,9 @@ public class JsonApiDict {
 
     public static final String REQ_USERGROUPS_ADD_REMOVE =
             "usergroups-add-remove";
+
+    public static final String REQ_USERGROUP_QUICK_SEARCH =
+            "usergroup-quick-search";
 
     public static final String REQ_GENERATE_UUID = "generate-uuid";
 
@@ -675,7 +683,10 @@ public class JsonApiDict {
         adm(REQ_PRINTER_OPT_DOWNLOAD, DbClaim.NONE, DbAccess.YES);
         usr(REQ_PRINTER_PRINT, ReqPrinterPrint.class, DbClaim.READ,
                 DbAccess.USER_LOCK);
-        usr(REQ_PRINTER_QUICK_SEARCH, DbClaim.READ, DbAccess.YES);
+
+        usr(REQ_PRINTER_QUICK_SEARCH, ReqPrinterQuickSearch.class,
+                DbClaim.READ, DbAccess.YES);
+
         adm(REQ_PRINTER_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET_MEDIA_COST, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET_MEDIA_SOURCES, DbClaim.READ, DbAccess.YES);
@@ -690,6 +701,9 @@ public class JsonApiDict {
                 DbAccess.YES);
         adm(REQ_SHARED_ACCOUNT_SET, ReqSharedAccountSet.class, DbClaim.READ,
                 DbAccess.YES);
+
+        usr(REQ_SHARED_ACCOUNT_QUICK_SEARCH, ReqSharedAccountQuickSearch.class,
+                DbClaim.READ, DbAccess.YES);
 
         adm(REQ_REPORT, DbClaim.READ, DbAccess.YES);
         usr(REQ_REPORT_USER, DbClaim.READ, DbAccess.YES);
@@ -714,6 +728,8 @@ public class JsonApiDict {
         adm(REQ_USERGROUPS_ADD_REMOVE, ReqUserGroupsAddRemove.class,
                 DbClaim.READ, DbAccess.YES);
 
+        usr(REQ_USERGROUP_QUICK_SEARCH, ReqUserGroupQuickSearch.class,
+                DbClaim.READ, DbAccess.YES);
     }
 
     /**

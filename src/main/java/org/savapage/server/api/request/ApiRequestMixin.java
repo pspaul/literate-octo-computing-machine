@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dto.AbstractDto;
@@ -34,6 +35,7 @@ import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.json.rpc.ErrorDataBasic;
 import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.ResultDataBasic;
+import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.Messages;
 
@@ -59,6 +61,12 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     private RequestCycle requestCycle;
     private PageParameters pageParameters;
     private boolean isGetAction;
+
+    /**
+     * .
+     */
+    protected static final ProxyPrintService PROXY_PRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     @Override
     public final Map<String, Object> process(final RequestCycle requestCycle,
@@ -95,6 +103,19 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
         return responseMap;
     }
 
+    /**
+     * Returns the Internet Protocol (IP) address of the client or last proxy
+     * that sent the request. For HTTP servlets, same as the value of the CGI
+     * variable <code>REMOTE_ADDR</code>.
+     *
+     * @return a <code>String</code> containing the IP address of the client
+     *         that sent the request
+     *
+     */
+    protected final String getRemoteAddr() {
+        return ((ServletWebRequest) RequestCycle.get().getRequest())
+                .getContainerRequest().getRemoteAddr();
+    }
     /**
      * @deprecated
      * @return The response {@link Map}.

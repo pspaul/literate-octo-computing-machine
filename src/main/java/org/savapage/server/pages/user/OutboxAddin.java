@@ -39,6 +39,7 @@ import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.SpSession;
+import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -148,6 +149,7 @@ public class OutboxAddin extends AbstractUserPage {
             mapVisible.put("cost", null);
             mapVisible.put("removeGraphics", null);
             mapVisible.put("ecoPrint", null);
+            mapVisible.put("extSupplier", null);
 
             /*
              *
@@ -180,6 +182,26 @@ public class OutboxAddin extends AbstractUserPage {
             // mapVisible.put("papersize", );
 
             mapVisible.put("cost", job.getLocaleInfo().getCost());
+
+            //
+            final String extSupplierImgUrl;
+
+            if (job.getExternalSupplier() != null) {
+                mapVisible.put("extSupplier", job.getExternalSupplier()
+                        .getUiText());
+                extSupplierImgUrl =
+                        WebApp.getExtSupplierEnumImgUrl(job
+                                .getExternalSupplier());
+            } else {
+                extSupplierImgUrl = null;
+            }
+
+            if (StringUtils.isBlank(extSupplierImgUrl)) {
+                helper.discloseLabel("extSupplierImg");
+            } else {
+                helper.encloseLabel("extSupplierImg", "", true).add(
+                        new AttributeModifier("src", extSupplierImgUrl));
+            }
 
             /*
              * Hide/Show

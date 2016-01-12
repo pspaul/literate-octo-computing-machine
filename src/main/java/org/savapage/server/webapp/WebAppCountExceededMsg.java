@@ -87,7 +87,8 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
     @Override
     protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
-        renderJs(response, getSpecializedJsFileName() + nocache);
+        renderJs(response,
+                String.format("%s%s", getSpecializedJsFileName(), nocache));
     }
 
 }
