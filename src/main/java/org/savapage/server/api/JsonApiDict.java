@@ -37,6 +37,7 @@ import org.savapage.server.api.request.ReqQueueGet;
 import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
+import org.savapage.server.api.request.ReqUserGroupMemberQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
 
@@ -195,7 +196,8 @@ public class JsonApiDict {
 
     public static final String REQ_SHARED_ACCOUNT_GET = "shared-account-get";
     public static final String REQ_SHARED_ACCOUNT_SET = "shared-account-set";
-    public static final String REQ_SHARED_ACCOUNT_QUICK_SEARCH = "shared-account-quick-search";
+    public static final String REQ_SHARED_ACCOUNT_QUICK_SEARCH =
+            "shared-account-quick-search";
 
     public static final String REQ_REPORT = "report";
     public static final String REQ_REPORT_USER = "report-user";
@@ -221,6 +223,9 @@ public class JsonApiDict {
 
     public static final String REQ_USERGROUP_QUICK_SEARCH =
             "usergroup-quick-search";
+
+    public static final String REQ_USERGROUP_MEMBER_QUICK_SEARCH =
+            "usergroup-member-quick-search";
 
     public static final String REQ_GENERATE_UUID = "generate-uuid";
 
@@ -730,6 +735,9 @@ public class JsonApiDict {
 
         usr(REQ_USERGROUP_QUICK_SEARCH, ReqUserGroupQuickSearch.class,
                 DbClaim.READ, DbAccess.YES);
+
+        usr(REQ_USERGROUP_MEMBER_QUICK_SEARCH,
+                ReqUserGroupMemberQuickSearch.class, DbClaim.READ, DbAccess.YES);
     }
 
     /**

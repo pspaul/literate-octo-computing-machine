@@ -89,11 +89,17 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             <td><label><wicket:message key="header-account"/></label>
                 <fieldset data-role="controlgroup" data-type="horizontal">
                     <label for="sp-print-delegation-select-account-group"><wicket:message key="label-group"/></label>
-                        <input type="radio" name="sp-print-delegation-select-account-radio" id="sp-print-delegation-select-account-group" checked /> 
+                        <input type="radio" name="sp-print-delegation-select-account-radio" 
+                            value="GROUP" 
+                            id="sp-print-delegation-select-account-group" checked /> 
                     <label for="sp-print-delegation-select-account-user"><wicket:message key="label-user"/></label>
-                        <input type="radio" name="sp-print-delegation-select-account-radio" id="sp-print-delegation-select-account-user" />
+                        <input type="radio" name="sp-print-delegation-select-account-radio" 
+                            value="USER" 
+                            id="sp-print-delegation-select-account-user" />
                     <label for="sp-print-delegation-select-account-shared"><wicket:message key="label-shared"/></label>
-                        <input type="radio" name="sp-print-delegation-select-account-radio" id="sp-print-delegation-select-account-shared" />
+                        <input type="radio" name="sp-print-delegation-select-account-radio"
+                            value="SHARED" 
+                            id="sp-print-delegation-select-account-shared" />
                 </fieldset>
             </td>
             <td><br/>

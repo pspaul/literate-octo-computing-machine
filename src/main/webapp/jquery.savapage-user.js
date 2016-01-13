@@ -1782,6 +1782,8 @@
 
 			var _this = this
 			//
+			, _util = _ns.Utils			
+			//
 			, _IMG_PADDING = 3
 			//
 			, _IMG_BORDER = 0
@@ -1800,7 +1802,7 @@
 			//
 			, _moveLeft, _moveRight, _moveToBegin, _moveToEnd, _moveJobs
 			//
-			, _showArrange, _showCutPageRanges, _getCutPageRanges, _countProp
+			, _showArrange, _showCutPageRanges, _getCutPageRanges
 			//
 			, _getJobRanges, _getFirstJob, _showArrButtons
 			//
@@ -2103,7 +2105,7 @@
 				//
 				, selUndo = $('#main-arr-undo')
 				//
-				, bCut = (_countProp(_model.myCutPages) > 0);
+				, bCut = _util.countProp(_model.myCutPages) > 0;
 
 				if (show) {
 					selEdit.removeClass('ui-disabled');
@@ -2195,25 +2197,10 @@
 			};
 
 			/**
-			 * Counts the number of properties in an object.
-			 *
-			 * Since IE8 does NOT support Object.keys(_model.myCutPages).length
-			 * we
-			 * use a workaround.
-			 */
-			_countProp = function(obj) {
-				var n = 0, p;
-				for (p in obj) {
-					n++;
-				}
-				return n;
-			};
-
-			/**
 			 *
 			 */
 			_showCutPageRanges = function() {
-				if (_countProp(_model.myCutPages) > 0) {
+				if (_util.countProp(_model.myCutPages) > 0) {
 					$('#main-page-range-cut').html(_getCutPageRanges());
 					$('#button-mini-cut').show();
 				} else {
