@@ -37,7 +37,9 @@ import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
+import org.savapage.core.dao.helpers.JsonPrintDelegation;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.RangeAtom;
@@ -50,13 +52,8 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
-import org.savapage.core.services.AccountingService;
-import org.savapage.core.services.DeviceService;
-import org.savapage.core.services.InboxService;
-import org.savapage.core.services.OutboxService;
-import org.savapage.core.services.PrinterService;
-import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.AccountTrxInfoSet;
 import org.savapage.core.services.helpers.PageScalingEnum;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
 import org.savapage.core.services.impl.InboxServiceImpl;
@@ -66,6 +63,9 @@ import org.savapage.server.api.JsonApiDict;
 import org.savapage.server.api.JsonApiServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * Handles a Proxy Print request.
@@ -86,46 +86,11 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             .getLogger(ReqPrinterPrint.class);
 
     /**
-     * .
-     */
-    private static final AccountingService ACCOUNTING_SERVICE = ServiceContext
-            .getServiceFactory().getAccountingService();
-
-    /**
-     * .
-     */
-    private static final DeviceService DEVICE_SERVICE = ServiceContext
-            .getServiceFactory().getDeviceService();
-
-    /**
-     * .
-     */
-    private static final InboxService INBOX_SERVICE = ServiceContext
-            .getServiceFactory().getInboxService();
-
-    /**
-     * .
-     */
-    private static final OutboxService OUTBOX_SERVICE = ServiceContext
-            .getServiceFactory().getOutboxService();
-
-    /**
-     * .
-     */
-    private static final PrinterService PRINTER_SERVICE = ServiceContext
-            .getServiceFactory().getPrinterService();
-
-    /**
-     * .
-     */
-    private static final ProxyPrintService PROXY_PRINT_SERVICE = ServiceContext
-            .getServiceFactory().getProxyPrintService();
-
-    /**
      *
      * @author Rijk Ravestein
      *
      */
+    @JsonInclude(Include.NON_NULL)
     private static class DtoReq extends AbstractDto {
 
         private String user;
@@ -141,6 +106,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Boolean ecoprint;
         private Boolean clear;
         private Map<String, String> options;
+        private PrintDelegationDto delegation;
 
         public String getUser() {
             return user;
@@ -244,6 +210,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         public void setOptions(Map<String, String> options) {
             this.options = options;
+        }
+
+        public PrintDelegationDto getDelegation() {
+            return delegation;
+        }
+
+        public void setDelegation(PrintDelegationDto delegation) {
+            this.delegation = delegation;
         }
 
     }
@@ -360,6 +334,27 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setEcoPrintShadow(dtoReq.getEcoprint());
         printReq.setLocale(this.getLocale());
         printReq.setIdUser(lockedUser.getId());
+
+        final PrintDelegationDto delegationDto = dtoReq.getDelegation();
+
+        if (delegationDto != null
+                && (!delegationDto.getGroups().isEmpty() || !delegationDto
+                        .getUsers().isEmpty())) {
+
+            final JsonPrintDelegation jsonDelegation =
+                    JsonPrintDelegation.create(dtoReq.getDelegation());
+
+            final AccountTrxInfoSet infoSet =
+                    PRINT_DELEGATION_SERVICE
+                            .createAccountTrxInfoSet(jsonDelegation);
+
+            printReq.setNumberOfCopies(infoSet.getWeightTotal());
+
+            if (printReq.getNumberOfCopies() > 1) {
+                printReq.setCollate(true);
+            }
+            printReq.setAccountTrxInfoSet(infoSet);
+        }
 
         /*
          * Vanilla jobs?

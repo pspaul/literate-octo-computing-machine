@@ -35,8 +35,16 @@ import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.json.rpc.ErrorDataBasic;
 import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.ResultDataBasic;
+import org.savapage.core.services.AccountingService;
+import org.savapage.core.services.DeviceService;
+import org.savapage.core.services.InboxService;
+import org.savapage.core.services.OutboxService;
+import org.savapage.core.services.PrintDelegationService;
+import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
+import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserGroupService;
 import org.savapage.core.util.Messages;
 
 /**
@@ -67,6 +75,56 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     protected static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /**
+     * .
+     */
+    protected static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
+
+    /**
+     * .
+     */
+    protected static final DeviceService DEVICE_SERVICE = ServiceContext
+            .getServiceFactory().getDeviceService();
+
+    /**
+     * .
+     */
+    protected static final InboxService INBOX_SERVICE = ServiceContext
+            .getServiceFactory().getInboxService();
+
+    /**
+     * .
+     */
+    protected static final OutboxService OUTBOX_SERVICE = ServiceContext
+            .getServiceFactory().getOutboxService();
+
+    /**
+     * .
+     */
+    protected static final PrinterService PRINTER_SERVICE = ServiceContext
+            .getServiceFactory().getPrinterService();
+
+    /**
+     * .
+     */
+    protected static final PrintDelegationService PRINT_DELEGATION_SERVICE =
+            ServiceContext.getServiceFactory().getPrintDelegationService();
+
+    /**
+     * .
+     */
+    protected static final QueueService QUEUE_SERVICE = ServiceContext
+            .getServiceFactory().getQueueService();
+
+    /**
+     * .
+     */
+    protected static final UserGroupService USER_GROUP_SERVICE = ServiceContext
+            .getServiceFactory().getUserGroupService();
+
+    //
 
     @Override
     public final Map<String, Object> process(final RequestCycle requestCycle,
@@ -116,6 +174,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
         return ((ServletWebRequest) RequestCycle.get().getRequest())
                 .getContainerRequest().getRemoteAddr();
     }
+
     /**
      * @deprecated
      * @return The response {@link Map}.

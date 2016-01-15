@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages;
 
+import org.savapage.core.dto.PrintDelegationDto;
+
 /**
  *
  * @author Rijk Ravestein
@@ -37,6 +39,22 @@ public final class PagePrintDelegation extends AbstractPage {
      *
      */
     public PagePrintDelegation() {
+
+        //
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        //
+        helper.addModifyLabelAttr("radio-account-group",
+                "value",
+                PrintDelegationDto.DelegatorAccountEnum.GROUP.toString());
+
+        helper.addModifyLabelAttr("radio-account-user",
+                "value",
+                PrintDelegationDto.DelegatorAccountEnum.USER.toString());
+
+        helper.addModifyLabelAttr("radio-account-shared",
+                "value",
+                PrintDelegationDto.DelegatorAccountEnum.SHARED.toString());
 
         //
         final QuickSearchPanel panel =

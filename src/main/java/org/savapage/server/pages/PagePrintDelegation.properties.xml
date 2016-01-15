@@ -19,6 +19,7 @@
     <entry key="button-select-all">Select all</entry>
     <entry key="button-deselect-all">Deselect all</entry>
     <entry key="button-remove-selected">Remove</entry>
+    <entry key="button-save">Save</entry>
     <entry key="button-close">Close</entry>        
 
     <entry key="button-apply">Apply</entry>

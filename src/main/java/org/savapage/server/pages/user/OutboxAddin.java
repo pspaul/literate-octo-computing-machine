@@ -34,6 +34,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.outbox.OutboxInfoDto;
+import org.savapage.core.outbox.OutboxInfoDto.OutboxAccountTrxInfoSet;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJob;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.services.OutboxService;
@@ -138,18 +139,12 @@ public class OutboxAddin extends AbstractUserPage {
              */
             final Map<String, String> mapVisible = new HashMap<>();
 
-            mapVisible.put("title", null);
-            mapVisible.put("papersize", null);
-            mapVisible.put("letterhead", null);
-            mapVisible.put("duplex", null);
-            mapVisible.put("singlex", null);
-            mapVisible.put("color", null);
-            mapVisible.put("collate", null);
-            mapVisible.put("grayscale", null);
-            mapVisible.put("cost", null);
-            mapVisible.put("removeGraphics", null);
-            mapVisible.put("ecoPrint", null);
-            mapVisible.put("extSupplier", null);
+            for (final String attr : new String[] { "title", "papersize",
+                    "letterhead", "duplex", "singlex", "color", "collate",
+                    "grayscale", "cost", "accounts", "removeGraphics",
+                    "ecoPrint", "extSupplier" }) {
+                mapVisible.put(attr, null);
+            }
 
             /*
              *
@@ -179,9 +174,29 @@ public class OutboxAddin extends AbstractUserPage {
                 mapVisible.put("ecoPrint", "Eco Print");
             }
 
-            // mapVisible.put("papersize", );
+            // Cost
+            final StringBuilder cost = new StringBuilder();
+            cost.append(job.getLocaleInfo().getCost());
 
-            mapVisible.put("cost", job.getLocaleInfo().getCost());
+            //
+            final OutboxAccountTrxInfoSet trxInfoSet =
+                    job.getAccountTransactions();
+
+            if (trxInfoSet != null) {
+
+                final int nAccounts = trxInfoSet.getTransactions().size();
+
+                if (nAccounts > 0) {
+                    cost.append(" (").append(nAccounts).append(" ");
+                    if (nAccounts == 1) {
+                        cost.append(localized("account"));
+                    } else {
+                        cost.append(localized("accounts"));
+                    }
+                    cost.append(")");
+                }
+            }
+            mapVisible.put("cost", cost.toString());
 
             //
             final String extSupplierImgUrl;
@@ -216,7 +231,6 @@ public class OutboxAddin extends AbstractUserPage {
                         StringUtils.isNotBlank(entry.getValue()));
             }
         }
-
     }
 
     /**

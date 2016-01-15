@@ -30,6 +30,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
+import org.savapage.server.api.request.ReqPrintDelegationSet;
 import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqPrinterQuickSearch;
 import org.savapage.server.api.request.ReqQueueEnable;
@@ -170,6 +171,9 @@ public class JsonApiDict {
 
     public static final String REQ_PRINT_AUTH_CANCEL = "print-auth-cancel";
     public static final String REQ_PRINT_FAST_RENEW = "print-fast-renew";
+
+    public static final String REQ_PRINT_DELEGATION_SET =
+            "print-delegation-set";
 
     public static final String REQ_PRINTER_OPT_DOWNLOAD =
             "printer-opt-download";
@@ -738,6 +742,10 @@ public class JsonApiDict {
 
         usr(REQ_USERGROUP_MEMBER_QUICK_SEARCH,
                 ReqUserGroupMemberQuickSearch.class, DbClaim.READ, DbAccess.YES);
+
+        usr(REQ_PRINT_DELEGATION_SET, ReqPrintDelegationSet.class,
+                DbClaim.READ, DbAccess.YES);
+
     }
 
     /**

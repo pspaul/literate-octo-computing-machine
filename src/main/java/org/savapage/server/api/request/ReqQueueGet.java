@@ -29,7 +29,6 @@ import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.User;
-import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 
 /**
@@ -38,12 +37,6 @@ import org.savapage.core.services.ServiceContext;
  *
  */
 public final class ReqQueueGet extends ApiRequestMixin {
-
-    /**
-     * .
-     */
-    private static final QueueService QUEUE_SERVICE = ServiceContext
-            .getServiceFactory().getQueueService();
 
     /**
      *

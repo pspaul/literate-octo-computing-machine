@@ -5112,7 +5112,8 @@
 						removeGraphics : removeGraphics,
 						ecoprint : ecoprint,
 						clear : isClear,
-						options : _model.myPrinterOpt
+						options : _model.myPrinterOpt,
+						delegation : _model.printDelegation
 					})
 				});
 

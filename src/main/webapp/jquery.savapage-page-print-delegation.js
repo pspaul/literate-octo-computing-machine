@@ -40,6 +40,8 @@
 			//
 			, _util = _ns.Utils
 			//
+			, _ACCOUNT_ENUM_GROUP = 'GROUP', _ACCOUNT_ENUM_USER = 'USER', _ACCOUNT_ENUM_SHARED = 'SHARED'
+			//
 			, _RADIO_ACCOUNT_NAME = 'sp-print-delegation-select-account-radio'
 			//
 			, _RADIO_ACCOUNT_ID_GROUP = 'sp-print-delegation-select-account-group'
@@ -68,6 +70,34 @@
 			//
 			, _nSelectedDelegatorGroups, _nSelectedDelegatorUsers
 
+			//----------------------------------------------------------------
+			, _delegationModel = function() {
+				return {
+					name : 'a name',
+					groups : _delegatorGroups,
+					users : _delegatorUsers
+				};
+			}			
+			//----------------------------------------------------------------
+			, _createModelAccount = function(account) {
+				// Java: PrintDelegationDto.DelegatorAccount
+				return {
+					type : account.accountType,
+					id : account.id
+				};
+			}
+			//----------------------------------------------------------------
+			, _onSaveModel = function(selection) {
+				// Java: PrintDelegationDto
+				var res = _api.call({
+					request : "print-delegation-set",
+					dto : JSON.stringify(_delegationModel())
+				});
+
+				if (res.result.code !== '0') {
+					_view.showApiMsg(res);
+				}
+			}
 			//
 			, _isAccountSharedSelected = function() {
 				return _view.isRadioIdSelected(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_SHARED);
@@ -76,7 +106,7 @@
 			, _setVisibilityDelegatorsEdit = function() {
 				var selectedRows = _nSelectedDelegatorGroups + _nSelectedDelegatorUsers > 0;
 				_view.enableCheckboxRadio($("#sp-print-delegation-edit-radio-edit"), selectedRows);
-				_view.enable($('.sp-print-delegator-rows'), _nDelegatorGroups > 0);
+				_view.enable($('.sp-print-delegator-rows'), _nDelegatorGroups + _nDelegatorUsers > 0);
 				_view.enable($('.sp-print-delegator-rows-selected'), selectedRows);
 				_view.enable($('.sp-print-delegation-mode-edit'), _nSelectedDelegatorGroups + _nSelectedDelegatorUsers > 0);
 				_view.enable($('#sp-print-delegation-button-remove-selected'), selectedRows);
@@ -99,11 +129,7 @@
 			}
 			//----------------------------------------------------------------
 			, _setVisibility = function() {
-				var showButtonAdd, enableButtonAdd, showAddGroups, showAddUsers, showEditPanel
-				//
-				, showSharedAccountSelect = _view.isRadioIdSelected('sp-print-delegation-select-account-radio', 'sp-print-delegation-select-account-shared')
-				//
-				;
+				var showButtonAdd, enableButtonAdd, showAddGroups, showAddUsers, showEditPanel;
 
 				if (_isModeAddGroups()) {
 					showAddGroups = true;
@@ -128,7 +154,7 @@
 				_view.visible($('#sp-print-delegation-button-add'), showButtonAdd);
 				_view.enable($('#sp-print-delegation-button-add'), enableButtonAdd);
 
-				_view.visible($('.sp-print-delegation-select-shared-account'), showSharedAccountSelect);
+				_view.visible($('.sp-print-delegation-select-shared-account'), _isAccountSharedSelected());
 
 				_setVisibilityDelegatorsEdit();
 			}
@@ -260,16 +286,16 @@
 				html += '"/>&nbsp;&nbsp;&nbsp;' + item.text + '</th>';
 				html += '<td><img src="famfamfam-silk/';
 
-				if (account.accountType === "GROUP") {
+				if (account.accountType === _ACCOUNT_ENUM_GROUP) {
 					html += 'group.png';
-				} else if (account.accountType === "USER") {
+				} else if (account.accountType === _ACCOUNT_ENUM_USER) {
 					html += 'user_gray.png';
 				} else {
 					html += "tag_green.png";
 				}
 				html += '"/>';
 
-				if (account.accountType === "SHARED") {
+				if (account.accountType === _ACCOUNT_ENUM_SHARED) {
 					html += '&nbsp;&nbsp;&nbsp;' + account.text;
 				}
 
@@ -279,7 +305,7 @@
 			//----------------------------------------------------------------
 			, _getDelegatorRowBody = function() {
 				return $('#sp-selected-print-delegation tbody');
-			}			
+			}
 			//----------------------------------------------------------------
 			, _onAddGroups = function() {
 				var tbody = _getDelegatorRowBody(), account = _getAccount();
@@ -288,13 +314,7 @@
 
 					if (!_delegatorGroups[item.key]) {
 
-						_delegatorGroups[item.key] = {
-							item : item,
-							account : {
-								accountType : account.accountType,
-								id : account.id
-							}
-						};
+						_delegatorGroups[item.key] = _createModelAccount(account);
 						_appendDelegatorRow(tbody, item, account, true);
 						_nDelegatorGroups++;
 					}
@@ -306,16 +326,10 @@
 				var tbody = _getDelegatorRowBody(), account = _getAccount();
 
 				$.each(_quickUserSelected, function(key, item) {
-					
+
 					if (!_delegatorUsers[item.key]) {
 
-						_delegatorUsers[item.key] = {
-							item : item,
-							account : {
-								accountType : account.accountType,
-								id : account.id
-							}
-						};
+						_delegatorUsers[item.key] = _createModelAccount(account);
 						_appendDelegatorRow(tbody, item, account, false);
 						_nDelegatorUsers++;
 					}
@@ -470,18 +484,21 @@
 				});
 				_initDelegatorSelection();
 			}
-			//
+			// 
 			, _onChangeEditMode = function(id) {
 
 				if (id === 'sp-print-delegation-edit-radio-add-groups') {
 
-					_view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_GROUP);
-					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), true);
+					_view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
+					
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
 
 				} else if (id === 'sp-print-delegation-edit-radio-add-users') {
 
 					_view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), false);
 
 					// Delect all groups
 					_quickUserGroupSelected = {};
@@ -498,16 +515,17 @@
 
 					$('#sp-print-delegation-users-select-to-add-filter').empty();
 
-					_view.enable($('#sp-print-delegation-button-add'), false);
+					_view.enable($('#sp-print-delegation-button-add'), false);					
 
 				} else {
-					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), true);
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), true);
-
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
 				}
 			}
 			//
 			;
+
 
 			//----------------------------------------------------------------
 			$('#page-print-delegation').on('pagecreate', function(event) {
@@ -519,7 +537,6 @@
 				, filterableAccounts = $("#sp-print-delegation-select-shared-account-filter")
 				//
 				;
-
 				_initDelegatorSelection();
 
 				$('#sp-print-delegation-button-select-all').click(function() {
@@ -532,6 +549,10 @@
 
 				$('#sp-print-delegation-button-remove-selected').click(function() {
 					_onDelegatorRemoveSelected();
+				});
+
+				$('#sp-print-delegation-button-save').click(function() {
+					_onSaveModel();
 				});
 
 				$('#sp-print-delegation-button-add').click(function() {
@@ -548,7 +569,7 @@
 					_setVisibility();
 				});
 
-				$('input[name="sp-print-delegation-select-account-radio"]').click(function() {
+				$('input[name="' + _RADIO_ACCOUNT_NAME + '"]').click(function() {
 					_setVisibility();
 				});
 
@@ -556,6 +577,9 @@
 				$(this).on('click', '#sp-selected-print-delegation-rows tr', null, function() {
 					_onDelegatorSelectRow($(this));
 				});
+
+				// Start with Add Groups (and trigger visibility actions).
+				$('#sp-print-delegation-edit-radio-add-groups').click();
 
 				//---------------------
 				// Group selection
@@ -585,8 +609,6 @@
 					_onUserSelected($(this));
 				});
 
-				// Do not show available users on first open.
-
 				//---------------------
 				// Account selection
 				//---------------------
@@ -604,6 +626,8 @@
 
 			}).on("pagebeforeshow", function(event, ui) {
 				_setVisibility();
+			}).on("pagebeforehide", function(event, ui) {
+				_model.printDelegation = _delegationModel(); 
 			});
 		};
 

@@ -19,7 +19,8 @@
     <entry key="button-select-all">Alles selecteren</entry>
     <entry key="button-deselect-all">Alles deselecteren</entry>
     <entry key="button-remove-selected">Verwijderen</entry>
-    <entry key="button-close">Sluiten</entry>        
+    <entry key="button-save">Opslaan</entry>
+    <entry key="button-close">Sluiten</entry>
     
     <entry key="button-apply">Toepassen</entry>
     <entry key="button-add">Toevoegen</entry>

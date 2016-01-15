@@ -42,9 +42,12 @@ import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
+import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.PrintOut;
+import org.savapage.core.jpa.User;
+import org.savapage.core.jpa.UserAccount;
 import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
@@ -112,8 +115,26 @@ public class AccountTrxPage extends AbstractListPage {
 
         }
 
+        /**
+         *
+         * @param accountTrx
+         * @return
+         */
+        private User getUserSubject(final AccountTrx trx) {
+
+            final List<UserAccount> members = trx.getAccount().getMembers();
+
+            if (members == null || members.isEmpty()) {
+                return null;
+            }
+            return members.get(0).getUser();
+        }
+
         @Override
         protected void populateItem(final ListItem<AccountTrx> item) {
+
+            //
+            final MarkupHelper helper = new MarkupHelper(item);
 
             final AccountTrx accountTrx = item.getModelObject();
             final DocLog docLog = accountTrx.getDocLog();
@@ -194,6 +215,7 @@ public class AccountTrxPage extends AbstractListPage {
             String printOutInfo = null;
             String comment = accountTrx.getComment();
             String imageSrc = null;
+            String delegate = null;
 
             //
             String msgKey;
@@ -301,12 +323,32 @@ public class AccountTrxPage extends AbstractListPage {
                     comment += String.format(" (%s)", docLog.getTitle());
                 }
 
+                final AccountTypeEnum accountType =
+                        AccountTypeEnum.valueOf(accountTrx.getAccount()
+                                .getAccountType());
+
+                final User userActor = docLog.getUser();
+
+                if (accountType == AccountTypeEnum.SHARED) {
+                    delegate = localized("by-user", userActor.getUserId());
+                } else if (accountType == AccountTypeEnum.GROUP) {
+                    // TODO
+                } else {
+                    final User userSubject = this.getUserSubject(accountTrx);
+                    if (userSubject != null
+                            && !userSubject.getId().equals(userActor.getId())) {
+                        delegate =
+                                localized("by-delegate", userActor.getUserId());
+                    }
+                }
                 break;
 
             default:
                 throw new SpException("TrxType [" + trxType
                         + "] unknown: not handled");
             }
+
+            helper.encloseLabel("delegate", delegate, delegate != null);
 
             final boolean isExtBitcoin =
                     StringUtils.isNotBlank(accountTrx.getExtCurrencyCode())
@@ -329,9 +371,6 @@ public class AccountTrxPage extends AbstractListPage {
             // External supplier status
             final ExternalSupplierStatusEnum extSupplierStatus =
                     DaoEnumHelper.getExtSupplierStatus(docLog);
-
-            //
-            final MarkupHelper helper = new MarkupHelper(item);
 
             if (StringUtils.isBlank(imageSrc)) {
                 helper.discloseLabel("trxImage");

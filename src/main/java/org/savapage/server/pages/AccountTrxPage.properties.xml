@@ -14,5 +14,8 @@
     <entry key="printed-pages-multiple">{0} pages</entry>
     
     <entry key="button-receipt">Receipt</entry>
+
+    <entry key="by-user">user "{0}"</entry>
+    <entry key="by-delegate">delegate "{0}"</entry>
     
 </properties>

@@ -24,19 +24,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
       
     <tbody id="sp-selected-print-delegation-rows">
         <wicket:remove><!-- Delegators with assigned Account
-        <tr>
-            <td>
-                 <label for="sp-print-delegator-row-[n]">group name (n) | user name</label>
-                 <input type="checkbox" id="sp-print-delegator-row-[n]" class="sp-selected-print-delegation-row-checkbox" />
-            </td>
-            <td>
-                <fieldset data-role="controlgroup" data-type="horizontal">
-                    <label for="a1_1">Group</label><input type="radio" name="radio-choice-a-1" id="a1_1"/> 
-                    <label for="a1_2">User</label><input type="radio" name="radio-choice-a-1" id="a1_2"/>
-                    <label for="a1_3">Marketing Department</label><input type="radio" name="radio-choice-a-1" id="a1_3" checked />
-                </fieldset>
-            </td>       
-        </tr>
+        <tr> ... </tr>
         --></wicket:remove>                
     </tbody>
 </table>
@@ -50,6 +38,10 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                                                               
     <button id="sp-print-delegation-button-remove-selected"
         class="sp-print-delegator-rows-selected ui-btn ui-btn-inline ui-btn-no-icon"><wicket:message key="button-remove-selected"/></button>
+
+    <button id="sp-print-delegation-button-save"
+        class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon"><wicket:message key="button-save"/></button>
+        
         
     <a href="#" data-rel="back" data-direction="reverse" 
         class="ui-btn ui-btn-inline ui-btn-no-icon"><wicket:message key="button-close"/></a>
@@ -90,16 +82,13 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                 <fieldset data-role="controlgroup" data-type="horizontal">
                     <label for="sp-print-delegation-select-account-group"><wicket:message key="label-group"/></label>
                         <input type="radio" name="sp-print-delegation-select-account-radio" 
-                            value="GROUP" 
-                            id="sp-print-delegation-select-account-group" checked /> 
+                            value="[enum value]" wicket:id="radio-account-group" id="sp-print-delegation-select-account-group" checked /> 
                     <label for="sp-print-delegation-select-account-user"><wicket:message key="label-user"/></label>
                         <input type="radio" name="sp-print-delegation-select-account-radio" 
-                            value="USER" 
-                            id="sp-print-delegation-select-account-user" />
+                            value="[enum value]" wicket:id="radio-account-user" id="sp-print-delegation-select-account-user" />
                     <label for="sp-print-delegation-select-account-shared"><wicket:message key="label-shared"/></label>
                         <input type="radio" name="sp-print-delegation-select-account-radio"
-                            value="SHARED" 
-                            id="sp-print-delegation-select-account-shared" />
+                            value="[enum value]" wicket:id="radio-account-shared" id="sp-print-delegation-select-account-shared" />
                 </fieldset>
             </td>
             <td><br/>

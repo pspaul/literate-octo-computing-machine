@@ -32,7 +32,6 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.UserGroupService;
 
 /**
  *
@@ -40,12 +39,6 @@ import org.savapage.core.services.UserGroupService;
  *
  */
 public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
-
-    /**
-     * .
-     */
-    private static final UserGroupService USER_GROUP_SERVICE = ServiceContext
-            .getServiceFactory().getUserGroupService();
 
     /**
      *

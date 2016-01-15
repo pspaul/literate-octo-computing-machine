@@ -24,30 +24,32 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 
 import org.savapage.core.dto.AbstractDto;
-import org.savapage.core.dto.SharedAccountDisplayInfoDto;
+import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.jpa.User;
-import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqSharedAccountSet extends ApiRequestMixin {
+public final class ReqPrintDelegationSet extends ApiRequestMixin {
 
     @Override
     protected void
             onRequest(final String requestingUser, final User lockedUser)
                     throws IOException {
 
-        final SharedAccountDisplayInfoDto dto =
-                AbstractDto.create(SharedAccountDisplayInfoDto.class,
+        final PrintDelegationDto dto =
+                AbstractDto.create(PrintDelegationDto.class,
                         getParmValue("dto"));
 
-        final AbstractJsonRpcMethodResponse rpcResponse =
-                ACCOUNTING_SERVICE.lazyUpdateSharedAccount(dto);
+        // System.out.println(dto.stringify());
+        // System.out.println(dto.stringifyPrettyPrinted());
+        // System.out.println(JsonPrintDelegation.create(dto).stringify());
 
-        this.setApiResultText(rpcResponse);
+        // this.setApiResultOk();
+        this.setApiResultText(ApiResultCodeEnum.INFO,
+                "This function is not implemented yet.");
     }
 
 }
