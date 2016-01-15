@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,9 @@
 /*
  * NOTE: the *! comment blocks are part of the compressed version.
  */
+
+/*jslint browser: true*/
+/*global $, jQuery, alert*/
 
 /*
  * SavaPage jQuery Mobile Admin Pages
@@ -950,8 +953,6 @@
 			//
 			, _refreshPanel, _refreshPanelByUrl, _refreshPanelCommon
 			//
-			, _loadListPage, _loadListPageByUrl
-			//
 			, _panelCur = null, _panelCurClass = null, _loadPanel
 			//
 			;
@@ -1199,57 +1200,6 @@
 				 * into view.
 				 */
 				$("#sp-a-content-button").click();
-			};
-
-			/**
-			 * Loads a page of a list.
-			 */
-			_loadListPage = function(wClass, wClassPage, jqId) {
-				_loadListPageByUrl(wClass, 'admin/' + wClassPage, jqId);
-			};
-
-			/**
-			 * Loads a page of a list.
-			 */
-			_loadListPageByUrl = function(wClass, wClassPage, jqId) {
-
-				var
-				//
-				panel = _panel[wClass]
-				//
-				, data = null
-				//
-				, jsonData = null
-				//
-				;
-
-				if (panel.getInput) {
-					data = panel.getInput(panel);
-				}
-
-				if (data) {
-					jsonData = JSON.stringify(data);
-				}
-
-				$.mobile.loading("show");
-				$.ajax({
-					type : "POST",
-					async : true,
-					url : '/pages/' + wClassPage,
-					data : {
-						user : _model.user.id,
-						data : jsonData
-					}
-				}).done(function(html) {
-					$(jqId).html(html).enhanceWithin();
-					if (panel.onOutput) {
-						panel.onOutput(panel, $.parseJSON($(jqId + ' .json-rsp').text()));
-					}
-				}).fail(function() {
-					_self.onDisconnected();
-				}).always(function() {
-					$.mobile.loading("hide");
-				});
 			};
 
 			/*

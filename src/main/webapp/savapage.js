@@ -83,19 +83,25 @@ String.prototype.vformat = function() {"use strict";
 		_ns.Utils.countProp = function(obj) {
 			var n = 0, p;
 			for (p in obj) {
-				n++;
+				if (obj.hasOwnProperty(p)) {
+					n++;
+				}
 			}
 			return n;
 		};
 
 		/**
-		 * @return first object property or null when not found. 
+		 * @return first object property or null when not found.
 		 */
 		_ns.Utils.getFirstProp = function(obj) {
-			for (var p in obj) {
-				return p;
+			var p, first = null;
+			for (p in obj) {
+				if (obj.hasOwnProperty(p)) {
+					first = p;
+					break;
+				}
 			}
-			return null;			
+			return first;
 		};
 
 		/**

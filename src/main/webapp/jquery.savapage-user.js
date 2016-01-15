@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile User Web App | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile User Web App | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,9 @@
 /*
  * NOTE: the *! comment blocks are part of the compressed version.
  */
+
+/*jslint browser: true*/
+/*global $, jQuery, alert*/
 
 /*
  * SavaPage jQuery Mobile User Web App
@@ -922,7 +925,7 @@
 					image.addClass('active');
 					// detailedScanImageInBrowser();
 				});
-				
+
 				$("#browser-nav-right").click(function() {
 					navRight();
 					return false;
@@ -1782,7 +1785,7 @@
 
 			var _this = this
 			//
-			, _util = _ns.Utils			
+			, _util = _ns.Utils
 			//
 			, _IMG_PADDING = 3
 			//
@@ -2228,19 +2231,22 @@
 				};
 
 				for (page in _model.myCutPages) {
-					if (pagePrv) {
-						if (parseInt(pagePrv, 10) + 1 === parseInt(page, 10)) {
-							pageEnd = page;
-						} else {
-							addRange();
-							pagePrv = null;
+
+					if (_model.myCutPages.hasOwnProperty(page)) {
+						if (pagePrv) {
+							if (parseInt(pagePrv, 10) + 1 === parseInt(page, 10)) {
+								pageEnd = page;
+							} else {
+								addRange();
+								pagePrv = null;
+							}
 						}
+						if (!pagePrv) {
+							pageStart = page;
+							pageEnd = page;
+						}
+						pagePrv = page;
 					}
-					if (!pagePrv) {
-						pageStart = page;
-						pageEnd = page;
-					}
-					pagePrv = page;
 				}
 				if (pagePrv) {
 					addRange();
@@ -3280,12 +3286,12 @@
 					_setVisibility();
 				});
 
-				/* 
-				$('#button-print-delegation').click(function() {
-					_this.onShowPrintDelegation();
-					return false;
-				});
-				*/
+				/*
+				 $('#button-print-delegation').click(function() {
+				 _this.onShowPrintDelegation();
+				 return false;
+				 });
+				 */
 
 				$('#button-print').click(function(e) {
 					_onPrint(false);
@@ -3590,25 +3596,28 @@
 				// Create the html.
 				for (mediaWlk in mapMediaJobs) {
 
-					if (html.length) {
-						html += ' ';
-					}
+					if (mapMediaJobs.hasOwnProperty(mediaWlk)) {
 
-					html += '<span class="';
-
-					if (media && mediaWlk !== media) {
-						this.jobsMatchMedia = this.MediaMatchEnum.CLASH;
-						if (this.printPageScaling === 'CROP') {
-							html += 'sp-ipp-media-info-crop';
-						} else if (this.printPageScaling === 'EXPAND') {
-							html += 'sp-ipp-media-info-expand';
-						} else {
-							html += 'sp-ipp-media-info-shrink';
+						if (html.length) {
+							html += ' ';
 						}
-					} else {
-						html += 'sp-ipp-media-info-match';
+
+						html += '<span class="';
+
+						if (media && mediaWlk !== media) {
+							this.jobsMatchMedia = this.MediaMatchEnum.CLASH;
+							if (this.printPageScaling === 'CROP') {
+								html += 'sp-ipp-media-info-crop';
+							} else if (this.printPageScaling === 'EXPAND') {
+								html += 'sp-ipp-media-info-expand';
+							} else {
+								html += 'sp-ipp-media-info-shrink';
+							}
+						} else {
+							html += 'sp-ipp-media-info-match';
+						}
+						html += '">' + mapMediaJobs[mediaWlk].mediaUi + '</span>';
 					}
-					html += '">' + mapMediaJobs[mediaWlk].mediaUi + '</span>';
 				}
 
 				if (html.length === 0 || !this.myPrinter) {
@@ -3646,28 +3655,31 @@
 				// Create the html.
 				for (mediaWlk in mapMediaJobs) {
 
-					if (html.length) {
-						html += ' ';
-					}
+					if (mapMediaJobs.hasOwnProperty(mediaWlk)) {
 
-					html += '<span class="';
-
-					if (!mapMediaSources[mediaWlk] || (IS_UNIQUE_MEDIASOURCE_REQUIRED && mapMediaSources[mediaWlk].count > 1)) {
-
-						this.jobsMatchMediaSources = this.MediaMatchEnum.CLASH;
-
-						if (this.printPageScaling === 'CROP') {
-							html += 'sp-ipp-media-info-crop';
-						} else if (this.printPageScaling === 'EXPAND') {
-							html += 'sp-ipp-media-info-expand';
-						} else {
-							html += 'sp-ipp-media-info-shrink';
+						if (html.length) {
+							html += ' ';
 						}
 
-					} else {
-						html += 'sp-ipp-media-info-match';
+						html += '<span class="';
+
+						if (!mapMediaSources[mediaWlk] || (IS_UNIQUE_MEDIASOURCE_REQUIRED && mapMediaSources[mediaWlk].count > 1)) {
+
+							this.jobsMatchMediaSources = this.MediaMatchEnum.CLASH;
+
+							if (this.printPageScaling === 'CROP') {
+								html += 'sp-ipp-media-info-crop';
+							} else if (this.printPageScaling === 'EXPAND') {
+								html += 'sp-ipp-media-info-expand';
+							} else {
+								html += 'sp-ipp-media-info-shrink';
+							}
+
+						} else {
+							html += 'sp-ipp-media-info-match';
+						}
+						html += '">' + mapMediaJobs[mediaWlk].mediaUi + '</span>';
 					}
-					html += '">' + mapMediaJobs[mediaWlk].mediaUi + '</span>';
 				}
 
 				selHtml = $('.sp-print-job-media-sources-info');
@@ -4625,7 +4637,7 @@
 			// -----------------------------
 			_changeIcon = function(icon, title) {
 				if (icon !== _iconCur) {
-					$("#button-cometd-status").attr('title', title ? title : '');
+					$("#button-cometd-status").attr('title', title || '');
 					$("#button-cometd-status").buttonMarkup({
 						icon : icon
 					});

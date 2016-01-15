@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile Common | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Common | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -2313,8 +2313,8 @@
 			 */
 			this.selectedValues = function(id) {
 				// It took some time to find out how to return an array object :-((
-				// "new Array[]" does NOT work.
-				var values = new Object(), i = 0;
+				// "new Array[]" does NOT work.			
+				var values = {}, i = 0;
 				$.each($("select[id='" + id + "']"), function() {
 					values[i++] = $(this).val();
 				});

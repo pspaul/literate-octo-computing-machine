@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile Admin Panels | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Admin Panels | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1624,8 +1624,6 @@
 
 			onOutput : function(my, output) {
 
-				var _view = _ns.PanelCommon.view;
-
 				my.output = output;
 				/*
 				 * NOTICE the $().one() construct. Since the page get
@@ -1681,7 +1679,7 @@
 			},
 
 			m2v : function(my) {
-				var val, id
+				var id
 				//
 				, _view = _ns.PanelCommon.view
 				//
@@ -1697,7 +1695,7 @@
 
 			v2m : function(my) {
 
-				var val, sel, present
+				var sel, present
 				//
 				, _view = _ns.PanelCommon.view
 				//
@@ -1750,9 +1748,8 @@
 
 			onOutput : function(my, output) {
 
-				var _view = _ns.PanelCommon.view;
-
 				my.output = output;
+				
 				/*
 				 * NOTICE the $().one() construct. Since the page get
 				 * reloaded all the time, we want a single-shot binding.

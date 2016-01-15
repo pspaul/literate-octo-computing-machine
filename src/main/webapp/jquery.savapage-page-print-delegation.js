@@ -1,4 +1,4 @@
-/*! SavaPage jQuery Mobile Exceeded WebApp | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Print Delegation Page | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
@@ -36,9 +36,7 @@
 
 		_ns.PagePrintDelegation = function(_i18n, _view, _model, _api) {
 
-			var _this = this
-			//
-			, _util = _ns.Utils
+			var _util = _ns.Utils
 			//
 			, _ACCOUNT_ENUM_GROUP = 'GROUP', _ACCOUNT_ENUM_USER = 'USER', _ACCOUNT_ENUM_SHARED = 'SHARED'
 			//
@@ -77,7 +75,7 @@
 					groups : _delegatorGroups,
 					users : _delegatorUsers
 				};
-			}			
+			}
 			//----------------------------------------------------------------
 			, _createModelAccount = function(account) {
 				// Java: PrintDelegationDto.DelegatorAccount
@@ -343,7 +341,7 @@
 				//
 				, dbkey = selection.attr('data-savapage'), dbKeySelected
 				//
-				, tmp;
+				;
 
 				if (_isModeAddGroups()) {
 
@@ -365,11 +363,10 @@
 					if (dbKeySelected) {
 						if (dbKeySelected === dbkey) {
 							return;
-						} else {
-							_nSelectedGroups--;
-							delete _quickUserGroupSelected[dbKeySelected];
-							selection.closest('ul').find('.' + _CLASS_SELECTED_IND).html(_IND_DESELECTED).removeClass(_CLASS_SELECTED_IND);
 						}
+						_nSelectedGroups--;
+						delete _quickUserGroupSelected[dbKeySelected];
+						selection.closest('ul').find('.' + _CLASS_SELECTED_IND).html(_IND_DESELECTED).removeClass(_CLASS_SELECTED_IND);
 					}
 
 					_nSelectedGroups++;
@@ -405,16 +402,15 @@
 				//
 				, dbkey = selection.attr('data-savapage')
 				//
-				, dbKeySelected = _quickAccountSelected ? _quickAccountSelected.key : null;
+				, dbKeySelected = _quickAccountSelected ? _quickAccountSelected.key : null
 				//
 				;
 
 				if (dbKeySelected) {
 					if (dbKeySelected === dbkey) {
 						return;
-					} else {
-						selection.closest('ul').find('.' + _CLASS_SELECTED_IND).html(_IND_DESELECTED).removeClass(_CLASS_SELECTED_IND);
 					}
+					selection.closest('ul').find('.' + _CLASS_SELECTED_IND).html(_IND_DESELECTED).removeClass(_CLASS_SELECTED_IND);
 				}
 				_quickAccountSelected = _quickAccountCache[dbkey];
 				span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
@@ -484,13 +480,13 @@
 				});
 				_initDelegatorSelection();
 			}
-			// 
+			//
 			, _onChangeEditMode = function(id) {
 
 				if (id === 'sp-print-delegation-edit-radio-add-groups') {
 
 					_view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
-					
+
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
 
@@ -515,7 +511,7 @@
 
 					$('#sp-print-delegation-users-select-to-add-filter').empty();
 
-					_view.enable($('#sp-print-delegation-button-add'), false);					
+					_view.enable($('#sp-print-delegation-button-add'), false);
 
 				} else {
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
@@ -525,7 +521,6 @@
 			}
 			//
 			;
-
 
 			//----------------------------------------------------------------
 			$('#page-print-delegation').on('pagecreate', function(event) {
@@ -627,7 +622,7 @@
 			}).on("pagebeforeshow", function(event, ui) {
 				_setVisibility();
 			}).on("pagebeforehide", function(event, ui) {
-				_model.printDelegation = _delegationModel(); 
+				_model.printDelegation = _delegationModel();
 			});
 		};
 

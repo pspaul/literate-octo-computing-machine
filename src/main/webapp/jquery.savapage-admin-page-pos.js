@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile Admin POS Page | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Admin POS Page | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,8 +26,8 @@
  * NOTE: the *! comment blocks are part of the compressed version.
  */
 
-/* jslint browser: true */
-/* global $, jQuery, alert */
+/*jslint browser: true*/
+/*global $, jQuery, alert*/
 
 /*
  * SavaPage jQuery Mobile Admin Pages.
