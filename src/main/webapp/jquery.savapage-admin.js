@@ -934,6 +934,10 @@
 					})
 				});
 				_view.showApiMsg(res);
+				if (res.result.code === '0') {
+					_view.changePage($('#page-admin'));
+					_view.pages.admin.refreshUserGroups();
+				}
 			};
 
 			/**

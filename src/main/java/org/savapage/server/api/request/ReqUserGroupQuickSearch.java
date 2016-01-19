@@ -29,7 +29,7 @@ import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.UserGroupMemberDao;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dto.AbstractDto;
-import org.savapage.core.dto.QuickSearchFilterDto;
+import org.savapage.core.dto.QuickSearchFilterUserGroupDto;
 import org.savapage.core.dto.QuickSearchItemDto;
 import org.savapage.core.dto.QuickSearchUserGroupItemDto;
 import org.savapage.core.jpa.User;
@@ -71,8 +71,8 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
         final UserGroupMemberDao groupMemberDao =
                 ServiceContext.getDaoContext().getUserGroupMemberDao();
 
-        final QuickSearchFilterDto dto =
-                AbstractDto.create(QuickSearchFilterDto.class,
+        final QuickSearchFilterUserGroupDto dto =
+                AbstractDto.create(QuickSearchFilterUserGroupDto.class,
                         this.getParmValue("dto"));
 
         final List<QuickSearchItemDto> items = new ArrayList<>();
@@ -81,6 +81,7 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
         final UserGroupDao.ListFilter filter = new UserGroupDao.ListFilter();
 
         filter.setContainingText(dto.getFilter());
+        filter.setAclRole(dto.getAclRole());
 
         /*
          * Since we locally filter out reserved groups we need to retrieve more

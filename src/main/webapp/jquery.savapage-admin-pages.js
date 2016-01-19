@@ -146,6 +146,24 @@
 			//
 			, _self = _ns.derive(_page)
 			//
+			, _m2v = function() {
+				
+				var i, cbRoles = $('#sp-usergroup-edit-roles').find(':checkbox')
+				//
+				, roles = _model.editUserGroup.aclRoles, roleWlk;
+
+				cbRoles.prop("checked", false).checkboxradio("refresh");				
+
+				if (roles) {
+					for ( i = 0; i < roles.length; i++) {
+						roleWlk = $('#sp-usergroup-edit-roles').find('[value=' + roles[i] + ']');
+						if (roleWlk) {
+							roleWlk.prop("checked", true).checkboxradio("refresh");				
+						}
+					}
+				}				
+			}
+			//
 			;
 
 			$(_self.id()).on('pagecreate', function(event) {
@@ -156,6 +174,7 @@
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
+				_m2v();
 			}).on('pageshow', function(event, ui) {
 			});
 			return _self;
@@ -171,7 +190,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,           _this = this
+			//,              _this = this
 			//
 			, _resize = function() {
 				var width = $('#sp-user-groups-add-remove-addin').width();
@@ -337,7 +356,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,            _this = this
+			//,               _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//

@@ -100,8 +100,13 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
         final UserGroupAttrDao daoAttr =
                 ServiceContext.getDaoContext().getUserGroupAttrDao();
 
-        final EnumSet<ACLRoleEnum> enumSet = EnumSet.copyOf(dtoReq.getRoles());
-        final String jsonEnumSet = JsonHelper.serializeEnumSet(enumSet);
+        final String jsonEnumSet;
+        if (dtoReq.getRoles().isEmpty()) {
+            jsonEnumSet = "[]"; // TODO
+        } else {
+            final EnumSet<ACLRoleEnum> enumSet = EnumSet.copyOf(dtoReq.getRoles());
+            jsonEnumSet = JsonHelper.serializeEnumSet(enumSet);
+        }
 
         final UserGroupAttrEnum attrEnum = UserGroupAttrEnum.ACL_ROLES;
 

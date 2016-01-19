@@ -22,12 +22,21 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
 
+import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.UserGroupDao;
+import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.dao.enums.UserGroupAttrEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
+import org.savapage.core.jpa.UserGroupAttr;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.JsonHelper;
 
 /**
  *
@@ -62,6 +71,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
 
         private Long id;
         private String name;
+        private List<ACLRoleEnum> aclRoles;
 
         public Long getId() {
             return id;
@@ -78,6 +88,15 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         public void setName(String name) {
             this.name = name;
         }
+
+        public List<ACLRoleEnum> getAclRoles() {
+            return aclRoles;
+        }
+
+        public void setAclRoles(List<ACLRoleEnum> aclRoles) {
+            this.aclRoles = aclRoles;
+        }
+
     }
 
     @Override
@@ -99,10 +118,33 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             return;
         }
 
+        //
         final DtoRsp dtoRsp = new DtoRsp();
 
         dtoRsp.setId(userGroup.getId());
         dtoRsp.setName(userGroup.getGroupName());
+
+        // ACL
+        final UserGroupAttrDao attrDao =
+                ServiceContext.getDaoContext().getUserGroupAttrDao();
+
+        final UserGroupAttr aclAttr =
+                attrDao.findByName(userGroup, UserGroupAttrEnum.ACL_ROLES);
+
+        if (aclAttr != null) {
+
+            final EnumSet<ACLRoleEnum> enumSet =
+                    JsonHelper.deserializeEnumSet(ACLRoleEnum.class,
+                            aclAttr.getValue());
+
+            final ArrayList<ACLRoleEnum> list = new ArrayList<>();
+            final Iterator<ACLRoleEnum> iter = enumSet.iterator();
+            while (iter.hasNext()) {
+                list.add(iter.next());
+            }
+            dtoRsp.setAclRoles(list);
+        }
+
         this.setResponse(dtoRsp);
 
         setApiResultOk();

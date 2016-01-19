@@ -182,7 +182,8 @@
 					request : "usergroup-quick-search",
 					dto : JSON.stringify({
 						filter : filter,
-						maxResults : _QS_MAX_RESULTS
+						maxResults : _QS_MAX_RESULTS,
+						aclRole : 'PRINT_DELEGATOR'
 					})
 				});
 
