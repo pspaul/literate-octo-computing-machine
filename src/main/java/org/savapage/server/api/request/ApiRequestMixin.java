@@ -35,6 +35,7 @@ import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.json.rpc.ErrorDataBasic;
 import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.ResultDataBasic;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.InboxService;
@@ -75,6 +76,12 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     protected static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /**
+     * .
+     */
+    protected static final AccessControlService ACCESSCONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      * .

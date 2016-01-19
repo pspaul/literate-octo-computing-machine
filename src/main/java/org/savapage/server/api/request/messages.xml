@@ -6,7 +6,7 @@
 
     <!-- ReqAccountGet -->
       
-    <entry key="msg-account-not-found">Account "{0}" is not found.</entry>
+    <entry key="msg-account-not-found">Account "{0}" not found.</entry>
 
 	<!-- ReqDbBackup -->
 
@@ -15,7 +15,7 @@
     
     <!-- ReqQueueEnable -->
     
-    <entry key="msg-queue-urlpath-not-found">Queue "{0}" is not found.</entry> 
+    <entry key="msg-queue-urlpath-not-found">Queue "{0}" not found.</entry> 
     
     <entry key="msg-queue-enabled">Queue "{0}" is enabled.</entry> 
     <entry key="msg-queue-disabled">Queue "{0}" is disabled.</entry>    
@@ -28,7 +28,7 @@
 
     <!-- ReqQueueGet -->
       
-    <entry key="msg-queue-not-found">Queue "{0}" is not found.</entry>
+    <entry key="msg-queue-not-found">Queue "{0}" not found.</entry>
 
     <!-- ReqPrinterPrint -->
     
@@ -37,6 +37,11 @@
     <entry key="msg-ecoprint-pending">Eco Print is being prepared. Please wait a moment and try again.</entry>
     <entry key="msg-select-single-pdf-filter">Selection of multiple PDF filters is not supported: please select one filter.</entry>
     <entry key="msg-print-auth-pending">Another print job is waiting for authentication. Try again later.</entry>
+
+    <!-- ReqUserGroupGet -->
+      
+    <entry key="msg-usergroup-not-found">User group "{0}" not found.</entry>
+    <entry key="msg-usergroup-updated">User group "{0}" successfully updated.</entry>
     
     <!-- ReqUserGroupsAddRemove -->
     <entry key="msg-no-groups">Select groups to add or remove.</entry>

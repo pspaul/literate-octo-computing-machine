@@ -34,10 +34,6 @@
  */
 ( function($, window, document, JSON, _ns) {"use strict";
 
-		/* jslint browser: true */
-		/* global $, jQuery, alert */
-
-		// =========================================================================
 		/**
 		 * Constructor
 		 */
@@ -139,7 +135,30 @@
 				$('#user-uuid-collapsible').collapsible('collapse');
 			});
 			return _self;
-			// IMPORTANT
+		};
+
+		/**
+		 * Constructor
+		 */
+		_ns.PageUserGroup = function(_i18n, _view, _model) {
+
+			var _page = new _ns.Page(_i18n, _view, '#page-user-group', 'admin.PageUserGroup')
+			//
+			, _self = _ns.derive(_page)
+			//
+			;
+
+			$(_self.id()).on('pagecreate', function(event) {
+
+				$(this).on('click', '#sp-button-usergroup-save', null, function() {
+					_self.onSaveUserGroup(_view.checkedValues($('#sp-usergroup-edit-roles')));
+					return false;
+				});
+
+			}).on("pagebeforeshow", function(event, ui) {
+			}).on('pageshow', function(event, ui) {
+			});
+			return _self;
 		};
 
 		// =========================================================================
@@ -152,7 +171,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,        _this = this
+			//,           _this = this
 			//
 			, _resize = function() {
 				var width = $('#sp-user-groups-add-remove-addin').width();
@@ -168,8 +187,7 @@
 				});
 
 				$(this).on('click', '#button-user-groups-add-remove-ok', null, function() {
-					_self.onUserGroupsAddRemove(_view.selectedValues('sp-select-user-groups-to-add'), 
-						_view.selectedValues('sp-select-user-groups-to-remove'));
+					_self.onUserGroupsAddRemove(_view.selectedValues('sp-select-user-groups-to-add'), _view.selectedValues('sp-select-user-groups-to-remove'));
 					return false;
 				});
 
@@ -179,9 +197,6 @@
 			}).on('pageshow', function(event, ui) {
 				_resize();
 			});
-			/*
-			 * IMPORTANT
-			 */
 			return _self;
 		};
 
@@ -262,9 +277,6 @@
 			}).on('pagebeforehide', function(event, ui) {
 				_self.onCreateBatchExit();
 			});
-			/*
-			 * IMPORTANT
-			 */
 			return _self;
 		};
 
@@ -308,9 +320,6 @@
 				}
 
 			});
-			/*
-			 * IMPORTANT
-			 */
 			return _self;
 		};
 
@@ -328,7 +337,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,         _this = this
+			//,            _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//
@@ -694,9 +703,6 @@
 			}).on("pagebeforeshow", function(event, ui) {
 				_m2v();
 			});
-			/*
-			 * IMPORTANT
-			 */
 			return _self;
 		};
 
@@ -746,9 +752,6 @@
 				$('#queue-url-path').textinput( reserved ? "disable" : "enable");
 				$('#queue-trusted').checkboxradio(_model.editQueue.fixedTrust ? "disable" : "enable");
 			});
-			/*
-			 * IMPORTANT
-			 */
 			return _self;
 		};
 
@@ -886,9 +889,6 @@
 				//
 				_onChangeChargeType(_view.getRadioValue('sp-printer-charge-type'));
 			});
-			/*
-			 * IMPORTANT
-			 */
 			return _self;
 		};
 
@@ -938,7 +938,6 @@
 				}
 			});
 			return _self;
-			// IMPORTANT
 		};
 		/**
 		 * Constructor
@@ -1613,7 +1612,7 @@
 				 * UserGroups Panel
 				 */
 				$(this).on('click', '.sp-edit-user-group', null, function() {
-					//_self.onEditUserGroup($(this).attr('data-savapage'));
+					_self.onEditUserGroup($(this).attr('data-savapage'));
 					return false;
 				});
 
@@ -2105,9 +2104,6 @@
 				});
 
 			});
-			/*
-			 * IMPORTANT
-			 */
 			return _self;
 		};
 

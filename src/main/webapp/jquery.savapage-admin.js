@@ -877,6 +877,23 @@
 				}
 			};
 
+			_view.pages.admin.onEditUserGroup = function(id) {
+				var res = _api.call({
+					request : 'usergroup-get',
+					dto : JSON.stringify({
+						id : id
+					})
+				});
+				if (res.result.code === '0') {
+					_model.editUserGroup = res.dto;
+					_view.pages.userGroup.loadShowAsync(function() {
+						$('#user-group-header').html(_model.editUserGroup.name);
+					});
+				} else {
+					_view.showApiMsg(res);
+				}
+			};
+
 			_view.pages.user.onGenerateUserUuid = function() {
 				var res = _api.call({
 					request : 'generate-uuid'
@@ -903,6 +920,20 @@
 					_view.changePage($('#page-admin'));
 					_view.pages.admin.refreshUserGroups();
 				}
+			};
+
+			/**
+			 *
+			 */
+			_view.pages.userGroup.onSaveUserGroup = function(roles) {
+				var res = _api.call({
+					request : 'usergroup-set',
+					dto : JSON.stringify({
+						id : _model.editUserGroup.id,
+						roles : roles
+					})
+				});
+				_view.showApiMsg(res);
 			};
 
 			/**
@@ -1749,6 +1780,7 @@
 				admin : new _ns.PageAdmin(_i18n, _view, _model),
 				membercard_upload : new _ns.PageMemberCardUpload(_i18n, _view, _model),
 				user : new _ns.PageUser(_i18n, _view, _model),
+				userGroup : new _ns.PageUserGroup(_i18n, _view, _model),
 				userGroupsAddRemove : new _ns.PageUserGroupsAddRemove(_i18n, _view, _model),
 				userPwReset : new _ns.PageUserPasswordReset(_i18n, _view, _model),
 				configProp : new _ns.PageConfigProp(_i18n, _view, _model),

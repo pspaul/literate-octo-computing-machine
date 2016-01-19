@@ -23,7 +23,11 @@ package org.savapage.server.pages.user;
 
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
+import org.savapage.server.SpSession;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
 
 /**
@@ -35,19 +39,29 @@ public class Main extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
 
+    private static final AccessControlService ACCESSCONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
     /**
      *
      */
     public Main() {
 
-        boolean visible =
+        boolean isUpload =
                 (ConfigManager.isWebPrintEnabled() && InetUtils
                         .isIp4AddrInCidrRanges(
                                 ConfigManager.instance().getConfigValue(
                                         Key.WEB_PRINT_LIMIT_IP_ADDRESSES),
                                 getClientIpAddr()));
 
-        addVisible(visible, "button-upload", localized("button-upload"));
+        addVisible(isUpload, "button-upload", localized("button-upload"));
+
+        //
+        boolean isPrintDelegate =
+                ACCESSCONTROL_SERVICE.isAuthorized(SpSession.get().getUser(),
+                        ACLRoleEnum.PRINT_DELEGATE);
+
+        addVisible(isPrintDelegate, "button-print-delegation", "Delegation");
 
         //
         add(new CommunityStatusFooterPanel("community-status-footer-panel"));

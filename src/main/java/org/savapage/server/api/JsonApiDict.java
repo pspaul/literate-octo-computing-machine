@@ -38,8 +38,10 @@ import org.savapage.server.api.request.ReqQueueGet;
 import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
+import org.savapage.server.api.request.ReqUserGroupGet;
 import org.savapage.server.api.request.ReqUserGroupMemberQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupQuickSearch;
+import org.savapage.server.api.request.ReqUserGroupSet;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
 
 /**
@@ -224,6 +226,10 @@ public class JsonApiDict {
 
     public static final String REQ_USERGROUPS_ADD_REMOVE =
             "usergroups-add-remove";
+
+    public static final String REQ_USERGROUP_GET = "usergroup-get";
+
+    public static final String REQ_USERGROUP_SET = "usergroup-set";
 
     public static final String REQ_USERGROUP_QUICK_SEARCH =
             "usergroup-quick-search";
@@ -727,6 +733,7 @@ public class JsonApiDict {
 
         adm(REQ_USER_DELETE, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_GET, DbClaim.READ, DbAccess.YES);
+
         usr(REQ_USER_GET_STATS, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_NOTIFY_ACCOUNT_CHANGE, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_QUICK_SEARCH, DbClaim.READ, DbAccess.YES);
@@ -736,6 +743,11 @@ public class JsonApiDict {
 
         adm(REQ_USERGROUPS_ADD_REMOVE, ReqUserGroupsAddRemove.class,
                 DbClaim.READ, DbAccess.YES);
+
+        adm(REQ_USERGROUP_GET, ReqUserGroupGet.class, DbClaim.READ,
+                DbAccess.YES);
+        adm(REQ_USERGROUP_SET, ReqUserGroupSet.class, DbClaim.READ,
+                DbAccess.YES);
 
         usr(REQ_USERGROUP_QUICK_SEARCH, ReqUserGroupQuickSearch.class,
                 DbClaim.READ, DbAccess.YES);

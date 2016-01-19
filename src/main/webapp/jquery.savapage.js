@@ -794,7 +794,7 @@
 			clearHiddenUserid : function() {
 				$('#sp-doclog-hidden-user-id').val("");
 				$("#sp-doclog-user-title").html("");
-				
+
 				$('#sp-doclog-hidden-account-id').val("");
 				$("#sp-doclog-account-title").html("");
 			},
@@ -812,7 +812,7 @@
 				 * is used. In Admin WebApp value of field below is used.
 				 */
 				my.input.select.user_id = null;
-				
+
 				//
 				my.input.select.account_id = null;
 
@@ -953,7 +953,7 @@
 				val = $('#sp-doclog-hidden-account-id').val();
 				present = (val.length > 0);
 				my.input.select.account_id = ( present ? val : null);
-				
+
 				//
 				date = _view.mobipickGetDate(sel);
 				present = (sel.val().length > 0);
@@ -2277,6 +2277,17 @@
 			};
 
 			/**
+			 * Get array with values of :checked children of input selector.
+			 */
+			this.checkedValues = function(sel) {
+				var values = [], i = 0;
+				$.each(sel.find(':checked'), function() {
+					values[i++] = $(this).val();
+				});
+				return values;
+			};
+
+			/**
 			 * Checks a radiobutton.
 			 */
 			this.checkRadio = function(name, id) {
@@ -2312,13 +2323,12 @@
 			 * Get array with selected values from (multiple) "select" element.
 			 */
 			this.selectedValues = function(id) {
-				// It took some time to find out how to return an array object :-((
-				// "new Array[]" does NOT work.			
-				var values = {}, i = 0;
-				$.each($("select[id='" + id + "']"), function() {
+				var values = [], i = 0;
+				$.each($("select[id='" + id + "']").find(':selected'), function() {
 					values[i++] = $(this).val();
+					console.log($(this).val());
 				});
-				return values[0];
+				return values;
 			};
 
 			this.countSelectedValues = function(id) {

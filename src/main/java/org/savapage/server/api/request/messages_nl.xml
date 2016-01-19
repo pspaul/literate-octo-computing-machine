@@ -36,6 +36,10 @@
     <entry key="msg-ecoprint-pending">Eco Print wordt voorbereid bezig. Wacht een moment en probeer opnieuw.</entry>
     <entry key="msg-select-single-pdf-filter">Selectie van meerdere PDF filters wordt niet ondersteund: selecteer één filter.</entry>
     <entry key="msg-print-auth-pending">Een andere afdruk-opdracht wacht op authenticatie. Probeer het later nog een keer.</entry>
+
+    <!-- ReqUserGroupGet -->      
+    <entry key="msg-usergroup-not-found">Gebruikersgroep "{0}" is niet gevonden.</entry>
+    <entry key="msg-usergroup-updated">Gebruikersgroep "{0}" is met succes bijgewerkt.</entry>
         
     <!-- ReqUserGroupsAddRemove -->
     <entry key="msg-no-groups">Selecteer groepen om toe te voegen of te verwijderen.</entry>

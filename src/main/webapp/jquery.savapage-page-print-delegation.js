@@ -279,10 +279,10 @@
 				html += isGroup ? _CLASS_GROUP : _CLASS_USER;
 				html += '" data-savapage="' + item.key + '">';
 				html += '<th><span class="' + _CLASS_SELECTED_TXT + '">&nbsp;</span>&nbsp;';
-				html += '<img src="famfamfam-silk/';
+				html += '<img src="/famfamfam-silk/';
 				html += isGroup ? 'group.png' : 'user_gray.png';
 				html += '"/>&nbsp;&nbsp;&nbsp;' + item.text + '</th>';
-				html += '<td><img src="famfamfam-silk/';
+				html += '<td><img src="/famfamfam-silk/';
 
 				if (account.accountType === _ACCOUNT_ENUM_GROUP) {
 					html += 'group.png';
