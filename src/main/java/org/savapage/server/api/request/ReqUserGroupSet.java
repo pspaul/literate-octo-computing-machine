@@ -22,8 +22,7 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.Map;
 
 import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.UserGroupDao;
@@ -56,7 +55,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
 
         private Long id;
 
-        private List<ACLRoleEnum> roles;
+        private Map<ACLRoleEnum, Boolean> aclRoles;
 
         public Long getId() {
             return id;
@@ -66,12 +65,12 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             this.id = id;
         }
 
-        public List<ACLRoleEnum> getRoles() {
-            return roles;
+        public Map<ACLRoleEnum, Boolean> getAclRoles() {
+            return aclRoles;
         }
 
-        public void setRoles(List<ACLRoleEnum> roles) {
-            this.roles = roles;
+        public void setAclRoles(Map<ACLRoleEnum, Boolean> aclRoles) {
+            this.aclRoles = aclRoles;
         }
 
     }
@@ -100,12 +99,12 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
         final UserGroupAttrDao daoAttr =
                 ServiceContext.getDaoContext().getUserGroupAttrDao();
 
-        final String jsonEnumSet;
-        if (dtoReq.getRoles().isEmpty()) {
-            jsonEnumSet = "[]"; // TODO
+        final String jsonRoles;
+
+        if (dtoReq.getAclRoles().isEmpty()) {
+            jsonRoles = null;
         } else {
-            final EnumSet<ACLRoleEnum> enumSet = EnumSet.copyOf(dtoReq.getRoles());
-            jsonEnumSet = JsonHelper.serializeEnumSet(enumSet);
+            jsonRoles = JsonHelper.stringifyObject(dtoReq.getAclRoles());
         }
 
         final UserGroupAttrEnum attrEnum = UserGroupAttrEnum.ACL_ROLES;
@@ -113,13 +112,17 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
         UserGroupAttr attr = daoAttr.findByName(userGroup, attrEnum);
 
         if (attr == null) {
-            attr = new UserGroupAttr();
-            attr.setUserGroup(userGroup);
-            attr.setName(attrEnum.getName());
-            attr.setValue(jsonEnumSet);
-            daoAttr.create(attr);
-        } else if (!attr.getValue().equals(jsonEnumSet)) {
-            attr.setValue(jsonEnumSet);
+            if (jsonRoles != null) {
+                attr = new UserGroupAttr();
+                attr.setUserGroup(userGroup);
+                attr.setName(attrEnum.getName());
+                attr.setValue(jsonRoles);
+                daoAttr.create(attr);
+            }
+        } else if (jsonRoles == null) {
+            daoAttr.delete(attr);
+        } else if (!attr.getValue().equals(jsonRoles)) {
+            attr.setValue(jsonRoles);
             daoAttr.update(attr);
         }
 

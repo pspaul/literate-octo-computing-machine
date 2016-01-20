@@ -145,23 +145,36 @@
 			var _page = new _ns.Page(_i18n, _view, '#page-user-group', 'admin.PageUserGroup')
 			//
 			, _self = _ns.derive(_page)
-			//
+			//--------------------
 			, _m2v = function() {
-				
-				var i, cbRoles = $('#sp-usergroup-edit-roles').find(':checkbox')
+				var rolesEdit = $('#sp-usergroup-edit-roles')
 				//
-				, roles = _model.editUserGroup.aclRoles, roleWlk;
+				, cbRoles = rolesEdit.find(':checkbox'), lbRoles = rolesEdit.find('label');
 
-				cbRoles.prop("checked", false).checkboxradio("refresh");				
+				cbRoles.prop("checked", false).checkboxradio("refresh");
+				lbRoles.addClass('sp-checkbox-tristate-label').addClass('sp-tristate-null');
 
-				if (roles) {
-					for ( i = 0; i < roles.length; i++) {
-						roleWlk = $('#sp-usergroup-edit-roles').find('[value=' + roles[i] + ']');
-						if (roleWlk) {
-							roleWlk.prop("checked", true).checkboxradio("refresh");				
-						}
+				$.each(_model.editUserGroup.aclRoles, function(key, val) {
+					var lbWlk, cbWlk = rolesEdit.find('[value=' + key + ']');
+					if (cbWlk) {
+						lbWlk = rolesEdit.find('[for=' + cbWlk.attr('id') + ']');
+						lbWlk.removeClass('sp-tristate-null');
+						lbWlk.addClass( val ? 'sp-tristate-on' : 'sp-tristate-off');
+						cbWlk.prop("checked", val).checkboxradio("refresh");
 					}
-				}				
+				});
+			}
+			//--------------------
+			, _v2m = function() {
+				var aclRoles = {};
+				$('#sp-usergroup-edit-roles').find('.sp-checkbox-tristate-label').each(function() {
+					var checkbox;
+					if (!$(this).hasClass('sp-tristate-null')) {
+						checkbox = $(this).siblings('[id=' + $(this).attr('for') + ']');
+						aclRoles[checkbox.attr('value')] = $(this).hasClass('sp-tristate-on');
+					}
+				});
+				_model.editUserGroup.aclRoles = aclRoles;
 			}
 			//
 			;
@@ -169,13 +182,27 @@
 			$(_self.id()).on('pagecreate', function(event) {
 
 				$(this).on('click', '#sp-button-usergroup-save', null, function() {
-					_self.onSaveUserGroup(_view.checkedValues($('#sp-usergroup-edit-roles')));
+					_v2m();
+					_self.onSaveUserGroup(_model.editUserGroup);
+					return false;
+				});
+
+				// Checkbox state transition: null -> on -> off -> null
+				$(this).on('click', ".sp-checkbox-tristate-label", null, function(event) {
+					if ($(this).hasClass('sp-tristate-null')) {
+						$(this).removeClass('sp-tristate-null').addClass('sp-tristate-on');
+						return true;
+					}
+					if ($(this).hasClass('sp-tristate-on')) {
+						$(this).removeClass('sp-tristate-on').addClass('sp-tristate-off');
+						return true;
+					}
+					$(this).removeClass('sp-tristate-off').addClass('sp-tristate-null');
 					return false;
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
 				_m2v();
-			}).on('pageshow', function(event, ui) {
 			});
 			return _self;
 		};
@@ -190,7 +217,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,              _this = this
+			//,                               _this = this
 			//
 			, _resize = function() {
 				var width = $('#sp-user-groups-add-remove-addin').width();
@@ -356,7 +383,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,               _this = this
+			//,                                _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//

@@ -171,7 +171,7 @@
 			}
 			//----------------------------------------------------------------
 			, _onGroupQuickSearch = function(target, filter) {
-				/* QuickSearchFilterDto */
+				/* QuickSearchFilterUserGroupDto */
 				var res, html = "";
 
 				_quickUserGroupCache = {};

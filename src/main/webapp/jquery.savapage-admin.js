@@ -925,12 +925,12 @@
 			/**
 			 *
 			 */
-			_view.pages.userGroup.onSaveUserGroup = function(roles) {
+			_view.pages.userGroup.onSaveUserGroup = function(group) {
 				var res = _api.call({
 					request : 'usergroup-set',
 					dto : JSON.stringify({
-						id : _model.editUserGroup.id,
-						roles : roles
+						id : group.id,
+						aclRoles : group.aclRoles
 					})
 				});
 				_view.showApiMsg(res);

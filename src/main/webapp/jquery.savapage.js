@@ -2326,7 +2326,6 @@
 				var values = [], i = 0;
 				$.each($("select[id='" + id + "']").find(':selected'), function() {
 					values[i++] = $(this).val();
-					console.log($(this).val());
 				});
 				return values;
 			};

@@ -1,8 +1,8 @@
-/*! SavaPage | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -132,4 +132,24 @@
     opacity: 0.4;
 }
 
+/* Classes for tri-state checkbox */
+.sp-checkbox-tristate-label {
+}
+.sp-tristate-null {
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    /* IE 5-7 */
+    filter: alpha(opacity=30);
+    /* Netscape */
+    -moz-opacity: 0.3;
+    /* Safari 1.x */
+    -khtml-opacity: 0.3;
+    /* Good browsers */
+    opacity: 0.3;
+}
+.sp-tristate-on {
+}
+.sp-tristate-off {	
+}
 
+/* end-of-file */

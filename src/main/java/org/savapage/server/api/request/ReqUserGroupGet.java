@@ -22,10 +22,8 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.UserGroupDao;
@@ -71,7 +69,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
 
         private Long id;
         private String name;
-        private List<ACLRoleEnum> aclRoles;
+        private Map<ACLRoleEnum, Boolean> aclRoles;
 
         public Long getId() {
             return id;
@@ -89,11 +87,11 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.name = name;
         }
 
-        public List<ACLRoleEnum> getAclRoles() {
+        public Map<ACLRoleEnum, Boolean> getAclRoles() {
             return aclRoles;
         }
 
-        public void setAclRoles(List<ACLRoleEnum> aclRoles) {
+        public void setAclRoles(Map<ACLRoleEnum, Boolean> aclRoles) {
             this.aclRoles = aclRoles;
         }
 
@@ -131,22 +129,22 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         final UserGroupAttr aclAttr =
                 attrDao.findByName(userGroup, UserGroupAttrEnum.ACL_ROLES);
 
-        if (aclAttr != null) {
+        Map<ACLRoleEnum, Boolean> aclRoles;
 
-            final EnumSet<ACLRoleEnum> enumSet =
-                    JsonHelper.deserializeEnumSet(ACLRoleEnum.class,
+        if (aclAttr == null) {
+            aclRoles = null;
+        } else {
+            aclRoles =
+                    JsonHelper.createEnumBooleanMapOrNull(ACLRoleEnum.class,
                             aclAttr.getValue());
-
-            final ArrayList<ACLRoleEnum> list = new ArrayList<>();
-            final Iterator<ACLRoleEnum> iter = enumSet.iterator();
-            while (iter.hasNext()) {
-                list.add(iter.next());
-            }
-            dtoRsp.setAclRoles(list);
         }
 
-        this.setResponse(dtoRsp);
+        if (aclRoles == null) {
+            aclRoles = new HashMap<ACLRoleEnum, Boolean>();
+        }
 
+        dtoRsp.setAclRoles(aclRoles);
+        this.setResponse(dtoRsp);
         setApiResultOk();
     }
 }
