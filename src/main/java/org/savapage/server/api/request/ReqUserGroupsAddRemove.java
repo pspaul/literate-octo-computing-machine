@@ -22,7 +22,9 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DaoContext;
@@ -32,6 +34,7 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.users.conf.InternalGroupList;
 
 /**
  *
@@ -86,13 +89,26 @@ public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
         int nAdded = 0;
         int nRemoved = 0;
 
-        if (dtoReq.getGroupsAdded() != null) {
+        if (dtoReq.getGroupsAdded() != null
+                && !dtoReq.getGroupsAdded().isEmpty()) {
+
+            final Set<String> internalGroups = InternalGroupList.getGroups();
+
+            final Set<String> internalGroupsCollected = new HashSet<>();
 
             final DaoBatchCommitter batchCommitter =
                     ServiceContext.getDaoContext().createBatchCommitter(
                             ConfigManager.getDaoBatchChunkSize());
 
             for (final String groupName : dtoReq.getGroupsAdded()) {
+
+                /*
+                 * Internal group names take precedence.
+                 */
+                if (internalGroups.contains(groupName)) {
+                    internalGroupsCollected.add(groupName);
+                    continue;
+                }
 
                 final AbstractJsonRpcMethodResponse rpcResponse =
                         USER_GROUP_SERVICE.addUserGroup(batchCommitter,
@@ -102,12 +118,22 @@ public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
                     this.setApiResultText(rpcResponse);
                     return;
                 }
+
+                batchCommitter.commit();
+                nAdded++;
+            }
+
+            for (final String groupName : internalGroupsCollected) {
+
+                USER_GROUP_SERVICE.addInternalUserGroup(batchCommitter,
+                        groupName);
                 batchCommitter.commit();
                 nAdded++;
             }
         }
 
-        if (dtoReq.getGroupsRemoved() != null) {
+        if (dtoReq.getGroupsRemoved() != null
+                && !dtoReq.getGroupsRemoved().isEmpty()) {
 
             final DaoContext daoCtx = ServiceContext.getDaoContext();
 

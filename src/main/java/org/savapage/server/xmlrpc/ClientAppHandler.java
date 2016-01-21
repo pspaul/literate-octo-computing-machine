@@ -39,7 +39,7 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.users.InternalUserAuthenticator;
-import org.savapage.core.users.UserAliasList;
+import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.WebApp;
 import org.savapage.server.auth.ClientAppUserAuthManager;

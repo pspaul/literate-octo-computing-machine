@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -30,11 +31,13 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.users.conf.InternalGroupList;
 
 /**
  *
@@ -122,23 +125,39 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
      */
     public UserGroupsAddRemoveAddIn() {
 
+        /*
+         * User Source and Internal Groups are candidates to Add.
+         */
+        final SortedSet<String> setAdd =
+                ConfigManager.instance().getUserSource().getGroups();
+
+        try {
+            setAdd.addAll(InternalGroupList.getGroups());
+        } catch (IOException e) {
+            throw new SpException(String.format("Error reading internal "
+                    + "groups file: %s", e.getMessage()));
+        }
+
+        /*
+         * Groups already present are the groups to be Removed.
+         */
         final UserGroupDao.ListFilter filter = new UserGroupDao.ListFilter();
 
         final UserGroupDao userGroupDao =
                 ServiceContext.getDaoContext().getUserGroupDao();
 
-        final List<UserGroup> entryListRemove =
+        final List<UserGroup> listRemove =
                 userGroupDao.getListChunk(filter, null, null,
                         UserGroupDao.Field.NAME, true);
 
-        final SortedSet<String> setAdd =
-                ConfigManager.instance().getUserSource().getGroups();
-
         /*
-         * Remove reserved groups and groups which are already added from the
-         * remove list.
+         * Update Add and Remove List.
+         *
+         * (1) Remove Reserved Groups from the Remove List.
+         *
+         * (2) Remove Remove List entries from the Add list.
          */
-        final Iterator<UserGroup> iter = entryListRemove.iterator();
+        final Iterator<UserGroup> iter = listRemove.iterator();
 
         while (iter.hasNext()) {
 
@@ -155,8 +174,6 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
         //
         add(new AddGroupsView("groups-add", Arrays.asList(setAdd.toArray()),
                 "option-add"));
-        add(new RemoveGroupsView("groups-remove", entryListRemove,
-                "option-remove"));
-
+        add(new RemoveGroupsView("groups-remove", listRemove, "option-remove"));
     }
 }
