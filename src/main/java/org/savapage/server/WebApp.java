@@ -810,8 +810,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             /*
              * IMPORTANT: do NOT bind() since we want print request sessions to
              * be temporary.
+             *
+             * Note that our own SpSession object is used. This is because the
+             * PPD download needs a SpSession.
              */
-            session = super.newSession(request, response);
+            session = new SpSession(request);
             session.invalidateNow();
 
             if (LOGGER.isDebugEnabled()) {

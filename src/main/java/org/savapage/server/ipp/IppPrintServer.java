@@ -96,13 +96,6 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
             .getLogger(IppPrintServer.class);
 
     /**
-     * IMPORTANT: PPD download (triggered by Add Printer in Linux) works, but
-     * has SIDE EFFECTS which makes it unusable for now. Need to be researched
-     * and is NOT implemented yet. See Mantis #160.
-     */
-    private static final boolean ALLOW_PPD_DOWNLOAD = false;
-
-    /**
      *
      */
     private final static QueueService QUEUE_SERVICE = ServiceContext
@@ -194,17 +187,12 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         final String contentTypeReq = request.getContentType();
 
         /*
-         * Request for a PPD file: do NOT deliver the file, since the effect
-         * needs to be tested. For now, just respond with SC_NOT_IMPLEMENTED.
+         * Request for a PPD file. See Mantis #160, #650.
          */
         if (contentTypeReq == null
                 && StringUtils.upperCase(request.getRequestURL().toString())
                         .endsWith(".PPD")) {
-            if (ALLOW_PPD_DOWNLOAD) {
-                handlePpdRequest(response);
-            } else {
-                response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            }
+            handlePpdRequest(response);
             return;
         }
 
@@ -214,7 +202,6 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         if (contentTypeReq == null
                 || !contentTypeReq
                         .equalsIgnoreCase(IppMessageMixin.CONTENT_TYPE_IPP)) {
-
             setResponsePage(WebAppUser.class);
             return;
         }
