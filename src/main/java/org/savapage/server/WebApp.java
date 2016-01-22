@@ -70,7 +70,7 @@ import org.savapage.server.pages.admin.AbstractAdminPage;
 import org.savapage.server.pages.user.AbstractUserPage;
 import org.savapage.server.raw.RawPrintServer;
 import org.savapage.server.webapp.WebAppAdminPage;
-import org.savapage.server.webapp.WebAppAdminPosPage;
+import org.savapage.server.webapp.WebAppPosPage;
 import org.savapage.server.webapp.WebAppUserPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -569,7 +569,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              * http://wicketinaction.com/2011/07/wicket-1-5-mounting-pages/
              */
             mountPage(MOUNT_PATH_WEBAPP_ADMIN, WebAppAdminPage.class);
-            mountPage(MOUNT_PATH_WEBAPP_POS, WebAppAdminPosPage.class);
+            mountPage(MOUNT_PATH_WEBAPP_POS, WebAppPosPage.class);
 
             mountPage(MOUNT_PATH_WEBAPP_USER, WebAppUserPage.class);
             mountPage(MOUNT_PATH_API, JsonApiServer.class);

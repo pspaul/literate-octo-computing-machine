@@ -5,6 +5,7 @@
     
     <entry key="login-descript-user">Please login to start the application.</entry>
     <entry key="login-descript-admin">Please login as administrator.</entry>
+    <entry key="login-descript-role">Please login as {0}.</entry>
     
     <entry key="button-login">Login</entry>
     <entry key="button-lang">Language</entry>

@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DeviceDao;
+import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
@@ -37,7 +38,7 @@ import org.savapage.core.services.helpers.UserAuth;
  * @author Datraverse B.V.
  *
  */
-public class Login extends AbstractPage {
+public final class Login extends AbstractPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,26 +47,27 @@ public class Login extends AbstractPage {
      */
     public Login() {
 
-        // this.openServiceContext();
-
         add(new Label("title", localized("title",
                 CommunityDictEnum.SAVAPAGE.getWord())));
         add(new Label("title-assoc", CommunityDictEnum.SAVAPAGE.getWord()));
 
-        String key;
+        final String loginDescript;
+
         switch (this.getWebAppType()) {
         case ADMIN:
-            key = "login-descript-admin";
+            loginDescript = localized("login-descript-admin");
             break;
         case POS:
-            key = "login-descript-admin";
+            loginDescript =
+                    localized("login-descript-role",
+                            ACLRoleEnum.WEB_CASHIER.uiText(getLocale()));
             break;
         default:
-            key = "login-descript-user";
+            loginDescript = localized("login-descript-user");
             break;
         }
 
-        add(new Label("login-descript", localized(key)));
+        add(new Label("login-descript", loginDescript));
 
         final ConfigManager cm = ConfigManager.instance();
 
@@ -79,9 +81,7 @@ public class Login extends AbstractPage {
         final UserAuth userAuth =
                 new UserAuth(terminal, null, this.isAdminRoleContext());
 
-        /*
-         *
-         */
+        //
         Label label = new Label("login-id-number");
 
         String inputType;
@@ -93,10 +93,7 @@ public class Login extends AbstractPage {
         label.add(new AttributeModifier("type", inputType));
         add(label);
 
-        /*
-         *
-         */
+        //
         addVisible(userAuth.isAuthIdPinReq(), "login-id-pin", "");
     }
-
 }

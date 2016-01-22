@@ -66,7 +66,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.users.AbstractUserSource;
 import org.savapage.core.util.AppLogHelper;
-import org.savapage.server.api.JsonApiServer;
+import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
 import org.slf4j.Logger;
@@ -973,7 +973,7 @@ public final class UserEventService extends AbstractEventService {
                         ImageUrl.composeDetailPageTemplate(userName, base64));
 
                 if (isWebAppClient) {
-                    JsonApiServer.addUserStats(userData, lockedUser,
+                    ApiRequestHelper.addUserStats(userData, lockedUser,
                             ServiceContext.getLocale(),
                             ServiceContext.getAppCurrencySymbol());
                 }
@@ -1066,7 +1066,7 @@ public final class UserEventService extends AbstractEventService {
                     ServiceContext.getDaoContext().getUserDao()
                             .findActiveUserByUserId(userId);
 
-            JsonApiServer.addUserStats(eventData, user,
+            ApiRequestHelper.addUserStats(eventData, user,
                     ServiceContext.getLocale(),
                     ServiceContext.getAppCurrencySymbol());
 

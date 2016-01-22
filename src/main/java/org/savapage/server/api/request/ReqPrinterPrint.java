@@ -425,7 +425,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
             if (printReq.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
 
-                JsonApiServer.addUserStats(this.getUserData(), lockedUser,
+                ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                         this.getLocale(), currencySymbol);
             }
 
@@ -510,7 +510,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             }
 
             JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
-            JsonApiServer.addUserStats(this.getUserData(), lockedUser,
+            ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                     this.getLocale(), currencySymbol);
 
             /*

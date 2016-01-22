@@ -4280,12 +4280,14 @@
 
 				_api.callAsync({
 					request : 'login',
-					authMode : authMode,
-					authId : authId,
-					authPw : authPw,
-					authToken : authToken,
-					assocCardNumber : assocCardNumber,
-					role : 'user'
+					dto : JSON.stringify({
+						authMode : authMode,
+						authId : authId,
+						authPw : authPw,
+						authToken : authToken,
+						assocCardNumber : assocCardNumber,
+						role : 'user'
+					})
 				}, function(data) {
 
 					_model.user.loggedIn = (data.result.code === '0');

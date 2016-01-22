@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -46,7 +48,9 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserGroupService;
+import org.savapage.core.services.UserService;
 import org.savapage.core.util.Messages;
+import org.savapage.server.api.UserAgentHelper;
 
 /**
  *
@@ -124,6 +128,12 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     protected static final QueueService QUEUE_SERVICE = ServiceContext
             .getServiceFactory().getQueueService();
+
+    /**
+     * .
+     */
+    protected static final UserService USER_SERVICE = ServiceContext
+            .getServiceFactory().getUserService();
 
     /**
      * .
@@ -284,7 +294,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     protected final void setApiResultText(final ApiResultCodeEnum code,
             final String text) {
-        createApiResult(code, "msg-single-parm", text);
+        this.createApiResult(code, "msg-single-parm", text);
     }
 
     /**
@@ -292,9 +302,28 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      *            The {@link AbstractJsonRpcMethodResponse}.
      * @return {@code true} when result is OK.
      */
-    protected final boolean isApiResultOk(
+    protected static boolean isApiResultOk(
             final AbstractJsonRpcMethodResponse rpcResponse) {
         return rpcResponse.isResult();
+    }
+
+    /**
+     * @param code
+     *            The {@link #ApiResultCodeEnum}.
+     * @return
+     */
+    protected boolean isApiResultCode(final ApiResultCodeEnum code) {
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> result =
+                (Map<String, Object>) responseMap.get("result");
+        return result.get("code").equals(code.getValue());
+    }
+
+    /**
+     * @return
+     */
+    protected boolean isApiResultOk() {
+        return isApiResultCode(ApiResultCodeEnum.OK);
     }
 
     /**
@@ -376,6 +405,16 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
          */
         return this.requestCycle.getRequest().getPostParameters()
                 .getParameterValue(parm).toString();
+    }
+
+    /**
+     * @return The {@link UserAgentHelper}.
+     */
+    protected final UserAgentHelper createUserAgentHelper() {
+        final HttpServletRequest request =
+                (HttpServletRequest) this.requestCycle.getRequest()
+                        .getContainerRequest();
+        return new UserAgentHelper(request);
     }
 
 }

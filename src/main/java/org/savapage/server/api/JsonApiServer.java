@@ -44,7 +44,6 @@ import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.print.attribute.standard.MediaSizeName;
-import javax.servlet.http.HttpSession;
 
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -61,11 +60,9 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestParameters;
-import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
-import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
@@ -107,7 +104,6 @@ import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.dto.AbstractDto;
-import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.dto.AccountVoucherBatchDto;
 import org.savapage.core.dto.AccountVoucherRedeemDto;
 import org.savapage.core.dto.JrPageSizeDto;
@@ -140,7 +136,6 @@ import org.savapage.core.jpa.ConfigProperty;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.DeviceAttr;
 import org.savapage.core.jpa.DocLog;
-import org.savapage.core.jpa.Entity;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.PosPurchase;
 import org.savapage.core.jpa.Printer;
@@ -157,7 +152,6 @@ import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.ResultDataBasic;
 import org.savapage.core.json.rpc.impl.ResultPosDeposit;
 import org.savapage.core.msg.UserMsgIndicator;
-import org.savapage.core.outbox.OutboxInfoDto;
 import org.savapage.core.papercut.PaperCutDbProxy;
 import org.savapage.core.papercut.PaperCutServerProxy;
 import org.savapage.core.print.gcp.GcpClient;
@@ -175,11 +169,9 @@ import org.savapage.core.reports.JrVoucherPageDesign;
 import org.savapage.core.reports.impl.AccountTrxListReport;
 import org.savapage.core.reports.impl.ReportCreator;
 import org.savapage.core.reports.impl.UserListReport;
-import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.services.AccountVoucherService;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DeviceService;
-import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.EmailService;
 import org.savapage.core.services.InboxService;
@@ -191,10 +183,6 @@ import org.savapage.core.services.UserService;
 import org.savapage.core.services.helpers.IppLogger;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.services.helpers.email.EmailMsgParms;
-import org.savapage.core.users.IExternalUserAuthenticator;
-import org.savapage.core.users.IUserSource;
-import org.savapage.core.users.InternalUserAuthenticator;
-import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
@@ -209,12 +197,12 @@ import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.request.ApiRequestHandler;
+import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.api.request.ApiResultCodeEnum;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.auth.WebAppUserAuthManager;
 import org.savapage.server.cometd.AbstractEventService;
-import org.savapage.server.cometd.UserEventService;
 import org.savapage.server.dto.MoneyTransferDto;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.AbstractPage;
@@ -306,11 +294,6 @@ public final class JsonApiServer extends AbstractPage {
      *
      */
     private static final JsonApiDict API_DICTIONARY = new JsonApiDict();
-
-    /**
-     *
-     */
-    private static final String USER_ROLE_ADMIN = "admin";
 
     // private static final String USER_ROLE_USER = "user";
 
@@ -498,20 +481,21 @@ public final class JsonApiServer extends AbstractPage {
                         break;
                     }
 
+                    final StringBuilder html = new StringBuilder();
+
+                    html.append("<h2 style='color: red;'>")
+                            .append(CommunityDictEnum.SAVAPAGE.getWord())
+                            .append(" Authorisation Error</h2>"
+                                    + "<p>Please login again.</p>"
+                                    + "<p><form action='")
+                            .append(urlPath)
+                            .append("'>"
+                                    + "<input type='submit'value='Login'/>"
+                                    + "</form></p>");
+
                     requestCycle
                             .scheduleRequestHandlerAfterCurrent(new TextRequestHandler(
-                                    "text/html",
-                                    "UTF-8",
-                                    "<h2 style='color: red;'>"
-                                            + CommunityDictEnum.SAVAPAGE
-                                                    .getWord()
-                                            + " Authorisation Error</h2>"
-                                            + "<p>Please login again.</p>"
-                                            + "<p><form action='"
-                                            + urlPath
-                                            + "'>"
-                                            + "<input type='submit'value='Login'/>"
-                                            + "</form></p>"));
+                                    "text/html", "UTF-8", html.toString()));
                     /*
                      * Reset to null.
                      */
@@ -1237,20 +1221,6 @@ public final class JsonApiServer extends AbstractPage {
                 }
             }
             return reqLanguage(language, country);
-
-        case JsonApiDict.REQ_LOGIN:
-
-            final String role = getParmValue(parameters, isGetAction, "role");
-            final boolean isAdminLogin =
-                    role != null && role.equals(USER_ROLE_ADMIN);
-
-            return reqLogin(UserAuth.mode(getParmValue(parameters, isGetAction,
-                    "authMode")),
-                    getParmValue(parameters, isGetAction, "authId"),
-                    getParmValue(parameters, isGetAction, "authPw"),
-                    getParmValue(parameters, isGetAction, "authToken"),
-                    getParmValue(parameters, isGetAction, "assocCardNumber"),
-                    isAdminLogin);
 
         case JsonApiDict.REQ_LOGOUT:
 
@@ -2120,7 +2090,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private boolean checkTouchSessionExpired(final SpSession session) {
 
-        if (isAuthTokenLoginEnabled()) {
+        if (ApiRequestHelper.isAuthTokenLoginEnabled()) {
             return false;
         }
 
@@ -2353,8 +2323,9 @@ public final class JsonApiServer extends AbstractPage {
 
                 DOC_LOG_SERVICE.logDocOut(lockedUser, docLog.getDocOut());
 
-                addUserStats(userData, lockedUser, this.getSession()
-                        .getLocale(), SpSession.getAppCurrencySymbol());
+                ApiRequestHelper.addUserStats(userData, lockedUser, this
+                        .getSession().getLocale(), SpSession
+                        .getAppCurrencySymbol());
 
                 setApiResult(userData, ApiResultCodeEnum.OK, "msg-mail-sent",
                         mailto);
@@ -2411,8 +2382,8 @@ public final class JsonApiServer extends AbstractPage {
         setApiResult(userData, ApiResultCodeEnum.OK, msgKey,
                 String.valueOf(jobCount));
 
-        addUserStats(userData, lockedUser, this.getSession().getLocale(),
-                SpSession.getAppCurrencySymbol());
+        ApiRequestHelper.addUserStats(userData, lockedUser, this.getSession()
+                .getLocale(), SpSession.getAppCurrencySymbol());
 
         return userData;
     }
@@ -2440,8 +2411,8 @@ public final class JsonApiServer extends AbstractPage {
 
         setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
 
-        addUserStats(userData, lockedUser, this.getSession().getLocale(),
-                SpSession.getAppCurrencySymbol());
+        ApiRequestHelper.addUserStats(userData, lockedUser, this.getSession()
+                .getLocale(), SpSession.getAppCurrencySymbol());
 
         return userData;
     }
@@ -2474,8 +2445,8 @@ public final class JsonApiServer extends AbstractPage {
         setApiResult(userData, ApiResultCodeEnum.OK, msgKey,
                 String.valueOf(jobCount), String.valueOf(minutes));
 
-        addUserStats(userData, lockedUser, this.getSession().getLocale(),
-                SpSession.getAppCurrencySymbol());
+        ApiRequestHelper.addUserStats(userData, lockedUser, this.getSession()
+                .getLocale(), SpSession.getAppCurrencySymbol());
 
         return userData;
     }
@@ -2779,7 +2750,8 @@ public final class JsonApiServer extends AbstractPage {
             throws Exception {
 
         final JsonPrinterList jsonPrinterList =
-                PROXY_PRINT_SERVICE.getUserPrinterList(getHostTerminal(),
+                PROXY_PRINT_SERVICE.getUserPrinterList(
+                        ApiRequestHelper.getHostTerminal(this.getRemoteAddr()),
                         userName);
 
         if (jsonPrinterList.getDfault() != null) {
@@ -4754,8 +4726,8 @@ public final class JsonApiServer extends AbstractPage {
             setApiResult(userData, ApiResultCodeEnum.ERROR,
                     "msg-user-not-found", userId);
         } else {
-            addUserStats(userData, user, this.getSession().getLocale(),
-                    SpSession.getAppCurrencySymbol());
+            ApiRequestHelper.addUserStats(userData, user, this.getSession()
+                    .getLocale(), SpSession.getAppCurrencySymbol());
             setApiResultOK(userData);
         }
         return userData;
@@ -5311,1105 +5283,6 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * Gets the {@link Device.DeviceTypeEnum#TERMINAL} definition of the remote
-     * client.
-     *
-     * @return {@code null} when no device definition is found.
-     */
-    private Device getHostTerminal() {
-
-        final DeviceDao deviceDao =
-                ServiceContext.getDaoContext().getDeviceDao();
-
-        return deviceDao.findByHostDeviceType(getRemoteAddr(),
-                DeviceTypeEnum.TERMINAL);
-    }
-
-    /**
-     * Handle login failure.
-     *
-     * @param userData
-     *            The data returned to the user.
-     * @param msgKeyAdminPublish
-     *            When {@code null} no admin message is published.
-     * @param args
-     *            The arguments of the message
-     * @return The userData input.
-     */
-    private Map<String, Object> onLoginFailed(
-            final Map<String, Object> userData,
-            final String msgKeyAdminPublish, final String... args) {
-
-        if (StringUtils.isNotBlank(msgKeyAdminPublish)) {
-
-            final String msg =
-                    AppLogHelper.logWarning(getClass(), msgKeyAdminPublish,
-                            args);
-
-            AdminPublisher.instance().publish(PubTopicEnum.USER,
-                    PubLevelEnum.WARN, msg);
-        }
-
-        return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                "msg-login-failed");
-    }
-
-    /**
-     * Handles a new login request for both the User and Admin WebApp.
-     * <p>
-     * When an assocCardNumber (not null) is passed, the User is authenticated
-     * according to the authMode. A login is NOT granted, just the card is
-     * associated.
-     * </p>
-     * <ul>
-     * <li>Internal admin is NOT allowed to login to the User WebApp.</li>
-     * <li>User MUST exist to login to Admin WebApp (no lazy user insert allowed
-     * in this case).</li>
-     * <li>User MUST exist to login when NO external user source (no lazy user
-     * insert allowed in this case).</li>
-     * <li>User MUST exist to login when lazy user insert is disabled.</li>
-     * <li>User MUST have admin rights to login to Admin WebApp.</li>
-     * <li>User MUST be a Person to login.</li>
-     * <li>User MUST be active (enabled) at moment of login.</li>
-     * </ul>
-     *
-     * @param userData
-     *            The map which can be converted to a json string by the caller.
-     * @param authMode
-     *            The authentication mode.
-     * @param authId
-     *            Offered user name (handled as user alias), ID Number or Card
-     *            Number.
-     * @param authPw
-     *            The password to be validated against the user source or user
-     *            PIN.
-     * @param assocCardNumber
-     *            The card number to associate with this user account. When
-     *            {@code null} NO card will be associated.
-     * @param isAdminOnlyLogin
-     *            <code>true</code> if this is a login for admin only.
-     * @return Same object as userData param.
-     * @throws IOException
-     */
-    private Map<String, Object> reqLoginNew(final Map<String, Object> userData,
-            final UserAuth.Mode authMode, final String authId,
-            final String authPw, final String assocCardNumber,
-            final boolean isAdminOnlyLogin) throws IOException {
-
-        /*
-         * INVARIANT: Password can NOT be empty in Name authentication.
-         */
-        if (authMode == UserAuth.Mode.NAME) {
-            if (StringUtils.isBlank(authPw)) {
-                return onLoginFailed(userData, null);
-            }
-        }
-
-        /*
-         *
-         */
-        final Device terminal = getHostTerminal();
-
-        final UserAuth theUserAuth =
-                new UserAuth(terminal, null, isAdminOnlyLogin);
-
-        if (!theUserAuth.isAuthModeAllowed(authMode)) {
-            return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-auth-mode-not-available", authMode.toString());
-        }
-
-        /*
-         *
-         */
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
-        final SpSession session = SpSession.get();
-        final ConfigManager cm = ConfigManager.instance();
-
-        final IExternalUserAuthenticator userAuthenticator =
-                cm.getUserAuthenticator();
-
-        /*
-         * This is the place to set the WebAppType session attribute.
-         */
-        final WebAppTypeEnum webAppType;
-
-        if (isAdminOnlyLogin) {
-            webAppType = WebAppTypeEnum.ADMIN;
-        } else {
-            webAppType = WebAppTypeEnum.USER;
-        }
-        session.setWebAppType(webAppType);
-
-        /*
-         * Initialize pessimistic.
-         */
-        session.setUser(null);
-
-        /*
-         * The facts.
-         */
-        final boolean allowInternalUsersOnly = (userAuthenticator == null);
-
-        final boolean isInternalAdmin =
-                authMode == UserAuth.Mode.NAME
-                        && ConfigManager.isInternalAdmin(authId);
-
-        final boolean isLazyUserInsert =
-                cm.isUserInsertLazyLogin() && !isAdminOnlyLogin
-                        && !allowInternalUsersOnly;
-
-        /*
-         * To find out.
-         */
-        boolean isAuthenticated = false;
-        boolean isInternalUser = false;
-        String uid = null;
-        User userDb = null;
-
-        /*
-         *
-         */
-        RfidNumberFormat rfidNumberFormat = null;
-
-        if (authMode == UserAuth.Mode.CARD_LOCAL || assocCardNumber != null) {
-            if (terminal == null) {
-                rfidNumberFormat = new RfidNumberFormat();
-            } else {
-                final DeviceAttrLookup lookup = new DeviceAttrLookup(terminal);
-                rfidNumberFormat =
-                        DEVICE_SERVICE.createRfidNumberFormat(terminal, lookup);
-            }
-        }
-
-        /*
-         *
-         */
-        if (isInternalAdmin) {
-
-            /*
-             * Internal admin
-             */
-
-            if (isAdminOnlyLogin) {
-
-                User userAuth =
-                        ConfigManager.instance().isInternalAdminValid(authId,
-                                authPw);
-
-                isAuthenticated = (userAuth != null);
-
-                if (isAuthenticated) {
-
-                    uid = authId;
-                    userDb = userAuth;
-
-                } else {
-                    /*
-                     * INVARIANT: internal admin password must be correct.
-                     */
-                    return onLoginFailed(userData,
-                            "msg-login-invalid-password",
-                            webAppType.getUiText(), authId);
-                }
-
-            } else {
-                /*
-                 * INVARIANT: internal admin is NOT allowed to login to the User
-                 * WebApp.
-                 */
-                return onLoginFailed(userData, "msg-login-denied",
-                        webAppType.getUiText(), authId);
-            }
-
-        } else {
-
-            if (authMode == UserAuth.Mode.NAME) {
-
-                /*
-                 * Get the "real" username from the alias.
-                 */
-                if (allowInternalUsersOnly) {
-                    uid = UserAliasList.instance().getUserName(authId);
-                } else {
-                    uid =
-                            UserAliasList.instance().getUserName(
-                                    userAuthenticator.asDbUserId(authId));
-                    uid = userAuthenticator.asDbUserId(uid);
-                }
-                /*
-                 * Read real user from database.
-                 */
-                userDb = userDao.findActiveUserByUserId(uid);
-
-            } else if (authMode == UserAuth.Mode.ID) {
-
-                userDb = USER_SERVICE.findUserByNumber(authId);
-
-                /*
-                 * INVARIANT: User MUST be present in database.
-                 */
-                if (userDb == null) {
-                    return onLoginFailed(userData, "msg-login-invalid-number",
-                            webAppType.getUiText(), authId);
-                }
-                uid = userDb.getUserId();
-
-            } else if (authMode == UserAuth.Mode.CARD_IP
-                    || authMode == UserAuth.Mode.CARD_LOCAL) {
-
-                String normalizedCardNumber = authId;
-
-                if (authMode == UserAuth.Mode.CARD_LOCAL) {
-                    normalizedCardNumber =
-                            rfidNumberFormat.getNormalizedNumber(authId);
-                }
-
-                userDb =
-                        USER_SERVICE.findUserByCardNumber(normalizedCardNumber);
-
-                /*
-                 * INVARIANT: User MUST be present.
-                 */
-                if (userDb == null) {
-
-                    userData.put("authCardSelfAssoc",
-                            Boolean.valueOf(theUserAuth.isAuthCardSelfAssoc()));
-
-                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                            "msg-login-unregistered-card");
-                }
-                uid = userDb.getUserId();
-            }
-
-            /*
-             * Check invariants based on user presence in database.
-             */
-            if (userDb == null) {
-
-                if (isAdminOnlyLogin) {
-                    /*
-                     * INVARIANT: User MUST exist to login to Admin WebApp (no
-                     * lazy user insert allowed in this case)
-                     */
-                    return onLoginFailed(userData,
-                            "msg-login-user-not-present",
-                            webAppType.getUiText(), authId);
-                }
-
-                if (allowInternalUsersOnly) {
-                    /*
-                     * INVARIANT: User MUST exist to login when NO external user
-                     * source (no lazy user insert allowed in this case).
-                     */
-                    return onLoginFailed(userData,
-                            "msg-login-user-not-present",
-                            webAppType.getUiText(), authId);
-                }
-
-                if (!isLazyUserInsert) {
-                    /*
-                     * INVARIANT: User MUST exist to login when lazy user insert
-                     * is disabled.
-                     */
-                    return onLoginFailed(userData,
-                            "msg-login-user-not-present",
-                            webAppType.getUiText(), authId);
-                }
-
-            } else {
-
-                if (isAdminOnlyLogin && !userDb.getAdmin()) {
-                    /*
-                     * INVARIANT: User MUST have admin rights to login to Admin
-                     * WebApp.
-                     */
-                    return onLoginFailed(userData, "msg-login-no-admin-rights",
-                            webAppType.getUiText(), userDb.getUserId());
-                }
-
-                if (!userDb.getPerson()) {
-                    /*
-                     * INVARIANT: User MUST be a Person to login.
-                     */
-                    return onLoginFailed(userData, "msg-login-no-person",
-                            webAppType.getUiText(), userDb.getUserId());
-                }
-
-                final Date onDate = new Date();
-
-                if (USER_SERVICE.isUserFullyDisabled(userDb, onDate)) {
-                    /*
-                     * INVARIANT: User MUST be active (enabled) at moment of
-                     * login.
-                     */
-                    return onLoginFailed(userData, "msg-login-disabled",
-                            webAppType.getUiText(), userDb.getUserId());
-                }
-
-                /*
-                 * Identify internal user.
-                 */
-                isInternalUser = userDb.getInternal();
-
-            }
-
-            /*
-             * Authenticate
-             */
-            if (authMode == UserAuth.Mode.NAME) {
-
-                if (isInternalUser) {
-
-                    isAuthenticated =
-                            InternalUserAuthenticator.authenticate(userDb,
-                                    authPw);
-
-                    if (!isAuthenticated) {
-                        /*
-                         * INVARIANT: Password of Internal User must be correct.
-                         */
-                        return onLoginFailed(userData,
-                                "msg-login-invalid-password",
-                                webAppType.getUiText(), userDb.getUserId());
-                    }
-
-                    // No lazy insert for internal user.
-
-                } else {
-
-                    final User userAuth;
-
-                    if (allowInternalUsersOnly) {
-                        userAuth = null;
-                        isAuthenticated = false;
-                    } else {
-                        userAuth = userAuthenticator.authenticate(uid, authPw);
-                        isAuthenticated = (userAuth != null);
-                    }
-
-                    if (!isAuthenticated) {
-                        /*
-                         * INVARIANT: Password of External User must be correct.
-                         */
-                        return onLoginFailed(userData,
-                                "msg-login-invalid-password",
-                                webAppType.getUiText(), uid);
-                    }
-
-                    /**
-                     * Lazy user insert
-                     */
-                    if (userDb == null) {
-
-                        boolean lazyInsert = false;
-
-                        final String group =
-                                cm.getConfigValue(Key.USER_SOURCE_GROUP).trim();
-
-                        if (group.isEmpty()) {
-                            lazyInsert = true;
-                        } else {
-                            IUserSource userSource = cm.getUserSource();
-                            lazyInsert = userSource.isUserInGroup(uid, group);
-                        }
-
-                        if (lazyInsert) {
-                            userDb =
-                                    userDao.findActiveUserByUserIdInsert(
-                                            userAuth, new Date(),
-                                            Entity.ACTOR_SYSTEM);
-                            /*
-                             * IMPORTANT: ad-hoc commit + begin transaction
-                             */
-                            if (userDb != null) {
-                                ServiceContext.getDaoContext().commit();
-                                ServiceContext.getDaoContext()
-                                        .beginTransaction();
-                            }
-                        }
-                    }
-
-                }
-
-            } else {
-
-                /*
-                 * Check PIN for both ID Number, Local and Network Card.
-                 */
-                isAuthenticated =
-                        (authMode == UserAuth.Mode.ID && !theUserAuth
-                                .isAuthIdPinReq())
-                                || (authMode == UserAuth.Mode.CARD_IP && !theUserAuth
-                                        .isAuthCardPinReq())
-                                || (authMode == UserAuth.Mode.CARD_LOCAL && !theUserAuth
-                                        .isAuthCardPinReq());
-
-                if (!isAuthenticated) {
-
-                    if (StringUtils.isBlank(authPw)) {
-                        /*
-                         * INVARIANT: PIN can NOT be empty.
-                         */
-                        return onLoginFailed(userData,
-                                "msg-login-no-pin-available",
-                                webAppType.getUiText(), authId);
-                    }
-
-                    final String encryptedPin =
-                            USER_SERVICE.findUserAttrValue(userDb,
-                                    UserAttrEnum.PIN);
-                    String pin = "";
-                    if (encryptedPin != null) {
-                        pin =
-                                CryptoUser.decryptUserAttr(userDb.getId(),
-                                        encryptedPin);
-                    }
-                    isAuthenticated = pin.equals(authPw);
-                }
-
-                if (!isAuthenticated) {
-                    /*
-                     * INVARIANT: PIN must be correct.
-                     */
-                    return onLoginFailed(userData, "msg-login-invalid-pin",
-                            webAppType.getUiText(), authId);
-                }
-            }
-
-            /*
-             * Lazy create user home directory
-             */
-            if (!isInternalAdmin && userDb != null) {
-
-                /*
-                 * Ad-hoc user lock
-                 */
-                userDb = userDao.lock(userDb.getId());
-
-                try {
-                    USER_SERVICE.lazyUserHomeDir(uid);
-                } catch (IOException e) {
-                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                            "msg-user-home-dir-create-error");
-                }
-            }
-
-        }
-
-        /*
-         * Associate Card Number to User?
-         */
-        if (assocCardNumber != null && userDb != null) {
-
-            USER_SERVICE.assocPrimaryCardNumber(userDb,
-                    rfidNumberFormat.getNormalizedNumber(assocCardNumber));
-
-            /*
-             * Do NOT grant a login, just associate the card.
-             */
-            return setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-card-registered-ok");
-        }
-
-        /*
-         * Warnings for Admin WebApp.
-         */
-        if (isAdminOnlyLogin) {
-            if (!cm.isSetupCompleted()) {
-                setApiResult(userData, ApiResultCodeEnum.WARN,
-                        "msg-setup-is-needed");
-            } else if (cm.doesInternalAdminHasDefaultPassword()) {
-                setApiResult(userData, ApiResultCodeEnum.WARN,
-                        "msg-change-internal-admin-password");
-            } else {
-                setApiResultMembershipMsg(userData);
-            }
-
-        } else {
-            setApiResultOK(userData);
-        }
-
-        /*
-         * Deny access, when the user is still not found in the database.
-         */
-        if (userDb == null) {
-            return onLoginFailed(userData, "msg-login-user-not-present",
-                    webAppType.getUiText(), uid);
-        }
-
-        final UserAuthToken authToken;
-
-        if (isAuthTokenLoginEnabled()) {
-            authToken = reqLoginLazyCreateAuthToken(uid, isAdminOnlyLogin);
-        } else {
-            authToken = null;
-        }
-
-        onUserLoginGranted(userData, session, isAdminOnlyLogin, uid, userDb,
-                authToken);
-
-        /*
-         * Update session.
-         */
-        session.setUser(userDb);
-
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Setting user in session of application ["
-                    + SpSession.get().getApplication().getClass().toString()
-                    + "] isAuthenticated [" + SpSession.get().isAuthenticated()
-                    + "]");
-        }
-
-        return userData;
-    }
-
-    /**
-     *
-     * @return {@code true} when login via browser local storage auth token is
-     *         enabled.
-     */
-    private static boolean isAuthTokenLoginEnabled() {
-        return ConfigManager.instance().isConfigValue(
-                Key.WEB_LOGIN_AUTHTOKEN_ENABLE);
-    }
-
-    /**
-     * Handles the login request for both the User and Admin WebApp.
-     * <p>
-     * NOTE: If {@link #AUTH_MODE_USER} and authPw is {@code null} the user is
-     * validated against the authToken.
-     * </p>
-     * <p>
-     * When an assocCardNumber (not null) is passed, the User is authenticated
-     * according to the authMode. A login is NOT granted, just the card is
-     * associated.
-     * </p>
-     * Invariants:
-     * <ul>
-     * <li>The application SHOULD be initialized.</li>
-     * <li>If set-up is not completed then the only login possible is as
-     * internal admin in the Admin WebApp.</li>
-     * <li>If Application is NOT ready-to-use the only login possible is as
-     * admin in the admin application.</li>
-     * <li>See
-     * {@link #reqLoginNew(Map, EntityManager, org.savapage.core.services.helpers.UserAuth.Mode, String, String, boolean)}
-     * and
-     * {@link #reqLoginAuthToken(Map, EntityManager, String, String, boolean)}.</li>
-     * </ul>
-     *
-     * @param authMode
-     *            The authentication mode.
-     * @param authId
-     *            Offered use name (handled as user alias), ID Number or Card
-     *            Number.
-     * @param authPw
-     *            The password or PIN. When {@code null} AND
-     *            {@link #AUTH_MODE_USER}, the authToken is used to validate.
-     * @param authToken
-     *            The authentication token.
-     * @param assocCardNumber
-     *            The card number to associate with this user account. When
-     *            {@code null} NO card will be associated.
-     * @param isAdminOnlyLogin
-     *            <code>true</code> if this is a login for admin only.
-     * @return The map which can be converted to a json string by the caller.
-     * @throws IOException
-     */
-    private Map<String, Object> reqLogin(final UserAuth.Mode authMode,
-            final String authId, final String authPw, final String authToken,
-            final String assocCardNumber, final boolean isAdminOnlyLogin)
-            throws IOException {
-
-        final UserAgentHelper userAgentHelper = createUserAgentHelper();
-
-        /*
-         * Browser diagnostics.
-         */
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Browser detection for [" + authId + "] Mobile ["
-                    + userAgentHelper.isMobileBrowser() + "] Mobile Safari ["
-                    + userAgentHelper.isSafariBrowserMobile() + "] UserAgent ["
-                    + userAgentHelper.getUserAgentHeader() + "]");
-        }
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final ConfigManager cm = ConfigManager.instance();
-        final SpSession session = SpSession.get();
-
-        if (LOGGER.isTraceEnabled()) {
-            String testLog = "Session [" + session.getId() + "]";
-            testLog += " WebAppCount [" + session.getAuthWebAppCount() + "]";
-            LOGGER.trace(testLog);
-        }
-
-        /*
-         * INVARIANT: Only one (1) authenticated session allowed for (non Mac OS
-         * X Safari) desktop computers.
-         */
-        if (!userAgentHelper.isMobileBrowser()
-                && !userAgentHelper.isSafariBrowserMacOsX()
-                && SpSession.get().getAuthWebAppCount() != 0) {
-            return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-login-another-session-active");
-        }
-
-        /*
-         * INVARIANT: The application SHOULD be initialized.
-         */
-        if (!cm.isInitialized()) {
-            return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-login-not-possible");
-        }
-
-        /*
-         * INVARIANT: If set-up is NOT completed the only login possible is mode
-         * {@link #AUTH_MODE_USER} as INTERNAL admin in the admin application.
-         */
-        if (!cm.isSetupCompleted()) {
-            if (!isAdminOnlyLogin || authMode != UserAuth.Mode.NAME) {
-                return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                        "msg-login-install-mode");
-            }
-            if (!ConfigManager.isInternalAdmin(authId)) {
-                return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                        "msg-login-as-internal-admin");
-            }
-        }
-
-        /*
-         * INVARIANT: If Application is NOT ready-to-use the only login possible
-         * is as admin in the admin application.
-         */
-        if (!cm.isAppReadyToUse()) {
-            if (!isAdminOnlyLogin) {
-                return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                        "msg-login-app-config");
-            }
-        }
-
-        //
-        final boolean isAuthTokenLoginEnabled = isAuthTokenLoginEnabled();
-
-        /*
-         * If user authentication token (browser local storage) is disabled or
-         * user was authenticated by OneTimeAuthToken, we fall back to the user
-         * in the active session.
-         */
-        if ((!isAuthTokenLoginEnabled || session.isOneTimeAuthToken())
-                && session.getUser() != null) {
-
-            /*
-             * INVARIANT: User must exist in database.
-             */
-            final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
-            // We need the JPA attached User.
-            final User userDb =
-                    userDao.findActiveUserByUserId(session.getUser()
-                            .getUserId());
-
-            if (userDb == null) {
-                onLoginFailed(userData, null);
-            } else {
-                onUserLoginGranted(userData, session, isAdminOnlyLogin, session
-                        .getUser().getUserId(), userDb, null);
-                setApiResultOK(userData);
-            }
-
-        } else {
-
-            //
-            final boolean isCliAppAuthApplied;
-
-            if (isAuthTokenLoginEnabled && authMode == UserAuth.Mode.NAME
-                    && StringUtils.isBlank(authPw)) {
-                isCliAppAuthApplied =
-                        this.reqLoginAuthTokenCliApp(userData, authId,
-                                this.getClientIpAddr(), isAdminOnlyLogin);
-            } else {
-                isCliAppAuthApplied = false;
-            }
-
-            if (!isCliAppAuthApplied) {
-
-                if (isAuthTokenLoginEnabled && authMode == UserAuth.Mode.NAME
-                        && StringUtils.isBlank(authPw)
-                        && StringUtils.isNotBlank(authToken)) {
-
-                    reqLoginAuthTokenWebApp(userData, authId, authToken,
-                            isAdminOnlyLogin);
-
-                } else {
-                    reqLoginNew(userData, authMode, authId, authPw,
-                            assocCardNumber, isAdminOnlyLogin);
-                }
-            }
-        }
-
-        userData.put("sessionid", SpSession.get().getId());
-
-        if (isApiResultOK(userData)) {
-            setSessionTimeoutSeconds(isAdminOnlyLogin);
-            SpSession.get().incrementAuthWebApp();
-        }
-
-        return userData;
-    }
-
-    /**
-     *
-     * @param isAdminSession
-     */
-    private void setSessionTimeoutSeconds(boolean isAdminSession) {
-
-        final Request request = RequestCycle.get().getRequest();
-
-        if (request instanceof WebRequest) {
-
-            final ServletWebRequest wr = (ServletWebRequest) request;
-            final HttpSession session = wr.getContainerRequest().getSession();
-
-            if (session == null) {
-                return;
-            }
-
-            final int minutes;
-
-            if (isAuthTokenLoginEnabled()) {
-
-                minutes = 0;
-
-            } else {
-
-                final IConfigProp.Key configKey;
-
-                if (isAdminSession) {
-                    configKey =
-                            IConfigProp.Key.WEB_LOGIN_ADMIN_SESSION_TIMOUT_MINS;
-                } else {
-                    configKey =
-                            IConfigProp.Key.WEB_LOGIN_USER_SESSION_TIMEOUT_MINS;
-                }
-
-                minutes = ConfigManager.instance().getConfigInt(configKey);
-
-            }
-            session.setMaxInactiveInterval(minutes * DateUtil.SECONDS_IN_MINUTE);
-        }
-    }
-
-    /**
-     * Uses the existing {@link UserAuthToken} (if found) or creates a new one.
-     *
-     * @param userId
-     *            The user id.
-     * @param isAdminOnlyLogin
-     * @return The {@link UserAuthToken}.
-     */
-    private UserAuthToken reqLoginLazyCreateAuthToken(final String userId,
-            final boolean isAdminOnlyLogin) {
-
-        UserAuthToken authToken =
-                WebAppUserAuthManager.instance().getAuthTokenOfUser(userId,
-                        isAdminOnlyLogin);
-
-        if (authToken == null || authToken.isAdminOnly() != isAdminOnlyLogin) {
-
-            authToken = new UserAuthToken(userId, isAdminOnlyLogin);
-
-            WebAppUserAuthManager.instance().putUserAuthToken(authToken,
-                    isAdminOnlyLogin);
-        }
-
-        return authToken;
-    }
-
-    /**
-     * Tries to login with Client App authentication token.
-     *
-     * @param userData
-     *            The user data to be filled after applying the authentication
-     *            method. If method is NOT applied, the userData in not touched.
-     * @param userId
-     *            The unique user id.
-     * @param clientIpAddress
-     *            The remote IP address.
-     * @return {@code false} when Client App Authentication was NOT applied.
-     * @throws IOException
-     */
-    private boolean reqLoginAuthTokenCliApp(final Map<String, Object> userData,
-            final String userId, final String clientIpAddress,
-            final boolean isAdminOnly) throws IOException {
-
-        /*
-         * INVARIANT: do NOT authenticate for Admin Web App.
-         */
-        if (isAdminOnly) {
-            return false;
-        }
-
-        /*
-         * INVARIANT: Trust between User Web App and User Client App MUST be
-         * enabled.
-         */
-        if (!ConfigManager.instance().isConfigValue(
-                Key.WEBAPP_USER_AUTH_TRUST_CLIAPP_AUTH)) {
-            return false;
-        }
-
-        /*
-         * INVARIANT: authentication token MUST be present for IP address.
-         */
-        final UserAuthToken authTokenCliApp =
-                ClientAppUserAuthManager.getIpAuthToken(clientIpAddress);
-
-        if (authTokenCliApp == null) {
-            return false;
-        }
-
-        /*
-         * INVARIANT: authentication token MUST match requesting user.
-         */
-        final String userIdToken = authTokenCliApp.getUser();
-
-        if (userIdToken == null || !userIdToken.equalsIgnoreCase(userId)) {
-            return false;
-        }
-
-        /*
-         * INVARIANT: authentication token MUST not be older than 2 times the
-         * max time it takes a long poll to finish.
-         */
-        if (ServiceContext.getTransactionDate().getTime()
-                - authTokenCliApp.getCreateTime() > 2 * UserEventService
-                .getMaxMonitorMsec()) {
-            return false;
-        }
-
-        /*
-         * INVARIANT: User must exist in database.
-         */
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-        final User userDb = userDao.findActiveUserByUserId(userId);
-
-        if (userDb != null) {
-
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("CliApp AuthToken Login [" + userId + "] granted.");
-            }
-
-            final SpSession session = SpSession.get();
-
-            session.setUser(userDb);
-
-            final UserAuthToken authTokenWebApp =
-                    reqLoginLazyCreateAuthToken(userId, isAdminOnly);
-
-            onUserLoginGranted(userData, session, isAdminOnly, userId,
-                    session.getUser(), authTokenWebApp);
-
-            setApiResultOK(userData);
-
-        } else {
-
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("CliApp AuthToken Login [" + userId
-                        + "] denied: user NOT found.");
-            }
-
-            onLoginFailed(userData, null);
-        }
-
-        return true;
-    }
-
-    /**
-     * Tries to login with WebApp authentication token.
-     *
-     * @param userData
-     * @param uid
-     * @param authtoken
-     * @param isAdminOnly
-     * @return
-     * @throws IOException
-     */
-    private Map<String, Object> reqLoginAuthTokenWebApp(
-            final Map<String, Object> userData, final String uid,
-            final String authtoken, final boolean isAdminOnly)
-            throws IOException {
-
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace(String
-                    .format("Login [%s] with WebApp AuthToken.", uid));
-        }
-
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
-        final WebAppUserAuthManager userAuthManager =
-                WebAppUserAuthManager.instance();
-
-        final UserAuthToken authTokenObj =
-                userAuthManager.getUserAuthToken(authtoken, isAdminOnly);
-
-        final User userDb;
-
-        if (authTokenObj != null && uid.equals(authTokenObj.getUser())
-                && authTokenObj.isAdminOnly() == isAdminOnly) {
-
-            if (isAdminOnly && ConfigManager.isInternalAdmin(uid)) {
-                userDb = ConfigManager.createInternalAdminUser();
-            } else {
-                userDb = userDao.findActiveUserByUserId(uid);
-            }
-
-        } else {
-            userDb = null;
-        }
-
-        if (userDb != null) {
-
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(String.format(
-                        "WebApp AuthToken Login [%s] granted.", uid));
-            }
-
-            final SpSession session = SpSession.get();
-
-            session.setUser(userDb);
-
-            onUserLoginGranted(userData, session, isAdminOnly, uid,
-                    session.getUser(), authTokenObj);
-
-            setApiResultOK(userData);
-
-        } else {
-
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(String.format(
-                        "WebApp AuthToken Login [%s] denied: user NOT found.",
-                        uid));
-            }
-
-            onLoginFailed(userData, null);
-        }
-
-        return userData;
-    }
-
-    /**
-     * Adds user statistics at the {@code stats} key of jsonData.
-     * <p>
-     * The User Statistics are used by the Client WebApp to update the Pie-chart
-     * graphics.
-     * </p>
-     *
-     * @param jsonData
-     *            The JSON data to add the {@code stats} key to.
-     * @param user
-     *            The User to get the statistics from.
-     */
-    public static void addUserStats(Map<String, Object> jsonData,
-            final User user, Locale locale, String currencySymbol) {
-
-        final Map<String, Object> stats = new HashMap<>();
-
-        stats.put("pagesPrintIn", user.getNumberOfPrintInPages());
-        stats.put("pagesPrintOut", user.getNumberOfPrintOutPages());
-        stats.put("pagesPdfOut", user.getNumberOfPdfOutPages());
-
-        final AccountDisplayInfoDto dto =
-                ACCOUNTING_SERVICE.getAccountDisplayInfo(user, locale,
-                        currencySymbol);
-
-        stats.put("accountInfo", dto);
-
-        final OutboxInfoDto outbox =
-                OUTBOX_SERVICE.pruneOutboxInfo(user.getUserId(),
-                        ServiceContext.getTransactionDate());
-
-        OUTBOX_SERVICE.applyLocaleInfo(outbox, locale, currencySymbol);
-
-        stats.put("outbox", outbox);
-
-        jsonData.put("stats", stats);
-    }
-
-    /**
-     * Sets the user data for login request and notifies the authenticated user
-     * to the Admin WebApp.
-     *
-     * @param userData
-     * @param session
-     * @param isAdminOnlyLogin
-     * @param uid
-     * @param userDb
-     * @param authToken
-     *            {@code null} when not available.
-     * @throws IOException
-     */
-    private void onUserLoginGranted(final Map<String, Object> userData,
-            final SpSession session, final boolean isAdminOnlyLogin,
-            final String uid, final User userDb, final UserAuthToken authToken)
-            throws IOException {
-
-        userData.put("id", uid);
-        userData.put("key_id", userDb.getId());
-        userData.put("fullname", userDb.getFullName());
-        userData.put("admin", userDb.getAdmin());
-        userData.put("internal", userDb.getInternal());
-        userData.put("systime", Long.valueOf(System.currentTimeMillis()));
-        userData.put("language", getSession().getLocale().getLanguage());
-        userData.put("country", getSession().getLocale().getCountry());
-        userData.put("mail", USER_SERVICE.getPrimaryEmailAddress(userDb));
-
-        userData.put("number", StringUtils.defaultString(USER_SERVICE
-                .getPrimaryIdNumber(userDb)));
-
-        if (!isAdminOnlyLogin) {
-            userData.put("uuid", USER_SERVICE.lazyAddUserAttrUuid(userDb)
-                    .toString());
-        }
-
-        if (authToken != null) {
-            userData.put("authtoken", authToken.getToken());
-        }
-
-        final String cometdToken;
-
-        if (userDb.getAdmin()) {
-            cometdToken = CometdClientMixin.SHARED_USER_ADMIN_TOKEN;
-            userData.put("role", "admin"); // TODO
-        } else {
-            cometdToken = CometdClientMixin.SHARED_USER_TOKEN;
-            userData.put("role", "editor"); // TODO
-        }
-        userData.put("cometdToken", cometdToken);
-
-        // role (editor|admin|reader)
-
-        WebApp.get().onAuthenticatedUser(session.getId(), getRemoteAddr(), uid,
-                userDb.getAdmin());
-
-        if (!isAdminOnlyLogin) {
-
-            addUserStats(userData, userDb, this.getSession().getLocale(),
-                    SpSession.getAppCurrencySymbol());
-
-            /*
-             * Make sure that any User Web App long poll for this user is
-             * interrupted.
-             */
-            interruptPendingLongPolls(userDb.getUserId());
-
-            INBOX_SERVICE.pruneOrphanJobs(ConfigManager.getUserHomeDir(uid),
-                    userDb);
-        }
-
-    }
-
-    /**
      * Returns the Internet Protocol (IP) address of the client or last proxy
      * that sent the request. For HTTP servlets, same as the value of the CGI
      * variable <code>REMOTE_ADDR</code>.
@@ -6463,7 +5336,8 @@ public final class JsonApiServer extends AbstractPage {
          * interrupted.
          */
         if (userId != null && this.getWebAppType() == WebAppTypeEnum.USER) {
-            interruptPendingLongPolls(userId);
+            ApiRequestHelper.interruptPendingLongPolls(userId,
+                    this.getRemoteAddr());
         }
     }
 
@@ -6583,35 +5457,14 @@ public final class JsonApiServer extends AbstractPage {
          * interrupted.
          */
         if (savedWebAppType == WebAppTypeEnum.USER && userId != null) {
-            interruptPendingLongPolls(userId);
+            ApiRequestHelper.interruptPendingLongPolls(userId,
+                    this.getRemoteAddr());
         }
 
         /*
          * We are OK.
          */
         return createApiResultOK();
-    }
-
-    /**
-     * Interrupts all current User Web App long polls for this user.
-     * <p>
-     * If the user id is the reserved 'admin', the interrupt is NOT applied.
-     * </p>
-     *
-     * @param userId
-     *            The user id.
-     * @throws IOException
-     *             When the interrupt message could not be written (to the
-     *             message file).
-     */
-    private void interruptPendingLongPolls(final String userId)
-            throws IOException {
-
-        if (!ConfigManager.isInternalAdmin(userId)) {
-
-            UserMsgIndicator.write(userId, new Date(),
-                    UserMsgIndicator.Msg.STOP_POLL_REQ, getRemoteAddr());
-        }
     }
 
     /**
@@ -6622,83 +5475,9 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqExitEventMonitor(final String userId)
             throws IOException {
-        interruptPendingLongPolls(userId);
+        ApiRequestHelper
+                .interruptPendingLongPolls(userId, this.getRemoteAddr());
         return createApiResultOK();
-    }
-
-    /**
-     * Sets the userData message with an error or warning depending on the
-     * Membership position. If the membership is ok, the OK message is applied.
-     *
-     * @param userData
-     *            The data the message is to be applied on.
-     * @throws NumberFormatException
-     */
-    private void setApiResultMembershipMsg(final Map<String, Object> userData)
-            throws NumberFormatException {
-
-        final MemberCard memberCard = MemberCard.instance();
-
-        Long daysLeft =
-                memberCard.getDaysLeftInVisitorPeriod(ServiceContext
-                        .getTransactionDate());
-
-        switch (memberCard.getStatus()) {
-        case EXCEEDED:
-            setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-membership-exceeded-user-limit",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
-            break;
-        case EXPIRED:
-            setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-membership-expired",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
-
-            break;
-        case VISITOR:
-            setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-membership-visit", daysLeft.toString(),
-                    CommunityDictEnum.VISITOR.getWord());
-            break;
-        case VISITOR_EXPIRED:
-            setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-membership-visit-expired",
-                    CommunityDictEnum.VISITOR.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
-            break;
-        case WRONG_MODULE:
-        case WRONG_COMMUNITY:
-            setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-membership-wrong-product",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
-            break;
-        case WRONG_VERSION:
-            setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-membership-version",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
-            break;
-        case WRONG_VERSION_WITH_GRACE:
-            setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-membership-version-grace",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    daysLeft.toString(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
-            break;
-        case VISITOR_EDITION:
-        case VALID:
-        default:
-            setApiResultOK(userData);
-            break;
-        }
     }
 
     /**
@@ -7168,8 +5947,9 @@ public final class JsonApiServer extends AbstractPage {
 
         //
         final UserAuth userAuth =
-                new UserAuth(getHostTerminal(), authModeReq, getWebAppType()
-                        .equals(WebAppTypeEnum.ADMIN));
+                new UserAuth(ApiRequestHelper.getHostTerminal(this
+                        .getRemoteAddr()), authModeReq, getWebAppType().equals(
+                        WebAppTypeEnum.ADMIN));
 
         userData.put("authName", userAuth.isVisibleAuthName());
         userData.put("authId", userAuth.isVisibleAuthId());

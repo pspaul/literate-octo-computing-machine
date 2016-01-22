@@ -92,7 +92,7 @@ public final class ZeroPagePanel extends Panel {
                             setResponsePage(WebAppAdminPage.class, parms);
                             break;
                         case POS:
-                            setResponsePage(WebAppAdminPosPage.class, parms);
+                            setResponsePage(WebAppPosPage.class, parms);
                             break;
                         default:
                             setResponsePage(WebAppUserPage.class, parms);

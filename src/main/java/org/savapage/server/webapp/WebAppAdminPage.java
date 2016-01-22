@@ -121,7 +121,7 @@ public final class WebAppAdminPage extends AbstractWebAppPage {
         renderJs(response, String.format("%s%s",
                 "jquery.savapage-admin-pages.js", nocache));
         renderJs(response, String.format("%s%s",
-                "jquery.savapage-admin-page-pos.js", nocache));
+                "jquery.savapage-page-pos.js", nocache));
 
         renderJs(response,
                 String.format("%s%s", getSpecializedJsFileName(), nocache));

@@ -5,6 +5,7 @@
     
     <entry key="login-descript-user">Bitte anmelden, um die Anwendung zu starten.</entry>
     <entry key="login-descript-admin">Bitte melden Sie sich als Administrator an.</entry>
+    <entry key="login-descript-role">Bitte melden Sie sich als {0} an.</entry>
     
     <entry key="button-login">Login</entry>
     <entry key="button-lang">Sprache</entry>

@@ -33,7 +33,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * @author Datraverse B.V.
  *
  */
-public final class WebAppAdminPosPage extends AbstractWebAppPage {
+public final class WebAppPosPage extends AbstractWebAppPage {
 
     /**
      *
@@ -45,7 +45,7 @@ public final class WebAppAdminPosPage extends AbstractWebAppPage {
      * @param parameters
      *            The {@link PageParameters}.
      */
-    public WebAppAdminPosPage(final PageParameters parameters) {
+    public WebAppPosPage(final PageParameters parameters) {
 
         super(parameters);
 
@@ -74,20 +74,20 @@ public final class WebAppAdminPosPage extends AbstractWebAppPage {
     protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
 
-        renderJs(response, String.format("%s%s",
-                "jquery.savapage-admin-page-pos.js", nocache));
+        renderJs(response,
+                String.format("%s%s", "jquery.savapage-page-pos.js", nocache));
         renderJs(response,
                 String.format("%s%s", getSpecializedJsFileName(), nocache));
     }
 
     @Override
     protected String getSpecializedCssFileName() {
-        return "jquery.savapage-admin-pos.css";
+        return "jquery.savapage-pos.css";
     }
 
     @Override
     protected String getSpecializedJsFileName() {
-        return "jquery.savapage-admin-pos.js";
+        return "jquery.savapage-pos.js";
     }
 
     @Override

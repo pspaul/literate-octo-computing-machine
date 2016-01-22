@@ -5,6 +5,7 @@
     
     <entry key="login-descript-user">Identifiez-vous pour démarrer l'application.</entry>
     <entry key="login-descript-admin">Connecter en tant qu'administrateur.</entry>
+    <entry key="login-descript-role">Connectez-vous en tant que {0}.</entry>
     
     <entry key="button-login">Login</entry>
     <entry key="button-lang">Langue</entry>

@@ -255,11 +255,13 @@
 
 				_api.callAsync({
 					request : 'login',
-					authMode : authMode,
-					authId : authId,
-					authPw : authPw,
-					authToken : authToken,
-					role : 'admin'
+					dto : JSON.stringify({
+						authMode : authMode,
+						authId : authId,
+						authPw : authPw,
+						authToken : authToken,
+						role : 'admin'
+					})
 				}, function(data) {
 					_handleLoginResult(authMode, data);
 				}, function() {

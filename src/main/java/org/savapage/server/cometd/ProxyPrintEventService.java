@@ -46,6 +46,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.Messages;
 import org.savapage.server.api.JsonApiServer;
+import org.savapage.server.api.request.ApiRequestHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -392,7 +393,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
 
                 if (request.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
 
-                    JsonApiServer.addUserStats(eventData, lockedUser,
+                    ApiRequestHelper.addUserStats(eventData, lockedUser,
                             ServiceContext.getLocale(),
                             ServiceContext.getAppCurrencySymbol());
 

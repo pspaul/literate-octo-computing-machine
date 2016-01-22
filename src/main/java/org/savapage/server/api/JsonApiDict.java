@@ -30,6 +30,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
+import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqPrintDelegationSet;
 import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqPrinterQuickSearch;
@@ -123,6 +124,7 @@ public class JsonApiDict {
     public static final String REQ_LETTERHEAD_SET = "letterhead-set";
 
     public static final String REQ_LOGIN = "login";
+
     public static final String REQ_LOGOUT = "logout";
 
     public static final String REQ_WEBAPP_UNLOAD = "webapp-unload";
@@ -332,15 +334,30 @@ public class JsonApiDict {
     private final Map<String, Req> dict = new HashMap<>();
 
     /**
-     *
+     * @deprecated
      * @param key
      * @param dbClaim
      * @param dbUsage
      * @param authReq
      */
+    @Deprecated
     private void put(final String key, AuthReq authReq, DbClaim dbClaim,
             DbAccess dbUsage) {
         dict.put(key, new Req(authReq, dbClaim, dbUsage));
+    }
+
+    /**
+     *
+     * @param key
+     * @param dbClaim
+     * @param handler
+     * @param dbUsage
+     * @param authReq
+     */
+    private void put(final String key,
+            final Class<? extends ApiRequestHandler> handler, AuthReq authReq,
+            DbClaim dbClaim, DbAccess dbUsage) {
+        dict.put(key, new Req(authReq, handler, dbClaim, dbUsage));
     }
 
     /**
@@ -652,7 +669,8 @@ public class JsonApiDict {
         usr(REQ_LETTERHEAD_GET, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_LETTERHEAD_SET, DbClaim.NONE, DbAccess.USER_LOCK);
 
-        put(REQ_LOGIN, AuthReq.NONE, DbClaim.READ, DbAccess.YES);
+        put(REQ_LOGIN, ReqLogin.class, AuthReq.NONE, DbClaim.READ, DbAccess.YES);
+
         usr(REQ_LOGOUT, DbClaim.NONE, DbAccess.NO);
         usr(REQ_WEBAPP_UNLOAD, DbClaim.NONE, DbAccess.NO);
         put(REQ_WEBAPP_CLOSE_SESSION, AuthReq.NONE, DbClaim.NONE, DbAccess.NO);

@@ -5,6 +5,7 @@
     
     <entry key="login-descript-user">Meld u aan om de applicatie te starten.</entry>
     <entry key="login-descript-admin">Meld u aan als beheerder.</entry>
+    <entry key="login-descript-role">Meld u aan als {0}.</entry>
     
     <entry key="button-login">Aanmelden</entry>
     <entry key="button-lang">Taal</entry>
