@@ -63,7 +63,7 @@ import org.savapage.core.services.UserService;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.WebApp;
-import org.savapage.server.webapp.WebAppUserPage;
+import org.savapage.server.webapp.WebAppUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,7 +215,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
                 || !contentTypeReq
                         .equalsIgnoreCase(IppMessageMixin.CONTENT_TYPE_IPP)) {
 
-            setResponsePage(WebAppUserPage.class);
+            setResponsePage(WebAppUser.class);
             return;
         }
 

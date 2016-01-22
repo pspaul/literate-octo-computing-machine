@@ -1,7 +1,7 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
- * Author: Rijk Ravestein.
+ * Copyright (c) 2011-2015 Datraverse B.V.
+ * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,47 +19,27 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.webapp;
+package org.savapage.server.pages.admin;
+
 
 /**
- * The type of Web Application.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
-public enum WebAppTypeEnum {
-    /**
-     * The Admin WebApp.
-     */
-    ADMIN("Admin"),
+public final class PageJobTickets extends AbstractAdminPage {
 
     /**
-     * The Point-of-Sale WebApp.
+     * Version for serialization.
      */
-    JOB_TICKETS("Job Tickets"),
+    private static final long serialVersionUID = 1L;
 
     /**
-     * The Point-of-Sale WebApp.
+     *
      */
-    POS("Pos"),
+    public PageJobTickets() {
 
-    /**
-     * The User WebApp.
-     */
-    USER("User"),
+        // final MarkupHelper helper = new MarkupHelper(this);
 
-    /**
-     * The WebApp type is undefined (unknown).
-     */
-    UNDEFINED("Unknown");
-
-    private final String uiText;
-
-    private WebAppTypeEnum(final String uiText) {
-        this.uiText = uiText;
-    }
-
-    public String getUiText() {
-        return uiText;
     }
 }

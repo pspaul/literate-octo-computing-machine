@@ -33,7 +33,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * @author Datraverse B.V.
  *
  */
-public final class WebAppPosPage extends AbstractWebAppPage {
+public final class WebAppJobTickets extends AbstractWebAppPage {
 
     /**
      *
@@ -45,7 +45,7 @@ public final class WebAppPosPage extends AbstractWebAppPage {
      * @param parameters
      *            The {@link PageParameters}.
      */
-    public WebAppPosPage(final PageParameters parameters) {
+    public WebAppJobTickets(final PageParameters parameters) {
 
         super(parameters);
 
@@ -53,7 +53,7 @@ public final class WebAppPosPage extends AbstractWebAppPage {
                 getWebAppTitle(getLocalizer().getString("webapp-title-suffix",
                         this));
 
-        addZeroPagePanel(WebAppTypeEnum.POS);
+        addZeroPagePanel(WebAppTypeEnum.JOB_TICKETS);
 
         add(new Label("app-title", appTitle));
 
@@ -67,27 +67,26 @@ public final class WebAppPosPage extends AbstractWebAppPage {
 
     @Override
     protected WebAppTypeEnum getWebAppType() {
-        return WebAppTypeEnum.POS;
+        return WebAppTypeEnum.JOB_TICKETS;
     }
 
     @Override
     protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
-
-        renderJs(response,
-                String.format("%s%s", "jquery.savapage-page-pos.js", nocache));
+        renderJs(response, String.format("%s%s",
+                "jquery.savapage-page-jobtickets.js", nocache));
         renderJs(response,
                 String.format("%s%s", getSpecializedJsFileName(), nocache));
     }
 
     @Override
     protected String getSpecializedCssFileName() {
-        return "jquery.savapage-pos.css";
+        return "jquery.savapage-jobtickets.css";
     }
 
     @Override
     protected String getSpecializedJsFileName() {
-        return "jquery.savapage-pos.js";
+        return "jquery.savapage-jobtickets.js";
     }
 
     @Override

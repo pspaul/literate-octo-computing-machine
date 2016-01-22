@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @author Datraverse B.V.
  *
  */
-public final class WebAppAdminPage extends AbstractWebAppPage {
+public final class WebAppAdmin extends AbstractWebAppPage {
 
     /**
      * .
@@ -63,7 +63,7 @@ public final class WebAppAdminPage extends AbstractWebAppPage {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(WebAppAdminPage.class);
+            .getLogger(WebAppAdmin.class);
 
     /**
      * .
@@ -80,7 +80,7 @@ public final class WebAppAdminPage extends AbstractWebAppPage {
      * @param parameters
      *            The {@link PageParameters}.
      */
-    public WebAppAdminPage(final PageParameters parameters) {
+    public WebAppAdmin(final PageParameters parameters) {
 
         super(parameters);
 

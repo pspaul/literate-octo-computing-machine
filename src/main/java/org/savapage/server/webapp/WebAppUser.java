@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
  * @author Datraverse B.V.
  *
  */
-public final class WebAppUserPage extends AbstractWebAppPage {
+public final class WebAppUser extends AbstractWebAppPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -79,7 +79,7 @@ public final class WebAppUserPage extends AbstractWebAppPage {
     private final static String PAGE_PARM_AUTH_TOKEN_USERID = "auth_user";
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(WebAppUserPage.class);
+            .getLogger(WebAppUser.class);
 
     /**
      *
@@ -209,7 +209,7 @@ public final class WebAppUserPage extends AbstractWebAppPage {
             final String fileName = uploadedFile.getClientFileName();
 
             final InternalFontFamilyEnum preferredFont =
-                    ((WebAppUserPage) this.getParent()).getSelectedUploadFont();
+                    ((WebAppUser) this.getParent()).getSelectedUploadFont();
 
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("User [" + user.getUserId() + "] uploaded file ["
@@ -314,7 +314,7 @@ public final class WebAppUserPage extends AbstractWebAppPage {
      * @param parameters
      *            The {@link PageParameters}.
      */
-    public WebAppUserPage(final PageParameters parameters) {
+    public WebAppUser(final PageParameters parameters) {
 
         super(parameters);
 

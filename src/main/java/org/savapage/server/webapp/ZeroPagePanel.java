@@ -89,13 +89,16 @@ public final class ZeroPagePanel extends Panel {
 
                         switch (webAppType) {
                         case ADMIN:
-                            setResponsePage(WebAppAdminPage.class, parms);
+                            setResponsePage(WebAppAdmin.class, parms);
+                            break;
+                        case JOB_TICKETS:
+                            setResponsePage(WebAppJobTickets.class, parms);
                             break;
                         case POS:
-                            setResponsePage(WebAppPosPage.class, parms);
+                            setResponsePage(WebAppPos.class, parms);
                             break;
                         default:
-                            setResponsePage(WebAppUserPage.class, parms);
+                            setResponsePage(WebAppUser.class, parms);
                             break;
                         }
                     }

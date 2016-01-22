@@ -57,6 +57,11 @@ public final class Login extends AbstractPage {
         case ADMIN:
             loginDescript = localized("login-descript-admin");
             break;
+        case JOB_TICKETS:
+            loginDescript =
+                    localized("login-descript-role",
+                            ACLRoleEnum.JOB_TICKET_OPERATOR.uiText(getLocale()));
+            break;
         case POS:
             loginDescript =
                     localized("login-descript-role",

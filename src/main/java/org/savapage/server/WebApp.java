@@ -69,9 +69,10 @@ import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.admin.AbstractAdminPage;
 import org.savapage.server.pages.user.AbstractUserPage;
 import org.savapage.server.raw.RawPrintServer;
-import org.savapage.server.webapp.WebAppAdminPage;
-import org.savapage.server.webapp.WebAppPosPage;
-import org.savapage.server.webapp.WebAppUserPage;
+import org.savapage.server.webapp.WebAppAdmin;
+import org.savapage.server.webapp.WebAppJobTickets;
+import org.savapage.server.webapp.WebAppPos;
+import org.savapage.server.webapp.WebAppUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,6 +125,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static final String MOUNT_PATH_WEBAPP_POS = "/pos";
 
     /**
+     * The Job Tickets mount path.
+     */
+    public static final String MOUNT_PATH_WEBAPP_JOBTICKETS = "/jobtickets";
+
+    /**
      * Used in this class to set mountPage().
      */
     private static final String MOUNT_PATH_API = "/api";
@@ -145,14 +151,14 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static final String PATH_IMAGES_PAYMENT = PATH_IMAGES + "/payment";
 
     /**
-    * .
-    */
+     * .
+     */
     public static final String PATH_IMAGES_EXT_SUPPLIER = PATH_IMAGES
             + "/ext-supplier";
 
     /**
-    * .
-    */
+     * .
+     */
     public static final String PATH_IMAGES_THIRDPARTY = PATH_IMAGES
             + "/thirdparty";
 
@@ -275,8 +281,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             final ThirdPartyEnum extSupplierEnum) {
 
         final StringBuilder url =
-                new StringBuilder().append(PATH_IMAGES_THIRDPARTY)
-                        .append("/").append(extSupplierEnum.getImageFileName());
+                new StringBuilder().append(PATH_IMAGES_THIRDPARTY).append("/")
+                        .append(extSupplierEnum.getImageFileName());
 
         return url.toString();
     }
@@ -568,10 +574,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              *
              * http://wicketinaction.com/2011/07/wicket-1-5-mounting-pages/
              */
-            mountPage(MOUNT_PATH_WEBAPP_ADMIN, WebAppAdminPage.class);
-            mountPage(MOUNT_PATH_WEBAPP_POS, WebAppPosPage.class);
+            mountPage(MOUNT_PATH_WEBAPP_ADMIN, WebAppAdmin.class);
+            mountPage(MOUNT_PATH_WEBAPP_JOBTICKETS, WebAppJobTickets.class);
+            mountPage(MOUNT_PATH_WEBAPP_POS, WebAppPos.class);
+            mountPage(MOUNT_PATH_WEBAPP_USER, WebAppUser.class);
 
-            mountPage(MOUNT_PATH_WEBAPP_USER, WebAppUserPage.class);
             mountPage(MOUNT_PATH_API, JsonApiServer.class);
             mountPage(MOUNT_PATH_PRINTERS, IppPrintServer.class);
 
@@ -783,11 +790,17 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
         final String urlPath = request.getUrl().getPath();
 
-        final String msg =
-                "newSession: URL path [" + urlPath + "] IP [" + remoteAddr
-                        + "]";
+        final String debugMsg;
 
-        Session session = null;
+        if (LOGGER.isDebugEnabled()) {
+            debugMsg =
+                    String.format("newSession: URL path [%s] IP [%s]", urlPath,
+                            remoteAddr);
+        } else {
+            debugMsg = null;
+        }
+
+        final Session session;
 
         /*
          * Mind the "/" at the beginning of the MOUNT_PATH_PRINTERS constant.
@@ -802,7 +815,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             session.invalidateNow();
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(msg + " [TEMP]");
+                LOGGER.debug(String.format("%s [TEMP]", debugMsg));
             }
 
         } else if (urlPath.startsWith(MOUNT_PATH_COMETD.substring(1))) {
@@ -822,7 +835,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             session = super.newSession(request, response);
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(msg + " [TEMP]");
+                LOGGER.trace(String.format("%s [TEMP]", debugMsg));
             }
 
         } else {
@@ -837,10 +850,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             session.bind();
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(msg + "] [" + session.getId() + "]. Sessions ["
-                        + theDictIpAddrUser.size() + "].");
+                LOGGER.debug(String.format("%s [%s]. Sessions [%d]", debugMsg,
+                        session.getId(), theDictIpAddrUser.size()));
             }
-
         }
         return session;
     }
