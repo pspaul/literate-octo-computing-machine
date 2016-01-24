@@ -23,8 +23,6 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -85,11 +83,13 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
      */
     private JsonPrinterList getUserPrinterList(final String userName) {
 
-        JsonPrinterList jsonPrinterList;
+        final JsonPrinterList jsonPrinterList;
+
         try {
             jsonPrinterList =
                     PROXY_PRINT_SERVICE.getUserPrinterList(ApiRequestHelper
                             .getHostTerminal(this.getRemoteAddr()), userName);
+
         } catch (IppConnectException | IppSyntaxException e) {
             throw new SpException(e.getMessage());
         }
@@ -98,6 +98,7 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
             PROXY_PRINT_SERVICE.localize(this.getLocale(),
                     jsonPrinterList.getDfault());
         }
+
         return jsonPrinterList;
     }
 
@@ -181,16 +182,6 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
                 }
             }
         }
-
-        //
-        Collections.sort(items, new Comparator<QuickSearchItemDto>() {
-
-            @Override
-            public int compare(QuickSearchItemDto o1, QuickSearchItemDto o2) {
-
-                return o1.getText().compareToIgnoreCase(o2.getText());
-            }
-        });
 
         //
         final DtoRsp rsp = new DtoRsp();
