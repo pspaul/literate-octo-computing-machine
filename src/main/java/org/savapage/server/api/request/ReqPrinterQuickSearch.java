@@ -23,24 +23,22 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
-import org.savapage.core.dao.DeviceDao;
-import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.QuickSearchFilterDto;
 import org.savapage.core.dto.QuickSearchItemDto;
 import org.savapage.core.dto.QuickSearchPrinterItemDto;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
-import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonPrinter;
 import org.savapage.core.json.JsonPrinterList;
-import org.savapage.core.services.ServiceContext;
 
 /**
  * Proxy Printers Quicksearch.
@@ -79,21 +77,6 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
     }
 
     /**
-     * Gets the {@link Device.DeviceTypeEnum#TERMINAL} definition of the remote
-     * client.
-     *
-     * @return {@code null} when no device definition is found.
-     */
-    private Device getHostTerminal() {
-
-        final DeviceDao deviceDao =
-                ServiceContext.getDaoContext().getDeviceDao();
-
-        return deviceDao.findByHostDeviceType(getRemoteAddr(),
-                DeviceTypeEnum.TERMINAL);
-    }
-
-    /**
      *
      * @param userName
      *            The requesting user.
@@ -105,8 +88,8 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
         JsonPrinterList jsonPrinterList;
         try {
             jsonPrinterList =
-                    PROXY_PRINT_SERVICE.getUserPrinterList(getHostTerminal(),
-                            userName);
+                    PROXY_PRINT_SERVICE.getUserPrinterList(ApiRequestHelper
+                            .getHostTerminal(this.getRemoteAddr()), userName);
         } catch (IppConnectException | IppSyntaxException e) {
             throw new SpException(e.getMessage());
         }
@@ -198,6 +181,16 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
                 }
             }
         }
+
+        //
+        Collections.sort(items, new Comparator<QuickSearchItemDto>() {
+
+            @Override
+            public int compare(QuickSearchItemDto o1, QuickSearchItemDto o2) {
+
+                return o1.getText().compareToIgnoreCase(o2.getText());
+            }
+        });
 
         //
         final DtoRsp rsp = new DtoRsp();

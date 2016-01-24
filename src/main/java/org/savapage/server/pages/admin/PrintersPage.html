@@ -9,6 +9,9 @@
 		<li class="ui-li-has-icon" wicket:id="printers-view">
             <img width="16" height="16" wicket:id="printerImage"/>
             <h3>
+                <wicket:enclosure child="deviceUriImg">
+                    <img wicket:id="deviceUriImg" src="" height="16"/>
+                </wicket:enclosure>                                             
                 <span wicket:id="displayName"/>
             </h3>
             <p><span wicket:id="printer-pie" class="sparkline-printer-pie"/>&nbsp;<span class="sp-printer-opt-download" wicket:id="printerName"/> &bull;
@@ -25,9 +28,6 @@
 			<p wicket:id="info"></p>
             
 			<div class="sp-txt-wrap">
-                <wicket:enclosure child="deviceUriImg">
-                    <img wicket:id="deviceUriImg" src="" height="12"/>
-                </wicket:enclosure>                                             
                 <span wicket:id="period"/>
 			</div> 
             <div class="sp-txt-wrap" wicket:id="totals"/>
