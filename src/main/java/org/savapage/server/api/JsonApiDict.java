@@ -184,7 +184,6 @@ public class JsonApiDict {
 
     public static final String REQ_PRINTER_DETAIL = "printer-detail";
     public static final String REQ_PRINTER_GET = "printer-get";
-    public static final String REQ_PRINTER_LIST = "printer-list";
     public static final String REQ_PRINTER_PRINT = "printer-print";
     public static final String REQ_PRINTER_RENAME = "printer-rename";
     public static final String REQ_PRINTER_QUICK_SEARCH =
@@ -712,7 +711,6 @@ public class JsonApiDict {
         usr(REQ_PRINT_FAST_RENEW, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_PRINTER_DETAIL, DbClaim.NONE, DbAccess.YES);
         adm(REQ_PRINTER_GET, DbClaim.NONE, DbAccess.YES);
-        usr(REQ_PRINTER_LIST, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_OPT_DOWNLOAD, DbClaim.NONE, DbAccess.YES);
         usr(REQ_PRINTER_PRINT, ReqPrinterPrint.class, DbClaim.READ,
                 DbAccess.USER_LOCK);

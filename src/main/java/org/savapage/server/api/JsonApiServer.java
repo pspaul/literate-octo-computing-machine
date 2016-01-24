@@ -143,7 +143,6 @@ import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonAbstractBase;
 import org.savapage.core.json.JsonPrinterDetail;
-import org.savapage.core.json.JsonPrinterList;
 import org.savapage.core.json.PdfProperties;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.json.rpc.ErrorDataBasic;
@@ -1412,10 +1411,6 @@ public final class JsonApiServer extends AbstractPage {
 
             return reqPrinterGet(requestingUser,
                     getParmValue(parameters, isGetAction, "id"));
-
-        case JsonApiDict.REQ_PRINTER_LIST:
-
-            return reqPrinterList(requestingUser);
 
         case JsonApiDict.REQ_PRINT_AUTH_CANCEL:
             return reqPrintAuthCancel(Long.parseLong(getParmValue(parameters,
@@ -2740,51 +2735,6 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         return userData;
-    }
-
-    /**
-     *
-     * @param userName
-     *            The requesting user.
-     * @return The {@linkJsonPrinterList}.
-     * @throws Exception
-     */
-    private JsonPrinterList getUserPrinterList(final String userName)
-            throws Exception {
-
-        final JsonPrinterList jsonPrinterList =
-                PROXY_PRINT_SERVICE.getUserPrinterList(
-                        ApiRequestHelper.getHostTerminal(this.getRemoteAddr()),
-                        userName);
-
-        if (jsonPrinterList.getDfault() != null) {
-            PROXY_PRINT_SERVICE.localize(getSession().getLocale(),
-                    jsonPrinterList.getDfault());
-        }
-        return jsonPrinterList;
-    }
-
-    /**
-     *
-     * @param userName
-     *            The requesting user.
-     * @return
-     * @throws Exception
-     */
-    private Map<String, Object> reqPrinterList(final String userName)
-            throws Exception {
-
-        final Map<String, Object> data = new HashMap<String, Object>();
-
-        if (!PROXY_PRINT_SERVICE.isConnectedToCups()) {
-            return setApiResult(data, ApiResultCodeEnum.ERROR,
-                    "msg-printer-connection-broken");
-        }
-
-        final JsonPrinterList jsonPrinterList = getUserPrinterList(userName);
-
-        data.put("data", jsonPrinterList);
-        return setApiResultOK(data);
     }
 
     /**
