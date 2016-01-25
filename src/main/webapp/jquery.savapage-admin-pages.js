@@ -912,6 +912,7 @@
 				$('#printer-printergroups').val(_model.editPrinter.printerGroups);
 
 				_view.checkCb('#printer-disabled', _model.editPrinter.disabled);
+				_view.checkCb('#printer-internal', _model.editPrinter.internal);
 				_view.checkCb('#printer-deleted', _model.editPrinter.deleted);
 
 				$('#printer-newname').val('');

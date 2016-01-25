@@ -4,6 +4,7 @@
     
 	<entry key="printer-displayname">Display as</entry>
 	<entry key="printer-location">Location</entry>
+    <entry key="printer-internal">Internal use</entry>
     <entry key="printer-disabled">Disabled</entry>
 	
     <entry key="printer-deleted">Delete when job history is cleaned</entry>

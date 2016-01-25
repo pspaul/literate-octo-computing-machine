@@ -39,6 +39,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.PrinterAttrDao;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.AccessControlScopeEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
@@ -97,6 +98,12 @@ public final class PrintersPage extends AbstractAdminListPage {
      */
     private static final PrinterService PRINTER_SERVICE = ServiceContext
             .getServiceFactory().getPrinterService();
+
+    /**
+     *
+     */
+    private static final PrinterAttrDao PRINTER_ATTR_DAO = ServiceContext
+            .getDaoContext().getPrinterAttrDao();
 
     /**
     *
@@ -460,11 +467,15 @@ public final class PrintersPage extends AbstractAdminListPage {
             item.add(labelWrk);
 
             //
+            final PrinterAttrLookup attrLookup = new PrinterAttrLookup(printer);
+
+            final boolean isInternal =
+                    PRINTER_ATTR_DAO.isInternalPrinter(attrLookup);
+
             final boolean isConfigured =
                     cupsPrinter == null
-                            || PROXY_PRINT_SERVICE
-                                    .isPrinterConfigured(cupsPrinter,
-                                            new PrinterAttrLookup(printer));
+                            || PROXY_PRINT_SERVICE.isPrinterConfigured(
+                                    cupsPrinter, attrLookup);
 
             item.add(createVisibleLabel(!isConfigured,
                     "printer-needs-configuration",
@@ -492,6 +503,9 @@ public final class PrintersPage extends AbstractAdminListPage {
                 if (printer.getDisabled()) {
                     color = MarkupHelper.CSS_TXT_ERROR;
                     signalKey = "signal-disabled";
+                } else if (isInternal) {
+                    color = MarkupHelper.CSS_TXT_WARN;
+                    signalKey = "signal-internal";
                 } else {
                     color = MarkupHelper.CSS_TXT_VALID;
                     signalKey = "signal-active";
@@ -611,7 +625,6 @@ public final class PrintersPage extends AbstractAdminListPage {
             item.add(labelWrk);
 
         }
-
     }
 
     /**

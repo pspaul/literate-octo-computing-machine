@@ -1348,6 +1348,7 @@
 				_model.editPrinter.printerGroups = $('#printer-printergroups').val();
 
 				_model.editPrinter.disabled = $('#printer-disabled').is(':checked');
+				_model.editPrinter.internal = $('#printer-internal').is(':checked');
 				_model.editPrinter.deleted = $('#printer-deleted').is(':checked');
 
 				var res = _api.call({

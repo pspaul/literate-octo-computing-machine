@@ -4,7 +4,9 @@
 
 	<entry key="printer-displayname">Weergeven als</entry>
     <entry key="printer-location">Locatie</entry>
-	<entry key="printer-disabled">Uitgeschakeld</entry>
+    <entry key="printer-internal">Intern gebruik</entry>
+    <entry key="printer-disabled">Uitgeschakeld</entry>
+
     <entry key="printer-deleted">Verwijderen als opdracht-historie is opgeruimd</entry>
 	
     <entry key="printer-groups">Proxy Printer Groepen</entry>

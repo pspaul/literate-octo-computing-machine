@@ -22,14 +22,19 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             <label for="printer-printergroups"><wicket:message key="printer-groups"/></label>
             <input type="text" id="printer-printergroups" value="" maxlength="128" 
                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>            
-				
-			<label for="printer-disabled"><wicket:message key="printer-disabled"/></label>
-			<input type="checkbox" id="printer-disabled" value="0" />
-					
-			<div class="printer-not-present">
-	            <label for="printer-deleted"><wicket:message key="printer-deleted"/></label>
-	            <input type="checkbox" id="printer-deleted" value="0"/>
-			</div>
+
+            <fieldset data-role="controlgroup" data-mini="false">				
+				<label for="printer-disabled"><wicket:message key="printer-disabled"/></label>
+				<input type="checkbox" id="printer-disabled" value="0" />
+	
+	            <label for="printer-internal"><wicket:message key="printer-internal"/></label>
+	            <input type="checkbox" id="printer-internal" value="0" />						
+            </fieldset>
+            			
+            <div class="printer-not-present">
+                <label for="printer-deleted"><wicket:message key="printer-deleted"/></label>
+                <input type="checkbox" id="printer-deleted" value="0"/>
+            </div>
 		</li>
         <li>    
             <div data-role="controlgroup" data-type="horizontal">
