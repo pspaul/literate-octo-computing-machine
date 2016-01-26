@@ -2221,7 +2221,7 @@
 				sel = _view.activePage().find('.sp-msg-popup');
 
 				// remove CR/LF, CR and replace all multiple spaces with one single space
-				txt = txt.replace(/\r?\n|\r/g, "").replace(/ +(?= )/g, '');
+				txt = txt ? txt.replace(/\r?\n|\r/g, "").replace(/ +(?= )/g, '') : '';
 
 				html = '<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>';
 				html += '<h3 class="ui-title ' + cssClass + '">' + title + '</h3>';

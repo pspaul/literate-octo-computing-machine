@@ -248,9 +248,9 @@ public final class WebAppUser extends AbstractWebAppPage {
                 docContentPrintReq.setProtocol(DocLogProtocolEnum.HTTP);
                 docContentPrintReq.setTitle(fileName);
 
-                QUEUE_SERVICE.printDocContent(
-                        ReservedIppQueueEnum.WEBPRINT.getUrlPath(), user,
-                        docContentPrintReq, uploadedFile.getInputStream());
+                QUEUE_SERVICE.printDocContent(ReservedIppQueueEnum.WEBPRINT,
+                        user, true, docContentPrintReq,
+                        uploadedFile.getInputStream());
 
             } finally {
                 ServiceContext.close();

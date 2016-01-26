@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonProcessingException;
 import org.savapage.core.SpException;
@@ -105,6 +106,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Boolean removeGraphics;
         private Boolean ecoprint;
         private Boolean clear;
+        private Boolean jobTicket;
         private Map<String, String> options;
         private PrintDelegationDto delegation;
 
@@ -202,6 +204,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         public void setClear(Boolean clear) {
             this.clear = clear;
+        }
+
+        public Boolean getJobTicket() {
+            return jobTicket;
+        }
+
+        public void setJobTicket(Boolean jobTicket) {
+            this.jobTicket = jobTicket;
         }
 
         public Map<String, String> getOptions() {
@@ -408,6 +418,36 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final String localizedCost = localizedPrinterCost(cost, null);
 
         /*
+         * Job Ticket?
+         */
+        if (BooleanUtils.isTrue(dtoReq.getJobTicket())) {
+
+            printReq.setPrintMode(PrintModeEnum.PUSH);
+
+            try {
+                JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq);
+            } catch (EcoPrintPdfTaskPendingException e) {
+                setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
+                return;
+            }
+
+            JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+
+            ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
+                    this.getLocale(), currencySymbol);
+
+            /*
+             * Since the job is present in the outbox we can honor the
+             * clearInbox request.
+             */
+            if (dtoReq.getClear()) {
+                INBOX_SERVICE.deleteAllPages(lockedUser.getUserId());
+            }
+
+            return;
+        }
+
+        /*
          * Direct Proxy Print?
          */
         if (dtoReq.getReaderName() == null) {
@@ -514,8 +554,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     this.getLocale(), currencySymbol);
 
             /*
-             * Since the job is present in the outbox we can honor the clearIbox
-             * request.
+             * Since the job is present in the outbox we can honor the
+             * clearInbox request.
              */
             if (dtoReq.getClear()) {
                 INBOX_SERVICE.deleteAllPages(lockedUser.getUserId());

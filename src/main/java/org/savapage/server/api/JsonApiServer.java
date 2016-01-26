@@ -170,7 +170,6 @@ import org.savapage.core.reports.impl.ReportCreator;
 import org.savapage.core.reports.impl.UserListReport;
 import org.savapage.core.services.AccountVoucherService;
 import org.savapage.core.services.AccountingService;
-import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.EmailService;
 import org.savapage.core.services.InboxService;
@@ -235,12 +234,6 @@ public final class JsonApiServer extends AbstractPage {
      */
     private static final AccountVoucherService ACCOUNT_VOUCHER_SERVICE =
             ServiceContext.getServiceFactory().getAccountVoucherService();
-
-    /**
-    *
-    */
-    private static final DeviceService DEVICE_SERVICE = ServiceContext
-            .getServiceFactory().getDeviceService();
 
     /**
      * .

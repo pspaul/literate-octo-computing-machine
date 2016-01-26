@@ -2256,8 +2256,7 @@
 
 			/**
 			 * Adjusts the visibility (width, padding, hide/show) of the
-			 * thumbnail
-			 * images, and move the last image to the right side (moveToEnd)
+			 * thumbnail images, and move the last image to the right side (moveToEnd)
 			 */
 			this.adjustThumbnailVisibility = function() {
 
@@ -3082,6 +3081,9 @@
 			, _fastPrintAvailable
 			//
 			, _getPrinterImg = function(item, isDirect) {
+				if (item.printer.jobTicket) {
+					return 'printer-jobticket-32x32.png';
+				}
 				if (item.printer.readerSecured) {
 					if (isDirect) {
 						return 'device-card-reader-terminal-16x16.png';
@@ -3105,8 +3107,11 @@
 				//
 				;
 				html = "<img width=\"16\" height=\"16\" src=\"/images/" + _getPrinterImg(item, isDirect) + "\"/>";
-				html += "<span class=\"ui-mini sp-txt-wrap\">";
-				html += item.text + " &bull; " + (item.printer.location || "&nbsp;");
+				html += "<span class=\"ui-mini sp-txt-wrap\">" + item.text;
+				if (item.printer.location) {
+					html += " &bull; ";
+				}
+				html += item.printer.location || "&nbsp;";
 				html += "<span/>";
 
 				if (isFast) {
@@ -5127,7 +5132,8 @@
 						ecoprint : ecoprint,
 						clear : isClear,
 						options : _model.myPrinterOpt,
-						delegation : _model.printDelegation
+						delegation : _model.printDelegation,
+						jobTicket : _model.myPrinter.jobTicket
 					})
 				});
 
@@ -5595,8 +5601,8 @@
 
 				var res;
 
-				_ns.deferAppWakeUp(false);
 				// first statement
+				_ns.deferAppWakeUp(false);
 
 				_userEvent.resume();
 
