@@ -2254,6 +2254,10 @@
 				return ranges;
 			};
 
+			this.alignThumbnails = function() {
+				_moveToEnd();
+			};
+
 			/**
 			 * Adjusts the visibility (width, padding, hide/show) of the
 			 * thumbnail images, and move the last image to the right side (moveToEnd)
@@ -5603,6 +5607,8 @@
 
 				// first statement
 				_ns.deferAppWakeUp(false);
+
+				_view.pages.main.alignThumbnails();
 
 				_userEvent.resume();
 
