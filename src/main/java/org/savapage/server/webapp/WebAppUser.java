@@ -47,6 +47,9 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
+import org.savapage.core.cometd.AdminPublisher;
+import org.savapage.core.cometd.PubLevelEnum;
+import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
@@ -290,6 +293,10 @@ public final class WebAppUser extends AbstractWebAppPage {
                         Key.WEB_LOGIN_TTP_TOKEN_EXPIRY_MSECS);
 
         if (!OneTimeAuthToken.isTokenValid(userid, token, msecExpiry)) {
+            final String msg = localized("msg-authtoken-denied", userid);
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.WARN, msg);
+            LOGGER.warn(msg);
             return;
         }
 
@@ -298,14 +305,27 @@ public final class WebAppUser extends AbstractWebAppPage {
                         .findActiveUserByUserId(userid);
 
         if (authUser == null) {
+
+            final String msg =
+                    localized("msg-authtoken-user-not-found", userid);
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.WARN, msg);
+            LOGGER.warn(msg);
+
             return;
         }
 
         SpSession.get().setUser(authUser, true);
 
+        final String msg = localized("msg-authtoken-accepted", userid);
+        AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
+                msg);
+
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(String.format(
                     "User [%s] authenticated with token: %s", userid, token));
+        } else if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(msg);
         }
     }
 

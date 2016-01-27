@@ -231,7 +231,11 @@
 						html += "<li class=\"ui-mini ui-li-has-icon\" data-icon=\"false\" data-savapage=\"" + item.key + "\">";
 						html += "<a href=\"#\">";
 						html += "<span class=\"" + _CLASS_SELECTED_TXT + "\" style=\"font-family: monospace;\">&nbsp;</span>&nbsp;";
-						html += item.text + "</a></li>";
+						html += item.fullName;
+						if (item.userId) {
+							html += ' &bull; ' + item.userId;
+						}
+						html += "</a></li>";
 					});
 				} else {
 					_view.showApiMsg(res);
@@ -282,8 +286,17 @@
 				html += '<th><span class="' + _CLASS_SELECTED_TXT + '">&nbsp;</span>&nbsp;';
 				html += '<img src="/famfamfam-silk/';
 				html += isGroup ? 'group.png' : 'user_gray.png';
-				html += '"/>&nbsp;&nbsp;&nbsp;' + item.text + '</th>';
-				html += '<td><img src="/famfamfam-silk/';
+				html += '"/>&nbsp;&nbsp;&nbsp;';
+
+				if (isGroup) {
+					html += item.text;
+				} else {
+					html += item.fullName;
+					if (item.userId) {
+						html += ' &bull; ' + item.userId;
+					}
+				}
+				html += '</th><td><img src="/famfamfam-silk/';
 
 				if (account.accountType === _ACCOUNT_ENUM_GROUP) {
 					html += 'group.png';

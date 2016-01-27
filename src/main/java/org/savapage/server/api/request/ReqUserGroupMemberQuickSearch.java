@@ -27,8 +27,8 @@ import java.util.List;
 
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
-import org.savapage.core.dto.QuickSearchItemDto;
 import org.savapage.core.dto.QuickSearchUserGroupMemberFilterDto;
+import org.savapage.core.dto.QuickSearchUserGroupMemberItemDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 
@@ -47,13 +47,13 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
      */
     private static class DtoRsp extends AbstractDto {
 
-        private List<QuickSearchItemDto> items;
+        private List<QuickSearchUserGroupMemberItemDto> items;
 
-        public List<QuickSearchItemDto> getItems() {
+        public List<QuickSearchUserGroupMemberItemDto> getItems() {
             return items;
         }
 
-        public void setItems(List<QuickSearchItemDto> items) {
+        public void setItems(List<QuickSearchUserGroupMemberItemDto> items) {
             this.items = items;
         }
 
@@ -70,13 +70,13 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
                 AbstractDto.create(QuickSearchUserGroupMemberFilterDto.class,
                         this.getParmValue("dto"));
 
-        final List<QuickSearchItemDto> items = new ArrayList<>();
+        final List<QuickSearchUserGroupMemberItemDto> items = new ArrayList<>();
 
         //
         final UserDao.ListFilter filter = new UserDao.ListFilter();
 
         filter.setUserGroupId(dto.getGroupId());
-        filter.setContainingIdText(dto.getFilter());
+        filter.setContainingNameText(dto.getFilter());
 
         final List<User> userList =
                 userDao.getListChunk(filter, null,
@@ -85,10 +85,12 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
 
         for (final User user : userList) {
 
-            final QuickSearchItemDto itemWlk = new QuickSearchItemDto();
+            final QuickSearchUserGroupMemberItemDto itemWlk =
+                    new QuickSearchUserGroupMemberItemDto();
 
             itemWlk.setKey(user.getId());
-            itemWlk.setText(user.getUserId());
+            itemWlk.setUserId(user.getUserId());
+            itemWlk.setFullName(user.getFullName());
 
             items.add(itemWlk);
         }

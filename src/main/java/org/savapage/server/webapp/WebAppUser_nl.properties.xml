@@ -15,6 +15,11 @@
     <entry key="button-back">Terug</entry>
     <entry key="button-renew">Vernieuwen</entry>
 
+    <entry key="msg-authtoken-accepted">Gebruiker "{0}" aangemeld met one-time token.</entry>
+    <entry key="msg-authtoken-denied">Aanmelding gebruiker "{0}" geweigerd: one-time token is ongeldig.</entry>
+    <entry key="msg-authtoken-user-not-found">Aanmelding gebruiker "{0}" mislukt: one-time token is geldig, maar
+        gebruiker is niet gevonden.</entry>
+
     <entry key="msg-file-upload-busy">Uploaden ...</entry>
     <entry key="msg-file-upload-success">Bestand met succes geüpload.</entry>
     <entry key="msg-file-upload-no-file">Geen bestand geüpload.</entry>
