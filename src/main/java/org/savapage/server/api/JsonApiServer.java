@@ -151,8 +151,6 @@ import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.ResultDataBasic;
 import org.savapage.core.json.rpc.impl.ResultPosDeposit;
 import org.savapage.core.msg.UserMsgIndicator;
-import org.savapage.core.papercut.PaperCutDbProxy;
-import org.savapage.core.papercut.PaperCutServerProxy;
 import org.savapage.core.print.gcp.GcpClient;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.gcp.GcpRegisterPrinterRsp;
@@ -160,9 +158,6 @@ import org.savapage.core.print.imap.ImapListener;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
-import org.savapage.core.print.smartschool.SmartSchoolCostPeriodDto;
-import org.savapage.core.print.smartschool.SmartSchoolPrintMonitor;
-import org.savapage.core.print.smartschool.SmartSchoolPrinter;
 import org.savapage.core.reports.JrPosDepositReceipt;
 import org.savapage.core.reports.JrVoucherPageDesign;
 import org.savapage.core.reports.impl.AccountTrxListReport;
@@ -188,10 +183,15 @@ import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.core.util.Messages;
 import org.savapage.core.util.QuickSearchDate;
+import org.savapage.ext.papercut.DelegatedPrintPeriodDto;
+import org.savapage.ext.papercut.PaperCutDbProxy;
+import org.savapage.ext.papercut.PaperCutServerProxy;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
 import org.savapage.ext.payment.PaymentGatewayTrx;
+import org.savapage.ext.smartschool.SmartschoolPrintMonitor;
+import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.request.ApiRequestHandler;
@@ -986,13 +986,13 @@ public final class JsonApiServer extends AbstractPage {
             final File tempCsvFile, final String jsonData,
             final String requestingUser) throws IOException {
 
-        final SmartSchoolCostPeriodDto dto =
-                AbstractDto.create(SmartSchoolCostPeriodDto.class, jsonData);
+        final DelegatedPrintPeriodDto dto =
+                AbstractDto.create(DelegatedPrintPeriodDto.class, jsonData);
 
         ServiceContext
                 .getServiceFactory()
                 .getPaperCutService()
-                .createSmartschoolStudentCostCsv(
+                .createDelegatedPrintStudentCostCsv(
                         PaperCutDbProxy.create(ConfigManager.instance(), true),
                         tempCsvFile, dto);
 
@@ -2718,7 +2718,7 @@ public final class JsonApiServer extends AbstractPage {
                 msgKey = "msg-config-props-applied-rescheduled";
             } else if (isSmartSchoolUpdate
                     && !ConfigManager.isSmartSchoolPrintActiveAndEnabled()
-                    && SmartSchoolPrinter.isOnline()) {
+                    && SmartschoolPrinter.isOnline()) {
                 if (SpJobScheduler.interruptSmartSchoolPoller()) {
                     msgKey = "msg-config-props-applied-smartschool-stopped";
                 }
@@ -3253,7 +3253,7 @@ public final class JsonApiServer extends AbstractPage {
         try {
             final MutableInt nMessagesInbox = new MutableInt();
 
-            SmartSchoolPrintMonitor.testConnection(nMessagesInbox);
+            SmartschoolPrintMonitor.testConnection(nMessagesInbox);
 
             setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-smartschool-test-passed", nMessagesInbox.toString());
@@ -3285,10 +3285,10 @@ public final class JsonApiServer extends AbstractPage {
                     "msg-smartschool-accounts-disabled");
         }
 
-        SmartSchoolPrinter.setBlocked(MemberCard.instance()
+        SmartschoolPrinter.setBlocked(MemberCard.instance()
                 .isMembershipDesirable());
 
-        if (SmartSchoolPrinter.isBlocked()) {
+        if (SmartschoolPrinter.isBlocked()) {
 
             return setApiResult(userData, ApiResultCodeEnum.WARN,
                     "msg-smartschool-blocked",
@@ -3296,14 +3296,14 @@ public final class JsonApiServer extends AbstractPage {
                     CommunityDictEnum.MEMBERSHIP.getWord());
         }
 
-        if (SmartSchoolPrinter.isOnline()) {
+        if (SmartschoolPrinter.isOnline()) {
 
             msgKey = "msg-smartschool-started-already";
 
         } else {
 
             if (simulate) {
-                SmartSchoolPrintMonitor.resetJobTickerCounter();
+                SmartschoolPrintMonitor.resetJobTickerCounter();
             }
 
             SpJobScheduler.instance().scheduleOneShotSmartSchoolPrintMonitor(

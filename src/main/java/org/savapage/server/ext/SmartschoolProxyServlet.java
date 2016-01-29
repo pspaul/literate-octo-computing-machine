@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server;
+package org.savapage.server.ext;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -42,11 +42,11 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang3.StringUtils;
-import org.savapage.core.print.smartschool.SmartschoolConstants;
-import org.savapage.core.print.smartschool.SmartschoolRequestEnum;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.SmartSchoolProxyService;
-import org.savapage.core.services.helpers.SmartSchoolConnection;
+import org.savapage.ext.smartschool.SmartschoolConnection;
+import org.savapage.ext.smartschool.SmartschoolConstants;
+import org.savapage.ext.smartschool.SmartschoolRequestEnum;
+import org.savapage.ext.smartschool.services.SmartschoolProxyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +75,7 @@ public final class SmartschoolProxyServlet extends HttpServlet {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(SmartschoolProxyServlet.class);
 
-    private static final SmartSchoolProxyService SMARTSCHOOL_PROXY =
+    private static final SmartschoolProxyService SMARTSCHOOL_PROXY =
             ServiceContext.getServiceFactory().getSmartSchoolProxyService();
     /**
      * Base path (without leading or trailing '/').
@@ -210,10 +210,10 @@ public final class SmartschoolProxyServlet extends HttpServlet {
         int httpStatus = HttpServletResponse.SC_OK;
 
         final String smartschoolAccount =
-                req.getParameter(SmartSchoolConnection.PROXY_URL_PARM_ACCOUNT);
+                req.getParameter(SmartschoolConnection.PROXY_URL_PARM_ACCOUNT);
 
         final String clusterNode =
-                req.getParameter(SmartSchoolConnection.PROXY_URL_PARM_NODE);
+                req.getParameter(SmartschoolConnection.PROXY_URL_PARM_NODE);
 
         // Is URL ok?
         if (smartschoolAccount == null || clusterNode == null) {

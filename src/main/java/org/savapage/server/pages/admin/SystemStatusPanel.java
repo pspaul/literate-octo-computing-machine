@@ -61,7 +61,6 @@ import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
-import org.savapage.core.print.smartschool.SmartSchoolPrinter;
 import org.savapage.core.services.AppLogService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
@@ -69,6 +68,7 @@ import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.bitcoin.BitcoinGateway;
+import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.WebApp;
 import org.savapage.server.cometd.UserEventService;
 import org.savapage.server.ext.ServerPluginManager;
@@ -323,7 +323,7 @@ public final class SystemStatusPanel extends Panel {
          */
         if (ConfigManager.isSmartSchoolPrintActiveAndEnabled()) {
 
-            if (SmartSchoolPrinter.isBlocked()) {
+            if (SmartschoolPrinter.isBlocked()) {
                 msgKey = "blocked";
                 cssColor = MarkupHelper.CSS_TXT_WARN;
             } else {
@@ -372,7 +372,7 @@ public final class SystemStatusPanel extends Panel {
 
             labelWrk =
                     helper.addCheckbox("flipswitch-smartschool-online",
-                            SmartSchoolPrinter.isOnline());
+                            SmartschoolPrinter.isOnline());
 
             setFlipswitchOnOffText(labelWrk);
 

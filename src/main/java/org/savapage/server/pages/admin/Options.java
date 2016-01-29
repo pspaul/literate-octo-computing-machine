@@ -43,10 +43,10 @@ import org.savapage.core.doc.XpsToPdf;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
-import org.savapage.core.print.smartschool.SmartSchoolPrinter;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.MediaUtils;
+import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -439,7 +439,7 @@ public final class Options extends AbstractAdminPage {
                     IConfigProp.Key.PAPERCUT_DB_PASSWORD);
 
             //
-            if (SmartSchoolPrinter.isBlocked()) {
+            if (SmartschoolPrinter.isBlocked()) {
                 msgKey = "blocked";
                 cssColor = MarkupHelper.CSS_TXT_WARN;
             } else {
@@ -488,7 +488,7 @@ public final class Options extends AbstractAdminPage {
 
             labelWrk =
                     helper.addCheckbox("flipswitch-smartschool-online",
-                            SmartSchoolPrinter.isOnline());
+                            SmartschoolPrinter.isOnline());
 
             setFlipswitchOnOffText(labelWrk);
 
