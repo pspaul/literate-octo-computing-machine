@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,8 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
+import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.JsonPrintDelegation;
@@ -53,12 +56,16 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
+import org.savapage.core.print.proxy.ProxyPrintJobChunk;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
+import org.savapage.core.services.helpers.ExternalSupplierInfo;
 import org.savapage.core.services.helpers.PageScalingEnum;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
+import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.services.impl.InboxServiceImpl;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.SpSession;
 import org.savapage.server.api.JsonApiDict;
 import org.savapage.server.api.JsonApiServer;
@@ -347,9 +354,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         final PrintDelegationDto delegationDto = dtoReq.getDelegation();
 
-        if (delegationDto != null
-                && (!delegationDto.getGroups().isEmpty() || !delegationDto
-                        .getUsers().isEmpty())) {
+        final boolean isDelegatedPrint =
+                delegationDto != null
+                        && (!delegationDto.getGroups().isEmpty() || !delegationDto
+                                .getUsers().isEmpty());
+
+        if (isDelegatedPrint) {
 
             final JsonPrintDelegation jsonDelegation =
                     JsonPrintDelegation.create(dtoReq.getDelegation());
@@ -387,6 +397,25 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 dtoReq.getPageScaling(), chunkVanillaJobs, iVanillaJob);
 
         /*
+         * Direct Proxy Print, integrated with PaperCut?
+         */
+        final boolean isDirectProxyPrint = dtoReq.getReaderName() == null;
+        final boolean isExtPaperCutPrint;
+
+        if (isDirectProxyPrint && isDelegatedPrint) {
+
+            final ThirdPartyEnum thirdParty =
+                    PROXY_PRINT_SERVICE.getExtPrinterManager(printer
+                            .getPrinterName());
+
+            isExtPaperCutPrint =
+                    isDelegatedPrint && thirdParty != null
+                            && thirdParty == ThirdPartyEnum.PAPERCUT;
+        } else {
+            isExtPaperCutPrint = false;
+        }
+
+        /*
          * Calculate the printing cost.
          */
         final String currencySymbol = SpSession.getAppCurrencySymbol();
@@ -394,19 +423,26 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final BigDecimal cost;
 
         try {
+            if (isExtPaperCutPrint) {
+                /*
+                 * No need to calculate the cost since it is taken from PaperCut
+                 * after PaperCut reports that job is printed successfully.
+                 */
+                cost = BigDecimal.ZERO;
+            } else {
+                /*
+                 * Set the common parameters for all print job chunks, and
+                 * calculate the cost.
+                 */
+                final ProxyPrintCostParms costParms =
+                        printReq.createProxyPrintCostParms();
 
-            /*
-             * Set the common parameters for all print job chunks, and calculate
-             * the cost.
-             */
-            final ProxyPrintCostParms costParms =
-                    printReq.createProxyPrintCostParms();
-
-            cost =
-                    ACCOUNTING_SERVICE.calcProxyPrintCost(
-                            ServiceContext.getLocale(), currencySymbol,
-                            lockedUser, printer, costParms,
-                            printReq.getJobChunkInfo());
+                cost =
+                        ACCOUNTING_SERVICE.calcProxyPrintCost(
+                                ServiceContext.getLocale(), currencySymbol,
+                                lockedUser, printer, costParms,
+                                printReq.getJobChunkInfo());
+            }
 
         } catch (ProxyPrintException e) {
             this.setApiResultText(ApiResultCodeEnum.WARN, e.getMessage());
@@ -421,54 +457,24 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          * Job Ticket?
          */
         if (BooleanUtils.isTrue(dtoReq.getJobTicket())) {
+            this.onPrintJobTicket(lockedUser, printReq, currencySymbol,
+                    dtoReq.getClear());
+            return;
+        }
 
-            printReq.setPrintMode(PrintModeEnum.PUSH);
-
-            try {
-                JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq);
-            } catch (EcoPrintPdfTaskPendingException e) {
-                setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
-                return;
-            }
-
-            JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
-
-            ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
-                    this.getLocale(), currencySymbol);
-
-            /*
-             * Since the job is present in the outbox we can honor the
-             * clearInbox request.
-             */
-            if (dtoReq.getClear()) {
-                INBOX_SERVICE.deleteAllPages(lockedUser.getUserId());
-            }
-
+        /*
+         * Direct Proxy Print integrated with PaperCut?
+         */
+        if (isExtPaperCutPrint) {
+            this.onExtPaperCutPrint(lockedUser, printReq, currencySymbol);
             return;
         }
 
         /*
          * Direct Proxy Print?
          */
-        if (dtoReq.getReaderName() == null) {
-
-            printReq.setPrintMode(PrintModeEnum.PUSH);
-
-            try {
-                PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, printReq);
-            } catch (EcoPrintPdfTaskPendingException e) {
-                setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
-                return;
-            }
-
-            JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
-
-            if (printReq.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
-
-                ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
-                        this.getLocale(), currencySymbol);
-            }
-
+        if (isDirectProxyPrint) {
+            this.onDirectProxyPrint(lockedUser, printReq, currencySymbol);
             return;
         }
 
@@ -539,28 +545,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 DEVICE_SERVICE.getProxyPrintAuthMode(device.getId());
 
         if (authModeEnum.isHoldRelease()) {
-
-            printReq.setPrintMode(PrintModeEnum.HOLD);
-
-            try {
-                OUTBOX_SERVICE.proxyPrintInbox(lockedUser, printReq);
-            } catch (EcoPrintPdfTaskPendingException e) {
-                setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
-                return;
-            }
-
-            JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
-            ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
-                    this.getLocale(), currencySymbol);
-
-            /*
-             * Since the job is present in the outbox we can honor the
-             * clearInbox request.
-             */
-            if (dtoReq.getClear()) {
-                INBOX_SERVICE.deleteAllPages(lockedUser.getUserId());
-            }
-
+            this.onHoldPrint(lockedUser, printReq, currencySymbol,
+                    dtoReq.getClear());
             return;
         }
 
@@ -585,7 +571,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
             setApiResult(ApiResultCodeEnum.WARN, "msg-print-auth-pending");
         }
-
     }
 
     /**
@@ -619,4 +604,173 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         return currencySymbol + cost;
     }
 
+    /**
+     *
+     * @param lockedUser
+     *            The locked {@link User} instance, can be {@code null}.
+     * @param printReq
+     *            The print request.
+     * @param currencySymbol
+     *            The currency symbol.
+     * @param clearAfterPrint
+     *            {@code true} to clear inbox after printing.
+     */
+    private void onPrintJobTicket(final User lockedUser,
+            final ProxyPrintInboxReq printReq, final String currencySymbol,
+            final boolean clearAfterPrint) {
+
+        printReq.setPrintMode(PrintModeEnum.PUSH);
+
+        try {
+            JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq);
+        } catch (EcoPrintPdfTaskPendingException e) {
+            setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
+            return;
+        }
+
+        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+
+        ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
+                this.getLocale(), currencySymbol);
+
+        /*
+         * Since the job is present in the outbox we can honor the clearInbox
+         * request.
+         */
+        if (clearAfterPrint) {
+            INBOX_SERVICE.deleteAllPages(lockedUser.getUserId());
+        }
+
+    }
+
+    /**
+     *
+     * @param lockedUser
+     *            The locked {@link User} instance, can be {@code null}.
+     * @param printReq
+     *            The print request.
+     * @param currencySymbol
+     *            The currency symbol.
+     * @param clearAfterPrint
+     *            {@code true} to clear inbox after printing.
+     */
+    private void onHoldPrint(final User lockedUser,
+            final ProxyPrintInboxReq printReq, final String currencySymbol,
+            final boolean clearAfterPrint) {
+
+        printReq.setPrintMode(PrintModeEnum.HOLD);
+
+        try {
+            OUTBOX_SERVICE.proxyPrintInbox(lockedUser, printReq);
+        } catch (EcoPrintPdfTaskPendingException e) {
+            setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
+            return;
+        }
+
+        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+        ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
+                this.getLocale(), currencySymbol);
+
+        /*
+         * Since the job is present in the outbox we can honor the clearInbox
+         * request.
+         */
+        if (clearAfterPrint) {
+            INBOX_SERVICE.deleteAllPages(lockedUser.getUserId());
+        }
+
+    }
+
+    /**
+     *
+     * @param lockedUser
+     *            The locked {@link User} instance, can be {@code null}.
+     * @param printReq
+     *            The print request.
+     * @param currencySymbol
+     *            The currency symbol.
+     * @throws IppConnectException
+     */
+    private void onDirectProxyPrint(final User lockedUser,
+            final ProxyPrintInboxReq printReq, final String currencySymbol)
+            throws IppConnectException {
+
+        printReq.setPrintMode(PrintModeEnum.PUSH);
+
+        try {
+            PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, printReq);
+        } catch (EcoPrintPdfTaskPendingException e) {
+            setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
+            return;
+        }
+
+        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+
+        if (printReq.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
+
+            ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
+                    this.getLocale(), currencySymbol);
+        }
+    }
+
+    /**
+     *
+     * @param lockedUser
+     *            The locked {@link User} instance, can be {@code null}.
+     * @param printReq
+     * @param currencySymbol
+     * @throws IppConnectException
+     */
+    private void onExtPaperCutPrint(final User lockedUser,
+            final ProxyPrintInboxReq printReq, final String currencySymbol)
+            throws IppConnectException {
+
+        printReq.setPrintMode(PrintModeEnum.PUSH);
+
+        final String accountName = "savapage"; // TODO
+
+        /*
+         * Encode job name into PaperCut format, and set all cost to zero, since
+         * cost is taken from PaperCut after PaperCut reports that jobs is
+         * printed successfully.
+         */
+        printReq.setJobName(PaperCutHelper.encodeProxyPrintJobName(accountName,
+                UUID.randomUUID().toString(), printReq.getJobName()));
+
+        printReq.setCost(BigDecimal.ZERO);
+
+        for (final ProxyPrintJobChunk chunk : printReq.getJobChunkInfo()
+                .getChunks()) {
+            chunk.setCost(BigDecimal.ZERO);
+            chunk.setJobName(PaperCutHelper.encodeProxyPrintJobName(
+                    accountName, UUID.randomUUID().toString(),
+                    chunk.getJobName()));
+        }
+
+        //
+        final ExternalSupplierInfo supplierInfo = new ExternalSupplierInfo();
+
+        supplierInfo.setSupplier(ExternalSupplierEnum.SAVAPAGE);
+        supplierInfo.setStatus(ExternalSupplierStatusEnum.PENDING_EXT
+                .toString());
+
+        printReq.setSupplierInfo(supplierInfo);
+
+        //
+        try {
+            PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, printReq);
+
+        } catch (EcoPrintPdfTaskPendingException e) {
+            setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
+            return;
+        }
+
+        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+
+        if (printReq.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
+
+            ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
+                    this.getLocale(), currencySymbol);
+        }
+    }
 }
