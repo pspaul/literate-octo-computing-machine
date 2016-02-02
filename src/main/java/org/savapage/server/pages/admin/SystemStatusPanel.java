@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -64,6 +64,7 @@ import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
 import org.savapage.core.services.AppLogService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;
@@ -146,15 +147,11 @@ public final class SystemStatusPanel extends Panel {
         labelWrk.add(new AttributeModifier("class", cssColor));
         add(labelWrk);
 
-        /*
-         *
-         */
-        add(new Label("sys-uptime", formatDuration(ManagementFactory
+        //
+        add(new Label("sys-uptime", DateUtil.formatDuration(ManagementFactory
                 .getRuntimeMXBean().getUptime())));
 
-        /*
-         *
-         */
+        //
         final UserDao userDAO = ServiceContext.getDaoContext().getUserDao();
 
         add(new Label("user-count", helper.localizedNumber(userDAO
@@ -841,34 +838,6 @@ public final class SystemStatusPanel extends Panel {
 
         return html;
 
-    }
-
-    /**
-     * Formats elapsed milliseconds into readable string.
-     *
-     * @param diff
-     *            milliseconds
-     * @return formatted string
-     */
-    private static String formatDuration(long duration) {
-
-        long durationSeconds = duration / 1000;
-
-        long days = durationSeconds / 86400;
-        long hours = (durationSeconds % 86400) / 3600;
-        long minutes = ((durationSeconds % 86400) % 3600) / 60;
-
-        if (days == 0) {
-            if (hours == 0) {
-                if (minutes == 0) {
-                    long seconds = ((durationSeconds % 86400) % 3600) % 60;
-                    return String.format("%ds", seconds);
-                }
-                return String.format("%dm", minutes);
-            }
-            return String.format("%dh %dm", hours, minutes);
-        }
-        return String.format("%dd %dh %dm", days, hours, minutes);
     }
 
 }
