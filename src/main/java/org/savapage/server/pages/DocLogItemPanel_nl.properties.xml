@@ -39,4 +39,6 @@
 	<entry key="prompt-signature">Handtekening</entry>
 	<entry key="prompt-destination">Bestemming</entry>
 
+    <entry key="delegators">Delegatiegevers</entry>
+
 </properties>

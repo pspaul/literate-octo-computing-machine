@@ -154,7 +154,9 @@ public class DocLogItemPanel extends Panel {
         //
         final String extSupplierImgUrl;
 
-        if (obj.getExtSupplier() != null) {
+        final boolean isExtSupplier = obj.getExtSupplier() != null;
+
+        if (isExtSupplier) {
             mapVisible.put("extSupplier", obj.getExtSupplier().getUiText());
             extSupplierImgUrl =
                     WebApp.getExtSupplierEnumImgUrl(obj.getExtSupplier());
@@ -194,14 +196,18 @@ public class DocLogItemPanel extends Panel {
 
             final StringBuilder builder = new StringBuilder();
 
+            int totWeightDelegators = 0;
+
             for (final AccountTrx trx : obj.getTransactions()) {
 
                 final Account account = trx.getAccount();
 
-                final AccountTypeEnum accountTYpe =
+                final AccountTypeEnum accountType =
                         AccountTypeEnum.valueOf(account.getAccountType());
 
-                if (accountTYpe != AccountTypeEnum.SHARED) {
+                if (accountType != AccountTypeEnum.SHARED) {
+                    totWeightDelegators +=
+                            trx.getTransactionWeight().intValue();
                     continue;
                 }
 
@@ -222,14 +228,18 @@ public class DocLogItemPanel extends Panel {
                             .append(" ")
                             .append(localizedDecimal(trx.getAmount()));
                 }
+
                 builder.append(" (").append(trx.getTransactionWeight())
                         .append(')');
-
             }
 
-            if (builder.length() > 0) {
-                mapVisible.put("account-trx", builder.toString());
+            if (isExtSupplier && totWeightDelegators > 0) {
+                builder.append(" • ");
+                builder.append(localized("delegators")).append(" (")
+                        .append(totWeightDelegators).append(")");
             }
+
+            mapVisible.put("account-trx", builder.toString());
         }
 
         //

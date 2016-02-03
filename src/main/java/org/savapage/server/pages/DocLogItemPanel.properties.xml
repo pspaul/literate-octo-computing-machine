@@ -39,4 +39,6 @@
     <entry key="prompt-signature">Signature</entry>
     <entry key="prompt-destination">Destination</entry>
     
+    <entry key="delegators">Delegators</entry>
+        
 </properties>

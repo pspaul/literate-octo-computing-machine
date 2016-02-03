@@ -27,7 +27,6 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -727,24 +726,21 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         printReq.setPrintMode(PrintModeEnum.PUSH);
 
-        final String accountName = "savapage"; // TODO
-
         /*
          * Encode job name into PaperCut format, and set all cost to zero, since
          * cost is taken from PaperCut after PaperCut reports that jobs is
          * printed successfully.
          */
-        printReq.setJobName(PaperCutHelper.encodeProxyPrintJobName(accountName,
-                UUID.randomUUID().toString(), printReq.getJobName()));
+        printReq.setJobName(PaperCutHelper.encodeProxyPrintJobName(printReq
+                .getJobName()));
 
         printReq.setCost(BigDecimal.ZERO);
 
         for (final ProxyPrintJobChunk chunk : printReq.getJobChunkInfo()
                 .getChunks()) {
             chunk.setCost(BigDecimal.ZERO);
-            chunk.setJobName(PaperCutHelper.encodeProxyPrintJobName(
-                    accountName, UUID.randomUUID().toString(),
-                    chunk.getJobName()));
+            chunk.setJobName(PaperCutHelper.encodeProxyPrintJobName(chunk
+                    .getJobName()));
         }
 
         //
