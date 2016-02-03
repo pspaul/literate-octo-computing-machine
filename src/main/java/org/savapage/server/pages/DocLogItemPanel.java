@@ -213,12 +213,15 @@ public class DocLogItemPanel extends Panel {
                     builder.append(accountParent.getName()).append('\\');
                 }
 
-                builder.append(account.getName())
-                        .append(" ")
-                        .append(CurrencyUtil.getCurrencySymbol(
-                                trx.getCurrencyCode(), getLocale()))
-                        .append(" ").append(localizedDecimal(trx.getAmount()));
+                builder.append(account.getName());
 
+                if (trx.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+                    builder.append(" ")
+                            .append(CurrencyUtil.getCurrencySymbol(
+                                    trx.getCurrencyCode(), getLocale()))
+                            .append(" ")
+                            .append(localizedDecimal(trx.getAmount()));
+                }
                 builder.append(" (").append(trx.getTransactionWeight())
                         .append(')');
 

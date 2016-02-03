@@ -942,15 +942,25 @@ public final class DocLogItem {
                 where.append("P.duplex = :duplex");
             }
 
+            //
             if (selState == DocLogDao.JobState.ACTIVE) {
+
                 if (nWhere > 0) {
                     where.append(" AND ");
                 }
                 nWhere++;
-                where.append("P.cupsJobState <= ").append(
+                where.append("(P.cupsJobState <= ").append(
                         IppJobStateEnum.IPP_JOB_STOPPED.asInt());
 
+                where.append(" OR D.externalStatus IN(")
+                        .append("\'")
+                        .append(ExternalSupplierStatusEnum.PENDING.toString())
+                        .append("\', \'")
+                        .append(ExternalSupplierStatusEnum.PENDING_EXT
+                                .toString()).append("\'").append("))");
+
             } else if (selState == DocLogDao.JobState.UNFINISHED) {
+
                 if (nWhere > 0) {
                     where.append(" AND ");
                 }
@@ -958,18 +968,34 @@ public final class DocLogItem {
                 where.append("(P.cupsJobState = ")
                         .append(IppJobStateEnum.IPP_JOB_CANCELED.asInt())
                         .append(" OR P.cupsJobState = ")
-                        .append(IppJobStateEnum.IPP_JOB_ABORTED.asInt())
-                        .append(")");
+                        .append(IppJobStateEnum.IPP_JOB_ABORTED.asInt());
+
+                where.append(" OR D.externalStatus IN(")
+                        .append("\'")
+                        .append(ExternalSupplierStatusEnum.CANCELLED.toString())
+                        .append("\', \'")
+                        .append(ExternalSupplierStatusEnum.EXPIRED.toString())
+                        .append("\', \'")
+                        .append(ExternalSupplierStatusEnum.ERROR.toString())
+                        .append("\'))");
 
             } else if (selState == DocLogDao.JobState.COMPLETED) {
+
                 if (nWhere > 0) {
                     where.append(" AND ");
                 }
                 nWhere++;
                 where.append("P.cupsJobState = ").append(
                         IppJobStateEnum.IPP_JOB_COMPLETED.asInt());
+
+                where.append(
+                        " AND (D.externalStatus IS NULL "
+                                + "OR D.externalStatus = \'")
+                        .append(ExternalSupplierStatusEnum.COMPLETED.toString())
+                        .append("\')");
             }
 
+            //
             if (nWhere == 0) {
                 return null;
             }
