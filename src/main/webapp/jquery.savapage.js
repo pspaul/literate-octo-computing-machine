@@ -828,12 +828,12 @@
 				my.input.select.signature = "";
 				my.input.select.destination = "";
 				// Boolean
-				my.input.select.letterhead = null;
+				my.input.select.letterhead = undefined;
 
 				my.input.select.printer_id = null;
 				my.input.select.job_state = null;
 				// Boolean
-				my.input.select.duplex = null;
+				my.input.select.duplex = undefined;
 
 				my.input.select.author = '';
 				my.input.select.subject = '';
@@ -841,7 +841,7 @@
 				my.input.select.userpw = '';
 				my.input.select.ownerpw = '';
 				// Boolean
-				my.input.select.encrypted = null;
+				my.input.select.encrypted = undefined;
 
 				my.input.sort.field = 'date';
 				my.input.sort.ascending = false;
@@ -918,13 +918,13 @@
 				_view.checkRadioValue('sp-doclog-select-type', my.input.select.doc_type);
 
 				val = my.input.select.letterhead;
-				_view.checkRadioValue('sp-doc-out-lh', val === null ? "" : ( val ? "1" : "0"));
+				_view.checkRadioValue('sp-doc-out-lh', val === undefined ? "" : ( val ? "1" : "0"));
 
 				val = my.input.select.duplex;
-				_view.checkRadioValue('sp-print-out-duplex', val === null ? "" : ( val ? "1" : "0"));
+				_view.checkRadioValue('sp-print-out-duplex', val === undefined ? "" : ( val ? "1" : "0"));
 
 				val = my.input.select.encrypted;
-				_view.checkRadioValue('sp-pdf-out-encrypt', val === null ? "" : ( val ? "1" : "0"));
+				_view.checkRadioValue('sp-pdf-out-encrypt', val === undefined ? "" : ( val ? "1" : "0"));
 
 				//---------------------------------
 				my.setVisibility(my);
@@ -998,11 +998,11 @@
 
 				//
 				val = _view.getRadioValue('sp-doc-out-lh');
-				my.input.select.letterhead = (val === "" ? null : (val === "1"));
+				my.input.select.letterhead = (val === "" ? undefined : (val === "1"));
 
 				//
 				val = _view.getRadioValue('sp-print-out-duplex');
-				my.input.select.duplex = (val === "" ? null : (val === "1"));
+				my.input.select.duplex = (val === "" ? undefined : (val === "1"));
 
 				//
 				sel = $('#sp-pdf-out-author');
@@ -1027,7 +1027,7 @@
 
 				//
 				val = _view.getRadioValue('sp-pdf-out-encrypt');
-				my.input.select.encrypted = (val === "" ? null : (val === "1"));
+				my.input.select.encrypted = (val === "" ? undefined : (val === "1"));
 
 			},
 
