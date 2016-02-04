@@ -950,6 +950,11 @@
 				_view.visible($('.smartschool-papercut-enabled'), enabled);
 			},
 
+			onPaperCutEnabled : function(enabled) {
+				var _view = _ns.PanelCommon.view;
+				_view.visible($('.papercut-enabled'), enabled);
+			},
+			
 			onFinancialUserTransfersEnabled : function(enabled) {
 				var _view = _ns.PanelCommon.view;
 				_view.visible($('.financial-user-transfers-enabled'), enabled);
@@ -999,6 +1004,7 @@
 				my.onSmartSchoolNodeEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.enable')), _view.isCbChecked($('#smartschool\\.2\\.soap\\.print\\.node\\.enable')));
 				my.onSmartSchoolNodeProxyEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.proxy\\.enable')), _view.isCbChecked($('#smartschool\\.2\\.soap\\.print\\.proxy\\.node\\.enable')));
 				my.onSmartSchoolPaperCutEnabled(_view.isCbChecked($('#smartschool\\.papercut\\.enable')));
+				my.onPaperCutEnabled(_view.isCbChecked($('#papercut\\.enable')));
 
 				my.onGcpRefresh(my);
 
@@ -1009,7 +1015,6 @@
 
 				_view.mobipick($("#sp-smartschool-papercut-student-cost-date-from"));
 				_view.mobipick($("#sp-smartschool-papercut-student-cost-date-to"));
-
 			}
 		};
 

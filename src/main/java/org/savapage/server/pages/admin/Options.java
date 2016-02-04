@@ -345,7 +345,6 @@ public final class Options extends AbstractAdminPage {
                     "smartschool-print-node-proxy-endpoint", keyWlk);
             tagInput("smartschool-print-node-proxy-endpoint-1", keyWlk);
 
-
             // SmartSchool #2
             keyWlk = IConfigProp.Key.SMARTSCHOOL_2_ENABLE;
             tagLabel("smartschool-print-enable-label-2",
@@ -423,7 +422,10 @@ public final class Options extends AbstractAdminPage {
             //
             labelledCheckbox("smartschool-papercut-enable",
                     IConfigProp.Key.SMARTSCHOOL_PAPERCUT_ENABLE);
-            //
+
+            // //
+            labelledCheckbox("papercut-enable", IConfigProp.Key.PAPERCUT_ENABLE);
+
             labelledInput("papercut-host", IConfigProp.Key.PAPERCUT_SERVER_HOST);
             labelledInput("papercut-port", IConfigProp.Key.PAPERCUT_SERVER_PORT);
             labelledInput("papercut-token",

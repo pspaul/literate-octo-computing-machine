@@ -1907,7 +1907,11 @@
 				$(this).on('change', "input:checkbox[id='smartschool.papercut.enable']", null, function(e) {
 					_panel.Options.onSmartSchoolPaperCutEnabled($(this).is(':checked'));
 				});
-
+				
+				$(this).on('change', "input:checkbox[id='papercut.enable']", null, function(e) {
+					_panel.Options.onPaperCutEnabled($(this).is(':checked'));
+				});
+				
 				$(this).on('change', "input:checkbox[id='gcp.enable']", null, function(e) {
 					_panel.Options.onGcpRefresh(_panel.Options);
 				});
@@ -1946,6 +1950,11 @@
 
 				$(this).on('click', '#apply-smartschool-papercut', null, function() {
 					_self.onApplySmartSchoolPaperCut(_view.isCbChecked($('#smartschool\\.papercut\\.enable')));
+					return false;
+				});
+
+				$(this).on('click', '#apply-papercut', null, function() {
+					_self.onApplyPaperCut(_view.isCbChecked($('#papercut\\.enable')));
 					return false;
 				});
 

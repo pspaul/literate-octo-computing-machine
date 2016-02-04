@@ -738,66 +738,14 @@ pattern="[0-9]*"
                     </div>                          
                 </li>
 
-            </ul>
-                        
-            <ul data-role="listview" data-inset="true">
-
                 <li>
-                    <h3><wicket:message key="papercut-header-text"/></h3>
-                                
                     <label for="smartschool-papercut-enable" wicket:id="smartschool-papercut-enable-label" />
                     <input type="checkbox" id="smartschool-papercut-enable" value="0"
                         wicket:id="smartschool-papercut-enable" />
                 
-                    <div class="smartschool-papercut-enabled">
-                
-                        <div data-role="collapsible" data-collapsed="true">
-                
-	                        <h3><wicket:message key="papercut-server-text"/></h3>
-	                        
-	                        <label for="" wicket:id="papercut-host-label" />
-	                        <input type="text" id="" value="" wicket:id="papercut-host" autocomplete="off"
-	                            autocorrect="off" autocapitalize="off" spellcheck="false" />
-	                                            
-	                        <label for="" wicket:id="papercut-port-label" />
-	                        <input type="text" id=""
-	                            value="" wicket:id="papercut-port" pattern="[0-9]*"
-	                            autocomplete="off" autocorrect="off" autocapitalize="off"
-	                            spellcheck="false" />
-	                            
-	                        <label for="" wicket:id="papercut-token-label" />
-	                        <input type="password" id="" wicket:id="papercut-token" value="" autocomplete="off"
-	                            autocorrect="off" autocapitalize="off" spellcheck="false" />
-	                    </div>
-                                             
-                        <div data-role="collapsible" data-collapsed="true">
-                    
-	                        <h3><wicket:message key="papercut-db-text"/></h3>
-	
-	                        <label for="" wicket:id="papercut-db-driver-label" />
-	                        <input type="text" id="" value="" wicket:id="papercut-db-driver" autocomplete="off"
-	                            autocorrect="off" autocapitalize="off" spellcheck="false" />
-	                                                                    
-	                        <label for="" wicket:id="papercut-db-url-label" />
-	                        <input type="text" id="" value="" wicket:id="papercut-db-url" autocomplete="off"
-	                            autocorrect="off" autocapitalize="off" spellcheck="false" />
-	                                            
-	                        <label for="" wicket:id="papercut-db-user-label" />
-	                        <input type="text" id="" value="" wicket:id="papercut-db-user" autocomplete="off"
-	                            autocorrect="off" autocapitalize="off" spellcheck="false" />
-	                            
-	                        <label for="" wicket:id="papercut-db-password-label" />
-	                        <input type="password" id="" wicket:id="papercut-db-password" value="" autocomplete="off"
-	                            autocorrect="off" autocapitalize="off" spellcheck="false" />
-	                    </div>
-                    </div>                         
                     <div>
                         <a href="#" id="apply-smartschool-papercut" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"> 
                           <wicket:message key="button-apply" /></a>                          
-                          
-                       <a href="#" id="test-papercut" class="smartschool-papercut-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info"> <wicket:message
-                          key="smartschool-button-test" /></a>
-                                
                     </div>                
                 </li>
                 <li class="smartschool-papercut-enabled">
@@ -835,6 +783,70 @@ pattern="[0-9]*"
     </li>    
     </wicket:enclosure>
 
+    <li>
+        <div data-role="collapsible" data-collapsed="true">
+            <h3><wicket:message key="papercut-header-text"/></h3>
+            <ul data-role="listview" data-inset="true">
+
+                <li>
+                    <label for="papercut-enable" wicket:id="papercut-enable-label" />
+                    <input type="checkbox" id="papercut-enable" value="0"
+                        wicket:id="papercut-enable" />
+                
+                    <div class="papercut-enabled">
+                
+                        <div data-role="collapsible" data-collapsed="true">
+                
+                            <h3><wicket:message key="papercut-server-text"/></h3>
+                            
+                            <label for="" wicket:id="papercut-host-label" />
+                            <input type="text" id="" value="" wicket:id="papercut-host" autocomplete="off"
+                                autocorrect="off" autocapitalize="off" spellcheck="false" />
+                                                
+                            <label for="" wicket:id="papercut-port-label" />
+                            <input type="text" id=""
+                                value="" wicket:id="papercut-port" pattern="[0-9]*"
+                                autocomplete="off" autocorrect="off" autocapitalize="off"
+                                spellcheck="false" />
+                                
+                            <label for="" wicket:id="papercut-token-label" />
+                            <input type="password" id="" wicket:id="papercut-token" value="" autocomplete="off"
+                                autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                                             
+                        <div data-role="collapsible" data-collapsed="true">
+                    
+                            <h3><wicket:message key="papercut-db-text"/></h3>
+    
+                            <label for="" wicket:id="papercut-db-driver-label" />
+                            <input type="text" id="" value="" wicket:id="papercut-db-driver" autocomplete="off"
+                                autocorrect="off" autocapitalize="off" spellcheck="false" />
+                                                                        
+                            <label for="" wicket:id="papercut-db-url-label" />
+                            <input type="text" id="" value="" wicket:id="papercut-db-url" autocomplete="off"
+                                autocorrect="off" autocapitalize="off" spellcheck="false" />
+                                                
+                            <label for="" wicket:id="papercut-db-user-label" />
+                            <input type="text" id="" value="" wicket:id="papercut-db-user" autocomplete="off"
+                                autocorrect="off" autocapitalize="off" spellcheck="false" />
+                                
+                            <label for="" wicket:id="papercut-db-password-label" />
+                            <input type="password" id="" wicket:id="papercut-db-password" value="" autocomplete="off"
+                                autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                    </div>                         
+                    <div>
+                        <a href="#" id="apply-papercut" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"> 
+                          <wicket:message key="button-apply" /></a>                          
+                          
+                       <a href="#" id="test-papercut" class="papercut-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info"> <wicket:message
+                          key="smartschool-button-test" /></a>
+                                
+                    </div>                
+                </li>
+             </ul>
+        </div>
+    </li>
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 

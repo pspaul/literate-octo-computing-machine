@@ -211,7 +211,7 @@
 
     <entry key="smartschool-on-demand-user-creation">Ad-hoc gebruikers aanmaken</entry>
     
-    <entry key="smartschool-papercut-enable">Inschakelen</entry>
+    <entry key="smartschool-papercut-enable">PaperCut Integratie Inschakelen</entry>
     
     <entry key="smartschool-button-test">Test</entry>
     <entry key="smartschool-button-stop">Stop</entry>
@@ -223,8 +223,8 @@
     <entry key="smartschool-student-invoicing-legend">Een CSV export van afdrukkosten totalen voor studenten binnen een periode.</entry>
     <entry key="smartschool-student-invoicing-classes-prompt">Een door spaties gescheiden lijst van Klassen (laat leeg om alles te selecteren)</entry>
 
-    <entry key="papercut-header-text">PaperCut Integratie</entry>
-    
+    <entry key="papercut-header-text">PaperCut Integratie</entry>    
+    <entry key="papercut-enable">Enable</entry>
     <entry key="papercut-server-text">PaperCut Server</entry>
     <entry key="papercut-host">Host</entry>
     <entry key="papercut-port">Poort</entry>

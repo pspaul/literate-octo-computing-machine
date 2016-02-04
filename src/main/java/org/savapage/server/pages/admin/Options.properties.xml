@@ -206,7 +206,7 @@
 
     <entry key="smartschool-on-demand-user-creation">On demand user creation</entry>
 
-    <entry key="smartschool-papercut-enable">Enable</entry>
+    <entry key="smartschool-papercut-enable">Enable PaperCut Integration</entry>
     
     <entry key="smartschool-button-test">Test</entry>
     <entry key="smartschool-button-stop">Stop</entry>
@@ -219,7 +219,7 @@
     <entry key="smartschool-student-invoicing-classes-prompt">A space separated list of Classes (leave empty to select all)</entry>
 
     <entry key="papercut-header-text">PaperCut Integration</entry>
-
+    <entry key="papercut-enable">Enable</entry>
     <entry key="papercut-server-text">PaperCut Server</entry>
     <entry key="papercut-host">Host</entry>
     <entry key="papercut-port">Port</entry>

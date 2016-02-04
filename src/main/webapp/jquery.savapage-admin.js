@@ -583,6 +583,14 @@
 
 				props['smartschool.papercut.enable'] = enable ? 'Y' : 'N';
 
+				_saveConfigProps(props);
+			};
+
+			_view.pages.admin.onApplyPaperCut = function(enable) {
+				var props = {};
+
+				props['papercut.enable'] = enable ? 'Y' : 'N';
+
 				if (enable) {
 					_fillConfigPropsText(props, ['papercut.server.host', 'papercut.server.port', 'papercut.webservices.auth-token', 'papercut.db.jdbc-driver', 'papercut.db.jdbc-url', 'papercut.db.user', 'papercut.db.password']);
 				}
