@@ -1527,7 +1527,7 @@
 		/**
 		 *
 		 */
-		_ns.PanelSharedAccountsBase = {
+		_ns.PanelAccountsBase = {
 
 			applyDefaults : function(my) {
 
@@ -1535,6 +1535,8 @@
 				my.input.maxResults = 10;
 
 				my.input.select.name_text = null;
+				// AccountTypeEnum
+				my.input.select.accountType = null;
 				// Boolean
 				my.input.select.deleted = false;
 				// Boolean
@@ -1562,6 +1564,9 @@
 				val = my.input.select.deleted;
 				_view.checkRadioValue('sp-shared-account-select-deleted', val === null ? "" : ( val ? "1" : "0"));
 
+				val = my.input.select.accountType;
+				_view.checkRadioValue('sp-shared-account-select-type', val === null ? "" :  val);
+
 				//
 				id = 'sp-shared-account-sort-dir';
 				_view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
@@ -1578,6 +1583,9 @@
 
 				val = _view.getRadioValue('sp-shared-account-select-deleted');
 				my.input.select.deleted = (val === "" ? null : (val === "1"));
+
+				val = _view.getRadioValue('sp-shared-account-select-type');
+				my.input.select.accountType = (val === "" ? null : val);
 
 				sel = $('#sp-shared-account-name-containing-text');
 				present = (sel.val().length > 0);
@@ -1611,7 +1619,7 @@
 			},
 
 			refresh : function(my, skipBeforeLoad) {
-				_ns.PanelCommon.refreshPanelAdmin('SharedAccountsBase', skipBeforeLoad);
+				_ns.PanelCommon.refreshPanelAdmin('AccountsBase', skipBeforeLoad);
 			},
 
 			// show page
@@ -1619,7 +1627,7 @@
 				_ns.PanelCommon.onValidPage(function() {
 					my.input.page = nPage;
 					my.v2m(my);
-					_ns.PanelCommon.loadListPageAdmin(my, 'SharedAccountsPage', '#sp-shared-account-list-page');
+					_ns.PanelCommon.loadListPageAdmin(my, 'AccountsPage', '#sp-shared-account-list-page');
 				});
 			},
 

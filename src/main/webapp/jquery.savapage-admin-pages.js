@@ -1035,7 +1035,7 @@
 				/*
 				 * Account
 				 */
-				SharedAccountsBase : _ns.PanelSharedAccountsBase,
+				AccountsBase : _ns.PanelAccountsBase,
 
 				/*
 				 * AccountTrx (common for Admin and User WebApp)
@@ -1112,7 +1112,7 @@
 				pnl.refresh(pnl);
 			};
 			_self.refreshSharedAccounts = function() {
-				var pnl = _panel.SharedAccountsBase;
+				var pnl = _panel.AccountsBase;
 				pnl.refresh(pnl);
 			};
 			_self.refreshDevices = function() {
@@ -1382,15 +1382,6 @@
 					return false;
 				});
 
-				$(this).on('click', '.sp-account-log', null, function() {
-					var pnl = _panel.DocLogBase;
-					pnl.applyDefaults(pnl);
-					pnl.input.select.account_id = $(this).attr('data-savapage');
-					// skipBeforeLoad
-					pnl.refresh(pnl, true);
-					return false;
-				});
-
 				$(this).on('click', '.sp-account-transaction', null, function() {
 					var pnl = _panel.AccountTrxBase;
 					pnl.applyDefaults(pnl);
@@ -1406,20 +1397,20 @@
 				});
 
 				$(this).on('click', '#button-accounts-apply', null, function() {
-					var pnl = _panel.SharedAccountsBase;
+					var pnl = _panel.AccountsBase;
 					pnl.page(pnl, 1);
 					return false;
 				});
 
 				$(this).on('click', '#button-accounts-default', null, function() {
-					var pnl = _panel.SharedAccountsBase;
+					var pnl = _panel.AccountsBase;
 					pnl.applyDefaults(pnl);
 					pnl.m2v(pnl);
 					return false;
 				});
 
 				$(this).on('click', '#button-accounts-report', null, function() {
-					var pnl = _panel.SharedAccountsBase;
+					var pnl = _panel.AccountsBase;
 					pnl.v2m(pnl);
 					_self.onDownload("report", pnl.input, "AccountList");
 					return true;

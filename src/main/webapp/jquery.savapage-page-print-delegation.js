@@ -501,7 +501,7 @@
 
 					_view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
 
-					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), true);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
 
 				} else if (id === 'sp-print-delegation-edit-radio-add-users') {

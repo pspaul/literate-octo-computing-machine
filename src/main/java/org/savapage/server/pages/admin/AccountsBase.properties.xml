@@ -5,6 +5,11 @@
     <entry key="select-and-sort">Select and Sort</entry>
 
     <entry key="prompt-name-containing-text">Name</entry>
+
+    <entry key="prompt-account-type">Type</entry>
+    <entry key="account-type-all">-</entry>
+    <entry key="account-type-group">Group</entry>
+    <entry key="account-type-shared">Shared</entry>
         
     <entry key="prompt-account-deleted">Deleted</entry>
     <entry key="account-deleted-all">-</entry>

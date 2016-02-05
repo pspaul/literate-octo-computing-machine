@@ -38,6 +38,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.helpers.AccountPagerReq;
 import org.savapage.core.jpa.Account;
+import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.server.SpSession;
@@ -48,7 +49,7 @@ import org.savapage.server.pages.MarkupHelper;
  * @author Rijk Ravestein
  *
  */
-public final class SharedAccountsPage extends AbstractAdminListPage {
+public final class AccountsPage extends AbstractAdminListPage {
 
     /**
      * Version for serialization.
@@ -81,7 +82,7 @@ public final class SharedAccountsPage extends AbstractAdminListPage {
     /**
      *
      */
-    public SharedAccountsPage() {
+    public AccountsPage() {
 
         this.currencySymbol = SpSession.getAppCurrencySymbol();
         this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
@@ -107,7 +108,16 @@ public final class SharedAccountsPage extends AbstractAdminListPage {
 
         final AccountDao.ListFilter filter = new AccountDao.ListFilter();
 
-        filter.setAccountType(Account.AccountTypeEnum.SHARED);
+        final AccountTypeEnum accountTypeSelect =
+                req.getSelect().getAccountType();
+
+        if (accountTypeSelect == null) {
+            filter.setAccountType(Account.AccountTypeEnum.SHARED);
+            filter.setAccountTypeExtra(Account.AccountTypeEnum.GROUP);
+        } else {
+            filter.setAccountType(accountTypeSelect);
+        }
+
         filter.setContainingNameText(req.getSelect().getNameContainingText());
         filter.setDeleted(req.getSelect().getDeleted());
 
@@ -273,16 +283,6 @@ public final class SharedAccountsPage extends AbstractAdminListPage {
                 labelWrk.add(new AttributeModifier("data-savapage", account
                         .getId()));
 
-                item.add(labelWrk);
-
-                /*
-                 *
-                 */
-                labelWrk =
-                        new Label("button-log", getLocalizer().getString(
-                                "button-log", this));
-                labelWrk.add(new AttributeModifier("data-savapage", account
-                        .getId()));
                 item.add(labelWrk);
 
                 /*

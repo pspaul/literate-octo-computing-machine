@@ -22,13 +22,15 @@
 package org.savapage.server.pages.admin;
 
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public class SharedAccountsBase extends AbstractAdminPage {
+public class AccountsBase extends AbstractAdminPage {
 
     /**
      * Version for serialization.
@@ -38,7 +40,15 @@ public class SharedAccountsBase extends AbstractAdminPage {
     /**
      *
      */
-    public SharedAccountsBase() {
+    public AccountsBase() {
+
+        final MarkupHelper  helper =  new MarkupHelper(this);
+
+        helper.addModifyLabelAttr("account-type-group", "value",
+                AccountTypeEnum.GROUP.toString());
+
+        helper.addModifyLabelAttr("account-type-shared", "value",
+                AccountTypeEnum.SHARED.toString());
 
         addVisible(ConfigManager.isInternalUsersEnabled(), "button-new",
                 localized("button-new"));

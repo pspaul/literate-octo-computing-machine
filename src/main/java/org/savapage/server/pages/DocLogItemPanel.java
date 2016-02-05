@@ -205,7 +205,8 @@ public class DocLogItemPanel extends Panel {
                 final AccountTypeEnum accountType =
                         AccountTypeEnum.valueOf(account.getAccountType());
 
-                if (accountType != AccountTypeEnum.SHARED) {
+                if (accountType != AccountTypeEnum.SHARED
+                        && accountType != AccountTypeEnum.GROUP) {
                     totWeightDelegators +=
                             trx.getTransactionWeight().intValue();
                     continue;

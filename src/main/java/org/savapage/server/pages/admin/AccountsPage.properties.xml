@@ -12,6 +12,5 @@
     <entry key="pages">Pages</entry>
         
     <entry key="button-edit">Edit</entry>
-    <entry key="button-log">Log</entry>
     <entry key="button-transaction">Transactions</entry>
 </properties>

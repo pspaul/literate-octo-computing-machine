@@ -12,6 +12,5 @@
     <entry key="pages">Pagina's</entry>
     
     <entry key="button-edit">Bewerken</entry>
-    <entry key="button-log">Logboek</entry>
     <entry key="button-transaction">Transacties</entry>
 </properties>

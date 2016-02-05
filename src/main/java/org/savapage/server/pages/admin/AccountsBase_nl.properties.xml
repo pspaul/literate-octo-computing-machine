@@ -5,6 +5,10 @@
     <entry key="select-and-sort">Selectie en Sortering</entry>
 
     <entry key="prompt-name-containing-text">Naam</entry>
+    
+    <entry key="account-type-all">-</entry>
+    <entry key="account-type-group">Groep</entry>
+    <entry key="account-type-shared">Gedeeld</entry>
 
     <entry key="prompt-account-deleted">Verwijderd</entry>
     <entry key="account-deleted-all">-</entry>
