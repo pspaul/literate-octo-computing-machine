@@ -989,6 +989,9 @@ public final class JsonApiServer extends AbstractPage {
         final DelegatedPrintPeriodDto dto =
                 AbstractDto.create(DelegatedPrintPeriodDto.class, jsonData);
 
+        dto.setPersonalAccountType(ConfigManager.instance().getConfigValue(
+                Key.SMARTSCHOOL_PAPERCUT_ACCOUNT_PERSONAL_TYPE));
+
         ServiceContext
                 .getServiceFactory()
                 .getPaperCutService()

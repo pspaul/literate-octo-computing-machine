@@ -777,6 +777,13 @@ public final class Options extends AbstractAdminPage {
         labelledCheckbox("proxyprint-clear-inbox",
                 IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX);
 
+        // Delegated Print
+        labelledCheckbox("proxyprint-delegate-enable",
+                IConfigProp.Key.PROXY_PRINT_DELEGATE_ENABLE);
+
+        labelledCheckbox("proxyprint-delegate-papercut-enable",
+                IConfigProp.Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
+
         /*
          * xpstopdf
          */

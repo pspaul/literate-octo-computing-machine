@@ -636,7 +636,9 @@
 			}).on("pagebeforeshow", function(event, ui) {
 				_setVisibility();
 			}).on("pagebeforehide", function(event, ui) {
+				var info = _nDelegatorGroups + _nDelegatorUsers > 0 ? '(' + _nDelegatorGroups + ',' + _nDelegatorUsers + ')': '';
 				_model.printDelegation = _delegationModel();
+				$('.sp-print-delegation-info').text(info);
 			});
 		};
 

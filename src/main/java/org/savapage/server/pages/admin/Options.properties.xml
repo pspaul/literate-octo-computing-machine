@@ -302,6 +302,9 @@
 
     <entry key="proxyprint-clear-inbox">Always remove SafePages after printing</entry>
 
+    <entry key="proxyprint-delegate-enable">Enable Delegated Print</entry>
+    <entry key="proxyprint-delegate-papercut-enable">Integrate Delegated Print with PaperCut</entry>
+
     <entry key="internal-users-enable">Internal users</entry>
     <entry key="internal-users-change-pw">Internal users can change their password</entry>
 

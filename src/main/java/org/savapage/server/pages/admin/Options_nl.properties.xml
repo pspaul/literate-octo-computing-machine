@@ -306,6 +306,9 @@
 
     <entry key="proxyprint-clear-inbox">SafePages altijd verwijderen na afdrukken</entry>
 
+    <entry key="proxyprint-delegate-enable">Delegated Print inschakelen</entry>
+    <entry key="proxyprint-delegate-papercut-enable">Integreer Delegated Print met PaperCut</entry>
+
     <entry key="internal-users-enable">Interne gebruikers</entry>
     <entry key="internal-users-change-pw">Interne gebruikers mogen hun wachtwoord wijzigen</entry>
 

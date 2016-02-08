@@ -3,4 +3,5 @@
 <properties>
     <entry key="button-edit">Bewerken</entry>
     <entry key="button-users">Gebruikers</entry>
+    <entry key="button-account">Account</entry>
 </properties>

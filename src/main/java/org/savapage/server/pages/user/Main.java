@@ -57,9 +57,17 @@ public class Main extends AbstractUserPage {
         addVisible(isUpload, "button-upload", localized("button-upload"));
 
         //
-        boolean isPrintDelegate =
-                ACCESSCONTROL_SERVICE.isAuthorized(SpSession.get().getUser(),
-                        ACLRoleEnum.PRINT_DELEGATE);
+        final boolean isPrintDelegate;
+
+        if (ConfigManager.instance().isConfigValue(
+                Key.PROXY_PRINT_DELEGATE_ENABLE)) {
+
+            isPrintDelegate =
+                    ACCESSCONTROL_SERVICE.isAuthorized(SpSession.get()
+                            .getUser(), ACLRoleEnum.PRINT_DELEGATE);
+        } else {
+            isPrintDelegate = false;
+        }
 
         addVisible(isPrintDelegate, "button-print-delegation", "Delegation");
 

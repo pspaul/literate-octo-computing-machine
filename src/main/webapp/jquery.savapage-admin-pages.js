@@ -1663,6 +1663,16 @@
 					return false;
 				});
 
+				$(this).on('click', '.sp-user-group-account', null, function() {
+					var pnl = _panel.AccountsBase;
+					pnl.applyDefaults(pnl);
+					pnl.input.select.name_text = $(this).attr('data-savapage');
+					pnl.input.select.accountType = $(this).attr('data-savapage-type');
+					// skipBeforeLoad
+					pnl.refresh(pnl, true);
+					return false;
+				});
+
 				$(this).on('click', "#button-show-add-remove-user-groups", null, function() {
 					_self.onShowAddRemoveUserGroups();
 					return false;

@@ -183,16 +183,7 @@
             </li>
             
         </ul>
-<wicket:remove><!-- 
---></wicket:remove>
-    <wicket:enclosure child="button-print-delegation">
-        <ul>
-            <li>
-                <a wicket:id="button-print-delegation" href="#" id="button-print-delegation" class="ui-btn ui-btn-inline ui-btn-icon-none"/>
-            </li>                
-        </ul>
-    </wicket:enclosure>            
-            
+
     </div>
     
     <div id="main-navbar-arrange" data-role="navbar" data-grid="c" 
@@ -267,8 +258,17 @@
             <span id="sparkline-user-pie"/>&nbsp;<span class="sp-txt-wrap" id="mini-user-balance"/>&nbsp;<span class="sp-plain-info">&bull;</span>&nbsp;<span class="sp-txt-info" id="mini-user-name"/></a>
 
 	    <wicket:enclosure child="button-upload">
-	        <a href="#" data-dialog="true" id="button-mini-upload" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-notext ui-icon-arrow-u" wicket:id="button-upload"/>
+	        <a href="#" data-dialog="true" id="button-mini-upload" 
+	           class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-notext ui-icon-arrow-u" 
+	           wicket:id="button-upload"/>
 	    </wicket:enclosure>
+
+	    <wicket:enclosure child="button-print-delegation">
+            <a href="#" id="button-print-delegation" 
+               class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-text">
+               <span class="sp-plain-info" wicket:id="button-print-delegation"/> <span class="sp-plain-info sp-print-delegation-info" />
+            </a>
+	    </wicket:enclosure>            
 
         <a href="#" id="button-mini-outbox" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-clock">
             <span class="sp-outbox-remaining-time"/>&nbsp;&nbsp;<span class="sp-outbox-jobs"/><span class="sp-outbox-pages"/><span class="sp-outbox-cost"/>

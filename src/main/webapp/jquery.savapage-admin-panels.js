@@ -1536,7 +1536,7 @@
 
 				my.input.select.name_text = null;
 				// AccountTypeEnum
-				my.input.select.accountType = null;
+				my.input.select.accountType = undefined;
 				// Boolean
 				my.input.select.deleted = false;
 				// Boolean
@@ -1565,7 +1565,7 @@
 				_view.checkRadioValue('sp-shared-account-select-deleted', val === null ? "" : ( val ? "1" : "0"));
 
 				val = my.input.select.accountType;
-				_view.checkRadioValue('sp-shared-account-select-type', val === null ? "" :  val);
+				_view.checkRadioValue('sp-shared-account-select-type', val === undefined ? "" : val);
 
 				//
 				id = 'sp-shared-account-sort-dir';
@@ -1585,7 +1585,7 @@
 				my.input.select.deleted = (val === "" ? null : (val === "1"));
 
 				val = _view.getRadioValue('sp-shared-account-select-type');
-				my.input.select.accountType = (val === "" ? null : val);
+				my.input.select.accountType = (val === "" ? undefined : val);
 
 				sel = $('#sp-shared-account-name-containing-text');
 				present = (sel.val().length > 0);

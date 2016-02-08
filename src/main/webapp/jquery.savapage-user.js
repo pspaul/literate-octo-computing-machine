@@ -2778,7 +2778,6 @@
 					return false;
 				});
 
-				// TEST
 				$('#button-print-delegation').click(function() {
 					_view.showPageAsync('#page-print-delegation', 'PagePrintDelegation');
 					return false;
