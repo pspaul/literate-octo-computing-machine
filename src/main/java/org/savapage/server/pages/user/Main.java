@@ -47,7 +47,7 @@ public class Main extends AbstractUserPage {
      */
     public Main() {
 
-        boolean isUpload =
+        final boolean isUpload =
                 (ConfigManager.isWebPrintEnabled() && InetUtils
                         .isIp4AddrInCidrRanges(
                                 ConfigManager.instance().getConfigValue(
@@ -57,19 +57,11 @@ public class Main extends AbstractUserPage {
         addVisible(isUpload, "button-upload", localized("button-upload"));
 
         //
-        final boolean isPrintDelegate;
+        final boolean isPrintDelegate =
+                ACCESSCONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
+                        ACLRoleEnum.PRINT_DELEGATE);
 
-        if (ConfigManager.instance().isConfigValue(
-                Key.PROXY_PRINT_DELEGATE_ENABLE)) {
-
-            isPrintDelegate =
-                    ACCESSCONTROL_SERVICE.isAuthorized(SpSession.get()
-                            .getUser(), ACLRoleEnum.PRINT_DELEGATE);
-        } else {
-            isPrintDelegate = false;
-        }
-
-        addVisible(isPrintDelegate, "button-print-delegation", "Delegation");
+        addVisible(isPrintDelegate, "button-print-delegation", "-");
 
         //
         add(new CommunityStatusFooterPanel("community-status-footer-panel"));

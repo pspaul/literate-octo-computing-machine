@@ -2778,7 +2778,7 @@
 					return false;
 				});
 
-				$('#button-print-delegation').click(function() {
+				$('#button-print-delegation-main').click(function() {
 					_view.showPageAsync('#page-print-delegation', 'PagePrintDelegation');
 					return false;
 				});
@@ -3300,6 +3300,11 @@
 				 return false;
 				 });
 				 */
+
+				$('#button-print-delegation').click(function() {
+					_view.showPageAsync('#page-print-delegation', 'PagePrintDelegation');
+					return false;
+				});
 
 				$('#button-print').click(function(e) {
 					_onPrint(false);
@@ -3992,11 +3997,17 @@
 				//
 				, trgNup = $('.sp-button-mini-print-n-up')
 				//
+				, trgDelegated = $('.sp-button-mini-print-delegation')
+				//
 				, ippAttrVal
 				//
 				, isColor
 				//
 				;
+
+				if (trgDelegated) {
+					trgDelegated.html(_ns.Utils.countProp(_model.printDelegation.groups) || '-');
+				}
 
 				_model.myPrintTitle = $('#print-title').val();
 				_saveSelectedletterhead('#print-letterhead-list');
@@ -4071,6 +4082,8 @@
 				_model.user.mailDefault = loginRes.mail;
 				_model.letterheads = null;
 				_model.propPdfDefault.desc.author = _model.user.fullname;
+
+				_model.printDelegation = {};
 
 				/*
 				 * _api.call({ request : 'exit-event-monitor' });
@@ -4885,6 +4898,13 @@
 				_view.showApiMsg(res);
 			};
 
+			/**
+			 * Callbacks: Print Delegation Dialog
+			 */
+			_view.pages.printDelegation.onBeforeHide = function() {
+				_refreshPrinterInd();
+			};
+			
 			/**
 			 * Callbacks: page credit transfer
 			 */

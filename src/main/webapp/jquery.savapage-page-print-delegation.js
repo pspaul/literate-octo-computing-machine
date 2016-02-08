@@ -36,7 +36,7 @@
 
 		_ns.PagePrintDelegation = function(_i18n, _view, _model, _api) {
 
-			var _util = _ns.Utils
+			var _util = _ns.Utils, _this = this
 			//
 			, _ACCOUNT_ENUM_GROUP = 'GROUP', _ACCOUNT_ENUM_USER = 'USER', _ACCOUNT_ENUM_SHARED = 'SHARED'
 			//
@@ -636,9 +636,8 @@
 			}).on("pagebeforeshow", function(event, ui) {
 				_setVisibility();
 			}).on("pagebeforehide", function(event, ui) {
-				var info = _nDelegatorGroups + _nDelegatorUsers > 0 ? '(' + _nDelegatorGroups + ',' + _nDelegatorUsers + ')': '';
 				_model.printDelegation = _delegationModel();
-				$('.sp-print-delegation-info').text(info);
+				_this.onBeforeHide();
 			});
 		};
 

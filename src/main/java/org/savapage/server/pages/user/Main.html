@@ -125,6 +125,8 @@
         .ui-icon-mini-duplex:after { background:  url(/glyphicons/glyphicons_351_book_open.png) 50% 50% no-repeat; background-size: 16px 14px;}
         .ui-icon-mini-print-color:after { background:  url(/silkicons/color_wheel.png) 50% 50% no-repeat; background-size: 16px 16px;}
         .ui-icon-mini-print-mono:after { background:  url(/glyphicons/glyphicons_091_adjust.png) 50% 50% no-repeat; background-size: 15px 15px;}
+        .ui-icon-mini-delegated-print:after { background:  url(/famfamfam-silk/group.png) 50% 50% no-repeat; background-size: 16px 16px;}
+
         
     </style>
     
@@ -264,10 +266,9 @@
 	    </wicket:enclosure>
 
 	    <wicket:enclosure child="button-print-delegation">
-            <a href="#" id="button-print-delegation" 
-               class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-text">
-               <span class="sp-plain-info" wicket:id="button-print-delegation"/> <span class="sp-plain-info sp-print-delegation-info" />
-            </a>
+            <a href="#" wicket:id="button-print-delegation" id="button-print-delegation-main"
+               class="ui-btn ui-corner-all ui-shadow sp-plain-info sp-button-mini-print-delegation 
+                        ui-icon-mini-delegated-print ui-shadow ui-btn ui-corner-all ui-btn-icon-left"/>
 	    </wicket:enclosure>            
 
         <a href="#" id="button-mini-outbox" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-clock">

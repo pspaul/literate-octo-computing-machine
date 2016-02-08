@@ -25,6 +25,10 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.QuickSearchPanel;
 
@@ -39,6 +43,9 @@ public class Print extends AbstractUserPage {
      *
      */
     private static final long serialVersionUID = 1L;
+
+    private static final AccessControlService ACCESSCONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      *
@@ -69,7 +76,8 @@ public class Print extends AbstractUserPage {
                 getLocalizer().getString("search-printer-placeholder", this));
 
         //
-        helper.addLabel("print-remove-graphics-label", localized("print-remove-graphics"));
+        helper.addLabel("print-remove-graphics-label",
+                localized("print-remove-graphics"));
 
         //
         helper.encloseLabel("print-ecoprint", "",
@@ -87,6 +95,13 @@ public class Print extends AbstractUserPage {
         }
 
         helper.addLabel("print-ecoprint-label", ecoPrintLabel);
+
+        //
+        final boolean isPrintDelegate =
+                ACCESSCONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
+                        ACLRoleEnum.PRINT_DELEGATE);
+
+        addVisible(isPrintDelegate, "button-print-delegation", "-");
 
     }
 }
