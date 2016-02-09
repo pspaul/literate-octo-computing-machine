@@ -15,7 +15,8 @@
     <p class="sp-txt-wrap">
 		Copyright &copy; 2011-<span wicket:id="current-year"></span> by 
 		<a class="sp-plain-link" href="" target="_blank" wicket:id="app-copyright-owner-url"/>
-    </p>		
+    </p>
+    
     <p class="sp-txt-wrap">
 		Licensed under 
         <a class="sp-plain-link" href="https://www.gnu.org/licenses/agpl.html" 
@@ -23,6 +24,10 @@
         the <a class="sp-plain-link" href="http://fsf.org" target="_blank">Free Software Foundation</a>.
     </p>
 
+    <wicket:enclosure child="translator-info">
+        <p class="sp-txt-wrap" wicket:id="translator-info"/>
+    </wicket:enclosure>
+            
     <p>    
        <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="http://savapage.org" target="_blank">
            www.savapage.org</a>

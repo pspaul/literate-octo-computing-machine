@@ -30,8 +30,10 @@ pattern="[0-9]*"
 		        <button class="sp-button-mini-print-duplex ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
 		        <button class="sp-button-mini-print-n-up ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>		        
                 <wicket:enclosure child="button-print-delegation">
+	                <label for="print-as-delegate"><wicket:message key="print-as-delegate"/></label>
+	                <input type="checkbox" id="print-as-delegate" value="1" checked />
                     <button wicket:id="button-print-delegation" id="button-print-delegation" 
-                    class="sp-button-mini-print-delegation ui-icon-mini-delegated-print ui-shadow ui-btn ui-corner-all ui-btn-icon-left"/>
+                    class="sp-button-mini-print-delegation sp-plain-info ui-icon-mini-delegated-print ui-shadow ui-btn ui-corner-all ui-btn-icon-left"/>
                 </wicket:enclosure>            
             </div>
                    
@@ -63,7 +65,7 @@ pattern="[0-9]*"
         <li data-role="list-divider" id="sp-printer-page-name">Job</li>
     
 	    <li data-mini="true">
-	    
+    
             <div class="ui-field-contain">
 		        <label data-mini="true" for="print-job-list">
 		            <wicket:message key="print-job-scope"/>
@@ -83,7 +85,8 @@ pattern="[0-9]*"
 			        <wicket:message key="print-copies"/>
 			    </label>
 			    <input type="range" id="slider-print-copies" wicket:id="slider-print-copies" 
-			          value="1" min="1" max="<var>" /> 			          
+			          value="1" min="1" max="<var>" />
+			    <label id="delegated-print-copies" style="display:none"/>      		          
             </div>
             		
             <div class="ui-field-contain">

@@ -4,6 +4,7 @@
     <entry key="title">Print Delegation</entry>
     
     <entry key="header-delegator">Delegator</entry>
+    <entry key="header-members">Members</entry>
     <entry key="header-account">Account</entry>
 
     <entry key="label-add-groups">Add Groups</entry>

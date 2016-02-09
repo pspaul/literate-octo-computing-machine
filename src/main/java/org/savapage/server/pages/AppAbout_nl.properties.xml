@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- +====================================================================+ -->
+<!-- | This file is part of the SavaPage project, http://savapage.org ....| -->
+<!-- | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License..| -->
+<!-- | Author: Rijk Ravestein ............................................| -->
+<!-- +====================================================================+ -->
+<!-- | Translator : Rijk Ravestein, rijkr@savapage.org ...................| -->
+<!-- +====================================================================+ -->
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+    <entry key="_translator_name">Rijk Ravestein</entry>
+    <entry key="_translator_email">rijkr@savapage.org</entry>
+    
+    <!-- | ...............................................................| -->
+
     <entry key="title">Info</entry>
     <entry key="license-info-link">Licentie informatie</entry>
+    <entry key="translator-info">Nederlandse vertaling door {0}.</entry>
     <entry key="source-code-link">Broncode</entry>
     <entry key="button-back">Terug</entry>    
 </properties>

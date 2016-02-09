@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- +====================================================================+ -->
+<!-- | This file is part of the SavaPage project, http://savapage.org ....| -->
+<!-- | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License..| -->
+<!-- | Author: Rijk Ravestein ............................................| -->
+<!-- +====================================================================+ -->
+<!-- | Translator : ......................................................| -->
+<!-- +====================================================================+ -->
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="title">Langue</entry>
-    <entry key="select-language">Choisissez votre langue:</entry>
-    <entry key="button-cancel">Annuler</entry>
+
+	<entry key="_translator_name"></entry>
+	<entry key="_translator_email"></entry>
+
+	<!-- | ...................................................................| -->
+
+	<entry key="title">Langue</entry>
+	<entry key="select-language">Choisissez votre langue:</entry>
+	<entry key="button-cancel">Annuler</entry>
 </properties>

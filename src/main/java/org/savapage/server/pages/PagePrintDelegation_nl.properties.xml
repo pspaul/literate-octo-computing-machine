@@ -4,6 +4,7 @@
     <entry key="title">Print Delegatie</entry>
     
     <entry key="header-delegator">Delegatiegever</entry>
+    <entry key="header-members">Leden</entry>
     <entry key="header-account">Account</entry>
     
     <entry key="label-add-groups">Groepen toevoegen</entry>

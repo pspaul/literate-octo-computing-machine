@@ -22,7 +22,9 @@
 package org.savapage.server.pages;
 
 import java.util.Calendar;
+import java.util.MissingResourceException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.community.CommunityDictEnum;
@@ -74,6 +76,18 @@ public final class AppAbout extends AbstractPage {
                 new PrinterDriverDownloadPanel("printerdriver-download-panel");
         add(downloadPanel);
         downloadPanel.populate();
+
+        //
+        String translatorInfo;
+        try {
+            translatorInfo =
+                    localized("translator-info", localized("_translator_name"));
+        } catch (MissingResourceException e) {
+            translatorInfo = null;
+        }
+
+        addVisible(StringUtils.isNotBlank(translatorInfo), "translator-info",
+                translatorInfo);
 
     }
 

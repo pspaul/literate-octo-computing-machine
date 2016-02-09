@@ -22,7 +22,8 @@
     <entry key="print-page-ranges">Pagina's</entry>
     <entry key="print-page-ranges-help">Bijvoorbeeld: 1-4,6,8-10</entry>
     
-    <entry key="button-delegation">Delegatie...</entry>
+    <entry key="print-as-delegate">Afdrukken als Gedelegeerde</entry>
+    
     <entry key="button-print">Afdrukken</entry>
     <entry key="button-print-and-close">Afdrukken &amp; Sluiten</entry>    
     <entry key="button-back">Terug</entry>        

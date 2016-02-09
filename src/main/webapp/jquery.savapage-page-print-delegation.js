@@ -62,7 +62,7 @@
 			//
 			, _delegatorGroups = {}, _delegatorUsers = {}
 			//
-			, _nDelegatorGroups = 0, _nDelegatorUsers = 0
+			, _nDelegatorGroups = 0, _nDelegatorUsers = 0, _nDelegatorGroupMembers = 0
 			//
 			, _delegatorGroupsSelected, _delegatorUsersSelected
 			//
@@ -77,11 +77,12 @@
 				};
 			}
 			//----------------------------------------------------------------
-			, _createModelAccount = function(account) {
+			, _createModelAccount = function(account, userCount) {
 				// Java: PrintDelegationDto.DelegatorAccount
 				return {
 					type : account.accountType,
-					id : account.id
+					id : account.id,
+					userCount : userCount
 				};
 			}
 			//----------------------------------------------------------------
@@ -108,6 +109,8 @@
 				_view.enable($('.sp-print-delegator-rows-selected'), selectedRows);
 				_view.enable($('.sp-print-delegation-mode-edit'), _nSelectedDelegatorGroups + _nSelectedDelegatorUsers > 0);
 				_view.enable($('#sp-print-delegation-button-remove-selected'), selectedRows);
+				
+// _nDelegatorGroupMembers				
 			}
 			//----------------------------------------------------------------
 			, _initDelegatorSelection = function() {
@@ -296,7 +299,9 @@
 						html += ' &bull; ' + item.userId;
 					}
 				}
-				html += '</th><td><img src="/famfamfam-silk/';
+				html += '</th>';
+				html += '<td>' + (isGroup ? item.userCount : 1) + '</td>';
+				html += '<td><img src="/famfamfam-silk/';
 
 				if (account.accountType === _ACCOUNT_ENUM_GROUP) {
 					html += 'group.png';
@@ -326,9 +331,10 @@
 
 					if (!_delegatorGroups[item.key]) {
 
-						_delegatorGroups[item.key] = _createModelAccount(account);
+						_delegatorGroups[item.key] = _createModelAccount(account, item.userCount);
 						_appendDelegatorRow(tbody, item, account, true);
 						_nDelegatorGroups++;
+						_nDelegatorGroupMembers += item.userCount; 
 					}
 				});
 				_setVisibilityDelegatorsEdit();
@@ -341,7 +347,7 @@
 
 					if (!_delegatorUsers[item.key]) {
 
-						_delegatorUsers[item.key] = _createModelAccount(account);
+						_delegatorUsers[item.key] = _createModelAccount(account, 1);
 						_appendDelegatorRow(tbody, item, account, false);
 						_nDelegatorUsers++;
 					}
@@ -482,13 +488,14 @@
 					var dbkey = $(this).attr('data-savapage');
 
 					if (_delegatorGroupsSelected[dbkey]) {
-						delete _delegatorGroups[dbkey];
 						_nDelegatorGroups--;
+						_nDelegatorGroupMembers -= _delegatorGroups[dbkey].userCount; 
+						delete _delegatorGroups[dbkey];
 						$(this).remove();
 					} else if (_delegatorUsersSelected[dbkey]) {
+						_nDelegatorUsers--;
 						delete _delegatorUsers[dbkey];
 						$(this).remove();
-						_nDelegatorUsers--;
 					}
 
 				});
@@ -510,7 +517,7 @@
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), false);
 
-					// Delect all groups
+					// Deselect all groups
 					_quickUserGroupSelected = {};
 					_nSelectedGroups = 0;
 
@@ -637,6 +644,7 @@
 				_setVisibility();
 			}).on("pagebeforehide", function(event, ui) {
 				_model.printDelegation = _delegationModel();
+				_model.printDelegationCopies = _nDelegatorGroupMembers + _nDelegatorUsers;
 				_this.onBeforeHide();
 			});
 		};

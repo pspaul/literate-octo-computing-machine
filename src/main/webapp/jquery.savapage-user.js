@@ -3229,15 +3229,30 @@
 				}
 			}
 			//
+			, _isDelegatedPrint = function() {
+				var sel = $('#print-as-delegate');
+				return sel && !_view.isCbDisabled(sel) && _view.isCbChecked(sel);
+			}
+			//
 			, _onPrint = function(isClose) {
-				_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")));
+				_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")), _isDelegatedPrint());
 			}
 			//
 			, _setVisibility = function() {
 
-				var selCollate = $(".print-collate"), copies = parseInt($('#slider-print-copies').val(), 10);
+				var selCollate = $(".print-collate"), copies, delegatedPrint = _isDelegatedPrint();
 
-				if (copies > 1) {
+				if (delegatedPrint) {
+					copies = _model.printDelegationCopies;
+					$('#delegated-print-copies').html(copies);
+				} else {
+					copies = parseInt($('#slider-print-copies').val(), 10);
+				}
+
+				_view.visible($('#slider-print-copies').parent(), !delegatedPrint);
+				_view.visible($('#delegated-print-copies'), delegatedPrint);
+
+				if (!delegatedPrint && copies > 1) {
 
 					selCollate.show();
 
@@ -3294,12 +3309,9 @@
 					_setVisibility();
 				});
 
-				/*
-				 $('#button-print-delegation').click(function() {
-				 _this.onShowPrintDelegation();
-				 return false;
-				 });
-				 */
+				$('#print-as-delegate').click(function() {
+					_setVisibility();
+				});
 
 				$('#button-print-delegation').click(function() {
 					_view.showPageAsync('#page-print-delegation', 'PagePrintDelegation');
@@ -3835,6 +3847,15 @@
 				this.propPdf = this.propPdfDefault;
 				this.refreshUniqueImgUrlValue();
 				this.prevMsgTime = null;
+
+				this.printDelegation = {};
+				this.printDelegationCopies = 0;
+			};
+
+			/**
+			 */
+			this.getDelegatedPrintCopies = function() {
+				return _ns.Utils.countProp(this.printDelegation.groups);
 			};
 
 			/**
@@ -4006,7 +4027,8 @@
 				;
 
 				if (trgDelegated) {
-					trgDelegated.html(_ns.Utils.countProp(_model.printDelegation.groups) || '-');
+					_view.enableCheckboxRadio($('#print-as-delegate'), _model.printDelegationCopies > 0);
+					trgDelegated.html(_model.printDelegationCopies || '-');
 				}
 
 				_model.myPrintTitle = $('#print-title').val();
@@ -4082,8 +4104,6 @@
 				_model.user.mailDefault = loginRes.mail;
 				_model.letterheads = null;
 				_model.propPdfDefault.desc.author = _model.user.fullname;
-
-				_model.printDelegation = {};
 
 				/*
 				 * _api.call({ request : 'exit-event-monitor' });
@@ -4904,7 +4924,7 @@
 			_view.pages.printDelegation.onBeforeHide = function() {
 				_refreshPrinterInd();
 			};
-			
+
 			/**
 			 * Callbacks: page credit transfer
 			 */
@@ -5129,7 +5149,7 @@
 			/**
 			 * Callbacks: page print
 			 */
-			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint, collate) {
+			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint, collate, isDelegation) {
 
 				var res, sel, cost, visible;
 
@@ -5150,12 +5170,12 @@
 						pageScaling : _model.printPageScaling,
 						copies : parseInt($('#slider-print-copies').val(), 10),
 						ranges : $('#print-page-ranges').val(),
-						collate : collate,
+						collate : isDelegation ? true : collate,
 						removeGraphics : removeGraphics,
 						ecoprint : ecoprint,
 						clear : isClear,
 						options : _model.myPrinterOpt,
-						delegation : _model.printDelegation,
+						delegation : isDelegation ? _model.printDelegation : null,
 						jobTicket : _model.myPrinter.jobTicket
 					})
 				});
