@@ -48,3 +48,4 @@ release.properties
 /.eclipse-pmd
 /aptana-studio-project
 /target
+.pmd
