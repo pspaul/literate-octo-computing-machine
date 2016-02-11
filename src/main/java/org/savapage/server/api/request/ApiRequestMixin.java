@@ -51,6 +51,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.Messages;
+import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.server.api.UserAgentHelper;
 
 /**
@@ -117,6 +118,13 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     protected static final OutboxService OUTBOX_SERVICE = ServiceContext
             .getServiceFactory().getOutboxService();
+
+    /**
+     * .
+     */
+    protected static final PaperCutService PAPERCUT_SERVICE = ServiceContext
+            .getServiceFactory().getPaperCutService();
+
 
     /**
      * .

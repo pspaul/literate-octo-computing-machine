@@ -82,6 +82,7 @@
     <entry key="msg-ecoprint-pending">Eco Print is being prepared. Please wait a moment and try again.</entry>
     <entry key="msg-select-single-pdf-filter">Selection of multiple PDF filters is not supported: please select one filter.</entry>
     <entry key="msg-print-auth-pending">Another print job is waiting for authentication. Try again later.</entry>
+    <entry key="msg-print-users-missing-in-papercut">These users are missing in PaperCut: {0}</entry>
 
     <!-- ReqUserGroupGet -->
       

@@ -5454,12 +5454,12 @@
 				//
 				, lh
 				//
-				, letterheadIdx = $(sel + ' :selected').val()
+				, letterheadIdx = $(sel + ' :selected').val() || 'none'
 				//
 				, mini = $('#button-mini-letterhead')
 				//
 				;
-
+				
 				_view.visible(mini, letterheadIdx !== 'none');
 
 				if (!force && (letterheadIdx === _model.myLetterheadIdx)) {
