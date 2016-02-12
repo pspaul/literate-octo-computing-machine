@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-    <entry key="voucher-valid">valid</entry>
-    <entry key="voucher-used">used</entry>
-    <entry key="voucher-expired">expired</entry>
-</properties>

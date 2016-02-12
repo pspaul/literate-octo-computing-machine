@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-    <entry key="title">Voucher inwisselen</entry>
-    <entry key="voucher-number">Nummer</entry>
-    <entry key="button-redeem">Inwisselen</entry>    
-    <entry key="button-back">Terug</entry>
-    <entry key="voucher-note">Alle verzoeken om vouchers in te wisselen worden gelogd.</entry>
-</properties>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-    <entry key="title-environmental-impact">Milieu Effect</entry>
-    <entry key="environmental-impact-paper">Papier</entry>
-    <entry key="environmental-impact-trees">Bomen</entry>
-    <entry key="environmental-impact-energy">Energie</entry>
-</properties>

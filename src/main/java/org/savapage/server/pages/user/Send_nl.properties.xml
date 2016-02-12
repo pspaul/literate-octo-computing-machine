@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-    <entry key="title">Verzenden als PDF</entry>
-    <entry key="send-mailto">E-mail adres</entry>
-    <entry key="button-send">Verzenden</entry>    
-    <entry key="button-back">Terug</entry>        
-    <entry key="button-default">Standaard</entry>
-</properties>

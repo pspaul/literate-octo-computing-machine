@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-
-    <entry key="prompt-url">Use this URL to print over public internet:</entry>
-    <entry key="no-url-available">No URL available. Please contact the administrator.</entry>
-    
-</properties>
