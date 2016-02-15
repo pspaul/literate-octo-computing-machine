@@ -62,8 +62,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(WebAppAdmin.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(WebAppAdmin.class);
 
     /**
      * .
@@ -89,9 +89,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
             return;
         }
 
-        final String appTitle =
-                getWebAppTitle(getLocalizer().getString("webapp-title-suffix",
-                        this));
+        final String appTitle = getWebAppTitle(
+                getLocalizer().getString("webapp-title-suffix", this));
 
         addZeroPagePanel(WebAppTypeEnum.ADMIN);
 
@@ -103,7 +102,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
     }
 
     @Override
-    boolean isJqueryCoreRenderedByWicket() {
+            boolean isJqueryCoreRenderedByWicket() {
         return true;
     }
 
@@ -120,8 +119,10 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                 "jquery.savapage-admin-panels.js", nocache));
         renderJs(response, String.format("%s%s",
                 "jquery.savapage-admin-pages.js", nocache));
+        renderJs(response,
+                String.format("%s%s", "jquery.savapage-page-pos.js", nocache));
         renderJs(response, String.format("%s%s",
-                "jquery.savapage-page-pos.js", nocache));
+                "jquery.savapage-page-jobtickets.js", nocache));
 
         renderJs(response,
                 String.format("%s%s", getSpecializedJsFileName(), nocache));
@@ -152,9 +153,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
         /*
          * create a feedback panel
          */
-        final Component feedback =
-                new FeedbackPanel("memberCardUploadFeedback")
-                        .setOutputMarkupPlaceholderTag(true);
+        final Component feedback = new FeedbackPanel("memberCardUploadFeedback")
+                .setOutputMarkupPlaceholderTag(true);
         add(feedback);
 
         /*
@@ -177,8 +177,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                     /*
                      * display uploaded info
                      */
-                    info(getLocalizer().getString(
-                            "msg-membercard-import-no-file", this));
+                    info(getLocalizer()
+                            .getString("msg-membercard-import-no-file", this));
                     return;
                 }
 
@@ -189,8 +189,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                     /*
                      * display uploaded info
                      */
-                    info(getLocalizer().getString(
-                            "msg-membercard-import-no-file", this));
+                    info(getLocalizer()
+                            .getString("msg-membercard-import-no-file", this));
                     return;
                 }
 
@@ -201,9 +201,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                 /*
                  * write to a temporary file
                  */
-                File tempFile =
-                        new File(System.getProperty("java.io.tmpdir") + "/"
-                                + uploadedFile.getClientFileName());
+                File tempFile = new File(System.getProperty("java.io.tmpdir")
+                        + "/" + uploadedFile.getClientFileName());
 
                 if (tempFile.exists()) {
                     tempFile.delete();
@@ -222,19 +221,18 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                     // info("saved file: " +
                     // uploadedFile.getClientFileName());
 
-                    isValid =
-                            MemberCard.instance().isMemberCardFormatValid(
-                                    tempFile);
+                    isValid = MemberCard.instance()
+                            .isMemberCardFormatValid(tempFile);
 
                     if (isValid) {
                         /*
                          * Rename to standard Menber Card file name
                          */
                         java.nio.file.Files.move(
-                                FileSystems.getDefault().getPath(
-                                        tempFile.getAbsolutePath()),
-                                FileSystems.getDefault().getPath(
-                                        finalFile.getAbsolutePath()),
+                                FileSystems.getDefault()
+                                        .getPath(tempFile.getAbsolutePath()),
+                                FileSystems.getDefault()
+                                        .getPath(finalFile.getAbsolutePath()),
                                 StandardCopyOption.ATOMIC_MOVE,
                                 StandardCopyOption.REPLACE_EXISTING);
 
@@ -309,7 +307,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
 
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Uploading "
-                            + CommunityDictEnum.MEMBER_CARD.getWord() + " file");
+                            + CommunityDictEnum.MEMBER_CARD.getWord()
+                            + " file");
                 }
 
                 /*
@@ -327,8 +326,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
 
         };
 
-        ajaxButton.add(new AttributeModifier("value", getLocalizer().getString(
-                "button-membercard-import", this)));
+        ajaxButton.add(new AttributeModifier("value",
+                getLocalizer().getString("button-membercard-import", this)));
 
         form.add(ajaxButton);
 
@@ -336,8 +335,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
          *
          */
         Label labelWrk = new Label("membercard-import-reset");
-        labelWrk.add(new AttributeModifier("value", getLocalizer().getString(
-                "button-membercard-import-clear", this)));
+        labelWrk.add(new AttributeModifier("value", getLocalizer()
+                .getString("button-membercard-import-clear", this)));
         form.add(labelWrk);
 
     }

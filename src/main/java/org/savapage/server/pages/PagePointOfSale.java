@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.pages.admin;
+package org.savapage.server.pages;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,14 +32,13 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.server.SpSession;
-import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class PagePointOfSale extends AbstractAdminPage {
+public final class PagePointOfSale extends AbstractAuthPage {
 
     /**
      * Version for serialization.
@@ -59,9 +58,8 @@ public final class PagePointOfSale extends AbstractAdminPage {
         /*
          * Option list: Payment types
          */
-        final List<String> paymentTypeList =
-                new ArrayList<>(ConfigManager.instance().getConfigSet(
-                        Key.FINANCIAL_POS_PAYMENT_METHODS));
+        final List<String> paymentTypeList = new ArrayList<>(ConfigManager
+                .instance().getConfigSet(Key.FINANCIAL_POS_PAYMENT_METHODS));
 
         Collections.sort(paymentTypeList);
 
@@ -77,7 +75,7 @@ public final class PagePointOfSale extends AbstractAdminPage {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void populateItem(ListItem<String> item) {
+                protected void populateItem(final ListItem<String> item) {
                     final String paymentType = item.getModel().getObject();
                     final Label label =
                             new Label("option-payment-type", paymentType);
@@ -87,5 +85,10 @@ public final class PagePointOfSale extends AbstractAdminPage {
 
             });
         }
+    }
+
+    @Override
+    protected boolean needMembership() {
+        return false;
     }
 }

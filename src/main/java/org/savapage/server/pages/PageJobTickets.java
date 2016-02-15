@@ -19,15 +19,14 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.pages.admin;
-
+package org.savapage.server.pages;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class PageJobTickets extends AbstractAdminPage {
+public final class PageJobTickets extends AbstractAuthPage {
 
     /**
      * Version for serialization.
@@ -41,5 +40,10 @@ public final class PageJobTickets extends AbstractAdminPage {
 
         // final MarkupHelper helper = new MarkupHelper(this);
 
+    }
+
+    @Override
+    protected boolean needMembership() {
+        return false;
     }
 }

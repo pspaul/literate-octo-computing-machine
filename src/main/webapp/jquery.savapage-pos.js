@@ -200,8 +200,7 @@
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,
-						authToken : authToken,
-						role : 'admin'
+						authToken : authToken
 					})
 				}, function(data) {
 					_handleLoginResult(authMode, data);
@@ -307,13 +306,13 @@
 
 			var
 			//
-			_LOC_AUTH_NAME = 'sp.auth.admin.name'
+			_LOC_AUTH_NAME = 'sp.auth.pos.name'
 			//
-			, _LOC_AUTH_TOKEN = 'sp.auth.admin.token'
+			, _LOC_AUTH_TOKEN = 'sp.auth.pos.token'
 			//
-			, _LOC_LANG = 'sp.admin.language'
+			, _LOC_LANG = 'sp.pos.language'
 			//
-			, _LOC_COUNTRY = 'sp.admin.country'
+			, _LOC_COUNTRY = 'sp.pos.country'
 			//
 			;
 

@@ -56,6 +56,7 @@ import org.savapage.core.util.CurrencyUtil;
 import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +66,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AccountTrxPage extends AbstractListPage {
 
-    private static final DocLogService DOC_LOG_SERVICE = ServiceContext
-            .getServiceFactory().getDocLogService();
+    private static final DocLogService DOC_LOG_SERVICE =
+            ServiceContext.getServiceFactory().getDocLogService();
 
     /**
      *
@@ -76,8 +77,8 @@ public class AccountTrxPage extends AbstractListPage {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AccountTrxPage.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(AccountTrxPage.class);
 
     /**
      * Maximum number of pages in the navigation bar. IMPORTANT: this must be an
@@ -85,7 +86,8 @@ public class AccountTrxPage extends AbstractListPage {
      */
     private static final int MAX_PAGES_IN_NAVBAR = 5;
 
-    private final class AccountTrxListView extends PropertyListView<AccountTrx> {
+    private final class AccountTrxListView
+            extends PropertyListView<AccountTrx> {
 
         private static final long serialVersionUID = 1L;
 
@@ -107,11 +109,11 @@ public class AccountTrxPage extends AbstractListPage {
 
             this.balanceDecimals = ConfigManager.getUserBalanceDecimals();
 
-            this.bitcoinUrlPatternTrx =
-                    cm.getConfigValue(Key.FINANCIAL_BITCOIN_USER_PAGE_URL_PATTERN_TRX);
+            this.bitcoinUrlPatternTrx = cm.getConfigValue(
+                    Key.FINANCIAL_BITCOIN_USER_PAGE_URL_PATTERN_TRX);
 
-            this.bitcoinUrlPatternAddr =
-                    cm.getConfigValue(Key.FINANCIAL_BITCOIN_USER_PAGE_URL_PATTERN_ADDRESS);
+            this.bitcoinUrlPatternAddr = cm.getConfigValue(
+                    Key.FINANCIAL_BITCOIN_USER_PAGE_URL_PATTERN_ADDRESS);
 
         }
 
@@ -148,30 +150,29 @@ public class AccountTrxPage extends AbstractListPage {
             }
 
             //
-            item.add(new Label("trxDate", localizedShortDateTime(accountTrx
-                    .getTransactionDate())));
+            item.add(new Label("trxDate",
+                    localizedShortDateTime(accountTrx.getTransactionDate())));
             //
             item.add(new Label("trxActor", accountTrx.getTransactedBy()));
 
             //
             final String currencySymbol =
-                    String.format("%s ", CurrencyUtil.getCurrencySymbol(
-                            accountTrx.getCurrencyCode(), getSession()
-                                    .getLocale()));
+                    String.format("%s ",
+                            CurrencyUtil.getCurrencySymbol(
+                                    accountTrx.getCurrencyCode(),
+                                    getSession().getLocale()));
 
             final String amount;
             final String balance;
 
             try {
-                amount =
-                        BigDecimalUtil.localizeMinimalPrecision(
-                                accountTrx.getAmount(), this.balanceDecimals,
-                                getSession().getLocale(), currencySymbol, true);
+                amount = BigDecimalUtil.localizeMinimalPrecision(
+                        accountTrx.getAmount(), this.balanceDecimals,
+                        getSession().getLocale(), currencySymbol, true);
 
-                balance =
-                        BigDecimalUtil.localize(accountTrx.getBalance(),
-                                this.balanceDecimals, getSession().getLocale(),
-                                currencySymbol, true);
+                balance = BigDecimalUtil.localize(accountTrx.getBalance(),
+                        this.balanceDecimals, getSession().getLocale(),
+                        currencySymbol, true);
 
             } catch (ParseException e) {
                 throw new SpException(e);
@@ -198,9 +199,8 @@ public class AccountTrxPage extends AbstractListPage {
 
             if (accountTrx.getExtMethod() != null) {
                 try {
-                    extPaymentMethod =
-                            PaymentMethodEnum
-                                    .valueOf(accountTrx.getExtMethod());
+                    extPaymentMethod = PaymentMethodEnum
+                            .valueOf(accountTrx.getExtMethod());
                 } catch (Exception e) {
                     // noop
                 }
@@ -208,9 +208,8 @@ public class AccountTrxPage extends AbstractListPage {
 
             //
             //
-            final boolean showDocLogTitle =
-                    ConfigManager.instance().isConfigValue(
-                            Key.WEBAPP_DOCLOG_SHOW_DOC_TITLE);
+            final boolean showDocLogTitle = ConfigManager.instance()
+                    .isConfigValue(Key.WEBAPP_DOCLOG_SHOW_DOC_TITLE);
 
             String printOutInfo = null;
             String comment = accountTrx.getComment();
@@ -238,9 +237,8 @@ public class AccountTrxPage extends AbstractListPage {
             case GATEWAY:
 
                 if (extPaymentMethod != null) {
-                    imageSrc =
-                            WebApp.getPaymentMethodImgUrl(extPaymentMethod,
-                                    false);
+                    imageSrc = WebApp.getPaymentMethodImgUrl(extPaymentMethod,
+                            false);
                 }
 
                 key = "type-gateway";
@@ -279,9 +277,8 @@ public class AccountTrxPage extends AbstractListPage {
                     cmt.append("(").append(docLog.getTitle()).append(")");
                 }
 
-                int totalPagesIn =
-                        docLog.getNumberOfPages().intValue()
-                                * accountTrx.getTransactionWeight().intValue();
+                int totalPagesIn = docLog.getNumberOfPages().intValue()
+                        * accountTrx.getTransactionWeight().intValue();
 
                 if (totalPagesIn == 1) {
                     msgKey = "printed-pages-one";
@@ -304,9 +301,8 @@ public class AccountTrxPage extends AbstractListPage {
 
                 key = "type-print-out";
 
-                int totalPagesOut =
-                        docLog.getNumberOfPages().intValue()
-                                * accountTrx.getTransactionWeight().intValue();
+                int totalPagesOut = docLog.getNumberOfPages().intValue()
+                        * accountTrx.getTransactionWeight().intValue();
 
                 if (totalPagesOut == 1) {
                     msgKey = "printed-pages-one";
@@ -323,9 +319,8 @@ public class AccountTrxPage extends AbstractListPage {
                     comment += String.format(" (%s)", docLog.getTitle());
                 }
 
-                final AccountTypeEnum accountType =
-                        AccountTypeEnum.valueOf(accountTrx.getAccount()
-                                .getAccountType());
+                final AccountTypeEnum accountType = AccountTypeEnum
+                        .valueOf(accountTrx.getAccount().getAccountType());
 
                 final User userActor = docLog.getUser();
 
@@ -344,16 +339,16 @@ public class AccountTrxPage extends AbstractListPage {
                 break;
 
             default:
-                throw new SpException("TrxType [" + trxType
-                        + "] unknown: not handled");
+                throw new SpException(
+                        "TrxType [" + trxType + "] unknown: not handled");
             }
 
             helper.encloseLabel("delegate", delegate, delegate != null);
 
             final boolean isExtBitcoin =
                     StringUtils.isNotBlank(accountTrx.getExtCurrencyCode())
-                            && accountTrx.getExtCurrencyCode().equals(
-                                    CurrencyUtil.BITCOIN_CURRENCY_CODE);
+                            && accountTrx.getExtCurrencyCode()
+                                    .equals(CurrencyUtil.BITCOIN_CURRENCY_CODE);
 
             // External supplier
             final ExternalSupplierEnum extSupplierEnum =
@@ -387,21 +382,22 @@ public class AccountTrxPage extends AbstractListPage {
                             && extPaymentMethod != null;
 
             if (isGatewayPaymentMethodInHeader) {
-                item.add(new Label("trxType", extPaymentMethod.toString()
-                        .toLowerCase()));
+                item.add(new Label("trxType",
+                        extPaymentMethod.toString().toLowerCase()));
             } else {
                 item.add(new Label("trxType", localized(key)));
             }
 
             //
-            helper.encloseLabel("extSupplier", extSupplier, extSupplier != null);
+            helper.encloseLabel("extSupplier", extSupplier,
+                    extSupplier != null);
 
             if (extSupplierStatus == null) {
                 helper.discloseLabel("extStatus");
             } else {
                 helper.encloseLabel("extStatus",
-                        extSupplierStatus.uiText(getLocale()), true).add(
-                        new AttributeAppender("class", MarkupHelper
+                        extSupplierStatus.uiText(getLocale()), true)
+                        .add(new AttributeAppender("class", MarkupHelper
                                 .getCssTxtClass(extSupplierStatus)));
             }
 
@@ -410,13 +406,15 @@ public class AccountTrxPage extends AbstractListPage {
 
             if (isVisible) {
 
-                helper.encloseLabel("receiptNumber", accountTrx
-                        .getPosPurchase().getReceiptNumber(), isVisible);
+                helper.encloseLabel("receiptNumber",
+                        accountTrx.getPosPurchase().getReceiptNumber(),
+                        isVisible);
 
-                if (StringUtils.isNotBlank(accountTrx.getPosPurchase()
-                        .getPaymentType())) {
-                    helper.encloseLabel("paymentMethod", accountTrx
-                            .getPosPurchase().getPaymentType(), isVisible);
+                if (StringUtils.isNotBlank(
+                        accountTrx.getPosPurchase().getPaymentType())) {
+                    helper.encloseLabel("paymentMethod",
+                            accountTrx.getPosPurchase().getPaymentType(),
+                            isVisible);
                 } else {
                     helper.discloseLabel("paymentMethod");
                 }
@@ -433,12 +431,9 @@ public class AccountTrxPage extends AbstractListPage {
 
             } else {
                 helper.discloseLabel("receiptNumber");
-                helper.encloseLabel(
-                        "paymentMethod",
-                        accountTrx.getExtMethod(),
-                        !isGatewayPaymentMethodInHeader
-                                && StringUtils.isNotBlank(accountTrx
-                                        .getExtMethod()));
+                helper.encloseLabel("paymentMethod", accountTrx.getExtMethod(),
+                        !isGatewayPaymentMethodInHeader && StringUtils
+                                .isNotBlank(accountTrx.getExtMethod()));
             }
 
             if (isExtBitcoin) {
@@ -457,16 +452,17 @@ public class AccountTrxPage extends AbstractListPage {
 
                     helper.addModifyLabelAttr("bitcoinTrxHash",
                             StringUtils.abbreviateMiddle(accountTrx.getExtId(),
-                                    "...", 13), "href", MessageFormat.format(
-                                    this.bitcoinUrlPatternTrx,
+                                    "...", 13),
+                            "href",
+                            MessageFormat.format(this.bitcoinUrlPatternTrx,
                                     accountTrx.getExtId()));
 
                 }
 
             } else {
-                helper.encloseLabel("paymentMethodAddress", accountTrx
-                        .getExtMethodAddress(), StringUtils
-                        .isNotBlank(accountTrx.getExtMethodAddress()));
+                helper.encloseLabel("paymentMethodAddress",
+                        accountTrx.getExtMethodAddress(), StringUtils
+                                .isNotBlank(accountTrx.getExtMethodAddress()));
 
                 helper.encloseLabel("extId", accountTrx.getExtId(),
                         StringUtils.isNotBlank(accountTrx.getExtId()));
@@ -493,38 +489,38 @@ public class AccountTrxPage extends AbstractListPage {
 
                 try {
 
-                    final boolean isPending =
-                            accountTrx.getAmount().compareTo(BigDecimal.ZERO) == 0;
+                    final boolean isPending = accountTrx.getAmount()
+                            .compareTo(BigDecimal.ZERO) == 0;
 
-                    ext.append(
-                            CurrencyUtil.getCurrencySymbol(
-                                    accountTrx.getExtCurrencyCode(),
-                                    getSession().getLocale())).append(" ");
+                    ext.append(CurrencyUtil.getCurrencySymbol(
+                            accountTrx.getExtCurrencyCode(),
+                            getSession().getLocale())).append(" ");
 
                     if (isExtBitcoin) {
-                        ext.append(BigDecimalUtil.localize(accountTrx
-                                .getExtAmount(), BitcoinUtil.BTC_DECIMALS,
+                        ext.append(BigDecimalUtil.localize(
+                                accountTrx.getExtAmount(),
+                                BitcoinUtil.BTC_DECIMALS,
                                 getSession().getLocale(), true));
                     } else {
                         ext.append(BigDecimalUtil.localize(
-                                accountTrx.getExtAmount(),
-                                this.balanceDecimals, getSession().getLocale(),
-                                "", true));
+                                accountTrx.getExtAmount(), this.balanceDecimals,
+                                getSession().getLocale(), "", true));
                     }
 
-                    if (accountTrx.getExtFee() != null
-                            && accountTrx.getExtFee()
-                                    .compareTo(BigDecimal.ZERO) != 0) {
+                    if (accountTrx.getExtFee() != null && accountTrx.getExtFee()
+                            .compareTo(BigDecimal.ZERO) != 0) {
 
                         ext.append(" -/- ");
 
                         if (isExtBitcoin) {
-                            ext.append(BigDecimalUtil.localize(accountTrx
-                                    .getExtFee(), BitcoinUtil.BTC_DECIMALS,
+                            ext.append(BigDecimalUtil.localize(
+                                    accountTrx.getExtFee(),
+                                    BitcoinUtil.BTC_DECIMALS,
                                     getSession().getLocale(), true));
                         } else {
-                            ext.append(BigDecimalUtil.localize(accountTrx
-                                    .getExtFee(), this.balanceDecimals,
+                            ext.append(BigDecimalUtil.localize(
+                                    accountTrx.getExtFee(),
+                                    this.balanceDecimals,
                                     getSession().getLocale(), "", true));
                         }
                     }
@@ -551,7 +547,7 @@ public class AccountTrxPage extends AbstractListPage {
 
     @Override
     protected final boolean needMembership() {
-        return isAdminRoleContext();
+        return this.getWebAppType() == WebAppTypeEnum.ADMIN;
     }
 
     /**
@@ -586,12 +582,7 @@ public class AccountTrxPage extends AbstractListPage {
         Long userId = null;
         Long accountId = null;
 
-        /*
-         * isAdminWebAppContext() sometimes returns null. Why !?
-         */
-        final boolean adminWebApp = isAdminRoleContext();
-
-        if (adminWebApp) {
+        if (this.getWebAppType() == WebAppTypeEnum.ADMIN) {
 
             userId = req.getSelect().getUserId();
             accountId = req.getSelect().getAccountId();
@@ -616,10 +607,9 @@ public class AccountTrxPage extends AbstractListPage {
         /*
          * Display the requested page.
          */
-        final List<AccountTrx> entryList =
-                accountTrxDao.getListChunk(filter, req.calcStartPosition(), req
-                        .getMaxResults(), req.getSort().getField(), req
-                        .getSort().getAscending());
+        final List<AccountTrx> entryList = accountTrxDao.getListChunk(filter,
+                req.calcStartPosition(), req.getMaxResults(),
+                req.getSort().getField(), req.getSort().getAscending());
 
         add(new AccountTrxListView("log-entry-view", entryList));
 
@@ -627,6 +617,7 @@ public class AccountTrxPage extends AbstractListPage {
          * Display the navigation bars and write the response.
          */
         createNavBarResponse(req, logCount, MAX_PAGES_IN_NAVBAR,
-                "sp-accounttrx-page", new String[] { "nav-bar-1", "nav-bar-2" });
+                "sp-accounttrx-page",
+                new String[] { "nav-bar-1", "nav-bar-2" });
     }
 }

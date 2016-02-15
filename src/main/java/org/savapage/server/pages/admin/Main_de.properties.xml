@@ -24,6 +24,7 @@
     
     <entry key="vouchers">Vouchers</entry>    
     <entry key="point-of-sale">Verkaufsstelle</entry>
+    <entry key="job-tickets">Jobtickets</entry>    
     <entry key="config-editor">Configuration Editor</entry>
     
 </properties>

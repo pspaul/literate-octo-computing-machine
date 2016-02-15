@@ -29,6 +29,7 @@ import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.SpSession;
+import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *
@@ -50,21 +51,21 @@ public final class AccountTrxBase extends AbstractAuthPage {
             return;
         }
 
+        final WebAppTypeEnum webAppType = this.getWebAppType();
+
         /**
          * If this page is displayed in the Admin WebApp context, we check the
          * admin authentication (including the need for a valid Membership).
          */
-        if (isAdminRoleContext()) {
+        if (webAppType == WebAppTypeEnum.ADMIN) {
             checkAdminAuthorization();
         }
 
-        handlePage();
-
+        handlePage(webAppType == WebAppTypeEnum.ADMIN);
     }
 
     @Override
     protected boolean needMembership() {
-        // return isAdminRoleContext();
         return false;
     }
 
@@ -72,7 +73,7 @@ public final class AccountTrxBase extends AbstractAuthPage {
      *
      * @param em
      */
-    private void handlePage() {
+    private void handlePage(final boolean adminWebApp) {
 
         final String data = getParmValue(POST_PARM_DATA);
 
@@ -80,11 +81,6 @@ public final class AccountTrxBase extends AbstractAuthPage {
 
         Long userId = null;
         Long accountId = null;
-
-        /*
-         * isAdminWebAppContext() sometimes returns null. Why !?
-         */
-        final boolean adminWebApp = isAdminRoleContext();
 
         boolean userNameVisible = false;
         boolean accountNameVisible = false;
@@ -110,14 +106,12 @@ public final class AccountTrxBase extends AbstractAuthPage {
         String accountName = null;
 
         if (userNameVisible) {
-            final User user =
-                    ServiceContext.getDaoContext().getUserDao()
-                            .findById(userId);
+            final User user = ServiceContext.getDaoContext().getUserDao()
+                    .findById(userId);
             userName = user.getUserId();
         } else if (accountNameVisible) {
-            final Account account =
-                    ServiceContext.getDaoContext().getAccountDao()
-                            .findById(accountId);
+            final Account account = ServiceContext.getDaoContext()
+                    .getAccountDao().findById(accountId);
             accountName = account.getName();
         }
 

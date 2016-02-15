@@ -48,7 +48,7 @@
             //_self.onPageShow()
             //_self.onPageHide()
 
-            var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale", "admin.PagePointOfSale")
+            var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale", "PagePointOfSale")
             //
             , _self = _ns.derive(_page)
             //

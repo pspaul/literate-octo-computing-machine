@@ -31,6 +31,7 @@ import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.server.SpSession;
+import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,8 @@ public class DocLogPage extends AbstractListPage {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(DocLogPage.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(DocLogPage.class);
 
     /**
      * Maximum number of pages in the navigation bar. IMPORTANT: this must be an
@@ -53,7 +54,7 @@ public class DocLogPage extends AbstractListPage {
 
     @Override
     protected boolean needMembership() {
-        return isAdminRoleContext();
+        return this.getWebAppType() == WebAppTypeEnum.ADMIN;
     }
 
     /**
@@ -77,11 +78,9 @@ public class DocLogPage extends AbstractListPage {
 
         Long userId = null;
 
-        final boolean adminWebApp = isAdminRoleContext();
-
         if (req.getSelect().getAccountId() == null) {
 
-            if (adminWebApp) {
+            if (this.getWebAppType() == WebAppTypeEnum.ADMIN) {
                 userId = req.getSelect().getUserId();
             } else {
                 /*

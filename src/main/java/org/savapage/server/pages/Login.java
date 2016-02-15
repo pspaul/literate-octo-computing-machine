@@ -31,6 +31,7 @@ import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
+import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  * Note that this Page is not extended from Page.
@@ -47,8 +48,8 @@ public final class Login extends AbstractPage {
      */
     public Login() {
 
-        add(new Label("title", localized("title",
-                CommunityDictEnum.SAVAPAGE.getWord())));
+        add(new Label("title",
+                localized("title", CommunityDictEnum.SAVAPAGE.getWord())));
         add(new Label("title-assoc", CommunityDictEnum.SAVAPAGE.getWord()));
 
         final String loginDescript;
@@ -58,14 +59,12 @@ public final class Login extends AbstractPage {
             loginDescript = localized("login-descript-admin");
             break;
         case JOB_TICKETS:
-            loginDescript =
-                    localized("login-descript-role",
-                            ACLRoleEnum.JOB_TICKET_OPERATOR.uiText(getLocale()));
+            loginDescript = localized("login-descript-role",
+                    ACLRoleEnum.JOB_TICKET_OPERATOR.uiText(getLocale()));
             break;
         case POS:
-            loginDescript =
-                    localized("login-descript-role",
-                            ACLRoleEnum.WEB_CASHIER.uiText(getLocale()));
+            loginDescript = localized("login-descript-role",
+                    ACLRoleEnum.WEB_CASHIER.uiText(getLocale()));
             break;
         default:
             loginDescript = localized("login-descript-user");
@@ -79,12 +78,11 @@ public final class Login extends AbstractPage {
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();
 
-        final Device terminal =
-                deviceDao.findByHostDeviceType(this.getClientIpAddr(),
-                        DeviceTypeEnum.TERMINAL);
+        final Device terminal = deviceDao.findByHostDeviceType(
+                this.getClientIpAddr(), DeviceTypeEnum.TERMINAL);
 
-        final UserAuth userAuth =
-                new UserAuth(terminal, null, this.isAdminRoleContext());
+        final UserAuth userAuth = new UserAuth(terminal, null,
+                this.getWebAppType() == WebAppTypeEnum.ADMIN);
 
         //
         Label label = new Label("login-id-number");

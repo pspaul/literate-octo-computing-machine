@@ -1354,6 +1354,11 @@
 					return false;
 				});
 
+				$('#button-jobtickets').click(function() {
+					_view.pages.jobTickets.loadShowAsync();
+					return false;
+				});
+
 				/*
 				 * One-time binding the click to a function. We don't want
 				 * to bind each time the panel is loaded.

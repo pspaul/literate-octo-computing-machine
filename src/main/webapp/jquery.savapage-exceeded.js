@@ -68,6 +68,10 @@
             //
             , _LOC_AUTH_USER_TOKEN = 'sp.auth.user.token'
             //
+            , _LOC_AUTH_POS_TOKEN = 'sp.auth.pos.token'
+            //
+            , _LOC_AUTH_JOBTICKETS_TOKEN = 'sp.auth.jobtickets.token'
+            //
             , _LOC_LANG = 'sp.admin.language';
 
             this.user = new _ns.User();
@@ -93,6 +97,15 @@
                 item = _LOC_AUTH_USER_TOKEN;
                 if (window.localStorage[item] !== null) {
                     this.authToken.tokenUserApp = window.localStorage[item];
+                }
+
+                item = _LOC_AUTH_POS_TOKEN;
+                if (window.localStorage[item] !== null) {
+                    this.authToken.tokenPosApp = window.localStorage[item];
+                }
+                item = _LOC_AUTH_JOBTICKETS_TOKEN;
+                if (window.localStorage[item] !== null) {
+                    this.authToken.tokenJobticketsApp = window.localStorage[item];
                 }
 
                 item = _LOC_LANG;
@@ -134,7 +147,9 @@
                     var res = _api.call({
                         request : 'webapp-close-session',
                         authTokenAdmin : _model.authToken.tokenAdminApp,
-                        authTokenUser : _model.authToken.tokenUserApp
+                        authTokenUser : _model.authToken.tokenUserApp,
+						authTokenPos : _model.authToken.tokenPosApp,                        
+						authTokenJobtickets : _model.authToken.tokenJobticketsApp                        
                     });
 
                     if (res.result.code === '0') {

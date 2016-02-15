@@ -36,6 +36,7 @@ import org.savapage.server.SpSession;
 import org.savapage.server.ipp.IppPrintServerUrlParms;
 import org.savapage.server.pages.AbstractAuthPage;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *
@@ -52,8 +53,8 @@ public final class UserInternetPrinter extends AbstractAuthPage {
     /**
     *
     */
-    private static final UserService USER_SERVICE = ServiceContext
-            .getServiceFactory().getUserService();
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      *
@@ -68,7 +69,7 @@ public final class UserInternetPrinter extends AbstractAuthPage {
          * If this page is displayed in the Admin WebApp context, we check the
          * admin authentication (including the need for a valid Membership).
          */
-        if (isAdminRoleContext()) {
+        if (this.getWebAppType() == WebAppTypeEnum.ADMIN) {
             checkAdminAuthorization();
         }
 
@@ -86,9 +87,8 @@ public final class UserInternetPrinter extends AbstractAuthPage {
         final String userNumber = USER_SERVICE.getPrimaryIdNumber(user);
         final String userUuid =
                 USER_SERVICE.getUserAttrValue(user, UserAttrEnum.UUID);
-        final String uriBase =
-                ConfigManager.instance().getConfigValue(
-                        Key.IPP_INTERNET_PRINTER_URI_BASE);
+        final String uriBase = ConfigManager.instance()
+                .getConfigValue(Key.IPP_INTERNET_PRINTER_URI_BASE);
 
         String text;
 
@@ -99,8 +99,8 @@ public final class UserInternetPrinter extends AbstractAuthPage {
             final IppPrintServerUrlParms urlParms =
                     new IppPrintServerUrlParms(uriBase,
                             ReservedIppQueueEnum.IPP_PRINT_INTERNET
-                                    .getUrlPath(), userNumber,
-                            UUID.fromString(userUuid));
+                                    .getUrlPath(),
+                            userNumber, UUID.fromString(userUuid));
             try {
                 text = urlParms.asUri().toString();
             } catch (URISyntaxException e) {

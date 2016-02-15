@@ -37,6 +37,7 @@ import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.SpSession;
+import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *
@@ -55,22 +56,24 @@ public class DocLogBase extends AbstractAuthPage {
             return;
         }
 
+        final WebAppTypeEnum webAppType = this.getWebAppType();
+
         /**
          * If this page is displayed in the Admin WebApp context, we check the
          * admin authentication (including the need for a valid Membership).
          */
-        if (isAdminRoleContext()) {
+        if (webAppType == WebAppTypeEnum.ADMIN) {
             checkAdminAuthorization();
         }
 
-        handlePage();
+        handlePage(webAppType == WebAppTypeEnum.ADMIN);
     }
 
     /**
      *
      * @param em
      */
-    private void handlePage() {
+    private void handlePage(final boolean adminWebApp) {
 
         final String data = getParmValue(POST_PARM_DATA);
 
@@ -78,8 +81,6 @@ public class DocLogBase extends AbstractAuthPage {
 
         Long userId = null;
         Long accountId = null;
-
-        final boolean adminWebApp = isAdminRoleContext();
 
         boolean userNameVisible = false;
         boolean accountNameVisible = false;
@@ -105,14 +106,12 @@ public class DocLogBase extends AbstractAuthPage {
         String accountName = null;
 
         if (userNameVisible) {
-            final User user =
-                    ServiceContext.getDaoContext().getUserDao()
-                            .findById(userId);
+            final User user = ServiceContext.getDaoContext().getUserDao()
+                    .findById(userId);
             userName = user.getUserId();
         } else if (accountNameVisible) {
-            final Account account =
-                    ServiceContext.getDaoContext().getAccountDao()
-                            .findById(accountId);
+            final Account account = ServiceContext.getDaoContext()
+                    .getAccountDao().findById(accountId);
             accountName = account.getName();
         }
 
@@ -174,9 +173,8 @@ public class DocLogBase extends AbstractAuthPage {
             @Override
             protected void populateItem(final ListItem<IppQueue> item) {
                 final IppQueue queue = item.getModel().getObject();
-                final Label label =
-                        new Label("option-queue", String.format("/%s",
-                                queue.getUrlPath()));
+                final Label label = new Label("option-queue",
+                        String.format("/%s", queue.getUrlPath()));
                 label.add(new AttributeModifier("value", queue.getId()));
                 item.add(label);
             }
@@ -190,8 +188,8 @@ public class DocLogBase extends AbstractAuthPage {
                 ServiceContext.getDaoContext().getPrinterDao();
 
         final List<Printer> printerList =
-                printerDao.getListChunk(new PrinterDao.ListFilter(), null,
-                        null, PrinterDao.Field.DISPLAY_NAME, true);
+                printerDao.getListChunk(new PrinterDao.ListFilter(), null, null,
+                        PrinterDao.Field.DISPLAY_NAME, true);
 
         add(new PropertyListView<Printer>("option-list-printers", printerList) {
 

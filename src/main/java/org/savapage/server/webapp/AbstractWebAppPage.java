@@ -48,8 +48,8 @@ import org.savapage.server.pages.AbstractPage;
  * @author Datraverse B.V.
  *
  */
-public abstract class AbstractWebAppPage extends AbstractPage implements
-        IHeaderContributor {
+public abstract class AbstractWebAppPage extends AbstractPage
+        implements IHeaderContributor {
 
     /**
      * .
@@ -69,8 +69,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
             "jquery-mobile/current/jquery.mobile.css";
 
     /**
-     * Stylesheet to be used with custom jQuery Mobile theme as produced with <a
-     * href="http://themeroller.jquerymobile.com/">themeroller</a>.
+     * Stylesheet to be used with custom jQuery Mobile theme as produced with
+     * <a href="http://themeroller.jquerymobile.com/">themeroller</a>.
      */
     public static final String WEBJARS_PATH_JQUERY_MOBILE_STRUCTURE_CSS =
             "jquery-mobile/current/jquery.mobile.structure.css";
@@ -98,12 +98,9 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      */
     protected enum JavaScriptLibrary {
         /** */
-        COMETD,
-        /** */
-        JQPLOT,
-        /** */
-        MOBIPICK,
-        /** */
+        COMETD, /** */
+        JQPLOT, /** */
+        MOBIPICK, /** */
         SPARKLINE
     }
 
@@ -168,8 +165,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      *            The {@link PageParameters}.
      * @return {@code true} when WebApp count is exceeded.
      */
-    protected final boolean isWebAppCountExceeded(
-            final PageParameters parameters) {
+    protected final boolean
+            isWebAppCountExceeded(final PageParameters parameters) {
 
         final UserAgentHelper userAgentHelper = createUserAgentHelper();
 
@@ -181,7 +178,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         final boolean isZeroPanel =
                 !parameters.get(ZeroPagePanel.PARM_SUBMIT_INIDICATOR).isEmpty();
 
-        return !isZeroPanel && (SpSession.get().getAuthWebAppCount() > 0);
+        return !isZeroPanel
+                && SpSession.get().getAuthWebAppCount(getWebAppType()) > 0;
     }
 
     @Override
@@ -212,11 +210,11 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      * JavaScript snippet format to render initially. The %s is the mountPath of
      * this page.
      */
-    private static final String INITIAL_JAVASCRIPT_FORMAT = "(function(){"
-            + "if(window.location.href.search('#')>0){"
-            + "window.location.replace("
-            + "window.location.protocol+\"//\"+window.location.host+\"" + "/"
-            + "%s" + "\");}})();";
+    private static final String INITIAL_JAVASCRIPT_FORMAT =
+            "(function(){" + "if(window.location.href.search('#')>0){"
+                    + "window.location.replace("
+                    + "window.location.protocol+\"//\"+window.location.host+\""
+                    + "/" + "%s" + "\");}})();";
 
     /**
      * {@link StringHeaderItem} pattern to render initially. The %s is the
@@ -267,8 +265,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
                 String.format(INITIAL_JAVASCRIPT_FORMAT, mountPath);
 
         final HeaderItem firstItem =
-                new PriorityHeaderItem(new StringHeaderItem(String.format(
-                        INITIAL_HEADERITEM_FORMAT, javascript)));
+                new PriorityHeaderItem(new StringHeaderItem(
+                        String.format(INITIAL_HEADERITEM_FORMAT, javascript)));
 
         response.render(firstItem);
     }
@@ -336,8 +334,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
             return null;
         }
 
-        return new File(String.format("%s/%s/%s",
-                CustomWebServlet.CONTENT_HOME, path, cssFile));
+        return new File(String.format("%s/%s/%s", CustomWebServlet.CONTENT_HOME,
+                path, cssFile));
     }
 
     /**
@@ -347,8 +345,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
     private File getCssThemeFile() {
 
         final StringBuilder key = new StringBuilder();
-        key.append("webapp.theme.").append(
-                this.getWebAppType().toString().toLowerCase());
+        key.append("webapp.theme.")
+                .append(this.getWebAppType().toString().toLowerCase());
 
         return getCssCustomFile(key.toString(),
                 CustomWebServlet.PATH_BASE_THEMES);
@@ -359,8 +357,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
      */
     private File getCssCustomFile() {
         final StringBuilder key = new StringBuilder();
-        key.append("webapp.custom.").append(
-                this.getWebAppType().toString().toLowerCase());
+        key.append("webapp.custom.")
+                .append(this.getWebAppType().toString().toLowerCase());
 
         return getCssCustomFile(key.toString(), CustomWebServlet.PATH_BASE);
     }
@@ -399,20 +397,20 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
 
         if (customThemeCss != null && customThemeCss.isFile()) {
 
-            response.render(CssHeaderItem.forUrl(String.format("/%s/%s%s",
-                    CustomWebServlet.PATH_BASE_THEMES,
-                    customThemeCss.getName(), nocache)));
+            response.render(CssHeaderItem.forUrl(
+                    String.format("/%s/%s%s", CustomWebServlet.PATH_BASE_THEMES,
+                            customThemeCss.getName(), nocache)));
 
-            response.render(CssHeaderItem.forUrl(String.format("%s/%s%s",
-                    CustomWebServlet.PATH_BASE_THEMES,
-                    "jquery.mobile.icons.min.css", nocache)));
+            response.render(CssHeaderItem.forUrl(
+                    String.format("%s/%s%s", CustomWebServlet.PATH_BASE_THEMES,
+                            "jquery.mobile.icons.min.css", nocache)));
 
-            response.render(WebApp
-                    .getWebjarsCssRef(WEBJARS_PATH_JQUERY_MOBILE_STRUCTURE_CSS));
+            response.render(WebApp.getWebjarsCssRef(
+                    WEBJARS_PATH_JQUERY_MOBILE_STRUCTURE_CSS));
 
         } else {
-            response.render(WebApp
-                    .getWebjarsCssRef(WEBJARS_PATH_JQUERY_MOBILE_CSS));
+            response.render(
+                    WebApp.getWebjarsCssRef(WEBJARS_PATH_JQUERY_MOBILE_CSS));
         }
 
         /*
@@ -420,8 +418,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
          */
 
         if (jsToRender.contains(JavaScriptLibrary.JQPLOT)) {
-            response.render(WebApp
-                    .getWebjarsCssRef(WEBJARS_PATH_JQUERY_JQPLOT_CSS));
+            response.render(
+                    WebApp.getWebjarsCssRef(WEBJARS_PATH_JQUERY_JQPLOT_CSS));
         }
 
         response.render(CssHeaderItem.forUrl("jquery.savapage.css" + nocache));
@@ -433,8 +431,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         }
 
         if (jsToRender.contains(JavaScriptLibrary.MOBIPICK)) {
-            response.render(CssHeaderItem.forUrl(WebApp.getJqMobiPickLocation()
-                    + "mobipick.css"));
+            response.render(CssHeaderItem
+                    .forUrl(WebApp.getJqMobiPickLocation() + "mobipick.css"));
         }
 
         // Custom CSS as last.
@@ -449,25 +447,26 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
          * JS files
          */
         if (!isJqueryCoreRenderedByWicket()) {
-            response.render(WebApp
-                    .getWebjarsJsRef(WebApp.WEBJARS_PATH_JQUERY_CORE_JS));
+            response.render(
+                    WebApp.getWebjarsJsRef(WebApp.WEBJARS_PATH_JQUERY_CORE_JS));
         }
 
         if (jsToRender.contains(JavaScriptLibrary.SPARKLINE)) {
-            response.render(WebApp
-                    .getWebjarsJsRef(WEBJARS_PATH_JQUERY_SPARKLINE));
+            response.render(
+                    WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_SPARKLINE));
         }
 
         if (jsToRender.contains(JavaScriptLibrary.JQPLOT)) {
-            response.render(WebApp
-                    .getWebjarsJsRef(WEBJARS_PATH_JQUERY_JQPLOT_JS));
+            response.render(
+                    WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_JQPLOT_JS));
 
             for (String plugin : new String[] { "jqplot.highlighter.js",
                     "jqplot.pieRenderer.js", "jqplot.json2.js",
-                    "jqplot.logAxisRenderer.js", "jqplot.dateAxisRenderer.js" }) {
+                    "jqplot.logAxisRenderer.js",
+                    "jqplot.dateAxisRenderer.js" }) {
 
-                response.render(WebApp.getWebjarsJsRef(String.format(
-                        "jqplot/current/plugins/%s", plugin)));
+                response.render(WebApp.getWebjarsJsRef(
+                        String.format("jqplot/current/plugins/%s", plugin)));
 
             }
         }
@@ -480,7 +479,8 @@ public abstract class AbstractWebAppPage extends AbstractPage implements
         }
 
         renderJs(response, String.format("%s%s", "savapage.js", nocache));
-        renderJs(response, String.format("%s%s", "jquery.savapage.js", nocache));
+        renderJs(response,
+                String.format("%s%s", "jquery.savapage.js", nocache));
 
         renderWebAppTypeJsFiles(response, nocache);
 

@@ -4326,8 +4326,7 @@
 						authId : authId,
 						authPw : authPw,
 						authToken : authToken,
-						assocCardNumber : assocCardNumber,
-						role : 'user'
+						assocCardNumber : assocCardNumber
 					})
 				}, function(data) {
 
@@ -5459,7 +5458,7 @@
 				, mini = $('#button-mini-letterhead')
 				//
 				;
-				
+
 				_view.visible(mini, letterheadIdx !== 'none');
 
 				if (!force && (letterheadIdx === _model.myLetterheadIdx)) {

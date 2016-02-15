@@ -259,8 +259,7 @@
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,
-						authToken : authToken,
-						role : 'admin'
+						authToken : authToken
 					})
 				}, function(data) {
 					_handleLoginResult(authMode, data);
@@ -1803,7 +1802,8 @@
 				printer : new _ns.PagePrinter(_i18n, _view, _model),
 				device : new _ns.PageDevice(_i18n, _view, _model),
 				voucherCreate : new _ns.PageAccountVoucherCreate(_i18n, _view, _model),
-				pointOfSale : new _ns.PagePointOfSale(_i18n, _view, _model, _api)
+				pointOfSale : new _ns.PagePointOfSale(_i18n, _view, _model, _api),
+				jobTickets : new _ns.PageJobTickets(_i18n, _view, _model, _api)
 			};
 
 			_ns.PanelDashboard.model = _model;

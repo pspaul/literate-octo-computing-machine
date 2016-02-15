@@ -182,20 +182,6 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
     }
 
     /**
-     * Checks if this page is used in an Administrator role context.
-     * <p>
-     * All types NE {@link WebAppTypeEnum#USER} are considered admin role
-     * context.
-     * </p>
-     *
-     * @return
-     */
-    protected final boolean isAdminRoleContext() {
-        WebAppTypeEnum webAppType = getWebAppType();
-        return (webAppType != WebAppTypeEnum.USER);
-    }
-
-    /**
      * Gets the {@link WebAppTypeEnum} of this session.
      *
      * @return The {@link WebAppTypeEnum}.

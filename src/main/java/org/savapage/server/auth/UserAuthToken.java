@@ -23,6 +23,8 @@ package org.savapage.server.auth;
 
 import java.util.Date;
 
+import org.savapage.server.webapp.WebAppTypeEnum;
+
 /**
  * User Authentication token.
  *
@@ -33,25 +35,25 @@ public final class UserAuthToken {
 
     private final String user;
     private final String token;
-    private final boolean adminOnly;
+    private final WebAppTypeEnum webAppType;
     private final long createTime;
 
     @SuppressWarnings("unused")
     private UserAuthToken() {
         this.user = null;
-        this.adminOnly = false;
+        this.webAppType = WebAppTypeEnum.UNDEFINED;
         this.token = null;
         this.createTime = 0;
     }
 
     /**
-     * Creates a non-admin {@link UserAuthToken}.
+     * Creates a {@link UserAuthToken} for a {@link WebAppTypeEnum#USER}.
      *
      * @param user
      *            The user id.
      */
     public UserAuthToken(final String user) {
-        this(user, false);
+        this(user, WebAppTypeEnum.USER);
     }
 
     /**
@@ -59,14 +61,12 @@ public final class UserAuthToken {
      *
      * @param user
      *            The user id.
-     * @param adminOnly
-     *            If {@code true} the token is for an "admin-only" context, i.e.
-     *            an Admin WebApp session. If {@code false} the token is used in
-     *            a regular user context, i.e. a User WebApp session.
+     * @param webAppType
+     *            The {@link WebAppTypeEnum}.
      */
-    public UserAuthToken(final String user, boolean adminOnly) {
+    public UserAuthToken(final String user, final WebAppTypeEnum webAppType) {
         this.user = user;
-        this.adminOnly = adminOnly;
+        this.webAppType = webAppType;
         this.token = java.util.UUID.randomUUID().toString();
         this.createTime = System.currentTimeMillis();
     }
@@ -79,8 +79,8 @@ public final class UserAuthToken {
         return user;
     }
 
-    public boolean isAdminOnly() {
-        return adminOnly;
+    public WebAppTypeEnum getWebAppType() {
+        return this.webAppType;
     }
 
     /**

@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages;
 
+import org.savapage.server.webapp.WebAppTypeEnum;
+
 /**
  *
  * @author Datraverse B.V.
@@ -46,7 +48,7 @@ public final class UserPasswordReset extends AbstractAuthPage {
          * If this page is displayed in the Admin WebApp context, we check the
          * admin authentication (including the need for a valid Membership).
          */
-        if (isAdminRoleContext()) {
+        if (this.getWebAppType() == WebAppTypeEnum.ADMIN) {
             checkAdminAuthorization();
         }
     }

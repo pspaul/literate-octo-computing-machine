@@ -197,8 +197,7 @@
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,
-						authToken : authToken,
-						role : 'admin'
+						authToken : authToken
 					})
 				}, function(data) {
 					_handleLoginResult(authMode, data);
@@ -304,13 +303,13 @@
 
 			var
 			//
-			_LOC_AUTH_NAME = 'sp.auth.admin.name'
+			_LOC_AUTH_NAME = 'sp.auth.jobtickets.name'
 			//
-			, _LOC_AUTH_TOKEN = 'sp.auth.admin.token'
+			, _LOC_AUTH_TOKEN = 'sp.auth.jobtickets.token'
 			//
-			, _LOC_LANG = 'sp.admin.language'
+			, _LOC_LANG = 'sp.jobtickets.language'
 			//
-			, _LOC_COUNTRY = 'sp.admin.country'
+			, _LOC_COUNTRY = 'sp.jobtickets.country'
 			//
 			;
 
