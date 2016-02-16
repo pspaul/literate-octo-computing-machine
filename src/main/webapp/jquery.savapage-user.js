@@ -1495,7 +1495,9 @@
 			}
 			//
 			, _refresh = function() {
-				var html = _view.getUserPageHtml('OutboxAddin');
+				var html = _view.getUserPageHtml('OutboxAddin', {
+					jobTickets : false
+				});
 				if (html) {
 					$('#outbox-job-list').html(html);
 					/*

@@ -33,8 +33,13 @@ public final class PageJobTickets extends AbstractAuthPage {
      */
     private static final long serialVersionUID = 1L;
 
+    @Override
+    protected boolean needMembership() {
+        return false;
+    }
+
     /**
-     *
+     * .
      */
     public PageJobTickets() {
 
@@ -42,8 +47,4 @@ public final class PageJobTickets extends AbstractAuthPage {
 
     }
 
-    @Override
-    protected boolean needMembership() {
-        return false;
-    }
 }

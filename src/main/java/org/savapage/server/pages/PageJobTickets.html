@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 <imput type="text" autofocus
 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
---></wicket:remove>  
+-->
+</wicket:remove>
 
 <div data-role="header" data-theme="b">
-    <h1><wicket:message key="title"/></h1>
+	<h1>
+		<wicket:message key="title" />
+	</h1>
 </div>
 
 <div class="ui-content">
-Hello world ...   
+
+	<ul data-role="listview" id="jobticket-list" data-inset="true"
+		class="ui-listview ui-listview-inset ui-corner-all ui-shadow" />
+
+	<a href="#" id="btn-jobtickets-refresh"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh">
+		<wicket:message key="button-refresh" />
+	</a>
+
+	<a href="#" id="btn-jobtickets-back" data-rel="back"
+		data-direction="reverse"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+		<wicket:message key="button-back" />
+	</a>
 </div>
 
-<wicket:remove><!-- 
+
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />

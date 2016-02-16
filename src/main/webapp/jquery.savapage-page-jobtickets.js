@@ -47,13 +47,47 @@
 
 			var _page = new _ns.Page(_i18n, _view, "#page-jobtickets", "PageJobTickets")
 			//
-			, _self = _ns.derive(_page);
+			, _self = _ns.derive(_page)
+			//
+			, _refresh = function() {
+
+				var html = _view.getUserPageHtml('OutboxAddin', {
+					jobTickets : true
+				});
+
+				if (html) {
+					$('#jobticket-list').html(html);
+					/*
+					 * JQM 1.4.0: strange, the listview needs a separate
+					 * refresh.
+					 */
+					$('#page-jobtickets').enhanceWithin();
+					$('#jobticket-list').listview('refresh');
+
+					// TODO
+
+					$('.sparkline-printout-pie').sparkline('html', {
+						type : 'pie',
+						sliceColors : [_view.colorPrinter, _view.colorSheet]
+					});
+
+				}
+				return false;
+			}
+			//
+			;
 
 			/**
 			 *
 			 */
 			$(_self.id()).on('pagecreate', function(event) {
+
+				$('#btn-jobtickets-refresh').click(function() {
+					return _refresh();
+				});
+
 			}).on("pageshow", function(event, ui) {
+
 			});
 
 			return _self;
