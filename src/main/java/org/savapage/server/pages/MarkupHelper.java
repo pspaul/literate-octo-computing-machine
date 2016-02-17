@@ -383,7 +383,7 @@ public final class MarkupHelper {
      */
     public Label addModifyLabelAttr(final String wicketId,
             final String attribute, final String value) {
-        final Label labelWrk = new Label(wicketId);
+        final Label labelWrk = new Label(wicketId, "");
         modifyLabelAttr(labelWrk, attribute, value);
         add(labelWrk);
         return labelWrk;
@@ -440,7 +440,7 @@ public final class MarkupHelper {
      */
     public Label addAppendLabelAttr(final String wicketId,
             final String attribute, final String value) {
-        final Label labelWrk = new Label(wicketId);
+        final Label labelWrk = new Label(wicketId, "");
         add(appendLabelAttr(labelWrk, attribute, value));
         return labelWrk;
     }
