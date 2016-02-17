@@ -50,14 +50,14 @@ public final class ApiRequestHelper {
     /**
      * .
      */
-    private static final AccountingService ACCOUNTING_SERVICE = ServiceContext
-            .getServiceFactory().getAccountingService();
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
 
     /**
      * .
      */
-    private static final OutboxService OUTBOX_SERVICE = ServiceContext
-            .getServiceFactory().getOutboxService();
+    private static final OutboxService OUTBOX_SERVICE =
+            ServiceContext.getServiceFactory().getOutboxService();
 
     /**
      * Prevents public instantiation.
@@ -71,8 +71,8 @@ public final class ApiRequestHelper {
      *         enabled.
      */
     public static boolean isAuthTokenLoginEnabled() {
-        return ConfigManager.instance().isConfigValue(
-                Key.WEB_LOGIN_AUTHTOKEN_ENABLE);
+        return ConfigManager.instance()
+                .isConfigValue(Key.WEB_LOGIN_AUTHTOKEN_ENABLE);
     }
 
     /**
@@ -100,15 +100,13 @@ public final class ApiRequestHelper {
         stats.put("pagesPrintOut", user.getNumberOfPrintOutPages());
         stats.put("pagesPdfOut", user.getNumberOfPdfOutPages());
 
-        final AccountDisplayInfoDto dto =
-                ACCOUNTING_SERVICE.getAccountDisplayInfo(user, locale,
-                        currencySymbol);
+        final AccountDisplayInfoDto dto = ACCOUNTING_SERVICE
+                .getAccountDisplayInfo(user, locale, currencySymbol);
 
         stats.put("accountInfo", dto);
 
-        final OutboxInfoDto outbox =
-                OUTBOX_SERVICE.pruneOutboxInfo(user.getUserId(),
-                        ServiceContext.getTransactionDate());
+        final OutboxInfoDto outbox = OUTBOX_SERVICE.getOutboxJobTicketInfo(user,
+                ServiceContext.getTransactionDate());
 
         OUTBOX_SERVICE.applyLocaleInfo(outbox, locale, currencySymbol);
 

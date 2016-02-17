@@ -1530,17 +1530,23 @@
 				});
 
 				$(this).on('click', '.sp-outbox-remove-job', null, function() {
-					_this.onOutboxDeleteJob($(this).attr('data-savapage'));
+					_this.onOutboxDeleteJob($(this).attr('data-savapage'), false);
 					if (_model.user.stats.outbox.jobCount > 0) {
 						return _refresh();
 					}
 					return _close();
 				});
 
-				//}).on("pagebeforeshow", function(event, ui) {
+				$(this).on('click', '.sp-outbox-remove-jobticket', null, function() {
+					_this.onOutboxDeleteJob($(this).attr('data-savapage'), true);
+					if (_model.user.stats.outbox.jobCount > 0) {
+						return _refresh();
+					}
+					return _close();
+				});
+
 			}).on("pageshow", function(event, ui) {
 				_refresh();
-				//}).on('pagebeforehide', function(event, ui) {
 			});
 		}
 
@@ -4975,11 +4981,15 @@
 				_view.showApiMsg(res);
 			};
 
-			_view.pages.outbox.onOutboxDeleteJob = function(jobId) {
+			_view.pages.outbox.onOutboxDeleteJob = function(jobFileName, isJobTicket) {
 				var res = _api.call({
 					request : 'outbox-delete-job',
-					jobId : jobId
+					dto : JSON.stringify({
+						jobFileName : jobFileName,
+						jobTicket : isJobTicket
+					})
 				});
+
 				if (res.result.code === "0") {
 					_model.user.stats = res.stats;
 					_model.myShowUserStats = true;

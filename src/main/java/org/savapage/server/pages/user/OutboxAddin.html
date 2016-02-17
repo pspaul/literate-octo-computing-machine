@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+	+====================================================================+ 
+	| This file is part of the SavaPage project <http://savapage.org> ...|
+	| Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+	|....................................................................| 
+	| SavaPage is free software: you can redistribute it and/or modify ..|
+	| it under the terms of the GNU Affero General Public License as ....|
+	| published by the Free Software Foundation, either version 3 of ....|
+	| the License, or (at your option) any later version. ...............|
+	+====================================================================+ 
+	-->
+</wicket:remove>
 
 <li wicket:id="job-entry">
 	<h3>
@@ -6,21 +19,30 @@
 			wicket:id="printer" />
 	</h3>
 
-    <div class="sp-txt-wrap">
-        <wicket:enclosure child="title">
-            <span wicket:id="title" />
-        </wicket:enclosure>
-        <wicket:enclosure child="extSupplier"> &bull;
+	<div class="sp-txt-wrap">
+		<wicket:enclosure child="title">
+			<span wicket:id="title" />
+		</wicket:enclosure>
+		<wicket:enclosure child="extSupplier"> &bull;
                 <wicket:enclosure child="extSupplierImg">
-                    <img wicket:id="extSupplierImg" src="" height="12"/>
-                </wicket:enclosure>                      
-                <wicket:enclosure child="extSupplier">
-                    <span wicket:id="extSupplier"/>
-                </wicket:enclosure>
-        </wicket:enclosure>             
-    </div>
+				<img wicket:id="extSupplierImg" src="" height="12" />
+			</wicket:enclosure>
+			<wicket:enclosure child="extSupplier">
+				<span wicket:id="extSupplier" />
+			</wicket:enclosure>
+		</wicket:enclosure>
+	</div>
 
 	<div class="sp-txt-wrap">
+		<img wicket:id="img-job" src="" height="16" />
+		<wicket:enclosure child="owner-user-id">
+			<span style="font-weight: bold;" wicket:id="owner-user-id" />
+			&bull;
+		</wicket:enclosure>
+		<wicket:enclosure child="owner-user-name">
+			<span wicket:id="owner-user-name" />
+            &bull;
+        </wicket:enclosure>
 		<span wicket:id="timeSubmit" /> &bull; <span wicket:id="totals" />
 		<wicket:enclosure child="color"> &bull; <span
 				class="sp-txt-warn" wicket:id="color" />
@@ -40,25 +62,37 @@
 		<wicket:enclosure child="singlex"> &bull; <span
 				class="sp-txt-info" wicket:id="singlex" />
 		</wicket:enclosure>
-        <wicket:enclosure child="collate"> &bull; <span
-                class="sp-txt-info" wicket:id="collate" />
-        </wicket:enclosure>
-		<wicket:enclosure child="ecoPrint"> &bull; <img height="12" src="/glyphicons/glyphicons_001_leaf.png"/>&nbsp;<span
+		<wicket:enclosure child="collate"> &bull; <span
+				class="sp-txt-info" wicket:id="collate" />
+		</wicket:enclosure>
+		<wicket:enclosure child="ecoPrint"> &bull; <img
+				height="12" src="/glyphicons/glyphicons_001_leaf.png" />&nbsp;<span
 				class="sp-txt-valid" wicket:id="ecoPrint" />
 		</wicket:enclosure>
-        <wicket:enclosure child="removeGraphics"> &bull; <img height="12" src="/glyphicons/glyphicons_092_tint.png"/>&nbsp;<span
-                class="sp-txt-valid" wicket:id="removeGraphics" />
-        </wicket:enclosure>
-        <wicket:enclosure child="cost"> &bull; <span
-                wicket:id="cost" />
-        </wicket:enclosure>
+		<wicket:enclosure child="removeGraphics"> &bull; <img
+				height="12" src="/glyphicons/glyphicons_092_tint.png" />&nbsp;<span
+				class="sp-txt-valid" wicket:id="removeGraphics" />
+		</wicket:enclosure>
+		<wicket:enclosure child="cost"> &bull; <span
+				wicket:id="cost" />
+		</wicket:enclosure>
 	</div>
 
-	<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
-		<a href="#" data-savapage="the-unique-filename"
-			class="sp-outbox-remove-job ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
-			wicket:id="button-remove" />
-	</div>
+	<wicket:enclosure child="button-remove-outbox-job">
+		<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
+			<a href="#" data-savapage="the-unique-filename"
+				class="sp-outbox-remove-job ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
+				wicket:id="button-remove-outbox-job" />
+		</div>
+	</wicket:enclosure>
+	
+    <wicket:enclosure child="button-remove-outbox-jobticket">
+        <div data-role="controlgroup" data-type="horizontal" class="ui-mini">
+            <a href="#" data-savapage="the-unique-filename"
+                class="sp-outbox-remove-jobticket ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
+                wicket:id="button-remove-outbox-jobticket" />
+        </div>
+    </wicket:enclosure>
 
 	<p class="ui-li-aside">
 		<span class="sp-outbox-remaining-time" wicket:id="timeExpiry" />

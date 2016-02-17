@@ -34,13 +34,18 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.IRequestParameters;
 import org.savapage.core.dao.DaoContext;
+import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.ipp.IppSyntaxException;
+import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.outbox.OutboxInfoDto;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxAccountTrxInfoSet;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
+import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.OutboxService;
+import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
@@ -73,8 +78,20 @@ public class OutboxAddin extends AbstractUserPage {
     /**
      * .
      */
+    private static final ProxyPrintService PROXYPRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /**
+     * .
+     */
     private static final JobTicketService JOBTICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
+
+    /**
+     * .
+     */
+    private static final UserDao USER_DAO =
+            ServiceContext.getDaoContext().getUserDao();
 
     /**
      * .
@@ -86,33 +103,64 @@ public class OutboxAddin extends AbstractUserPage {
          */
         private static final long serialVersionUID = 1L;
 
+        private final boolean isJobticketView;
+
         /**
          *
          * @param id
          * @param list
+         * @param jobticketView
          */
-        public OutboxJobView(String id, List<OutboxJobDto> list) {
+        public OutboxJobView(final String id, final List<OutboxJobDto> list,
+                final boolean jobticketView) {
             super(id, list);
+            this.isJobticketView = jobticketView;
         }
 
         @Override
         protected void populateItem(ListItem<OutboxJobDto> item) {
 
-            final OutboxJobDto job = item.getModelObject();
-
             final MarkupHelper helper = new MarkupHelper(item);
+            final OutboxJobDto job = item.getModelObject();
+            final boolean isJobTicketItem = job.getUserId() != null;
 
             Label labelWlk;
+
+            //
+            final JsonProxyPrinter cachedPrinter =
+                    PROXYPRINT_SERVICE.getCachedPrinter(job.getPrinterName());
+
+            final String printerDisplayName;
+
+            if (cachedPrinter == null) {
+                printerDisplayName = "???";
+            } else {
+                printerDisplayName = StringUtils.defaultString(
+                        cachedPrinter.getDbPrinter().getDisplayName(),
+                        job.getPrinterName());
+            }
 
             /*
              * Fixed attributes.
              */
-            item.add(new Label("printer", job.getPrinterName()));
+            item.add(new Label("printer", printerDisplayName));
             item.add(new Label("timeSubmit",
                     job.getLocaleInfo().getSubmitTime()));
             item.add(new Label("timeExpiry",
                     job.getLocaleInfo().getExpiryTime()));
+
+            final StringBuilder imgSrc = new StringBuilder();
+
             //
+            imgSrc.append(WebApp.PATH_IMAGES).append('/');
+            if (isJobTicketItem) {
+                imgSrc.append("printer-jobticket-32x32.png");
+            } else {
+                imgSrc.append("device-card-reader-16x16.png");
+            }
+
+            helper.addModifyLabelAttr("img-job", "src", imgSrc.toString());
+
             /*
              * Totals
              */
@@ -150,10 +198,18 @@ public class OutboxAddin extends AbstractUserPage {
             item.add(new Label("printout-pie", sparklineData));
 
             //
-            labelWlk = new Label("button-remove",
-                    getLocalizer().getString("button-remove", this));
-            labelWlk.add(new AttributeModifier("data-savapage", job.getFile()));
-            item.add(labelWlk);
+            final String encloseButtonId;
+            if (isJobTicketItem) {
+                helper.discloseLabel("button-remove-outbox-job");
+                encloseButtonId = "button-remove-outbox-jobticket";
+            } else {
+                helper.discloseLabel("button-remove-outbox-jobticket");
+                encloseButtonId = "button-remove-outbox-job";
+            }
+
+            helper.encloseLabel(encloseButtonId,
+                    getLocalizer().getString("button-remove", this), true)
+                    .add(new AttributeModifier("data-savapage", job.getFile()));
 
             /*
              * Variable attributes.
@@ -163,7 +219,7 @@ public class OutboxAddin extends AbstractUserPage {
             for (final String attr : new String[] { "title", "papersize",
                     "letterhead", "duplex", "singlex", "color", "collate",
                     "grayscale", "cost", "accounts", "removeGraphics",
-                    "ecoPrint", "extSupplier" }) {
+                    "ecoPrint", "extSupplier", "owner-user-name" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -238,6 +294,26 @@ public class OutboxAddin extends AbstractUserPage {
                         .add(new AttributeModifier("src", extSupplierImgUrl));
             }
 
+            //
+            if (this.isJobticketView && job.getUserId() != null) {
+
+                final org.savapage.core.jpa.User user =
+                        USER_DAO.findById(job.getUserId());
+
+                if (user == null) {
+                    labelWlk = helper.encloseLabel("owner-user-id",
+                            "*** USER NOT FOUND ***", true);
+                    MarkupHelper.appendLabelAttr(labelWlk, "class",
+                            MarkupHelper.CSS_TXT_WARN);
+                } else {
+                    helper.encloseLabel("owner-user-id", user.getUserId(),
+                            true);
+                    mapVisible.put("owner-user-name", user.getFullName());
+                }
+            } else {
+                helper.discloseLabel("owner-user-id");
+            }
+
             /*
              * Hide/Show
              */
@@ -254,7 +330,7 @@ public class OutboxAddin extends AbstractUserPage {
     }
 
     /**
-     * jobTickets : true | false
+     * .
      */
     public OutboxAddin() {
 
@@ -271,19 +347,34 @@ public class OutboxAddin extends AbstractUserPage {
             return;
         }
 
+        /*
+         * We need the cache to get the alias of the printer later on.
+         */
+        try {
+            PROXYPRINT_SERVICE.lazyInitPrinterCache();
+        } catch (IppConnectException | IppSyntaxException e) {
+            setResponsePage(
+                    new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
+            return;
+        }
+
         final SpSession session = SpSession.get();
 
         final OutboxInfoDto outboxInfo;
-        final List<OutboxJobDto> jobTickets;
 
         if (isJobticketView) {
 
             outboxInfo = new OutboxInfoDto();
-            jobTickets = JOBTICKET_SERVICE.getTickets();
+
+            /*
+             * Job Tickets mix-in.
+             */
+            for (final OutboxJobDto dto : JOBTICKET_SERVICE.getTickets()) {
+                outboxInfo.addJob(dto.getFile(), dto);
+            }
 
         } else {
             final DaoContext daoContext = ServiceContext.getDaoContext();
-
             /*
              * Lock user while getting the OutboxInfo.
              */
@@ -292,20 +383,11 @@ public class OutboxAddin extends AbstractUserPage {
             final org.savapage.core.jpa.User lockedUser =
                     daoContext.getUserDao().lock(session.getUser().getId());
 
-            outboxInfo = OUTBOX_SERVICE.pruneOutboxInfo(lockedUser.getUserId(),
+            outboxInfo = OUTBOX_SERVICE.getOutboxJobTicketInfo(lockedUser,
                     ServiceContext.getTransactionDate());
 
             // unlock
             daoContext.rollback();
-
-            jobTickets = JOBTICKET_SERVICE.getTickets(lockedUser.getId());
-        }
-
-        /*
-         * Job Tickets mix-in.
-         */
-        for (final OutboxJobDto dto : jobTickets) {
-            outboxInfo.addJob(dto.getFile(), dto);
         }
 
         OUTBOX_SERVICE.applyLocaleInfo(outboxInfo, session.getLocale(),
@@ -319,7 +401,7 @@ public class OutboxAddin extends AbstractUserPage {
         }
 
         //
-        add(new OutboxJobView("job-entry", entryList));
+        add(new OutboxJobView("job-entry", entryList, isJobticketView));
     }
 
 }

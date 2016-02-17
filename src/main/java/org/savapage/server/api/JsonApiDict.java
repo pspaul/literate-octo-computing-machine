@@ -31,6 +31,9 @@ import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqLogin;
+import org.savapage.server.api.request.ReqOutboxClear;
+import org.savapage.server.api.request.ReqOutboxDeleteJob;
+import org.savapage.server.api.request.ReqOutboxExtend;
 import org.savapage.server.api.request.ReqPrintDelegationSet;
 import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqPrinterQuickSearch;
@@ -274,14 +277,12 @@ public class JsonApiDict {
         /**
          * No authentication required.
          */
-        NONE,
-        /**
-         * User authentication required.
-         */
-        USER,
-        /**
-         * Admin authentication required.
-         */
+        NONE, /**
+               * User authentication required.
+               */
+        USER, /**
+               * Admin authentication required.
+               */
         ADMIN
     }
 
@@ -316,9 +317,8 @@ public class JsonApiDict {
             this.handler = null;
         }
 
-        private Req(AuthReq authReq,
-                Class<? extends ApiRequestHandler> handler, DbClaim dbClaim,
-                DbAccess dbAccess) {
+        private Req(AuthReq authReq, Class<? extends ApiRequestHandler> handler,
+                DbClaim dbClaim, DbAccess dbAccess) {
             this.dbAccess = dbAccess;
             this.dbClaim = dbClaim;
             this.authReq = authReq;
@@ -416,7 +416,8 @@ public class JsonApiDict {
 
     private void non(final String key,
             final Class<? extends ApiRequestHandler> handler) {
-        dict.put(key, new Req(AuthReq.NONE, handler, DbClaim.NONE, DbAccess.NO));
+        dict.put(key,
+                new Req(AuthReq.NONE, handler, DbClaim.NONE, DbAccess.NO));
     }
 
     /**
@@ -668,7 +669,8 @@ public class JsonApiDict {
         usr(REQ_LETTERHEAD_GET, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_LETTERHEAD_SET, DbClaim.NONE, DbAccess.USER_LOCK);
 
-        put(REQ_LOGIN, ReqLogin.class, AuthReq.NONE, DbClaim.READ, DbAccess.YES);
+        put(REQ_LOGIN, ReqLogin.class, AuthReq.NONE, DbClaim.READ,
+                DbAccess.YES);
 
         usr(REQ_LOGOUT, DbClaim.NONE, DbAccess.NO);
         usr(REQ_WEBAPP_UNLOAD, DbClaim.NONE, DbAccess.NO);
@@ -676,9 +678,12 @@ public class JsonApiDict {
 
         adm(REQ_MAIL_TEST, DbClaim.NONE, DbAccess.NO);
 
-        usr(REQ_OUTBOX_CLEAR, DbClaim.NONE, DbAccess.USER_LOCK);
-        usr(REQ_OUTBOX_DELETE_JOB, DbClaim.NONE, DbAccess.USER_LOCK);
-        usr(REQ_OUTBOX_EXTEND, DbClaim.NONE, DbAccess.USER_LOCK);
+        usr(REQ_OUTBOX_CLEAR, ReqOutboxClear.class, DbClaim.NONE,
+                DbAccess.USER_LOCK);
+        usr(REQ_OUTBOX_DELETE_JOB, ReqOutboxDeleteJob.class, DbClaim.NONE,
+                DbAccess.USER_LOCK);
+        usr(REQ_OUTBOX_EXTEND, ReqOutboxExtend.class, DbClaim.NONE,
+                DbAccess.USER_LOCK);
 
         adm(REQ_PAGOMETER_RESET, DbClaim.EXCLUSIVE, DbAccess.YES);
 
@@ -715,8 +720,8 @@ public class JsonApiDict {
         usr(REQ_PRINTER_PRINT, ReqPrinterPrint.class, DbClaim.READ,
                 DbAccess.USER_LOCK);
 
-        usr(REQ_PRINTER_QUICK_SEARCH, ReqPrinterQuickSearch.class,
-                DbClaim.READ, DbAccess.YES);
+        usr(REQ_PRINTER_QUICK_SEARCH, ReqPrinterQuickSearch.class, DbClaim.READ,
+                DbAccess.YES);
 
         adm(REQ_PRINTER_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET_MEDIA_COST, DbClaim.READ, DbAccess.YES);
@@ -769,10 +774,11 @@ public class JsonApiDict {
                 DbClaim.READ, DbAccess.YES);
 
         usr(REQ_USERGROUP_MEMBER_QUICK_SEARCH,
-                ReqUserGroupMemberQuickSearch.class, DbClaim.READ, DbAccess.YES);
+                ReqUserGroupMemberQuickSearch.class, DbClaim.READ,
+                DbAccess.YES);
 
-        usr(REQ_PRINT_DELEGATION_SET, ReqPrintDelegationSet.class,
-                DbClaim.READ, DbAccess.YES);
+        usr(REQ_PRINT_DELEGATION_SET, ReqPrintDelegationSet.class, DbClaim.READ,
+                DbAccess.YES);
 
     }
 

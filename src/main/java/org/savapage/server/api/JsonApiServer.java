@@ -1340,19 +1340,6 @@ public final class JsonApiServer extends AbstractPage {
                             getParmValue(parameters, isGetAction, "isGlobal")),
                     mySessionUser);
 
-        case JsonApiDict.REQ_OUTBOX_CLEAR:
-
-            return reqOutboxClear(lockedUser);
-
-        case JsonApiDict.REQ_OUTBOX_DELETE_JOB:
-
-            return reqOutboxRemoveJob(lockedUser,
-                    getParmValue(parameters, isGetAction, "jobId"));
-
-        case JsonApiDict.REQ_OUTBOX_EXTEND:
-
-            return reqOutboxExtend(lockedUser);
-
         case JsonApiDict.REQ_PAGE_DELETE:
 
             return reqInboxPageDelete(requestingUser,
@@ -2311,99 +2298,6 @@ public final class JsonApiServer extends AbstractPage {
                 }
             }
         }
-
-        return userData;
-    }
-
-    /**
-     *
-     * @param user
-     * @return
-     */
-    private Map<String, Object> reqOutboxClear(final User lockedUser) {
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final int jobCount = OUTBOX_SERVICE.clearOutbox(lockedUser.getUserId());
-
-        final String msgKey;
-
-        if (jobCount == 0) {
-            msgKey = "msg-outbox-cleared-none";
-        } else if (jobCount == 1) {
-            msgKey = "msg-outbox-cleared-one";
-        } else {
-            msgKey = "msg-outbox-cleared-multiple";
-        }
-
-        setApiResult(userData, ApiResultCodeEnum.OK, msgKey,
-                String.valueOf(jobCount));
-
-        ApiRequestHelper.addUserStats(userData, lockedUser,
-                this.getSession().getLocale(),
-                SpSession.getAppCurrencySymbol());
-
-        return userData;
-    }
-
-    /**
-     *
-     * @param user
-     * @return
-     */
-    private Map<String, Object> reqOutboxRemoveJob(final User lockedUser,
-            final String jobFileName) {
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final boolean removedJob = OUTBOX_SERVICE
-                .removeOutboxJob(lockedUser.getUserId(), jobFileName);
-
-        final String msgKey;
-
-        if (removedJob) {
-            msgKey = "msg-outbox-removed-job";
-        } else {
-            msgKey = "msg-outbox-removed-job-none";
-        }
-
-        setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
-
-        ApiRequestHelper.addUserStats(userData, lockedUser,
-                this.getSession().getLocale(),
-                SpSession.getAppCurrencySymbol());
-
-        return userData;
-    }
-
-    /**
-     *
-     * @param userId
-     * @return
-     */
-    private Map<String, Object> reqOutboxExtend(final User lockedUser) {
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final int minutes = 10;
-
-        final int jobCount = OUTBOX_SERVICE
-                .extendOutboxExpiry(lockedUser.getUserId(), minutes);
-
-        final String msgKey;
-
-        if (jobCount == 0) {
-            msgKey = "msg-outbox-extended-none";
-        } else if (jobCount == 1) {
-            msgKey = "msg-outbox-extended-one";
-        } else {
-            msgKey = "msg-outbox-extended-multiple";
-        }
-
-        setApiResult(userData, ApiResultCodeEnum.OK, msgKey,
-                String.valueOf(jobCount), String.valueOf(minutes));
-
-        ApiRequestHelper.addUserStats(userData, lockedUser,
-                this.getSession().getLocale(),
-                SpSession.getAppCurrencySymbol());
 
         return userData;
     }
