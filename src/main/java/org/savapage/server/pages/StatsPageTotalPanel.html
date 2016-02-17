@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <wicket:panel>
 
-    <li data-role="list-divider"><wicket:message key="total-pages"/>
-        <p class="ui-li-aside"><strong wicket:id="page-totals-since"/></p>    
-    </li>
+	<li data-role="list-divider">
+		<wicket:message key="total-pages" />
+		<p class="ui-li-aside">
+			<strong wicket:id="page-totals-since" />
+		</p>
+	</li>
 
-    <li>
-        <div id="dashboard-piechart"></div>
-        <div id="dashboard-xychart"></div>
-    </li>
+	<li>
+		<div id="dashboard-piechart"></div>
+		<div id="dashboard-xychart"></div>
+	</li>
 
 </wicket:panel>

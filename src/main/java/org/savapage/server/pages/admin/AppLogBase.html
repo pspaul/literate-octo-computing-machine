@@ -1,105 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<wicket:remove><!-- 
-<imput type="text"
-autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
---></wicket:remove>  
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <ul data-role="listview" data-inset="true">
 
-	<li data-role="list-divider"><span><wicket:message key="title"/></span></li>
+	<li data-role="list-divider">
+		<span><wicket:message key="title" /></span>
+	</li>
 
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 
 			<h3>
-				<wicket:message key="select-and-sort"/>
+				<wicket:message key="select-and-sort" />
 			</h3>
 
-            <ul data-role="listview" data-inset="true">
+			<ul data-role="listview" data-inset="true">
 
-                <li>
-                    <div class="ui-field-contain">
-	                    <label for="sp-applog-containing-text"><wicket:message key="prompt-containing-text"/></label>
-		                <input type="text" id="sp-applog-containing-text" value="" maxlength="128" data-clear-btn="true" 
-		                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>                
-                    </div>
-                    		                
+				<li>
 					<div class="ui-field-contain">
-					<fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
-					
-						<legend>
-							<wicket:message key="prompt-level"/>
-						</legend>
-		
-                        <label for="sp-applog-select-level-all"><wicket:message key="level-all"/></label>
-						<input type="radio" name="sp-applog-select-level" id="sp-applog-select-level-all"
-							checked="checked" 
-                              wicket:id="level-all" value=""/> 
-								
-                        <label for="sp-applog-select-level-info"><wicket:message key="level-info"/></label>
-						<input type="radio" name="sp-applog-select-level" id="sp-applog-select-level-info" 
-						      wicket:id="level-info" value=""/> 
-						
-                        <label for="sp-applog-select-level-warn"><wicket:message key="level-warning"/></label>
-						<input type="radio" name="sp-applog-select-level" id="sp-applog-select-level-warn" 
-                              wicket:id="level-warn" value=""/> 
-								
-                        <label for="sp-applog-select-level-err"><wicket:message key="level-error"/></label>                 
-						<input type="radio" name="sp-applog-select-level" id="sp-applog-select-level-err" 
-                              wicket:id="level-error" value=""/> 
-		
-					</fieldset></div>
+						<label for="sp-applog-containing-text">
+							<wicket:message key="prompt-containing-text" />
+						</label>
+						<input type="text" id="sp-applog-containing-text" value=""
+							maxlength="128" data-clear-btn="true" autocomplete="off"
+							autocorrect="off" autocapitalize="off" spellcheck="false" />
+					</div>
 
-                </li>
-                <li>
-                    <span><wicket:message key="prompt-period"/></span>
-                    
-			        <div class="ui-field-contain">
-			            <label for="sp-applog-date-from"><wicket:message key="prompt-period-from"/></label>
-			            <input id="sp-applog-date-from" data-clear-btn="true" />
-			        </div>        
+					<div class="ui-field-contain">
+						<fieldset data-role="controlgroup" data-type="horizontal"
+							class="ui-mini">
 
-                    <div class="ui-field-contain">
-                        <label for="sp-applog-date-to"><wicket:message key="prompt-period-to"/></label>                 
-                        <input id="sp-applog-date-to" data-clear-btn="true" />
-                    </div>
-                </li>
-                
-                <li>
-                    <div class="ui-field-contain">
-		            <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
-		                <legend>
-		                    <wicket:message key="prompt-sort-by"/>
-		                </legend>
-		
-		                <input type="radio" name="sp-applog-sort-by" id="sp-applog-sort-by-date" checked="checked" value="DATE"/> 
-		                <label for="sp-applog-sort-by-date"><wicket:message key="sort-by-date"/></label>
-		                
-		                <input type="radio" name="sp-applog-sort-by" id="sp-applog-sort-by-level" value="LEVEL"/> 
-		                <label for="sp-applog-sort-by-level"><wicket:message key="sort-by-level"/></label>
-		                        
-		                <input type="radio" name="sp-applog-sort-dir" id="sp-applog-sort-dir-asc" checked="checked" /> 
-		                <label for="sp-applog-sort-dir-asc"><wicket:message key="sort-asc"/></label>
-		                
-		                <input type="radio" name="sp-applog-sort-dir" id="sp-applog-sort-dir-desc"/> 
-		                <label for="sp-applog-sort-dir-desc"><wicket:message key="sort-desc"/></label>
-		                        
-		            </fieldset></div>		
-                </li>
-                
-                <li>
-                    <div data-role="controlgroup" data-type="horizontal">
-                    
-						<a href="#" id="button-applog-apply" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-						     <wicket:message key="button-apply"/></a>			
-						<a href="#" id="button-applog-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-						     <wicket:message key="button-default"/></a>
-                        <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</a>                             
-				    </div>
-                </li>
-            </ul>
-		</div> 
+							<legend>
+								<wicket:message key="prompt-level" />
+							</legend>
+
+							<label for="sp-applog-select-level-all">
+								<wicket:message key="level-all" />
+							</label>
+							<input type="radio" name="sp-applog-select-level"
+								id="sp-applog-select-level-all" checked="checked"
+								wicket:id="level-all" value="" />
+
+							<label for="sp-applog-select-level-info">
+								<wicket:message key="level-info" />
+							</label>
+							<input type="radio" name="sp-applog-select-level"
+								id="sp-applog-select-level-info" wicket:id="level-info" value="" />
+
+							<label for="sp-applog-select-level-warn">
+								<wicket:message key="level-warning" />
+							</label>
+							<input type="radio" name="sp-applog-select-level"
+								id="sp-applog-select-level-warn" wicket:id="level-warn" value="" />
+
+							<label for="sp-applog-select-level-err">
+								<wicket:message key="level-error" />
+							</label>
+							<input type="radio" name="sp-applog-select-level"
+								id="sp-applog-select-level-err" wicket:id="level-error" value="" />
+
+						</fieldset>
+					</div>
+
+				</li>
+				<li>
+					<span><wicket:message key="prompt-period" /></span>
+
+					<div class="ui-field-contain">
+						<label for="sp-applog-date-from">
+							<wicket:message key="prompt-period-from" />
+						</label>
+						<input id="sp-applog-date-from" data-clear-btn="true" />
+					</div>
+
+					<div class="ui-field-contain">
+						<label for="sp-applog-date-to">
+							<wicket:message key="prompt-period-to" />
+						</label>
+						<input id="sp-applog-date-to" data-clear-btn="true" />
+					</div>
+				</li>
+
+				<li>
+					<div class="ui-field-contain">
+						<fieldset data-role="controlgroup" data-type="horizontal"
+							class="ui-mini">
+							<legend>
+								<wicket:message key="prompt-sort-by" />
+							</legend>
+
+							<input type="radio" name="sp-applog-sort-by"
+								id="sp-applog-sort-by-date" checked="checked" value="DATE" />
+							<label for="sp-applog-sort-by-date">
+								<wicket:message key="sort-by-date" />
+							</label>
+
+							<input type="radio" name="sp-applog-sort-by"
+								id="sp-applog-sort-by-level" value="LEVEL" />
+							<label for="sp-applog-sort-by-level">
+								<wicket:message key="sort-by-level" />
+							</label>
+
+							<input type="radio" name="sp-applog-sort-dir"
+								id="sp-applog-sort-dir-asc" checked="checked" />
+							<label for="sp-applog-sort-dir-asc">
+								<wicket:message key="sort-asc" />
+							</label>
+
+							<input type="radio" name="sp-applog-sort-dir"
+								id="sp-applog-sort-dir-desc" />
+							<label for="sp-applog-sort-dir-desc">
+								<wicket:message key="sort-desc" />
+							</label>
+
+						</fieldset>
+					</div>
+				</li>
+
+				<li>
+					<div data-role="controlgroup" data-type="horizontal">
+
+						<a href="#" id="button-applog-apply"
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+							<wicket:message key="button-apply" />
+						</a>
+						<a href="#" id="button-applog-default"
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+							<wicket:message key="button-default" />
+						</a>
+						<a href="#"
+							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</a>
+					</div>
+				</li>
+			</ul>
+		</div>
 	</li>
 
 	<li id="sp-applog-list-page"></li>

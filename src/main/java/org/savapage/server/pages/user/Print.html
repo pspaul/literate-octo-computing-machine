@@ -1,199 +1,246 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<wicket:remove><!-- 
-<imput type="text" autofocus
-autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-pattern="[0-9]*" 
---></wicket:remove>  
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <div data-role="header" data-theme="b">
-    <h1><wicket:message key="title"/></h1>
+	<h1>
+		<wicket:message key="title" />
+	</h1>
 </div>
 
 <div class="ui-content" id="content-print">
 
-    <ul data-role="listview" data-inset="true">
-    
-        <li data-role="list-divider" id="sp-printer-page-name">Printer</li>
-    
-        <li>
-            <div data-role="controlgroup" data-type="horizontal" class="ui-mini">
-            
-                <button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">
-                    <span class="sp-txt-wrap sp-print-job-media-sources-info">&nbsp;</span>
-                </button>
-                
-                <button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info"/>
-                
-		        <button class="sp-button-mini-print-color ui-icon-mini-print-color ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
-		        <button class="sp-button-mini-print-mono ui-icon-mini-print-mono ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
-		        <button class="sp-button-mini-print-duplex ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
-		        <button class="sp-button-mini-print-n-up ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>		        
-                <wicket:enclosure child="button-print-delegation">
-	                <label for="print-as-delegate"><wicket:message key="print-as-delegate"/></label>
-	                <input type="checkbox" id="print-as-delegate" value="1" checked />
-                    <button wicket:id="button-print-delegation" id="button-print-delegation" 
-                    class="sp-button-mini-print-delegation sp-plain-info ui-icon-mini-delegated-print ui-shadow ui-btn ui-corner-all ui-btn-icon-left"/>
-                </wicket:enclosure>            
-            </div>
-                   
-	        <wicket:fragment wicket:id="quicksearch-printer"/>
-	
-	        <ul class="printer-selected" data-role="listview" data-inset="true">
-	            <li class="ui-li-has-icon sp-txt-wrap" data-icon="gear">
-	               <a href="#" id="button-print-settings" />
-	            </li>
-	        </ul>
+	<ul data-role="listview" data-inset="true">
 
-            <ul class="printer-fast-print-info" data-role="listview" data-inset="true">
-                <li class="ui-li-has-icon" data-icon="refresh">
-                    <a href="#" id="button-printer-fast-print-renew" title="Push button to refesh.">
-                        <img width="16" height="16" src="/images/device-card-reader-16x16.png"/>
-                        <span class="ui-mini sp-txt-info sp-txt-wrap">
-                            <wicket:message key="prompt-fast-print-expiry"/>
-                        </span>
-                        <span class="ui-li-count" id="printer-fast-print-expiry">hh:ss</span>
-                    </a>
-                </li>
-            </ul>
-            
-	    </li>
-    </ul>
-        
-    <ul class="printer-selected" data-role="listview" data-inset="true">
-    
-        <li data-role="list-divider" id="sp-printer-page-name">Job</li>
-    
-	    <li data-mini="true">
-    
-            <div class="ui-field-contain">
-		        <label data-mini="true" for="print-job-list">
-		            <wicket:message key="print-job-scope"/>
-		        </label>
-		        <select data-mini="true" id="print-job-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"/>
-            </div>
-            
-            <div class="ui-field-contain">
-	            <label for="print-title">
-	                <wicket:message key="print-title"/>
-	            </label>
-	            <input type="text" data-clear-btn="true" id="print-title" value="" />
-            </div>
-            	        
-            <div class="ui-field-contain">
-			    <label for="slider-print-copies">
-			        <wicket:message key="print-copies"/>
-			    </label>
-			    <input type="range" id="slider-print-copies" wicket:id="slider-print-copies" 
-			          value="1" min="1" max="<var>" />
-			    <label id="delegated-print-copies" style="display:none"/>      		          
-            </div>
-            		
-            <div class="ui-field-contain">
-				<label for="print-page-ranges">
-				   <wicket:message key="print-page-ranges"/>        
+		<li data-role="list-divider" id="sp-printer-page-name">Printer</li>
+
+		<li>
+			<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
+
+				<button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">
+					<span class="sp-txt-wrap sp-print-job-media-sources-info">&nbsp;</span>
+				</button>
+
+				<button
+					class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info" />
+
+				<button
+					class="sp-button-mini-print-color ui-icon-mini-print-color ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
+				<button
+					class="sp-button-mini-print-mono ui-icon-mini-print-mono ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
+				<button
+					class="sp-button-mini-print-duplex ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
+				<button
+					class="sp-button-mini-print-n-up ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
+				<wicket:enclosure child="button-print-delegation">
+					<label for="print-as-delegate">
+						<wicket:message key="print-as-delegate" />
+					</label>
+					<input type="checkbox" id="print-as-delegate" value="1" checked />
+					<button wicket:id="button-print-delegation"
+						id="button-print-delegation"
+						class="sp-button-mini-print-delegation sp-plain-info ui-icon-mini-delegated-print ui-shadow ui-btn ui-corner-all ui-btn-icon-left" />
+				</wicket:enclosure>
+			</div>
+
+			<wicket:fragment wicket:id="quicksearch-printer" />
+
+			<ul class="printer-selected" data-role="listview" data-inset="true">
+				<li class="ui-li-has-icon sp-txt-wrap" data-icon="gear">
+					<a href="#" id="button-print-settings" />
+				</li>
+			</ul>
+
+			<ul class="printer-fast-print-info" data-role="listview"
+				data-inset="true">
+				<li class="ui-li-has-icon" data-icon="refresh">
+					<a href="#" id="button-printer-fast-print-renew"
+						title="Push button to refesh.">
+						<img width="16" height="16"
+							src="/images/device-card-reader-16x16.png" />
+						<span class="ui-mini sp-txt-info sp-txt-wrap"> <wicket:message
+								key="prompt-fast-print-expiry" />
+						</span> <span class="ui-li-count" id="printer-fast-print-expiry">hh:ss</span>
+					</a>
+				</li>
+			</ul>
+
+		</li>
+	</ul>
+
+	<ul class="printer-selected" data-role="listview" data-inset="true">
+
+		<li data-role="list-divider" id="sp-printer-page-name">Job</li>
+
+		<li data-mini="true">
+
+			<div class="ui-field-contain">
+				<label data-mini="true" for="print-job-list">
+					<wicket:message key="print-job-scope" />
 				</label>
-				<input type="text" data-clear-btn="true" id="print-page-ranges" value="" pattern="[0-9]*"
-				   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </div>
+				<select data-mini="true" id="print-job-list" data-icon="carat-d"
+					data-iconpos="left" data-native-menu="false" />
+			</div>
 
-            <div data-mini="true" class="ui-field-contain">
-                <label data-mini="true" for="print-letterhead-list">
-                    <wicket:message key="prompt-letterhead"/>        
-                </label>
-                <select data-mini="true" id="print-letterhead-list" data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
-            </div>
-            
-<wicket:enclosure child="print-ecoprint">
-            <div data-mini="true" data-role="controlgroup">
-                <label for="print-ecoprint">
-                    &nbsp;&nbsp;<img height="12" src="/glyphicons/glyphicons_001_leaf.png"/>&nbsp;&nbsp;                
-                    <span wicket:id="print-ecoprint-label"/>
-                </label> 
-                <input type="checkbox" wicket:id="print-ecoprint" id="print-ecoprint" value="1"/>            
-            </div>
-</wicket:enclosure>
-                    
-            <div data-mini="true" data-role="controlgroup">
-                <label for="print-remove-graphics">
-                    &nbsp;&nbsp;<img height="12" src="/glyphicons/glyphicons_092_tint.png"/>&nbsp;&nbsp;                
-                    <span wicket:id="print-remove-graphics-label"/>
-                </label>
-                <input type="checkbox" id="print-remove-graphics" value="1"/>            
-            </div>
+			<div class="ui-field-contain">
+				<label for="print-title">
+					<wicket:message key="print-title" />
+				</label>
+				<input type="text" data-clear-btn="true" id="print-title" value="" />
+			</div>
 
-            <div data-mini="true" data-role="controlgroup" class="print-collate">
-                <label for="print-collate">
-                    <table><tr>
-                        <td>Collate&nbsp;</td>
-                        <td>
-                            <div class="print_collate_sheet_next  print_collate_sheet_1_2">2</div>
-                            <div class="print_collate_sheet_first print_collate_sheet_1_1">1</div>
-                        </td>
-                        <td>
-                            <div class="print_collate_sheet_next  print_collate_sheet_2_2">2</div>
-                            <div class="print_collate_sheet_first print_collate_sheet_2_1">1</div>
-                        </td>
-                    </tr></table>
-                </label> 
-                <input type="checkbox" id="print-collate" value="1" checked />            
-            </div>
+			<div class="ui-field-contain">
+				<label for="slider-print-copies">
+					<wicket:message key="print-copies" />
+				</label>
+				<input type="range" id="slider-print-copies"
+					wicket:id="slider-print-copies" value="1" min="1" max="<var>" />
+				<label id="delegated-print-copies" style="display: none" />
+			</div>
 
-            <div data-mini="true" data-role="controlgroup">
-                <label for="delete-pages-after-print">
-                    <wicket:message key="delete-pages-after-print"/>        
-                </label>
-                <input type="checkbox" id="delete-pages-after-print" wicket:id="delete-pages-after-print" value="1"/>
-            </div>
+			<div class="ui-field-contain">
+				<label for="print-page-ranges">
+					<wicket:message key="print-page-ranges" />
+				</label>
+				<input type="text" data-clear-btn="true" id="print-page-ranges"
+					value="" pattern="[0-9]*" autocomplete="off" autocorrect="off"
+					autocapitalize="off" spellcheck="false" />
+			</div>
 
-	    </li>
-	
-    </ul>
-    
-<wicket:remove><!-- 
+			<div data-mini="true" class="ui-field-contain">
+				<label data-mini="true" for="print-letterhead-list">
+					<wicket:message key="prompt-letterhead" />
+				</label>
+				<select data-mini="true" id="print-letterhead-list"
+					data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
+			</div>
+
+			<wicket:enclosure child="print-ecoprint">
+				<div data-mini="true" data-role="controlgroup">
+					<label for="print-ecoprint">
+						&nbsp;&nbsp;
+						<img height="12" src="/glyphicons/glyphicons_001_leaf.png" />
+						&nbsp;&nbsp; <span wicket:id="print-ecoprint-label" />
+					</label>
+					<input type="checkbox" wicket:id="print-ecoprint"
+						id="print-ecoprint" value="1" />
+				</div>
+			</wicket:enclosure>
+
+			<div data-mini="true" data-role="controlgroup">
+				<label for="print-remove-graphics">
+					&nbsp;&nbsp;
+					<img height="12" src="/glyphicons/glyphicons_092_tint.png" />
+					&nbsp;&nbsp; <span wicket:id="print-remove-graphics-label" />
+				</label>
+				<input type="checkbox" id="print-remove-graphics" value="1" />
+			</div>
+
+			<div data-mini="true" data-role="controlgroup" class="print-collate">
+				<label for="print-collate">
+					<table>
+						<tr>
+							<td>Collate&nbsp;</td>
+							<td>
+								<div class="print_collate_sheet_next  print_collate_sheet_1_2">2</div>
+								<div class="print_collate_sheet_first print_collate_sheet_1_1">1</div>
+							</td>
+							<td>
+								<div class="print_collate_sheet_next  print_collate_sheet_2_2">2</div>
+								<div class="print_collate_sheet_first print_collate_sheet_2_1">1</div>
+							</td>
+						</tr>
+					</table>
+				</label>
+				<input type="checkbox" id="print-collate" value="1" checked />
+			</div>
+
+			<div data-mini="true" data-role="controlgroup">
+				<label for="delete-pages-after-print">
+					<wicket:message key="delete-pages-after-print" />
+				</label>
+				<input type="checkbox" id="delete-pages-after-print"
+					wicket:id="delete-pages-after-print" value="1" />
+			</div>
+
+		</li>
+
+	</ul>
+
+	<wicket:remove>
+		<!-- 
     <a href="#" id="button-print" class="ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
         <wicket:message key="button-print"/>        
     </a>
---></wicket:remove>    
-    <a href="#" id="button-print-and-close" class="ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
-        <wicket:message key="button-print-and-close"/>        
-    </a>
-    
-    <a href="#" data-rel="back" data-direction="reverse" id="button-printer-back"  
-        class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-        <wicket:message key="button-back"/>
-    </a>
-        
+-->
+	</wicket:remove>
+	<a href="#" id="button-print-and-close"
+		class="ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
+		<wicket:message key="button-print-and-close" />
+	</a>
+
+	<a href="#" data-rel="back" data-direction="reverse"
+		id="button-printer-back"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+		<wicket:message key="button-back" />
+	</a>
+
 </div>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 POPUP for Proxy Print Authentication
---></wicket:remove>  
-<div data-role="popup" id="sp-popup-print-auth" data-dismissible="false" class="ui-content">
+-->
+</wicket:remove>
+<div data-role="popup" id="sp-popup-print-auth" data-dismissible="false"
+	class="ui-content">
 
 	<div id="auth-popup-content-wait" class="ui-corner-bottom ui-content">
-        <p class="sp-txt-info" id="sp-print-auth-countdown" style="position:absolute; right:20px;"/>
-	    <h3 class="ui-title"><wicket:message key="auth-popup-title"/></h3>
-	    
-	    <div id="sp-popup-print-auth-cost" class="sp-txt-warn"/>
-	    
-	    <p><wicket:message key="auth-popup-message"/></p>
-	    <a href="#" id="sp-button-print-auth-cancel" class="ui-btn ui-btn-inline">
-	       <wicket:message key="button-cancel"/>
-	    </a>    
+		<p class="sp-txt-info" id="sp-print-auth-countdown"
+			style="position: absolute; right: 20px;" />
+		<h3 class="ui-title">
+			<wicket:message key="auth-popup-title" />
+		</h3>
+
+		<div id="sp-popup-print-auth-cost" class="sp-txt-warn" />
+
+		<p>
+			<wicket:message key="auth-popup-message" />
+		</p>
+		<a href="#" id="sp-button-print-auth-cancel"
+			class="ui-btn ui-btn-inline">
+			<wicket:message key="button-cancel" />
+		</a>
 	</div>
-	
-    <div id="auth-popup-content-msg" class="ui-corner-bottom ui-content">
-        <h3 class="ui-title"><span id="auth-popup-user-msg-title"/></h3>
-        <p id="auth-popup-user-msg"/>
-        <a href="#" data-rel="back" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-           <wicket:message key="button-ok"/>
-        </a>    
-    </div>
-	
+
+	<div id="auth-popup-content-msg" class="ui-corner-bottom ui-content">
+		<h3 class="ui-title">
+			<span id="auth-popup-user-msg-title" />
+		</h3>
+		<p id="auth-popup-user-msg" />
+		<a href="#" data-rel="back"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+			<wicket:message key="button-ok" />
+		</a>
+	</div>
+
 </div>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />

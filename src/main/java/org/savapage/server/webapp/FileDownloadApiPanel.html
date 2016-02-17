@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <wicket:panel>
 
-<wicket:remove> <!--
+	<wicket:remove>
+		<!--
 NOTE: Method GET is used, because Android native browser cannot handle POST. 
 I.e. the commit on the form is issued twice + the 2nd time the values of the
 hidden input is void.   
---></wicket:remove>
+-->
+	</wicket:remove>
 
-<form id="sp-file-download-api-form" action="/api" method="get" target="_blank">
-    <input type="hidden" name="request"/>
-    <input type="hidden" name="request-sub"/>
-    <input type="hidden" name="user"/>
-    <input type="hidden" name="data"/>
-</form>
+	<form id="sp-file-download-api-form" action="/api" method="get"
+		target="_blank">
+		<input type="hidden" name="request" />
+		<input type="hidden" name="request-sub" />
+		<input type="hidden" name="user" />
+		<input type="hidden" name="data" />
+	</form>
 
 </wicket:panel>

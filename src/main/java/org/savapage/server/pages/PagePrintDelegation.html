@@ -1,120 +1,184 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<wicket:remove><!-- 
-<imput type="text" autofocus
-autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
---></wicket:remove>  
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <div data-role="header" data-theme="b">
-    <h1><wicket:message key="title"/></h1>
+	<h1>
+		<wicket:message key="title" />
+	</h1>
 </div>
 
 <div class="ui-content">
 
-<ul data-role="listview" data-inset="true" class="ui-mini">
-<li>
-<table data-role="table" id="sp-selected-print-delegation"    
-    data-mode="reflow" class="ui-responsive ui-shadow table-stroke">
-    <thead>         
-        <tr>
-            <th data-priority="1"><wicket:message key="header-delegator"/></th>
-            <th data-priority="2"><wicket:message key="header-members"/></th>            
-            <th data-priority="2"><wicket:message key="header-account"/></th>
-        </tr>         
-    </thead>
-      
-    <tbody id="sp-selected-print-delegation-rows">
-        <wicket:remove><!-- Delegators with assigned Account
+	<ul data-role="listview" data-inset="true" class="ui-mini">
+		<li>
+			<table data-role="table" id="sp-selected-print-delegation"
+				data-mode="reflow" class="ui-responsive ui-shadow table-stroke">
+				<thead>
+					    
+					<tr>
+						<th data-priority="1">
+							<wicket:message key="header-delegator" />
+						</th>
+						<th data-priority="2">
+							<wicket:message key="header-members" />
+						</th>
+						<th data-priority="2">
+							<wicket:message key="header-account" />
+						</th>
+					</tr>
+					  
+				</thead>
+				  
+				<tbody id="sp-selected-print-delegation-rows">
+					<wicket:remove>
+						<!-- Delegators with assigned Account
         <tr> ... </tr>
-        --></wicket:remove>                
-    </tbody>
-</table>
-<br/>
-<div>
-    <button id="sp-print-delegation-button-select-all"
-        class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon"><wicket:message key="button-select-all"/></button>
-        
-    <button id="sp-print-delegation-button-deselect-all"
-        class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon"><wicket:message key="button-deselect-all"/></button>  
-                                                              
-    <button id="sp-print-delegation-button-remove-selected"
-        class="sp-print-delegator-rows-selected ui-btn ui-btn-inline ui-btn-no-icon"><wicket:message key="button-remove-selected"/></button>
+        -->
+					</wicket:remove>
+				</tbody>
+			</table>
+			<br />
+			<div>
+				<button id="sp-print-delegation-button-select-all"
+					class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon">
+					<wicket:message key="button-select-all" />
+				</button>
 
-    <button id="sp-print-delegation-button-save"
-        class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon"><wicket:message key="button-save"/></button>
-        
-        
-    <a href="#" data-rel="back" data-direction="reverse" 
-        class="ui-btn ui-btn-inline ui-btn-no-icon"><wicket:message key="button-close"/></a>
-</div>                                
-</li>
-</ul>
+				<button id="sp-print-delegation-button-deselect-all"
+					class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon">
+					<wicket:message key="button-deselect-all" />
+				</button>
 
-<ul id="sp-print-delegation-edit-area" data-role="listview" data-inset="true" class="ui-mini">
-<li>
-    <fieldset data-role="controlgroup" data-type="horizontal">
-    
-        <label for="sp-print-delegation-edit-radio-add-groups"><wicket:message key="label-add-groups"/></label>
-        <input type="radio" name="sp-print-delegation-edit-radio" id="sp-print-delegation-edit-radio-add-groups" checked />
-        
-        <label for="sp-print-delegation-edit-radio-add-users"><wicket:message key="label-add-users"/></label>
-        <input type="radio" name="sp-print-delegation-edit-radio" id="sp-print-delegation-edit-radio-add-users" />
-        
-<wicket:remove><!-- 
+				<button id="sp-print-delegation-button-remove-selected"
+					class="sp-print-delegator-rows-selected ui-btn ui-btn-inline ui-btn-no-icon">
+					<wicket:message key="button-remove-selected" />
+				</button>
+
+				<button id="sp-print-delegation-button-save"
+					class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon">
+					<wicket:message key="button-save" />
+				</button>
+
+
+				<a href="#" data-rel="back" data-direction="reverse"
+					class="ui-btn ui-btn-inline ui-btn-no-icon">
+					<wicket:message key="button-close" />
+				</a>
+			</div>
+		</li>
+	</ul>
+
+	<ul id="sp-print-delegation-edit-area" data-role="listview"
+		data-inset="true" class="ui-mini">
+		<li>
+			<fieldset data-role="controlgroup" data-type="horizontal">
+
+				<label for="sp-print-delegation-edit-radio-add-groups">
+					<wicket:message key="label-add-groups" />
+				</label>
+				<input type="radio" name="sp-print-delegation-edit-radio"
+					id="sp-print-delegation-edit-radio-add-groups" checked />
+
+				<label for="sp-print-delegation-edit-radio-add-users">
+					<wicket:message key="label-add-users" />
+				</label>
+				<input type="radio" name="sp-print-delegation-edit-radio"
+					id="sp-print-delegation-edit-radio-add-users" />
+
+				<wicket:remove>
+					<!-- 
         <label for="sp-print-delegation-edit-radio-edit"><wicket:message key="label-edit"/></label>
         <input type="radio" name="sp-print-delegation-edit-radio" id="sp-print-delegation-edit-radio-edit" />
---></wicket:remove>
+-->
+				</wicket:remove>
 
-    </fieldset>
+			</fieldset>
 
-    <table width="100%" cellpadding="5">
-        <tr>
-            <td valign="top" width="50%">
-                <div class="sp-print-delegation-mode-add-groups">
-                    <wicket:fragment wicket:id="quicksearch-user-groups"/>
-                </div>
-            </td>
-            <td valign="top">
-                <div class="sp-print-delegation-mode-add-users">
-                    <wicket:fragment wicket:id="quicksearch-users"/>
-	            </div>
-            </td>
-        </tr>
-        <tr>  
-            <td><label><wicket:message key="header-account"/></label>
-                <fieldset data-role="controlgroup" data-type="horizontal">
-                    <label for="sp-print-delegation-select-account-group"><wicket:message key="label-group"/></label>
-                        <input type="radio" name="sp-print-delegation-select-account-radio" 
-                            value="[enum value]" wicket:id="radio-account-group" id="sp-print-delegation-select-account-group" checked /> 
-                    <label for="sp-print-delegation-select-account-user"><wicket:message key="label-user"/></label>
-                        <input type="radio" name="sp-print-delegation-select-account-radio" 
-                            value="[enum value]" wicket:id="radio-account-user" id="sp-print-delegation-select-account-user" />
-                    <label for="sp-print-delegation-select-account-shared"><wicket:message key="label-shared"/></label>
-                        <input type="radio" name="sp-print-delegation-select-account-radio"
-                            value="[enum value]" wicket:id="radio-account-shared" id="sp-print-delegation-select-account-shared" />
-                </fieldset>
-            </td>
-            <td><br/>
-                <button id="sp-print-delegation-button-apply" class="sp-print-delegation-mode-edit ui-btn ui-btn-inline">
-                    <wicket:message key="button-apply"/></button>
-                <button id="sp-print-delegation-button-add" class="sp-print-delegation-mode-add ui-btn ui-btn-inline">
-                    <wicket:message key="button-add"/></button>
-                <a href="#" data-rel="back" data-direction="reverse" 
-                    class="ui-btn ui-btn-inline ui-btn-no-icon"><wicket:message key="button-close"/></a>
-            </td>
-        </tr>
-        <tr class="sp-print-delegation-select-shared-account">  
-            <td>
-                <wicket:fragment wicket:id="quicksearch-shared-account"/>
-            </td>
-         </tr>
-    </table>
-</li>    
-</ul>
-    
-</div>                       
+			<table width="100%" cellpadding="5">
+				<tr>
+					<td valign="top" width="50%">
+						<div class="sp-print-delegation-mode-add-groups">
+							<wicket:fragment wicket:id="quicksearch-user-groups" />
+						</div>
+					</td>
+					<td valign="top">
+						<div class="sp-print-delegation-mode-add-users">
+							<wicket:fragment wicket:id="quicksearch-users" />
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>
+							<wicket:message key="header-account" />
+						</label>
+						<fieldset data-role="controlgroup" data-type="horizontal">
+							<label for="sp-print-delegation-select-account-group">
+								<wicket:message key="label-group" />
+							</label>
+							<input type="radio"
+								name="sp-print-delegation-select-account-radio"
+								value="[enum value]" wicket:id="radio-account-group"
+								id="sp-print-delegation-select-account-group" checked />
+							<label for="sp-print-delegation-select-account-user">
+								<wicket:message key="label-user" />
+							</label>
+							<input type="radio"
+								name="sp-print-delegation-select-account-radio"
+								value="[enum value]" wicket:id="radio-account-user"
+								id="sp-print-delegation-select-account-user" />
+							<label for="sp-print-delegation-select-account-shared">
+								<wicket:message key="label-shared" />
+							</label>
+							<input type="radio"
+								name="sp-print-delegation-select-account-radio"
+								value="[enum value]" wicket:id="radio-account-shared"
+								id="sp-print-delegation-select-account-shared" />
+						</fieldset>
+					</td>
+					<td>
+						<br />
+						<button id="sp-print-delegation-button-apply"
+							class="sp-print-delegation-mode-edit ui-btn ui-btn-inline">
+							<wicket:message key="button-apply" />
+						</button>
+						<button id="sp-print-delegation-button-add"
+							class="sp-print-delegation-mode-add ui-btn ui-btn-inline">
+							<wicket:message key="button-add" />
+						</button>
+						<a href="#" data-rel="back" data-direction="reverse"
+							class="ui-btn ui-btn-inline ui-btn-no-icon">
+							<wicket:message key="button-close" />
+						</a>
+					</td>
+				</tr>
+				<tr class="sp-print-delegation-select-shared-account">
+					<td>
+						<wicket:fragment wicket:id="quicksearch-shared-account" />
+					</td>
+				</tr>
+			</table>
+		</li>
+	</ul>
 
-<wicket:remove><!-- 
+</div>
+
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>
-<div data-role="popup" data-dismissible="true" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-dismissible="true" data-position-to="window"
+	class="sp-msg-popup ui-content" />

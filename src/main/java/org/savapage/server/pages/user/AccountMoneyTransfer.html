@@ -1,50 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <input type="hidden" id="money-transfer-gateway"
-    wicket:id="money-transfer-gateway" data-payment-gateway=""
-    data-payment-method="" />
+	wicket:id="money-transfer-gateway" data-payment-gateway=""
+	data-payment-method="" />
 
-<table border="0" >
-<tr>
-<td style="padding-right: 10px;">
-<img wicket:id="img-payment-method" src="" />
-</td>
-<td valign="middle">
+<table border="0">
+	<tr>
+		<td style="padding-right: 10px;">
+			<img wicket:id="img-payment-method" src="" />
+		</td>
+		<td valign="middle">
 
-    <span class="sp-txt-info sp-txt-wrap" wicket:id="prompt-transfer-money" />
-    
-    <wicket:enclosure child="payment-min-amount">
-    <div class="sp-txt-valid sp-txt-wrap" wicket:id="payment-min-amount" />
-    </wicket:enclosure>
-    
-    <wicket:enclosure child="payment-costs">
-    <div class="sp-txt-warn sp-txt-wrap" wicket:id="payment-costs" />
-    </wicket:enclosure>
-    
-</td>
-</tr>
+			<span class="sp-txt-info sp-txt-wrap"
+				wicket:id="prompt-transfer-money" />
+
+			<wicket:enclosure child="payment-min-amount">
+				<div class="sp-txt-valid sp-txt-wrap" wicket:id="payment-min-amount" />
+			</wicket:enclosure>
+
+			<wicket:enclosure child="payment-costs">
+				<div class="sp-txt-warn sp-txt-wrap" wicket:id="payment-costs" />
+			</wicket:enclosure>
+
+		</td>
+	</tr>
 </table>
 
 <table>
 	<tr>
-		<td><span wicket:id="currency-symbol" />&nbsp;</td>
-		<td width="80px"><input tabindex="2" type="text"
-			style="text-align: right;" id="money-transfer-main" value=""
-			maxlength="3" pattern="[0-9]*" /></td>
+		<td>
+			<span wicket:id="currency-symbol" />&nbsp;
+		</td>
+		<td width="80px">
+			<input tabindex="2" type="text" style="text-align: right;"
+				id="money-transfer-main" value="" maxlength="3" pattern="[0-9]*" />
+		</td>
 		<td wicket:id="decimal-separator" />
-		<td width="50px"><input tabindex="2" type="text"
-			id="money-transfer-cents" value="00" maxlength="2" pattern="[0-9]*" />
+		<td width="50px">
+			<input tabindex="2" type="text" id="money-transfer-cents" value="00"
+				maxlength="2" pattern="[0-9]*" />
 		</td>
 	</tr>
 </table>
 
 <div>
-    <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-action" id="button-money-transfer">
-        <wicket:message key="button-start"/>
-    </a>
-    <a href="#" data-rel="back" data-direction="reverse" 
-        class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-        <wicket:message key="button-back"/>        
-    </a>
+	<a href="#"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-action"
+		id="button-money-transfer">
+		<wicket:message key="button-start" />
+	</a>
+	<a href="#" data-rel="back" data-direction="reverse"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+		<wicket:message key="button-back" />
+	</a>
 
-</div>   
+</div>

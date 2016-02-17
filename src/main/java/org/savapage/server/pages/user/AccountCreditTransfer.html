@@ -1,61 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?xml version="1.0" encoding="UTF-8"?>
-
-<wicket:remove><!-- 
-<imput type="text" autofocus
-autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
---></wicket:remove>  
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <div data-role="header" data-theme="b">
-    <h1><wicket:message key="title"/></h1>
+	<h1>
+		<wicket:message key="title" />
+	</h1>
 </div>
 
 <div class="ui-content">
 
-    <p><div class="sp-txt-valid">
-        <wicket:message key="prompt-available"/>: <span id="credit-transfer-available"/>                
-    </div></p>
+	<p>
+	<div class="sp-txt-valid">
+		<wicket:message key="prompt-available" />
+		: <span id="credit-transfer-available" />
+	</div>
+	</p>
 
-    <label><wicket:message key="prompt-amount"/></label>
-    
+	<label>
+		<wicket:message key="prompt-amount" />
+	</label>
+
 	<table>
-	    <tr>
-	        <td><span wicket:id="currency-symbol" />&nbsp;</td>
-	        <td width="80px">
-	           <input tabindex="1" type="text" id="money-credit-transfer-main" value=""
-	               style="text-align: right;" maxlength="3" pattern="[0-9]*" /></td>
-	        <td wicket:id="decimal-separator" />
-	        <td width="50px">
-	           <input tabindex="1" type="text" id="money-credit-transfer-cents" 
-	               value="00" maxlength="2" pattern="[0-9]*" />
-            </td>
-	    </tr>
+		<tr>
+			<td>
+				<span wicket:id="currency-symbol" />&nbsp;
+			</td>
+			<td width="80px">
+				<input tabindex="1" type="text" id="money-credit-transfer-main"
+					value="" style="text-align: right;" maxlength="3" pattern="[0-9]*" />
+			</td>
+			<td wicket:id="decimal-separator" />
+			<td width="50px">
+				<input tabindex="1" type="text" id="money-credit-transfer-cents"
+					value="00" maxlength="2" pattern="[0-9]*" />
+			</td>
+		</tr>
 	</table>
 
-        <label for="money-credit-transfer-user"><wicket:message key="prompt-to-user"/></label>
-        <input type="text" id="money-credit-transfer-user" value=""  data-clear-btn="true"   
-           autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="2" />
+	<label for="money-credit-transfer-user">
+		<wicket:message key="prompt-to-user" />
+	</label>
+	<input type="text" id="money-credit-transfer-user" value=""
+		data-clear-btn="true" autocorrect="off" autocapitalize="off"
+		spellcheck="false" tabindex="2" />
 
-<wicket:enclosure child="prompt-comment">
-        <label wicket:id="prompt-comment" for="money-credit-transfer-comment"/>
-        <input type="text" id="money-credit-transfer-comment" value=""  data-clear-btn="true"   
-           autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="3" />
-</wicket:enclosure>
+	<wicket:enclosure child="prompt-comment">
+		<label wicket:id="prompt-comment" for="money-credit-transfer-comment" />
+		<input type="text" id="money-credit-transfer-comment" value=""
+			data-clear-btn="true" autocorrect="off" autocapitalize="off"
+			spellcheck="false" tabindex="3" />
+	</wicket:enclosure>
 
-    <div>
-	    <a href="#" id="button-transfer-credit-ok" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" tabindex="4" >
-	        <wicket:message key="button-transfer"/>
-	    </a>
-	       
-	    <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" tabindex="4" >
-	        <wicket:message key="button-back"/>        
-	    </a>
-    </div>
-    
+	<div>
+		<a href="#" id="button-transfer-credit-ok"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+			tabindex="4">
+			<wicket:message key="button-transfer" />
+		</a>
+
+		<a href="#" data-rel="back" data-direction="reverse"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+			tabindex="4">
+			<wicket:message key="button-back" />
+		</a>
+	</div>
+
 </div>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />

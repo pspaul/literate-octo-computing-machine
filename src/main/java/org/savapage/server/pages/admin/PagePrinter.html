@@ -1,93 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wicket:remove><!-- 
-<imput type="text" autofocus
-autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
---></wicket:remove>  
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <div class="ui-content" id="content-printer">
 
-   <ul data-role="listview" data-inset="true">
+	<ul data-role="listview" data-inset="true">
 
-        <li data-role="list-divider" id="sp-printer-page-name" data-theme="b"/>
+		<li data-role="list-divider" id="sp-printer-page-name" data-theme="b" />
 
-        <li>
-            <label for="printer-displayname"><wicket:message key="printer-displayname"/></label>
-            <input type="text" id="printer-displayname" value="" maxlength="128" autofocus
-				autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+		<li>
+			<label for="printer-displayname">
+				<wicket:message key="printer-displayname" />
+			</label>
+			<input type="text" id="printer-displayname" value="" maxlength="128"
+				autofocus autocomplete="off" autocorrect="off" autocapitalize="off"
+				spellcheck="false" />
 
-            <label for="printer-location"><wicket:message key="printer-location"/></label>
-            <input type="text" id="printer-location" value="" maxlength="255"
-                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+			<label for="printer-location">
+				<wicket:message key="printer-location" />
+			</label>
+			<input type="text" id="printer-location" value="" maxlength="255"
+				autocomplete="off" autocorrect="off" autocapitalize="off"
+				spellcheck="false" />
 
-            <label for="printer-printergroups"><wicket:message key="printer-groups"/></label>
-            <input type="text" id="printer-printergroups" value="" maxlength="128" 
-                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>            
+			<label for="printer-printergroups">
+				<wicket:message key="printer-groups" />
+			</label>
+			<input type="text" id="printer-printergroups" value=""
+				maxlength="128" autocomplete="off" autocorrect="off"
+				autocapitalize="off" spellcheck="false" />
 
-            <fieldset data-role="controlgroup" data-mini="false">				
-				<label for="printer-disabled"><wicket:message key="printer-disabled"/></label>
+			<fieldset data-role="controlgroup" data-mini="false">
+				<label for="printer-disabled">
+					<wicket:message key="printer-disabled" />
+				</label>
 				<input type="checkbox" id="printer-disabled" value="0" />
-	
-	            <label for="printer-internal"><wicket:message key="printer-internal"/></label>
-	            <input type="checkbox" id="printer-internal" value="0" />						
-            </fieldset>
-            			
-            <div class="printer-not-present">
-                <label for="printer-deleted"><wicket:message key="printer-deleted"/></label>
-                <input type="checkbox" id="printer-deleted" value="0"/>
-            </div>
+
+				<label for="printer-internal">
+					<wicket:message key="printer-internal" />
+				</label>
+				<input type="checkbox" id="printer-internal" value="0" />
+			</fieldset>
+
+			<div class="printer-not-present">
+				<label for="printer-deleted">
+					<wicket:message key="printer-deleted" />
+				</label>
+				<input type="checkbox" id="printer-deleted" value="0" />
+			</div>
 		</li>
-        <li>    
-            <div data-role="controlgroup" data-type="horizontal">
-                <a href="#" id="button-save-printer" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" tabindex="100">
-                    <wicket:message key="button-apply"/></a>
-            
-                <a href="#" data-rel="back" data-direction="reverse" tabindex="101"
-                    class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"><wicket:message
-                        key="button-cancel"/></a>
-            </div>                  
-        </li>
-    </ul>
-    
-    <wicket:remove><!-- 
+		<li>
+			<div data-role="controlgroup" data-type="horizontal">
+				<a href="#" id="button-save-printer"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+					tabindex="100">
+					<wicket:message key="button-apply" />
+				</a>
+
+				<a href="#" data-rel="back" data-direction="reverse" tabindex="101"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+					<wicket:message key="button-cancel" />
+				</a>
+			</div>
+		</li>
+	</ul>
+
+	<wicket:remove>
+		<!-- 
     To be filled by JavaScript: see PrinterMediaSourceAddin.java/html  
-    --></wicket:remove>  
-   <div id="sp-printer-media-source-addin" data-role="listview" data-inset="true"/>
+    -->
+	</wicket:remove>
+	<div id="sp-printer-media-source-addin" data-role="listview"
+		data-inset="true" />
 
-    <wicket:remove><!-- 
+	<wicket:remove>
+		<!-- 
     To be filled by JavaScript: see PrinterAccountingAddin.java/html  
-    --></wicket:remove>  
-   <div id="sp-printer-accounting-addin" data-role="listview" data-inset="true"/>
+    -->
+	</wicket:remove>
+	<div id="sp-printer-accounting-addin" data-role="listview"
+		data-inset="true" />
 
-   <ul data-role="listview" data-inset="true" class="printer-not-present">
-   
-        <li data-role="list-divider" data-theme="b"><wicket:message key="printer-rename"/></li>
-        
-        <li>
-            <div class="sp-txt-wrap"><wicket:message key="printer-rename-note"/></div>
-            
-            <p/>
-            
-			<label for="printer-newname"><wicket:message key="printer-newname"/></label> 
+	<ul data-role="listview" data-inset="true" class="printer-not-present">
+
+		<li data-role="list-divider" data-theme="b">
+			<wicket:message key="printer-rename" />
+		</li>
+
+		<li>
+			<div class="sp-txt-wrap">
+				<wicket:message key="printer-rename-note" />
+			</div>
+
+			<p />
+
+			<label for="printer-newname">
+				<wicket:message key="printer-newname" />
+			</label>
 			<input type="text" id="printer-newname" value="" maxlength="128"
-			    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-            		
-			<label for="printer-rename-replace"><wicket:message key="printer-rename-replace"/></label>
+				autocomplete="off" autocorrect="off" autocapitalize="off"
+				spellcheck="false" />
+
+			<label for="printer-rename-replace">
+				<wicket:message key="printer-rename-replace" />
+			</label>
 			<input type="checkbox" id="printer-rename-replace" value="0" />
-	            
-            <div data-role="controlgroup" data-type="horizontal">
-	            <a href="#" id="button-rename-printer" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-	               <wicket:message key="button-rename"/>
-	            </a>
-                <a href="#" data-rel="back" data-direction="reverse"
-                    class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"><wicket:message
-                        key="button-cancel"/></a>
-            </div>
-        </li>
-    </ul>
-    
+
+			<div data-role="controlgroup" data-type="horizontal">
+				<a href="#" id="button-rename-printer"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+					<wicket:message key="button-rename" />
+				</a>
+				<a href="#" data-rel="back" data-direction="reverse"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+					<wicket:message key="button-cancel" />
+				</a>
+			</div>
+		</li>
+	</ul>
+
 </div>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />

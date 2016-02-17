@@ -1,21 +1,44 @@
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
+
 <div data-role="header" id="header-accounttrx">
-    <p><center><wicket:message key="title"/></center></p>
+	<p>
+	<center>
+		<wicket:message key="title" />
+	</center>
+	</p>
 </div>
 
 <div class="ui-content" id="content-accounttrx"></div>
 
 <div data-role="footer" id="footer-accounttrx" data-position="fixed">
 	<div data-role="controlgroup" data-type="horizontal">
-        <a href="#page-main" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-            <wicket:message key="button-back"/>
-        </a>
-        <a href="#" id="button-goto-doclog" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
-            <wicket:message key="button-doclog"/>
-        </a>
+		<a href="#page-main"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+			<wicket:message key="button-back" />
+		</a>
+		<a href="#" id="button-goto-doclog"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
+			<wicket:message key="button-doclog" />
+		</a>
 	</div>
 </div>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />

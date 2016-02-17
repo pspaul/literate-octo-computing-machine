@@ -1,23 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
-<span class="sp-txt-info sp-txt-wrap"><wicket:message key="prompt-transfer-bitcoin" /></span>
+<span class="sp-txt-info sp-txt-wrap"><wicket:message
+		key="prompt-transfer-bitcoin" /></span>
 <br />
 
 <input type="hidden" id="money-transfer-gateway"
 	wicket:id="money-transfer-gateway" value="?" />
 
-<img style="display: block; margin-left: auto; margin-right: auto; "
+<img style="display: block; margin-left: auto; margin-right: auto;"
 	src="" wicket:id="qr-code" />
 
-<center><span style="font-size: 10pt;" wicket:id="bitcoin-trx-id"/></center>
-<p style="font-size: 10pt;" class="sp-txt-info sp-text-wrap"><wicket:message key="prompt-onetime-use"/></p>
-<br/>
+<center>
+	<span style="font-size: 10pt;" wicket:id="bitcoin-trx-id" />
+</center>
+<p style="font-size: 10pt;" class="sp-txt-info sp-text-wrap">
+	<wicket:message key="prompt-onetime-use" />
+</p>
+<br />
 <div>
-	<a href="bitcoin:adress?message=the%20message" wicket:id="bitcoin-uri-button"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-action"/> 
-			
+	<a href="bitcoin:adress?message=the%20message"
+		wicket:id="bitcoin-uri-button"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-action" />
+
 	<a href="#" data-rel="back" data-direction="reverse"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-			key="button-back" />
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+		<wicket:message key="button-back" />
 	</a>
 </div>

@@ -1,26 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<wicket:remove><!-- 
-<imput type="text"
-autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
---></wicket:remove>  
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <div data-role="header">
-    <h1><wicket:message key="title"/></h1>
+	<h1>
+		<wicket:message key="title" />
+	</h1>
 </div>
 
 <div class="ui-content">
 
-    <h3 id="sp-not-authorized"><wicket:message key="msg-not-authorized"/></h3>
-    
-    <p>
-	    <a href="#" class="ui-btn ui-btn-inline" id="sp-button-continue-after-expire">
-	        <wicket:message key="button-continue"/>
-	    </a>
-    </p>
+	<h3 id="sp-not-authorized">
+		<wicket:message key="msg-not-authorized" />
+	</h3>
+
+	<p>
+		<a href="#" class="ui-btn ui-btn-inline"
+			id="sp-button-continue-after-expire">
+			<wicket:message key="button-continue" />
+		</a>
+	</p>
 </div>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />

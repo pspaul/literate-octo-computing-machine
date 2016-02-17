@@ -1,85 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <span style="display: none;" class="json-rsp" wicket:id="json-rsp"></span>
 
 <wicket:fragment wicket:id="nav-bar-1"></wicket:fragment>
 <br />
 <div>
-    <ul data-role="listview" data-filter="false">
-        <li wicket:id="log-entry-view">
-            
-            <h3>
-                <wicket:enclosure child="trxImage">
-                    <img height="28" wicket:id="trxImage"/>&nbsp;
-                </wicket:enclosure>
-                <span wicket:id="trxType"/>
-                <wicket:enclosure child="extSupplier">
-                    &bull; <span wicket:id="extSupplier"/>
-                </wicket:enclosure>                                        
-                <wicket:enclosure child="receiptNumber">
-                    &bull; <span wicket:id="receiptNumber"/>
-                </wicket:enclosure>                                        
-            </h3>
+	<ul data-role="listview" data-filter="false">
+		<li wicket:id="log-entry-view">
 
-            <div class="sp-txt-wrap">            
-            
-	            <span wicket:id="balance"/> &bull; <span wicket:id="amount"/>
-	            
-	            <wicket:enclosure child="paymentMethod">
-	                &bull; <span wicket:id="paymentMethod"/>
-	            </wicket:enclosure>
-	            
-	            <wicket:enclosure child="paymentMethodAddress">
-	                &bull; <span wicket:id="paymentMethodAddress"/>
-	            </wicket:enclosure>
-	            
-	            <wicket:enclosure child="extId">
-	                &bull; <span wicket:id="extId"/>
-	            </wicket:enclosure>
-	
-	            <wicket:enclosure child="bitcoinAddress">
-	                &bull; <a wicket:id="bitcoinAddress" target="_blank"/>
-	            </wicket:enclosure>
-	            
-	            <wicket:enclosure child="bitcoinTrxHash">
-	                &bull; <a wicket:id="bitcoinTrxHash" target="_blank"/>
-	            </wicket:enclosure>
-		            
-	            <wicket:enclosure child="printOut">
-	                &bull; <span wicket:id="printOut"/>
-	            </wicket:enclosure>
-	            
-                <wicket:enclosure child="extStatus">
-                    &bull; <span wicket:id="extStatus"/>
-                </wicket:enclosure>                                
-                
-	            <wicket:enclosure child="comment">
-	                <div style="font-style: italic;" wicket:id="comment"></div>
-	            </wicket:enclosure>
-	
-	            <wicket:enclosure child="extAmount">
-	                &bull; <span style="font-size: small;" wicket:id="extAmount"/>
-	            </wicket:enclosure>
-	            
-                <wicket:enclosure child="extDetails">
-                    &bull; <span style="font-size: small;" wicket:id="extDetails"/>
+			<h3>
+				<wicket:enclosure child="trxImage">
+					<img height="28" wicket:id="trxImage" />&nbsp;
                 </wicket:enclosure>
-                
-	            <wicket:enclosure child="delegate">
-	                &bull; <span style="font-size: small;" wicket:id="delegate"/>
-	            </wicket:enclosure>
-	            
-	            <wicket:enclosure child="downloadReceipt">
-	                <div>
-	                    <a href="#" data-savapage="the-db-id"
-	                        class="sp-download-receipt ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d"
-	                        wicket:id="downloadReceipt"/>
-	                </div>                    
-	            </wicket:enclosure>
-            </div>            
-            <p class="ui-li-aside"><span wicket:id="trxDate"/><br><span wicket:id="trxActor"/></p>
-        </li>
-    </ul>
+				<span wicket:id="trxType" />
+				<wicket:enclosure child="extSupplier">
+                    &bull; <span wicket:id="extSupplier" />
+				</wicket:enclosure>
+				<wicket:enclosure child="receiptNumber">
+                    &bull; <span wicket:id="receiptNumber" />
+				</wicket:enclosure>
+			</h3>
+
+			<div class="sp-txt-wrap">
+
+				<span wicket:id="balance" /> &bull; <span wicket:id="amount" />
+
+				<wicket:enclosure child="paymentMethod">
+	                &bull; <span wicket:id="paymentMethod" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="paymentMethodAddress">
+	                &bull; <span wicket:id="paymentMethodAddress" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="extId">
+	                &bull; <span wicket:id="extId" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="bitcoinAddress">
+	                &bull; <a wicket:id="bitcoinAddress" target="_blank" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="bitcoinTrxHash">
+	                &bull; <a wicket:id="bitcoinTrxHash" target="_blank" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="printOut">
+	                &bull; <span wicket:id="printOut" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="extStatus">
+                    &bull; <span wicket:id="extStatus" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="comment">
+					<div style="font-style: italic;" wicket:id="comment"></div>
+				</wicket:enclosure>
+
+				<wicket:enclosure child="extAmount">
+	                &bull; <span style="font-size: small;"
+						wicket:id="extAmount" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="extDetails">
+                    &bull; <span style="font-size: small;"
+						wicket:id="extDetails" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="delegate">
+	                &bull; <span style="font-size: small;"
+						wicket:id="delegate" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="downloadReceipt">
+					<div>
+						<a href="#" data-savapage="the-db-id"
+							class="sp-download-receipt ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d"
+							wicket:id="downloadReceipt" />
+					</div>
+				</wicket:enclosure>
+			</div>
+			<p class="ui-li-aside">
+				<span wicket:id="trxDate" />
+				<br>
+				<span wicket:id="trxActor" />
+			</p>
+		</li>
+	</ul>
 </div>
 <p>&nbsp;</p>
 <wicket:fragment wicket:id="nav-bar-2"></wicket:fragment>

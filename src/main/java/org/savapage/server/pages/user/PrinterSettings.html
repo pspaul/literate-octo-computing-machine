@@ -1,62 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <div data-role="header" data-theme="b">
-    <h1 id="title-printer-settings"></h1>
+	<h1 id="title-printer-settings"></h1>
 </div>
 
 <div class="ui-content" id="print-settings">
 
-    <ul data-role="listview" data-inset="true">
-    
-        <li>
-            <div data-role="controlgroup" data-type="horizontal" class="ui-mini">
-                <button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-sources-info"/>
-                <button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info"/>
-             </div>
-        </li>
-                            
-        <li class="sp-print-job-scaling">
-        
-            <wicket:message key="page-scaling" />
-                            
-            <div class="ui-mini">
-            
-				<fieldset data-role="controlgroup" data-type="horizontal">
-				
-				    <label for="" wicket:id="page-scaling-crop-label" />
-				    <input type="radio" name="" id="" wicket:id="page-scaling-crop" />
-				    
-				    <label for="" wicket:id="page-scaling-expand-label" />
-				    <input type="radio" name="" id="" wicket:id="page-scaling-expand" />
-				    
-				    <label for="" wicket:id="page-scaling-shrink-label" />
-				    <input type="radio" name="" id="" wicket:id="page-scaling-shrink" />
-				</fieldset>
-           
-		    </div>
-	    
-		</li>
-		
-        <li>    
-		    <div id="printer-options">
-		    <wicket:remove><!--
-		    Placeholder for: <select id="print-opt-i" data-native-menu="false"></select>
-		     --> </wicket:remove>
-		    </div>
-		</li>    
-    </ul>
+	<ul data-role="listview" data-inset="true">
 
-    <a href="#" data-rel="back" data-direction="reverse" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-        <wicket:message key="button-apply"/>
-    </a>
-    
-    <a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle" id="button-print-settings-default">
-        <wicket:message key="button-default"/>
-    </a>
-            
+		<li>
+			<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
+				<button
+					class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-sources-info" />
+				<button
+					class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info" />
+			</div>
+		</li>
+
+		<li class="sp-print-job-scaling">
+
+			<wicket:message key="page-scaling" />
+
+			<div class="ui-mini">
+
+				<fieldset data-role="controlgroup" data-type="horizontal">
+
+					<label for="" wicket:id="page-scaling-crop-label" />
+					<input type="radio" name="" id="" wicket:id="page-scaling-crop" />
+
+					<label for="" wicket:id="page-scaling-expand-label" />
+					<input type="radio" name="" id="" wicket:id="page-scaling-expand" />
+
+					<label for="" wicket:id="page-scaling-shrink-label" />
+					<input type="radio" name="" id="" wicket:id="page-scaling-shrink" />
+				</fieldset>
+
+			</div>
+
+		</li>
+
+		<li>
+			<div id="printer-options">
+				<wicket:remove>
+					<!--
+		    Placeholder for: <select id="print-opt-i" data-native-menu="false"></select>
+		     -->
+				</wicket:remove>
+			</div>
+		</li>
+	</ul>
+
+	<a href="#" data-rel="back" data-direction="reverse"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+		<wicket:message key="button-apply" />
+	</a>
+
+	<a href="#"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+		id="button-print-settings-default">
+		<wicket:message key="button-default" />
+	</a>
+
 </div>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />

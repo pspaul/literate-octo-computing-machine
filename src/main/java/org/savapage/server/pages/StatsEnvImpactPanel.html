@@ -1,43 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <wicket:panel>
-    <li data-role="list-divider"><wicket:message key="title-environmental-impact"/></li>
-    
-    <li>
-		<wicket:remove><!--
+	<li data-role="list-divider">
+		<wicket:message key="title-environmental-impact" />
+	</li>
+
+	<li>
+		<wicket:remove>
+			<!--
 		+======================================================================+
 		| http://api.jquerymobile.com/table-reflow/
         |  ... to use pre-configured  breakpoint, add the ui-responsive class 
         |  to the table to convert from the stacked presentation to a tabular 
         |  presentation at 560px (35em)		
 		+======================================================================+
-		--></wicket:remove>  
-        <table data-role="table" data-mode="reflow" class="ui-responsive table-stroke">
-            <thead>
-	            <tr>
-                    <th data-priority="1"/>
-                    <th data-priority="2"/>
-	            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th><wicket:message key="environmental-impact-paper"/></th>
-                    <td class="sp-txt-info" ><span wicket:id="total-esu-printed-out"/> SU</td>
-                </tr>
-	            <tr>
-	                <th><wicket:message key="environmental-impact-trees"/></th>
-	                <td class="sp-txt-info" wicket:id="environmental-impact-trees"/>
-	            </tr>
-	            <tr>
-	                <th>CO<sub>2</sub></th>
-	                <td class="sp-txt-info" wicket:id="environmental-impact-co2"/>
-	            </tr>
-	            <tr>
-	                <th><wicket:message key="environmental-impact-energy"/></th>
-	                <td class="sp-txt-info" wicket:id="environmental-impact-energy"/>
-	            </tr>
-            </tbody>
-        </table>
-    </li>
+		-->
+		</wicket:remove>
+		<table data-role="table" data-mode="reflow"
+			class="ui-responsive table-stroke">
+			<thead>
+				<tr>
+					<th data-priority="1" />
+					<th data-priority="2" />
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>
+						<wicket:message key="environmental-impact-paper" />
+					</th>
+					<td class="sp-txt-info">
+						<span wicket:id="total-esu-printed-out" /> SU
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<wicket:message key="environmental-impact-trees" />
+					</th>
+					<td class="sp-txt-info" wicket:id="environmental-impact-trees" />
+				</tr>
+				<tr>
+					<th>
+						CO<sub>2</sub>
+					</th>
+					<td class="sp-txt-info" wicket:id="environmental-impact-co2" />
+				</tr>
+				<tr>
+					<th>
+						<wicket:message key="environmental-impact-energy" />
+					</th>
+					<td class="sp-txt-info" wicket:id="environmental-impact-energy" />
+				</tr>
+			</tbody>
+		</table>
+	</li>
 
 </wicket:panel>

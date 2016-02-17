@@ -1,37 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <wicket:remove>
 	<!-- 
-<imput type="text" autofocus
-autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
--->
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
 </wicket:remove>
 
 <div data-role="header" data-theme="b">
-	<h1><wicket:message key="title-user-group"/></h1>
+	<h1>
+		<wicket:message key="title-user-group" />
+	</h1>
 </div>
 
 <div class="ui-content" id="content-user-group">
 
 	<ul data-role="listview" data-inset="true">
 
-		<li data-role="list-divider"><span class="sp-txt-wrap"
-			id="user-group-header" /></li>
+		<li data-role="list-divider">
+			<span class="sp-txt-wrap" id="user-group-header" />
+		</li>
 
 		<li>
-		    <fieldset data-role="controlgroup" data-mini="true" id="sp-usergroup-edit-roles">
-		        <legend>Roles:</legend>
-		        <wicket:fragment wicket:id="ACLRoleEnumCheckboxes"/>
-		    </fieldset>		            
+			<fieldset data-role="controlgroup" data-mini="true"
+				id="sp-usergroup-edit-roles">
+				<legend>Roles:</legend>
+				<wicket:fragment wicket:id="ACLRoleEnumCheckboxes" />
+			</fieldset>
 		</li>
 	</ul>
 
 	<a href="#" id="sp-button-usergroup-save"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"> <wicket:message
-			key="button-ok" /></a> <a href="#" data-rel="back"
-		data-direction="reverse"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> 
-		  <wicket:message key="button-cancel" /></a>
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+		<wicket:message key="button-ok" />
+	</a>
+	<a href="#" data-rel="back" data-direction="reverse"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+		<wicket:message key="button-cancel" />
+	</a>
 
 </div>
 

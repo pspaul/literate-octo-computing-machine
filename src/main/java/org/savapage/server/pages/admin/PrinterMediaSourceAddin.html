@@ -1,32 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <wicket:enclosure child="printer-media-source-panel">
 
-<ul data-role="listview" data-inset="true">
+	<ul data-role="listview" data-inset="true">
 
-<li data-role="list-divider" data-theme="b"><wicket:message key="media-source"/></li>
-    
-<li>
-    <div wicket:id="cost-per-side"/>
-</li>
+		<li data-role="list-divider" data-theme="b">
+			<wicket:message key="media-source" />
+		</li>
 
-<li class="sp-printer-charge-media-sources">
-    <wicket:fragment wicket:id="printer-media-source-panel"/>
-</li>
+		<li>
+			<div wicket:id="cost-per-side" />
+		</li>
 
-<li>    
-     <div data-role="controlgroup" data-type="horizontal">     
-        <a href="#" id="button-save-printer-media-sources" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" 
-            tabindex="200">
-            <wicket:message key="button-apply"/>
-        </a>
-    
-        <a href="#" data-rel="back" data-direction="reverse" tabindex="201"
-            class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"><wicket:message
-                key="button-cancel"/></a>
-    </div>                  
-</li>
+		<li class="sp-printer-charge-media-sources">
+			<wicket:fragment wicket:id="printer-media-source-panel" />
+		</li>
 
-</ul>
+		<li>
+			<div data-role="controlgroup" data-type="horizontal">
+				<a href="#" id="button-save-printer-media-sources"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+					tabindex="200">
+					<wicket:message key="button-apply" />
+				</a>
+
+				<a href="#" data-rel="back" data-direction="reverse" tabindex="201"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+					<wicket:message key="button-cancel" />
+				</a>
+			</div>
+		</li>
+
+	</ul>
 
 </wicket:enclosure>

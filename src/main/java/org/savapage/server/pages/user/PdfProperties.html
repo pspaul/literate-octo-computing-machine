@@ -1,192 +1,286 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<wicket:remove><!-- 
-<imput type="text" autofocus
-autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
---></wicket:remove>  
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <div data-role="header" data-theme="b">
-    <h1><wicket:message key="title"/></h1>
+	<h1>
+		<wicket:message key="title" />
+	</h1>
 </div>
 
 <div class="ui-content" id="pdf-properties">
 
-    <ul data-role="listview" data-inset="true">
-    
-	    <li>
-            <div class="ui-field-contain">
-                <label data-mini="true" for="pdf-job-list"><wicket:message key="pdf-job-scope"/></label>
-    		    <select data-mini="true" id="pdf-job-list" data-icon="check" data-iconpos="left" data-native-menu="false"/>
-	       </div>
-            <div class="ui-field-contain">
-                <label for="pdf-title"><wicket:message key="pdf-title"/></label>
-                <input data-mini="true" type="text" name="pdf-title" id="pdf-title" data-clear-btn="true" value="" autofocus />
-            </div>
-            
-	        <div class="ui-field-contain">
-	            <label for="pdf-author"><wicket:message key="pdf-author"/></label>
-	            <input type="text" name="pdf-author" id="pdf-author" value="" data-clear-btn="true"
-	                autocomplete="off" autocorrect="off" spellcheck="false"/>
-	        </div>
-        
-	        <div data-mini="true" class="ui-field-contain">
-	            <label for="pdf-page-ranges"><wicket:message key="pdf-page-ranges"/></label>
-	            <input type="text" id="pdf-page-ranges" value="" pattern="[0-9]*" data-clear-btn="true"   
-	               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-	        </div>
-	                   
-            <div class="ui-field-contain">
-                <label data-mini="true" for="pdf-letterhead-list">
-                    <wicket:message key="prompt-letterhead"/>   
-                </label>
-                <select data-mini="true" id="pdf-letterhead-list" data-icon="check" data-iconpos="left" data-native-menu="false"></select>
-            </div>  
-                
-	        <div class="ui-field-contain">
-<wicket:enclosure child="pdf-ecoprint">
-                <label data-mini="true" for="pdf-ecoprint">
-                    &nbsp;&nbsp;<img height="12" src="/glyphicons/glyphicons_001_leaf.png"/>&nbsp;&nbsp;                
-                    <wicket:message key="pdf-ecoprint"/>
-                </label>
-                <input data-mini="true" type="checkbox" wicket:id="pdf-ecoprint" id="pdf-ecoprint" value="1"/>
-</wicket:enclosure>
-       
-                <label data-mini="true" for="pdf-remove-graphics">
-                    &nbsp;&nbsp;<img height="12" src="/glyphicons/glyphicons_092_tint.png"/>&nbsp;&nbsp;                
-                    <wicket:message key="pdf-remove-graphics"/>
-                </label>
-                <input data-mini="true" type="checkbox" id="pdf-remove-graphics" value="1"/>
-                
-            </div>
+	<ul data-role="listview" data-inset="true">
 
-	        <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini">
-				<wicket:remove><!-- 
+		<li>
+			<div class="ui-field-contain">
+				<label data-mini="true" for="pdf-job-list">
+					<wicket:message key="pdf-job-scope" />
+				</label>
+				<select data-mini="true" id="pdf-job-list" data-icon="check"
+					data-iconpos="left" data-native-menu="false" />
+			</div>
+			<div class="ui-field-contain">
+				<label for="pdf-title">
+					<wicket:message key="pdf-title" />
+				</label>
+				<input data-mini="true" type="text" name="pdf-title" id="pdf-title"
+					data-clear-btn="true" value="" autofocus />
+			</div>
+
+			<div class="ui-field-contain">
+				<label for="pdf-author">
+					<wicket:message key="pdf-author" />
+				</label>
+				<input type="text" name="pdf-author" id="pdf-author" value=""
+					data-clear-btn="true" autocomplete="off" autocorrect="off"
+					spellcheck="false" />
+			</div>
+
+			<div data-mini="true" class="ui-field-contain">
+				<label for="pdf-page-ranges">
+					<wicket:message key="pdf-page-ranges" />
+				</label>
+				<input type="text" id="pdf-page-ranges" value="" pattern="[0-9]*"
+					data-clear-btn="true" autocomplete="off" autocorrect="off"
+					autocapitalize="off" spellcheck="false" />
+			</div>
+
+			<div class="ui-field-contain">
+				<label data-mini="true" for="pdf-letterhead-list">
+					<wicket:message key="prompt-letterhead" />
+				</label>
+				<select data-mini="true" id="pdf-letterhead-list" data-icon="check"
+					data-iconpos="left" data-native-menu="false"></select>
+			</div>
+
+			<div class="ui-field-contain">
+				<wicket:enclosure child="pdf-ecoprint">
+					<label data-mini="true" for="pdf-ecoprint">
+						&nbsp;&nbsp;
+						<img height="12" src="/glyphicons/glyphicons_001_leaf.png" />
+						&nbsp;&nbsp;
+						<wicket:message key="pdf-ecoprint" />
+					</label>
+					<input data-mini="true" type="checkbox" wicket:id="pdf-ecoprint"
+						id="pdf-ecoprint" value="1" />
+				</wicket:enclosure>
+
+				<label data-mini="true" for="pdf-remove-graphics">
+					&nbsp;&nbsp;
+					<img height="12" src="/glyphicons/glyphicons_092_tint.png" />
+					&nbsp;&nbsp;
+					<wicket:message key="pdf-remove-graphics" />
+				</label>
+				<input data-mini="true" type="checkbox" id="pdf-remove-graphics"
+					value="1" />
+
+			</div>
+
+			<fieldset data-role="controlgroup" data-type="horizontal"
+				class="ui-mini">
+				<wicket:remove>
+					<!-- 
 	            <legend class="sp-txt-wrap">
 	                <wicket:message key="prompt-apply"/>
 	            </legend>
-				--></wicket:remove>  
-	    
-	            <input type="checkbox" id="pdf-apply-description" value="0"/> 
-	            <label for="pdf-apply-description"><wicket:message key="pdf-cat-descript"/></label>
-	    
-	            <input type="checkbox" id="pdf-apply-security" value="0"/> 
-	            <label for="pdf-apply-security"><wicket:message key="pdf-cat-security"/></label>
-	    
-	            <input type="checkbox" id="pdf-apply-passwords" value="0"/> 
-	            <label for="pdf-apply-passwords"><wicket:message key="pdf-cat-passwords"/></label>
-	                            
-	        </fieldset>
-        
-	    </li>
-    
-    <li>
-    
-	    <div data-role="collapsible-set" id="pdf-collapsible-set">
-	    
-		    <div data-role="collapsible" data-collapsed="true">
-		    
-			    <h3><wicket:message key="pdf-cat-descript"/></h3>
-			    
-                <label for="pdf-subject"><wicket:message key="pdf-subject"/></label>
-                <input class="sp-pdf-apply-src" type="text" name="pdf-subject" id="pdf-subject" data-clear-btn="true" value=""/>
-			    
-                <label for="pdf-keywords"><wicket:message key="pdf-keywords"/></label>
-		       	<input class="sp-pdf-apply-src" type="text" name="pdf-keywords" id="pdf-keywords" data-clear-btn="true" value=""
-			           autocapitalize="off"/>
-		        
-            </div>	        
-	    
-			<div data-role="collapsible" data-collapsed="true">
-			
-				<h3><wicket:message key="pdf-cat-security"/></h3>
-			
-		        <input type="checkbox" id="pdf-encryption" value="128" />
-		        <label for="pdf-encryption"><wicket:message key="pdf-encryption"/></label>
-			
-			    <div id="pdf-allow-block">
-			    
-				    <fieldset data-role="controlgroup" id="pdf-allow" data-type="vertical">
-				    
-				        <legend>
-				            <wicket:message key="pdf-actions-allowed"/>
-				        </legend>
-				    
-				       <input type="checkbox" id="pdf-allow-printing" value="0"/>
-				       <label for="pdf-allow-printing"><wicket:message key="pdf-allow-printing"/></label>
-				       
-				       <input type="checkbox" id="pdf-allow-degraded-printing" value="0"/>
-				       <label for="pdf-allow-degraded-printing"><wicket:message key="pdf-allow-degraded-printing"/></label>
-				       
-				       <input type="checkbox" id="pdf-allow-modify-contents" value="0"/>
-				       <label for="pdf-allow-modify-contents"><wicket:message key="pdf-allow-modify-contents"/></label>
-				
-				       <input type="checkbox" id="pdf-allow-modify-annotations" value="0"/>
-				       <label for="pdf-allow-modify-annotations"><wicket:message key="pdf-allow-modify-annotations"/></label>
-				
-				       <input type="checkbox" id="pdf-allow-assembly" value="0"/>
-				       <label for="pdf-allow-assembly"><wicket:message key="pdf-allow-assembly"/></label>
-				
-				       <input type="checkbox" id="pdf-allow-copy" value="0"/>
-				       <label for="pdf-allow-copy"><wicket:message key="pdf-allow-copy"/></label>
-				
-				       <input type="checkbox" id="pdf-allow-copy-for-access" value="0"/>
-				       <label for="pdf-allow-copy-for-access"><wicket:message key="pdf-allow-copy-for-access"/></label>
-				
-				    </fieldset>
-				    
-                    <div data-role="controlgroup" data-type="horizontal" class="ui-mini">
-                        <a href="#" id="button-pdf-allow-all" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-plus">
-                            <wicket:message key="button-pdf-allow-all"/>
-                        </a>
-                        <a href="#" id="button-pdf-allow-none" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-minus">
-                            <wicket:message key="button-pdf-allow-none"/>
-                        </a>
-                    </div>
-			    </div>
-			    
-		    </div>
-		
-		    <div data-role="collapsible" data-collapsed="true">
-		    
-			    <h3><wicket:message key="pdf-cat-passwords"/></h3>
-			
-			    <label for="pdf-pw-user"><wicket:message key="pdf-user-password"/></label>
-			    <input class="sp-pdf-apply-src" type="password" id="pdf-pw-user" maxlength="32" value="" data-clear-btn="true"/>
-	            		    
-   			    <label for="pdf-pw-user-c"><wicket:message key="pdf-password-confirm"/></label>
-       		    <input type="password" id="pdf-pw-user-c" maxlength="32" value="" data-clear-btn="true"/>
-			         
-   			    <label for="pdf-pw-owner"><wicket:message key="pdf-owner-password"/></label>
-	     	    <input class="sp-pdf-apply-src" type="password" id="pdf-pw-owner" maxlength="32" value="" data-clear-btn="true"/>
+				-->
+				</wicket:remove>
 
-			    <label for="pdf-pw-owner-c"><wicket:message key="pdf-password-confirm"/></label>
-   			    <input type="password" id="pdf-pw-owner-c" maxlength="32" value="" data-clear-btn="true"/>
-		    
-		    </div>
-	    
-	    </div>
-	
-    </li>
+				<input type="checkbox" id="pdf-apply-description" value="0" />
+				<label for="pdf-apply-description">
+					<wicket:message key="pdf-cat-descript" />
+				</label>
 
-    </ul>
-        
-    <div data-role="controlgroup" data-type="horizontal">
-	    <a href="#" id="button-pdf-download" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d">
-	        <wicket:message key="button-download"/></a>
-	        
-	    <a href="#" id="button-pdf-send" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-mail">
-	        <wicket:message key="button-send"/></a>
-	                    
-	    <a href="#" id="button-pdf-properties-default" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-	        <wicket:message key="button-default"/></a>
-	        
-	    <a href="#" data-rel="back" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-	        <wicket:message key="button-back"/></a>
+				<input type="checkbox" id="pdf-apply-security" value="0" />
+				<label for="pdf-apply-security">
+					<wicket:message key="pdf-cat-security" />
+				</label>
+
+				<input type="checkbox" id="pdf-apply-passwords" value="0" />
+				<label for="pdf-apply-passwords">
+					<wicket:message key="pdf-cat-passwords" />
+				</label>
+
+			</fieldset>
+
+		</li>
+
+		<li>
+
+			<div data-role="collapsible-set" id="pdf-collapsible-set">
+
+				<div data-role="collapsible" data-collapsed="true">
+
+					<h3>
+						<wicket:message key="pdf-cat-descript" />
+					</h3>
+
+					<label for="pdf-subject">
+						<wicket:message key="pdf-subject" />
+					</label>
+					<input class="sp-pdf-apply-src" type="text" name="pdf-subject"
+						id="pdf-subject" data-clear-btn="true" value="" />
+
+					<label for="pdf-keywords">
+						<wicket:message key="pdf-keywords" />
+					</label>
+					<input class="sp-pdf-apply-src" type="text" name="pdf-keywords"
+						id="pdf-keywords" data-clear-btn="true" value=""
+						autocapitalize="off" />
+
+				</div>
+
+				<div data-role="collapsible" data-collapsed="true">
+
+					<h3>
+						<wicket:message key="pdf-cat-security" />
+					</h3>
+
+					<input type="checkbox" id="pdf-encryption" value="128" />
+					<label for="pdf-encryption">
+						<wicket:message key="pdf-encryption" />
+					</label>
+
+					<div id="pdf-allow-block">
+
+						<fieldset data-role="controlgroup" id="pdf-allow"
+							data-type="vertical">
+
+							<legend>
+								<wicket:message key="pdf-actions-allowed" />
+							</legend>
+
+							<input type="checkbox" id="pdf-allow-printing" value="0" />
+							<label for="pdf-allow-printing">
+								<wicket:message key="pdf-allow-printing" />
+							</label>
+
+							<input type="checkbox" id="pdf-allow-degraded-printing" value="0" />
+							<label for="pdf-allow-degraded-printing">
+								<wicket:message key="pdf-allow-degraded-printing" />
+							</label>
+
+							<input type="checkbox" id="pdf-allow-modify-contents" value="0" />
+							<label for="pdf-allow-modify-contents">
+								<wicket:message key="pdf-allow-modify-contents" />
+							</label>
+
+							<input type="checkbox" id="pdf-allow-modify-annotations"
+								value="0" />
+							<label for="pdf-allow-modify-annotations">
+								<wicket:message key="pdf-allow-modify-annotations" />
+							</label>
+
+							<input type="checkbox" id="pdf-allow-assembly" value="0" />
+							<label for="pdf-allow-assembly">
+								<wicket:message key="pdf-allow-assembly" />
+							</label>
+
+							<input type="checkbox" id="pdf-allow-copy" value="0" />
+							<label for="pdf-allow-copy">
+								<wicket:message key="pdf-allow-copy" />
+							</label>
+
+							<input type="checkbox" id="pdf-allow-copy-for-access" value="0" />
+							<label for="pdf-allow-copy-for-access">
+								<wicket:message key="pdf-allow-copy-for-access" />
+							</label>
+
+						</fieldset>
+
+						<div data-role="controlgroup" data-type="horizontal"
+							class="ui-mini">
+							<a href="#" id="button-pdf-allow-all"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-plus">
+								<wicket:message key="button-pdf-allow-all" />
+							</a>
+							<a href="#" id="button-pdf-allow-none"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-minus">
+								<wicket:message key="button-pdf-allow-none" />
+							</a>
+						</div>
+					</div>
+
+				</div>
+
+				<div data-role="collapsible" data-collapsed="true">
+
+					<h3>
+						<wicket:message key="pdf-cat-passwords" />
+					</h3>
+
+					<label for="pdf-pw-user">
+						<wicket:message key="pdf-user-password" />
+					</label>
+					<input class="sp-pdf-apply-src" type="password" id="pdf-pw-user"
+						maxlength="32" value="" data-clear-btn="true" />
+
+					<label for="pdf-pw-user-c">
+						<wicket:message key="pdf-password-confirm" />
+					</label>
+					<input type="password" id="pdf-pw-user-c" maxlength="32" value=""
+						data-clear-btn="true" />
+
+					<label for="pdf-pw-owner">
+						<wicket:message key="pdf-owner-password" />
+					</label>
+					<input class="sp-pdf-apply-src" type="password" id="pdf-pw-owner"
+						maxlength="32" value="" data-clear-btn="true" />
+
+					<label for="pdf-pw-owner-c">
+						<wicket:message key="pdf-password-confirm" />
+					</label>
+					<input type="password" id="pdf-pw-owner-c" maxlength="32" value=""
+						data-clear-btn="true" />
+
+				</div>
+
+			</div>
+
+		</li>
+
+	</ul>
+
+	<div data-role="controlgroup" data-type="horizontal">
+		<a href="#" id="button-pdf-download"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d">
+			<wicket:message key="button-download" />
+		</a>
+
+		<a href="#" id="button-pdf-send"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-mail">
+			<wicket:message key="button-send" />
+		</a>
+
+		<a href="#" id="button-pdf-properties-default"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+			<wicket:message key="button-default" />
+		</a>
+
+		<a href="#" data-rel="back"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+			<wicket:message key="button-back" />
+		</a>
 	</div>
 </div>
 
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />

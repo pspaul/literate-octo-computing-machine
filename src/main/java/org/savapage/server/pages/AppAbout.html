@@ -1,52 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
-<div data-role="header" data-theme="b" >
+<div data-role="header" data-theme="b">
 	<h1>
-		<wicket:message key="title"/>
+		<wicket:message key="title" />
 	</h1>
 </div>
 
 <div class="ui-content">
 
-	<h3 wicket:id="app-version"/>
+	<h3 wicket:id="app-version" />
 	<p class="sp-txt-wrap">
-		<span wicket:id="app-name"/> is Libre Software.
-	</p> 
-    <p class="sp-txt-wrap">
-		Copyright &copy; 2011-<span wicket:id="current-year"></span> by 
-		<a class="sp-plain-link" href="" target="_blank" wicket:id="app-copyright-owner-url"/>
-    </p>
-    
-    <p class="sp-txt-wrap">
+		<span wicket:id="app-name" /> is Libre Software.
+	</p>
+	<p class="sp-txt-wrap">
+		Copyright &copy; 2011-<span wicket:id="current-year"></span> by
+		<a class="sp-plain-link" href="" target="_blank"
+			wicket:id="app-copyright-owner-url" />
+	</p>
+
+	<p class="sp-txt-wrap">
 		Licensed under the
-        <a class="sp-plain-link" href="https://www.gnu.org/licenses/agpl.html" 
-            target="_blank">GNU Affero General Public License (AGPL)</a> as published by 
-        the <a class="sp-plain-link" href="http://fsf.org" target="_blank">Free Software Foundation</a>,
-        either version&nbsp;3 of the License, or (at your option) any later version.        
-    </p>
+		<a class="sp-plain-link" href="https://www.gnu.org/licenses/agpl.html"
+			target="_blank">GNU Affero General Public License (AGPL)</a>
+		as published by the
+		<a class="sp-plain-link" href="http://fsf.org" target="_blank">Free
+			Software Foundation</a>
+		, either version&nbsp;3 of the License, or (at your option) any later
+		version.
+	</p>
 
-    <wicket:enclosure child="translator-info">
-        <p class="sp-txt-wrap" wicket:id="translator-info"/>
-    </wicket:enclosure>
-            
-    <p>    
-       <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="http://savapage.org" target="_blank">
-           www.savapage.org</a>
-	   <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="/docs/licenses/" target="_blank">
-	      <wicket:message key="license-info-link" /></a>
-       <a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini" href="" target="_blank"
-            wicket:id="savapage-source-code-url"/>
-    </p>
-    
-    <wicket:fragment wicket:id="printerdriver-download-panel"/>
+	<wicket:enclosure child="translator-info">
+		<p class="sp-txt-wrap" wicket:id="translator-info" />
+	</wicket:enclosure>
 
-    <div>
-       <br/>	
-	   <a href="#" class="ui-btn ui-btn-inline ui-icon-back ui-btn-icon-left" 
-	       id="button-appinfo-cancel"
-	       data-rel="back" data-direction="reverse">
-	           <wicket:message key="button-back"/></a>
-    </div>
+	<p>
+		<a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini"
+			href="http://savapage.org" target="_blank"> www.savapage.org</a>
+		<a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini"
+			href="/docs/licenses/" target="_blank">
+			<wicket:message key="license-info-link" />
+		</a>
+		<a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini"
+			href="" target="_blank" wicket:id="savapage-source-code-url" />
+	</p>
+
+	<wicket:fragment wicket:id="printerdriver-download-panel" />
+
+	<div>
+		<br />
+		<a href="#" class="ui-btn ui-btn-inline ui-icon-back ui-btn-icon-left"
+			id="button-appinfo-cancel" data-rel="back" data-direction="reverse">
+			<wicket:message key="button-back" />
+		</a>
+	</div>
 </div>
 
 

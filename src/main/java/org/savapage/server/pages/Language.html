@@ -1,33 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <div data-role="header" data-theme="b">
 	<h1>
-		<wicket:message key="title"/>
+		<wicket:message key="title" />
 	</h1>
 </div>
 
-<div class="ui-content" >
+<div class="ui-content">
 
 	<p>
-		<wicket:message key="select-language"/>
+		<wicket:message key="select-language" />
 	</p>
 
 	<div>
 		<ul data-role="listview" data-inset="true" id="language-list">
-            <li><a href="#" data-language="de" data-country="DE">Deutsch</a></li>
-			<li><a href="#" data-language="en" data-country="US">English</a></li>
-			<li><a href="#" data-language="fr" data-country="FR">Français</a></li>
-            <li><a href="#" data-language="nl" data-country="NL">Nederlands</a></li>
+			<li>
+				<a href="#" data-language="de" data-country="DE">Deutsch</a>
+			</li>
+			<li>
+				<a href="#" data-language="en" data-country="US">English</a>
+			</li>
+			<li>
+				<a href="#" data-language="fr" data-country="FR">Français</a>
+			</li>
+			<li>
+				<a href="#" data-language="nl" data-country="NL">Nederlands</a>
+			</li>
 		</ul>
 	</div>
 
-	<a href="#page-login" id="button-lang-cancel" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-        <wicket:message key="button-cancel"/>
-    </a>
+	<a href="#page-login" id="button-lang-cancel"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+		<wicket:message key="button-cancel" />
+	</a>
 
 </div>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />

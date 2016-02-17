@@ -1,44 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 
 <wicket:panel>
 
-	<table data-role="table" data-mode="reflow" class="ui-responsive ui-mini table-stroke">
+	<table data-role="table" data-mode="reflow"
+		class="ui-responsive ui-mini table-stroke">
 		<thead>
 			<tr>
 				<th />
-				<th colspan="2"><wicket:message key="one-sided"/></th>
-				<th colspan="2"><wicket:message key="two-sided"/></th>
+				<th colspan="2">
+					<wicket:message key="one-sided" />
+				</th>
+				<th colspan="2">
+					<wicket:message key="two-sided" />
+				</th>
 			</tr>
 			<tr>
-				<th/>
-				<th data-priority="1"><wicket:message key="grayscale"/></th>
-				<th data-priority="1"><wicket:message key="color"/></th>
-                <th data-priority="2"><wicket:message key="grayscale"/></th>
-                <th data-priority="2"><wicket:message key="color"/></th>
+				<th />
+				<th data-priority="1">
+					<wicket:message key="grayscale" />
+				</th>
+				<th data-priority="1">
+					<wicket:message key="color" />
+				</th>
+				<th data-priority="2">
+					<wicket:message key="grayscale" />
+				</th>
+				<th data-priority="2">
+					<wicket:message key="color" />
+				</th>
 			</tr>
 		</thead>
 		<tbody>
-            <tr class="sp-printer-cost-media-row" wicket:id="media-row">
-                <td style="vertical-align: middle">
-                    <label for="" wicket:id="media-checkbox-label" value="1"/>
-                    <input class="sp-printer-cost-media" type="checkbox" id="" wicket:id="media-checkbox"/>
-                </td>
-                <td><input class="sp-printer-cost-1-g" type="text" maxlength="" wicket:id="one-sided-grayscale" pattern="[0-9]*"/></td>
-                <td><input class="sp-printer-cost-1-c" type="text" maxlength="" wicket:id="one-sided-color" pattern="[0-9]*"/></td>
-                <td><input class="sp-printer-cost-2-g" type="text" maxlength="" wicket:id="two-sided-grayscale" pattern="[0-9]*"/></td>
-                <td><input class="sp-printer-cost-2-c" type="text" maxlength="" wicket:id="two-sided-color" pattern="[0-9]*"/></td>
-            </tr>
-            <tr>
-                <td colspan="5">
-                    <a href="#" id="sp-printer-cost-media-less" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-bullets">
-                        <wicket:message key="show-selected-only"/>
-                    </a>
-                    <a href="#" id="sp-printer-cost-media-more" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-plus">
-                        <wicket:message key="show-all"/>
-                    </a>
-                </td>
-            </tr>
-              
+			<tr class="sp-printer-cost-media-row" wicket:id="media-row">
+				<td style="vertical-align: middle">
+					<label for="" wicket:id="media-checkbox-label" value="1" />
+					<input class="sp-printer-cost-media" type="checkbox" id=""
+						wicket:id="media-checkbox" />
+				</td>
+				<td>
+					<input class="sp-printer-cost-1-g" type="text" maxlength=""
+						wicket:id="one-sided-grayscale" pattern="[0-9]*" />
+				</td>
+				<td>
+					<input class="sp-printer-cost-1-c" type="text" maxlength=""
+						wicket:id="one-sided-color" pattern="[0-9]*" />
+				</td>
+				<td>
+					<input class="sp-printer-cost-2-g" type="text" maxlength=""
+						wicket:id="two-sided-grayscale" pattern="[0-9]*" />
+				</td>
+				<td>
+					<input class="sp-printer-cost-2-c" type="text" maxlength=""
+						wicket:id="two-sided-color" pattern="[0-9]*" />
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5">
+					<a href="#" id="sp-printer-cost-media-less"
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-bullets">
+						<wicket:message key="show-selected-only" />
+					</a>
+					<a href="#" id="sp-printer-cost-media-more"
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-plus">
+						<wicket:message key="show-all" />
+					</a>
+				</td>
+			</tr>
+
 		</tbody>
 	</table>
 

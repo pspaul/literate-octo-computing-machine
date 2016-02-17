@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<h4><wicket:message key="prompt-groups-add"/>:</h4> 
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
+
+<h4>
+	<wicket:message key="prompt-groups-add" />
+	:
+</h4>
 <p>
-<select class="sp-select-user-groups" id="sp-select-user-groups-to-add" multiple data-role="none" size="10">
-    <wicket:fragment wicket:id="groups-add">
-        <option wicket:id="option-add"/>
-    </wicket:fragment>        
-</select>
-<p/>
-<h4><wicket:message key="prompt-groups-remove"/>:</h4> 
+	<select class="sp-select-user-groups" id="sp-select-user-groups-to-add"
+		multiple data-role="none" size="10">
+		<wicket:fragment wicket:id="groups-add">
+			<option wicket:id="option-add" />
+		</wicket:fragment>
+	</select>
+<p />
+<h4>
+	<wicket:message key="prompt-groups-remove" />
+	:
+</h4>
 <p>
-<select class="sp-select-user-groups" id="sp-select-user-groups-to-remove" multiple data-role="none" size="10">
-    <wicket:fragment wicket:id="groups-remove">
-        <option wicket:id="option-remove"/>
-    </wicket:fragment>
-</select>
+	<select class="sp-select-user-groups"
+		id="sp-select-user-groups-to-remove" multiple data-role="none"
+		size="10">
+		<wicket:fragment wicket:id="groups-remove">
+			<option wicket:id="option-remove" />
+		</wicket:fragment>
+	</select>
 </p>

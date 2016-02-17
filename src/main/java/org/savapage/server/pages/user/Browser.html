@@ -1,27 +1,53 @@
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
 <div class="ui-content" id="content-browser">
-    <div id="page-browser-images" class="image_reel">
-<wicket:remove><!-- 
-Cache of 3 images.
---></wicket:remove>  
-        <img src=""/>
-        <img src=""/>
-        <img src=""/>
-    </div>
+	<div id="page-browser-images" class="image_reel">
+
+		<wicket:remove>
+			<!-- Cache of 3 images -->
+		</wicket:remove>
+		<img src="" />
+		<img src="" />
+		<img src="" />
+	</div>
 </div>
 
 <div data-role="footer" id="footer-browser" data-position="fixed">
-    <input type="range" id="browser-slider" value="0" min="0" max="0"/>
-    <div data-role="navbar">
-        <ul>
-            <li><a href="#" id="browser-back" data-icon="back" data-rel="back" data-direction="reverse"></a></li>
-            <li><a href="#" id="browser-delete" data-icon="delete"></a></li>
-            <li><a href="#" id="browser-nav-left" data-icon="arrow-l"></a></li>
-            <li><a href="#" id="browser-nav-right" data-icon="arrow-r"></a></li>
-        </ul>
-    </div>
+	<input type="range" id="browser-slider" value="0" min="0" max="0" />
+	<div data-role="navbar">
+		<ul>
+			<li>
+				<a href="#" id="browser-back" data-icon="back" data-rel="back"
+					data-direction="reverse"></a>
+			</li>
+			<li>
+				<a href="#" id="browser-delete" data-icon="delete"></a>
+			</li>
+			<li>
+				<a href="#" id="browser-nav-left" data-icon="arrow-l"></a>
+			</li>
+			<li>
+				<a href="#" id="browser-nav-right" data-icon="arrow-r"></a>
+			</li>
+		</ul>
+	</div>
 </div>
 
-<wicket:remove><!-- 
+<wicket:remove>
+	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
---></wicket:remove>  
-<div data-role="popup" data-position-to="window" class="sp-msg-popup ui-content"/>
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />
