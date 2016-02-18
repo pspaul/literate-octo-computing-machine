@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,25 +29,28 @@ package org.savapage.server.api.request;
 public enum ApiResultCodeEnum {
 
     /**
-    *
-    */
+     * .
+     */
     OK("0"),
 
     /**
-    *
-    */
+     * .
+     */
     INFO("1"),
+
     /**
-    *
-    */
+     * .
+     */
     WARN("2"),
+
     /**
-    *
-    */
+     * .
+     */
     ERROR("3"),
+
     /**
-    *
-    */
+     * .
+     */
     UNAUTH("9");
 
     private final String value;

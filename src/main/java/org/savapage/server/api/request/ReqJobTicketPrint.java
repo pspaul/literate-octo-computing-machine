@@ -23,19 +23,17 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
-import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.User;
-import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
-import org.savapage.core.services.ServiceContext;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqJobTicketDelete extends ApiRequestMixin {
+public final class ReqJobTicketPrint extends ApiRequestMixin {
 
     /**
      *
@@ -62,39 +60,21 @@ public final class ReqJobTicketDelete extends ApiRequestMixin {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
-        final OutboxJobDto dto =
-                JOBTICKET_SERVICE.removeTicket(dtoReq.getJobFileName());
+        try {
+            final OutboxJobDto dto =
+                    JOBTICKET_SERVICE.printTicket(dtoReq.getJobFileName());
+            final String msgKey;
 
-        final String msgKey;
+            if (dto == null) {
+                msgKey = "msg-jobticket-print-none";
+            } else {
+                msgKey = "msg-jobticket-print-ok";
+            }
 
-        if (dto == null) {
-            msgKey = "msg-outbox-removed-jobticket-none";
-        } else {
-            msgKey = "msg-outbox-removed-jobticket";
-            notifyUser(dto.getUserId());
-        }
+            this.setApiResult(ApiResultCodeEnum.OK, msgKey);
 
-        this.setApiResult(ApiResultCodeEnum.OK, msgKey);
-
-    }
-
-    /**
-     * @param userKey
-     *            The user database key
-     * @throws IOException
-     *             When IO error.
-     */
-    private void notifyUser(final Long userKey) throws IOException {
-
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
-        final User user = userDao.findById(userKey);
-
-        if (UserMsgIndicator.isSafePagesDirPresent(user.getUserId())) {
-
-            UserMsgIndicator.write(user.getUserId(),
-                    ServiceContext.getTransactionDate(),
-                    UserMsgIndicator.Msg.JOBTICKET_DENIED, null);
+        } catch (IppConnectException e) {
+            this.setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
         }
 
     }

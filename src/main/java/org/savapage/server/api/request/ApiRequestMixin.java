@@ -98,39 +98,38 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     /**
      * .
      */
-    protected static final DeviceService DEVICE_SERVICE = ServiceContext
-            .getServiceFactory().getDeviceService();
+    protected static final DeviceService DEVICE_SERVICE =
+            ServiceContext.getServiceFactory().getDeviceService();
 
     /**
      * .
      */
-    protected static final InboxService INBOX_SERVICE = ServiceContext
-            .getServiceFactory().getInboxService();
+    protected static final InboxService INBOX_SERVICE =
+            ServiceContext.getServiceFactory().getInboxService();
 
     /**
      * .
      */
-    protected static final JobTicketService JOBTICKET_SERVICE = ServiceContext
-            .getServiceFactory().getJobTicketService();
+    protected static final JobTicketService JOBTICKET_SERVICE =
+            ServiceContext.getServiceFactory().getJobTicketService();
 
     /**
      * .
      */
-    protected static final OutboxService OUTBOX_SERVICE = ServiceContext
-            .getServiceFactory().getOutboxService();
+    protected static final OutboxService OUTBOX_SERVICE =
+            ServiceContext.getServiceFactory().getOutboxService();
 
     /**
      * .
      */
-    protected static final PaperCutService PAPERCUT_SERVICE = ServiceContext
-            .getServiceFactory().getPaperCutService();
-
+    protected static final PaperCutService PAPERCUT_SERVICE =
+            ServiceContext.getServiceFactory().getPaperCutService();
 
     /**
      * .
      */
-    protected static final PrinterService PRINTER_SERVICE = ServiceContext
-            .getServiceFactory().getPrinterService();
+    protected static final PrinterService PRINTER_SERVICE =
+            ServiceContext.getServiceFactory().getPrinterService();
 
     /**
      * .
@@ -141,20 +140,20 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     /**
      * .
      */
-    protected static final QueueService QUEUE_SERVICE = ServiceContext
-            .getServiceFactory().getQueueService();
+    protected static final QueueService QUEUE_SERVICE =
+            ServiceContext.getServiceFactory().getQueueService();
 
     /**
      * .
      */
-    protected static final UserService USER_SERVICE = ServiceContext
-            .getServiceFactory().getUserService();
+    protected static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      * .
      */
-    protected static final UserGroupService USER_GROUP_SERVICE = ServiceContext
-            .getServiceFactory().getUserGroupService();
+    protected static final UserGroupService USER_GROUP_SERVICE =
+            ServiceContext.getServiceFactory().getUserGroupService();
 
     //
 
@@ -162,7 +161,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     public final Map<String, Object> process(final RequestCycle requestCycle,
             final PageParameters parameters, final boolean isGetAction,
             final String requestingUser, final User lockedUser)
-            throws Exception {
+                    throws Exception {
 
         this.requestCycle = requestCycle;
         this.pageParameters = parameters;
@@ -279,8 +278,8 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @param txt
      *            The message text.
      */
-    private void createApiResult(final ApiResultCodeEnum code,
-            final String msg, final String txt) {
+    private void createApiResult(final ApiResultCodeEnum code, final String msg,
+            final String txt) {
 
         final Map<String, Object> out = this.getResponseMap();
 
@@ -317,8 +316,8 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      *            The {@link AbstractJsonRpcMethodResponse}.
      * @return {@code true} when result is OK.
      */
-    protected static boolean isApiResultOk(
-            final AbstractJsonRpcMethodResponse rpcResponse) {
+    protected static boolean
+            isApiResultOk(final AbstractJsonRpcMethodResponse rpcResponse) {
         return rpcResponse.isResult();
     }
 
@@ -347,14 +346,13 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @param rpcResponse
      *            The {@link AbstractJsonRpcMethodResponse}.
      */
-    protected final void setApiResultText(
-            final AbstractJsonRpcMethodResponse rpcResponse) {
+    protected final void
+            setApiResultText(final AbstractJsonRpcMethodResponse rpcResponse) {
 
         if (rpcResponse.isResult()) {
 
-            final ResultDataBasic result =
-                    rpcResponse.asResult().getResult()
-                            .data(ResultDataBasic.class);
+            final ResultDataBasic result = rpcResponse.asResult().getResult()
+                    .data(ResultDataBasic.class);
 
             this.setApiResultText(ApiResultCodeEnum.OK, result.getMessage());
 

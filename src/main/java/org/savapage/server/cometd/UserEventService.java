@@ -88,14 +88,14 @@ public final class UserEventService extends AbstractEventService {
     /**
      * .
      */
-    private static final InboxService INBOX_SERVICE = ServiceContext
-            .getServiceFactory().getInboxService();
+    private static final InboxService INBOX_SERVICE =
+            ServiceContext.getServiceFactory().getInboxService();
 
     /**
      * .
      */
-    private static final UserService USER_SERVICE = ServiceContext
-            .getServiceFactory().getUserService();
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      * The channel this <i>service</i> <strong>subscribes</strong> (listens) to.
@@ -144,8 +144,8 @@ public final class UserEventService extends AbstractEventService {
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(UserEventService.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(UserEventService.class);
 
     /**
      *
@@ -230,12 +230,16 @@ public final class UserEventService extends AbstractEventService {
                     eventData = createAccountMsg(user, locale);
                     break;
 
+                case JOBTICKET_DENIED:
+                    eventData = createJobTicketMsg(user,
+                            msgIndicator.getMessage(), locale);
+                    break;
+
                 case PRINT_IN_DENIED:
                     // no break intended
                 case PRINT_OUT_COMPLETED:
-                    eventData =
-                            createPrintMsg(user, locale, msgPrevMonitorTime,
-                                    messageDate);
+                    eventData = createPrintMsg(user, locale, msgPrevMonitorTime,
+                            messageDate);
                     break;
 
                 case STOP_POLL_REQ:
@@ -317,8 +321,8 @@ public final class UserEventService extends AbstractEventService {
 
         pubMsg.append(clientIpAddress).append(')');
 
-        AdminPublisher.instance().publish(PubTopicEnum.USER,
-                PubLevelEnum.ERROR, pubMsg.toString());
+        AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.ERROR,
+                pubMsg.toString());
 
         AppLogHelper.logError(this.getClass(), "exception", pubMsg.toString());
     }
@@ -351,9 +355,8 @@ public final class UserEventService extends AbstractEventService {
         Map<String, Object> input = message.getDataAsMap();
 
         // Mantis #503
-        final String user =
-                AbstractUserSource.asDbUserId((String) input.get("user"),
-                        ConfigManager.isLdapUserSync());
+        final String user = AbstractUserSource.asDbUserId(
+                (String) input.get("user"), ConfigManager.isLdapUserSync());
 
         final Long pageOffset = (Long) input.get("page-offset");
         final String uniqueUrlValue = (String) input.get("unique-url-value");
@@ -404,10 +407,9 @@ public final class UserEventService extends AbstractEventService {
                 }
 
                 try {
-                    UserMsgIndicator
-                            .write(user, new Date(),
-                                    UserMsgIndicator.Msg.STOP_POLL_REQ,
-                                    clientIpAddress);
+                    UserMsgIndicator.write(user, new Date(),
+                            UserMsgIndicator.Msg.STOP_POLL_REQ,
+                            clientIpAddress);
 
                 } catch (IOException e) {
                     LOGGER.error("Listener removed (timeout) for user [" + user
@@ -461,9 +463,8 @@ public final class UserEventService extends AbstractEventService {
              * job was not deleted in the prune, this change will be notified
              * here (with a max delay of theMaxMonitorMsec).
              */
-            eventData =
-                    getChangedJobsEvent(user, pageOffset, uniqueUrlValue,
-                            base64, isWebAppClient, locale);
+            eventData = getChangedJobsEvent(user, pageOffset, uniqueUrlValue,
+                    base64, isWebAppClient, locale);
 
             /*
              * Any MESSAGES to be notified of since the previous check date?
@@ -478,10 +479,9 @@ public final class UserEventService extends AbstractEventService {
              */
             if (eventData == null) {
 
-                eventData =
-                        watchUserFileEvents(clientIpAddress, dateStart, user,
-                                locale, pageOffset, uniqueUrlValue, base64,
-                                isWebAppClient);
+                eventData = watchUserFileEvents(clientIpAddress, dateStart,
+                        user, locale, pageOffset, uniqueUrlValue, base64,
+                        isWebAppClient);
             }
 
             if (eventData == null) {
@@ -490,9 +490,8 @@ public final class UserEventService extends AbstractEventService {
 
             if (ADMIN_PUB_USER_EVENT) {
 
-                final UserEventEnum userEvent =
-                        UserEventEnum.valueOf(eventData.get(KEY_EVENT)
-                                .toString());
+                final UserEventEnum userEvent = UserEventEnum
+                        .valueOf(eventData.get(KEY_EVENT).toString());
 
                 if (userEvent != UserEventEnum.NULL) {
                     publishAdminEvent(user, clientIpAddress, isWebAppClient,
@@ -591,8 +590,8 @@ public final class UserEventService extends AbstractEventService {
             final String clientIpAddress, final Date dateStart,
             final String user, final Locale locale, final Long pageOffset,
             final String uniqueUrlValue, final boolean base64,
-            final boolean isWebAppClient) throws IOException,
-            UserNotFoundException {
+            final boolean isWebAppClient)
+                    throws IOException, UserNotFoundException {
 
         final WatchService watchService =
                 FileSystems.getDefault().newWatchService();
@@ -600,9 +599,8 @@ public final class UserEventService extends AbstractEventService {
         final Path path2WatchJob =
                 Paths.get(ConfigManager.getUserHomeDir(user));
 
-        final WatchKey watchKeyJob =
-                path2WatchJob.register(watchService, ENTRY_CREATE,
-                        ENTRY_DELETE, ENTRY_MODIFY);
+        final WatchKey watchKeyJob = path2WatchJob.register(watchService,
+                ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 
         final Map<WatchKey, Path> watchKeys = new HashMap<WatchKey, Path>();
 
@@ -626,9 +624,8 @@ public final class UserEventService extends AbstractEventService {
                 /*
                  * WAIT for key to be signaled ...
                  */
-                WatchKey key =
-                        watchService.poll(MSECS_WAIT_BETWEEN_POLLS,
-                                TimeUnit.MILLISECONDS);
+                WatchKey key = watchService.poll(MSECS_WAIT_BETWEEN_POLLS,
+                        TimeUnit.MILLISECONDS);
 
                 boolean bJobsCreated = false;
                 boolean bJobsDeleted = false;
@@ -655,8 +652,8 @@ public final class UserEventService extends AbstractEventService {
                             if (LOGGER.isWarnEnabled()) {
                                 LOGGER.warn(String.format(
                                         "%s : events may have been lost "
-                                                + "or discarded", event.kind()
-                                                .name()));
+                                                + "or discarded",
+                                        event.kind().name()));
                             }
                             continue;
                         }
@@ -671,9 +668,10 @@ public final class UserEventService extends AbstractEventService {
                         final File file = child.toFile();
 
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug(String.format(
-                                    "EVENT [%s] for file [%s]", event.kind()
-                                            .name(), file.getAbsolutePath()));
+                            LOGGER.debug(
+                                    String.format("EVENT [%s] for file [%s]",
+                                            event.kind().name(),
+                                            file.getAbsolutePath()));
                         }
 
                         final boolean isJobEvent =
@@ -682,9 +680,8 @@ public final class UserEventService extends AbstractEventService {
                         boolean isMsgEvent = false;
 
                         if (!isJobEvent) {
-                            isMsgEvent =
-                                    UserMsgIndicator.isMsgIndicatorFile(user,
-                                            file);
+                            isMsgEvent = UserMsgIndicator
+                                    .isMsgIndicatorFile(user, file);
                         }
 
                         /*
@@ -719,9 +716,8 @@ public final class UserEventService extends AbstractEventService {
                         } else {
 
                             if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug(String.format(
-                                        "Ignored: %s - [%s]", event.kind()
-                                                .name(), child));
+                                LOGGER.debug(String.format("Ignored: %s - [%s]",
+                                        event.kind().name(), child));
                             }
                         }
 
@@ -764,12 +760,15 @@ public final class UserEventService extends AbstractEventService {
                             returnData = createAccountMsg(user, locale);
                             break;
 
+                        case JOBTICKET_DENIED:
+                            returnData = createJobTicketMsg(user, msg, locale);
+                            break;
+
                         case PRINT_IN_DENIED:
                             // no break intended
                         case PRINT_OUT_COMPLETED:
-                            returnData =
-                                    createPrintMsg(user, locale, messageDate,
-                                            messageDate);
+                            returnData = createPrintMsg(user, locale,
+                                    messageDate, messageDate);
                             break;
 
                         case PRINT_OUT_HOLD:
@@ -788,20 +787,17 @@ public final class UserEventService extends AbstractEventService {
 
                             final String senderId = msgIndicator.getSenderId();
 
-                            if (clientIpAddress == null
-                                    || (senderId != null && senderId
-                                            .equals(clientIpAddress))) {
+                            if (clientIpAddress == null || (senderId != null
+                                    && senderId.equals(clientIpAddress))) {
 
-                                returnData =
-                                        createNullMsg(user, isWebAppClient,
-                                                locale);
+                                returnData = createNullMsg(user, isWebAppClient,
+                                        locale);
                                 break;
                             }
 
                             if (LOGGER.isWarnEnabled()) {
                                 LOGGER.warn("Ignored message ["
-                                        + msgIndicator.getMessage()
-                                        + "] from ["
+                                        + msgIndicator.getMessage() + "] from ["
                                         + msgIndicator.getSenderId()
                                         + "] since we are [" + clientIpAddress
                                         + "]");
@@ -833,10 +829,8 @@ public final class UserEventService extends AbstractEventService {
 
                 } else if (bJobsCreated || bJobsDeleted) {
 
-                    returnData =
-                            getChangedJobsEvent(user, pageOffset,
-                                    uniqueUrlValue, base64, isWebAppClient,
-                                    locale);
+                    returnData = getChangedJobsEvent(user, pageOffset,
+                            uniqueUrlValue, base64, isWebAppClient, locale);
                 }
 
                 /*
@@ -909,7 +903,7 @@ public final class UserEventService extends AbstractEventService {
             final String userName, final Long nPageOffset,
             final String uniqueUrlValue, final boolean base64,
             final boolean isWebAppClient, final Locale locale)
-            throws UserNotFoundException, IOException {
+                    throws UserNotFoundException, IOException {
 
         final Date perfStartTime = PerformanceLogger.startTime();
 
@@ -931,9 +925,8 @@ public final class UserEventService extends AbstractEventService {
                  * locking the user, since multiple row locks of same user leads
                  * to random deadlocks in Fast Print Release scenario's.
                  */
-                lockedUser =
-                        daoContext.getUserDao()
-                                .findActiveUserByUserId(userName);
+                lockedUser = daoContext.getUserDao()
+                        .findActiveUserByUserId(userName);
             } else {
                 /*
                  * #575: PostgreSQL handles same user concurrent row locking
@@ -943,15 +936,14 @@ public final class UserEventService extends AbstractEventService {
             }
 
             if (lockedUser == null) {
-                throw new UserNotFoundException("user [" + userName
-                        + "] not found.");
+                throw new UserNotFoundException(
+                        "user [" + userName + "] not found.");
             }
 
             USER_SERVICE.lazyUserHomeDir(userName);
 
-            final PageImages pages =
-                    INBOX_SERVICE.getPageChunks(userName, null, uniqueUrlValue,
-                            base64);
+            final PageImages pages = INBOX_SERVICE.getPageChunks(userName, null,
+                    uniqueUrlValue, base64);
 
             int totPages = 0;
 
@@ -1063,9 +1055,8 @@ public final class UserEventService extends AbstractEventService {
         ServiceContext.setLocale(locale);
 
         try {
-            final User user =
-                    ServiceContext.getDaoContext().getUserDao()
-                            .findActiveUserByUserId(userId);
+            final User user = ServiceContext.getDaoContext().getUserDao()
+                    .findActiveUserByUserId(userId);
 
             ApiRequestHelper.addUserStats(eventData, user,
                     ServiceContext.getLocale(),
@@ -1097,6 +1088,40 @@ public final class UserEventService extends AbstractEventService {
 
         eventData.put(KEY_DATA, json);
         eventData.put(KEY_EVENT, UserEventEnum.ACCOUNT);
+
+        return addUserStats(eventData, userId, locale);
+    }
+
+    /**
+     *
+     * @return
+     */
+    private Map<String, Object> createJobTicketMsg(final String userId,
+            UserMsgIndicator.Msg msgInd, final Locale locale) {
+
+        final Map<String, Object> eventData = new HashMap<String, Object>();
+
+        final JsonUserMsg msg = new JsonUserMsg();
+        msg.setLevel(JsonUserMsg.LEVEL_INFO);
+
+        final String text;
+        switch (msgInd) {
+        case JOBTICKET_DENIED:
+            text = this.localize(locale, "jobticket-denied");
+            break;
+        default:
+            text = "???";
+            break;
+        }
+
+        msg.setText(text);
+
+        final JsonUserMsgNotification json = new JsonUserMsgNotification();
+        json.addUserMsg(msg);
+        json.setMsgTime(System.currentTimeMillis());
+
+        eventData.put(KEY_DATA, json);
+        eventData.put(KEY_EVENT, UserEventEnum.JOBTICKET);
 
         return addUserStats(eventData, userId, locale);
     }

@@ -348,7 +348,7 @@
 
 					} else {
 
-						if (res.event === "PRINT_MSG" || res.event === "ACCOUNT") {
+						if (res.event === "PRINT_MSG" || res.event === "ACCOUNT" || res.event === "JOBTICKET") {
 							_this.onMsgEvent(res.data);
 							_this.onAccountEvent(res.stats);
 						} else if (res.event === "NULL") {

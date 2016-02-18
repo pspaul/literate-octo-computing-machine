@@ -31,6 +31,7 @@ import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqJobTicketDelete;
+import org.savapage.server.api.request.ReqJobTicketPrint;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqOutboxClear;
 import org.savapage.server.api.request.ReqOutboxDeleteJob;
@@ -110,6 +111,7 @@ public class JsonApiDict {
     public static final String REQ_LANGUAGE = "language";
 
     public static final String REQ_JOBTICKET_DELETE = "jobticket-delete";
+    public static final String REQ_JOBTICKET_PRINT = "jobticket-print";
 
     public static final String REQ_PAPERCUT_TEST = "papercut-test";
 
@@ -664,6 +666,9 @@ public class JsonApiDict {
         usr(REQ_INBOX_IS_VANILLA, DbClaim.NONE, DbAccess.USER_LOCK);
 
         adm(REQ_JOBTICKET_DELETE, ReqJobTicketDelete.class, DbClaim.READ,
+                DbAccess.YES);
+
+        adm(REQ_JOBTICKET_PRINT, ReqJobTicketPrint.class, DbClaim.READ,
                 DbAccess.YES);
 
         usr(REQ_JQPLOT, DbClaim.NONE, DbAccess.YES);

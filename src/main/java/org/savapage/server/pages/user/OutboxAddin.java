@@ -199,6 +199,7 @@ public class OutboxAddin extends AbstractUserPage {
 
             //
             final String encloseButtonId;
+
             if (isJobTicketItem) {
                 helper.discloseLabel("button-remove-outbox-job");
                 encloseButtonId = "button-remove-outbox-jobticket";
@@ -297,6 +298,11 @@ public class OutboxAddin extends AbstractUserPage {
             //
             if (this.isJobticketView && job.getUserId() != null) {
 
+                helper.encloseLabel("button-jobticket-print",
+                        localized("button-print"), true)
+                        .add(new AttributeModifier("data-savapage",
+                                job.getFile()));
+
                 final org.savapage.core.jpa.User user =
                         USER_DAO.findById(job.getUserId());
 
@@ -312,6 +318,7 @@ public class OutboxAddin extends AbstractUserPage {
                 }
             } else {
                 helper.discloseLabel("owner-user-id");
+                helper.discloseLabel("button-jobticket-print");
             }
 
             /*

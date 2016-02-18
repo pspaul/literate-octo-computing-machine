@@ -84,17 +84,34 @@
 				});
 
 				$(this).on('click', '.sp-outbox-remove-jobticket', null, function() {
+					
 					var res = _api.call({
 						request : 'jobticket-delete',
 						dto : JSON.stringify({
 							jobFileName : $(this).attr('data-savapage'),
 						})
 					});
+					
 					if (res.result.code === "0") {
 						_refresh();
 					}
 					_view.showApiMsg(res);
 				});
+				
+				$(this).on('click', '.sp-jobticket-print', null, function() {
+					var res = _api.call({
+						request : 'jobticket-print',
+						dto : JSON.stringify({
+							jobFileName : $(this).attr('data-savapage'),
+						})
+					});
+					
+					if (res.result.code === "0") {
+						_refresh();
+					}
+					_view.showApiMsg(res);
+				});
+
 
 			}).on("pageshow", function(event, ui) {
 				if (!_shown) {

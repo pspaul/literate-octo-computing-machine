@@ -37,6 +37,11 @@ public enum UserEventEnum {
     ACCOUNT("Account"),
 
     /**
+     * Job Ticket message.
+     */
+    JOBTICKET("Job Ticket"),
+
+    /**
      * SafePages are printed.
      */
     PRINT_IN("Print"),

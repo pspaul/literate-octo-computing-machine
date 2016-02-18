@@ -33,7 +33,6 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
-import org.savapage.core.SpException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.CometdClientMixin;
 import org.savapage.core.cometd.PubLevelEnum;
@@ -210,7 +209,13 @@ public final class ReqLogin extends ApiRequestMixin {
          * INVARIANT: Web App type MUST be defined.
          */
         if (webAppType == null || webAppType == WebAppTypeEnum.UNDEFINED) {
-            throw new SpException("Unknown Web App type.");
+            /*
+             * The WebApp lost connection because the server was restarted :
+             * this makes the Web App fall back to the Login page.
+             */
+            this.setApiResultText(ApiResultCodeEnum.ERROR,
+                    "Please refresh your browser page.");
+            return;
         }
 
         final UserAgentHelper userAgentHelper = this.createUserAgentHelper();
