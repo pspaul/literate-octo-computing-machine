@@ -1535,11 +1535,6 @@ public final class JsonApiServer extends AbstractPage {
 
             return reqUserGetStats(requestingUser);
 
-        case JsonApiDict.REQ_USER_NOTIFY_ACCOUNT_CHANGE:
-
-            return reqUserNotifyAccountChange(
-                    getParmValue(parameters, isGetAction, "dto"));
-
         case JsonApiDict.REQ_USER_SET:
             return reqUserSet(getParmValue(parameters, isGetAction, "userDto"));
 
@@ -4971,30 +4966,6 @@ public final class JsonApiServer extends AbstractPage {
                     "msg-voucher-deleted-expired-many", nDeleted.toString());
         }
         return userData;
-    }
-
-    /**
-     *
-     * @param userId
-     * @return
-     * @throws IOException
-     */
-    private Map<String, Object> reqUserNotifyAccountChange(
-            final String primaryKeyDto) throws IOException {
-
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
-        final PrimaryKeyDto dto =
-                AbstractDto.create(PrimaryKeyDto.class, primaryKeyDto);
-
-        final User user = userDao.findById(dto.getKey());
-
-        if (UserMsgIndicator.isSafePagesDirPresent(user.getUserId())) {
-            UserMsgIndicator.write(user.getUserId(),
-                    ServiceContext.getTransactionDate(),
-                    UserMsgIndicator.Msg.ACCOUNT_INFO, null);
-        }
-        return createApiResultOK();
     }
 
     /**

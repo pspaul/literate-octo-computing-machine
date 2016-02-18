@@ -23,17 +23,16 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
-import org.savapage.server.SpSession;
+import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqOutboxDeleteJob extends ApiRequestMixin {
+public final class ReqJobTicketDelete extends ApiRequestMixin {
 
     /**
      *
@@ -43,7 +42,6 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
     private static class DtoReq extends AbstractDto {
 
         private String jobFileName;
-        private Boolean jobTicket;
 
         public String getJobFileName() {
             return jobFileName;
@@ -51,14 +49,6 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
 
         public void setJobFileName(String jobFileName) {
             this.jobFileName = jobFileName;
-        }
-
-        public Boolean getJobTicket() {
-            return jobTicket;
-        }
-
-        public void setJobTicket(Boolean jobTicket) {
-            this.jobTicket = jobTicket;
         }
 
     }
@@ -69,54 +59,23 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
+        final OutboxJobDto dto =
+                JOBTICKET_SERVICE.removeTicket(dtoReq.getJobFileName());
+
         final String msgKey;
 
-        if (BooleanUtils.isTrue(dtoReq.getJobTicket())) {
-            msgKey = removeJobTicket(lockedUser, dtoReq);
+        if (dto == null) {
+            msgKey = "msg-outbox-removed-jobticket-none";
         } else {
-            msgKey = removeOutboxJob(lockedUser, dtoReq);
+            msgKey = "msg-outbox-removed-jobticket";
         }
 
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);
 
-        ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
-                this.getLocale(), SpSession.getAppCurrencySymbol());
     }
 
-    /**
-     * Removes a job in the user's outbox.
-     *
-     * @param lockedUser
-     *            The user.
-     * @param dtoReq
-     *            The request.
-     * @return The message key.
-     */
-    private String removeOutboxJob(final User lockedUser, final DtoReq dtoReq) {
+    private void notifyUser(final Long userId) {
 
-        if (OUTBOX_SERVICE.removeOutboxJob(lockedUser.getUserId(),
-                dtoReq.getJobFileName())) {
-            return "msg-outbox-removed-job";
-        }
-        return "msg-outbox-removed-job-none";
-    }
-
-    /**
-     * Removes a Job Ticket from the user.
-     *
-     * @param lockedUser
-     *            The user.
-     * @param dtoReq
-     *            The request.
-     * @return The message key.
-     */
-    private String removeJobTicket(final User lockedUser, final DtoReq dtoReq) {
-
-        if (JOBTICKET_SERVICE.removeTicket(lockedUser.getId(),
-                dtoReq.getJobFileName()) == null) {
-            return "msg-outbox-removed-jobticket-none";
-        }
-        return "msg-outbox-removed-jobticket";
     }
 
 }

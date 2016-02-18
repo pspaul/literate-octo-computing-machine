@@ -47,7 +47,7 @@
 
 			var _page = new _ns.Page(_i18n, _view, "#page-jobtickets", "PageJobTickets")
 			//
-			, _self = _ns.derive(_page)
+			, _self = _ns.derive(_page), _shown
 			//
 			, _refresh = function() {
 
@@ -64,13 +64,10 @@
 					$('#page-jobtickets').enhanceWithin();
 					$('#jobticket-list').listview('refresh');
 
-					// TODO
-
 					$('.sparkline-printout-pie').sparkline('html', {
 						type : 'pie',
 						sliceColors : [_view.colorPrinter, _view.colorSheet]
 					});
-
 				}
 				return false;
 			}
@@ -86,8 +83,24 @@
 					return _refresh();
 				});
 
-			}).on("pageshow", function(event, ui) {
+				$(this).on('click', '.sp-outbox-remove-jobticket', null, function() {
+					var res = _api.call({
+						request : 'jobticket-delete',
+						dto : JSON.stringify({
+							jobFileName : $(this).attr('data-savapage'),
+						})
+					});
+					if (res.result.code === "0") {
+						_refresh();
+					}
+					_view.showApiMsg(res);
+				});
 
+			}).on("pageshow", function(event, ui) {
+				if (!_shown) {
+					_shown = true;
+					_refresh();
+				}
 			});
 
 			return _self;

@@ -348,17 +348,15 @@
 
 					} else {
 
-						if (res.event === "PRINT_MSG") {
+						if (res.event === "PRINT_MSG" || res.event === "ACCOUNT") {
 							_this.onMsgEvent(res.data);
 							_this.onAccountEvent(res.stats);
-						} else if (res.event === "ACCOUNT" || res.event === "NULL") {
+						} else if (res.event === "NULL") {
 							_this.onNullEvent(res.data);
 							_this.onAccountEvent(res.stats);
 						}
-
 						_this.onPollInvitation();
 					}
-
 				}
 			};
 

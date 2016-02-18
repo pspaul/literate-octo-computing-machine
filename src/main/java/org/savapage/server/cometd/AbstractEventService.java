@@ -27,7 +27,9 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.server.AbstractService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
+import org.savapage.core.util.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,14 +39,14 @@ import org.slf4j.LoggerFactory;
  * @author Datraverse B.V.
  *
  */
-public abstract class AbstractEventService extends AbstractService implements
-        ServiceEntryPoint {
+public abstract class AbstractEventService extends AbstractService
+        implements ServiceEntryPoint {
 
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AbstractEventService.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(AbstractEventService.class);
 
     /**
      *
@@ -71,8 +73,8 @@ public abstract class AbstractEventService extends AbstractService implements
      * The max time this service is allowed to take. We compensate with some
      * extra time for network transfer.
      */
-    protected static long theMaxMonitorMsec = theMaxNetworkDelayMsec
-            - MSECS_MAX_MONITOR_MARGIN;
+    protected static long theMaxMonitorMsec =
+            theMaxNetworkDelayMsec - MSECS_MAX_MONITOR_MARGIN;
 
     /**
      *
@@ -134,13 +136,45 @@ public abstract class AbstractEventService extends AbstractService implements
             return new Locale(language, country);
         } catch (Exception e) {
             if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(String
-                        .format("Locale cannot be created for %s %s (falling back to %s)",
-                                language, StringUtils.defaultString(country),
-                                Locale.getDefault().toString()));
+                LOGGER.warn(String.format(
+                        "Locale cannot be created for %s %s (falling back to %s)",
+                        language, StringUtils.defaultString(country),
+                        Locale.getDefault().toString()));
             }
             return Locale.getDefault();
         }
+    }
+
+    /**
+     * Return a localized message string. IMPORTANT:
+     * {@link ServiceContext#getLocale() is used.
+     *
+     * @param key
+     *            The key of the message.
+     * @param args
+     *            The placeholder arguments for the message template.
+     *
+     * @return The message text.
+     */
+    protected final String localize(final String key, final String... args) {
+        return this.localize(ServiceContext.getLocale(), key, args);
+    }
+
+    /**
+     * Return a localized message string.
+     *
+     * @param locale
+     *            The {@link Locale}.
+     * @param key
+     *            The key of the message.
+     * @param args
+     *            The placeholder arguments for the message template.
+     *
+     * @return The message text.
+     */
+    protected final String localize(final Locale locale, final String key,
+            final String... args) {
+        return Messages.getMessage(getClass(), locale, key, args);
     }
 
     /**

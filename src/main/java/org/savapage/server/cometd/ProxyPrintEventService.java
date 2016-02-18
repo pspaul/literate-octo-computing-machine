@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,6 @@ import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.util.Messages;
 import org.savapage.server.api.JsonApiServer;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.slf4j.Logger;
@@ -55,7 +54,8 @@ import org.slf4j.LoggerFactory;
  * clients publish service requests to be notified of <b>proxy print</b> events.
  * Events are published on {@linkplain #CHANNEL_PUBLISH}.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 public final class ProxyPrintEventService extends AbstractEventService {
 
@@ -66,8 +66,8 @@ public final class ProxyPrintEventService extends AbstractEventService {
     /**
     *
     */
-    private static final ProxyPrintService PROXY_PRINT_SERVICE = ServiceContext
-            .getServiceFactory().getProxyPrintService();
+    private static final ProxyPrintService PROXY_PRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     /**
      * The channel this <i>service</i> <strong>subscribes</strong> (listens) to.
@@ -105,8 +105,8 @@ public final class ProxyPrintEventService extends AbstractEventService {
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ProxyPrintEventService.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ProxyPrintEventService.class);
 
     /**
      *
@@ -115,7 +115,8 @@ public final class ProxyPrintEventService extends AbstractEventService {
      * @param name
      *            The name of the service
      */
-    public ProxyPrintEventService(final BayeuxServer bayeux, final String name) {
+    public ProxyPrintEventService(final BayeuxServer bayeux,
+            final String name) {
         super(bayeux, name);
         addService(CHANNEL_SUBSCRIPTION, CHANNEL_MESSAGE_HANDLER);
         if (LOGGER.isTraceEnabled()) {
@@ -186,8 +187,8 @@ public final class ProxyPrintEventService extends AbstractEventService {
                     }
 
                     try {
-                        ProxyPrintAuthManager
-                                .cancelRequest(idUser, printerName);
+                        ProxyPrintAuthManager.cancelRequest(idUser,
+                                printerName);
 
                     } catch (InterruptedException e) {
 
@@ -208,15 +209,13 @@ public final class ProxyPrintEventService extends AbstractEventService {
             /*
              * Blocking till event (or timeout).
              */
-            eventData =
-                    watchAuthEvent(idUser, printerName, readerIpAddress,
-                            rfidNumberFormat);
+            eventData = watchAuthEvent(idUser, printerName, readerIpAddress,
+                    rfidNumberFormat);
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("STOP Proxy Printer [" + printerName
-                        + "] reader [" + readerIpAddress
-                        + "] event monitoring for client [" + clientIpAddress
-                        + "] user [" + idUser + "]");
+                LOGGER.trace("STOP Proxy Printer [" + printerName + "] reader ["
+                        + readerIpAddress + "] event monitoring for client ["
+                        + clientIpAddress + "] user [" + idUser + "]");
             }
 
         } catch (InterruptedException e) {
@@ -300,8 +299,8 @@ public final class ProxyPrintEventService extends AbstractEventService {
          * INVARIANT: Device MUST be a reader.
          */
         if (!deviceDao.isCardReader(device)) {
-            throw new SpException("Device [" + readerName
-                    + "] is NOT a Card Reader");
+            throw new SpException(
+                    "Device [" + readerName + "] is NOT a Card Reader");
         }
 
         /*
@@ -344,11 +343,10 @@ public final class ProxyPrintEventService extends AbstractEventService {
             LOGGER.trace("Waiting [" + timeout + "] seconds for card swipe...");
         }
 
-        final ProxyPrintInboxReq request =
-                ProxyPrintAuthManager.waitForAuth(idUser, printerName,
-                        readerIpAddress, rfidNumberFormat,
-                        ProxyPrintAuthManager.getMaxRequestAgeSeconds(),
-                        TimeUnit.SECONDS);
+        final ProxyPrintInboxReq request = ProxyPrintAuthManager.waitForAuth(
+                idUser, printerName, readerIpAddress, rfidNumberFormat,
+                ProxyPrintAuthManager.getMaxRequestAgeSeconds(),
+                TimeUnit.SECONDS);
 
         if (request == null) {
 
@@ -361,7 +359,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
 
             LOGGER.trace("Print request expired.");
 
-            request.setUserMsg(localize("proxyprint-auth-expired"));
+            request.setUserMsg(this.localize("proxyprint-auth-expired"));
 
             JsonApiServer.setApiResultMsg(eventData, request);
 
@@ -435,28 +433,12 @@ public final class ProxyPrintEventService extends AbstractEventService {
 
             LOGGER.trace("Authentication failed ");
 
-            request.setUserMsg(localize("proxyprint-auth-failed"));
+            request.setUserMsg(this.localize("proxyprint-auth-failed"));
 
             JsonApiServer.setApiResultMsg(eventData, request);
         }
 
         return eventData;
-    }
-
-/**
-     * Return a localized message string. IMPORTANT: {@link ServiceContext#getLocale()
-     * is used.
-     *
-     * @param key
-     *            The key of the message.
-     * @param args
-     *            The placeholder arguments for the message template.
-     *
-     * @return The message text.
-     */
-    private String localize(final String key, final String... args) {
-        return Messages.getMessage(getClass(), ServiceContext.getLocale(), key,
-                args);
     }
 
 }

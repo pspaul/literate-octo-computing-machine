@@ -49,9 +49,8 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
 
         super(parameters);
 
-        final String appTitle =
-                getWebAppTitle(getLocalizer().getString("webapp-title-suffix",
-                        this));
+        final String appTitle = getWebAppTitle(
+                getLocalizer().getString("webapp-title-suffix", this));
 
         addZeroPagePanel(WebAppTypeEnum.JOB_TICKETS);
 
@@ -61,7 +60,7 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
     }
 
     @Override
-    boolean isJqueryCoreRenderedByWicket() {
+            boolean isJqueryCoreRenderedByWicket() {
         return true;
     }
 
@@ -91,7 +90,8 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
 
     @Override
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
-        return EnumSet.noneOf(JavaScriptLibrary.class);
+        return EnumSet.of(JavaScriptLibrary.MOBIPICK,
+                JavaScriptLibrary.SPARKLINE);
     }
 
 }

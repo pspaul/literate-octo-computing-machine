@@ -27,7 +27,6 @@ import org.savapage.core.jpa.User;
 import org.savapage.server.SpSession;
 
 /**
- * Creates a backup of the database.
  *
  * @author Rijk Ravestein
  *

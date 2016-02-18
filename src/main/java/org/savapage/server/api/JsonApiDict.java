@@ -30,6 +30,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
+import org.savapage.server.api.request.ReqJobTicketDelete;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqOutboxClear;
 import org.savapage.server.api.request.ReqOutboxDeleteJob;
@@ -47,6 +48,7 @@ import org.savapage.server.api.request.ReqUserGroupMemberQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupSet;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
+import org.savapage.server.api.request.ReqUserNotifyAccountChange;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.
@@ -106,6 +108,8 @@ public class JsonApiDict {
     public static final String REQ_INBOX_IS_VANILLA = "inbox-is-vanilla";
     public static final String REQ_JQPLOT = "jqplot";
     public static final String REQ_LANGUAGE = "language";
+
+    public static final String REQ_JOBTICKET_DELETE = "jobticket-delete";
 
     public static final String REQ_PAPERCUT_TEST = "papercut-test";
 
@@ -659,6 +663,9 @@ public class JsonApiDict {
         usr(REQ_JOB_PAGES, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_INBOX_IS_VANILLA, DbClaim.NONE, DbAccess.USER_LOCK);
 
+        adm(REQ_JOBTICKET_DELETE, ReqJobTicketDelete.class, DbClaim.READ,
+                DbAccess.YES);
+
         usr(REQ_JQPLOT, DbClaim.NONE, DbAccess.YES);
         non(REQ_LANGUAGE);
         usr(REQ_LETTERHEAD_ATTACH, DbClaim.NONE, DbAccess.USER_LOCK);
@@ -756,7 +763,10 @@ public class JsonApiDict {
         adm(REQ_USER_GET, DbClaim.READ, DbAccess.YES);
 
         usr(REQ_USER_GET_STATS, DbClaim.READ, DbAccess.YES);
-        adm(REQ_USER_NOTIFY_ACCOUNT_CHANGE, DbClaim.READ, DbAccess.YES);
+
+        adm(REQ_USER_NOTIFY_ACCOUNT_CHANGE, ReqUserNotifyAccountChange.class,
+                DbClaim.READ, DbAccess.YES);
+
         adm(REQ_USER_QUICK_SEARCH, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_SOURCE_GROUPS, DbClaim.NONE, DbAccess.NO);

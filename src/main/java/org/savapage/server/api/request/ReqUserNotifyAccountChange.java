@@ -23,37 +23,58 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
+import org.savapage.core.dao.UserDao;
+import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
-import org.savapage.server.SpSession;
+import org.savapage.core.msg.UserMsgIndicator;
+import org.savapage.core.services.ServiceContext;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqOutboxClear extends ApiRequestMixin {
+public final class ReqUserNotifyAccountChange extends ApiRequestMixin {
+
+    /**
+     *
+     * The request.
+     *
+     */
+    private static class DtoReq extends AbstractDto {
+
+        @JsonProperty("key")
+        private Long userKey;
+
+        public Long getUserKey() {
+            return userKey;
+        }
+
+        public void setUserKey(Long userKey) {
+            this.userKey = userKey;
+        }
+
+    }
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final int jobCount = OUTBOX_SERVICE.clearOutbox(lockedUser.getUserId());
+        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
-        final String msgKey;
+        final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
-        if (jobCount == 0) {
-            msgKey = "msg-outbox-cleared-none";
-        } else if (jobCount == 1) {
-            msgKey = "msg-outbox-cleared-one";
-        } else {
-            msgKey = "msg-outbox-cleared-multiple";
+        final User user = userDao.findById(dtoReq.getUserKey());
+
+        if (UserMsgIndicator.isSafePagesDirPresent(user.getUserId())) {
+            UserMsgIndicator.write(user.getUserId(),
+                    ServiceContext.getTransactionDate(),
+                    UserMsgIndicator.Msg.ACCOUNT_INFO, null);
         }
 
-        this.setApiResult(ApiResultCodeEnum.OK, msgKey,
-                String.valueOf(jobCount));
-
-        ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
-                this.getLocale(), SpSession.getAppCurrencySymbol());
+        this.setApiResultOk();
     }
 
 }

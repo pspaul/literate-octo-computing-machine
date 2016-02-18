@@ -59,6 +59,7 @@ import org.savapage.core.inbox.PageImages.PageImage;
 import org.savapage.core.jpa.PrintIn;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.jpa.User;
+import org.savapage.core.msg.JsonUserMsg;
 import org.savapage.core.msg.JsonUserMsgNotification;
 import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.services.InboxService;
@@ -586,7 +587,7 @@ public final class UserEventService extends AbstractEventService {
      * @throws IOException
      * @throws UserNotFoundException
      */
-    private static Map<String, Object> watchUserFileEvents(
+    private Map<String, Object> watchUserFileEvents(
             final String clientIpAddress, final Date dateStart,
             final String user, final Locale locale, final Long pageOffset,
             final String uniqueUrlValue, final boolean base64,
@@ -1047,7 +1048,7 @@ public final class UserEventService extends AbstractEventService {
      * Adds user statistics to event data.
      *
      * @param eventData
-     *            Teh event data.
+     *            The event data.
      * @param userId
      *            The user id.
      * @param locale
@@ -1081,12 +1082,17 @@ public final class UserEventService extends AbstractEventService {
      *
      * @return
      */
-    private static Map<String, Object> createAccountMsg(final String userId,
+    private Map<String, Object> createAccountMsg(final String userId,
             final Locale locale) {
 
         final Map<String, Object> eventData = new HashMap<String, Object>();
-        final JsonUserMsgNotification json = new JsonUserMsgNotification();
 
+        final JsonUserMsg msg = new JsonUserMsg();
+        msg.setLevel(JsonUserMsg.LEVEL_INFO);
+        msg.setText(this.localize(locale, "account-changed"));
+
+        final JsonUserMsgNotification json = new JsonUserMsgNotification();
+        json.addUserMsg(msg);
         json.setMsgTime(System.currentTimeMillis());
 
         eventData.put(KEY_DATA, json);
