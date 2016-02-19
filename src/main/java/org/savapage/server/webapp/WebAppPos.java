@@ -49,9 +49,13 @@ public final class WebAppPos extends AbstractWebAppPage {
 
         super(parameters);
 
-        final String appTitle =
-                getWebAppTitle(getLocalizer().getString("webapp-title-suffix",
-                        this));
+        if (isWebAppCountExceeded(parameters)) {
+            this.setWebAppCountExceededResponse();
+            return;
+        }
+
+        final String appTitle = getWebAppTitle(
+                getLocalizer().getString("webapp-title-suffix", this));
 
         addZeroPagePanel(WebAppTypeEnum.POS);
 
@@ -61,7 +65,7 @@ public final class WebAppPos extends AbstractWebAppPage {
     }
 
     @Override
-    boolean isJqueryCoreRenderedByWicket() {
+            boolean isJqueryCoreRenderedByWicket() {
         return true;
     }
 

@@ -189,7 +189,6 @@ import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.api.request.ApiResultCodeEnum;
 import org.savapage.server.auth.ClientAppUserAuthManager;
-import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.auth.WebAppUserAuthManager;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.dto.MoneyTransferDto;
@@ -5135,8 +5134,9 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * This method acts as a {@link #reqLogout(User, String)} for the
-     * {@link User} in the current {@link SpSession}.
+     * This method acts as a {@link #reqLogout(User, String)} for the current
+     * {@link SpSession}. It also invalidated the {@link WebAppTypeEnum}
+     * authentication token.
      *
      * @param authTokenUser
      *            The authentication token of the User WebApp.
@@ -5146,41 +5146,16 @@ public final class JsonApiServer extends AbstractPage {
      *            The authentication token of the POS WebApp.
      * @param authTokenJobtickets
      *            The authentication token of the Jobtickets WebApp.
-     * @return
+     * @return The response map.
      * @throws IOException
+     *             When IO errors.
      */
     private Map<String, Object> reqWebAppCloseSession(
             final String authTokenUser, final String authTokenAdmin,
             final String authTokenPos, final String authTokenJobtickets)
                     throws IOException {
 
-        final UserAuthToken removedTokenUser = WebAppUserAuthManager.instance()
-                .removeUserAuthToken(authTokenUser, WebAppTypeEnum.USER);
-
-        final UserAuthToken removedTokenAdmin = WebAppUserAuthManager.instance()
-                .removeUserAuthToken(authTokenUser, WebAppTypeEnum.ADMIN);
-
         final SpSession session = SpSession.get();
-
-        if (LOGGER.isTraceEnabled()) {
-            String testLog =
-                    "reqWebAppCloseSession Session [" + session.getId() + "]";
-            testLog += " WebAppCount ["
-                    + session.getAuthWebAppCount(session.getWebAppType()) + "]";
-            testLog += " authTokenUser [" + authTokenUser + "]";
-            if (removedTokenUser == null) {
-                testLog += "  [NOT found]";
-            } else {
-                testLog += "  [REMOVED]";
-            }
-            testLog += " authTokenAdmin [" + authTokenAdmin + "]";
-            if (removedTokenAdmin == null) {
-                testLog += "  [NOT found]";
-            } else {
-                testLog += "  [REMOVED]";
-            }
-            LOGGER.trace(testLog);
-        }
 
         final String userId;
 
@@ -5222,8 +5197,33 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         /*
-         * We are OK.
+         * Remove the AUTH token of the active WebApp.
          */
+        final String authTokenToRemove;
+
+        switch (savedWebAppType) {
+        case ADMIN:
+            authTokenToRemove = authTokenAdmin;
+            break;
+        case JOB_TICKETS:
+            authTokenToRemove = authTokenJobtickets;
+            break;
+        case POS:
+            authTokenToRemove = authTokenPos;
+            break;
+        case USER:
+            authTokenToRemove = authTokenUser;
+            break;
+        default:
+            authTokenToRemove = null;
+            break;
+        }
+
+        if (authTokenToRemove != null) {
+            WebAppUserAuthManager.instance()
+                    .removeUserAuthToken(authTokenToRemove, savedWebAppType);
+        }
+
         return createApiResultOK();
     }
 

@@ -155,6 +155,16 @@ public abstract class AbstractWebAppPage extends AbstractPage
     }
 
     /**
+     * Sets {@link WebAppCountExceededMsg} as response page with
+     * {@link WebAppTypeEnum} as {@link PageParameter}.
+     */
+    protected final void setWebAppCountExceededResponse() {
+        final PageParameters parms = new PageParameters();
+        parms.set(WebAppCountExceededMsg.PARM_WEBAPPTYPE, this.getWebAppType());
+        setResponsePage(WebAppCountExceededMsg.class, parms);
+    }
+
+    /**
      * Checks if the WebApp count is exceeded.
      * <p>
      * Note: we do NOT check on mobile and Mac OS X Safari browsers, i.e. we
@@ -176,10 +186,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
         }
 
         final boolean isZeroPanel =
-                !parameters.get(ZeroPagePanel.PARM_SUBMIT_INIDICATOR).isEmpty();
+                !parameters.get(ZeroPagePanel.PARM_SUBMIT_INDICATOR).isEmpty();
 
-        return !isZeroPanel
-                && SpSession.get().getAuthWebAppCount(getWebAppType()) > 0;
+        return !isZeroPanel && SpSession.get().getAuthWebAppCount() > 0;
     }
 
     @Override

@@ -36,7 +36,6 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.PerformanceLogger;
-import org.savapage.core.SpException;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
@@ -195,10 +194,6 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
 
         if (getSession() != null) {
             webAppType = session.getWebAppType();
-        }
-
-        if (webAppType == null || webAppType == WebAppTypeEnum.UNDEFINED) {
-            throw new SpException("Undefined Web App type.");
         }
 
         return webAppType;

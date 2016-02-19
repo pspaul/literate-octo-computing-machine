@@ -121,16 +121,10 @@ public final class SpSession extends WebSession {
     }
 
     /**
-     * @param webAppType
-     *            The {@link WebAppTypeEnum}.
-     *
      * @return The authenticated Web App counter.
      */
-    public int getAuthWebAppCount(final WebAppTypeEnum webAppType) {
-        if (webAppType == WebAppTypeEnum.USER) {
-            return this.authWebAppCount;
-        }
-        return 0;
+    public int getAuthWebAppCount() {
+        return this.authWebAppCount;
     }
 
     /**

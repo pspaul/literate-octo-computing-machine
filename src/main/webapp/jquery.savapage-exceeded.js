@@ -153,7 +153,7 @@
                     });
 
                     if (res.result.code === '0') {
-                        window.location.replace(window.location.protocol + "//" + window.location.host + "/user");
+                        window.location.replace(window.location.protocol + "//" + window.location.host + $('#sp-webapp-mountpath').attr('value'));
                         return false;
                     }
                     alert('error');

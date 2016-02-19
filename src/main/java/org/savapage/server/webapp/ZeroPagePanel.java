@@ -48,7 +48,7 @@ public final class ZeroPagePanel extends Panel {
      * A {@link PageParameters} value indicating that a submit was encountered
      * on the {@link ZeroPagePanel}.
      */
-    public static final String PARM_SUBMIT_INIDICATOR = "zero-refresh";
+    public static final String PARM_SUBMIT_INDICATOR = "zero-refresh";
 
     /**
      *
@@ -85,7 +85,7 @@ public final class ZeroPagePanel extends Panel {
                             final Form<?> form) {
 
                         final PageParameters parms = new PageParameters();
-                        parms.set(PARM_SUBMIT_INIDICATOR, "1");
+                        parms.set(PARM_SUBMIT_INDICATOR, "1");
 
                         switch (webAppType) {
                         case ADMIN:

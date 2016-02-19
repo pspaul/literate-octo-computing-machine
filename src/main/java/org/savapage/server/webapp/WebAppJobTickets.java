@@ -49,6 +49,11 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
 
         super(parameters);
 
+        if (isWebAppCountExceeded(parameters)) {
+            this.setWebAppCountExceededResponse();
+            return;
+        }
+
         final String appTitle = getWebAppTitle(
                 getLocalizer().getString("webapp-title-suffix", this));
 
@@ -60,7 +65,7 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
     }
 
     @Override
-            boolean isJqueryCoreRenderedByWicket() {
+    protected boolean isJqueryCoreRenderedByWicket() {
         return true;
     }
 

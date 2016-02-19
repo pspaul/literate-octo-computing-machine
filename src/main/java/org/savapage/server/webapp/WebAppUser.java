@@ -81,14 +81,14 @@ public final class WebAppUser extends AbstractWebAppPage {
     private final static String PAGE_PARM_AUTH_TOKEN = "auth_token";
     private final static String PAGE_PARM_AUTH_TOKEN_USERID = "auth_user";
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(WebAppUser.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(WebAppUser.class);
 
     /**
      *
      */
-    private static final QueueService QUEUE_SERVICE = ServiceContext
-            .getServiceFactory().getQueueService();
+    private static final QueueService QUEUE_SERVICE =
+            ServiceContext.getServiceFactory().getQueueService();
 
     /**
      * "Bean" attribute used for the selected font from the Form. Note: Wicket
@@ -116,7 +116,7 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     @Override
-    boolean isJqueryCoreRenderedByWicket() {
+    protected boolean isJqueryCoreRenderedByWicket() {
         return true;
     }
 
@@ -160,8 +160,10 @@ public final class WebAppUser extends AbstractWebAppPage {
                     ((ServletWebRequest) RequestCycle.get().getRequest())
                             .getContainerRequest().getRemoteAddr();
 
-            if (!InetUtils.isIp4AddrInCidrRanges(ConfigManager.instance()
-                    .getConfigValue(Key.WEB_PRINT_LIMIT_IP_ADDRESSES),
+            if (!InetUtils
+                    .isIp4AddrInCidrRanges(
+                            ConfigManager.instance().getConfigValue(
+                                    Key.WEB_PRINT_LIMIT_IP_ADDRESSES),
                     originatorIp)) {
 
                 error(localized("msg-file-upload-ip-not-allowed"));
@@ -192,7 +194,8 @@ public final class WebAppUser extends AbstractWebAppPage {
 
             try {
                 handleFileUpload(originatorIp, uploadedFile);
-                info(getLocalizer().getString("msg-file-process-success", this));
+                info(getLocalizer().getString("msg-file-process-success",
+                        this));
             } catch (Exception e) {
                 error(localized("msg-file-process-error", e.getMessage()));
             }
@@ -205,8 +208,8 @@ public final class WebAppUser extends AbstractWebAppPage {
          * @throws IOException
          */
         private void handleFileUpload(final String originatorIp,
-                FileUpload uploadedFile) throws DocContentPrintException,
-                IOException {
+                FileUpload uploadedFile)
+                        throws DocContentPrintException, IOException {
 
             final User user = SpSession.get().getUser();
             final String fileName = uploadedFile.getClientFileName();
@@ -224,14 +227,12 @@ public final class WebAppUser extends AbstractWebAppPage {
 
             try {
 
-                DocContentTypeEnum contentType =
-                        DocContent.getContentTypeFromMime(uploadedFile
-                                .getContentType());
+                DocContentTypeEnum contentType = DocContent
+                        .getContentTypeFromMime(uploadedFile.getContentType());
 
                 if (contentType == null) {
-                    contentType =
-                            DocContent.getContentTypeFromFile(uploadedFile
-                                    .getClientFileName());
+                    contentType = DocContent.getContentTypeFromFile(
+                            uploadedFile.getClientFileName());
 
                     if (LOGGER.isWarnEnabled()) {
                         LOGGER.warn("No content type found for ["
@@ -274,9 +275,8 @@ public final class WebAppUser extends AbstractWebAppPage {
         final String token =
                 this.getParmValue(parameters, false, PAGE_PARM_AUTH_TOKEN);
 
-        final String userid =
-                this.getParmValue(parameters, false,
-                        PAGE_PARM_AUTH_TOKEN_USERID);
+        final String userid = this.getParmValue(parameters, false,
+                PAGE_PARM_AUTH_TOKEN_USERID);
 
         if (userid == null || token == null) {
             return;
@@ -288,9 +288,8 @@ public final class WebAppUser extends AbstractWebAppPage {
             return;
         }
 
-        final long msecExpiry =
-                ConfigManager.instance().getConfigLong(
-                        Key.WEB_LOGIN_TTP_TOKEN_EXPIRY_MSECS);
+        final long msecExpiry = ConfigManager.instance()
+                .getConfigLong(Key.WEB_LOGIN_TTP_TOKEN_EXPIRY_MSECS);
 
         if (!OneTimeAuthToken.isTokenValid(userid, token, msecExpiry)) {
             final String msg = localized("msg-authtoken-denied", userid);
@@ -300,9 +299,8 @@ public final class WebAppUser extends AbstractWebAppPage {
             return;
         }
 
-        final User authUser =
-                ServiceContext.getDaoContext().getUserDao()
-                        .findActiveUserByUserId(userid);
+        final User authUser = ServiceContext.getDaoContext().getUserDao()
+                .findActiveUserByUserId(userid);
 
         if (authUser == null) {
 
@@ -322,8 +320,8 @@ public final class WebAppUser extends AbstractWebAppPage {
                 msg);
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace(String.format(
-                    "User [%s] authenticated with token: %s", userid, token));
+            LOGGER.trace(String.format("User [%s] authenticated with token: %s",
+                    userid, token));
         } else if (LOGGER.isInfoEnabled()) {
             LOGGER.info(msg);
         }
@@ -339,7 +337,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         super(parameters);
 
         if (isWebAppCountExceeded(parameters)) {
-            setResponsePage(WebAppCountExceededMsg.class);
+            this.setWebAppCountExceededResponse();
             return;
         }
 
@@ -351,9 +349,8 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         addZeroPagePanel(WebAppTypeEnum.USER);
 
-        maxUploadMb =
-                ConfigManager.instance().getConfigLong(
-                        Key.WEB_PRINT_MAX_FILE_MB);
+        maxUploadMb = ConfigManager.instance()
+                .getConfigLong(Key.WEB_PRINT_MAX_FILE_MB);
 
         if (maxUploadMb == null) {
             maxUploadMb = IConfigProp.WEBPRINT_MAX_FILE_MB_V_DEFAULT;
@@ -399,9 +396,8 @@ public final class WebAppUser extends AbstractWebAppPage {
         /*
          * create a feedback panel
          */
-        final Component feedback =
-                new FeedbackPanel("fileUploadFeedback")
-                        .setOutputMarkupPlaceholderTag(true);
+        final Component feedback = new FeedbackPanel("fileUploadFeedback")
+                .setOutputMarkupPlaceholderTag(true);
 
         add(feedback);
 
@@ -431,8 +427,8 @@ public final class WebAppUser extends AbstractWebAppPage {
          * Create the file upload field.
          */
         fileUploadField = new FileUploadField("fileUpload");
-        fileUploadField.add(new AttributeModifier("accept", DocContent
-                .getHtmlAcceptString()));
+        fileUploadField.add(new AttributeModifier("accept",
+                DocContent.getHtmlAcceptString()));
 
         form.add(fileUploadField);
 
@@ -443,8 +439,7 @@ public final class WebAppUser extends AbstractWebAppPage {
                 .getConfigFontFamily(Key.REPORTS_PDF_INTERNAL_FONT_FAMILY));
 
         final DropDownChoice<InternalFontFamilyEnum> fileUploadFontDropDown =
-                new DropDownChoice<>(
-                        "fileUploadFontSelect",
+                new DropDownChoice<>("fileUploadFontSelect",
                         new PropertyModel<InternalFontFamilyEnum>(this,
                                 "selectedUploadFont"),
                         new LoadableDetachableModel<List<InternalFontFamilyEnum>>() {
@@ -453,9 +448,8 @@ public final class WebAppUser extends AbstractWebAppPage {
 
                             @Override
                             protected List<InternalFontFamilyEnum> load() {
-                                return new ArrayList<>(
-                                        Arrays.asList(InternalFontFamilyEnum
-                                                .values()));
+                                return new ArrayList<>(Arrays.asList(
+                                        InternalFontFamilyEnum.values()));
                             }
                         }, new IChoiceRenderer<InternalFontFamilyEnum>() {
 
@@ -475,11 +469,8 @@ public final class WebAppUser extends AbstractWebAppPage {
                             }
 
                             @Override
-                            public
-                                    InternalFontFamilyEnum
-                                    getObject(
-                                            String arg0,
-                                            IModel<? extends List<? extends InternalFontFamilyEnum>> arg1) {
+                            public InternalFontFamilyEnum getObject(String arg0,
+                                    IModel<? extends List<? extends InternalFontFamilyEnum>> arg1) {
                                 return InternalFontFamilyEnum.valueOf(arg0);
                             }
                         });
@@ -514,8 +505,8 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         };
 
-        ajaxButton.add(new AttributeModifier("value", getLocalizer().getString(
-                "button-file-upload", this)));
+        ajaxButton.add(new AttributeModifier("value",
+                getLocalizer().getString("button-file-upload", this)));
 
         form.add(ajaxButton);
 
@@ -523,8 +514,8 @@ public final class WebAppUser extends AbstractWebAppPage {
          *
          */
         final Label labelWrk = new Label("file-upload-reset");
-        labelWrk.add(new AttributeModifier("value", getLocalizer().getString(
-                "button-file-upload-clear", this)));
+        labelWrk.add(new AttributeModifier("value",
+                getLocalizer().getString("button-file-upload-clear", this)));
         form.add(labelWrk);
 
     }

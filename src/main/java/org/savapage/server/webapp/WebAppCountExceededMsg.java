@@ -24,11 +24,13 @@ package org.savapage.server.webapp;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.server.SpSession;
+import org.savapage.server.WebApp;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -36,6 +38,11 @@ import org.savapage.server.SpSession;
  *
  */
 public final class WebAppCountExceededMsg extends AbstractWebAppPage {
+
+    /**
+     * .
+     */
+    public static final String PARM_WEBAPPTYPE = "app";
 
     /**
      *
@@ -48,19 +55,52 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
      *            The {@link PageParameters}.
      */
     public WebAppCountExceededMsg(final PageParameters parameters) {
+
         super(parameters);
-        add(new Label("app-title", getWebAppTitle(null)));
-        add(new Label("title", CommunityDictEnum.SAVAPAGE.getWord()));
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addLabel("app-title", getWebAppTitle(null));
+        helper.addLabel("title", CommunityDictEnum.SAVAPAGE.getWord());
+
+        //
+        final WebAppTypeEnum requestedWebAppType =
+                EnumUtils.getEnum(WebAppTypeEnum.class,
+                        this.getPageParameters().get(PARM_WEBAPPTYPE)
+                                .toString(WebAppTypeEnum.UNDEFINED.toString()));
+
+        final String mountPath;
+
+        switch (requestedWebAppType) {
+        case ADMIN:
+            mountPath = WebApp.MOUNT_PATH_WEBAPP_ADMIN;
+            break;
+        case JOB_TICKETS:
+            mountPath = WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
+            break;
+        case POS:
+            mountPath = WebApp.MOUNT_PATH_WEBAPP_POS;
+            break;
+        case USER:
+        case UNDEFINED:
+        default:
+            mountPath = WebApp.MOUNT_PATH_WEBAPP_USER;
+            break;
+        }
+
+        helper.addModifyLabelAttr("sp-webapp-mountpath", "value", mountPath);
     }
 
     @Override
-    boolean isJqueryCoreRenderedByWicket() {
+    protected boolean isJqueryCoreRenderedByWicket() {
         return false;
     }
 
     @Override
     protected WebAppTypeEnum getWebAppType() {
-
+        /*
+         * IMPORTANT: Use Web App Type of current session.
+         */
         final WebAppTypeEnum webAppType = SpSession.get().getWebAppType();
 
         if (webAppType != null) {

@@ -85,7 +85,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
         super(parameters);
 
         if (isWebAppCountExceeded(parameters)) {
-            setResponsePage(WebAppCountExceededMsg.class);
+            this.setWebAppCountExceededResponse();
             return;
         }
 
@@ -102,7 +102,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
     }
 
     @Override
-            boolean isJqueryCoreRenderedByWicket() {
+    protected boolean isJqueryCoreRenderedByWicket() {
         return true;
     }
 

@@ -238,7 +238,7 @@ public final class ReqLogin extends ApiRequestMixin {
         if (LOGGER.isTraceEnabled()) {
             String testLog = "Session [" + session.getId() + "]";
             testLog += " WebAppCount ["
-                    + session.getAuthWebAppCount(session.getWebAppType()) + "]";
+                    + session.getAuthWebAppCount() + "]";
             LOGGER.trace(testLog);
         }
 
@@ -248,7 +248,7 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         if (!userAgentHelper.isMobileBrowser()
                 && !userAgentHelper.isSafariBrowserMacOsX()
-                && SpSession.get().getAuthWebAppCount(webAppType) != 0) {
+                && SpSession.get().getAuthWebAppCount() != 0) {
 
             this.setApiResult(ApiResultCodeEnum.ERROR,
                     "msg-login-another-session-active");

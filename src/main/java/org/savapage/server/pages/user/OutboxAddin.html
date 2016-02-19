@@ -78,33 +78,24 @@
 		</wicket:enclosure>
 	</div>
 
-	<div data-role="controlgroup" data-type="horizontal">
-	
-		<wicket:enclosure child="button-remove-outbox-job">
-			<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
-				<a href="#" data-savapage="the-unique-filename"
-					class="sp-outbox-remove-job ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
-					wicket:id="button-remove-outbox-job" />
-			</div>
-		</wicket:enclosure>
+	<wicket:enclosure child="button-remove-outbox-job">
+		<a href="#" data-savapage="the-unique-filename"
+			class="sp-outbox-remove-job ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
+			wicket:id="button-remove-outbox-job" />
+	</wicket:enclosure>
 
-		<wicket:enclosure child="button-remove-outbox-jobticket">
-			<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
-				<a href="#" data-savapage="the-unique-filename"
-					class="sp-outbox-remove-jobticket ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
-					wicket:id="button-remove-outbox-jobticket" />
-			</div>
-		</wicket:enclosure>
+	<wicket:enclosure child="button-remove-outbox-jobticket">
+		<a href="#" data-savapage="the-unique-filename"
+			class="sp-outbox-remove-jobticket ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
+			wicket:id="button-remove-outbox-jobticket" />
+	</wicket:enclosure>
 
-		<wicket:enclosure child="button-jobticket-print">
-			<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
-				<a href="#" data-savapage="the-unique-filename"
-					class="sp-jobticket-print ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
-					wicket:id="button-jobticket-print" />
-			</div>
-		</wicket:enclosure>
-	</div>
-	
+	<wicket:enclosure child="button-jobticket-print">
+		<a href="#" data-savapage="the-unique-filename"
+			class="sp-jobticket-print ui-btn ui-mini ui-btn-inline ui-btn-icon-none "
+			wicket:id="button-jobticket-print" />
+	</wicket:enclosure>
+
 	<p class="ui-li-aside">
 		<span class="sp-outbox-remaining-time" wicket:id="timeExpiry" />
 	</p>
