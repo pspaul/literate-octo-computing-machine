@@ -170,13 +170,9 @@
 				// Call-back: api
 				//
 				_api.onExpired(function() {
-					if (_view.activePage().attr('id') === 'page-admin') {
-						_view.showExpiredDialog();
-					} else {
-						// deferred handling
-						_model.sessionExpired = true;
-					}
+					_view.showExpiredDialog();
 				});
+
 				// Call-back: api
 				_api.onDisconnected(function() {
 					_model.user.loggedIn = false;
@@ -197,6 +193,7 @@
 				_api.callAsync({
 					request : 'login',
 					dto : JSON.stringify({
+						webAppType : 'POS',
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,
@@ -440,6 +437,16 @@
 					// Initial load/show of Login dialog
 					_view.pages.login.loadShowAsync();
 				}
+
+				$(window).on('beforeunload', function() {
+					// By NOT returning anything the unload dialog will not show.
+					$.noop();
+				}).on('unload', function() {
+					_api.removeCallbacks();
+					_api.call({
+						request : 'webapp-unload'
+					});
+				});
 			};
 		};
 

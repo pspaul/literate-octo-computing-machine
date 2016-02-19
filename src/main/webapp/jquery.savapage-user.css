@@ -101,26 +101,6 @@ img.active {
     border: 1px #006600 dotted;
 }
 
-.sp-outbox-remaining-time {
-    color: #DC5C05;
-    padding: 0px;
-}
-.sp-outbox-jobs {
-    color: #444444;
-    padding: 2px 5px 2px 5px;
-    border: 1px #DDDDDD solid;
-}
-.sp-outbox-pages {
-    color: #888888;
-    padding: 2px 5px 2px 5px;
-    border: 1px #DDDDDD solid;
-}
-.sp-outbox-cost {
-    color: #888888;
-    padding: 2px 5px 2px 5px;
-    border: 1px #DDDDDD solid;
-}
-
 .sp-thumbnail-cut {
     background: red;
 }

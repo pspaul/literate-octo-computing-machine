@@ -1198,7 +1198,8 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_WEBAPP_UNLOAD:
 
-            return reqWebAppUnload();
+            SpSession.get().decrementAuthWebApp();
+            return createApiResultOK();
 
         case JsonApiDict.REQ_WEBAPP_CLOSE_SESSION:
 
@@ -5054,13 +5055,14 @@ public final class JsonApiServer extends AbstractPage {
 
     /**
      * Stops and replaces the underlying (Web)Session, invalidating the current
-     * one and creating a new one. NOTE: relevant data of the current session is
-     * copied.
+     * one and creating a new one.
      *
      * @param session
      *            The {@link SpSession}.
      * @param userId
+     *            The user ID.
      * @throws IOException
+     *             When IO error.
      */
     private void stopReplaceSession(final SpSession session,
             final String userId) throws IOException {
@@ -5070,27 +5072,22 @@ public final class JsonApiServer extends AbstractPage {
         final WebAppTypeEnum savedWebAppType = session.getWebAppType();
 
         /*
-         * IMPORTANT: Logout to remove the user associated with this session.
+         * IMPORTANT: Logout to remove the user and WebApp Type associated with
+         * this session.
          */
         session.logout();
 
         /*
          * Replaces the underlying (Web)Session, invalidating the current one
-         * and creating a new one. NOTE: the data of the current session is
-         * copied.
+         * and creating a new one. NOTE: data are copied from current session.
          */
         session.replaceSession();
-
-        /*
-         * Restore the critical session attribute.
-         */
-        session.setWebAppType(savedWebAppType);
 
         /*
          * Make sure that all User Web App long polls for this user are
          * interrupted.
          */
-        if (userId != null && this.getWebAppType() == WebAppTypeEnum.USER) {
+        if (userId != null && savedWebAppType == WebAppTypeEnum.USER) {
             ApiRequestHelper.interruptPendingLongPolls(userId,
                     this.getRemoteAddr());
         }
@@ -5122,14 +5119,6 @@ public final class JsonApiServer extends AbstractPage {
 
         this.stopReplaceSession(SpSession.get(), userId);
 
-        return createApiResultOK();
-    }
-
-    /**
-     * @return The OK message.
-     */
-    private Map<String, Object> reqWebAppUnload() {
-        SpSession.get().decrementAuthWebApp();
         return createApiResultOK();
     }
 
@@ -5171,21 +5160,16 @@ public final class JsonApiServer extends AbstractPage {
         final WebAppTypeEnum savedWebAppType = session.getWebAppType();
 
         /*
-         * IMPORTANT: Logout to remove the user associated with this session.
+         * IMPORTANT: Logout to remove the user and WebApp Type associated with
+         * this session.
          */
         session.logout();
 
         /*
          * Replaces the underlying (Web)Session, invalidating the current one
-         * and creating a new one. NOTE: the data of the current session is
-         * copied.
+         * and creating a new one. NOTE: data are copied from current session.
          */
         session.replaceSession();
-
-        /*
-         * Restore the critical session attribute.
-         */
-        session.setWebAppType(savedWebAppType);
 
         /*
          * Make sure that all User Web App long polls for this user are

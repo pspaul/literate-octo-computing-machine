@@ -256,6 +256,7 @@
 				_api.callAsync({
 					request : 'login',
 					dto : JSON.stringify({
+						webAppType : 'ADMIN',
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,

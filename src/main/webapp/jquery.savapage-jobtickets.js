@@ -194,6 +194,7 @@
 				_api.callAsync({
 					request : 'login',
 					dto : JSON.stringify({
+						webAppType : 'JOB_TICKETS',
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,
@@ -437,6 +438,17 @@
 					// Initial load/show of Login dialog
 					_view.pages.login.loadShowAsync();
 				}
+				
+				$(window).on('beforeunload', function() {
+					// By NOT returning anything the unload dialog will not show.
+					$.noop();
+				}).on('unload', function() {
+					_api.removeCallbacks();
+					_api.call({
+						request : 'webapp-unload'
+					});
+				});
+				
 			};
 		};
 

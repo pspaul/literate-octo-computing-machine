@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ import org.savapage.server.pages.AbstractPage;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public abstract class AbstractWebAppPage extends AbstractPage
@@ -144,14 +144,11 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
         super(parameters);
 
-        SpSession.get().setWebAppType(this.getWebAppType());
-
         final String language = parameters.get("language").toString();
 
         if (language != null) {
             getSession().setLocale(new Locale(language));
         }
-
     }
 
     /**

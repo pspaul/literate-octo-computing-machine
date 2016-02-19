@@ -84,20 +84,20 @@
 				});
 
 				$(this).on('click', '.sp-outbox-remove-jobticket', null, function() {
-					
+
 					var res = _api.call({
 						request : 'jobticket-delete',
 						dto : JSON.stringify({
 							jobFileName : $(this).attr('data-savapage'),
 						})
 					});
-					
+
 					if (res.result.code === "0") {
 						_refresh();
 					}
 					_view.showApiMsg(res);
 				});
-				
+
 				$(this).on('click', '.sp-jobticket-print', null, function() {
 					var res = _api.call({
 						request : 'jobticket-print',
@@ -105,13 +105,22 @@
 							jobFileName : $(this).attr('data-savapage'),
 						})
 					});
-					
+
 					if (res.result.code === "0") {
 						_refresh();
 					}
 					_view.showApiMsg(res);
 				});
 
+				$(this).on('click', "#btn-jobtickets-back", null, function() {
+					/*
+					 *  onBack() is injected by the Job Ticket Web App, but not by the Admin Web App host of this page.
+					 */
+					if (_self.onBack) {
+						return _self.onBack();
+					}
+					return true;
+				});
 
 			}).on("pageshow", function(event, ui) {
 				if (!_shown) {

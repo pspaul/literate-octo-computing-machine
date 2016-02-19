@@ -4328,6 +4328,7 @@
 				_api.callAsync({
 					request : 'login',
 					dto : JSON.stringify({
+						webAppType : 'USER',
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,

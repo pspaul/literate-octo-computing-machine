@@ -93,11 +93,21 @@ public final class ReqLogin extends ApiRequestMixin {
     @JsonInclude(Include.NON_NULL)
     private static class DtoReq extends AbstractDto {
 
+        private WebAppTypeEnum webAppType;
+
         private String authMode;
         private String authId;
         private String authPw;
         private String authToken;
         private String assocCardNumber;
+
+        public WebAppTypeEnum getWebAppType() {
+            return webAppType;
+        }
+
+        public void setWebAppType(WebAppTypeEnum webAppType) {
+            this.webAppType = webAppType;
+        }
 
         public String getAuthMode() {
             return authMode;
@@ -155,7 +165,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
         reqLogin(UserAuth.mode(dtoReq.getAuthMode()), dtoReq.getAuthId(),
                 dtoReq.getAuthPw(), dtoReq.getAuthToken(),
-                dtoReq.getAssocCardNumber(), SpSession.get().getWebAppType());
+                dtoReq.getAssocCardNumber(), dtoReq.getWebAppType());
     }
 
     /**
@@ -205,19 +215,6 @@ public final class ReqLogin extends ApiRequestMixin {
             final String assocCardNumber, final WebAppTypeEnum webAppType)
                     throws IOException {
 
-        /*
-         * INVARIANT: Web App type MUST be defined.
-         */
-        if (webAppType == null || webAppType == WebAppTypeEnum.UNDEFINED) {
-            /*
-             * The WebApp lost connection because the server was restarted :
-             * this makes the Web App fall back to the Login page.
-             */
-            this.setApiResultText(ApiResultCodeEnum.ERROR,
-                    "Please refresh your browser page.");
-            return;
-        }
-
         final UserAgentHelper userAgentHelper = this.createUserAgentHelper();
 
         /*
@@ -237,8 +234,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
         if (LOGGER.isTraceEnabled()) {
             String testLog = "Session [" + session.getId() + "]";
-            testLog += " WebAppCount ["
-                    + session.getAuthWebAppCount() + "]";
+            testLog += " WebAppCount [" + session.getAuthWebAppCount() + "]";
             LOGGER.trace(testLog);
         }
 
@@ -353,7 +349,8 @@ public final class ReqLogin extends ApiRequestMixin {
 
         if (isApiResultOk()) {
             this.setSessionTimeoutSeconds(webAppType);
-            SpSession.get().incrementAuthWebApp();
+            session.setWebAppType(webAppType);
+            session.incrementAuthWebApp();
         }
     }
 

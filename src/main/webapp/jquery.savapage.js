@@ -2262,12 +2262,11 @@
 				this.checkCb(sel, !this.isCbChecked(sel));
 			};
 
-
 			/**
 			 * Returns boolean.
 			 */
 			this.isCbDisabled = function(sel) {
-				return sel.checkboxradio( "option", "disabled" );
+				return sel.checkboxradio("option", "disabled");
 			};
 
 			/**

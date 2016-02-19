@@ -204,8 +204,12 @@ public final class SpSession extends WebSession {
      * the authenticated webapp counter.
      */
     public synchronized void logout() {
+
         setUser(null);
+        setWebAppType(WebAppTypeEnum.UNDEFINED);
+
         decrementAuthWebApp();
+
         this.creationTime = System.currentTimeMillis();
         this.lastValidateTime = this.creationTime;
     }
