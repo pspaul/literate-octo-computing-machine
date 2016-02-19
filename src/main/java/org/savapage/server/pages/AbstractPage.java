@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -51,21 +51,22 @@ import org.slf4j.LoggerFactory;
  * TODO: All helper methods should be moved to {@link MarkupHelper}.
  * </p>
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
-public abstract class AbstractPage extends WebPage implements ServiceEntryPoint {
+public abstract class AbstractPage extends WebPage
+        implements ServiceEntryPoint {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AbstractPage.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(AbstractPage.class);
 
-    private final DateFormat dfLongDate = DateFormat.getDateInstance(
-            DateFormat.LONG, getSession().getLocale());
+    private final DateFormat dfLongDate = DateFormat
+            .getDateInstance(DateFormat.LONG, getSession().getLocale());
 
     private final DateFormat dfDateTime = DateFormat.getDateTimeInstance(
             DateFormat.LONG, DateFormat.LONG, getSession().getLocale());
@@ -73,14 +74,14 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
     private final DateFormat dfShortDateTime = DateFormat.getDateTimeInstance(
             DateFormat.SHORT, DateFormat.SHORT, getSession().getLocale());
 
-    private final NumberFormat fmNumber = NumberFormat.getInstance(getSession()
-            .getLocale());
+    private final NumberFormat fmNumber =
+            NumberFormat.getInstance(getSession().getLocale());
 
-    private final DateFormat dfShortDate = DateFormat.getDateInstance(
-            DateFormat.SHORT, getSession().getLocale());
+    private final DateFormat dfShortDate = DateFormat
+            .getDateInstance(DateFormat.SHORT, getSession().getLocale());
 
-    private final DateFormat dfMediumDate = DateFormat.getDateInstance(
-            DateFormat.MEDIUM, getSession().getLocale());
+    private final DateFormat dfMediumDate = DateFormat
+            .getDateInstance(DateFormat.MEDIUM, getSession().getLocale());
 
     private boolean serviceContextOpened = false;
 
@@ -177,16 +178,16 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
 
         if (PerformanceLogger.isEnabled()) {
             PerformanceLogger.log(this.getClass(), "onAfterRender",
-                    perfStartTime, getWebAppType().toString());
+                    perfStartTime, getSessionWebAppType().toString());
         }
     }
 
     /**
-     * Gets the {@link WebAppTypeEnum} of this session.
+     * Gets the authenticated {@link WebAppTypeEnum} from the session.
      *
      * @return The {@link WebAppTypeEnum}.
      */
-    protected WebAppTypeEnum getWebAppType() {
+    protected final WebAppTypeEnum getSessionWebAppType() {
 
         WebAppTypeEnum webAppType = WebAppTypeEnum.UNDEFINED;
 
@@ -283,7 +284,8 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
      *            The values to fill the placeholders
      * @return The localized string.
      */
-    protected final String localized(final String key, final Object... objects) {
+    protected final String localized(final String key,
+            final Object... objects) {
         return MessageFormat.format(getLocalizer().getString(key, this),
                 objects);
     }
@@ -503,9 +505,8 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
     @Deprecated
     protected void tagLabel(final String wicketId, final String localizerKey,
             final String attrFor) {
-        Label labelWrk =
-                new Label(wicketId, getLocalizer()
-                        .getString(localizerKey, this));
+        Label labelWrk = new Label(wicketId,
+                getLocalizer().getString(localizerKey, this));
         labelWrk.add(new AttributeModifier("for", attrFor));
         add(labelWrk);
     }
@@ -532,10 +533,8 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
         /*
          *
          */
-        Label labelWrk =
-                new Label(wicketIdBase + wicketIdSuffix + "-label",
-                        getLocalizer().getString(wicketIdBase + wicketIdSuffix,
-                                this));
+        Label labelWrk = new Label(wicketIdBase + wicketIdSuffix + "-label",
+                getLocalizer().getString(wicketIdBase + wicketIdSuffix, this));
         labelWrk.add(new AttributeModifier("for", attrId));
         add(labelWrk);
     }
@@ -553,7 +552,8 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
      * @param checked
      */
     protected void tagRadio(final String wicketId, final String attrName,
-            final String attrId, final String attrValue, final boolean checked) {
+            final String attrId, final String attrValue,
+            final boolean checked) {
         Label labelWrk = new Label(wicketId);
         labelWrk.add(new AttributeModifier("name", attrName));
         labelWrk.add(new AttributeModifier("id", attrId));
@@ -574,8 +574,8 @@ public abstract class AbstractPage extends WebPage implements ServiceEntryPoint 
      * @param value
      */
     @Deprecated
-    protected final void
-            addTextInput(final String wicketId, final String value) {
+    protected final void addTextInput(final String wicketId,
+            final String value) {
 
         Label labelWrk = new Label(wicketId);
         labelWrk.add(new AttributeModifier("value", value));

@@ -69,7 +69,7 @@ public final class UserInternetPrinter extends AbstractAuthPage {
          * If this page is displayed in the Admin WebApp context, we check the
          * admin authentication (including the need for a valid Membership).
          */
-        if (this.getWebAppType() == WebAppTypeEnum.ADMIN) {
+        if (this.getSessionWebAppType() == WebAppTypeEnum.ADMIN) {
             checkAdminAuthorization();
         }
 

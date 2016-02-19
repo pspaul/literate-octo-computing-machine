@@ -153,14 +153,14 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     /**
      * .
      */
-    public static final String PATH_IMAGES_EXT_SUPPLIER = PATH_IMAGES
-            + "/ext-supplier";
+    public static final String PATH_IMAGES_EXT_SUPPLIER =
+            PATH_IMAGES + "/ext-supplier";
 
     /**
      * .
      */
-    public static final String PATH_IMAGES_THIRDPARTY = PATH_IMAGES
-            + "/thirdparty";
+    public static final String PATH_IMAGES_THIRDPARTY =
+            PATH_IMAGES + "/thirdparty";
 
     /**
      * Basename of the properties file for web customization.
@@ -264,8 +264,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             final ExternalSupplierEnum extSupplierEnum) {
 
         final StringBuilder url =
-                new StringBuilder().append(PATH_IMAGES_EXT_SUPPLIER)
-                        .append("/").append(extSupplierEnum.getImageFileName());
+                new StringBuilder().append(PATH_IMAGES_EXT_SUPPLIER).append("/")
+                        .append(extSupplierEnum.getImageFileName());
 
         return url.toString();
     }
@@ -277,8 +277,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *            The {@link ThirdPartyEnum}.
      * @return The relative URL as string.
      */
-    public static String getThirdPartyEnumImgUrl(
-            final ThirdPartyEnum extSupplierEnum) {
+    public static String
+            getThirdPartyEnumImgUrl(final ThirdPartyEnum extSupplierEnum) {
 
         final StringBuilder url =
                 new StringBuilder().append(PATH_IMAGES_THIRDPARTY).append("/")
@@ -337,8 +337,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              * ADD first-time authenticated user on IP address
              */
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("IP User Session [" + ipAddr + "] [" + user
-                        + "] [" + sessionId + "] added. Sessions ["
+                LOGGER.debug("IP User Session [" + ipAddr + "] [" + user + "] ["
+                        + sessionId + "] added. Sessions ["
                         + (theDictIpAddrUser.size() + 1) + "].");
             }
 
@@ -351,9 +351,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
             if (oldSession == null) {
 
-                LOGGER.error("addSessionIpUser: no session for "
-                        + "IP address [" + ipAddr + "] of old user [" + oldUser
-                        + "]");
+                LOGGER.error(
+                        "addSessionIpUser: no session for " + "IP address ["
+                                + ipAddr + "] of old user [" + oldUser + "]");
 
             } else {
 
@@ -405,20 +405,18 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *            Action string used for logging.
      * @return {@code true} if the cache is in-sync.
      */
-    private static synchronized boolean checkIpUserSessionCache(
-            final String action) {
+    private static synchronized boolean
+            checkIpUserSessionCache(final String action) {
 
-        boolean inSync =
-                theDictIpAddrUser.size() == theDictSessionIpAddr.size()
-                        && theDictSessionIpAddr.size() == theDictIpAddrSession
-                                .size();
+        boolean inSync = theDictIpAddrUser.size() == theDictSessionIpAddr.size()
+                && theDictSessionIpAddr.size() == theDictIpAddrSession.size();
 
         if (!inSync) {
             LOGGER.error(action + ": SessionIpUserCache is out-of-sync:"
                     + " IPaddr->User [" + theDictIpAddrUser.size() + "]"
-                    + " IPaddr->SessionId [" + theDictIpAddrSession.size()
-                    + "]" + " SessionId->IPaddr ["
-                    + theDictSessionIpAddr.size() + "]");
+                    + " IPaddr->SessionId [" + theDictIpAddrSession.size() + "]"
+                    + " SessionId->IPaddr [" + theDictSessionIpAddr.size()
+                    + "]");
         }
         return inSync;
     }
@@ -522,8 +520,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * @param namePath
      * @return
      */
-    public static JavaScriptReferenceHeaderItem getWebjarsJsRef(
-            final String namePath) {
+    public static JavaScriptReferenceHeaderItem
+            getWebjarsJsRef(final String namePath) {
         return JavaScriptHeaderItem
                 .forReference(new WebjarsJavaScriptResourceReference(namePath));
     }
@@ -535,8 +533,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public static CssReferenceHeaderItem
             getWebjarsCssRef(final String namePath) {
-        return CssHeaderItem.forReference(new WebjarsCssResourceReference(
-                namePath));
+        return CssHeaderItem
+                .forReference(new WebjarsCssResourceReference(namePath));
     }
 
     /**
@@ -595,7 +593,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              * the parameters can be get with PageParameters.get(String) (e.g.
              * parameters.get("a") will return "1")
              *
-             * https://cwiki.apache.org/confluence/display/WICKET/Request+mapping
+             * https://cwiki.apache.org/confluence/display/WICKET/Request+
+             * mapping
              */
             mount(new MountedMapper(ImageUrl.MOUNT_PATH, ImageServer.class,
                     new UrlPathPageParametersEncoder()));
@@ -624,8 +623,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              * Web server.
              */
             final StringBuilder logMsg = new StringBuilder();
-            logMsg.append("Web Server started on port ").append(
-                    WebServer.getServerPort());
+            logMsg.append("Web Server started on port ")
+                    .append(WebServer.getServerPort());
             logMsg.append(" and ").append(WebServer.getServerPortSsl())
                     .append(" (SSL)");
 
@@ -634,11 +633,10 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             /*
              *
              */
-            final Long maxnetworkdelay =
-                    Long.parseLong(theServerProps.getProperty(
-                            "cometd.client.maxnetworkdelay.msec", String
-                                    .valueOf(AbstractEventService
-                                            .getMaxNetworkDelayMsecDefault())));
+            final Long maxnetworkdelay = Long.parseLong(theServerProps
+                    .getProperty("cometd.client.maxnetworkdelay.msec",
+                            String.valueOf(AbstractEventService
+                                    .getMaxNetworkDelayMsecDefault())));
 
             AbstractEventService.setMaxNetworkDelay(maxnetworkdelay);
 
@@ -650,9 +648,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             /*
              * Server plug-in manager.
              */
-            this.pluginManager =
-                    ServerPluginManager
-                            .create(ConfigManager.getServerExtHome());
+            this.pluginManager = ServerPluginManager
+                    .create(ConfigManager.getServerExtHome());
 
             this.pluginManager.start();
 
@@ -666,9 +663,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             /*
              * IP Print Server (RAW)
              */
-            final int iRawPrintPort =
-                    Integer.valueOf(theServerProps.getProperty(
-                            ConfigManager.SERVER_PROP_PRINTER_RAW_PORT,
+            final int iRawPrintPort = Integer.valueOf(theServerProps
+                    .getProperty(ConfigManager.SERVER_PROP_PRINTER_RAW_PORT,
                             ConfigManager.PRINTER_RAW_PORT_DEFAULT));
 
             this.rawPrintServer = new RawPrintServer(iRawPrintPort);
@@ -732,9 +728,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * Replaces the built-in jQuery Core library with the one we need for JQuery
      * Mobile and other jQuery plugins.
      * <p>
-     * See <a
-     * href="http://wicketinaction.com/2012/07/wicket-6-resource-management/">
-     * Wicket 6 resource management</a>.
+     * See <a href=
+     * "http://wicketinaction.com/2012/07/wicket-6-resource-management/"> Wicket
+     * 6 resource management</a>.
      * </p>
      */
     private void replaceJQueryCore() {
@@ -744,7 +740,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
         addResourceReplacement(
                 (JavaScriptResourceReference) getJavaScriptLibrarySettings()
-                        .getJQueryReference(), replacement.getReference());
+                        .getJQueryReference(),
+                replacement.getReference());
     }
 
     /**
@@ -784,18 +781,16 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     @Override
     public Session newSession(final Request request, final Response response) {
 
-        final String remoteAddr =
-                ((ServletWebRequest) request).getContainerRequest()
-                        .getRemoteAddr();
+        final String remoteAddr = ((ServletWebRequest) request)
+                .getContainerRequest().getRemoteAddr();
 
         final String urlPath = request.getUrl().getPath();
 
         final String debugMsg;
 
         if (LOGGER.isDebugEnabled()) {
-            debugMsg =
-                    String.format("newSession: URL path [%s] IP [%s]", urlPath,
-                            remoteAddr);
+            debugMsg = String.format("newSession: URL path [%s] IP [%s]",
+                    urlPath, remoteAddr);
         } else {
             debugMsg = null;
         }
@@ -873,8 +868,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("IP User Session [?.?.?.?] [" + sessionId
-                            + "] unbound. Sessions ["
-                            + theDictIpAddrUser.size() + "].");
+                            + "] unbound. Sessions [" + theDictIpAddrUser.size()
+                            + "].");
                 }
 
             } else {
@@ -894,9 +889,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                 } else {
 
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("IP User Session [" + ipAddr + "] ["
-                                + user + "] [" + sessionId
-                                + "] removed. Sessions ["
+                        LOGGER.debug("IP User Session [" + ipAddr + "] [" + user
+                                + "] [" + sessionId + "] removed. Sessions ["
                                 + (theDictIpAddrUser.size()) + "].");
                     }
 

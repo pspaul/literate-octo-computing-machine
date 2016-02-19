@@ -36,8 +36,13 @@ import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  * Customized {@link WebSession}.
+ *
  * <p>
- * Note that methods are synchronized, because sessions aren’t thread-safe.
+ * <i>A session instance is shared by all Web Apps across multiple tabs in a
+ * single browser</i>.
+ * </p>
+ * <p>
+ * NOTE: methods are synchronized, because sessions aren’t thread-safe.
  * </p>
  *
  * @author Rijk Ravestein

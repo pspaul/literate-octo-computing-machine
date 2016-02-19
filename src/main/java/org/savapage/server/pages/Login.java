@@ -21,8 +21,10 @@
  */
 package org.savapage.server.pages;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.IRequestParameters;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DeviceDao;
@@ -54,7 +56,20 @@ public final class Login extends AbstractPage {
 
         final String loginDescript;
 
-        switch (this.getWebAppType()) {
+        /*
+         * At this point we can NOT use the authenticated Web App Type from the
+         * session, since this is the first Web App in the browser, or a new
+         * browser tab with another Web App Type. So, we use a request parameter
+         * to determine the Web App Type.
+         */
+        final IRequestParameters parms =
+                getRequestCycle().getRequest().getPostParameters();
+
+        final WebAppTypeEnum webAppType = EnumUtils.getEnum(
+                WebAppTypeEnum.class, parms.getParameterValue("webAppType")
+                        .toString(WebAppTypeEnum.UNDEFINED.toString()));
+
+        switch (webAppType) {
         case ADMIN:
             loginDescript = localized("login-descript-admin");
             break;
@@ -82,7 +97,7 @@ public final class Login extends AbstractPage {
                 this.getClientIpAddr(), DeviceTypeEnum.TERMINAL);
 
         final UserAuth userAuth = new UserAuth(terminal, null,
-                this.getWebAppType() == WebAppTypeEnum.ADMIN);
+                this.getSessionWebAppType() == WebAppTypeEnum.ADMIN);
 
         //
         Label label = new Label("login-id-number");

@@ -347,8 +347,8 @@ public class OutboxAddin extends AbstractUserPage {
         final boolean isJobticketView =
                 parms.getParameterValue("jobTickets").toBoolean();
 
-        if (isJobticketView && getWebAppType() != WebAppTypeEnum.JOB_TICKETS
-                && getWebAppType() != WebAppTypeEnum.ADMIN) {
+        if (isJobticketView && getSessionWebAppType() != WebAppTypeEnum.JOB_TICKETS
+                && getSessionWebAppType() != WebAppTypeEnum.ADMIN) {
             setResponsePage(
                     new MessageContent(AppLogLevelEnum.ERROR, "Access denied"));
             return;

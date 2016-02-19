@@ -458,7 +458,7 @@ public final class JsonApiServer extends AbstractPage {
 
                     String urlPath;
 
-                    switch (getWebAppType()) {
+                    switch (getSessionWebAppType()) {
                     case ADMIN:
                         urlPath = WebApp.MOUNT_PATH_WEBAPP_ADMIN;
                         break;
@@ -5115,7 +5115,7 @@ public final class JsonApiServer extends AbstractPage {
         ClientAppUserAuthManager.removeUserAuthToken(this.getClientIpAddr());
 
         WebAppUserAuthManager.instance().removeUserAuthToken(authToken,
-                this.getWebAppType());
+                this.getSessionWebAppType());
 
         this.stopReplaceSession(SpSession.get(), userId);
 
@@ -5693,7 +5693,7 @@ public final class JsonApiServer extends AbstractPage {
         //
         final UserAuth userAuth = new UserAuth(
                 ApiRequestHelper.getHostTerminal(this.getRemoteAddr()),
-                authModeReq, getWebAppType().equals(WebAppTypeEnum.ADMIN));
+                authModeReq, getSessionWebAppType().equals(WebAppTypeEnum.ADMIN));
 
         userData.put("authName", userAuth.isVisibleAuthName());
         userData.put("authId", userAuth.isVisibleAuthId());

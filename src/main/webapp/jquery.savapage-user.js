@@ -4328,7 +4328,7 @@
 				_api.callAsync({
 					request : 'login',
 					dto : JSON.stringify({
-						webAppType : 'USER',
+						webAppType : _model.WEBAPP_TYPE,
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,
@@ -4390,6 +4390,8 @@
 							 */
 							_view.pages.login.loadShowAsync(function() {
 								_this.initLoginUserInput();
+							}, {
+								webAppType : _model.WEBAPP_TYPE
 							});
 						}
 					}
@@ -4865,7 +4867,7 @@
 			 */
 			_view.onDisconnected = function() {
 				_model.user.loggedIn = false;
-				_view.pages.login.loadShowAsync();
+				_view.pages.login.loadShow(_model.WEBAPP_TYPE);
 			};
 
 			/**
@@ -5890,6 +5892,8 @@
 
 				var user = _ns.Utils.getUrlParam('user');
 
+				_model.WEBAPP_TYPE = 'USER';
+
 				_ctrl.init();
 
 				if (user) {
@@ -5899,7 +5903,7 @@
 				} else {
 					_ctrl.initLoginUserInput();
 					// Initial load/show of Login dialog
-					_view.pages.login.loadShowAsync();
+					_view.pages.login.loadShow(_model.WEBAPP_TYPE);
 				}
 			};
 

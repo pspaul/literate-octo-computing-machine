@@ -1135,14 +1135,14 @@
 				return _id;
 			};
 
-			this.loadShowAsync = function(onDone) {
+			this.loadShowAsync = function(onDone, jsonData) {
 				var _this = this;
 				_view.showPageAsync($(_id), _class, function() {
 					_this.isLoaded = true;
 					if (onDone) {
 						onDone();
 					}
-				});
+				}, jsonData);
 			};
 
 			this.load = function() {
@@ -1332,6 +1332,12 @@
 				if (nextPageId === 'page-zero') {
 					_self.show();
 				}
+			};
+
+			_self.loadShow = function(webAppType) {
+				_self.loadShowAsync(null, {
+					webAppType : webAppType
+				});
 			};
 
 			_self.onLogin = function(foo) {
@@ -2053,7 +2059,7 @@
 				 * the login window is showed as a response.
 				 */
 				this.message(_i18n.string('msg-disconnected'));
-				this.onDisconnected();
+				_api.onDisconnected();
 				return false;
 			};
 
@@ -2107,7 +2113,7 @@
 				this.showPageAsync(sel, 'user/' + page, onDone);
 			};
 
-			this.showPageAsync = function(sel, page, onDone) {
+			this.showPageAsync = function(sel, page, onDone, jsonData) {
 				var _this = this;
 
 				if ($(sel).children().length === 0) {
@@ -2117,7 +2123,8 @@
 					$.ajax({
 						type : "POST",
 						async : true,
-						dataType : "html",
+						dataType : 'html',
+						data : jsonData || {},
 						url : '/pages/' + page
 					}).done(function(html) {
 						$(sel).html(html).page();
@@ -2128,11 +2135,10 @@
 					}).fail(function() {
 						/*
 						 * Do NOT use this.showApiMsg(), since it will NOT show,
-						 * since
-						 * the login window is showed as a response.
+						 * since the login window is showed as a response.
 						 */
 						_this.message(_i18n.string('msg-disconnected'));
-						_this.onDisconnected();
+						_api.onDisconnected();
 					}).always(function() {
 						$.mobile.loading("hide");
 					});
@@ -2233,6 +2239,13 @@
 
 				sel.html(html);
 				sel.enhanceWithin().popup("open");
+			};
+
+			/**
+			 *
+			 */
+			this.isLoginPageActive = function() {
+				return this.activePage().attr('id') === 'page-login';
 			};
 
 			/**

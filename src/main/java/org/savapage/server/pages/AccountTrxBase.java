@@ -51,7 +51,7 @@ public final class AccountTrxBase extends AbstractAuthPage {
             return;
         }
 
-        final WebAppTypeEnum webAppType = this.getWebAppType();
+        final WebAppTypeEnum webAppType = this.getSessionWebAppType();
 
         /**
          * If this page is displayed in the Admin WebApp context, we check the

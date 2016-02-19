@@ -157,7 +157,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
      */
     protected final void setWebAppCountExceededResponse() {
         final PageParameters parms = new PageParameters();
-        parms.set(WebAppCountExceededMsg.PARM_WEBAPPTYPE, this.getWebAppType());
+        parms.set(WebAppCountExceededMsg.PARM_WEBAPPTYPE,
+                this.getSessionWebAppType());
         setResponsePage(WebAppCountExceededMsg.class, parms);
     }
 
@@ -188,7 +189,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
         return !isZeroPanel && SpSession.get().getAuthWebAppCount() > 0;
     }
 
-    @Override
+    /**
+     * @return The {@link WebAppTypeEnum} of this Web App.
+     */
     protected abstract WebAppTypeEnum getWebAppType();
 
     /**
@@ -352,7 +355,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
         final StringBuilder key = new StringBuilder();
         key.append("webapp.theme.")
-                .append(this.getWebAppType().toString().toLowerCase());
+                .append(this.getSessionWebAppType().toString().toLowerCase());
 
         return getCssCustomFile(key.toString(),
                 CustomWebServlet.PATH_BASE_THEMES);
@@ -364,7 +367,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
     private File getCssCustomFile() {
         final StringBuilder key = new StringBuilder();
         key.append("webapp.custom.")
-                .append(this.getWebAppType().toString().toLowerCase());
+                .append(this.getSessionWebAppType().toString().toLowerCase());
 
         return getCssCustomFile(key.toString(), CustomWebServlet.PATH_BASE);
     }

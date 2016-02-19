@@ -54,7 +54,7 @@ public class DocLogPage extends AbstractListPage {
 
     @Override
     protected boolean needMembership() {
-        return this.getWebAppType() == WebAppTypeEnum.ADMIN;
+        return this.getSessionWebAppType() == WebAppTypeEnum.ADMIN;
     }
 
     /**
@@ -80,7 +80,7 @@ public class DocLogPage extends AbstractListPage {
 
         if (req.getSelect().getAccountId() == null) {
 
-            if (this.getWebAppType() == WebAppTypeEnum.ADMIN) {
+            if (this.getSessionWebAppType() == WebAppTypeEnum.ADMIN) {
                 userId = req.getSelect().getUserId();
             } else {
                 /*

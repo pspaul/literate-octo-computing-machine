@@ -28,7 +28,6 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
-import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -98,15 +97,8 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
 
     @Override
     protected WebAppTypeEnum getWebAppType() {
-        /*
-         * IMPORTANT: Use Web App Type of current session.
-         */
-        final WebAppTypeEnum webAppType = SpSession.get().getWebAppType();
-
-        if (webAppType != null) {
-            return webAppType;
-        }
-        return WebAppTypeEnum.USER;
+        // Meaningless in our case.
+        return null;
     }
 
     @Override

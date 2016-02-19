@@ -547,7 +547,7 @@ public class AccountTrxPage extends AbstractListPage {
 
     @Override
     protected final boolean needMembership() {
-        return this.getWebAppType() == WebAppTypeEnum.ADMIN;
+        return this.getSessionWebAppType() == WebAppTypeEnum.ADMIN;
     }
 
     /**
@@ -582,7 +582,7 @@ public class AccountTrxPage extends AbstractListPage {
         Long userId = null;
         Long accountId = null;
 
-        if (this.getWebAppType() == WebAppTypeEnum.ADMIN) {
+        if (this.getSessionWebAppType() == WebAppTypeEnum.ADMIN) {
 
             userId = req.getSelect().getUserId();
             accountId = req.getSelect().getAccountId();
