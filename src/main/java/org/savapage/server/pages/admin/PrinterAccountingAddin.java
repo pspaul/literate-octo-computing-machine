@@ -24,6 +24,7 @@ package org.savapage.server.pages.admin;
 import java.text.ParseException;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
@@ -48,17 +49,18 @@ public final class PrinterAccountingAddin extends AbstractAdminPage {
     /**
      *
      */
-    private static final ProxyPrintService PROXYPRINT_SERVICE = ServiceContext
-            .getServiceFactory().getProxyPrintService();
+    private static final ProxyPrintService PROXYPRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     /**
      *
      */
-    public PrinterAccountingAddin() {
+    public PrinterAccountingAddin(final PageParameters parameters) {
 
-        final Long printerId =
-                getRequestCycle().getRequest().getPostParameters()
-                        .getParameterValue("id").toLong();
+        super(parameters);
+
+        final Long printerId = getRequestCycle().getRequest()
+                .getPostParameters().getParameterValue("id").toLong();
 
         handlePage(printerId);
 
@@ -73,9 +75,8 @@ public final class PrinterAccountingAddin extends AbstractAdminPage {
         add(new Label("cost-per-side", localized("cost-per-side",
                 ConfigManager.getAppCurrencyCode())));
 
-        final Printer printer =
-                ServiceContext.getDaoContext().getPrinterDao()
-                        .findById(printerId);
+        final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
+                .findById(printerId);
 
         final String printerName = printer.getPrinterName();
 
@@ -102,9 +103,8 @@ public final class PrinterAccountingAddin extends AbstractAdminPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        final boolean isSimple =
-                printer.getChargeType().equals(
-                        Printer.ChargeType.SIMPLE.toString());
+        final boolean isSimple = printer.getChargeType()
+                .equals(Printer.ChargeType.SIMPLE.toString());
 
         helper.tagRadio("printer-charge-simple",
                 Printer.ChargeType.SIMPLE.toString(), isSimple);
@@ -114,12 +114,10 @@ public final class PrinterAccountingAddin extends AbstractAdminPage {
 
         String cost;
         try {
-            cost =
-                    BigDecimalUtil.localize(
-                            printer.getDefaultCost(),
-                            ConfigManager.instance().getConfigInt(
-                                    Key.FINANCIAL_PRINTER_COST_DECIMALS),
-                            getSession().getLocale(), false);
+            cost = BigDecimalUtil.localize(printer.getDefaultCost(),
+                    ConfigManager.instance()
+                            .getConfigInt(Key.FINANCIAL_PRINTER_COST_DECIMALS),
+                    getSession().getLocale(), false);
         } catch (ParseException e) {
             throw new SpException(e);
         }

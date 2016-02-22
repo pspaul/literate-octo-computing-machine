@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 /**
  *
  * @author Rijk Ravestein
@@ -36,7 +38,7 @@ public final class DevicesBase extends AbstractAdminPage {
     /**
      *
      */
-    public DevicesBase() {
-
+    public DevicesBase(final PageParameters parameters) {
+        super(parameters);
     }
 }

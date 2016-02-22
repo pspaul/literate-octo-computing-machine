@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,17 +21,22 @@
  */
 package org.savapage.server.pages.user;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.server.pages.AbstractAuthPage;
 
 /**
  * Abstract page for all User Session pages.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public abstract class AbstractUserPage extends AbstractAuthPage {
 
     private static final long serialVersionUID = 1L;
+
+    public AbstractUserPage(final PageParameters parameters) {
+        super(parameters);
+    }
 
     @Override
     protected boolean needMembership() {

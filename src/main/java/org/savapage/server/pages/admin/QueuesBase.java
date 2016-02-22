@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 /**
  *
  * @author Rijk Ravestein
@@ -36,7 +38,7 @@ public final class QueuesBase extends AbstractAdminPage {
     /**
      *
      */
-    public QueuesBase() {
-
+    public QueuesBase(final PageParameters parameters) {
+        super(parameters);
     }
 }

@@ -30,6 +30,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
@@ -62,16 +63,16 @@ public final class DevicesPage extends AbstractAdminListPage {
      */
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(DevicesPage.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(DevicesPage.class);
 
     private static final int MAX_PAGES_IN_NAVBAR = 5; // must be odd number
 
     /**
      * .
      */
-    private static final DeviceService DEVICE_SERVICE = ServiceContext
-            .getServiceFactory().getDeviceService();
+    private static final DeviceService DEVICE_SERVICE =
+            ServiceContext.getServiceFactory().getDeviceService();
 
     /**
      * Bean for mapping JSON page request.
@@ -153,16 +154,17 @@ public final class DevicesPage extends AbstractAdminListPage {
     /**
      *
      */
-    public DevicesPage() {
+    public DevicesPage(final PageParameters parameters) {
+
+        super(parameters);
 
         // this.openServiceContext();
 
         final RfIdReaderService rfidReaderService =
                 ServiceContext.getServiceFactory().getRfIdReaderService();
 
-        final DateFormat dateFormat =
-                DateFormat.getDateTimeInstance(DateFormat.MEDIUM,
-                        DateFormat.MEDIUM, getLocale());
+        final DateFormat dateFormat = DateFormat.getDateTimeInstance(
+                DateFormat.MEDIUM, DateFormat.MEDIUM, getLocale());
 
         final Req req = readReq();
 
@@ -187,10 +189,9 @@ public final class DevicesPage extends AbstractAdminListPage {
 
         final long devicesCount = deviceDAO.getListCount(filter);
 
-        final List<Device> entryList =
-                deviceDAO.getListChunk(filter, req.calcStartPosition(), req
-                        .getMaxResults(), Field.NAME, req.getSort()
-                        .getAscending());
+        final List<Device> entryList = deviceDAO.getListChunk(filter,
+                req.calcStartPosition(), req.getMaxResults(), Field.NAME,
+                req.getSort().getAscending());
 
         /*
          * Display the requested page.
@@ -235,16 +236,15 @@ public final class DevicesPage extends AbstractAdminListPage {
                         signalKey = "signal-disconnected";
                     }
 
-                    readerConnectStatus =
-                            localized(signalKey,
-                                    dateFormat.format(status.getDate()));
+                    readerConnectStatus = localized(signalKey,
+                            dateFormat.format(status.getDate()));
                 } else {
                     readerConnectStatus = "";
                 }
 
                 item.add(createVisibleLabel(deviceDAO.isCardReader(device),
-                        "readerConnectStatus", readerConnectStatus, color + " "
-                                + MarkupHelper.CSS_TXT_WRAP));
+                        "readerConnectStatus", readerConnectStatus,
+                        color + " " + MarkupHelper.CSS_TXT_WRAP));
 
                 /*
                  * Signal
@@ -330,9 +330,8 @@ public final class DevicesPage extends AbstractAdminListPage {
 
                 if (printerAuth != null || printerGroupAuth != null) {
 
-                    final ProxyPrintAuthModeEnum authModeEnum =
-                            DEVICE_SERVICE
-                                    .getProxyPrintAuthMode(device.getId());
+                    final ProxyPrintAuthModeEnum authModeEnum = DEVICE_SERVICE
+                            .getProxyPrintAuthMode(device.getId());
 
                     if (authModeEnum == null) {
 
@@ -372,10 +371,10 @@ public final class DevicesPage extends AbstractAdminListPage {
                 }
                 item.add(createVisibleLabel(printerAuth != null,
                         "printerAuthMode", proxyPrintAuthMode)
-                        .setEscapeModelStrings(false));
+                                .setEscapeModelStrings(false));
                 item.add(createVisibleLabel(printerGroupAuth != null,
                         "printerGroupAuthMode", proxyPrintAuthMode)
-                        .setEscapeModelStrings(false));
+                                .setEscapeModelStrings(false));
 
                 item.add(createVisibleLabel(printerAuth != null, "printerAuth",
                         printerAuth));
@@ -391,27 +390,26 @@ public final class DevicesPage extends AbstractAdminListPage {
                     imageSrc = "device-terminal-card-reader-16x16.png";
                 } else if (device.getCardReaderTerminal() != null) {
                     imageSrc = "device-card-reader-terminal-16x16.png";
-                } else if (device.getDeviceType().equals(
-                        DeviceTypeEnum.CARD_READER.toString())) {
+                } else if (device.getDeviceType()
+                        .equals(DeviceTypeEnum.CARD_READER.toString())) {
                     imageSrc = "device-card-reader-16x16.png";
                 } else {
                     imageSrc = "device-terminal-16x16.png";
                 }
 
                 labelWrk = new Label("deviceImage", "");
-                labelWrk.add(new AttributeModifier("src", String.format(
-                        "%s/%s", WebApp.PATH_IMAGES, imageSrc)));
+                labelWrk.add(new AttributeModifier("src",
+                        String.format("%s/%s", WebApp.PATH_IMAGES, imageSrc)));
                 item.add(labelWrk);
 
                 /*
                  * Set the uid in 'data-savapage' attribute, so it can be picked
                  * up in JavaScript for editing.
                  */
-                labelWrk =
-                        new Label("button-edit", getLocalizer().getString(
-                                "button-edit", this));
-                labelWrk.add(new AttributeModifier("data-savapage", device
-                        .getId()));
+                labelWrk = new Label("button-edit",
+                        getLocalizer().getString("button-edit", this));
+                labelWrk.add(
+                        new AttributeModifier("data-savapage", device.getId()));
                 item.add(labelWrk);
 
             }

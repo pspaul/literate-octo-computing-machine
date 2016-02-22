@@ -35,6 +35,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
@@ -84,32 +85,32 @@ public final class PrintersPage extends AbstractAdminListPage {
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(PrintersPage.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(PrintersPage.class);
 
     /**
      *
      */
-    private static final DeviceService DEVICE_SERVICE = ServiceContext
-            .getServiceFactory().getDeviceService();
+    private static final DeviceService DEVICE_SERVICE =
+            ServiceContext.getServiceFactory().getDeviceService();
 
     /**
      *
      */
-    private static final PrinterService PRINTER_SERVICE = ServiceContext
-            .getServiceFactory().getPrinterService();
+    private static final PrinterService PRINTER_SERVICE =
+            ServiceContext.getServiceFactory().getPrinterService();
 
     /**
      *
      */
-    private static final PrinterAttrDao PRINTER_ATTR_DAO = ServiceContext
-            .getDaoContext().getPrinterAttrDao();
+    private static final PrinterAttrDao PRINTER_ATTR_DAO =
+            ServiceContext.getDaoContext().getPrinterAttrDao();
 
     /**
     *
     */
-    private static final ProxyPrintService PROXY_PRINT_SERVICE = ServiceContext
-            .getServiceFactory().getProxyPrintService();
+    private static final ProxyPrintService PROXY_PRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     /**
      *
@@ -199,7 +200,8 @@ public final class PrintersPage extends AbstractAdminListPage {
 
         private static final long serialVersionUID = 1L;
 
-        public PrintersListView(final String id, final List<Printer> entryList) {
+        public PrintersListView(final String id,
+                final List<Printer> entryList) {
             super(id, entryList);
         }
 
@@ -234,8 +236,8 @@ public final class PrintersPage extends AbstractAdminListPage {
                     break;
 
                 default:
-                    throw new SpException("Oops, missed auth mode ["
-                            + authModeEnum + "]");
+                    throw new SpException(
+                            "Oops, missed auth mode [" + authModeEnum + "]");
                 }
             }
             return proxyPrintAuthMode.toString();
@@ -244,18 +246,16 @@ public final class PrintersPage extends AbstractAdminListPage {
         @Override
         protected void populateItem(final ListItem<Printer> item) {
 
-            final Printer printer =
-                    ServiceContext.getDaoContext().getPrinterDao()
-                            .findById(item.getModelObject().getId());
+            final Printer printer = ServiceContext.getDaoContext()
+                    .getPrinterDao().findById(item.getModelObject().getId());
 
             Label labelWrk = null;
 
             /*
              * Sparklines: pie-chart.
              */
-            String sparklineData =
-                    printer.getTotalPages().toString() + ","
-                            + printer.getTotalSheets();
+            String sparklineData = printer.getTotalPages().toString() + ","
+                    + printer.getTotalSheets();
 
             item.add(new Label("printer-pie", sparklineData));
 
@@ -293,7 +293,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             item.add(new Label("displayName"));
 
             labelWrk = new Label("printerName");
-            labelWrk.add(new AttributeModifier("data-savapage", printer.getId()));
+            labelWrk.add(
+                    new AttributeModifier("data-savapage", printer.getId()));
 
             item.add(labelWrk);
 
@@ -305,10 +306,9 @@ public final class PrintersPage extends AbstractAdminListPage {
             final Map<String, Device> terminalDevices = new HashMap<>();
             final Map<String, Device> readerDevices = new HashMap<>();
 
-            boolean isSecured =
-                    PRINTER_SERVICE.checkPrinterSecurity(printer,
-                            terminalSecured, readerSecured, terminalDevices,
-                            readerDevices);
+            boolean isSecured = PRINTER_SERVICE.checkPrinterSecurity(printer,
+                    terminalSecured, readerSecured, terminalDevices,
+                    readerDevices);
 
             String imageSrc;
 
@@ -330,15 +330,16 @@ public final class PrintersPage extends AbstractAdminListPage {
 
             labelWrk = new Label("printerImage", "");
 
-            labelWrk.add(new AttributeModifier("src", String.format("%s/%s",
-                    WebApp.PATH_IMAGES, imageSrc)));
+            labelWrk.add(new AttributeModifier("src",
+                    String.format("%s/%s", WebApp.PATH_IMAGES, imageSrc)));
 
             item.add(labelWrk);
 
             String assocTerminal = null;
             String assocCardReader = null;
 
-            for (final Entry<String, Device> entry : terminalDevices.entrySet()) {
+            for (final Entry<String, Device> entry : terminalDevices
+                    .entrySet()) {
                 if (assocTerminal == null) {
                     assocTerminal = "";
                 } else {
@@ -368,8 +369,8 @@ public final class PrintersPage extends AbstractAdminListPage {
                     "assocTerminal", assocTerminal));
 
             item.add(createVisibleLabel((assocCardReader != null),
-                    "assocCardReader", assocCardReader).setEscapeModelStrings(
-                    false));
+                    "assocCardReader", assocCardReader)
+                            .setEscapeModelStrings(false));
 
             /*
              * Printer Groups
@@ -427,9 +428,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             labelWrk.add(new AttributeModifier("class", color));
             item.add(labelWrk);
 
-            labelWrk =
-                    createVisibleLabel((userGroups != null), "userGroups",
-                            userGroups);
+            labelWrk = createVisibleLabel((userGroups != null), "userGroups",
+                    userGroups);
             labelWrk.add(new AttributeModifier("class", color));
 
             item.add(labelWrk);
@@ -437,9 +437,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             /*
              * Device URI + Signal
              */
-            final JsonProxyPrinter cupsPrinter =
-                    PROXY_PRINT_SERVICE.getCachedPrinter(printer
-                            .getPrinterName());
+            final JsonProxyPrinter cupsPrinter = PROXY_PRINT_SERVICE
+                    .getCachedPrinter(printer.getPrinterName());
 
             String deviceUriText = "";
             String deviceUriImgUrl = null;
@@ -449,8 +448,8 @@ public final class PrintersPage extends AbstractAdminListPage {
                 if (deviceUri != null) {
                     deviceUriText = deviceUri.toString();
                     if (PaperCutHelper.isPaperCutPrinter(deviceUri)) {
-                        deviceUriImgUrl =
-                                WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT);
+                        deviceUriImgUrl = WebApp.getThirdPartyEnumImgUrl(
+                                ThirdPartyEnum.PAPERCUT);
                     }
                 }
             }
@@ -458,9 +457,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             item.add(new Label("deviceUri", deviceUriText));
 
             //
-            labelWrk =
-                    createVisibleLabel(deviceUriImgUrl != null, "deviceUriImg",
-                            "");
+            labelWrk = createVisibleLabel(deviceUriImgUrl != null,
+                    "deviceUriImg", "");
             if (deviceUriImgUrl != null) {
                 labelWrk.add(new AttributeModifier("src", deviceUriImgUrl));
             }
@@ -473,9 +471,8 @@ public final class PrintersPage extends AbstractAdminListPage {
                     PRINTER_ATTR_DAO.isInternalPrinter(attrLookup);
 
             final boolean isConfigured =
-                    cupsPrinter == null
-                            || PROXY_PRINT_SERVICE.isPrinterConfigured(
-                                    cupsPrinter, attrLookup);
+                    cupsPrinter == null || PROXY_PRINT_SERVICE
+                            .isPrinterConfigured(cupsPrinter, attrLookup);
 
             item.add(createVisibleLabel(!isConfigured,
                     "printer-needs-configuration",
@@ -513,10 +510,9 @@ public final class PrintersPage extends AbstractAdminListPage {
                 location = cupsPrinter.getLocation();
 
                 if (StringUtils.isNotBlank(cupsPrinter.getPpd())) {
-                    info =
-                            cupsPrinter.getPpd() + " version "
-                                    + cupsPrinter.getPpdVersion() + ": "
-                                    + cupsPrinter.getModelName();
+                    info = cupsPrinter.getPpd() + " version "
+                            + cupsPrinter.getPpdVersion() + ": "
+                            + cupsPrinter.getModelName();
                 } else {
                     info = cupsPrinter.getModelName();
                 }
@@ -578,10 +574,8 @@ public final class PrintersPage extends AbstractAdminListPage {
                 totals += " " + localized(key);
 
                 //
-                totals +=
-                        ", "
-                                + NumberUtil.humanReadableByteCount(
-                                        printer.getTotalBytes(), true);
+                totals += ", " + NumberUtil
+                        .humanReadableByteCount(printer.getTotalBytes(), true);
             }
 
             item.add(new Label("period", period));
@@ -591,34 +585,33 @@ public final class PrintersPage extends AbstractAdminListPage {
              * Set the uid in 'data-savapage' attribute, so it can be picked up
              * in JavaScript for editing.
              */
-            labelWrk =
-                    new Label("button-edit", getLocalizer().getString(
-                            "button-edit", this));
-            labelWrk.add(new AttributeModifier("data-savapage", printer.getId()));
+            labelWrk = new Label("button-edit",
+                    getLocalizer().getString("button-edit", this));
+            labelWrk.add(
+                    new AttributeModifier("data-savapage", printer.getId()));
             item.add(labelWrk);
 
             /*
              *
              */
-            labelWrk =
-                    new Label("button-log", getLocalizer().getString(
-                            "button-log", this));
-            labelWrk.add(new AttributeModifier("data-savapage", printer.getId()));
+            labelWrk = new Label("button-log",
+                    getLocalizer().getString("button-log", this));
+            labelWrk.add(
+                    new AttributeModifier("data-savapage", printer.getId()));
             item.add(labelWrk);
 
             /*
              *
              */
-            labelWrk =
-                    new Label("button-cups", getLocalizer().getString(
-                            "button-cups", this)) {
-                        private static final long serialVersionUID = 1L;
+            labelWrk = new Label("button-cups",
+                    getLocalizer().getString("button-cups", this)) {
+                private static final long serialVersionUID = 1L;
 
-                        @Override
-                        public boolean isVisible() {
-                            return cupsPrinter != null;
-                        }
-                    };
+                @Override
+                public boolean isVisible() {
+                    return cupsPrinter != null;
+                }
+            };
 
             labelWrk.add(new AttributeModifier("href",
                     getCupsPrinterUrl(printer.getPrinterName())));
@@ -630,7 +623,9 @@ public final class PrintersPage extends AbstractAdminListPage {
     /**
      *
      */
-    public PrintersPage() {
+    public PrintersPage(final PageParameters parameters) {
+
+        super(parameters);
 
         /*
          * Check for new/changed printers.
@@ -647,8 +642,8 @@ public final class PrintersPage extends AbstractAdminListPage {
 
         } catch (IppConnectException e) {
 
-            setResponsePage(new MessageContent(AppLogLevelEnum.WARN, localized(
-                    "ipp-connect-error", e.getMessage())));
+            setResponsePage(new MessageContent(AppLogLevelEnum.WARN,
+                    localized("ipp-connect-error", e.getMessage())));
 
         } catch (IppSyntaxException e) {
             throw new SpException(e);
@@ -675,10 +670,9 @@ public final class PrintersPage extends AbstractAdminListPage {
         /*
          * Display the requested page.
          */
-        final List<Printer> entryList =
-                printerDao.getListChunk(filter, req.calcStartPosition(), req
-                        .getMaxResults(), PrinterDao.Field.DISPLAY_NAME, req
-                        .getSort().getAscending());
+        final List<Printer> entryList = printerDao.getListChunk(filter,
+                req.calcStartPosition(), req.getMaxResults(),
+                PrinterDao.Field.DISPLAY_NAME, req.getSort().getAscending());
 
         add(new PrintersListView("printers-view", entryList));
 

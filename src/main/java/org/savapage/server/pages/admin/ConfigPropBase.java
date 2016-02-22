@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 /**
  *
  * @author Rijk Ravestein
@@ -36,6 +38,8 @@ public final class ConfigPropBase extends AbstractAdminPage {
     /**
      *
      */
-    public ConfigPropBase() {
+    public ConfigPropBase(final PageParameters parameters) {
+
+        super(parameters);
     }
 }

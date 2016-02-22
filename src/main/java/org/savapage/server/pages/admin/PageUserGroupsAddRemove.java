@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 /**
  *
  * @author Rijk Ravestein
@@ -36,7 +38,8 @@ public final class PageUserGroupsAddRemove extends AbstractAdminPage {
     /**
      *
      */
-    public PageUserGroupsAddRemove() {
+    public PageUserGroupsAddRemove(final PageParameters parameters) {
+        super(parameters);
     }
 
 }

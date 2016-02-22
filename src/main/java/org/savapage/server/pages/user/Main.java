@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.user;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLRoleEnum;
@@ -32,7 +33,7 @@ import org.savapage.server.pages.CommunityStatusFooterPanel;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public class Main extends AbstractUserPage {
@@ -45,21 +46,21 @@ public class Main extends AbstractUserPage {
     /**
      *
      */
-    public Main() {
+    public Main(final PageParameters parameters) {
 
-        final boolean isUpload =
-                (ConfigManager.isWebPrintEnabled() && InetUtils
-                        .isIp4AddrInCidrRanges(
-                                ConfigManager.instance().getConfigValue(
-                                        Key.WEB_PRINT_LIMIT_IP_ADDRESSES),
-                                getClientIpAddr()));
+        super(parameters);
+
+        final boolean isUpload = (ConfigManager.isWebPrintEnabled()
+                && InetUtils.isIp4AddrInCidrRanges(
+                        ConfigManager.instance().getConfigValue(
+                                Key.WEB_PRINT_LIMIT_IP_ADDRESSES),
+                        getClientIpAddr()));
 
         addVisible(isUpload, "button-upload", localized("button-upload"));
 
         //
-        final boolean isPrintDelegate =
-                ACCESSCONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
-                        ACLRoleEnum.PRINT_DELEGATE);
+        final boolean isPrintDelegate = ACCESSCONTROL_SERVICE.hasAccess(
+                SpSession.get().getUser(), ACLRoleEnum.PRINT_DELEGATE);
 
         addVisible(isPrintDelegate, "button-print-delegation", "-");
 

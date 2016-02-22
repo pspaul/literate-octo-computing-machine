@@ -31,6 +31,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserGroupDao;
@@ -94,8 +95,8 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
     private class AddGroupsView extends PropertyListView<Object> {
 
         /**
-       *
-       */
+        *
+        */
         private static final long serialVersionUID = 1L;
 
         private final String optionId;
@@ -105,7 +106,8 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
          * @param id
          * @param list
          */
-        public AddGroupsView(String id, List<Object> list, final String optionId) {
+        public AddGroupsView(String id, List<Object> list,
+                final String optionId) {
             super(id, list);
             this.optionId = optionId;
         }
@@ -123,7 +125,9 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
     /**
      *
      */
-    public UserGroupsAddRemoveAddIn() {
+    public UserGroupsAddRemoveAddIn(final PageParameters parameters) {
+
+        super(parameters);
 
         /*
          * User Source and Internal Groups are candidates to Add.
@@ -134,8 +138,9 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
         try {
             setAdd.addAll(InternalGroupList.getGroups());
         } catch (IOException e) {
-            throw new SpException(String.format("Error reading internal "
-                    + "groups file: %s", e.getMessage()));
+            throw new SpException(
+                    String.format("Error reading internal " + "groups file: %s",
+                            e.getMessage()));
         }
 
         /*
@@ -146,9 +151,8 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
         final UserGroupDao userGroupDao =
                 ServiceContext.getDaoContext().getUserGroupDao();
 
-        final List<UserGroup> listRemove =
-                userGroupDao.getListChunk(filter, null, null,
-                        UserGroupDao.Field.NAME, true);
+        final List<UserGroup> listRemove = userGroupDao.getListChunk(filter,
+                null, null, UserGroupDao.Field.NAME, true);
 
         /*
          * Update Add and Remove List.

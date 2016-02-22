@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 /**
  *
  * @author Rijk Ravestein
@@ -36,7 +38,9 @@ public final class SystemStatusAddin extends AbstractAdminPage {
     /**
      *
      */
-    public SystemStatusAddin() {
+    public SystemStatusAddin(final PageParameters parameters) {
+
+        super(parameters);
 
         final SystemStatusPanel systemStatusPanel =
                 new SystemStatusPanel("system-status-panel");

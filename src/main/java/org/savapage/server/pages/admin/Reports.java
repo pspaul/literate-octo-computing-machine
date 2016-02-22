@@ -37,15 +37,9 @@ public final class Reports extends AbstractAdminPage {
 
     /**
      *
-     */
-    public Reports() {
-    }
-
-    /**
-     *
      * @param parameters
      */
     public Reports(final PageParameters parameters) {
-
+        super(parameters);
     }
 }

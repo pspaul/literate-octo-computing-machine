@@ -31,6 +31,7 @@ import javax.print.attribute.standard.MediaSizeName;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.circuitbreaker.CircuitStateEnum;
 import org.savapage.core.config.CircuitBreakerEnum;
@@ -70,7 +71,9 @@ public final class Options extends AbstractAdminPage {
     /**
      *
      */
-    public Options() {
+    public Options(final PageParameters parameters) {
+
+        super(parameters);
 
         final MarkupHelper helper = new MarkupHelper(this);
         final ConfigManager cm = ConfigManager.instance();
@@ -93,13 +96,16 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.LDAP_TYPE_V_OPEN_LDAP);
 
         labelledRadio("ldap-schema-type", "-apple",
-                IConfigProp.Key.LDAP_SCHEMA_TYPE, IConfigProp.LDAP_TYPE_V_APPLE);
+                IConfigProp.Key.LDAP_SCHEMA_TYPE,
+                IConfigProp.LDAP_TYPE_V_APPLE);
 
         labelledRadio("ldap-schema-type", "-activ",
-                IConfigProp.Key.LDAP_SCHEMA_TYPE, IConfigProp.LDAP_TYPE_V_ACTIV);
+                IConfigProp.Key.LDAP_SCHEMA_TYPE,
+                IConfigProp.LDAP_TYPE_V_ACTIV);
 
         labelledRadio("ldap-schema-type", "-edir",
-                IConfigProp.Key.LDAP_SCHEMA_TYPE, IConfigProp.LDAP_TYPE_V_E_DIR);
+                IConfigProp.Key.LDAP_SCHEMA_TYPE,
+                IConfigProp.LDAP_TYPE_V_E_DIR);
 
         labelledInput("ldap-host", Key.AUTH_LDAP_HOST);
         labelledInput("ldap-port", Key.AUTH_LDAP_PORT);
@@ -134,9 +140,8 @@ public final class Options extends AbstractAdminPage {
          *
          *
          */
-        String sourceGroup =
-                ConfigManager.instance().getConfigValue(Key.USER_SOURCE_GROUP)
-                        .trim();
+        String sourceGroup = ConfigManager.instance()
+                .getConfigValue(Key.USER_SOURCE_GROUP).trim();
         if (sourceGroup.isEmpty()) {
             sourceGroup = getLocalizer().getString("all-users", this);
         }
@@ -226,7 +231,8 @@ public final class Options extends AbstractAdminPage {
 
         //
         labelledRadio("user-auth-mode-default", "-user",
-                IConfigProp.Key.AUTH_MODE_DEFAULT, IConfigProp.AUTH_MODE_V_NAME);
+                IConfigProp.Key.AUTH_MODE_DEFAULT,
+                IConfigProp.AUTH_MODE_V_NAME);
         labelledRadio("user-auth-mode-default", "-number",
                 IConfigProp.Key.AUTH_MODE_DEFAULT, IConfigProp.AUTH_MODE_V_ID);
         labelledRadio("user-auth-mode-default", "-card",
@@ -270,10 +276,10 @@ public final class Options extends AbstractAdminPage {
 
         if (ConfigManager.isSmartSchoolPrintModuleActivated()) {
 
-            helper.encloseLabel(
-                    headerId,
+            helper.encloseLabel(headerId,
                     String.format("%s Print",
-                            ExternalSupplierEnum.SMARTSCHOOL.getUiText()), true);
+                            ExternalSupplierEnum.SMARTSCHOOL.getUiText()),
+                    true);
 
             IConfigProp.Key keyWlk;
 
@@ -298,27 +304,23 @@ public final class Options extends AbstractAdminPage {
                     "smartschool-print-proxyprinter", keyWlk);
             tagInput("smartschool-print-proxyprinter-1", keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
             tagLabel("smartschool-print-proxyprinter-duplex-label-1",
                     "smartschool-print-proxyprinter-duplex", keyWlk);
             tagInput("smartschool-print-proxyprinter-duplex-1", keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
             tagLabel("smartschool-print-proxyprinter-grayscale-label-1",
                     "smartschool-print-proxyprinter-grayscale", keyWlk);
             tagInput("smartschool-print-proxyprinter-grayscale-1", keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
             tagLabel("smartschool-print-proxyprinter-grayscale-duplex-label-1",
                     "smartschool-print-proxyprinter-grayscale-duplex", keyWlk);
             tagInput("smartschool-print-proxyprinter-grayscale-duplex-1",
                     keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_CHARGE_TO_STUDENTS;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_CHARGE_TO_STUDENTS;
             tagLabel("smartschool-print-charge-to-students-label-1",
                     "smartschool-print-charge-to-students", keyWlk);
             tagCheckbox("smartschool-print-charge-to-students-1", keyWlk);
@@ -339,8 +341,7 @@ public final class Options extends AbstractAdminPage {
                     "smartschool-print-node-id", keyWlk);
             tagInput("smartschool-print-node-id-1", keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_PROXY_ENDPOINT_URL;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_PROXY_ENDPOINT_URL;
             tagLabel("smartschool-print-node-proxy-endpoint-label-1",
                     "smartschool-print-node-proxy-endpoint", keyWlk);
             tagInput("smartschool-print-node-proxy-endpoint-1", keyWlk);
@@ -366,27 +367,23 @@ public final class Options extends AbstractAdminPage {
                     "smartschool-print-proxyprinter", keyWlk);
             tagInput("smartschool-print-proxyprinter-2", keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
             tagLabel("smartschool-print-proxyprinter-duplex-label-2",
                     "smartschool-print-proxyprinter-duplex", keyWlk);
             tagInput("smartschool-print-proxyprinter-duplex-2", keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
             tagLabel("smartschool-print-proxyprinter-grayscale-label-2",
                     "smartschool-print-proxyprinter-grayscale", keyWlk);
             tagInput("smartschool-print-proxyprinter-grayscale-2", keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
             tagLabel("smartschool-print-proxyprinter-grayscale-duplex-label-2",
                     "smartschool-print-proxyprinter-grayscale-duplex", keyWlk);
             tagInput("smartschool-print-proxyprinter-grayscale-duplex-2",
                     keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_CHARGE_TO_STUDENTS;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_CHARGE_TO_STUDENTS;
             tagLabel("smartschool-print-charge-to-students-label-2",
                     "smartschool-print-charge-to-students", keyWlk);
             tagCheckbox("smartschool-print-charge-to-students-2", keyWlk);
@@ -407,8 +404,7 @@ public final class Options extends AbstractAdminPage {
                     "smartschool-print-node-id", keyWlk);
             tagInput("smartschool-print-node-id-2", keyWlk);
 
-            keyWlk =
-                    IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_PROXY_ENDPOINT_URL;
+            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_PROXY_ENDPOINT_URL;
             tagLabel("smartschool-print-node-proxy-endpoint-label-2",
                     "smartschool-print-node-proxy-endpoint", keyWlk);
             tagInput("smartschool-print-node-proxy-endpoint-2", keyWlk);
@@ -424,10 +420,13 @@ public final class Options extends AbstractAdminPage {
                     IConfigProp.Key.SMARTSCHOOL_PAPERCUT_ENABLE);
 
             // //
-            labelledCheckbox("papercut-enable", IConfigProp.Key.PAPERCUT_ENABLE);
+            labelledCheckbox("papercut-enable",
+                    IConfigProp.Key.PAPERCUT_ENABLE);
 
-            labelledInput("papercut-host", IConfigProp.Key.PAPERCUT_SERVER_HOST);
-            labelledInput("papercut-port", IConfigProp.Key.PAPERCUT_SERVER_PORT);
+            labelledInput("papercut-host",
+                    IConfigProp.Key.PAPERCUT_SERVER_HOST);
+            labelledInput("papercut-port",
+                    IConfigProp.Key.PAPERCUT_SERVER_PORT);
             labelledInput("papercut-token",
                     IConfigProp.Key.PAPERCUT_SERVER_AUTH_TOKEN);
 
@@ -447,10 +446,10 @@ public final class Options extends AbstractAdminPage {
             } else {
                 msgKey = null;
 
-                final CircuitStateEnum circuitState =
-                        ConfigManager.getCircuitBreaker(
+                final CircuitStateEnum circuitState = ConfigManager
+                        .getCircuitBreaker(
                                 CircuitBreakerEnum.SMARTSCHOOL_CONNECTION)
-                                .getCircuitState();
+                        .getCircuitState();
 
                 switch (circuitState) {
 
@@ -482,15 +481,13 @@ public final class Options extends AbstractAdminPage {
                 msgText = getLocalizer().getString(msgKey, this);
             }
 
-            labelWrk =
-                    helper.encloseLabel("smartschool-print-status", msgText,
-                            true);
+            labelWrk = helper.encloseLabel("smartschool-print-status", msgText,
+                    true);
 
             MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
 
-            labelWrk =
-                    helper.addCheckbox("flipswitch-smartschool-online",
-                            SmartschoolPrinter.isOnline());
+            labelWrk = helper.addCheckbox("flipswitch-smartschool-online",
+                    SmartschoolPrinter.isOnline());
 
             setFlipswitchOnOffText(labelWrk);
 
@@ -529,10 +526,9 @@ public final class Options extends AbstractAdminPage {
 
         msgKey = null;
 
-        final CircuitStateEnum circuitState =
-                ConfigManager.getCircuitBreaker(
-                        CircuitBreakerEnum.MAILPRINT_CONNECTION)
-                        .getCircuitState();
+        final CircuitStateEnum circuitState = ConfigManager
+                .getCircuitBreaker(CircuitBreakerEnum.MAILPRINT_CONNECTION)
+                .getCircuitState();
 
         switch (circuitState) {
 
@@ -552,9 +548,9 @@ public final class Options extends AbstractAdminPage {
             break;
 
         default:
-            throw new SpException("Oops we missed "
-                    + CircuitStateEnum.class.getSimpleName() + " value ["
-                    + circuitState.toString() + "]");
+            throw new SpException(
+                    "Oops we missed " + CircuitStateEnum.class.getSimpleName()
+                            + " value [" + circuitState.toString() + "]");
         }
 
         if (msgKey == null) {
@@ -566,9 +562,8 @@ public final class Options extends AbstractAdminPage {
         labelWrk = helper.encloseLabel("mailprint-status", msgText, true);
         MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
 
-        labelWrk =
-                helper.addCheckbox("flipswitch-mailprint-online",
-                        ImapPrinter.isOnline());
+        labelWrk = helper.addCheckbox("flipswitch-mailprint-online",
+                ImapPrinter.isOnline());
         setFlipswitchOnOffText(labelWrk);
 
         /*
@@ -621,8 +616,8 @@ public final class Options extends AbstractAdminPage {
 
         add(new Label("gcp-summary-printer-name", GcpPrinter.getPrinterName()));
         add(new Label("gcp-summary-printer-owner", GcpPrinter.getOwnerId()));
-        add(new Label("gcp-summary-printer-state", GcpPrinter.getState()
-                .toString()));
+        add(new Label("gcp-summary-printer-state",
+                GcpPrinter.getState().toString()));
 
         boolean enabled = ConfigManager.isGcpEnabled();
         final GcpPrinter.State gcpStatus = GcpPrinter.getState();
@@ -633,9 +628,8 @@ public final class Options extends AbstractAdminPage {
             cssColor = MarkupHelper.CSS_TXT_WARN;
         }
 
-        labelWrk =
-                new Label("gcp-summary-printer-state-display",
-                        GcpPrinter.localized(enabled, gcpStatus));
+        labelWrk = new Label("gcp-summary-printer-state-display",
+                GcpPrinter.localized(enabled, gcpStatus));
         labelWrk.add(new AttributeModifier("class", cssColor));
         add(labelWrk);
 
@@ -646,12 +640,11 @@ public final class Options extends AbstractAdminPage {
         // General
 
         try {
-            final String creditLimit =
-                    BigDecimalUtil
-                            .localize(
-                                    cm.getConfigBigDecimal(IConfigProp.Key.FINANCIAL_GLOBAL_CREDIT_LIMIT),
-                                    cm.getConfigInt(Key.FINANCIAL_USER_BALANCE_DECIMALS),
-                                    getLocale(), true);
+            final String creditLimit = BigDecimalUtil.localize(
+                    cm.getConfigBigDecimal(
+                            IConfigProp.Key.FINANCIAL_GLOBAL_CREDIT_LIMIT),
+                    cm.getConfigInt(Key.FINANCIAL_USER_BALANCE_DECIMALS),
+                    getLocale(), true);
 
             labelledInput("financial-global-credit-limit",
                     IConfigProp.Key.FINANCIAL_GLOBAL_CREDIT_LIMIT, creditLimit);
@@ -670,9 +663,8 @@ public final class Options extends AbstractAdminPage {
         boolean disableCurrencyChange =
                 ConfigManager.instance().isAppReadyToUse();
 
-        final Label labelCurrency =
-                tagInput("financial-currency-code",
-                        Key.FINANCIAL_GLOBAL_CURRENCY_CODE);
+        final Label labelCurrency = tagInput("financial-currency-code",
+                Key.FINANCIAL_GLOBAL_CURRENCY_CODE);
 
         if (disableCurrencyChange) {
             labelCurrency.add(new AttributeModifier("disabled", "disabled"));
@@ -727,15 +719,15 @@ public final class Options extends AbstractAdminPage {
         final String jmcRemoteProcess;
 
         try {
-            jmcRemoteProcess =
-                    InetUtils.getServerHostAddress() + ":"
-                            + JmxRemoteProperties.getPort();
+            jmcRemoteProcess = InetUtils.getServerHostAddress() + ":"
+                    + JmxRemoteProperties.getPort();
         } catch (UnknownHostException e) {
             throw new SpException("Server IP address could not be found", e);
         }
 
         labelWrk = new Label("jmx-remote-process", jmcRemoteProcess);
-        labelWrk.add(new AttributeModifier("class", MarkupHelper.CSS_TXT_VALID));
+        labelWrk.add(
+                new AttributeModifier("class", MarkupHelper.CSS_TXT_VALID));
         add(labelWrk);
 
         add(new Label("jmx-password-reset", localized("jmx-password-reset",
@@ -792,13 +784,11 @@ public final class Options extends AbstractAdminPage {
 
         boolean installed = XpsToPdf.isInstalled();
         String keyInstalled = installed ? "installed" : "not-installed";
-        String colorInstalled =
-                installed ? MarkupHelper.CSS_TXT_VALID
-                        : MarkupHelper.CSS_TXT_WARN;
+        String colorInstalled = installed ? MarkupHelper.CSS_TXT_VALID
+                : MarkupHelper.CSS_TXT_WARN;
 
-        labelWrk =
-                new Label("version-xpstopdf", XpsToPdf.name() + " ("
-                        + localized(keyInstalled) + ")");
+        labelWrk = new Label("version-xpstopdf",
+                XpsToPdf.name() + " (" + localized(keyInstalled) + ")");
 
         labelWrk.add(new AttributeModifier("class", colorInstalled));
         add(labelWrk);
@@ -811,18 +801,16 @@ public final class Options extends AbstractAdminPage {
 
         String version = OfficeToPdf.getLibreOfficeVersion();
         installed = StringUtils.isNotBlank(version);
-        colorInstalled =
-                installed ? MarkupHelper.CSS_TXT_VALID
-                        : MarkupHelper.CSS_TXT_WARN;
+        colorInstalled = installed ? MarkupHelper.CSS_TXT_VALID
+                : MarkupHelper.CSS_TXT_WARN;
         keyInstalled = installed ? "installed" : "not-installed";
 
         if (!installed) {
             version = OfficeToPdf.name();
         }
 
-        labelWrk =
-                new Label("version-libreoffice", version + " ("
-                        + localized(keyInstalled) + ")");
+        labelWrk = new Label("version-libreoffice",
+                version + " (" + localized(keyInstalled) + ")");
         labelWrk.add(new AttributeModifier("class", colorInstalled));
         add(labelWrk);
 
@@ -831,9 +819,8 @@ public final class Options extends AbstractAdminPage {
          */
         add(new Label("backup-location", ConfigManager.getDbBackupHome()));
 
-        long time =
-                ConfigManager.instance().getConfigLong(
-                        IConfigProp.Key.SYS_BACKUP_LAST_RUN_TIME);
+        long time = ConfigManager.instance()
+                .getConfigLong(IConfigProp.Key.SYS_BACKUP_LAST_RUN_TIME);
         String lastRun = "-";
         if (time > 0) {
             lastRun = localizedDateTime(new Date(time));
@@ -876,8 +863,8 @@ public final class Options extends AbstractAdminPage {
                 false);
         labelledCheckbox("pagometer-reset-queues", "pagometer-reset-queues",
                 false);
-        labelledCheckbox("pagometer-reset-printers",
-                "pagometer-reset-printers", false);
+        labelledCheckbox("pagometer-reset-printers", "pagometer-reset-printers",
+                false);
         labelledCheckbox("pagometer-reset-dashboard",
                 "pagometer-reset-dashboard", false);
 
@@ -885,9 +872,10 @@ public final class Options extends AbstractAdminPage {
          *
          */
         tagInput("locale-description", Key.SYS_DEFAULT_LOCALE);
-        add(new Label("locale-description-label", MessageFormat.format(
-                getLocalizer().getString("locale-description", this),
-                ConfigManager.getServerHostLocale().toLanguageTag())));
+        add(new Label("locale-description-label",
+                MessageFormat.format(
+                        getLocalizer().getString("locale-description", this),
+                        ConfigManager.getServerHostLocale().toLanguageTag())));
 
         /*
          * Report Font Family.
@@ -916,9 +904,10 @@ public final class Options extends AbstractAdminPage {
             hostPaperSize = hostMediaSize.toString();
         }
 
-        add(new Label("papersize-description", MessageFormat.format(
-                getLocalizer().getString("papersize-description", this),
-                hostPaperSize)));
+        add(new Label("papersize-description",
+                MessageFormat.format(
+                        getLocalizer().getString("papersize-description", this),
+                        hostPaperSize)));
 
         labelledRadio("default-papersize", "-system",
                 IConfigProp.Key.SYS_DEFAULT_PAPER_SIZE,
@@ -932,14 +921,14 @@ public final class Options extends AbstractAdminPage {
 
     }
 
-    private void
-            labelledInput(final String id, final IConfigProp.Key configKey) {
+    private void labelledInput(final String id,
+            final IConfigProp.Key configKey) {
         tagInput(id, configKey);
         tagLabel(id + "-label", id, configKey);
     }
 
-    private void labelledInput(final String id,
-            final IConfigProp.Key configKey, final String value) {
+    private void labelledInput(final String id, final IConfigProp.Key configKey,
+            final String value) {
         tagInput(id, configKey, value);
         tagLabel(id + "-label", id, configKey);
     }
@@ -958,8 +947,8 @@ public final class Options extends AbstractAdminPage {
     private Label tagInput(final String id, final IConfigProp.Key key,
             final String value) {
         Label labelWrk = new Label(id);
-        labelWrk.add(new AttributeModifier("id", ConfigManager.instance()
-                .getConfigKey(key)));
+        labelWrk.add(new AttributeModifier("id",
+                ConfigManager.instance().getConfigKey(key)));
         labelWrk.add(new AttributeModifier("value", value));
         add(labelWrk);
         return labelWrk;
@@ -991,8 +980,8 @@ public final class Options extends AbstractAdminPage {
     private void tagTextarea(final String id, final IConfigProp.Key key,
             final String value) {
         Label labelWrk = new Label(id, value);
-        labelWrk.add(new AttributeModifier("id", ConfigManager.instance()
-                .getConfigKey(key)));
+        labelWrk.add(new AttributeModifier("id",
+                ConfigManager.instance().getConfigKey(key)));
         add(labelWrk);
     }
 
@@ -1008,8 +997,8 @@ public final class Options extends AbstractAdminPage {
      */
     private void tagLabel(final String id, final String localeKey,
             final IConfigProp.Key configKey) {
-        tagLabel(id, localeKey, ConfigManager.instance()
-                .getConfigKey(configKey));
+        tagLabel(id, localeKey,
+                ConfigManager.instance().getConfigKey(configKey));
     }
 
     /**
@@ -1028,8 +1017,8 @@ public final class Options extends AbstractAdminPage {
      */
     private void tagCheckbox(final String wicketId, final IConfigProp.Key key) {
         Label labelWrk = new Label(wicketId);
-        labelWrk.add(new AttributeModifier("id", ConfigManager.instance()
-                .getConfigKey(key)));
+        labelWrk.add(new AttributeModifier("id",
+                ConfigManager.instance().getConfigKey(key)));
         if (ConfigManager.instance().isConfigValue(key)) {
             labelWrk.add(new AttributeModifier("checked", "checked"));
         }
@@ -1060,8 +1049,8 @@ public final class Options extends AbstractAdminPage {
      */
     private void tagSelect(final String id, final IConfigProp.Key key) {
         Label labelWrk = new Label(id);
-        labelWrk.add(new AttributeModifier("id", ConfigManager.instance()
-                .getConfigKey(key)));
+        labelWrk.add(new AttributeModifier("id",
+                ConfigManager.instance().getConfigKey(key)));
         add(labelWrk);
     }
 
@@ -1097,9 +1086,8 @@ public final class Options extends AbstractAdminPage {
 
         final String attrName =
                 ConfigManager.instance().getConfigKey(configKey);
-        final boolean checked =
-                ConfigManager.instance().getConfigValue(configKey)
-                        .equals(attrValue);
+        final boolean checked = ConfigManager.instance()
+                .getConfigValue(configKey).equals(attrValue);
 
         labelledRadio(wicketIdBase, wicketIdSuffix, attrName, attrValue,
                 checked);
@@ -1113,10 +1101,10 @@ public final class Options extends AbstractAdminPage {
      */
     private void setFlipswitchOnOffText(final Label label) {
 
-        MarkupHelper.modifyLabelAttr(label, "data-on-text", getLocalizer()
-                .getString("flipswitch-on", this));
-        MarkupHelper.modifyLabelAttr(label, "data-off-text", getLocalizer()
-                .getString("flipswitch-off", this));
+        MarkupHelper.modifyLabelAttr(label, "data-on-text",
+                getLocalizer().getString("flipswitch-on", this));
+        MarkupHelper.modifyLabelAttr(label, "data-off-text",
+                getLocalizer().getString("flipswitch-off", this));
     }
 
 }

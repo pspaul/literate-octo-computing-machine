@@ -33,6 +33,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.AccountDao;
@@ -82,7 +83,9 @@ public final class AccountsPage extends AbstractAdminListPage {
     /**
      *
      */
-    public AccountsPage() {
+    public AccountsPage(final PageParameters parameters) {
+
+        super(parameters);
 
         this.currencySymbol = SpSession.getAppCurrencySymbol();
         this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
@@ -203,15 +206,13 @@ public final class AccountsPage extends AbstractAdminListPage {
                     labelWrk = new Label("accountName", "");
                     item.add(labelWrk);
                 } else {
-                    labelWrk =
-                            new Label("accountNameParent", account.getParent()
-                                    .getName());
+                    labelWrk = new Label("accountNameParent",
+                            account.getParent().getName());
                     item.add(labelWrk);
 
                     // ⦦ : U+29A6 (OBLIQUE ANGLE OPENING UP)
-                    labelWrk =
-                            new Label("accountName", String.format("⦦ %s",
-                                    account.getName()));
+                    labelWrk = new Label("accountName",
+                            String.format("⦦ %s", account.getName()));
                     item.add(labelWrk);
                 }
 
@@ -238,14 +239,12 @@ public final class AccountsPage extends AbstractAdminListPage {
                  * Balance
                  */
                 try {
-                    labelWrk =
-                            new Label("balance-amount",
-                                    BigDecimalUtil.localize(account
-                                            .getBalance(), ConfigManager
-                                            .getUserBalanceDecimals(), locale,
-                                            ServiceContext
-                                                    .getAppCurrencySymbol(),
-                                            true));
+                    labelWrk = new Label("balance-amount",
+                            BigDecimalUtil.localize(account.getBalance(),
+                                    ConfigManager.getUserBalanceDecimals(),
+                                    locale,
+                                    ServiceContext.getAppCurrencySymbol(),
+                                    true));
 
                     if (account.getBalance().compareTo(BigDecimal.ZERO) < 0) {
                         labelWrk.add(new AttributeModifier("class",
@@ -276,23 +275,21 @@ public final class AccountsPage extends AbstractAdminListPage {
                  * Set the uid in 'data-savapage' attribute, so it can be picked
                  * up in JavaScript for editing.
                  */
-                labelWrk =
-                        new Label("button-edit", getLocalizer().getString(
-                                "button-edit", this));
+                labelWrk = new Label("button-edit",
+                        getLocalizer().getString("button-edit", this));
 
-                labelWrk.add(new AttributeModifier("data-savapage", account
-                        .getId()));
+                labelWrk.add(new AttributeModifier("data-savapage",
+                        account.getId()));
 
                 item.add(labelWrk);
 
                 /*
                  *
                  */
-                labelWrk =
-                        new Label("button-transaction", getLocalizer()
-                                .getString("button-transaction", this));
-                labelWrk.add(new AttributeModifier("data-savapage", account
-                        .getId()));
+                labelWrk = new Label("button-transaction",
+                        getLocalizer().getString("button-transaction", this));
+                labelWrk.add(new AttributeModifier("data-savapage",
+                        account.getId()));
                 item.add(labelWrk);
 
                 /*
@@ -307,8 +304,8 @@ public final class AccountsPage extends AbstractAdminListPage {
          * Display the navigation bars and write the response.
          */
         createNavBarResponse(req, accountCount, MAX_PAGES_IN_NAVBAR,
-                "sp-shared-accounts-page", new String[] { "nav-bar-1",
-                        "nav-bar-2" });
+                "sp-shared-accounts-page",
+                new String[] { "nav-bar-1", "nav-bar-2" });
     }
 
 }

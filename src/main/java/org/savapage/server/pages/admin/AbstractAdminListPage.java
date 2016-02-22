@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.server.pages.AbstractListPage;
 
 /**
@@ -43,7 +44,9 @@ public abstract class AbstractAdminListPage extends AbstractListPage {
     /**
      *
      */
-    public AbstractAdminListPage() {
+    public AbstractAdminListPage(final PageParameters parameters) {
+
+        super(parameters);
 
         if (isAuthErrorHandled()) {
             return;

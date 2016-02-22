@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,13 @@
  */
 package org.savapage.server.pages.user;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public class PdfProperties extends AbstractUserPage {
@@ -36,7 +37,9 @@ public class PdfProperties extends AbstractUserPage {
     /**
      *
      */
-    public PdfProperties() {
+    public PdfProperties(final PageParameters parameters) {
+
+        super(parameters);
 
         final MarkupHelper helper = new MarkupHelper(this);
 

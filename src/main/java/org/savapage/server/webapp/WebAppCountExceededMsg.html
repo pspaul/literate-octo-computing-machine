@@ -77,24 +77,19 @@ If no sizes attribute is set, the element’s size defaults to 57 x 57.
 
 			<ul data-role="listview" data-inset="true">
 				<li>
-					<h2 class="sp-txt-warn sp-txt-wrap">
-						<wicket:message key="message" />
-					</h2>
-					<div class="sp-txt-info sp-txt-wrap">
-						<wicket:message key="remedy" />
-					</div>
-
+					<h2 class="sp-txt-wrap" wicket:id="message" />
+					<wicket:enclosure child="remedy">
+						<div class="sp-txt-info sp-txt-wrap" wicket:id="remedy" />
+					</wicket:enclosure>
 				</li>
 			</ul>
-
-			<input type="hidden" id="sp-webapp-mountpath"
-				wicket:id="sp-webapp-mountpath"/>
-
-			<a href="#" id="button-login"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home">
-				<wicket:message key="button-login" />
-			</a>
-
+			<wicket:enclosure child="button-login">
+				<input type="hidden" id="sp-webapp-mountpath"
+					wicket:id="sp-webapp-mountpath" />
+				<a href="#" id="button-login"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home"
+					wicket:id="button-login" />
+			</wicket:enclosure>
 		</div>
 	</div>
 

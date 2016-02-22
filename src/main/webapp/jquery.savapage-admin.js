@@ -145,7 +145,7 @@
 				} else if (_view.activePage().attr('id') === 'page-login') {
 					_view.pages.login.notifyLoginFailed(authMode, data.result.txt);
 				} else {
-					_view.pages.login.loadShow(_model.WEBAPP_TYPE);
+					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
 				}
 
 			};
@@ -256,7 +256,7 @@
 				_api.callAsync({
 					request : 'login',
 					dto : JSON.stringify({
-						webAppType : _model.WEBAPP_TYPE,
+						webAppType : _ns.WEBAPP_TYPE,
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,
@@ -278,7 +278,7 @@
 			 */
 			_view.onDisconnected = function() {
 				_model.user.loggedIn = false;
-				_view.pages.login.loadShow(_model.WEBAPP_TYPE);
+				_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
 			};
 
 			/**
@@ -1818,7 +1818,7 @@
 			 */
 			this.init = function() {
 
-				_model.WEBAPP_TYPE = 'ADMIN';
+				_ns.WEBAPP_TYPE = 'ADMIN';
 
 				_ctrl.init();
 
@@ -1826,7 +1826,7 @@
 					_ctrl.login(_view.AUTH_MODE_NAME, _model.authToken.user, null, _model.authToken.token);
 				} else {
 					// Initial load/show of Login dialog
-					_view.pages.login.loadShow(_model.WEBAPP_TYPE);
+					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
 				}
 			};
 

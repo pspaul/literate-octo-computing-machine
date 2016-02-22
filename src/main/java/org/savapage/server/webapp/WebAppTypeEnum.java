@@ -41,7 +41,7 @@ public enum WebAppTypeEnum {
     /**
      * The Point-of-Sale WebApp.
      */
-    POS("Pos"),
+    POS("POS"),
 
     /**
      * The User WebApp.

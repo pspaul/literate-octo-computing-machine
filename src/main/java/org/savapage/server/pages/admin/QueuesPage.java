@@ -31,6 +31,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
@@ -64,13 +65,13 @@ public final class QueuesPage extends AbstractAdminListPage {
      */
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(QueuesPage.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(QueuesPage.class);
 
     private static final int MAX_PAGES_IN_NAVBAR = 5; // must be odd number
 
-    private static final QueueService QUEUE_SERVICE = ServiceContext
-            .getServiceFactory().getQueueService();
+    private static final QueueService QUEUE_SERVICE =
+            ServiceContext.getServiceFactory().getQueueService();
 
     /**
      * Bean for mapping JSON page request.
@@ -159,7 +160,9 @@ public final class QueuesPage extends AbstractAdminListPage {
     /**
      *
      */
-    public QueuesPage() {
+    public QueuesPage(final PageParameters parameters) {
+
+        super(parameters);
 
         // this.openServiceContext();
 
@@ -180,9 +183,8 @@ public final class QueuesPage extends AbstractAdminListPage {
         /*
          * Standard URL's
          */
-        String serverName =
-                ConfigManager.instance()
-                        .getConfigValue(Key.SYS_SERVER_DNS_NAME);
+        String serverName = ConfigManager.instance()
+                .getConfigValue(Key.SYS_SERVER_DNS_NAME);
 
         if (serverName == null || serverName.trim().isEmpty()) {
             try {
@@ -205,10 +207,9 @@ public final class QueuesPage extends AbstractAdminListPage {
         /*
          * Display the requested page.
          */
-        final List<IppQueue> entryList =
-                queueDao.getListChunk(filter, req.calcStartPosition(), req
-                        .getMaxResults(), IppQueueDao.Field.URL_PATH, req
-                        .getSort().getAscending());
+        final List<IppQueue> entryList = queueDao.getListChunk(filter,
+                req.calcStartPosition(), req.getMaxResults(),
+                IppQueueDao.Field.URL_PATH, req.getSort().getAscending());
 
         final QueueService queueService =
                 ServiceContext.getServiceFactory().getQueueService();
@@ -244,8 +245,8 @@ public final class QueuesPage extends AbstractAdminListPage {
                 series.clear();
 
                 try {
-                    series.init(observationTime, queueService
-                            .getAttributeValue(queue,
+                    series.init(observationTime,
+                            queueService.getAttributeValue(queue,
                                     IppQueueAttrEnum.PRINT_IN_ROLLING_DAY_PAGES
                                             .getDbName()));
                 } catch (IOException e) {
@@ -311,23 +312,21 @@ public final class QueuesPage extends AbstractAdminListPage {
                  */
                 final MarkupHelper helper = new MarkupHelper(item);
 
-                if (reservedQueue == null
-                        || (reservedQueue.isDriverPrint()
-                                && reservedQueue != ReservedIppQueueEnum.RAW_PRINT
-                                && reservedQueue != ReservedIppQueueEnum.IPP_PRINT_INTERNET && reservedQueue != ReservedIppQueueEnum.AIRPRINT)) {
+                if (reservedQueue == null || (reservedQueue.isDriverPrint()
+                        && reservedQueue != ReservedIppQueueEnum.RAW_PRINT
+                        && reservedQueue != ReservedIppQueueEnum.IPP_PRINT_INTERNET
+                        && reservedQueue != ReservedIppQueueEnum.AIRPRINT)) {
 
-                    helper.encloseLabel(
-                            "url-default",
+                    helper.encloseLabel("url-default",
                             String.format("%s/%s", urlDefault,
-                                    queue.getUrlPath()), true)
-                            .setEscapeModelStrings(false);
+                                    queue.getUrlPath()),
+                            true).setEscapeModelStrings(false);
 
                     // For now, do NOT show the Windows URL.
-                    helper.encloseLabel(
-                            "url-windows",
+                    helper.encloseLabel("url-windows",
                             String.format("%s/%s", urlWindows,
-                                    queue.getUrlPath()), false)
-                            .setEscapeModelStrings(false);
+                                    queue.getUrlPath()),
+                            false).setEscapeModelStrings(false);
 
                 } else {
                     helper.discloseLabel("url-default");
@@ -340,20 +339,20 @@ public final class QueuesPage extends AbstractAdminListPage {
                 final StringBuilder reservedText = new StringBuilder();
 
                 if (reservedQueue == null) {
-                    reservedText.append(ReservedIppQueueEnum.IPP_PRINT
-                            .getUiText());
+                    reservedText
+                            .append(ReservedIppQueueEnum.IPP_PRINT.getUiText());
                 } else {
                     reservedText.append(reservedQueue.getUiText());
 
                     if (reservedQueue == ReservedIppQueueEnum.RAW_PRINT) {
-                        reservedText.append(" Port ").append(
-                                ConfigManager.getRawPrinterPort());
+                        reservedText.append(" Port ")
+                                .append(ConfigManager.getRawPrinterPort());
                     }
 
                     reservedText
-                            .append(" (")
-                            .append(getLocalizer().getString("signal-reserved",
-                                    this)).append(")");
+                            .append(" (").append(getLocalizer()
+                                    .getString("signal-reserved", this))
+                            .append(")");
 
                 }
                 helper.encloseLabel("reserved-queue", reservedText.toString(),
@@ -372,11 +371,11 @@ public final class QueuesPage extends AbstractAdminListPage {
                     final StringBuilder builder = new StringBuilder();
 
                     if (cm.isConfigValue(Key.SMARTSCHOOL_1_ENABLE)) {
-                        builder.append(cm
-                                .getConfigValue(Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER));
+                        builder.append(cm.getConfigValue(
+                                Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER));
 
-                        final String grayscalePrinter =
-                                cm.getConfigValue(Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE);
+                        final String grayscalePrinter = cm.getConfigValue(
+                                Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE);
 
                         if (StringUtils.isNotBlank(grayscalePrinter)) {
                             builder.append(" (").append(grayscalePrinter)
@@ -388,11 +387,11 @@ public final class QueuesPage extends AbstractAdminListPage {
                         if (builder.length() > 0) {
                             builder.append(", ");
                         }
-                        builder.append(cm
-                                .getConfigValue(Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER));
+                        builder.append(cm.getConfigValue(
+                                Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER));
 
-                        final String grayscalePrinter =
-                                cm.getConfigValue(Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE);
+                        final String grayscalePrinter = cm.getConfigValue(
+                                Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE);
 
                         if (StringUtils.isNotBlank(grayscalePrinter)) {
                             builder.append(" (").append(grayscalePrinter)
@@ -446,10 +445,8 @@ public final class QueuesPage extends AbstractAdminListPage {
                     totals += " " + localized(key);
 
                     //
-                    totals +=
-                            ", "
-                                    + NumberUtil.humanReadableByteCount(
-                                            queue.getTotalBytes(), true);
+                    totals += ", " + NumberUtil.humanReadableByteCount(
+                            queue.getTotalBytes(), true);
                 }
 
                 item.add(new Label("period", period));
@@ -458,11 +455,10 @@ public final class QueuesPage extends AbstractAdminListPage {
                 /*
                  *
                  */
-                labelWrk =
-                        new Label("button-log", getLocalizer().getString(
-                                "button-log", this));
-                labelWrk.add(new AttributeModifier("data-savapage", queue
-                        .getId()));
+                labelWrk = new Label("button-log",
+                        getLocalizer().getString("button-log", this));
+                labelWrk.add(
+                        new AttributeModifier("data-savapage", queue.getId()));
                 item.add(labelWrk);
 
                 /*
@@ -472,8 +468,8 @@ public final class QueuesPage extends AbstractAdminListPage {
                 if (reservedQueue == null || reservedQueue.isDriverPrint()) {
                     helper.encloseLabel("button-edit",
                             getLocalizer().getString("button-edit", this), true)
-                            .add(new AttributeModifier("data-savapage", queue
-                                    .getId()));
+                            .add(new AttributeModifier("data-savapage",
+                                    queue.getId()));
 
                 } else {
                     helper.discloseLabel("button-edit");

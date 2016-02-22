@@ -454,8 +454,10 @@
 
 				var res, json;
 
+				apiData.webAppType = _ns.WEBAPP_TYPE;
+				
 				if (_user.loggedIn) {
-					apiData.user = _user.id;
+					apiData.user = _user.id;					
 				}
 
 				// Since this is a synchronous call, this does NOT show in
@@ -494,6 +496,8 @@
 			 */
 			this.callAsync = function(apiData, onSuccess, onFinished, onError) {
 				var _this = this;
+
+				apiData.webAppType = _ns.WEBAPP_TYPE;
 
 				$.mobile.loading("show");
 
@@ -577,7 +581,7 @@
 				$.ajax({
 					type : "POST",
 					async : true,
-					url : '/pages/' + wClassPage,
+					url : '/pages/' + wClassPage + _ns.WebAppTypeUrlParm(),
 					data : {
 						user : _ns.PanelCommon.userId,
 						data : jsonData
@@ -2043,7 +2047,7 @@
 				html = $.ajax({
 					type : "POST",
 					async : false,
-					url : '/pages/' + page,
+					url : '/pages/' + page + _ns.WebAppTypeUrlParm(),
 					dataType : 'json',
 					data : data || {}
 				}).responseText;
@@ -2125,7 +2129,7 @@
 						async : true,
 						dataType : 'html',
 						data : jsonData || {},
-						url : '/pages/' + page
+						url : '/pages/' + page + _ns.WebAppTypeUrlParm()
 					}).done(function(html) {
 						$(sel).html(html).page();
 						_view.changePage($(sel));

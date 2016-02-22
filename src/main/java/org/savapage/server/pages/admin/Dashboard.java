@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 /**
  *
  * @author Rijk Ravestein
@@ -36,7 +38,9 @@ public class Dashboard extends AbstractAdminPage {
     /**
      *
      */
-    public Dashboard() {
+    public Dashboard(final PageParameters parameters) {
+
+        super(parameters);
 
         /*
          * System status.

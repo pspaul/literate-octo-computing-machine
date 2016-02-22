@@ -45,6 +45,7 @@ import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.print.attribute.standard.MediaSizeName;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.time.DateUtils;
@@ -317,6 +318,10 @@ public final class JsonApiServer extends AbstractPage {
         final String requestingUser =
                 getParmValue(parameters, isGetAction, JsonApiDict.PARM_USER);
 
+        final WebAppTypeEnum requestingWebAppType =
+                EnumUtils.getEnum(WebAppTypeEnum.class, getParmValue(parameters,
+                        isGetAction, JsonApiDict.PARM_WEBAPP_TYPE));
+
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Request: " + requestId);
         }
@@ -355,8 +360,8 @@ public final class JsonApiServer extends AbstractPage {
              * Is the request valid and the requesting user authorized for the
              * request?
              */
-            Map<String, Object> returnData =
-                    checkValidAndAuthorized(requestId, requestingUser);
+            Map<String, Object> returnData = checkValidAndAuthorized(requestId,
+                    requestingUser, requestingWebAppType);
 
             final boolean isValidAndAuthorizedRequest = returnData == null;
 
@@ -1203,12 +1208,7 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_WEBAPP_CLOSE_SESSION:
 
-            return reqWebAppCloseSession(
-                    getParmValue(parameters, isGetAction, "authTokenUser"),
-                    getParmValue(parameters, isGetAction, "authTokenAdmin"),
-                    getParmValue(parameters, isGetAction, "authTokenPos"),
-                    getParmValue(parameters, isGetAction,
-                            "authTokenJobtickets"));
+            return reqWebAppCloseSession();
 
         case JsonApiDict.REQ_MAIL_TEST:
 
@@ -2060,17 +2060,23 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * Checks if the request is valid and the user is authorized to perform the
-     * API.
+     * Checks if the request is valid, the Web App is right, and the user is
+     * authorized to perform the API.
      *
+     * @param request
+     *            The request id.
      * @param uid
-     *            The user id.
+     *            The requesting user id.
+     * @param webAppType
+     *            The requested {@link WebAppTypeEnum}.
      * @return {@code null} if user is authorized, otherwise a Map object
      *         containing the error message.
      * @throws IOException
+     *             When IO error.
      */
     private Map<String, Object> checkValidAndAuthorized(final String request,
-            final String uid) throws IOException {
+            final String uid, final WebAppTypeEnum webAppType)
+                    throws IOException {
 
         Map<String, Object> userData = null;
 
@@ -2108,7 +2114,11 @@ public final class JsonApiServer extends AbstractPage {
 
         } else if (session.isAuthenticated()) {
 
-            if (session.getUser().getUserId().equals(uid)) {
+            if (webAppType != session.getWebAppType()) {
+
+                authorized = false;
+
+            } else if (session.getUser().getUserId().equals(uid)) {
 
                 if (API_DICTIONARY.isAdminAuthenticationNeeded(request)) {
                     authorized = session.getUser().getAdmin().booleanValue();
@@ -2120,7 +2130,7 @@ public final class JsonApiServer extends AbstractPage {
                 authorized = false;
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("request [" + request + "]: user [" + uid
+                    LOGGER.debug("Request [" + request + "]: user [" + uid
                             + "] is NOT the owner " + "of this session ["
                             + session.getId() + "]");
                 }
@@ -2131,7 +2141,7 @@ public final class JsonApiServer extends AbstractPage {
             authorized = false;
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("request [" + request
+                LOGGER.debug("Request [" + request
                         + "]: NO user authenticated in session ["
                         + session.getId() + "]");
             }
@@ -2140,7 +2150,7 @@ public final class JsonApiServer extends AbstractPage {
         //
         if (authorized) {
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("user [" + uid + "] is owner of session "
+                LOGGER.trace("User [" + uid + "] is owner of session "
                         + session.getId());
             }
         } else {
@@ -5123,25 +5133,14 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * This method acts as a {@link #reqLogout(User, String)} for the current
-     * {@link SpSession}. It also invalidated the {@link WebAppTypeEnum}
-     * authentication token.
+     * This method closes for the current {@link SpSession} and interrupts any
+     * CometD long-polls of the owning user.
      *
-     * @param authTokenUser
-     *            The authentication token of the User WebApp.
-     * @param authTokenAdmin
-     *            The authentication token of the Admin WebApp.
-     * @param authTokenPos
-     *            The authentication token of the POS WebApp.
-     * @param authTokenJobtickets
-     *            The authentication token of the Jobtickets WebApp.
      * @return The response map.
      * @throws IOException
      *             When IO errors.
      */
-    private Map<String, Object> reqWebAppCloseSession(
-            final String authTokenUser, final String authTokenAdmin,
-            final String authTokenPos, final String authTokenJobtickets)
+    private Map<String, Object> reqWebAppCloseSession()
                     throws IOException {
 
         final SpSession session = SpSession.get();
@@ -5178,34 +5177,6 @@ public final class JsonApiServer extends AbstractPage {
         if (savedWebAppType == WebAppTypeEnum.USER && userId != null) {
             ApiRequestHelper.interruptPendingLongPolls(userId,
                     this.getRemoteAddr());
-        }
-
-        /*
-         * Remove the AUTH token of the active WebApp.
-         */
-        final String authTokenToRemove;
-
-        switch (savedWebAppType) {
-        case ADMIN:
-            authTokenToRemove = authTokenAdmin;
-            break;
-        case JOB_TICKETS:
-            authTokenToRemove = authTokenJobtickets;
-            break;
-        case POS:
-            authTokenToRemove = authTokenPos;
-            break;
-        case USER:
-            authTokenToRemove = authTokenUser;
-            break;
-        default:
-            authTokenToRemove = null;
-            break;
-        }
-
-        if (authTokenToRemove != null) {
-            WebAppUserAuthManager.instance()
-                    .removeUserAuthToken(authTokenToRemove, savedWebAppType);
         }
 
         return createApiResultOK();
@@ -5693,7 +5664,8 @@ public final class JsonApiServer extends AbstractPage {
         //
         final UserAuth userAuth = new UserAuth(
                 ApiRequestHelper.getHostTerminal(this.getRemoteAddr()),
-                authModeReq, getSessionWebAppType().equals(WebAppTypeEnum.ADMIN));
+                authModeReq,
+                getSessionWebAppType().equals(WebAppTypeEnum.ADMIN));
 
         userData.put("authName", userAuth.isVisibleAuthName());
         userData.put("authId", userAuth.isVisibleAuthId());

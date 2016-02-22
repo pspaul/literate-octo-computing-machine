@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,13 @@
  */
 package org.savapage.server.pages;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.MemberCard;
 import org.savapage.server.SpSession;
 import org.savapage.server.pages.admin.MembershipMsg;
+import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,18 +35,23 @@ import org.slf4j.LoggerFactory;
  * Abstract page for all pages which need authorized access. The constructor
  * checks the SpSession to see if the user is authorized to see the pages.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public abstract class AbstractAuthPage extends AbstractPage {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * .
+     */
+    protected static final String GET_PARM_WEBAPPTYPE = "sp-app";
+
     protected static final String POST_PARM_DATA = "data";
     protected static final String POST_PARM_USER = "user";
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AbstractAuthPage.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(AbstractAuthPage.class);
 
     private boolean authErrorHandled = false;
     private boolean adminUser = false;
@@ -76,10 +84,8 @@ public abstract class AbstractAuthPage extends AbstractPage {
     /**
      * Checks the following contraints:
      * <ul>
-     * <li>
-     * User must be an administrator.</li>
-     * <li>
-     * If this page needs a valid membership status (see
+     * <li>User must be an administrator.</li>
+     * <li>If this page needs a valid membership status (see
      * {@link #needMembership()}), the Admin WebApp must not be blocked (see
      * {@link MemberCard#isMembershipDesirable()}.</li>
      * </ul>
@@ -102,9 +108,8 @@ public abstract class AbstractAuthPage extends AbstractPage {
             if (LOGGER.isErrorEnabled()) {
                 SpSession session = SpSession.get();
 
-                final String error =
-                        "user [" + session.getUser().getUserId()
-                                + "] is not authorized";
+                final String error = "user [" + session.getUser().getUserId()
+                        + "] is not authorized";
                 LOGGER.error(error);
             }
             this.setResponsePage(NotAuthorized.class);
@@ -126,7 +131,7 @@ public abstract class AbstractAuthPage extends AbstractPage {
      * constructor before doing additional checking.
      * </p>
      */
-    public AbstractAuthPage() {
+    public AbstractAuthPage(final PageParameters parameters) {
 
         final RequestCycle requestCycle = getRequestCycle();
 
@@ -134,15 +139,21 @@ public abstract class AbstractAuthPage extends AbstractPage {
             LOGGER.trace(requestCycle.getRequest().getClientUrl().toString());
         }
 
-        String message = null;
+        final WebAppTypeEnum webAppTypeReq =
+                EnumUtils.getEnum(WebAppTypeEnum.class,
+                        parameters.get(GET_PARM_WEBAPPTYPE).toString());
 
-        SpSession session = SpSession.get();
+        final SpSession session = SpSession.get();
+        final WebAppTypeEnum webAppTypeAuth = session.getWebAppType();
 
-        if (session == null) {
-            message = "no session";
-        } else if (session.getUser() == null) {
-            message = "unknown user not authorized";
+        final String message;
+
+        if (session.getUser() == null) {
+            message = "Unknown user.";
+        } else if (webAppTypeAuth != null && webAppTypeAuth != webAppTypeReq) {
+            message = "Wrong Web App Type.";
         } else {
+            message = null;
             adminUser = session.getUser().getAdmin();
         }
 

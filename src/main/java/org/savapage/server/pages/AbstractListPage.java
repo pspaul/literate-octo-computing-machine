@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,17 +26,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  */
 public abstract class AbstractListPage extends AbstractAuthPage {
 
     private static final long serialVersionUID = 1L;
+
+    public AbstractListPage(final PageParameters parameters) {
+        super(parameters);
+    }
 
     @Override
     protected boolean needMembership() {

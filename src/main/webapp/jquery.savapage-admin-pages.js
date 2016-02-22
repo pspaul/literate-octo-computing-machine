@@ -1178,7 +1178,7 @@
 				$.ajax({
 					type : "POST",
 					async : true,
-					url : '/pages/' + url + wClass,
+					url : '/pages/' + url + wClass + _ns.WebAppTypeUrlParm(),
 					data : {
 						user : _model.user.id,
 						data : jsonData

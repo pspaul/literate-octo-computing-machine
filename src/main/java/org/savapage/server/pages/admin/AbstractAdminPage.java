@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.server.pages.AbstractAuthPage;
 
 /**
@@ -46,7 +47,9 @@ public abstract class AbstractAdminPage extends AbstractAuthPage {
     /**
      *
      */
-    public AbstractAdminPage() {
+    public AbstractAdminPage(final PageParameters parameters) {
+
+        super(parameters);
 
         if (isAuthErrorHandled()) {
             return;

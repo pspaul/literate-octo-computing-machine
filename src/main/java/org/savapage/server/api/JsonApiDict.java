@@ -58,6 +58,7 @@ import org.savapage.server.api.request.ReqUserNotifyAccountChange;
  */
 public class JsonApiDict {
 
+    public static final String PARM_WEBAPP_TYPE = "webAppType";
     public static final String PARM_REQ = "request";
     public static final String PARM_USER = "user";
 

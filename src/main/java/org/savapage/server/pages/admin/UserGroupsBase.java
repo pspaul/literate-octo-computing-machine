@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.server.pages.TooltipPanel;
 
 /**
@@ -38,7 +39,9 @@ public class UserGroupsBase extends AbstractAdminPage {
     /**
      *
      */
-    public UserGroupsBase() {
+    public UserGroupsBase(final PageParameters parameters) {
+
+        super(parameters);
 
         final TooltipPanel tooltip = new TooltipPanel("tooltip-add-remove");
         tooltip.populate(localized("tooltip-add-remove"));

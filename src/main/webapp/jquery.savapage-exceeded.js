@@ -35,146 +35,82 @@
  */
 ( function($, window, document, JSON, _ns) {"use strict";
 
-        /**
-         * Constructor
-         */
-        _ns.Controller = function(_i18n, _model, _view, _api) {
+		/**
+		 * Constructor
+		 */
+		_ns.Controller = function(_i18n, _model, _view, _api) {
 
-            /*
-             *
-             */
-            this.init = function() {
-                _model.initAuth();
-            };
+			/*
+			 *
+			 */
+			this.init = function() {
+				// _model.initAuth();
+			};
 
-            /*
-             *
-             */
-            _view.onDisconnected = function() {
-                alert('Disconnected');
-            };
+			/*
+			 *
+			 */
+			_view.onDisconnected = function() {
+				alert('Disconnected');
+			};
 
-        };
-        /**
-         *
-         */
-        _ns.Model = function(_i18n) {
+		};
+		/**
+		 *
+		 */
+		_ns.Model = function(_i18n) {
+			this.user = new _ns.User();
+		};
+		/**
+		 *
+		 */
+		$.SavaPageApp = function(name) {
 
-            var
-            //
-            _LOC_AUTH_NAME = 'sp.auth.admin.name'
-            //
-            , _LOC_AUTH_ADMIN_TOKEN = 'sp.auth.admin.token'
-            //
-            , _LOC_AUTH_USER_TOKEN = 'sp.auth.user.token'
-            //
-            , _LOC_AUTH_POS_TOKEN = 'sp.auth.pos.token'
-            //
-            , _LOC_AUTH_JOBTICKETS_TOKEN = 'sp.auth.jobtickets.token'
-            //
-            , _LOC_LANG = 'sp.admin.language';
+			var _i18n = null
+			//
+			, _model = new _ns.Model(_i18n)
+			//
+			, _api = new _ns.Api(_i18n, _model.user)
+			//
+			, _view = new _ns.View(_i18n, _api)
+			//
+			, _ctrl = new _ns.Controller(_i18n, _model, _view, _api)
+			//
+			;
 
-            this.user = new _ns.User();
+			this.init = function() {
 
-            this.authToken = {};
+				_ctrl.init();
 
-            this.initAuth = function() {
+				$('#button-login').click(function() {
 
-                var item;
+					var res = _api.call({
+						request : 'webapp-close-session'
+					});
 
-                this.authToken = {};
+					if (res.result.code === '0') {
+						window.location.replace(window.location.protocol + "//" + window.location.host + $('#sp-webapp-mountpath').attr('value'));
+						return false;
+					}
+					alert('error');
+					return true;
+				});
 
-                item = _LOC_AUTH_NAME;
-                if (window.localStorage[item] !== null) {
-                    this.authToken.user = window.localStorage[item];
-                }
+			};
+		};
 
-                item = _LOC_AUTH_ADMIN_TOKEN;
-                if (window.localStorage[item] !== null) {
-                    this.authToken.tokenAdminApp = window.localStorage[item];
-                }
+		$(function() {
+			$.savapageApp = new $.SavaPageApp();
+			// do NOT initialize here (to early for some browsers, like Opera)
+		});
 
-                item = _LOC_AUTH_USER_TOKEN;
-                if (window.localStorage[item] !== null) {
-                    this.authToken.tokenUserApp = window.localStorage[item];
-                }
+		$(document).on("mobileinit", null, null, function() {
+			$.mobile.defaultPageTransition = "none";
+			$.mobile.defaultDialogTransition = "none";
+		}).on("ready", null, null, function() {
+			// Initialize AFTER document is read
+			$.savapageApp.init();
 
-                item = _LOC_AUTH_POS_TOKEN;
-                if (window.localStorage[item] !== null) {
-                    this.authToken.tokenPosApp = window.localStorage[item];
-                }
-                item = _LOC_AUTH_JOBTICKETS_TOKEN;
-                if (window.localStorage[item] !== null) {
-                    this.authToken.tokenJobticketsApp = window.localStorage[item];
-                }
+		});
 
-                item = _LOC_LANG;
-                if (window.localStorage[item] !== null) {
-                    this.authToken.language = window.localStorage[item];
-                }
-
-            };
-
-            this.setLanguage = function(lang) {
-                this.authToken.language = lang;
-                window.localStorage[_LOC_LANG] = lang;
-            };
-
-        };
-        /**
-         *
-         */
-        $.SavaPageApp = function(name) {
-
-            var _i18n = null
-            //
-            , _model = new _ns.Model(_i18n)
-            //
-            , _api = new _ns.Api(_i18n, _model.user)
-            //
-            , _view = new _ns.View(_i18n, _api)
-            //
-            , _ctrl = new _ns.Controller(_i18n, _model, _view, _api)
-            //
-            ;
-
-            this.init = function() {
-
-                _ctrl.init();
-
-                $('#button-login').click(function() {
-
-                    var res = _api.call({
-                        request : 'webapp-close-session',
-                        authTokenAdmin : _model.authToken.tokenAdminApp,
-                        authTokenUser : _model.authToken.tokenUserApp,
-						authTokenPos : _model.authToken.tokenPosApp,                        
-						authTokenJobtickets : _model.authToken.tokenJobticketsApp                        
-                    });
-
-                    if (res.result.code === '0') {
-                        window.location.replace(window.location.protocol + "//" + window.location.host + $('#sp-webapp-mountpath').attr('value'));
-                        return false;
-                    }
-                    alert('error');
-                    return true;
-                });
-
-            };
-        };
-
-        $(function() {
-            $.savapageApp = new $.SavaPageApp();
-            // do NOT initialize here (to early for some browsers, like Opera)
-        });
-
-        $(document).on("mobileinit", null, null, function() {
-            $.mobile.defaultPageTransition = "none";
-            $.mobile.defaultDialogTransition = "none";
-        }).on("ready", null, null, function() {
-            // Initialize AFTER document is read
-            $.savapageApp.init();
-
-        });
-
-    }(jQuery, this, this.document, JSON, this.org.savapage));
+	}(jQuery, this, this.document, JSON, this.org.savapage));

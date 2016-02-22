@@ -23,6 +23,7 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 
@@ -47,7 +48,9 @@ public final class PrintersBase extends AbstractAdminPage {
     /**
      *
      */
-    public PrintersBase() {
+    public PrintersBase(final PageParameters parameters) {
+
+        super(parameters);
 
         final Label labelWrk = new Label("button-cups", "CUPS");
         labelWrk.add(new AttributeModifier("href", PROXY_PRINT_SERVICE

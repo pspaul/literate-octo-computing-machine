@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
@@ -51,7 +52,7 @@ import org.savapage.server.pages.StatsPageTotalPanel;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public class UserDashboard extends AbstractUserPage {
@@ -61,9 +62,9 @@ public class UserDashboard extends AbstractUserPage {
     /**
      *
      */
-    public UserDashboard() {
+    public UserDashboard(final PageParameters parameters) {
 
-        // this.openServiceContext();
+        super(parameters);
         handlePage();
     }
 
@@ -80,9 +81,8 @@ public class UserDashboard extends AbstractUserPage {
 
         final SpSession session = SpSession.get();
 
-        final org.savapage.core.jpa.User user =
-                ServiceContext.getDaoContext().getUserDao()
-                        .findById(session.getUser().getId());
+        final org.savapage.core.jpa.User user = ServiceContext.getDaoContext()
+                .getUserDao().findById(session.getUser().getId());
 
         /*
          * Page Totals.
@@ -105,11 +105,8 @@ public class UserDashboard extends AbstractUserPage {
          * Accounting.
          */
         final AccountDisplayInfoDto dto =
-                ServiceContext
-                        .getServiceFactory()
-                        .getAccountingService()
-                        .getAccountDisplayInfo(user,
-                                ServiceContext.getLocale(),
+                ServiceContext.getServiceFactory().getAccountingService()
+                        .getAccountDisplayInfo(user, ServiceContext.getLocale(),
                                 SpSession.getAppCurrencySymbol());
 
         // ------------------
@@ -135,18 +132,17 @@ public class UserDashboard extends AbstractUserPage {
             clazzBalance = MarkupHelper.CSS_TXT_ERROR;
             break;
         default:
-            throw new SpException("Status [" + dto.getStatus()
-                    + "] not handled.");
+            throw new SpException(
+                    "Status [" + dto.getStatus() + "] not handled.");
         }
 
         helper.addModifyLabelAttr("balance", dto.getBalance(), "class",
                 clazzBalance);
 
         // Redeem voucher?
-        final Label labelVoucherRedeem =
-                MarkupHelper.createEncloseLabel("button-voucher-redeem",
-                        localized("button-voucher"),
-                        cm.isConfigValue(Key.FINANCIAL_USER_VOUCHERS_ENABLE));
+        final Label labelVoucherRedeem = MarkupHelper.createEncloseLabel(
+                "button-voucher-redeem", localized("button-voucher"),
+                cm.isConfigValue(Key.FINANCIAL_USER_VOUCHERS_ENABLE));
 
         add(MarkupHelper.appendLabelAttr(labelVoucherRedeem, "title",
                 localized("button-title-voucher")));
@@ -156,10 +152,9 @@ public class UserDashboard extends AbstractUserPage {
                 dto.getStatus() == AccountDisplayInfoDto.Status.DEBIT
                         && cm.isConfigValue(Key.FINANCIAL_USER_TRANSFER_ENABLE);
 
-        final Label labelTransferCredit =
-                MarkupHelper.createEncloseLabel("button-transfer-credit",
-                        localized("button-transfer-to-user"),
-                        enableTransferCredit);
+        final Label labelTransferCredit = MarkupHelper.createEncloseLabel(
+                "button-transfer-credit", localized("button-transfer-to-user"),
+                enableTransferCredit);
 
         add(MarkupHelper.appendLabelAttr(labelTransferCredit, "title",
                 localized("button-title-transfer-to-user")));
@@ -212,19 +207,18 @@ public class UserDashboard extends AbstractUserPage {
         try {
             externalPlugin = pluginMgr.getExternalPaymentGateway();
 
-            isExternalGateway =
-                    externalPlugin != null
-                            && externalPlugin.isOnline()
-                            && externalPlugin
-                                    .isCurrencySupported(appCurrencyCode);
+            isExternalGateway = externalPlugin != null
+                    && externalPlugin.isOnline()
+                    && externalPlugin.isCurrencySupported(appCurrencyCode);
 
             if (isExternalGateway) {
-                list.addAll(externalPlugin.getExternalPaymentMethods().values());
+                list.addAll(
+                        externalPlugin.getExternalPaymentMethods().values());
             }
 
         } catch (PaymentGatewayException e) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
-                    e.getMessage()));
+            setResponsePage(
+                    new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
             return;
         }
 
@@ -235,7 +229,8 @@ public class UserDashboard extends AbstractUserPage {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(final ListItem<PaymentMethodInfo> item) {
+            protected void
+                    populateItem(final ListItem<PaymentMethodInfo> item) {
 
                 final PaymentMethodInfo info = item.getModelObject();
 
@@ -244,15 +239,15 @@ public class UserDashboard extends AbstractUserPage {
                 labelWrk.add(new AttributeModifier("src", WebApp
                         .getPaymentMethodImgUrl(info.getMethod(), false)));
 
-                labelWrk.add(new AttributeModifier("title", localized(
-                        "button-title-transfer", info.getMethod().toString()
-                                .toLowerCase())));
+                labelWrk.add(new AttributeModifier("title",
+                        localized("button-title-transfer",
+                                info.getMethod().toString().toLowerCase())));
 
                 labelWrk.add(new AttributeModifier("data-payment-gateway",
                         externalPlugin.getId()));
 
-                labelWrk.add(new AttributeModifier("data-payment-method", info
-                        .getMethod().toString()));
+                labelWrk.add(new AttributeModifier("data-payment-method",
+                        info.getMethod().toString()));
 
                 item.add(labelWrk);
             }

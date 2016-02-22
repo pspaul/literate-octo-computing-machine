@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLRoleEnum;
@@ -57,7 +58,9 @@ public final class Main extends AbstractAdminPage {
     /**
      *
      */
-    public Main() {
+    public Main(final PageParameters parameters) {
+
+        super(parameters);
 
         MarkupHelper helper = new MarkupHelper(this);
 

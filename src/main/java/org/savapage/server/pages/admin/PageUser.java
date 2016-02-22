@@ -23,6 +23,7 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dto.UserAccountingDto;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -41,7 +42,10 @@ public final class PageUser extends AbstractAdminPage {
     /**
      *
      */
-    public PageUser() {
+    public PageUser(final PageParameters parameters) {
+
+        super(parameters);
+
         final MarkupHelper helper = new MarkupHelper(this);
 
         //

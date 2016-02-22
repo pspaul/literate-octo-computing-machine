@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.user;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.server.SpSession;
@@ -28,7 +29,7 @@ import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public class AccountCreditTransfer extends AbstractUserPage {
@@ -38,7 +39,9 @@ public class AccountCreditTransfer extends AbstractUserPage {
     /**
      *
      */
-    public AccountCreditTransfer() {
+    public AccountCreditTransfer(final PageParameters parameters) {
+
+        super(parameters);
 
         final String currencySymbol = SpSession.getAppCurrencySymbol();
         final MarkupHelper helper = new MarkupHelper(this);
@@ -46,9 +49,7 @@ public class AccountCreditTransfer extends AbstractUserPage {
         helper.addLabel("currency-symbol", currencySymbol);
         helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
 
-        helper.encloseLabel(
-                "prompt-comment",
-                localized("prompt-comment"),
+        helper.encloseLabel("prompt-comment", localized("prompt-comment"),
                 ConfigManager.instance().isConfigValue(
                         Key.FINANCIAL_USER_TRANSFER_ENABLE_COMMENTS));
 

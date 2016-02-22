@@ -58,6 +58,13 @@ String.prototype.vformat = function() {"use strict";
  */
 ( function(window, document, _ns) {"use strict";
 
+		// WebAppTypeEnum
+		_ns.WEBAPP_TYPE = 'UNDEFINED';
+
+		_ns.WebAppTypeUrlParm = function() {
+			return '?sp-app=' + _ns.WEBAPP_TYPE;
+		};
+		
 		/**
 		 *
 		 */

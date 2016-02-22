@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@
  * address: info@datraverse.com
  */
 package org.savapage.server.pages;
+
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  *
@@ -41,8 +43,9 @@ public final class PageJobTickets extends AbstractAuthPage {
     /**
      * .
      */
-    public PageJobTickets() {
+    public PageJobTickets(final PageParameters parameters) {
 
+        super(parameters);
         // final MarkupHelper helper = new MarkupHelper(this);
 
     }

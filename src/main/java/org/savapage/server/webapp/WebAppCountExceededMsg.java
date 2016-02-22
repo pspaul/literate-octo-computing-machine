@@ -28,6 +28,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
+import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -41,7 +42,7 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
     /**
      * .
      */
-    public static final String PARM_WEBAPPTYPE = "app";
+    public static final String PARM_WEBAPPTYPE = "sp-app";
 
     /**
      *
@@ -62,32 +63,93 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
         helper.addLabel("app-title", getWebAppTitle(null));
         helper.addLabel("title", CommunityDictEnum.SAVAPAGE.getWord());
 
-        //
-        final WebAppTypeEnum requestedWebAppType =
-                EnumUtils.getEnum(WebAppTypeEnum.class,
-                        this.getPageParameters().get(PARM_WEBAPPTYPE)
-                                .toString(WebAppTypeEnum.UNDEFINED.toString()));
+        final WebAppTypeEnum webAppTypeAuth = SpSession.get().getWebAppType();
 
-        final String mountPath;
+        final WebAppTypeEnum webAppTypeRequested = EnumUtils
+                .getEnum(WebAppTypeEnum.class, parameters.get(PARM_WEBAPPTYPE)
+                        .toString(WebAppTypeEnum.UNDEFINED.toString()));
 
-        switch (requestedWebAppType) {
+        final String message;
+        final String messageCss;
+        final String remedy;
+        final WebAppTypeEnum webAppTypeLogin;
+
+        if (webAppTypeAuth == null
+                || webAppTypeAuth == WebAppTypeEnum.UNDEFINED) {
+
+            webAppTypeLogin = WebAppTypeEnum.USER;
+            message = localized("message-login", webAppTypeLogin);
+            messageCss = MarkupHelper.CSS_TXT_VALID;
+            remedy = null;
+
+        } else if (webAppTypeRequested == WebAppTypeEnum.UNDEFINED) {
+
+            webAppTypeLogin = null;
+            message = localized("message-unknown", webAppTypeAuth.getUiText());
+            messageCss = MarkupHelper.CSS_TXT_WARN;
+            remedy = null;
+
+        } else if (webAppTypeAuth == webAppTypeRequested) {
+
+            webAppTypeLogin = null;
+            message =
+                    localized("message-same", webAppTypeRequested.getUiText());
+            messageCss = MarkupHelper.CSS_TXT_WARN;
+            remedy = localized("remedy-same");
+
+        } else {
+
+            webAppTypeLogin = webAppTypeRequested;
+            message = localized("message-switch",
+                    webAppTypeRequested.getUiText());
+            messageCss = MarkupHelper.CSS_TXT_VALID;
+
+            if (webAppTypeAuth == null
+                    || webAppTypeAuth == WebAppTypeEnum.UNDEFINED) {
+                remedy = null;
+            } else {
+                remedy = localized("remedy-switch", webAppTypeAuth.getUiText());
+            }
+        }
+
+        helper.addAppendLabelAttr("message", message, "class", messageCss);
+
+        if (remedy == null) {
+            helper.discloseLabel("remedy");
+        } else {
+            helper.encloseLabel("remedy", remedy, true);
+        }
+
+        if (webAppTypeLogin == null) {
+            helper.discloseLabel("button-login");
+        } else {
+            helper.encloseLabel("button-login", localized("button-login"),
+                    true);
+            helper.addModifyLabelAttr("sp-webapp-mountpath", "value",
+                    this.getMountPathRequested(webAppTypeLogin));
+        }
+    }
+
+    /**
+     *
+     * @param webAppTypeRequested
+     *            The requested web app.
+     * @return The mount path.
+     */
+    private String
+            getMountPathRequested(final WebAppTypeEnum webAppTypeRequested) {
+        switch (webAppTypeRequested) {
         case ADMIN:
-            mountPath = WebApp.MOUNT_PATH_WEBAPP_ADMIN;
-            break;
+            return WebApp.MOUNT_PATH_WEBAPP_ADMIN;
         case JOB_TICKETS:
-            mountPath = WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
-            break;
+            return WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
         case POS:
-            mountPath = WebApp.MOUNT_PATH_WEBAPP_POS;
-            break;
+            return WebApp.MOUNT_PATH_WEBAPP_POS;
         case USER:
         case UNDEFINED:
         default:
-            mountPath = WebApp.MOUNT_PATH_WEBAPP_USER;
-            break;
+            return WebApp.MOUNT_PATH_WEBAPP_USER;
         }
-
-        helper.addModifyLabelAttr("sp-webapp-mountpath", "value", mountPath);
     }
 
     @Override

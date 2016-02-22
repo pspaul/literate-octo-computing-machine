@@ -29,6 +29,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.server.SpSession;
@@ -48,7 +49,9 @@ public final class PagePointOfSale extends AbstractAuthPage {
     /**
      *
      */
-    public PagePointOfSale() {
+    public PagePointOfSale(final PageParameters parameters) {
+
+        super(parameters);
 
         MarkupHelper helper = new MarkupHelper(this);
 

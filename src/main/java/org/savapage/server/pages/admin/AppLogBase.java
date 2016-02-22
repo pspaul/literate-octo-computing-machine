@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -39,7 +40,9 @@ public final class AppLogBase extends AbstractAdminPage {
     /**
      *
      */
-    public AppLogBase() {
+    public AppLogBase(final PageParameters parameters) {
+
+        super(parameters);
 
         MarkupHelper helper = new MarkupHelper(this);
 

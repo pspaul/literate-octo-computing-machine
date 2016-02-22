@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.dao.DeviceAttrDao;
 import org.savapage.core.dao.enums.DeviceAttrEnum;
@@ -41,7 +42,9 @@ public final class PageDevice extends AbstractAdminPage {
     /**
      *
      */
-    public PageDevice() {
+    public PageDevice(final PageParameters parameters) {
+
+        super(parameters);
 
         String attrName;
         String wicketIdBase;
@@ -108,8 +111,8 @@ public final class PageDevice extends AbstractAdminPage {
 
         labelledRadio(wicketIdBase, "-user", attrName,
                 IConfigProp.AUTH_MODE_V_NAME, false);
-        labelledRadio(wicketIdBase, "-id", attrName,
-                IConfigProp.AUTH_MODE_V_ID, false);
+        labelledRadio(wicketIdBase, "-id", attrName, IConfigProp.AUTH_MODE_V_ID,
+                false);
         labelledRadio(wicketIdBase, "-card-local", attrName,
                 IConfigProp.AUTH_MODE_V_CARD_LOCAL, false);
         labelledRadio(wicketIdBase, "-card-network", attrName,

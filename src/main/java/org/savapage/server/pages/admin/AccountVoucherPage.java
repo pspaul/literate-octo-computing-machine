@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.AccountVoucherDao;
 import org.savapage.core.dao.AccountVoucherDao.ListFilter;
 import org.savapage.core.dao.helpers.AccountVoucherPagerReq;
@@ -53,7 +54,9 @@ public final class AccountVoucherPage extends AbstractAdminListPage {
     /**
      *
      */
-    public AccountVoucherPage() {
+    public AccountVoucherPage(final PageParameters parameters) {
+
+        super(parameters);
 
         final String data = getParmValue(POST_PARM_DATA);
         final AccountVoucherPagerReq req = AccountVoucherPagerReq.readReq(data);
@@ -83,10 +86,9 @@ public final class AccountVoucherPage extends AbstractAdminListPage {
 
         // add(new Label("applog-count", Long.toString(logCount)));
 
-        final List<AccountVoucher> entryList =
-                accountVoucherDao.getListChunk(filter, req.calcStartPosition(),
-                        req.getMaxResults(), req.getSort().getField(), req
-                                .getSort().getAscending());
+        final List<AccountVoucher> entryList = accountVoucherDao.getListChunk(
+                filter, req.calcStartPosition(), req.getMaxResults(),
+                req.getSort().getField(), req.getSort().getAscending());
 
         //
         add(new PropertyListView<AccountVoucher>("voucher-entry-view",

@@ -30,6 +30,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.UserGroupMemberDao;
@@ -67,7 +68,9 @@ public final class UserGroupsPage extends AbstractAdminListPage {
     /**
      *
      */
-    public UserGroupsPage() {
+    public UserGroupsPage(final PageParameters parameters) {
+
+        super(parameters);
 
         final String data = getParmValue(POST_PARM_DATA);
         final UserGroupPagerReq req = UserGroupPagerReq.read(data);
@@ -140,8 +143,8 @@ public final class UserGroupsPage extends AbstractAdminListPage {
 
                 //
                 final ReservedUserGroupEnum reservedGroup =
-                        ReservedUserGroupEnum.fromDbName(userGroup
-                                .getGroupName());
+                        ReservedUserGroupEnum
+                                .fromDbName(userGroup.getGroupName());
 
                 final long userCount;
 
@@ -159,29 +162,26 @@ public final class UserGroupsPage extends AbstractAdminListPage {
                  * Set the uid in 'data-savapage' attribute, so it can be picked
                  * up in JavaScript for editing.
                  */
-                labelWrk =
-                        new Label("button-edit", getLocalizer().getString(
-                                "button-edit", this));
+                labelWrk = new Label("button-edit",
+                        getLocalizer().getString("button-edit", this));
 
-                labelWrk.add(new AttributeModifier("data-savapage", userGroup
-                        .getId()));
+                labelWrk.add(new AttributeModifier("data-savapage",
+                        userGroup.getId()));
 
                 item.add(labelWrk);
 
                 //
-                labelWrk =
-                        new Label("button-users", getLocalizer().getString(
-                                "button-users", this));
-                labelWrk.add(new AttributeModifier("data-savapage", userGroup
-                        .getId()));
+                labelWrk = new Label("button-users",
+                        getLocalizer().getString("button-users", this));
+                labelWrk.add(new AttributeModifier("data-savapage",
+                        userGroup.getId()));
                 item.add(labelWrk);
 
                 //
-                labelWrk =
-                        new Label("button-account", getLocalizer()
-                                .getString("button-account", this));
-                labelWrk.add(new AttributeModifier("data-savapage", userGroup
-                        .getGroupName()));
+                labelWrk = new Label("button-account",
+                        getLocalizer().getString("button-account", this));
+                labelWrk.add(new AttributeModifier("data-savapage",
+                        userGroup.getGroupName()));
                 labelWrk.add(new AttributeModifier("data-savapage-type",
                         AccountTypeEnum.GROUP.toString()));
                 item.add(labelWrk);

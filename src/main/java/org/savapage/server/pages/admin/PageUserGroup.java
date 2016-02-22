@@ -23,6 +23,7 @@ package org.savapage.server.pages.admin;
 
 import java.util.EnumSet;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.services.ServiceContext;
@@ -42,20 +43,21 @@ public final class PageUserGroup extends AbstractAdminPage {
     /**
      *
      */
-    public PageUserGroup() {
+    public PageUserGroup(final PageParameters parameters) {
+
+        super(parameters);
 
         final ACLRoleEnumPanel aclRolePanel =
                 new ACLRoleEnumPanel("ACLRoleEnumCheckboxes");
 
-        final EnumSet<ACLRoleEnum> selected =
-                EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR,
-                        ACLRoleEnum.WEB_CASHIER);
+        final EnumSet<ACLRoleEnum> selected = EnumSet
+                .of(ACLRoleEnum.JOB_TICKET_OPERATOR, ACLRoleEnum.WEB_CASHIER);
 
         final UserGroupAttrDao daoAttr =
                 ServiceContext.getDaoContext().getUserGroupAttrDao();
 
-//        final UserGroupAttr attr =
-//                daoAttr.findByName(group, UserGroupAttrEnum.ACL_ROLES);
+        // final UserGroupAttr attr =
+        // daoAttr.findByName(group, UserGroupAttrEnum.ACL_ROLES);
 
         aclRolePanel.populate(selected);
 

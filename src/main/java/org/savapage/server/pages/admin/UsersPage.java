@@ -35,6 +35,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserDao;
@@ -67,19 +68,19 @@ public final class UsersPage extends AbstractAdminListPage {
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(UsersPage.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(UsersPage.class);
 
     /**
     *
     */
-    private static final AccountingService ACCOUNTING_SERVICE = ServiceContext
-            .getServiceFactory().getAccountingService();
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
     /**
      *
      */
-    private static final UserService USER_SERVICE = ServiceContext
-            .getServiceFactory().getUserService();
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      *
@@ -107,7 +108,9 @@ public final class UsersPage extends AbstractAdminListPage {
     /**
      *
      */
-    public UsersPage() {
+    public UsersPage(final PageParameters parameters) {
+
+        super(parameters);
 
         // this.openServiceContext();
 
@@ -260,8 +263,8 @@ public final class UsersPage extends AbstractAdminListPage {
                  *
                  */
                 item.add(new Label("fullName"));
-                item.add(new Label("email", userService
-                        .getPrimaryEmailAddress(user)));
+                item.add(new Label("email",
+                        userService.getPrimaryEmailAddress(user)));
 
                 /*
                  * Signal
@@ -335,11 +338,8 @@ public final class UsersPage extends AbstractAdminListPage {
                     totals += " " + localized(key);
 
                     //
-                    totals +=
-                            ", "
-                                    + NumberUtil.humanReadableByteCount(
-                                            user.getNumberOfPrintInBytes(),
-                                            true);
+                    totals += ", " + NumberUtil.humanReadableByteCount(
+                            user.getNumberOfPrintInBytes(), true);
                 }
 
                 item.add(new Label("period", period));
@@ -351,15 +351,13 @@ public final class UsersPage extends AbstractAdminListPage {
                 String homeSize = "-";
                 if (user.getPerson()) {
                     try {
-                        final long size =
-                                ConfigManager.getUserHomeDirSize(user
-                                        .getUserId());
+                        final long size = ConfigManager
+                                .getUserHomeDirSize(user.getUserId());
                         if (size > 0) {
                             // homeSize =
                             // FileUtils.byteCountToDisplaySize(size);
-                            homeSize =
-                                    NumberUtil.humanReadableByteCount(size,
-                                            true);
+                            homeSize = NumberUtil.humanReadableByteCount(size,
+                                    true);
                         }
                     } catch (IOException e) {
                         homeSize = "-";
@@ -374,42 +372,39 @@ public final class UsersPage extends AbstractAdminListPage {
                  */
                 final boolean visible = !user.getDeleted();
 
-                labelWrk =
-                        new Label("button-edit", getLocalizer().getString(
-                                "button-edit", this)) {
+                labelWrk = new Label("button-edit",
+                        getLocalizer().getString("button-edit", this)) {
 
-                            private static final long serialVersionUID = 1L;
+                    private static final long serialVersionUID = 1L;
 
-                            @Override
-                            public boolean isVisible() {
-                                return visible;
-                            }
+                    @Override
+                    public boolean isVisible() {
+                        return visible;
+                    }
 
-                        };
+                };
 
-                labelWrk.add(new AttributeModifier("data-savapage", user
-                        .getUserId()));
+                labelWrk.add(new AttributeModifier("data-savapage",
+                        user.getUserId()));
 
                 item.add(labelWrk);
 
                 /*
                  *
                  */
-                labelWrk =
-                        new Label("button-log", getLocalizer().getString(
-                                "button-log", this));
-                labelWrk.add(new AttributeModifier("data-savapage", user
-                        .getId()));
+                labelWrk = new Label("button-log",
+                        getLocalizer().getString("button-log", this));
+                labelWrk.add(
+                        new AttributeModifier("data-savapage", user.getId()));
                 item.add(labelWrk);
 
                 /*
                  *
                  */
-                labelWrk =
-                        new Label("button-transaction", getLocalizer()
-                                .getString("button-transaction", this));
-                labelWrk.add(new AttributeModifier("data-savapage", user
-                        .getId()));
+                labelWrk = new Label("button-transaction",
+                        getLocalizer().getString("button-transaction", this));
+                labelWrk.add(
+                        new AttributeModifier("data-savapage", user.getId()));
                 item.add(labelWrk);
 
                 /*

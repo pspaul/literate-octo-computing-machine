@@ -33,6 +33,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
@@ -339,7 +340,9 @@ public class OutboxAddin extends AbstractUserPage {
     /**
      * .
      */
-    public OutboxAddin() {
+    public OutboxAddin(final PageParameters parameters) {
+
+        super(parameters);
 
         final IRequestParameters parms =
                 getRequestCycle().getRequest().getPostParameters();
@@ -347,7 +350,8 @@ public class OutboxAddin extends AbstractUserPage {
         final boolean isJobticketView =
                 parms.getParameterValue("jobTickets").toBoolean();
 
-        if (isJobticketView && getSessionWebAppType() != WebAppTypeEnum.JOB_TICKETS
+        if (isJobticketView
+                && getSessionWebAppType() != WebAppTypeEnum.JOB_TICKETS
                 && getSessionWebAppType() != WebAppTypeEnum.ADMIN) {
             setResponsePage(
                     new MessageContent(AppLogLevelEnum.ERROR, "Access denied"));

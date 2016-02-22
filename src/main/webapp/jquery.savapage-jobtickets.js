@@ -102,7 +102,7 @@
 				} else if (_view.isLoginPageActive()) {
 					_view.pages.login.notifyLoginFailed(authMode, data.result.txt);
 				} else {
-					_view.pages.login.loadShow(_model.WEBAPP_TYPE);
+					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
 				}
 			};
 
@@ -180,6 +180,18 @@
 					_view.changePage($('#page-login'));
 				});
 
+				/*
+				 * One-time binding the click to a function. We don't want
+				 * to bind each time the panel is loaded.
+				 *
+				 * Even if #id doesn't exist yet (because the panel is not
+				 * loaded) this code is executed.
+				 */
+				$('body').on('click', '#sp-button-continue-after-expire', null, function() {
+					_ns.restartWebApp();
+					return false;
+				});
+
 			};
 
 			/**
@@ -194,7 +206,7 @@
 				_api.callAsync({
 					request : 'login',
 					dto : JSON.stringify({
-						webAppType : _model.WEBAPP_TYPE,
+						webAppType : _ns.WEBAPP_TYPE,
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,
@@ -216,7 +228,7 @@
 			 */
 			_view.onDisconnected = function() {
 				_model.user.loggedIn = false;
-				_view.pages.login.loadShow(_model.WEBAPP_TYPE);
+				_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
 			};
 
 			/**
@@ -430,14 +442,14 @@
 			 */
 			this.init = function() {
 
-				_model.WEBAPP_TYPE = 'JOB_TICKETS';
+				_ns.WEBAPP_TYPE = 'JOB_TICKETS';
 
 				_ctrl.init();
 
 				if (_model.authToken.user && _model.authToken.token) {
 					_ctrl.login(_view.AUTH_MODE_NAME, _model.authToken.user, null, _model.authToken.token);
 				} else {
-					_view.pages.login.loadShow(_model.WEBAPP_TYPE);
+					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
 				}
 
 				$(window).on('beforeunload', function() {

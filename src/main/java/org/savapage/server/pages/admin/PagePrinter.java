@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 /**
  *
  * @author Rijk Ravestein
@@ -36,7 +38,9 @@ public class PagePrinter extends AbstractAdminPage {
     /**
      *
      */
-    public PagePrinter() {
+    public PagePrinter(final PageParameters parameters) {
+        super(parameters);
+
         handlePage();
     }
 

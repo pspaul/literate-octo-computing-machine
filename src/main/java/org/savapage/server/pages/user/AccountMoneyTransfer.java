@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import java.text.ParseException;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
@@ -43,7 +44,7 @@ import org.savapage.server.pages.MessageContent;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public class AccountMoneyTransfer extends AbstractUserPage {
@@ -53,7 +54,9 @@ public class AccountMoneyTransfer extends AbstractUserPage {
     /**
      *
      */
-    public AccountMoneyTransfer() {
+    public AccountMoneyTransfer(final PageParameters parameters) {
+
+        super(parameters);
 
         final IRequestParameters parms =
                 getRequestCycle().getRequest().getPostParameters();
@@ -67,21 +70,19 @@ public class AccountMoneyTransfer extends AbstractUserPage {
         final PaymentGateway gateway =
                 pluginMgr.getExternalPaymentGateway(gatewayId);
 
-
         if (!gateway.isOnline()) {
             setResponsePage(new MessageContent(AppLogLevelEnum.INFO,
                     this.localized("msg-payment-disabled", method.toString())));
             return;
         }
 
-
         final PaymentMethodInfo methodInfo;
 
         try {
             methodInfo = gateway.getExternalPaymentMethods().get(method);
         } catch (PaymentGatewayException e) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
-                    e.getMessage()));
+            setResponsePage(
+                    new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
             return;
         }
 
@@ -110,9 +111,8 @@ public class AccountMoneyTransfer extends AbstractUserPage {
                     || decimalWrk.compareTo(BigDecimal.ZERO) == 0) {
                 amount = null;
             } else {
-                amount =
-                        BigDecimalUtil.localize(decimalWrk, amountDecimals,
-                                getLocale(), true);
+                amount = BigDecimalUtil.localize(decimalWrk, amountDecimals,
+                        getLocale(), true);
             }
 
             //
@@ -122,10 +122,9 @@ public class AccountMoneyTransfer extends AbstractUserPage {
                     || decimalWrk.compareTo(BigDecimal.ZERO) == 0) {
                 perc = null;
             } else {
-                perc =
-                        BigDecimalUtil.localize(
-                                decimalWrk.multiply(BigDecimal.valueOf(100)),
-                                getLocale(), true);
+                perc = BigDecimalUtil.localize(
+                        decimalWrk.multiply(BigDecimal.valueOf(100)),
+                        getLocale(), true);
 
             }
 
@@ -140,13 +139,11 @@ public class AccountMoneyTransfer extends AbstractUserPage {
                 if (amount == null) {
                     prompt = localized("prompt-payment-fee-perc", perc);
                 } else if (perc == null) {
-                    prompt =
-                            localized("prompt-payment-fee-amount",
-                                    currencySymbol, amount);
+                    prompt = localized("prompt-payment-fee-amount",
+                            currencySymbol, amount);
                 } else {
-                    prompt =
-                            localized("prompt-payment-fee-amount-perc",
-                                    currencySymbol, amount, perc);
+                    prompt = localized("prompt-payment-fee-amount-perc",
+                            currencySymbol, amount, perc);
                 }
                 helper.encloseLabel("payment-costs", prompt, true);
             }
@@ -157,8 +154,7 @@ public class AccountMoneyTransfer extends AbstractUserPage {
             if (decimalWrk == null) {
                 helper.discloseLabel("payment-min-amount");
             } else {
-                helper.encloseLabel(
-                        "payment-min-amount",
+                helper.encloseLabel("payment-min-amount",
                         localized("prompt-payment-min-amount", currencySymbol,
                                 BigDecimalUtil.localize(decimalWrk,
                                         amountDecimals, getLocale(), true)),
@@ -169,10 +165,8 @@ public class AccountMoneyTransfer extends AbstractUserPage {
             throw new SpException(e.getMessage(), e);
         }
 
-        helper.addLabel(
-                "prompt-transfer-money",
-                localized("prompt-transfer-money", method.toString()
-                        .toLowerCase()));
+        helper.addLabel("prompt-transfer-money", localized(
+                "prompt-transfer-money", method.toString().toLowerCase()));
 
         //
         helper.addLabel("currency-symbol", currencySymbol);

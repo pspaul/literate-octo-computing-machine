@@ -29,6 +29,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.reports.JrVoucherPageLayoutEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.MediaUtils;
@@ -49,7 +50,9 @@ public final class AccountVoucherBase extends AbstractAdminPage {
     /**
      *
      */
-    public AccountVoucherBase() {
+    public AccountVoucherBase(final PageParameters parameters) {
+
+        super(parameters);
 
         // openServiceContext();
 

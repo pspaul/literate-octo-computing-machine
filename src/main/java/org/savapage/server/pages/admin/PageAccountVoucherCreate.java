@@ -23,6 +23,7 @@ package org.savapage.server.pages.admin;
 
 import javax.print.attribute.standard.MediaSizeName;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.reports.JrVoucherPageLayoutEnum;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.server.pages.VoucherDesignOptionsPanel;
@@ -42,7 +43,9 @@ public final class PageAccountVoucherCreate extends AbstractAdminPage {
     /**
      *
      */
-    public PageAccountVoucherCreate() {
+    public PageAccountVoucherCreate(final PageParameters parameters) {
+
+        super(parameters);
         /*
          * Option list: voucher card design
          */

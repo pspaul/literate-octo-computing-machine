@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.PrinterDao;
@@ -41,7 +42,7 @@ import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  */
 public class DocLogBase extends AbstractAuthPage {
 
@@ -50,7 +51,9 @@ public class DocLogBase extends AbstractAuthPage {
     /**
      *
      */
-    public DocLogBase() {
+    public DocLogBase(final PageParameters parameters) {
+
+        super(parameters);
 
         if (isAuthErrorHandled()) {
             return;

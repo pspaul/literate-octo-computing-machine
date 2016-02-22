@@ -27,6 +27,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.jpa.UserGroup;
@@ -47,7 +48,9 @@ public final class UsersBase extends AbstractAdminPage {
     /**
      *
      */
-    public UsersBase() {
+    public UsersBase(final PageParameters parameters) {
+
+        super(parameters);
 
         addVisible(ConfigManager.isInternalUsersEnabled(), "button-new",
                 localized("button-new"));

@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.server.pages.MarkupHelper;
@@ -40,9 +41,11 @@ public class AccountsBase extends AbstractAdminPage {
     /**
      *
      */
-    public AccountsBase() {
+    public AccountsBase(final PageParameters parameters) {
 
-        final MarkupHelper  helper =  new MarkupHelper(this);
+        super(parameters);
+
+        final MarkupHelper helper = new MarkupHelper(this);
 
         helper.addModifyLabelAttr("account-type-group", "value",
                 AccountTypeEnum.GROUP.toString());

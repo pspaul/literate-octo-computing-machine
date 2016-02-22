@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ package org.savapage.server.pages.user;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLRoleEnum;
@@ -34,7 +35,7 @@ import org.savapage.server.pages.QuickSearchPanel;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public class Print extends AbstractUserPage {
@@ -50,7 +51,9 @@ public class Print extends AbstractUserPage {
     /**
      *
      */
-    public Print() {
+    public Print(final PageParameters parameters) {
+
+        super(parameters);
 
         final MarkupHelper helper = new MarkupHelper(this);
         final ConfigManager cm = ConfigManager.instance();
@@ -97,9 +100,8 @@ public class Print extends AbstractUserPage {
         helper.addLabel("print-ecoprint-label", ecoPrintLabel);
 
         //
-        final boolean isPrintDelegate =
-                ACCESSCONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
-                        ACLRoleEnum.PRINT_DELEGATE);
+        final boolean isPrintDelegate = ACCESSCONTROL_SERVICE.hasAccess(
+                SpSession.get().getUser(), ACLRoleEnum.PRINT_DELEGATE);
 
         addVisible(isPrintDelegate, "button-print-delegation", "-");
 

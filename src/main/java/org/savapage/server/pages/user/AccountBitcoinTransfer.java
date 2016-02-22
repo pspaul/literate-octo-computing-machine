@@ -34,8 +34,7 @@ import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
-import net.iharder.Base64;
-
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.UserAttrDao;
@@ -62,6 +61,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import net.iharder.Base64;
+
 /**
  *
  * @author Datraverse B.V.
@@ -75,7 +76,9 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
      * Creates and displays a bitcoin payment address in <a
      * href="https://en.bitcoin.it/wiki/BIP_0021">BIP 0021</a> format.
      */
-    public AccountBitcoinTransfer() {
+    public AccountBitcoinTransfer(final PageParameters parameters) {
+
+        super(parameters);
 
         final BitcoinGateway plugin =
                 WebApp.get().getPluginManager().getBitcoinGateway();

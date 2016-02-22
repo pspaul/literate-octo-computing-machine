@@ -158,7 +158,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
     protected final void setWebAppCountExceededResponse() {
         final PageParameters parms = new PageParameters();
         parms.set(WebAppCountExceededMsg.PARM_WEBAPPTYPE,
-                this.getSessionWebAppType());
+                this.getWebAppType());
         setResponsePage(WebAppCountExceededMsg.class, parms);
     }
 

@@ -28,6 +28,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
@@ -53,8 +54,8 @@ public final class ConfigPropPage extends AbstractAdminListPage {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ConfigPropPage.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ConfigPropPage.class);
 
     /**
      * Maximum number of pages in the navigation bar. IMPORTANT: this must be an
@@ -121,7 +122,9 @@ public final class ConfigPropPage extends AbstractAdminListPage {
     /**
      *
      */
-    public ConfigPropPage() {
+    public ConfigPropPage(final PageParameters parameters) {
+
+        super(parameters);
 
         // this.openServiceContext();
 
@@ -145,12 +148,12 @@ public final class ConfigPropPage extends AbstractAdminListPage {
 
         // add(new Label("applog-count", Long.toString(logCount)));
 
-        final List<ConfigProperty> entryList =
-                dao.getListChunk(filter, req.calcStartPosition(), req
-                        .getMaxResults(), ConfigPropertyDao.Field.NAME, req
-                        .getSort().getAscending());
+        final List<ConfigProperty> entryList = dao.getListChunk(filter,
+                req.calcStartPosition(), req.getMaxResults(),
+                ConfigPropertyDao.Field.NAME, req.getSort().getAscending());
 
-        add(new PropertyListView<ConfigProperty>("config-entry-view", entryList) {
+        add(new PropertyListView<ConfigProperty>("config-entry-view",
+                entryList) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -166,11 +169,10 @@ public final class ConfigPropPage extends AbstractAdminListPage {
                  * Set the uid in 'data-savapage' attribute, so it can be picked
                  * up in JavaScript for editing.
                  */
-                Label labelWrk =
-                        new Label("button-edit", getLocalizer().getString(
-                                "button-edit", this));
-                labelWrk.add(new AttributeModifier("data-savapage", prop
-                        .getPropertyName()));
+                Label labelWrk = new Label("button-edit",
+                        getLocalizer().getString("button-edit", this));
+                labelWrk.add(new AttributeModifier("data-savapage",
+                        prop.getPropertyName()));
                 item.add(labelWrk);
 
             }

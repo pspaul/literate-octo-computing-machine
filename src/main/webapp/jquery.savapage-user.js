@@ -4328,7 +4328,7 @@
 				_api.callAsync({
 					request : 'login',
 					dto : JSON.stringify({
-						webAppType : _model.WEBAPP_TYPE,
+						webAppType : _ns.WEBAPP_TYPE,
 						authMode : authMode,
 						authId : authId,
 						authPw : authPw,
@@ -4391,7 +4391,7 @@
 							_view.pages.login.loadShowAsync(function() {
 								_this.initLoginUserInput();
 							}, {
-								webAppType : _model.WEBAPP_TYPE
+								webAppType : _ns.WEBAPP_TYPE
 							});
 						}
 					}
@@ -4867,7 +4867,7 @@
 			 */
 			_view.onDisconnected = function() {
 				_model.user.loggedIn = false;
-				_view.pages.login.loadShow(_model.WEBAPP_TYPE);
+				_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
 			};
 
 			/**
@@ -5892,7 +5892,7 @@
 
 				var user = _ns.Utils.getUrlParam('user');
 
-				_model.WEBAPP_TYPE = 'USER';
+				_ns.WEBAPP_TYPE = 'USER';
 
 				_ctrl.init();
 
@@ -5903,7 +5903,7 @@
 				} else {
 					_ctrl.initLoginUserInput();
 					// Initial load/show of Login dialog
-					_view.pages.login.loadShow(_model.WEBAPP_TYPE);
+					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
 				}
 			};
 
