@@ -4643,7 +4643,7 @@
 				$.ajax({
 					type : "POST",
 					async : true,
-					url : '/pages/' + wClass,
+					url : '/pages/' + wClass + _ns.WebAppTypeUrlParm(),
 					data : {
 						user : _ns.PanelCommon.userId,
 						data : jsonData
