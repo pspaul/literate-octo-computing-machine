@@ -1497,14 +1497,7 @@
 					jobTickets : false
 				});
 				if (html) {
-					$('#outbox-job-list').html(html);
-					/*
-					 * JQM 1.4.0: strange, the listview needs a separate
-					 * refresh.
-					 */
-					$('#page-outbox').enhanceWithin();
-					$('#outbox-job-list').listview('refresh');
-
+					$('#outbox-job-list').html(html).enhanceWithin();
 					$('.sparkline-printout-pie').sparkline('html', {
 						type : 'pie',
 						sliceColors : [_view.colorPrinter, _view.colorSheet]

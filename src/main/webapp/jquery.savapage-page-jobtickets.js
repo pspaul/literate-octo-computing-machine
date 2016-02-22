@@ -56,14 +56,7 @@
 				});
 
 				if (html) {
-					$('#jobticket-list').html(html);
-					/*
-					 * JQM 1.4.0: strange, the listview needs a separate
-					 * refresh.
-					 */
-					$('#page-jobtickets').enhanceWithin();
-					$('#jobticket-list').listview('refresh');
-
+					$('#jobticket-list').html(html).enhanceWithin();;
 					$('.sparkline-printout-pie').sparkline('html', {
 						type : 'pie',
 						sliceColors : [_view.colorPrinter, _view.colorSheet]

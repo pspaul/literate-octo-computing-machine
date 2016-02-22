@@ -172,4 +172,14 @@
     border: 1px #DDDDDD solid;
 }
 
+.sp-outbox-job-entry {
+    padding: 0px 5px 5px 8px;
+	margin: 8px; 
+    border: 1px #DDDDDD solid;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    border-radius: 8px;
+}
+
 /* end-of-file */

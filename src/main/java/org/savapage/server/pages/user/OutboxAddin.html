@@ -13,15 +13,22 @@
 	-->
 </wicket:remove>
 
-<li wicket:id="job-entry">
-	<h3>
+<wicket:remove>
+    <!--
+     
+    -->
+</wicket:remove>
+
+<div wicket:id="job-entry" class="sp-outbox-job-entry">
+
+	<h4 style="margin-top: 15px; margin-bottom: 10px;">
 		<span wicket:id="printout-pie" class="sparkline-printout-pie" />&nbsp;<span
 			wicket:id="printer" />
-	</h3>
+	</h4>
 
 	<div class="sp-txt-wrap">
 		<wicket:enclosure child="title">
-			<span wicket:id="title" />
+			<span wicket:id="title" style="font-style: italic;" />
 		</wicket:enclosure>
 		<wicket:enclosure child="extSupplier"> &bull;
                 <wicket:enclosure child="extSupplierImg">
@@ -43,7 +50,9 @@
 			<span wicket:id="owner-user-name" />
             &bull;
         </wicket:enclosure>
-		<span wicket:id="timeSubmit" /> &bull; <span wicket:id="totals" />
+		<span wicket:id="timeSubmit" /> &bull; <span
+			class="sp-outbox-remaining-time" wicket:id="timeExpiry" /> &bull; <span
+			wicket:id="totals" />
 		<wicket:enclosure child="color"> &bull; <span
 				class="sp-txt-warn" wicket:id="color" />
 		</wicket:enclosure>
@@ -96,7 +105,4 @@
 			wicket:id="button-jobticket-print" />
 	</wicket:enclosure>
 
-	<p class="ui-li-aside">
-		<span class="sp-outbox-remaining-time" wicket:id="timeExpiry" />
-	</p>
-</li>
+</div>

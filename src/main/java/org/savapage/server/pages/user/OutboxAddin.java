@@ -220,8 +220,8 @@ public class OutboxAddin extends AbstractUserPage {
 
             for (final String attr : new String[] { "title", "papersize",
                     "letterhead", "duplex", "singlex", "color", "collate",
-                    "grayscale", "cost", "accounts", "removeGraphics",
-                    "ecoPrint", "extSupplier", "owner-user-name" }) {
+                    "grayscale", "accounts", "removeGraphics", "ecoPrint",
+                    "extSupplier", "owner-user-name" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -275,7 +275,10 @@ public class OutboxAddin extends AbstractUserPage {
                     cost.append(")");
                 }
             }
-            mapVisible.put("cost", cost.toString());
+
+            item.add(new Label("cost",
+                    StringUtils.replace(cost.toString(), " ", "&nbsp;"))
+                    .setEscapeModelStrings(false));
 
             //
             final String extSupplierImgUrl;
