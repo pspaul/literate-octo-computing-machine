@@ -5885,7 +5885,7 @@
 
 				var user = _ns.Utils.getUrlParam('user');
 
-				_ns.WEBAPP_TYPE = 'USER';
+				_ns.initWebApp('USER');
 
 				_ctrl.init();
 

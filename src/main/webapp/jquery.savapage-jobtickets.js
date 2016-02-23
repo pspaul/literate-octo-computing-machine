@@ -163,18 +163,11 @@
 
 				_view.initI18n(res.language);
 
-				//
 				// Call-back: api
-				//
 				_api.onExpired(function() {
-					if (_view.activePage().attr('id') === 'page-admin') {
-						_view.showExpiredDialog();
-					} else {
-						// deferred handling
-						_model.sessionExpired = true;
-					}
+					_view.showExpiredDialog();
 				});
-				// Call-back: api
+
 				_api.onDisconnected(function() {
 					_model.user.loggedIn = false;
 					_view.changePage($('#page-login'));
@@ -442,7 +435,7 @@
 			 */
 			this.init = function() {
 
-				_ns.WEBAPP_TYPE = 'JOB_TICKETS';
+				_ns.initWebApp('JOB_TICKETS');
 
 				_ctrl.init();
 

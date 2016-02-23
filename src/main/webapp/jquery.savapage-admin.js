@@ -1818,7 +1818,7 @@
 			 */
 			this.init = function() {
 
-				_ns.WEBAPP_TYPE = 'ADMIN';
+				_ns.initWebApp('ADMIN');
 
 				_ctrl.init();
 

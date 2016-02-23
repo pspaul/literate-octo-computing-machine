@@ -454,10 +454,14 @@
 
 				var res, json;
 
+				if (_ns.logger.isDebugEnabled()) {
+					_ns.logger.debug(_ns.WEBAPP_TYPE + ' /api : ' + apiData.request);
+				}
+
 				apiData.webAppType = _ns.WEBAPP_TYPE;
-				
+
 				if (_user.loggedIn) {
-					apiData.user = _user.id;					
+					apiData.user = _user.id;
 				}
 
 				// Since this is a synchronous call, this does NOT show in
@@ -478,6 +482,10 @@
 					res = $.parseJSON(json);
 				}
 
+				if (res && res.result && _ns.logger.isDebugEnabled()) {
+					_ns.logger.debug('return [' + (res.result.code || '?') + '] ' + (res.result.txt === undefined ? '' : ('\"' + res.result.txt + '\"')));
+				}
+
 				if (!res) {
 					res = this.simulateDisconnectError();
 					if (_onDisconnected) {
@@ -488,6 +496,7 @@
 						_onExpired();
 					}
 				}
+
 				return res;
 			};
 
@@ -496,6 +505,10 @@
 			 */
 			this.callAsync = function(apiData, onSuccess, onFinished, onError) {
 				var _this = this;
+
+				if (_ns.logger.isDebugEnabled()) {
+					_ns.logger.debug(_ns.WEBAPP_TYPE + ' /api (async): ' + apiData.request);
+				}
 
 				apiData.webAppType = _ns.WEBAPP_TYPE;
 
@@ -561,13 +574,11 @@
 			 */
 			loadListPage : function(panel, wClassPage, jqId) {
 
-				var
+				var data = null, jsonData = null
 				//
-				data = null
-				//
-				, jsonData = null
-				//
-				;
+				, url = '/pages/' + wClassPage + _ns.WebAppTypeUrlParm();
+
+				_ns.logger.debug(url);
 
 				if (panel.getInput) {
 					data = panel.getInput(panel);
@@ -581,7 +592,7 @@
 				$.ajax({
 					type : "POST",
 					async : true,
-					url : '/pages/' + wClassPage + _ns.WebAppTypeUrlParm(),
+					url : url,
 					data : {
 						user : _ns.PanelCommon.userId,
 						data : jsonData
@@ -2038,7 +2049,9 @@
 			 */
 			this.getPageHtml = function(page, data) {
 
-				var html;
+				var html, url = '/pages/' + page + _ns.WebAppTypeUrlParm();
+
+				_ns.logger.debug(url);
 
 				// Since this is a synchronous call, this does NOT show in
 				// Chrome browser (at the moment of the call).
@@ -2047,7 +2060,7 @@
 				html = $.ajax({
 					type : "POST",
 					async : false,
-					url : '/pages/' + page + _ns.WebAppTypeUrlParm(),
+					url : url,
 					dataType : 'json',
 					data : data || {}
 				}).responseText;
@@ -2118,9 +2131,13 @@
 			};
 
 			this.showPageAsync = function(sel, page, onDone, jsonData) {
-				var _this = this;
+				var _this = this, url;
 
 				if ($(sel).children().length === 0) {
+
+					url = '/pages/' + page + _ns.WebAppTypeUrlParm();
+
+					_ns.logger.debug(url);
 
 					$.mobile.loading("show");
 
@@ -2129,7 +2146,7 @@
 						async : true,
 						dataType : 'html',
 						data : jsonData || {},
-						url : '/pages/' + page + _ns.WebAppTypeUrlParm()
+						url : url
 					}).done(function(html) {
 						$(sel).html(html).page();
 						_view.changePage($(sel));

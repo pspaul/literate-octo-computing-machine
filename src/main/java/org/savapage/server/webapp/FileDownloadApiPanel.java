@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,21 +22,39 @@
 package org.savapage.server.webapp;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import org.savapage.server.api.JsonApiDict;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
-public class FileDownloadApiPanel extends Panel {
+public final class FileDownloadApiPanel extends Panel {
 
     /**
      *
      */
     private static final long serialVersionUID = 1L;
 
-    public FileDownloadApiPanel(String id) {
+    /**
+     *
+     * @param id
+     *            The Wicket ID.
+     * @param webAppType
+     *            The {@link WebAppTypeEnum} context.
+     */
+    public FileDownloadApiPanel(final String id,
+            final WebAppTypeEnum webAppType) {
+
         super(id);
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        MarkupHelper.modifyLabelAttr(
+                helper.addModifyLabelAttr("webAppType", "name",
+                        JsonApiDict.PARM_WEBAPP_TYPE),
+                "value", webAppType.toString());
     }
 
 }

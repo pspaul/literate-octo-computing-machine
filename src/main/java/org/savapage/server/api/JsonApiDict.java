@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,15 @@
  */
 package org.savapage.server.api;
 
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.savapage.core.SpException;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqGenerateUuid;
@@ -36,6 +39,7 @@ import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqOutboxClear;
 import org.savapage.server.api.request.ReqOutboxDeleteJob;
 import org.savapage.server.api.request.ReqOutboxExtend;
+import org.savapage.server.api.request.ReqPosDepositQuickSearch;
 import org.savapage.server.api.request.ReqPrintDelegationSet;
 import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqPrinterQuickSearch;
@@ -50,18 +54,20 @@ import org.savapage.server.api.request.ReqUserGroupQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupSet;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
 import org.savapage.server.api.request.ReqUserNotifyAccountChange;
+import org.savapage.server.api.request.ReqUserQuickSearch;
+import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 public class JsonApiDict {
 
     public static final String PARM_WEBAPP_TYPE = "webAppType";
     public static final String PARM_REQ = "request";
     public static final String PARM_USER = "user";
-
     public static final String PARM_REQ_SUB = "request-sub";
     public static final String PARM_DATA = "data";
 
@@ -284,12 +290,16 @@ public class JsonApiDict {
         /**
          * No authentication required.
          */
-        NONE, /**
-               * User authentication required.
-               */
-        USER, /**
-               * Admin authentication required.
-               */
+        NONE,
+
+        /**
+         * User authentication required.
+         */
+        USER,
+
+        /**
+         * Admin authentication required.
+         */
         ADMIN
     }
 
@@ -309,6 +319,7 @@ public class JsonApiDict {
         final DbAccess dbAccess;
         final DbClaim dbClaim;
         final Class<? extends ApiRequestHandler> handler;
+        final EnumSet<ACLRoleEnum> aclRolesRequired;
 
         /**
          * @deprecated
@@ -317,19 +328,34 @@ public class JsonApiDict {
          * @param dbAccess
          */
         @Deprecated
-        private Req(AuthReq authReq, DbClaim dbClaim, DbAccess dbAccess) {
+        private Req(final AuthReq authReq, final DbClaim dbClaim,
+                final DbAccess dbAccess) {
             this.dbAccess = dbAccess;
             this.dbClaim = dbClaim;
             this.authReq = authReq;
             this.handler = null;
+            this.aclRolesRequired = null;
         }
 
-        private Req(AuthReq authReq, Class<? extends ApiRequestHandler> handler,
-                DbClaim dbClaim, DbAccess dbAccess) {
+        private Req(final AuthReq authReq,
+                final Class<? extends ApiRequestHandler> handler,
+                final DbClaim dbClaim, final DbAccess dbAccess) {
             this.dbAccess = dbAccess;
             this.dbClaim = dbClaim;
             this.authReq = authReq;
             this.handler = handler;
+            this.aclRolesRequired = null;
+        }
+
+        private Req(final AuthReq authReq,
+                final Class<? extends ApiRequestHandler> handler,
+                final DbClaim dbClaim, final DbAccess dbAccess,
+                final EnumSet<ACLRoleEnum> aclRolesRequired) {
+            this.dbAccess = dbAccess;
+            this.dbClaim = dbClaim;
+            this.authReq = authReq;
+            this.handler = handler;
+            this.aclRolesRequired = aclRolesRequired;
         }
 
     };
@@ -390,6 +416,35 @@ public class JsonApiDict {
             final Class<? extends ApiRequestHandler> handler, DbClaim dbClaim,
             DbAccess dbAccess) {
         dict.put(key, new Req(AuthReq.USER, handler, dbClaim, dbAccess));
+    }
+
+    /**
+     * Puts a user's {@link Req} in the dictionary.
+     *
+     * @param key
+     * @param handler
+     * @param dbClaim
+     * @param dbAccess
+     */
+    private void acl(final String key,
+            final Class<? extends ApiRequestHandler> handler, DbClaim dbClaim,
+            DbAccess dbAccess, final EnumSet<ACLRoleEnum> aclRolesRequired) {
+        dict.put(key, new Req(AuthReq.USER, handler, dbClaim, dbAccess,
+                aclRolesRequired));
+    }
+
+    /**
+     * @deprecated
+     * @param key
+     * @param dbClaim
+     * @param dbAccess
+     * @param aclRolesRequired
+     */
+    @Deprecated
+    private void acl(final String key, DbClaim dbClaim, DbAccess dbAccess,
+            final EnumSet<ACLRoleEnum> aclRolesRequired) {
+        dict.put(key, new Req(AuthReq.USER, null, dbClaim, dbAccess,
+                aclRolesRequired));
     }
 
     /**
@@ -613,6 +668,60 @@ public class JsonApiDict {
     }
 
     /**
+     * Checks if a Web App is authorized to execute the request.
+     *
+     * @param request
+     *            The id string of the request.
+     * @param webAppType
+     *            The {@link WebAppTypeEnum}.
+     * @return {@code true} when Web App is authorized.
+     */
+    public boolean isWebAppAuthorized(final String request,
+            final WebAppTypeEnum webAppType) {
+
+        final Req req = dict.get(request);
+
+        if (req.aclRolesRequired == null) {
+            return true;
+        }
+
+        final Iterator<ACLRoleEnum> iter = req.aclRolesRequired.iterator();
+
+        boolean allowed = false;
+
+        while (!allowed && iter.hasNext()) {
+
+            final ACLRoleEnum role = iter.next();
+
+            switch (role) {
+            case JOB_TICKET_CREATOR:
+                allowed = webAppType == WebAppTypeEnum.USER;
+                break;
+            case JOB_TICKET_OPERATOR:
+                allowed = EnumSet
+                        .of(WebAppTypeEnum.ADMIN, WebAppTypeEnum.JOB_TICKETS)
+                        .contains(webAppType);
+                break;
+            case PRINT_DELEGATE:
+                allowed = webAppType == WebAppTypeEnum.USER;
+                break;
+            case PRINT_DELEGATOR:
+                allowed = webAppType == WebAppTypeEnum.USER;
+                break;
+            case WEB_CASHIER:
+                allowed = EnumSet.of(WebAppTypeEnum.ADMIN, WebAppTypeEnum.POS)
+                        .contains(webAppType);
+                break;
+            default:
+                throw new IllegalArgumentException(String.format(
+                        "%s.%s is not supported",
+                        role.getClass().getSimpleName(), role.toString()));
+            }
+        }
+        return allowed;
+    }
+
+    /**
      *
      */
     public JsonApiDict() {
@@ -666,11 +775,11 @@ public class JsonApiDict {
         usr(REQ_JOB_PAGES, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_INBOX_IS_VANILLA, DbClaim.NONE, DbAccess.USER_LOCK);
 
-        adm(REQ_JOBTICKET_DELETE, ReqJobTicketDelete.class, DbClaim.READ,
-                DbAccess.YES);
+        acl(REQ_JOBTICKET_DELETE, ReqJobTicketDelete.class, DbClaim.READ,
+                DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
-        adm(REQ_JOBTICKET_PRINT, ReqJobTicketPrint.class, DbClaim.READ,
-                DbAccess.YES);
+        acl(REQ_JOBTICKET_PRINT, ReqJobTicketPrint.class, DbClaim.READ,
+                DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         usr(REQ_JQPLOT, DbClaim.NONE, DbAccess.YES);
         non(REQ_LANGUAGE);
@@ -715,13 +824,20 @@ public class JsonApiDict {
 
         adm(REQ_BITCOIN_WALLET_REFRESH, DbClaim.NONE, DbAccess.NO);
 
-        adm(REQ_POS_DEPOSIT, DbClaim.NONE, DbAccess.YES);
+        acl(REQ_POS_DEPOSIT, DbClaim.NONE, DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.WEB_CASHIER));
 
-        adm(REQ_POS_RECEIPT_DOWNLOAD, DbClaim.READ, DbAccess.YES);
+        acl(REQ_POS_RECEIPT_DOWNLOAD, DbClaim.READ, DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.WEB_CASHIER));
+
         usr(REQ_POS_RECEIPT_DOWNLOAD_USER, DbClaim.READ, DbAccess.YES);
 
-        adm(REQ_POS_RECEIPT_SENDMAIL, DbClaim.READ, DbAccess.YES);
-        adm(REQ_POS_DEPOSIT_QUICK_SEARCH, DbClaim.READ, DbAccess.YES);
+        acl(REQ_POS_RECEIPT_SENDMAIL, DbClaim.READ, DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.WEB_CASHIER));
+
+        acl(REQ_POS_DEPOSIT_QUICK_SEARCH, ReqPosDepositQuickSearch.class,
+                DbClaim.READ, DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.WEB_CASHIER));
 
         adm(REQ_PAYMENT_GATEWAY_ONLINE, DbClaim.NONE, DbAccess.NO);
 
@@ -770,10 +886,13 @@ public class JsonApiDict {
 
         usr(REQ_USER_GET_STATS, DbClaim.READ, DbAccess.YES);
 
-        adm(REQ_USER_NOTIFY_ACCOUNT_CHANGE, ReqUserNotifyAccountChange.class,
-                DbClaim.READ, DbAccess.YES);
+        acl(REQ_USER_NOTIFY_ACCOUNT_CHANGE, ReqUserNotifyAccountChange.class,
+                DbClaim.READ, DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.WEB_CASHIER));
 
-        adm(REQ_USER_QUICK_SEARCH, DbClaim.READ, DbAccess.YES);
+        acl(REQ_USER_QUICK_SEARCH, ReqUserQuickSearch.class, DbClaim.READ,
+                DbAccess.YES, EnumSet.of(ACLRoleEnum.WEB_CASHIER));
+
         adm(REQ_USER_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_SOURCE_GROUPS, DbClaim.NONE, DbAccess.NO);
         adm(REQ_USER_SYNC, DbClaim.NONE, DbAccess.NO);

@@ -157,8 +157,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
      */
     protected final void setWebAppCountExceededResponse() {
         final PageParameters parms = new PageParameters();
-        parms.set(WebAppCountExceededMsg.PARM_WEBAPPTYPE,
-                this.getWebAppType());
+        parms.set(WebAppCountExceededMsg.PARM_WEBAPPTYPE, this.getWebAppType());
         setResponsePage(WebAppCountExceededMsg.class, parms);
     }
 
@@ -516,8 +515,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
      *
      */
     protected final void addFileDownloadApiPanel() {
-        FileDownloadApiPanel apiPanel =
-                new FileDownloadApiPanel("file-download-api-panel");
+        FileDownloadApiPanel apiPanel = new FileDownloadApiPanel(
+                "file-download-api-panel", this.getWebAppType());
         add(apiPanel);
     }
 

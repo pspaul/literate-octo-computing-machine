@@ -429,7 +429,7 @@
 			 */
 			this.init = function() {
 
-				_ns.WEBAPP_TYPE = 'POS';
+				_ns.initWebApp('POS');
 
 				_ctrl.init();
 

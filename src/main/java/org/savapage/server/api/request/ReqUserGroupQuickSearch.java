@@ -37,7 +37,7 @@ import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
 
 /**
- * Proxy Printers Quicksearch.
+ * User Group Quicksearch.
  *
  * @author Rijk Ravestein
  *

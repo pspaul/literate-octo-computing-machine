@@ -27,13 +27,11 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -87,7 +85,6 @@ import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.PrinterGroupDao;
 import org.savapage.core.dao.UserAccountDao;
 import org.savapage.core.dao.UserDao;
-import org.savapage.core.dao.enums.AccountTrxTypeEnum;
 import org.savapage.core.dao.enums.DeviceAttrEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.DocLogProtocolEnum;
@@ -105,10 +102,6 @@ import org.savapage.core.dto.PrimaryKeyDto;
 import org.savapage.core.dto.ProxyPrinterCostDto;
 import org.savapage.core.dto.ProxyPrinterDto;
 import org.savapage.core.dto.ProxyPrinterMediaSourcesDto;
-import org.savapage.core.dto.QuickSearchFilterDto;
-import org.savapage.core.dto.QuickSearchItemDto;
-import org.savapage.core.dto.QuickSearchPosPurchaseItemDto;
-import org.savapage.core.dto.QuickSearchUserItemDto;
 import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.UserDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
@@ -122,14 +115,12 @@ import org.savapage.core.inbox.PageImages;
 import org.savapage.core.inbox.PageImages.PageImage;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.job.SpJobScheduler;
-import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.ConfigProperty;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.DeviceAttr;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.IppQueue;
-import org.savapage.core.jpa.PosPurchase;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
@@ -160,7 +151,6 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.EmailService;
 import org.savapage.core.services.InboxService;
-import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
@@ -171,10 +161,8 @@ import org.savapage.core.services.helpers.email.EmailMsgParms;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
-import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.core.util.Messages;
-import org.savapage.core.util.QuickSearchDate;
 import org.savapage.ext.papercut.DelegatedPrintPeriodDto;
 import org.savapage.ext.papercut.PaperCutDbProxy;
 import org.savapage.ext.papercut.PaperCutServerProxy;
@@ -254,12 +242,6 @@ public final class JsonApiServer extends AbstractPage {
             ServiceContext.getServiceFactory().getInboxService();
 
     /**
-     *
-     */
-    private static final OutboxService OUTBOX_SERVICE =
-            ServiceContext.getServiceFactory().getOutboxService();
-
-    /**
      * .
      */
     private static final ProxyPrintService PROXY_PRINT_SERVICE =
@@ -286,8 +268,6 @@ public final class JsonApiServer extends AbstractPage {
      *
      */
     private static final JsonApiDict API_DICTIONARY = new JsonApiDict();
-
-    // private static final String USER_ROLE_USER = "user";
 
     /**
      *
@@ -1272,11 +1252,6 @@ public final class JsonApiServer extends AbstractPage {
             return reqPosDeposit(requestingUser,
                     getParmValue(parameters, isGetAction, "dto"));
 
-        case JsonApiDict.REQ_POS_DEPOSIT_QUICK_SEARCH:
-
-            return reqPosDepositQuickSearch(
-                    getParmValue(parameters, isGetAction, "dto"));
-
         case JsonApiDict.REQ_POS_RECEIPT_SENDMAIL:
 
             return reqPosReceiptSendMail(requestingUser,
@@ -1537,10 +1512,6 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_USER_SET:
             return reqUserSet(getParmValue(parameters, isGetAction, "userDto"));
-
-        case JsonApiDict.REQ_USER_QUICK_SEARCH:
-            return reqUserQuickSearch(
-                    getParmValue(parameters, isGetAction, "dto"));
 
         case JsonApiDict.REQ_USER_SOURCE_GROUPS:
 
@@ -2123,7 +2094,8 @@ public final class JsonApiServer extends AbstractPage {
                 if (API_DICTIONARY.isAdminAuthenticationNeeded(request)) {
                     authorized = session.getUser().getAdmin().booleanValue();
                 } else {
-                    authorized = true;
+                    authorized = API_DICTIONARY.isWebAppAuthorized(request,
+                            webAppType);
                 }
 
             } else {
@@ -2826,133 +2798,6 @@ public final class JsonApiServer extends AbstractPage {
             setApiResult(data, ApiResultCodeEnum.ERROR, "msg-tech-error",
                     e.getMessage());
         }
-
-        return data;
-    }
-
-    /**
-     *
-     * @param json
-     * @return
-     * @throws ParseException
-     */
-    private Map<String, Object> reqPosDepositQuickSearch(String json)
-            throws ParseException {
-
-        final Map<String, Object> data = new HashMap<String, Object>();
-
-        final QuickSearchFilterDto dto =
-                AbstractDto.create(QuickSearchFilterDto.class, json);
-
-        final AccountTrxDao accountTrxDao =
-                ServiceContext.getDaoContext().getAccountTrxDao();
-
-        final UserAccountDao userAccountDao =
-                ServiceContext.getDaoContext().getUserAccountDao();
-
-        final AccountTrxDao.ListFilter filter = new AccountTrxDao.ListFilter();
-        filter.setAccountType(AccountTypeEnum.USER);
-        filter.setTrxType(AccountTrxTypeEnum.DEPOSIT);
-
-        final List<QuickSearchItemDto> list = new ArrayList<>();
-
-        //
-        Date dateFrom = null;
-        try {
-            dateFrom = QuickSearchDate.toDate(dto.getFilter());
-        } catch (ParseException e) {
-            dateFrom = null;
-        }
-        filter.setDateFrom(dateFrom);
-
-        //
-        final LocaleHelper localeHelper =
-                new LocaleHelper(SpSession.get().getLocale());
-
-        final String currencySymbol = SpSession.getAppCurrencySymbol();
-        final int balanceDecimals = ConfigManager.getUserBalanceDecimals();
-
-        QuickSearchPosPurchaseItemDto itemWlk;
-
-        for (final AccountTrx accountTrx : accountTrxDao.getListChunk(filter, 0,
-                dto.getMaxResults(), AccountTrxDao.Field.TRX_DATE, false)) {
-
-            final PosPurchase purchase = accountTrx.getPosPurchase();
-            final User user = userAccountDao
-                    .findByAccountId(accountTrx.getAccount().getId()).getUser();
-
-            itemWlk = new QuickSearchPosPurchaseItemDto();
-
-            itemWlk.setKey(accountTrx.getId());
-
-            itemWlk.setComment(purchase.getComment());
-            itemWlk.setPaymentType(purchase.getPaymentType());
-            itemWlk.setReceiptNumber(purchase.getReceiptNumber());
-
-            itemWlk.setDateTime(localeHelper
-                    .getShortDateTime(accountTrx.getTransactionDate()));
-
-            itemWlk.setTotalCost(localeHelper.getCurrencyDecimal(
-                    purchase.getTotalCost(), balanceDecimals, currencySymbol));
-
-            itemWlk.setUserId(user.getUserId());
-            itemWlk.setUserEmail(USER_SERVICE.getPrimaryEmailAddress(user));
-
-            list.add(itemWlk);
-
-        }
-        //
-        data.put("items", list);
-
-        setApiResultOK(data);
-        return data;
-    }
-
-    /**
-     *
-     * @param json
-     * @return
-     */
-    private Map<String, Object> reqUserQuickSearch(String json) {
-
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
-        final Map<String, Object> data = new HashMap<String, Object>();
-
-        final QuickSearchFilterDto dto =
-                AbstractDto.create(QuickSearchFilterDto.class, json);
-
-        final String currencySymbol = SpSession.getAppCurrencySymbol();
-
-        final UserDao.ListFilter filter = new UserDao.ListFilter();
-
-        filter.setContainingIdText(dto.getFilter());
-        filter.setDeleted(Boolean.FALSE);
-        filter.setPerson(Boolean.TRUE);
-
-        final List<QuickSearchItemDto> list = new ArrayList<>();
-
-        QuickSearchUserItemDto itemWlk;
-
-        for (final User user : userDao.getListChunk(filter, 0,
-                dto.getMaxResults(), UserDao.Field.USERID, true)) {
-
-            itemWlk = new QuickSearchUserItemDto();
-
-            itemWlk.setKey(user.getId());
-            itemWlk.setText(user.getUserId());
-            itemWlk.setEmail(USER_SERVICE.getPrimaryEmailAddress(user));
-
-            itemWlk.setBalance(
-                    ACCOUNTING_SERVICE.getFormattedUserBalance(user.getUserId(),
-                            ServiceContext.getLocale(), currencySymbol));
-
-            list.add(itemWlk);
-        }
-
-        data.put("items", list);
-
-        setApiResultOK(data);
 
         return data;
     }
@@ -5140,8 +4985,7 @@ public final class JsonApiServer extends AbstractPage {
      * @throws IOException
      *             When IO errors.
      */
-    private Map<String, Object> reqWebAppCloseSession()
-                    throws IOException {
+    private Map<String, Object> reqWebAppCloseSession() throws IOException {
 
         final SpSession session = SpSession.get();
 

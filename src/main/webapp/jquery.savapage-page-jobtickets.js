@@ -56,7 +56,8 @@
 				});
 
 				if (html) {
-					$('#jobticket-list').html(html).enhanceWithin();;
+					$('#jobticket-list').html(html).enhanceWithin();
+					;
 					$('.sparkline-printout-pie').sparkline('html', {
 						type : 'pie',
 						sliceColors : [_view.colorPrinter, _view.colorSheet]
@@ -77,7 +78,6 @@
 				});
 
 				$(this).on('click', '.sp-outbox-remove-jobticket', null, function() {
-
 					var res = _api.call({
 						request : 'jobticket-delete',
 						dto : JSON.stringify({

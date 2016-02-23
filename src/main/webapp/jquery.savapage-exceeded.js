@@ -44,7 +44,7 @@
 			 *
 			 */
 			this.init = function() {
-				// _model.initAuth();
+				$.noop();
 			};
 
 			/*

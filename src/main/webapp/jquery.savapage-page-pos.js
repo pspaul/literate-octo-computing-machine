@@ -75,7 +75,7 @@
                         })
                     });
                     if (res.result.code === '0') {
-                        _quickUserCache = res.items;
+                        _quickUserCache = res.dto.items;
                         $.each(_quickUserCache, function(key, item) {
                             html += "<li class=\"ui-mini\" data-savapage=\"" + key + "\"><a tabindex=\"2\" href=\"#\">" + item.text + " &bull; " + (item.email || "&nbsp;") + "</a></li>";
                         });
@@ -182,7 +182,7 @@
                     });
                     if (res.result.code === '0') {
 
-                        $.each(res.items, function(key, item) {
+                        $.each(res.dto.items, function(key, item) {
 
                             // item = QuickSearchPosPurchaseItemDto
 

@@ -14,8 +14,12 @@
 </wicket:remove>
 
 <wicket:remove>
-    <!--
-     
+	<!--
+    Mantis #662: Improve hold print jobs display in User Web App.
+    
+    Use custom css instead of <ul data-role="listview">, because jQuery Mobile 
+    does not fully enhance the DOM injected <ul>. Strange enough, when running
+    in Wicket development mode, enhancement is executed as expected.
     -->
 </wicket:remove>
 
