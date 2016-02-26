@@ -110,11 +110,6 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static final String MOUNT_PATH_WEBAPP_USER = "/user";
 
     /**
-     * URL parameter to pass user id.
-     */
-    public static final String URL_PARM_USER = "user";
-
-    /**
      * Used in this class to set mountPage().
      */
     public static final String MOUNT_PATH_WEBAPP_ADMIN = "/admin";

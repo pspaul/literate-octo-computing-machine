@@ -58,19 +58,31 @@ String.prototype.vformat = function() {"use strict";
  */
 ( function(window, document, _ns) {"use strict";
 
+		/*
+		 *  WebApp URL parameters.
+		 */
+		_ns.URL_PARM = {
+			LOG_LEVEL : 'sp-log',
+			USER : 'sp-user',
+			LANGUAGE : 'sp-lang',
+			COUNTRY: 'sp-ctry',
+			LOGIN : 'sp-login'
+		};
+
 		/**
 		 *
 		 */
 		_ns.initWebApp = function(webAppType) {
 			_ns.WEBAPP_TYPE = webAppType;
-			_ns.logger.setLogLevel(_ns.Utils.getUrlParam('logLevel'));
+			_ns.logger.setLogLevel(_ns.Utils.getUrlParam(_ns.URL_PARM.LOG_LEVEL));
 		};
 
 		// WebAppTypeEnum
 		_ns.WEBAPP_TYPE = 'UNDEFINED';
 
-		_ns.WebAppTypeUrlParm = function() {
-			return '?sp-app=' + _ns.WEBAPP_TYPE;
+		// URL parameter for HTML pages (/page).
+		_ns.WebAppTypeUrlParm = function(pfx) {
+			return (pfx || '?') + 'sp-app=' + _ns.WEBAPP_TYPE;
 		};
 
 		/**

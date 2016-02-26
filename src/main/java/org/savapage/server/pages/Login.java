@@ -26,7 +26,6 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.IRequestParameters;
 import org.savapage.core.community.CommunityDictEnum;
-import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
@@ -73,7 +72,7 @@ public final class Login extends AbstractPage {
         case ADMIN:
             loginDescript = localized("login-descript-admin");
             break;
-        case JOB_TICKETS:
+        case JOBTICKETS:
             loginDescript = localized("login-descript-role",
                     ACLRoleEnum.JOB_TICKET_OPERATOR.uiText(getLocale()));
             break;
@@ -87,8 +86,6 @@ public final class Login extends AbstractPage {
         }
 
         add(new Label("login-descript", loginDescript));
-
-        final ConfigManager cm = ConfigManager.instance();
 
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();

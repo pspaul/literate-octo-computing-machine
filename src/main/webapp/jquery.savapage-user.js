@@ -4218,7 +4218,7 @@
 			this.init = function() {
 				var res, language, country
 				//
-				, authModeRequest = _util.getUrlParam('login');
+				, authModeRequest = _util.getUrlParam(_ns.URL_PARM.LOGIN);
 
 				_model.initAuth();
 
@@ -4256,11 +4256,11 @@
 
 				_view.imgBase64 = res.img_base64;
 
-				language = _util.getUrlParam('language');
+				language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);
 				if (!language) {
 					language = _model.authToken.language || '';
 				}
-				country = _util.getUrlParam('country');
+				country = _util.getUrlParam(_ns.URL_PARM.COUNTRY);
 				if (!country) {
 					country = _model.authToken.country || '';
 				}
@@ -5883,7 +5883,7 @@
 
 			this.init = function() {
 
-				var user = _ns.Utils.getUrlParam('user');
+				var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER);
 
 				_ns.initWebApp('USER');
 

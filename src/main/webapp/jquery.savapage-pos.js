@@ -116,7 +116,7 @@
 
 				var res, language, country
 				//
-				, authModeRequest = _util.getUrlParam('login');
+				, authModeRequest = _util.getUrlParam(_ns.URL_PARM.LOGIN);
 
 				/*
 				 *
@@ -146,12 +146,12 @@
 				// NOTE: authCardSelfAssoc is DISABLED
 				_view.pages.login.setAuthMode(res.authName, res.authId, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, null, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
-				language = _util.getUrlParam('language');
+				language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);
 				if (!language) {
 					language = _model.authToken.language || '';
 				}
 
-				country = _util.getUrlParam('country');
+				country = _util.getUrlParam(_ns.URL_PARM.COUNTRY);
 				if (!country) {
 					country = _model.authToken.country || '';
 				}

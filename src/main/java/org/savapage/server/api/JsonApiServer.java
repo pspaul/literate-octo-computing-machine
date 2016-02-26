@@ -447,7 +447,7 @@ public final class JsonApiServer extends AbstractPage {
                     case ADMIN:
                         urlPath = WebApp.MOUNT_PATH_WEBAPP_ADMIN;
                         break;
-                    case JOB_TICKETS:
+                    case JOBTICKETS:
                         urlPath = WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
                         break;
                     case POS:

@@ -637,7 +637,7 @@ public final class ReqLogin extends ApiRequestMixin {
                                 ACLRoleEnum.WEB_CASHIER.uiText(getLocale()));
                         return;
                     }
-                } else if (webAppType == WebAppTypeEnum.JOB_TICKETS) {
+                } else if (webAppType == WebAppTypeEnum.JOBTICKETS) {
                     if (!ACCESSCONTROL_SERVICE.hasAccess(userDb,
                             ACLRoleEnum.JOB_TICKET_OPERATOR)) {
                         onLoginFailed("msg-login-no-access-to-role",

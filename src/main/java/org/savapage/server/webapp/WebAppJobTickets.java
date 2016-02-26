@@ -57,7 +57,7 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
         final String appTitle = getWebAppTitle(
                 getLocalizer().getString("webapp-title-suffix", this));
 
-        addZeroPagePanel(WebAppTypeEnum.JOB_TICKETS);
+        addZeroPagePanel(WebAppTypeEnum.JOBTICKETS);
 
         add(new Label("app-title", appTitle));
 
@@ -71,7 +71,7 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
 
     @Override
     protected WebAppTypeEnum getWebAppType() {
-        return WebAppTypeEnum.JOB_TICKETS;
+        return WebAppTypeEnum.JOBTICKETS;
     }
 
     @Override

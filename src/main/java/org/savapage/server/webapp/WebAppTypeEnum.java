@@ -36,7 +36,7 @@ public enum WebAppTypeEnum {
     /**
      * The Point-of-Sale WebApp.
      */
-    JOB_TICKETS("Job Tickets"),
+    JOBTICKETS("Job Tickets"),
 
     /**
      * The Point-of-Sale WebApp.

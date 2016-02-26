@@ -107,7 +107,7 @@ public final class WebAppUserAuthManager {
         switch (webAppType) {
         case ADMIN:
             return IDX_CONTEXT_ADMIN;
-        case JOB_TICKETS:
+        case JOBTICKETS:
             return IDX_CONTEXT_JOBTICKET;
         case POS:
             return IDX_CONTEXT_POS;

@@ -46,6 +46,7 @@ import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.cometd.UserEventService;
+import org.savapage.server.webapp.AbstractWebAppPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,8 +71,8 @@ public final class ClientAppHandler {
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ClientAppHandler.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ClientAppHandler.class);
 
     /**
      * Checks is the apiKey is valid.
@@ -81,8 +82,8 @@ public final class ClientAppHandler {
      *            The apiKey.
      * @return {@code true} when valid
      */
-    private static boolean
-            isApiKeyValid(final String apiId, final String apiKey) {
+    private static boolean isApiKeyValid(final String apiId,
+            final String apiKey) {
         boolean isValid = true;
         try {
             MemberCard.instance().validateContent(apiId, apiKey);
@@ -98,8 +99,8 @@ public final class ClientAppHandler {
      * @throws MalformedURLException
      * @throws UnknownHostException
      */
-    private static URL getCometdUrl() throws MalformedURLException,
-            UnknownHostException {
+    private static URL getCometdUrl()
+            throws MalformedURLException, UnknownHostException {
         return new URL("https", InetUtils.getServerHostAddress(),
                 Integer.parseInt(ConfigManager.getServerSslPort()),
                 WebApp.MOUNT_PATH_COMETD);
@@ -125,7 +126,7 @@ public final class ClientAppHandler {
         builder.setScheme("http").setHost(InetUtils.getServerHostAddress())
                 .setPort(Integer.parseInt(ConfigManager.getServerPort()))
                 .setPath(WebApp.MOUNT_PATH_WEBAPP_USER)
-                .addParameter(WebApp.URL_PARM_USER, userId);
+                .addParameter(AbstractWebAppPage.URL_PARM_USER, userId);
 
         return builder.build().toURL();
     }
@@ -174,15 +175,14 @@ public final class ClientAppHandler {
 
         } else if (StringUtils.isNotBlank(adminPassKey)) {
 
-            isAuth =
-                    cm.getConfigValue(Key.CLIAPP_AUTH_ADMIN_PASSKEY).equals(
-                            adminPassKey);
+            isAuth = cm.getConfigValue(Key.CLIAPP_AUTH_ADMIN_PASSKEY)
+                    .equals(adminPassKey);
         } else {
 
             final String authenticatedWebAppUser;
 
-            if (ConfigManager.instance().isConfigValue(
-                    Key.CLIAPP_AUTH_TRUST_WEBAPP_USER_AUTH)) {
+            if (ConfigManager.instance()
+                    .isConfigValue(Key.CLIAPP_AUTH_TRUST_WEBAPP_USER_AUTH)) {
                 authenticatedWebAppUser =
                         WebApp.getAuthUserByIpAddr(clientIpAddress);
             } else {
@@ -198,9 +198,8 @@ public final class ClientAppHandler {
 
             } else {
 
-                authToken =
-                        ClientAppUserAuthManager
-                                .getIpAuthToken(clientIpAddress);
+                authToken = ClientAppUserAuthManager
+                        .getIpAuthToken(clientIpAddress);
 
                 if (authToken != null && authToken.getUser().equals(userId)
                         && authToken.getToken().equals(userToken)) {
@@ -217,9 +216,8 @@ public final class ClientAppHandler {
                     /*
                      * Get the "real" username from the alias.
                      */
-                    String uid =
-                            UserAliasList.instance().getUserName(
-                                    userAuthenticator.asDbUserId(userId));
+                    String uid = UserAliasList.instance()
+                            .getUserName(userAuthenticator.asDbUserId(userId));
                     uid = userAuthenticator.asDbUserId(uid);
 
                     ServiceContext.open();
@@ -228,9 +226,8 @@ public final class ClientAppHandler {
                         /*
                          * Read real user from database.
                          */
-                        final User userDb =
-                                ServiceContext.getDaoContext().getUserDao()
-                                        .findActiveUserByUserId(uid);
+                        final User userDb = ServiceContext.getDaoContext()
+                                .getUserDao().findActiveUserByUserId(uid);
 
                         if (userDb == null || !userDb.getPerson()) {
 
@@ -238,14 +235,12 @@ public final class ClientAppHandler {
 
                         } else if (userDb.getInternal()) {
 
-                            isAuth =
-                                    InternalUserAuthenticator.authenticate(
-                                            userDb, userPassword);
+                            isAuth = InternalUserAuthenticator
+                                    .authenticate(userDb, userPassword);
                         } else {
 
-                            isAuth =
-                                    userAuthenticator.authenticate(uid,
-                                            userPassword) != null;
+                            isAuth = userAuthenticator.authenticate(uid,
+                                    userPassword) != null;
                         }
 
                     } finally {
@@ -302,9 +297,8 @@ public final class ClientAppHandler {
 
             } else {
 
-                final UserAuthToken authToken =
-                        getUserAuthToken(userId, userPassword, userToken,
-                                adminPassKey);
+                final UserAuthToken authToken = getUserAuthToken(userId,
+                        userPassword, userToken, adminPassKey);
 
                 if (authToken == null) {
 
@@ -324,16 +318,16 @@ public final class ClientAppHandler {
 
                     cometdConnect
                             .setAuthToken(CometdClientMixin.SHARED_USER_TOKEN);
-                    cometdConnect.setMaxNetworkDelay(AbstractEventService
-                            .getMaxNetworkDelay());
+                    cometdConnect.setMaxNetworkDelay(
+                            AbstractEventService.getMaxNetworkDelay());
                     /*
                      * Note: public/subscribe channels are inverse for
                      * client/server.
                      */
-                    cometdConnect
-                            .setChannelPublish(UserEventService.CHANNEL_SUBSCRIPTION);
-                    cometdConnect
-                            .setChannelSubscribe(UserEventService.CHANNEL_PUBLISH);
+                    cometdConnect.setChannelPublish(
+                            UserEventService.CHANNEL_SUBSCRIPTION);
+                    cometdConnect.setChannelSubscribe(
+                            UserEventService.CHANNEL_PUBLISH);
 
                     cometdConnect.setUrl(getCometdUrl().toString());
 

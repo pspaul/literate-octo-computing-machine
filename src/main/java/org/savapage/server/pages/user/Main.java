@@ -59,8 +59,9 @@ public class Main extends AbstractUserPage {
         addVisible(isUpload, "button-upload", localized("button-upload"));
 
         //
-        final boolean isPrintDelegate = ACCESSCONTROL_SERVICE.hasAccess(
-                SpSession.get().getUser(), ACLRoleEnum.PRINT_DELEGATE);
+        final org.savapage.core.jpa.User user = SpSession.get().getUser();
+        final boolean isPrintDelegate = user != null && ACCESSCONTROL_SERVICE
+                .hasAccess(user, ACLRoleEnum.PRINT_DELEGATE);
 
         addVisible(isPrintDelegate, "button-print-delegation", "-");
 

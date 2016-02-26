@@ -167,7 +167,7 @@
 
 				var res, language, country
 				//
-				, authModeRequest = _util.getUrlParam('login');
+				, authModeRequest = _util.getUrlParam(_ns.URL_PARM.LOGIN);
 
 				/*
 				 *
@@ -200,12 +200,12 @@
 				// Configures CometD (without starting it)
 				_cometd.configure(res.cometdMaxNetworkDelay);
 
-				language = _util.getUrlParam('language');
+				language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);
 				if (!language) {
 					language = _model.authToken.language || '';
 				}
 
-				country = _util.getUrlParam('country');
+				country = _util.getUrlParam(_ns.URL_PARM.COUNTRY);
 				if (!country) {
 					country = _model.authToken.country || '';
 				}

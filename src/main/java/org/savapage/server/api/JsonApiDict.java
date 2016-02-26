@@ -699,7 +699,7 @@ public class JsonApiDict {
                 break;
             case JOB_TICKET_OPERATOR:
                 allowed = EnumSet
-                        .of(WebAppTypeEnum.ADMIN, WebAppTypeEnum.JOB_TICKETS)
+                        .of(WebAppTypeEnum.ADMIN, WebAppTypeEnum.JOBTICKETS)
                         .contains(webAppType);
                 break;
             case PRINT_DELEGATE:

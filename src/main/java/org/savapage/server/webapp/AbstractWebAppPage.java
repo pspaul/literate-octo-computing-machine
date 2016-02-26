@@ -33,10 +33,14 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.PriorityHeaderItem;
 import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.VersionInfo;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.server.CustomWebServlet;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
@@ -233,6 +237,16 @@ public abstract class AbstractWebAppPage extends AbstractPage
                     + "%s" + "\n" + "/*]]>*/" + "\n</script>\n";
 
     /**
+     * The prefix for SavaPage URL parameters.
+     */
+    private static final String URL_PARM_PFX = "sp-";
+
+    /**
+     * URL parameter to pass user id.
+     */
+    public static final String URL_PARM_USER = URL_PARM_PFX + "user";
+
+    /**
      * Renders tiny JavaScript snippet at the very start of the page to
      * workaround the Browser F5 refresh problem.
      * <p>
@@ -265,12 +279,28 @@ public abstract class AbstractWebAppPage extends AbstractPage
             renderInitialJavaScript(final IHeaderResponse response) {
 
         /*
-         * Use the current URL path as mount path.
+         * Use the current URL path as mount path ...
          */
-        final String mountPath = this.getRequest().getUrl().getPath();
+        final StringBuilder mountPath = new StringBuilder();
+        mountPath.append(this.getRequest().getUrl().getPath());
+
+        /*
+         * ... and append our own sp-* URL parameters.
+         */
+        for (final NamedPair pair : this.getPageParameters().getAllNamed()) {
+            if (pair.getKey().startsWith(URL_PARM_PFX)) {
+                if (mountPath.length() > 0) {
+                    mountPath.append("?");
+                } else {
+                    mountPath.append("&");
+                }
+                mountPath.append(pair.getKey()).append("=")
+                        .append(pair.getValue());
+            }
+        }
 
         final String javascript =
-                String.format(INITIAL_JAVASCRIPT_FORMAT, mountPath);
+                String.format(INITIAL_JAVASCRIPT_FORMAT, mountPath.toString());
 
         final HeaderItem firstItem =
                 new PriorityHeaderItem(new StringHeaderItem(
@@ -325,12 +355,13 @@ public abstract class AbstractWebAppPage extends AbstractPage
     abstract boolean isJqueryCoreRenderedByWicket();
 
     /**
+     * The file name from the web property file.
      *
      * @param key
-     * @param path
-     * @return
+     *            The property key.
+     * @return {@code null} when not found (or empty).
      */
-    private static File getCssCustomFile(final String key, final String path) {
+    private static String getCssCustomFile(final String key) {
 
         if (key == null) {
             return null;
@@ -341,34 +372,98 @@ public abstract class AbstractWebAppPage extends AbstractPage
         if (StringUtils.isBlank(cssFile)) {
             return null;
         }
-
-        return new File(String.format("%s/%s/%s", CustomWebServlet.CONTENT_HOME,
-                path, cssFile));
+        return cssFile;
     }
 
     /**
+     * The file name from configuration property.
+     *
+     * @param key
+     *            The property key.
+     * @return {@code null} when not found (or empty).
+     */
+    private static String getCssFileName(IConfigProp.Key key) {
+        final String fileName = ConfigManager.instance().getConfigValue(key);
+        if (StringUtils.isNotBlank(fileName)) {
+            return fileName;
+        }
+        return null;
+    }
+
+    /**
+     * @param webAppType
+     *            The {@link WebAppTypeEnum}.
      * @return The jQuery Mobile Theme CSS {@link File}, or {@code null} when
      *         not applicable.
      */
-    private File getCssThemeFile() {
+    private String getCssThemeFileName(final WebAppTypeEnum webAppType) {
+
+        final IConfigProp.Key configKey;
+        switch (webAppType) {
+        case ADMIN:
+            configKey = Key.WEBAPP_THEME_ADMIN;
+            break;
+        case JOBTICKETS:
+            configKey = Key.WEBAPP_THEME_JOBTICKETS;
+            break;
+        case POS:
+            configKey = Key.WEBAPP_THEME_POS;
+            break;
+        case USER:
+            configKey = Key.WEBAPP_THEME_USER;
+            break;
+        default:
+            configKey = null;
+            break;
+        }
+
+        if (configKey != null) {
+            final String cssFile = getCssFileName(configKey);
+            if (cssFile != null) {
+                return cssFile;
+            }
+        }
 
         final StringBuilder key = new StringBuilder();
-        key.append("webapp.theme.")
-                .append(this.getSessionWebAppType().toString().toLowerCase());
-
-        return getCssCustomFile(key.toString(),
-                CustomWebServlet.PATH_BASE_THEMES);
+        key.append("webapp.theme.").append(webAppType.toString().toLowerCase());
+        return getCssCustomFile(key.toString());
     }
 
     /**
-     * @return The custom CSS {@link File}, or {@code null} when not applicable.
+     * @return The custom CSS filename, or {@code null} when not applicable.
      */
-    private File getCssCustomFile() {
+    private String getCssCustomFileName(final WebAppTypeEnum webAppType) {
+
+        final IConfigProp.Key configKey;
+        switch (webAppType) {
+        case ADMIN:
+            configKey = Key.WEBAPP_CUSTOM_ADMIN;
+            break;
+        case JOBTICKETS:
+            configKey = Key.WEBAPP_CUSTOM_JOBTICKETS;
+            break;
+        case POS:
+            configKey = Key.WEBAPP_CUSTOM_POS;
+            break;
+        case USER:
+            configKey = Key.WEBAPP_CUSTOM_USER;
+            break;
+        default:
+            configKey = null;
+            break;
+        }
+
+        if (configKey != null) {
+            final String cssFile = getCssFileName(configKey);
+            if (cssFile != null) {
+                return cssFile;
+            }
+        }
+
         final StringBuilder key = new StringBuilder();
         key.append("webapp.custom.")
-                .append(this.getSessionWebAppType().toString().toLowerCase());
-
-        return getCssCustomFile(key.toString(), CustomWebServlet.PATH_BASE);
+                .append(webAppType.toString().toLowerCase());
+        return getCssCustomFile(key.toString());
     }
 
     /**
@@ -398,16 +493,24 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
         final Set<JavaScriptLibrary> jsToRender = getJavaScriptToRender();
 
+        WebAppTypeEnum webAppType = this.getWebAppType();
+
+        if (webAppType == null) {
+            webAppType = this.getSessionWebAppType();
+        }
+        if (webAppType == null) {
+            webAppType = WebAppTypeEnum.UNDEFINED;
+        }
         /*
          * jQuery Mobile CSS files.
          */
-        final File customThemeCss = getCssThemeFile();
+        final String customThemeCssFileName = getCssThemeFileName(webAppType);
 
-        if (customThemeCss != null && customThemeCss.isFile()) {
+        if (customThemeCssFileName != null) {
 
             response.render(CssHeaderItem.forUrl(
                     String.format("/%s/%s%s", CustomWebServlet.PATH_BASE_THEMES,
-                            customThemeCss.getName(), nocache)));
+                            customThemeCssFileName, nocache)));
 
             response.render(CssHeaderItem.forUrl(
                     String.format("%s/%s%s", CustomWebServlet.PATH_BASE_THEMES,
@@ -444,11 +547,11 @@ public abstract class AbstractWebAppPage extends AbstractPage
         }
 
         // Custom CSS as last.
-        final File customCss = getCssCustomFile();
+        final String customCssFileName = getCssCustomFileName(webAppType);
 
-        if (customCss != null && customCss.isFile()) {
+        if (customCssFileName != null) {
             response.render(CssHeaderItem.forUrl(String.format("/%s/%s%s",
-                    CustomWebServlet.PATH_BASE, customCss.getName(), nocache)));
+                    CustomWebServlet.PATH_BASE, customCssFileName, nocache)));
         }
 
         /*
