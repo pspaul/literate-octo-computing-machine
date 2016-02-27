@@ -184,14 +184,23 @@
 			_self.start = function(token) {
 				_isOn = true;
 				_self.onConnecting();
+
+				if (_ns.logger.isDebugEnabled()) {
+					_ns.logger.debug('CometD: handshake...');
+				}
+
 				// See Java class: CometdConnectDto
-				$.cometd.handshake({
-					ext : {
-						'org.savapage.authn' : {
-							token : token
+				try {
+					$.cometd.handshake({
+						ext : {
+							'org.savapage.authn' : {
+								token : token
+							}
 						}
-					}
-				});
+					});
+				} catch (msg) {
+					_ns.logger.warn('CometD exception on handshake: ' + msg);
+				}
 			};
 
 			/**
@@ -204,7 +213,8 @@
 				try {
 					_self.onDisconnecting();
 					$.cometd.disconnect(sync);
-				} catch (ignore) {
+				} catch (msg) {
+					_ns.logger.warn('CometD exception on disconnect: ' + msg);
 				}
 			};
 
@@ -483,7 +493,7 @@
 				}
 
 				if (res && res.result && _ns.logger.isDebugEnabled()) {
-					_ns.logger.debug('return [' + (res.result.code || '?') + '] ' + (res.result.txt === undefined ? '' : ('\"' + res.result.txt + '\"')));
+					_ns.logger.debug('/api -> return [' + (res.result.code || '?') + '] ' + (res.result.txt === undefined ? '' : ('\"' + res.result.txt + '\"')));
 				}
 
 				if (!res) {

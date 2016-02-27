@@ -324,6 +324,10 @@
 
 				var res = $.parseJSON(message.data);
 
+				if (_ns.logger.isDebugEnabled()) {
+					_ns.logger.debug('UserEvent: event ' + res.event + ( _paused ? ' (paused)' : ''));
+				}
+
 				_longPollStartTime = null;
 
 				if (!_paused) {
@@ -373,6 +377,10 @@
 					/*
 					 * Get things started: invite to do a poll.
 					 */
+					if (_ns.logger.isDebugEnabled()) {
+						_ns.logger.debug('UserEvent: first poll invitation');
+					}
+
 					this.onPollInvitation();
 				}
 			};
@@ -411,6 +419,11 @@
 			this.poll = function(userid, pagecount, uniqueUrlVal, prevMsgTime, language, country, base64) {
 
 				if (!_longPollStartTime && userid) {
+
+					if (_ns.logger.isDebugEnabled()) {
+						_ns.logger.debug('UserEvent: poll()');
+					}
+
 					_longPollStartTime = new Date().getTime();
 					this.onWaitingForEvent();
 					try {
@@ -425,6 +438,7 @@
 							webAppClient : true
 						});
 					} catch (err) {
+						_ns.logger.warn('UserEvent poll() exception: ' + err);						
 						this.onException(err);
 					}
 				}
@@ -442,6 +456,9 @@
 			 * and the current long-poll is interrupted.
 			 */
 			this.pause = function() {
+				if (_ns.logger.isDebugEnabled()) {
+					_ns.logger.debug('UserEvent: pause()');
+				}
 				_paused = true;
 				_api.call({
 					request : 'exit-event-monitor'
@@ -456,6 +473,9 @@
 			this.resume = function() {
 				_paused = false;
 				if (!_longPollStartTime && _cometd.isOn()) {
+					if (_ns.logger.isDebugEnabled()) {
+						_ns.logger.debug('UserEvent: resume()');
+					}
 					this.onPollInvitation();
 				}
 			};
@@ -4758,6 +4778,7 @@
 			};
 
 			_deviceEvent.onException = function(msg) {
+				_ns.logger.warn('DeviceEvent exception: ' + msg);
 				_view.message(msg);
 			};
 
@@ -4803,6 +4824,7 @@
 			};
 
 			_proxyprintEvent.onException = function(msg) {
+				_ns.logger.warn('ProxyPrintEvent exception: ' + msg);
 				_view.message(msg);
 			};
 
@@ -4817,8 +4839,7 @@
 			};
 
 			_userEvent.onException = function(msg) {
-				//_view.message(msg);
-				_view.pages.main.onRefreshApp();
+				$.noop();				
 			};
 
 			_userEvent.onJobEvent = function(res) {
