@@ -5911,7 +5911,7 @@
 				_ctrl.init();
 
 				if (user) {
-					_ctrl.login(_view.AUTH_MODE_NAME, user, null, null);
+					_ctrl.login(_view.AUTH_MODE_NAME, user, null, _model.authToken.token);
 				} else if (_model.authToken.user && _model.authToken.token) {
 					_ctrl.login(_view.AUTH_MODE_NAME, _model.authToken.user, null, _model.authToken.token);
 				} else {
