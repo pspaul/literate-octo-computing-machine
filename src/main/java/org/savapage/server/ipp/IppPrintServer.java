@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -75,7 +75,8 @@ import org.slf4j.LoggerFactory;
  * {@link IppPrintServerHomePage} is the handler of the default web context.
  * </p>
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
@@ -92,20 +93,20 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(IppPrintServer.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(IppPrintServer.class);
 
     /**
      *
      */
-    private final static QueueService QUEUE_SERVICE = ServiceContext
-            .getServiceFactory().getQueueService();
+    private final static QueueService QUEUE_SERVICE =
+            ServiceContext.getServiceFactory().getQueueService();
 
     /**
     *
     */
-    private final static UserService USER_SERVICE = ServiceContext
-            .getServiceFactory().getUserService();
+    private final static UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      *
@@ -149,8 +150,8 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
      * @author rijk
      *
      */
-    private static class SpStreamRequestHandler extends
-            ResourceStreamRequestHandler {
+    private static class SpStreamRequestHandler
+            extends ResourceStreamRequestHandler {
 
         /**
          *
@@ -172,17 +173,15 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
         final RequestCycle requestCycle = getRequestCycle();
 
-        final HttpServletRequest request =
-                (HttpServletRequest) requestCycle.getRequest()
-                        .getContainerRequest();
+        final HttpServletRequest request = (HttpServletRequest) requestCycle
+                .getRequest().getContainerRequest();
 
         if (LOGGER.isDebugEnabled()) {
             logDebug(request, parameters);
         }
 
-        final HttpServletResponse response =
-                (HttpServletResponse) requestCycle.getResponse()
-                        .getContainerResponse();
+        final HttpServletResponse response = (HttpServletResponse) requestCycle
+                .getResponse().getContainerResponse();
 
         final String contentTypeReq = request.getContentType();
 
@@ -199,9 +198,8 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         /*
          * Redirect to /user page for content types other than IPP_CONTENT_TYPE.
          */
-        if (contentTypeReq == null
-                || !contentTypeReq
-                        .equalsIgnoreCase(IppMessageMixin.CONTENT_TYPE_IPP)) {
+        if (contentTypeReq == null || !contentTypeReq
+                .equalsIgnoreCase(IppMessageMixin.CONTENT_TYPE_IPP)) {
             setResponsePage(WebAppUser.class);
             return;
         }
@@ -222,8 +220,8 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
              * Get the Queue from the URL.
              */
             final IppPrintServerUrlParms serverPageParms =
-                    new IppPrintServerUrlParms(Url.parse(request
-                            .getRequestURL().toString()));
+                    new IppPrintServerUrlParms(
+                            Url.parse(request.getRequestURL().toString()));
 
             final String requestedQueueUrlPath = serverPageParms.getPrinter();
 
@@ -236,16 +234,16 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
             /*
              * Find queue object.
              */
-            final IppQueue queue =
-                    ServiceContext.getDaoContext().getIppQueueDao()
-                            .findByUrlPath(requestedQueueUrlPath);
+            final IppQueue queue = ServiceContext.getDaoContext()
+                    .getIppQueueDao().findByUrlPath(requestedQueueUrlPath);
 
             /*
              * Does user have access to queue?
              */
             final boolean hasPrintAccessToQueue;
 
-            if (reservedQueueEnum != null && !reservedQueueEnum.isDriverPrint()) {
+            if (reservedQueueEnum != null
+                    && !reservedQueueEnum.isDriverPrint()) {
 
                 hasPrintAccessToQueue = false;
 
@@ -264,14 +262,16 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
             } else {
 
-                hasPrintAccessToQueue =
-                        QUEUE_SERVICE.hasClientIpAccessToQueue(queue,
-                                serverPageParms.getPrinter(), remoteAddr);
+                hasPrintAccessToQueue = QUEUE_SERVICE.hasClientIpAccessToQueue(
+                        queue, serverPageParms.getPrinter(), remoteAddr);
             }
 
             /*
              *
              */
+            final boolean trustedUserAsRequester =
+                    reservedQueueEnum == ReservedIppQueueEnum.IPP_PRINT_INTERNET;
+
             final String trustedIppClientUserId;
 
             if (!hasPrintAccessToQueue) {
@@ -280,9 +280,8 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
             } else if (reservedQueueEnum == ReservedIppQueueEnum.IPP_PRINT_INTERNET) {
 
-                final User remoteInternetUser =
-                        USER_SERVICE.findUserByNumberUuid(
-                                serverPageParms.getUserNumber(),
+                final User remoteInternetUser = USER_SERVICE
+                        .findUserByNumberUuid(serverPageParms.getUserNumber(),
                                 serverPageParms.getUserUuid());
 
                 if (remoteInternetUser == null) {
@@ -300,10 +299,10 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
              */
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-            final IppOperationId ippOperationId =
-                    AbstractIppOperation.handle(remoteAddr, queue,
-                            requestedQueueUrlPath, request.getInputStream(),
-                            bos, hasPrintAccessToQueue, trustedIppClientUserId);
+            final IppOperationId ippOperationId = AbstractIppOperation.handle(
+                    remoteAddr, queue, requestedQueueUrlPath,
+                    request.getInputStream(), bos, hasPrintAccessToQueue,
+                    trustedIppClientUserId, trustedUserAsRequester);
 
             /*
              *
@@ -316,30 +315,27 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
                 if (reservedQueueEnum != null
                         && !reservedQueueEnum.isDriverPrint()) {
 
-                    warnMsg =
-                            new StringBuilder()
-                                    .append("Print to reserved queue [")
-                                    .append(requestedQueueUrlPath)
-                                    .append("] denied from ")
-                                    .append(remoteAddr).toString();
+                    warnMsg = new StringBuilder()
+                            .append("Print to reserved queue [")
+                            .append(requestedQueueUrlPath)
+                            .append("] denied from ").append(remoteAddr)
+                            .toString();
 
                 } else if (queue == null || queue.getDeleted()) {
 
-                    warnMsg =
-                            new StringBuilder()
-                                    .append("Print to unknown queue [")
-                                    .append(requestedQueueUrlPath)
-                                    .append("] denied from ")
-                                    .append(remoteAddr).toString();
+                    warnMsg = new StringBuilder()
+                            .append("Print to unknown queue [")
+                            .append(requestedQueueUrlPath)
+                            .append("] denied from ").append(remoteAddr)
+                            .toString();
 
                 } else if (queue.getDisabled()) {
 
-                    warnMsg =
-                            new StringBuilder()
-                                    .append("Print to disabled queue [")
-                                    .append(requestedQueueUrlPath)
-                                    .append("] denied from ")
-                                    .append(remoteAddr).toString();
+                    warnMsg = new StringBuilder()
+                            .append("Print to disabled queue [")
+                            .append(requestedQueueUrlPath)
+                            .append("] denied from ").append(remoteAddr)
+                            .toString();
 
                 } else {
 
@@ -365,8 +361,8 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
              * Finishing up.
              */
             final ResourceStreamRequestHandler handler =
-                    new SpStreamRequestHandler(new ByteArrayInputStream(
-                            bos.toByteArray()));
+                    new SpStreamRequestHandler(
+                            new ByteArrayInputStream(bos.toByteArray()));
             handler.setContentDisposition(ContentDisposition.INLINE);
             requestCycle.scheduleRequestHandlerAfterCurrent(handler);
 
@@ -415,8 +411,8 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         final File file = ConfigManager.getPpdFile();
 
         if (!file.exists()) {
-            throw new SpException("PPD file [" + file.getAbsolutePath()
-                    + "] does NOT exist");
+            throw new SpException(
+                    "PPD file [" + file.getAbsolutePath() + "] does NOT exist");
         }
 
         final IResourceStream resourceStream = new FileResourceStream(file);
@@ -461,8 +457,8 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         }
 
         for (final NamedPair namedPair : parameters.getAllNamed()) {
-            log.append("Parameter [").append(namedPair.getKey())
-                    .append("] = [").append(namedPair.getValue()).append("]\n");
+            log.append("Parameter [").append(namedPair.getKey()).append("] = [")
+                    .append(namedPair.getValue()).append("]\n");
         }
 
         LOGGER.debug(log.toString());
