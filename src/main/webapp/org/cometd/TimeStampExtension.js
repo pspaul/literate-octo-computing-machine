@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 the original author or authors.
+ * Copyright (c) 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,22 @@
  * limitations under the License.
  */
 
-(function()
-{
-    function bind(org_cometd)
-    {
+(function() {
+    function bind(org_cometd) {
         /**
          * The timestamp extension adds the optional timestamp field to all outgoing messages.
          */
-        return org_cometd.TimeStampExtension = function()
-        {
-            this.outgoing = function(message)
-            {
+        return org_cometd.TimeStampExtension = function() {
+            this.outgoing = function(message) {
                 message.timestamp = new Date().toUTCString();
                 return message;
             };
         };
     }
 
-    if (typeof define === 'function' && define.amd)
-    {
+    if (typeof define === 'function' && define.amd) {
         define(['org/cometd'], bind);
-    }
-    else
-    {
+    } else {
         bind(org.cometd);
     }
 }());

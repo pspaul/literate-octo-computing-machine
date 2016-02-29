@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2015 the original author or authors.
+ * Copyright (c) 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function()
-{
-    function bind(TimeSyncExtension, cometd)
-    {
+(function() {
+    function bind(TimeSyncExtension, cometd) {
         var result = new TimeSyncExtension();
         cometd.registerExtension('timesync', result);
         return result;
     }
 
-    if (typeof define === 'function' && define.amd)
-    {
+    if (typeof define === 'function' && define.amd) {
         define(['org/cometd/TimeSyncExtension', 'jquery.cometd'], bind);
-    }
-    else
-    {
+    } else {
         bind(org.cometd.TimeSyncExtension, jQuery.cometd);
     }
 })();

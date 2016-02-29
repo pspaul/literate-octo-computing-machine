@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>savapage-server</artifactId>
 	<groupId>org.savapage</groupId>
-	<version>0.9.10</version>
+	<version>0.9.11</version>
 	<name>SavaPage Server</name>
 	<packaging>war</packaging>
 	<licenses>
@@ -15,7 +15,7 @@
 	</licenses>
 	<properties>
 		<wicket.version>7.1.0</wicket.version>
-		<jetty.version>9.2.13.v20150730</jetty.version>
+		<jetty.version>9.2.15.v20160210</jetty.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>		
 	</properties>
@@ -65,17 +65,17 @@
 		<dependency>
 			<groupId>org.savapage</groupId>
 			<artifactId>savapage-core</artifactId>
-			<version>0.9.10</version>
+			<version>0.9.11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.savapage</groupId>
 			<artifactId>savapage-ext</artifactId>
-			<version>0.9.10</version>
+			<version>0.9.11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cometd.java</groupId>
 			<artifactId>cometd-java-server</artifactId>
-			<version>3.0.6</version>
+			<version>3.0.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlrpc</groupId>
