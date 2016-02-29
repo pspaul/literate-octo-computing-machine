@@ -438,7 +438,7 @@
 							webAppClient : true
 						});
 					} catch (err) {
-						_ns.logger.warn('UserEvent poll() exception: ' + err);						
+						_ns.logger.warn('UserEvent poll() exception: ' + err);
 						this.onException(err);
 					}
 				}
@@ -1772,6 +1772,7 @@
 				// initial hide
 				$('#button-file-upload-submit').on('click', null, null, function() {
 					$('#file-upload-feedback').show();
+					$('#button-file-upload-reset').click();
 					return true;
 				});
 
@@ -4839,7 +4840,7 @@
 			};
 
 			_userEvent.onException = function(msg) {
-				$.noop();				
+				$.noop();
 			};
 
 			_userEvent.onJobEvent = function(res) {
