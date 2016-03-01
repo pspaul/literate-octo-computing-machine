@@ -30,6 +30,7 @@ import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.UserGroupAttrEnum;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.dto.UserAccountingDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.jpa.UserGroupAttr;
@@ -70,6 +71,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         private Long id;
         private String name;
         private Map<ACLRoleEnum, Boolean> aclRoles;
+        private UserAccountingDto accounting;
 
         public Long getId() {
             return id;
@@ -95,12 +97,19 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.aclRoles = aclRoles;
         }
 
+        public UserAccountingDto getAccounting() {
+            return accounting;
+        }
+
+        public void setAccounting(UserAccountingDto accounting) {
+            this.accounting = accounting;
+        }
+
     }
 
     @Override
-    protected void
-            onRequest(final String requestingUser, final User lockedUser)
-                    throws IOException {
+    protected void onRequest(final String requestingUser, final User lockedUser)
+            throws IOException {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
@@ -134,9 +143,8 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         if (aclAttr == null) {
             aclRoles = null;
         } else {
-            aclRoles =
-                    JsonHelper.createEnumBooleanMapOrNull(ACLRoleEnum.class,
-                            aclAttr.getValue());
+            aclRoles = JsonHelper.createEnumBooleanMapOrNull(ACLRoleEnum.class,
+                    aclAttr.getValue());
         }
 
         if (aclRoles == null) {
@@ -144,6 +152,12 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         }
 
         dtoRsp.setAclRoles(aclRoles);
+
+        //
+        dtoRsp.setAccounting(
+                ACCOUNTING_SERVICE.getInitialUserAccounting(userGroup));
+
+        //
         this.setResponse(dtoRsp);
         setApiResultOk();
     }

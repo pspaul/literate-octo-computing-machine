@@ -22,27 +22,81 @@
 <div class="ui-content" id="content-user-group">
 
 	<ul data-role="listview" data-inset="true">
+        <li data-role="list-divider">
+            <wicket:message key="prompt-name" />
+        </li>
+		<li>
+			<span class="sp-txt-wrap" id="user-group-header" />
+		</li>
+	</ul>
+	<ul data-role="listview" data-inset="true">
 
 		<li data-role="list-divider">
-			<span class="sp-txt-wrap" id="user-group-header" />
+			<wicket:message key="prompt-roles" />
 		</li>
 
 		<li>
 			<fieldset data-role="controlgroup" data-mini="true"
 				id="sp-usergroup-edit-roles">
-				<legend>Roles:</legend>
 				<wicket:fragment wicket:id="ACLRoleEnumCheckboxes" />
 			</fieldset>
 		</li>
 	</ul>
 
+	<ul data-role="listview" data-inset="true">
+		<li data-role="list-divider">
+			<wicket:message key="prompt-new-user-settings" />
+		</li>
+
+		<li>
+			<label for="user-group-account-balance">
+				<wicket:message key="label-balance" />
+			</label>
+			<input type="text" id="user-group-account-balance" value=""
+				maxlength="10" pattern="[0-9]*" />
+
+			<fieldset class="ui-mini" data-role="controlgroup"
+				data-type="horizontal">
+
+				<legend>
+					<wicket:message key="label-credit-limit" />
+				</legend>
+
+				<label for="user-group-account-credit-limit-none">
+					<wicket:message key="label-credit-limit-none" />
+				</label>
+				<input type="radio" name="user-group-account-credit-limit-type"
+					id="user-group-account-credit-limit-none"
+					wicket:id="credit-limit-none" />
+
+				<label for="user-group-account-credit-limit-default">
+					<wicket:message key="label-credit-limit-default" />
+				</label>
+				<input type="radio" name="user-group-account-credit-limit-type"
+					id="user-group-account-credit-limit-default"
+					wicket:id="credit-limit-default" />
+
+				<label for="user-group-account-credit-limit-individual">
+					<wicket:message key="label-credit-limit-individual" />
+				</label>
+				<input type="radio" name="user-group-account-credit-limit-type"
+					id="user-group-account-credit-limit-individual"
+					wicket:id="credit-limit-individual" />
+
+			</fieldset>
+
+			<input type="text" id="user-group-account-credit-limit-amount"
+				value="" maxlength="10" pattern="[0-9]*" />
+		</li>
+
+	</ul>
+
 	<a href="#" id="sp-button-usergroup-save"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-		<wicket:message key="button-ok" />
-	</a>
-	<a href="#" data-rel="back" data-direction="reverse"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-		<wicket:message key="button-cancel" />
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"> <wicket:message
+			key="button-ok" />
+	</a> <a href="#" data-rel="back" data-direction="reverse"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+			key="button-cancel" />
 	</a>
 
 </div>

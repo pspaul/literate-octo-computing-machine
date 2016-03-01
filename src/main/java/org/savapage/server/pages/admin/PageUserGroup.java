@@ -26,7 +26,9 @@ import java.util.EnumSet;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.dto.UserAccountingDto;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -62,6 +64,19 @@ public final class PageUserGroup extends AbstractAdminPage {
         aclRolePanel.populate(selected);
 
         add(aclRolePanel);
+
+        //
+        //
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addModifyLabelAttr("credit-limit-none", "value",
+                UserAccountingDto.CreditLimitEnum.NONE.toString());
+
+        helper.addModifyLabelAttr("credit-limit-default", "value",
+                UserAccountingDto.CreditLimitEnum.DEFAULT.toString());
+
+        helper.addModifyLabelAttr("credit-limit-individual", "value",
+                UserAccountingDto.CreditLimitEnum.INDIVIDUAL.toString());
     }
 
 }

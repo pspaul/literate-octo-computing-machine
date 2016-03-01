@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -936,11 +936,18 @@
 			 *
 			 */
 			_view.pages.userGroup.onSaveUserGroup = function(group) {
-				var res = _api.call({
+				var res, accounting = _model.editUserGroup.accounting;
+
+				accounting.balance = $('#user-group-account-balance').val();
+				accounting.creditLimit = _view.getRadioValue("user-group-account-credit-limit-type");
+				accounting.creditLimitAmount = $('#user-group-account-credit-limit-amount').val();
+
+				res = _api.call({
 					request : 'usergroup-set',
 					dto : JSON.stringify({
 						id : group.id,
-						aclRoles : group.aclRoles
+						aclRoles : group.aclRoles,
+						accounting : accounting
 					})
 				});
 				_view.showApiMsg(res);

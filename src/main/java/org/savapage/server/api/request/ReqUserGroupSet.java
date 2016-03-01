@@ -22,6 +22,7 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 import org.savapage.core.dao.UserGroupAttrDao;
@@ -29,6 +30,7 @@ import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.UserGroupAttrEnum;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.dto.UserAccountingDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.jpa.UserGroupAttr;
@@ -56,6 +58,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
         private Long id;
 
         private Map<ACLRoleEnum, Boolean> aclRoles;
+        private UserAccountingDto accounting;
 
         public Long getId() {
             return id;
@@ -73,12 +76,19 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             this.aclRoles = aclRoles;
         }
 
+        public UserAccountingDto getAccounting() {
+            return accounting;
+        }
+
+        public void setAccounting(UserAccountingDto accounting) {
+            this.accounting = accounting;
+        }
+
     }
 
     @Override
-    protected void
-            onRequest(final String requestingUser, final User lockedUser)
-                    throws IOException {
+    protected void onRequest(final String requestingUser, final User lockedUser)
+            throws IOException {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
@@ -126,7 +136,21 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             daoAttr.update(attr);
         }
 
+        try {
+            ACCOUNTING_SERVICE.setInitialUserAccounting(userGroup,
+                    dtoReq.getAccounting());
+        } catch (ParseException e) {
+            setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
+            return;
+        }
+
+        userGroup.setModifiedBy(ServiceContext.getActor());
+        userGroup.setModifiedDate(ServiceContext.getTransactionDate());
+
+        ServiceContext.getDaoContext().getUserGroupDao().update(userGroup);
+
         setApiResult(ApiResultCodeEnum.OK, "msg-usergroup-updated",
                 userGroup.getGroupName());
     }
+
 }

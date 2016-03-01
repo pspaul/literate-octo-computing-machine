@@ -146,10 +146,16 @@
 			//
 			, _self = _ns.derive(_page)
 			//--------------------
+			, _onChangeCreditLimit = function(creditLimit) {
+				_view.visible($('#user-group-account-credit-limit-amount'), creditLimit === "INDIVIDUAL");
+			}
+			//--------------------
 			, _m2v = function() {
 				var rolesEdit = $('#sp-usergroup-edit-roles')
 				//
-				, cbRoles = rolesEdit.find(':checkbox'), lbRoles = rolesEdit.find('label');
+				, cbRoles = rolesEdit.find(':checkbox'), lbRoles = rolesEdit.find('label')
+				//
+				, accounting = _model.editUserGroup.accounting;
 
 				cbRoles.prop("checked", false).checkboxradio("refresh");
 				lbRoles.addClass('sp-checkbox-tristate-label').addClass('sp-tristate-null');
@@ -163,6 +169,13 @@
 						cbWlk.prop("checked", val).checkboxradio("refresh");
 					}
 				});
+
+				//
+				$('#user-group-account-balance').val(accounting.balance);
+				$('#user-group-account-credit-limit-amount').val(accounting.creditLimitAmount);
+				_view.checkRadioValue("user-group-account-credit-limit-type", accounting.creditLimit);
+				_onChangeCreditLimit(accounting.creditLimit);
+
 			}
 			//--------------------
 			, _v2m = function() {
@@ -201,6 +214,10 @@
 					return false;
 				});
 
+				$(this).on('change', "input:radio[name='user-group-account-credit-limit-type']", null, function(e) {
+					_onChangeCreditLimit($(this).val());
+				});
+
 			}).on("pagebeforeshow", function(event, ui) {
 				_m2v();
 			});
@@ -217,7 +234,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,                               _this = this
+			//,                                 _this = this
 			//
 			, _resize = function() {
 				var width = $('#sp-user-groups-add-remove-addin').width();
@@ -383,7 +400,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,                                _this = this
+			//,                                  _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//
@@ -1913,11 +1930,11 @@
 				$(this).on('change', "input:checkbox[id='smartschool.papercut.enable']", null, function(e) {
 					_panel.Options.onSmartSchoolPaperCutEnabled($(this).is(':checked'));
 				});
-				
+
 				$(this).on('change', "input:checkbox[id='papercut.enable']", null, function(e) {
 					_panel.Options.onPaperCutEnabled($(this).is(':checked'));
 				});
-				
+
 				$(this).on('change', "input:checkbox[id='gcp.enable']", null, function(e) {
 					_panel.Options.onGcpRefresh(_panel.Options);
 				});
