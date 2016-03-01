@@ -27,8 +27,10 @@ import java.util.MissingResourceException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp;
 
 /**
  *
@@ -45,37 +47,48 @@ public final class AppAbout extends AbstractPage {
     /**
      *
      */
-    public AppAbout() {
+    public AppAbout(final PageParameters parameters) {
+
+        super(parameters);
 
         add(new Label("app-version", ConfigManager.getAppNameVersion()));
-        add(new Label("current-year", String.valueOf(Calendar.getInstance()
-                .get(Calendar.YEAR))));
+        add(new Label("current-year",
+                String.valueOf(Calendar.getInstance().get(Calendar.YEAR))));
 
         add(new Label("app-name", CommunityDictEnum.SAVAPAGE.getWord()));
 
         Label labelWrk;
 
         //
-        labelWrk =
-                new Label("app-copyright-owner-url",
-                        CommunityDictEnum.DATRAVERSE_BV.getWord());
+        labelWrk = new Label("app-copyright-owner-url",
+                CommunityDictEnum.DATRAVERSE_BV.getWord());
         labelWrk.add(new AttributeModifier("href",
                 CommunityDictEnum.DATRAVERSE_BV_URL.getWord()));
         add(labelWrk);
 
         //
-        labelWrk =
-                new Label("savapage-source-code-url",
-                        localized("source-code-link"));
+        labelWrk = new Label("savapage-source-code-url",
+                localized("source-code-link"));
         labelWrk.add(new AttributeModifier("href",
                 CommunityDictEnum.COMMUNITY_SOURCE_CODE_URL.getWord()));
         add(labelWrk);
 
         //
-        final PrinterDriverDownloadPanel downloadPanel =
-                new PrinterDriverDownloadPanel("printerdriver-download-panel");
-        add(downloadPanel);
-        downloadPanel.populate();
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        final String downloadPanelId = "printerdriver-download-panel";
+
+        if (ConfigManager.instance().isConfigValue(
+                IConfigProp.Key.WEBAPP_ABOUT_DRIVER_DOWNLOAD_ENABLE)) {
+
+            final PrinterDriverDownloadPanel downloadPanel =
+                    new PrinterDriverDownloadPanel(downloadPanelId);
+            add(downloadPanel);
+            downloadPanel.populate();
+
+        } else {
+            helper.discloseLabel(downloadPanelId);
+        }
 
         //
         String translatorInfo;
@@ -88,7 +101,6 @@ public final class AppAbout extends AbstractPage {
 
         addVisible(StringUtils.isNotBlank(translatorInfo), "translator-info",
                 translatorInfo);
-
     }
 
 }

@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -58,6 +59,11 @@ public abstract class AbstractPage extends WebPage
         implements ServiceEntryPoint {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * .
+     */
+    protected static final String GET_PARM_WEBAPPTYPE = "sp-app";
 
     /**
      * The logger.
@@ -104,6 +110,18 @@ public abstract class AbstractPage extends WebPage
      */
     protected AbstractPage(final PageParameters parameters) {
         super(parameters);
+    }
+
+    /**
+     *
+     * @param parameters
+     *            The {@link PageParameters}.
+     * @return The web App type.
+     */
+    protected final WebAppTypeEnum
+            getWebAppTypeEnum(final PageParameters parameters) {
+        return EnumUtils.getEnum(WebAppTypeEnum.class,
+                parameters.get(GET_PARM_WEBAPPTYPE).toString());
     }
 
     /**

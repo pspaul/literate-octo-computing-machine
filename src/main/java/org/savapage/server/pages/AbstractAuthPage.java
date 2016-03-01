@@ -21,7 +21,6 @@
  */
 package org.savapage.server.pages;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.MemberCard;
@@ -45,8 +44,6 @@ public abstract class AbstractAuthPage extends AbstractPage {
     /**
      * .
      */
-    protected static final String GET_PARM_WEBAPPTYPE = "sp-app";
-
     protected static final String POST_PARM_DATA = "data";
     protected static final String POST_PARM_USER = "user";
 
@@ -139,9 +136,7 @@ public abstract class AbstractAuthPage extends AbstractPage {
             LOGGER.trace(requestCycle.getRequest().getClientUrl().toString());
         }
 
-        final WebAppTypeEnum webAppTypeReq =
-                EnumUtils.getEnum(WebAppTypeEnum.class,
-                        parameters.get(GET_PARM_WEBAPPTYPE).toString());
+        final WebAppTypeEnum webAppTypeReq = this.getWebAppTypeEnum(parameters);
 
         final SpSession session = SpSession.get();
         final WebAppTypeEnum webAppTypeAuth = session.getWebAppType();
