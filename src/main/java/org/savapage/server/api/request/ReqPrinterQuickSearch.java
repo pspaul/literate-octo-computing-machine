@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -75,6 +75,7 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
     }
 
     /**
+     * Gets the printers for requesting user on this terminal.
      *
      * @param userName
      *            The requesting user.
@@ -86,9 +87,9 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
         final JsonPrinterList jsonPrinterList;
 
         try {
-            jsonPrinterList =
-                    PROXY_PRINT_SERVICE.getUserPrinterList(ApiRequestHelper
-                            .getHostTerminal(this.getRemoteAddr()), userName);
+            jsonPrinterList = PROXY_PRINT_SERVICE.getUserPrinterList(
+                    ApiRequestHelper.getHostTerminal(this.getRemoteAddr()),
+                    userName);
 
         } catch (IppConnectException | IppSyntaxException e) {
             throw new SpException(e.getMessage());
@@ -103,13 +104,11 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
     }
 
     @Override
-    protected void
-            onRequest(final String requestingUser, final User lockedUser)
-                    throws IOException {
+    protected void onRequest(final String requestingUser, final User lockedUser)
+            throws IOException {
 
-        final QuickSearchFilterDto dto =
-                AbstractDto.create(QuickSearchFilterDto.class,
-                        this.getParmValue("dto"));
+        final QuickSearchFilterDto dto = AbstractDto
+                .create(QuickSearchFilterDto.class, this.getParmValue("dto"));
 
         final List<QuickSearchItemDto> items = new ArrayList<>();
 
@@ -132,7 +131,8 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
 
             final JsonPrinter printer = iter.next();
 
-            if (printer.getAuthMode() != null && printer.getAuthMode().isFast()) {
+            if (printer.getAuthMode() != null
+                    && printer.getAuthMode().isFast()) {
                 fastPrintAvailable = Boolean.TRUE;
             }
 
@@ -140,8 +140,8 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
 
             if (StringUtils.isEmpty(filter)
                     || printer.getAlias().toLowerCase().contains(filter)
-                    || (StringUtils.isNotBlank(location) && location
-                            .toLowerCase().contains(filter))) {
+                    || (StringUtils.isNotBlank(location)
+                            && location.toLowerCase().contains(filter))) {
 
                 if (items.size() < maxItems) {
 

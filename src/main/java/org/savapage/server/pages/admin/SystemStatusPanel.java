@@ -91,7 +91,7 @@ public final class SystemStatusPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Duration after which new is expired.
+     * Duration after which news expires.
      */
     private static final long RETRIEVE_NEWS_TIME_EXPIRY =
             12 * DateUtil.DURATION_MSEC_HOUR;
@@ -102,7 +102,7 @@ public final class SystemStatusPanel extends Panel {
     private static long retrieveNewsTime = 0L;
 
     /**
-     * Last time the news HTML.
+     * Last time news HTML.
      */
     private static String retrieveNewsHtml;
 

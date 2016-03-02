@@ -1240,10 +1240,12 @@
 			_view.pages.admin.onEditDevice = function(id) {
 				var res = _api.call({
 					request : 'device-get',
-					id : id
+					dto : JSON.stringify({
+						id : id
+					})
 				});
 				if (res && res.result.code === '0') {
-					_model.editDevice = res.j_device;
+					_model.editDevice = res.dto;
 					_view.pages.device.loadShowAsync(function() {
 						$('#title-device').html(_model.editDevice.deviceName);
 					});
@@ -1255,8 +1257,10 @@
 			_view.pages.device.onDeleteDevice = function(device) {
 				var res = _api.call({
 					request : 'device-delete',
-					id : device.id,
-					deviceName : device.deviceName
+					dto : JSON.stringify({
+						id : device.id,
+						deviceName : device.deviceName
+					})
 				});
 
 				_view.showApiMsg(res);
@@ -1277,7 +1281,7 @@
 			_view.pages.device.onSaveDevice = function(device) {
 				var res = _api.call({
 					request : 'device-set',
-					j_device : JSON.stringify(device)
+					dto : JSON.stringify(device)
 				});
 
 				_view.showApiMsg(res);

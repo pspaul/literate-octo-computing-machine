@@ -32,6 +32,9 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqDbBackup;
+import org.savapage.server.api.request.ReqDeviceDelete;
+import org.savapage.server.api.request.ReqDeviceGet;
+import org.savapage.server.api.request.ReqDeviceSet;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqJobTicketDelete;
 import org.savapage.server.api.request.ReqJobTicketPrint;
@@ -741,13 +744,12 @@ public class JsonApiDict {
 
         adm(REQ_DB_BACKUP, ReqDbBackup.class, DbClaim.NONE, DbAccess.NO);
 
-        adm(REQ_DEVICE_DELETE, DbClaim.READ, DbAccess.YES);
-
+        adm(REQ_DEVICE_DELETE, ReqDeviceDelete.class, DbClaim.READ,
+                DbAccess.YES);
         adm(REQ_DEVICE_NEW_CARD_READER, DbClaim.NONE, DbAccess.NO);
         adm(REQ_DEVICE_NEW_TERMINAL, DbClaim.NONE, DbAccess.NO);
-
-        adm(REQ_DEVICE_GET, DbClaim.NONE, DbAccess.YES);
-        adm(REQ_DEVICE_SET, DbClaim.READ, DbAccess.YES);
+        adm(REQ_DEVICE_GET, ReqDeviceGet.class, DbClaim.NONE, DbAccess.YES);
+        adm(REQ_DEVICE_SET, ReqDeviceSet.class, DbClaim.READ, DbAccess.YES);
 
         usr(REQ_EXIT_EVENT_MONITOR, DbClaim.NONE, DbAccess.NO);
         adm(REQ_GCP_GET_DETAILS, DbClaim.READ, DbAccess.YES);
