@@ -76,9 +76,7 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.AccountTrxDao;
-import org.savapage.core.dao.ConfigPropertyDao;
 import org.savapage.core.dao.DaoContext;
-import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.UserAccountDao;
 import org.savapage.core.dao.UserDao;
@@ -112,11 +110,8 @@ import org.savapage.core.inbox.PageImages.PageImage;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.jpa.AccountTrx;
-import org.savapage.core.jpa.ConfigProperty;
 import org.savapage.core.jpa.DocLog;
-import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.Printer;
-import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonAbstractBase;
 import org.savapage.core.json.JsonPrinterDetail;
@@ -1108,16 +1103,6 @@ public final class JsonApiServer extends AbstractPage {
             return reqConstants(
                     getParmValue(parameters, isGetAction, "authMode"));
 
-        case JsonApiDict.REQ_CONFIG_GET_PROP:
-
-            return reqConfigGetProp(
-                    getParmValue(parameters, isGetAction, "name"));
-
-        case JsonApiDict.REQ_CONFIG_SET_PROPS:
-
-            return reqConfigSetProps(requestingUser,
-                    getParmValue(parameters, isGetAction, "props"));
-
         case JsonApiDict.REQ_DEVICE_NEW_CARD_READER:
 
             return reqDeviceNew(DeviceTypeEnum.CARD_READER);
@@ -1468,11 +1453,6 @@ public final class JsonApiServer extends AbstractPage {
                     Integer.parseInt(
                             getParmValue(parameters, isGetAction, "jobIndex")),
                     getParmValue(parameters, isGetAction, "ranges"));
-
-        case JsonApiDict.REQ_QUEUE_SET:
-
-            return reqQueueSet(requestingUser,
-                    getParmValue(parameters, isGetAction, "j_queue"));
 
         case JsonApiDict.REQ_USER_DELETE:
 
@@ -2334,214 +2314,6 @@ public final class JsonApiServer extends AbstractPage {
         }
     }
 
-    /**
-     * Custom validates a {@link IConfigProp.Key} value.
-     *
-     * @param userData
-     *            The user data to be returned with error message when value is
-     *            NOT valid.
-     * @param key
-     *            The key of the configuration item.
-     * @param value
-     *            The value of the configuration item.
-     * @return {@code null} when NO validation error, or the userData object
-     *         filled with the error message when an error is encountered..
-     */
-    private Map<String, Object> customConfigPropValidate(
-            Map<String, Object> userData, Key key, String value) {
-
-        if (key == Key.PROXY_PRINT_NON_SECURE_PRINTER_GROUP
-                && StringUtils.isNotBlank(value)) {
-
-            final PrinterGroup jpaPrinterGroup = ServiceContext.getDaoContext()
-                    .getPrinterGroupDao().findByName(value);
-
-            if (jpaPrinterGroup == null) {
-                return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                        "msg-device-printer-group-not-found", value);
-            }
-        }
-
-        if (key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
-                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX
-                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
-                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX
-                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER
-                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_DUPLEX
-                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
-                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX) {
-
-            if (StringUtils.isNotBlank(value)) {
-
-                final PrinterDao printerDao =
-                        ServiceContext.getDaoContext().getPrinterDao();
-
-                if (printerDao.findByName(value) == null) {
-                    return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                            "msg-printer-not-found", value);
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Updates one or more configuration properties. Valid properties are
-     * updated (and eventually committed), till an invalid property is
-     * encountered.
-     *
-     * @param user
-     * @param jsonProps
-     * @return
-     * @throws ParseException
-     */
-    private Map<String, Object> reqConfigSetProps(final String requestingUser,
-            final String jsonProps) throws ParseException {
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("jsonProps: " + jsonProps);
-        }
-
-        String msgKey = "msg-config-props-applied";
-
-        final JsonNode list;
-
-        try {
-            list = new ObjectMapper().readTree(jsonProps);
-        } catch (IOException e) {
-            throw new SpException(e.getMessage(), e);
-        }
-
-        final ConfigManager cm = ConfigManager.instance();
-
-        final Iterator<String> iter = list.getFieldNames();
-
-        boolean isSmartSchoolUpdate = false;
-
-        boolean isValid = true;
-        int nJobsRescheduled = 0;
-        int nValid = 0;
-
-        while (iter.hasNext() && isValid) {
-
-            final String key = iter.next();
-
-            String value = list.get(key).getTextValue();
-
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(key + " = " + value);
-            }
-
-            final Key configKey = cm.getConfigKey(key);
-
-            /*
-             * If this value is Locale formatted, we MUST revert to locale
-             * independent format.
-             */
-            if (cm.isConfigBigDecimal(configKey)) {
-                value = BigDecimalUtil.toPlainString(value,
-                        getSession().getLocale(), true);
-            }
-
-            /*
-             *
-             */
-            if (customConfigPropValidate(userData, configKey, value) != null) {
-                return userData;
-            }
-
-            final IConfigProp.ValidationResult res =
-                    cm.validate(configKey, value);
-            isValid = res.isValid();
-
-            if (isValid) {
-
-                boolean preValue = false;
-
-                switch (configKey) {
-
-                case SYS_DEFAULT_LOCALE:
-                    ConfigManager.setDefaultLocale(value);
-                    break;
-
-                case SCHEDULE_HOURLY:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
-                case SCHEDULE_DAILY:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
-                case SCHEDULE_WEEKLY:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
-                case SCHEDULE_MONTHLY:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
-                case SCHEDULE_DAILY_MAINT:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
-                case PRINT_IMAP_ENABLE:
-                    preValue = cm.isConfigValue(configKey);
-                    break;
-                default:
-                    break;
-                }
-
-                /*
-                 * TODO: This updates the cache while database is not committed
-                 * yet! When database transaction is rollback back the cache is
-                 * dirty.
-                 */
-                cm.updateConfigKey(configKey, value, requestingUser);
-
-                nValid++;
-
-                if (configKey == Key.PRINT_IMAP_ENABLE && preValue
-                        && !cm.isConfigValue(configKey)) {
-                    if (SpJobScheduler.interruptImapListener()) {
-                        msgKey = "msg-config-props-applied-mail-print-stopped";
-                    }
-
-                } else if (configKey == Key.SMARTSCHOOL_1_ENABLE
-                        || configKey == Key.SMARTSCHOOL_2_ENABLE) {
-                    isSmartSchoolUpdate = true;
-                }
-
-            } else {
-                setApiResult(userData, ApiResultCodeEnum.ERROR,
-                        "msg-config-props-error", value);
-            }
-
-        } // end-while
-
-        if (nValid > 0) {
-            ConfigManager.instance().calcRunnable();
-        }
-
-        if (isValid) {
-
-            if (nJobsRescheduled > 0) {
-                msgKey = "msg-config-props-applied-rescheduled";
-            } else if (isSmartSchoolUpdate
-                    && !ConfigManager.isSmartSchoolPrintActiveAndEnabled()
-                    && SmartschoolPrinter.isOnline()) {
-                if (SpJobScheduler.interruptSmartSchoolPoller()) {
-                    msgKey = "msg-config-props-applied-smartschool-stopped";
-                }
-            }
-
-            setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
-        }
-
-        return userData;
-    }
 
     /**
      * {@link JsonApiDict#REQ_PRINTER_DETAIL}.
@@ -3259,125 +3031,6 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * Edits or creates a Queue.
-     * <p>
-     * Also, a logical delete can be applied or reversed.
-     * </p>
-     *
-     * @param requestingUser
-     * @param jsonQueue
-     * @return
-     */
-    private Map<String, Object> reqQueueSet(final String requestingUser,
-            final String jsonQueue) {
-
-        final IppQueueDao ippQueueDao =
-                ServiceContext.getDaoContext().getIppQueueDao();
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("jsonQueue: " + jsonQueue);
-        }
-
-        final JsonNode list;
-
-        try {
-            list = new ObjectMapper().readTree(jsonQueue);
-        } catch (IOException e) {
-            throw new SpException(e.getMessage(), e);
-        }
-
-        final JsonNode id = list.get("id");
-        final boolean isNew = id.isNull();
-        final Date now = new Date();
-        final String urlPath = list.get("urlpath").getTextValue().trim();
-
-        /*
-         * Note: returns null when logically deleted!!
-         */
-        final IppQueue jpaQueueDuplicate = ippQueueDao.findByUrlPath(urlPath);
-
-        IppQueue jpaQueue = null;
-
-        boolean isDuplicate = true;
-
-        if (isNew) {
-
-            if (jpaQueueDuplicate == null) {
-
-                jpaQueue = new IppQueue();
-                jpaQueue.setCreatedBy(requestingUser);
-                jpaQueue.setCreatedDate(now);
-
-                isDuplicate = false;
-            }
-
-        } else {
-
-            jpaQueue = ippQueueDao.findById(id.asLong());
-
-            if (jpaQueueDuplicate == null
-                    || jpaQueueDuplicate.getId().equals(jpaQueue.getId())) {
-
-                jpaQueue.setModifiedBy(requestingUser);
-                jpaQueue.setModifiedDate(now);
-
-                isDuplicate = false;
-            }
-        }
-
-        if (isDuplicate) {
-
-            setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-queue-duplicate-path", urlPath);
-
-        } else {
-
-            jpaQueue.setUrlPath(urlPath);
-            jpaQueue.setIpAllowed(list.get("ipallowed").getTextValue());
-            jpaQueue.setTrusted(list.get("trusted").getBooleanValue());
-            jpaQueue.setDisabled(list.get("disabled").getBooleanValue());
-
-            if (isNew) {
-
-                if (QUEUE_SERVICE.isReservedQueue(urlPath)) {
-
-                    setApiResult(userData, ApiResultCodeEnum.ERROR,
-                            "msg-queue-reserved-path", urlPath);
-
-                } else {
-
-                    ippQueueDao.create(jpaQueue);
-
-                    setApiResult(userData, ApiResultCodeEnum.OK,
-                            "msg-queue-created-ok");
-                }
-
-            } else {
-
-                final boolean isDeleted = list.get("deleted").getBooleanValue();
-
-                if (jpaQueue.getDeleted() != isDeleted) {
-
-                    if (isDeleted) {
-                        QUEUE_SERVICE.setLogicalDeleted(jpaQueue, now,
-                                requestingUser);
-                    } else {
-                        QUEUE_SERVICE.undoLogicalDeleted(jpaQueue);
-                    }
-                }
-
-                ippQueueDao.update(jpaQueue);
-
-                setApiResult(userData, ApiResultCodeEnum.OK,
-                        "msg-queue-saved-ok");
-            }
-        }
-        return userData;
-    }
-
-    /**
      *
      * @param card
      * @return
@@ -3716,67 +3369,6 @@ public final class JsonApiServer extends AbstractPage {
         return setApiResult(data, ApiResultCodeEnum.OK, "msg-printer-sync-ok");
     }
 
-    /**
-     *
-     * @param user
-     * @param userSubject
-     * @return
-     * @throws ParseException
-     */
-    private Map<String, Object> reqConfigGetProp(final String name)
-            throws ParseException {
-
-        final ConfigPropertyDao dao =
-                ServiceContext.getDaoContext().getConfigPropertyDao();
-
-        final ConfigManager cm = ConfigManager.instance();
-
-        Map<String, Object> userData = new HashMap<String, Object>();
-
-        /*
-         * INVARIANT: property MUST exist in database.
-         */
-        final ConfigProperty prop = dao.findByName(name);
-
-        if (prop == null) {
-            return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-config-prop-not-found", name);
-        }
-
-        /*
-         * INVARIANT: property MUST exist in cache.
-         */
-        final Key key = cm.getConfigKey(name);
-        if (key == null) {
-            return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-config-prop-not-found", name);
-        }
-
-        /*
-         * If display of this value is Locale sensitive, we MUST revert to
-         * locale format.
-         */
-        String value = prop.getValue();
-
-        if (cm.isConfigBigDecimal(key)) {
-            value = BigDecimalUtil.localize(BigDecimalUtil.valueOf(value),
-                    getSession().getLocale(), true);
-        }
-
-        Map<String, Object> obj = new HashMap<String, Object>();
-
-        obj.put("name", name);
-        obj.put("value", value);
-        obj.put("multiline", cm.isConfigMultiline(key));
-
-        /*
-         *
-         */
-        userData.put("j_prop", obj);
-        setApiResultOK(userData);
-
-        return userData;
-    }
 
     /**
      *

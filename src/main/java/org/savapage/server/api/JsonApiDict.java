@@ -31,6 +31,8 @@ import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.server.api.request.ApiRequestHandler;
+import org.savapage.server.api.request.ReqConfigPropGet;
+import org.savapage.server.api.request.ReqConfigPropsSet;
 import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqDeviceDelete;
 import org.savapage.server.api.request.ReqDeviceGet;
@@ -48,6 +50,7 @@ import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqPrinterQuickSearch;
 import org.savapage.server.api.request.ReqQueueEnable;
 import org.savapage.server.api.request.ReqQueueGet;
+import org.savapage.server.api.request.ReqQueueSet;
 import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
@@ -738,8 +741,10 @@ public class JsonApiDict {
         usr(REQ_ACCOUNT_VOUCHER_REDEEM, DbClaim.READ, DbAccess.USER_LOCK);
 
         put(REQ_CARD_IS_REGISTERED, AuthReq.NONE, DbClaim.READ, DbAccess.YES);
-        adm(REQ_CONFIG_GET_PROP, DbClaim.READ, DbAccess.YES);
-        adm(REQ_CONFIG_SET_PROPS, DbClaim.READ, DbAccess.YES);
+        adm(REQ_CONFIG_GET_PROP, ReqConfigPropGet.class, DbClaim.READ,
+                DbAccess.YES);
+        adm(REQ_CONFIG_SET_PROPS, ReqConfigPropsSet.class, DbClaim.READ,
+                DbAccess.YES);
         put(REQ_CONSTANTS, AuthReq.NONE, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_DB_BACKUP, ReqDbBackup.class, DbClaim.NONE, DbAccess.NO);
@@ -861,7 +866,7 @@ public class JsonApiDict {
         adm(REQ_PRINTER_SYNC, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_QUEUE_GET, ReqQueueGet.class, DbClaim.NONE, DbAccess.YES);
-        adm(REQ_QUEUE_SET, DbClaim.READ, DbAccess.YES);
+        adm(REQ_QUEUE_SET, ReqQueueSet.class, DbClaim.READ, DbAccess.YES);
         adm(REQ_QUEUE_ENABLE, ReqQueueEnable.class, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_SHARED_ACCOUNT_GET, ReqSharedAccountGet.class, DbClaim.NONE,

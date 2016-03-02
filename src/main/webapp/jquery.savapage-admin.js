@@ -155,7 +155,7 @@
 			_saveConfigProps = function(props) {
 				var res = _api.call({
 					request : 'config-set-props',
-					props : JSON.stringify(props)
+					dto : JSON.stringify(props)
 				});
 				_view.showApiMsg(res);
 				return (res.result.code === '0');
@@ -1058,10 +1058,12 @@
 
 				var res = _api.call({
 					request : 'config-get-prop',
-					name : name
+					dto : JSON.stringify({
+						name : name
+					})
 				});
 				if (res.result.code === '0') {
-					_model.editConfigProp = res.j_prop;
+					_model.editConfigProp = res.dto;
 					_view.pages.configProp.loadShowAsync(function() {
 						$('#config-prop-name').html(_model.editConfigProp.name);
 					});
@@ -1218,7 +1220,7 @@
 
 				var res = _api.call({
 					request : 'queue-set',
-					j_queue : JSON.stringify(_model.editQueue)
+					dto : JSON.stringify(_model.editQueue)
 				});
 
 				_view.showApiMsg(res);

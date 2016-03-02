@@ -59,7 +59,7 @@ public final class ReqQueueGet extends ApiRequestMixin {
     /**
      * The response.
      */
-    private static class DtoRsp extends AbstractDto {
+    public static class DtoRsp extends AbstractDto {
 
         private Long id;
         private String urlpath;
