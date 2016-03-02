@@ -222,5 +222,18 @@ a:hover.poll_button {
   top: 15px;
 }
 
+#page-doclog .ui-content {
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	max-width: 700px;
+}
+
+#page-accounttrx .ui-content {
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	max-width: 700px;
+}
 
 /* end-of-file */
