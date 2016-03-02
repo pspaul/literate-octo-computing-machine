@@ -37,7 +37,8 @@ public final class ReqOutboxClear extends ApiRequestMixin {
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final int jobCount = OUTBOX_SERVICE.clearOutbox(lockedUser.getUserId());
+        final int jobCount = OUTBOX_SERVICE.clearOutbox(lockedUser.getUserId())
+                + JOBTICKET_SERVICE.removeTickets(lockedUser.getId());
 
         final String msgKey;
 
