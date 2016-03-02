@@ -91,16 +91,32 @@ public final class SystemStatusPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * .
+     * Duration after which new is expired.
      */
-    private static final AppLogService APP_LOG_SERVICE = ServiceContext
-            .getServiceFactory().getAppLogService();
+    private static final long RETRIEVE_NEWS_TIME_EXPIRY =
+            12 * DateUtil.DURATION_MSEC_HOUR;
+
+    /**
+     * Last time the news was retrieved.
+     */
+    private static long retrieveNewsTime = 0L;
+
+    /**
+     * Last time the news HTML.
+     */
+    private static String retrieveNewsHtml;
 
     /**
      * .
      */
-    private static final QueueService QUEUE_SERVICE = ServiceContext
-            .getServiceFactory().getQueueService();
+    private static final AppLogService APP_LOG_SERVICE =
+            ServiceContext.getServiceFactory().getAppLogService();
+
+    /**
+     * .
+     */
+    private static final QueueService QUEUE_SERVICE =
+            ServiceContext.getServiceFactory().getQueueService();
 
     /**
      * @param panelId
@@ -132,11 +148,9 @@ public final class SystemStatusPanel extends Panel {
             msg = getLocalizer().getString("sys-status-setup-needed", this);
         } else if (memberCard.isMembershipDesirable()) {
             cssColor = MarkupHelper.CSS_TXT_WARN;
-            msg =
-                    MessageFormat.format(
-                            getLocalizer().getString(
-                                    "sys-status-membercard-missing", this),
-                            CommunityDictEnum.MEMBER_CARD.getWord());
+            msg = MessageFormat.format(getLocalizer()
+                    .getString("sys-status-membercard-missing", this),
+                    CommunityDictEnum.MEMBER_CARD.getWord());
         } else {
             cssColor = MarkupHelper.CSS_TXT_VALID;
             msg = getLocalizer().getString("sys-status-ready", this);
@@ -148,14 +162,14 @@ public final class SystemStatusPanel extends Panel {
         add(labelWrk);
 
         //
-        add(new Label("sys-uptime", DateUtil.formatDuration(ManagementFactory
-                .getRuntimeMXBean().getUptime())));
+        add(new Label("sys-uptime", DateUtil.formatDuration(
+                ManagementFactory.getRuntimeMXBean().getUptime())));
 
         //
         final UserDao userDAO = ServiceContext.getDaoContext().getUserDao();
 
-        add(new Label("user-count", helper.localizedNumber(userDAO
-                .countActiveUsers())));
+        add(new Label("user-count",
+                helper.localizedNumber(userDAO.countActiveUsers())));
 
         /*
          * Mail Print
@@ -169,10 +183,9 @@ public final class SystemStatusPanel extends Panel {
 
             msgKey = null;
 
-            final CircuitStateEnum circuitState =
-                    ConfigManager.getCircuitBreaker(
-                            CircuitBreakerEnum.MAILPRINT_CONNECTION)
-                            .getCircuitState();
+            final CircuitStateEnum circuitState = ConfigManager
+                    .getCircuitBreaker(CircuitBreakerEnum.MAILPRINT_CONNECTION)
+                    .getCircuitState();
 
             switch (circuitState) {
 
@@ -206,9 +219,8 @@ public final class SystemStatusPanel extends Panel {
             labelWrk = helper.encloseLabel("mailprint-status", msgText, true);
             MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
 
-            labelWrk =
-                    helper.addCheckbox("flipswitch-mailprint-online",
-                            ImapPrinter.isOnline());
+            labelWrk = helper.addCheckbox("flipswitch-mailprint-online",
+                    ImapPrinter.isOnline());
             setFlipswitchOnOffText(labelWrk);
 
         } else {
@@ -240,8 +252,8 @@ public final class SystemStatusPanel extends Panel {
             case ON_LINE:
                 break;
             default:
-                throw new SpException("Unhandled GcpPrinter.Status ["
-                        + gcpStatus + "]");
+                throw new SpException(
+                        "Unhandled GcpPrinter.Status [" + gcpStatus + "]");
             }
 
             if (msgKey == null) {
@@ -282,10 +294,9 @@ public final class SystemStatusPanel extends Panel {
             helper.encloseLabel("payment-plugin-bitcoin",
                     bitcoinPlugin.getName(), true);
 
-            labelWrk =
-                    helper.addCheckbox(
-                            "flipswitch-payment-plugin-bitcoin-online",
-                            bitcoinPlugin.isOnline());
+            labelWrk = helper.addCheckbox(
+                    "flipswitch-payment-plugin-bitcoin-online",
+                    bitcoinPlugin.isOnline());
             setFlipswitchOnOffText(labelWrk);
         }
 
@@ -301,17 +312,16 @@ public final class SystemStatusPanel extends Panel {
             } else {
                 helper.encloseLabel("payment-plugin-generic",
                         externalPlugin.getName(), true);
-                labelWrk =
-                        helper.addCheckbox(
-                                "flipswitch-payment-plugin-generic-online",
-                                externalPlugin.isOnline());
+                labelWrk = helper.addCheckbox(
+                        "flipswitch-payment-plugin-generic-online",
+                        externalPlugin.isOnline());
 
                 setFlipswitchOnOffText(labelWrk);
             }
 
         } catch (PaymentGatewayException e) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
-                    e.getMessage()));
+            setResponsePage(
+                    new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
             return;
         }
 
@@ -326,10 +336,10 @@ public final class SystemStatusPanel extends Panel {
             } else {
                 msgKey = null;
 
-                final CircuitStateEnum circuitState =
-                        ConfigManager.getCircuitBreaker(
+                final CircuitStateEnum circuitState = ConfigManager
+                        .getCircuitBreaker(
                                 CircuitBreakerEnum.SMARTSCHOOL_CONNECTION)
-                                .getCircuitState();
+                        .getCircuitState();
 
                 switch (circuitState) {
 
@@ -361,15 +371,13 @@ public final class SystemStatusPanel extends Panel {
                 msgText = getLocalizer().getString(msgKey, this);
             }
 
-            labelWrk =
-                    helper.encloseLabel("smartschool-print-status", msgText,
-                            true);
+            labelWrk = helper.encloseLabel("smartschool-print-status", msgText,
+                    true);
 
             MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
 
-            labelWrk =
-                    helper.addCheckbox("flipswitch-smartschool-online",
-                            SmartschoolPrinter.isOnline());
+            labelWrk = helper.addCheckbox("flipswitch-smartschool-online",
+                    SmartschoolPrinter.isOnline());
 
             setFlipswitchOnOffText(labelWrk);
 
@@ -380,20 +388,17 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Web Print
          */
-        labelWrk =
-                helper.addCheckbox("flipswitch-webprint-online",
-                        ConfigManager.isWebPrintEnabled());
+        labelWrk = helper.addCheckbox("flipswitch-webprint-online",
+                ConfigManager.isWebPrintEnabled());
         setFlipswitchOnOffText(labelWrk);
         add(labelWrk);
 
         /*
          * Internet Print
          */
-        labelWrk =
-                helper.addCheckbox(
-                        "flipswitch-internetprint-online",
-                        QUEUE_SERVICE
-                                .isQueueEnabled(ReservedIppQueueEnum.IPP_PRINT_INTERNET));
+        labelWrk = helper.addCheckbox("flipswitch-internetprint-online",
+                QUEUE_SERVICE.isQueueEnabled(
+                        ReservedIppQueueEnum.IPP_PRINT_INTERNET));
         setFlipswitchOnOffText(labelWrk);
         add(labelWrk);
 
@@ -403,8 +408,8 @@ public final class SystemStatusPanel extends Panel {
         add(new Label("client-sessions",
                 helper.localizedNumber(UserEventService.getClientAppCount())));
 
-        add(new Label("web-sessions", helper.localizedNumber(WebApp
-                .getAuthUserSessionCount())));
+        add(new Label("web-sessions",
+                helper.localizedNumber(WebApp.getAuthUserSessionCount())));
 
         /*
          * Community Membership
@@ -421,9 +426,8 @@ public final class SystemStatusPanel extends Panel {
 
         case EXCEEDED:
             cssColor = MarkupHelper.CSS_TXT_WARN;
-            memberStat =
-                    getLocalizer()
-                            .getString("membership-status-exceeded", this);
+            memberStat = getLocalizer().getString("membership-status-exceeded",
+                    this);
             break;
 
         case EXPIRED:
@@ -439,12 +443,9 @@ public final class SystemStatusPanel extends Panel {
 
         case VISITOR_EXPIRED:
             cssColor = MarkupHelper.CSS_TXT_WARN;
-            memberStat =
-                    String.format(
-                            "%s (%s)",
-                            CommunityDictEnum.VISITOR.getWord(),
-                            getLocalizer().getString(
-                                    "membership-status-expired", this));
+            memberStat = String.format("%s (%s)",
+                    CommunityDictEnum.VISITOR.getWord(), getLocalizer()
+                            .getString("membership-status-expired", this));
 
             break;
 
@@ -476,16 +477,14 @@ public final class SystemStatusPanel extends Panel {
 
         case WRONG_VERSION:
             cssColor = MarkupHelper.CSS_TXT_WARN;
-            memberStat =
-                    getLocalizer().getString("membership-status-wrong-version",
-                            this);
+            memberStat = getLocalizer()
+                    .getString("membership-status-wrong-version", this);
             break;
 
         case WRONG_VERSION_WITH_GRACE:
             cssColor = MarkupHelper.CSS_TXT_WARN;
-            memberStat =
-                    getLocalizer().getString("membership-status-wrong-version",
-                            this);
+            memberStat = getLocalizer()
+                    .getString("membership-status-wrong-version", this);
             break;
 
         default:
@@ -494,9 +493,9 @@ public final class SystemStatusPanel extends Panel {
         }
 
         //
-        add(new Label("membership-org-prompt", String.format("%s %s",
-                CommunityDictEnum.COMMUNITY.getWord(), CommunityDictEnum.MEMBER
-                        .getWord().toLowerCase())));
+        add(new Label("membership-org-prompt",
+                String.format("%s %s", CommunityDictEnum.COMMUNITY.getWord(),
+                        CommunityDictEnum.MEMBER.getWord().toLowerCase())));
         labelWrk =
                 new Label("membership-org", memberCard.getMemberOrganisation());
         labelWrk.add(new AttributeModifier("class", cssColor));
@@ -508,10 +507,8 @@ public final class SystemStatusPanel extends Panel {
         add(labelWrk);
 
         //
-        labelWrk =
-                new Label("membership-participants",
-                        helper.localizedNumber(memberCard
-                                .getMemberParticipants()));
+        labelWrk = new Label("membership-participants",
+                helper.localizedNumber(memberCard.getMemberParticipants()));
         labelWrk.add(new AttributeModifier("class", cssColor));
         add(labelWrk);
 
@@ -522,23 +519,20 @@ public final class SystemStatusPanel extends Panel {
             enclosedValue =
                     helper.localizedDate(memberCard.getExpirationDate());
         }
-        labelWrk =
-                MarkupHelper.createEncloseLabel("membership-valid-till",
-                        enclosedValue, enclosedValue != null);
+        labelWrk = MarkupHelper.createEncloseLabel("membership-valid-till",
+                enclosedValue, enclosedValue != null);
 
         labelWrk.add(new AttributeModifier("class", cssColor));
         add(labelWrk);
 
         //
         if (memberCard.getDaysTillExpiry() != null) {
-            enclosedValue =
-                    helper.localizedNumber(memberCard.getDaysTillExpiry()
-                            .longValue());
+            enclosedValue = helper.localizedNumber(
+                    memberCard.getDaysTillExpiry().longValue());
         }
-        labelWrk =
-                MarkupHelper.createEncloseLabel(
-                        "membership-valid-days-remaining", enclosedValue,
-                        enclosedValue != null);
+        labelWrk = MarkupHelper.createEncloseLabel(
+                "membership-valid-days-remaining", enclosedValue,
+                enclosedValue != null);
         labelWrk.add(new AttributeModifier("class", cssColor));
         add(labelWrk);
 
@@ -551,8 +545,8 @@ public final class SystemStatusPanel extends Panel {
         Label labelErr =
                 new Label("error-count", helper.localizedNumber(errors));
         if (errors > 0) {
-            labelErr.add(new AttributeModifier("class",
-                    MarkupHelper.CSS_TXT_ERROR));
+            labelErr.add(
+                    new AttributeModifier("class", MarkupHelper.CSS_TXT_ERROR));
         }
         add(labelErr);
 
@@ -563,17 +557,16 @@ public final class SystemStatusPanel extends Panel {
         Label labelWarn =
                 new Label("warning-count", helper.localizedNumber(warnings));
         if (warnings > 0) {
-            labelWarn.add(new AttributeModifier("class",
-                    MarkupHelper.CSS_TXT_WARN));
+            labelWarn.add(
+                    new AttributeModifier("class", MarkupHelper.CSS_TXT_WARN));
         }
         add(labelWarn);
 
         /*
          * Show technical info?
          */
-        final boolean showTechInfo =
-                ConfigManager.instance().isConfigValue(
-                        Key.WEBAPP_ADMIN_DASHBOARD_SHOW_TECH_INFO);
+        final boolean showTechInfo = ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_ADMIN_DASHBOARD_SHOW_TECH_INFO);
 
         /*
          * JVM memory.
@@ -590,14 +583,13 @@ public final class SystemStatusPanel extends Panel {
         final String memoryInfo;
 
         if (showTechInfo) {
-            memoryInfo =
-                    String.format("%s Max • %s Total • %s Free", NumberUtil
-                            .humanReadableByteCount(Runtime.getRuntime()
-                                    .maxMemory(), true), NumberUtil
-                            .humanReadableByteCount(Runtime.getRuntime()
-                                    .totalMemory(), true), NumberUtil
-                            .humanReadableByteCount(Runtime.getRuntime()
-                                    .freeMemory(), true));
+            memoryInfo = String.format("%s Max • %s Total • %s Free",
+                    NumberUtil.humanReadableByteCount(
+                            Runtime.getRuntime().maxMemory(), true),
+                    NumberUtil.humanReadableByteCount(
+                            Runtime.getRuntime().totalMemory(), true),
+                    NumberUtil.humanReadableByteCount(
+                            Runtime.getRuntime().freeMemory(), true));
         } else {
             memoryInfo = "";
         }
@@ -624,10 +616,9 @@ public final class SystemStatusPanel extends Panel {
 
         if (showTechInfo) {
 
-            connectionInfo =
-                    String.format("%d (%d) • services (database)",
-                            ServiceContext.getOpenCount(),
-                            DaoContextImpl.getOpenCount());
+            connectionInfo = String.format("%d (%d) • services (database)",
+                    ServiceContext.getOpenCount(),
+                    DaoContextImpl.getOpenCount());
 
         } else {
             connectionInfo = "";
@@ -666,8 +657,8 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Environmental Impact.
          */
-        Double esu =
-                (double) (cm.getConfigLong(Key.STATS_TOTAL_PRINT_OUT_ESU) / 100);
+        Double esu = (double) (cm.getConfigLong(Key.STATS_TOTAL_PRINT_OUT_ESU)
+                / 100);
         StatsEnvImpactPanel envImpactPanel =
                 new StatsEnvImpactPanel("environmental-impact");
         add(envImpactPanel);
@@ -684,10 +675,8 @@ public final class SystemStatusPanel extends Panel {
 
             if (html == null) {
                 html = "<li>" + helper.localized("news-fetch-error") + "</li>";
-                html =
-                        "<li><span class=\"" + MarkupHelper.CSS_TXT_ERROR
-                                + "\">" + helper.localized("news-fetch-error")
-                                + "</span></li>";
+                html = "<li><span class=\"" + MarkupHelper.CSS_TXT_ERROR + "\">"
+                        + helper.localized("news-fetch-error") + "</span></li>";
             }
 
         } else {
@@ -709,18 +698,24 @@ public final class SystemStatusPanel extends Panel {
      */
     private void setFlipswitchOnOffText(final Label label) {
 
-        MarkupHelper.modifyLabelAttr(label, "data-on-text", getLocalizer()
-                .getString("flipswitch-on", this));
-        MarkupHelper.modifyLabelAttr(label, "data-off-text", getLocalizer()
-                .getString("flipswitch-off", this));
+        MarkupHelper.modifyLabelAttr(label, "data-on-text",
+                getLocalizer().getString("flipswitch-on", this));
+        MarkupHelper.modifyLabelAttr(label, "data-off-text",
+                getLocalizer().getString("flipswitch-off", this));
     }
 
     /**
-     * Retrieves the news as HTML from the SavaPage site.
+     * Retrieves the news as HTML from local cache or from the SavaPage site
+     * when cache expired.
      *
      * @return HTML string with the news, or {@code null when no news is found}.
      */
-    private String retrieveNews() {
+    private synchronized String retrieveNews() {
+
+        if (retrieveNewsTime > 0 && retrieveNewsTime
+                + RETRIEVE_NEWS_TIME_EXPIRY > System.currentTimeMillis()) {
+            return retrieveNewsHtml;
+        }
 
         final CircuitBreakerOperation operation =
                 new CircuitBreakerOperation() {
@@ -759,21 +754,20 @@ public final class SystemStatusPanel extends Panel {
                             request.setHeader(HttpHeaders.USER_AGENT,
                                     ConfigManager.getAppNameVersion());
 
-                            request.setConfig(RequestConfig
-                                    .custom()
+                            request.setConfig(RequestConfig.custom()
                                     .setConnectTimeout(
                                             RETRIEVE_NEWS_TIMEOUT_MSEC)
                                     .setSocketTimeout(
                                             RETRIEVE_NEWS_TIMEOUT_MSEC)
                                     .setConnectionRequestTimeout(
-                                            RETRIEVE_NEWS_TIMEOUT_MSEC).build());
+                                            RETRIEVE_NEWS_TIMEOUT_MSEC)
+                                    .build());
 
                             final HttpResponse response =
                                     client.execute(request);
 
-                            reader =
-                                    new BufferedReader(new InputStreamReader(
-                                            response.getEntity().getContent()));
+                            reader = new BufferedReader(new InputStreamReader(
+                                    response.getEntity().getContent()));
 
                             final StringBuilder htmlBuffer =
                                     new StringBuilder();
@@ -824,9 +818,8 @@ public final class SystemStatusPanel extends Panel {
 
                 };
 
-        final CircuitBreaker breaker =
-                ConfigManager
-                        .getCircuitBreaker(CircuitBreakerEnum.INTERNET_URL_CONNECTION);
+        final CircuitBreaker breaker = ConfigManager
+                .getCircuitBreaker(CircuitBreakerEnum.INTERNET_URL_CONNECTION);
 
         String html;
 
@@ -836,8 +829,10 @@ public final class SystemStatusPanel extends Panel {
             html = null;
         }
 
-        return html;
+        retrieveNewsTime = System.currentTimeMillis();
+        retrieveNewsHtml = html;
 
+        return retrieveNewsHtml;
     }
 
 }
