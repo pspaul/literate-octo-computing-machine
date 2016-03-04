@@ -162,6 +162,11 @@ public class OutboxAddin extends AbstractUserPage {
 
             helper.addModifyLabelAttr("img-job", "src", imgSrc.toString());
 
+            //
+            helper.encloseLabel("jobticket-remark", job.getComment(),
+                    isJobTicketItem
+                            && StringUtils.isNotBlank(job.getComment()));
+
             /*
              * Totals
              */
@@ -199,20 +204,28 @@ public class OutboxAddin extends AbstractUserPage {
             item.add(new Label("printout-pie", sparklineData));
 
             //
-            final String encloseButtonId;
+            final String encloseButtonIdRemove;
+            final String encloseButtonIdPreview;
 
             if (isJobTicketItem) {
                 helper.discloseLabel("button-remove-outbox-job");
-                encloseButtonId = "button-remove-outbox-jobticket";
+                helper.discloseLabel("button-preview-outbox-job");
+                encloseButtonIdRemove = "button-remove-outbox-jobticket";
+                encloseButtonIdPreview = "button-preview-outbox-jobticket";
             } else {
                 helper.discloseLabel("button-remove-outbox-jobticket");
-                encloseButtonId = "button-remove-outbox-job";
+                helper.discloseLabel("button-preview-outbox-jobticket");
+                encloseButtonIdRemove = "button-remove-outbox-job";
+                encloseButtonIdPreview = "button-preview-outbox-job";
             }
 
-            helper.encloseLabel(encloseButtonId,
+            helper.encloseLabel(encloseButtonIdRemove,
                     getLocalizer().getString("button-remove", this), true)
                     .add(new AttributeModifier("data-savapage", job.getFile()));
 
+            helper.encloseLabel(encloseButtonIdPreview,
+                    getLocalizer().getString("button-preview", this), true)
+                    .add(new AttributeModifier("data-savapage", job.getFile()));
             /*
              * Variable attributes.
              */
@@ -278,7 +291,7 @@ public class OutboxAddin extends AbstractUserPage {
 
             item.add(new Label("cost",
                     StringUtils.replace(cost.toString(), " ", "&nbsp;"))
-                    .setEscapeModelStrings(false));
+                            .setEscapeModelStrings(false));
 
             //
             final String extSupplierImgUrl;

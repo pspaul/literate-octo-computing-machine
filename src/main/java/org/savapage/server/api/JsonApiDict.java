@@ -167,6 +167,8 @@ public class JsonApiDict {
             "payment-gateway-online";
 
     public static final String REQ_PDF = "pdf";
+    public static final String REQ_PDF_OUTBOX = "pdf-outbox";
+    public static final String REQ_PDF_JOBTICKET = "pdf-jobticket";
     public static final String REQ_PDF_GET_PROPERTIES = "pdf-get-properties";
     public static final String REQ_PDF_SET_PROPERTIES = "pdf-set-properties";
 
@@ -605,6 +607,8 @@ public class JsonApiDict {
         switch (request) {
 
         case REQ_PDF:
+        case REQ_PDF_OUTBOX:
+        case REQ_PDF_JOBTICKET:
         case REQ_REPORT:
         case REQ_REPORT_USER:
         case REQ_ACCOUNT_VOUCHER_BATCH_PRINT:
@@ -820,6 +824,10 @@ public class JsonApiDict {
         usr(REQ_PAGE_MOVE, DbClaim.NONE, DbAccess.USER_LOCK);
 
         usr(REQ_PDF, DbClaim.READ, DbAccess.USER_LOCK);
+        usr(REQ_PDF_OUTBOX, DbClaim.NONE, DbAccess.NO);
+        acl(REQ_PDF_JOBTICKET, DbClaim.NONE, DbAccess.NO,
+                EnumSet.of(ACLRoleEnum.JOB_TICKET_CREATOR, ACLRoleEnum.JOB_TICKET_OPERATOR));
+
         usr(REQ_PDF_GET_PROPERTIES, DbClaim.NONE, DbAccess.YES);
         usr(REQ_PDF_SET_PROPERTIES, DbClaim.READ, DbAccess.YES);
 

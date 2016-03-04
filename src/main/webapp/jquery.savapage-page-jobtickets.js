@@ -91,6 +91,15 @@
 					_view.showApiMsg(res);
 				});
 
+				$(this).on('click', '.sp-outbox-preview-job', null, function() {
+					_api.download("pdf-outbox", null, $(this).attr('data-savapage'));					
+					return false;
+				});
+				$(this).on('click', '.sp-outbox-preview-jobticket', null, function() {
+					_api.download("pdf-jobticket", null, $(this).attr('data-savapage'));					
+					return false;
+				});
+
 				$(this).on('click', '.sp-jobticket-print', null, function() {
 					var res = _api.call({
 						request : 'jobticket-print',

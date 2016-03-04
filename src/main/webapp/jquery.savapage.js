@@ -431,6 +431,11 @@
 				return '/api?webAppType=' + _ns.WEBAPP_TYPE + '&request=pdf&user=' + _user.id + '&jobIndex=' + jobIndex + '&ranges=' + ranges + '&removeGraphics=' + removeGraphics + '&ecoprint=' + ecoprint + '&unique=' + d.getTime().toString();
 			};
 
+			this.getUrl4PdfHoldJob = function(fileName, isJobTicket) {
+				var req = isJobTicket ? 'pdf-jobticket' : 'pdf-outbox';
+				return '/api?webAppType=' + _ns.WEBAPP_TYPE + '&request=' + req + '&user=' + _user.id + '&fileName=' + fileName;
+			};
+
 			/**
 			 * Simulate error response for disconnect situation
 			 */

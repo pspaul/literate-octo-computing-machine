@@ -1504,7 +1504,7 @@
 		/**
 		 *
 		 */
-		function PageOutbox(_i18n, _view, _model) {
+		function PageOutbox(_i18n, _view, _model, _api) {
 			var _this = this
 			//
 			, _close = function() {
@@ -1547,13 +1547,21 @@
 					}
 					return _close();
 				});
-
 				$(this).on('click', '.sp-outbox-remove-jobticket', null, function() {
 					_this.onOutboxDeleteJob($(this).attr('data-savapage'), true);
 					if (_model.user.stats.outbox.jobCount > 0) {
 						return _refresh();
 					}
 					return _close();
+				});
+
+				$(this).on('click', '.sp-outbox-preview-job', null, function() {
+					_api.download("pdf-outbox", null, $(this).attr('data-savapage'));					
+					return false;
+				});
+				$(this).on('click', '.sp-outbox-preview-jobticket', null, function() {
+					_api.download("pdf-jobticket", null, $(this).attr('data-savapage'));					
+					return false;
 				});
 
 			}).on("pageshow", function(event, ui) {
@@ -3247,6 +3255,8 @@
 					sel.val('');
 					_onQuickPrinterSearch($("#sp-print-qs-printer-filter"), "");
 				}
+				
+				_view.visible($('.sp-jobticket'), _model.myPrinter.jobTicket); 
 			}
 			//
 			, _isDelegatedPrint = function() {
@@ -3297,6 +3307,7 @@
 			this.clearInput = function() {
 				$('#slider-print-copies').val(1).slider("refresh");
 				$('#print-page-ranges').val('');
+				$('#sp-jobticket-remark').val('');				
 				if (!$('#delete-pages-after-print')[0].disabled) {
 					_view.checkCb("#delete-pages-after-print", false);
 				}
@@ -3381,6 +3392,8 @@
 					_model.myPrintTitle = selTitle.val();
 					return false;
 				});
+
+				_view.mobipick($("#sp-jobticket-date"));
 
 			}).on("pagebeforeshow", function(event, ui) {
 				_setVisibility();
@@ -5203,7 +5216,8 @@
 						clear : isClear,
 						options : _model.myPrinterOpt,
 						delegation : isDelegation ? _model.printDelegation : null,
-						jobTicket : _model.myPrinter.jobTicket
+						jobTicket : _model.myPrinter.jobTicket,
+						jobTicketRemark : _model.myPrinter.jobTicket ? $('#sp-jobticket-remark').val() : null
 					})
 				});
 
@@ -5871,7 +5885,7 @@
 				clear : new PageClear(_i18n, _view, _model),
 				accountTrx : new PageAccountTrx(_i18n, _view, _model, _api),
 				doclog : new PageDocLog(_i18n, _view, _model, _api),
-				outbox : new PageOutbox(_i18n, _view, _model),
+				outbox : new PageOutbox(_i18n, _view, _model, _api),
 				send : new PageSend(_i18n, _view, _model),
 				pagebrowser : new PageBrowser(_i18n, _view, _model),
 				pageDashboard : new PageDashboard(_i18n, _view, _model),

@@ -182,4 +182,15 @@
     border-radius: 8px;
 }
 
+.sp-outbox-jobticket-remark {
+    padding: 5px 5px 5px 5px;
+	margin: 8px; 
+    border: 2px orange dotted;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    border-radius: 8px;
+}
+
+
 /* end-of-file */

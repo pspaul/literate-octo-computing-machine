@@ -91,6 +91,11 @@
 		</wicket:enclosure>
 	</div>
 
+	<wicket:enclosure child="jobticket-remark">
+		<div class="sp-txt-wrap sp-outbox-jobticket-remark"
+			wicket:id="jobticket-remark" />
+	</wicket:enclosure>
+
 	<wicket:enclosure child="button-remove-outbox-job">
 		<a href="#" data-savapage="the-unique-filename"
 			class="sp-outbox-remove-job ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
@@ -101,6 +106,18 @@
 		<a href="#" data-savapage="the-unique-filename"
 			class="sp-outbox-remove-jobticket ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
 			wicket:id="button-remove-outbox-jobticket" />
+	</wicket:enclosure>
+
+	<wicket:enclosure child="button-preview-outbox-job">
+		<a href="#" data-savapage="the-unique-filename"
+			class="sp-outbox-preview-job ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
+			wicket:id="button-preview-outbox-job"/>
+	</wicket:enclosure>
+
+	<wicket:enclosure child="button-preview-outbox-jobticket">
+		<a href="#" data-savapage="the-unique-filename"
+			class="sp-outbox-preview-jobticket ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
+			wicket:id="button-preview-outbox-jobticket"/>
 	</wicket:enclosure>
 
 	<wicket:enclosure child="button-jobticket-print">

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.Map;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.codehaus.jackson.JsonProcessingException;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
@@ -118,6 +120,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Boolean ecoprint;
         private Boolean clear;
         private Boolean jobTicket;
+        private String jobTicketRemark;
         private Map<String, String> options;
         private PrintDelegationDto delegation;
 
@@ -223,6 +226,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         public void setJobTicket(Boolean jobTicket) {
             this.jobTicket = jobTicket;
+        }
+
+        public String getJobTicketRemark() {
+            return jobTicketRemark;
+        }
+
+        public void setJobTicketRemark(String jobTicketRemark) {
+            this.jobTicketRemark = jobTicketRemark;
         }
 
         public Map<String, String> getOptions() {
@@ -478,8 +489,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          * Job Ticket?
          */
         if (BooleanUtils.isTrue(dtoReq.getJobTicket())) {
+            printReq.setComment(dtoReq.getJobTicketRemark());
+
+            // TODO
+            final Date deliveryDate = DateUtils.addHours(new Date(), 1);
+
             this.onPrintJobTicket(lockedUser, printReq, currencySymbol,
-                    dtoReq.getClear());
+                    dtoReq.getClear(), deliveryDate);
             return;
         }
 
@@ -633,15 +649,18 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *            The currency symbol.
      * @param clearAfterPrint
      *            {@code true} to clear inbox after printing.
+     * @param deliveryDate
+     *            The requested date of delivery.
      */
     private void onPrintJobTicket(final User lockedUser,
             final ProxyPrintInboxReq printReq, final String currencySymbol,
-            final boolean clearAfterPrint) {
+            final boolean clearAfterPrint, final Date deliveryDate) {
 
         printReq.setPrintMode(PrintModeEnum.PUSH);
 
         try {
-            JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq);
+            JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq,
+                    deliveryDate);
         } catch (EcoPrintPdfTaskPendingException e) {
             setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
             return;

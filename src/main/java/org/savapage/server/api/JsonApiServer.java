@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -54,6 +55,7 @@ import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
+import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.resource.StringBufferResourceStream;
 import org.apache.wicket.util.time.Duration;
@@ -140,6 +142,8 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.EmailService;
 import org.savapage.core.services.InboxService;
+import org.savapage.core.services.JobTicketService;
+import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
@@ -229,6 +233,18 @@ public final class JsonApiServer extends AbstractPage {
      */
     private static final InboxService INBOX_SERVICE =
             ServiceContext.getServiceFactory().getInboxService();
+
+    /**
+    *
+    */
+    private static final JobTicketService JOBTICKET_SERVICE =
+            ServiceContext.getServiceFactory().getJobTicketService();
+
+    /**
+    *
+    */
+    private static final OutboxService OUTBOX_SERVICE =
+            ServiceContext.getServiceFactory().getOutboxService();
 
     /**
      * .
@@ -385,6 +401,10 @@ public final class JsonApiServer extends AbstractPage {
                 switch (requestId) {
 
                 case JsonApiDict.REQ_ACCOUNT_VOUCHER_BATCH_PRINT:
+                    // no break intended
+                case JsonApiDict.REQ_PDF_JOBTICKET:
+                    // no break intended
+                case JsonApiDict.REQ_PDF_OUTBOX:
                     // no break intended
                 case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
                     // no break intended
@@ -568,6 +588,14 @@ public final class JsonApiServer extends AbstractPage {
             case JsonApiDict.REQ_ACCOUNT_VOUCHER_BATCH_PRINT:
                 requestHandler = exportVoucherBatchPrint(tempExportFile,
                         parameters.get(JsonApiDict.PARM_REQ_SUB).toString());
+                break;
+
+            case JsonApiDict.REQ_PDF_JOBTICKET:
+            case JsonApiDict.REQ_PDF_OUTBOX:
+                requestHandler = this.exportOutboxPdf(requestingUser,
+                        getParmValue(parameters, isGetAction,
+                                JsonApiDict.PARM_REQ_SUB),
+                        request.equals(JsonApiDict.REQ_PDF_JOBTICKET));
                 break;
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
@@ -953,6 +981,73 @@ public final class JsonApiServer extends AbstractPage {
 
         handler.setContentDisposition(ContentDisposition.ATTACHMENT);
         handler.setFileName("smartschool-papercut-student-cost.csv");
+        handler.setCacheDuration(Duration.NONE);
+
+        return handler;
+    }
+
+    /**
+     * Exports user outbox or job ticket PDF.
+     *
+     * @param fileName
+     *            The base file name.
+     * @param requestingUser
+     *            The user requesting the export.
+     * @param isJobTicket
+     *            {@code true} when PDF is a job ticket.
+     * @return The {@link IRequestHandler}}
+     */
+    private IRequestHandler exportOutboxPdf(final String requestingUser,
+            final String fileName, final boolean isJobTicket) {
+
+        final File pdfFile;
+
+        if (isJobTicket) {
+
+            /*
+             * INVARIANT: A user can only see his own job ticket.
+             */
+            final WebAppTypeEnum webAppType = this.getSessionWebAppType();
+
+            if (webAppType != WebAppTypeEnum.JOBTICKETS
+                    && webAppType != WebAppTypeEnum.ADMIN
+                    && JOBTICKET_SERVICE.getTicket(
+                            SpSession.get().getUser().getId(),
+                            fileName) == null) {
+                pdfFile = null;
+            } else {
+                pdfFile =
+                        Paths.get(ConfigManager.getJobTicketsHome().toString(),
+                                fileName).toFile();
+            }
+
+        } else {
+            pdfFile = OUTBOX_SERVICE.getOutboxFile(requestingUser, fileName);
+        }
+
+        if (pdfFile == null || !pdfFile.exists()) {
+
+            final StringBuilder html = new StringBuilder();
+
+            html.append("<h2 style='color: red;'>");
+
+            if (isJobTicket) {
+                html.append("Job Ticket");
+            } else {
+                html.append("Hold Job");
+            }
+
+            html.append(" not found.</h2>");
+            return new TextRequestHandler("text/html", "UTF-8",
+                    html.toString());
+        }
+
+        final ResourceStreamRequestHandler handler =
+                new ResourceStreamRequestHandler(
+                        new FileResourceStream(pdfFile));
+
+        handler.setContentDisposition(ContentDisposition.ATTACHMENT);
+        handler.setFileName(fileName);
         handler.setCacheDuration(Duration.NONE);
 
         return handler;
@@ -2314,7 +2409,6 @@ public final class JsonApiServer extends AbstractPage {
         }
     }
 
-
     /**
      * {@link JsonApiDict#REQ_PRINTER_DETAIL}.
      *
@@ -3368,7 +3462,6 @@ public final class JsonApiServer extends AbstractPage {
 
         return setApiResult(data, ApiResultCodeEnum.OK, "msg-printer-sync-ok");
     }
-
 
     /**
      *

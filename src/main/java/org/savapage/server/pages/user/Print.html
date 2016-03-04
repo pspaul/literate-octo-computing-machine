@@ -66,12 +66,11 @@
 				data-inset="true">
 				<li class="ui-li-has-icon" data-icon="refresh">
 					<a href="#" id="button-printer-fast-print-renew"
-						title="Push button to refesh.">
-						<img width="16" height="16"
-							src="/images/device-card-reader-16x16.png" />
-						<span class="ui-mini sp-txt-info sp-txt-wrap"> <wicket:message
+						title="Push button to refesh."> <img width="16" height="16"
+							src="/images/device-card-reader-16x16.png" /> <span
+						class="ui-mini sp-txt-info sp-txt-wrap"> <wicket:message
 								key="prompt-fast-print-expiry" />
-						</span> <span class="ui-li-count" id="printer-fast-print-expiry">hh:ss</span>
+					</span> <span class="ui-li-count" id="printer-fast-print-expiry">hh:ss</span>
 					</a>
 				</li>
 			</ul>
@@ -173,7 +172,31 @@
 				<input type="checkbox" id="delete-pages-after-print"
 					wicket:id="delete-pages-after-print" value="1" />
 			</div>
+		</li>
 
+		<li class="sp-jobticket" data-mini="true">
+			<span class="sp-txt-wrap"><wicket:message
+					key="prompt-jobticket-delivery-datetime" /></span>
+			<table>
+				<tr>
+					<td>
+						<input id="sp-jobticket-date" data-clear-btn="true" />
+					</td>
+					<td>
+						<input type="number" data-clear-btn="true" id="sp-jobticket-hrs"
+							min="0" max="23" step="1" value="" />
+					</td>
+					<td>:</td>
+					<td>
+						<input type="number" data-clear-btn="true" id="sp-jobticket-min"
+							min="0" max="45" step="15" value="" />
+					</td>
+				</tr>
+			</table>
+
+			<span class="sp-txt-wrap"><wicket:message
+					key="prompt-jobticket-remark" /></span>
+			<textarea name="textarea" id="sp-jobticket-remark" maxlength="255" />
 		</li>
 
 	</ul>
@@ -188,12 +211,10 @@
 	<a href="#" id="button-print-and-close"
 		class="ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
 		<wicket:message key="button-print-and-close" />
-	</a>
-
-	<a href="#" data-rel="back" data-direction="reverse"
+	</a> <a href="#" data-rel="back" data-direction="reverse"
 		id="button-printer-back"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-		<wicket:message key="button-back" />
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+			key="button-back" />
 	</a>
 
 </div>
@@ -219,8 +240,7 @@ POPUP for Proxy Print Authentication
 			<wicket:message key="auth-popup-message" />
 		</p>
 		<a href="#" id="sp-button-print-auth-cancel"
-			class="ui-btn ui-btn-inline">
-			<wicket:message key="button-cancel" />
+			class="ui-btn ui-btn-inline"> <wicket:message key="button-cancel" />
 		</a>
 	</div>
 
@@ -230,8 +250,8 @@ POPUP for Proxy Print Authentication
 		</h3>
 		<p id="auth-popup-user-msg" />
 		<a href="#" data-rel="back"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-			<wicket:message key="button-ok" />
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+				key="button-ok" />
 		</a>
 	</div>
 
