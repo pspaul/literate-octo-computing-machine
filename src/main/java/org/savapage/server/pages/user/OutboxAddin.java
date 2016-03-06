@@ -223,9 +223,14 @@ public class OutboxAddin extends AbstractUserPage {
                     getLocalizer().getString("button-remove", this), true)
                     .add(new AttributeModifier("data-savapage", job.getFile()));
 
-            helper.encloseLabel(encloseButtonIdPreview,
-                    getLocalizer().getString("button-preview", this), true)
-                    .add(new AttributeModifier("data-savapage", job.getFile()));
+            if (job.isDrm()) {
+                helper.discloseLabel(encloseButtonIdPreview);
+            } else {
+                helper.encloseLabel(encloseButtonIdPreview,
+                        getLocalizer().getString("button-preview", this), true)
+                        .add(new AttributeModifier("data-savapage",
+                                job.getFile()));
+            }
             /*
              * Variable attributes.
              */
@@ -234,7 +239,7 @@ public class OutboxAddin extends AbstractUserPage {
             for (final String attr : new String[] { "title", "papersize",
                     "letterhead", "duplex", "singlex", "color", "collate",
                     "grayscale", "accounts", "removeGraphics", "ecoPrint",
-                    "extSupplier", "owner-user-name" }) {
+                    "extSupplier", "owner-user-name", "drm" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -264,6 +269,10 @@ public class OutboxAddin extends AbstractUserPage {
             }
             if (job.isEcoPrint()) {
                 mapVisible.put("ecoPrint", "Eco Print");
+            }
+
+            if (job.isDrm()) {
+                mapVisible.put("drm", "DRM");
             }
 
             // Cost
