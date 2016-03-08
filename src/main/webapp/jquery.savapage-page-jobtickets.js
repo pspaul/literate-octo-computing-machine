@@ -89,9 +89,9 @@
 			//
 			, _quickUserSearch = new _ns.QuickUserSearch(_view, _api)
 			//
-			, _onSelectUser = function(key, text) {
-				$("#sp-jobticket-userid").val(text);
-				_userKey = key;
+			, _onSelectUser = function(quickUserSelected) {
+				$("#sp-jobticket-userid").val(quickUserSelected.text);
+				_userKey = quickUserSelected.key;
 				_refresh();
 			}
 			//

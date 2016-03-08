@@ -1188,16 +1188,18 @@
 			//
 			;
 
-			this.onCreate = function(parent, filterId, onSelectUser, onClearUser) {
+			this.onCreate = function(parent, filterId, onSelectUser, onClearUser, onQuickSearchBefore) {
 				var filterableUserId = $("#" + filterId);
 
 				_this = this;
 
 				this.onSelectUser = onSelectUser;
 				this.onClearUser = onClearUser;
+				this.onQuickSearchBefore = onQuickSearchBefore;
 
 				filterableUserId.on("filterablebeforefilter", function(e, data) {
 					e.preventDefault();
+					_this.onQuickSearchBefore ? onQuickSearchBefore() : null;
 					_onQuickUserSearch($(this), data.input.get(0).value);
 				});
 
@@ -1205,7 +1207,7 @@
 					var attr = "data-savapage";
 					_quickUserSelected = _quickUserCache[$(this).attr(attr)];
 					filterableUserId.empty().filterable("refresh");
-					_this.onSelectUser ? _this.onSelectUser(_quickUserSelected.key, _quickUserSelected.text) : null;
+					_this.onSelectUser ? _this.onSelectUser(_quickUserSelected) : null;
 				});
 
 			};
