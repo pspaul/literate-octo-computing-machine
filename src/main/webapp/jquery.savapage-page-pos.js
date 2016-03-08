@@ -40,19 +40,10 @@
          */
         _ns.PagePointOfSale = function(_i18n, _view, _model, _api) {
 
-            //_self.onBack();
-
-            /*
-            * SavaPage call-backs from pagecontainershow / pagecontainerhide.
-            */
-            //_self.onPageShow()
-            //_self.onPageHide()
-
             var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale", "PagePointOfSale")
             //
             , _self = _ns.derive(_page)
             //
-            //,                       _this = this
             , _quickUserCache = []
             //
             , _quickUserSelected
@@ -98,7 +89,7 @@
                 sel.attr(attr, _quickUserSelected.key);
                 sel.val(_quickUserSelected.text);
 
-                filterable.empty();
+                filterable.empty().filterable("refresh");
 
                 $("#sp-pos-user-balance").text(_quickUserSelected.balance);
                 $("#sp-pos-receipt-as-email-label").html(_quickUserSelected.email || "&nbsp;");

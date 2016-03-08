@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +71,7 @@ import org.savapage.core.services.helpers.ProxyPrintCostParms;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.services.impl.InboxServiceImpl;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.core.util.DateUtil;
 import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.ext.papercut.PaperCutServerProxy;
 import org.savapage.server.SpSession;
@@ -120,6 +122,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Boolean ecoprint;
         private Boolean clear;
         private Boolean jobTicket;
+        private Long jobTicketDate;
+        private Integer jobTicketHrs;
+        private Integer jobTicketMin;
         private String jobTicketRemark;
         private Map<String, String> options;
         private PrintDelegationDto delegation;
@@ -226,6 +231,30 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         public void setJobTicket(Boolean jobTicket) {
             this.jobTicket = jobTicket;
+        }
+
+        public Long getJobTicketDate() {
+            return jobTicketDate;
+        }
+
+        public void setJobTicketDate(Long jobTicketDate) {
+            this.jobTicketDate = jobTicketDate;
+        }
+
+        public Integer getJobTicketHrs() {
+            return jobTicketHrs;
+        }
+
+        public void setJobTicketHrs(Integer jobTicketHrs) {
+            this.jobTicketHrs = jobTicketHrs;
+        }
+
+        public Integer getJobTicketMin() {
+            return jobTicketMin;
+        }
+
+        public void setJobTicketMin(Integer jobTicketMin) {
+            this.jobTicketMin = jobTicketMin;
         }
 
         public String getJobTicketRemark() {
@@ -491,11 +520,32 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         if (BooleanUtils.isTrue(dtoReq.getJobTicket())) {
             printReq.setComment(dtoReq.getJobTicketRemark());
 
-            // TODO
-            final Date deliveryDate = DateUtils.addHours(new Date(), 1);
+            Date deliveryDate;
+
+            if (dtoReq.getJobTicketDate() == null) {
+                deliveryDate = new Date();
+            } else {
+                deliveryDate = new Date(dtoReq.getJobTicketDate().longValue());
+            }
+
+            int minutes = 0;
+
+            if (dtoReq.getJobTicketHrs() != null) {
+                minutes += dtoReq.getJobTicketHrs().intValue()
+                        * DateUtil.MINUTES_IN_HOUR;
+            }
+
+            if (dtoReq.getJobTicketMin() != null) {
+                minutes += dtoReq.getJobTicketMin().intValue();
+            }
+
+            deliveryDate = DateUtils.addMinutes(
+                    DateUtils.truncate(deliveryDate, Calendar.DAY_OF_MONTH),
+                    minutes);
 
             this.onPrintJobTicket(lockedUser, printReq, currencySymbol,
                     dtoReq.getClear(), deliveryDate);
+
             return;
         }
 

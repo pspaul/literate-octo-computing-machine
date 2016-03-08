@@ -1149,6 +1149,68 @@
 			}
 		};
 
+		// =========================================================================
+		/**
+		 * Constructor
+		 */
+		_ns.QuickUserSearch = function(_view, _api) {
+
+			var _this, _quickUserCache = [], _quickUserSelected
+			//
+			, _onQuickUserSearch = function(target, filter) {
+				/* QuickSearchFilterDto */
+				var res, html = "";
+
+				_quickUserCache = [];
+				_quickUserSelected = undefined;
+
+				if (filter && filter.length > 0) {
+					res = _api.call({
+						request : "user-quick-search",
+						dto : JSON.stringify({
+							filter : filter,
+							maxResults : 5
+						})
+					});
+					if (res.result.code === '0') {
+						_quickUserCache = res.dto.items;
+						$.each(_quickUserCache, function(key, item) {
+							html += "<li class=\"ui-mini\" data-savapage=\"" + key + "\"><a tabindex=\"2\" href=\"#\">" + item.text + " &bull; " + (item.email || "&nbsp;") + "</a></li>";
+						});
+					} else {
+						_view.showApiMsg(res);
+					}
+				} else {
+					_this.onClearUser ? _this.onClearUser() : null;
+				}
+				target.html(html).filterable("refresh");
+			}
+			//
+			;
+
+			this.onCreate = function(parent, filterId, onSelectUser, onClearUser) {
+				var filterableUserId = $("#" + filterId);
+
+				_this = this;
+
+				this.onSelectUser = onSelectUser;
+				this.onClearUser = onClearUser;
+
+				filterableUserId.on("filterablebeforefilter", function(e, data) {
+					e.preventDefault();
+					_onQuickUserSearch($(this), data.input.get(0).value);
+				});
+
+				parent.on('click', '#' + filterId + ' li', null, function() {
+					var attr = "data-savapage";
+					_quickUserSelected = _quickUserCache[$(this).attr(attr)];
+					filterableUserId.empty().filterable("refresh");
+					_this.onSelectUser ? _this.onSelectUser(_quickUserSelected.key, _quickUserSelected.text) : null;
+				});
+
+			};
+		};
+
 		/**
 		 * Constructor
 		 *

@@ -826,7 +826,8 @@ public class JsonApiDict {
         usr(REQ_PDF, DbClaim.READ, DbAccess.USER_LOCK);
         usr(REQ_PDF_OUTBOX, DbClaim.NONE, DbAccess.NO);
         acl(REQ_PDF_JOBTICKET, DbClaim.NONE, DbAccess.NO,
-                EnumSet.of(ACLRoleEnum.JOB_TICKET_CREATOR, ACLRoleEnum.JOB_TICKET_OPERATOR));
+                EnumSet.of(ACLRoleEnum.JOB_TICKET_CREATOR,
+                        ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         usr(REQ_PDF_GET_PROPERTIES, DbClaim.NONE, DbAccess.YES);
         usr(REQ_PDF_SET_PROPERTIES, DbClaim.READ, DbAccess.YES);
@@ -906,7 +907,8 @@ public class JsonApiDict {
                 EnumSet.of(ACLRoleEnum.WEB_CASHIER));
 
         acl(REQ_USER_QUICK_SEARCH, ReqUserQuickSearch.class, DbClaim.READ,
-                DbAccess.YES, EnumSet.of(ACLRoleEnum.WEB_CASHIER));
+                DbAccess.YES, EnumSet.of(ACLRoleEnum.WEB_CASHIER,
+                        ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         adm(REQ_USER_SET, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_SOURCE_GROUPS, DbClaim.NONE, DbAccess.NO);

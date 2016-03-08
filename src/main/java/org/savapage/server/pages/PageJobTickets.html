@@ -21,18 +21,65 @@
 
 <div class="ui-content">
 
-	<div id="jobticket-list" />
+	<div data-role="collapsible" data-collapsed="true" class="ui-mini">
+		<h3>
+			<wicket:message key="select-and-sort" />
+		</h3>
+
+		<div class="ui-field-contain">
+			<label for="sp-jobticket-userid">
+				<wicket:message key="prompt-userid" />
+			</label>
+			<input tabindex="1" type="text" id="sp-jobticket-userid" value=""
+				maxlength="128" autofocus data-type="search" autocomplete="off"
+				autocorrect="off" autocapitalize="off" spellcheck="false" />
+		</div>
+		<ul id="sp-jobticket-userid-filter" data-role="listview"
+			data-filter="true" data-input="#sp-jobticket-userid"
+			data-filter-placeholder="Find a User by ID..." data-filter-theme="a"
+			data-inset="true" />
+
+		<div class="ui-field-contain">
+			<fieldset data-role="controlgroup" data-type="horizontal"
+				class="ui-mini">
+
+				<legend>
+					<wicket:message key="prompt-expiry-date" />
+				</legend>
+
+				<input type="radio" name="sp-jobticket-sort-dir"
+					id="sp-jobticket-sort-dir-asc" checked="checked" />
+				<label for="sp-jobticket-sort-dir-asc">
+					<wicket:message key="sort-asc" />
+				</label>
+
+				<input type="radio" name="sp-jobticket-sort-dir"
+					id="sp-jobticket-sort-dir-desc" />
+				<label for="sp-jobticket-sort-dir-desc">
+					<wicket:message key="sort-desc" />
+				</label>
+
+			</fieldset>
+		</div>
+
+	</div>
+
+	<div style="width: auto; margin: 10px; height: 5px; background-color: white;">
+		<div id='sp-jobticket-countdown'
+			style="width: 0%; height: 100%; background-color: #ededed;" />
+	</div>
 
 	<a href="#" id="btn-jobtickets-refresh"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh">
-		<wicket:message key="button-refresh" />
-	</a>
-
-	<a href="#" id="btn-jobtickets-back" data-rel="back"
+		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-refresh">
+		<wicket:message key="button-refresh-now" />
+	</a> <a href="#" id="btn-jobtickets-back" data-rel="back"
 		data-direction="reverse"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-back">
 		<wicket:message key="button-back" />
 	</a>
+
+	<div id="jobticket-list" />
+
 </div>
 
 

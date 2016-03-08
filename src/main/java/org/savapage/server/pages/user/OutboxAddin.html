@@ -48,12 +48,12 @@
 		<img wicket:id="img-job" src="" height="16" />
 		<wicket:enclosure child="owner-user-id">
 			<span style="font-weight: bold;" wicket:id="owner-user-id" />
-			&bull;
+			<wicket:enclosure child="owner-user-name">
+                &bull;
+				<span wicket:id="owner-user-name" />
+			</wicket:enclosure>
+			<br />
 		</wicket:enclosure>
-		<wicket:enclosure child="owner-user-name">
-			<span wicket:id="owner-user-name" />
-            &bull;
-        </wicket:enclosure>
 		<span wicket:id="timeSubmit" /> &bull; <span
 			class="sp-outbox-remaining-time" wicket:id="timeExpiry" /> &bull; <span
 			wicket:id="totals" />

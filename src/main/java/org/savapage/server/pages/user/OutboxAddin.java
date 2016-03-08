@@ -22,11 +22,14 @@
 package org.savapage.server.pages.user;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -48,6 +51,7 @@ import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.DateUtil;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
@@ -145,11 +149,30 @@ public class OutboxAddin extends AbstractUserPage {
              * Fixed attributes.
              */
             item.add(new Label("printer", printerDisplayName));
+
             item.add(new Label("timeSubmit",
                     job.getLocaleInfo().getSubmitTime()));
-            item.add(new Label("timeExpiry",
-                    job.getLocaleInfo().getExpiryTime()));
 
+            //
+            labelWlk = new Label("timeExpiry",
+                    job.getLocaleInfo().getExpiryTime());
+
+            final long now = System.currentTimeMillis();
+            final String cssClass;
+
+            if (job.getExpiryTime() < now) {
+                cssClass = MarkupHelper.CSS_TXT_ERROR;
+            } else if (job.getExpiryTime()
+                    - now < DateUtil.DURATION_MSEC_HOUR) {
+                cssClass = MarkupHelper.CSS_TXT_WARN;
+            } else {
+                cssClass = MarkupHelper.CSS_TXT_VALID;
+            }
+
+            MarkupHelper.modifyLabelAttr(labelWlk, "class", cssClass);
+            item.add(labelWlk);
+
+            //
             final StringBuilder imgSrc = new StringBuilder();
 
             //
@@ -405,7 +428,40 @@ public class OutboxAddin extends AbstractUserPage {
             /*
              * Job Tickets mix-in.
              */
-            for (final OutboxJobDto dto : JOBTICKET_SERVICE.getTickets()) {
+            final Long userKey =
+                    parms.getParameterValue("userKey").toOptionalLong();
+
+            final boolean expiryAsc = BooleanUtils.isTrue(
+                    parms.getParameterValue("expiryAsc").toOptionalBoolean());
+
+            final List<OutboxJobDto> tickets;
+
+            if (userKey == null) {
+                tickets = JOBTICKET_SERVICE.getTickets();
+            } else {
+                tickets = JOBTICKET_SERVICE.getTickets(userKey);
+            }
+
+            Collections.sort(tickets, new Comparator<OutboxJobDto>() {
+                @Override
+                public int compare(final OutboxJobDto left,
+                        final OutboxJobDto right) {
+                    final int ret;
+                    if (left.getExpiryTime() < right.getExpiryTime()) {
+                        ret = -1;
+                    } else if (left.getExpiryTime() > right.getExpiryTime()) {
+                        ret = 1;
+                    } else {
+                        ret = 0;
+                    }
+                    if (expiryAsc) {
+                        return ret;
+                    }
+                    return -ret;
+                }
+            });
+
+            for (final OutboxJobDto dto : tickets) {
                 outboxInfo.addJob(dto.getFile(), dto);
             }
 

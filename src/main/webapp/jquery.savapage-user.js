@@ -1556,11 +1556,11 @@
 				});
 
 				$(this).on('click', '.sp-outbox-preview-job', null, function() {
-					_api.download("pdf-outbox", null, $(this).attr('data-savapage'));					
+					_api.download("pdf-outbox", null, $(this).attr('data-savapage'));
 					return false;
 				});
 				$(this).on('click', '.sp-outbox-preview-jobticket', null, function() {
-					_api.download("pdf-jobticket", null, $(this).attr('data-savapage'));					
+					_api.download("pdf-jobticket", null, $(this).attr('data-savapage'));
 					return false;
 				});
 
@@ -3255,8 +3255,8 @@
 					sel.val('');
 					_onQuickPrinterSearch($("#sp-print-qs-printer-filter"), "");
 				}
-				
-				_view.visible($('.sp-jobticket'), _model.myPrinter.jobTicket); 
+
+				_view.visible($('.sp-jobticket'), _model.myPrinter.jobTicket);
 			}
 			//
 			, _isDelegatedPrint = function() {
@@ -3307,7 +3307,10 @@
 			this.clearInput = function() {
 				$('#slider-print-copies').val(1).slider("refresh");
 				$('#print-page-ranges').val('');
-				$('#sp-jobticket-remark').val('');				
+				$('#sp-jobticket-remark').val('');
+				$('#sp-jobticket-date').val('');
+				$('#sp-jobticket-hrs').val('');
+				$('#sp-jobticket-min').val('');
 				if (!$('#delete-pages-after-print')[0].disabled) {
 					_view.checkCb("#delete-pages-after-print", false);
 				}
@@ -5191,10 +5194,17 @@
 			 */
 			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint, collate, isDelegation) {
 
-				var res, sel, cost, visible;
+				var res, sel, cost, visible, date, present, jobTicketDate;
 
 				if (_saveSelectedletterhead('#print-letterhead-list')) {
 					return;
+				}
+
+				if (_model.myPrinter.jobTicket) {
+					sel = $('#sp-jobticket-date');
+					date = _view.mobipickGetDate(sel);
+					present = (sel.val().length > 0);
+					jobTicketDate = ( present ? date.getTime() : null);
 				}
 
 				_model.myPrintTitle = $('#print-title').val();
@@ -5217,6 +5227,9 @@
 						options : _model.myPrinterOpt,
 						delegation : isDelegation ? _model.printDelegation : null,
 						jobTicket : _model.myPrinter.jobTicket,
+						jobTicketDate : jobTicketDate,
+						jobTicketHrs : _model.myPrinter.jobTicket ? $('#sp-jobticket-hrs').val() : null,
+						jobTicketMin : _model.myPrinter.jobTicket ? $('#sp-jobticket-min').val() : null,
 						jobTicketRemark : _model.myPrinter.jobTicket ? $('#sp-jobticket-remark').val() : null
 					})
 				});

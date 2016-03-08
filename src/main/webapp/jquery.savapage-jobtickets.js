@@ -455,6 +455,11 @@
 					});
 				});
 
+				$(document).on('click', '.sp-collapse', null, function() {
+					$(this).closest('[data-role=collapsible]').collapsible('collapse');
+					return false;
+				});
+
 			};
 		};
 
