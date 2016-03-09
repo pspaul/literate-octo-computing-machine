@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ import org.savapage.core.dao.helpers.UserGroupPagerReq;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -165,24 +166,26 @@ public final class UserGroupsPage extends AbstractAdminListPage {
                 labelWrk = new Label("button-edit",
                         getLocalizer().getString("button-edit", this));
 
-                labelWrk.add(new AttributeModifier("data-savapage",
-                        userGroup.getId()));
+                labelWrk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, userGroup.getId()));
 
                 item.add(labelWrk);
 
                 //
                 labelWrk = new Label("button-users",
                         getLocalizer().getString("button-users", this));
-                labelWrk.add(new AttributeModifier("data-savapage",
-                        userGroup.getId()));
+                labelWrk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, userGroup.getId()));
                 item.add(labelWrk);
 
                 //
                 labelWrk = new Label("button-account",
                         getLocalizer().getString("button-account", this));
-                labelWrk.add(new AttributeModifier("data-savapage",
-                        userGroup.getGroupName()));
-                labelWrk.add(new AttributeModifier("data-savapage-type",
+                labelWrk.add(
+                        new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                userGroup.getGroupName()));
+                labelWrk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE_TYPE,
                         AccountTypeEnum.GROUP.toString()));
                 item.add(labelWrk);
 

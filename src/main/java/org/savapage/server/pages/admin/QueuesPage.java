@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -457,8 +457,8 @@ public final class QueuesPage extends AbstractAdminListPage {
                  */
                 labelWrk = new Label("button-log",
                         getLocalizer().getString("button-log", this));
-                labelWrk.add(
-                        new AttributeModifier("data-savapage", queue.getId()));
+                labelWrk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, queue.getId()));
                 item.add(labelWrk);
 
                 /*
@@ -468,7 +468,8 @@ public final class QueuesPage extends AbstractAdminListPage {
                 if (reservedQueue == null || reservedQueue.isDriverPrint()) {
                     helper.encloseLabel("button-edit",
                             getLocalizer().getString("button-edit", this), true)
-                            .add(new AttributeModifier("data-savapage",
+                            .add(new AttributeModifier(
+                                    MarkupHelper.ATTR_DATA_SAVAPAGE,
                                     queue.getId()));
 
                 } else {

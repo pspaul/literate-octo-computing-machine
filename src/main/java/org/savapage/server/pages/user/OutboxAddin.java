@@ -244,14 +244,16 @@ public class OutboxAddin extends AbstractUserPage {
 
             helper.encloseLabel(encloseButtonIdRemove,
                     getLocalizer().getString("button-remove", this), true)
-                    .add(new AttributeModifier("data-savapage", job.getFile()));
+                    .add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
+                            job.getFile()));
 
             if (job.isDrm()) {
                 helper.discloseLabel(encloseButtonIdPreview);
             } else {
                 helper.encloseLabel(encloseButtonIdPreview,
                         getLocalizer().getString("button-preview", this), true)
-                        .add(new AttributeModifier("data-savapage",
+                        .add(new AttributeModifier(
+                                MarkupHelper.ATTR_DATA_SAVAPAGE,
                                 job.getFile()));
             }
             /*
@@ -349,7 +351,8 @@ public class OutboxAddin extends AbstractUserPage {
 
                 helper.encloseLabel("button-jobticket-print",
                         localized("button-print"), true)
-                        .add(new AttributeModifier("data-savapage",
+                        .add(new AttributeModifier(
+                                MarkupHelper.ATTR_DATA_SAVAPAGE,
                                 job.getFile()));
 
                 final org.savapage.core.jpa.User user =

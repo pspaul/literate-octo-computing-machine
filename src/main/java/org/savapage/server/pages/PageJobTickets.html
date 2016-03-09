@@ -44,7 +44,7 @@
 				class="ui-mini">
 
 				<legend>
-					<wicket:message key="prompt-expiry-date" />
+					<wicket:message key="prompt-expiration" />
 				</legend>
 
 				<input type="radio" name="sp-jobticket-sort-dir"
@@ -64,7 +64,8 @@
 
 	</div>
 
-	<div style="width: auto; margin: 10px; height: 5px; background-color: white;">
+	<div
+		style="width: auto; margin: 10px; height: 5px; background-color: white;">
 		<div id='sp-jobticket-countdown'
 			style="width: 0%; height: 100%; background-color: #ededed;" />
 	</div>
@@ -80,6 +81,19 @@
 
 	<div id="jobticket-list" />
 
+</div>
+
+<div data-role="popup" id="sp-jobticket-popup" data-theme="a"
+	data-overlay-theme="a" data-arrow="l">
+
+	<div role="main" class="ui-content">
+		<h3 class="ui-title" id="sp-jobticket-popup-title">Job Ticket</h3>
+
+		<div id="sp-jobticket-popup-addin"/>
+		
+		<a href="#" data-rel="back"
+			class="ui-btn ui-mini ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" />
+	</div>
 </div>
 
 

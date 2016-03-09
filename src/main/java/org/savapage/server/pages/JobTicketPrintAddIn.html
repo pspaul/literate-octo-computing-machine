@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <http://savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
+
+<legend class="sp-txt-wrap">
+	<wicket:message key="prompt-header" />
+</legend>
+<br />
+
+<div class="ui-field-contain ui-mini">
+	<fieldset data-role="controlgroup">
+		<wicket:fragment wicket:id="printer-radio">
+			<label for="the-id" wicket:id="label"/>
+			<input type="radio" name="sp-jobticket-redirect-printer"
+				wicket:id="input" id="the-id" value="the-printer-key" />
+		</wicket:fragment>
+	</fieldset>
+</div>
+<br />
+<a href="#" id="sp-jobticket-popup-btn-print" wicket:id="btn-print"
+	class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
+

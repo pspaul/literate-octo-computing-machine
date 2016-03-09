@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -193,7 +193,7 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 /**
  * Implements the private JSON interface of the Server.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public final class JsonApiServer extends AbstractPage {

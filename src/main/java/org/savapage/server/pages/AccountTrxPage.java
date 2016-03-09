@@ -426,7 +426,8 @@ public class AccountTrxPage extends AbstractListPage {
                             localized("button-receipt"), isVisible);
 
                     labelWrk = (Label) item.get("downloadReceipt");
-                    labelWrk.add(new AttributeModifier("data-savapage",
+                    labelWrk.add(new AttributeModifier(
+                            MarkupHelper.ATTR_DATA_SAVAPAGE,
                             accountTrx.getId().toString()));
                 }
 

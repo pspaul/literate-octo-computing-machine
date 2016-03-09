@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -408,8 +408,8 @@ public final class DevicesPage extends AbstractAdminListPage {
                  */
                 labelWrk = new Label("button-edit",
                         getLocalizer().getString("button-edit", this));
-                labelWrk.add(
-                        new AttributeModifier("data-savapage", device.getId()));
+                labelWrk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, device.getId()));
                 item.add(labelWrk);
 
             }

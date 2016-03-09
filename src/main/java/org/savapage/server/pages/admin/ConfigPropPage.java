@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ import org.savapage.core.dao.ConfigPropertyDao;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
 import org.savapage.core.jpa.ConfigProperty;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,8 +172,9 @@ public final class ConfigPropPage extends AbstractAdminListPage {
                  */
                 Label labelWrk = new Label("button-edit",
                         getLocalizer().getString("button-edit", this));
-                labelWrk.add(new AttributeModifier("data-savapage",
-                        prop.getPropertyName()));
+                labelWrk.add(
+                        new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                prop.getPropertyName()));
                 item.add(labelWrk);
 
             }

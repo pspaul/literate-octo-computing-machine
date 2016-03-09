@@ -18,12 +18,13 @@
 <wicket:fragment wicket:id="stats-pages-total" />
 <wicket:fragment wicket:id="environmental-impact" />
 
-<li data-role="list-divider">
-	<wicket:message key="title-financial" />
-</li>
-<li>
-	<wicket:remove>
-		<!--
+<wicket:enclosure child="title-financial">
+
+	<li data-role="list-divider" wicket:id="title-financial"/>
+	
+	<li>
+		<wicket:remove>
+			<!--
     +======================================================================+
     | http://api.jquerymobile.com/table-reflow/
     |  ... to use pre-configured  breakpoint, add the ui-responsive class 
@@ -31,68 +32,67 @@
     |  presentation at 560px (35em)     
     +======================================================================+
     -->
-	</wicket:remove>
-	<table data-role="table" data-mode="reflow"
-		class="ui-responsive table-stroke">
-		<thead>
-			<tr>
-				<th data-priority="1" />
-				<th data-priority="2" />
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<th>
-					<wicket:message key="balance" />
-				</th>
-				<td wicket:id="balance" />
-			</tr>
-			<tr>
-				<th>
-					<wicket:message key="credit-limit" />
-				</th>
-				<td wicket:id="credit-limit" />
-			</tr>
-		</tbody>
-	</table>
+		</wicket:remove>
+		<table data-role="table" data-mode="reflow"
+			class="ui-responsive table-stroke">
+			<thead>
+				<tr>
+					<th data-priority="1" />
+					<th data-priority="2" />
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>
+						<wicket:message key="balance" />
+					</th>
+					<td wicket:id="balance" />
+				</tr>
+				<tr>
+					<th>
+						<wicket:message key="credit-limit" />
+					</th>
+					<td wicket:id="credit-limit" />
+				</tr>
+			</tbody>
+		</table>
 
-	<div data-role="controlgroup" data-type="horizontal">
+		<div data-role="controlgroup" data-type="horizontal">
 
-		<wicket:enclosure child="button-voucher-redeem">
-			<a href="#"
-				class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-plus"
-				wicket:id="button-voucher-redeem" id="button-voucher-redeem-page"
-				title="" />
+			<wicket:enclosure child="button-voucher-redeem">
+				<a href="#"
+					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-plus"
+					wicket:id="button-voucher-redeem" id="button-voucher-redeem-page"
+					title="" />
+			</wicket:enclosure>
+
+			<wicket:enclosure child="button-transfer-credit">
+				<a href="#"
+					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-minus"
+					wicket:id="button-transfer-credit" id="button-transfer-credit-page"
+					title="" />
+			</wicket:enclosure>
+		</div>
+
+		<wicket:enclosure child="header-gateway">
+			<p />
+			<div class="sp-txt-info sp-txt-wrap" wicket:id="header-gateway" />
+			<p />
 		</wicket:enclosure>
 
-		<wicket:enclosure child="button-transfer-credit">
-			<a href="#"
-				class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-minus"
-				wicket:id="button-transfer-credit" id="button-transfer-credit-page"
-				title="" />
-		</wicket:enclosure>
-	</div>
+		<div class="sp-txt-wrap">
 
-	<wicket:enclosure child="header-gateway">
-		<p />
-		<div class="sp-txt-info sp-txt-wrap" wicket:id="header-gateway" />
-		<p />
-	</wicket:enclosure>
+			<span wicket:id="payment-methods"> <a href="#"> <img
+						wicket:id="img-payment-method" class="sp-transfer-money-img"
+						src="" title="" data-payment-gateway="" data-payment-method="" /></a>&nbsp;&nbsp;
+			</span>
 
-	<div class="sp-txt-wrap">
+			<wicket:enclosure child="img-transfer-bitcoin">
+				<a href="#"> <img wicket:id="img-transfer-bitcoin"
+						id="button-transfer-bitcoin-page" src="" />
+				</a>
+			</wicket:enclosure>
 
-		<span wicket:id="payment-methods"> <a href="#"> <img
-					wicket:id="img-payment-method" class="sp-transfer-money-img" src=""
-					title="" data-payment-gateway="" data-payment-method="" /></a>&nbsp;&nbsp;
-		</span>
-
-		<wicket:enclosure child="img-transfer-bitcoin">
-			<a href="#"> <img wicket:id="img-transfer-bitcoin"
-					id="button-transfer-bitcoin-page" src="" />
-			</a>
-		</wicket:enclosure>
-
-	</div>
-
-
-</li>
+		</div>
+	</li>
+</wicket:enclosure>

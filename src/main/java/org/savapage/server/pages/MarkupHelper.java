@@ -50,6 +50,9 @@ import org.savapage.core.ipp.IppJobStateEnum;
  */
 public final class MarkupHelper {
 
+    public static final String ATTR_DATA_SAVAPAGE = "data-savapage";
+    public static final String ATTR_DATA_SAVAPAGE_TYPE = "data-savapage-type";
+
     public static final String CSS_AMOUNT_MIN = "sp-amount-min";
 
     public static final String CSS_TXT_ERROR = "sp-txt-error";
@@ -87,9 +90,8 @@ public final class MarkupHelper {
         this.container = container;
         this.fmNumber =
                 NumberFormat.getInstance(container.getSession().getLocale());
-        this.dfLongDate =
-                DateFormat.getDateInstance(DateFormat.LONG, container
-                        .getSession().getLocale());
+        this.dfLongDate = DateFormat.getDateInstance(DateFormat.LONG,
+                container.getSession().getLocale());
     }
 
     /**
@@ -191,8 +193,8 @@ public final class MarkupHelper {
      *            {@code true} if the checkbox must be checked.
      * @return The added checkbox.
      */
-    public Label labelledCheckbox(final String wicketId,
-            final String attrIdFor, final boolean checked) {
+    public Label labelledCheckbox(final String wicketId, final String attrIdFor,
+            final boolean checked) {
         tagLabel(wicketId + "-label", wicketId, attrIdFor);
         return addCheckbox(wicketId, attrIdFor, checked);
     }
@@ -295,7 +297,8 @@ public final class MarkupHelper {
      * @return The added {@link Label}.
      */
     public Label tagRadio(final String wicketId, final String attrName,
-            final String attrId, final String attrValue, final boolean checked) {
+            final String attrId, final String attrValue,
+            final boolean checked) {
 
         final Label labelWrk = new Label(wicketId);
 
@@ -331,9 +334,8 @@ public final class MarkupHelper {
      */
     public Label tagLabel(final String wicketId, final String localizerKey,
             final String attrFor) {
-        final Label labelWrk =
-                new Label(wicketId, getLocalizer().getString(localizerKey,
-                        container));
+        final Label labelWrk = new Label(wicketId,
+                getLocalizer().getString(localizerKey, container));
         labelWrk.add(new AttributeModifier("for", attrFor));
         add(labelWrk);
         return labelWrk;
@@ -458,8 +460,8 @@ public final class MarkupHelper {
      */
     public static Label appendLabelAttr(final Label label,
             final String attribute, final String value) {
-        label.add(new AttributeAppender(attribute, String.format(" %s",
-                value.trim())));
+        label.add(new AttributeAppender(attribute,
+                String.format(" %s", value.trim())));
         return label;
     }
 

@@ -25,8 +25,10 @@ import java.io.IOException;
 
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.ipp.client.IppConnectException;
+import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
+import org.savapage.core.services.ServiceContext;
 
 /**
  *
@@ -43,6 +45,7 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
     private static class DtoReq extends AbstractDto {
 
         private String jobFileName;
+        private Long printerId;
 
         public String getJobFileName() {
             return jobFileName;
@@ -50,6 +53,14 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
 
         public void setJobFileName(String jobFileName) {
             this.jobFileName = jobFileName;
+        }
+
+        public Long getPrinterId() {
+            return printerId;
+        }
+
+        public void setPrinterId(Long printerId) {
+            this.printerId = printerId;
         }
 
     }
@@ -60,9 +71,19 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
+        final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
+                .findById(dtoReq.getPrinterId());
+
+        if (printer == null) {
+            this.setApiResultText(ApiResultCodeEnum.ERROR, "Printer not found");
+            return;
+        }
+
         try {
-            final OutboxJobDto dto =
-                    JOBTICKET_SERVICE.printTicket(dtoReq.getJobFileName());
+
+            final OutboxJobDto dto = JOBTICKET_SERVICE.printTicket(printer,
+                    dtoReq.getJobFileName());
+
             final String msgKey;
 
             if (dto == null) {

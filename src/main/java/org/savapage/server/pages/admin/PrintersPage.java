@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.PrinterAttrDao;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.AccessControlScopeEnum;
@@ -199,10 +200,13 @@ public final class PrintersPage extends AbstractAdminListPage {
     private class PrintersListView extends PropertyListView<Printer> {
 
         private static final long serialVersionUID = 1L;
+        private final String jobTicketPrinterName;
 
         public PrintersListView(final String id,
                 final List<Printer> entryList) {
             super(id, entryList);
+            this.jobTicketPrinterName = StringUtils.defaultString(ConfigManager
+                    .instance().getConfigValue(Key.JOBTICKET_PROXY_PRINTER));
         }
 
         private String getProxyPrintAuthMode(final Device device) {
@@ -293,41 +297,46 @@ public final class PrintersPage extends AbstractAdminListPage {
             item.add(new Label("displayName"));
 
             labelWrk = new Label("printerName");
-            labelWrk.add(
-                    new AttributeModifier("data-savapage", printer.getId()));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
+                    printer.getId()));
 
             item.add(labelWrk);
 
-            /*
-             * Check Security.
-             */
-            final MutableBoolean terminalSecured = new MutableBoolean();
-            final MutableBoolean readerSecured = new MutableBoolean();
+            final boolean isJobTicketPrinter = this.jobTicketPrinterName
+                    .equalsIgnoreCase(printer.getPrinterName());
+
+            final String imageSrc;
+
             final Map<String, Device> terminalDevices = new HashMap<>();
             final Map<String, Device> readerDevices = new HashMap<>();
 
-            boolean isSecured = PRINTER_SERVICE.checkPrinterSecurity(printer,
-                    terminalSecured, readerSecured, terminalDevices,
-                    readerDevices);
-
-            String imageSrc;
-
-            if (isSecured) {
-                if (terminalSecured.booleanValue()
-                        && readerSecured.booleanValue()) {
-                    imageSrc = "printer-terminal-custom-or-auth-16x16.png";
-                } else if (terminalSecured.booleanValue()) {
-                    imageSrc = "printer-terminal-custom-16x16.png";
-                } else {
-                    imageSrc = "printer-terminal-auth-16x16.png";
-                }
-            } else if (ConfigManager.instance()
-                    .isNonSecureProxyPrinter(printer)) {
-                imageSrc = "printer-terminal-any-16x16.png";
+            if (isJobTicketPrinter) {
+                imageSrc = "printer-jobticket-32x32.png";
             } else {
-                imageSrc = "printer-terminal-none-16x16.png";
-            }
+                final MutableBoolean terminalSecured = new MutableBoolean();
+                final MutableBoolean readerSecured = new MutableBoolean();
 
+                final boolean isSecured = PRINTER_SERVICE.checkPrinterSecurity(
+                        printer, terminalSecured, readerSecured,
+                        terminalDevices, readerDevices);
+
+                if (isSecured) {
+
+                    if (terminalSecured.booleanValue()
+                            && readerSecured.booleanValue()) {
+                        imageSrc = "printer-terminal-custom-or-auth-16x16.png";
+                    } else if (terminalSecured.booleanValue()) {
+                        imageSrc = "printer-terminal-custom-16x16.png";
+                    } else {
+                        imageSrc = "printer-terminal-auth-16x16.png";
+                    }
+                } else if (ConfigManager.instance()
+                        .isNonSecureProxyPrinter(printer)) {
+                    imageSrc = "printer-terminal-any-16x16.png";
+                } else {
+                    imageSrc = "printer-terminal-none-16x16.png";
+                }
+            }
             labelWrk = new Label("printerImage", "");
 
             labelWrk.add(new AttributeModifier("src",
@@ -399,18 +408,16 @@ public final class PrintersPage extends AbstractAdminListPage {
             /*
              * User Groups
              */
-            String userGroups = null;
+            final StringBuilder userGroups = new StringBuilder();
 
             final JsonUserGroupAccess userAccess =
                     PRINTER_SERVICE.getAccessControl(printer);
 
             for (final String userGroup : userAccess.getGroups()) {
-                if (userGroups == null) {
-                    userGroups = "";
-                } else {
-                    userGroups += ", ";
+                if (userGroups.length() > 0) {
+                    userGroups.append(", ");
                 }
-                userGroups += userGroup;
+                userGroups.append(userGroup);
             }
 
             final String userGroupsPrompt;
@@ -428,8 +435,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             labelWrk.add(new AttributeModifier("class", color));
             item.add(labelWrk);
 
-            labelWrk = createVisibleLabel((userGroups != null), "userGroups",
-                    userGroups);
+            labelWrk = createVisibleLabel(userGroups.length() > 0, "userGroups",
+                    userGroups.toString());
             labelWrk.add(new AttributeModifier("class", color));
 
             item.add(labelWrk);
@@ -587,8 +594,8 @@ public final class PrintersPage extends AbstractAdminListPage {
              */
             labelWrk = new Label("button-edit",
                     getLocalizer().getString("button-edit", this));
-            labelWrk.add(
-                    new AttributeModifier("data-savapage", printer.getId()));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
+                    printer.getId()));
             item.add(labelWrk);
 
             /*
@@ -596,8 +603,8 @@ public final class PrintersPage extends AbstractAdminListPage {
              */
             labelWrk = new Label("button-log",
                     getLocalizer().getString("button-log", this));
-            labelWrk.add(
-                    new AttributeModifier("data-savapage", printer.getId()));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
+                    printer.getId()));
             item.add(labelWrk);
 
             /*

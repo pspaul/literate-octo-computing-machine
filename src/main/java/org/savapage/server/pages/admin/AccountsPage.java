@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -278,8 +278,8 @@ public final class AccountsPage extends AbstractAdminListPage {
                 labelWrk = new Label("button-edit",
                         getLocalizer().getString("button-edit", this));
 
-                labelWrk.add(new AttributeModifier("data-savapage",
-                        account.getId()));
+                labelWrk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, account.getId()));
 
                 item.add(labelWrk);
 
@@ -288,8 +288,8 @@ public final class AccountsPage extends AbstractAdminListPage {
                  */
                 labelWrk = new Label("button-transaction",
                         getLocalizer().getString("button-transaction", this));
-                labelWrk.add(new AttributeModifier("data-savapage",
-                        account.getId()));
+                labelWrk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, account.getId()));
                 item.add(labelWrk);
 
                 /*

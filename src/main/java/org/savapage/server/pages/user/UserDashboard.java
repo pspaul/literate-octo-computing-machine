@@ -55,7 +55,7 @@ import org.savapage.server.pages.StatsPageTotalPanel;
  * @author Rijk Ravestein
  *
  */
-public class UserDashboard extends AbstractUserPage {
+public final class UserDashboard extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,10 +74,6 @@ public class UserDashboard extends AbstractUserPage {
      * @throws ParseException
      */
     private void handlePage() {
-
-        final ConfigManager cm = ConfigManager.instance();
-
-        final MarkupHelper helper = new MarkupHelper(this);
 
         final SpSession session = SpSession.get();
 
@@ -104,6 +100,26 @@ public class UserDashboard extends AbstractUserPage {
         /*
          * Accounting.
          */
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        final String keyTitleFinancial = "title-financial";
+        // helper.discloseLabel(keyTitleFinancial);
+        helper.addLabel(keyTitleFinancial, localized(keyTitleFinancial));
+        showAccountingDetails(helper, user);
+    }
+
+    /**
+     *
+     * @param helper
+     *            The {@link MarkupHelper}.
+     * @param user
+     *            The requesting user.
+     */
+    private void showAccountingDetails(final MarkupHelper helper,
+            final org.savapage.core.jpa.User user) {
+
+        final ConfigManager cm = ConfigManager.instance();
+
         final AccountDisplayInfoDto dto =
                 ServiceContext.getServiceFactory().getAccountingService()
                         .getAccountDisplayInfo(user, ServiceContext.getLocale(),

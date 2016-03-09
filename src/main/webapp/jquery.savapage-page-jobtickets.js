@@ -55,7 +55,6 @@
 
 				if (html) {
 					$('#jobticket-list').html(html).enhanceWithin();
-					;
 					$('.sparkline-printout-pie').sparkline('html', {
 						type : 'pie',
 						sliceColors : [_view.colorPrinter, _view.colorSheet]
@@ -101,6 +100,17 @@
 				_refresh();
 			}
 			//
+			, _onPrintPopup = function(jobFileName, positionTo) {
+				var html = _view.getPageHtml('JobTicketPrintAddIn', {
+					jobFileName : jobFileName
+				}) || 'error';
+
+				$('#sp-jobticket-popup-addin').html(html);
+				$('#sp-jobticket-popup').enhanceWithin().popup('open', {
+					positionTo : positionTo
+				});
+			}
+			//
 			;
 
 			$(_self.id()).on('pagecreate', function(event) {
@@ -138,17 +148,7 @@
 
 				}).on('click', '.sp-jobticket-print', null, function() {
 
-					var res = _api.call({
-						request : 'jobticket-print',
-						dto : JSON.stringify({
-							jobFileName : $(this).attr('data-savapage'),
-						})
-					});
-
-					if (res.result.code === "0") {
-						_refresh();
-					}
-					_view.showApiMsg(res);
+					_onPrintPopup($(this).attr('data-savapage'), $(this));
 
 				}).on('change', "input[name='sp-jobticket-sort-dir']", null, function() {
 
@@ -164,8 +164,25 @@
 						return _self.onBack();
 					}
 					return true;
+
+				}).on('click', "#sp-jobticket-popup-btn-print", null, function() {
+					
+					var res = _api.call({
+						request : 'jobticket-print',
+						dto : JSON.stringify({
+							jobFileName : $(this).attr('data-savapage'),
+							printerId : _view.getRadioValue('sp-jobticket-redirect-printer')
+						})
+					});
+
+					if (res.result.code === "0") {
+						$('#sp-jobticket-popup').popup('close');
+						_refresh();
+					}
+					_view.showApiMsg(res);
+
 				});
-				
+
 				_quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);
 
 			}).on("pageshow", function(event, ui) {
