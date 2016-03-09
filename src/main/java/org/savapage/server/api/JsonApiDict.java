@@ -805,7 +805,7 @@ public class JsonApiDict {
         put(REQ_LOGIN, ReqLogin.class, AuthReq.NONE, DbClaim.READ,
                 DbAccess.YES);
 
-        usr(REQ_LOGOUT, DbClaim.NONE, DbAccess.NO);
+        put(REQ_LOGOUT, AuthReq.NONE, DbClaim.NONE, DbAccess.NO);
         usr(REQ_WEBAPP_UNLOAD, DbClaim.NONE, DbAccess.NO);
         put(REQ_WEBAPP_CLOSE_SESSION, AuthReq.NONE, DbClaim.NONE, DbAccess.NO);
 

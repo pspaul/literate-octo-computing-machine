@@ -265,6 +265,13 @@
 			 * Callbacks: page PointOfSale
 			 */
 			_view.pages.pointOfSale.onBack = function() {
+
+				/*
+				 *  Since this method is also called by onPageHide when Back button is pressed.
+				 */
+				if (!_model.user.loggedIn) {
+					return true;
+				}
 				/*
 				 * NOTE: This is the same solution as in the User WebApp.
 				 * See remarks over there.
@@ -281,8 +288,10 @@
 					authToken : _model.authToken.token
 				});
 
+				_model.user.loggedIn = false;
+
 				if (res.result.code !== '0') {
-					//_view.message(res.result.txt);
+					_ns.logger.warn(res.result.txt);
 					_model.setAuthToken(null, null);
 				}
 

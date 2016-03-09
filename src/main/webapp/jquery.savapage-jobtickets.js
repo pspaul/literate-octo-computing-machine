@@ -268,14 +268,21 @@
 			});
 
 			/**
-			 * Callbacks: page PointOfSale
+			 * Callbacks
 			 */
 			_view.pages.jobTickets.onBack = function() {
+
+				/*
+				 *  Since this method is also called by onPageHide when Back button is pressed.
+				 */
+				if (!_model.user.loggedIn) {
+					return true;
+				}
+
 				/*
 				 * NOTE: This is the same solution as in the User WebApp.
 				 * See remarks over there.
 				 */
-
 				/*
 				 * Prevent that BACK button shows private data when disconnected.
 				 * Mantis #108
@@ -287,8 +294,10 @@
 					authToken : _model.authToken.token
 				});
 
+				_model.user.loggedIn = false;
+
 				if (res.result.code !== '0') {
-					//_view.message(res.result.txt);
+					_ns.logger.warn(res.result.txt);
 					_model.setAuthToken(null, null);
 				}
 
