@@ -71,6 +71,12 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
+        if (dtoReq.getPrinterId() == null) {
+            this.setApiResultText(ApiResultCodeEnum.ERROR,
+                    "No printer specified");
+            return;
+        }
+
         final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
                 .findById(dtoReq.getPrinterId());
 

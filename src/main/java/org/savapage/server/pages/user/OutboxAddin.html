@@ -32,7 +32,7 @@
 
 	<div class="sp-txt-wrap">
 		<wicket:enclosure child="title">
-			<span wicket:id="title" style="font-style: italic;" />
+			<span wicket:id="title" style="font-style: italic;" /><p />
 		</wicket:enclosure>
 		<wicket:enclosure child="extSupplier"> &bull;
                 <wicket:enclosure child="extSupplierImg">
@@ -45,14 +45,18 @@
 	</div>
 
 	<div class="sp-txt-wrap">
-		<img wicket:id="img-job" src="" height="16" />
+		<img wicket:id="img-job" src="" height="16" />&nbsp;
 		<wicket:enclosure child="owner-user-id">
-			<span style="font-weight: bold;" wicket:id="owner-user-id" />
-			<wicket:enclosure child="owner-user-name">
+            <wicket:enclosure child="owner-user-name">
+                <span wicket:id="owner-user-name" />
                 &bull;
-				<span wicket:id="owner-user-name" />
+            </wicket:enclosure>
+			<span wicket:id="owner-user-id" />
+			<wicket:enclosure child="owner-user-email">
+				<small>&bull; <a class="sp-plain-info"
+					wicket:id="owner-user-email" /></small>
 			</wicket:enclosure>
-			<br />
+			<p />
 		</wicket:enclosure>
 		<span wicket:id="timeSubmit" /> &bull; <span
 			class="sp-outbox-remaining-time" wicket:id="timeExpiry" /> &bull; <span
@@ -99,16 +103,18 @@
 			wicket:id="jobticket-remark" />
 	</wicket:enclosure>
 
-	<wicket:enclosure child="button-remove-outbox-job">
+	<p />
+
+	<wicket:enclosure child="button-cancel-outbox-job">
 		<a href="#" data-savapage="the-unique-filename"
-			class="sp-outbox-remove-job ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
-			wicket:id="button-remove-outbox-job" />
+			class="sp-outbox-cancel-job ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
+			wicket:id="button-cancel-outbox-job" />
 	</wicket:enclosure>
 
-	<wicket:enclosure child="button-remove-outbox-jobticket">
+	<wicket:enclosure child="button-cancel-outbox-jobticket">
 		<a href="#" data-savapage="the-unique-filename"
-			class="sp-outbox-remove-jobticket ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
-			wicket:id="button-remove-outbox-jobticket" />
+			class="sp-outbox-cancel-jobticket ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
+			wicket:id="button-cancel-outbox-jobticket" />
 	</wicket:enclosure>
 
 	<wicket:enclosure child="button-preview-outbox-job">

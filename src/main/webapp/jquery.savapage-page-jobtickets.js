@@ -39,11 +39,15 @@
 
 			var _page = new _ns.Page(_i18n, _view, "#page-jobtickets", "PageJobTickets")
 			//
-			, _self = _ns.derive(_page), _shown
+			, _self = _ns.derive(_page)
 			//
 			, _countdownCounter, _countdownTimer
 			//
+			, _MODE_PRINT = '0', _MODE_CANCEL = '1'
+			//
 			, _userKey, _expiryAsc = true
+			//
+			, _quickUserSearch = new _ns.QuickUserSearch(_view, _api)
 			//
 			, _refresh = function() {
 
@@ -60,6 +64,8 @@
 						sliceColors : [_view.colorPrinter, _view.colorSheet]
 					});
 				}
+
+				_view.enable($('.sp-jobtickets-all'), $('.sp-outbox-job-entry').length > 0);
 
 				_countdownCounter = 1;
 
@@ -86,8 +92,6 @@
 				}, 100);
 			}
 			//
-			, _quickUserSearch = new _ns.QuickUserSearch(_view, _api)
-			//
 			, _onSelectUser = function(quickUserSelected) {
 				$("#sp-jobticket-userid").val(quickUserSelected.text);
 				_userKey = quickUserSelected.key;
@@ -111,6 +115,57 @@
 				});
 			}
 			//
+			, _cancelJob = function(jobFileName) {
+				return _api.call({
+					request : 'jobticket-delete',
+					dto : JSON.stringify({
+						jobFileName : jobFileName
+					})
+				});
+			}
+			//
+			, _printJob = function(jobFileName, printerId) {
+				return _api.call({
+					request : 'jobticket-print',
+					dto : JSON.stringify({
+						jobFileName : jobFileName,
+						printerId : printerId
+					})
+				});
+			}
+			//
+			, _onProcessAll = function(mode, popup) {
+
+				var logPfx = (mode === _MODE_PRINT ? 'Print' : 'Cancel'), tickets = $('.sp-outbox-cancel-jobticket'), nWlk = 0;
+
+				popup.find('.sp-progress-all-total').html(tickets.length);
+
+				popup.find('.ui-content:eq(0)').hide();
+				popup.find('.ui-content:eq(1)').show();
+
+				tickets.each(function() {
+					var res, msg;
+
+					if (mode === _MODE_PRINT) {
+						res = _printJob($(this).attr('data-savapage'));
+					} else {
+						res = _cancelJob($(this).attr('data-savapage'));
+					}
+					
+					popup.find('.sp-progress-all-ordinal').html(++nWlk);
+
+					if (res.result.code !== "0") {
+						msg = res.result.txt || 'error';
+						_ns.logger.warn(logPfx + ' Job Ticket error: ' + msg);
+						popup.find('.sp-progress-all-error').append(msg + '</br>');
+					}
+				});
+
+				_refresh();
+
+				popup.popup('close');
+			}
+			//
 			;
 
 			$(_self.id()).on('pagecreate', function(event) {
@@ -123,74 +178,80 @@
 					return false;
 				});
 
-				$(this).on('click', '.sp-outbox-remove-jobticket', null, function() {
-					var res = _api.call({
-						request : 'jobticket-delete',
-						dto : JSON.stringify({
-							jobFileName : $(this).attr('data-savapage'),
-						})
-					});
-
+				$(this).on('click', '.sp-outbox-cancel-jobticket', null, function() {
+					var res = _cancelJob($(this).attr('data-savapage'));
 					if (res.result.code === "0") {
 						_refresh();
 					}
 					_view.showApiMsg(res);
 
 				}).on('click', '.sp-outbox-preview-job', null, function() {
-
 					_api.download("pdf-outbox", null, $(this).attr('data-savapage'));
 					return false;
 
 				}).on('click', '.sp-outbox-preview-jobticket', null, function() {
-
 					_api.download("pdf-jobticket", null, $(this).attr('data-savapage'));
 					return false;
 
 				}).on('click', '.sp-jobticket-print', null, function() {
-
 					_onPrintPopup($(this).attr('data-savapage'), $(this));
 
 				}).on('change', "input[name='sp-jobticket-sort-dir']", null, function() {
-
 					_expiryAsc = $(this).attr('id') === 'sp-jobticket-sort-dir-asc';
 					_refresh();
 					return false;
 
-				}).on('click', "#btn-jobtickets-back", null, function() {
+				}).on('click', '#btn-jobtickets-cancel-all', null, function() {
+					var dlg = $('#sp-jobticket-popup-cancel-all');
+
+					dlg.find('.ui-content:eq(1)').hide();
+					dlg.find('.ui-content:eq(0)').show();
+
+					dlg.popup('open', {
+						positionTo : $(this)
+					});
+					$("#sp-jobticket-popup-cancel-all-btn-no").focus();
+
+				}).on('click', '#btn-jobtickets-print-all', null, function() {
+					var dlg = $('#sp-jobticket-popup-print-all');
+
+					dlg.find('.ui-content:eq(1)').hide();
+					dlg.find('.ui-content:eq(0)').show();
+
+					dlg.popup('open', {
+						positionTo : $(this)
+					});
+					$("#sp-jobticket-popup-print-all-btn-no").focus();
+
+				}).on('click', "#sp-jobticket-popup-cancel-all-btn-yes", null, function() {
+					_onProcessAll(_MODE_CANCEL, $('#sp-jobticket-popup-cancel-all'));
+
+				}).on('click', "#sp-jobticket-popup-print-all-btn-yes", null, function() {
+					_onProcessAll(_MODE_PRINT, $('#sp-jobticket-popup-print-all'));
+
+				}).on('click', "#btn-jobtickets-close", null, function() {
 					/*
-					 *  onBack() is injected by the Job Ticket Web App, but not by the Admin Web App host of this page.
+					 *  onClose() is injected by the Job Ticket Web App, but not by the Admin Web App host of this page.
 					 */
-					if (_self.onBack) {
-						return _self.onBack();
+					if (_self.onClose) {
+						return _self.onClose();
 					}
 					return true;
 
 				}).on('click', "#sp-jobticket-popup-btn-print", null, function() {
-					
-					var res = _api.call({
-						request : 'jobticket-print',
-						dto : JSON.stringify({
-							jobFileName : $(this).attr('data-savapage'),
-							printerId : _view.getRadioValue('sp-jobticket-redirect-printer')
-						})
-					});
-
+					var res = _printJob($(this).attr('data-savapage'), _view.getRadioValue('sp-jobticket-redirect-printer'));
 					if (res.result.code === "0") {
 						$('#sp-jobticket-popup').popup('close');
 						_refresh();
 					}
 					_view.showApiMsg(res);
-
 				});
 
 				_quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);
 
 			}).on("pageshow", function(event, ui) {
-				if (!_shown) {
-					_initCountdownTimer();
-					_shown = true;
-					_refresh();
-				}
+				_initCountdownTimer();
+				_refresh();
 			}).on("pagehide", function(event, ui) {
 				_clearCountdownTimer();
 			});

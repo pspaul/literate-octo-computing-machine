@@ -70,14 +70,28 @@
 			style="width: 0%; height: 100%; background-color: #ededed;" />
 	</div>
 
-	<a href="#" id="btn-jobtickets-refresh"
+	<button id="btn-jobtickets-refresh"
 		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-refresh">
 		<wicket:message key="button-refresh-now" />
-	</a> <a href="#" id="btn-jobtickets-back" data-rel="back"
+	</button>
+	<!--  -->
+	<button id="btn-jobtickets-cancel-all" data-rel="popup"
+		class="ui-btn ui-mini ui-btn-inline sp-jobtickets-all">
+		<wicket:message key="button-cancel-all" />
+		. . .
+	</button>
+	<!--  -->
+	<button id="btn-jobtickets-print-all" data-rel="popup"
+		class="ui-btn ui-mini ui-btn-inline sp-jobtickets-all">
+		<wicket:message key="button-print-all" />
+		. . .
+	</button>
+	<!--  -->
+	<button id="btn-jobtickets-close" data-rel="back"
 		data-direction="reverse"
-		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-back">
-		<wicket:message key="button-back" />
-	</a>
+		class="ui-btn ui-mini ui-btn-inline ui-icon-none">
+		<wicket:message key="button-close" />
+	</button>
 
 	<div id="jobticket-list" />
 
@@ -85,17 +99,77 @@
 
 <div data-role="popup" id="sp-jobticket-popup" data-theme="a"
 	data-overlay-theme="a" data-arrow="l">
-
-	<div role="main" class="ui-content">
-		<h3 class="ui-title" id="sp-jobticket-popup-title">Job Ticket</h3>
-
-		<div id="sp-jobticket-popup-addin"/>
-		
+	<div class="ui-content">
+		<h3 class="ui-title" id="sp-jobticket-popup-title">
+			<wicket:message key="title-print-popup" />
+		</h3>
+		<div id="sp-jobticket-popup-addin" />
 		<a href="#" data-rel="back"
 			class="ui-btn ui-mini ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" />
 	</div>
 </div>
 
+<div data-role="popup" id="sp-jobticket-popup-cancel-all"
+	data-overlay-theme="a" data-theme="a" data-dismissible="false"
+	data-arrow="t">
+	    
+	<div class="ui-content">
+		<p class="ui-title">
+			<wicket:message key="prompt-cancel-all" />
+		</p>
+
+		<p class="sp-txt-warn">
+			<wicket:message key="warn-cancel-all" />
+		</p>
+
+		<a href="#" id="sp-jobticket-popup-cancel-all-btn-no"
+			class="ui-btn ui-btn-inline" data-rel="back"> <wicket:message
+				key="button-no-rather-not" />
+		</a>
+		<!--  -->
+		<button id="sp-jobticket-popup-cancel-all-btn-yes"
+			class="ui-btn ui-mini ui-btn-inline">
+			<wicket:message key="button-cancel-all-yes" />
+		</button>
+	</div>
+
+	<div class="ui-content">
+		Cancelled Job Ticket <span class="sp-progress-all-ordinal" /> of <span
+			class="sp-progress-all-total" />
+		<div class="sp-progress-all-error sp-txt-error" />
+	</div>
+</div>
+
+<div data-role="popup" id="sp-jobticket-popup-print-all"
+	data-overlay-theme="a" data-theme="a" data-dismissible="false"
+	data-arrow="t">
+	    
+	<div class="ui-content">
+		<p class="ui-title">
+			<wicket:message key="prompt-print-all" />
+		</p>
+
+		<p class="sp-txt-valid">
+			<wicket:message key="info-print-all" />
+		</p>
+
+		<a href="#" id="sp-jobticket-popup-print-all-btn-no"
+			class="ui-btn ui-btn-inline" data-rel="back"> <wicket:message
+				key="button-no-rather-not" />
+		</a>
+		<!--  -->
+		<button id="sp-jobticket-popup-print-all-btn-yes"
+			class="ui-btn ui-mini ui-btn-inline">
+			<wicket:message key="button-print-all-yes" />
+		</button>
+	</div>
+
+	<div class="ui-content">
+		Printed Job Ticket <span class="sp-progress-all-ordinal" /> of <span
+			class="sp-progress-all-total" />
+		<div class="sp-progress-all-error sp-txt-error" />
+	</div>
+</div>
 
 <wicket:remove>
 	<!-- 

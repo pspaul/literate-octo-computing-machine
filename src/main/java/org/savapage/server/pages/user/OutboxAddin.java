@@ -51,6 +51,7 @@ import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserService;
 import org.savapage.core.util.DateUtil;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
@@ -91,6 +92,12 @@ public class OutboxAddin extends AbstractUserPage {
      */
     private static final JobTicketService JOBTICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
+
+    /**
+     * .
+     */
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      * .
@@ -231,19 +238,19 @@ public class OutboxAddin extends AbstractUserPage {
             final String encloseButtonIdPreview;
 
             if (isJobTicketItem) {
-                helper.discloseLabel("button-remove-outbox-job");
+                helper.discloseLabel("button-cancel-outbox-job");
                 helper.discloseLabel("button-preview-outbox-job");
-                encloseButtonIdRemove = "button-remove-outbox-jobticket";
+                encloseButtonIdRemove = "button-cancel-outbox-jobticket";
                 encloseButtonIdPreview = "button-preview-outbox-jobticket";
             } else {
-                helper.discloseLabel("button-remove-outbox-jobticket");
+                helper.discloseLabel("button-cancel-outbox-jobticket");
                 helper.discloseLabel("button-preview-outbox-jobticket");
-                encloseButtonIdRemove = "button-remove-outbox-job";
+                encloseButtonIdRemove = "button-cancel-outbox-job";
                 encloseButtonIdPreview = "button-preview-outbox-job";
             }
 
             helper.encloseLabel(encloseButtonIdRemove,
-                    getLocalizer().getString("button-remove", this), true)
+                    getLocalizer().getString("button-cancel", this), true)
                     .add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
                             job.getFile()));
 
@@ -350,7 +357,8 @@ public class OutboxAddin extends AbstractUserPage {
             if (this.isJobticketView && job.getUserId() != null) {
 
                 helper.encloseLabel("button-jobticket-print",
-                        localized("button-print"), true)
+                        String.format("%s . . .", localized("button-print")),
+                        true)
                         .add(new AttributeModifier(
                                 MarkupHelper.ATTR_DATA_SAVAPAGE,
                                 job.getFile()));
@@ -367,6 +375,18 @@ public class OutboxAddin extends AbstractUserPage {
                     helper.encloseLabel("owner-user-id", user.getUserId(),
                             true);
                     mapVisible.put("owner-user-name", user.getFullName());
+
+                    final String email =
+                            USER_SERVICE.getPrimaryEmailAddress(user);
+
+                    if (StringUtils.isBlank(email)) {
+                        helper.discloseLabel("owner-user-email");
+                    } else {
+                        labelWlk = helper.encloseLabel("owner-user-email",
+                                email, true);
+                        MarkupHelper.appendLabelAttr(labelWlk, "href",
+                                String.format("mailto:%s", email));
+                    }
                 }
             } else {
                 helper.discloseLabel("owner-user-id");

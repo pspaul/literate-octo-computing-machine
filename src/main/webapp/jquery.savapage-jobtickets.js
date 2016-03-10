@@ -270,7 +270,7 @@
 			/**
 			 * Callbacks
 			 */
-			_view.pages.jobTickets.onBack = function() {
+			_view.pages.jobTickets.onClose = function() {
 
 				/*
 				 *  Since this method is also called by onPageHide when Back button is pressed.
@@ -307,7 +307,7 @@
 			};
 
 			_view.pages.jobTickets.onPageHide = function() {
-				_view.pages.jobTickets.onBack();
+				_view.pages.jobTickets.onClose();
 			};
 
 		};

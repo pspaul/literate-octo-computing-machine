@@ -1540,14 +1540,14 @@
 					return _close();
 				});
 
-				$(this).on('click', '.sp-outbox-remove-job', null, function() {
+				$(this).on('click', '.sp-outbox-cancel-job', null, function() {
 					_this.onOutboxDeleteJob($(this).attr('data-savapage'), false);
 					if (_model.user.stats.outbox.jobCount > 0) {
 						return _refresh();
 					}
 					return _close();
 				});
-				$(this).on('click', '.sp-outbox-remove-jobticket', null, function() {
+				$(this).on('click', '.sp-outbox-cancel-jobticket', null, function() {
 					_this.onOutboxDeleteJob($(this).attr('data-savapage'), true);
 					if (_model.user.stats.outbox.jobCount > 0) {
 						return _refresh();

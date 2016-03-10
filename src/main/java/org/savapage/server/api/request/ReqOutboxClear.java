@@ -43,11 +43,11 @@ public final class ReqOutboxClear extends ApiRequestMixin {
         final String msgKey;
 
         if (jobCount == 0) {
-            msgKey = "msg-outbox-cleared-none";
+            msgKey = "msg-outbox-cancelled-none";
         } else if (jobCount == 1) {
-            msgKey = "msg-outbox-cleared-one";
+            msgKey = "msg-outbox-cancelled-one";
         } else {
-            msgKey = "msg-outbox-cleared-multiple";
+            msgKey = "msg-outbox-cancelled-multiple";
         }
 
         this.setApiResult(ApiResultCodeEnum.OK, msgKey,

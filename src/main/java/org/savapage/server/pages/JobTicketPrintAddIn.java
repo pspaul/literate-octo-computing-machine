@@ -234,6 +234,12 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
             return printerList;
         }
 
+        final boolean colorJob = job.isColorJob();
+        final boolean duplexJob = job.isDuplexJob();
+
+        int iPreferred = -1;
+        int iPrinter = 0;
+
         for (final PrinterGroupMember member : printerGroup.getMembers()) {
 
             final Printer printer = member.getPrinter();
@@ -250,11 +256,24 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
             /*
              * Check compatibility.
              */
-            if (job.isColorJob() && !cupsPrinter.getColorDevice()) {
+            if (duplexJob && !cupsPrinter.getDuplexDevice()) {
                 continue;
             }
-            if (job.isDuplexJob() && !cupsPrinter.getDuplexDevice()) {
+
+            final boolean colorPrinter = cupsPrinter.getColorDevice();
+
+            if (colorJob && !colorPrinter) {
                 continue;
+            }
+
+            if (iPreferred < 0) {
+                if (colorJob) {
+                    if (colorPrinter) {
+                        iPreferred = iPrinter;
+                    }
+                } else if (!colorPrinter) {
+                    iPreferred = iPrinter;
+                }
             }
 
             final RedirectPrinter redirectPrinter = new RedirectPrinter();
@@ -262,10 +281,12 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
 
             redirectPrinter.setId(printer.getId());
             redirectPrinter.setName(printer.getDisplayName());
+
+            iPrinter++;
         }
 
-        if (!printerList.isEmpty()) {
-            printerList.get(0).setPreferred(true);
+        if (!printerList.isEmpty() && iPreferred >= 0) {
+            printerList.get(iPreferred).setPreferred(true);
         }
         //
         return printerList;

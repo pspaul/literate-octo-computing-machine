@@ -68,9 +68,9 @@ public final class ReqJobTicketDelete extends ApiRequestMixin {
         final String msgKey;
 
         if (dto == null) {
-            msgKey = "msg-outbox-removed-jobticket-none";
+            msgKey = "msg-outbox-cancelled-jobticket-none";
         } else {
-            msgKey = "msg-outbox-removed-jobticket";
+            msgKey = "msg-outbox-cancelled-jobticket";
             notifyUser(dto.getUserId());
         }
 
@@ -96,7 +96,6 @@ public final class ReqJobTicketDelete extends ApiRequestMixin {
                     ServiceContext.getTransactionDate(),
                     UserMsgIndicator.Msg.JOBTICKET_DENIED, null);
         }
-
     }
 
 }

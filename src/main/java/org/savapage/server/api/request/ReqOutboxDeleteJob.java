@@ -96,9 +96,9 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
 
         if (OUTBOX_SERVICE.removeOutboxJob(lockedUser.getUserId(),
                 dtoReq.getJobFileName())) {
-            return "msg-outbox-removed-job";
+            return "msg-outbox-cancelled-job";
         }
-        return "msg-outbox-removed-job-none";
+        return "msg-outbox-cancelled-job-none";
     }
 
     /**
@@ -114,9 +114,9 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
 
         if (JOBTICKET_SERVICE.removeTicket(lockedUser.getId(),
                 dtoReq.getJobFileName()) == null) {
-            return "msg-outbox-removed-jobticket-none";
+            return "msg-outbox-cancelled-jobticket-none";
         }
-        return "msg-outbox-removed-jobticket";
+        return "msg-outbox-cancelled-jobticket";
     }
 
 }
