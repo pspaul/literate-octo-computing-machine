@@ -75,7 +75,6 @@ public final class ReqJobTicketDelete extends ApiRequestMixin {
         }
 
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);
-
     }
 
     /**

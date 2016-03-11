@@ -134,36 +134,38 @@
 				});
 			}
 			//
-			, _onProcessAll = function(mode, popup) {
+			, _onProcessAll = function(mode) {
 
-				var logPfx = (mode === _MODE_PRINT ? 'Print' : 'Cancel'), tickets = $('.sp-outbox-cancel-jobticket'), nWlk = 0;
-
-				popup.find('.sp-progress-all-total').html(tickets.length);
+				var logPfx = (mode === _MODE_PRINT ? 'Print' : 'Cancel')
+				//
+				, popup = (mode === _MODE_PRINT ? $('#sp-jobticket-popup-print-all') : $('#sp-jobticket-popup-cancel-all'))
+				//
+				, tickets = $('.sp-outbox-cancel-jobticket');
 
 				popup.find('.ui-content:eq(0)').hide();
 				popup.find('.ui-content:eq(1)').show();
 
-				tickets.each(function() {
-					var res, msg;
+				// Stalled async execution: long enough to show the busy message to user.
+				window.setTimeout(function() {
+					tickets.each(function() {
 
-					if (mode === _MODE_PRINT) {
-						res = _printJob($(this).attr('data-savapage'));
-					} else {
-						res = _cancelJob($(this).attr('data-savapage'));
-					}
-					
-					popup.find('.sp-progress-all-ordinal').html(++nWlk);
+						var res, msg;
 
-					if (res.result.code !== "0") {
-						msg = res.result.txt || 'error';
-						_ns.logger.warn(logPfx + ' Job Ticket error: ' + msg);
-						popup.find('.sp-progress-all-error').append(msg + '</br>');
-					}
-				});
+						if (mode === _MODE_PRINT) {
+							res = _printJob($(this).attr('data-savapage'));
+						} else {
+							res = _cancelJob($(this).attr('data-savapage'));
+						}
 
-				_refresh();
-
-				popup.popup('close');
+						if (res && res.result.code !== "0") {
+							msg = res.result.txt || 'unknown';
+							_ns.logger.warn(logPfx + ' Job Ticket error: ' + msg);
+							popup.find('.sp-progress-all-error').append(msg + '</br>');
+						}
+					});
+					_refresh();
+					popup.popup('close');
+				}, 1500);
 			}
 			//
 			;
@@ -223,12 +225,6 @@
 					});
 					$("#sp-jobticket-popup-print-all-btn-no").focus();
 
-				}).on('click', "#sp-jobticket-popup-cancel-all-btn-yes", null, function() {
-					_onProcessAll(_MODE_CANCEL, $('#sp-jobticket-popup-cancel-all'));
-
-				}).on('click', "#sp-jobticket-popup-print-all-btn-yes", null, function() {
-					_onProcessAll(_MODE_PRINT, $('#sp-jobticket-popup-print-all'));
-
 				}).on('click', "#btn-jobtickets-close", null, function() {
 					/*
 					 *  onClose() is injected by the Job Ticket Web App, but not by the Admin Web App host of this page.
@@ -245,6 +241,10 @@
 						_refresh();
 					}
 					_view.showApiMsg(res);
+				}).on('click', '#sp-jobticket-popup-cancel-all-btn-yes', null, function() {
+					_onProcessAll(_MODE_CANCEL);
+				}).on('click', '#sp-jobticket-popup-print-all-btn-yes', null, function() {
+					_onProcessAll(_MODE_PRINT);
 				});
 
 				_quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);

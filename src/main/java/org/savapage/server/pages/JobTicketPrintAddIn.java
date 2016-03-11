@@ -21,7 +21,6 @@
  */
 package org.savapage.server.pages;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,16 +29,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
-import org.savapage.core.jpa.Printer;
-import org.savapage.core.jpa.PrinterGroup;
-import org.savapage.core.jpa.PrinterGroupMember;
-import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
-import org.savapage.core.print.proxy.JsonProxyPrinter;
+import org.savapage.core.dto.RedirectPrinterDto;
 import org.savapage.core.services.JobTicketService;
-import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 
 /**
@@ -63,49 +55,8 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
     /**
      * .
      */
-    private static final ProxyPrintService PROXYPRINT_SERVICE =
-            ServiceContext.getServiceFactory().getProxyPrintService();
-
-    /**
-     *
-     */
-    private static class RedirectPrinter {
-
-        private Long id;
-        private String name;
-        private boolean preferred;
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public boolean isPreferred() {
-            return preferred;
-        }
-
-        public void setPreferred(boolean preferred) {
-            this.preferred = preferred;
-        }
-
-    }
-
-    /**
-     * .
-     */
     private static class RedirectPrinterListView
-            extends PropertyListView<RedirectPrinter> {
+            extends PropertyListView<RedirectPrinterDto> {
 
         /**
          * .
@@ -120,7 +71,7 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
          *            The item list.
          */
         RedirectPrinterListView(final String id,
-                final List<RedirectPrinter> list) {
+                final List<RedirectPrinterDto> list) {
 
             super(id, list);
         }
@@ -140,9 +91,9 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
         }
 
         @Override
-        protected void populateItem(final ListItem<RedirectPrinter> item) {
+        protected void populateItem(final ListItem<RedirectPrinterDto> item) {
 
-            final RedirectPrinter printer = item.getModelObject();
+            final RedirectPrinterDto printer = item.getModelObject();
 
             final String id = UUID.randomUUID().toString();
 
@@ -187,108 +138,30 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
                     "\"jobFileName\" parameter missing"));
         }
 
-        final OutboxJobDto job;
+        //
+        final List<RedirectPrinterDto> printerList;
 
         try {
-            job = JOBTICKET_SERVICE.getTicket(jobFileName);
+            printerList = JOBTICKET_SERVICE.getRedirectPrinters(jobFileName);
         } catch (Exception e) {
             setResponsePage(
                     new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
             return;
         }
 
-        if (job == null) {
+        if (printerList == null) {
             setResponsePage(new MessageContent(AppLogLevelEnum.WARN,
                     localized("msg-jobticket-not-found")));
             return;
         }
 
-        final MarkupHelper helper = new MarkupHelper(this);
-
-        //
-        helper.addModifyLabelAttr("btn-print", localized("button-print"),
-                MarkupHelper.ATTR_DATA_SAVAPAGE, jobFileName);
-
-        //
-        final List<RedirectPrinter> printerList = this.getRedirectPrinters(job);
-
         add(new RedirectPrinterListView("printer-radio", printerList));
-    }
 
-    /**
-     *
-     * @param jobFileName
-     * @return
-     */
-    private List<RedirectPrinter> getRedirectPrinters(final OutboxJobDto job) {
-
-        final List<RedirectPrinter> printerList = new ArrayList<>();
-
-        final String groupName = ConfigManager.instance()
-                .getConfigValue(Key.JOBTICKET_PROXY_PRINTER_GROUP);
-
-        final PrinterGroup printerGroup = ServiceContext.getDaoContext()
-                .getPrinterGroupDao().findByName(groupName);
-
-        if (printerGroup == null) {
-            return printerList;
-        }
-
-        final boolean colorJob = job.isColorJob();
-        final boolean duplexJob = job.isDuplexJob();
-
-        int iPreferred = -1;
-        int iPrinter = 0;
-
-        for (final PrinterGroupMember member : printerGroup.getMembers()) {
-
-            final Printer printer = member.getPrinter();
-
-            final JsonProxyPrinter cupsPrinter = PROXYPRINT_SERVICE
-                    .getCachedPrinter(printer.getPrinterName());
-
-            if (cupsPrinter == null) {
-                throw new IllegalStateException(
-                        String.format("Printer [%s] not found in cache.",
-                                printer.getPrinterName()));
-            }
-
-            /*
-             * Check compatibility.
-             */
-            if (duplexJob && !cupsPrinter.getDuplexDevice()) {
-                continue;
-            }
-
-            final boolean colorPrinter = cupsPrinter.getColorDevice();
-
-            if (colorJob && !colorPrinter) {
-                continue;
-            }
-
-            if (iPreferred < 0) {
-                if (colorJob) {
-                    if (colorPrinter) {
-                        iPreferred = iPrinter;
-                    }
-                } else if (!colorPrinter) {
-                    iPreferred = iPrinter;
-                }
-            }
-
-            final RedirectPrinter redirectPrinter = new RedirectPrinter();
-            printerList.add(redirectPrinter);
-
-            redirectPrinter.setId(printer.getId());
-            redirectPrinter.setName(printer.getDisplayName());
-
-            iPrinter++;
-        }
-
-        if (!printerList.isEmpty() && iPreferred >= 0) {
-            printerList.get(iPreferred).setPreferred(true);
-        }
         //
-        return printerList;
+        final Label label = new Label("btn-print", localized("button-print"));
+        MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_DATA_SAVAPAGE,
+                jobFileName);
+        add(label);
     }
+
 }

@@ -24,6 +24,7 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.dto.RedirectPrinterDto;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
@@ -71,14 +72,26 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
-        if (dtoReq.getPrinterId() == null) {
+        Long printerId = dtoReq.getPrinterId();
+
+        if (printerId == null) {
+
+            final RedirectPrinterDto dto = JOBTICKET_SERVICE
+                    .getRedirectPrinter(dtoReq.getJobFileName());
+
+            if (dto != null) {
+                printerId = dto.getId();
+            }
+        }
+
+        if (printerId == null) {
             this.setApiResultText(ApiResultCodeEnum.ERROR,
-                    "No printer specified");
+                    "No printer specified or available.");
             return;
         }
 
         final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
-                .findById(dtoReq.getPrinterId());
+                .findById(printerId);
 
         if (printer == null) {
             this.setApiResultText(ApiResultCodeEnum.ERROR, "Printer not found");
