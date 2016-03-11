@@ -65,7 +65,7 @@ String.prototype.vformat = function() {"use strict";
 			LOG_LEVEL : 'sp-log',
 			USER : 'sp-user',
 			LANGUAGE : 'sp-lang',
-			COUNTRY: 'sp-ctry',
+			COUNTRY : 'sp-ctry',
 			LOGIN : 'sp-login'
 		};
 
@@ -248,9 +248,9 @@ String.prototype.vformat = function() {"use strict";
 			//
 			, _log = function(level, args) {
 				if (window.console) {
-					var logger = window.console[level];
+					var logger = window.console[level], now;
 					if (_ns.Utils.isFunction(logger)) {
-						var now = new Date();
+						now = new Date();
 						[].splice.call(args, 0, 0, _zeroPad(now.getHours(), 2) + ':' + _zeroPad(now.getMinutes(), 2) + ':' + _zeroPad(now.getSeconds(), 2) + '.' + _zeroPad(now.getMilliseconds(), 3));
 						logger.apply(window.console, args);
 					}

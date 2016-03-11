@@ -69,7 +69,7 @@
 			}
 			//
 			, _onClearUser = function() {
-
+				$.noop();
 			}
 			//
 			, _clear = function() {

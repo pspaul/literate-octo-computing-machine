@@ -1181,7 +1181,9 @@
 						_view.showApiMsg(res);
 					}
 				} else {
-					_this.onClearUser ? _this.onClearUser() : null;
+					if (_this.onClearUser) {
+						this.onClearUser();
+					}
 				}
 				target.html(html).filterable("refresh");
 			}
@@ -1199,7 +1201,9 @@
 
 				filterableUserId.on("filterablebeforefilter", function(e, data) {
 					e.preventDefault();
-					_this.onQuickSearchBefore ? onQuickSearchBefore() : null;
+					if (_this.onQuickSearchBefore) {
+						onQuickSearchBefore();
+					}
 					_onQuickUserSearch($(this), data.input.get(0).value);
 				});
 
@@ -1207,7 +1211,9 @@
 					var attr = "data-savapage";
 					_quickUserSelected = _quickUserCache[$(this).attr(attr)];
 					filterableUserId.empty().filterable("refresh");
-					_this.onSelectUser ? _this.onSelectUser(_quickUserSelected) : null;
+					if (_this.onSelectUser) {
+						_this.onSelectUser(_quickUserSelected);
+					}
 				});
 
 			};

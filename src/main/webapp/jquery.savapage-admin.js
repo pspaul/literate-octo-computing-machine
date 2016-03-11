@@ -1621,6 +1621,10 @@
 				return _view.pages.admin.commonPwReset('reset-jmx-pw', $('#jmx-pw-new'), $('#jmx-pw-confirm'));
 			};
 
+			_view.pages.jobTickets.onClose = function() {
+				_view.pages.admin.show();
+			};
+
 			/**
 			 *
 			 */
