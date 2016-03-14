@@ -366,6 +366,28 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
+        final boolean isJobTicket = BooleanUtils.isTrue(dtoReq.getJobTicket());
+
+        /*
+         * INVARIANT: when NOT a job ticket the total number of printed pages
+         * MUST be within limits.
+         */
+        if (!isJobTicket && StringUtils.isNotBlank(ConfigManager.instance()
+                .getConfigValue(Key.JOBTICKET_PROXY_PRINTER))) {
+
+            final int totPages = dtoReq.getCopies().intValue() * nPagesPrinted;
+
+            final int maxPages = ConfigManager.instance()
+                    .getConfigInt(Key.JOBTICKET_THRESHOLD_PAGE_TOTAL);
+
+            if (totPages > maxPages) {
+                setApiResult(ApiResultCodeEnum.WARN,
+                        "msg-print-exceeds-jobticket-pagelimit",
+                        String.valueOf(totPages), String.valueOf(maxPages));
+                return;
+            }
+        }
+
         /*
          * Inspect the user printer options.
          */
@@ -517,7 +539,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         /*
          * Job Ticket?
          */
-        if (BooleanUtils.isTrue(dtoReq.getJobTicket())) {
+        if (isJobTicket) {
+
             printReq.setComment(dtoReq.getJobTicketRemark());
 
             Date deliveryDate;

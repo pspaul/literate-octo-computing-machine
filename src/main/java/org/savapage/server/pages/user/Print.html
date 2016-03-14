@@ -99,13 +99,26 @@
 				<input type="text" data-clear-btn="true" id="print-title" value="" />
 			</div>
 
-			<div class="ui-field-contain">
+			<div class="ui-field-contain" id="slider-print-copies-div">
 				<label for="slider-print-copies">
 					<wicket:message key="print-copies" />
 				</label>
 				<input type="range" id="slider-print-copies"
 					wicket:id="slider-print-copies" value="1" min="1" max="<var>" />
-				<label id="delegated-print-copies" style="display: none" />
+			</div>
+
+			<div class="ui-field-contain" id="number-print-copies-div">
+				<label for="number-print-copies">
+					<wicket:message key="print-copies" />
+				</label>
+				<input type="number" id="number-print-copies" value="1" min="1" />
+			</div>
+
+			<div class="ui-field-contain" id="delegated-print-copies-div">
+				<label for="delegated-print-copies">
+					<wicket:message key="print-copies" />
+				</label>
+				<input type="text" id="delegated-print-copies" disabled />
 			</div>
 
 			<div class="ui-field-contain">
@@ -211,7 +224,8 @@
 	<button id="button-print-and-close"
 		class="ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
 		<wicket:message key="button-print-and-close" />
-	</button> <a href="#" data-rel="back" data-direction="reverse"
+	</button>
+	<a href="#" data-rel="back" data-direction="reverse"
 		id="button-printer-back"
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
 			key="button-back" />
@@ -239,8 +253,8 @@ POPUP for Proxy Print Authentication
 		<p>
 			<wicket:message key="auth-popup-message" />
 		</p>
-		<button id="sp-button-print-auth-cancel"
-			class="ui-btn ui-btn-inline"> <wicket:message key="button-cancel" />
+		<button id="sp-button-print-auth-cancel" class="ui-btn ui-btn-inline">
+			<wicket:message key="button-cancel" />
 		</button>
 	</div>
 

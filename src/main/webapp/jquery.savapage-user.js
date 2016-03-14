@@ -3270,17 +3270,22 @@
 			//
 			, _setVisibility = function() {
 
-				var selCollate = $(".print-collate"), copies, delegatedPrint = _isDelegatedPrint();
+				var selCollate = $(".print-collate"), copies, delegatedPrint = _isDelegatedPrint()
+				//
+				, jobTicket = _model.myPrinter && _model.myPrinter.jobTicket;
 
 				if (delegatedPrint) {
 					copies = _model.printDelegationCopies;
-					$('#delegated-print-copies').html(copies);
+					$('#delegated-print-copies').val(copies);
+				} else if (jobTicket) {
+					$.noop();
 				} else {
 					copies = parseInt($('#slider-print-copies').val(), 10);
 				}
 
-				_view.visible($('#slider-print-copies').parent(), !delegatedPrint);
-				_view.visible($('#delegated-print-copies'), delegatedPrint);
+				_view.visible($('#slider-print-copies-div'), !delegatedPrint && !jobTicket);
+				_view.visible($('#number-print-copies-div'), !delegatedPrint && jobTicket);
+				_view.visible($('#delegated-print-copies-div'), delegatedPrint);
 
 				if (!delegatedPrint && copies > 1) {
 
@@ -3306,6 +3311,8 @@
 
 			this.clearInput = function() {
 				$('#slider-print-copies').val(1).slider("refresh");
+				$('#delegated-print-copies').val(1);
+				$('#number-print-copies').val(1);
 				$('#print-page-ranges').val('');
 				$('#sp-jobticket-remark').val('');
 				$('#sp-jobticket-date').val('');
@@ -5194,7 +5201,9 @@
 			 */
 			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint, collate, isDelegation) {
 
-				var res, sel, cost, visible, date, present, jobTicketDate;
+				var res, sel, cost, visible, date, present, jobTicketDate, isJobticket = _model.myPrinter.jobTicket
+				//
+				, copies = isDelegation ? "1" : ( isJobticket ? $('#number-print-copies').val() : $('#slider-print-copies').val());
 
 				if (_saveSelectedletterhead('#print-letterhead-list')) {
 					return;
@@ -5218,7 +5227,7 @@
 						jobName : _model.myPrintTitle,
 						jobIndex : _model.printJobIndex,
 						pageScaling : _model.printPageScaling,
-						copies : parseInt($('#slider-print-copies').val(), 10),
+						copies : parseInt(copies, 10),
 						ranges : $('#print-page-ranges').val(),
 						collate : isDelegation ? true : collate,
 						removeGraphics : removeGraphics,
@@ -5226,11 +5235,11 @@
 						clear : isClear,
 						options : _model.myPrinterOpt,
 						delegation : isDelegation ? _model.printDelegation : null,
-						jobTicket : _model.myPrinter.jobTicket,
+						jobTicket : isJobticket,
 						jobTicketDate : jobTicketDate,
-						jobTicketHrs : _model.myPrinter.jobTicket ? $('#sp-jobticket-hrs').val() : null,
-						jobTicketMin : _model.myPrinter.jobTicket ? $('#sp-jobticket-min').val() : null,
-						jobTicketRemark : _model.myPrinter.jobTicket ? $('#sp-jobticket-remark').val() : null
+						jobTicketHrs : isJobticket ? $('#sp-jobticket-hrs').val() : null,
+						jobTicketMin : isJobticket ? $('#sp-jobticket-min').val() : null,
+						jobTicketRemark : isJobticket ? $('#sp-jobticket-remark').val() : null
 					})
 				});
 
