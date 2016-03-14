@@ -112,10 +112,10 @@
 				<input type="text" id="user-uuid" maxlength="36" value=""
 					data-clear-btn="true" autocomplete="off" autocorrect="off"
 					autocapitalize="off" spellcheck="false" />
-				<a href="#" id="button-user-generate-uuid"
+				<button id="button-user-generate-uuid"
 					class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-recycle">
 					<wicket:message key="button-generate" />
-				</a>
+				</button>
 			</div>
 		</li>
 
@@ -177,21 +177,20 @@
 
 		<li>
 			<div data-role="controlgroup" data-type="horizontal">
-				<a href="#" id="button-save-user"
+				<button id="button-save-user"
 					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 					<wicket:message key="button-ok" />
-				</a>
+				</button>
 
-				<a href="#"
-					class="sp-internal-user-edit ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit"
-					id="button-user-pw-dialog">
+				<button id="button-user-pw-dialog"
+					class="sp-internal-user-edit ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
 					<wicket:message key="button-password" />
-				</a>
+				</button>
 
 				<a href="#"
 					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-					data-rel="back" data-direction="reverse">
-					<wicket:message key="button-cancel" />
+					data-rel="back" data-direction="reverse"> <wicket:message
+						key="button-cancel" />
 				</a>
 			</div>
 		</li>
@@ -208,13 +207,13 @@
 				<wicket:message key="user-delete-warning" />
 			</div>
 			<div data-role="controlgroup" data-type="horizontal">
-				<a href="#" id="button-delete-user"
+				<button id="button-delete-user"
 					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
 					<wicket:message key="button-delete" />
-				</a>
+				</button>
 				<a href="#" data-rel="back" data-direction="reverse"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-					<wicket:message key="button-cancel" />
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+						key="button-cancel" />
 				</a>
 			</div>
 		</li>

@@ -20,8 +20,8 @@
 
 <wicket:enclosure child="title-financial">
 
-	<li data-role="list-divider" wicket:id="title-financial"/>
-	
+	<li data-role="list-divider" wicket:id="title-financial" />
+
 	<li>
 		<wicket:remove>
 			<!--
@@ -60,17 +60,15 @@
 		<div data-role="controlgroup" data-type="horizontal">
 
 			<wicket:enclosure child="button-voucher-redeem">
-				<a href="#"
+				<button id="button-voucher-redeem-page"
 					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-plus"
-					wicket:id="button-voucher-redeem" id="button-voucher-redeem-page"
-					title="" />
+					wicket:id="button-voucher-redeem" title="" />
 			</wicket:enclosure>
 
 			<wicket:enclosure child="button-transfer-credit">
-				<a href="#"
+				<button id="button-transfer-credit-page"
 					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-minus"
-					wicket:id="button-transfer-credit" id="button-transfer-credit-page"
-					title="" />
+					wicket:id="button-transfer-credit" title="" />
 			</wicket:enclosure>
 		</div>
 
