@@ -776,6 +776,16 @@ public final class Options extends AbstractAdminPage {
         labelledCheckbox("proxyprint-delegate-papercut-enable",
                 IConfigProp.Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
 
+        // Job Ticket
+        tagInput("proxyprint-jobticket-printer",
+                IConfigProp.Key.JOBTICKET_PROXY_PRINTER);
+
+        tagInput("proxyprint-jobticket-printer-group",
+                IConfigProp.Key.JOBTICKET_PROXY_PRINTER_GROUP);
+
+        labelledInput("proxyprint-jobticket-threshold-page-total",
+                IConfigProp.Key.JOBTICKET_THRESHOLD_PAGE_TOTAL);
+
         /*
          * xpstopdf
          */

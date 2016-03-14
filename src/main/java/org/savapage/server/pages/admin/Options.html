@@ -1179,6 +1179,32 @@
 							value="0" wicket:id="proxyprint-delegate-papercut-enable" />
 					</div>
 				</li>
+
+				<li>
+					<h3>Job Tickets</h3>
+					<span class="sp-txt-wrap"><wicket:message
+							key="proxyprint-jobticket-printer" /></span>
+					<input type="text" id="proxyprint-jobticket-printer"
+						wicket:id="proxyprint-jobticket-printer" />
+
+					<span class="sp-txt-wrap"><wicket:message
+							key="proxyprint-jobticket-printer-group" /></span>
+					<input type="text" id="proxyprint-jobticket-printer-group"
+						wicket:id="proxyprint-jobticket-printer-group" />
+
+					<span class="sp-txt-wrap"><wicket:message
+							key="proxyprint-jobticket-threshold-page-total-prompt" /></span>
+
+					<div class="ui-field-contain">
+						<label for="proxyprint-jobticket-threshold-page-total"
+							style="float: right;"
+							wicket:id="proxyprint-jobticket-threshold-page-total-label" />
+						<input type="number"
+							id="proxyprint-jobticket-threshold-page-total" min="1"
+							wicket:id="proxyprint-jobticket-threshold-page-total" />
+					</div>
+				</li>
+
 				<li>
 					<div>
 						<button id="apply-proxyprint"

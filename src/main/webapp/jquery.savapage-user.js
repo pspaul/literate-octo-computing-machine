@@ -572,14 +572,6 @@
 					}
 				});
 
-				$('.sp-img-popup').on({
-					popupbeforeposition : function() {
-						// popupafteropen : function() {
-						var height = $(window).height() - 60 + "px";
-						$(".sp-img-popup img").height(height);
-					}
-				});
-
 			}).on("pagebeforeshow", function(event, ui) {
 
 				_this.onShow();
