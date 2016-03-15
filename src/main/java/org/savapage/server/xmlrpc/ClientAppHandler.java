@@ -40,7 +40,6 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.users.InternalUserAuthenticator;
 import org.savapage.core.users.conf.UserAliasList;
-import org.savapage.core.util.InetUtils;
 import org.savapage.server.WebApp;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
@@ -99,11 +98,10 @@ public final class ClientAppHandler {
      * @throws MalformedURLException
      * @throws UnknownHostException
      */
-    private static URL getCometdUrl()
+    private static String getCometdUrlPath()
             throws MalformedURLException, UnknownHostException {
-        return new URL("https", InetUtils.getServerHostAddress(),
-                Integer.parseInt(ConfigManager.getServerSslPort()),
-                WebApp.MOUNT_PATH_COMETD);
+        return new URL("https", "dummy", 443, WebApp.MOUNT_PATH_COMETD)
+                .getPath();
     }
 
     /**
@@ -115,20 +113,17 @@ public final class ClientAppHandler {
      * @throws UnknownHostException
      * @throws URISyntaxException
      */
-    private static URL getUserWebAppUrl(final String userId)
+    private static String getUserWebAppPath(final String userId)
             throws URISyntaxException, MalformedURLException,
             UnknownHostException {
 
-        // TODO: IConfigProp.Key to use SSL (or not).
-
         final URIBuilder builder = new URIBuilder();
 
-        builder.setScheme("http").setHost(InetUtils.getServerHostAddress())
-                .setPort(Integer.parseInt(ConfigManager.getServerPort()))
+        builder.setScheme("http").setHost("dummy").setPort(443)
                 .setPath(WebApp.MOUNT_PATH_WEBAPP_USER)
                 .addParameter(AbstractWebAppPage.URL_PARM_USER, userId);
 
-        return builder.build().toURL();
+        return builder.build().toURL().getPath();
     }
 
     /**
@@ -311,7 +306,7 @@ public final class ClientAppHandler {
                     dto.setStatus(ClientAppConnectDto.Status.OK);
 
                     dto.setServerTime(System.currentTimeMillis());
-                    dto.setWebAppUrl(getUserWebAppUrl(userId).toString());
+                    dto.setWebAppPath(getUserWebAppPath(userId).toString());
 
                     final CometdConnectDto cometdConnect =
                             new CometdConnectDto();
@@ -329,7 +324,7 @@ public final class ClientAppHandler {
                     cometdConnect.setChannelSubscribe(
                             UserEventService.CHANNEL_PUBLISH);
 
-                    cometdConnect.setUrl(getCometdUrl().toString());
+                    cometdConnect.setUrlPath(getCometdUrlPath().toString());
 
                     dto.setCometd(cometdConnect);
                 }
