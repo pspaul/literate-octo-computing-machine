@@ -1182,7 +1182,7 @@
 					}
 				} else {
 					if (_this.onClearUser) {
-						this.onClearUser();
+						_this.onClearUser();
 					}
 				}
 				target.html(html).filterable("refresh");
