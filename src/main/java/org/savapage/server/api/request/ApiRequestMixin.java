@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -359,10 +360,23 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
         } else {
 
             final JsonRpcError error = rpcResponse.asError().getError();
+            final StringBuilder text = new StringBuilder();
+
+            if (StringUtils.isNotBlank(error.getMessage())) {
+                text.append(error.getMessage());
+            }
+
             final ErrorDataBasic errorData = error.data(ErrorDataBasic.class);
 
-            this.setApiResultText(ApiResultCodeEnum.ERROR,
-                    errorData.getReason());
+            if (errorData != null
+                    && StringUtils.isNotBlank(errorData.getReason())) {
+                if (text.length() > 0) {
+                    text.append(' ');
+                }
+                text.append('[').append(errorData.getReason()).append(']');
+            }
+
+            this.setApiResultText(ApiResultCodeEnum.ERROR, text.toString());
         }
     }
 

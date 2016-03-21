@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -114,7 +114,7 @@ public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
                         USER_GROUP_SERVICE.addUserGroup(batchCommitter,
                                 groupName);
 
-                if (!this.isApiResultOk(rpcResponse)) {
+                if (!isApiResultOk(rpcResponse)) {
                     this.setApiResultText(rpcResponse);
                     return;
                 }
@@ -146,7 +146,7 @@ public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
                 final AbstractJsonRpcMethodResponse rpcResponse =
                         USER_GROUP_SERVICE.deleteUserGroup(groupId);
 
-                if (!this.isApiResultOk(rpcResponse)) {
+                if (!isApiResultOk(rpcResponse)) {
                     this.setApiResultText(rpcResponse);
                     return;
                 }
