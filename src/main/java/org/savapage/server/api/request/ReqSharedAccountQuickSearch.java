@@ -77,6 +77,7 @@ public final class ReqSharedAccountQuickSearch extends ApiRequestMixin {
 
         filter.setAccountType(AccountTypeEnum.SHARED);
         filter.setContainingNameText(dto.getFilter());
+        filter.setDeleted(Boolean.FALSE);
 
         final AccountDao accountDao =
                 ServiceContext.getDaoContext().getAccountDao();
