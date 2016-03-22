@@ -482,7 +482,7 @@ public class RfidEventHandler implements ServiceEntryPoint {
     private static boolean isAlwaysFastRelease() {
 
         final IConfigProp.Key key =
-                IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX;
+                IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE;
 
         return ConfigManager.instance().isConfigValue(key);
     }

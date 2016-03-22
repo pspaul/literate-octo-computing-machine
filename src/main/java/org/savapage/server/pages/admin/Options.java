@@ -767,7 +767,7 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_MAX_COPIES);
 
         labelledCheckbox("proxyprint-clear-inbox",
-                IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX);
+                IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE);
 
         // Delegated Print
         labelledCheckbox("proxyprint-delegate-enable",

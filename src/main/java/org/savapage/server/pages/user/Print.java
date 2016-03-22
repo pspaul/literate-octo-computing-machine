@@ -63,7 +63,7 @@ public class Print extends AbstractUserPage {
 
         final Label label = new Label("delete-pages-after-print");
 
-        if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX)) {
+        if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
             label.add(new AttributeModifier("checked", "checked"));
             label.add(new AttributeModifier("disabled", "disabled"));
         }

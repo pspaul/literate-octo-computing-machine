@@ -66,6 +66,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
 import org.savapage.core.services.helpers.ExternalSupplierInfo;
+import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.services.helpers.PageScalingEnum;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
@@ -301,6 +302,32 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
+        final ConfigManager cm = ConfigManager.instance();
+
+        /*
+         * If/how to clear the inbox.
+         */
+        final InboxSelectScopeEnum clearScope;
+
+        if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
+
+            /*
+             * Overrule scope with system setting.
+             */
+            clearScope = cm.getConfigEnum(InboxSelectScopeEnum.class,
+                    Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE);
+
+            if (clearScope == null) {
+                throw new IllegalStateException("Invalid clear scope");
+            }
+
+        } else if (dtoReq.getClear()) {
+            clearScope = InboxSelectScopeEnum.ALL;
+        } else {
+            clearScope = InboxSelectScopeEnum.NONE;
+        }
+
+        //
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();
 
@@ -372,13 +399,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          * INVARIANT: when NOT a job ticket the total number of printed pages
          * MUST be within limits.
          */
-        if (!isJobTicket && StringUtils.isNotBlank(ConfigManager.instance()
-                .getConfigValue(Key.JOBTICKET_PROXY_PRINTER))) {
+        if (!isJobTicket && StringUtils
+                .isNotBlank(cm.getConfigValue(Key.JOBTICKET_PROXY_PRINTER))) {
 
             final int totPages = dtoReq.getCopies().intValue() * nPagesPrinted;
 
-            final int maxPages = ConfigManager.instance()
-                    .getConfigInt(Key.JOBTICKET_THRESHOLD_PAGE_TOTAL);
+            final int maxPages =
+                    cm.getConfigInt(Key.JOBTICKET_THRESHOLD_PAGE_TOTAL);
 
             if (totPages > maxPages) {
                 setApiResult(ApiResultCodeEnum.WARN,
@@ -403,7 +430,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final ProxyPrintInboxReq printReq = new ProxyPrintInboxReq();
 
         printReq.setCollate(dtoReq.getCollate());
-        printReq.setClearPages(dtoReq.getClear());
         printReq.setJobName(dtoReq.getJobName());
         printReq.setPageRanges(ranges);
         printReq.setNumberOfCopies(dtoReq.getCopies());
@@ -414,6 +440,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setEcoPrintShadow(dtoReq.getEcoprint());
         printReq.setLocale(this.getLocale());
         printReq.setIdUser(lockedUser.getId());
+        printReq.setClearScope(clearScope);
 
         final PrintDelegationDto delegationDto = dtoReq.getDelegation();
 
@@ -423,9 +450,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         if (isDelegatedPrint) {
 
-            if (!ConfigManager.instance()
-                    .isConfigValue(Key.PROXY_PRINT_DELEGATE_ENABLE)) {
-                throw new SpException("Delegated Print is disabled");
+            if (!cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ENABLE)) {
+                throw new SpException("Delegated Print is disabled.");
             }
 
             final JsonPrintDelegation jsonDelegation =
@@ -473,9 +499,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
              * PaperCut integration enable + PaperCut Managed Printer AND
              * Delegated Print integration with PaperCut?
              */
-            isExtPaperCutPrint = this.isExtPaperCutPrint(printer)
-                    && ConfigManager.instance().isConfigValue(
-                            Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
+            isExtPaperCutPrint = this.isExtPaperCutPrint(printer) && cm
+                    .isConfigValue(Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
 
         } else {
             isExtPaperCutPrint = false;
@@ -567,7 +592,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     minutes);
 
             this.onPrintJobTicket(lockedUser, printReq, currencySymbol,
-                    dtoReq.getClear(), deliveryDate);
+                    deliveryDate);
 
             return;
         }
@@ -655,8 +680,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 DEVICE_SERVICE.getProxyPrintAuthMode(device.getId());
 
         if (authModeEnum.isHoldRelease()) {
-            this.onHoldPrint(lockedUser, printReq, currencySymbol,
-                    dtoReq.getClear());
+            this.onHoldPrint(lockedUser, printReq, currencySymbol);
             return;
         }
 
@@ -672,8 +696,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
              * Signal NEEDS_AUTH
              */
             data.put("requestStatus", printReq.getStatus().toString());
-            data.put("printAuthExpirySecs", ConfigManager.instance()
-                    .getConfigInt(Key.PROXY_PRINT_DIRECT_EXPIRY_SECS));
+            data.put("printAuthExpirySecs",
+                    cm.getConfigInt(Key.PROXY_PRINT_DIRECT_EXPIRY_SECS));
 
             setApiResultOk();
 
@@ -727,7 +751,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      */
     private void onPrintJobTicket(final User lockedUser,
             final ProxyPrintInboxReq printReq, final String currencySymbol,
-            final boolean clearAfterPrint, final Date deliveryDate) {
+            final Date deliveryDate) {
 
         printReq.setPrintMode(PrintModeEnum.PUSH);
 
@@ -739,18 +763,17 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
+        /*
+         * Since the job is preserved in the outbox we clear the inbox.
+         */
+        printReq.setClearedPages(
+                PROXY_PRINT_SERVICE.clearInbox(lockedUser, printReq));
+
+        //
         JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
 
         ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                 this.getLocale(), currencySymbol);
-
-        /*
-         * Since the job is present in the outbox we can honor the clearInbox
-         * request.
-         */
-        if (clearAfterPrint) {
-            INBOX_SERVICE.deleteAllPages(lockedUser.getUserId());
-        }
 
     }
 
@@ -762,12 +785,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *            The print request.
      * @param currencySymbol
      *            The currency symbol.
-     * @param clearAfterPrint
-     *            {@code true} to clear inbox after printing.
      */
     private void onHoldPrint(final User lockedUser,
-            final ProxyPrintInboxReq printReq, final String currencySymbol,
-            final boolean clearAfterPrint) {
+            final ProxyPrintInboxReq printReq, final String currencySymbol) {
 
         printReq.setPrintMode(PrintModeEnum.HOLD);
 
@@ -778,18 +798,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
+        /*
+         * Since the job is preserved in the outbox we clear the inbox.
+         */
+        printReq.setClearedPages(
+                PROXY_PRINT_SERVICE.clearInbox(lockedUser, printReq));
+
+        //
         JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
         ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                 this.getLocale(), currencySymbol);
-
-        /*
-         * Since the job is present in the outbox we can honor the clearInbox
-         * request.
-         */
-        if (clearAfterPrint) {
-            INBOX_SERVICE.deleteAllPages(lockedUser.getUserId());
-        }
-
     }
 
     /**

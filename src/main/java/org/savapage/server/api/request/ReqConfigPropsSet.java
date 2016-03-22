@@ -32,6 +32,7 @@ import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.validator.ValidationResult;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.jpa.PrinterGroup;
@@ -112,7 +113,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 return;
             }
 
-            final IConfigProp.ValidationResult res =
+            final ValidationResult res =
                     cm.validate(configKey, value);
             isValid = res.isValid();
 
