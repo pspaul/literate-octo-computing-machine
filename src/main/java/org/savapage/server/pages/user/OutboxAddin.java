@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.print.attribute.standard.MediaSizeName;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -53,6 +55,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.MediaUtils;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
@@ -279,6 +282,22 @@ public class OutboxAddin extends AbstractUserPage {
              *
              */
             mapVisible.put("title", job.getJobName());
+
+            //
+            final String mediaOption =
+                    ProxyPrintInboxReq.getMediaOption(job.getOptionValues());
+
+            if (mediaOption != null) {
+                final MediaSizeName mediaSizeName =
+                        MediaUtils.getMediaSizeFromInboxMedia(mediaOption);
+
+                if (mediaSizeName == null) {
+                    mapVisible.put("papersize", mediaOption);
+                } else {
+                    mapVisible.put("papersize",
+                            MediaUtils.getUserFriendlyMediaName(mediaSizeName));
+                }
+            }
 
             if (ProxyPrintInboxReq.isDuplex(job.getOptionValues())) {
                 mapVisible.put("duplex", localized("duplex"));
