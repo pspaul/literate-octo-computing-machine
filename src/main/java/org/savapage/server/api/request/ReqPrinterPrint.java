@@ -425,9 +425,25 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 && !optionSides.equals(IppKeyword.SIDES_ONE_SIDED);
 
         /*
+         * Vanilla jobs?
+         */
+        final boolean chunkVanillaJobs;
+        final Integer iVanillaJob;
+
+        if (dtoReq.getJobIndex().intValue() < 0) {
+            iVanillaJob = null;
+            chunkVanillaJobs = isDuplexPrint && printEntireInbox
+                    && jobs.getJobs().size() > 1
+                    && INBOX_SERVICE.isInboxVanilla(jobs);
+        } else {
+            iVanillaJob = dtoReq.getJobIndex();
+            chunkVanillaJobs = true;
+        }
+
+        /*
          * Create the proxy print request, and chunk it.
          */
-        final ProxyPrintInboxReq printReq = new ProxyPrintInboxReq();
+        final ProxyPrintInboxReq printReq = new ProxyPrintInboxReq(iVanillaJob);
 
         printReq.setCollate(dtoReq.getCollate());
         printReq.setJobName(dtoReq.getJobName());
@@ -468,22 +484,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             printReq.setAccountTrxInfoSet(infoSet);
         }
 
-        /*
-         * Vanilla jobs?
-         */
-        final boolean chunkVanillaJobs;
-        final Integer iVanillaJob;
-
-        if (dtoReq.getJobIndex().intValue() < 0) {
-            iVanillaJob = null;
-            chunkVanillaJobs = isDuplexPrint && printEntireInbox
-                    && jobs.getJobs().size() > 1
-                    && INBOX_SERVICE.isInboxVanilla(jobs);
-        } else {
-            iVanillaJob = dtoReq.getJobIndex();
-            chunkVanillaJobs = true;
-        }
-
         PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
                 dtoReq.getPageScaling(), chunkVanillaJobs, iVanillaJob);
 
@@ -494,7 +494,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final boolean isExtPaperCutPrint;
 
         if (isDirectProxyPrint && isDelegatedPrint) {
-
             /*
              * PaperCut integration enable + PaperCut Managed Printer AND
              * Delegated Print integration with PaperCut?
@@ -822,7 +821,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      */
     private void onDirectProxyPrint(final User lockedUser,
             final ProxyPrintInboxReq printReq, final String currencySymbol)
-                    throws IppConnectException {
+            throws IppConnectException {
 
         printReq.setPrintMode(PrintModeEnum.PUSH);
 
@@ -852,7 +851,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      */
     private void onExtPaperCutPrint(final User lockedUser,
             final ProxyPrintInboxReq printReq, final String currencySymbol)
-                    throws IppConnectException {
+            throws IppConnectException {
 
         printReq.setPrintMode(PrintModeEnum.PUSH);
 
