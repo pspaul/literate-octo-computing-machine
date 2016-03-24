@@ -234,9 +234,6 @@
 				});
 
 				$(this).on('click', "#sp-pos-button-back", null, function() {
-					/*
-					 *  onBack() is injected by the POS Web App, but not by the Admin Web App host of this page.
-					 */
 					if (_self.onBack) {
 						return _self.onBack();
 					}

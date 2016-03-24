@@ -226,9 +226,6 @@
 					$("#sp-jobticket-popup-print-all-btn-no").focus();
 
 				}).on('click', "#btn-jobtickets-close", null, function() {
-					/*
-					 *  onClose() is injected by the Job Ticket Web App, but not by the Admin Web App host of this page.
-					 */
 					if (_self.onClose) {
 						return _self.onClose();
 					}

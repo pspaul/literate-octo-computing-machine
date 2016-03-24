@@ -39,6 +39,9 @@ import org.savapage.core.outbox.OutboxInfoDto;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.SpSession;
+import org.savapage.server.WebApp;
+import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *
@@ -135,6 +138,56 @@ public final class ApiRequestHelper {
         if (!ConfigManager.isInternalAdmin(userId)) {
             UserMsgIndicator.write(userId, new Date(),
                     UserMsgIndicator.Msg.STOP_POLL_REQ, remoteAddr);
+        }
+    }
+
+    /**
+     * Stops and replaces the underlying (Web)Session, invalidating the current
+     * one and creating a new one.
+     * <p>
+     * NOTE: {@link #interruptPendingLongPolls(String, String)} is executed when
+     * {@link WebAppTypeEnum#USER}.
+     * </p>
+     * <p>
+     * NOTE: When replacing the session, the Wicket framework invalidate() calls
+     * our {@link WebApp#sessionUnbound(String)} : this method publishes the
+     * logout message.
+     * </p>
+     *
+     * @param session
+     *            The {@link SpSession}.
+     * @param userId
+     *            The user ID.
+     * @param remoteAddr
+     *            the IP address of the client that sent the request
+     * @throws IOException
+     *             When IO error.
+     */
+    public static void stopReplaceSession(final SpSession session,
+            final String userId, final String remoteAddr) throws IOException {
+        /*
+         * Save the critical session attribute.
+         */
+        final WebAppTypeEnum savedWebAppType = session.getWebAppType();
+
+        /*
+         * IMPORTANT: Logout to remove the user and WebApp Type associated with
+         * this session.
+         */
+        session.logout();
+
+        /*
+         * Replaces the underlying (Web)Session, invalidating the current one
+         * and creating a new one. NOTE: data are copied from current session.
+         */
+        session.replaceSession();
+
+        /*
+         * Make sure that all User Web App long polls for this user are
+         * interrupted.
+         */
+        if (userId != null && savedWebAppType == WebAppTypeEnum.USER) {
+            interruptPendingLongPolls(userId, remoteAddr);
         }
     }
 

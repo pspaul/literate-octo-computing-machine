@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -72,6 +72,7 @@ import org.savapage.server.raw.RawPrintServer;
 import org.savapage.server.webapp.WebAppAdmin;
 import org.savapage.server.webapp.WebAppJobTickets;
 import org.savapage.server.webapp.WebAppPos;
+import org.savapage.server.webapp.WebAppTypeEnum;
 import org.savapage.server.webapp.WebAppUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,8 @@ import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceR
  * application without deploying, run
  * {@link org.savapage.server.WebServer#main(String[])}.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
@@ -310,17 +312,18 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * Adds authenticated entry in IP User Session cache. When a user is already
      * present on the IP address it is replaced by the user offered here.
      *
+     * @param webAppType
+     *            The {@link WebAppTypeEnum}.
      * @param sessionId
      *            The session ID as key.
      * @param ipAddr
      *            The IP address of the remote host.
      * @param user
      *            The authenticated user.
-     * @param isAdmin
-     *            {@code true} when user is an administrator.
      */
-    public synchronized void onAuthenticatedUser(final String sessionId,
-            final String ipAddr, final String user, final boolean isAdmin) {
+    public synchronized void onAuthenticatedUser(
+            final WebAppTypeEnum webAppType, final String sessionId,
+            final String ipAddr, final String user) {
 
         /*
          * Removing the old session on same IP address
@@ -377,16 +380,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
         /*
          *
          */
-        final String msgKey;
-
-        if (isAdmin) {
-            msgKey = "pub-admin-login-success";
-        } else {
-            msgKey = "pub-user-login-success";
-        }
-
         AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
-                localize(msgKey, user, ipAddr));
+                localize("pub-user-login-success", webAppType.getUiText(), user,
+                        ipAddr));
         /*
          *
          */
@@ -889,6 +885,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                                 + (theDictIpAddrUser.size()) + "].");
                     }
 
+                    /*
+                     * TODO: how to get the WebAppTypEnum?
+                     */
                     AdminPublisher.instance().publish(PubTopicEnum.USER,
                             PubLevelEnum.INFO,
                             localize("pub-user-logout", user, ipAddr));

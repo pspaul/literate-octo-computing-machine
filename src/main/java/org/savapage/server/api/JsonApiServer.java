@@ -124,7 +124,6 @@ import org.savapage.core.json.rpc.JsonRpcConfig;
 import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.ResultDataBasic;
 import org.savapage.core.json.rpc.impl.ResultPosDeposit;
-import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.print.gcp.GcpClient;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.gcp.GcpRegisterPrinterRsp;
@@ -145,7 +144,6 @@ import org.savapage.core.services.InboxService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
-import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.services.helpers.IppLogger;
@@ -170,8 +168,6 @@ import org.savapage.server.WebApp;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.api.request.ApiResultCodeEnum;
-import org.savapage.server.auth.ClientAppUserAuthManager;
-import org.savapage.server.auth.WebAppUserAuthManager;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.dto.MoneyTransferDto;
 import org.savapage.server.ext.ServerPluginManager;
@@ -255,12 +251,6 @@ public final class JsonApiServer extends AbstractPage {
     /**
      *
      */
-    private static final QueueService QUEUE_SERVICE =
-            ServiceContext.getServiceFactory().getQueueService();
-
-    /**
-     *
-     */
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
 
@@ -277,6 +267,7 @@ public final class JsonApiServer extends AbstractPage {
     /**
      *
      * @param parameters
+     *            The {@link PageParameters}.
      */
     public JsonApiServer(final PageParameters parameters) {
 
@@ -732,7 +723,7 @@ public final class JsonApiServer extends AbstractPage {
     private void mailDepositReceipt(final Long accountTrxDbId,
             final String toAddress, final String requestingUser,
             boolean isAdminRequest) throws JRException, MessagingException,
-                    IOException, InterruptedException, CircuitBreakerException {
+            IOException, InterruptedException, CircuitBreakerException {
 
         final File tempPdfFile = new File(OutputProducer
                 .createUniqueTempPdfName(requestingUser, "deposit-receipt"));
@@ -912,7 +903,7 @@ public final class JsonApiServer extends AbstractPage {
     private IRequestHandler exportReport(final File tempPdfFile,
             final String reportId, final String jsonData,
             final String requestingUser, final boolean requestingUserAdmin)
-                    throws JRException {
+            throws JRException {
 
         final Locale locale = getSession().getLocale();
 
@@ -1161,7 +1152,7 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> handleRequest(final String request,
             final PageParameters parameters, final boolean isGetAction,
             final String requestingUser, final User lockedUser)
-                    throws Exception {
+            throws Exception {
 
         final User mySessionUser = SpSession.get().getUser();
 
@@ -1234,11 +1225,6 @@ public final class JsonApiServer extends AbstractPage {
             }
             return reqLanguage(language, country);
 
-        case JsonApiDict.REQ_LOGOUT:
-
-            return reqLogout(requestingUser,
-                    getParmValue(parameters, isGetAction, "authToken"));
-
         case JsonApiDict.REQ_WEBAPP_UNLOAD:
 
             SpSession.get().decrementAuthWebApp();
@@ -1297,8 +1283,8 @@ public final class JsonApiServer extends AbstractPage {
 
             return apiResultFromBasicRpcResponse(ACCOUNTING_SERVICE
                     .transferUserCredit(JsonAbstractBase.create(
-                            UserCreditTransferDto.class,
-                            getParmValue(parameters, isGetAction, "dto"))));
+                            UserCreditTransferDto.class, getParmValue(
+                                    parameters, isGetAction, "dto"))));
 
         case JsonApiDict.REQ_USER_MONEY_TRANSFER_REQUEST:
 
@@ -1628,8 +1614,8 @@ public final class JsonApiServer extends AbstractPage {
             final int vanillaJobIndex, final String pageRangeFilter,
             final boolean removeGraphics, final boolean ecoPdf,
             final DocLog docLog, final String purpose)
-                    throws LetterheadNotFoundException, IOException,
-                    PostScriptDrmException, EcoPrintPdfTaskPendingException {
+            throws LetterheadNotFoundException, IOException,
+            PostScriptDrmException, EcoPrintPdfTaskPendingException {
 
         final String pdfFile =
                 OutputProducer.createUniqueTempPdfName(user, purpose);
@@ -1819,15 +1805,6 @@ public final class JsonApiServer extends AbstractPage {
     private String localize(final String key, final String... args) {
         return Messages.getMessage(getClass(), getSession().getLocale(), key,
                 args);
-    }
-
-    /**
-     *
-     * @param data
-     * @return
-     */
-    private boolean isApiResultOK(final Map<String, Object> data) {
-        return isApiResultCode(data, ApiResultCodeEnum.OK);
     }
 
     /**
@@ -2100,7 +2077,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> checkValidAndAuthorized(final String request,
             final String uid, final WebAppTypeEnum webAppType)
-                    throws IOException {
+            throws IOException {
 
         Map<String, Object> userData = null;
 
@@ -2134,7 +2111,8 @@ public final class JsonApiServer extends AbstractPage {
                 userId = session.getUser().getUserId();
             }
 
-            this.stopReplaceSession(session, userId);
+            ApiRequestHelper.stopReplaceSession(session, userId,
+                    this.getRemoteAddr());
 
         } else if (session.isAuthenticated()) {
 
@@ -2207,9 +2185,8 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqSend(final User lockedUser,
             final String mailto, final String jobIndex, final String ranges,
             final boolean removeGraphics, final boolean ecoPdf)
-                    throws LetterheadNotFoundException, IOException,
-                    MessagingException, InterruptedException,
-                    CircuitBreakerException, ParseException {
+            throws LetterheadNotFoundException, IOException, MessagingException,
+            InterruptedException, CircuitBreakerException, ParseException {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
@@ -2497,35 +2474,6 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * Gets the localized string for a BigDecimal.
-     *
-     * @param vlaue
-     *            The {@link BigDecimal}.
-     * @param currencySymbol
-     *            {@code null} when not available.
-     * @return The localized string.
-     * @throws ParseException
-     */
-    private final String localizedPrinterCost(final BigDecimal decimal,
-            final String currencySymbol) throws ParseException {
-
-        BigDecimal value = decimal;
-
-        if (value == null) {
-            value = BigDecimal.ZERO;
-        }
-
-        String cost = BigDecimalUtil.localize(value,
-                ConfigManager.getPrinterCostDecimals(),
-                this.getSession().getLocale(), true);
-
-        if (StringUtils.isBlank(currencySymbol)) {
-            return cost;
-        }
-        return currencySymbol + cost;
-    }
-
-    /**
      *
      * @param user
      * @param ranges
@@ -2535,7 +2483,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqInboxPageMove(final String user,
             final String ranges, final String position)
-                    throws NumberFormatException {
+            throws NumberFormatException {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
@@ -3617,7 +3565,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqUserMoneyTransfer(
             final String requestingUser, final String jsonDto)
-                    throws IOException {
+            throws IOException {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
@@ -4044,75 +3992,6 @@ public final class JsonApiServer extends AbstractPage {
     private String getRemoteAddr() {
         return ((ServletWebRequest) RequestCycle.get().getRequest())
                 .getContainerRequest().getRemoteAddr();
-    }
-
-    /**
-     * Stops and replaces the underlying (Web)Session, invalidating the current
-     * one and creating a new one.
-     *
-     * @param session
-     *            The {@link SpSession}.
-     * @param userId
-     *            The user ID.
-     * @throws IOException
-     *             When IO error.
-     */
-    private void stopReplaceSession(final SpSession session,
-            final String userId) throws IOException {
-        /*
-         * Save the critical session attribute.
-         */
-        final WebAppTypeEnum savedWebAppType = session.getWebAppType();
-
-        /*
-         * IMPORTANT: Logout to remove the user and WebApp Type associated with
-         * this session.
-         */
-        session.logout();
-
-        /*
-         * Replaces the underlying (Web)Session, invalidating the current one
-         * and creating a new one. NOTE: data are copied from current session.
-         */
-        session.replaceSession();
-
-        /*
-         * Make sure that all User Web App long polls for this user are
-         * interrupted.
-         */
-        if (userId != null && savedWebAppType == WebAppTypeEnum.USER) {
-            ApiRequestHelper.interruptPendingLongPolls(userId,
-                    this.getRemoteAddr());
-        }
-    }
-
-    /**
-     * Logs out by replacing the underlying (Web)Session, invalidating the
-     * current one and creating a new one. Also sends the
-     * {@link UserMsgIndicator.Msg#STOP_POLL_REQ} message.
-     * <p>
-     * After the invalidate() the Wicket framework calls
-     * {@link WebApp#sessionUnbound(String)} : this method publishes the logout
-     * message.
-     * </p>
-     *
-     * @param lockedUser
-     * @param authToken
-     *            The authorization token (can be {@code null}).
-     * @return The OK message.
-     * @throws IOException
-     */
-    private Map<String, Object> reqLogout(final String userId,
-            final String authToken) throws IOException {
-
-        ClientAppUserAuthManager.removeUserAuthToken(this.getClientIpAddr());
-
-        WebAppUserAuthManager.instance().removeUserAuthToken(authToken,
-                this.getSessionWebAppType());
-
-        this.stopReplaceSession(SpSession.get(), userId);
-
-        return createApiResultOK();
     }
 
     /**

@@ -213,7 +213,7 @@ public final class ReqLogin extends ApiRequestMixin {
     private void reqLogin(final UserAuth.Mode authMode, final String authId,
             final String authPw, final String authToken,
             final String assocCardNumber, final WebAppTypeEnum webAppType)
-                    throws IOException {
+            throws IOException {
 
         final UserAgentHelper userAgentHelper = this.createUserAgentHelper();
 
@@ -870,7 +870,7 @@ public final class ReqLogin extends ApiRequestMixin {
      */
     private void reqLoginAuthTokenWebApp(final String uid,
             final String authtoken, final WebAppTypeEnum webAppType)
-                    throws IOException {
+            throws IOException {
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
@@ -1147,7 +1147,7 @@ public final class ReqLogin extends ApiRequestMixin {
     private void onUserLoginGranted(final Map<String, Object> userData,
             final SpSession session, final WebAppTypeEnum webAppType,
             final String uid, final User userDb, final UserAuthToken authToken)
-                    throws IOException {
+            throws IOException {
 
         userData.put("id", uid);
         userData.put("key_id", userDb.getId());
@@ -1182,10 +1182,8 @@ public final class ReqLogin extends ApiRequestMixin {
         }
         userData.put("cometdToken", cometdToken);
 
-        // role (editor|admin|reader)
-
-        WebApp.get().onAuthenticatedUser(session.getId(), getRemoteAddr(), uid,
-                userDb.getAdmin());
+        WebApp.get().onAuthenticatedUser(webAppType, session.getId(),
+                getRemoteAddr(), uid);
 
         if (webAppType == WebAppTypeEnum.USER) {
 

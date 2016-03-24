@@ -5636,7 +5636,9 @@
 				 */
 				var res = _api.call({
 					request : 'logout',
-					authToken : _model.authToken.token
+					dto : JSON.stringify({
+						authToken : _model.authToken.token
+					})
 				});
 
 				if (res.result.code !== '0') {

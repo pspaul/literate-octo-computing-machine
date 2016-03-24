@@ -250,7 +250,7 @@
 			 * Callbacks: page LOGIN
 			 */
 			_view.pages.login.onShow(function() {
-				_model.user.loggedIn = false;
+				$.noop();
 			});
 
 			_view.pages.login.onLanguage(function() {
@@ -267,7 +267,8 @@
 			_view.pages.pointOfSale.onBack = function() {
 
 				/*
-				 *  Since this method is also called by onPageHide when Back button is pressed.
+				 * Since this method is also called by the generic onPageHide call-back,
+				 * as set in on('pagecontainershow'), when Back button is pressed.
 				 */
 				if (!_model.user.loggedIn) {
 					return true;
@@ -285,7 +286,9 @@
 
 				var res = _api.call({
 					request : 'logout',
-					authToken : _model.authToken.token
+					dto : JSON.stringify({
+						authToken : _model.authToken.token
+					})
 				});
 
 				_model.user.loggedIn = false;

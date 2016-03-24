@@ -41,6 +41,7 @@ import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqJobTicketDelete;
 import org.savapage.server.api.request.ReqJobTicketPrint;
 import org.savapage.server.api.request.ReqLogin;
+import org.savapage.server.api.request.ReqLogout;
 import org.savapage.server.api.request.ReqOutboxClear;
 import org.savapage.server.api.request.ReqOutboxDeleteJob;
 import org.savapage.server.api.request.ReqOutboxExtend;
@@ -805,7 +806,9 @@ public class JsonApiDict {
         put(REQ_LOGIN, ReqLogin.class, AuthReq.NONE, DbClaim.READ,
                 DbAccess.YES);
 
-        put(REQ_LOGOUT, AuthReq.NONE, DbClaim.NONE, DbAccess.NO);
+        put(REQ_LOGOUT, ReqLogout.class, AuthReq.NONE, DbClaim.NONE,
+                DbAccess.NO);
+
         usr(REQ_WEBAPP_UNLOAD, DbClaim.NONE, DbAccess.NO);
         put(REQ_WEBAPP_CLOSE_SESSION, AuthReq.NONE, DbClaim.NONE, DbAccess.NO);
 

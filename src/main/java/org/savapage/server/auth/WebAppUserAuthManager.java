@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,10 +30,11 @@ import org.savapage.server.webapp.WebAppTypeEnum;
 /**
  * Singleton manager of WebApp User Authentications Tokens.
  * <p>
- * Separate cache dictionaries for User and Admin context are maintained.
+ * A separate cache dictionarie for each Web App context is maintained (User,
+ * Admin, POS, Jobticket).
  * </p>
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public final class WebAppUserAuthManager {
@@ -132,6 +133,9 @@ public final class WebAppUserAuthManager {
      */
     public synchronized UserAuthToken getUserAuthToken(final String token,
             final WebAppTypeEnum webAppType) {
+        if (webAppType == WebAppTypeEnum.UNDEFINED) {
+            return null;
+        }
         return dictTokenAuthToken.get(getDictIndex(webAppType)).get(token);
     }
 
@@ -146,6 +150,10 @@ public final class WebAppUserAuthManager {
      */
     public synchronized UserAuthToken getAuthTokenOfUser(final String user,
             final WebAppTypeEnum webAppType) {
+
+        if (webAppType == WebAppTypeEnum.UNDEFINED) {
+            return null;
+        }
         return dictUserAuthToken.get(getDictIndex(webAppType)).get(user);
     }
 
@@ -188,6 +196,10 @@ public final class WebAppUserAuthManager {
      */
     public synchronized UserAuthToken removeUserAuthToken(final String token,
             final WebAppTypeEnum webAppType) {
+
+        if (webAppType == WebAppTypeEnum.UNDEFINED) {
+            return null;
+        }
 
         final int i = getDictIndex(webAppType);
 

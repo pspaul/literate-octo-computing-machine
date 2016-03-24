@@ -53,7 +53,9 @@ import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.papercut.services.PaperCutService;
+import org.savapage.server.SpSession;
 import org.savapage.server.api.UserAgentHelper;
+import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *
@@ -162,7 +164,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     public final Map<String, Object> process(final RequestCycle requestCycle,
             final PageParameters parameters, final boolean isGetAction,
             final String requestingUser, final User lockedUser)
-                    throws Exception {
+            throws Exception {
 
         this.requestCycle = requestCycle;
         this.pageParameters = parameters;
@@ -205,6 +207,23 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     protected final String getRemoteAddr() {
         return ((ServletWebRequest) RequestCycle.get().getRequest())
                 .getContainerRequest().getRemoteAddr();
+    }
+
+    /**
+     * Gets the authenticated {@link WebAppTypeEnum} from {@link SpSession}.
+     *
+     * @return The {@link WebAppTypeEnum}.
+     */
+    protected final WebAppTypeEnum getSessionWebAppType() {
+
+        WebAppTypeEnum webAppType = WebAppTypeEnum.UNDEFINED;
+
+        final SpSession session = SpSession.get();
+
+        if (session != null) {
+            webAppType = session.getWebAppType();
+        }
+        return webAppType;
     }
 
     /**
