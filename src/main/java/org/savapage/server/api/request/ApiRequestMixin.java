@@ -64,6 +64,8 @@ import org.savapage.server.webapp.WebAppTypeEnum;
  */
 public abstract class ApiRequestMixin implements ApiRequestHandler {
 
+    private static final String REQ_KEY_DTO = "dto";
+
     private static final String RSP_KEY_DTO = "dto";
     private static final String RSP_KEY_CODE = "code";
     private static final String RSP_KEY_RESULT = "result";
@@ -180,7 +182,8 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @param requestingUser
      *            The user if of the requesting user.
      * @param lockedUser
-     *            The locked {@link User} instance, can be {@code null}.
+     *            The locked {@link User} instance: is {@code null} when use is
+     *            <i>not</i> locked.
      * @throws Exception
      *             When an unexpected error is encountered.
      */
@@ -432,6 +435,14 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     protected final void setApiResultOk() {
         createApiResult(ApiResultCodeEnum.OK, null, null);
+    }
+
+    /**
+     *
+     * @return The JSON string value of the "dto" POST or GET parameter.
+     */
+    protected final String getParmValueDto() {
+        return this.getParmValue(REQ_KEY_DTO);
     }
 
     /**

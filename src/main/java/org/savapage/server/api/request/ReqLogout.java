@@ -23,12 +23,17 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.msg.UserMsgIndicator;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.SpSession;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.WebAppUserAuthManager;
+import org.savapage.server.webapp.WebAppTypeEnum;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -65,17 +70,59 @@ public final class ReqLogout extends ApiRequestMixin {
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
+        final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValueDto());
+
+        final WebAppTypeEnum webAppType = this.getSessionWebAppType();
 
         ClientAppUserAuthManager.removeUserAuthToken(this.getRemoteAddr());
 
-        WebAppUserAuthManager.instance().removeUserAuthToken(
-                dtoReq.getAuthToken(), this.getSessionWebAppType());
+        WebAppUserAuthManager.instance()
+                .removeUserAuthToken(dtoReq.getAuthToken(), webAppType);
 
         ApiRequestHelper.stopReplaceSession(SpSession.get(), requestingUser,
                 this.getRemoteAddr());
 
+        if (webAppType == WebAppTypeEnum.USER && ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_USER_LOGOUT_CLEAR_INBOX)) {
+            this.clearUserInbox(requestingUser, lockedUser);
+        }
+
         setApiResultOk();
+    }
+
+    /**
+     * Clears the user's inbox.
+     *
+     * @param requestingUser
+     *            The user if of the requesting user.
+     * @param lockedUser
+     *            The locked {@link User} instance: is {@code null} when use is
+     *            <i>not</i> locked.
+     */
+    private void clearUserInbox(final String requestingUser,
+            final User lockedUser) {
+
+        if (INBOX_SERVICE.getInboxInfo(requestingUser).jobCount() == 0) {
+            return;
+        }
+
+        final DaoContext daoCtx = ServiceContext.getDaoContext();
+
+        final boolean applyTransaction = !daoCtx.isTransactionActive();
+
+        if (applyTransaction) {
+            daoCtx.beginTransaction();
+        }
+        try {
+            if (lockedUser == null) {
+                daoCtx.getUserDao().lockByUserId(requestingUser);
+            }
+            INBOX_SERVICE.deleteAllPages(requestingUser);
+        } finally {
+            if (applyTransaction) {
+                daoCtx.rollback();
+            }
+        }
     }
 
 }

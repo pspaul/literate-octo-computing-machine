@@ -1198,6 +1198,19 @@ public final class ReqLogin extends ApiRequestMixin {
             ApiRequestHelper.interruptPendingLongPolls(userDb.getUserId(),
                     this.getRemoteAddr());
 
+            /*
+             * Check for expired inbox jobs.
+             */
+            final long msecJobExpiry = ConfigManager.instance()
+                    .getConfigInt(Key.PRINT_IN_JOB_EXPIRY_MINS, 0)
+                    * DateUtil.DURATION_MSEC_MINUTE;
+
+            if (msecJobExpiry > 0) {
+                INBOX_SERVICE.deleteJobs(userDb.getUserId(),
+                        System.currentTimeMillis(), msecJobExpiry);
+            }
+
+            //
             INBOX_SERVICE.pruneOrphanJobs(ConfigManager.getUserHomeDir(uid),
                     userDb);
         }
