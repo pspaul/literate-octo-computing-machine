@@ -1332,19 +1332,19 @@ public final class JsonApiServer extends AbstractPage {
 
             return reqInboxIsVanilla(requestingUser);
 
-        case JsonApiDict.REQ_JOB_DELETE:
+        case JsonApiDict.REQ_INBOX_JOB_DELETE:
 
             return reqInboxJobDelete(requestingUser, Integer
                     .valueOf(getParmValue(parameters, isGetAction, "ijob")));
 
-        case JsonApiDict.REQ_JOB_EDIT:
+        case JsonApiDict.REQ_INBOX_JOB_EDIT:
 
             return reqInboxJobEdit(requestingUser,
                     Integer.valueOf(
                             getParmValue(parameters, isGetAction, "ijob")),
                     getParmValue(parameters, isGetAction, "data"));
 
-        case JsonApiDict.REQ_JOB_PAGES:
+        case JsonApiDict.REQ_INBOX_JOB_PAGES:
 
             return reqInboxJobPages(requestingUser,
                     getParmValue(parameters, isGetAction, "first-detail-page"),

@@ -107,6 +107,12 @@ img.active {
 .sp-thumbnail-selected {
     background: orange;
 }
+
+/* TEST */
+.sp-thumbnail-subscript-job-expired {
+    background: orange !important;
+}
+
 .thumbnail_reel img {
 }
 .thumbnail_reel p {

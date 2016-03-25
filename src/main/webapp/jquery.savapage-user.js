@@ -2023,6 +2023,11 @@
 						span.text('');
 					}
 
+					/*
+					 * Expired? TEST-TEST
+					 */
+					//divCur.find('.sp-thumbnail-subscript').addClass('sp-thumbnail-subscript-job-expired');
+
 					//--------------------------
 					wlkPageNr += page.pages;
 					divPrv = divCur;
@@ -5760,7 +5765,7 @@
 			_view.pages.main.onExpandPage = function(nPage) {
 
 				var data = _api.call({
-					request : 'job-pages',
+					request : 'inbox-job-pages',
 					'first-detail-page' : nPage,
 					'unique-url-value' : _model.uniqueImgUrlValue,
 					base64 : _view.imgBase64
@@ -5800,7 +5805,7 @@
 			_view.pages.main.onPopupJobApply = function() {
 
 				var data = _api.call({
-					'request' : 'job-edit',
+					'request' : 'inbox-job-edit',
 					ijob : _model.iPopUpJob,
 					data : JSON.stringify({
 						rotate : $('#sp-popup-job-rotate').is(':checked'),
@@ -5819,7 +5824,7 @@
 			 */
 			_view.pages.main.onPopupJobDelete = function() {
 				var data = _api.call({
-					'request' : 'job-delete',
+					'request' : 'inbox-job-delete',
 					ijob : _model.iPopUpJob
 				});
 				if (data.result.code === '0') {

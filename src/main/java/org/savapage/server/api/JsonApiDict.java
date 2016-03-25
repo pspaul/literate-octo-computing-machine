@@ -117,9 +117,10 @@ public class JsonApiDict {
     public static final String REQ_IMAP_START = "imap-start";
     public static final String REQ_IMAP_STOP = "imap-stop";
 
-    public static final String REQ_JOB_DELETE = "job-delete";
-    public static final String REQ_JOB_EDIT = "job-edit";
-    public static final String REQ_JOB_PAGES = "job-pages";
+    public static final String REQ_INBOX_JOB_DELETE = "inbox-job-delete";
+    public static final String REQ_INBOX_JOB_EDIT = "inbox-job-edit";
+    public static final String REQ_INBOX_JOB_PAGES = "inbox-job-pages";
+
     public static final String REQ_INBOX_IS_VANILLA = "inbox-is-vanilla";
     public static final String REQ_JQPLOT = "jqplot";
     public static final String REQ_LANGUAGE = "language";
@@ -782,9 +783,9 @@ public class JsonApiDict {
         adm(REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV, DbClaim.NONE,
                 DbAccess.NO);
 
-        usr(REQ_JOB_DELETE, DbClaim.NONE, DbAccess.USER_LOCK);
-        usr(REQ_JOB_EDIT, DbClaim.NONE, DbAccess.USER_LOCK);
-        usr(REQ_JOB_PAGES, DbClaim.NONE, DbAccess.USER_LOCK);
+        usr(REQ_INBOX_JOB_DELETE, DbClaim.NONE, DbAccess.USER_LOCK);
+        usr(REQ_INBOX_JOB_EDIT, DbClaim.NONE, DbAccess.USER_LOCK);
+        usr(REQ_INBOX_JOB_PAGES, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_INBOX_IS_VANILLA, DbClaim.NONE, DbAccess.USER_LOCK);
 
         acl(REQ_JOBTICKET_DELETE, ReqJobTicketDelete.class, DbClaim.READ,
