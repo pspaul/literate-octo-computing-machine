@@ -1819,10 +1819,6 @@
 			//
 			, _isThumbnailDragged = false
 			//
-			, _IMG_WIDTH = function() {
-				return _model.MY_THUMBNAIL_WIDTH;
-			}
-			//
 			, _moveLeft, _moveRight, _moveToBegin, _moveToEnd, _moveJobs
 			//
 			, _showArrange, _showCutPageRanges, _getCutPageRanges
@@ -1832,6 +1828,22 @@
 			, _onThumbnailTap, _onThumbnailTapHold, _onPageInfoTap
 			// mapping page URLs to jQuery <img> selectors
 			, _tnUrl2Img
+			//
+			, _IMG_WIDTH = function() {
+				return _model.MY_THUMBNAIL_WIDTH;
+			}
+			//
+			/**
+			 * Set job expiration marker in thumbnail subscript.
+			 */, _setThumbnailExpiry = function() {
+				var subscripts = $('.sp-thumbnail-subscript'), msecNow = new Date().getTime(), i = 0;
+				$.each(_model.myJobPages, function(key, page) {
+					if (page.expiryTime > 0 && page.expiryTime - msecNow < page.expiryTimeSignal) {
+						subscripts.eq(i).addClass('sp-thumbnail-subscript-job-expired').addClass('ui-btn-icon-left').addClass('ui-icon-mini-expired-clock');
+					}
+					i = i + 1;
+				});
+			}
 			//
 			;
 
@@ -1849,15 +1861,9 @@
 			 *
 			 */
 			this.showUserStats = function() {
-				var stats = _model.user.stats
-				//
-				, outbox
-				//
-				, pages = 0
-				//
-				, status
-				//
-				;
+				var stats = _model.user.stats, outbox, pages = 0, status;
+
+				_setThumbnailExpiry();
 
 				if (stats) {
 
@@ -1887,7 +1893,6 @@
 				}
 
 				_model.setJobsMatchMediaSources(_view);
-
 			};
 
 			/**
@@ -1902,7 +1907,6 @@
 					prop.i = i;
 					prop.img = $(this);
 					_this.tnUrl2Img[_model.myJobPages[i].url] = prop;
-					//window.console.log('[' + i + ']');
 					i = i + 1;
 				});
 			};
@@ -1947,7 +1951,7 @@
 				 */
 				$.each(_model.myJobPages, function(key, page) {
 
-					var divCur, item, tnUrl, span
+					var divCur, item, tnUrl, span, title
 					//
 					, imgWidth = _IMG_WIDTH()
 					//
@@ -1964,6 +1968,10 @@
 						 */
 						divCur = tnUrl.img.parent();
 					} else {
+						title = page.media;
+						if (page.expiryTime) {
+							title += ' &bull; ' + _ns.Utils.formatDateTime(new Date(page.expiryTime));
+						}
 						/*
 						 * Mantis #320: we set the 'height' attribute with the
 						 * A4 assumption, later on at the removeImgHeight() the
@@ -1972,7 +1980,7 @@
 						 */
 						item = "";
 						item += '<div><img onload="org.savapage.removeImgHeight(this)" width="' + imgWidth + '" height="' + imgHeightA4 + '" border="0" src="' + _view.getImgSrc(page.url) + '" style="padding: ' + _IMG_PADDING + 'px;"/>';
-						item += '<a title="' + page.media + '" href="#" class="sp-thumbnail-subscript ui-btn ui-mini" style="margin-top:-' + (2 * _IMG_PADDING + 1) + 'px; margin-right: ' + _IMG_PADDING + 'px; margin-left: ' + _IMG_PADDING + 'px; border: none; box-shadow: none;">';
+						item += '<a title="' + title + '" href="#" class="sp-thumbnail-subscript ui-btn ui-mini" style="margin-top:-' + (2 * _IMG_PADDING + 1) + 'px; margin-right: ' + _IMG_PADDING + 'px; margin-left: ' + _IMG_PADDING + 'px; border: none; box-shadow: none;">';
 						item += '<span class="sp-thumbnail-page"/>';
 						item += '<span class="sp-thumbnail-tot-pages"/>';
 						item += '<span class="sp-thumbnail-tot-chunk"/>';
@@ -2023,11 +2031,6 @@
 						span.text('');
 					}
 
-					/*
-					 * Expired? TEST-TEST
-					 */
-					//divCur.find('.sp-thumbnail-subscript').addClass('sp-thumbnail-subscript-job-expired');
-
 					//--------------------------
 					wlkPageNr += page.pages;
 					divPrv = divCur;
@@ -2061,6 +2064,8 @@
 				} else {
 					$('#page-main-thumbnail-viewport').addClass('thumbnail_viewport_empty');
 				}
+
+				_setThumbnailExpiry();
 
 				//
 				_tnUrl2Img();

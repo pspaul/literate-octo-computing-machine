@@ -169,6 +169,28 @@ String.prototype.vformat = function() {"use strict";
 		};
 
 		/**
+		 *
+		 */
+		_ns.Utils.zeroPad = function(value, length) {
+			var result = '';
+			while (--length > 0) {
+				if (value >= Math.pow(10, length)) {
+					break;
+				}
+				result += '0';
+			}
+			result += value;
+			return result;
+		};
+
+		/**
+		 *
+		 */
+		_ns.Utils.formatDateTime = function(date) {
+			return date.getFullYear() + '-' + _ns.Utils.zeroPad(date.getMonth() + 1, 2) + '-' + _ns.Utils.zeroPad(date.getDate(), 2) + ' ' + _ns.Utils.zeroPad(date.getHours(), 2) + ':' + _ns.Utils.zeroPad(date.getMinutes(), 2) + ':' + _ns.Utils.zeroPad(date.getSeconds(), 2);
+		};
+
+		/**
 		 * Constructor
 		 */
 		_ns.User = function() {
@@ -234,24 +256,12 @@ String.prototype.vformat = function() {"use strict";
 		 */
 		_ns.Logger = function() {
 
-			var _zeroPad = function(value, length) {
-				var result = '';
-				while (--length > 0) {
-					if (value >= Math.pow(10, length)) {
-						break;
-					}
-					result += '0';
-				}
-				result += value;
-				return result;
-			}
-			//
-			, _log = function(level, args) {
+			var _log = function(level, args) {
 				if (window.console) {
 					var logger = window.console[level], now;
 					if (_ns.Utils.isFunction(logger)) {
 						now = new Date();
-						[].splice.call(args, 0, 0, _zeroPad(now.getHours(), 2) + ':' + _zeroPad(now.getMinutes(), 2) + ':' + _zeroPad(now.getSeconds(), 2) + '.' + _zeroPad(now.getMilliseconds(), 3));
+						[].splice.call(args, 0, 0, _ns.Utils.zeroPad(now.getHours(), 2) + ':' + _ns.Utils.zeroPad(now.getMinutes(), 2) + ':' + _ns.Utils.zeroPad(now.getSeconds(), 2) + '.' + _ns.Utils.zeroPad(now.getMilliseconds(), 3));
 						logger.apply(window.console, args);
 					}
 				}

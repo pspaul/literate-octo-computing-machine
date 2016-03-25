@@ -108,9 +108,8 @@ img.active {
     background: orange;
 }
 
-/* TEST */
 .sp-thumbnail-subscript-job-expired {
-    background: orange !important;
+    background: #fff2e6 !important;
 }
 
 .thumbnail_reel img {
