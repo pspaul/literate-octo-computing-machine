@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.imaging.ImageUrl;
@@ -67,6 +68,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.users.AbstractUserSource;
 import org.savapage.core.util.AppLogHelper;
+import org.savapage.core.util.DateUtil;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
@@ -79,7 +81,8 @@ import org.slf4j.LoggerFactory;
  * <b>created</b> (printed) and <b>deleted</b> jobs. Events are published on
  * {@linkplain #CHANNEL_PUBLISH}.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 public final class UserEventService extends AbstractEventService {
 
@@ -241,6 +244,10 @@ public final class UserEventService extends AbstractEventService {
                 case PRINT_OUT_COMPLETED:
                     eventData = createPrintMsg(user, locale, msgPrevMonitorTime,
                             messageDate);
+                    break;
+
+                case PRINT_IN_EXPIRED:
+                    eventData = createPrintInExpiredMsg(user, locale);
                     break;
 
                 case STOP_POLL_REQ:
@@ -487,7 +494,7 @@ public final class UserEventService extends AbstractEventService {
             }
 
             /*
-             * Any MESSAGES to be notified of since the previous check date?
+             * Any MESSAGES to be notified since the previous check date?
              */
             if (eventData == null && msgPrevMonitorTime != null) {
                 eventData =
@@ -502,6 +509,10 @@ public final class UserEventService extends AbstractEventService {
                 eventData = watchUserFileEvents(clientIpAddress, dateStart,
                         user, locale, pageOffset, uniqueUrlValue, base64,
                         isWebAppClient);
+            }
+
+            if (eventData == null) {
+                eventData = checkPrintInJobExpiry(user, dateStart, locale);
             }
 
             if (eventData == null) {
@@ -614,7 +625,7 @@ public final class UserEventService extends AbstractEventService {
             final String user, final Locale locale, final Long pageOffset,
             final String uniqueUrlValue, final boolean base64,
             final boolean isWebAppClient)
-                    throws IOException, UserNotFoundException {
+            throws IOException, UserNotFoundException {
 
         final WatchService watchService =
                 FileSystems.getDefault().newWatchService();
@@ -799,6 +810,10 @@ public final class UserEventService extends AbstractEventService {
                         case PRINT_OUT_COMPLETED:
                             returnData = createPrintMsg(user, locale,
                                     messageDate, messageDate);
+                            break;
+
+                        case PRINT_IN_EXPIRED:
+                            returnData = createPrintInExpiredMsg(user, locale);
                             break;
 
                         case PRINT_OUT_HOLD:
@@ -1181,6 +1196,37 @@ public final class UserEventService extends AbstractEventService {
      *
      * @return
      */
+    private Map<String, Object> createPrintInExpiredMsg(final String userId,
+            final Locale locale) {
+
+        final Map<String, Object> eventData = new HashMap<String, Object>();
+
+        final JsonUserMsg msg = new JsonUserMsg();
+        msg.setLevel(JsonUserMsg.LEVEL_WARN);
+        msg.setText(this.localize(locale, "print-in-expired"));
+
+        final JsonUserMsgNotification json = new JsonUserMsgNotification();
+        json.addUserMsg(msg);
+        json.setMsgTime(System.currentTimeMillis());
+
+        eventData.put(KEY_DATA, json);
+        eventData.put(KEY_EVENT, UserEventEnum.PRINT_IN_EXPIRED);
+        eventData.put(KEY_MSG_TIME, json.getMsgTime());
+
+        return eventData;
+    }
+
+    /**
+     *
+     * @param userId
+     *            The user id.
+     * @param isWebAppClient
+     *            {@code true} is client is User Web App, {@code false} if Java
+     *            Client.
+     * @param locale
+     * @param msgTime
+     * @return
+     */
     private static Map<String, Object> createNullMsg(final String userId,
             final boolean isWebAppClient, final Locale locale,
             final long msgTime) {
@@ -1199,6 +1245,42 @@ public final class UserEventService extends AbstractEventService {
         }
 
         return eventData;
+    }
+
+    /**
+     *
+     * @param userId
+     *            The user id.
+     * @param dateStart
+     * @param locale
+     * @return
+     * @throws IOException
+     */
+    private Map<String, Object> checkPrintInJobExpiry(final String userId,
+            final Date dateStart, final Locale locale) throws IOException {
+
+        /*
+         * Check for expired inbox jobs.
+         */
+        final long msecJobExpiry = ConfigManager.instance()
+                .getConfigInt(Key.PRINT_IN_JOB_EXPIRY_MINS, 0)
+                * DateUtil.DURATION_MSEC_MINUTE;
+
+        if (msecJobExpiry <= 0) {
+            return null;
+        }
+
+        final int nDeleted = INBOX_SERVICE.deleteJobs(userId,
+                dateStart.getTime(), msecJobExpiry);
+
+        if (nDeleted == 0) {
+            return null;
+        }
+
+        UserMsgIndicator.write(userId, dateStart,
+                UserMsgIndicator.Msg.PRINT_IN_EXPIRED, null);
+
+        return createPrintInExpiredMsg(userId, locale);
     }
 
 }

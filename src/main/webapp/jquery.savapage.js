@@ -2346,6 +2346,16 @@
 				sel.html(html);
 				sel.enhanceWithin().popup("open");
 			};
+						
+			this.msgDialogBox = function(txt, cssClass) {
+				var sel = _view.activePage().find('.sp-msg-popup'), html;
+
+				html = '<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>';
+				html += '<p class="sp-txt-wrap ' + cssClass + '">' + txt + '</p>';
+
+				sel.html(html);
+				sel.enhanceWithin().popup("open");				
+			};
 
 			/**
 			 *

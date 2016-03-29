@@ -26,7 +26,7 @@ import org.savapage.core.jpa.PrintOut;
 /**
  * TODO: move this class to savapage-common project.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public enum UserEventEnum {
@@ -45,6 +45,11 @@ public enum UserEventEnum {
      * SafePages are printed.
      */
     PRINT_IN("Print"),
+
+    /**
+     * SafePages are expired.
+     */
+    PRINT_IN_EXPIRED("Print-in Expired"),
 
     /**
      * {@link PrintOut} notification message.

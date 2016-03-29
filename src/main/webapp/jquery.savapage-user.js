@@ -355,6 +355,8 @@
 						if (res.event === "PRINT_MSG" || res.event === "ACCOUNT" || res.event === "JOBTICKET") {
 							_this.onMsgEvent(res.data);
 							_this.onAccountEvent(res.stats);
+						} else if (res.event === "PRINT_IN_EXPIRED") {
+							_this.onMsgEvent(res.data, true);
 						} else if (res.event === "NULL") {
 							_this.onNullEvent(res.data);
 							_this.onAccountEvent(res.stats);
@@ -1836,9 +1838,9 @@
 			/**
 			 * Set job expiration marker in thumbnail subscript.
 			 */, _setThumbnailExpiry = function() {
-				var subscripts = $('.sp-thumbnail-subscript'), msecNow = new Date().getTime(), i = 0;
+				var subscripts = $('.sp-thumbnail-subscript'), i = 0;
 				$.each(_model.myJobPages, function(key, page) {
-					if (page.expiryTime > 0 && page.expiryTime - msecNow < page.expiryTimeSignal) {
+					if (page.expiryTime > 0 && page.expiryTime - _model.prevMsgTime < page.expiryTimeSignal) {
 						subscripts.eq(i).addClass('sp-thumbnail-subscript-job-expired').addClass('ui-btn-icon-left').addClass('ui-icon-mini-expired-clock');
 					}
 					i = i + 1;
@@ -4882,7 +4884,7 @@
 				_model.prevMsgTime = data.msgTime;
 			};
 
-			_userEvent.onMsgEvent = function(data) {
+			_userEvent.onMsgEvent = function(data, dialogBox) {
 				var msg = '', i = 0;
 
 				_model.prevMsgTime = data.msgTime;
@@ -4895,7 +4897,11 @@
 					msg += ( err ? '</span>' : '');
 					i = i + 1;
 				});
-				_view.message(msg);
+				if (dialogBox) {
+					_view.msgDialogBox(msg, 'sp-msg-popup-warn');
+				} else {
+					_view.message(msg);
+				}
 			};
 
 			_userEvent.onPollInvitation = function() {
