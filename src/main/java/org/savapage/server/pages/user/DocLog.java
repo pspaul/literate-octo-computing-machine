@@ -22,6 +22,9 @@
 package org.savapage.server.pages.user;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -36,7 +39,19 @@ public class DocLog extends AbstractUserPage {
      *
      */
     public DocLog(final PageParameters parameters) {
+
         super(parameters);
+
+        final MarkupHelper helper = new MarkupHelper(this);
+        final String wicketId = "button-transactions";
+
+        if (ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_USER_FINANCIAL_SHOW)) {
+            helper.addLabel(wicketId, localized("button-transactions"));
+        } else {
+            helper.discloseLabel(wicketId);
+        }
+
     }
 
 }

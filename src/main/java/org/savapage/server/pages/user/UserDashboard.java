@@ -103,9 +103,15 @@ public final class UserDashboard extends AbstractUserPage {
         final MarkupHelper helper = new MarkupHelper(this);
 
         final String keyTitleFinancial = "title-financial";
-        // helper.discloseLabel(keyTitleFinancial);
-        helper.addLabel(keyTitleFinancial, localized(keyTitleFinancial));
-        showAccountingDetails(helper, user);
+
+        if (ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_USER_FINANCIAL_SHOW)) {
+            helper.addLabel(keyTitleFinancial, localized(keyTitleFinancial));
+            showAccountingDetails(helper, user);
+        } else {
+            helper.discloseLabel(keyTitleFinancial);
+        }
+
     }
 
     /**

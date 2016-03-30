@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.user;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
@@ -30,6 +31,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.SpSession;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -50,6 +52,8 @@ public class Main extends AbstractUserPage {
 
         super(parameters);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
         final boolean isUpload = (ConfigManager.isWebPrintEnabled()
                 && InetUtils.isIp4AddrInCidrRanges(
                         ConfigManager.instance().getConfigValue(
@@ -60,6 +64,7 @@ public class Main extends AbstractUserPage {
 
         //
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
+
         final boolean isPrintDelegate = user != null && ACCESSCONTROL_SERVICE
                 .hasAccess(user, ACLRoleEnum.PRINT_DELEGATE);
 
@@ -67,5 +72,22 @@ public class Main extends AbstractUserPage {
 
         //
         add(new CommunityStatusFooterPanel("community-status-footer-panel"));
+
+        //
+        helper.encloseLabel("mini-user-balance", "", ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_USER_FINANCIAL_SHOW));
+
+        //
+        final String userId;
+        final String userName;
+
+        if (user == null) {
+            userId = "";
+            userName = "";
+        } else {
+            userName = StringUtils.defaultString(user.getFullName());
+            userId = user.getUserId();
+        }
+        helper.addModifyLabelAttr("mini-user-name", userId, "title", userName);
     }
 }

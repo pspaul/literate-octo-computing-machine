@@ -28,10 +28,11 @@
 			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
 				key="button-back" />
 		</a>
-		<button id="button-goto-accounttrx"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-shop">
-			<wicket:message key="button-transactions" />
-		</button>
+		<wicket:enclosure child="button-transactions">
+			<button id="button-goto-accounttrx"
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-shop"
+				wicket:id="button-transactions" />
+		</wicket:enclosure>
 	</div>
 </div>
 

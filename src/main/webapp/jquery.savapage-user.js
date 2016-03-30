@@ -1863,7 +1863,7 @@
 			 *
 			 */
 			this.showUserStats = function() {
-				var stats = _model.user.stats, outbox, pages = 0, status;
+				var stats = _model.user.stats, outbox, pages = 0, status, selBalance;
 
 				_setThumbnailExpiry();
 
@@ -1875,7 +1875,10 @@
 					});
 
 					status = stats.accountInfo.status;
-					$('#mini-user-balance').html(stats.accountInfo.balance).attr("class", status === "CREDIT" ? "sp-txt-warn" : (status === "DEBIT" ? "sp-txt-valid" : "sp-txt-error"));
+					selBalance = $('#mini-user-balance');
+					if (selBalance) {
+						selBalance.html(stats.accountInfo.balance).attr("class", status === "CREDIT" ? "sp-txt-warn" : (status === "DEBIT" ? "sp-txt-valid" : "sp-txt-error"));
+					}
 
 					outbox = _model.user.stats.outbox;
 				}
