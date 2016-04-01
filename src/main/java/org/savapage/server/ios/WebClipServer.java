@@ -23,14 +23,12 @@ package org.savapage.server.ios;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-
-import net.iharder.Base64;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +40,8 @@ import org.savapage.core.SpException;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.util.Messages;
+
+import net.iharder.Base64;
 
 /**
  * Serving the {@link #CONTENT_TYPE_WEBCLIP} for iOS devices.
@@ -77,14 +77,14 @@ public class WebClipServer extends WebPage {
      */
     public WebClipServer(final PageParameters parameters) {
 
-        HttpServletRequest request =
-                (HttpServletRequest) getRequestCycle().getRequest()
-                        .getContainerRequest();
+        HttpServletRequest request = (HttpServletRequest) getRequestCycle()
+                .getRequest().getContainerRequest();
 
         final StringBuilder buffer = new StringBuilder();
 
         buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        buffer.append("<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n");
+        buffer.append(
+                "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n");
 
         buffer.append("<plist version=\"1.0\">\n<dict>\n");
 
@@ -115,7 +115,8 @@ public class WebClipServer extends WebPage {
                 localize("webclip-motto", CommunityDictEnum.SAVAPAGE.getWord());
 
         // String desc =
-        // "Druk op \"Installeren\", en start de SavaPage app vanaf uw home-scherm om te beginnen.";
+        // "Druk op \"Installeren\", en start de SavaPage app vanaf uw
+        // home-scherm om te beginnen.";
 
         addKeyValue(buffer, indent1, "PayloadDescription", desc);
 
@@ -130,7 +131,8 @@ public class WebClipServer extends WebPage {
         /*
          * A reverse-DNS-style identifier for the specific payload.
          */
-        addKeyValue(buffer, indent1, "PayloadIdentifier", basePayloadIdentifier);
+        addKeyValue(buffer, indent1, "PayloadIdentifier",
+                basePayloadIdentifier);
 
         /*
          * Optional. If present and set to true, the user cannot delete the
@@ -189,7 +191,8 @@ public class WebClipServer extends WebPage {
         /*
          * Designate as Web Clip Payload.
          */
-        addKeyValue(buffer, indent3, "PayloadType", "com.apple.webClip.managed");
+        addKeyValue(buffer, indent3, "PayloadType",
+                "com.apple.webClip.managed");
 
         /*
          * The version number of the individual payload.
@@ -201,8 +204,8 @@ public class WebClipServer extends WebPage {
          * usually the same identifier as the root-level PayloadIdentifier value
          * with an additional component appended.
          */
-        addKeyValue(buffer, indent3, "PayloadIdentifier", basePayloadIdentifier
-                + ".webclip");
+        addKeyValue(buffer, indent3, "PayloadIdentifier",
+                basePayloadIdentifier + ".webclip");
 
         /*
          * A globally unique identifier for the payload. The actual content is
@@ -255,12 +258,8 @@ public class WebClipServer extends WebPage {
         buffer.append("</dict>\n" + "</plist>");
 
         // ---------------------------------------------------------------------
-        String text = null;
-        try {
-            text = StringUtils.toString(buffer.toString().getBytes(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new SpException(e);
-        }
+        final String text = StringUtils.toEncodedString(
+                buffer.toString().getBytes(), Charset.forName("UTF-8"));
 
         getRequestCycle().scheduleRequestHandlerAfterCurrent(
                 new TextRequestHandler(CONTENT_TYPE_WEBCLIP, "UTF-8", text));
@@ -273,8 +272,8 @@ public class WebClipServer extends WebPage {
      * @param key
      * @return
      */
-    private StringBuilder
-            addKey(StringBuilder buffer, String indent, String key) {
+    private StringBuilder addKey(StringBuilder buffer, String indent,
+            String key) {
         return buffer.append(indent + "<key>" + key + "</key>\n");
     }
 
@@ -288,8 +287,8 @@ public class WebClipServer extends WebPage {
      */
     private StringBuilder addKeyValue(StringBuilder buffer, String indent,
             String key, String value) {
-        return addKey(buffer, indent, key).append(
-                indent + "<string>" + value + "</string>\n");
+        return addKey(buffer, indent, key)
+                .append(indent + "<string>" + value + "</string>\n");
     }
 
     /**
@@ -385,8 +384,8 @@ public class WebClipServer extends WebPage {
      * @param icon
      * @return
      */
-    private StringBuilder
-            addIcon(StringBuilder buffer, String indent, File icon) {
+    private StringBuilder addIcon(StringBuilder buffer, String indent,
+            File icon) {
 
         byte[] iconBytes;
         try {
@@ -395,9 +394,8 @@ public class WebClipServer extends WebPage {
             throw new SpException(e);
         }
 
-        return addKey(buffer, indent, "Icon")
-                .append(indent + "<data>" + Base64.encodeBytes(iconBytes)
-                        + "</data>\n");
+        return addKey(buffer, indent, "Icon").append(indent + "<data>"
+                + Base64.encodeBytes(iconBytes) + "</data>\n");
     }
 
     /**
@@ -413,10 +411,9 @@ public class WebClipServer extends WebPage {
         URI uriApp = null;
 
         try {
-            uriApp =
-                    new URI(uriReq.getScheme(), uriReq.getUserInfo(),
-                            uriReq.getHost(), uriReq.getPort(), pathApp,
-                            uriReq.getQuery(), uriReq.getFragment());
+            uriApp = new URI(uriReq.getScheme(), uriReq.getUserInfo(),
+                    uriReq.getHost(), uriReq.getPort(), pathApp,
+                    uriReq.getQuery(), uriReq.getFragment());
         } catch (URISyntaxException e) {
             throw new SpException(e);
         }
@@ -434,8 +431,8 @@ public class WebClipServer extends WebPage {
      */
     private StringBuilder addKeyValue(StringBuilder buffer, String indent,
             String key, Integer value) {
-        return addKey(buffer, indent, key).append(
-                indent + "<integer>" + value + "</integer>\n");
+        return addKey(buffer, indent, key)
+                .append(indent + "<integer>" + value + "</integer>\n");
     }
 
     /**
