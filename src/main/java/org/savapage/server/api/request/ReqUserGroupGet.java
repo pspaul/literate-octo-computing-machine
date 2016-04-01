@@ -57,6 +57,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             return id;
         }
 
+        @SuppressWarnings("unused")
         public void setId(Long id) {
             this.id = id;
         }
@@ -73,6 +74,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         private Map<ACLRoleEnum, Boolean> aclRoles;
         private UserAccountingDto accounting;
 
+        @SuppressWarnings("unused")
         public Long getId() {
             return id;
         }
@@ -81,6 +83,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.id = id;
         }
 
+        @SuppressWarnings("unused")
         public String getName() {
             return name;
         }
@@ -89,6 +92,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.name = name;
         }
 
+        @SuppressWarnings("unused")
         public Map<ACLRoleEnum, Boolean> getAclRoles() {
             return aclRoles;
         }
@@ -97,6 +101,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.aclRoles = aclRoles;
         }
 
+        @SuppressWarnings("unused")
         public UserAccountingDto getAccounting() {
             return accounting;
         }

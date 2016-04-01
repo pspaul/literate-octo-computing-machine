@@ -64,6 +64,7 @@ public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
             return groupsAdded;
         }
 
+        @SuppressWarnings("unused")
         public void setGroupsAdded(List<String> groupsAdded) {
             this.groupsAdded = groupsAdded;
         }
@@ -72,6 +73,7 @@ public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
             return groupsRemoved;
         }
 
+        @SuppressWarnings("unused")
         public void setGroupsRemoved(List<Long> groupsRemoved) {
             this.groupsRemoved = groupsRemoved;
         }
@@ -79,9 +81,8 @@ public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
     }
 
     @Override
-    protected void
-            onRequest(final String requestingUser, final User lockedUser)
-                    throws IOException {
+    protected void onRequest(final String requestingUser, final User lockedUser)
+            throws IOException {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 

@@ -127,17 +127,6 @@ public final class MarkupHelper {
     }
 
     /**
-     * Gives the localized string for a key.
-     *
-     * @param key
-     *            The key from the XML resource file
-     * @return The localized string.
-     */
-    private String localized(final String key) {
-        return getLocalizer().getString(key, container);
-    }
-
-    /**
      * Gets as localized string of a Number. The locale of the current session
      * is used.
      *

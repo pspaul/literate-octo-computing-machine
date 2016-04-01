@@ -52,6 +52,7 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
             return jobFileName;
         }
 
+        @SuppressWarnings("unused")
         public void setJobFileName(String jobFileName) {
             this.jobFileName = jobFileName;
         }
@@ -60,6 +61,7 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
             return printerId;
         }
 
+        @SuppressWarnings("unused")
         public void setPrinterId(Long printerId) {
             this.printerId = printerId;
         }

@@ -72,8 +72,8 @@ public final class SmartschoolProxyServlet extends HttpServlet {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(SmartschoolProxyServlet.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(SmartschoolProxyServlet.class);
 
     private static final SmartschoolProxyService SMARTSCHOOL_PROXY =
             ServiceContext.getServiceFactory().getSmartSchoolProxyService();
@@ -97,6 +97,7 @@ public final class SmartschoolProxyServlet extends HttpServlet {
      * @throws IOException
      *             When errors.
      */
+    @SuppressWarnings("unused")
     private static void printRequest(final InputStream istr,
             final PrintStream pstr) throws IOException {
 
@@ -202,8 +203,8 @@ public final class SmartschoolProxyServlet extends HttpServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req,
-            final HttpServletResponse resp) throws ServletException,
-            IOException {
+            final HttpServletResponse resp)
+            throws ServletException, IOException {
 
         // printRequest(req.getInputStream(), System.out);
 
@@ -243,8 +244,8 @@ public final class SmartschoolProxyServlet extends HttpServlet {
             } else {
 
                 final SmartschoolRequestEnum smartschoolRequest =
-                        SmartschoolRequestEnum.fromSoapName(operationNode
-                                .getNodeName());
+                        SmartschoolRequestEnum
+                                .fromSoapName(operationNode.getNodeName());
 
                 if (LOGGER.isDebugEnabled()) {
                     logRequest(smartschoolAccount, clusterNode,
@@ -262,18 +263,16 @@ public final class SmartschoolProxyServlet extends HttpServlet {
 
                         SMARTSCHOOL_PROXY.keepNodeAlive(clusterNode);
 
-                        soapMessageOut =
-                                SMARTSCHOOL_PROXY.createPrintJobsRsp(
-                                        smartschoolAccount, clusterNode);
+                        soapMessageOut = SMARTSCHOOL_PROXY.createPrintJobsRsp(
+                                smartschoolAccount, clusterNode);
                         break;
 
                     case GET_DOCUMENT:
 
                         SMARTSCHOOL_PROXY.keepNodeAlive(clusterNode);
 
-                        final String documentId =
-                                soapRequestParms
-                                        .get(SmartschoolConstants.XML_ELM_UID);
+                        final String documentId = soapRequestParms
+                                .get(SmartschoolConstants.XML_ELM_UID);
 
                         if (StringUtils.isBlank(documentId)) {
                             httpStatus = HttpServletResponse.SC_BAD_REQUEST;
@@ -281,8 +280,8 @@ public final class SmartschoolProxyServlet extends HttpServlet {
                         }
                         try {
                             SMARTSCHOOL_PROXY.streamGetDocumentRsp(
-                                    smartschoolAccount, clusterNode,
-                                    documentId, resp.getOutputStream());
+                                    smartschoolAccount, clusterNode, documentId,
+                                    resp.getOutputStream());
                             resp.setContentType("application/soap+xml");
                         } catch (FileNotFoundException e) {
                             // TODO

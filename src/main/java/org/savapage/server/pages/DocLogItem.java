@@ -36,7 +36,6 @@ import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.PrintOutDao;
 import org.savapage.core.dao.enums.DaoEnumHelper;
-import org.savapage.core.dao.enums.DocLogProtocolEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
@@ -416,10 +415,6 @@ public final class DocLogItem {
                     log.setDocType(DocLogDao.Type.IN);
 
                     if (printIn != null) {
-
-                        final DocLogProtocolEnum protocol =
-                                DocLogProtocolEnum.asEnum(docLog
-                                        .getDeliveryProtocol());
 
                         ReservedIppQueueEnum reservedQueue =
                                 queueService.getReservedQueue(printIn

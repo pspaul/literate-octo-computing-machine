@@ -72,7 +72,11 @@ public final class ConfigPropPage extends AbstractAdminListPage {
      */
     private static class Req extends AbstractPagerReq {
 
+        /**
+         *
+         */
         public static class Select {
+
             @JsonProperty("text")
             private String containingText = null;
 
@@ -80,11 +84,15 @@ public final class ConfigPropPage extends AbstractAdminListPage {
                 return containingText;
             }
 
+            @SuppressWarnings("unused")
             public void setContainingText(String containingText) {
                 this.containingText = containingText;
             }
         }
 
+        /**
+         *
+         */
         public static class Sort {
 
             private Boolean ascending = true;
@@ -93,6 +101,7 @@ public final class ConfigPropPage extends AbstractAdminListPage {
                 return ascending;
             }
 
+            @SuppressWarnings("unused")
             public void setAscending(Boolean ascending) {
                 this.ascending = ascending;
             }
@@ -106,6 +115,7 @@ public final class ConfigPropPage extends AbstractAdminListPage {
             return select;
         }
 
+        @SuppressWarnings("unused")
         public void setSelect(Select select) {
             this.select = select;
         }
@@ -114,6 +124,7 @@ public final class ConfigPropPage extends AbstractAdminListPage {
             return sort;
         }
 
+        @SuppressWarnings("unused")
         public void setSort(Sort sort) {
             this.sort = sort;
         }

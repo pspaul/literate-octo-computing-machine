@@ -105,6 +105,7 @@ public final class ReqLogin extends ApiRequestMixin {
             return webAppType;
         }
 
+        @SuppressWarnings("unused")
         public void setWebAppType(WebAppTypeEnum webAppType) {
             this.webAppType = webAppType;
         }
@@ -113,6 +114,7 @@ public final class ReqLogin extends ApiRequestMixin {
             return authMode;
         }
 
+        @SuppressWarnings("unused")
         public void setAuthMode(String authMode) {
             this.authMode = authMode;
         }
@@ -121,6 +123,7 @@ public final class ReqLogin extends ApiRequestMixin {
             return authId;
         }
 
+        @SuppressWarnings("unused")
         public void setAuthId(String authId) {
             this.authId = authId;
         }
@@ -129,6 +132,7 @@ public final class ReqLogin extends ApiRequestMixin {
             return authPw;
         }
 
+        @SuppressWarnings("unused")
         public void setAuthPw(String authPw) {
             this.authPw = authPw;
         }
@@ -137,6 +141,7 @@ public final class ReqLogin extends ApiRequestMixin {
             return authToken;
         }
 
+        @SuppressWarnings("unused")
         public void setAuthToken(String authToken) {
             this.authToken = authToken;
         }
@@ -145,6 +150,7 @@ public final class ReqLogin extends ApiRequestMixin {
             return assocCardNumber;
         }
 
+        @SuppressWarnings("unused")
         public void setAssocCardNumber(String assocCardNumber) {
             this.assocCardNumber = assocCardNumber;
         }
@@ -153,6 +159,7 @@ public final class ReqLogin extends ApiRequestMixin {
     /**
      * .
      */
+    @SuppressWarnings("unused")
     private static class DtoRsp extends AbstractDto {
 
     }

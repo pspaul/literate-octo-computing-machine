@@ -52,6 +52,7 @@ public final class ReqUserNotifyAccountChange extends ApiRequestMixin {
             return userKey;
         }
 
+        @SuppressWarnings("unused")
         public void setUserKey(Long userKey) {
             this.userKey = userKey;
         }

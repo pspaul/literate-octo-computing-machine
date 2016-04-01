@@ -54,6 +54,7 @@ public final class ReqQueueEnable extends ApiRequestMixin {
             return urlPath;
         }
 
+        @SuppressWarnings("unused")
         public void setUrlPath(String urlPath) {
             this.urlPath = urlPath;
         }
@@ -62,6 +63,7 @@ public final class ReqQueueEnable extends ApiRequestMixin {
             return enabled;
         }
 
+        @SuppressWarnings("unused")
         public void setEnabled(Boolean enabled) {
             this.enabled = enabled;
         }

@@ -82,6 +82,9 @@ public final class DevicesPage extends AbstractAdminListPage {
      */
     private static class Req extends AbstractPagerReq {
 
+        /**
+         *
+         */
         public static class Select {
 
             @JsonProperty("text")
@@ -94,6 +97,7 @@ public final class DevicesPage extends AbstractAdminListPage {
                 return containingText;
             }
 
+            @SuppressWarnings("unused")
             public void setContainingText(String containingText) {
                 this.containingText = containingText;
             }
@@ -102,6 +106,7 @@ public final class DevicesPage extends AbstractAdminListPage {
                 return disabled;
             }
 
+            @SuppressWarnings("unused")
             public void setDisabled(Boolean disabled) {
                 this.disabled = disabled;
             }
@@ -110,12 +115,16 @@ public final class DevicesPage extends AbstractAdminListPage {
                 return reader;
             }
 
+            @SuppressWarnings("unused")
             public void setReader(Boolean reader) {
                 this.reader = reader;
             }
 
         }
 
+        /**
+         *
+         */
         public static class Sort {
 
             private Boolean ascending = true;
@@ -124,6 +133,7 @@ public final class DevicesPage extends AbstractAdminListPage {
                 return ascending;
             }
 
+            @SuppressWarnings("unused")
             public void setAscending(Boolean ascending) {
                 this.ascending = ascending;
             }
@@ -137,6 +147,7 @@ public final class DevicesPage extends AbstractAdminListPage {
             return select;
         }
 
+        @SuppressWarnings("unused")
         public void setSelect(Select select) {
             this.select = select;
         }
@@ -145,6 +156,7 @@ public final class DevicesPage extends AbstractAdminListPage {
             return sort;
         }
 
+        @SuppressWarnings("unused")
         public void setSort(Sort sort) {
             this.sort = sort;
         }
@@ -157,8 +169,6 @@ public final class DevicesPage extends AbstractAdminListPage {
     public DevicesPage(final PageParameters parameters) {
 
         super(parameters);
-
-        // this.openServiceContext();
 
         final RfIdReaderService rfidReaderService =
                 ServiceContext.getServiceFactory().getRfIdReaderService();

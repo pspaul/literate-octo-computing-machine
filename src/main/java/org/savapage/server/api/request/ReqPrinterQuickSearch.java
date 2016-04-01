@@ -56,6 +56,7 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
         private List<QuickSearchItemDto> items;
         private Boolean fastPrintAvailable;
 
+        @SuppressWarnings("unused")
         public List<QuickSearchItemDto> getItems() {
             return items;
         }
@@ -64,6 +65,7 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
             this.items = items;
         }
 
+        @SuppressWarnings("unused")
         public Boolean getFastPrintAvailable() {
             return fastPrintAvailable;
         }

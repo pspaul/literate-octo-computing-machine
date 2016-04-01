@@ -156,8 +156,9 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.USER_SOURCE_UPDATE_USER_DETAILS);
         labelledCheckbox("sync-schedule",
                 IConfigProp.Key.SCHEDULE_AUTO_SYNC_USER);
-        labelledCheckbox("sync-delete-users", "sync-delete-users", false);
 
+        helper.labelledCheckbox("sync-delete-users", "sync-delete-users",
+                false);
         /*
          *
          */
@@ -869,13 +870,13 @@ public final class Options extends AbstractAdminPage {
         /*
          *
          */
-        labelledCheckbox("pagometer-reset-users", "pagometer-reset-users",
-                false);
-        labelledCheckbox("pagometer-reset-queues", "pagometer-reset-queues",
-                false);
-        labelledCheckbox("pagometer-reset-printers", "pagometer-reset-printers",
-                false);
-        labelledCheckbox("pagometer-reset-dashboard",
+        helper.labelledCheckbox("pagometer-reset-users",
+                "pagometer-reset-users", false);
+        helper.labelledCheckbox("pagometer-reset-queues",
+                "pagometer-reset-queues", false);
+        helper.labelledCheckbox("pagometer-reset-printers",
+                "pagometer-reset-printers", false);
+        helper.labelledCheckbox("pagometer-reset-dashboard",
                 "pagometer-reset-dashboard", false);
 
         /*

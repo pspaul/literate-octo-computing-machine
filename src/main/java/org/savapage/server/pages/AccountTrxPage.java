@@ -49,7 +49,6 @@ import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserAccount;
-import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.BitcoinUtil;
@@ -66,9 +65,6 @@ import org.slf4j.LoggerFactory;
  * @author Rijk Ravestein
  */
 public class AccountTrxPage extends AbstractListPage {
-
-    private static final DocLogService DOC_LOG_SERVICE =
-            ServiceContext.getServiceFactory().getDocLogService();
 
     /**
      *
@@ -94,6 +90,7 @@ public class AccountTrxPage extends AbstractListPage {
 
         final int balanceDecimals;
         final String bitcoinUrlPatternTrx;
+        @SuppressWarnings("unused")
         final String bitcoinUrlPatternAddr;
 
         /**

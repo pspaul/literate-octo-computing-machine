@@ -64,6 +64,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return id;
         }
 
+        @SuppressWarnings("unused")
         public void setId(Long id) {
             this.id = id;
         }
@@ -72,6 +73,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return aclRoles;
         }
 
+        @SuppressWarnings("unused")
         public void setAclRoles(Map<ACLRoleEnum, Boolean> aclRoles) {
             this.aclRoles = aclRoles;
         }
@@ -80,6 +82,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return accounting;
         }
 
+        @SuppressWarnings("unused")
         public void setAccounting(UserAccountingDto accounting) {
             this.accounting = accounting;
         }

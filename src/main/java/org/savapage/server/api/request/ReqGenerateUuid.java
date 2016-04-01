@@ -44,6 +44,7 @@ public final class ReqGenerateUuid extends ApiRequestMixin {
 
         private String uuid;
 
+        @SuppressWarnings("unused")
         public String getUuid() {
             return uuid;
         }

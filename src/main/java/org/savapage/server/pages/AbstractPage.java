@@ -455,32 +455,6 @@ public abstract class AbstractPage extends WebPage
     }
 
     /**
-     * @deprecated Adds a label/input checkbox.
-     *             <p>
-     *             Use
-     *             {@link MarkupHelper#labelledCheckbox(String, String, boolean)}
-     *             .
-     *             </p>
-     *
-     * @param wicketId
-     *            The {@code wicket:id} of the {@code <input>} part. The
-     *            {@code <label>} part must have the same {@code wicket:id} with
-     *            the {@code-label} suffix appended.
-     *
-     * @param attrIdFor
-     *            The value of the HTML 'id' attribute of the {@code <input>}
-     *            part, and the 'for' attribute of the {@code <label>} part.
-     * @param checked
-     *            {@code true} if the checkbox must be checked.
-     */
-    @Deprecated
-    protected void labelledCheckbox(final String wicketId,
-            final String attrIdFor, final boolean checked) {
-        tagCheckbox(wicketId, attrIdFor, checked);
-        tagLabel(wicketId + "-label", wicketId, attrIdFor);
-    }
-
-    /**
      * @deprecated Adds a checkbox.
      *             <p>
      *             Use {@link MarkupHelper#addCheckbox(String, String, boolean)}

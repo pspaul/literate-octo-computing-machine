@@ -42,7 +42,6 @@ import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
-import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -63,16 +62,6 @@ public final class AccountsPage extends AbstractAdminListPage {
     private static final int MAX_PAGES_IN_NAVBAR = 5; // must be odd number
 
     /**
-     * The currency symbol of the current Locale.
-     */
-    private final String currencySymbol;
-
-    /**
-     * Number of currency decimals to display.
-     */
-    private final int currencyDecimals;
-
-    /**
      * @return {@code false} to give Admin a chance to inspect the accounts.
      */
     @Override
@@ -86,9 +75,6 @@ public final class AccountsPage extends AbstractAdminListPage {
     public AccountsPage(final PageParameters parameters) {
 
         super(parameters);
-
-        this.currencySymbol = SpSession.getAppCurrencySymbol();
-        this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
 
         /*
          * We need a transaction because of the lazy creation of UserAccount
@@ -136,30 +122,12 @@ public final class AccountsPage extends AbstractAdminListPage {
                 accountDao.getListChunk(filter, req.calcStartPosition(),
                         req.getMaxResults(), sortField, sortAscending);
 
-        final String myCurrencySymbol = this.currencySymbol;
-        final int myCurrencyDecimals = this.currencyDecimals;
-
         final Locale locale = getSession().getLocale();
 
         //
         add(new PropertyListView<Account>("accounts-view", entryList) {
 
             private static final long serialVersionUID = 1L;
-
-            /**
-             * Decodes an encoded decimal to a localized string.
-             *
-             * @param value
-             * @return
-             */
-            private final String localizedDecimal(final BigDecimal value) {
-                try {
-                    return BigDecimalUtil.localize(value, myCurrencyDecimals,
-                            locale, true);
-                } catch (ParseException e) {
-                    throw new SpException(e);
-                }
-            }
 
             /**
              *

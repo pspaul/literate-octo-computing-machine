@@ -130,10 +130,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Map<String, String> options;
         private PrintDelegationDto delegation;
 
+        @SuppressWarnings("unused")
         public String getUser() {
             return user;
         }
 
+        @SuppressWarnings("unused")
         public void setUser(String user) {
             this.user = user;
         }
@@ -142,6 +144,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return printer;
         }
 
+        @SuppressWarnings("unused")
         public void setPrinter(String printer) {
             this.printer = printer;
         }
@@ -150,6 +153,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return readerName;
         }
 
+        @SuppressWarnings("unused")
         public void setReaderName(String readerName) {
             this.readerName = readerName;
         }
@@ -158,6 +162,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return jobName;
         }
 
+        @SuppressWarnings("unused")
         public void setJobName(String jobName) {
             this.jobName = jobName;
         }
@@ -166,6 +171,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return jobIndex;
         }
 
+        @SuppressWarnings("unused")
         public void setJobIndex(Integer jobIndex) {
             this.jobIndex = jobIndex;
         }
@@ -174,6 +180,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return pageScaling;
         }
 
+        @SuppressWarnings("unused")
         public void setPageScaling(PageScalingEnum pageScaling) {
             this.pageScaling = pageScaling;
         }
@@ -182,6 +189,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return copies;
         }
 
+        @SuppressWarnings("unused")
         public void setCopies(Integer copies) {
             this.copies = copies;
         }
@@ -190,6 +198,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return ranges;
         }
 
+        @SuppressWarnings("unused")
         public void setRanges(String ranges) {
             this.ranges = ranges;
         }
@@ -198,6 +207,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return collate;
         }
 
+        @SuppressWarnings("unused")
         public void setCollate(Boolean collate) {
             this.collate = collate;
         }
@@ -206,6 +216,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return removeGraphics;
         }
 
+        @SuppressWarnings("unused")
         public void setRemoveGraphics(Boolean removeGraphics) {
             this.removeGraphics = removeGraphics;
         }
@@ -214,6 +225,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return ecoprint;
         }
 
+        @SuppressWarnings("unused")
         public void setEcoprint(Boolean ecoprint) {
             this.ecoprint = ecoprint;
         }
@@ -222,6 +234,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return clear;
         }
 
+        @SuppressWarnings("unused")
         public void setClear(Boolean clear) {
             this.clear = clear;
         }
@@ -230,6 +243,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return jobTicket;
         }
 
+        @SuppressWarnings("unused")
         public void setJobTicket(Boolean jobTicket) {
             this.jobTicket = jobTicket;
         }
@@ -238,6 +252,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return jobTicketDate;
         }
 
+        @SuppressWarnings("unused")
         public void setJobTicketDate(Long jobTicketDate) {
             this.jobTicketDate = jobTicketDate;
         }
@@ -246,6 +261,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return jobTicketHrs;
         }
 
+        @SuppressWarnings("unused")
         public void setJobTicketHrs(Integer jobTicketHrs) {
             this.jobTicketHrs = jobTicketHrs;
         }
@@ -254,6 +270,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return jobTicketMin;
         }
 
+        @SuppressWarnings("unused")
         public void setJobTicketMin(Integer jobTicketMin) {
             this.jobTicketMin = jobTicketMin;
         }
@@ -262,6 +279,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return jobTicketRemark;
         }
 
+        @SuppressWarnings("unused")
         public void setJobTicketRemark(String jobTicketRemark) {
             this.jobTicketRemark = jobTicketRemark;
         }
@@ -270,6 +288,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return options;
         }
 
+        @SuppressWarnings("unused")
         public void setOptions(Map<String, String> options) {
             this.options = options;
         }
@@ -278,6 +297,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return delegation;
         }
 
+        @SuppressWarnings("unused")
         public void setDelegation(PrintDelegationDto delegation) {
             this.delegation = delegation;
         }

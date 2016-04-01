@@ -81,7 +81,11 @@ public final class QueuesPage extends AbstractAdminListPage {
      */
     private static class Req extends AbstractPagerReq {
 
+        /**
+         *
+         */
         public static class Select {
+
             @JsonProperty("text")
             private String containingText = null;
 
@@ -93,6 +97,7 @@ public final class QueuesPage extends AbstractAdminListPage {
                 return containingText;
             }
 
+            @SuppressWarnings("unused")
             public void setContainingText(String containingText) {
                 this.containingText = containingText;
             }
@@ -101,6 +106,7 @@ public final class QueuesPage extends AbstractAdminListPage {
                 return trusted;
             }
 
+            @SuppressWarnings("unused")
             public void setTrusted(Boolean trusted) {
                 this.trusted = trusted;
             }
@@ -109,6 +115,7 @@ public final class QueuesPage extends AbstractAdminListPage {
                 return disabled;
             }
 
+            @SuppressWarnings("unused")
             public void setDisabled(Boolean disabled) {
                 this.disabled = disabled;
             }
@@ -117,11 +124,15 @@ public final class QueuesPage extends AbstractAdminListPage {
                 return deleted;
             }
 
+            @SuppressWarnings("unused")
             public void setDeleted(Boolean deleted) {
                 this.deleted = deleted;
             }
         }
 
+        /**
+         *
+         */
         public static class Sort {
 
             private Boolean ascending = true;
@@ -130,6 +141,7 @@ public final class QueuesPage extends AbstractAdminListPage {
                 return ascending;
             }
 
+            @SuppressWarnings("unused")
             public void setAscending(Boolean ascending) {
                 this.ascending = ascending;
             }
@@ -143,6 +155,7 @@ public final class QueuesPage extends AbstractAdminListPage {
             return select;
         }
 
+        @SuppressWarnings("unused")
         public void setSelect(Select select) {
             this.select = select;
         }
@@ -151,6 +164,7 @@ public final class QueuesPage extends AbstractAdminListPage {
             return sort;
         }
 
+        @SuppressWarnings("unused")
         public void setSort(Sort sort) {
             this.sort = sort;
         }
@@ -414,19 +428,20 @@ public final class QueuesPage extends AbstractAdminListPage {
                 /*
                  * Period + Totals
                  */
-                String period = ""; // localized("period") + ": ";
-                String totals = "";
+                final StringBuilder period = new StringBuilder();
+                final StringBuilder totals = new StringBuilder();
 
                 if (queue.getResetDate() == null) {
-                    period += localizedMediumDate(queue.getCreatedDate());
+                    period.append(localizedMediumDate(queue.getCreatedDate()));
                 } else {
-                    period += localizedMediumDate(queue.getResetDate());
+                    period.append(localizedMediumDate(queue.getResetDate()));
                 }
 
-                period += " ~ ";
+                period.append(" ~ ");
 
                 if (queue.getLastUsageDate() != null) {
-                    period += localizedMediumDate(queue.getLastUsageDate());
+                    period.append(
+                            localizedMediumDate(queue.getLastUsageDate()));
 
                     //
                     String key = null;
@@ -434,23 +449,24 @@ public final class QueuesPage extends AbstractAdminListPage {
 
                     //
                     total = queue.getTotalJobs();
-                    totals += localizedNumber(total);
+                    totals.append(helper.localizedNumber(total));
                     key = (total == 1) ? "job" : "jobs";
-                    totals += " " + localized(key);
+                    totals.append(" ").append(localized(key));
 
                     //
                     total = queue.getTotalPages();
-                    totals += ", " + localizedNumber(total);
+                    totals.append(", ").append(helper.localizedNumber(total));
                     key = (total == 1) ? "page" : "pages";
-                    totals += " " + localized(key);
+                    totals.append(" ").append(localized(key));
 
                     //
-                    totals += ", " + NumberUtil.humanReadableByteCount(
-                            queue.getTotalBytes(), true);
+                    totals.append(", ")
+                            .append(NumberUtil.humanReadableByteCount(
+                                    queue.getTotalBytes(), true));
                 }
 
-                item.add(new Label("period", period));
-                item.add(new Label("totals", totals));
+                item.add(new Label("period", period.toString()));
+                item.add(new Label("totals", totals.toString()));
 
                 /*
                  *

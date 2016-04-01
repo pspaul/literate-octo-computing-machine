@@ -22,8 +22,6 @@
 package org.savapage.server.pages.admin;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +34,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
@@ -46,12 +43,9 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
-import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -64,12 +58,6 @@ public final class UsersPage extends AbstractAdminListPage {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     *
-     */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(UsersPage.class);
 
     /**
     *
@@ -93,11 +81,6 @@ public final class UsersPage extends AbstractAdminListPage {
     private final String currencySymbol;
 
     /**
-     * Number of currency decimals to display.
-     */
-    private final int currencyDecimals;
-
-    /**
      * @return {@code false} to give Admin a chance to inspect the users.
      */
     @Override
@@ -115,7 +98,6 @@ public final class UsersPage extends AbstractAdminListPage {
         // this.openServiceContext();
 
         this.currencySymbol = SpSession.getAppCurrencySymbol();
-        this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
 
         /*
          * We need a transaction because of the lazy creation of UserAccount
@@ -179,7 +161,6 @@ public final class UsersPage extends AbstractAdminListPage {
                         req.getMaxResults(), sortField, sortAscending);
 
         final String myCurrencySymbol = this.currencySymbol;
-        final int myCurrencyDecimals = this.currencyDecimals;
 
         final Locale locale = getSession().getLocale();
 
@@ -187,21 +168,6 @@ public final class UsersPage extends AbstractAdminListPage {
         add(new PropertyListView<User>("users-view", entryList) {
 
             private static final long serialVersionUID = 1L;
-
-            /**
-             * Decodes an encoded decimal to a localized string.
-             *
-             * @param value
-             * @return
-             */
-            private final String localizedDecimal(final BigDecimal value) {
-                try {
-                    return BigDecimalUtil.localize(value, myCurrencyDecimals,
-                            locale, true);
-                } catch (ParseException e) {
-                    throw new SpException(e);
-                }
-            }
 
             /**
              *
@@ -229,9 +195,8 @@ public final class UsersPage extends AbstractAdminListPage {
             @Override
             protected void populateItem(final ListItem<User> item) {
 
-                /*
-                 *
-                 */
+                final MarkupHelper helper = new MarkupHelper(item);
+
                 final Map<String, String> mapVisible = new HashMap<>();
                 mapVisible.put("balance-currency", null);
 
@@ -307,19 +272,20 @@ public final class UsersPage extends AbstractAdminListPage {
                 /*
                  * Period + Totals
                  */
-                String period = ""; // localized("period") + ": ";
-                String totals = "";
+                final StringBuilder period = new StringBuilder();
+                final StringBuilder totals = new StringBuilder();
 
                 if (user.getResetDate() == null) {
-                    period += localizedMediumDate(user.getCreatedDate());
+                    period.append(localizedMediumDate(user.getCreatedDate()));
                 } else {
-                    period += localizedMediumDate(user.getResetDate());
+                    period.append(localizedMediumDate(user.getResetDate()));
                 }
 
-                period += " ~ ";
+                period.append(" ~ ");
 
                 if (user.getLastUserActivity() != null) {
-                    period += localizedMediumDate(user.getLastUserActivity());
+                    period.append(
+                            localizedMediumDate(user.getLastUserActivity()));
 
                     //
                     String key = null;
@@ -327,23 +293,24 @@ public final class UsersPage extends AbstractAdminListPage {
 
                     //
                     total = user.getNumberOfPrintInJobs();
-                    totals += localizedNumber(total);
+                    totals.append(helper.localizedNumber(total));
                     key = (total == 1) ? "job" : "jobs";
-                    totals += " " + localized(key);
+                    totals.append(" ").append(localized(key));
 
                     //
                     total = user.getNumberOfPrintInPages();
-                    totals += ", " + localizedNumber(total);
+                    totals.append(", ").append(helper.localizedNumber(total));
                     key = (total == 1) ? "page" : "pages";
-                    totals += " " + localized(key);
+                    totals.append(" ").append(localized(key));
 
                     //
-                    totals += ", " + NumberUtil.humanReadableByteCount(
-                            user.getNumberOfPrintInBytes(), true);
+                    totals.append(", ")
+                            .append(NumberUtil.humanReadableByteCount(
+                                    user.getNumberOfPrintInBytes(), true));
                 }
 
-                item.add(new Label("period", period));
-                item.add(new Label("totals", totals));
+                item.add(new Label("period", period.toString()));
+                item.add(new Label("totals", totals.toString()));
 
                 /*
                  *

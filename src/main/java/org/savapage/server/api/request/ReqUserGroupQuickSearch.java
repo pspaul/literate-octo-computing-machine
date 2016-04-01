@@ -53,6 +53,7 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
 
         private List<QuickSearchItemDto> items;
 
+        @SuppressWarnings("unused")
         public List<QuickSearchItemDto> getItems() {
             return items;
         }

@@ -49,6 +49,7 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
             return jobFileName;
         }
 
+        @SuppressWarnings("unused")
         public void setJobFileName(String jobFileName) {
             this.jobFileName = jobFileName;
         }
@@ -57,6 +58,7 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
             return jobTicket;
         }
 
+        @SuppressWarnings("unused")
         public void setJobTicket(Boolean jobTicket) {
             this.jobTicket = jobTicket;
         }

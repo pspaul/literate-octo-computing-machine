@@ -57,6 +57,7 @@ public final class ReqDeviceGet extends ApiRequestMixin {
             return id;
         }
 
+        @SuppressWarnings("unused")
         public void setId(Long id) {
             this.id = id;
         }

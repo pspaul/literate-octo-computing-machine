@@ -54,6 +54,7 @@ public final class ReqConfigPropGet extends ApiRequestMixin {
             return name;
         }
 
+        @SuppressWarnings("unused")
         public void setName(String name) {
             this.name = name;
         }
@@ -71,6 +72,7 @@ public final class ReqConfigPropGet extends ApiRequestMixin {
         private String value;
         private Boolean multiline;
 
+        @SuppressWarnings("unused")
         public String getName() {
             return name;
         }
@@ -79,6 +81,7 @@ public final class ReqConfigPropGet extends ApiRequestMixin {
             this.name = name;
         }
 
+        @SuppressWarnings("unused")
         public String getValue() {
             return value;
         }
@@ -87,6 +90,7 @@ public final class ReqConfigPropGet extends ApiRequestMixin {
             this.value = value;
         }
 
+        @SuppressWarnings("unused")
         public Boolean getMultiline() {
             return multiline;
         }

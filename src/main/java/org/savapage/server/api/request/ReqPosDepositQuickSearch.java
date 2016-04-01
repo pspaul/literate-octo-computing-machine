@@ -61,6 +61,7 @@ public final class ReqPosDepositQuickSearch extends ApiRequestMixin {
 
         private List<QuickSearchItemDto> items;
 
+        @SuppressWarnings("unused")
         public List<QuickSearchItemDto> getItems() {
             return items;
         }

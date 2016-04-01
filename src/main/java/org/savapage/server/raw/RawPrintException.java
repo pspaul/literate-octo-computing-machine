@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ package org.savapage.server.raw;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  * @since 0.9.9
  */
 public class RawPrintException extends Exception {
@@ -35,8 +35,8 @@ public class RawPrintException extends Exception {
 
     /**
      * Constructs a new {@link RawPrintException} without a message.
-     *
      */
+    @SuppressWarnings("unused")
     private RawPrintException() {
         super("");
     }

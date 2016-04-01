@@ -211,7 +211,7 @@ public class OutboxAddin extends AbstractUserPage {
             int copies = job.getCopies();
 
             //
-            totals.append(localizedNumber(total));
+            totals.append(helper.localizedNumber(total));
             key = (total == 1) ? "page" : "pages";
             totals.append(" ").append(localized(key));
 

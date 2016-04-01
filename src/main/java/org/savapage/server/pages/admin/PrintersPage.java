@@ -126,7 +126,11 @@ public final class PrintersPage extends AbstractAdminListPage {
      */
     private static class Req extends AbstractPagerReq {
 
+        /**
+         *
+         */
         public static class Select {
+
             @JsonProperty("text")
             private String containingText = null;
 
@@ -137,6 +141,7 @@ public final class PrintersPage extends AbstractAdminListPage {
                 return containingText;
             }
 
+            @SuppressWarnings("unused")
             public void setContainingText(String containingText) {
                 this.containingText = containingText;
             }
@@ -145,6 +150,7 @@ public final class PrintersPage extends AbstractAdminListPage {
                 return disabled;
             }
 
+            @SuppressWarnings("unused")
             public void setDisabled(Boolean disabled) {
                 this.disabled = disabled;
             }
@@ -153,12 +159,16 @@ public final class PrintersPage extends AbstractAdminListPage {
                 return deleted;
             }
 
+            @SuppressWarnings("unused")
             public void setDeleted(Boolean deleted) {
                 this.deleted = deleted;
             }
 
         }
 
+        /**
+         *
+         */
         public static class Sort {
 
             private Boolean ascending = true;
@@ -167,6 +177,7 @@ public final class PrintersPage extends AbstractAdminListPage {
                 return ascending;
             }
 
+            @SuppressWarnings("unused")
             public void setAscending(Boolean ascending) {
                 this.ascending = ascending;
             }
@@ -180,6 +191,7 @@ public final class PrintersPage extends AbstractAdminListPage {
             return select;
         }
 
+        @SuppressWarnings("unused")
         public void setSelect(Select select) {
             this.select = select;
         }
@@ -188,6 +200,7 @@ public final class PrintersPage extends AbstractAdminListPage {
             return sort;
         }
 
+        @SuppressWarnings("unused")
         public void setSort(Sort sort) {
             this.sort = sort;
         }
@@ -252,6 +265,8 @@ public final class PrintersPage extends AbstractAdminListPage {
 
             final Printer printer = ServiceContext.getDaoContext()
                     .getPrinterDao().findById(item.getModelObject().getId());
+
+            final MarkupHelper helper = new MarkupHelper(item);
 
             Label labelWrk = null;
 
@@ -544,19 +559,19 @@ public final class PrintersPage extends AbstractAdminListPage {
             /*
              * Period + Totals
              */
-            String period = ""; // localized("period") + ": ";
-            String totals = "";
+            final StringBuilder period = new StringBuilder();
+            final StringBuilder totals = new StringBuilder();
 
             if (printer.getResetDate() == null) {
-                period += localizedMediumDate(printer.getCreatedDate());
+                period.append(localizedMediumDate(printer.getCreatedDate()));
             } else {
-                period += localizedMediumDate(printer.getResetDate());
+                period.append(localizedMediumDate(printer.getResetDate()));
             }
 
-            period += " ~ ";
+            period.append(" ~ ");
 
             if (printer.getLastUsageDate() != null) {
-                period += localizedMediumDate(printer.getLastUsageDate());
+                period.append(localizedMediumDate(printer.getLastUsageDate()));
 
                 //
                 String key = null;
@@ -564,29 +579,29 @@ public final class PrintersPage extends AbstractAdminListPage {
 
                 //
                 total = printer.getTotalJobs();
-                totals += localizedNumber(total);
+                totals.append(helper.localizedNumber(total));
                 key = (total == 1) ? "job" : "jobs";
-                totals += " " + localized(key);
+                totals.append(" ").append(localized(key));
 
                 //
                 total = printer.getTotalPages();
-                totals += ", " + localizedNumber(total);
+                totals.append(", " + helper.localizedNumber(total));
                 key = (total == 1) ? "page" : "pages";
-                totals += " " + localized(key);
+                totals.append(" ").append(localized(key));
 
                 //
                 total = printer.getTotalSheets();
-                totals += ", " + localizedNumber(total);
+                totals.append(", " + helper.localizedNumber(total));
                 key = (total == 1) ? "sheet" : "sheets";
-                totals += " " + localized(key);
+                totals.append(" ").append(localized(key));
 
                 //
-                totals += ", " + NumberUtil
-                        .humanReadableByteCount(printer.getTotalBytes(), true);
+                totals.append(", ").append(NumberUtil
+                        .humanReadableByteCount(printer.getTotalBytes(), true));
             }
 
-            item.add(new Label("period", period));
-            item.add(new Label("totals", totals));
+            item.add(new Label("period", period.toString()));
+            item.add(new Label("totals", totals.toString()));
 
             /*
              * Set the uid in 'data-savapage' attribute, so it can be picked up

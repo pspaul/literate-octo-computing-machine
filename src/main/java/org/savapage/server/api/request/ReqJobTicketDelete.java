@@ -50,6 +50,7 @@ public final class ReqJobTicketDelete extends ApiRequestMixin {
             return jobFileName;
         }
 
+        @SuppressWarnings("unused")
         public void setJobFileName(String jobFileName) {
             this.jobFileName = jobFileName;
         }

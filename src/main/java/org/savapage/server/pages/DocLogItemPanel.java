@@ -25,10 +25,8 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,14 +54,14 @@ import org.savapage.server.WebApp;
  */
 public class DocLogItemPanel extends Panel {
 
-    private final NumberFormat fmNumber = NumberFormat.getInstance(getSession()
-            .getLocale());
+    private final NumberFormat fmNumber =
+            NumberFormat.getInstance(getSession().getLocale());
 
     private final DateFormat dfShortDateTime = DateFormat.getDateTimeInstance(
             DateFormat.SHORT, DateFormat.SHORT, getSession().getLocale());
 
-    private final DateFormat dfShortTime = DateFormat.getTimeInstance(
-            DateFormat.SHORT, getSession().getLocale());
+    private final DateFormat dfShortTime = DateFormat
+            .getTimeInstance(DateFormat.SHORT, getSession().getLocale());
 
     /**
      *
@@ -88,28 +86,10 @@ public class DocLogItemPanel extends Panel {
     }
 
     /**
-     * Gets the locale for the currency.
-     *
-     * <p>
-     * NOTE: We use the Locale from the request. Do NOT use the getLocale()
-     * cause it will get you the locale from the session, which does NOT contain
-     * the ISO 3166 country code needed for the {@link Currency#getSymbol()}
-     * method.
-     * </p>
-     *
-     * @throws IllegalArgumentException
-     *             if the country of the given locale is not a supported ISO
-     *             3166 country code.
-     */
-    private Locale getCurrencyLocale() {
-        return getRequestCycle().getRequest().getLocale();
-    }
-
-    /**
      *
      * @param model
      */
-    public void populate(IModel<DocLogItem> model) {
+    public void populate(final IModel<DocLogItem> model) {
 
         final DocLogItem obj = model.getObject();
 
@@ -168,8 +148,8 @@ public class DocLogItemPanel extends Panel {
         if (StringUtils.isBlank(extSupplierImgUrl)) {
             helper.discloseLabel("extSupplierImg");
         } else {
-            helper.encloseLabel("extSupplierImg", "", true).add(
-                    new AttributeModifier("src", extSupplierImgUrl));
+            helper.encloseLabel("extSupplierImg", "", true)
+                    .add(new AttributeModifier("src", extSupplierImgUrl));
         }
 
         //
@@ -179,8 +159,7 @@ public class DocLogItemPanel extends Panel {
         if (extSupplierStatus == null) {
             helper.discloseLabel("extStatus");
         } else {
-            addVisible(true, "extStatus",
-                    extSupplierStatus.uiText(getLocale()),
+            addVisible(true, "extStatus", extSupplierStatus.uiText(getLocale()),
                     MarkupHelper.getCssTxtClass(extSupplierStatus));
         }
 
@@ -333,8 +312,9 @@ public class DocLogItemPanel extends Panel {
                 mapVisible.put("job-id", obj.getJobId().toString());
 
                 if (obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
-                    mapVisible.put("cost-currency", CurrencyUtil
-                            .getCurrencySymbol(obj.getCurrencyCode(),
+                    mapVisible.put("cost-currency",
+                            CurrencyUtil.getCurrencySymbol(
+                                    obj.getCurrencyCode(),
                                     getSession().getLocale()));
                     mapVisible.put("cost", localizedDecimal(obj.getCost()));
                 }
@@ -376,9 +356,7 @@ public class DocLogItemPanel extends Panel {
                 }
 
                 final String sparklineData =
-                        String.format(
-                                "%d,%d",
-                                obj.getTotalSheets(),
+                        String.format("%d,%d", obj.getTotalSheets(),
                                 obj.getTotalPages() * obj.getCopies()
                                         - obj.getTotalSheets());
 
@@ -398,8 +376,8 @@ public class DocLogItemPanel extends Panel {
 
         //
         String title = null;
-        if (ConfigManager.instance().isConfigValue(
-                Key.WEBAPP_DOCLOG_SHOW_DOC_TITLE)) {
+        if (ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_DOCLOG_SHOW_DOC_TITLE)) {
             title = obj.getTitle();
         }
         mapVisible.put("title", title);
@@ -439,8 +417,8 @@ public class DocLogItemPanel extends Panel {
         total = obj.getTotalSheets();
         if (total > 0) {
             key = (total == 1) ? "sheet" : "sheets";
-            totals.append(" (").append(total).append(" ")
-                    .append(localized(key)).append(")");
+            totals.append(" (").append(total).append(" ").append(localized(key))
+                    .append(")");
         }
 
         //
@@ -471,8 +449,8 @@ public class DocLogItemPanel extends Panel {
                 cssClassWlk = cssJobState;
             }
 
-            addVisible(StringUtils.isNotBlank(entry.getValue()),
-                    entry.getKey(), entry.getValue(), cssClassWlk);
+            addVisible(StringUtils.isNotBlank(entry.getValue()), entry.getKey(),
+                    entry.getValue(), cssClassWlk);
         }
 
     }

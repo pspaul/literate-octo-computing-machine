@@ -26,6 +26,7 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.dao.DeviceAttrDao;
 import org.savapage.core.dao.enums.DeviceAttrEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -46,20 +47,22 @@ public final class PageDevice extends AbstractAdminPage {
 
         super(parameters);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
         String attrName;
         String wicketIdBase;
 
         //
-        labelledCheckbox("user-auth-mode",
+        helper.labelledCheckbox("user-auth-mode",
                 DeviceAttrEnum.AUTH_MODE_IS_CUSTOM.getDbName(), false);
         //
-        labelledCheckbox("user-auth-mode-name",
+        helper.labelledCheckbox("user-auth-mode-name",
                 DeviceAttrEnum.AUTH_MODE_NAME.getDbName(), false);
-        labelledCheckbox("user-auth-mode-id",
+        helper.labelledCheckbox("user-auth-mode-id",
                 DeviceAttrEnum.AUTH_MODE_ID.getDbName(), false);
-        labelledCheckbox("user-auth-mode-card-local",
+        helper.labelledCheckbox("user-auth-mode-card-local",
                 DeviceAttrEnum.AUTH_MODE_CARD_LOCAL.getDbName(), false);
-        labelledCheckbox("user-auth-mode-card-network",
+        helper.labelledCheckbox("user-auth-mode-card-network",
                 DeviceAttrEnum.AUTH_MODE_CARD_IP.getDbName(), false);
 
         //
@@ -67,14 +70,14 @@ public final class PageDevice extends AbstractAdminPage {
                 DeviceAttrEnum.WEBAPP_USER_MAX_IDLE_SECS.getDbName(), "0");
 
         //
-        labelledCheckbox("user-auth-mode-id-pin",
+        helper.labelledCheckbox("user-auth-mode-id-pin",
                 DeviceAttrEnum.AUTH_MODE_ID_PIN_REQ.getDbName(), false);
-        labelledCheckbox("user-auth-mode-id-mask",
+        helper.labelledCheckbox("user-auth-mode-id-mask",
                 DeviceAttrEnum.AUTH_MODE_ID_IS_MASKED.getDbName(), false);
         //
-        labelledCheckbox("user-auth-mode-card-pin",
+        helper.labelledCheckbox("user-auth-mode-card-pin",
                 DeviceAttrEnum.AUTH_MODE_CARD_PIN_REQ.getDbName(), false);
-        labelledCheckbox("user-auth-mode-card-self-assoc",
+        helper.labelledCheckbox("user-auth-mode-card-self-assoc",
                 DeviceAttrEnum.AUTH_MODE_CARD_SELF_ASSOC.getDbName(), false);
 
         //

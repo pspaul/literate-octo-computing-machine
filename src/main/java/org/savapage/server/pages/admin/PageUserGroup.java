@@ -24,10 +24,8 @@ package org.savapage.server.pages.admin;
 import java.util.EnumSet;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.UserAccountingDto;
-import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -54,12 +52,6 @@ public final class PageUserGroup extends AbstractAdminPage {
 
         final EnumSet<ACLRoleEnum> selected = EnumSet
                 .of(ACLRoleEnum.JOB_TICKET_OPERATOR, ACLRoleEnum.WEB_CASHIER);
-
-        final UserGroupAttrDao daoAttr =
-                ServiceContext.getDaoContext().getUserGroupAttrDao();
-
-        // final UserGroupAttr attr =
-        // daoAttr.findByName(group, UserGroupAttrEnum.ACL_ROLES);
 
         aclRolePanel.populate(selected);
 

@@ -60,6 +60,7 @@ public final class ReqLogout extends ApiRequestMixin {
             return authToken;
         }
 
+        @SuppressWarnings("unused")
         public void setAuthToken(String authToken) {
             this.authToken = authToken;
         }

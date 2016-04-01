@@ -39,6 +39,7 @@ public final class ReqPrintDelegationSet extends ApiRequestMixin {
             onRequest(final String requestingUser, final User lockedUser)
                     throws IOException {
 
+        @SuppressWarnings("unused")
         final PrintDelegationDto dto =
                 AbstractDto.create(PrintDelegationDto.class,
                         getParmValue("dto"));
