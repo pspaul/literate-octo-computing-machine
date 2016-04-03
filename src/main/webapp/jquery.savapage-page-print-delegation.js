@@ -29,9 +29,6 @@
 /*jslint browser: true*/
 /*global $, jQuery, alert*/
 
-/*
- *
- */
 ( function($, window, document, JSON, _ns) {"use strict";
 
 		_ns.PagePrintDelegation = function(_i18n, _view, _model, _api) {
@@ -121,16 +118,16 @@
 			}
 			//
 			, _setVisibilityDelegatorsEdit = function() {
-				var selectedRows = _nSelectedDelegatorGroups + _nSelectedDelegatorUsers > 0;				
-				
+				var selectedRows = _nSelectedDelegatorGroups + _nSelectedDelegatorUsers > 0;
+
 				/*
-				 *  For future use: when #sp-print-delegation-edit-radio-edit is present.
-				 */
+				*  For future use: when #sp-print-delegation-edit-radio-edit is present.
+				*/
 				//_view.enableCheckboxRadio($("#sp-print-delegation-edit-radio-edit"), selectedRows);
 
 				_view.enable($('.sp-print-delegator-rows'), _nDelegatorGroups + _nDelegatorUsers > 0);
 				_view.enable($('.sp-print-delegator-rows-selected'), selectedRows);
-				_view.enable($('.sp-print-delegation-mode-edit'), _nSelectedDelegatorGroups + _nSelectedDelegatorUsers > 0);
+				_view.enable($('.sp-print-delegation-mode-edit'), selectedRows);
 				_view.enable($('#sp-print-delegation-button-remove-selected'), selectedRows);
 			}
 			//----------------------------------------------------------------
