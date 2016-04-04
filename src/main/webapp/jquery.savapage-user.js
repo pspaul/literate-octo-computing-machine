@@ -1770,14 +1770,20 @@
 			 */
 			$(_self.id()).on('pagecreate', function(event) {
 
-				$('#file-upload-feedback').hide();
 				// initial hide
+				$('#file-upload-feedback').hide();
+				
 				$('#button-file-upload-submit').on('click', null, null, function() {
 					$('#file-upload-feedback').show();
 					$('#button-file-upload-reset').click();
 					return true;
 				});
 
+				$('#button-file-upload-reset').on('click', null, null, function() {
+					$('#file-upload-feedback').html('').hide();
+					return true;
+				});
+				
 			}).on("pagebeforeshow", function(event, ui) {
 
 				_ns.deferAppWakeUp(true);
@@ -1786,8 +1792,7 @@
 				/*
 				 * Clear and Hide content
 				 */
-				$('#file-upload-feedback').hide();
-				$('#file-upload-feedback').html('');
+				//$('#file-upload-feedback').html('').hide();
 				$('#button-file-upload-reset').click();
 
 				/*
@@ -2407,6 +2412,18 @@
 
 					_view.checkCb("#sp-popup-job-undelete", false);
 					_view.checkCb("#sp-popup-job-rotate", (job.rotate !== '0'));
+
+					sel2 = $('#sp-popup-job-expiry');
+
+					if (page.expiryTime) {
+						if (page.expiryTime > 0 && page.expiryTime - _model.prevMsgTime < page.expiryTimeSignal) {
+							sel2.addClass('sp-thumbnail-subscript-job-expired');
+						} else {
+							sel2.removeClass('sp-thumbnail-subscript-job-expired');
+						}
+						sel2.find('span').html(_ns.Utils.formatDateTime(new Date(page.expiryTime)));
+					}
+					_view.visible(sel2, page.expiryTime);
 
 					$('#sp-popup-job-info').enhanceWithin().popup('open', {
 						positionTo : '#page-main-thumbnail-images .sp-thumbnail-page:eq(' + iImg + ')'
