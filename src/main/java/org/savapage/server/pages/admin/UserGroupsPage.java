@@ -140,21 +140,30 @@ public final class UserGroupsPage extends AbstractAdminListPage {
 
                 Label labelWrk = null;
 
-                item.add(new Label("groupName", userGroup.getGroupName()));
-
                 //
                 final ReservedUserGroupEnum reservedGroup =
                         ReservedUserGroupEnum
                                 .fromDbName(userGroup.getGroupName());
 
+                final String groupName;
                 final long userCount;
 
                 if (reservedGroup == null) {
+                    groupName = userGroup.getGroupName();
                     groupFilter.setGroupId(userGroup.getId());
                     userCount = groupMemberDao.getUserCount(groupFilter);
                 } else {
+                    groupName = reservedGroup.getUiName();
                     userCount = userDao.countActiveUsers(reservedGroup);
                 }
+                labelWrk = new Label("groupName", groupName);
+
+                if (reservedGroup != null) {
+                    MarkupHelper.appendLabelAttr(labelWrk, "class",
+                            MarkupHelper.CSS_TXT_WARN);
+                }
+
+                item.add(labelWrk);
 
                 labelWrk = new Label("signal", String.valueOf(userCount));
                 item.add(labelWrk);

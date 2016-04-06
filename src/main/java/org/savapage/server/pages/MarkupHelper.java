@@ -35,6 +35,7 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
+import org.savapage.core.jpa.Account.AccountTypeEnum;
 
 /**
  * Helper methods for a {@link MarkupContainer}.
@@ -69,6 +70,11 @@ public final class MarkupHelper {
     public static final String CSS_PRINT_IN_QUEUE = "sp-print-in-queue";
     public static final String CSS_PRINT_OUT_PRINTER = "sp-print-out-printer";
     public static final String CSS_PRINT_OUT_PDF = "sp-print-out-pdf";
+
+    /**
+     * HTML entity for ⦦ : OBLIQUE ANGLE OPENING UP).
+     */
+    public static final String HTML_ENT_OBL_ANGLE_OPENING_UP = "&#x29A6;";
 
     /**
      *
@@ -559,7 +565,7 @@ public final class MarkupHelper {
     /**
      * Gets CSS_TXT_* class of enum value.
      *
-     * @param status
+     * @param state
      *            The {@link IppJobStateEnum}.
      * @return the CSS_TXT_* class of the enum value.
      */
@@ -581,7 +587,31 @@ public final class MarkupHelper {
         default:
             return "";
         }
-
     }
 
+    /**
+     * Gets the URL image path of {@link AccountTypeEnum}.
+     *
+     * @param accountType
+     *            The enum value.
+     * @return The {@code /} prefixed URL path.
+     */
+    public static String getImgUrlPath(final AccountTypeEnum accountType) {
+
+        final String imageSrc;
+
+        switch (accountType) {
+        case GROUP:
+            imageSrc = "group.png";
+            break;
+        case SHARED:
+            imageSrc = "tag_green.png";
+            break;
+        default:
+            imageSrc = "user_gray.png";
+            break;
+        }
+
+        return String.format("/%s/%s", "famfamfam-silk", imageSrc);
+    }
 }

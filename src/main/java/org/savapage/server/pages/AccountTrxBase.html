@@ -21,15 +21,15 @@
 <ul data-role="listview" data-inset="true">
 
 	<li data-role="list-divider">
-		<wicket:message key="title" />
-		<wicket:enclosure child="select-and-sort-user"> 
-            - <wicket:message key="select-and-sort-user" />: <span
+		<wicket:enclosure child="select-and-sort-user">
+			<wicket:message key="select-and-sort-user" />:&nbsp;<span
 				wicket:id="select-and-sort-user" />
 		</wicket:enclosure>
-		<wicket:enclosure child="select-and-sort-account"> 
-            - <wicket:message key="select-and-sort-account" />: <span
+		<wicket:enclosure child="select-and-sort-account">
+			<img width="16" height="16" wicket:id="accountImage" />&nbsp;&nbsp;<span
 				wicket:id="select-and-sort-account" />
 		</wicket:enclosure>
+		&bull;&nbsp;<wicket:message key="title" />
 	</li>
 
 	<li>

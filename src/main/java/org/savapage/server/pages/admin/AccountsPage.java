@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -178,11 +179,24 @@ public final class AccountsPage extends AbstractAdminListPage {
                             account.getParent().getName());
                     item.add(labelWrk);
 
-                    // ⦦ : U+29A6 (OBLIQUE ANGLE OPENING UP)
                     labelWrk = new Label("accountName",
-                            String.format("⦦ %s", account.getName()));
+                            String.format("%s %s",
+                                    MarkupHelper.HTML_ENT_OBL_ANGLE_OPENING_UP,
+                                    account.getName()));
+                    labelWrk.setEscapeModelStrings(false);
                     item.add(labelWrk);
                 }
+
+                /*
+                 * Image
+                 */
+                final AccountTypeEnum accountType = EnumUtils.getEnum(
+                        AccountTypeEnum.class, account.getAccountType());
+
+                labelWrk = new Label("accountImage", "");
+                labelWrk.add(new AttributeModifier("src",
+                        MarkupHelper.getImgUrlPath(accountType)));
+                item.add(labelWrk);
 
                 /*
                  * Signal

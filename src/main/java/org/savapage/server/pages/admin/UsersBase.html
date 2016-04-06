@@ -31,24 +31,24 @@
 				<li>
 
 					<div class="ui-field-contain">
+						<label for="sp-user-select-group">
+							<wicket:message key="prompt-group" />
+						</label>
+						<select name="sp-user-select-group" id="sp-user-select-group"
+							data-native-menu="true">
+							<wicket:fragment wicket:id="option-list-groups">
+								<option value="the-key" wicket:id="option-group"></option>
+							</wicket:fragment>
+						</select>
+					</div>
+
+					<div class="ui-field-contain">
 						<label for="sp-user-id-containing-text">
 							<wicket:message key="prompt-id-containing-text" />
 						</label>
 						<input type="text" id="sp-user-id-containing-text" value=""
 							maxlength="128" data-clear-btn="true" autocomplete="off"
 							autocorrect="off" autocapitalize="off" spellcheck="false" />
-					</div>
-
-					<div class="ui-field-contain">
-						<label for="sp-user-select-group">
-							<wicket:message key="prompt-group" />
-						</label>
-						<select name="sp-user-select-group" id="sp-user-select-group"
-							data-native-menu="true" class="ui-mini">
-							<wicket:fragment wicket:id="option-list-groups">
-								<option value="the-key" wicket:id="option-group"></option>
-							</wicket:fragment>
-						</select>
 					</div>
 
 					<div class="ui-field-contain">

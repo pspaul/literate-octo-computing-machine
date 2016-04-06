@@ -394,7 +394,7 @@ public final class DevicesPage extends AbstractAdminListPage {
                 /*
                  * Device Image
                  */
-                String imageSrc;
+                final String imageSrc;
 
                 if (device.getCardReader() != null) {
                     imageSrc = "device-terminal-card-reader-16x16.png";

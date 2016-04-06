@@ -21,12 +21,14 @@
  */
 package org.savapage.server.pages;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.AccountTrxTypeEnum;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
 import org.savapage.core.jpa.Account;
+import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.SpSession;
@@ -45,6 +47,8 @@ public final class AccountTrxBase extends AbstractAuthPage {
 
     /**
      *
+     * @param parameters
+     *            The {@code PageParameters}.
      */
     public AccountTrxBase(final PageParameters parameters) {
 
@@ -73,8 +77,7 @@ public final class AccountTrxBase extends AbstractAuthPage {
     }
 
     /**
-     *
-     * @param em
+     * @param adminWebApp
      */
     private void handlePage(final boolean adminWebApp) {
 
@@ -108,14 +111,36 @@ public final class AccountTrxBase extends AbstractAuthPage {
         String userName = null;
         String accountName = null;
 
+        final AccountTypeEnum accountType;
+
         if (userNameVisible) {
+
             final User user = ServiceContext.getDaoContext().getUserDao()
                     .findById(userId);
+
             userName = user.getUserId();
+
+            accountType = AccountTypeEnum.USER;
+
         } else if (accountNameVisible) {
+
             final Account account = ServiceContext.getDaoContext()
                     .getAccountDao().findById(accountId);
-            accountName = account.getName();
+
+            accountType = EnumUtils.getEnum(AccountTypeEnum.class,
+                    account.getAccountType());
+
+            final Account accountParent = account.getParent();
+            if (accountParent == null) {
+                accountName = account.getName();
+            } else {
+                accountName = String.format("%s <sub>%s %s</sub>",
+                        accountParent.getName(),
+                        MarkupHelper.HTML_ENT_OBL_ANGLE_OPENING_UP,
+                        account.getName());
+            }
+        } else {
+            accountType = null;
         }
 
         //
@@ -161,7 +186,13 @@ public final class AccountTrxBase extends AbstractAuthPage {
         //
         helper.encloseLabel("select-and-sort-user", userName, userNameVisible);
         helper.encloseLabel("select-and-sort-account", accountName,
-                accountNameVisible);
+                accountNameVisible).setEscapeModelStrings(false);
+
+        if (accountType != null) {
+            helper.addModifyLabelAttr("accountImage", "", "src",
+                    MarkupHelper.getImgUrlPath(accountType));
+        }
+
     }
 
 }
