@@ -69,6 +69,17 @@
 				</label>
 				<input type="checkbox" id="user-disabled" value="0" />
 			</fieldset>
+
+			<div data-role="collapsible" data-collapsed="false">
+				<h3>
+					<wicket:message key="header-roles" />
+				</h3>
+				<fieldset data-role="controlgroup" data-mini="true"
+					id="sp-user-edit-roles">
+					<wicket:fragment wicket:id="ACLRoleEnumCheckboxes" />
+				</fieldset>
+			</div>
+
 		</li>
 
 		<li>

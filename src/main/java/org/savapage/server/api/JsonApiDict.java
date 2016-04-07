@@ -55,6 +55,7 @@ import org.savapage.server.api.request.ReqQueueSet;
 import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
+import org.savapage.server.api.request.ReqUserGet;
 import org.savapage.server.api.request.ReqUserGroupGet;
 import org.savapage.server.api.request.ReqUserGroupMemberQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupQuickSearch;
@@ -62,6 +63,7 @@ import org.savapage.server.api.request.ReqUserGroupSet;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
 import org.savapage.server.api.request.ReqUserNotifyAccountChange;
 import org.savapage.server.api.request.ReqUserQuickSearch;
+import org.savapage.server.api.request.ReqUserSet;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
@@ -902,7 +904,8 @@ public class JsonApiDict {
         usr(REQ_USER_LAZY_ECOPRINT, DbClaim.NONE, DbAccess.USER_LOCK);
 
         adm(REQ_USER_DELETE, DbClaim.READ, DbAccess.YES);
-        adm(REQ_USER_GET, DbClaim.READ, DbAccess.YES);
+
+        adm(REQ_USER_GET, ReqUserGet.class, DbClaim.READ, DbAccess.YES);
 
         usr(REQ_USER_GET_STATS, DbClaim.READ, DbAccess.YES);
 
@@ -914,7 +917,7 @@ public class JsonApiDict {
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.WEB_CASHIER,
                         ACLRoleEnum.JOB_TICKET_OPERATOR));
 
-        adm(REQ_USER_SET, DbClaim.READ, DbAccess.YES);
+        adm(REQ_USER_SET, ReqUserSet.class, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_SOURCE_GROUPS, DbClaim.NONE, DbAccess.NO);
         adm(REQ_USER_SYNC, DbClaim.NONE, DbAccess.NO);
 

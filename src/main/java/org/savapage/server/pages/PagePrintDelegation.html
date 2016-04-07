@@ -66,15 +66,18 @@
 					<wicket:message key="button-remove-selected" />
 				</button>
 
-				<button id="sp-print-delegation-button-save"
-					class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon">
-					<wicket:message key="button-save" />
-				</button>
-
+				<wicket:remove>
+					<!-- 
+					<button id="sp-print-delegation-button-save"
+						class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon">
+						<wicket:message key="button-save" />
+					</button>
+				 -->
+				</wicket:remove>
 
 				<a href="#" data-rel="back" data-direction="reverse"
-					class="ui-btn ui-btn-inline ui-btn-no-icon">
-					<wicket:message key="button-close" />
+					class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
+						key="button-close" />
 				</a>
 			</div>
 		</li>
@@ -159,8 +162,8 @@
 							<wicket:message key="button-add" />
 						</button>
 						<a href="#" data-rel="back" data-direction="reverse"
-							class="ui-btn ui-btn-inline ui-btn-no-icon">
-							<wicket:message key="button-close" />
+							class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
+								key="button-close" />
 						</a>
 					</td>
 				</tr>

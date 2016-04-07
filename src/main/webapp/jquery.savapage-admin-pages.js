@@ -35,6 +35,55 @@
 ( function($, window, document, JSON, _ns) {"use strict";
 
 		/**
+		 *
+		 */
+		_ns.ACLRoleEnumPanel = {
+
+			/*
+			 * Checkbox state transition: null -> on -> off -> null.
+			 */
+			onCheckboxClick : function(selCheckboxLabel) {
+				if (selCheckboxLabel.hasClass('sp-tristate-null')) {
+					selCheckboxLabel.removeClass('sp-tristate-null').addClass('sp-tristate-on');
+					return true;
+				}
+				if (selCheckboxLabel.hasClass('sp-tristate-on')) {
+					selCheckboxLabel.removeClass('sp-tristate-on').addClass('sp-tristate-off');
+					return true;
+				}
+				selCheckboxLabel.removeClass('sp-tristate-off').addClass('sp-tristate-null');
+				return false;
+			},
+
+			m2v : function(selFieldset, aclRoles) {
+				var cbRoles = selFieldset.find(':checkbox'), lbRoles = selFieldset.find('label');
+
+				cbRoles.prop("checked", false).checkboxradio("refresh");
+				lbRoles.addClass('sp-checkbox-tristate-label').addClass('sp-tristate-null');
+
+				$.each(aclRoles, function(key, val) {
+					var lbWlk, cbWlk = selFieldset.find('[value=' + key + ']');
+					if (cbWlk) {
+						lbWlk = selFieldset.find('[for=' + cbWlk.attr('id') + ']');
+						lbWlk.removeClass('sp-tristate-null');
+						lbWlk.addClass( val ? 'sp-tristate-on' : 'sp-tristate-off');
+						cbWlk.prop("checked", val).checkboxradio("refresh");
+					}
+				});
+			},
+
+			v2m : function(selFieldset, aclRoles) {
+				selFieldset.find('.sp-checkbox-tristate-label').each(function() {
+					var checkbox;
+					if (!$(this).hasClass('sp-tristate-null')) {
+						checkbox = $(this).siblings('[id=' + $(this).attr('for') + ']');
+						aclRoles[checkbox.attr('value')] = $(this).hasClass('sp-tristate-on');
+					}
+				});
+			}
+		};
+
+		/**
 		 * Constructor
 		 */
 		_ns.PageUser = function(_i18n, _view, _model) {
@@ -46,45 +95,12 @@
 			, _onChangeCreditLimit = function(creditLimit) {
 				_view.visible($('#user-account-credit-limit-amount'), creditLimit === "INDIVIDUAL");
 			}
-			//
-			;
-
-			$(_self.id()).on('pagecreate', function(event) {
-
-				$(this).on('click', '#button-user-generate-uuid', null, function() {
-					_self.onGenerateUserUuid();
-					return false;
-				});
-
-				$(this).on('click', '#button-save-user', null, function() {
-					_self.onSaveUser();
-					return false;
-				});
-
-				$(this).on('click', '#button-delete-user', null, function() {
-					_self.onDeleteUser();
-					return false;
-				});
-
-				$(this).on('click', '#button-user-pw-dialog', null, function() {
-					_view.showPageAsync('#page-user-pw-reset', 'UserPasswordReset', function() {
-						$('#user-pw-reset-title').html(_model.editUser.userName);
-					});
-					return false;
-				});
-
-				$(this).on('change', "input:radio[name='user-account-credit-limit-type']", null, function(e) {
-					_onChangeCreditLimit($(this).val());
-				});
-
-			}).on("pagebeforeshow", function(event, ui) {
+			//--------------------
+			, _m2v = function() {
 				// See Java org.savapage.dto.UserDto
+				var emailOther, accounting = _model.editUser.accounting;
 
-				var emailOther
-				//
-				, accounting = _model.editUser.accounting
-				//
-				;
+				_ns.ACLRoleEnumPanel.m2v($('#sp-user-edit-roles'), _model.editUser.aclRoles);
 
 				if (_model.editUser.emailOther) {
 					$.each(_model.editUser.emailOther, function(key, val) {
@@ -130,7 +146,87 @@
 				} else {
 					$('#user-userid').focus();
 				}
+			}
+			//--------------------
+			, _v2m = function() {
 
+				var emailOther = [], accounting = {};
+
+				$.each($('#user-email-other').val().split("\n"), function(key, val) {
+					var address = val.trim();
+					if (address.length > 0) {
+						emailOther.push({
+							address : address
+						});
+					}
+				});
+				_model.editUser.emailOther = emailOther;
+
+				_model.editUser.aclRoles = {};
+				_ns.ACLRoleEnumPanel.v2m($('#sp-user-edit-roles'), _model.editUser.aclRoles);
+
+				accounting.balance = $('#user-account-balance').val();
+				accounting.creditLimit = _view.getRadioValue("user-account-credit-limit-type");
+				accounting.creditLimitAmount = $('#user-account-credit-limit-amount').val();
+
+				_model.editUser.accounting = accounting;
+
+				if (!_model.editUser.dbId) {
+					if (!_view.checkPwMatch($('#user-user-pw'), $('#user-user-pw-confirm'))) {
+						return;
+					}
+					_model.editUser.userName = $('#user-userid').val();
+					_model.editUser.password = $('#user-user-pw').val();
+				}
+
+				_model.editUser.email = $('#user-email').val();
+				_model.editUser.fullName = $('#user-fullname').val();
+				_model.editUser.admin = $('#user-isadmin').is(':checked');
+				_model.editUser.person = $('#user-isperson').is(':checked');
+				_model.editUser.disabled = $('#user-disabled').is(':checked');
+				_model.editUser.card = $('#user-card-number').val();
+				_model.editUser.id = $('#user-id-number').val();
+				_model.editUser.pin = $('#user-pin').val();
+				_model.editUser.uuid = $('#user-uuid').val();
+			}
+			//
+			;
+
+			$(_self.id()).on('pagecreate', function(event) {
+
+				$(this).on('click', '#button-user-generate-uuid', null, function() {
+					_self.onGenerateUserUuid();
+					return false;
+				});
+
+				$(this).on('click', '#button-save-user', null, function() {
+					_v2m();
+					_self.onSaveUser();
+					return false;
+				});
+
+				$(this).on('click', '#button-delete-user', null, function() {
+					_self.onDeleteUser();
+					return false;
+				});
+
+				$(this).on('click', '#button-user-pw-dialog', null, function() {
+					_view.showPageAsync('#page-user-pw-reset', 'UserPasswordReset', function() {
+						$('#user-pw-reset-title').html(_model.editUser.userName);
+					});
+					return false;
+				});
+
+				$(this).on('change', "input:radio[name='user-account-credit-limit-type']", null, function(e) {
+					_onChangeCreditLimit($(this).val());
+				});
+
+				$(this).on('click', ".sp-checkbox-tristate-label", null, function(event) {
+					return _ns.ACLRoleEnumPanel.onCheckboxClick($(this));
+				});
+
+			}).on("pagebeforeshow", function(event, ui) {
+				_m2v();
 			}).on('pageshow', function(event, ui) {
 				$('#user-uuid-collapsible').collapsible('collapse');
 			});
@@ -151,26 +247,10 @@
 			}
 			//--------------------
 			, _m2v = function() {
-				var rolesEdit = $('#sp-usergroup-edit-roles')
-				//
-				, cbRoles = rolesEdit.find(':checkbox'), lbRoles = rolesEdit.find('label')
-				//
-				, accounting = _model.editUserGroup.accounting;
+				var accounting = _model.editUserGroup.accounting;
 
-				cbRoles.prop("checked", false).checkboxradio("refresh");
-				lbRoles.addClass('sp-checkbox-tristate-label').addClass('sp-tristate-null');
+				_ns.ACLRoleEnumPanel.m2v($('#sp-usergroup-edit-roles'), _model.editUserGroup.aclRoles);
 
-				$.each(_model.editUserGroup.aclRoles, function(key, val) {
-					var lbWlk, cbWlk = rolesEdit.find('[value=' + key + ']');
-					if (cbWlk) {
-						lbWlk = rolesEdit.find('[for=' + cbWlk.attr('id') + ']');
-						lbWlk.removeClass('sp-tristate-null');
-						lbWlk.addClass( val ? 'sp-tristate-on' : 'sp-tristate-off');
-						cbWlk.prop("checked", val).checkboxradio("refresh");
-					}
-				});
-
-				//
 				$('#user-group-account-balance').val(accounting.balance);
 				$('#user-group-account-credit-limit-amount').val(accounting.creditLimitAmount);
 				_view.checkRadioValue("user-group-account-credit-limit-type", accounting.creditLimit);
@@ -179,15 +259,8 @@
 			}
 			//--------------------
 			, _v2m = function() {
-				var aclRoles = {};
-				$('#sp-usergroup-edit-roles').find('.sp-checkbox-tristate-label').each(function() {
-					var checkbox;
-					if (!$(this).hasClass('sp-tristate-null')) {
-						checkbox = $(this).siblings('[id=' + $(this).attr('for') + ']');
-						aclRoles[checkbox.attr('value')] = $(this).hasClass('sp-tristate-on');
-					}
-				});
-				_model.editUserGroup.aclRoles = aclRoles;
+				_model.editUserGroup.aclRoles = {};
+				_ns.ACLRoleEnumPanel.v2m($('#sp-usergroup-edit-roles'), _model.editUserGroup.aclRoles);
 			}
 			//
 			;
@@ -200,18 +273,8 @@
 					return false;
 				});
 
-				// Checkbox state transition: null -> on -> off -> null
 				$(this).on('click', ".sp-checkbox-tristate-label", null, function(event) {
-					if ($(this).hasClass('sp-tristate-null')) {
-						$(this).removeClass('sp-tristate-null').addClass('sp-tristate-on');
-						return true;
-					}
-					if ($(this).hasClass('sp-tristate-on')) {
-						$(this).removeClass('sp-tristate-on').addClass('sp-tristate-off');
-						return true;
-					}
-					$(this).removeClass('sp-tristate-off').addClass('sp-tristate-null');
-					return false;
+					return _ns.ACLRoleEnumPanel.onCheckboxClick($(this));
 				});
 
 				$(this).on('change', "input:radio[name='user-group-account-credit-limit-type']", null, function(e) {
@@ -234,7 +297,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,                                 _this = this
+			//,                                                              _this = this
 			//
 			, _resize = function() {
 				var width = $('#sp-user-groups-add-remove-addin').width();
@@ -400,7 +463,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,                                  _this = this
+			//,                                                               _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//

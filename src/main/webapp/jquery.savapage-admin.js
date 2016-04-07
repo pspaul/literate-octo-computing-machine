@@ -877,10 +877,12 @@
 			_view.pages.admin.onEditUser = function(uid) {
 				var res = _api.call({
 					request : 'user-get',
-					s_user : uid
+					dto : JSON.stringify({
+						uid : uid
+					})
 				});
 				if (res.result.code === '0') {
-					_model.editUser = res.userDto;
+					_model.editUser = res.dto;
 					_view.pages.user.loadShowAsync(function() {
 						$('#user-userid-txt').html(_model.editUser.userName);
 					});
@@ -964,48 +966,9 @@
 			 */
 			_view.pages.user.onSaveUser = function() {
 
-				var res, emailOther = [], accounting = {};
-
-				//
-				$.each($('#user-email-other').val().split("\n"), function(key, val) {
-					var address = val.trim();
-					if (address.length > 0) {
-						emailOther.push({
-							address : address
-						});
-					}
-				});
-				_model.editUser.emailOther = emailOther;
-
-				//
-				accounting.balance = $('#user-account-balance').val();
-				accounting.creditLimit = _view.getRadioValue("user-account-credit-limit-type");
-				accounting.creditLimitAmount = $('#user-account-credit-limit-amount').val();
-
-				_model.editUser.accounting = accounting;
-
-				//
-				if (!_model.editUser.dbId) {
-					if (!_view.checkPwMatch($('#user-user-pw'), $('#user-user-pw-confirm'))) {
-						return;
-					}
-					_model.editUser.userName = $('#user-userid').val();
-					_model.editUser.password = $('#user-user-pw').val();
-				}
-
-				_model.editUser.email = $('#user-email').val();
-				_model.editUser.fullName = $('#user-fullname').val();
-				_model.editUser.admin = $('#user-isadmin').is(':checked');
-				_model.editUser.person = $('#user-isperson').is(':checked');
-				_model.editUser.disabled = $('#user-disabled').is(':checked');
-				_model.editUser.card = $('#user-card-number').val();
-				_model.editUser.id = $('#user-id-number').val();
-				_model.editUser.pin = $('#user-pin').val();
-				_model.editUser.uuid = $('#user-uuid').val();
-
-				res = _api.call({
+				var res = _api.call({
 					request : 'user-set',
-					userDto : JSON.stringify(_model.editUser)
+					dto : JSON.stringify(_model.editUser)
 				});
 
 				_view.showApiMsg(res);

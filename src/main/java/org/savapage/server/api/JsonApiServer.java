@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
-import javax.persistence.EntityManager;
 import javax.print.attribute.standard.MediaSizeName;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -99,7 +98,6 @@ import org.savapage.core.dto.ProxyPrinterCostDto;
 import org.savapage.core.dto.ProxyPrinterDto;
 import org.savapage.core.dto.ProxyPrinterMediaSourcesDto;
 import org.savapage.core.dto.UserCreditTransferDto;
-import org.savapage.core.dto.UserDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.imaging.EcoPrintPdfTask;
@@ -1540,17 +1538,9 @@ public final class JsonApiServer extends AbstractPage {
             return reqUserDelete(getParmValue(parameters, isGetAction, "id"),
                     getParmValue(parameters, isGetAction, "userid"));
 
-        case JsonApiDict.REQ_USER_GET:
-
-            return reqUserGet(requestingUser,
-                    getParmValue(parameters, isGetAction, "s_user"));
-
         case JsonApiDict.REQ_USER_GET_STATS:
 
             return reqUserGetStats(requestingUser);
-
-        case JsonApiDict.REQ_USER_SET:
-            return reqUserSet(getParmValue(parameters, isGetAction, "userDto"));
 
         case JsonApiDict.REQ_USER_SOURCE_GROUPS:
 
@@ -3416,36 +3406,6 @@ public final class JsonApiServer extends AbstractPage {
      * @param user
      * @param userSubject
      * @return
-     * @throws IOException
-     */
-    private Map<String, Object> reqUserGet(final String userId,
-            final String userSubject) throws IOException {
-
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final User user = userDao.findActiveUserByUserId(userSubject);
-
-        if (user == null) {
-
-            setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-user-not-found", userId);
-
-        } else {
-
-            final UserDto dto = USER_SERVICE.createUserDto(user);
-            userData.put("userDto", dto.asMap());
-            setApiResultOK(userData);
-        }
-        return userData;
-    }
-
-    /**
-     *
-     * @param user
-     * @param userSubject
-     * @return
      */
     private Map<String, Object> reqUserGetStats(final String userId) {
 
@@ -3906,50 +3866,6 @@ public final class JsonApiServer extends AbstractPage {
             setApiResult(userData, ApiResultCodeEnum.OK,
                     "msg-voucher-deleted-expired-many", nDeleted.toString());
         }
-        return userData;
-    }
-
-    /**
-     * Edits or creates a User.
-     * <p>
-     * Delete is not handled here, see
-     * {@link #reqUserDelete(EntityManager, String, String, String)}.
-     * </p>
-     *
-     * @param user
-     * @param jsonUser
-     * @return
-     * @throws IOException
-     */
-    private Map<String, Object> reqUserSet(final String jsonUser)
-            throws IOException {
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final UserDto userDto =
-                JsonAbstractBase.create(UserDto.class, jsonUser);
-
-        final boolean isNew = userDto.getDatabaseId() == null;
-
-        AbstractJsonRpcMethodResponse rpcResponse =
-                USER_SERVICE.setUser(userDto, isNew);
-
-        if (rpcResponse.isResult()) {
-            String msgKeyOk;
-
-            if (isNew) {
-                msgKeyOk = "msg-user-created-ok";
-            } else {
-                msgKeyOk = "msg-user-saved-ok";
-            }
-
-            setApiResult(userData, ApiResultCodeEnum.OK, msgKeyOk);
-
-        } else {
-            setApiResultMsgError(userData, "", rpcResponse.asError().getError()
-                    .data(ErrorDataBasic.class).getReason());
-        }
-
         return userData;
     }
 

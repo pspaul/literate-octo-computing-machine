@@ -108,7 +108,38 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return;
         }
 
-        //
+        this.setAclRoles(dtoReq, userGroup);
+
+        try {
+            ACCOUNTING_SERVICE.setInitialUserAccounting(userGroup,
+                    dtoReq.getAccounting());
+        } catch (ParseException e) {
+            setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
+            return;
+        }
+
+        userGroup.setModifiedBy(ServiceContext.getActor());
+        userGroup.setModifiedDate(ServiceContext.getTransactionDate());
+
+        ServiceContext.getDaoContext().getUserGroupDao().update(userGroup);
+
+        setApiResult(ApiResultCodeEnum.OK, "msg-usergroup-updated",
+                userGroup.getGroupName());
+    }
+
+    /**
+     * Sets the ACL roles.
+     *
+     * @param dtoReq
+     *            The request.
+     * @param userGroup
+     *            The user group.
+     * @throws IOException
+     *             When JSON errors.
+     */
+    private void setAclRoles(final DtoReq dtoReq, final UserGroup userGroup)
+            throws IOException {
+
         final UserGroupAttrDao daoAttr =
                 ServiceContext.getDaoContext().getUserGroupAttrDao();
 
@@ -138,22 +169,6 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             attr.setValue(jsonRoles);
             daoAttr.update(attr);
         }
-
-        try {
-            ACCOUNTING_SERVICE.setInitialUserAccounting(userGroup,
-                    dtoReq.getAccounting());
-        } catch (ParseException e) {
-            setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
-            return;
-        }
-
-        userGroup.setModifiedBy(ServiceContext.getActor());
-        userGroup.setModifiedDate(ServiceContext.getTransactionDate());
-
-        ServiceContext.getDaoContext().getUserGroupDao().update(userGroup);
-
-        setApiResult(ApiResultCodeEnum.OK, "msg-usergroup-updated",
-                userGroup.getGroupName());
     }
 
 }
