@@ -28,6 +28,7 @@ import java.util.Map;
 import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.enums.UserGroupAttrEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.UserAccountingDto;
@@ -58,6 +59,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
         private Long id;
 
         private Map<ACLRoleEnum, Boolean> aclRoles;
+        private Boolean accountingEnabled;
         private UserAccountingDto accounting;
 
         public Long getId() {
@@ -76,6 +78,15 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setAclRoles(Map<ACLRoleEnum, Boolean> aclRoles) {
             this.aclRoles = aclRoles;
+        }
+
+        public Boolean getAccountingEnabled() {
+            return accountingEnabled;
+        }
+
+        @SuppressWarnings("unused")
+        public void setAccountingEnabled(Boolean accountingEnabled) {
+            this.accountingEnabled = accountingEnabled;
         }
 
         public UserAccountingDto getAccounting() {
@@ -110,21 +121,37 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
 
         this.setAclRoles(dtoReq, userGroup);
 
-        try {
-            ACCOUNTING_SERVICE.setInitialUserAccounting(userGroup,
-                    dtoReq.getAccounting());
-        } catch (ParseException e) {
-            setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
-            return;
+        ReservedUserGroupEnum reservedGroup =
+                ReservedUserGroupEnum.fromDbName(userGroup.getGroupName());
+
+        if (reservedGroup == ReservedUserGroupEnum.ALL) {
+            userGroup.setInitialSettingsEnabled(Boolean.FALSE);
+        } else {
+            try {
+                ACCOUNTING_SERVICE.setInitialUserAccounting(userGroup,
+                        dtoReq.getAccounting());
+            } catch (ParseException e) {
+                setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
+                return;
+            }
+            userGroup.setInitialSettingsEnabled(dtoReq.getAccountingEnabled());
         }
 
         userGroup.setModifiedBy(ServiceContext.getActor());
         userGroup.setModifiedDate(ServiceContext.getTransactionDate());
 
+        // Update
         ServiceContext.getDaoContext().getUserGroupDao().update(userGroup);
 
-        setApiResult(ApiResultCodeEnum.OK, "msg-usergroup-updated",
-                userGroup.getGroupName());
+        // Message
+        final String groupName;
+
+        if (reservedGroup == null) {
+            groupName = userGroup.getGroupName();
+        } else {
+            groupName = reservedGroup.getUiName();
+        }
+        setApiResult(ApiResultCodeEnum.OK, "msg-usergroup-updated", groupName);
     }
 
     /**

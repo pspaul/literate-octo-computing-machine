@@ -242,23 +242,39 @@
 			//
 			, _self = _ns.derive(_page)
 			//--------------------
+			, _onChangeAccountingEnabled = function(selected) {
+				_view.visible($('#user-group-account-new-user'), selected);
+			}
+			//--------------------
 			, _onChangeCreditLimit = function(creditLimit) {
 				_view.visible($('#user-group-account-credit-limit-amount'), creditLimit === "INDIVIDUAL");
 			}
 			//--------------------
 			, _m2v = function() {
-				var accounting = _model.editUserGroup.accounting;
+				var accounting = _model.editUserGroup.accounting, accountingEnabled = _model.editUserGroup.accountingEnabled;
 
 				_ns.ACLRoleEnumPanel.m2v($('#sp-usergroup-edit-roles'), _model.editUserGroup.aclRoles);
+
+				_view.visible($('#user-group-account-define-new-user').closest('ul'), !_model.editUserGroup.allUsersGroup);
+
+				_view.checkCb('#user-group-account-define-new-user', accountingEnabled);
 
 				$('#user-group-account-balance').val(accounting.balance);
 				$('#user-group-account-credit-limit-amount').val(accounting.creditLimitAmount);
 				_view.checkRadioValue("user-group-account-credit-limit-type", accounting.creditLimit);
-				_onChangeCreditLimit(accounting.creditLimit);
 
+				_onChangeCreditLimit(accounting.creditLimit);
+				_onChangeAccountingEnabled(accountingEnabled);
 			}
 			//--------------------
 			, _v2m = function() {
+				var accounting = _model.editUserGroup.accounting;
+
+				accounting.balance = $('#user-group-account-balance').val();
+				accounting.creditLimit = _view.getRadioValue("user-group-account-credit-limit-type");
+				accounting.creditLimitAmount = $('#user-group-account-credit-limit-amount').val();
+
+				_model.editUserGroup.accountingEnabled = _view.isCbChecked($('#user-group-account-define-new-user'));
 				_model.editUserGroup.aclRoles = {};
 				_ns.ACLRoleEnumPanel.v2m($('#sp-usergroup-edit-roles'), _model.editUserGroup.aclRoles);
 			}
@@ -271,6 +287,10 @@
 					_v2m();
 					_self.onSaveUserGroup(_model.editUserGroup);
 					return false;
+				});
+
+				$(this).on('change', "#user-group-account-define-new-user", null, function(event) {
+					_onChangeAccountingEnabled(_view.isCbChecked($(this)));
 				});
 
 				$(this).on('click', ".sp-checkbox-tristate-label", null, function(event) {
@@ -297,7 +317,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,                                                              _this = this
+			//,                                                                       _this = this
 			//
 			, _resize = function() {
 				var width = $('#sp-user-groups-add-remove-addin').width();
@@ -463,7 +483,7 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,                                                               _this = this
+			//,                                                                        _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//

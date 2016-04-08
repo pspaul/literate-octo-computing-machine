@@ -940,18 +940,13 @@
 			 *
 			 */
 			_view.pages.userGroup.onSaveUserGroup = function(group) {
-				var res, accounting = _model.editUserGroup.accounting;
-
-				accounting.balance = $('#user-group-account-balance').val();
-				accounting.creditLimit = _view.getRadioValue("user-group-account-credit-limit-type");
-				accounting.creditLimitAmount = $('#user-group-account-credit-limit-amount').val();
-
-				res = _api.call({
+				var res = _api.call({
 					request : 'usergroup-set',
 					dto : JSON.stringify({
 						id : group.id,
 						aclRoles : group.aclRoles,
-						accounting : accounting
+						accountingEnabled : group.accountingEnabled,
+						accounting : group.accounting
 					})
 				});
 				_view.showApiMsg(res);

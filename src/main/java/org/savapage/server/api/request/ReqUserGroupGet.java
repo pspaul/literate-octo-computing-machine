@@ -28,6 +28,7 @@ import java.util.Map;
 import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.enums.UserGroupAttrEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.UserAccountingDto;
@@ -72,6 +73,8 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         private Long id;
         private String name;
         private Map<ACLRoleEnum, Boolean> aclRoles;
+        private Boolean allUsersGroup;
+        private Boolean accountingEnabled;
         private UserAccountingDto accounting;
 
         @SuppressWarnings("unused")
@@ -99,6 +102,24 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
 
         public void setAclRoles(Map<ACLRoleEnum, Boolean> aclRoles) {
             this.aclRoles = aclRoles;
+        }
+
+        @SuppressWarnings("unused")
+        public Boolean getAllUsersGroup() {
+            return allUsersGroup;
+        }
+
+        public void setAllUsersGroup(Boolean allUsersGroup) {
+            this.allUsersGroup = allUsersGroup;
+        }
+
+        @SuppressWarnings("unused")
+        public Boolean getAccountingEnabled() {
+            return accountingEnabled;
+        }
+
+        public void setAccountingEnabled(Boolean accountingEnabled) {
+            this.accountingEnabled = accountingEnabled;
         }
 
         @SuppressWarnings("unused")
@@ -135,6 +156,9 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
 
         dtoRsp.setId(userGroup.getId());
         dtoRsp.setName(userGroup.getGroupName());
+        dtoRsp.setAllUsersGroup(ReservedUserGroupEnum.fromDbName(
+                userGroup.getGroupName()) == ReservedUserGroupEnum.ALL);
+        dtoRsp.setAccountingEnabled(userGroup.getInitialSettingsEnabled());
 
         // ACL
         final UserGroupAttrDao attrDao =
