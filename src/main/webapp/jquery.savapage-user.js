@@ -3212,7 +3212,7 @@
 						_this.onFastProxyPrintRenew(false);
 					}
 
-					_view.visible($('#content-print .printer-fast-print-info'), res.fastPrintAvailable);
+					_view.visible($('#content-print .printer-fast-print-info'), _fastPrintAvailable);
 
 					$.each(_quickPrinterCache, function(key, item) {
 
