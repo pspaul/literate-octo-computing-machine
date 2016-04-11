@@ -901,7 +901,13 @@
 				if (res.result.code === '0') {
 					_model.editUserGroup = res.dto;
 					_view.pages.userGroup.loadShowAsync(function() {
-						$('#user-group-header').html(_model.editUserGroup.name);
+						var sel = $('#user-group-header'), cssClass = 'sp-txt-warn';
+						sel.html(_model.editUserGroup.name);
+						if (_model.editUserGroup.builtInGroup) {
+							sel.addClass(cssClass);
+						} else {
+							sel.removeClass(cssClass);
+						}
 					});
 				} else {
 					_view.showApiMsg(res);

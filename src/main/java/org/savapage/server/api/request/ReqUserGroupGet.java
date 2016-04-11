@@ -73,6 +73,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         private Long id;
         private String name;
         private Map<ACLRoleEnum, Boolean> aclRoles;
+        private Boolean builtInGroup;
         private Boolean allUsersGroup;
         private Boolean accountingEnabled;
         private UserAccountingDto accounting;
@@ -102,6 +103,15 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
 
         public void setAclRoles(Map<ACLRoleEnum, Boolean> aclRoles) {
             this.aclRoles = aclRoles;
+        }
+
+        @SuppressWarnings("unused")
+        public Boolean getBuiltInGroup() {
+            return builtInGroup;
+        }
+
+        public void setBuiltInGroup(Boolean builtInGroup) {
+            this.builtInGroup = builtInGroup;
         }
 
         @SuppressWarnings("unused")
@@ -151,13 +161,22 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             return;
         }
 
+        final ReservedUserGroupEnum reservedUserGroup =
+                ReservedUserGroupEnum.fromDbName(userGroup.getGroupName());
+
         //
         final DtoRsp dtoRsp = new DtoRsp();
 
         dtoRsp.setId(userGroup.getId());
-        dtoRsp.setName(userGroup.getGroupName());
-        dtoRsp.setAllUsersGroup(ReservedUserGroupEnum.fromDbName(
-                userGroup.getGroupName()) == ReservedUserGroupEnum.ALL);
+
+        if (reservedUserGroup == null) {
+            dtoRsp.setName(userGroup.getGroupName());
+        } else {
+            dtoRsp.setName(reservedUserGroup.getUiName());
+        }
+
+        dtoRsp.setBuiltInGroup(reservedUserGroup != null);
+        dtoRsp.setAllUsersGroup(reservedUserGroup == ReservedUserGroupEnum.ALL);
         dtoRsp.setAccountingEnabled(userGroup.getInitialSettingsEnabled());
 
         // ACL
