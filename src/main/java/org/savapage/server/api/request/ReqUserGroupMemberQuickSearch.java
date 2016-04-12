@@ -61,9 +61,8 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
     }
 
     @Override
-    protected void
-            onRequest(final String requestingUser, final User lockedUser)
-                    throws IOException {
+    protected void onRequest(final String requestingUser, final User lockedUser)
+            throws IOException {
 
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
@@ -78,11 +77,11 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
 
         filter.setUserGroupId(dto.getGroupId());
         filter.setContainingNameText(dto.getFilter());
+        filter.setDeleted(Boolean.FALSE);
 
-        final List<User> userList =
-                userDao.getListChunk(filter, null,
-                        Integer.valueOf(dto.getMaxResults()),
-                        UserDao.Field.USERID, true);
+        final List<User> userList = userDao.getListChunk(filter, null,
+                Integer.valueOf(dto.getMaxResults()), UserDao.Field.USERID,
+                true);
 
         for (final User user : userList) {
 
