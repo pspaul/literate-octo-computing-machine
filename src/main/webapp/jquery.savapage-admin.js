@@ -1121,7 +1121,8 @@
 			_view.pages.sharedAccount.onSaveSharedAccount = function() {
 
 				_model.editAccount.name = $('#shared-account-name').val();
-				_model.editAccount.parentName = $('#shared-account-name-parent').val();
+				_model.editAccount.parentName = $('#shared-account-name-parent').val();				
+				_model.editAccount.balance = $('#shared-account-balance').val();
 				_model.editAccount.notes = $('#shared-account-notes').val();
 				_model.editAccount.deleted = $('#shared-account-deleted').is(':checked');
 
