@@ -79,20 +79,42 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
         filter.setContainingNameText(dto.getFilter());
         filter.setDeleted(Boolean.FALSE);
 
-        final List<User> userList = userDao.getListChunk(filter, null,
-                Integer.valueOf(dto.getMaxResults()), UserDao.Field.USERID,
-                true);
+        final int nUsersMax = dto.getMaxResults();
 
-        for (final User user : userList) {
+        int nUsersSelected = 0;
+        int iStartPosition = 0;
+        int userListSize = nUsersMax;
 
-            final QuickSearchUserGroupMemberItemDto itemWlk =
-                    new QuickSearchUserGroupMemberItemDto();
+        while (nUsersSelected < nUsersMax && userListSize == nUsersMax) {
 
-            itemWlk.setKey(user.getId());
-            itemWlk.setUserId(user.getUserId());
-            itemWlk.setFullName(user.getFullName());
+            final List<User> userList = userDao.getListChunk(filter,
+                    iStartPosition, nUsersMax, UserDao.Field.USERID, true);
 
-            items.add(itemWlk);
+            userListSize = userList.size();
+
+            for (final User user : userList) {
+
+                if (dto.getAclRole() != null && !ACCESSCONTROL_SERVICE
+                        .isAuthorized(user, dto.getAclRole())) {
+                    continue;
+                }
+
+                final QuickSearchUserGroupMemberItemDto itemWlk =
+                        new QuickSearchUserGroupMemberItemDto();
+
+                itemWlk.setKey(user.getId());
+                itemWlk.setUserId(user.getUserId());
+                itemWlk.setFullName(user.getFullName());
+
+                items.add(itemWlk);
+
+                nUsersSelected++;
+
+                if (nUsersSelected == nUsersMax) {
+                    break;
+                }
+            }
+            iStartPosition += nUsersMax;
         }
 
         //

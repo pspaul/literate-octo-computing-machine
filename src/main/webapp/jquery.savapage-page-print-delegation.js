@@ -239,7 +239,8 @@
 					dto : JSON.stringify({
 						groupId : groupId,
 						filter : filter,
-						maxResults : _QS_MAX_RESULTS
+						maxResults : _QS_MAX_RESULTS,
+						aclRole : 'PRINT_DELEGATOR'
 					})
 				});
 
