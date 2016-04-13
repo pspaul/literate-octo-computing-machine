@@ -402,20 +402,19 @@
 					dbKeySelected = _util.getFirstProp(_quickUserGroupSelected);
 
 					if (dbKeySelected) {
-						if (dbKeySelected === dbkey) {
-							return;
-						}
 						_nSelectedGroups--;
 						delete _quickUserGroupSelected[dbKeySelected];
 						selection.closest('ul').find('.' + _CLASS_SELECTED_IND).html(_IND_DESELECTED).removeClass(_CLASS_SELECTED_IND);
 					}
 
-					_nSelectedGroups++;
-					_quickUserGroupSelected[dbkey] = _quickUserGroupCache[dbkey];
-
-					span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
-
-					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, "");
+					if (dbKeySelected === dbkey) {
+						dbkey = null;
+					} else {
+						_nSelectedGroups++;
+						_quickUserGroupSelected[dbkey] = _quickUserGroupCache[dbkey];
+						span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
+					}
+					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val());
 				}
 			}
 			//----------------------------------------------------------------
@@ -546,7 +545,7 @@
 					_quickUserSelected = {};
 					_nSelectedUsers = 0;
 
-					$('#sp-print-delegation-users-select-to-add-filter').empty();
+					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), null, $('#sp-print-delegation-users-select-to-add').val());
 
 					_view.enable($('#sp-print-delegation-button-add'), false);
 
