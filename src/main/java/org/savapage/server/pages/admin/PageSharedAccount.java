@@ -22,6 +22,8 @@
 package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -40,6 +42,17 @@ public final class PageSharedAccount extends AbstractAdminPage {
      */
     public PageSharedAccount(final PageParameters parameters) {
         super(parameters);
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addModifyLabelAttr("groupAccountImage", "", "src",
+                MarkupHelper.getImgUrlPath(AccountTypeEnum.GROUP));
+
+        helper.addModifyLabelAttr("sharedAccountImage", "", "src",
+                MarkupHelper.getImgUrlPath(AccountTypeEnum.SHARED));
+
+        helper.addModifyLabelAttr("parentAccountImage", "", "src",
+                MarkupHelper.getImgUrlPath(AccountTypeEnum.SHARED));
     }
 
 }

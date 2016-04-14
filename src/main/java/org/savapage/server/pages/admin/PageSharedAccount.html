@@ -15,7 +15,12 @@
 
 <div data-role="header" data-theme="b">
 	<h1>
-		<wicket:message key="title-account" />
+		<div class="sp-shared-account-edit">
+			<wicket:message key="title-shared-account" />
+		</div>
+		<div class="sp-group-account-edit">
+			<wicket:message key="title-group-account" />
+		</div>
 	</h1>
 </div>
 
@@ -24,7 +29,11 @@
 	<ul data-role="listview" data-inset="true">
 
 		<li data-role="list-divider">
-			<wicket:message key="label-account-name" />
+			<span><img class="sp-shared-account-edit" width="16"
+					height="16" wicket:id="sharedAccountImage" />
+				<img class="sp-group-account-edit" width="16" height="16"
+					wicket:id="groupAccountImage" />&nbsp;
+			</span><span><wicket:message key="label-account-name" /></span>
 		</li>
 		<li>
 			<input type="text" id="shared-account-name" value="" maxlength="255"
@@ -32,7 +41,10 @@
 				spellcheck="false" />
 		</li>
 		<li data-role="list-divider">
-			<wicket:message key="label-account-name-parent" />
+			<span> <img width="16" height="16"
+					wicket:id="parentAccountImage" />&nbsp;&nbsp;
+			</span><span><wicket:message key="label-account-name-parent" /></span>
+
 		</li>
 		<li>
 			<input type="text" id="shared-account-name-parent" value=""
