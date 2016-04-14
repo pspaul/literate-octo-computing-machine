@@ -4469,9 +4469,6 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("cardAssocMaxSecs",
                 cm.getConfigInt(Key.WEBAPP_CARD_ASSOC_DIALOG_MAX_SECS));
 
-        userData.put("intUserIdPfx",
-                cm.getConfigValue(Key.INTERNAL_USERS_NAME_PREFIX));
-
         userData.put("watchdogHeartbeatSecs",
                 cm.getConfigInt(Key.WEBAPP_WATCHDOG_HEARTBEAT_SECS));
 

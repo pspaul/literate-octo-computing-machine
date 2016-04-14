@@ -61,6 +61,7 @@ import org.savapage.server.api.request.ReqUserGroupMemberQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupSet;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
+import org.savapage.server.api.request.ReqUserInitInternal;
 import org.savapage.server.api.request.ReqUserNotifyAccountChange;
 import org.savapage.server.api.request.ReqUserQuickSearch;
 import org.savapage.server.api.request.ReqUserSet;
@@ -245,6 +246,7 @@ public class JsonApiDict {
     public static final String REQ_USER_DELETE = "user-delete";
     public static final String REQ_USER_GET = "user-get";
     public static final String REQ_USER_GET_STATS = "user-get-stats";
+    public static final String REQ_USER_INIT_INTERNAL = "user-init-internal";
     public static final String REQ_USER_LAZY_ECOPRINT = "user-lazy-ecoprint";
     public static final String REQ_USER_NOTIFY_ACCOUNT_CHANGE =
             "user-notify-account-change";
@@ -906,6 +908,9 @@ public class JsonApiDict {
         adm(REQ_USER_DELETE, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_USER_GET, ReqUserGet.class, DbClaim.READ, DbAccess.YES);
+
+        adm(REQ_USER_INIT_INTERNAL, ReqUserInitInternal.class, DbClaim.READ,
+                DbAccess.YES);
 
         usr(REQ_USER_GET_STATS, DbClaim.READ, DbAccess.YES);
 

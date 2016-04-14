@@ -141,7 +141,6 @@
 
 				_model.locale = res.locale;
 				_model.maxIdleSeconds = res.maxIdleSeconds;
-				_model.intUserIdPfx = res.intUserIdPfx;
 
 				// NOTE: authCardSelfAssoc is DISABLED
 				_view.pages.login.setAuthMode(res.authName, res.authId, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, null, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);

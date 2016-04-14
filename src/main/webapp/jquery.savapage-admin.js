@@ -192,7 +192,6 @@
 
 				_model.locale = res.locale;
 				_model.maxIdleSeconds = res.maxIdleSeconds;
-				_model.intUserIdPfx = res.intUserIdPfx;
 
 				// NOTE: authCardSelfAssoc is DISABLED
 				_view.pages.login.setAuthMode(res.authName, res.authId, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, null, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
@@ -854,20 +853,15 @@
 			};
 
 			_view.pages.admin.onCreateUser = function() {
-				_model.editUser = {
-					dbId : null,
-					userName : _model.intUserIdPfx,
-					fullName : '',
-					email : '',
-					emailOther : [],
-					admin : false,
-					person : true,
-					disabled : false,
-					internal : true,
-					password : '',
-					accounting : {}
-				};
-				_view.pages.user.loadShowAsync();
+				var res = _api.call({
+					request : 'user-init-internal'
+				});
+				if (res.result.code === '0') {
+					_model.editUser = res.dto;
+					_view.pages.user.loadShowAsync();
+				} else {
+					_view.showApiMsg(res);
+				}
 			};
 
 			_view.pages.admin.onShowAddRemoveUserGroups = function() {
@@ -1092,7 +1086,8 @@
 					id : null,
 					name : '',
 					balance : 0,
-					deleted : false
+					deleted : false,
+					accountType : 'SHARED'
 				};
 				_view.pages.sharedAccount.loadShowAsync(function() {
 					$('#title-account').html(_model.editQueue.name);
@@ -1121,7 +1116,7 @@
 			_view.pages.sharedAccount.onSaveSharedAccount = function() {
 
 				_model.editAccount.name = $('#shared-account-name').val();
-				_model.editAccount.parentName = $('#shared-account-name-parent').val();				
+				_model.editAccount.parentName = $('#shared-account-name-parent').val();
 				_model.editAccount.balance = $('#shared-account-balance').val();
 				_model.editAccount.notes = $('#shared-account-notes').val();
 				_model.editAccount.deleted = $('#shared-account-deleted').is(':checked');

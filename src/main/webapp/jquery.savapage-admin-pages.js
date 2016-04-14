@@ -372,6 +372,9 @@
 				$('#shared-account-name-parent').val(_model.editAccount.parentName);
 				$('#shared-account-notes').val(_model.editAccount.notes);
 
+				_view.visible($('.sp-shared-account-edit'), _model.editAccount.accountType === 'SHARED');
+				_view.visible($('.sp-group-account-edit'), _model.editAccount.accountType !== 'SHARED');
+				
 				_view.visible($('.shared-account_user-defined-section'), _model.editAccount.id !== null);
 				_view.checkCb('#shared-account-deleted', _model.editAccount.deleted);
 			});
