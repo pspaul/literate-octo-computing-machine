@@ -172,10 +172,10 @@
 				_model.editUser.accounting = accounting;
 
 				if (!_model.editUser.dbId) {
-					if (!_view.checkPwMatch($('#user-user-pw'), $('#user-user-pw-confirm'))) {
-						return;
-					}
 					_model.editUser.userName = $('#user-userid').val();
+					if (!_view.checkPwMatch($('#user-user-pw'), $('#user-user-pw-confirm'))) {
+						return false;
+					}
 					_model.editUser.password = $('#user-user-pw').val();
 				}
 
@@ -188,6 +188,8 @@
 				_model.editUser.id = $('#user-id-number').val();
 				_model.editUser.pin = $('#user-pin').val();
 				_model.editUser.uuid = $('#user-uuid').val();
+
+				return true;
 			}
 			//
 			;
@@ -200,8 +202,9 @@
 				});
 
 				$(this).on('click', '#button-save-user', null, function() {
-					_v2m();
-					_self.onSaveUser();
+					if (_v2m()) {
+						_self.onSaveUser();
+					}
 					return false;
 				});
 
@@ -317,8 +320,6 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			//,                                                                       _this = this
-			//
 			, _resize = function() {
 				var width = $('#sp-user-groups-add-remove-addin').width();
 				$('.sp-select-user-groups').width(width);
@@ -374,7 +375,7 @@
 
 				_view.visible($('.sp-shared-account-edit'), _model.editAccount.accountType === 'SHARED');
 				_view.visible($('.sp-group-account-edit'), _model.editAccount.accountType !== 'SHARED');
-				
+
 				_view.visible($('.shared-account_user-defined-section'), _model.editAccount.id !== null);
 				_view.checkCb('#shared-account-deleted', _model.editAccount.deleted);
 			});
@@ -485,8 +486,6 @@
 			, _page = new _ns.Page(_i18n, _view, '#page-device', 'admin.PageDevice')
 			//
 			, _self = _ns.derive(_page)
-			//
-			//,                                                                        _this = this
 			//
 			, _onAuthModeEnabled, _onProxyPrintEnabled, _onCustomAuthEnabled
 			//
@@ -864,8 +863,6 @@
 			var _page = new _ns.Page(_i18n, _view, '#page-queue', 'admin.PageQueue')
 			//
 			, _self = _ns.derive(_page)
-			//
-			//, _this = this
 			//
 			;
 
