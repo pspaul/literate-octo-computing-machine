@@ -36,10 +36,14 @@
 
 			<div class="sp-txt-wrap">
 
-				<span wicket:id="balance" /> &bull; <span wicket:id="amount" />
+				<span wicket:id="balance" />
+
+				<wicket:enclosure child="amount">
+				    &bull; <span wicket:id="amount" />
+				</wicket:enclosure>
 
 				<wicket:enclosure child="paymentMethod">
-	                &bull; <span wicket:id="paymentMethod" />
+                    &bull; <span wicket:id="paymentMethod" />
 				</wicket:enclosure>
 
 				<wicket:enclosure child="paymentMethodAddress">

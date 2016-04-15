@@ -147,6 +147,9 @@ public class AccountTrxPage extends AbstractListPage {
                 printOut = null;
             }
 
+            final AccountTrxTypeEnum trxType =
+                    AccountTrxTypeEnum.valueOf(accountTrx.getTrxType());
+
             //
             item.add(new Label("trxDate",
                     localizedShortDateTime(accountTrx.getTransactionDate())));
@@ -178,19 +181,22 @@ public class AccountTrxPage extends AbstractListPage {
 
             Label labelWrk;
 
-            labelWrk = new Label("amount", amount);
-            if (accountTrx.getAmount().compareTo(BigDecimal.ZERO) < 0) {
-                labelWrk.add(new AttributeModifier("class",
-                        MarkupHelper.CSS_AMOUNT_MIN));
-            }
-            item.add(labelWrk);
-
             labelWrk = new Label("balance", balance);
             if (accountTrx.getBalance().compareTo(BigDecimal.ZERO) < 0) {
                 labelWrk.add(new AttributeModifier("class",
                         MarkupHelper.CSS_AMOUNT_MIN));
             }
             item.add(labelWrk);
+
+            if (trxType == AccountTrxTypeEnum.INITIAL) {
+                helper.discloseLabel("amount");
+            } else {
+                labelWrk = helper.encloseLabel("amount", amount, true);
+                if (accountTrx.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+                    labelWrk.add(new AttributeModifier("class",
+                            MarkupHelper.CSS_AMOUNT_MIN));
+                }
+            }
 
             //
             PaymentMethodEnum extPaymentMethod = null;
@@ -216,13 +222,13 @@ public class AccountTrxPage extends AbstractListPage {
 
             //
             String msgKey;
-
             String key;
 
-            final AccountTrxTypeEnum trxType =
-                    AccountTrxTypeEnum.valueOf(accountTrx.getTrxType());
-
             switch (trxType) {
+
+            case INITIAL:
+                key = "type-initial";
+                break;
 
             case ADJUST:
                 key = "type-adjust";

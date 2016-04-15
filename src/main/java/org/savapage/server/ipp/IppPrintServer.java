@@ -210,6 +210,10 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         response.setContentType(IppMessageMixin.CONTENT_TYPE_IPP);
         response.setStatus(HttpServletResponse.SC_OK);
 
+        /*
+         * NOTE: There is NO top level database transaction. Specialized methods
+         * have their own database transaction.
+         */
         ServiceContext.open();
 
         try {

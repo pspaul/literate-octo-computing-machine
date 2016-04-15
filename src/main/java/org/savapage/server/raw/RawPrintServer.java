@@ -76,8 +76,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
     /**
      * .
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(RawPrintServer.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(RawPrintServer.class);
 
     /**
      * The default port number.
@@ -98,8 +98,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
     /**
      * .
      */
-    private static final QueueService QUEUE_SERVICE = ServiceContext
-            .getServiceFactory().getQueueService();
+    private static final QueueService QUEUE_SERVICE =
+            ServiceContext.getServiceFactory().getQueueService();
 
     /**
      * .
@@ -208,10 +208,9 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
                                     mySocket.getInetAddress().getHostAddress();
                         }
 
-                        msg =
-                                String.format("%s: %s (IP Print from %s)", ex
-                                        .getClass().getSimpleName(), ex
-                                        .getMessage(), hostAddress);
+                        msg = String.format("%s: %s (IP Print from %s)",
+                                ex.getClass().getSimpleName(), ex.getMessage(),
+                                hostAddress);
 
                         LOGGER.error(msg, ex);
                     }
@@ -289,8 +288,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
      *             When no content received (within time), or content is not
      *             PostScript.
      */
-    private void readAndPrint(final Socket socket) throws IOException,
-            RawPrintException {
+    private void readAndPrint(final Socket socket)
+            throws IOException, RawPrintException {
 
         final Date perfStartTime = PerformanceLogger.startTime();
 
@@ -362,10 +361,10 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         try {
             strline = readLine(istr, bos);
         } catch (SocketTimeoutException e) {
-            throw new RawPrintException(
-                    String.format("No IP Print data received from "
-                            + "[%s] within [%d] msec.", originatorIp,
-                            SocketServerThread.READ_TIMEOUT_MSEC));
+            throw new RawPrintException(String.format(
+                    "No IP Print data received from "
+                            + "[%s] within [%d] msec.",
+                    originatorIp, SocketServerThread.READ_TIMEOUT_MSEC));
         }
 
         /*
@@ -424,15 +423,14 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
             consumeWithoutProcessing(istr);
 
-            throw new IOException("IP Print job from [" + originatorIp
-                    + "] has no [" + PFX_TITLE + "] and/or [" + PFX_USERID
-                    + "]");
+            throw new IOException(
+                    "IP Print job from [" + originatorIp + "] has no ["
+                            + PFX_TITLE + "] and/or [" + PFX_USERID + "]");
         }
 
         // Mantis #503
-        userid =
-                AbstractUserSource.asDbUserId(userid,
-                        ConfigManager.isLdapUserSync());
+        userid = AbstractUserSource.asDbUserId(userid,
+                ConfigManager.isLdapUserSync());
 
         if (LOGGER.isTraceEnabled()) {
 
@@ -442,8 +440,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
                 LOGGER.trace(lines.get(i));
             }
             if (i > MAX_LINES) {
-                LOGGER.trace("... " + Integer.valueOf(i - MAX_LINES)
-                        + "more lines");
+                LOGGER.trace(
+                        "... " + Integer.valueOf(i - MAX_LINES) + "more lines");
             }
         }
 
@@ -455,6 +453,10 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
         ReadWriteLockEnum.DATABASE_READONLY.setReadLock(true);
 
+        /*
+         * NOTE: There is NO top level database transaction. Specialized methods
+         * have their own database transaction.
+         */
         try {
 
             final IppQueueDao queueDao =
@@ -467,15 +469,13 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
              */
             final String uri = "RAW:" + this.port;
 
-            final boolean clientIpAllowed =
-                    QUEUE_SERVICE.hasClientIpAccessToQueue(queue, uri,
-                            originatorIp);
+            final boolean clientIpAllowed = QUEUE_SERVICE
+                    .hasClientIpAccessToQueue(queue, uri, originatorIp);
 
             if (clientIpAllowed) {
 
-                processor =
-                        new DocContentPrintProcessor(queue, originatorIp,
-                                title, authenticatedWebAppUser);
+                processor = new DocContentPrintProcessor(queue, originatorIp,
+                        title, authenticatedWebAppUser);
 
                 processor.setReadAheadInputBytes(bos.toByteArray());
 
@@ -517,8 +517,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
      * @return The stripped string.
      */
     private String stripParentheses(final String content) {
-        return StringUtils.removeEnd(
-                StringUtils.removeStart(content.trim(), "("), ")");
+        return StringUtils
+                .removeEnd(StringUtils.removeStart(content.trim(), "("), ")");
     }
 
     /**
@@ -543,8 +543,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             }
         } catch (IOException e) {
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("consumeWithoutProcessing error: "
-                        + e.getMessage());
+                LOGGER.trace(
+                        "consumeWithoutProcessing error: " + e.getMessage());
             }
         }
     }
@@ -577,9 +577,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             throw new SpException(ex);
         }
 
-        SpInfo.instance()
-                .log(String.format("IP Print Server started on port %d.",
-                        this.port));
+        SpInfo.instance().log(String
+                .format("IP Print Server started on port %d.", this.port));
 
         while (this.keepAcceptingRequests) {
 

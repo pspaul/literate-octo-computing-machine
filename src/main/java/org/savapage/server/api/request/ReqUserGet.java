@@ -65,10 +65,8 @@ public final class ReqUserGet extends ApiRequestMixin {
         final User user = userDao.findActiveUserByUserId(dtoReq.getUid());
 
         if (user == null) {
-
             setApiResult(ApiResultCodeEnum.ERROR, "msg-user-not-found",
                     dtoReq.getUid());
-
         } else {
             this.setResponse(USER_SERVICE.createUserDto(user));
             setApiResultOk();
