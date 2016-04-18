@@ -939,9 +939,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         /*
-         * PaperCut enabled?
+         * PaperCut Print Monitoring enabled?
          */
-        if (!ConfigManager.instance().isConfigValue(Key.PAPERCUT_ENABLE)) {
+        if (!ConfigManager.isPaperCutPrintEnabled()) {
             return false;
         }
 

@@ -392,10 +392,13 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
 
             if (errorData != null
                     && StringUtils.isNotBlank(errorData.getReason())) {
-                if (text.length() > 0) {
-                    text.append(' ');
+
+                final boolean hasMessage = text.length() > 0;
+
+                if (hasMessage) {
+                    text.append(" :");
                 }
-                text.append('[').append(errorData.getReason()).append(']');
+                text.append(errorData.getReason());
             }
 
             this.setApiResultText(ApiResultCodeEnum.ERROR, text.toString());
