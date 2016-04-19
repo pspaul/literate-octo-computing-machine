@@ -598,12 +598,21 @@
 				_saveConfigProps(props);
 			};
 
-			_view.pages.admin.onApplySmartSchoolPaperCutStudentCostCsv = function(timeFrom, timeTo, klassen) {
-				// SmartSchoolCostPeriodDto
+			_view.pages.admin.onDownloadSmartSchoolPaperCutStudentCostCsv = function(timeFrom, timeTo, klassen) {
+				// DelegatedPrintPeriodDto
 				_api.download("smartschool-papercut-student-cost-csv", null, JSON.stringify({
 					timeFrom : timeFrom,
 					timeTo : timeTo,
-					klassen : klassen
+					classes : klassen
+				}));
+			};
+
+			_view.pages.admin.onDownloadPapercutDelegatorCostCsv = function(timeFrom, timeTo, accounts) {
+				// DelegatedPrintPeriodDto
+				_api.download("papercut-delegator-cost-csv", null, JSON.stringify({
+					timeFrom : timeFrom,
+					timeTo : timeTo,
+					classes : accounts
 				}));
 			};
 

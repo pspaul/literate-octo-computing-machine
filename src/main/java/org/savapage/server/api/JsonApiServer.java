@@ -403,6 +403,8 @@ public final class JsonApiServer extends AbstractPage {
                     // no break intended
                 case JsonApiDict.REQ_REPORT_USER:
                     // no break intended
+                case JsonApiDict.REQ_PAPERCUT_DELEGATOR_COST_CSV:
+                    // no break intended
                 case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
                     handleExportFile(requestId, parameters, requestingUser,
                             isGetAction);
@@ -603,12 +605,22 @@ public final class JsonApiServer extends AbstractPage {
                         requestingUser, request.equals(JsonApiDict.REQ_REPORT));
                 break;
 
-            case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
-                requestHandler = exportSmartschoolPapercutStudentCost(
-                        tempExportFile,
+            case JsonApiDict.REQ_PAPERCUT_DELEGATOR_COST_CSV:
+                requestHandler = exportPapercutDelegatorCost(
+                        ConfigManager.instance().getConfigValue(
+                                Key.PROXY_PRINT_DELEGATE_PAPERCUT_ACCOUNT_PERSONAL_TYPE),
+                        "papercut-delegator-cost.csv", tempExportFile,
                         parameters.get(JsonApiDict.PARM_REQ_SUB).toString(),
                         requestingUser);
+                break;
 
+            case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
+                requestHandler = exportPapercutDelegatorCost(
+                        ConfigManager.instance().getConfigValue(
+                                Key.SMARTSCHOOL_PAPERCUT_ACCOUNT_PERSONAL_TYPE),
+                        "smartschool-papercut-student-cost.csv", tempExportFile,
+                        parameters.get(JsonApiDict.PARM_REQ_SUB).toString(),
+                        requestingUser);
                 break;
 
             default:
@@ -940,28 +952,38 @@ public final class JsonApiServer extends AbstractPage {
     /**
      * <p>
      * Handles the {@link JsonApiDict#REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV}
-     * request by returning the {@link IRequestHandler}.
+     * or oor {@link JsonApiDict#REQ_PAPERCUT_DELEGATOR_COST_CSV} request by
+     * returning the {@link IRequestHandler}.
      * </p>
      *
+     * @param personalAccountType
+     *            The value of
+     *            {@link Key#PROXY_PRINT_DELEGATE_PAPERCUT_ACCOUNT_PERSONAL_TYPE}
+     *            or {@link Key#SMARTSCHOOL_PAPERCUT_ACCOUNT_PERSONAL_TYPE}.
+     * @param csvFileName
+     *            The name of the CSV file as shown to the user.
      * @param tempCsvFile
      *            The temporary CSV {@link File}.
      * @param jsonData
+     *            JSON data.
      * @param requestingUser
-     * @return
+     *            The requesting user.
+     * @return The {@link IRequestHandler}.
      * @throws IOException
+     *             When IO error.
      */
-    private IRequestHandler exportSmartschoolPapercutStudentCost(
+    private IRequestHandler exportPapercutDelegatorCost(
+            final String personalAccountType, final String csvFileName,
             final File tempCsvFile, final String jsonData,
             final String requestingUser) throws IOException {
 
         final DelegatedPrintPeriodDto dto =
                 AbstractDto.create(DelegatedPrintPeriodDto.class, jsonData);
 
-        dto.setPersonalAccountType(ConfigManager.instance().getConfigValue(
-                Key.SMARTSCHOOL_PAPERCUT_ACCOUNT_PERSONAL_TYPE));
+        dto.setPersonalAccountType(personalAccountType);
 
         ServiceContext.getServiceFactory().getPaperCutService()
-                .createDelegatedPrintStudentCostCsv(
+                .createDelegatorPrintCostCsv(
                         PaperCutDbProxy.create(ConfigManager.instance(), true),
                         tempCsvFile, dto);
 
@@ -969,7 +991,7 @@ public final class JsonApiServer extends AbstractPage {
                 new DownloadRequestHandler(tempCsvFile);
 
         handler.setContentDisposition(ContentDisposition.ATTACHMENT);
-        handler.setFileName("smartschool-papercut-student-cost.csv");
+        handler.setFileName(csvFileName);
         handler.setCacheDuration(Duration.NONE);
 
         return handler;

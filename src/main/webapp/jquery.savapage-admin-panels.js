@@ -950,11 +950,22 @@
 				_view.visible($('.smartschool-papercut-enabled'), enabled);
 			},
 
+			onProxyPrintDelegateEnabled : function(enabled) {
+				var _view = _ns.PanelCommon.view;
+				_view.visible($('.sp-proxyprint-delegate-enable-enabled'), enabled);
+				this.onProxyPrintDelegatePaperCutEnabled( enabled ? _view.isCbChecked($("#proxy-print\\.delegate\\.papercut\\.enable")) : false);
+			},
+
+			onProxyPrintDelegatePaperCutEnabled : function(enabled) {
+				var _view = _ns.PanelCommon.view;
+				_view.visible($('.sp-download-papercut-delegator-cost-enabled'), enabled);
+			},
+
 			onPaperCutEnabled : function(enabled) {
 				var _view = _ns.PanelCommon.view;
 				_view.visible($('.papercut-enabled'), enabled);
 			},
-			
+
 			onFinancialUserTransfersEnabled : function(enabled) {
 				var _view = _ns.PanelCommon.view;
 				_view.visible($('.financial-user-transfers-enabled'), enabled);
@@ -1015,6 +1026,12 @@
 
 				_view.mobipick($("#sp-smartschool-papercut-student-cost-date-from"));
 				_view.mobipick($("#sp-smartschool-papercut-student-cost-date-to"));
+
+				_view.mobipick($("#sp-papercut-delegator-cost-date-from"));
+				_view.mobipick($("#sp-papercut-delegator-cost-date-to"));
+				
+				my.onProxyPrintDelegatePaperCutEnabled(_view.isCbChecked($('#proxy-print\\.delegate\\.papercut\\.enable')));
+				my.onProxyPrintDelegateEnabled(_view.isCbChecked($('#proxy-print\\.delegate\\.enable')));
 			}
 		};
 
@@ -1345,7 +1362,7 @@
 				my.input.select.email_text = null;
 
 				my.input.select.usergroup_id = null;
-				
+
 				// Boolean
 				my.input.select.admin = null;
 				// Boolean
@@ -1380,7 +1397,7 @@
 				$('#sp-user-email-containing-text').val(my.input.select.email_text);
 
 				$('#sp-user-select-group').val(my.input.select.usergroup_id).selectmenu('refresh');
-				
+
 				val = my.input.select.person;
 				_view.checkRadioValue('sp-user-select-type', val === null ? "" : ( val ? "1" : "0"));
 
@@ -1762,7 +1779,7 @@
 			onOutput : function(my, output) {
 
 				my.output = output;
-				
+
 				/*
 				 * NOTICE the $().one() construct. Since the page get
 				 * reloaded all the time, we want a single-shot binding.

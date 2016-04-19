@@ -1957,7 +1957,7 @@
 					}
 				});
 
-				$(this).on('click', '#apply-smartschool-papercut-student-cost-csv', null, function() {
+				$(this).on('click', '#sp-download-smartschool-papercut-student-cost-csv', null, function() {
 					var sel = $('#sp-smartschool-papercut-student-cost-date-from'), from = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null, to, klassen = $('#sp-smartschool-papercut-student-cost-klassen').val();
 
 					sel = $('#sp-smartschool-papercut-student-cost-date-to');
@@ -1968,9 +1968,25 @@
 					} else {
 						klassen = null;
 					}
-					_self.onApplySmartSchoolPaperCutStudentCostCsv(from, to, klassen);
+					_self.onDownloadSmartSchoolPaperCutStudentCostCsv(from, to, klassen);
 					return false;
 				});
+				
+				$(this).on('click', '#sp-download-papercut-delegator-cost-csv', null, function() {
+					var sel = $('#sp-papercut-delegator-cost-date-from'), from = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null, to, accounts = $('#sp-papercut-delegator-cost-accounts').val();
+
+					sel = $('#sp-papercut-delegator-cost-date-to');
+					to = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
+
+					if (accounts.length > 0) {
+						accounts = accounts.split(" ");
+					} else {
+						accounts = null;
+					}
+					_self.onDownloadPapercutDelegatorCostCsv(from, to, accounts);
+					return false;
+				});
+				
 
 				$(this).on('change', "input:checkbox[id='flipswitch-internetprint-online']", null, function(e) {
 					_self.onFlipswitchInternetPrint($(this).is(':checked'));
@@ -2012,6 +2028,14 @@
 
 				$(this).on('change', "input:checkbox[id='smartschool.papercut.enable']", null, function(e) {
 					_panel.Options.onSmartSchoolPaperCutEnabled($(this).is(':checked'));
+				});
+
+				$(this).on('change', "input:checkbox[id='proxy-print.delegate.enable']", null, function(e) {
+					_panel.Options.onProxyPrintDelegateEnabled($(this).is(':checked'));
+				});
+				
+				$(this).on('change', "input:checkbox[id='proxy-print.delegate.papercut.enable']", null, function(e) {
+					_panel.Options.onProxyPrintDelegatePaperCutEnabled($(this).is(':checked'));
 				});
 
 				$(this).on('change', "input:checkbox[id='papercut.enable']", null, function(e) {

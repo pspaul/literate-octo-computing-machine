@@ -727,11 +727,13 @@
 							</label>
 							<input id="sp-smartschool-papercut-student-cost-date-from"
 								data-clear-btn="true" />
+
 							<label for="sp-smartschool-papercut-student-cost-date-to">
 								<wicket:message key="prompt-period-to" />
 							</label>
 							<input id="sp-smartschool-papercut-student-cost-date-to"
 								data-clear-btn="true" />
+
 							<label for="sp-smartschool-papercut-student-cost-klassen"
 								class="sp-txt-wrap">
 								<wicket:message
@@ -741,8 +743,9 @@
 								id="sp-smartschool-papercut-student-cost-klassen" value=""
 								data-clear-btn="true" autocomplete="off" autocorrect="off"
 								autocapitalize="off" spellcheck="false" />
-							<button id="apply-smartschool-papercut-student-cost-csv"
-								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+
+							<button id="sp-download-smartschool-papercut-student-cost-csv"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d">
 								<wicket:message key="button-download" />
 							</button>
 						</div>
@@ -1166,22 +1169,68 @@
 							autocapitalize="off" />
 					</div>
 				</li>
+
 				<li>
 					<h3>Delegated Print</h3>
 					<div class="ui-mini">
+						<br />
 						<label for="proxyprint-delegate-enable"
 							wicket:id="proxyprint-delegate-enable-label" />
 						<input type="checkbox" id="proxyprint-delegate-enable" value="0"
 							wicket:id="proxyprint-delegate-enable" />
+					</div>
+
+					<div class="sp-proxyprint-delegate-enable-enabled ui-mini">
 						<label for="proxyprint-delegate-papercut-enable"
 							wicket:id="proxyprint-delegate-papercut-enable-label" />
 						<input type="checkbox" id="proxyprint-delegate-papercut-enable"
 							value="0" wicket:id="proxyprint-delegate-papercut-enable" />
 					</div>
+
+					<div class="sp-download-papercut-delegator-cost-enabled ui-mini">
+						<br />
+						<div data-role="collapsible" data-collapsed="true">
+							<h3>
+								<wicket:message
+									key="proxyprint-delegate-papercut-invoicing-header" />
+							</h3>
+							<label class="sp-txt-wrap">
+								<wicket:message
+									key="proxyprint-delegate-papercut-invoicing-legend" />
+							</label>
+
+							<label for="papercut-delegator-cost-date-from">
+								<wicket:message key="prompt-period-from" />
+							</label>
+							<input id="sp-papercut-delegator-cost-date-from"
+								data-clear-btn="true" />
+
+							<label for="sp-papercut-delegator-cost-date-to">
+								<wicket:message key="prompt-period-to" />
+							</label>
+							<input id="sp-papercut-delegator-cost-date-to"
+								data-clear-btn="true" />
+
+							<label for="sp-papercut-delegator-cost-accounts"
+								class="sp-txt-wrap">
+								<wicket:message
+									key="proxyprint-delegate-papercut-invoicing-accounts-prompt" />
+							</label>
+							<input type="text" id="sp-papercut-delegator-cost-accounts"
+								value="" data-clear-btn="true" autocomplete="off"
+								autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+							<button id="sp-download-papercut-delegator-cost-csv"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d">
+								<wicket:message key="button-download" />
+							</button>
+						</div>
+					</div>
 				</li>
 
 				<li>
 					<h3>Job Tickets</h3>
+					<br />
 					<span class="sp-txt-wrap"><wicket:message
 							key="proxyprint-jobticket-printer" /></span>
 					<input type="text" id="proxyprint-jobticket-printer"

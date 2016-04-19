@@ -142,6 +142,9 @@ public class JsonApiDict {
     public static final String REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV =
             "smartschool-papercut-student-cost-csv";
 
+    public static final String REQ_PAPERCUT_DELEGATOR_COST_CSV =
+            "papercut-delegator-cost-csv";
+
     public static final String REQ_LETTERHEAD_ATTACH = "letterhead-attach";
     public static final String REQ_LETTERHEAD_DELETE = "letterhead-delete";
     public static final String REQ_LETTERHEAD_DETACH = "letterhead-detach";
@@ -618,6 +621,7 @@ public class JsonApiDict {
         case REQ_REPORT:
         case REQ_REPORT_USER:
         case REQ_ACCOUNT_VOUCHER_BATCH_PRINT:
+        case REQ_PAPERCUT_DELEGATOR_COST_CSV:
         case REQ_POS_RECEIPT_DOWNLOAD:
         case REQ_POS_RECEIPT_DOWNLOAD_USER:
         case REQ_PRINTER_OPT_DOWNLOAD:
@@ -785,6 +789,9 @@ public class JsonApiDict {
         adm(REQ_SMARTSCHOOL_START_SIMULATE, DbClaim.NONE, DbAccess.NO);
         adm(REQ_SMARTSCHOOL_STOP, DbClaim.NONE, DbAccess.NO);
         adm(REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV, DbClaim.NONE,
+                DbAccess.NO);
+
+        adm(REQ_PAPERCUT_DELEGATOR_COST_CSV, DbClaim.NONE,
                 DbAccess.NO);
 
         usr(REQ_INBOX_JOB_DELETE, DbClaim.NONE, DbAccess.USER_LOCK);
