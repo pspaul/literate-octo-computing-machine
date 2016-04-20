@@ -767,6 +767,9 @@ public final class Options extends AbstractAdminPage {
         labelledInput("proxyprint-max-copies",
                 IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_MAX_COPIES);
 
+        labelledInput("proxyprint-max-pages",
+                IConfigProp.Key.PROXY_PRINT_MAX_PAGES);
+
         labelledCheckbox("proxyprint-clear-inbox",
                 IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE);
 
@@ -783,9 +786,6 @@ public final class Options extends AbstractAdminPage {
 
         tagInput("proxyprint-jobticket-printer-group",
                 IConfigProp.Key.JOBTICKET_PROXY_PRINTER_GROUP);
-
-        labelledInput("proxyprint-jobticket-threshold-page-total",
-                IConfigProp.Key.JOBTICKET_THRESHOLD_PAGE_TOTAL);
 
         /*
          * xpstopdf

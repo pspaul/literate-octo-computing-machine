@@ -88,7 +88,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
             String value = list.get(key).getTextValue();
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(key + " = " + value);
+                LOGGER.trace(String.format("%s = %s", key, value));
             }
 
             final Key configKey = cm.getConfigKey(key);
@@ -113,8 +113,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 return;
             }
 
-            final ValidationResult res =
-                    cm.validate(configKey, value);
+            final ValidationResult res = cm.validate(configKey, value);
             isValid = res.isValid();
 
             if (isValid) {
@@ -203,7 +202,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
     }
 
     /**
-     * Custom validates a {@link IConfigProp.Key} value.
+     * Custom validates a single {@link IConfigProp.Key} value.
      *
      * @param key
      *            The key of the configuration item.
@@ -214,7 +213,8 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
      */
     private boolean customConfigPropValidate(Key key, String value) {
 
-        if (key == Key.PROXY_PRINT_NON_SECURE_PRINTER_GROUP
+        if ((key == Key.PROXY_PRINT_NON_SECURE_PRINTER_GROUP
+                || key == Key.JOBTICKET_PROXY_PRINTER_GROUP)
                 && StringUtils.isNotBlank(value)) {
 
             final PrinterGroup jpaPrinterGroup = ServiceContext.getDaoContext()
@@ -227,7 +227,8 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
             }
         }
 
-        if (key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
+        if (key == Key.JOBTICKET_PROXY_PRINTER
+                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
                 || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX
                 || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
                 || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX

@@ -716,7 +716,7 @@
 					_fillConfigPropsText(props, ['proxy-print.non-secure-printer-group']);
 				}
 
-				_fillConfigPropsText(props, ['proxy-print.fast-expiry-mins', 'proxy-print.hold-expiry-mins', 'proxy-print.direct-expiry-secs', 'webapp.user.proxy-print.max-copies', 'jobticket.proxy-printer', 'jobticket.proxy-printer-group', 'jobticket.threshold.page-total']);
+				_fillConfigPropsText(props, ['proxy-print.fast-expiry-mins', 'proxy-print.hold-expiry-mins', 'proxy-print.direct-expiry-secs', 'webapp.user.proxy-print.max-copies', 'proxy-print.max-pages','jobticket.proxy-printer', 'jobticket.proxy-printer-group']);
 
 				_saveConfigProps(props);
 			};
