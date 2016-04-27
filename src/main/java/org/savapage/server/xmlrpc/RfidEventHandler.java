@@ -442,7 +442,8 @@ public class RfidEventHandler implements ServiceEntryPoint {
              * Hold|Fast Proxy Print.
              */
             doHoldFastProxyPrint(map, clientIpAddress, cardNumber, cardReader,
-                    user, isHoldReleasePrintSupported);
+                    user, isHoldReleasePrintSupported,
+                    isFastProxyPrintSupported);
 
         } else {
 
@@ -490,15 +491,21 @@ public class RfidEventHandler implements ServiceEntryPoint {
      *            The user of the card.
      * @param isHoldPrintSupported
      *            {@code true} if Hold Print is supported.
+     * @param isFastPrintSupported
+     *            {@code true} if Fast Print is supported.
+     * @return The number of pages printed.
      * @throws ProxyPrintException
      *             When logical proxy print errors.
      */
-    private void doHoldFastProxyPrint(final Map<String, Object> map,
+    private int doHoldFastProxyPrint(final Map<String, Object> map,
             final String clientIpAddress, final String cardNumber,
             final Device cardReader, final User user,
-            final boolean isHoldPrintSupported) throws ProxyPrintException {
+            final boolean isHoldPrintSupported,
+            final boolean isFastPrintSupported) throws ProxyPrintException {
 
-        int nPages = 0;
+        int nPagesReleased = 0;
+
+        final ConfigManager cm = ConfigManager.instance();
 
         final DaoContext daoContext = ServiceContext.getDaoContext();
 
@@ -507,52 +514,65 @@ public class RfidEventHandler implements ServiceEntryPoint {
         int nPagesHoldReleased = 0;
 
         /*
-         * Step 1: try to Hold Print.
+         * Step 1: HOLD Print Release.
          */
         if (isHoldPrintSupported) {
 
             nPagesHoldReleased = PROXY_PRINT_SERVICE
                     .proxyPrintOutbox(cardReader, cardNumber);
 
-            nPages += nPagesHoldReleased;
+            nPagesReleased += nPagesHoldReleased;
         }
 
         /*
-         * Check if a Fast Print is to be tried after a Hold Print release.
-         *
-         * When the inbox is configured to be COMPLETELY cleared after creating
-         * a Hold Proxy Print Job, we will try a Fast Release.
-         *
-         * The assumption is that the user will exit the User Web App after
-         * creating Hold Proxy Print Jobs and therefore, that newly arrived
-         * print-in jobs are subject to Fast Release.
-         *
-         * NOTE: when the inbox is NOT COMPLETELY cleared after creating a Hold
-         * Proxy Print Job, we run the risk of releasing the print-in, that was
-         * already captured in the Hold Print, a second time in the Fast Print.
+         * Step 2: FAST Print Release.
          */
-        final ConfigManager cm = ConfigManager.instance();
+        final boolean doFastPrint;
 
-        final boolean doFastReleaseAfterHoldRelease;
+        if (isFastPrintSupported) {
 
-        if (cm.isConfigValue(
-                IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
+            if (!isHoldPrintSupported || nPagesHoldReleased == 0) {
 
-            final InboxSelectScopeEnum clearScope =
-                    cm.getConfigEnum(InboxSelectScopeEnum.class,
+                /*
+                 * FAST Print Release when HOLD Print is disabled or no HOLD job
+                 * is present.
+                 */
+                doFastPrint = true;
+
+            } else {
+                /*
+                 * When Proxy Printing is configured to COMPLETELY clear the
+                 * inbox after printing, the inbox is also cleared after
+                 * creating a HOLD Proxy Print Job,. In that case we will FAST
+                 * Release.
+                 *
+                 * (The assumption is that the user will exit the User Web App
+                 * after creating Hold Proxy Print Jobs and therefore, that
+                 * newly arrived print-in jobs are subject to Fast Release)
+                 *
+                 * NOTE: when the inbox is NOT COMPLETELY cleared after creating
+                 * a Hold Proxy Print Job, we run the risk of releasing the
+                 * print-in, that was already captured in the Hold Print, a
+                 * second time in the Fast Print.
+                 */
+                if (cm.isConfigValue(
+                        IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
+
+                    final InboxSelectScopeEnum clearScope = cm.getConfigEnum(
+                            InboxSelectScopeEnum.class,
                             Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE);
 
-            doFastReleaseAfterHoldRelease =
-                    EnumSet.of(InboxSelectScopeEnum.ALL).contains(clearScope);
+                    doFastPrint = EnumSet.of(InboxSelectScopeEnum.ALL)
+                            .contains(clearScope);
+                } else {
+                    doFastPrint = false;
+                }
+            }
         } else {
-            doFastReleaseAfterHoldRelease = false;
+            doFastPrint = false;
         }
 
-        /*
-         * Step 2: try to Fast Print.
-         */
-        if (nPagesHoldReleased == 0 || doFastReleaseAfterHoldRelease) {
-
+        if (doFastPrint) {
             /*
              * We need a new transaction, when Hold Print was executed.
              */
@@ -560,29 +580,8 @@ public class RfidEventHandler implements ServiceEntryPoint {
                 daoContext.beginTransaction();
             }
 
-            final int nPagesFastPrinted = PROXY_PRINT_SERVICE
+            nPagesReleased += PROXY_PRINT_SERVICE
                     .proxyPrintInboxFast(cardReader, cardNumber);
-
-            if (nPagesFastPrinted == 0 && nPagesHoldReleased == 0) {
-
-                final String key = "rfid-card-swipe-no-pages";
-
-                throw new ProxyPrintException(
-                        Messages.getSystemMessage(this.getClass(), key,
-                                user.getUserId()),
-                        Messages.getLogFileMessage(this.getClass(), key,
-                                user.getUserId()));
-
-            }
-
-            nPages += nPagesFastPrinted;
-        }
-
-        if (nPagesHoldReleased > 0 && !doFastReleaseAfterHoldRelease) {
-            /*
-             * Clear the inbox to prevent Fast Print at next card swipe.
-             */
-            INBOX_SERVICE.deleteAllPages(user.getUserId());
         }
 
         daoContext.commit();
@@ -590,9 +589,9 @@ public class RfidEventHandler implements ServiceEntryPoint {
         final StringBuilder builder = new StringBuilder(96);
 
         builder.append("User [").append(user.getUserId()).append("] released [")
-                .append(nPages).append("] proxy printed page");
+                .append(nPagesReleased).append("] proxy printed page");
 
-        if (nPages > 1) {
+        if (nPagesReleased > 1) {
             builder.append("s");
         }
 
@@ -606,6 +605,18 @@ public class RfidEventHandler implements ServiceEntryPoint {
                     .append("].");
         }
 
+        if (nPagesReleased == 0) {
+            final String key = "rfid-card-swipe-no-pages";
+
+            throw new ProxyPrintException(
+                    Messages.getSystemMessage(this.getClass(), key,
+                            user.getUserId()),
+                    Messages.getLogFileMessage(this.getClass(), key,
+                            user.getUserId()));
+        }
+
         map.put(KEY_MESSAGE, builder.toString());
+
+        return nPagesReleased;
     }
 }
