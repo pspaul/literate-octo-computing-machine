@@ -49,11 +49,13 @@ import org.savapage.core.rfid.RfidEvent;
 import org.savapage.core.rfid.RfidReaderManager;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.InboxService;
+import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.services.UserService;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
+import org.savapage.core.services.helpers.ProxyPrintOutboxResult;
 import org.savapage.core.util.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +91,9 @@ public class RfidEventHandler implements ServiceEntryPoint {
 
     private static final InboxService INBOX_SERVICE =
             ServiceContext.getServiceFactory().getInboxService();
+
+    private static final OutboxService OUTBOX_SERVICE =
+            ServiceContext.getServiceFactory().getOutboxService();
 
     private static final ProxyPrintAuthManager PROXYPRINT_AUTHMANAGER =
             ProxyPrintAuthManager.instance();
@@ -503,25 +508,54 @@ public class RfidEventHandler implements ServiceEntryPoint {
             final boolean isHoldPrintSupported,
             final boolean isFastPrintSupported) throws ProxyPrintException {
 
-        int nPagesReleased = 0;
-
         final ConfigManager cm = ConfigManager.instance();
 
+        /*
+         * Parameters
+         */
+        final int nHoldJobs =
+                OUTBOX_SERVICE.getOutboxJobCount(user.getUserId());
+
+        final boolean isProxyPrintSafePagesClear;
+
+        if (cm.isConfigValue(
+                IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
+
+            final InboxSelectScopeEnum proxyPrintClearScope =
+                    cm.getConfigEnum(InboxSelectScopeEnum.class,
+                            Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE);
+
+            isProxyPrintSafePagesClear = EnumSet
+                    .of(InboxSelectScopeEnum.ALL, InboxSelectScopeEnum.JOBS,
+                            InboxSelectScopeEnum.PAGES)
+                    .contains(proxyPrintClearScope);
+        } else {
+            isProxyPrintSafePagesClear = false;
+        }
+
+        /*
+         * Counters
+         */
+        int nPagesReleased = 0;
+
+        //
         final DaoContext daoContext = ServiceContext.getDaoContext();
-
         daoContext.beginTransaction();
-
-        int nPagesHoldReleased = 0;
 
         /*
          * Step 1: HOLD Print Release.
          */
+        final int nHoldJobsReleased;
+
         if (isHoldPrintSupported) {
 
-            nPagesHoldReleased = PROXY_PRINT_SERVICE
+            final ProxyPrintOutboxResult result = PROXY_PRINT_SERVICE
                     .proxyPrintOutbox(cardReader, cardNumber);
 
-            nPagesReleased += nPagesHoldReleased;
+            nHoldJobsReleased = result.getJobs();
+            nPagesReleased += result.getPages();
+        } else {
+            nHoldJobsReleased = 0;
         }
 
         /*
@@ -530,43 +564,17 @@ public class RfidEventHandler implements ServiceEntryPoint {
         final boolean doFastPrint;
 
         if (isFastPrintSupported) {
-
-            if (!isHoldPrintSupported || nPagesHoldReleased == 0) {
-
-                /*
-                 * FAST Print Release when HOLD Print is disabled or no HOLD job
-                 * is present.
-                 */
+            /*
+             * If Hold jobs exist for any printer, a Fast Print is only done
+             * when Proxy Printing is configured to “Always remove SafePages
+             * after printing”. This way, because all SafePages are cleared
+             * after creating a Hold Job, we know for sure that present
+             * SafePages are not part of any Hold Print Job.
+             */
+            if (nHoldJobs == 0) {
                 doFastPrint = true;
-
             } else {
-                /*
-                 * When Proxy Printing is configured to COMPLETELY clear the
-                 * inbox after printing, the inbox is also cleared after
-                 * creating a HOLD Proxy Print Job,. In that case we will FAST
-                 * Release.
-                 *
-                 * (The assumption is that the user will exit the User Web App
-                 * after creating Hold Proxy Print Jobs and therefore, that
-                 * newly arrived print-in jobs are subject to Fast Release)
-                 *
-                 * NOTE: when the inbox is NOT COMPLETELY cleared after creating
-                 * a Hold Proxy Print Job, we run the risk of releasing the
-                 * print-in, that was already captured in the Hold Print, a
-                 * second time in the Fast Print.
-                 */
-                if (cm.isConfigValue(
-                        IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
-
-                    final InboxSelectScopeEnum clearScope = cm.getConfigEnum(
-                            InboxSelectScopeEnum.class,
-                            Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE);
-
-                    doFastPrint = EnumSet.of(InboxSelectScopeEnum.ALL)
-                            .contains(clearScope);
-                } else {
-                    doFastPrint = false;
-                }
+                doFastPrint = isProxyPrintSafePagesClear;
             }
         } else {
             doFastPrint = false;
@@ -580,8 +588,21 @@ public class RfidEventHandler implements ServiceEntryPoint {
                 daoContext.beginTransaction();
             }
 
+            /*
+             * NOTE: this will also clear ALL SafePages.
+             */
             nPagesReleased += PROXY_PRINT_SERVICE
                     .proxyPrintInboxFast(cardReader, cardNumber);
+
+        } else if (nHoldJobsReleased > 0 && !isProxyPrintSafePagesClear) {
+            /*
+             * When Proxy Printing is not configured to “Always remove SafePages
+             * after printing”, all SafePages will be ad-hoc cleared after a
+             * Hold Print release. This will prevent that, after all Hold jobs
+             * are released at Hold-only printers, and no Hold jobs exist for
+             * any printer, remaining SafePages will be Fast Printed anyway.
+             */
+            INBOX_SERVICE.deleteAllPages(user.getUserId());
         }
 
         daoContext.commit();
