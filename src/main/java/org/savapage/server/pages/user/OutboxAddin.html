@@ -31,24 +31,26 @@
 	</h4>
 
 	<div class="sp-txt-wrap">
-		<wicket:enclosure child="title">
-			<span wicket:id="title" style="font-style: italic;" /><p />
-		</wicket:enclosure>
-		<wicket:enclosure child="extSupplier"> &bull;
-                <wicket:enclosure child="extSupplierImg">
-				<img wicket:id="extSupplierImg" src="" height="12" />
+		<wicket:enclosure child="extSupplier">
+			<wicket:enclosure child="extSupplierImg">
+				<img wicket:id="extSupplierImg" src="" height="12" style="margin-left: 4px;"/>
 			</wicket:enclosure>
 			<wicket:enclosure child="extSupplier">
 				<span wicket:id="extSupplier" />
 			</wicket:enclosure>
+			&bull;
+		</wicket:enclosure>
+		<wicket:enclosure child="title">
+			<span wicket:id="title" style="font-style: italic;" />
+			<p />
 		</wicket:enclosure>
 	</div>
 
 	<div class="sp-txt-wrap">
-		<img wicket:id="img-job" src="" height="16" />&nbsp;
+		<img wicket:id="img-job" src="" height="16" />
 		<wicket:enclosure child="owner-user-id">
-            <wicket:enclosure child="owner-user-name">
-                <span wicket:id="owner-user-name" />
+			<wicket:enclosure child="owner-user-name">
+				<span wicket:id="owner-user-name" />
                 &bull;
             </wicket:enclosure>
 			<span wicket:id="owner-user-id" />

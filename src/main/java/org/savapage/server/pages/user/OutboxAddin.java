@@ -42,6 +42,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.outbox.OutboxInfoDto;
@@ -356,11 +357,11 @@ public class OutboxAddin extends AbstractUserPage {
             //
             final String extSupplierImgUrl;
 
-            if (job.getExternalSupplier() != null) {
-                mapVisible.put("extSupplier",
-                        job.getExternalSupplier().getUiText());
-                extSupplierImgUrl = WebApp
-                        .getExtSupplierEnumImgUrl(job.getExternalSupplier());
+            if (job.getExternalSupplierInfo() != null) {
+                final ExternalSupplierEnum supplier =
+                        job.getExternalSupplierInfo().getSupplier();
+                mapVisible.put("extSupplier", supplier.getUiText());
+                extSupplierImgUrl = WebApp.getExtSupplierEnumImgUrl(supplier);
             } else {
                 extSupplierImgUrl = null;
             }

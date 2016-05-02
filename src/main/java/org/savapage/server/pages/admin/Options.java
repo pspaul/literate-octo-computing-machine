@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,18 +38,24 @@ import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.doc.OfficeToPdf;
 import org.savapage.core.doc.XpsToPdf;
+import org.savapage.core.ipp.IppSyntaxException;
+import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
+import org.savapage.core.services.ProxyPrintService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.pages.MessageContent;
 
 /**
  *
@@ -63,6 +69,12 @@ public final class Options extends AbstractAdminPage {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * .
+     */
+    private static final ProxyPrintService PROXYPRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
+
     @Override
     protected boolean needMembership() {
         return false;
@@ -75,12 +87,22 @@ public final class Options extends AbstractAdminPage {
 
         super(parameters);
 
+        /*
+         * We need the printer cache for user input validation.
+         */
+        try {
+            PROXYPRINT_SERVICE.lazyInitPrinterCache();
+        } catch (IppConnectException | IppSyntaxException e) {
+            setResponsePage(
+                    new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
+            return;
+        }
+
+        //
         final MarkupHelper helper = new MarkupHelper(this);
         final ConfigManager cm = ConfigManager.instance();
 
-        /*
-         *
-         */
+        //
         labelledRadio("auth-method", "-none", IConfigProp.Key.AUTH_METHOD,
                 IConfigProp.AUTH_METHOD_V_NONE);
         labelledRadio("auth-method", "-unix", IConfigProp.Key.AUTH_METHOD,
@@ -88,9 +110,7 @@ public final class Options extends AbstractAdminPage {
         labelledRadio("auth-method", "-ldap", IConfigProp.Key.AUTH_METHOD,
                 IConfigProp.AUTH_METHOD_V_LDAP);
 
-        /*
-         *
-         */
+        //
         labelledRadio("ldap-schema-type", "-open",
                 IConfigProp.Key.LDAP_SCHEMA_TYPE,
                 IConfigProp.LDAP_TYPE_V_OPEN_LDAP);

@@ -550,10 +550,12 @@ public final class MarkupHelper {
             return CSS_TXT_VALID;
 
         case PENDING:
+        case PENDING_COMPLETE:
         case PENDING_EXT:
             return CSS_TXT_WARN;
 
         case CANCELLED:
+        case PENDING_CANCEL:
         case EXPIRED:
         case ERROR:
         default:

@@ -33,7 +33,7 @@ import org.savapage.server.SpSession;
  * @author Rijk Ravestein
  *
  */
-public final class ReqOutboxDeleteJob extends ApiRequestMixin {
+public final class ReqOutboxCancelJob extends ApiRequestMixin {
 
     /**
      *
@@ -74,9 +74,9 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
         final String msgKey;
 
         if (BooleanUtils.isTrue(dtoReq.getJobTicket())) {
-            msgKey = removeJobTicket(lockedUser, dtoReq);
+            msgKey = cancelJobTicket(lockedUser, dtoReq);
         } else {
-            msgKey = removeOutboxJob(lockedUser, dtoReq);
+            msgKey = cancelOutboxJob(lockedUser, dtoReq);
         }
 
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);
@@ -86,7 +86,7 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
     }
 
     /**
-     * Removes a job in the user's outbox.
+     * Cancels a job in the user's outbox.
      *
      * @param lockedUser
      *            The user.
@@ -94,9 +94,9 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
      *            The request.
      * @return The message key.
      */
-    private String removeOutboxJob(final User lockedUser, final DtoReq dtoReq) {
+    private String cancelOutboxJob(final User lockedUser, final DtoReq dtoReq) {
 
-        if (OUTBOX_SERVICE.removeOutboxJob(lockedUser.getUserId(),
+        if (OUTBOX_SERVICE.cancelOutboxJob(lockedUser.getUserId(),
                 dtoReq.getJobFileName())) {
             return "msg-outbox-cancelled-job";
         }
@@ -104,7 +104,7 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
     }
 
     /**
-     * Removes a Job Ticket from the user.
+     * Cancels a Job Ticket from the user.
      *
      * @param lockedUser
      *            The user.
@@ -112,9 +112,9 @@ public final class ReqOutboxDeleteJob extends ApiRequestMixin {
      *            The request.
      * @return The message key.
      */
-    private String removeJobTicket(final User lockedUser, final DtoReq dtoReq) {
+    private String cancelJobTicket(final User lockedUser, final DtoReq dtoReq) {
 
-        if (JOBTICKET_SERVICE.removeTicket(lockedUser.getId(),
+        if (JOBTICKET_SERVICE.cancelTicket(lockedUser.getId(),
                 dtoReq.getJobFileName()) == null) {
             return "msg-outbox-cancelled-jobticket-none";
         }

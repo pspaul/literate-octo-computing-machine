@@ -31,14 +31,15 @@ import org.savapage.server.SpSession;
  * @author Rijk Ravestein
  *
  */
-public final class ReqOutboxClear extends ApiRequestMixin {
+public final class ReqOutboxCancelAll extends ApiRequestMixin {
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final int jobCount = OUTBOX_SERVICE.clearOutbox(lockedUser.getUserId())
-                + JOBTICKET_SERVICE.removeTickets(lockedUser.getId());
+        final int jobCount =
+                OUTBOX_SERVICE.cancelOutboxJobs(lockedUser.getUserId())
+                        + JOBTICKET_SERVICE.cancelTickets(lockedUser.getId());
 
         final String msgKey;
 

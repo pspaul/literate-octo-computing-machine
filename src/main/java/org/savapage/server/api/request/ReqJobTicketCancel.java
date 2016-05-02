@@ -35,7 +35,7 @@ import org.savapage.core.services.ServiceContext;
  * @author Rijk Ravestein
  *
  */
-public final class ReqJobTicketDelete extends ApiRequestMixin {
+public final class ReqJobTicketCancel extends ApiRequestMixin {
 
     /**
      *
@@ -64,7 +64,7 @@ public final class ReqJobTicketDelete extends ApiRequestMixin {
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
         final OutboxJobDto dto =
-                JOBTICKET_SERVICE.removeTicket(dtoReq.getJobFileName());
+                JOBTICKET_SERVICE.cancelTicket(dtoReq.getJobFileName());
 
         final String msgKey;
 

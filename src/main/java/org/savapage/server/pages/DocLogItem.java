@@ -125,8 +125,8 @@ public final class DocLogItem {
         return extSupplierStatus;
     }
 
-    public void setExtSupplierStatus(
-            ExternalSupplierStatusEnum extSupplierStatus) {
+    public void
+            setExtSupplierStatus(ExternalSupplierStatusEnum extSupplierStatus) {
         this.extSupplierStatus = extSupplierStatus;
     }
 
@@ -287,8 +287,8 @@ public final class DocLogItem {
          * @param orderBy
          * @return
          */
-        protected abstract String getOrderByField(
-                final DocLogDao.FieldEnum orderBy);
+        protected abstract String
+                getOrderByField(final DocLogDao.FieldEnum orderBy);
 
         /**
          *
@@ -369,8 +369,8 @@ public final class DocLogItem {
                 DocLogItem log = new DocLogItem();
 
                 log.setExtSupplier(DaoEnumHelper.getExtSupplier(docLog));
-                log.setExtSupplierStatus(DaoEnumHelper
-                        .getExtSupplierStatus(docLog));
+                log.setExtSupplierStatus(
+                        DaoEnumHelper.getExtSupplierStatus(docLog));
 
                 log.setUserId(docLog.getUser().getUserId());
                 log.setUserName(docLog.getUser().getFullName());
@@ -396,12 +396,12 @@ public final class DocLogItem {
                 if (log.getTransactions().isEmpty()) {
                     log.setCurrencyCode(ConfigManager.getAppCurrencyCode());
                 } else {
-                    log.setCurrencyCode(log.getTransactions().get(0)
-                            .getCurrencyCode());
+                    log.setCurrencyCode(
+                            log.getTransactions().get(0).getCurrencyCode());
                 }
 
-                log.setHumanReadableByteCount(NumberUtil
-                        .humanReadableByteCount(docLog.getNumberOfBytes(), true));
+                log.setHumanReadableByteCount(NumberUtil.humanReadableByteCount(
+                        docLog.getNumberOfBytes(), true));
 
                 final DocIn docIn = docLog.getDocIn();
                 final DocOut docOut = docLog.getDocOut();
@@ -417,8 +417,8 @@ public final class DocLogItem {
                     if (printIn != null) {
 
                         ReservedIppQueueEnum reservedQueue =
-                                queueService.getReservedQueue(printIn
-                                        .getQueue().getUrlPath());
+                                queueService.getReservedQueue(
+                                        printIn.getQueue().getUrlPath());
 
                         if (reservedQueue == null) {
                             reservedQueue = ReservedIppQueueEnum.IPP_PRINT;
@@ -427,9 +427,9 @@ public final class DocLogItem {
                         if (reservedQueue == ReservedIppQueueEnum.IPP_PRINT) {
 
                             log.setHeader(
-                            // reservedQueue.getUiText() + " " +
-                            WebApp.MOUNT_PATH_PRINTERS + "/"
-                                    + printIn.getQueue().getUrlPath());
+                                    // reservedQueue.getUiText() + " " +
+                                    WebApp.MOUNT_PATH_PRINTERS + "/"
+                                            + printIn.getQueue().getUrlPath());
 
                         } else {
                             log.setHeader(reservedQueue.getUiText());
@@ -475,13 +475,13 @@ public final class DocLogItem {
                         log.setTotalSheets(printOut.getNumberOfSheets());
                         log.setCopies(printOut.getNumberOfCopies());
 
-                        log.setPrintMode(PrintModeEnum.valueOf(printOut
-                                .getPrintMode()));
+                        log.setPrintMode(
+                                PrintModeEnum.valueOf(printOut.getPrintMode()));
 
                         if (printOut.getCupsCompletedTime() != null) {
-                            log.setCompletedDate(new Date(printOut
-                                    .getCupsCompletedTime()
-                                    * DateUtil.DURATION_MSEC_SECOND));
+                            log.setCompletedDate(
+                                    new Date(printOut.getCupsCompletedTime()
+                                            * DateUtil.DURATION_MSEC_SECOND));
                         }
 
                     } else if (pdfOut != null) {
@@ -493,10 +493,10 @@ public final class DocLogItem {
                         log.setSubject(pdfOut.getSubject());
                         log.setKeywords(pdfOut.getKeywords());
                         log.setEncrypted(pdfOut.getEncrypted());
-                        log.setOwnerPw(StringUtils.isNotBlank(pdfOut
-                                .getPasswordOwner()));
-                        log.setUserPw(StringUtils.isNotBlank(pdfOut
-                                .getPasswordUser()));
+                        log.setOwnerPw(StringUtils
+                                .isNotBlank(pdfOut.getPasswordOwner()));
+                        log.setUserPw(StringUtils
+                                .isNotBlank(pdfOut.getPasswordUser()));
                     }
                 }
 
@@ -645,8 +645,8 @@ public final class DocLogItem {
         }
 
         @Override
-        protected void
-                setExtraParms(final Query query, final DocLogPagerReq req) {
+        protected void setExtraParms(final Query query,
+                final DocLogPagerReq req) {
             // no code intended
         }
 
@@ -677,8 +677,8 @@ public final class DocLogItem {
         }
 
         @Override
-        protected void
-                setExtraParms(final Query query, final DocLogPagerReq req) {
+        protected void setExtraParms(final Query query,
+                final DocLogPagerReq req) {
             Long id = req.getSelect().getQueueId();
             if (id != null && id > 0) {
                 query.setParameter("queue_id", id);
@@ -748,8 +748,8 @@ public final class DocLogItem {
         }
 
         @Override
-        protected void
-                setExtraParms(final Query query, final DocLogPagerReq req) {
+        protected void setExtraParms(final Query query,
+                final DocLogPagerReq req) {
 
             final String selSignature = req.getSelect().getSignature();
             final String selDestination = req.getSelect().getDestination();
@@ -855,8 +855,8 @@ public final class DocLogItem {
         }
 
         @Override
-        protected void
-                setExtraParms(final Query query, final DocLogPagerReq req) {
+        protected void setExtraParms(final Query query,
+                final DocLogPagerReq req) {
 
             super.setExtraParms(query, req);
 
@@ -944,15 +944,15 @@ public final class DocLogItem {
                     where.append(" AND ");
                 }
                 nWhere++;
-                where.append("(P.cupsJobState <= ").append(
-                        IppJobStateEnum.IPP_JOB_STOPPED.asInt());
+                where.append("(P.cupsJobState <= ")
+                        .append(IppJobStateEnum.IPP_JOB_STOPPED.asInt());
 
-                where.append(" OR D.externalStatus IN(")
-                        .append("\'")
+                where.append(" OR D.externalStatus IN(").append("\'")
                         .append(ExternalSupplierStatusEnum.PENDING.toString())
                         .append("\', \'")
                         .append(ExternalSupplierStatusEnum.PENDING_EXT
-                                .toString()).append("\'").append("))");
+                                .toString())
+                        .append("\'").append("))");
 
             } else if (selState == DocLogDao.JobState.UNFINISHED) {
 
@@ -965,9 +965,11 @@ public final class DocLogItem {
                         .append(" OR P.cupsJobState = ")
                         .append(IppJobStateEnum.IPP_JOB_ABORTED.asInt());
 
-                where.append(" OR D.externalStatus IN(")
-                        .append("\'")
+                where.append(" OR D.externalStatus IN(").append("\'")
                         .append(ExternalSupplierStatusEnum.CANCELLED.toString())
+                        .append("\', \'")
+                        .append(ExternalSupplierStatusEnum.PENDING_CANCEL
+                                .toString())
                         .append("\', \'")
                         .append(ExternalSupplierStatusEnum.EXPIRED.toString())
                         .append("\', \'")
@@ -980,16 +982,17 @@ public final class DocLogItem {
                     where.append(" AND ");
                 }
                 nWhere++;
-                where.append("P.cupsJobState = ").append(
-                        IppJobStateEnum.IPP_JOB_COMPLETED.asInt());
+                where.append("P.cupsJobState = ")
+                        .append(IppJobStateEnum.IPP_JOB_COMPLETED.asInt());
 
-                where.append(
-                        " AND (D.externalStatus IS NULL "
-                                + "OR D.externalStatus = \'")
+                where.append(" AND (D.externalStatus IS NULL "
+                        + "OR D.externalStatus IN(").append("\'")
                         .append(ExternalSupplierStatusEnum.COMPLETED.toString())
-                        .append("\')");
+                        .append("\', \'")
+                        .append(ExternalSupplierStatusEnum.PENDING_COMPLETE
+                                .toString())
+                        .append("\'))");
             }
-
             //
             if (nWhere == 0) {
                 return null;
@@ -1003,8 +1006,8 @@ public final class DocLogItem {
         }
 
         @Override
-        protected void
-                setExtraParms(final Query query, final DocLogPagerReq req) {
+        protected void setExtraParms(final Query query,
+                final DocLogPagerReq req) {
 
             super.setExtraParms(query, req);
 
@@ -1060,8 +1063,8 @@ public final class DocLogItem {
         case PRINT:
             return new QPrint();
         default:
-            throw new SpException(String.format("Unknown doctype [%s]",
-                    docType.toString()));
+            throw new SpException(
+                    String.format("Unknown doctype [%s]", docType.toString()));
         }
     }
 

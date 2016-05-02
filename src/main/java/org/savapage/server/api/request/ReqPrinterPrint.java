@@ -41,8 +41,6 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
-import org.savapage.core.dao.enums.ExternalSupplierEnum;
-import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.JsonPrintDelegation;
@@ -61,20 +59,17 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
-import org.savapage.core.print.proxy.ProxyPrintJobChunk;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
-import org.savapage.core.services.helpers.ExternalSupplierInfo;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.services.helpers.PageScalingEnum;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
-import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.services.impl.InboxServiceImpl;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
-import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.ext.papercut.PaperCutServerProxy;
+import org.savapage.ext.papercut.job.PaperCutPrintMonitorJob;
 import org.savapage.server.SpSession;
 import org.savapage.server.api.JsonApiDict;
 import org.savapage.server.api.JsonApiServer;
@@ -527,8 +522,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
              * PaperCut integration enable + PaperCut Managed Printer AND
              * Delegated Print integration with PaperCut?
              */
-            isExtPaperCutPrint = this.isExtPaperCutPrint(printer) && cm
-                    .isConfigValue(Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
+            isExtPaperCutPrint = PAPERCUT_SERVICE
+                    .isExtPaperCutPrint(printer.getPrinterName())
+                    && cm.isConfigValue(
+                            Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
 
         } else {
             isExtPaperCutPrint = false;
@@ -871,6 +868,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     }
 
     /**
+     * Proxy Prints to a PaperCut managed printer.
+     * <p>
+     * The PaperCut status is monitored by {@link PaperCutPrintMonitorJob}.
+     * </p>
      *
      * @param lockedUser
      *            The locked {@link User} instance, can be {@code null}.
@@ -882,35 +883,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             final ProxyPrintInboxReq printReq, final String currencySymbol)
             throws IppConnectException {
 
-        printReq.setPrintMode(PrintModeEnum.PUSH);
+        PAPERCUT_SERVICE.prepareForExtPaperCut(printReq, null);
 
-        /*
-         * Encode job name into PaperCut format, and set all cost to zero, since
-         * cost is taken from PaperCut after PaperCut reports that jobs is
-         * printed successfully.
-         */
-        printReq.setJobName(
-                PaperCutHelper.encodeProxyPrintJobName(printReq.getJobName()));
-
-        printReq.setCost(BigDecimal.ZERO);
-
-        for (final ProxyPrintJobChunk chunk : printReq.getJobChunkInfo()
-                .getChunks()) {
-            chunk.setCost(BigDecimal.ZERO);
-            chunk.setJobName(
-                    PaperCutHelper.encodeProxyPrintJobName(chunk.getJobName()));
-        }
-
-        //
-        final ExternalSupplierInfo supplierInfo = new ExternalSupplierInfo();
-
-        supplierInfo.setSupplier(ExternalSupplierEnum.SAVAPAGE);
-        supplierInfo
-                .setStatus(ExternalSupplierStatusEnum.PENDING_EXT.toString());
-
-        printReq.setSupplierInfo(supplierInfo);
-
-        //
         try {
             PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, printReq);
 
@@ -926,35 +900,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                     this.getLocale(), currencySymbol);
         }
-    }
-
-    /**
-     * Checks if Cut PaperCut integration for Printer is applicable.
-     *
-     * @param printer
-     *            The printer.
-     * @return {@code true} is applicable.
-     */
-    private boolean isExtPaperCutPrint(final Printer printer) {
-
-        /*
-         * Is printer managed by PaperCut?
-         */
-        final ThirdPartyEnum thirdParty = PROXY_PRINT_SERVICE
-                .getExtPrinterManager(printer.getPrinterName());
-
-        if (thirdParty == null || thirdParty != ThirdPartyEnum.PAPERCUT) {
-            return false;
-        }
-
-        /*
-         * PaperCut Print Monitoring enabled?
-         */
-        if (!ConfigManager.isPaperCutPrintEnabled()) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
