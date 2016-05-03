@@ -440,26 +440,6 @@ public final class Options extends AbstractAdminPage {
             labelledCheckbox("smartschool-papercut-enable",
                     IConfigProp.Key.SMARTSCHOOL_PAPERCUT_ENABLE);
 
-            // //
-            labelledCheckbox("papercut-enable",
-                    IConfigProp.Key.PAPERCUT_ENABLE);
-
-            labelledInput("papercut-host",
-                    IConfigProp.Key.PAPERCUT_SERVER_HOST);
-            labelledInput("papercut-port",
-                    IConfigProp.Key.PAPERCUT_SERVER_PORT);
-            labelledInput("papercut-token",
-                    IConfigProp.Key.PAPERCUT_SERVER_AUTH_TOKEN);
-
-            //
-            labelledInput("papercut-db-driver",
-                    IConfigProp.Key.PAPERCUT_DB_JDBC_DRIVER);
-            labelledInput("papercut-db-url",
-                    IConfigProp.Key.PAPERCUT_DB_JDBC_URL);
-            labelledInput("papercut-db-user", IConfigProp.Key.PAPERCUT_DB_USER);
-            labelledInput("papercut-db-password",
-                    IConfigProp.Key.PAPERCUT_DB_PASSWORD);
-
             //
             if (SmartschoolPrinter.isBlocked()) {
                 msgKey = "blocked";
@@ -515,6 +495,28 @@ public final class Options extends AbstractAdminPage {
         } else {
             helper.discloseLabel(headerId);
         }
+
+        /*
+         * PaperCut Integration.
+         */
+        labelledCheckbox("papercut-enable",
+                IConfigProp.Key.PAPERCUT_ENABLE);
+
+        labelledInput("papercut-host",
+                IConfigProp.Key.PAPERCUT_SERVER_HOST);
+        labelledInput("papercut-port",
+                IConfigProp.Key.PAPERCUT_SERVER_PORT);
+        labelledInput("papercut-token",
+                IConfigProp.Key.PAPERCUT_SERVER_AUTH_TOKEN);
+
+        //
+        labelledInput("papercut-db-driver",
+                IConfigProp.Key.PAPERCUT_DB_JDBC_DRIVER);
+        labelledInput("papercut-db-url",
+                IConfigProp.Key.PAPERCUT_DB_JDBC_URL);
+        labelledInput("papercut-db-user", IConfigProp.Key.PAPERCUT_DB_USER);
+        labelledInput("papercut-db-password",
+                IConfigProp.Key.PAPERCUT_DB_PASSWORD);
 
         /*
          * Mail Print.
