@@ -64,6 +64,7 @@ import org.savapage.core.LetterheadNotFoundException;
 import org.savapage.core.PerformanceLogger;
 import org.savapage.core.PostScriptDrmException;
 import org.savapage.core.SpException;
+import org.savapage.core.circuitbreaker.CircuitBreaker;
 import org.savapage.core.circuitbreaker.CircuitBreakerException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.CometdClientMixin;
@@ -107,6 +108,8 @@ import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.OutputProducer;
 import org.savapage.core.inbox.PageImages;
 import org.savapage.core.inbox.PageImages.PageImage;
+import org.savapage.core.ipp.IppSyntaxException;
+import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.jpa.AccountTrx;
@@ -3403,22 +3406,33 @@ public final class JsonApiServer extends AbstractPage {
      *
      * @param user
      * @return
+     * @throws IppSyntaxException
      * @throws Exception
      */
     private Map<String, Object> reqPrinterSync(final String user)
-            throws Exception {
+            throws IppSyntaxException {
 
         final Map<String, Object> data = new HashMap<String, Object>();
 
-        if (!PROXY_PRINT_SERVICE.isConnectedToCups()) {
-            return setApiResult(data, ApiResultCodeEnum.ERROR,
-                    "msg-printer-connection-broken");
+        final CircuitBreaker circuit = ConfigManager.getCircuitBreaker(
+                CircuitBreakerEnum.CUPS_LOCAL_IPP_CONNECTION);
+
+        /*
+         * Try again when circuit is not closed.
+         */
+        if (!circuit.isCircuitClosed()) {
+            circuit.closeCircuit();
         }
 
         /*
          * Re-initialize the CUPS printer cache.
          */
-        PROXY_PRINT_SERVICE.initPrinterCache();
+        try {
+            PROXY_PRINT_SERVICE.initPrinterCache();
+        } catch (IppConnectException e) {
+            return setApiResult(data, ApiResultCodeEnum.ERROR,
+                    "msg-printer-connection-broken");
+        }
 
         return setApiResult(data, ApiResultCodeEnum.OK, "msg-printer-sync-ok");
     }

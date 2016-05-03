@@ -627,6 +627,39 @@ public final class SystemStatusPanel extends Panel {
         helper.encloseLabel("connections-info", connectionInfo, showTechInfo);
 
         /*
+         * CUPS connection status
+         */
+
+        final String clazz;
+
+        final CircuitBreaker circuit = ConfigManager.getCircuitBreaker(
+                CircuitBreakerEnum.CUPS_LOCAL_IPP_CONNECTION);
+
+        switch (circuit.getCircuitState()) {
+        case CLOSED:
+            clazz = MarkupHelper.CSS_TXT_VALID;
+            break;
+
+        case DAMAGED:
+            clazz = MarkupHelper.CSS_TXT_ERROR;
+            break;
+
+        case HALF_OPEN:
+        case OPEN:
+        default:
+            clazz = MarkupHelper.CSS_TXT_WARN;
+            break;
+        }
+
+        final Label labelCups = new Label("cups-connection",
+                circuit.getCircuitState().uiText(getLocale()));
+
+        labelCups.add(new AttributeModifier("class",
+                String.format("%s %s", MarkupHelper.CSS_TXT_WRAP, clazz)));
+
+        add(labelCups);
+
+        /*
          * Proxy Print
          */
         int size = 0;
@@ -726,14 +759,14 @@ public final class SystemStatusPanel extends Panel {
                             "http://www.savapage.org/"
                                     //
                                     + "news-embedded.php?embedded=y"
-                                    //
+                    //
                                     + "&v_major=" + VersionInfo.VERSION_A_MAJOR
-                                    //
+                    //
                                     + "&v_minor=" + VersionInfo.VERSION_B_MINOR
-                                    //
+                    //
                                     + "&v_revision="
                                     + VersionInfo.VERSION_C_REVISION
-                                    //
+                    //
                                     + "&v_build=" + VersionInfo.VERSION_D_BUILD;
 
                     @Override
