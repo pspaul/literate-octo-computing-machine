@@ -512,12 +512,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 dtoReq.getPageScaling(), chunkVanillaJobs, iVanillaJob);
 
         /*
-         * Direct Proxy Print, integrated with PaperCut?
+         * Non-secure Proxy Print, integrated with PaperCut?
          */
-        final boolean isDirectProxyPrint = dtoReq.getReaderName() == null;
+        final boolean isNonSecureProxyPrint = dtoReq.getReaderName() == null;
         final boolean isExtPaperCutPrint;
 
-        if (isDirectProxyPrint && isDelegatedPrint) {
+        if (isNonSecureProxyPrint && isDelegatedPrint) {
             /*
              * PaperCut integration enable + PaperCut Managed Printer AND
              * Delegated Print integration with PaperCut?
@@ -633,7 +633,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         /*
          * Direct Proxy Print?
          */
-        if (isDirectProxyPrint) {
+        if (isNonSecureProxyPrint) {
             this.onDirectProxyPrint(lockedUser, printReq, currencySymbol);
             return;
         }

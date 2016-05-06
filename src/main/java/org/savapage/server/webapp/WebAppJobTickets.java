@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,10 +27,16 @@ import java.util.Set;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.ipp.IppSyntaxException;
+import org.savapage.core.ipp.client.IppConnectException;
+import org.savapage.core.services.ProxyPrintService;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.server.pages.MessageContent;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public final class WebAppJobTickets extends AbstractWebAppPage {
@@ -39,6 +45,12 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
      *
      */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * .
+     */
+    private static final ProxyPrintService PROXYPRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     /**
      *
@@ -51,6 +63,17 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
 
         if (isWebAppCountExceeded(parameters)) {
             this.setWebAppCountExceededResponse();
+            return;
+        }
+
+        /*
+         * We need the printer cache.
+         */
+        try {
+            PROXYPRINT_SERVICE.lazyInitPrinterCache();
+        } catch (IppConnectException | IppSyntaxException e) {
+            setResponsePage(
+                    new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
             return;
         }
 

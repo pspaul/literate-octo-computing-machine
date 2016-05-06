@@ -149,6 +149,9 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 case PRINT_IMAP_ENABLE:
                     preValue = cm.isConfigValue(configKey);
                     break;
+                case PAPERCUT_ENABLE:
+                    preValue = cm.isConfigValue(configKey);
+                    break;
                 default:
                     break;
                 }
@@ -162,7 +165,20 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
 
                 nValid++;
 
-                if (configKey == Key.PRINT_IMAP_ENABLE && preValue
+                if (configKey == Key.PAPERCUT_ENABLE) {
+
+                    if (preValue && !cm.isConfigValue(configKey)) {
+                        SpJobScheduler.interruptPaperCutPrintMonitor();
+                        msgKey = "msg-config-props-applied-"
+                                + "papercut-print-monitor-stopped";
+                    } else if (!preValue && cm.isConfigValue(configKey)) {
+                        SpJobScheduler.instance()
+                                .scheduleOneShotPaperCutPrintMonitor(0);
+                        msgKey = "msg-config-props-applied-"
+                                + "papercut-print-monitor-started";
+                    }
+
+                } else if (configKey == Key.PRINT_IMAP_ENABLE && preValue
                         && !cm.isConfigValue(configKey)) {
                     if (SpJobScheduler.interruptImapListener()) {
                         msgKey = "msg-config-props-applied-mail-print-stopped";
