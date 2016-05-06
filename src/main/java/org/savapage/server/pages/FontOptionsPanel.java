@@ -37,33 +37,35 @@ import org.savapage.core.fonts.InternalFontFamilyEnum;
  * @author Rijk Ravestein
  *
  */
-public class FontOptionsPanel extends Panel {
+public final class FontOptionsPanel extends Panel {
 
     private static final long serialVersionUID = 1L;
 
-    public FontOptionsPanel(String id) {
+    public FontOptionsPanel(final String id) {
         super(id);
     }
 
     /**
      *
+     * @param fontFamilyDefault
      */
     public void populate(final InternalFontFamilyEnum fontFamilyDefault) {
 
         final List<InternalFontFamilyEnum> entryList =
                 new ArrayList<>(Arrays.asList(InternalFontFamilyEnum.values()));
 
-        add(new PropertyListView<InternalFontFamilyEnum>(
-                "option-font-families", entryList) {
+        add(new PropertyListView<InternalFontFamilyEnum>("option-font-families",
+                entryList) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem<InternalFontFamilyEnum> item) {
+            protected void
+                    populateItem(final ListItem<InternalFontFamilyEnum> item) {
 
                 final InternalFontFamilyEnum font = item.getModel().getObject();
-                final Label label =
-                        new Label("option-font-family", font.getName());
+                final Label label = new Label("option-font-family",
+                        font.uiText(getLocale()));
                 label.add(new AttributeModifier("value", font.toString()));
                 if (fontFamilyDefault.equals(font)) {
                     label.add(new AttributeModifier("selected", "selected"));

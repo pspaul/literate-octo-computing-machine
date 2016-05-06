@@ -386,6 +386,49 @@ public final class SystemStatusPanel extends Panel {
         }
 
         /*
+         * Proxy Print Service (CUPS connection status)
+         */
+        final CircuitBreaker circuit = ConfigManager.getCircuitBreaker(
+                CircuitBreakerEnum.CUPS_LOCAL_IPP_CONNECTION);
+
+        final String clazz;
+
+        if (circuit.getCircuitState() == CircuitStateEnum.CLOSED) {
+            clazz = null;
+        } else {
+
+            switch (circuit.getCircuitState()) {
+            case CLOSED:
+                clazz = MarkupHelper.CSS_TXT_VALID;
+                break;
+
+            case DAMAGED:
+                clazz = MarkupHelper.CSS_TXT_ERROR;
+                break;
+
+            case HALF_OPEN:
+            case OPEN:
+            default:
+                clazz = MarkupHelper.CSS_TXT_WARN;
+                break;
+            }
+        }
+        //
+        labelWrk = helper.addCheckbox("flipswitch-proxyprint-online",
+                clazz == null);
+        setFlipswitchOnOffText(labelWrk);
+
+        //
+        if (clazz == null) {
+            helper.discloseLabel("cups-connection");
+        } else {
+            labelWrk = helper.encloseLabel("cups-connection",
+                    circuit.getCircuitState().uiText(getLocale()), true);
+            labelWrk.add(new AttributeModifier("class",
+                    String.format("%s %s", MarkupHelper.CSS_TXT_WRAP, clazz)));
+        }
+
+        /*
          * Web Print
          */
         labelWrk = helper.addCheckbox("flipswitch-webprint-online",
@@ -625,39 +668,6 @@ public final class SystemStatusPanel extends Panel {
         }
 
         helper.encloseLabel("connections-info", connectionInfo, showTechInfo);
-
-        /*
-         * CUPS connection status
-         */
-
-        final String clazz;
-
-        final CircuitBreaker circuit = ConfigManager.getCircuitBreaker(
-                CircuitBreakerEnum.CUPS_LOCAL_IPP_CONNECTION);
-
-        switch (circuit.getCircuitState()) {
-        case CLOSED:
-            clazz = MarkupHelper.CSS_TXT_VALID;
-            break;
-
-        case DAMAGED:
-            clazz = MarkupHelper.CSS_TXT_ERROR;
-            break;
-
-        case HALF_OPEN:
-        case OPEN:
-        default:
-            clazz = MarkupHelper.CSS_TXT_WARN;
-            break;
-        }
-
-        final Label labelCups = new Label("cups-connection",
-                circuit.getCircuitState().uiText(getLocale()));
-
-        labelCups.add(new AttributeModifier("class",
-                String.format("%s %s", MarkupHelper.CSS_TXT_WRAP, clazz)));
-
-        add(labelCups);
 
         /*
          * Proxy Print

@@ -164,7 +164,7 @@ public final class WebAppUser extends AbstractWebAppPage {
                     .isIp4AddrInCidrRanges(
                             ConfigManager.instance().getConfigValue(
                                     Key.WEB_PRINT_LIMIT_IP_ADDRESSES),
-                    originatorIp)) {
+                            originatorIp)) {
 
                 error(localized("msg-file-upload-ip-not-allowed"));
                 return;
@@ -209,7 +209,7 @@ public final class WebAppUser extends AbstractWebAppPage {
          */
         private void handleFileUpload(final String originatorIp,
                 FileUpload uploadedFile)
-                        throws DocContentPrintException, IOException {
+                throws DocContentPrintException, IOException {
 
             final User user = SpSession.get().getUser();
             final String fileName = uploadedFile.getClientFileName();
@@ -458,7 +458,7 @@ public final class WebAppUser extends AbstractWebAppPage {
                             @Override
                             public Object getDisplayValue(
                                     final InternalFontFamilyEnum object) {
-                                return object.getName();
+                                return object.uiText(getLocale());
                             }
 
                             @Override
