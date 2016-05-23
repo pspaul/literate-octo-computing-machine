@@ -425,10 +425,10 @@
 			 * IE8 caches according to the /api?... URL, so although content differs
 			 * in subsequent calls the same old cached PDF is shown.
 			 */
-			this.getUrl4Pdf = function(ranges, removeGraphics, ecoprint, jobIndex) {
+			this.getUrl4Pdf = function(ranges, removeGraphics, ecoprint, grayscale, jobIndex) {
 				// number of milliseconds since 1970/01/01
 				var d = new Date();
-				return '/api?webAppType=' + _ns.WEBAPP_TYPE + '&request=pdf&user=' + _user.id + '&jobIndex=' + jobIndex + '&ranges=' + ranges + '&removeGraphics=' + removeGraphics + '&ecoprint=' + ecoprint + '&unique=' + d.getTime().toString();
+				return '/api?webAppType=' + _ns.WEBAPP_TYPE + '&request=pdf&user=' + _user.id + '&jobIndex=' + jobIndex + '&ranges=' + ranges + '&removeGraphics=' + removeGraphics + '&ecoprint=' + ecoprint  + '&grayscale=' + grayscale + '&unique=' + d.getTime().toString();
 			};
 
 			this.getUrl4PdfHoldJob = function(fileName, isJobTicket) {

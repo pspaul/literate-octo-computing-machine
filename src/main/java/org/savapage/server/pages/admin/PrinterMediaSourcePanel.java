@@ -61,14 +61,14 @@ public final class PrinterMediaSourcePanel extends Panel {
      */
     private static final long serialVersionUID = 1L;
 
-    private static final AccountingService ACCOUNTING_SERVICE = ServiceContext
-            .getServiceFactory().getAccountingService();
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
 
-    private static final PrinterService PRINTER_SERVICE = ServiceContext
-            .getServiceFactory().getPrinterService();
+    private static final PrinterService PRINTER_SERVICE =
+            ServiceContext.getServiceFactory().getPrinterService();
 
-    private static final ProxyPrintService PROXYPRINT_SERVICE = ServiceContext
-            .getServiceFactory().getProxyPrintService();
+    private static final ProxyPrintService PROXYPRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     private static final String DEFAULT_MARKER = "*";
 
@@ -77,8 +77,8 @@ public final class PrinterMediaSourcePanel extends Panel {
     /**
      *
      */
-    private class MediaListView extends
-            PropertyListView<JsonProxyPrinterOptChoice> {
+    private class MediaListView
+            extends PropertyListView<JsonProxyPrinterOptChoice> {
 
         private final String media;
 
@@ -114,14 +114,14 @@ public final class PrinterMediaSourcePanel extends Panel {
     /**
      *
      */
-    private class MediaSourceListView extends
-            PropertyListView<IppMediaSourceCostDto> {
+    private class MediaSourceListView
+            extends PropertyListView<IppMediaSourceCostDto> {
 
         private static final long serialVersionUID = 1L;
 
         private final Locale locale = getSession().getLocale();
-        private final int fractionDigits = ConfigManager
-                .getPrinterCostDecimals();
+        private final int fractionDigits =
+                ConfigManager.getPrinterCostDecimals();
 
         private final List<JsonProxyPrinterOptChoice> mediaList;
 
@@ -170,10 +170,9 @@ public final class PrinterMediaSourcePanel extends Panel {
             final String cost;
 
             try {
-                cost =
-                        BigDecimalUtil.localize(
-                                BigDecimalUtil.valueOf(plainCost),
-                                fractionDigits, locale, false);
+                cost = BigDecimalUtil.localize(
+                        BigDecimalUtil.valueOf(plainCost), fractionDigits,
+                        locale, false);
 
             } catch (ParseException e) {
                 throw new SpException(e);
@@ -195,7 +194,8 @@ public final class PrinterMediaSourcePanel extends Panel {
         }
 
         @Override
-        protected void populateItem(final ListItem<IppMediaSourceCostDto> item) {
+        protected void
+                populateItem(final ListItem<IppMediaSourceCostDto> item) {
 
             final IppMediaSourceCostDto dto = item.getModelObject();
 
@@ -204,13 +204,11 @@ public final class PrinterMediaSourcePanel extends Panel {
             /*
              * media-source (checkbox + label)
              */
-            String htmlId =
-                    ACCOUNTING_SERVICE.getMediaSourceAttr(dto.getSource())
-                            .getKey();
+            String htmlId = ACCOUNTING_SERVICE
+                    .getMediaSourceAttr(dto.getSource()).getKey();
 
-            labelWrk =
-                    MarkupHelper.createCheckbox("media-source-checkbox",
-                            htmlId, dto.getActive());
+            labelWrk = MarkupHelper.createCheckbox("media-source-checkbox",
+                    htmlId, dto.getActive());
 
             item.add(labelWrk);
 
@@ -335,9 +333,8 @@ public final class PrinterMediaSourcePanel extends Panel {
          */
         if (dtoManual != null) {
 
-            final String htmlId =
-                    ACCOUNTING_SERVICE
-                            .getMediaSourceAttr(dtoManual.getSource()).getKey();
+            final String htmlId = ACCOUNTING_SERVICE
+                    .getMediaSourceAttr(dtoManual.getSource()).getKey();
 
             // checkbox
             labelWrk =
@@ -349,17 +346,16 @@ public final class PrinterMediaSourcePanel extends Panel {
             // label
             String mediaMnemonic = dtoManual.getSource();
 
-            labelWrk =
-                    new Label("media-source-checkbox-manual-label",
-                            mediaMnemonic);
+            labelWrk = new Label("media-source-checkbox-manual-label",
+                    mediaMnemonic);
             labelWrk.add(new AttributeModifier("for", htmlId));
             add(labelWrk);
 
             // display
-            labelWrk =
-                    helper.encloseLabel("media-source-manual-display-name", "",
-                            true);
-            labelWrk.add(new AttributeModifier("value", dtoManual.getDisplay()));
+            labelWrk = helper.encloseLabel("media-source-manual-display-name",
+                    "", true);
+            labelWrk.add(
+                    new AttributeModifier("value", dtoManual.getDisplay()));
 
         } else {
             helper.discloseLabel("media-source-manual-display-name");
@@ -392,9 +388,8 @@ public final class PrinterMediaSourcePanel extends Panel {
 
         if (lookup.containsKey(ippKeyword)) {
 
-            isDefaultColor =
-                    IppKeyword.PRINT_COLOR_MODE_COLOR.equalsIgnoreCase(lookup
-                            .get(ippKeyword).getDefchoiceIpp());
+            isDefaultColor = IppKeyword.PRINT_COLOR_MODE_COLOR
+                    .equalsIgnoreCase(lookup.get(ippKeyword).getDefchoiceIpp());
 
             if (isDefaultColor) {
                 colorMark = DEFAULT_MARKER;
@@ -412,9 +407,8 @@ public final class PrinterMediaSourcePanel extends Panel {
 
         if (lookup.containsKey(ippKeyword)) {
 
-            final boolean isDefaultIppOneSided =
-                    IppKeyword.SIDES_ONE_SIDED.equalsIgnoreCase(lookup.get(
-                            ippKeyword).getDefchoiceIpp());
+            final boolean isDefaultIppOneSided = IppKeyword.SIDES_ONE_SIDED
+                    .equalsIgnoreCase(lookup.get(ippKeyword).getDefchoiceIpp());
 
             if (isDefaultIppOneSided) {
                 oneSidedMark = DEFAULT_MARKER;
@@ -426,9 +420,8 @@ public final class PrinterMediaSourcePanel extends Panel {
         add(new Label("th-one-sided", oneSidedMark));
         add(new Label("th-two-sided", twoSidedMark));
 
-        final String[] markerLabels =
-                { "th-grayscale-1", "th-color-1", "th-grayscale-2",
-                        "th-color-2" };
+        final String[] markerLabels = { "th-grayscale-1", "th-color-1",
+                "th-grayscale-2", "th-color-2" };
 
         final String[] markers;
 
@@ -448,9 +441,8 @@ public final class PrinterMediaSourcePanel extends Panel {
         final String labelDefaultMonochrome = "use-grayscale-as-default";
 
         final boolean showMonochromeDefault = isColorPrinter && isDefaultColor;
-        labelWrk =
-                helper.encloseLabel(labelDefaultMonochrome, "",
-                        showMonochromeDefault);
+        labelWrk = helper.encloseLabel(labelDefaultMonochrome, "",
+                showMonochromeDefault);
 
         // Checked?
         if (showMonochromeDefault && printer.getAttributes() != null) {
@@ -458,14 +450,30 @@ public final class PrinterMediaSourcePanel extends Panel {
             final String colorModeDefault =
                     PRINTER_SERVICE.getPrintColorModeDefault(printer);
 
-            if (colorModeDefault != null
-                    && colorModeDefault
-                            .equalsIgnoreCase(IppKeyword.PRINT_COLOR_MODE_MONOCHROME)) {
+            if (colorModeDefault != null && colorModeDefault
+                    .equalsIgnoreCase(IppKeyword.PRINT_COLOR_MODE_MONOCHROME)) {
                 labelWrk.add(new AttributeModifier("checked", "checked"));
             }
         }
 
         add(labelWrk);
 
+        /*
+         * Client-side monochrome conversion.
+         */
+        final String labelClientSideMonochrome =
+                "client-side-monochrome-conversion";
+
+        labelWrk = helper.encloseLabel(labelClientSideMonochrome, "",
+                isColorPrinter);
+
+        // Checked?
+        if (isColorPrinter && printer.getAttributes() != null) {
+            if (PRINTER_SERVICE.isClientSideMonochrome(printer)) {
+                labelWrk.add(new AttributeModifier("checked", "checked"));
+            }
+        }
+
+        add(labelWrk);
     }
 }

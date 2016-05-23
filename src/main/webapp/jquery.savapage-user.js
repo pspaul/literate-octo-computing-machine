@@ -1574,7 +1574,7 @@
 			$("#page-send").on("pagecreate", function(event) {
 
 				$('#button-send-send').click(function() {
-					_this.onSend($('#send-mailto').val(), _model.pdfPageRanges, _model.removeGraphics, _model.ecoprint);
+					_this.onSend($('#send-mailto').val(), _model.pdfPageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfGrayscale);
 					$('#pdf-page-ranges').val('');
 					return false;
 				});
@@ -1772,7 +1772,7 @@
 
 				// initial hide
 				$('#file-upload-feedback').hide();
-				
+
 				$('#button-file-upload-submit').on('click', null, null, function() {
 					$('#file-upload-feedback').show();
 					$('#button-file-upload-reset').click();
@@ -1783,15 +1783,15 @@
 					$('#file-upload-feedback').html('').hide();
 					return true;
 				});
-				
+
 			}).on("pagebeforeshow", function(event, ui) {
 
 				_ns.deferAppWakeUp(true);
 
 			}).on('pagebeforehide', function(event, ui) {
 				/*
-				 * Clear and Hide content
-				 */
+				* Clear and Hide content
+				*/
 				//$('#file-upload-feedback').html('').hide();
 				$('#button-file-upload-reset').click();
 
@@ -4061,6 +4061,11 @@
 			}
 			/**
 			 *
+			 */, _savePdfGrayscale = function(sel) {
+				_model.pdfGrayscale = _view.isCbChecked($(sel));
+			}
+			/**
+			 *
 			 */, _checkVanillaJobs = function() {
 
 				var res = _api.call({
@@ -5091,7 +5096,7 @@
 			/**
 			 * Callbacks: page send
 			 */
-			_view.pages.send.onSend = function(mailto, ranges, removeGraphics, ecoprint) {
+			_view.pages.send.onSend = function(mailto, ranges, removeGraphics, ecoprint, grayscale) {
 
 				var res;
 
@@ -5102,7 +5107,8 @@
 						jobIndex : _model.pdfJobIndex,
 						ranges : ranges,
 						removeGraphics : removeGraphics,
-						ecoprint : ecoprint
+						ecoprint : ecoprint,
+						grayscale : grayscale
 					});
 					if (res.result.code === "0") {
 						_model.user.stats = res.stats;
@@ -5143,6 +5149,7 @@
 				_saveSelectedletterhead('#pdf-letterhead-list');
 				_saveRemoveGraphics('#pdf-remove-graphics');
 				_saveEcoprint('#pdf-ecoprint');
+				_savePdfGrayscale('#pdf-grayscale');
 
 				_model.pdfPageRanges = $('#pdf-page-ranges').val();
 
@@ -5159,12 +5166,15 @@
 			 */
 			_view.pages.pdfprop.onDownload = function() {
 
-				var pageRanges = $('#pdf-page-ranges').val();
+				var pageRanges = $('#pdf-page-ranges').val(), filters;
 
 				_saveRemoveGraphics('#pdf-remove-graphics');
 				_saveEcoprint('#pdf-ecoprint');
+				_savePdfGrayscale('#pdf-grayscale');
 
-				if (_model.removeGraphics && _model.ecoprint) {
+				filters = (_model.removeGraphics ? 1 : 0) + (_model.ecoprint ? 1 : 0) + (_model.pdfGrayscale ? 1 : 0);
+
+				if (filters > 1) {
 					_view.message(_i18n.format('msg-select-single-pdf-filter', null));
 					return false;
 				}
@@ -5179,7 +5189,7 @@
 					return false;
 				}
 				//
-				window.location.assign(_api.getUrl4Pdf(pageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfJobIndex));
+				window.location.assign(_api.getUrl4Pdf(pageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfGrayscale, _model.pdfJobIndex));
 				$('#pdf-page-ranges').val('');
 				_model.myShowUserStatsGet = true;
 				return true;

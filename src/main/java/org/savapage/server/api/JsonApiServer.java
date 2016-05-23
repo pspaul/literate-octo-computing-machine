@@ -1107,6 +1107,9 @@ public final class JsonApiServer extends AbstractPage {
 
         try {
 
+            final boolean grayscalePdf = Boolean.parseBoolean(
+                    getParmValue(parameters, isGetAction, "grayscale"));
+
             final DocLog docLog = new DocLog();
 
             /*
@@ -1116,7 +1119,7 @@ public final class JsonApiServer extends AbstractPage {
                     Integer.parseInt(
                             getParmValue(parameters, isGetAction, "jobIndex")),
                     getParmValue(parameters, isGetAction, "ranges"),
-                    removeGraphics, ecoPrint, docLog, "download");
+                    removeGraphics, ecoPrint, grayscalePdf, docLog, "download");
 
             /*
              * (2) Write log to database.
@@ -1549,7 +1552,10 @@ public final class JsonApiServer extends AbstractPage {
                     Boolean.parseBoolean(getParmValue(parameters, isGetAction,
                             "removeGraphics")),
                     Boolean.parseBoolean(
-                            getParmValue(parameters, isGetAction, "ecoprint")));
+                            getParmValue(parameters, isGetAction, "ecoprint"))
+                    //
+                    , Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "grayscale")));
 
         case JsonApiDict.REQ_USER_LAZY_ECOPRINT:
 
@@ -1613,6 +1619,8 @@ public final class JsonApiServer extends AbstractPage {
      *            one-pixel).
      * @param ecoPdf
      *            <code>true</code> if Eco PDF is to be generated.
+     * @param grayscalePdf
+     *            <code>true</code> if Grayscale PDF is to be generated.
      * @param docLog
      * @param purpose
      *            A simple tag to insert into the filename (to add some
@@ -1628,7 +1636,8 @@ public final class JsonApiServer extends AbstractPage {
     private File generatePdfForExport(final User user,
             final int vanillaJobIndex, final String pageRangeFilter,
             final boolean removeGraphics, final boolean ecoPdf,
-            final DocLog docLog, final String purpose)
+            final boolean grayscalePdf, final DocLog docLog,
+            final String purpose)
             throws LetterheadNotFoundException, IOException,
             PostScriptDrmException, EcoPrintPdfTaskPendingException {
 
@@ -1639,7 +1648,8 @@ public final class JsonApiServer extends AbstractPage {
                 vanillaJobIndex, pageRangeFilter);
 
         return OutputProducer.instance().generatePdfForExport(user, pdfFile,
-                documentPageRangeFilter, removeGraphics, ecoPdf, docLog);
+                documentPageRangeFilter, removeGraphics, ecoPdf, grayscalePdf,
+                docLog);
     }
 
     /**
@@ -2189,6 +2199,8 @@ public final class JsonApiServer extends AbstractPage {
      * @param removeGraphics
      * @param ecoPdf
      *            <code>true</code> if Eco PDF is to be generated.
+     * @param grayscalePdf
+     *            <code>true</code> if Grayscale PDF is to be generated.
      * @return
      * @throws LetterheadNotFoundException
      * @throws IOException
@@ -2199,7 +2211,8 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqSend(final User lockedUser,
             final String mailto, final String jobIndex, final String ranges,
-            final boolean removeGraphics, final boolean ecoPdf)
+            final boolean removeGraphics, final boolean ecoPdf,
+            final boolean grayscalePdf)
             throws LetterheadNotFoundException, IOException, MessagingException,
             InterruptedException, CircuitBreakerException, ParseException {
 
@@ -2221,9 +2234,9 @@ public final class JsonApiServer extends AbstractPage {
             /*
              * (1) Generate with existing user lock.
              */
-            fileAttach =
-                    generatePdfForExport(lockedUser, Integer.parseInt(jobIndex),
-                            ranges, removeGraphics, ecoPdf, docLog, "email");
+            fileAttach = generatePdfForExport(lockedUser,
+                    Integer.parseInt(jobIndex), ranges, removeGraphics, ecoPdf,
+                    grayscalePdf, docLog, "email");
             /*
              * INVARIANT: Since sending the mail is synchronous, file length is
              * important and MUST be less than criterion.

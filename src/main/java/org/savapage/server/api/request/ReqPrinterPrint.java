@@ -482,6 +482,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setIdUser(lockedUser.getId());
         printReq.setClearScope(clearScope);
 
+        //
+        printReq.setConvertToGrayscale(printReq.isGrayscale()
+                && PROXY_PRINT_SERVICE.isColorPrinter(dtoReq.getPrinter())
+                && PRINTER_SERVICE.isClientSideMonochrome(printer));
+
+        //
         final PrintDelegationDto delegationDto = dtoReq.getDelegation();
 
         final boolean isDelegatedPrint =

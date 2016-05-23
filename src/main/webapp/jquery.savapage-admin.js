@@ -1384,6 +1384,8 @@
 				//
 				, selDefaultMonochrome = $('#sp-printer-use-monochrome-as-default')
 				//
+				, selClientSideMonochrome = $('#sp-printer-client-side-monochrome')
+				//
 				;
 
 				dto.id = _model.editPrinter.id;
@@ -1392,6 +1394,10 @@
 
 				if (selDefaultMonochrome) {
 					dto.defaultMonochrome = _view.isCbChecked(selDefaultMonochrome);
+				}
+
+				if (selClientSideMonochrome) {
+					dto.clientSideMonochrome = _view.isCbChecked(selClientSideMonochrome);
 				}
 
 				if (sourceAuto) {
