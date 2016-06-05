@@ -49,6 +49,7 @@ import org.savapage.server.api.request.ReqPosDepositQuickSearch;
 import org.savapage.server.api.request.ReqPrintDelegationSet;
 import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqPrinterQuickSearch;
+import org.savapage.server.api.request.ReqPrinterSet;
 import org.savapage.server.api.request.ReqQueueEnable;
 import org.savapage.server.api.request.ReqQueueGet;
 import org.savapage.server.api.request.ReqQueueSet;
@@ -791,8 +792,7 @@ public class JsonApiDict {
         adm(REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV, DbClaim.NONE,
                 DbAccess.NO);
 
-        adm(REQ_PAPERCUT_DELEGATOR_COST_CSV, DbClaim.NONE,
-                DbAccess.NO);
+        adm(REQ_PAPERCUT_DELEGATOR_COST_CSV, DbClaim.NONE, DbAccess.NO);
 
         usr(REQ_INBOX_JOB_DELETE, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_INBOX_JOB_EDIT, DbClaim.NONE, DbAccess.USER_LOCK);
@@ -883,7 +883,7 @@ public class JsonApiDict {
         usr(REQ_PRINTER_QUICK_SEARCH, ReqPrinterQuickSearch.class, DbClaim.READ,
                 DbAccess.YES);
 
-        adm(REQ_PRINTER_SET, DbClaim.READ, DbAccess.YES);
+        adm(REQ_PRINTER_SET, ReqPrinterSet.class, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET_MEDIA_COST, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET_MEDIA_SOURCES, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_RENAME, DbClaim.READ, DbAccess.YES);

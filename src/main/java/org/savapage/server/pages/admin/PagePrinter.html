@@ -61,6 +61,14 @@
 			</div>
 		</li>
 		<li>
+			<label for="printer-ppd-ext-file">
+				<wicket:message key="printer-ppd-ext-file" />
+			</label>
+			<input type="text" id="printer-ppd-ext-file" value=""
+				maxlength="128" autocomplete="off" autocorrect="off"
+				autocapitalize="off" spellcheck="false" />
+		</li>
+		<li>
 			<div data-role="controlgroup" data-type="horizontal">
 				<button id="button-save-printer"
 					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
@@ -69,8 +77,8 @@
 				</button>
 
 				<a href="#" data-rel="back" data-direction="reverse" tabindex="101"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-					<wicket:message key="button-cancel" />
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+						key="button-cancel" />
 				</a>
 			</div>
 		</li>

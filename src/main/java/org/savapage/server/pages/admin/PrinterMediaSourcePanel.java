@@ -99,7 +99,7 @@ public final class PrinterMediaSourcePanel extends Panel {
 
             final JsonProxyPrinterOptChoice dto = item.getModelObject();
 
-            final Label label = new Label("media-source-media", dto.getText());
+            final Label label = new Label("media-source-media", dto.getUiText());
 
             label.add(new AttributeModifier("value", dto.getChoice()));
 

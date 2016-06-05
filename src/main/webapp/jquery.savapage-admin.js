@@ -716,7 +716,7 @@
 					_fillConfigPropsText(props, ['proxy-print.non-secure-printer-group']);
 				}
 
-				_fillConfigPropsText(props, ['proxy-print.fast-expiry-mins', 'proxy-print.hold-expiry-mins', 'proxy-print.direct-expiry-secs', 'webapp.user.proxy-print.max-copies', 'proxy-print.max-pages','jobticket.proxy-printer', 'jobticket.proxy-printer-group']);
+				_fillConfigPropsText(props, ['proxy-print.fast-expiry-mins', 'proxy-print.hold-expiry-mins', 'proxy-print.direct-expiry-secs', 'webapp.user.proxy-print.max-copies', 'proxy-print.max-pages', 'jobticket.proxy-printer', 'jobticket.proxy-printer-group']);
 
 				_saveConfigProps(props);
 			};
@@ -1338,14 +1338,15 @@
 				_model.editPrinter.displayName = $('#printer-displayname').val();
 				_model.editPrinter.location = $('#printer-location').val();
 				_model.editPrinter.printerGroups = $('#printer-printergroups').val();
-
+				_model.editPrinter.ppdExtFile = $('#printer-ppd-ext-file').val();
 				_model.editPrinter.disabled = $('#printer-disabled').is(':checked');
 				_model.editPrinter.internal = $('#printer-internal').is(':checked');
 				_model.editPrinter.deleted = $('#printer-deleted').is(':checked');
 
+				// ProxyPrinterDto
 				var res = _api.call({
 					request : 'printer-set',
-					j_printer : JSON.stringify(_model.editPrinter)
+					dto : JSON.stringify(_model.editPrinter)
 				});
 
 				_view.showApiMsg(res);

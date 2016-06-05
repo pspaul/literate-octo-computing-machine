@@ -1010,6 +1010,7 @@
 				$('#printer-displayname').val(_model.editPrinter.displayName);
 				$('#printer-location').val(_model.editPrinter.location);
 				$('#printer-printergroups').val(_model.editPrinter.printerGroups);
+				$('#printer-ppd-ext-file').val(_model.editPrinter.ppdExtFile);
 
 				_view.checkCb('#printer-disabled', _model.editPrinter.disabled);
 				_view.checkCb('#printer-internal', _model.editPrinter.internal);

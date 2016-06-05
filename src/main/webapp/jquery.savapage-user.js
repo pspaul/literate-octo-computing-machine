@@ -3053,7 +3053,7 @@
 						selExpr = PRINT_OPT_PFX + i;
 
 						html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '">';
-						html += '<label for="' + selExpr + '">' + option.text + '</label>';
+						html += '<label for="' + selExpr + '">' + option.uiText + '</label>';
 						html += '<select ' + CUSTOM_HTML5_DATA_ATTR + '="' + keyword + '" id="' + selExpr + '" data-native-menu="false">';
 
 						$.each(option.choices, function(key, val) {
@@ -3081,7 +3081,7 @@
 								if (selected === val.choice) {
 									html += ' selected';
 								}
-								html += '>' + val.text + '</option>';
+								html += '>' + val.uiText + '</option>';
 							}
 						});
 

@@ -1429,11 +1429,6 @@ public final class JsonApiServer extends AbstractPage {
             return reqPrinterRename(requestingUser,
                     getParmValue(parameters, isGetAction, "j_printer"));
 
-        case JsonApiDict.REQ_PRINTER_SET:
-
-            return reqPrinterSet(
-                    getParmValue(parameters, isGetAction, "j_printer"));
-
         case JsonApiDict.REQ_PRINTER_SET_MEDIA_COST:
 
             return reqPrinterSetMediaCost(
@@ -3279,44 +3274,6 @@ public final class JsonApiServer extends AbstractPage {
 
         return setApiResult(userData, ApiResultCodeEnum.OK, msgKey, oldName,
                 newName);
-    }
-
-    /**
-     * Sets the Proxy Printer (basic) properties.
-     * <p>
-     * Also, a logical delete can be applied or reversed.
-     * </p>
-     *
-     * @param jsonPrinter
-     * @return
-     */
-    private Map<String, Object> reqPrinterSet(final String jsonPrinter) {
-
-        final PrinterDao printerDao =
-                ServiceContext.getDaoContext().getPrinterDao();
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final ProxyPrinterDto dto =
-                JsonAbstractBase.create(ProxyPrinterDto.class, jsonPrinter);
-
-        final long id = dto.getId();
-
-        final Printer jpaPrinter = printerDao.findById(id);
-
-        /*
-         * INVARIANT: printer MUST exist.
-         */
-        if (jpaPrinter == null) {
-            return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-printer-not-found", String.valueOf(id));
-        }
-
-        PROXY_PRINT_SERVICE.setProxyPrinterProps(jpaPrinter, dto);
-
-        setApiResult(userData, ApiResultCodeEnum.OK, "msg-printer-saved-ok");
-
-        return userData;
     }
 
     /**
