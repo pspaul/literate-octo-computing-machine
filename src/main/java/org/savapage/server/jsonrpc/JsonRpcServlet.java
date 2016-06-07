@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -82,18 +82,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 @WebServlet(name = "JsonRpcServlet", urlPatterns = { "/jsonrpc" })
-public final class JsonRpcServlet extends HttpServlet implements
-        ServiceEntryPoint {
+public final class JsonRpcServlet extends HttpServlet
+        implements ServiceEntryPoint {
 
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(JsonRpcServlet.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(JsonRpcServlet.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -102,32 +102,32 @@ public final class JsonRpcServlet extends HttpServlet implements
     /**
      * .
      */
-    private static final AccountingService ACCOUNTING_SERVICE = ServiceContext
-            .getServiceFactory().getAccountingService();
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
 
     /**
      * .
      */
-    private static final UserService USER_SERVICE = ServiceContext
-            .getServiceFactory().getUserService();
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      * .
      */
-    private static final UserGroupService USER_GROUP_SERVICE = ServiceContext
-            .getServiceFactory().getUserGroupService();
+    private static final UserGroupService USER_GROUP_SERVICE =
+            ServiceContext.getServiceFactory().getUserGroupService();
 
     /**
      * .
      */
-    private static final PrinterService PRINTER_SERVICE = ServiceContext
-            .getServiceFactory().getPrinterService();
+    private static final PrinterService PRINTER_SERVICE =
+            ServiceContext.getServiceFactory().getPrinterService();
 
     /**
      * .
      */
-    private static final ProxyPrintService PROXY_PRINT_SERVICE = ServiceContext
-            .getServiceFactory().getProxyPrintService();
+    private static final ProxyPrintService PROXY_PRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     @Override
     public void init() {
@@ -145,14 +145,15 @@ public final class JsonRpcServlet extends HttpServlet implements
         LOGGER.error(ex.getMessage(), ex);
 
         return JsonRpcMethodError.createBasicError(
-                JsonRpcError.Code.INTERNAL_ERROR, "Server exception: "
-                        + ex.getClass().getSimpleName(), ex.getMessage());
+                JsonRpcError.Code.INTERNAL_ERROR,
+                "Server exception: " + ex.getClass().getSimpleName(),
+                ex.getMessage());
     }
 
     @Override
     public void doPost(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse) throws IOException,
-            ServletException {
+            final HttpServletResponse httpResponse)
+            throws IOException, ServletException {
 
         AbstractJsonRpcMessage rpcResponse = null;
 
@@ -195,8 +196,8 @@ public final class JsonRpcServlet extends HttpServlet implements
      * @param httpRequest
      * @return
      */
-    private AbstractJsonRpcMessage handleRequest(
-            final HttpServletRequest httpRequest) {
+    private AbstractJsonRpcMessage
+            handleRequest(final HttpServletRequest httpRequest) {
 
         /*
          * INVARIANT: secure access only.
@@ -307,7 +308,8 @@ public final class JsonRpcServlet extends HttpServlet implements
                     "API Key is missing.");
         }
 
-        if (!JsonRpcConfig.isApiKeyValid(JsonRpcConfig.API_INTERNAL_ID, apiKey)) {
+        if (!JsonRpcConfig.isApiKeyValid(JsonRpcConfig.API_INTERNAL_ID,
+                apiKey)) {
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INVALID_REQUEST, "Invalid request.",
                     "Invalid API Key.");
@@ -336,19 +338,17 @@ public final class JsonRpcServlet extends HttpServlet implements
             switch (methodName) {
 
             case ADD_INTERNAL_USER:
-                rpcResponse =
-                        USER_SERVICE.addInternalUser(methodParser.getParams(
-                                ParamsAddInternalUser.class).getUser());
+                rpcResponse = USER_SERVICE.addInternalUser(methodParser
+                        .getParams(ParamsAddInternalUser.class).getUser());
                 break;
 
             case ADD_USER_GROUP:
 
                 batchCommitter = createBatchCommitter();
 
-                rpcResponse =
-                        USER_GROUP_SERVICE.addUserGroup(batchCommitter,
-                                methodParser.getParams(ParamsUniqueName.class)
-                                        .getUniqueName());
+                rpcResponse = USER_GROUP_SERVICE.addUserGroup(batchCommitter,
+                        methodParser.getParams(ParamsUniqueName.class)
+                                .getUniqueName());
                 break;
 
             case CHANGE_BASE_CURRENCY:
@@ -359,27 +359,24 @@ public final class JsonRpcServlet extends HttpServlet implements
                 batchCommitter = createBatchCommitter();
                 batchCommitter.setTest(parmsChangeBaseCurrency.isTest());
 
-                rpcResponse =
-                        ACCOUNTING_SERVICE.changeBaseCurrency(batchCommitter,
-                                Currency.getInstance(parmsChangeBaseCurrency
-                                        .getCurrencyCodeFrom()), Currency
-                                        .getInstance(parmsChangeBaseCurrency
-                                                .getCurrencyCodeTo()),
-                                parmsChangeBaseCurrency.getExchangeRate());
+                rpcResponse = ACCOUNTING_SERVICE.changeBaseCurrency(
+                        batchCommitter,
+                        Currency.getInstance(
+                                parmsChangeBaseCurrency.getCurrencyCodeFrom()),
+                        Currency.getInstance(
+                                parmsChangeBaseCurrency.getCurrencyCodeTo()),
+                        parmsChangeBaseCurrency.getExchangeRate());
 
                 break;
 
             case DELETE_USER:
-                rpcResponse =
-                        USER_SERVICE.deleteUser(methodParser.getParams(
-                                ParamsUniqueName.class).getUniqueName());
+                rpcResponse = USER_SERVICE.deleteUserAutoCorrect(methodParser
+                        .getParams(ParamsUniqueName.class).getUniqueName());
                 break;
 
             case DELETE_USER_GROUP:
-                rpcResponse =
-                        USER_GROUP_SERVICE.deleteUserGroup(methodParser
-                                .getParams(ParamsUniqueName.class)
-                                .getUniqueName());
+                rpcResponse = USER_GROUP_SERVICE.deleteUserGroup(methodParser
+                        .getParams(ParamsUniqueName.class).getUniqueName());
                 break;
 
             case LIST_USERS:
@@ -397,10 +394,9 @@ public final class JsonRpcServlet extends HttpServlet implements
                 final ParamsPaging parmsListUserGroups =
                         methodParser.getParams(ParamsPaging.class);
 
-                rpcResponse =
-                        USER_GROUP_SERVICE.listUserGroups(
-                                parmsListUserGroups.getStartIndex(),
-                                parmsListUserGroups.getItemsPerPage());
+                rpcResponse = USER_GROUP_SERVICE.listUserGroups(
+                        parmsListUserGroups.getStartIndex(),
+                        parmsListUserGroups.getItemsPerPage());
                 break;
 
             case LIST_USER_GROUP_MEMBERS:
@@ -408,11 +404,10 @@ public final class JsonRpcServlet extends HttpServlet implements
                 final ParamsSingleFilterList parmsGroupMembers =
                         methodParser.getParams(ParamsSingleFilterList.class);
 
-                rpcResponse =
-                        USER_GROUP_SERVICE.listUserGroupMembers(
-                                parmsGroupMembers.getFilter(),
-                                parmsGroupMembers.getStartIndex(),
-                                parmsGroupMembers.getItemsPerPage());
+                rpcResponse = USER_GROUP_SERVICE.listUserGroupMembers(
+                        parmsGroupMembers.getFilter(),
+                        parmsGroupMembers.getStartIndex(),
+                        parmsGroupMembers.getItemsPerPage());
                 break;
 
             case LIST_USER_GROUP_MEMBERSHIPS:
@@ -420,11 +415,10 @@ public final class JsonRpcServlet extends HttpServlet implements
                 final ParamsSingleFilterList parmsMemberships =
                         methodParser.getParams(ParamsSingleFilterList.class);
 
-                rpcResponse =
-                        USER_GROUP_SERVICE.listUserGroupMemberships(
-                                parmsMemberships.getFilter(),
-                                parmsMemberships.getStartIndex(),
-                                parmsMemberships.getItemsPerPage());
+                rpcResponse = USER_GROUP_SERVICE.listUserGroupMemberships(
+                        parmsMemberships.getFilter(),
+                        parmsMemberships.getStartIndex(),
+                        parmsMemberships.getItemsPerPage());
                 break;
 
             case LIST_USER_SOURCE_GROUP_MEMBERS:
@@ -432,10 +426,9 @@ public final class JsonRpcServlet extends HttpServlet implements
                 final ParamsSourceGroupMembers parmsSourceGroupMembers =
                         methodParser.getParams(ParamsSourceGroupMembers.class);
 
-                rpcResponse =
-                        USER_GROUP_SERVICE.listUserSourceGroupMembers(
-                                parmsSourceGroupMembers.getGroupName(),
-                                parmsSourceGroupMembers.getNested());
+                rpcResponse = USER_GROUP_SERVICE.listUserSourceGroupMembers(
+                        parmsSourceGroupMembers.getGroupName(),
+                        parmsSourceGroupMembers.getNested());
 
                 break;
 
@@ -447,32 +440,27 @@ public final class JsonRpcServlet extends HttpServlet implements
 
             case LIST_USER_SOURCE_GROUP_NESTING:
 
-                rpcResponse =
-                        USER_GROUP_SERVICE
-                                .listUserSourceGroupNesting(methodParser
-                                        .getParams(ParamsUniqueName.class)
-                                        .getUniqueName());
+                rpcResponse = USER_GROUP_SERVICE.listUserSourceGroupNesting(
+                        methodParser.getParams(ParamsUniqueName.class)
+                                .getUniqueName());
                 break;
 
             case PRINTER_ACCESS_CONTROL:
 
-                rpcResponse =
-                        handlePrinterAccessControl(methodParser
-                                .getParams(ParamsPrinterAccessControl.class));
+                rpcResponse = handlePrinterAccessControl(methodParser
+                        .getParams(ParamsPrinterAccessControl.class));
                 break;
 
             case PRINTER_SNMP:
 
-                rpcResponse =
-                        PROXY_PRINT_SERVICE.readSnmp(methodParser
-                                .getParams(ParamsPrinterSnmp.class));
+                rpcResponse = PROXY_PRINT_SERVICE.readSnmp(
+                        methodParser.getParams(ParamsPrinterSnmp.class));
                 break;
 
             case SET_USER_PROPERTIES:
 
-                rpcResponse =
-                        USER_SERVICE.setUserProperties(methodParser.getParams(
-                                ParamsSetUserProperties.class)
+                rpcResponse = USER_SERVICE.setUserProperties(
+                        methodParser.getParams(ParamsSetUserProperties.class)
                                 .getUserProperties());
                 break;
 
@@ -488,19 +476,16 @@ public final class JsonRpcServlet extends HttpServlet implements
 
                 batchCommitter = createBatchCommitter();
 
-                rpcResponse =
-                        USER_GROUP_SERVICE.syncUserGroup(batchCommitter,
-                                methodParser.getParams(ParamsUniqueName.class)
-                                        .getUniqueName());
+                rpcResponse = USER_GROUP_SERVICE.syncUserGroup(batchCommitter,
+                        methodParser.getParams(ParamsUniqueName.class)
+                                .getUniqueName());
                 break;
 
             default:
-                rpcResponse =
-                        JsonRpcMethodError.createBasicError(
-                                JsonRpcError.Code.INVALID_REQUEST,
-                                "Invalid request.",
-                                "Method [" + methodParser.getMethod()
-                                        + "] is not implemented.");
+                rpcResponse = JsonRpcMethodError.createBasicError(
+                        JsonRpcError.Code.INVALID_REQUEST, "Invalid request.",
+                        "Method [" + methodParser.getMethod()
+                                + "] is not implemented.");
                 break;
             }
 
@@ -512,18 +497,15 @@ public final class JsonRpcServlet extends HttpServlet implements
 
         } catch (JsonProcessingException e) {
 
-            rpcResponse =
-                    JsonRpcMethodError.createBasicError(
-                            JsonRpcError.Code.PARSE_ERROR,
-                            "JSON parsing error.",
-                            "JSON method parameters are not valid.");
+            rpcResponse = JsonRpcMethodError.createBasicError(
+                    JsonRpcError.Code.PARSE_ERROR, "JSON parsing error.",
+                    "JSON method parameters are not valid.");
 
         } catch (SnmpConnectException e) {
 
-            rpcResponse =
-                    JsonRpcMethodError.createBasicError(
-                            JsonRpcError.Code.INTERNAL_ERROR,
-                            "SNMP connect error.", e.getMessage());
+            rpcResponse = JsonRpcMethodError.createBasicError(
+                    JsonRpcError.Code.INTERNAL_ERROR, "SNMP connect error.",
+                    e.getMessage());
 
         } catch (IOException e) {
 
@@ -644,9 +626,9 @@ public final class JsonRpcServlet extends HttpServlet implements
 
             if (access == null) {
                 return JsonRpcMethodError.createBasicError(
-                        Code.INVALID_REQUEST,
-                        "Printer [" + parms.getPrinterName()
-                                + "] does not exist.", null);
+                        Code.INVALID_REQUEST, "Printer ["
+                                + parms.getPrinterName() + "] does not exist.",
+                        null);
             } else {
 
                 final ResultUserGroupAccess data = new ResultUserGroupAccess();
@@ -662,8 +644,8 @@ public final class JsonRpcServlet extends HttpServlet implements
             return PRINTER_SERVICE.removeAccessControl(parms.getPrinterName());
 
         default:
-            throw new SpException("Unhandled action [" + parms.getAction()
-                    + "].");
+            throw new SpException(
+                    "Unhandled action [" + parms.getAction() + "].");
         }
     }
 
@@ -672,7 +654,7 @@ public final class JsonRpcServlet extends HttpServlet implements
      * @return The {@link DaoBatchCommitter}.
      */
     private DaoBatchCommitter createBatchCommitter() {
-        return ServiceContext.getDaoContext().createBatchCommitter(
-                ConfigManager.getDaoBatchChunkSize());
+        return ServiceContext.getDaoContext()
+                .createBatchCommitter(ConfigManager.getDaoBatchChunkSize());
     }
 }
