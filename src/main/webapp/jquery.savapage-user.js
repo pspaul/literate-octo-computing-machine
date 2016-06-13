@@ -420,7 +420,7 @@
 			 */
 			this.poll = function(userid, pagecount, uniqueUrlVal, prevMsgTime, language, country, base64) {
 
-				if (!_longPollStartTime && userid) {
+				if (!_longPollStartTime && userid && _cometd.isOn()) {
 
 					if (_ns.logger.isDebugEnabled()) {
 						_ns.logger.debug('UserEvent: poll()');
