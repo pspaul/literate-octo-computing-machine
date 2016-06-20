@@ -840,8 +840,8 @@ public final class UserEventService extends AbstractEventService {
                                 break;
                             }
 
-                            if (LOGGER.isWarnEnabled()) {
-                                LOGGER.warn("Ignored message ["
+                            if (LOGGER.isTraceEnabled()) {
+                                LOGGER.trace("Ignored message ["
                                         + msgIndicator.getMessage() + "] from ["
                                         + msgIndicator.getSenderId()
                                         + "] since we are [" + clientIpAddress
