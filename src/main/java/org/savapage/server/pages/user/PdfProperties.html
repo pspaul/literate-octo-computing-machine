@@ -261,18 +261,22 @@
 	</ul>
 
 	<div data-role="controlgroup" data-type="horizontal">
-		<button id="button-pdf-download"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d">
-			<wicket:message key="button-download" />
-		</button>
-		<button id="button-pdf-send"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-mail">
-			<wicket:message key="button-send" />
-		</button>
+
+		<wicket:enclosure child="button-pdf-download">
+			<button id="button-pdf-download" wicket:id="button-pdf-download"
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d" />
+		</wicket:enclosure>
+
+		<wicket:enclosure child="button-pdf-send">
+			<button id="button-pdf-send" wicket:id="button-pdf-send"
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-mail" />
+		</wicket:enclosure>
+
 		<button id="button-pdf-properties-default"
 			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
 			<wicket:message key="button-default" />
 		</button>
+
 		<a href="#" data-rel="back"
 			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
 				key="button-back" />

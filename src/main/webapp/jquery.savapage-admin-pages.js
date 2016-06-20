@@ -37,12 +37,11 @@
 		/**
 		 *
 		 */
-		_ns.ACLRoleEnumPanel = {
-
+		_ns.TriStateCheckbox = {
 			/*
 			 * Checkbox state transition: null -> on -> off -> null.
 			 */
-			onCheckboxClick : function(selCheckboxLabel) {
+			onLabelClick : function(selCheckboxLabel) {
 				if (selCheckboxLabel.hasClass('sp-tristate-null')) {
 					selCheckboxLabel.removeClass('sp-tristate-null').addClass('sp-tristate-on');
 					return true;
@@ -55,16 +54,184 @@
 				return false;
 			},
 
-			m2v : function(selFieldset, aclRoles) {
-				var cbRoles = selFieldset.find(':checkbox'), lbRoles = selFieldset.find('label');
+			isOn : function(selCheckboxLabel) {
+				return selCheckboxLabel.hasClass('sp-tristate-on');
+			},
+
+			isOff : function(selCheckboxLabel) {
+				return selCheckboxLabel.hasClass('sp-tristate-off');
+			},
+
+			isNull : function(selCheckboxLabel) {
+				return selCheckboxLabel.hasClass('sp-tristate-null');
+			}
+		};
+
+		/**
+		 *
+		 */
+		_ns.ACLPermissionPanel = {
+
+			isReader : function(role) {
+				return role === 'READER';
+			},
+
+			isEditor : function(role) {
+				return role === 'EDITOR';
+			},
+
+			setOidView : function(_view, selCheckboxLabel) {
+				var selOid = selCheckboxLabel.closest('.sp-acl-oid'), selPerms = selOid.find('.sp-acl-oid-perms')
+				//
+				, selRoles = selOid.find('.sp-acl-oid-perms-roles'), isOn = _ns.TriStateCheckbox.isOn(selCheckboxLabel)
+				//
+				, selRadio = selRoles.find(':radio'), oidRole = _view.getRadioValue(selRadio.attr("name"))
+				//
+				, isReader = false, isEditor = false;
+
+				_view.visible(selPerms, isOn);
+				// Do not show a single radio option
+				_view.visible(selRoles, isOn && selRadio.length > 1);
+
+				//
+				if (isOn) {
+					if (_ns.ACLPermissionPanel.isReader(oidRole)) {
+						isReader = true;
+					} else if (_ns.ACLPermissionPanel.isEditor(oidRole)) {
+						isReader = true;
+						isEditor = true;
+					}
+					_view.visible(selPerms.find('.sp-acl-oid-perms-reader'), isReader);
+					_view.visible(selPerms.find('.sp-acl-oid-perms-editor'), isEditor);
+				}
+			},
+
+			m2v : function(_view, selParent, aclOids, aclOidsReader, aclOidsEditor) {
+				var cbOids = selParent.find('.sp-acl-oid-checkbox'), lbOids = selParent.find('.sp-acl-oid-label');
+
+				cbOids.prop("checked", false).checkboxradio("refresh");
+
+				lbOids.removeClass('sp-tristate-on').removeClass('sp-tristate-off');
+				lbOids.addClass('sp-checkbox-tristate-label').addClass('sp-tristate-null');
+
+				if (aclOids) {
+
+					$.each(cbOids, function() {
+
+						var id = $(this).attr('id'), lbWlk = selParent.find('[for=' + id + ']')
+						//
+						, key = $(this).val(), oidRole = aclOids[key], checked = false, selRadio, radioName
+						//
+						, isReader = false, isEditor = false;
+
+						if (oidRole !== undefined) {
+							checked = oidRole !== null;
+							lbWlk.removeClass('sp-tristate-null').addClass( checked ? 'sp-tristate-on' : 'sp-tristate-off');
+						}
+						$(this).prop("checked", checked).checkboxradio("refresh");
+
+						selRadio = $(this).closest('.sp-acl-oid').find('.sp-acl-oid-perms-roles').find(':radio');
+
+						if (selRadio) {
+
+							radioName = selRadio.attr("name");
+
+							if (checked) {
+								_view.checkRadioValue(radioName, oidRole);
+							} else {
+								_view.checkRadioFirst(radioName);
+							}
+
+							oidRole = _view.getRadioValue(radioName);
+
+							if (_ns.ACLPermissionPanel.isReader(oidRole)) {
+								isReader = true;
+							} else if (_ns.ACLPermissionPanel.isEditor(oidRole)) {
+								isReader = true;
+								isEditor = true;
+							}
+
+							if (isReader) {
+								$(this).closest('.sp-acl-oid').find('.sp-acl-oid-perms-reader').find(':checkbox').each(function() {
+									_view.checkCbSel($(this), $.inArray($(this).val(), aclOidsReader[key]) > -1);
+								});
+							}
+							if (isEditor) {
+								$(this).closest('.sp-acl-oid').find('.sp-acl-oid-perms-editor').find(':checkbox').each(function() {
+									_view.checkCbSel($(this), $.inArray($(this).val(), aclOidsEditor[key]) > -1);
+								});
+							}
+						}
+
+					});
+				}
+
+				$.each(lbOids, function() {
+					_ns.ACLPermissionPanel.setOidView(_view, $(this));
+				});
+			},
+
+			v2m : function(_view, selParent, aclOids, aclOidsReader, aclOidsEditor) {
+
+				selParent.find('.sp-acl-oid-label').each(function() {
+
+					var i, perms, checkbox, oidRole = null, selRadio, isReader = false, isEditor = false;
+
+					if (!_ns.TriStateCheckbox.isNull($(this))) {
+						if (_ns.TriStateCheckbox.isOn($(this))) {
+							selRadio = $(this).closest('.sp-acl-oid').find('.sp-acl-oid-perms-roles').find(':radio:checked');
+							if (selRadio) {
+								oidRole = selRadio.attr('value');
+							}
+						}
+						checkbox = $(this).siblings('[id=' + $(this).attr('for') + ']');
+						aclOids[checkbox.attr('value')] = oidRole;
+
+						if (oidRole) {
+							if (_ns.ACLPermissionPanel.isReader(oidRole)) {
+								isReader = true;
+							} else if (_ns.ACLPermissionPanel.isEditor(oidRole)) {
+								isReader = true;
+								isEditor = true;
+							}
+						}
+
+						if (isReader) {
+							perms = [];
+							i = 0;
+							$(this).closest('.sp-acl-oid').find('.sp-acl-oid-perms-reader').find(':checkbox:checked').each(function() {
+								perms[i++] = $(this).val();
+							});
+							aclOidsReader[checkbox.attr('value')] = perms;
+						}
+						if (isEditor) {
+							perms = [];
+							i = 0;
+							$(this).closest('.sp-acl-oid').find('.sp-acl-oid-perms-editor').find(':checkbox:checked').each(function() {
+								perms[i++] = $(this).val();
+							});
+							aclOidsEditor[checkbox.attr('value')] = perms;
+						}
+					}
+				});
+			}
+		};
+
+		/**
+		 *
+		 */
+		_ns.ACLRoleEnumPanel = {
+
+			m2v : function(selParent, aclRoles) {
+				var cbRoles = selParent.find(':checkbox'), lbRoles = selParent.find('label');
 
 				cbRoles.prop("checked", false).checkboxradio("refresh");
 				lbRoles.addClass('sp-checkbox-tristate-label').addClass('sp-tristate-null');
 
 				$.each(aclRoles, function(key, val) {
-					var lbWlk, cbWlk = selFieldset.find('[value=' + key + ']');
+					var lbWlk, cbWlk = selParent.find('[value=' + key + ']');
 					if (cbWlk) {
-						lbWlk = selFieldset.find('[for=' + cbWlk.attr('id') + ']');
+						lbWlk = selParent.find('[for=' + cbWlk.attr('id') + ']');
 						lbWlk.removeClass('sp-tristate-null');
 						lbWlk.addClass( val ? 'sp-tristate-on' : 'sp-tristate-off');
 						cbWlk.prop("checked", val).checkboxradio("refresh");
@@ -72,8 +239,8 @@
 				});
 			},
 
-			v2m : function(selFieldset, aclRoles) {
-				selFieldset.find('.sp-checkbox-tristate-label').each(function() {
+			v2m : function(selParent, aclRoles) {
+				selParent.find('.sp-checkbox-tristate-label').each(function() {
 					var checkbox;
 					if (!$(this).hasClass('sp-tristate-null')) {
 						checkbox = $(this).siblings('[id=' + $(this).attr('for') + ']');
@@ -225,7 +392,7 @@
 				});
 
 				$(this).on('click', ".sp-checkbox-tristate-label", null, function(event) {
-					return _ns.ACLRoleEnumPanel.onCheckboxClick($(this));
+					return _ns.TriStateCheckbox.onLabelClick($(this));
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
@@ -257,6 +424,7 @@
 				var accounting = _model.editUserGroup.accounting, accountingEnabled = _model.editUserGroup.accountingEnabled;
 
 				_ns.ACLRoleEnumPanel.m2v($('#sp-usergroup-edit-roles'), _model.editUserGroup.aclRoles);
+				_ns.ACLPermissionPanel.m2v(_view, $('#sp-usergroup-edit-privileges-user'), _model.editUserGroup.aclOidsUser, _model.editUserGroup.aclOidsUserReader, _model.editUserGroup.aclOidsUserEditor);
 
 				_view.visible($('#user-group-account-define-new-user').closest('ul'), !_model.editUserGroup.allUsersGroup);
 
@@ -278,8 +446,18 @@
 				accounting.creditLimitAmount = $('#user-group-account-credit-limit-amount').val();
 
 				_model.editUserGroup.accountingEnabled = _view.isCbChecked($('#user-group-account-define-new-user'));
+
 				_model.editUserGroup.aclRoles = {};
 				_ns.ACLRoleEnumPanel.v2m($('#sp-usergroup-edit-roles'), _model.editUserGroup.aclRoles);
+
+				_model.editUserGroup.aclOidsUser = {};
+				_model.editUserGroup.aclOidsUserReader = {};
+				_model.editUserGroup.aclOidsUserEditor = {};
+				_ns.ACLPermissionPanel.v2m(_view, $('#sp-usergroup-edit-privileges-user'), _model.editUserGroup.aclOidsUser, _model.editUserGroup.aclOidsUserReader, _model.editUserGroup.aclOidsUserEditor);
+
+				_model.editUserGroup.aclOidsAdmin = {};
+				_model.editUserGroup.aclOidsAdminReader = {};
+				_model.editUserGroup.aclOidsAdminEditor = {};
 			}
 			//
 			;
@@ -297,7 +475,16 @@
 				});
 
 				$(this).on('click', ".sp-checkbox-tristate-label", null, function(event) {
-					return _ns.ACLRoleEnumPanel.onCheckboxClick($(this));
+					var ret = _ns.TriStateCheckbox.onLabelClick($(this));
+					if ($(this).hasClass('sp-acl-oid-label')) {
+						_ns.ACLPermissionPanel.setOidView(_view, $(this));
+					}
+					return ret;
+				});
+
+				$(this).on('change', ".sp-acl-oid-perms-roles input:radio", null, function(e) {
+					var label = $(this).closest('.sp-acl-oid').find('.sp-acl-oid-label');
+					_ns.ACLPermissionPanel.setOidView(_view, label);
 				});
 
 				$(this).on('change', "input:radio[name='user-group-account-credit-limit-type']", null, function(e) {
@@ -1972,7 +2159,7 @@
 					_self.onDownloadSmartSchoolPaperCutStudentCostCsv(from, to, klassen);
 					return false;
 				});
-				
+
 				$(this).on('click', '#sp-download-papercut-delegator-cost-csv', null, function() {
 					var sel = $('#sp-papercut-delegator-cost-date-from'), from = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null, to, accounts = $('#sp-papercut-delegator-cost-accounts').val();
 
@@ -1987,7 +2174,6 @@
 					_self.onDownloadPapercutDelegatorCostCsv(from, to, accounts);
 					return false;
 				});
-				
 
 				$(this).on('change', "input:checkbox[id='flipswitch-internetprint-online']", null, function(e) {
 					_self.onFlipswitchInternetPrint($(this).is(':checked'));
@@ -2034,7 +2220,7 @@
 				$(this).on('change', "input:checkbox[id='proxy-print.delegate.enable']", null, function(e) {
 					_panel.Options.onProxyPrintDelegateEnabled($(this).is(':checked'));
 				});
-				
+
 				$(this).on('change', "input:checkbox[id='proxy-print.delegate.papercut.enable']", null, function(e) {
 					_panel.Options.onProxyPrintDelegatePaperCutEnabled($(this).is(':checked'));
 				});

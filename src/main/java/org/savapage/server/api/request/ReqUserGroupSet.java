@@ -23,10 +23,16 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.UserGroupDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.enums.UserGroupAttrEnum;
@@ -40,6 +46,7 @@ import org.savapage.core.util.JsonHelper;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -59,6 +66,60 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
         private Long id;
 
         private Map<ACLRoleEnum, Boolean> aclRoles;
+
+        /**
+         * OIDS with the main role permission for Role "User". When a
+         * {@link ACLOidEnum} key is not present the permission is
+         * indeterminate. A {@code null} value implies no privileges.
+         */
+        @JsonProperty("aclOidsUser")
+        private Map<ACLOidEnum, ACLPermissionEnum> aclOidsUser;
+
+        /**
+         * OIDS with extra permissions for main {@link ACLPermissionEnum#READER}
+         * role for Role "User". When a {@link ACLOidEnum} key is not present in
+         * the map extra permissions are not applicable. An empty
+         * {@link ACLPermissionEnum} list implies no privileges.
+         */
+        @JsonProperty("aclOidsUserReader")
+        private Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsUserReader;
+
+        /**
+         * OIDS with extra permissions for main {@link ACLPermissionEnum#EDITOR}
+         * role for Role "User". When a {@link ACLOidEnum} key is not present in
+         * the map extra permissions are not applicable. An empty
+         * {@link ACLPermissionEnum} list implies no privileges.
+         */
+        @JsonProperty("aclOidsUserEditor")
+        private Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsUserEditor;
+
+        /**
+         * OIDS with the main role permission for Role "Admin". When a
+         * {@link ACLOidEnum} key is not present the permission is
+         * indeterminate. A {@code null} value implies no privileges.
+         */
+        @JsonProperty("aclOidsAdmin")
+        private Map<ACLOidEnum, ACLPermissionEnum> aclOidsAdmin;
+
+        /**
+         * OIDS with extra permissions for main {@link ACLPermissionEnum#READER}
+         * role for Role "Admin". When a {@link ACLOidEnum} key is not present
+         * in the map extra permissions are not applicable. An empty
+         * {@link ACLPermissionEnum} list implies no privileges.
+         */
+        @JsonProperty("aclOidsAdminReader")
+        private Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsAdminReader;
+
+        /**
+         * OIDS with extra permissions for main {@link ACLPermissionEnum#EDITOR}
+         * role for Role "Admin". When a {@link ACLOidEnum} key is not present
+         * in the map extra permissions are not applicable. An empty
+         * {@link ACLPermissionEnum} list implies no privileges.
+         */
+        @JsonProperty("aclOidsAdminEditor")
+        private Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsAdminEditor;
+
+        //
         private Boolean accountingEnabled;
         private UserAccountingDto accounting;
 
@@ -78,6 +139,62 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setAclRoles(Map<ACLRoleEnum, Boolean> aclRoles) {
             this.aclRoles = aclRoles;
+        }
+
+        public Map<ACLOidEnum, ACLPermissionEnum> getAclOidsUser() {
+            return aclOidsUser;
+        }
+
+        public void
+                setAclOidsUser(Map<ACLOidEnum, ACLPermissionEnum> aclOidsUser) {
+            this.aclOidsUser = aclOidsUser;
+        }
+
+        public Map<ACLOidEnum, List<ACLPermissionEnum>> getAclOidsUserReader() {
+            return aclOidsUserReader;
+        }
+
+        public void setAclOidsUserReader(
+                Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsUserReader) {
+            this.aclOidsUserReader = aclOidsUserReader;
+        }
+
+        public Map<ACLOidEnum, List<ACLPermissionEnum>> getAclOidsUserEditor() {
+            return aclOidsUserEditor;
+        }
+
+        public void setAclOidsUserEditor(
+                Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsUserEditor) {
+            this.aclOidsUserEditor = aclOidsUserEditor;
+        }
+
+        public Map<ACLOidEnum, ACLPermissionEnum> getAclOidsAdmin() {
+            return aclOidsAdmin;
+        }
+
+        public void setAclOidsAdmin(
+                Map<ACLOidEnum, ACLPermissionEnum> aclOidsAdmin) {
+            this.aclOidsAdmin = aclOidsAdmin;
+        }
+
+        public Map<ACLOidEnum, List<ACLPermissionEnum>>
+                getAclOidsAdminReader() {
+            return aclOidsAdminReader;
+        }
+
+        public void setAclOidsAdminReader(
+                Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsAdminReader) {
+            this.aclOidsAdminReader = aclOidsAdminReader;
+        }
+
+        public Map<ACLOidEnum, List<ACLPermissionEnum>>
+                getAclOidsAdminEditor() {
+            return aclOidsAdminEditor;
+        }
+
+        public void setAclOidsAdminEditor(
+                Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsAdminEditor) {
+            this.aclOidsAdminEditor = aclOidsAdminEditor;
         }
 
         public Boolean getAccountingEnabled() {
@@ -121,6 +238,14 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
 
         this.setAclRoles(dtoReq, userGroup);
 
+        this.setAclOids(dtoReq.getAclOidsUser(), dtoReq.getAclOidsUserReader(),
+                dtoReq.getAclOidsUserEditor(), userGroup,
+                UserGroupAttrEnum.ACL_OIDS_USER);
+
+        this.setAclOids(dtoReq.getAclOidsAdmin(),
+                dtoReq.getAclOidsAdminReader(), dtoReq.getAclOidsAdminEditor(),
+                userGroup, UserGroupAttrEnum.ACL_OIDS_ADMIN);
+
         ReservedUserGroupEnum reservedGroup =
                 ReservedUserGroupEnum.fromDbName(userGroup.getGroupName());
 
@@ -155,6 +280,41 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
     }
 
     /**
+     * Creates, updates or deletes a {@link UserGroupAttr}.
+     *
+     * @param daoAttr
+     *            The {@link UserGroupAttrDao}.
+     * @param userGroup
+     *            The user group.
+     * @param attrEnum
+     *            The attribute key.
+     * @param attrValue
+     *            The attribute value. When {@code null} an existing attribute
+     *            is deleted.
+     */
+    private static void crudUserGroupAttr(final UserGroupAttrDao daoAttr,
+            final UserGroup userGroup, final UserGroupAttrEnum attrEnum,
+            final String attrValue) {
+
+        UserGroupAttr attr = daoAttr.findByName(userGroup, attrEnum);
+
+        if (attr == null) {
+            if (attrValue != null) {
+                attr = new UserGroupAttr();
+                attr.setUserGroup(userGroup);
+                attr.setName(attrEnum.getName());
+                attr.setValue(attrValue);
+                daoAttr.create(attr);
+            }
+        } else if (attrValue == null) {
+            daoAttr.delete(attr);
+        } else if (!attr.getValue().equals(attrValue)) {
+            attr.setValue(attrValue);
+            daoAttr.update(attr);
+        }
+    }
+
+    /**
      * Sets the ACL roles.
      *
      * @param dtoReq
@@ -178,24 +338,90 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             jsonRoles = JsonHelper.stringifyObject(dtoReq.getAclRoles());
         }
 
-        final UserGroupAttrEnum attrEnum = UserGroupAttrEnum.ACL_ROLES;
+        crudUserGroupAttr(daoAttr, userGroup, UserGroupAttrEnum.ACL_ROLES,
+                jsonRoles);
+    }
 
-        UserGroupAttr attr = daoAttr.findByName(userGroup, attrEnum);
+    /**
+     * Creates, updates or deletes the ACL Privileges.
+     *
+     * @param aclOids
+     *            The ACL list.
+     * @param userGroup
+     *            The user group.
+     * @param attrEnum
+     *            The attribute type.
+     * @throws IOException
+     *             When JSON errors.
+     */
+    private void setAclOids(final Map<ACLOidEnum, ACLPermissionEnum> aclOids,
+            final Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsReader,
+            final Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsEditor,
+            final UserGroup userGroup, final UserGroupAttrEnum attrEnum)
+            throws IOException {
 
-        if (attr == null) {
-            if (jsonRoles != null) {
-                attr = new UserGroupAttr();
-                attr.setUserGroup(userGroup);
-                attr.setName(attrEnum.getName());
-                attr.setValue(jsonRoles);
-                daoAttr.create(attr);
+        /*
+         * Consolidate.
+         */
+        final Map<ACLOidEnum, List<ACLPermissionEnum>> mapAll = new HashMap<>();
+
+        for (final Entry<ACLOidEnum, ACLPermissionEnum> entry : aclOids
+                .entrySet()) {
+
+            final ACLOidEnum oid = entry.getKey();
+            final ACLPermissionEnum value = entry.getValue();
+
+            final List<ACLPermissionEnum> perms = new ArrayList<>();
+            mapAll.put(oid, perms);
+
+            if (value == null) {
+                continue;
             }
-        } else if (jsonRoles == null) {
-            daoAttr.delete(attr);
-        } else if (!attr.getValue().equals(jsonRoles)) {
-            attr.setValue(jsonRoles);
-            daoAttr.update(attr);
+
+            perms.add(value);
+
+            if (aclOidsReader.containsKey(oid)) {
+                perms.addAll(aclOidsReader.get(oid));
+            }
+
+            if (aclOidsEditor.containsKey(oid)) {
+                perms.addAll(aclOidsEditor.get(oid));
+            }
         }
+
+        //
+        final Map<ACLOidEnum, Integer> aclOidsPriv = asMapPrivilege(mapAll);
+
+        final String jsonOids;
+
+        if (aclOidsPriv.isEmpty()) {
+            jsonOids = null;
+        } else {
+            jsonOids = JsonHelper.stringifyObject(aclOidsPriv);
+        }
+
+        final UserGroupAttrDao daoAttr =
+                ServiceContext.getDaoContext().getUserGroupAttrDao();
+
+        crudUserGroupAttr(daoAttr, userGroup, attrEnum, jsonOids);
+    }
+
+    /**
+     *
+     * @param mapIn
+     * @return
+     */
+    public static Map<ACLOidEnum, Integer> asMapPrivilege(
+            final Map<ACLOidEnum, List<ACLPermissionEnum>> mapIn) {
+
+        final Map<ACLOidEnum, Integer> mapOut = new HashMap<>();
+
+        for (final Entry<ACLOidEnum, List<ACLPermissionEnum>> entry : mapIn
+                .entrySet()) {
+            mapOut.put(entry.getKey(), Integer
+                    .valueOf(ACLPermissionEnum.asPrivilege(entry.getValue())));
+        }
+        return mapOut;
     }
 
 }

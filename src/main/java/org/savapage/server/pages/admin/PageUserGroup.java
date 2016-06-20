@@ -24,6 +24,7 @@ package org.savapage.server.pages.admin;
 import java.util.EnumSet;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.UserAccountingDto;
 import org.savapage.server.pages.MarkupHelper;
@@ -47,6 +48,7 @@ public final class PageUserGroup extends AbstractAdminPage {
 
         super(parameters);
 
+        //
         final ACLRoleEnumPanel aclRolePanel =
                 new ACLRoleEnumPanel("ACLRoleEnumCheckboxes");
 
@@ -58,6 +60,11 @@ public final class PageUserGroup extends AbstractAdminPage {
         add(aclRolePanel);
 
         //
+        final ACLPermissionPanel aclPermPanel =
+                new ACLPermissionPanel("ACLPermissionsUser");
+        aclPermPanel.populate(ACLOidEnum.getUserOids());
+        add(aclPermPanel);
+
         //
         final MarkupHelper helper = new MarkupHelper(this);
 

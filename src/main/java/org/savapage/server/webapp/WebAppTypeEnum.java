@@ -55,7 +55,7 @@ public enum WebAppTypeEnum {
 
     private final String uiText;
 
-    private WebAppTypeEnum(final String uiText) {
+    WebAppTypeEnum(final String uiText) {
         this.uiText = uiText;
     }
 

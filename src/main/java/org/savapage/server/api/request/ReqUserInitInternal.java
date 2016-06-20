@@ -25,9 +25,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.UserAccountingDto;
 import org.savapage.core.dto.UserDto;
@@ -62,6 +65,8 @@ public final class ReqUserInitInternal extends ApiRequestMixin {
 
         dto.setAccounting(accounting);
         dto.setAclRoles(new HashMap<ACLRoleEnum, Boolean>());
+        dto.setAclOidsUser(new HashMap<ACLOidEnum, List<ACLPermissionEnum>>());
+        dto.setAclOidsAdmin(new HashMap<ACLOidEnum, List<ACLPermissionEnum>>());
         dto.setAdmin(Boolean.FALSE);
         dto.setDatabaseId(null);
         dto.setDisabled(Boolean.FALSE);

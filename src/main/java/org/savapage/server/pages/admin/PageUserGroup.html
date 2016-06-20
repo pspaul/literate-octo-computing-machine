@@ -45,6 +45,18 @@
 
 	<ul data-role="listview" data-inset="true">
 		<li data-role="list-divider">
+			<wicket:message key="prompt-privileges-user" />
+		</li>
+		<li>
+			<fieldset data-role="controlgroup" data-mini="true"
+				id="sp-usergroup-edit-privileges-user">
+				<wicket:fragment wicket:id="ACLPermissionsUser" />
+			</fieldset>
+		</li>
+	</ul>
+
+	<ul data-role="listview" data-inset="true">
+		<li data-role="list-divider">
 			<wicket:message key="prompt-new-user-settings" />
 		</li>
 
@@ -52,9 +64,9 @@
 
 			<label for="user-group-account-define-new-user">
 				<wicket:message key="label-define-new-user" />
-			</label>			
+			</label>
 			<input type="checkbox" id="user-group-account-define-new-user" />
-			
+
 			<div id="user-group-account-new-user">
 				<br />
 				<label for="user-group-account-balance">

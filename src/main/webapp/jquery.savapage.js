@@ -2385,6 +2385,13 @@
 			};
 
 			/**
+			 * (Un)checks a checkbox button.
+			 */
+			this.checkCbSel = function(sel, isChecked) {
+				sel.prop("checked", isChecked).checkboxradio("refresh");
+			};
+
+			/**
 			 * Toggles a checkbox button.
 			 */
 			this.toggleCb = function(sel) {
@@ -2430,6 +2437,15 @@
 				var sel = $('input[name="' + name + '"]');
 				sel.prop('checked', false);
 				$('#' + id).prop('checked', true);
+				sel.checkboxradio("refresh");
+			};
+
+			/**
+			 * Checks first a radio button.
+			 */
+			this.checkRadioFirst = function(name) {
+				var sel = $('input[name="' + name + '"]');
+				sel.prop('checked', false).first().prop('checked', true);;
 				sel.checkboxradio("refresh");
 			};
 

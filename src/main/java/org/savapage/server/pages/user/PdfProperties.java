@@ -21,8 +21,15 @@
  */
 package org.savapage.server.pages.user;
 
+import java.util.List;
+
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -37,6 +44,14 @@ public class PdfProperties extends AbstractUserPage {
     /**
      *
      */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
+    /**
+     *
+     * @param parameters
+     *            The parms.
+     */
     public PdfProperties(final PageParameters parameters) {
 
         super(parameters);
@@ -46,6 +61,18 @@ public class PdfProperties extends AbstractUserPage {
         //
         helper.encloseLabel("pdf-ecoprint", "",
                 ConfigManager.isEcoPrintEnabled());
+
+        //
+        final List<ACLPermissionEnum> permissions = ACCESS_CONTROL_SERVICE
+                .getUserPermission(SpSession.get().getUser(), ACLOidEnum.PDF);
+
+        helper.encloseLabel("button-pdf-download", localized("button-download"),
+                permissions == null || ACCESS_CONTROL_SERVICE.hasUserPermission(
+                        permissions, ACLPermissionEnum.DOWNLOAD));
+
+        helper.encloseLabel("button-pdf-send", localized("button-send"),
+                permissions == null || ACCESS_CONTROL_SERVICE.hasUserPermission(
+                        permissions, ACLPermissionEnum.SEND));
     }
 
 }

@@ -954,6 +954,12 @@
 					dto : JSON.stringify({
 						id : group.id,
 						aclRoles : group.aclRoles,
+						aclOidsUser : group.aclOidsUser,
+						aclOidsUserReader : group.aclOidsUserReader,
+						aclOidsUserEditor : group.aclOidsUserEditor,
+						aclOidsAdmin : group.aclOidsAdmin,
+						aclOidsAdminReader : group.aclOidsAdminReader,
+						aclOidsAdminEditor : group.aclOidsAdminEditor,
 						accountingEnabled : group.accountingEnabled,
 						accounting : group.accounting
 					})
