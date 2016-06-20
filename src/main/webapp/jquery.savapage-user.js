@@ -2505,13 +2505,15 @@
 				_showArrange(false);
 
 				/*
-				 * Hide text in buttons, show text as title instead.
+				 * Hide text in buttons, show text as title instead, when desktop browser.
 				 */
-				$(".sp-nav-button-txt").hide();
-				$.each($(".sp-nav-button-txt"), function(key, obj) {
-					$(this).hide();
-					$(this).closest("li").attr("title", "\n " + $(this).text() + " \n");
-				});
+				if (!_ns.Utils.isMobileOrTablet()) {
+					$(".sp-nav-button-txt").hide();
+					$.each($(".sp-nav-button-txt"), function(key, obj) {
+						$(this).hide();
+						$(this).closest("li").attr("title", "\n " + $(this).text() + " \n");
+					});
+				}
 
 				// Now that the images are loaded (needed for iOS Safari), hide
 				// them.
