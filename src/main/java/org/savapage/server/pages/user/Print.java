@@ -26,6 +26,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
@@ -45,7 +47,7 @@ public class Print extends AbstractUserPage {
      */
     private static final long serialVersionUID = 1L;
 
-    private static final AccessControlService ACCESSCONTROL_SERVICE =
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
@@ -100,10 +102,20 @@ public class Print extends AbstractUserPage {
         helper.addLabel("print-ecoprint-label", ecoPrintLabel);
 
         //
-        final boolean isPrintDelegate = ACCESSCONTROL_SERVICE.hasAccess(
-                SpSession.get().getUser(), ACLRoleEnum.PRINT_DELEGATE);
+        final org.savapage.core.jpa.User user = SpSession.get().getUser();
+
+        final boolean isPrintDelegate = ACCESS_CONTROL_SERVICE.hasAccess(user,
+                ACLRoleEnum.PRINT_DELEGATE);
 
         addVisible(isPrintDelegate, "button-print-delegation", "-");
+
+        //
+        final Integer privsLetterhead = ACCESS_CONTROL_SERVICE
+                .getUserPrivileges(user, ACLOidEnum.LETTERHEAD);
+
+        helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
+                privsLetterhead == null || ACLPermissionEnum.READER
+                        .isPresent(privsLetterhead.intValue()));
 
     }
 }

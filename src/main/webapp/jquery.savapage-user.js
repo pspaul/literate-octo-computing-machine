@@ -61,7 +61,6 @@
 				 */
 				_ns.cometd.start(_ns.model.user.cometdToken);
 				_ns.userEvent.resume();
-				//alert("All loaded!");
 			}
 		};
 
@@ -2233,7 +2232,6 @@
 					if (!bBefore) {
 						position += 1;
 					}
-					// alert('move ['+ranges+'] at ['+position+']');
 					_this.onPageMove(ranges, position);
 					_showArrButtons(false);
 				}
@@ -2519,16 +2517,14 @@
 				// them.
 				$(".sp-main-status-ind").hide();
 
-				/*
-				 *
-				 */
+				//
 				$('#thumbnail_nav_r').css('right', $('#page-main-thumbnail-viewport').innerWidth() + 'px');
 
 				// Thumbnail viewport
 				$('.thumbnail_reel img').mousedown(function(e) {
 					e.preventDefault();
 				});
-				// Button on fixed footer
+				
 				$('#button-about').click(function() {
 					_view.showPageAsync('#page-info', 'AppAbout');
 					return false;
@@ -2816,7 +2812,6 @@
 					$('#page-main-thumbnail-images img').removeClass('main_selected');
 					var ranges = _getJobRanges('sp-thumbnail-selected');
 					if (ranges !== null) {
-						//alert('delete ['+ranges+']');
 						_this.onPageDelete(ranges);
 						_showArrButtons(false);
 					}
@@ -4604,9 +4599,15 @@
 			 */
 			this.setLetterheadMenu = function(sel) {
 
+				var options, jSel = $(sel);
+				
+				if (jSel.length == 0) {
+					return;
+				}
+				
 				_getLetterheads();
 
-				var options = '<option value="none"';
+				options = '<option value="none"';
 
 				if (!_model.letterheadDefault) {
 					options += ' selected';
@@ -4621,7 +4622,7 @@
 					options += '>' + value.name + '</option>';
 				});
 
-				$(sel).empty().append(options).selectmenu('refresh');
+				$(jSel).empty().append(options).selectmenu('refresh');
 			};
 
 			/**

@@ -63,8 +63,10 @@ public class PdfProperties extends AbstractUserPage {
                 ConfigManager.isEcoPrintEnabled());
 
         //
-        final List<ACLPermissionEnum> permissions = ACCESS_CONTROL_SERVICE
-                .getUserPermission(SpSession.get().getUser(), ACLOidEnum.PDF);
+        final org.savapage.core.jpa.User user = SpSession.get().getUser();
+
+        final List<ACLPermissionEnum> permissions =
+                ACCESS_CONTROL_SERVICE.getUserPermission(user, ACLOidEnum.PDF);
 
         helper.encloseLabel("button-pdf-download", localized("button-download"),
                 permissions == null || ACCESS_CONTROL_SERVICE.hasUserPermission(
@@ -73,6 +75,15 @@ public class PdfProperties extends AbstractUserPage {
         helper.encloseLabel("button-pdf-send", localized("button-send"),
                 permissions == null || ACCESS_CONTROL_SERVICE.hasUserPermission(
                         permissions, ACLPermissionEnum.SEND));
+
+        //
+        final Integer privsLetterhead = ACCESS_CONTROL_SERVICE
+                .getUserPrivileges(user, ACLOidEnum.LETTERHEAD);
+
+        helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
+                privsLetterhead == null || ACLPermissionEnum.READER
+                        .isPresent(privsLetterhead.intValue()));
+
     }
 
 }

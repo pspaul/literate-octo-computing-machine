@@ -2445,7 +2445,7 @@
 			 */
 			this.checkRadioFirst = function(name) {
 				var sel = $('input[name="' + name + '"]');
-				sel.prop('checked', false).first().prop('checked', true);;
+				sel.prop('checked', false).first().prop('checked', true);
 				sel.checkboxradio("refresh");
 			};
 

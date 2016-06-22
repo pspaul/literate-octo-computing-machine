@@ -130,13 +130,14 @@
 					autocapitalize="off" spellcheck="false" />
 			</div>
 
-			<div data-mini="true" class="ui-field-contain">
-				<label data-mini="true" for="print-letterhead-list">
-					<wicket:message key="prompt-letterhead" />
-				</label>
-				<select data-mini="true" id="print-letterhead-list"
-					data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
-			</div>
+			<wicket:enclosure child="prompt-letterhead">
+				<div data-mini="true" class="ui-field-contain">
+					<label wicket:id="prompt-letterhead" data-mini="true"
+						for="print-letterhead-list" />
+					<select data-mini="true" id="print-letterhead-list"
+						data-icon="carat-d" data-iconpos="left" data-native-menu="false"></select>
+				</div>
+			</wicket:enclosure>
 
 			<wicket:enclosure child="print-ecoprint">
 				<div data-mini="true" data-role="controlgroup">

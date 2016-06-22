@@ -131,6 +131,30 @@
 	border-radius: 0 !important;
 }
 
+.ui-icon-main-upload:after {
+	background: url(/glyphicons/glyphicons_213_up_arrow.png) 50% 50%
+		no-repeat;
+	background-size: 16px 18px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+}
+
+.ui-icon-main-browse:after {
+	background: url(/glyphicons/glyphicons_236_zoom_in.png) 50% 50%
+		no-repeat;
+	background-size: 20px 20px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+}
+
+.ui-icon-main-about:after {
+	background: url(/glyphicons/glyphicons_195_circle_info.png) 50% 50%
+		no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+}
+
 .ui-icon-mini-cut:after {
 	background: url(/glyfx/cut-selected.png) 50% 50% no-repeat;
 	background-size: 16px 16px;
@@ -199,79 +223,35 @@
 
 	<div class='ui-content'>
 
-		<div id="main-navbar-action" data-role="navbar" data-grid="c"
+		<div id="main-navbar-action" data-role="navbar"
 			style="max-width: 480px; margin-left: auto; margin-right: auto; border: 0;"
 			class="ui-bar-c main_action">
 
 			<ul>
-				<li class="main_actions">
-					<button class="ui-btn ui-btn-icon-top ui-icon-main-pdf-properties"
-						id="button-main-pdf-properties">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-pdf" /></span>
-					</button>
-				</li>
-				<li class="main_actions">
-					<button class="ui-btn ui-btn-icon-top ui-icon-main-print"
-						id="button-main-print">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-print" /></span>
-					</button>
-				</li>
-				<li class="main_action_base">
-					<button class="ui-btn ui-btn-icon-top ui-icon-main-letterhead"
-						id="button-main-letterhead">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-letterhead" /></span>
-					</button>
-				</li>
-				<li class="main_actions">
-					<button class="ui-btn ui-btn-icon-top ui-icon-main-clear"
-						data-dialog="true" id="button-main-clear">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-clear" /></span>
-					</button>
-				</li>
-
+				<wicket:fragment wicket:id="main-navbar-row-top">
+					<li wicket:id="item" class="[CLASS]">
+						<button wicket:id="button" class="ui-btn ui-btn-icon-top"
+							id="[ID]">
+							<span wicket:id="button-text" class="sp-nav-button-txt">[TEXT]</span>
+						</button>
+					</li>
+				</wicket:fragment>
 			</ul>
+
 			<ul>
-				<li class="main_action_base">
-					<button class="ui-btn ui-btn-icon-top ui-icon-main-logout"
-						id="button-logout">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-logout" /></span>
-					</button>
-				</li>
-
-				<li class="main_action_base">
-					<button class="ui-btn ui-btn-icon-top ui-icon-main-refresh"
-						id="button-main-refresh">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-refresh" /></span>
-					</button>
-				</li>
-
-				<li class="main_action_base">
-					<button class="ui-btn ui-btn-icon-top ui-icon-main-doclog"
-						id="button-main-doclog">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-doclog" /></span>
-					</button>
-				</li>
-
-				<li class="main_actions">
-					<button class="ui-btn ui-btn-icon-top ui-icon-main-arr-edit"
-						id="main-arr-edit">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-sort" /></span>
-					</button>
-				</li>
-
+				<wicket:fragment wicket:id="main-navbar-row-bottom">
+					<li wicket:id="item" class="[CLASS]">
+						<button wicket:id="button" class="ui-btn ui-btn-icon-top"
+							id="[ID]">
+							<span wicket:id="button-text" class="sp-nav-button-txt">[TEXT]</span>
+						</button>
+					</li>
+				</wicket:fragment>
 			</ul>
 
 		</div>
 
-		<div id="main-navbar-arrange" data-role="navbar" data-grid="c"
+		<div id="main-navbar-arrange" data-role="navbar"
 			style="max-width: 480px; margin-left: auto; margin-right: auto; border: 0;"
 			class="ui-bar-c main_action_arrange">
 
@@ -356,11 +336,11 @@
 		<button id="button-cometd-status"
 			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-info">&nbsp;</button>
 
-		<a href="#page-info" id="button-about" data-dialog="true"
-			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-text">
-			<wicket:message key="button-about" />
-		</a>
-		<!--  -->
+		<wicket:enclosure child="button-mini-about">
+			<a wicket:id="button-mini-about" href="#page-info" id="button-about" data-dialog="true"
+				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-text"/>
+		</wicket:enclosure>
+		
 		<button data-dialog="true" id="button-mini-user"
 			class="ui-btn ui-btn-inline">
 			<span id="sparkline-user-pie" />

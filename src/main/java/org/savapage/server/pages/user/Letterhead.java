@@ -23,6 +23,10 @@ package org.savapage.server.pages.user;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.server.SpSession;
 
 /**
  *
@@ -32,6 +36,12 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 public class Letterhead extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     *
+     */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      *
@@ -51,5 +61,11 @@ public class Letterhead extends AbstractUserPage {
                 };
 
         add(label);
+
+        // TODO
+        if (ACCESS_CONTROL_SERVICE.hasUserAccess(SpSession.get().getUser(),
+                ACLOidEnum.LETTERHEAD)) {
+        }
+
     }
 }

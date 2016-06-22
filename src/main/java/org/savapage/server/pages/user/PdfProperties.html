@@ -57,13 +57,14 @@
 					autocapitalize="off" spellcheck="false" />
 			</div>
 
-			<div class="ui-field-contain">
-				<label data-mini="true" for="pdf-letterhead-list">
-					<wicket:message key="prompt-letterhead" />
-				</label>
-				<select data-mini="true" id="pdf-letterhead-list" data-icon="check"
-					data-iconpos="left" data-native-menu="false"></select>
-			</div>
+			<wicket:enclosure child="prompt-letterhead">
+				<div class="ui-field-contain">
+					<label wicket:id="prompt-letterhead" data-mini="true"
+						for="pdf-letterhead-list" />
+					<select data-mini="true" id="pdf-letterhead-list" data-icon="check"
+						data-iconpos="left" data-native-menu="false"></select>
+				</div>
+			</wicket:enclosure>
 
 			<div class="ui-field-contain">
 				<wicket:enclosure child="pdf-ecoprint">
