@@ -69,7 +69,7 @@ public class Main extends AbstractUserPage {
      *
      */
     private static enum NavButtonEnum {
-        ABOUT, BROWSE, UPLOAD
+        ABOUT, BROWSE, UPLOAD, PDF, LETTERHEAD, SORT
     }
 
     /**
@@ -100,7 +100,14 @@ public class Main extends AbstractUserPage {
      */
     private class NavBarRow extends PropertyListView<NavBarItem> {
 
-        public NavBarRow(final String id, final List<NavBarItem> list) {
+        /**
+         *
+         * @param id
+         *            The Wicket id.
+         * @param list
+         *            The list.
+         */
+        NavBarRow(final String id, final List<NavBarItem> list) {
             super(id, list);
         }
 
@@ -171,8 +178,17 @@ public class Main extends AbstractUserPage {
         add(new CommunityStatusFooterPanel("community-status-footer-panel"));
 
         //
-        helper.encloseLabel("mini-user-balance", "", ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_USER_FINANCIAL_SHOW));
+        final Set<NavButtonEnum> buttonPrivileged = getNavButtonPriv(user);
+
+        //
+        this.populateNavBar(buttonPrivileged, buttonCandidates);
+
+        //
+        addVisible(isUpload && buttonCandidates.contains(NavButtonEnum.UPLOAD),
+                "button-upload", localized("button-upload"));
+
+        addVisible(buttonCandidates.contains(NavButtonEnum.ABOUT),
+                "button-mini-about", localized("button-about"));
 
         //
         final String userId;
@@ -185,47 +201,67 @@ public class Main extends AbstractUserPage {
             userName = StringUtils.defaultString(user.getFullName());
             userId = user.getUserId();
         }
-        helper.addModifyLabelAttr("mini-user-name", userId, "title", userName);
 
-        //
-        final Set<ACLOidEnum> buttonPrivileged = getNavButtonPriv(user);
+        final boolean showMiniUserDetails =
+                ACCESS_CONTROL_SERVICE.hasUserAccess(user, ACLOidEnum.U_USER);
 
-        //
-        this.populateNavBar(buttonPrivileged, buttonCandidates);
+        if (showMiniUserDetails) {
 
-        //
-        addVisible(isUpload && buttonCandidates.contains(NavButtonEnum.UPLOAD),
-                "button-upload", localized("button-upload"));
+            helper.encloseLabel("mini-user-balance", "", ConfigManager
+                    .instance().isConfigValue(Key.WEBAPP_USER_FINANCIAL_SHOW));
 
-        addVisible(buttonCandidates.contains(NavButtonEnum.ABOUT),
-                "button-mini-about", localized("button-about"));
+            helper.addModifyLabelAttr("mini-user-details-name", userId, "title",
+                    userName);
+
+            helper.discloseLabel("mini-user-name");
+
+        } else {
+
+            helper.discloseLabel("mini-user-details-name");
+            final Label name = MarkupHelper.createEncloseLabel("mini-user-name",
+                    userId, true);
+            add(name.add(new AttributeModifier("title", userName)));
+        }
     }
 
     /**
-     * .
+     *
+     * @param user
+     *            The user.
+     * @return The privileged navigation buttons.
      */
-    private static Set<ACLOidEnum>
+    private static Set<NavButtonEnum>
             getNavButtonPriv(final org.savapage.core.jpa.User user) {
 
-        final Set<ACLOidEnum> set = new HashSet<>();
+        final Set<NavButtonEnum> set = new HashSet<>();
 
-        ACLOidEnum oidWlk;
+        NavButtonEnum navButtonWlk;
 
         //
-        oidWlk = ACLOidEnum.PDF;
-        final Integer pdfPrivilege =
-                ACCESS_CONTROL_SERVICE.getUserPrivileges(user, oidWlk);
+        navButtonWlk = NavButtonEnum.PDF;
 
-        if (pdfPrivilege == null
-                || ACLPermissionEnum.DOWNLOAD.isPresent(pdfPrivilege.intValue())
-                || ACLPermissionEnum.SEND.isPresent(pdfPrivilege.intValue())) {
-            set.add(oidWlk);
+        final Integer inboxPriv = ACCESS_CONTROL_SERVICE.getUserPrivileges(user,
+                ACLOidEnum.U_INBOX);
+
+        if (inboxPriv == null
+                || ACLPermissionEnum.DOWNLOAD.isPresent(inboxPriv.intValue())
+                || ACLPermissionEnum.SEND.isPresent(inboxPriv.intValue())) {
+            set.add(navButtonWlk);
         }
 
         //
-        oidWlk = ACLOidEnum.LETTERHEAD;
-        if (ACCESS_CONTROL_SERVICE.hasUserAccess(user, oidWlk)) {
-            set.add(oidWlk);
+        navButtonWlk = NavButtonEnum.SORT;
+
+        if (inboxPriv == null
+                || ACLPermissionEnum.EDITOR.isPresent(inboxPriv.intValue())) {
+            set.add(navButtonWlk);
+        }
+
+        //
+        navButtonWlk = NavButtonEnum.LETTERHEAD;
+        if (ACCESS_CONTROL_SERVICE.hasUserAccess(user,
+                ACLOidEnum.U_LETTERHEAD)) {
+            set.add(navButtonWlk);
         }
 
         //
@@ -286,7 +322,7 @@ public class Main extends AbstractUserPage {
      *
      * @param buttonPrivileged
      */
-    private void populateNavBar(final Set<ACLOidEnum> buttonPrivileged,
+    private void populateNavBar(final Set<NavButtonEnum> buttonPrivileged,
             final Set<NavButtonEnum> buttonCandidates) {
 
         List<NavBarItem> items = new ArrayList<>();
@@ -300,7 +336,7 @@ public class Main extends AbstractUserPage {
         // ------------
         // PDF
         // ------------
-        if (buttonPrivileged.contains(ACLOidEnum.PDF)) {
+        if (buttonPrivileged.contains(NavButtonEnum.PDF)) {
             itemWlk = new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-pdf-properties", "button-main-pdf-properties",
                     localized("button-pdf"));
@@ -321,7 +357,7 @@ public class Main extends AbstractUserPage {
         // ------------
         // Letterhead
         // ------------
-        if (buttonPrivileged.contains(ACLOidEnum.LETTERHEAD)) {
+        if (buttonPrivileged.contains(NavButtonEnum.LETTERHEAD)) {
             itemWlk = new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                     "ui-icon-main-letterhead", "button-main-letterhead",
                     localized("button-letterhead"));
@@ -359,9 +395,17 @@ public class Main extends AbstractUserPage {
                 "ui-icon-main-doclog", "button-main-doclog",
                 localized("button-doclog")));
 
-        items.add(
-                new NavBarItem(CSS_CLASS_MAIN_ACTIONS, "ui-icon-main-arr-edit",
-                        "main-arr-edit", localized("button-sort")));
+        if (buttonPrivileged.contains(NavButtonEnum.SORT)) {
+            itemWlk = new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
+                    "ui-icon-main-arr-edit", "main-arr-edit",
+                    localized("button-sort"));
+        } else {
+            itemWlk = useButtonCandidate(buttonCandidates);
+        }
+
+        if (itemWlk != null) {
+            items.add(itemWlk);
+        }
 
         add(new NavBarRow("main-navbar-row-bottom", items));
     }

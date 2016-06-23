@@ -64,7 +64,7 @@ public class Letterhead extends AbstractUserPage {
 
         // TODO
         if (ACCESS_CONTROL_SERVICE.hasUserAccess(SpSession.get().getUser(),
-                ACLOidEnum.LETTERHEAD)) {
+                ACLOidEnum.U_LETTERHEAD)) {
         }
 
     }

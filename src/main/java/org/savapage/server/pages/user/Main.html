@@ -213,6 +213,11 @@
 	background-size: 16px 16px;
 }
 
+.ui-icon-mini-user:after {
+	background: url(/famfamfam-silk/user_gray.png) 50% 50% no-repeat;
+	background-size: 16px 16px;
+}
+
 .ui-icon-mini-expired-clock:after {
 	background: url(/glyphicons/glyphicons_057_history.png) 50% 50%
 		no-repeat;
@@ -337,21 +342,32 @@
 			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-info">&nbsp;</button>
 
 		<wicket:enclosure child="button-mini-about">
-			<a wicket:id="button-mini-about" href="#page-info" id="button-about" data-dialog="true"
-				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-text"/>
+			<button wicket:id="button-mini-about" id="button-about"
+				data-dialog="true"
+				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-text" />
 		</wicket:enclosure>
-		
-		<button data-dialog="true" id="button-mini-user"
-			class="ui-btn ui-btn-inline">
-			<span id="sparkline-user-pie" />
-			<wicket:enclosure child="mini-user-balance">
+
+		<wicket:enclosure child="mini-user-details-name">
+			<button data-dialog="true" id="button-mini-user"
+				class="ui-btn ui-btn-inline">
+				<span id="sparkline-user-pie" />
+				<wicket:enclosure child="mini-user-balance">
 				&nbsp;<span class="sp-txt-wrap" id="mini-user-balance"
-					wicket:id="mini-user-balance" />
-				<span class="sp-plain-info">&nbsp;&bull;</span>
-			</wicket:enclosure>
-			&nbsp;<span class="sp-txt-info" id="mini-user-name"
-				wicket:id="mini-user-name" />
-		</button>
+						wicket:id="mini-user-balance" />
+					<span class="sp-plain-info">&nbsp;&bull;</span>
+				</wicket:enclosure>
+				&nbsp;<span class="sp-txt-info" id="mini-user-name"
+					wicket:id="mini-user-details-name" />
+			</button>
+		</wicket:enclosure>
+
+		<wicket:enclosure child="mini-user-name">
+			<button
+				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-mini-user ">
+				<span wicket:id="mini-user-name" class="sp-txt-info"
+					id="mini-user-name">rijk</span>
+			</button>
+		</wicket:enclosure>
 
 		<wicket:enclosure child="button-upload">
 			<button data-dialog="true" id="button-mini-upload"
