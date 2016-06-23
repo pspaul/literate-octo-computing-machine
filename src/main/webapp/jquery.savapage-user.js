@@ -2524,7 +2524,7 @@
 				$('.thumbnail_reel img').mousedown(function(e) {
 					e.preventDefault();
 				});
-				
+
 				$('#button-about').click(function() {
 					_view.showPageAsync('#page-info', 'AppAbout');
 					return false;
@@ -4581,7 +4581,7 @@
 			 *            The selector, e.g. '#print-job-list'
 			 */
 			this.setJobScopeMenu = function(sel) {
-				var options = '<option value="-1">&ndash;</option>';
+				var options = '<option value="-1">' + _i18n.format('scope-all-documents', null) + '</option>';
 				if (_model.myJobsVanilla) {
 					$.each(_model.myJobs, function(key, value) {
 						options += '<option value="' + key + '">' + value.title + '</option>';
@@ -4600,11 +4600,11 @@
 			this.setLetterheadMenu = function(sel) {
 
 				var options, jSel = $(sel);
-				
+
 				if (jSel.length == 0) {
 					return;
 				}
-				
+
 				_getLetterheads();
 
 				options = '<option value="none"';
