@@ -86,10 +86,10 @@
 		</li>
 	</ul>
 
-	<button id="button-letterhead-create"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-		<wicket:message key="button-new" />
-	</button>
+	<wicket:enclosure child="button-new">
+		<button wicket:id="button-new" id="button-letterhead-create"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" />
+	</wicket:enclosure>
 
 	<button id="button-letterhead-refresh"
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh">
