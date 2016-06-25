@@ -1595,6 +1595,7 @@
 					}
 				});
 
+
 				/*
 				 * Smooth scrolling to primary content
 				 *
@@ -1628,6 +1629,12 @@
 					//} else {
 					//    _loadPanel(clazz);
 					//}
+					return false;
+				});
+
+
+				$('#button-about-org').click(function() {
+					_view.showPageAsync('#page-info', 'AppAbout');
 					return false;
 				});
 

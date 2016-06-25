@@ -51,6 +51,7 @@ public final class Login extends AbstractPage {
 
         add(new Label("title",
                 localized("title", CommunityDictEnum.SAVAPAGE.getWord())));
+
         add(new Label("title-assoc", CommunityDictEnum.SAVAPAGE.getWord()));
 
         final String loginDescript;
@@ -68,24 +69,36 @@ public final class Login extends AbstractPage {
                 WebAppTypeEnum.class, parms.getParameterValue("webAppType")
                         .toString(WebAppTypeEnum.UNDEFINED.toString()));
 
-        switch (webAppType) {
-        case ADMIN:
-            loginDescript = localized("login-descript-admin");
-            break;
-        case JOBTICKETS:
-            loginDescript = localized("login-descript-role",
-                    ACLRoleEnum.JOB_TICKET_OPERATOR.uiText(getLocale()));
-            break;
-        case POS:
-            loginDescript = localized("login-descript-role",
-                    ACLRoleEnum.WEB_CASHIER.uiText(getLocale()));
-            break;
-        default:
-            loginDescript = localized("login-descript-user");
-            break;
+        final HtmlInjectComponent htmlInject = new HtmlInjectComponent(
+                "login-inject", webAppType, HtmlInjectEnum.LOGIN);
+
+        MarkupHelper helper = new MarkupHelper(this);
+
+        if (htmlInject.isInjectAvailable()) {
+            add(htmlInject);
+            loginDescript = null;
+        } else {
+            helper.discloseLabel("login-inject");
+            switch (webAppType) {
+            case ADMIN:
+                loginDescript = localized("login-descript-admin");
+                break;
+            case JOBTICKETS:
+                loginDescript = localized("login-descript-role",
+                        ACLRoleEnum.JOB_TICKET_OPERATOR.uiText(getLocale()));
+                break;
+            case POS:
+                loginDescript = localized("login-descript-role",
+                        ACLRoleEnum.WEB_CASHIER.uiText(getLocale()));
+                break;
+            default:
+                loginDescript = localized("login-descript-user");
+                break;
+            }
         }
 
-        add(new Label("login-descript", loginDescript));
+        helper.encloseLabel("login-descript", loginDescript,
+                loginDescript != null);
 
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();

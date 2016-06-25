@@ -2530,6 +2530,11 @@
 					return false;
 				});
 
+				$('#button-about-org').click(function() {
+					_view.showPageAsync('#page-info', 'AppAbout');
+					return false;
+				});
+
 				$('#button-mini-upload').click(function() {
 					/*
 					 * This page is a fixed part of WebAppUserPage.html

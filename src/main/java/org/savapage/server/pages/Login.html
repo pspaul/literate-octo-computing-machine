@@ -35,10 +35,13 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 
 <div class="ui-content" id="page-login-content">
 
-	<h3 class="sp-login-dialog" wicket:id="title" />
-	<h3 class="sp-login-dialog-assoc" wicket:id="title-assoc" />
+	<label wicket:id="login-inject" />
 
-	<div class="sp-login-dialog" wicket:id="login-descript" />
+	<wicket:enclosure child="login-descript">
+		<h3 class="sp-login-dialog" wicket:id="title" />
+		<h3 class="sp-login-dialog-assoc" wicket:id="title-assoc" />
+		<div class="sp-login-dialog" wicket:id="login-descript" />
+	</wicket:enclosure>
 
 	<ul data-role="listview" data-inset="true">
 		<li>
@@ -73,8 +76,8 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 						<wicket:message key="button-ok" />
 					</button>
 					<a href="#" id="sp-btn-login-card-assoc-cancel"
-						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-						<wicket:message key="button-cancel" />
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+							key="button-cancel" />
 					</a>
 				</div>
 			</div>
@@ -222,8 +225,7 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 		<a href="#" id="button-app-about" data-dialog="true"
 			class="ui-mini ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
 			<span class="sp-txt-info"><wicket:message key="button-about" /></span>
-		</a>
-		<a href="#" id="button-app-language" data-dialog="true"
+		</a> <a href="#" id="button-app-language" data-dialog="true"
 			class="ui-mini ui-btn ui-btn-inline ui-btn-icon-left ui-icon-gear">
 			<span class="sp-txt-info"><wicket:message key="button-lang" /></span>
 		</a>

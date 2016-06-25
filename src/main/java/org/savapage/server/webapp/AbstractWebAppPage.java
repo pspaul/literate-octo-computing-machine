@@ -102,9 +102,12 @@ public abstract class AbstractWebAppPage extends AbstractPage
      */
     protected enum JavaScriptLibrary {
         /** */
-        COMETD, /** */
-        JQPLOT, /** */
-        MOBIPICK, /** */
+        COMETD,
+        /** */
+        JQPLOT,
+        /** */
+        MOBIPICK,
+        /** */
         SPARKLINE
     }
 
@@ -425,7 +428,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
         }
 
         final StringBuilder key = new StringBuilder();
-        key.append("webapp.theme.").append(webAppType.toString().toLowerCase());
+        key.append(Key.WEBAPP_THEME_PFX)
+                .append(webAppType.toString().toLowerCase());
         return getCssCustomFile(key.toString());
     }
 
@@ -461,7 +465,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
         }
 
         final StringBuilder key = new StringBuilder();
-        key.append("webapp.custom.")
+        key.append(Key.WEBAPP_CUSTOM_PFX)
                 .append(webAppType.toString().toLowerCase());
         return getCssCustomFile(key.toString());
     }
