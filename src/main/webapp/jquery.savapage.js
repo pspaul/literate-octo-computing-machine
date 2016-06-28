@@ -45,6 +45,19 @@
 		//
 		;
 
+		/**
+		 * Common initializing actions for all Web App types.
+		 */
+		_ns.commonWebAppInit = function() {
+			/*
+			 * JQM dialogs that are pre-loaded are initially made invisible with
+			 * attribute style="display: none;". This is done inhibit display
+			 * when JavaScript is not supported or disabled.
+			 * We remove the attribute here. Mantis #701.
+			 */
+			$('.sp-initial-hidden').attr('style', '');
+		};
+
 		/*
 		 * Indicates if the WebApp was restarted by a WebApp action
 		 * (an not by a browser action like F5, close browser tab,
@@ -428,7 +441,7 @@
 			this.getUrl4Pdf = function(ranges, removeGraphics, ecoprint, grayscale, jobIndex) {
 				// number of milliseconds since 1970/01/01
 				var d = new Date();
-				return '/api?webAppType=' + _ns.WEBAPP_TYPE + '&request=pdf&user=' + _user.id + '&jobIndex=' + jobIndex + '&ranges=' + ranges + '&removeGraphics=' + removeGraphics + '&ecoprint=' + ecoprint  + '&grayscale=' + grayscale + '&unique=' + d.getTime().toString();
+				return '/api?webAppType=' + _ns.WEBAPP_TYPE + '&request=pdf&user=' + _user.id + '&jobIndex=' + jobIndex + '&ranges=' + ranges + '&removeGraphics=' + removeGraphics + '&ecoprint=' + ecoprint + '&grayscale=' + grayscale + '&unique=' + d.getTime().toString();
 			};
 
 			this.getUrl4PdfHoldJob = function(fileName, isJobTicket) {
@@ -2346,7 +2359,7 @@
 				sel.html(html);
 				sel.enhanceWithin().popup("open");
 			};
-						
+
 			this.msgDialogBox = function(txt, cssClass) {
 				var sel = _view.activePage().find('.sp-msg-popup'), html;
 
@@ -2354,7 +2367,7 @@
 				html += '<p class="sp-txt-wrap ' + cssClass + '">' + txt + '</p>';
 
 				sel.html(html);
-				sel.enhanceWithin().popup("open");				
+				sel.enhanceWithin().popup("open");
 			};
 
 			/**

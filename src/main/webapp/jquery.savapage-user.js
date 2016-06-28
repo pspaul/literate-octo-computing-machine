@@ -5947,6 +5947,8 @@
 			, _cometd, _userEvent, _deviceEvent, _proxyprintEvent, _ctrl
 			//
 			;
+			
+			_ns.commonWebAppInit();
 
 			_view.pages = {
 				language : new _ns.PageLanguage(_i18n, _view, _model),

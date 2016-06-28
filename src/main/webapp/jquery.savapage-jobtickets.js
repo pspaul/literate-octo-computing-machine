@@ -417,6 +417,8 @@
 			//
 			;
 
+			_ns.commonWebAppInit();
+
 			_view.pages = {
 				language : new _ns.PageLanguage(_i18n, _view, _model),
 				login : new _ns.PageLogin(_i18n, _view, _api),

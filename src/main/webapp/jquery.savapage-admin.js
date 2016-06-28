@@ -1787,7 +1787,7 @@
 			//
 			, _cometd, _ctrl;
 
-			// convenience for panels
+			_ns.commonWebAppInit();
 
 			_view.pages = {
 				language : new _ns.PageLanguage(_i18n, _view, _model),
@@ -1813,7 +1813,7 @@
 
 			_cometd = new _ns.Cometd();
 			_ctrl = new _ns.Controller(_i18n, _model, _view, _api, _cometd);
-
+			
 			/**
 			 *
 			 */

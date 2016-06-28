@@ -102,7 +102,9 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 	<div data-role="dialog" data-theme="a" id="page-credit-transfer" />
 	<div data-role="dialog" data-theme="a" id="page-info" />
 
-	<div data-role="dialog" data-theme="a" id="page-outbox">
+	<div data-role="dialog" data-theme="a" id="page-outbox"
+		style="display: none;" class="sp-initial-hidden">
+
 		<div data-role="header" data-theme="b">
 			<h1>
 				<wicket:message key="outbox-title" />
@@ -134,11 +136,13 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 			class="sp-msg-popup ui-content" />
 	</div>
 
-	<div data-role="dialog" data-theme="a" id="page-dashboard">
+	<div data-role="dialog" data-theme="a" id="page-dashboard"
+		style="display: none;" class="sp-initial-hidden">
 		<wicket:fragment wicket:id="page-dashboard-panel"></wicket:fragment>
 	</div>
 
-	<div data-role="dialog" data-theme="a" id="page-money-transfer">
+	<div data-role="dialog" data-theme="a" id="page-money-transfer"
+		style="display: none;" class="sp-initial-hidden">
 
 		<div data-role="header" data-theme="b">
 			<h1>
@@ -162,7 +166,8 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 	</div>
 
 
-	<div data-role="dialog" data-theme="a" id="page-bitcoin-transfer">
+	<div data-role="dialog" data-theme="a" id="page-bitcoin-transfer"
+		style="display: none;" class="sp-initial-hidden">
 
 		<div data-role="header" data-theme="b">
 			<h1>
@@ -186,7 +191,8 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 	</div>
 
 
-	<div data-role="dialog" data-theme="a" id="page-user-internet-printer">
+	<div data-role="dialog" data-theme="a" id="page-user-internet-printer"
+		style="display: none;" class="sp-initial-hidden">
 
 		<div data-role="header" data-theme="b">
 			<h1>
@@ -232,7 +238,8 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
     handler to work. It does NOT work on injected mobile pages. 
      ================================================================== -->
 	</wicket:remove>
-	<div data-role="dialog" data-theme="a" id="page-file-upload">
+	<div data-role="dialog" data-theme="a" id="page-file-upload"
+		style="display: none;" class="sp-initial-hidden">
 
 		<div data-role="header" data-theme="b">
 			<h1>
