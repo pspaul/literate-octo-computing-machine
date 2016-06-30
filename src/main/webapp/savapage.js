@@ -56,7 +56,7 @@ String.prototype.vformat = function() {"use strict";
 /**
  *
  */
-( function(window, document, _ns) {"use strict";
+( function(window, document, navigator, _ns) {"use strict";
 
 		/*
 		 *  WebApp URL parameters.
@@ -330,4 +330,4 @@ String.prototype.vformat = function() {"use strict";
 		_ns.Base = function() {
 		};
 
-	}(this, this.document, this.org.savapage));
+	}(this, this.document, this.navigator, this.org.savapage));

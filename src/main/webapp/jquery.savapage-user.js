@@ -1827,9 +1827,13 @@
 			//
 			, _moveLeft, _moveRight, _moveToBegin, _moveToEnd, _moveJobs
 			//
-			, _showArrange, _showCutPageRanges, _getCutPageRanges
+			, _showArrange, _getPageRangesFormatted
 			//
-			, _getJobRanges, _getFirstJob, _showArrButtons
+			, _showCutPageRanges, _getCutPageRanges
+			//
+			, _showSelectPageRanges, _getSelectPageRanges
+			//
+			, _getFirstJob, _showArrButtons
 			//
 			, _onThumbnailTap, _onThumbnailTapHold, _onPageInfoTap
 			// mapping page URLs to jQuery <img> selectors
@@ -2172,7 +2176,9 @@
 			_showArrange = function(bShow) {
 				$('#page-main-thumbnail-images div').removeClass('sp-thumbnail-selected').removeClass('sp-thumbnail-cut');
 				_model.myCutPages = {};
+				_model.mySelectPages = {};
 				_showCutPageRanges();
+				_showSelectPageRanges();
 				_showArrButtons(false);
 
 				_view.visible($('.main_action_arrange'), bShow);
@@ -2181,31 +2187,6 @@
 				_isEditMode = bShow;
 			};
 
-			/*
-			 * Calculates the formatted real page range from thumbnail pages with
-			 * a
-			 * certain CSS class. The format is: "n,n,...".
-			 *
-			 * @param {string} cssClass The CSS class. @returns {string} The
-			 * formatted page range.
-			 */
-			_getJobRanges = function(cssClass) {
-				var ranges = null, nOffset = 0, iOffset = 0
-				//
-				, tn = $('#page-main-thumbnail-images div');
-
-				$.each($('.' + cssClass), function(key, obj) {
-					if (ranges === null) {
-						ranges = '';
-						iOffset = tn.index(obj);
-						nOffset = _model.getPageNumber(iOffset);
-					} else {
-						ranges += ",";
-					}
-					ranges += nOffset + (tn.index(obj) - iOffset);
-				});
-				return ranges;
-			};
 			/*
 			 *
 			 */
@@ -2248,12 +2229,43 @@
 					$('#button-mini-cut').hide();
 				}
 			};
+
+			/**
+			 *
+			 */
+			_showSelectPageRanges = function() {
+				if (_util.countProp(_model.mySelectPages) > 0) {
+					$('#main-page-range-select').html(_getSelectPageRanges());
+					$('#button-mini-select').show();
+				} else {
+					$('#button-mini-select').hide();
+				}
+			};
+
 			/**
 			 * Creates a string with page range format from the cut pages.
 			 *
 			 * Example: '3-4,7,9-11'
 			 */
 			_getCutPageRanges = function() {
+				return _getPageRangesFormatted(_model.myCutPages);
+			};
+
+			/**
+			 * Creates a string with page range format from the selected pages.
+			 *
+			 * Example: '3-4,7,9-11'
+			 */
+			_getSelectPageRanges = function() {
+				return _getPageRangesFormatted(_model.mySelectPages);
+			};
+
+			/**
+			 * Creates a string with page range format from pages array.
+			 *
+			 * Example: '3-4,7,9-11'
+			 */
+			_getPageRangesFormatted = function(myPages) {
 				var ranges = '', pageStart, pageEnd, pagePrv
 				//
 				, page
@@ -2268,9 +2280,9 @@
 					}
 				};
 
-				for (page in _model.myCutPages) {
+				for (page in myPages) {
 
-					if (_model.myCutPages.hasOwnProperty(page)) {
+					if (myPages.hasOwnProperty(page)) {
 						if (pagePrv) {
 							if (parseInt(pagePrv, 10) + 1 === parseInt(page, 10)) {
 								pageEnd = page;
@@ -2336,20 +2348,29 @@
 				}
 
 				/*
-				 * Set the CSS class for cut thumbnails.
+				 * Set the CSS class for cut/selected thumbnails.
 				 */
 				tn = $('#page-main-thumbnail-images div');
 
 				$.each(tn, function(key, obj) {
 					var n = _model.getPageNumber(tn.index($(this)));
+
 					if (_model.myCutPages[n] === true) {
 						$(this).addClass('sp-thumbnail-cut');
 					} else {
 						$(this).removeClass('sp-thumbnail-cut');
 					}
+
+					if (_model.mySelectPages[n] === true) {
+						$(this).addClass('sp-thumbnail-selected');
+					} else {
+						$(this).removeClass('sp-thumbnail-selected');
+					}
+
 				});
 
 				_showCutPageRanges();
+				_showSelectPageRanges();
 			};
 
 			/*
@@ -2448,13 +2469,15 @@
 			 */
 			_onThumbnailTap = function(thumbnail) {
 
-				var tn
+				var tn, nPage
 				//
 				, iImage = $('#page-main-thumbnail-images img').index(thumbnail);
 
 				if (iImage < 0) {
 					return;
 				}
+
+				nPage = _model.getPageNumber(iImage);
 
 				$('#page-main-thumbnail-images img').removeClass('main_selected');
 
@@ -2463,15 +2486,23 @@
 					 * Image representing a single page
 					 */
 					if (_isEditMode) {
+
 						tn = thumbnail.parent();
+
 						if (tn.hasClass('sp-thumbnail-cut')) {
 
 							tn.removeClass('sp-thumbnail-cut');
-							delete _model.myCutPages[_model.getPageNumber(iImage)];
+							delete _model.myCutPages[nPage];
 							_showCutPageRanges();
 
 						} else {
 							tn.toggleClass('sp-thumbnail-selected');
+							if (tn.hasClass('sp-thumbnail-selected')) {
+								_model.mySelectPages[nPage] = true;
+							} else {
+								delete _model.mySelectPages[nPage];
+							}
+							_showSelectPageRanges();
 						}
 						_showArrButtons($('.sp-thumbnail-selected').length > 0);
 					} else {
@@ -2482,7 +2513,7 @@
 					/*
 					 * Image representing multiple pages
 					 */
-					_this.onExpandPage(_model.getPageNumber(iImage));
+					_this.onExpandPage(nPage);
 				}
 			};
 			/**
@@ -2769,7 +2800,9 @@
 				$('#main-arr-undo').click(function() {
 					$('#page-main-thumbnail-images div').removeClass('sp-thumbnail-selected').removeClass('sp-thumbnail-cut');
 					_model.myCutPages = {};
+					_model.mySelectPages = {};
 					_showCutPageRanges();
+					_showSelectPageRanges();
 					_showArrButtons(false);
 					return false;
 				});
@@ -2778,27 +2811,23 @@
 				 *
 				 */
 				$('#main-arr-cut').click(function() {
+					var page;
+					// var tn = $('#page-main-thumbnail-images div');
 
 					$('.sp-thumbnail-selected').addClass('sp-thumbnail-cut').removeClass('sp-thumbnail-selected');
 
-					var tn = $('#page-main-thumbnail-images div');
-
-					/*
-					 * Update myCutPages by traverse
-					 * each thumbnail
-					 */
-					$.each(tn, function(key, obj) {
-						var n = _model.getPageNumber(tn.index($(this)));
-						if ($(this).hasClass('sp-thumbnail-cut')) {
-							_model.myCutPages[n] = true;
-						} else {
-							if (_model.myCutPages[n]) {
-								delete _model.myCutPages[n];
-							}
+					for (page in _model.mySelectPages) {
+						if (_model.mySelectPages.hasOwnProperty(page)) {
+							_model.myCutPages[page] = true;
 						}
-					});
+					}
+					_model.mySelectPages = {};
+
 					_showCutPageRanges();
+					_showSelectPageRanges();
+
 					_showArrButtons(false);
+
 					return false;
 				});
 
@@ -2813,10 +2842,9 @@
 				});
 
 				$('#main-arr-delete').click(function() {
-					// _mousedownTarget.removeClass('main_selected');
 					$('#page-main-thumbnail-images img').removeClass('main_selected');
-					var ranges = _getJobRanges('sp-thumbnail-selected');
-					if (ranges !== null) {
+					var ranges = _getSelectPageRanges();
+					if (ranges.length > 0) {
 						_this.onPageDelete(ranges);
 						_showArrButtons(false);
 					}
@@ -3548,6 +3576,11 @@
 			this.myCutPages = {};
 
 			/*
+			 *
+			 */
+			this.mySelectPages = {};
+
+			/*
 			 * this.user = { alias : null, id : null, admin : null, role : null,
 			 * mail : null, mailDefault : null, loggedIn : false };
 			 */
@@ -3912,6 +3945,7 @@
 				this.myTotPages = 0;
 				this.myJobPages = [];
 				this.myCutPages = {};
+				this.mySelectPages = {};
 				this.myPrinter = null;
 				this.propPdf = this.propPdfDefault;
 				this.refreshUniqueImgUrlValue();
@@ -4606,7 +4640,7 @@
 
 				var options, jSel = $(sel);
 
-				if (jSel.length == 0) {
+				if (jSel.length === 0) {
 					return;
 				}
 
@@ -5947,7 +5981,7 @@
 			, _cometd, _userEvent, _deviceEvent, _proxyprintEvent, _ctrl
 			//
 			;
-			
+
 			_ns.commonWebAppInit();
 
 			_view.pages = {
