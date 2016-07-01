@@ -191,6 +191,11 @@ public class Main extends AbstractUserPage {
                 "button-mini-about", localized("button-about"));
 
         //
+        this.add(MarkupHelper.createEncloseLabel("main-arr-action-pdf",
+                localized("button-pdf"),
+                buttonPrivileged.contains(NavButtonEnum.PDF)));
+
+        //
         final String userId;
         final String userName;
 

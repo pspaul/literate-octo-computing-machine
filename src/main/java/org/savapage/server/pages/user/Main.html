@@ -81,9 +81,9 @@
 	border-radius: 0 !important;
 }
 
-.ui-icon-main-arr-select-all:after {
-	background: url(/glyfx/copy-selected.png) 50% 50% no-repeat;
-	background-size: 25px 25px;
+.ui-icon-main-arr-action-popup:after {
+	background: url(/glyphicons/glyphicons_187_more.png) 50% 50% no-repeat;
+	background-size: 22px 7px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
 }
@@ -288,7 +288,7 @@
 								key="button-paste-after" /></span>
 					</button>
 				</li>
-				<li>
+				<li class="main_actions main_arr_edit">
 					<button id="main-arr-delete"
 						class="ui-btn ui-btn-icon-top ui-icon-main-clear">
 						<span class="sp-nav-button-txt"><wicket:message
@@ -297,12 +297,13 @@
 				</li>
 			</ul>
 			<ul>
-				<li class="main_actions">
-					<button id="main-arr-select-all"
-						class="ui-btn ui-btn-icon-top ui-icon-main-arr-select-all">
+				<li class="main_actions main_arr_edit">
+
+					<a href="#sp-popup-arr-action" data-rel="popup"
+						class="ui-btn ui-btn-icon-top ui-icon-main-arr-action-popup">
 						<span class="sp-nav-button-txt"><wicket:message
-								key="button-select-all" /></span>
-					</button>
+								key="button-more-actions" /></span>
+					</a>
 				</li>
 				<li class="main_actions main_arr_edit">
 					<button id="main-arr-unselect-all"
@@ -449,6 +450,32 @@ Welcome Back POPUP with Refresh button.
 	<button id="sp-popup-wakeup-refresh" class="ui-btn ui-btn-inline">
 		<wicket:message key="button-continue" />
 	</button>
+</div>
+
+<wicket:remove>
+	<!-- 
+POPUP with extra sort mode actions. 
+-->
+</wicket:remove>
+<div data-role="popup" data-arrow="false" id="sp-popup-arr-action">
+
+	<ul data-role="listview" data-inset="true" data-type="vertical"
+		data-icon="false">
+
+		<wicket:enclosure child="main-arr-action-pdf">
+			<li>
+				<a href="#" id="main-arr-action-pdf"
+					class="ui-btn ui-btn-icon-left ui-icon-main-pdf-properties">&nbsp;<span
+					wicket:id="main-arr-action-pdf">[PDF]</span></a>
+			</li>
+		</wicket:enclosure>
+		<li>
+			<a href="#" id="main-arr-action-print"
+				class="ui-btn ui-btn-icon-left ui-icon-main-print">&nbsp;<wicket:message
+					key="button-print" />
+			</a>
+		</li>
+	</ul>
 </div>
 
 <wicket:remove>
