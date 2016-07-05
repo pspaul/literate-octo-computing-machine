@@ -1830,7 +1830,7 @@
 			//
 			, _showArrange, _showCutPageRanges, _showSelectPageRanges
 			//
-			, _getFirstJob, _showArrButtons
+			, _getFirstJob, _showArrButtons, _showArrButtonsAsync
 			//
 			, _onThumbnailTap, _onThumbnailTapHold, _onPageInfoTap
 			// mapping page URLs to jQuery <img> selectors
@@ -2139,6 +2139,15 @@
 						'left' : (widthViewport - $('#page-main-thumbnail-images').outerWidth() - $('#thumbnail_nav_r').outerWidth() + 'px')
 					});
 				}
+			};
+
+			/*
+			 *
+			 */
+			_showArrButtonsAsync = function() {
+				window.setTimeout(function() {
+					_showArrButtons();
+				}, 10);
 			};
 
 			/*
@@ -2586,10 +2595,14 @@
 				 */
 				$('#sp-popup-job-apply').click(function() {
 					_this.onPopupJobApply();
+					_showArrButtonsAsync();
 				});
+
 				$('#sp-popup-job-delete').click(function() {
 					_this.onPopupJobDelete();
+					_showArrButtonsAsync();
 				});
+
 				/*
 				 *
 				 */

@@ -292,7 +292,8 @@ public class DocLogItemPanel extends Panel {
 
             } else {
 
-                mapVisible.put("printoutMode", obj.getPrintMode().getUiText());
+                mapVisible.put("printoutMode",
+                        obj.getPrintMode().uiText(getLocale()));
 
                 cssClass = MarkupHelper.CSS_PRINT_OUT_PRINTER;
 
