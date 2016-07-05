@@ -1830,7 +1830,7 @@
 			//
 			, _showArrange, _showCutPageRanges, _showSelectPageRanges
 			//
-			, _getFirstJob, _showArrButtons, _showArrButtonsAsync
+			, _getFirstJob, _showArrButtons
 			//
 			, _onThumbnailTap, _onThumbnailTapHold, _onPageInfoTap
 			// mapping page URLs to jQuery <img> selectors
@@ -2144,15 +2144,6 @@
 			/*
 			 *
 			 */
-			_showArrButtonsAsync = function() {
-				window.setTimeout(function() {
-					_showArrButtons();
-				}, 10);
-			};
-
-			/*
-			 *
-			 */
 			_showArrButtons = function() {
 				var selEdit = $('.main_arr_edit')
 				//
@@ -2323,6 +2314,7 @@
 
 				_showCutPageRanges();
 				_showSelectPageRanges();
+				_showArrButtons();
 			};
 
 			/*
@@ -2330,7 +2322,7 @@
 			 */
 			_onPageInfoTap = function(sel) {
 
-				var iImg = -1, page, job, sel2
+				var iImg = -1, page, job, sel2, nDel
 				//
 				, cssCls = 'sp-thumbnail-subscript'
 				//
@@ -2371,12 +2363,15 @@
 
 					page = _model.myJobPages[iImg];
 					job = _model.myJobs[page.job];
+					nDel = job.pages - job.pagesSelected;
 
 					_model.iPopUpJob = page.job;
 
 					$('#popup-job-info-name').html(job.title);
-					$('#popup-job-info-pages-selected').html(job.pagesSelected);
 					$('#popup-job-info-pages').html(job.pages);
+					
+					$('#popup-job-info-pages-deleted').find('span').html(nDel);
+					_view.visible($('#popup-job-info-pages-deleted'), nDel > 0);					
 
 					$('#popup-job-info-media').html(job.media);
 					$('#popup-job-info-drm').html(job.drm ? '&nbsp;DRM' : '');
@@ -2595,12 +2590,10 @@
 				 */
 				$('#sp-popup-job-apply').click(function() {
 					_this.onPopupJobApply();
-					_showArrButtonsAsync();
 				});
 
 				$('#sp-popup-job-delete').click(function() {
 					_this.onPopupJobDelete();
-					_showArrButtonsAsync();
 				});
 
 				/*

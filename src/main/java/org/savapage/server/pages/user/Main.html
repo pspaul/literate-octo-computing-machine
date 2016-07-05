@@ -484,50 +484,68 @@ POPUP with Page/Job info
 -->
 </wicket:remove>
 <div data-role="popup" id="sp-popup-job-info" data-theme="a"
-	data-arrow="true" class="ui-content">
+	data-arrow="true" class="ui-content" style="max-width: 400px;">
 
-	<h3 class="ui-title" id="popup-job-info-name"></h3>
+	<h3 class="ui-title">
+		<wicket:message key="header-document" />
+	</h3>
 
-	<fieldset data-role="controlgroup" data-type="vertical">
+	<h4 class="sp-txt-wrap sp-txt-info" id="popup-job-info-name" />
 
-		<legend>
-			<span id="popup-job-info-pages-selected" />/<span
-				id="popup-job-info-pages" />
-			<wicket:message key="prompt-job-pages" />
-			(<span id="popup-job-info-media" />) <span
-				class="sp-msg-popup-warn sp-txt-wrap" id="popup-job-info-drm" />
-		</legend>
+	<ul data-role="listview" data-inset="true">
+		<li>
+			<legend>
+				<wicket:message key="prompt-job-pages" />
+				<span id="popup-job-info-pages" /> <span class="sp-txt-warn"
+					id="popup-job-info-pages-deleted">&bull; <span /> <wicket:message
+						key="prompt-deleted" />
+				</span> &bull; <span id="popup-job-info-media" /> <span
+					class="sp-msg-popup-warn sp-txt-wrap" id="popup-job-info-drm" />
+			</legend>
+		</li>
+		<li>
+			<fieldset data-role="controlgroup" data-type="vertical">
 
-		<button id="sp-popup-job-expiry"
-			class="ui-icon-mini-expired-clock ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-mini ui-btn-inline"
-			style="border: none; box-shadow: none; margin-bottom: 10px; opacity: 0.7; font-weight: normal;">
-			<span />
-		</button>
+				<button id="sp-popup-job-expiry"
+					class="ui-icon-mini-expired-clock ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-mini ui-btn-inline"
+					style="border: none; box-shadow: none; margin-bottom: 10px; opacity: 0.7; font-weight: normal;">
+					<span />
+				</button>
 
-		<input type="checkbox" id="sp-popup-job-undelete" value="1" />
-		<label for="sp-popup-job-undelete">
-			<wicket:message key="prompt-job-undelete" />
-		</label>
+				<input type="checkbox" id="sp-popup-job-undelete" value="1" />
+				<label for="sp-popup-job-undelete">
+					<wicket:message key="prompt-job-undelete" />
+				</label>
 
-		<input type="checkbox" id="sp-popup-job-rotate" value="1" />
-		<label for="sp-popup-job-rotate">
-			<wicket:message key="prompt-job-rotate" />
-		</label>
+				<input type="checkbox" id="sp-popup-job-rotate" value="1" />
+				<label for="sp-popup-job-rotate">
+					<wicket:message key="prompt-job-rotate" />
+				</label>
+			</fieldset>
 
-	</fieldset>
-
-	<button id="sp-popup-job-apply"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-		<wicket:message key="button-apply" />
-	</button>
-	<button id="sp-popup-job-delete"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
-		<wicket:message key="button-clear" />
-	</button>
-
-	<a href="#" data-rel="back"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"><wicket:message
-			key="button-close" /></a>
+			<div>
+				<button id="sp-popup-job-apply"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+					<wicket:message key="button-apply" />
+				</button>
+				<a href="#" data-rel="back"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"><wicket:message
+						key="button-close" /></a>
+			</div>
+		</li>
+	</ul>
+	<ul data-role="listview" data-inset="true">
+		<li class="ui-mini">
+			<div class="sp-txt-wrap">
+				<wicket:message key="prompt-delete-document" />
+			</div>
+			<br />
+			<button id="sp-popup-job-delete"
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete ui-mini">
+				<wicket:message key="button-delete-document" />
+			</button>
+		</li>
+	</ul>
 	<!--  -->
 	<a href="#" data-rel="back"
 		class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" />
