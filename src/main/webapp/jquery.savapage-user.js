@@ -2369,9 +2369,9 @@
 
 					$('#popup-job-info-name').html(job.title);
 					$('#popup-job-info-pages').html(job.pages);
-					
+
 					$('#popup-job-info-pages-deleted').find('span').html(nDel);
-					_view.visible($('#popup-job-info-pages-deleted'), nDel > 0);					
+					_view.visible($('#popup-job-info-pages-deleted'), nDel > 0);
 
 					$('#popup-job-info-media').html(job.media);
 					$('#popup-job-info-drm').html(job.drm ? '&nbsp;DRM' : '');
@@ -2482,8 +2482,9 @@
 
 				/*
 				 * Hide text in buttons, show text as title instead, when desktop browser.
+				 * See: OnOffEnum (Java)
 				 */
-				if (!_ns.Utils.isMobileOrTablet()) {
+				if (_model.showNavButtonTxt === 'OFF' || (_model.showNavButtonTxt === 'AUTO' && !_ns.Utils.isMobileOrTablet())) {
 					$(".sp-nav-button-txt").hide();
 					$.each($(".sp-nav-button-txt"), function(key, obj) {
 						$(this).hide();
@@ -4382,6 +4383,9 @@
 				_model.authCardIp = res.authCardIp;
 				_model.cometdDeviceToken = res.cometdToken;
 				_model.maxIdleSeconds = res.maxIdleSeconds;
+
+				// OnOffEnum
+				_model.showNavButtonTxt = res.showNavButtonTxt;
 
 				_model.MY_THUMBNAIL_WIDTH = res['thumbnail-width'];
 				_model.propPdfDefault = res['pdf-prop-default'];

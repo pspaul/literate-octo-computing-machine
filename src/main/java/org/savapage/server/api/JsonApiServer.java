@@ -76,6 +76,7 @@ import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.OnOffEnum;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.AccountTrxDao;
 import org.savapage.core.dao.DaoContext;
@@ -4489,6 +4490,10 @@ public final class JsonApiServer extends AbstractPage {
 
         //
         userData.put("systime", Long.valueOf(System.currentTimeMillis()));
+
+        //
+        userData.put("showNavButtonTxt", cm.getConfigEnum(OnOffEnum.class,
+                Key.WEBAPP_USER_MAIN_NAV_BUTTON_TEXT));
 
         return userData;
     }
