@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.ajax.markup.html.form.upload.UploadProgressBar;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -65,13 +66,14 @@ import org.savapage.core.print.server.DocContentPrintReq;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
+import org.savapage.core.util.NumberUtil;
 import org.savapage.server.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public final class WebAppUser extends AbstractWebAppPage {
@@ -129,7 +131,7 @@ public final class WebAppUser extends AbstractWebAppPage {
     protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
         renderJs(response, String.format("%s%s",
-                "jquery.savapage-page-print-delegation.js", nocache));
+                JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION, nocache));
         renderJs(response,
                 String.format("%s%s", getSpecializedJsFileName(), nocache));
     }
@@ -176,7 +178,7 @@ public final class WebAppUser extends AbstractWebAppPage {
                 /*
                  * display uploaded info
                  */
-                info(getLocalizer().getString("msg-file-upload-no-file", this));
+                warn(getLocalizer().getString("msg-file-upload-no-file", this));
                 return;
             }
 
@@ -190,12 +192,26 @@ public final class WebAppUser extends AbstractWebAppPage {
                 return;
             }
 
-            info(getLocalizer().getString("msg-file-upload-success", this));
+            final String fileSize = NumberUtil
+                    .humanReadableByteCount(uploadedFile.getSize(), true);
+
+            info(String.format("%s (%s)", uploadedFile.getClientFileName(),
+                    fileSize));
 
             try {
+
+                AdminPublisher.instance().publish(PubTopicEnum.WEBPRINT,
+                        PubLevelEnum.INFO,
+                        localized("msg-admin-file-upload",
+                                SpSession.get().getUser().getUserId(),
+                                uploadedFile.getClientFileName(), fileSize));
+
+                // Convert file to PDF.
                 handleFileUpload(originatorIp, uploadedFile);
+
                 info(getLocalizer().getString("msg-file-process-success",
                         this));
+
             } catch (Exception e) {
                 error(localized("msg-file-process-error", e.getMessage()));
             }
@@ -203,12 +219,13 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         /**
          *
+         * @param originatorIp
          * @param uploadedFile
          * @throws DocContentPrintException
          * @throws IOException
          */
         private void handleFileUpload(final String originatorIp,
-                FileUpload uploadedFile)
+                final FileUpload uploadedFile)
                 throws DocContentPrintException, IOException {
 
             final User user = SpSession.get().getUser();
@@ -218,9 +235,9 @@ public final class WebAppUser extends AbstractWebAppPage {
                     ((WebAppUser) this.getParent()).getSelectedUploadFont();
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("User [" + user.getUserId() + "] uploaded file ["
-                        + uploadedFile.getContentType() + "] ["
-                        + uploadedFile.getClientFileName() + "]");
+                LOGGER.trace(String.format("User [%s] uploaded file [%s] [%s]",
+                        user.getUserId(), uploadedFile.getContentType(),
+                        uploadedFile.getClientFileName()));
             }
 
             ServiceContext.open();
@@ -235,9 +252,10 @@ public final class WebAppUser extends AbstractWebAppPage {
                             uploadedFile.getClientFileName());
 
                     if (LOGGER.isWarnEnabled()) {
-                        LOGGER.warn("No content type found for ["
-                                + uploadedFile.getContentType() + "], using ["
-                                + contentType + "] based on file extension.");
+                        LOGGER.warn(String.format(
+                                "No content type found for [%s], "
+                                        + "using [%s] based on file extension.",
+                                uploadedFile.getContentType(), contentType));
                     }
                 }
 
@@ -394,14 +412,6 @@ public final class WebAppUser extends AbstractWebAppPage {
     private void fileUploadMarkup() {
 
         /*
-         * create a feedback panel
-         */
-        final Component feedback = new FeedbackPanel("fileUploadFeedback")
-                .setOutputMarkupPlaceholderTag(true);
-
-        add(feedback);
-
-        /*
          * Supported types.
          */
         add(new Label("file-upload-types-docs",
@@ -431,6 +441,18 @@ public final class WebAppUser extends AbstractWebAppPage {
                 DocContent.getHtmlAcceptString()));
 
         form.add(fileUploadField);
+
+        /*
+         * The progress bar.
+         */
+        form.add(new UploadProgressBar("upload-progress", form));
+
+        /*
+         * The feedback panel.
+         */
+        final Component feedback = new FeedbackPanel("fileUploadFeedback")
+                .setOutputMarkupPlaceholderTag(true);
+        form.add(feedback);
 
         /*
          *
@@ -487,13 +509,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             @Override
             protected void onSubmit(final AjaxRequestTarget target,
                     final Form<?> form) {
-
-                // info(getLocalizer().getString("msg-file-upload-busy", this));
-                LOGGER.info("Uploading file ...");
-
-                /*
-                 * ajax-update the feedback panel
-                 */
+                // ajax-update the feedback panel
                 target.add(feedback);
             }
 
@@ -501,6 +517,8 @@ public final class WebAppUser extends AbstractWebAppPage {
             protected void onError(final AjaxRequestTarget target,
                     final Form<?> form) {
                 LOGGER.error("error uploading file");
+                // ajax-update the feedback panel
+                target.add(feedback);
             }
 
         };

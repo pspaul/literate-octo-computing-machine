@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public final class WebAppAdmin extends AbstractWebAppPage {
@@ -177,7 +177,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                     /*
                      * display uploaded info
                      */
-                    info(getLocalizer()
+                    warn(getLocalizer()
                             .getString("msg-membercard-import-no-file", this));
                     return;
                 }
@@ -189,7 +189,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                     /*
                      * display uploaded info
                      */
-                    info(getLocalizer()
+                    warn(getLocalizer()
                             .getString("msg-membercard-import-no-file", this));
                     return;
                 }
@@ -242,13 +242,13 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                                 "msg-membercard-import-success", this));
 
                     } else {
-                        info(getLocalizer().getString(
+                        error(getLocalizer().getString(
                                 "msg-membercard-import-file-invalid", this));
 
                         if (LOGGER.isInfoEnabled()) {
-                            LOGGER.info(uploadedFile.getClientFileName()
-                                    + " is not a valid "
-                                    + CommunityDictEnum.MEMBER_CARD.getWord());
+                            LOGGER.info(String.format("%s is not a valid %s.",
+                                    uploadedFile.getClientFileName(),
+                                    CommunityDictEnum.MEMBER_CARD.getWord()));
                         }
                         // + " File-Size: "
                         // +
@@ -302,26 +302,24 @@ public final class WebAppAdmin extends AbstractWebAppPage {
             protected void onSubmit(final AjaxRequestTarget target,
                     final Form<?> form) {
 
-                info(getLocalizer().getString("msg-membercard-import-busy",
-                        this));
-
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Uploading "
-                            + CommunityDictEnum.MEMBER_CARD.getWord()
-                            + " file");
+                    LOGGER.info(String.format("Uploading %s file.",
+                            CommunityDictEnum.MEMBER_CARD.getWord()));
                 }
 
-                /*
-                 * ajax-update the feedback panel
-                 */
+                // ajax-update the feedback panel
                 target.add(feedback);
             }
 
             @Override
             protected void onError(final AjaxRequestTarget target,
                     final Form<?> form) {
-                LOGGER.error("error importing "
-                        + CommunityDictEnum.MEMBER_CARD.getWord());
+
+                LOGGER.error(String.format("Error importing %s",
+                        CommunityDictEnum.MEMBER_CARD.getWord()));
+
+                // ajax-update the feedback panel
+                target.add(feedback);
             }
 
         };

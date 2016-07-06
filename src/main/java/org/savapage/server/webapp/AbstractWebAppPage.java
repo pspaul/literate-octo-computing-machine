@@ -111,6 +111,14 @@ public abstract class AbstractWebAppPage extends AbstractPage
         SPARKLINE
     }
 
+    private static final String CSS_FILE_WICKET_SAVAPAGE =
+            "wicket.savapage.css";
+    private static final String CSS_FILE_JQUERY_SAVAPAGE =
+            "jquery.savapage.css";
+
+    static final String JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION =
+            "jquery.savapage-page-print-delegation.js";
+
     /**
      *
      */
@@ -537,7 +545,11 @@ public abstract class AbstractWebAppPage extends AbstractPage
                     WebApp.getWebjarsCssRef(WEBJARS_PATH_JQUERY_JQPLOT_CSS));
         }
 
-        response.render(CssHeaderItem.forUrl("jquery.savapage.css" + nocache));
+        response.render(CssHeaderItem.forUrl(
+                String.format("%s%s", CSS_FILE_WICKET_SAVAPAGE, nocache)));
+
+        response.render(CssHeaderItem.forUrl(
+                String.format("%s%s", CSS_FILE_JQUERY_SAVAPAGE, nocache)));
 
         final String specializedCssFile = getSpecializedCssFileName();
 

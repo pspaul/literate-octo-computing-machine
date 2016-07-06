@@ -713,6 +713,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * </p>
      */
     private void applyWicketApplicationSettings() {
+        getApplicationSettings().setUploadProgressUpdatesEnabled(true);
     }
 
     /**

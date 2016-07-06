@@ -271,9 +271,6 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 				</li>
 			</ul>
 
-			<div wicket:id="fileUploadFeedback" id="file-upload-feedback"
-				class="ui-body ui-body-d" />
-
 			<form wicket:id="fileUploadForm" enctype="multipart/form-data">
 				<ul data-role="listview" data-inset="true">
 					<li>
@@ -288,6 +285,11 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 						<label for="file-upload-file" />
 						<input id="file-upload-file" wicket:id="fileUpload" type="file"
 							accept="" size="50" />
+						<span wicket:id="upload-progress">[[ajax upload
+							progressbar]]</span>
+						<!--  -->
+						<span class="sp-txt-wrap" wicket:id="fileUploadFeedback"
+							id="file-upload-feedback" />
 					</li>
 				</ul>
 				<p>

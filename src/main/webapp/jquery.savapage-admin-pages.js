@@ -1254,8 +1254,15 @@
 					$('#membercard-import-feedback').show();
 					return true;
 				});
+				
+				$('#button-membercard-import-reset').on('click', null, null, function() {
+					$('#membercard-import-feedback').html('').hide();
+					return true;
+				});				
+				
 			}).on("pagebeforeshow", function(event, ui) {
 				_submitted = false;
+				
 			}).on('pagebeforehide', function(event, ui) {
 				/*
 				 * Clear and Hide content
