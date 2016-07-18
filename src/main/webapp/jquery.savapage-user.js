@@ -3556,6 +3556,8 @@
 			this.myFirstPageShowPrint = true;
 			this.myFirstPageShowPrintSettings = true;
 			this.myFirstPageShowLetterhead = true;
+			
+			this.preservePrintJobSettings = false; 
 
 			this.myInboxTitle = null;
 			this.myPrintTitle = null;
@@ -5452,6 +5454,8 @@
 			_view.pages.print.onSettings = function(printerName) {
 				var res;
 
+				_model.preservePrintJobSettings = true;
+				
 				if (_model.myPrinter.name !== printerName) {
 
 					res = _api.call({
@@ -5483,6 +5487,12 @@
 			};
 
 			_view.pages.print.onShow = function() {
+
+				if (_model.preservePrintJobSettings) {
+					_model.preservePrintJobSettings = false;
+					_refreshPrinterInd();
+					return;
+				}
 
 				if (_model.myFirstPageShowPrint) {
 					_model.setJobsMatchMediaSources(_view);
