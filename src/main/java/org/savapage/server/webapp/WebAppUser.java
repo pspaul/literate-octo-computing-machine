@@ -533,7 +533,7 @@ public final class WebAppUser extends AbstractWebAppPage {
          */
         final Label labelWrk = new Label("file-upload-reset");
         labelWrk.add(new AttributeModifier("value",
-                getLocalizer().getString("button-file-upload-clear", this)));
+                getLocalizer().getString("button-file-upload-reset", this)));
         form.add(labelWrk);
 
     }
