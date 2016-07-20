@@ -212,8 +212,9 @@ public class Main extends AbstractUserPage {
 
         if (showMiniUserDetails) {
 
-            helper.encloseLabel("mini-user-balance", "", ConfigManager
-                    .instance().isConfigValue(Key.WEBAPP_USER_FINANCIAL_SHOW));
+            helper.encloseLabel("mini-user-balance", "",
+                    ACCESS_CONTROL_SERVICE.hasUserPermission(user,
+                            ACLOidEnum.U_FINANCIAL, ACLPermissionEnum.READER));
 
             helper.addModifyLabelAttr("mini-user-details-name", userId, "title",
                     userName);

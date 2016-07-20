@@ -34,8 +34,11 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dto.AccountDisplayInfoDto;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;
@@ -58,6 +61,9 @@ import org.savapage.server.pages.StatsPageTotalPanel;
 public final class UserDashboard extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
+
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      *
@@ -98,16 +104,19 @@ public final class UserDashboard extends AbstractUserPage {
         envImpactPanel.populate(esu);
 
         /*
-         * Accounting.
+         * Financial.
          */
         final MarkupHelper helper = new MarkupHelper(this);
 
         final String keyTitleFinancial = "title-financial";
 
-        if (ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_USER_FINANCIAL_SHOW)) {
+        final Integer financialPriv = ACCESS_CONTROL_SERVICE.getUserPrivileges(
+                SpSession.get().getUser(), ACLOidEnum.U_FINANCIAL);
+
+        if (ACLPermissionEnum.READER.isPresent(financialPriv)) {
             helper.addLabel(keyTitleFinancial, localized(keyTitleFinancial));
-            showAccountingDetails(helper, user);
+            showFinancialDetails(helper, user,
+                    ACLPermissionEnum.EDITOR.isPresent(financialPriv));
         } else {
             helper.discloseLabel(keyTitleFinancial);
         }
@@ -120,9 +129,12 @@ public final class UserDashboard extends AbstractUserPage {
      *            The {@link MarkupHelper}.
      * @param user
      *            The requesting user.
+     * @param allowFinancialTrx
+     *            {@code true} when financial transactions are allowed.
      */
-    private void showAccountingDetails(final MarkupHelper helper,
-            final org.savapage.core.jpa.User user) {
+    private void showFinancialDetails(final MarkupHelper helper,
+            final org.savapage.core.jpa.User user,
+            final boolean allowFinancialTrx) {
 
         final ConfigManager cm = ConfigManager.instance();
 
@@ -164,15 +176,16 @@ public final class UserDashboard extends AbstractUserPage {
         // Redeem voucher?
         final Label labelVoucherRedeem = MarkupHelper.createEncloseLabel(
                 "button-voucher-redeem", localized("button-voucher"),
-                cm.isConfigValue(Key.FINANCIAL_USER_VOUCHERS_ENABLE));
+                allowFinancialTrx && cm
+                        .isConfigValue(Key.FINANCIAL_USER_VOUCHERS_ENABLE));
 
         add(MarkupHelper.appendLabelAttr(labelVoucherRedeem, "title",
                 localized("button-title-voucher")));
 
         // Credit transfer?
-        final boolean enableTransferCredit =
-                dto.getStatus() == AccountDisplayInfoDto.Status.DEBIT
-                        && cm.isConfigValue(Key.FINANCIAL_USER_TRANSFER_ENABLE);
+        final boolean enableTransferCredit = allowFinancialTrx
+                && dto.getStatus() == AccountDisplayInfoDto.Status.DEBIT
+                && cm.isConfigValue(Key.FINANCIAL_USER_TRANSFER_ENABLE);
 
         final Label labelTransferCredit = MarkupHelper.createEncloseLabel(
                 "button-transfer-credit", localized("button-transfer-to-user"),
@@ -195,9 +208,9 @@ public final class UserDashboard extends AbstractUserPage {
          */
         final BitcoinGateway bitcoinPlugin = pluginMgr.getBitcoinGateway();
 
-        final boolean isBitcoinGateway =
-                bitcoinPlugin != null && bitcoinPlugin.isOnline()
-                        && bitcoinPlugin.isCurrencySupported(appCurrencyCode);
+        final boolean isBitcoinGateway = allowFinancialTrx
+                && bitcoinPlugin != null && bitcoinPlugin.isOnline()
+                && bitcoinPlugin.isCurrencySupported(appCurrencyCode);
 
         if (isBitcoinGateway) {
 
@@ -229,7 +242,7 @@ public final class UserDashboard extends AbstractUserPage {
         try {
             externalPlugin = pluginMgr.getExternalPaymentGateway();
 
-            isExternalGateway = externalPlugin != null
+            isExternalGateway = allowFinancialTrx && externalPlugin != null
                     && externalPlugin.isOnline()
                     && externalPlugin.isCurrencySupported(appCurrencyCode);
 

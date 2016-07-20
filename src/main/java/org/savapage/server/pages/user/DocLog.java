@@ -22,8 +22,10 @@
 package org.savapage.server.pages.user;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -35,6 +37,9 @@ public class DocLog extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
 
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
     /**
      *
      */
@@ -45,8 +50,8 @@ public class DocLog extends AbstractUserPage {
         final MarkupHelper helper = new MarkupHelper(this);
         final String wicketId = "button-transactions";
 
-        if (ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_USER_FINANCIAL_SHOW)) {
+        if (ACCESS_CONTROL_SERVICE.hasUserAccess(SpSession.get().getUser(),
+                ACLOidEnum.U_FINANCIAL)) {
             helper.addLabel(wicketId, localized("button-transactions"));
         } else {
             helper.discloseLabel(wicketId);
