@@ -2251,10 +2251,14 @@
 					_panel.Options.onGcpRefresh(_panel.Options);
 				});
 
+				$(this).on('change', "input:checkbox[id='webapp.user.proxy-print.clear-inbox.enable']", null, function(e) {
+					_panel.Options.onProxyPrintClearInboxEnabled($(this).is(':checked'));
+				});
+
 				$(this).on('change', "input:checkbox[id='proxy-print.non-secure']", null, function(e) {
 					_panel.Options.onProxyPrintEnabled($(this).is(':checked'));
 				});
-
+								
 				$(this).on('change', "#group-user-auth-mode-local input:checkbox", null, function(e) {
 					_panel.Options.onAuthModeLocalEnabled();
 				});

@@ -166,7 +166,10 @@
 				<label for="print-collate">
 					<table>
 						<tr>
-							<td><wicket:message key="prompt-collate" />&nbsp;</td>
+							<td>
+								<wicket:message key="prompt-collate" />
+								&nbsp;
+							</td>
 							<td>
 								<div class="print_collate_sheet_next  print_collate_sheet_1_2">2</div>
 								<div class="print_collate_sheet_first print_collate_sheet_1_1">1</div>
@@ -180,14 +183,21 @@
 				</label>
 				<input type="checkbox" id="print-collate" value="1" checked />
 			</div>
-
-			<div data-mini="true" data-role="controlgroup">
-				<label for="delete-pages-after-print">
-					<wicket:message key="delete-pages-after-print" />
-				</label>
-				<input type="checkbox" id="delete-pages-after-print"
-					wicket:id="delete-pages-after-print" value="1" />
-			</div>
+		</li>
+		<li>
+			<wicket:enclosure child="delete-pages-after-print">
+				<div data-mini="true" data-role="controlgroup">
+					<label for="delete-pages-after-print">
+						<wicket:message key="delete-pages-after-print" />
+					</label>
+					<input type="checkbox" id="delete-pages-after-print"
+						wicket:id="delete-pages-after-print" value="1" />
+				</div>
+			</wicket:enclosure>
+			<wicket:enclosure child="delete-pages-after-print-warn">
+				<small class="sp-txt-wrap sp-txt-info"
+					wicket:id="delete-pages-after-print-warn" />
+			</wicket:enclosure>
 		</li>
 
 		<li class="sp-jobticket" data-mini="true">

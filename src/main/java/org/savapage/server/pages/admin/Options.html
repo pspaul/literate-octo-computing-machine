@@ -219,7 +219,7 @@
 					<label for="sync-delete-users" wicket:id="sync-delete-users-label" />
 					<input type="checkbox" id="sync-delete-users" value="0"
 						wicket:id="sync-delete-users" />
-						
+
 					<div>
 						<button id="user-sync-test"
 							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
@@ -270,7 +270,9 @@
 						wicket:id="users-can-change-pin" />
 				</li>
 				<li>
-					<h3>Trust</h3>
+					<h3>
+						<wicket:message key="prompt-trust" />
+					</h3>
 					<label for="" wicket:id="webapp-user-auth-trust-cliapp-auth-label" />
 					<input type="checkbox" id="" value="0"
 						wicket:id="webapp-user-auth-trust-cliapp-auth" />
@@ -976,7 +978,9 @@
 	</li>
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
-			<h3>Mail Print</h3>
+			<h3>
+				<wicket:message key="cat-mail-print" />
+			</h3>
 			<ul data-role="listview" data-inset="true">
 				<li>
 					<label for="imap-enable" wicket:id="imap-enable-label" />
@@ -1061,7 +1065,9 @@
 	</li>
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
-			<h3>Web Print</h3>
+			<h3>
+				<wicket:message key="cat-web-print" />
+			</h3>
 			<ul data-role="listview" data-inset="true">
 				<li>
 					<label for="webprint-enable" wicket:id="webprint-enable-label" />
@@ -1091,7 +1097,9 @@
 	</li>
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
-			<h3>Internet Print</h3>
+			<h3>
+				<wicket:message key="cat-internet-print" />
+			</h3>
 			<div class="sp-txt-wrap">
 				<wicket:message key="prompt-internetprint-base-uri" />
 			</div>
@@ -1108,7 +1116,9 @@
 	</li>
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
-			<h3>Proxy Print</h3>
+			<h3>
+				<wicket:message key="cat-proxy-print" />
+			</h3>
 			<ul data-role="listview" data-inset="true">
 				<li>
 					<h3>
@@ -1131,6 +1141,14 @@
 						wicket:id="proxyprint-clear-inbox-label" />
 					<input type="checkbox" id="proxyprint-clear-inbox" value="0"
 						wicket:id="proxyprint-clear-inbox" />
+
+					<div class="proxyprint-clear-inbox-scope-enabled" style="margin-left:20px;">
+						<wicket:message key="proxyprint-clear-inbox-scope" />
+						<fieldset data-role="controlgroup" data-mini="true"
+							id="proxyprint-clear-inbox-scope">
+							<wicket:fragment wicket:id="proxyprint-clear-inbox-scope" />
+						</fieldset>
+					</div>
 				</li>
 				<li>
 					<label for="proxyprint-non-secure"
@@ -1147,7 +1165,9 @@
 					</div>
 				</li>
 				<li>
-					<h3>Fast Print Mode</h3>
+					<h3>
+						<wicket:message key="cat-proxy-print-mode-fast" />
+					</h3>
 					<span class="sp-txt-wrap"><wicket:message
 							key="proxyprint-fast-expiry-mins-prompt" /></span>
 					<div class="ui-field-contain">
@@ -1157,7 +1177,9 @@
 							wicket:id="proxyprint-fast-expiry-mins" pattern="[0-9]*"
 							autocapitalize="off" />
 					</div>
-					<h3>Hold Print Mode</h3>
+					<h3>
+						<wicket:message key="cat-proxy-print-mode-hold" />
+					</h3>
 					<span class="sp-txt-wrap"><wicket:message
 							key="proxyprint-hold-expiry-mins-prompt" /></span>
 					<div class="ui-field-contain">
@@ -1167,7 +1189,9 @@
 							wicket:id="proxyprint-hold-expiry-mins" pattern="[0-9]*"
 							autocapitalize="off" />
 					</div>
-					<h3>Direct Print Mode</h3>
+					<h3>
+						<wicket:message key="cat-proxy-print-mode-direct" />
+					</h3>
 					<span class="sp-txt-wrap"><wicket:message
 							key="proxyprint-direct-expiry-secs-prompt" /></span>
 					<div class="ui-field-contain">
@@ -1180,7 +1204,9 @@
 				</li>
 
 				<li>
-					<h3>Delegated Print</h3>
+					<h3>
+						<wicket:message key="cat-delegated-print" />
+					</h3>
 					<div class="ui-mini">
 						<br />
 						<label for="proxyprint-delegate-enable"
@@ -1265,7 +1291,9 @@
 	</li>
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
-			<h3>Eco Print</h3>
+			<h3>
+				<wicket:message key="cat-eco-print" />
+			</h3>
 			<ul data-role="listview" data-inset="true">
 				<li>
 					<label for="ecoprint-enable" wicket:id="ecoprint-enable-label" />

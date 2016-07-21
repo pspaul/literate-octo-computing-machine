@@ -3324,6 +3324,9 @@
 			;
 
 			this.clearInput = function() {
+				
+				var selCbClear = $('#delete-pages-after-print');
+				
 				$('#slider-print-copies').val(1).slider("refresh");
 				$('#delegated-print-copies').val(1);
 				$('#number-print-copies').val(1);
@@ -3332,7 +3335,8 @@
 				$('#sp-jobticket-date').val('');
 				$('#sp-jobticket-hrs').val('');
 				$('#sp-jobticket-min').val('');
-				if (!$('#delete-pages-after-print')[0].disabled) {
+				
+				if (selCbClear[0] && !$('#delete-pages-after-print')[0].disabled) {
 					_view.checkCb("#delete-pages-after-print", false);
 				}
 			};

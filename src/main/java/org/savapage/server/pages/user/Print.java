@@ -21,9 +21,9 @@
  */
 package org.savapage.server.pages.user;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
@@ -31,6 +31,7 @@ import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.QuickSearchPanel;
@@ -63,14 +64,38 @@ public class Print extends AbstractUserPage {
         helper.addModifyLabelAttr("slider-print-copies", "max",
                 cm.getConfigValue(Key.WEBAPP_USER_PROXY_PRINT_MAX_COPIES));
 
-        final Label label = new Label("delete-pages-after-print");
+        final String idDeletePages = "delete-pages-after-print";
+        final String idDeletePagesWarn = "delete-pages-after-print-warn";
 
         if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
-            label.add(new AttributeModifier("checked", "checked"));
-            label.add(new AttributeModifier("disabled", "disabled"));
-        }
 
-        add(label);
+            final InboxSelectScopeEnum clearScope =
+                    cm.getConfigEnum(InboxSelectScopeEnum.class,
+                            Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE);
+
+            final String keyWarn;
+            switch (clearScope) {
+            case ALL:
+                keyWarn = "delete-pages-after-print-info-all";
+                break;
+            case JOBS:
+                keyWarn = "delete-pages-after-print-info-jobs";
+                break;
+            case PAGES:
+                keyWarn = "delete-pages-after-print-info-pages";
+                break;
+            case NONE:
+            default:
+                throw new SpException(String.format("%s is not handled.",
+                        clearScope.toString()));
+            }
+
+            helper.discloseLabel(idDeletePages);
+            helper.encloseLabel(idDeletePagesWarn, localized(keyWarn), true);
+        } else {
+            add(new Label(idDeletePages));
+            helper.discloseLabel(idDeletePagesWarn);
+        }
 
         final QuickSearchPanel panel =
                 new QuickSearchPanel("quicksearch-printer");

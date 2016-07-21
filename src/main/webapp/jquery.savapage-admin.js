@@ -708,14 +708,17 @@
 
 			_view.pages.admin.onApplyProxyPrint = function() {
 
-				var props = {};
+				var props = {}, key;
 
 				_fillConfigPropsYN(props, ['proxy-print.non-secure', 'proxy-print.delegate.enable', 'proxy-print.delegate.papercut.enable', 'webapp.user.proxy-print.clear-inbox.enable']);
 
 				if (props['proxy-print.non-secure'] === 'Y') {
 					_fillConfigPropsText(props, ['proxy-print.non-secure-printer-group']);
 				}
-
+				
+				key = 'webapp.user.proxy-print.clear-inbox.scope';
+				props[key] = _view.getRadioValue(key);
+				
 				_fillConfigPropsText(props, ['proxy-print.fast-expiry-mins', 'proxy-print.hold-expiry-mins', 'proxy-print.direct-expiry-secs', 'webapp.user.proxy-print.max-copies', 'proxy-print.max-pages', 'jobticket.proxy-printer', 'jobticket.proxy-printer-group']);
 
 				_saveConfigProps(props);

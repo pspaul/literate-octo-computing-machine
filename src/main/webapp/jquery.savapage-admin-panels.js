@@ -911,6 +911,11 @@
 				_view.visible($('.imap-enabled'), enabled);
 			},
 
+			onProxyPrintClearInboxEnabled : function(enabled) {
+				var _view = _ns.PanelCommon.view;
+				_view.visible($('.proxyprint-clear-inbox-scope-enabled'), enabled);
+			},
+
 			onProxyPrintEnabled : function(enabled) {
 				var _view = _ns.PanelCommon.view;
 				_view.visible($('.proxyprint-enabled'), enabled);
@@ -1008,6 +1013,7 @@
 				my.onAuthModeLocalEnabled();
 				my.onPrintImapEnabled(_view.isCbChecked($('#print\\.imap\\.enable')));
 				my.onProxyPrintEnabled(_view.isCbChecked($('#proxy-print\\.non-secure')));
+				my.onProxyPrintClearInboxEnabled(_view.isCbChecked($('#webapp\\.user\\.proxy-print\\.clear-inbox\\.enable')));
 				my.onWebPrintEnabled(_view.isCbChecked($('#web-print\\.enable')));
 				my.onEcoPrintEnabled(_view.isCbChecked($('#eco-print\\.enable')));
 

@@ -25,6 +25,7 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.EnumSet;
 
 import javax.print.attribute.standard.MediaSizeName;
 
@@ -49,10 +50,12 @@ import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
+import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
@@ -499,21 +502,17 @@ public final class Options extends AbstractAdminPage {
         /*
          * PaperCut Integration.
          */
-        labelledCheckbox("papercut-enable",
-                IConfigProp.Key.PAPERCUT_ENABLE);
+        labelledCheckbox("papercut-enable", IConfigProp.Key.PAPERCUT_ENABLE);
 
-        labelledInput("papercut-host",
-                IConfigProp.Key.PAPERCUT_SERVER_HOST);
-        labelledInput("papercut-port",
-                IConfigProp.Key.PAPERCUT_SERVER_PORT);
+        labelledInput("papercut-host", IConfigProp.Key.PAPERCUT_SERVER_HOST);
+        labelledInput("papercut-port", IConfigProp.Key.PAPERCUT_SERVER_PORT);
         labelledInput("papercut-token",
                 IConfigProp.Key.PAPERCUT_SERVER_AUTH_TOKEN);
 
         //
         labelledInput("papercut-db-driver",
                 IConfigProp.Key.PAPERCUT_DB_JDBC_DRIVER);
-        labelledInput("papercut-db-url",
-                IConfigProp.Key.PAPERCUT_DB_JDBC_URL);
+        labelledInput("papercut-db-url", IConfigProp.Key.PAPERCUT_DB_JDBC_URL);
         labelledInput("papercut-db-user", IConfigProp.Key.PAPERCUT_DB_USER);
         labelledInput("papercut-db-password",
                 IConfigProp.Key.PAPERCUT_DB_PASSWORD);
@@ -792,8 +791,21 @@ public final class Options extends AbstractAdminPage {
         labelledInput("proxyprint-max-pages",
                 IConfigProp.Key.PROXY_PRINT_MAX_PAGES);
 
+        //
         labelledCheckbox("proxyprint-clear-inbox",
                 IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE);
+
+        final EnumRadioPanel clearInboxScopePanel =
+                new EnumRadioPanel("proxyprint-clear-inbox-scope");
+
+        clearInboxScopePanel.populate(
+                EnumSet.complementOf(EnumSet.of(InboxSelectScopeEnum.NONE)),
+                cm.getConfigEnum(InboxSelectScopeEnum.class,
+                        Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE),
+                InboxSelectScopeEnum.uiTextMap(getLocale()),
+                cm.getConfigKey(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE));
+
+        add(clearInboxScopePanel);
 
         // Delegated Print
         labelledCheckbox("proxyprint-delegate-enable",
