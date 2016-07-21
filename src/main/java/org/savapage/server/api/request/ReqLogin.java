@@ -1263,44 +1263,46 @@ public final class ReqLogin extends ApiRequestMixin {
         case EXCEEDED:
             setApiResult(ApiResultCodeEnum.INFO,
                     "msg-membership-exceeded-user-limit",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
+                    CommunityDictEnum.MEMBERSHIP.getWord(getLocale()),
+                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(getLocale()),
+                    CommunityDictEnum.MEMBER_CARD.getWord(getLocale()));
             break;
         case EXPIRED:
             setApiResult(ApiResultCodeEnum.INFO, "msg-membership-expired",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
+                    CommunityDictEnum.MEMBERSHIP.getWord(getLocale()),
+                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(getLocale()),
+                    CommunityDictEnum.MEMBER_CARD.getWord(getLocale()));
 
             break;
         case VISITOR:
             setApiResult(ApiResultCodeEnum.INFO, "msg-membership-visit",
-                    daysLeft.toString(), CommunityDictEnum.VISITOR.getWord());
+                    daysLeft.toString(),
+                    CommunityDictEnum.VISITOR.getWord(getLocale()));
             break;
         case VISITOR_EXPIRED:
             setApiResult(ApiResultCodeEnum.INFO, "msg-membership-visit-expired",
-                    CommunityDictEnum.VISITOR.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
+                    CommunityDictEnum.VISITOR.getWord(getLocale()),
+                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(getLocale()),
+                    CommunityDictEnum.MEMBER_CARD.getWord(getLocale()));
             break;
         case WRONG_MODULE:
         case WRONG_COMMUNITY:
             setApiResult(ApiResultCodeEnum.INFO, "msg-membership-wrong-product",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
+                    CommunityDictEnum.MEMBERSHIP.getWord(getLocale()),
+                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(getLocale()),
+                    CommunityDictEnum.MEMBER_CARD.getWord(getLocale()));
             break;
         case WRONG_VERSION:
             setApiResult(ApiResultCodeEnum.INFO, "msg-membership-version",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
+                    CommunityDictEnum.MEMBERSHIP.getWord(getLocale()),
+                    CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(getLocale()),
+                    CommunityDictEnum.MEMBER_CARD.getWord(getLocale()));
             break;
         case WRONG_VERSION_WITH_GRACE:
             setApiResult(ApiResultCodeEnum.INFO, "msg-membership-version-grace",
-                    CommunityDictEnum.MEMBERSHIP.getWord(), daysLeft.toString(),
-                    CommunityDictEnum.MEMBER_CARD.getWord());
+                    CommunityDictEnum.MEMBERSHIP.getWord(getLocale()),
+                    daysLeft.toString(),
+                    CommunityDictEnum.MEMBER_CARD.getWord(getLocale()));
             break;
         case VISITOR_EDITION:
         case VALID:

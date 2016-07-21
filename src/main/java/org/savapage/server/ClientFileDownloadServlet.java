@@ -78,8 +78,8 @@ public final class ClientFileDownloadServlet extends HttpServlet {
 
     @Override
     protected void doGet(final HttpServletRequest req,
-            final HttpServletResponse resp) throws ServletException,
-            IOException {
+            final HttpServletResponse resp)
+            throws ServletException, IOException {
 
         final Path pathDownload =
                 FileSystems.getDefault().getPath(ConfigManager.getClientHome(),
@@ -138,8 +138,8 @@ public final class ClientFileDownloadServlet extends HttpServlet {
         /*
          * Before streaming content, set content characteristics.
          */
-        resp.setHeader("Content-Disposition", String.format(
-                "attachment; filename=\"%s\"", attachmentFilename));
+        resp.setHeader("Content-Disposition", String
+                .format("attachment; filename=\"%s\"", attachmentFilename));
 
         resp.setContentType(getContentType(file));
         resp.setContentLength((int) file.length());
@@ -183,10 +183,8 @@ public final class ClientFileDownloadServlet extends HttpServlet {
             final HttpServletResponse resp) throws IOException {
 
         final File zipFile =
-                FileSystems
-                        .getDefault()
-                        .getPath(ConfigManager.getAppTmpDir(),
-                                UUID.randomUUID().toString()).toFile();
+                FileSystems.getDefault().getPath(ConfigManager.getAppTmpDir(),
+                        UUID.randomUUID().toString()).toFile();
 
         final ZipOutputStream zostr =
                 new ZipOutputStream(new FileOutputStream(zipFile));
@@ -255,12 +253,12 @@ public final class ClientFileDownloadServlet extends HttpServlet {
 
                 relativePath
                         .append(CommunityDictEnum.SAVAPAGE.getWord()
-                                .toLowerCase()).append("/")
-                        .append(CLIENT_DIR_NAME);
+                                .toLowerCase())
+                        .append("/").append(CLIENT_DIR_NAME);
 
-                relativePath.append(StringUtils.removeStart(
-                        files[i].getCanonicalPath(),
-                        clientDir.getCanonicalPath()));
+                relativePath.append(
+                        StringUtils.removeStart(files[i].getCanonicalPath(),
+                                clientDir.getCanonicalPath()));
 
                 zostr.putNextEntry(new ZipEntry(relativePath.toString()));
 

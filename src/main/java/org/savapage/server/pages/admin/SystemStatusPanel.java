@@ -174,6 +174,9 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Mail Print
          */
+        add(new Label("prompt-mail-print",
+                CommunityDictEnum.MAIL_PRINT.getWord(getLocale())));
+
         String msgKey;
         String msgText;
 
@@ -231,7 +234,6 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Google Cloud Print
          */
-
         if (ConfigManager.isGcpEnabled()) {
 
             final GcpPrinter.State gcpStatus = GcpPrinter.getState();
@@ -388,6 +390,9 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Proxy Print Service (CUPS connection status)
          */
+        add(new Label("prompt-proxy-print",
+                CommunityDictEnum.PROXY_PRINT.getWord(getLocale())));
+
         final CircuitBreaker circuit = ConfigManager.getCircuitBreaker(
                 CircuitBreakerEnum.CUPS_LOCAL_IPP_CONNECTION);
 
@@ -431,6 +436,9 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Web Print
          */
+        add(new Label("prompt-web-print",
+                CommunityDictEnum.WEB_PRINT.getWord(getLocale())));
+
         labelWrk = helper.addCheckbox("flipswitch-webprint-online",
                 ConfigManager.isWebPrintEnabled());
         setFlipswitchOnOffText(labelWrk);
@@ -439,6 +447,9 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Internet Print
          */
+        add(new Label("prompt-internet-print",
+                CommunityDictEnum.INTERNET_PRINT.getWord(getLocale())));
+
         labelWrk = helper.addCheckbox("flipswitch-internetprint-online",
                 QUEUE_SERVICE.isQueueEnabled(
                         ReservedIppQueueEnum.IPP_PRINT_INTERNET));

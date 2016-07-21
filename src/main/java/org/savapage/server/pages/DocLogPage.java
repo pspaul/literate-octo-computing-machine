@@ -29,8 +29,11 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.DocLogDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
@@ -46,6 +49,9 @@ public class DocLogPage extends AbstractListPage {
 
     private static final Logger LOGGER =
             LoggerFactory.getLogger(DocLogPage.class);
+
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      * Maximum number of pages in the navigation bar. IMPORTANT: this must be an
@@ -75,6 +81,8 @@ public class DocLogPage extends AbstractListPage {
             LOGGER.trace("data : " + data);
         }
 
+        final boolean showFinancialData;
+
         final DocLogPagerReq req = DocLogPagerReq.read(data);
 
         final DocLogDao.Type docType = req.getSelect().getDocType();
@@ -85,13 +93,19 @@ public class DocLogPage extends AbstractListPage {
 
             if (this.getSessionWebAppType() == WebAppTypeEnum.ADMIN) {
                 userId = req.getSelect().getUserId();
+                showFinancialData = true;
             } else {
                 /*
                  * If we are called in a User WebApp context we ALWAYS use the
                  * user of the current session.
                  */
                 userId = SpSession.get().getUser().getId();
+
+                showFinancialData = ACCESS_CONTROL_SERVICE.hasUserAccess(
+                        SpSession.get().getUser(), ACLOidEnum.U_FINANCIAL);
             }
+        } else {
+            showFinancialData = true;
         }
 
         /*
@@ -118,8 +132,8 @@ public class DocLogPage extends AbstractListPage {
                 /*
                  * Step 1: Create panel and add to page.
                  */
-                final DocLogItemPanel panel =
-                        new DocLogItemPanel("doc-entry", item.getModel());
+                final DocLogItemPanel panel = new DocLogItemPanel("doc-entry",
+                        item.getModel(), showFinancialData);
 
                 item.add(panel);
 

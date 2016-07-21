@@ -160,7 +160,7 @@
 		</li>
 
 
-		<li data-role="list-divider">Services</li>
+		<li data-role="list-divider"><wicket:message key="header-services" /></li>
 		<li>
 			<table data-role="table" data-mode="reflow"
 				class="ui-responsive table-stroke">
@@ -173,7 +173,7 @@
 				<tbody>
 
 					<tr>
-						<th style="vertical-align: middle;">Proxy Print</th>
+						<th style="vertical-align: middle;" wicket:id="prompt-proxy-print"/>
 						<td>
 							<input type="checkbox" wicket:id="flipswitch-proxyprint-online"
 								data-mini="true" data-role="flipswitch" data-on-text="On"
@@ -200,7 +200,7 @@
 
 					<wicket:enclosure child="mailprint-status">
 						<tr>
-							<th style="vertical-align: middle;">Mail Print</th>
+							<th style="vertical-align: middle;" wicket:id="prompt-mail-print"/>
 							<td>
 								<input type="checkbox" class="flipswitch-mailprint-online"
 									wicket:id="flipswitch-mailprint-online" data-mini="true"
@@ -212,7 +212,7 @@
 					</wicket:enclosure>
 
 					<tr>
-						<th style="vertical-align: middle;">Web Print</th>
+						<th style="vertical-align: middle;" wicket:id="prompt-web-print"/>
 						<td>
 							<input type="checkbox" id="flipswitch-webprint-online"
 								wicket:id="flipswitch-webprint-online" data-mini="true"
@@ -221,7 +221,7 @@
 					</tr>
 
 					<tr>
-						<th style="vertical-align: middle;">Internet Print</th>
+						<th style="vertical-align: middle;" wicket:id="prompt-internet-print"/>
 						<td>
 							<input type="checkbox" id="flipswitch-internetprint-online"
 								wicket:id="flipswitch-internetprint-online" data-mini="true"

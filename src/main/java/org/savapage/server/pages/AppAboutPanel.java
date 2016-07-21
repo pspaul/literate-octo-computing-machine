@@ -84,19 +84,21 @@ public final class AppAboutPanel extends Panel {
         add(new Label("current-year",
                 String.valueOf(Calendar.getInstance().get(Calendar.YEAR))));
 
-        add(new Label("app-name", CommunityDictEnum.SAVAPAGE.getWord()));
+        add(new Label("app-name",
+                CommunityDictEnum.SAVAPAGE.getWord(getLocale())));
 
         Label labelWrk;
 
         //
         add(new Label("app-copyright-owner",
-                CommunityDictEnum.DATRAVERSE_BV.getWord()));
+                CommunityDictEnum.DATRAVERSE_BV.getWord(getLocale())));
 
         //
         labelWrk = new Label("savapage-source-code-url",
                 localized("source-code-link"));
         labelWrk.add(new AttributeModifier("href",
-                CommunityDictEnum.COMMUNITY_SOURCE_CODE_URL.getWord()));
+                CommunityDictEnum.COMMUNITY_SOURCE_CODE_URL
+                        .getWord(getLocale())));
         add(labelWrk);
 
         //

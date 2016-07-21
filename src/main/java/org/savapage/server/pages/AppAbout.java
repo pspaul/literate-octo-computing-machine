@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages;
 
+import java.util.Locale;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
@@ -61,7 +63,8 @@ public final class AppAbout extends AbstractPage {
             helper.discloseLabel("savapage-info-after-inject");
             helper.encloseLabel("app-version",
                     ConfigManager.getAppNameVersion(), true);
-            add(new Label("app-name", CommunityDictEnum.SAVAPAGE.getWord()));
+            add(new Label("app-name",
+                    CommunityDictEnum.SAVAPAGE.getWord(Locale.getDefault())));
             add(new AppAboutPanel("savapage-info"));
         }
 

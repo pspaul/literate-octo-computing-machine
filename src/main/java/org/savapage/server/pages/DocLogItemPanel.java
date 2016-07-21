@@ -73,16 +73,21 @@ public class DocLogItemPanel extends Panel {
      */
     private final int currencyDecimals;
 
+    //
+    private final boolean showDocLogCost;
+
     /**
      *
      * @param id
      * @param model
      */
-    public DocLogItemPanel(String id, IModel<DocLogItem> model) {
+    public DocLogItemPanel(String id, IModel<DocLogItem> model,
+            final boolean showFinancialData) {
 
         super(id, model);
 
         this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
+        this.showDocLogCost = showFinancialData;
     }
 
     /**
@@ -312,7 +317,8 @@ public class DocLogItemPanel extends Panel {
                 mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
                 mapVisible.put("job-id", obj.getJobId().toString());
 
-                if (obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
+                if (this.showDocLogCost
+                        && obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
                     mapVisible.put("cost-currency",
                             CurrencyUtil.getCurrencySymbol(
                                     obj.getCurrencyCode(),
