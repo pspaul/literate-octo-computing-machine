@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.user;
 
+import java.util.EnumSet;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
@@ -33,6 +35,7 @@ import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.server.SpSession;
+import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.QuickSearchPanel;
 
@@ -51,6 +54,11 @@ public class Print extends AbstractUserPage {
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
 
+    final String ID_DELETE_PAGES = "delete-pages-after-print";
+    final String ID_DELETE_PAGES_WARN = "delete-pages-after-print-warn";
+    final String ID_DELETE_PAGES_SCOPE = "delete-pages-after-print-scope";
+    final String HTML_NAME_DELETE_PAGES_SCOPE = ID_DELETE_PAGES_SCOPE;
+
     /**
      *
      */
@@ -63,9 +71,6 @@ public class Print extends AbstractUserPage {
 
         helper.addModifyLabelAttr("slider-print-copies", "max",
                 cm.getConfigValue(Key.WEBAPP_USER_PROXY_PRINT_MAX_COPIES));
-
-        final String idDeletePages = "delete-pages-after-print";
-        final String idDeletePagesWarn = "delete-pages-after-print-warn";
 
         if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
 
@@ -90,11 +95,25 @@ public class Print extends AbstractUserPage {
                         clearScope.toString()));
             }
 
-            helper.discloseLabel(idDeletePages);
-            helper.encloseLabel(idDeletePagesWarn, localized(keyWarn), true);
+            helper.discloseLabel(ID_DELETE_PAGES);
+            helper.encloseLabel(ID_DELETE_PAGES_WARN, localized(keyWarn), true);
+
         } else {
-            add(new Label(idDeletePages));
-            helper.discloseLabel(idDeletePagesWarn);
+
+            helper.discloseLabel(ID_DELETE_PAGES_WARN);
+
+            add(new Label(ID_DELETE_PAGES));
+
+            final EnumRadioPanel clearInboxScopePanel =
+                    new EnumRadioPanel(ID_DELETE_PAGES_SCOPE);
+
+            clearInboxScopePanel.populate(
+                    EnumSet.complementOf(EnumSet.of(InboxSelectScopeEnum.NONE)),
+                    InboxSelectScopeEnum.ALL,
+                    InboxSelectScopeEnum.uiTextMap(getLocale()),
+                    HTML_NAME_DELETE_PAGES_SCOPE);
+
+            add(clearInboxScopePanel);
         }
 
         final QuickSearchPanel panel =

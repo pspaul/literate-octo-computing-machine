@@ -3279,7 +3279,11 @@
 			}
 			//
 			, _onPrint = function(isClose) {
-				_this.onPrint(_view.isCbChecked($("#delete-pages-after-print")), isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")), _isDelegatedPrint());
+				var clearScope = null;
+				if (_view.isCbChecked($("#delete-pages-after-print"))) {
+					clearScope = _view.getRadioValue('delete-pages-after-print-scope');
+				}
+				_this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")), _isDelegatedPrint());
 			}
 			//
 			, _setVisibility = function() {
@@ -3319,14 +3323,16 @@
 				} else {
 					selCollate.hide();
 				}
+
+				_view.visible($('.delete-pages-after-print-scope-enabled'), _view.isCbChecked($('#delete-pages-after-print')));
 			}
 			//
 			;
 
 			this.clearInput = function() {
-				
+
 				var selCbClear = $('#delete-pages-after-print');
-				
+
 				$('#slider-print-copies').val(1).slider("refresh");
 				$('#delegated-print-copies').val(1);
 				$('#number-print-copies').val(1);
@@ -3335,7 +3341,7 @@
 				$('#sp-jobticket-date').val('');
 				$('#sp-jobticket-hrs').val('');
 				$('#sp-jobticket-min').val('');
-				
+
 				if (selCbClear[0] && !$('#delete-pages-after-print')[0].disabled) {
 					_view.checkCb("#delete-pages-after-print", false);
 				}
@@ -3365,6 +3371,10 @@
 				});
 
 				$('#slider-print-copies').change(function() {
+					_setVisibility();
+				});
+
+				$('#delete-pages-after-print').change(function() {
 					_setVisibility();
 				});
 
@@ -3560,8 +3570,8 @@
 			this.myFirstPageShowPrint = true;
 			this.myFirstPageShowPrintSettings = true;
 			this.myFirstPageShowLetterhead = true;
-			
-			this.preservePrintJobSettings = false; 
+
+			this.preservePrintJobSettings = false;
 
 			this.myInboxTitle = null;
 			this.myPrintTitle = null;
@@ -5309,7 +5319,7 @@
 			/**
 			 * Callbacks: page print
 			 */
-			_view.pages.print.onPrint = function(isClear, isClose, removeGraphics, ecoprint, collate, isDelegation) {
+			_view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint, collate, isDelegation) {
 
 				var res, sel, cost, visible, date, present, jobTicketDate, isJobticket = _model.myPrinter.jobTicket
 				//
@@ -5342,7 +5352,7 @@
 						collate : isDelegation ? true : collate,
 						removeGraphics : removeGraphics,
 						ecoprint : ecoprint,
-						clear : isClear,
+						clearScope : clearScope,
 						options : _model.myPrinterOpt,
 						delegation : isDelegation ? _model.printDelegation : null,
 						jobTicket : isJobticket,
@@ -5408,7 +5418,7 @@
 					if (isClose) {
 						$('#button-printer-back').click();
 					}
-					if (isClear) {
+					if (clearScope !== null) {
 						_view.pages.main.onRefreshPages();
 					}
 					_model.user.stats = res.stats;
@@ -5459,7 +5469,7 @@
 				var res;
 
 				_model.preservePrintJobSettings = true;
-				
+
 				if (_model.myPrinter.name !== printerName) {
 
 					res = _api.call({

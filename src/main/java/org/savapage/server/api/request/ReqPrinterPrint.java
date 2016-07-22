@@ -116,7 +116,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Boolean collate;
         private Boolean removeGraphics;
         private Boolean ecoprint;
-        private Boolean clear;
+        private InboxSelectScopeEnum clearScope;
         private Boolean jobTicket;
         private Long jobTicketDate;
         private Integer jobTicketHrs;
@@ -225,13 +225,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             this.ecoprint = ecoprint;
         }
 
-        public Boolean getClear() {
-            return clear;
+        public InboxSelectScopeEnum getClearScope() {
+            return clearScope;
         }
 
         @SuppressWarnings("unused")
-        public void setClear(Boolean clear) {
-            this.clear = clear;
+        public void setClearScope(InboxSelectScopeEnum clearScope) {
+            this.clearScope = clearScope;
         }
 
         public Boolean getJobTicket() {
@@ -333,13 +333,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE);
 
             if (clearScope == null) {
-                throw new IllegalStateException("Invalid clear scope");
+                throw new IllegalStateException("Invalid clear scope.");
             }
 
-        } else if (dtoReq.getClear()) {
-            clearScope = InboxSelectScopeEnum.ALL;
-        } else {
+        } else if (dtoReq.getClearScope() == null) {
             clearScope = InboxSelectScopeEnum.NONE;
+        } else {
+            clearScope = dtoReq.getClearScope();
         }
 
         //
@@ -797,7 +797,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         /*
          * Since the job is preserved in the outbox we clear the inbox.
          */
-        printReq.setClearedPages(
+        printReq.setClearedObjects(
                 PROXY_PRINT_SERVICE.clearInbox(lockedUser, printReq));
 
         //
@@ -832,7 +832,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         /*
          * Since the job is preserved in the outbox we clear the inbox.
          */
-        printReq.setClearedPages(
+        printReq.setClearedObjects(
                 PROXY_PRINT_SERVICE.clearInbox(lockedUser, printReq));
 
         //

@@ -82,7 +82,9 @@
 
 	<ul class="printer-selected" data-role="listview" data-inset="true">
 
-		<li data-role="list-divider" id="sp-printer-page-name">Job</li>
+		<li data-role="list-divider" id="sp-printer-page-name">
+			<wicket:message key="header-job" />
+		</li>
 
 		<li data-mini="true">
 
@@ -193,7 +195,18 @@
 					<input type="checkbox" id="delete-pages-after-print"
 						wicket:id="delete-pages-after-print" value="1" />
 				</div>
+
+				<div class="delete-pages-after-print-scope-enabled"
+					style="margin-left: 20px;">
+					<small> <wicket:message
+							key="delete-pages-after-print-scope" /></small>
+					<fieldset data-role="controlgroup" data-mini="true"
+						id="delete-pages-after-print-scope">
+						<wicket:fragment wicket:id="delete-pages-after-print-scope" />
+					</fieldset>
+				</div>
 			</wicket:enclosure>
+
 			<wicket:enclosure child="delete-pages-after-print-warn">
 				<small class="sp-txt-wrap sp-txt-info"
 					wicket:id="delete-pages-after-print-warn" />

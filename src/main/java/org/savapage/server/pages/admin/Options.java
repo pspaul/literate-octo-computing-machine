@@ -768,7 +768,7 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.CLIAPP_AUTH_ADMIN_PASSKEY);
 
         /*
-         *
+         * Proxy Print
          */
         labelledCheckbox("proxyprint-non-secure",
                 IConfigProp.Key.PROXY_PRINT_NON_SECURE);
