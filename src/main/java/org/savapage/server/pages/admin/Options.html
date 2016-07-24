@@ -1755,13 +1755,49 @@
 					<h3>
 						<wicket:message key="print-in-header" />
 					</h3>
-					<span class="sp-txt-wrap"> <wicket:message
+				</li>
+				<li>
+					<div class="sp-txt-wrap" style="margin-bottom: 20px;"> <wicket:message
 							key="print-in-encrypted-pdf-descript" />
-					</span>
+					</div>
 					<label for="print-in-allow-encrypted-pdf"
 						wicket:id="print-in-allow-encrypted-pdf-label" />
 					<input type="checkbox" id="print-in-allow-encrypted-pdf" value="0"
 						wicket:id="print-in-allow-encrypted-pdf" />
+				</li>
+				<li>
+					<div class="sp-txt-wrap" style="margin-bottom: 20px;">
+						<wicket:message key="print-in-clear-descript" />
+					</div>
+					<label for="[item-key]" wicket:id="print-in-clear-at-logout-label" />
+					<input type="checkbox" id="[item-key]" value="0"
+						wicket:id="print-in-clear-at-logout" />
+
+					<div class="sp-txt-wrap" style="margin-top: 20px;">
+						<wicket:message key="print-in-expiry-descript" />
+					</div>
+					<div class="ui-field-contain" style="max-width: 150px;">
+						<label for="" style="float: right;"
+							wicket:id="print-in-expiry-mins-label" />
+						<input style="" type="text" id="" value=""
+							wicket:id="print-in-expiry-mins" pattern="[0-9]*"
+							autocapitalize="off" />
+					</div>
+
+					<div class="sp-txt-wrap">
+						<wicket:message key="print-in-expiry-signal-descript" />
+					</div>
+
+					<div class="ui-field-contain" style="max-width: 150px;">
+						<label for="" style="float: right;"
+							wicket:id="print-in-expiry-signal-mins-label" />
+						<input style="" type="text" id="" value=""
+							wicket:id="print-in-expiry-signal-mins" pattern="[0-9]*"
+							autocapitalize="off" />
+					</div>
+
+				</li>
+				<li>
 					<div>
 						<button id="apply-print-in"
 							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">

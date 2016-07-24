@@ -901,6 +901,15 @@ public final class Options extends AbstractAdminPage {
         labelledCheckbox("print-in-allow-encrypted-pdf",
                 IConfigProp.Key.PRINT_IN_ALLOW_ENCRYPTED_PDF);
 
+        labelledCheckbox("print-in-clear-at-logout",
+                IConfigProp.Key.WEBAPP_USER_LOGOUT_CLEAR_INBOX);
+
+        labelledInput("print-in-expiry-mins",
+                IConfigProp.Key.PRINT_IN_JOB_EXPIRY_MINS);
+
+        labelledInput("print-in-expiry-signal-mins",
+                IConfigProp.Key.WEBAPP_USER_PRINT_IN_JOB_EXPIRY_SIGNAL_MINS);
+
         /*
          *
          */
