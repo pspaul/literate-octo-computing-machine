@@ -113,10 +113,11 @@ public final class UserDashboard extends AbstractUserPage {
         final Integer financialPriv = ACCESS_CONTROL_SERVICE.getUserPrivileges(
                 SpSession.get().getUser(), ACLOidEnum.U_FINANCIAL);
 
-        if (ACLPermissionEnum.READER.isPresent(financialPriv)) {
+        if (financialPriv == null
+                || ACLPermissionEnum.READER.isPresent(financialPriv)) {
             helper.addLabel(keyTitleFinancial, localized(keyTitleFinancial));
-            showFinancialDetails(helper, user,
-                    ACLPermissionEnum.EDITOR.isPresent(financialPriv));
+            showFinancialDetails(helper, user, financialPriv == null
+                    || ACLPermissionEnum.EDITOR.isPresent(financialPriv));
         } else {
             helper.discloseLabel(keyTitleFinancial);
         }
