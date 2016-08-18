@@ -10,7 +10,7 @@
     <licenses>
         <license>
             <name>GNU Affero General Public License (AGPL)</name>
-            <url>http://www.gnu.org/licenses/agpl-3.0.txt</url>
+            <url>https://www.gnu.org/licenses/agpl-3.0.txt</url>
         </license>
     </licenses>
     <properties>
@@ -215,9 +215,9 @@
     <description>SavaPage is an Enterprise Printing Solution with a Web App for Print Preview, Editing, PDF Creation and Proxy Printing.</description>
     <organization>
         <name>Datraverse B.V.</name>
-        <url>http://www.datraverse.com/en</url>
+        <url>https://www.datraverse.com</url>
     </organization>
-    <url>http://savapage.org</url>
+    <url>https://www.savapage.org</url>
     <issueManagement>
         <url>https://secure.datraverse.nl/issues/</url>
     </issueManagement>
