@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2014 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -36,7 +36,8 @@ import org.savapage.core.config.ConfigManager;
  * This context listener receives notifications when the web application (i.e.
  * the context) is started up or shutdown.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 @WebListener
 public final class SpContextListener implements ServletContextListener {
@@ -65,12 +66,11 @@ public final class SpContextListener implements ServletContextListener {
             WebApp.loadWebProperties();
 
             /*
-             * Initialize the admin publisher. We use the regular port for the
+             * Initialize the admin publisher. We use the SSL port for the
              * CometD Admin Client.
              */
-            final int serverPort = Integer.parseInt(WebApp.getServerPort());
-
-            AdminPublisher.instance().init(serverPort);
+            AdminPublisher.instance()
+                    .init(Integer.parseInt(WebApp.getServerSslPort()), true);
 
         } catch (IOException e) {
             throw new SpException(e.getMessage());
