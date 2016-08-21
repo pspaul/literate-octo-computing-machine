@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -22,11 +22,17 @@
 package org.savapage.server;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -43,22 +49,82 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.savapage.common.ConfigDefaults;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.ipp.operation.IppMessageMixin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The main class for the Web Server.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public final class WebServer {
 
     /**
+     * Redirect all traffic except IPP to SSL.
+     */
+    private static class MySecuredRedirectHandler
+            extends SecuredRedirectHandler {
+
+        @Override
+        public void handle(final String target,
+                final org.eclipse.jetty.server.Request baseRequest,
+                final HttpServletRequest request,
+                final HttpServletResponse response)
+                throws IOException, ServletException {
+
+            final String contentTypeReq = request.getContentType();
+
+            /*
+             * Take IPP traffic as it is, do not redirect.
+             */
+            if (contentTypeReq != null && contentTypeReq
+                    .equalsIgnoreCase(IppMessageMixin.CONTENT_TYPE_IPP)) {
+                return;
+            }
+
+            super.handle(target, baseRequest, request, response);
+        }
+    }
+
+    /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(WebServer.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(WebServer.class);
+
+    /**
+     * .
+     */
+    private static final String PROP_KEY_SERVER_PORT = "server.port";
+
+    /**
+     * .
+     */
+    private static final String PROP_KEY_SERVER_PORT_SSL = "server.ssl.port";
+
+    /**
+     * .
+     */
+    private static final String PROP_KEY_HTML_REDIRECT_SSL =
+            "server.html.redirect.ssl";
+
+    /**
+     * .
+     */
+    private static final String PROP_KEY_SSL_KEYSTORE = "server.ssl.keystore";
+
+    /**
+     * .
+     */
+    private static final String PROP_KEY_SSL_KEYSTORE_PW =
+            "server.ssl.keystore-password";
+
+    /**
+     * .
+     */
+    private static final String PROP_KEY_SSL_KEY_PW = "server.ssl.key-password";
 
     /**
      * .
@@ -69,6 +135,11 @@ public final class WebServer {
      * .
      */
     private static int serverPortSsl;
+
+    /**
+     * .
+     */
+    private static boolean serverSslRedirect;
 
     /**
      *
@@ -84,6 +155,22 @@ public final class WebServer {
      */
     public static int getServerPortSsl() {
         return serverPortSsl;
+    }
+
+    /**
+     *
+     * @return {@code true} when server access is SSL only.
+     */
+    public static boolean isSSLOnly() {
+        return serverPortSsl > 0 && serverPort == 0;
+    }
+
+    /**
+     *
+     * @return {@code true} when non-SSL port is redirected to SSL port.
+     */
+    public static boolean isSSLRedirect() {
+        return serverSslRedirect;
     }
 
     /**
@@ -174,16 +261,19 @@ public final class WebServer {
         propsServer.load(new java.io.FileInputStream(pathServerProperties));
 
         /*
-         * Add a connector for regular port
+         * Server Ports.
          */
-        serverPort =
-                Integer.parseInt(propsServer.getProperty("server.port",
-                        ConfigDefaults.SERVER_PORT));
+        serverPort = Integer.parseInt(propsServer
+                .getProperty(PROP_KEY_SERVER_PORT, ConfigDefaults.SERVER_PORT));
 
-        serverPortSsl =
-                Integer.parseInt(propsServer.getProperty("server.ssl.port",
-                        ConfigDefaults.SERVER_SSL_PORT));
+        serverPortSsl = Integer.parseInt(propsServer.getProperty(
+                PROP_KEY_SERVER_PORT_SSL, ConfigDefaults.SERVER_SSL_PORT));
 
+        serverSslRedirect =
+                !isSSLOnly() && BooleanUtils.toBooleanDefaultIfNull(
+                        BooleanUtils.toBooleanObject(propsServer
+                                .getProperty(PROP_KEY_HTML_REDIRECT_SSL)),
+                        false);
         /*
          *
          */
@@ -203,8 +293,7 @@ public final class WebServer {
         org.eclipse.jetty.webapp.Configuration.ClassList classlist =
                 org.eclipse.jetty.webapp.Configuration.ClassList
                         .setServerDefault(server);
-        classlist.addBefore(
-                "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
+        classlist.addBefore("org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
                 "org.eclipse.jetty.annotations.AnnotationConfiguration");
 
         /*
@@ -222,20 +311,21 @@ public final class WebServer {
         httpConfig.setSecureScheme("https");
         httpConfig.setSecurePort(serverPortSsl);
 
-        /*
-         * The first server connector we create is the one for http, passing in
-         * the http configuration we configured above so it can get things like
-         * the output buffer size, etc. We also set the port and configure an
-         * idle timeout.
-         */
-        final ServerConnector http =
-                new ServerConnector(server, new HttpConnectionFactory(
-                        httpConfig));
+        if (!isSSLOnly()) {
+            /*
+             * The server connector we create is the one for http, passing in
+             * the http configuration we configured above so it can get things
+             * like the output buffer size, etc. We also set the port and
+             * configure an idle timeout.
+             */
+            final ServerConnector http = new ServerConnector(server,
+                    new HttpConnectionFactory(httpConfig));
 
-        http.setPort(serverPort);
-        http.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
+            http.setPort(serverPort);
+            http.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
 
-        server.addConnector(http);
+            server.addConnector(http);
+        }
 
         /*
          * SSL Context Factory for HTTPS and SPDY.
@@ -253,8 +343,8 @@ public final class WebServer {
 
         // Mantis #562
         sslContextFactory.addExcludeCipherSuites(
-        //
-        // weak
+                //
+                // weak
                 "TLS_RSA_WITH_RC4_128_MD5",
                 // weak
                 "TLS_RSA_WITH_RC4_128_SHA",
@@ -271,9 +361,9 @@ public final class WebServer {
                 // insecure
                 "TLS_DHE_RSA_WITH_AES_256_CBC_SHA256"
         //
-                );
+        );
 
-        if (propsServer.getProperty("server.ssl.keystore") == null) {
+        if (propsServer.getProperty(PROP_KEY_SSL_KEYSTORE) == null) {
 
             InputStream istr;
 
@@ -281,9 +371,8 @@ public final class WebServer {
              *
              */
             final Properties propsPw = new Properties();
-            istr =
-                    new java.io.FileInputStream(serverHome
-                            + "/data/default-ssl-keystore.pw");
+            istr = new java.io.FileInputStream(
+                    serverHome + "/data/default-ssl-keystore.pw");
             propsPw.load(istr);
             final String pw = propsPw.getProperty("password");
             istr.close();
@@ -291,9 +380,8 @@ public final class WebServer {
             /**
              *
              */
-            istr =
-                    new java.io.FileInputStream(serverHome
-                            + "/data/default-ssl-keystore");
+            istr = new java.io.FileInputStream(
+                    serverHome + "/data/default-ssl-keystore");
             final KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(istr, pw.toCharArray());
             istr.close();
@@ -306,17 +394,16 @@ public final class WebServer {
 
         } else {
 
-            final Resource keystore =
-                    Resource.newResource(serverHome + "/"
-                            + propsServer.getProperty("server.ssl.keystore"));
+            final Resource keystore = Resource.newResource(serverHome + "/"
+                    + propsServer.getProperty(PROP_KEY_SSL_KEYSTORE));
 
             sslContextFactory.setKeyStoreResource(keystore);
 
-            sslContextFactory.setKeyStorePassword(propsServer
-                    .getProperty("server.ssl.keystore-password"));
+            sslContextFactory.setKeyStorePassword(
+                    propsServer.getProperty(PROP_KEY_SSL_KEYSTORE_PW));
 
-            sslContextFactory.setKeyManagerPassword(propsServer
-                    .getProperty("server.ssl.key-password"));
+            sslContextFactory.setKeyManagerPassword(
+                    propsServer.getProperty(PROP_KEY_SSL_KEY_PW));
         }
 
         /*
@@ -339,10 +426,10 @@ public final class WebServer {
          * we just made along with the previously created ssl context factory.
          * Next we set the port and a longer idle timeout.
          */
-        final ServerConnector https =
-                new ServerConnector(server, new SslConnectionFactory(
-                        sslContextFactory, HttpVersion.HTTP_1_1.asString()),
-                        new HttpConnectionFactory(httpsConfig));
+        final ServerConnector https = new ServerConnector(server,
+                new SslConnectionFactory(sslContextFactory,
+                        HttpVersion.HTTP_1_1.asString()),
+                new HttpConnectionFactory(httpsConfig));
 
         https.setPort(serverPortSsl);
         https.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
@@ -365,9 +452,8 @@ public final class WebServer {
         if (fDevelopment) {
             pathToWarFile = "src/main/webapp";
         } else {
-            pathToWarFile =
-                    serverHome + "/lib/"
-                            + System.getProperty("savapage.war.file");
+            pathToWarFile = serverHome + "/lib/"
+                    + System.getProperty("savapage.war.file");
         }
 
         webAppContext.setWar(pathToWarFile);
@@ -382,14 +468,12 @@ public final class WebServer {
                 ".*/savapage-server-[^/]*\\.jar$|.*/classes/.*");
 
         /*
-         *
+         * Redirect to SSL?
          */
-        final boolean forceSSL = false; // For future use.
-
         final Handler[] handlerArray;
 
-        if (forceSSL) {
-            handlerArray = new Handler[] { new SecuredRedirectHandler(),
+        if (serverSslRedirect) {
+            handlerArray = new Handler[] { new MySecuredRedirectHandler(),
                     webAppContext };
         } else {
             handlerArray = new Handler[] { webAppContext };
@@ -425,8 +509,8 @@ public final class WebServer {
             writer.write(String.valueOf(now.getTime()) + "\n");
             writer.flush();
 
-            Runtime.getRuntime().addShutdownHook(
-                    new WebServerShutdownHook(server));
+            Runtime.getRuntime()
+                    .addShutdownHook(new WebServerShutdownHook(server));
 
             /*
              * Start the server
