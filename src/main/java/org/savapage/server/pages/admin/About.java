@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -466,6 +466,13 @@ public final class About extends AbstractAdminPage {
 
         labelWrk = new Label("savapage-helpdesk-url", urlHelpDesk);
         labelWrk.add(new AttributeModifier("href", urlHelpDesk));
+        add(labelWrk);
+
+        //
+        labelWrk = new Label("savapage-url",
+                CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG.getWord());
+        labelWrk.add(new AttributeModifier("href",
+                CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG_URL.getWord()));
         add(labelWrk);
 
         //

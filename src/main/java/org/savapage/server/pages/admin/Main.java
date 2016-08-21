@@ -69,7 +69,7 @@ public final class Main extends AbstractAdminPage {
         //
         helper.addModifyLabelAttr("savapage-org-link",
                 CommunityDictEnum.SAVAPAGE_DOT_ORG.getWord(), "href",
-                CommunityDictEnum.SAVAPAGE_DOT_ORG_URL.getWord());
+                CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG_URL.getWord());
 
         //
         final User user = SpSession.get().getUser();
