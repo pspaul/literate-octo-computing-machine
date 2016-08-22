@@ -618,10 +618,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
             if (!WebServer.isSSLOnly()) {
                 logMsg.append(WebServer.getServerPort());
-                logMsg.append(" and ");
 
                 if (WebServer.isSSLRedirect()) {
-                    logMsg.append("redirect to ");
+                    logMsg.append(" with redirect to ");
+                } else {
+                    logMsg.append(" and ");
                 }
             }
             logMsg.append(WebServer.getServerPortSsl()).append(" (SSL)");
