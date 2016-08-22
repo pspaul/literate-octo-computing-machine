@@ -39,6 +39,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.SpException;
@@ -65,12 +66,14 @@ import org.savapage.core.services.AppLogService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.WebApp;
+import org.savapage.server.WebServer;
 import org.savapage.server.cometd.UserEventService;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
@@ -89,6 +92,16 @@ public final class SystemStatusPanel extends Panel {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
+
+    /**
+     *
+     */
+    private static final long DAYS_IN_MONTH = 30;
+
+    /**
+     *
+     */
+    private static final long DAYS_IN_YEAR = 365;
 
     /**
      * Duration after which news expires.
@@ -615,6 +628,36 @@ public final class SystemStatusPanel extends Panel {
                     new AttributeModifier("class", MarkupHelper.CSS_TXT_WARN));
         }
         add(labelWarn);
+
+        /*
+         * SSL Certificate
+         */
+        final WebServer.SslCertInfo sslCert = WebServer.getSslCertInfo();
+        String certText = null;
+        String certClass = null;
+
+        if (sslCert != null) {
+
+            final LocaleHelper localeHelper = new LocaleHelper(getLocale());
+
+            final long delta = sslCert.getNotAfter().getTime()
+                    - System.currentTimeMillis();
+
+            if (delta < DateUtil.DURATION_MSEC_DAY * DAYS_IN_YEAR) {
+                certText = localeHelper.getMediumDate(sslCert.getNotAfter());
+                if (delta < DateUtil.DURATION_MSEC_DAY * DAYS_IN_MONTH) {
+                    certClass = "sp-txt-warn";
+                } else {
+                    certClass = "sp-txt-info";
+                }
+            }
+        }
+
+        labelWrk =
+                helper.encloseLabel("ssl-expiry", certText, certText != null);
+        if (certClass != null) {
+            labelWrk.add(AttributeAppender.append("class", certClass));
+        }
 
         /*
          * Show technical info?

@@ -21,17 +21,27 @@
  */
 package org.savapage.server;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Properties;
 
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.Handler;
@@ -48,6 +58,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.savapage.common.ConfigDefaults;
+import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.ipp.operation.IppMessageMixin;
 import org.slf4j.Logger;
@@ -60,6 +71,49 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class WebServer {
+
+    /**
+     * .
+     */
+    public static class SslCertInfo {
+
+        private final String issuerCN;
+        private final Date creationDate;
+        private final Date notAfter;
+        private final boolean selfSigned;
+
+        private SslCertInfo() {
+            this.issuerCN = null;
+            this.creationDate = null;
+            this.notAfter = null;
+            this.selfSigned = false;
+        }
+
+        public SslCertInfo(final String issuerCN, final Date creationDate,
+                final Date notAfter, final boolean selfSigned) {
+            this.issuerCN = issuerCN;
+            this.creationDate = creationDate;
+            this.notAfter = notAfter;
+            this.selfSigned = selfSigned;
+        }
+
+        public String getIssuerCN() {
+            return issuerCN;
+        }
+
+        public Date getCreationDate() {
+            return creationDate;
+        }
+
+        public Date getNotAfter() {
+            return notAfter;
+        }
+
+        public boolean isSelfSigned() {
+            return selfSigned;
+        }
+
+    }
 
     /**
      * Redirect all traffic except IPP to SSL.
@@ -85,6 +139,53 @@ public final class WebServer {
             }
 
             super.handle(target, baseRequest, request, response);
+        }
+    }
+
+    /**
+     *
+     */
+    private static class ConnectorConfig {
+
+        private static final int MIN_THREADS = 20;
+
+        private static final int MAX_THREADS_X64 = 8000;
+
+        private static final int MAX_THREADS_I686 = 4000;
+
+        private static final int MAX_IDLE_TIME_MSEC = 30000;
+
+        /**
+         *
+         * @return
+         */
+        public static int getMinThreads() {
+            return MIN_THREADS;
+        }
+
+        public static boolean isX64() {
+            return System.getProperty("os.arch").equalsIgnoreCase("amd64");
+        }
+
+        /**
+         *
+         * @return
+         */
+        public static int getMaxThreads() {
+
+            final int maxThreads;
+
+            if (isX64()) {
+                maxThreads = MAX_THREADS_X64;
+            } else {
+                maxThreads = MAX_THREADS_I686;
+            }
+
+            return maxThreads;
+        }
+
+        public static int getIdleTimeoutMsec() {
+            return MAX_IDLE_TIME_MSEC;
         }
     }
 
@@ -142,6 +243,17 @@ public final class WebServer {
     private static boolean serverSslRedirect;
 
     /**
+     * .
+     */
+    private static SslCertInfo sslCertInfo;
+
+    /**
+    *
+    */
+    private WebServer() {
+    }
+
+    /**
      *
      * @return The server port.
      */
@@ -175,55 +287,104 @@ public final class WebServer {
 
     /**
      *
+     * @return The {@link SslCertInfo}, or {@code null}. when alias is not
+     *         found.
      */
-    private WebServer() {
+    public static SslCertInfo getSslCertInfo() {
+        return sslCertInfo;
     }
 
     /**
+     * Creates the {@link SslCertInfo}.
      *
+     * @param ksLocation
+     *            The keystore location.
+     * @param ksPassword
+     *            The keystore password.
+     * @param certAlias
+     *            The certificate alias.
+     * @return The {@link SslCertInfo}, or {@code null}. when alias is not
+     *         found.
      */
-    private static class ConnectorConfig {
+    private static SslCertInfo createSslCertInfo(final String ksLocation,
+            final String ksPassword) {
 
-        private static final int MIN_THREADS = 20;
+        FileInputStream is = null;
 
-        private static final int MAX_THREADS_X64 = 8000;
+        SslCertInfo certInfo = null;
 
-        private static final int MAX_THREADS_I686 = 4000;
+        try {
 
-        private static final int MAX_IDLE_TIME_MSEC = 30000;
+            final File file = new File(ksLocation);
+            is = new FileInputStream(file);
 
-        /**
-         *
-         * @return
-         */
-        public static int getMinThreads() {
-            return MIN_THREADS;
-        }
+            final KeyStore keystore =
+                    KeyStore.getInstance(KeyStore.getDefaultType());
 
-        public static boolean isX64() {
-            return System.getProperty("os.arch").equalsIgnoreCase("amd64");
-        }
+            keystore.load(is, ksPassword.toCharArray());
 
-        /**
-         *
-         * @return
-         */
-        public static int getMaxThreads() {
+            final Enumeration<String> aliases = keystore.aliases();
 
-            final int maxThreads;
+            /*
+             * Get X509 cert and alias with most recent "not after".
+             */
+            long minNotAfter = Long.MAX_VALUE;
+            java.security.cert.X509Certificate minCertX509 = null;
+            String minAlias = null;
+            int nAliases = 0;
 
-            if (isX64()) {
-                maxThreads = MAX_THREADS_X64;
-            } else {
-                maxThreads = MAX_THREADS_I686;
+            while (aliases.hasMoreElements()) {
+
+                final String alias = aliases.nextElement();
+
+                final java.security.cert.Certificate cert =
+                        keystore.getCertificate(alias);
+
+                if (cert instanceof java.security.cert.X509Certificate) {
+
+                    java.security.cert.X509Certificate certX509 =
+                            (java.security.cert.X509Certificate) cert;
+
+                    final long notAfter = certX509.getNotAfter().getTime();
+                    if (notAfter < minNotAfter) {
+                        minCertX509 = certX509;
+                        minAlias = alias;
+                    }
+
+                    nAliases++;
+                }
             }
 
-            return maxThreads;
+            if (minCertX509 != null) {
+
+                final Date creationDate = keystore.getCreationDate(minAlias);
+                final Date notAfter = minCertX509.getNotAfter();
+
+                final LdapName ln =
+                        new LdapName(minCertX509.getIssuerDN().getName());
+
+                for (final Rdn rdn : ln.getRdns()) {
+
+                    if (rdn.getType().equalsIgnoreCase("CN")) {
+
+                        final String issuerCN = rdn.getValue().toString();
+
+                        certInfo = new SslCertInfo(issuerCN, creationDate,
+                                notAfter, nAliases == 1);
+                        break;
+                    }
+                }
+            }
+
+        } catch (KeyStoreException | NoSuchAlgorithmException
+                | CertificateException | IOException | InvalidNameException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new SpException(e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
 
-        public static int getIdleTimeoutMsec() {
-            return MAX_IDLE_TIME_MSEC;
-        }
+        return certInfo;
     }
 
     /**
@@ -363,6 +524,9 @@ public final class WebServer {
         //
         );
 
+        final String ksLocation;
+        final String ksPassword;
+
         if (propsServer.getProperty(PROP_KEY_SSL_KEYSTORE) == null) {
 
             InputStream istr;
@@ -371,40 +535,48 @@ public final class WebServer {
              *
              */
             final Properties propsPw = new Properties();
+
             istr = new java.io.FileInputStream(
                     serverHome + "/data/default-ssl-keystore.pw");
+
             propsPw.load(istr);
-            final String pw = propsPw.getProperty("password");
+            ksPassword = propsPw.getProperty("password");
             istr.close();
 
             /**
              *
              */
-            istr = new java.io.FileInputStream(
-                    serverHome + "/data/default-ssl-keystore");
+            ksLocation = serverHome + "/data/default-ssl-keystore";
+
+            istr = new java.io.FileInputStream(ksLocation);
             final KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(istr, pw.toCharArray());
+            ks.load(istr, ksPassword.toCharArray());
             istr.close();
 
             /**
              *
              */
             sslContextFactory.setKeyStore(ks);
-            sslContextFactory.setKeyManagerPassword(pw);
+            sslContextFactory.setKeyManagerPassword(ksPassword);
 
         } else {
 
-            final Resource keystore = Resource.newResource(serverHome + "/"
-                    + propsServer.getProperty(PROP_KEY_SSL_KEYSTORE));
+            ksLocation = String.format("%s%c%s", serverHome, File.separatorChar,
+                    propsServer.getProperty(PROP_KEY_SSL_KEYSTORE));
+
+            ksPassword = propsServer.getProperty(PROP_KEY_SSL_KEYSTORE_PW);
+
+            final Resource keystore = Resource.newResource(ksLocation);
 
             sslContextFactory.setKeyStoreResource(keystore);
 
-            sslContextFactory.setKeyStorePassword(
-                    propsServer.getProperty(PROP_KEY_SSL_KEYSTORE_PW));
+            sslContextFactory.setKeyStorePassword(ksPassword);
 
             sslContextFactory.setKeyManagerPassword(
                     propsServer.getProperty(PROP_KEY_SSL_KEY_PW));
         }
+
+        sslCertInfo = createSslCertInfo(ksLocation, ksPassword);
 
         /*
          * HTTPS Configuration
@@ -491,7 +663,8 @@ public final class WebServer {
          *
          */
         final String serverStartedFile =
-                serverHome + "/logs/" + "server.started.txt";
+                String.format("%s%clogs%cserver.started.txt", serverHome,
+                        File.separatorChar, File.separatorChar);
 
         int status = 0;
 
@@ -505,8 +678,13 @@ public final class WebServer {
             writer = new FileWriter(serverStartedFile);
 
             final Date now = new Date();
-            writer.write("#" + now.toString() + "\n");
-            writer.write(String.valueOf(now.getTime()) + "\n");
+
+            writer.write("#");
+            writer.write(now.toString());
+            writer.write("\n");
+            writer.write(String.valueOf(now.getTime()));
+            writer.write("\n");
+
             writer.flush();
 
             Runtime.getRuntime()
@@ -522,15 +700,10 @@ public final class WebServer {
             }
 
         } catch (Exception e) {
-
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             status = 1;
-
         } finally {
-
-            if (writer != null) {
-                writer.close();
-            }
+            IOUtils.closeQuietly(writer);
         }
 
         if (status == 0) {

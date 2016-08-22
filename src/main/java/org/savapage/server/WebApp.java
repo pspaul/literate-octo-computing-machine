@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -56,6 +57,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.util.AppLogHelper;
+import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.server.api.JsonApiServer;
@@ -626,8 +628,38 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                 }
             }
             logMsg.append(WebServer.getServerPortSsl()).append(" (SSL)");
-
             SpInfo.instance().log(logMsg.toString());
+
+            //
+            final WebServer.SslCertInfo sslCert = WebServer.getSslCertInfo();
+
+            if (sslCert == null) {
+                SpInfo.instance().log("SSL Certificate info NOT avaliable.");
+            } else {
+                final LocaleHelper helper = new LocaleHelper(Locale.ENGLISH);
+
+                logMsg.setLength(0);
+                logMsg.append("SSL Cert Issuer  [")
+                        .append(sslCert.getIssuerCN()).append("]");
+
+                if (sslCert.isSelfSigned()) {
+                    logMsg.append(" self-signed.");
+                }
+                SpInfo.instance().log(logMsg.toString());
+
+                logMsg.setLength(0);
+                logMsg.append("SSL Cert Created [").append(
+                        helper.getLongMediumDateTime(sslCert.getCreationDate()))
+                        .append("]");
+                SpInfo.instance().log(logMsg.toString());
+
+                logMsg.setLength(0);
+                logMsg.append("SSL Cert Expires [")
+                        .append(helper
+                                .getLongMediumDateTime(sslCert.getNotAfter()))
+                        .append("]");
+                SpInfo.instance().log(logMsg.toString());
+            }
 
             /*
              *
