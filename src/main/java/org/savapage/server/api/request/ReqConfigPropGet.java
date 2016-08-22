@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -28,7 +28,6 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.ConfigPropertyDao;
 import org.savapage.core.dto.AbstractDto;
-import org.savapage.core.jpa.ConfigProperty;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
@@ -113,21 +112,22 @@ public final class ReqConfigPropGet extends ApiRequestMixin {
         final ConfigManager cm = ConfigManager.instance();
 
         /*
-         * INVARIANT: property MUST exist in database.
+         * INVARIANT: property MUST exist in cache.
          */
-        final ConfigProperty prop = dao.findByName(dtoReq.getName());
+        final Key key = cm.getConfigKey(dtoReq.getName());
 
-        if (prop == null) {
+        if (key == null) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-config-prop-not-found",
                     dtoReq.getName());
             return;
         }
 
         /*
-         * INVARIANT: property MUST exist in cache.
+         * INVARIANT: property MUST exist in database.
          */
-        final Key key = cm.getConfigKey(dtoReq.getName());
-        if (key == null) {
+        String value = cm.readDbConfigKey(key);
+
+        if (value == null) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-config-prop-not-found",
                     dtoReq.getName());
             return;
@@ -137,8 +137,6 @@ public final class ReqConfigPropGet extends ApiRequestMixin {
          * If display of this value is Locale sensitive, we MUST revert to
          * locale format.
          */
-        String value = prop.getValue();
-
         if (cm.isConfigBigDecimal(key)) {
             try {
                 value = BigDecimalUtil.localize(BigDecimalUtil.valueOf(value),
