@@ -698,8 +698,12 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                     .getProperty(ConfigManager.SERVER_PROP_PRINTER_RAW_PORT,
                             ConfigManager.PRINTER_RAW_PORT_DEFAULT));
 
-            this.rawPrintServer = new RawPrintServer(iRawPrintPort);
-            this.rawPrintServer.start();
+            if (iRawPrintPort == 0) {
+                SpInfo.instance().log("IP Print Server disabled.");
+            } else {
+                this.rawPrintServer = new RawPrintServer(iRawPrintPort);
+                this.rawPrintServer.start();
+            }
 
         } catch (Exception e) {
 
