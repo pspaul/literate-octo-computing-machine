@@ -61,6 +61,7 @@ import org.savapage.common.ConfigDefaults;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.ipp.operation.IppMessageMixin;
+import org.savapage.server.xmlrpc.SpXmlRpcServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +83,7 @@ public final class WebServer {
         private final Date notAfter;
         private final boolean selfSigned;
 
+        @SuppressWarnings("unused")
         private SslCertInfo() {
             this.issuerCN = null;
             this.creationDate = null;
@@ -129,6 +131,15 @@ public final class WebServer {
                 throws IOException, ServletException {
 
             final String contentTypeReq = request.getContentType();
+
+            /*
+             * For now, take /xmlrpc as it is, do not redirect. Reason: C++
+             * modules are not prepared for SSL yet.
+             */
+            if (request.getPathInfo()
+                    .startsWith(SpXmlRpcServlet.SERVLET_URL_PATTERN)) {
+                return;
+            }
 
             /*
              * Take IPP traffic as it is, do not redirect.
