@@ -1,7 +1,7 @@
 /*! SavaPage jQuery Mobile User Web App | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -16,7 +16,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -1792,14 +1792,15 @@
 				/*
 				* Clear and Hide content
 				*/
-				//$('#file-upload-feedback').html('').hide();
 				$('#button-file-upload-reset').click();
 
 				/*
 				 * IMPORTANT: _ns.deferAppWakeUp(false) is performed in
 				 * main.onShow()
 				 */
-
+				
+				// Mantis #717
+				_ns.checkAppWakeUpAutoRestore();
 			});
 			return _self;
 		}
@@ -4284,6 +4285,53 @@
 				}
 			};
 
+			/**
+			 * Restores CometD UserEvent connection automatically.
+			 * Mantis #717.
+			 */
+			this.onWakeUpAutoRestore = function(deferAppWakeUp) {
+
+				/*
+				 * Stop the timer.
+				 */
+				_ns.stopAppWatchdog();
+
+				/*
+				 * By pausing we tell the server to interrupt the long-poll: as a
+				 * result of this call the connection to the server might be lost
+				 * or the session is expired).
+				 */
+				_ns.userEvent.pause();
+
+				/*
+				 * #320
+				 */
+				_userEvent.removeListener();
+				_proxyprintEvent.removeListener();
+
+				_ns.cometd.stop();
+
+				/*
+				 * Are we still logged in (may be connection to server is lost or
+				 * session is expired)?
+				 */
+				if (!_model.user.loggedIn) {
+					return false;
+				}
+
+				// Start with defer setting.
+				_ns.startAppWatchdog(deferAppWakeUp);
+
+				_userEvent.setLongPollLost();
+
+				_ns.cometd.start(_ns.model.user.cometdToken);
+				_userEvent.resume();
+			};
+
+			/**
+			 * Restores CometD UserEvent connection after user acknowledges 
+			 * "Welcome Back" message.  
+			 */
 			this.onWakeUp = function(deltaMsec) {
 
 				var buttonGoOn = $('#sp-popup-wakeup-refresh');
@@ -4304,9 +4352,9 @@
 				_ns.stopAppWatchdog();
 
 				/*
-				 * By pausing we tell the server to interrupt the long-poll: as
-				 * a result of this call connection to server might be lost or
-				 * session expired).
+				 * By pausing we tell the server to interrupt the long-poll: as a
+				 * result of this call the connection to the server might be lost
+				 * or the session is expired).
 				 */
 				_ns.userEvent.pause();
 
@@ -4347,7 +4395,7 @@
 
 				buttonGoOn.click(function(e) {
 
-					_ns.startAppWatchdog();
+					_ns.startAppWatchdog(false);
 
 					$('#sp-popup-wakeup').popup('close');
 
@@ -4386,7 +4434,7 @@
 					_view.message('connection to server is lost');
 					return;
 				}
-				_ns.configAppWatchdog(_this.onWakeUp, res.watchdogHeartbeatSecs, res.watchdogTimeoutSecs);
+				_ns.configAppWatchdog(_this.onWakeUp, res.watchdogHeartbeatSecs, res.watchdogTimeoutSecs, _this.onWakeUpAutoRestore);
 
 				_model.prevMsgTime = res.systime;
 
@@ -4505,7 +4553,7 @@
 							_ns.monitorUserIdle(_model.maxIdleSeconds, _view.pages.main.onLogout);
 						}
 
-						_ns.startAppWatchdog();
+						_ns.startAppWatchdog(false);
 
 					} else {
 
@@ -4878,7 +4926,11 @@
 			_cometd.onConnectionBroken = function() {
 				_changeIcon("delete", 'Connection is broken.');
 				if (_model.user.loggedIn) {
-					_this.onWakeUp();
+					if (_ns.isAppWakeUpDeferred()) {
+						_this.onWakeUpAutoRestore(true);
+					} else {
+						_this.onWakeUp();
+					}
 				}
 			};
 			_cometd.onConnectionClosed = function() {

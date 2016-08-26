@@ -1,7 +1,7 @@
 /*! SavaPage jQuery Mobile Common | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -16,7 +16,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -37,7 +37,8 @@
 		//
 		, _watchdogTimer, _onWatchdogHeartbeat, _lastAppHeartbeat
 		//
-		, _deferAppWakeUp, _onAppWakeUp
+		, _deferAppWakeUp, _onAppWakeUp, _onAppWakeUpAutoRestore
+
 		//
 		, _doAppHeartbeat = function() {
 			_lastAppHeartbeat = new Date().getTime();
@@ -94,16 +95,34 @@
 				_onAppWakeUp(delta);
 			}
 		};
+		
+		/**
+		 * Mantis #717
+		 */
+		_ns.checkAppWakeUpAutoRestore = function() {
+			if (_onAppWakeUpAutoRestore) {
+				var now = new Date().getTime(), delta = (now - _lastAppHeartbeat);
+				_lastAppHeartbeat = now;				
+				if (delta > (_watchdogTimeoutSecs * 1000)) {
+					_onAppWakeUpAutoRestore(_deferAppWakeUp);
+				}
+			}
+		};
 
-		_ns.configAppWatchdog = function(onAppWakeUp, watchdogHeartbeatSecs, watchdogTimeoutSecs) {
+		_ns.configAppWatchdog = function(onAppWakeUp, watchdogHeartbeatSecs, watchdogTimeoutSecs, onAppWakeUpAutoRestore) {
 			_onAppWakeUp = onAppWakeUp;
 			_watchdogHeartbeatSecs = watchdogHeartbeatSecs;
 			_watchdogTimeoutSecs = watchdogTimeoutSecs;
+			_onAppWakeUpAutoRestore = onAppWakeUpAutoRestore;
 		};
+		
+		_ns.isAppWakeUpDeferred = function() {
+			return _deferAppWakeUp;
+		};
+		
+		_ns.startAppWatchdog = function(defer) {
 
-		_ns.startAppWatchdog = function() {
-
-			_ns.deferAppWakeUp(false);
+			_ns.deferAppWakeUp(defer);
 
 			_doAppHeartbeat();
 
