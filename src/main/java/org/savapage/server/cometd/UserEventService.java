@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -45,6 +45,7 @@ import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.savapage.core.PerformanceLogger;
+import org.savapage.core.ShutdownException;
 import org.savapage.core.SpException;
 import org.savapage.core.UserNotFoundException;
 import org.savapage.core.cometd.AdminPublisher;
@@ -86,6 +87,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class UserEventService extends AbstractEventService {
 
+    /**
+     * .
+     */
     private static final boolean ADMIN_PUB_USER_EVENT = true;
 
     /**
@@ -628,13 +632,14 @@ public final class UserEventService extends AbstractEventService {
      *         map with information about the change.
      * @throws IOException
      * @throws UserNotFoundException
+     * @throws ShutdownException
      */
     private Map<String, Object> watchUserFileEvents(
             final String clientIpAddress, final Date dateStart,
             final String user, final Locale locale, final Long pageOffset,
             final String uniqueUrlValue, final boolean base64,
             final boolean isWebAppClient)
-            throws IOException, UserNotFoundException {
+            throws IOException, UserNotFoundException, ShutdownException {
 
         final WatchService watchService =
                 FileSystems.getDefault().newWatchService();
@@ -657,6 +662,10 @@ public final class UserEventService extends AbstractEventService {
             int i = 0;
 
             while (true) {
+
+                if (ConfigManager.isShutdownInProgress()) {
+                    throw new ShutdownException();
+                }
 
                 i++;
 
@@ -919,11 +928,13 @@ public final class UserEventService extends AbstractEventService {
             } // end-for
 
         } catch (InterruptedException e) {
-            // ignore
+
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("File Watch: InterruptedException ["
                         + e.getMessage() + "]");
             }
+            throw new ShutdownException();
+
         } finally {
             // Closing is CRUCIAL to prevent the "Too Many Open Files" Error
             watchService.close();
