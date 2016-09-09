@@ -27,24 +27,18 @@
 
 	<div>
 		<ul data-role="listview" data-inset="true" id="language-list">
-			<li>
-				<a href="#" data-language="de" data-country="DE">Deutsch</a>
-			</li>
-			<li>
-				<a href="#" data-language="en" data-country="US">English</a>
-			</li>
-			<li>
-				<a href="#" data-language="fr" data-country="FR">Français</a>
-			</li>
-			<li>
-				<a href="#" data-language="nl" data-country="NL">Nederlands</a>
-			</li>
+			<wicket:fragment wicket:id="language-list">
+				<li>
+					<a href="#" data-language="xx" data-country="XX"
+						wicket:id="language">Xxxx</a>
+				</li>
+			</wicket:fragment>
 		</ul>
 	</div>
 
 	<a href="#page-login" id="button-lang-cancel"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-		<wicket:message key="button-cancel" />
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+			key="button-cancel" />
 	</a>
 
 </div>

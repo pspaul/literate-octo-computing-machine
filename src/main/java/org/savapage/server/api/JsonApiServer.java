@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -154,6 +154,7 @@ import org.savapage.core.services.helpers.email.EmailMsgParms;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.papercut.DelegatedPrintPeriodDto;
@@ -267,6 +268,21 @@ public final class JsonApiServer extends AbstractPage {
     private static final JsonApiDict API_DICTIONARY = new JsonApiDict();
 
     /**
+     * Applies the requested locale to the session locale. When the request does
+     * not match an available language the {@link Locale#US} is applied..
+     */
+    private void applyLocaleToSession() {
+
+        final String currentLanguage = getSession().getLocale().getLanguage();
+        for (final Locale locale : LocaleHelper.getAvailableLanguages()) {
+            if (locale.getLanguage().equals(currentLanguage)) {
+                return;
+            }
+        }
+        getSession().setLocale(Locale.US);
+    }
+
+    /**
      *
      * @param parameters
      *            The {@link PageParameters}.
@@ -327,6 +343,8 @@ public final class JsonApiServer extends AbstractPage {
         /*
          *
          */
+        applyLocaleToSession();
+
         ServiceContext.open();
 
         ServiceContext.setLocale(getSession().getLocale());
@@ -4538,27 +4556,36 @@ public final class JsonApiServer extends AbstractPage {
          */
         final Locale.Builder localeBuilder = new Locale.Builder();
 
-        localeBuilder.setLanguage(language);
-
-        if (StringUtils.isNotBlank(country)) {
-
-            localeBuilder.setRegion(country);
-
-        } else {
-            /*
-             * We adopt the country/region code from the Browser, if the
-             * language setting of the Browser is the same as the SELECTED
-             * language in the SavaPage Web App.
-             */
-            final Locale localeReq = getRequestCycle().getRequest().getLocale();
-
-            if (localeReq.getLanguage().equalsIgnoreCase(language)) {
-                localeBuilder.setRegion(localeReq.getCountry());
-            }
-        }
+        Locale locale;
 
         //
-        final Locale locale = localeBuilder.build();
+        try {
+            localeBuilder.setLanguage(language);
+
+            if (StringUtils.isNotBlank(country)) {
+
+                localeBuilder.setRegion(country);
+
+            } else {
+                /*
+                 * We adopt the country/region code from the Browser, if the
+                 * language setting of the Browser is the same as the SELECTED
+                 * language in the SavaPage Web App.
+                 */
+                final Locale localeReq =
+                        getRequestCycle().getRequest().getLocale();
+
+                if (localeReq.getLanguage().equalsIgnoreCase(language)) {
+                    localeBuilder.setRegion(localeReq.getCountry());
+                }
+            }
+
+            locale = localeBuilder.build();
+
+        } catch (Exception e) {
+            locale = Locale.US;
+        }
+
         SpSession.get().setLocale(locale);
 
         /*

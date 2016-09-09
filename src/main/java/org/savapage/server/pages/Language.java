@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,12 +14,20 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
 package org.savapage.server.pages;
+
+import java.util.Locale;
+
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
+import org.savapage.core.util.LocaleHelper;
 
 /**
  *
@@ -34,6 +42,28 @@ public class Language extends AbstractPage {
      *
      */
     public Language() {
+
+        add(new PropertyListView<Locale>("language-list",
+                LocaleHelper.getAvailableLanguages()) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(final ListItem<Locale> item) {
+
+                final Locale locale = item.getModel().getObject();
+
+                final Label label = new Label("language",
+                        locale.getDisplayLanguage(locale));
+
+                label.add(new AttributeModifier("data-language",
+                        locale.getLanguage()));
+                label.add(new AttributeModifier("data-country",
+                        locale.getCountry()));
+
+                item.add(label);
+            }
+        });
     }
 
 }
