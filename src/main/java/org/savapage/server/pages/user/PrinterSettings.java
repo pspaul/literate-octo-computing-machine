@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -46,13 +46,13 @@ public class PrinterSettings extends AbstractUserPage {
         final String htmlRadioName = "print-page-scaling-enum";
 
         labelledRadio("page-scaling", "-crop", htmlRadioName,
-                PageScalingEnum.CROP.toString(), true);
+                PageScalingEnum.CROP.toString(), false);
 
         labelledRadio("page-scaling", "-expand", htmlRadioName,
                 PageScalingEnum.EXPAND.toString(), false);
 
         labelledRadio("page-scaling", "-shrink", htmlRadioName,
-                PageScalingEnum.SHRINK.toString(), false);
+                PageScalingEnum.SHRINK.toString(), true);
 
     }
 
