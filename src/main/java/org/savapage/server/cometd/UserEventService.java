@@ -215,8 +215,8 @@ public final class UserEventService extends AbstractEventService {
      * @throws IOException
      */
     private Map<String, Object> checkUserMsgIndicator(
-            final Date msgPrevMonitorTime, final String user,
-            final Locale locale) throws IOException {
+            final String clientIpAddress, final Date msgPrevMonitorTime,
+            final String user, final Locale locale) throws IOException {
 
         Map<String, Object> eventData = null;
 
@@ -255,6 +255,13 @@ public final class UserEventService extends AbstractEventService {
                      * Do NOT eventData = createUserMessageNullEvent(); because
                      * this will result in an endless loop.
                      */
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(String.format(
+                                "STOP_POLL_REQ at start of poll for "
+                                        + "user [%s] at [%s] ignored",
+                                user, clientIpAddress));
+                    }
+
                     break;
 
                 default:
@@ -444,7 +451,7 @@ public final class UserEventService extends AbstractEventService {
 
         if (LOGGER.isTraceEnabled()) {
 
-            LOGGER.trace("START job monitoring for user [" + user + "] IP ["
+            LOGGER.trace("START job monitoring for user [" + user + "] at ["
                     + clientIpAddress + "] pageOffset [" + pageOffset
                     + "] uniqueUrlValue [" + uniqueUrlValue + "] base64 ["
                     + base64 + "] locale [" + locale + "] msgPrevTime ["
@@ -497,8 +504,8 @@ public final class UserEventService extends AbstractEventService {
              * Any MESSAGES to be notified since the previous check date?
              */
             if (eventData == null && msgPrevMonitorTime != null) {
-                eventData =
-                        checkUserMsgIndicator(msgPrevMonitorTime, user, locale);
+                eventData = checkUserMsgIndicator(clientIpAddress,
+                        msgPrevMonitorTime, user, locale);
             }
 
             /*
@@ -586,7 +593,9 @@ public final class UserEventService extends AbstractEventService {
         }
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("STOP job monitoring for user [" + user + "]");
+            LOGGER.trace(
+                    String.format("STOP job monitoring for user [%s] at [%s]",
+                            user, clientIpAddress));
         }
     }
 
