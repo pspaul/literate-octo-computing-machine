@@ -56,10 +56,7 @@
 			$(imgDomElement).removeAttr("height");
 			_ns.thumbnails2Load--;
 			if (_ns.thumbnails2Load === 0) {
-				/*
-				 * All thumbnails are loaded, so resume CometD.
-				 */
-				_ns.cometd.start(_ns.model.user.cometdToken);
+				// All thumbnails are loaded, so resume.
 				_ns.userEvent.resume();
 			}
 		};
@@ -379,7 +376,7 @@
 					 * Get things started: invite to do a poll.
 					 */
 					if (_ns.logger.isDebugEnabled()) {
-						_ns.logger.debug('UserEvent: first poll invitation');
+						_ns.logger.debug('UserEvent: addListener + onPollInvitation');
 					}
 
 					this.onPollInvitation();
@@ -391,6 +388,9 @@
 			 */
 			this.removeListener = function() {
 				if (_subscription) {
+					if (_ns.logger.isDebugEnabled()) {
+						_ns.logger.debug('UserEvent: removeListener');
+					}
 					_cometd.removeListener(_subscription);
 					_subscription = null;
 				}
@@ -574,29 +574,13 @@
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
-
 				_this.onShow();
-
 			}).on("pageshow", function(event, ui) {
-				/*
-				 * Mantis #320: while the dialog is in view, CometD is stopped,
-				 * so images get loaded in iOS Safari.
-				 */
 				_ns.userEvent.pause();
-				_ns.cometd.stop();
-				//
-
 			}).on('pagebeforehide', function(event, ui) {
-
 				_this.onHide();
-
 			}).on("pagehide", function(event, ui) {
-				/*
-				 * Mantis #320: start CometD again.
-				 */
-				_ns.cometd.start(_ns.model.user.cometdToken);
 				_ns.userEvent.resume();
-				//
 			});
 		}
 
@@ -997,12 +981,7 @@
 					_this.adjustSlider();
 				}
 
-				/*
-				 * Mantis #320: while the browser is in view, CometD is stopped,
-				 * so images get loaded in iOS Safari
-				 */
 				_ns.userEvent.pause();
-				_ns.cometd.stop();
 
 			}).on("pageshow", function(event, ui) {
 
@@ -1010,10 +989,6 @@
 				_this.adjustImages();
 
 			}).on("pagehide", function(event, ui) {
-				/*
-				 * Mantis #320: start CometD again.
-				 */
-				_ns.cometd.start(_ns.model.user.cometdToken);
 				_ns.userEvent.resume();
 			});
 		}
@@ -1790,15 +1765,15 @@
 
 			}).on('pagebeforehide', function(event, ui) {
 				/*
-				* Clear and Hide content
-				*/
+				 * Clear and Hide content
+				 */
 				$('#button-file-upload-reset').click();
 
 				/*
-				 * IMPORTANT: _ns.deferAppWakeUp(false) is performed in
-				 * main.onShow()
-				 */
-				
+				* IMPORTANT: _ns.deferAppWakeUp(false) is performed in
+				* main.onShow()
+				*/
+
 				// Mantis #717
 				_ns.checkAppWakeUpAutoRestore();
 			});
@@ -4291,9 +4266,10 @@
 			 */
 			this.onWakeUpAutoRestore = function(deferAppWakeUp) {
 
-				/*
-				 * Stop the timer.
-				 */
+				if (_ns.logger.isDebugEnabled()) {
+					_ns.logger.debug('onWakeUpAutoRestore');
+				}
+
 				_ns.stopAppWatchdog();
 
 				/*
@@ -4303,13 +4279,9 @@
 				 */
 				_ns.userEvent.pause();
 
-				/*
-				 * #320
-				 */
+				//
 				_userEvent.removeListener();
 				_proxyprintEvent.removeListener();
-
-				_ns.cometd.stop();
 
 				/*
 				 * Are we still logged in (may be connection to server is lost or
@@ -4324,27 +4296,26 @@
 
 				_userEvent.setLongPollLost();
 
-				_ns.cometd.start(_ns.model.user.cometdToken);
-				_userEvent.resume();
+				// IMPORTANT: perform next steps async !!
+				window.setTimeout(function() {
+					_userEvent.addListener();
+					_proxyprintEvent.addListener();
+					_userEvent.resume();
+				}, 10);
+
 			};
 
 			/**
-			 * Restores CometD UserEvent connection after user acknowledges 
-			 * "Welcome Back" message.  
+			 * Restores CometD UserEvent connection after user acknowledges
+			 * "Welcome Back" message.
 			 */
 			this.onWakeUp = function(deltaMsec) {
 
 				var buttonGoOn = $('#sp-popup-wakeup-refresh');
 
-				/*
-				* When paused there is NO pending long-poll: we fall back to the
-				* normal "resume" behavior.
-				*/
-
-				// Not for now (because of #320)
-				//if (_userEvent.isPaused()) {
-				//    return;
-				//}
+				if (_ns.logger.isDebugEnabled()) {
+					_ns.logger.debug('onWakeUp');
+				}
 
 				/*
 				 * At this point we want user interaction: so, stop the timer!
@@ -4364,8 +4335,6 @@
 				_userEvent.removeListener();
 				_proxyprintEvent.removeListener();
 
-				_ns.cometd.stop();
-
 				/*
 				 * Are we still logged in (may be connection to server is lost or
 				 * session is expired)?
@@ -4383,9 +4352,9 @@
 				}
 
 				/*
-				 * We use a popup since we NEED user action to continue.
+				 * IMPORTANT: we use a popup since we NEED user action to continue.
 				 * Reason: some devices give some CPU cycles every 10-20 seconds
-				 * to the Web App when it is in the background...
+				 * to the Web App when it is in the background.
 				 */
 				$('#sp-popup-wakeup').popup('open', {
 					positionTo : 'window'
@@ -4401,8 +4370,9 @@
 
 					_userEvent.setLongPollLost();
 
-					// Mantis #320
-					_ns.cometd.start(_ns.model.user.cometdToken);
+					_userEvent.addListener();
+					_proxyprintEvent.addListener();
+
 					_userEvent.resume();
 
 					return false;
@@ -4792,7 +4762,6 @@
 
 					if (_ns.thumbnails2Load > 0) {
 						_ns.userEvent.pause();
-						_ns.cometd.stop();
 					} else {
 						_ns.userEvent.onPollInvitation();
 					}
@@ -4961,7 +4930,6 @@
 			};
 			_deviceEvent.onEventError = function(msg) {
 				_view.message(msg);
-				_cometd.stop();
 			};
 			_deviceEvent.onPollInvitation = function() {
 				_deviceEvent.poll(_model.language, _model.country);
@@ -5025,7 +4993,6 @@
 
 			_userEvent.onEventError = function(msg) {
 				_view.message(msg);
-				_cometd.stop();
 			};
 
 			_userEvent.onException = function(msg) {
