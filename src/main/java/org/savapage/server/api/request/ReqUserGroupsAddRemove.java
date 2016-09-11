@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -101,6 +101,8 @@ public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
                     ServiceContext.getDaoContext().createBatchCommitter(
                             ConfigManager.getDaoBatchChunkSize());
 
+            batchCommitter.open();
+
             for (final String groupName : dtoReq.getGroupsAdded()) {
 
                 /*
@@ -131,6 +133,8 @@ public final class ReqUserGroupsAddRemove extends ApiRequestMixin {
                 batchCommitter.commit();
                 nAdded++;
             }
+
+            batchCommitter.close();
         }
 
         if (dtoReq.getGroupsRemoved() != null

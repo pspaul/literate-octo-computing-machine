@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -344,7 +344,7 @@ public final class JsonRpcServlet extends HttpServlet
 
             case ADD_USER_GROUP:
 
-                batchCommitter = createBatchCommitter();
+                batchCommitter = openBatchCommitter();
 
                 rpcResponse = USER_GROUP_SERVICE.addUserGroup(batchCommitter,
                         methodParser.getParams(ParamsUniqueName.class)
@@ -356,7 +356,7 @@ public final class JsonRpcServlet extends HttpServlet
                 final ParamsChangeBaseCurrency parmsChangeBaseCurrency =
                         methodParser.getParams(ParamsChangeBaseCurrency.class);
 
-                batchCommitter = createBatchCommitter();
+                batchCommitter = openBatchCommitter();
                 batchCommitter.setTest(parmsChangeBaseCurrency.isTest());
 
                 rpcResponse = ACCOUNTING_SERVICE.changeBaseCurrency(
@@ -474,7 +474,7 @@ public final class JsonRpcServlet extends HttpServlet
 
             case SYNC_USER_GROUP:
 
-                batchCommitter = createBatchCommitter();
+                batchCommitter = openBatchCommitter();
 
                 rpcResponse = USER_GROUP_SERVICE.syncUserGroup(batchCommitter,
                         methodParser.getParams(ParamsUniqueName.class)
@@ -522,6 +522,7 @@ public final class JsonRpcServlet extends HttpServlet
                 daoContext.rollback();
             } else {
                 batchCommitter.rollback();
+                batchCommitter.close();
             }
 
             ServiceContext.close();
@@ -650,11 +651,14 @@ public final class JsonRpcServlet extends HttpServlet
     }
 
     /**
+     * Creates and opens a {@link DaoBatchCommitter}.
      *
-     * @return The {@link DaoBatchCommitter}.
+     * @return The committer.
      */
-    private DaoBatchCommitter createBatchCommitter() {
-        return ServiceContext.getDaoContext()
+    private DaoBatchCommitter openBatchCommitter() {
+        final DaoBatchCommitter committer = ServiceContext.getDaoContext()
                 .createBatchCommitter(ConfigManager.getDaoBatchChunkSize());
+        committer.open();
+        return committer;
     }
 }
