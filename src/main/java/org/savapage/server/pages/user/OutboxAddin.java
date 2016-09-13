@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -216,6 +216,12 @@ public class OutboxAddin extends AbstractUserPage {
             key = (total == 1) ? "page" : "pages";
             totals.append(" ").append(localized(key));
 
+            // n-up
+            if (job.getNumberUp().intValue() > 1) {
+                totals.append(", ")
+                        .append(localized("n-up", job.getNumberUp()));
+            }
+
             //
             if (copies > 1) {
                 totals.append(", ").append(copies).append(" ")
@@ -275,7 +281,8 @@ public class OutboxAddin extends AbstractUserPage {
             for (final String attr : new String[] { "title", "papersize",
                     "letterhead", "duplex", "singlex", "color", "collate",
                     "grayscale", "accounts", "removeGraphics", "ecoPrint",
-                    "extSupplier", "owner-user-name", "drm" }) {
+                    "extSupplier", "owner-user-name", "drm", "punch", "staple",
+                    "fold", "booklet" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -321,6 +328,19 @@ public class OutboxAddin extends AbstractUserPage {
             }
             if (job.isEcoPrint()) {
                 mapVisible.put("ecoPrint", "Eco Print");
+            }
+
+            if (job.hasFinishingPunch()) {
+                mapVisible.put("punch", localized("punch"));
+            }
+            if (job.hasFinishingStaple()) {
+                mapVisible.put("staple", localized("staple"));
+            }
+            if (job.hasFinishingFold()) {
+                mapVisible.put("fold", localized("fold"));
+            }
+            if (job.hasFinishingBooklet()) {
+                mapVisible.put("booklet", localized("booklet"));
             }
 
             if (job.isDrm()) {
