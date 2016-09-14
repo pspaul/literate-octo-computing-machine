@@ -115,6 +115,17 @@
 				});
 			}
 			//
+			, _onEditPopup = function(jobFileName, positionTo) {
+				var html = _view.getPageHtml('JobTicketEditAddIn', {
+					jobFileName : jobFileName
+				}) || 'error';
+
+				$('#sp-jobticket-popup-addin').html(html);
+				$('#sp-jobticket-popup').enhanceWithin().popup('open', {
+					positionTo : positionTo
+				});
+			}
+			//
 			, _cancelJob = function(jobFileName) {
 				return _api.call({
 					request : 'jobticket-delete',
@@ -197,6 +208,9 @@
 
 				}).on('click', '.sp-jobticket-print', null, function() {
 					_onPrintPopup($(this).attr('data-savapage'), $(this));
+
+				}).on('click', '.sp-jobticket-edit', null, function() {
+					_onEditPopup($(this).attr('data-savapage'), $(this));
 
 				}).on('change', "input[name='sp-jobticket-sort-dir']", null, function() {
 					_expiryAsc = $(this).attr('id') === 'sp-jobticket-sort-dir-asc';

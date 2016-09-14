@@ -33,7 +33,8 @@
 	<div class="sp-txt-wrap">
 		<wicket:enclosure child="extSupplier">
 			<wicket:enclosure child="extSupplierImg">
-				<img wicket:id="extSupplierImg" src="" height="12" style="margin-left: 4px;"/>
+				<img wicket:id="extSupplierImg" src="" height="12"
+					style="margin-left: 4px;" />
 			</wicket:enclosure>
 			<wicket:enclosure child="extSupplier">
 				<span wicket:id="extSupplier" />
@@ -92,20 +93,20 @@
 				height="12" src="/glyphicons/glyphicons_092_tint.png" />&nbsp;<span
 				class="sp-txt-valid" wicket:id="removeGraphics" />
 		</wicket:enclosure>
-		
-        <wicket:enclosure child="punch"> &bull; <span
-                class="sp-txt-job-finishing" wicket:id="punch" />
-        </wicket:enclosure>
-        <wicket:enclosure child="staple"> &bull; <span
-                class="sp-txt-job-finishing" wicket:id="staple" />
-        </wicket:enclosure>
-        <wicket:enclosure child="fold"> &bull; <span
-                class="sp-txt-job-finishing" wicket:id="fold" />
-        </wicket:enclosure>
-        <wicket:enclosure child="booklet"> &bull; <span
-                class="sp-txt-job-finishing" wicket:id="booklet" />
-        </wicket:enclosure>
-        
+
+		<wicket:enclosure child="punch"> &bull; <span
+				class="sp-txt-job-finishing" wicket:id="punch" />
+		</wicket:enclosure>
+		<wicket:enclosure child="staple"> &bull; <span
+				class="sp-txt-job-finishing" wicket:id="staple" />
+		</wicket:enclosure>
+		<wicket:enclosure child="fold"> &bull; <span
+				class="sp-txt-job-finishing" wicket:id="fold" />
+		</wicket:enclosure>
+		<wicket:enclosure child="booklet"> &bull; <span
+				class="sp-txt-job-finishing" wicket:id="booklet" />
+		</wicket:enclosure>
+
 		<wicket:enclosure child="drm"> &bull; <span
 				class="sp-txt-warn" wicket:id="drm" />
 		</wicket:enclosure>
@@ -120,6 +121,13 @@
 	</wicket:enclosure>
 
 	<p />
+
+
+	<wicket:enclosure child="button-edit-outbox-jobticket">
+		<button data-savapage="the-unique-filename"
+			class="sp-jobticket-edit ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
+			wicket:id="button-edit-outbox-jobticket" />
+	</wicket:enclosure>
 
 	<wicket:enclosure child="button-cancel-outbox-job">
 		<button data-savapage="the-unique-filename"

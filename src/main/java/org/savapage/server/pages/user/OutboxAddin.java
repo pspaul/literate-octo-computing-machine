@@ -59,6 +59,7 @@ import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.webapp.WebAppTypeEnum;
@@ -244,6 +245,15 @@ public class OutboxAddin extends AbstractUserPage {
             item.add(new Label("printout-pie", sparklineData));
 
             //
+            labelWlk = helper.encloseLabel("button-edit-outbox-jobticket",
+                    String.format("%s . . .",
+                            HtmlButtonEnum.EDIT.uiText(getLocale())),
+                    isJobTicketItem);
+            if (isJobTicketItem) {
+                labelWlk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, job.getFile()));
+            }
+
             final String encloseButtonIdRemove;
             final String encloseButtonIdPreview;
 
