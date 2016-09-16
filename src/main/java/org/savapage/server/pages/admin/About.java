@@ -36,7 +36,6 @@ import org.savapage.core.SpException;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.doc.OfficeToPdf;
 import org.savapage.core.doc.XpsToPdf;
@@ -68,7 +67,7 @@ public final class About extends AbstractAdminPage {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected final boolean needMembership() {
+    protected boolean needMembership() {
         return false;
     }
 
@@ -461,8 +460,8 @@ public final class About extends AbstractAdminPage {
                         CommunityDictEnum.MEMBER_CARD.getWord(getLocale()))));
 
         //
-        final String urlHelpDesk = ConfigManager.instance()
-                .getConfigValue(Key.COMMUNITY_HELPDESK_URL);
+        final String urlHelpDesk =
+                CommunityDictEnum.SAVAPAGE_SUPPORT_URL.getWord();
 
         labelWrk = new Label("savapage-helpdesk-url", urlHelpDesk);
         labelWrk.add(new AttributeModifier("href", urlHelpDesk));
