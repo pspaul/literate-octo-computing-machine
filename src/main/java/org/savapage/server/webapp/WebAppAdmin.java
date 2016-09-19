@@ -28,7 +28,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -324,18 +323,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
 
         };
 
-        ajaxButton.add(new AttributeModifier("value",
-                getLocalizer().getString("button-membercard-import", this)));
-
         form.add(ajaxButton);
-
-        /*
-         *
-         */
-        Label labelWrk = new Label("membercard-import-reset");
-        labelWrk.add(new AttributeModifier("value", getLocalizer()
-                .getString("button-membercard-import-clear", this)));
-        form.add(labelWrk);
 
     }
 

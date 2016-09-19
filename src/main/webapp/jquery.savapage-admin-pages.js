@@ -1247,6 +1247,17 @@
 			 *
 			 */
 			$(_self.id()).on('pagecreate', function(event) {
+
+				$('#membercard-import-title').html(_i18n.format('membercard-import-title'));
+				$('#membercard-import-file-label').html(_i18n.format('membercard-import-file-label'));
+
+				// <input>
+				$('#button-membercard-import-reset').attr('value', _i18n.format('button-reset')).button('refresh');
+				$('#button-membercard-import-submit').attr('value', _i18n.format('button-upload')).button('refresh');
+
+				// <a>
+				$('#button-membercard-import-back').html(_i18n.format('button-back'));
+
 				$('#membercard-import-feedback').hide();
 				// initial hide
 				$('#button-membercard-import-submit').on('click', null, null, function() {
@@ -1254,15 +1265,15 @@
 					$('#membercard-import-feedback').show();
 					return true;
 				});
-				
+
 				$('#button-membercard-import-reset').on('click', null, null, function() {
 					$('#membercard-import-feedback').html('').hide();
 					return true;
-				});				
-				
+				});
+
 			}).on("pagebeforeshow", function(event, ui) {
 				_submitted = false;
-				
+
 			}).on('pagebeforehide', function(event, ui) {
 				/*
 				 * Clear and Hide content
@@ -1602,7 +1613,6 @@
 					}
 				});
 
-
 				/*
 				 * Smooth scrolling to primary content
 				 *
@@ -1638,7 +1648,6 @@
 					//}
 					return false;
 				});
-
 
 				$('#button-about-org').click(function() {
 					_view.showPageAsync('#page-info', 'AppAbout');
@@ -2258,7 +2267,7 @@
 				$(this).on('change', "input:checkbox[id='proxy-print.non-secure']", null, function(e) {
 					_panel.Options.onProxyPrintEnabled($(this).is(':checked'));
 				});
-								
+
 				$(this).on('change', "#group-user-auth-mode-local input:checkbox", null, function(e) {
 					_panel.Options.onAuthModeLocalEnabled();
 				});

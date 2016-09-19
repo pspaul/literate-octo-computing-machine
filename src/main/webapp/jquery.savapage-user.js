@@ -2488,18 +2488,18 @@
 				});
 
 				$('#button-mini-upload').click(function() {
-					var html, pageId = '#page-file-upload';
+					var html, pageId = '#page-file-upload', selAddIn = $('#file-upload-addin');
 					/*
 					 * This page is a fixed part of WebAppUserPage.html
 					 */
 					_view.changePage(pageId);
 
-					if (true) {
+					if (selAddIn.children().length === 0) {
 						html = _view.getUserPageHtml('FileUploadAddIn');
 						$('#file-upload-title').html(_i18n.format('file-upload-title'));
 						$('#file-upload-txt-font-family').html(_i18n.format('file-upload-txt-font-family'));
 						//
-						$('#file-upload-addin').html(html).listview('refresh');
+						selAddIn.html(html).listview('refresh');
 						// <input>
 						$('#button-file-upload-reset').attr('value', _i18n.format('button-reset')).button('refresh');
 						$('#button-file-upload-submit').attr('value', _i18n.format('button-upload')).button('refresh');

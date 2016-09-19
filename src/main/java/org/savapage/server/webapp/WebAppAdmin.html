@@ -2,15 +2,15 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -117,9 +117,7 @@ If no sizes attribute is set, the element’s size defaults to 57 x 57.
 		style="display: none;" class="sp-initial-hidden">
 
 		<div data-role="header" data-theme="b">
-			<h1>
-				<wicket:message key="membercard-import-title" />
-			</h1>
+			<h1 id="membercard-import-title" />
 		</div>
 
 		<div class="ui-content">
@@ -127,26 +125,23 @@ If no sizes attribute is set, the element’s size defaults to 57 x 57.
 				id="membercard-import-feedback" class="ui-body ui-body-a" />
 			<p>
 			<form wicket:id="memberCardUploadForm" enctype="multipart/form-data">
-				<label for="membercard-import-file">
-					<wicket:message key="membercard-import-file" />
-				</label>
+				<label for="membercard-import-file"
+					id="membercard-import-file-label" />
 				<input id="membercard-import-file" wicket:id="memberCardUpload"
-					type="file" size="50" />
+					style="font-size: 110%;" type="file" size="50" />
 				<p>
 					<input wicket:id="ajaxSubmit" type="button" data-inline="true"
 						data-icon="check" value="button-membercard-import"
-						id="button-membercard-import-submit" />
+						data-corners="false" id="button-membercard-import-submit" />
 
-					<input wicket:id="membercard-import-reset" type="reset"
-						data-inline="true" data-icon="delete"
-						id="button-membercard-import-reset"
+					<input type="reset" data-inline="true" data-icon="delete"
+						data-corners="false" id="button-membercard-import-reset"
 						value="button-membercard-import-clear" />
 
 					<a href="#"
 						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-						data-rel="back" data-direction="reverse"> <wicket:message
-							key="button-back" />
-					</a>
+						data-rel="back" data-direction="reverse"
+						id="button-membercard-import-back" />
 				</p>
 			</form>
 			</p>
