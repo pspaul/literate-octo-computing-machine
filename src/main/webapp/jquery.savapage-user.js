@@ -1607,7 +1607,7 @@
 		 * Constructor
 		 */
 		function PageUserInternetPrinter(_i18n, _view, _model) {
-			var _page = new _ns.Page(_i18n, _view, '#page-user-internet-printer', 'UserInternetPrinter'), _self = _ns.derive(_page);
+			var _page = new _ns.Page(_i18n, _view, '#page-user-internet-printer', 'InternetPrinter'), _self = _ns.derive(_page);
 			return _self;
 		}
 
@@ -1615,7 +1615,6 @@
 		 *
 		 */
 		function PageDashboard(_i18n, _view, _model) {
-			//var _this = this;
 
 			$('#page-dashboard').on('pagecreate', function(event) {
 
@@ -1639,14 +1638,12 @@
 
 				if ($('#button-user-internet-printer-dialog')) {
 					$(this).on('click', '#button-user-internet-printer-dialog', null, function() {
-						// The UUID page is a fixed part of WebAppUserPage.html
-						// (we only refresh the content)
 						var pageId = '#page-user-internet-printer'
 						//
-						, html = _view.getUserPageHtml('UserInternetPrinter')
+						, html = _view.getUserPageHtml('InternetPrinterAddIn')
 						//
 						;
-						_view.changePage(pageId);
+						_view.showUserPage(pageId, 'InternetPrinter');
 						if (html) {
 							$('#page-user-internet-printer-content').html(html);
 							$(pageId).enhanceWithin();
@@ -2491,32 +2488,39 @@
 				});
 
 				$('#button-mini-upload').click(function() {
+					var html, pageId = '#page-file-upload';
 					/*
 					 * This page is a fixed part of WebAppUserPage.html
 					 */
-					_view.changePage('#page-file-upload');
+					_view.changePage(pageId);
+
+					if (true) {
+						html = _view.getUserPageHtml('FileUploadAddIn');
+						$('#file-upload-title').html(_i18n.format('file-upload-title'));
+						$('#file-upload-txt-font-family').html(_i18n.format('file-upload-txt-font-family'));
+						//
+						$('#file-upload-addin').html(html).listview('refresh');
+						// <input>
+						$('#button-file-upload-reset').attr('value', _i18n.format('button-reset')).button('refresh');
+						$('#button-file-upload-submit').attr('value', _i18n.format('button-upload')).button('refresh');
+						// <a>
+						$('#button-file-upload-back').html(_i18n.format('button-back'));						
+					}
 					return false;
 				});
 
 				$('#button-mini-outbox').click(function() {
-					/*
-					 * This page is a fixed part of WebAppUserPage.html
-					 */
-					_view.changePage('#page-outbox');
+					_view.showUserPage('#page-outbox', 'Outbox');
 					return false;
-
 				});
 
 				$('#button-mini-user').click(function() {
 
 					var html, xydata, piedata, pageId = '#page-dashboard';
 
-					/*
-					 * This page is a fixed part of WebAppUserPage.html
-					 */
-					_view.changePage(pageId);
+					_view.showUserPage(pageId, 'UserDashboard');
 
-					html = _view.getUserPageHtml('UserDashboard');
+					html = _view.getUserPageHtml('UserDashboardAddIn');
 
 					if (html) {
 
@@ -2543,10 +2547,8 @@
 						if (_model.dashboardPiechart) {
 							/*
 							 * IMPORTANT: Release all resources occupied by the
-							 * jqPlot.
-							 * NOT releasing introduces a HUGE memory leak, each
-							 * time
-							 * the plot is refreshed.
+							 * jqPlot. NOT releasing introduces a HUGE memory leak,
+							 * each time the plot is refreshed.
 							 */
 							_model.dashboardPiechart.destroy();
 						}
@@ -5174,7 +5176,7 @@
 			};
 
 			/**
-			 * Callbacks: pageDashboard
+			 * Callbacks: money transfer
 			 */
 			_view.pages.moneyTransfer.onMoneyTransfer = function(gatewayId, method, main, cents) {
 				// MoneyTransferDto.java

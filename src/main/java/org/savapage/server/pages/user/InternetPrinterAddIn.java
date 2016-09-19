@@ -44,7 +44,7 @@ import org.savapage.server.webapp.WebAppTypeEnum;
  * @author Rijk Ravestein
  *
  */
-public final class UserInternetPrinter extends AbstractAuthPage {
+public final class InternetPrinterAddIn extends AbstractAuthPage {
 
     /**
      *
@@ -60,7 +60,7 @@ public final class UserInternetPrinter extends AbstractAuthPage {
     /**
      *
      */
-    public UserInternetPrinter(final PageParameters parameters) {
+    public InternetPrinterAddIn(final PageParameters parameters) {
 
         super(parameters);
 

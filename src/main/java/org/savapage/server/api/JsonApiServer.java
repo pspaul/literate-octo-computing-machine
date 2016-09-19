@@ -174,6 +174,7 @@ import org.savapage.server.api.request.ApiResultCodeEnum;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.dto.MoneyTransferDto;
 import org.savapage.server.ext.ServerPluginManager;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.webapp.WebAppTypeEnum;
@@ -4600,6 +4601,12 @@ public final class JsonApiServer extends AbstractPage {
             i18n.put(key, rcBundle.getString(key));
         }
 
+        // i18n for FileUpload (WebPrint).
+        i18n.put("button-back", HtmlButtonEnum.BACK.uiText(locale));
+        i18n.put("button-upload", HtmlButtonEnum.UPLOAD.uiText(locale));
+        i18n.put("button-reset", HtmlButtonEnum.RESET.uiText(locale));
+
+        //
         userData.put("i18n", i18n);
         userData.put("language", locale.getLanguage());
         userData.put("country", locale.getCountry());

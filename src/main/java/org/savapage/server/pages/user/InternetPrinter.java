@@ -14,101 +14,34 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.helpers;
+package org.savapage.server.pages.user;
 
-import java.util.Locale;
-
-import org.savapage.core.util.LocaleHelper;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public enum HtmlButtonEnum {
+public class InternetPrinter extends AbstractUserPage {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      *
+     * @param parameters
+     *            The parms.
      */
-    APPLY,
-
-    /**
-    *
-    */
-    BACK,
-
-    /**
-     *
-     */
-    CANCEL,
-
-    /**
-    *
-    */
-    CANCEL_ALL,
-
-    /**
-    *
-    */
-    CLOSE,
-
-    /**
-     *
-     */
-    DELETE,
-
-    /**
-    *
-    */
-    DOWNLOAD,
-
-    /**
-     *
-     */
-    EDIT,
-
-    /**
-    *
-    */
-    EXTEND,
-
-    /**
-     *
-     */
-    OK,
-
-    /**
-     *
-     */
-    PRINT,
-
-    /**
-    *
-    */
-    RESET,
-
-    /**
-     *
-     */
-    SAVE,
-
-    /**
-    *
-    */
-    UPLOAD;
-
-    /**
-     * @param locale
-     *            The {@link Locale}.
-     * @return The localized text.
-     */
-    public String uiText(final Locale locale) {
-        return LocaleHelper.uiText(this, locale);
+    public InternetPrinter(final PageParameters parameters) {
+        super(parameters);
+        add(new Label("button-back", HtmlButtonEnum.BACK.uiText(getLocale())));
     }
 
 }

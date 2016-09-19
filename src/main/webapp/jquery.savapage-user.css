@@ -1,7 +1,7 @@
 /*! SavaPage | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
 
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2015 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -16,7 +16,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -218,6 +218,16 @@ a:hover.poll_button {
     border-radius: 3px; 
 }
 
+
+#page-user-internet-printer .ui-dialog-contain {
+  width: 80%;
+  max-width: 1920px;
+  margin: 15px auto 15px auto;
+  padding: 0;
+  position: relative;
+  top: 15px;
+}
+ 
 #page-print-delegation .ui-dialog-contain {
   width: 92.5%;
   max-width: 1920px;

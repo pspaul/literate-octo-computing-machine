@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -377,16 +377,6 @@ public final class WebAppUser extends AbstractWebAppPage {
         fileUploadMarkup();
 
         addFileDownloadApiPanel();
-
-        /*
-         * NOTE: Since Wicket 7 a panel is needed to make <wicket:enclosure>
-         * work.
-         */
-        final UserDashboardPanel dashboardPanel =
-                new UserDashboardPanel("page-dashboard-panel");
-
-        add(dashboardPanel);
-        dashboardPanel.populate();
     }
 
     @Override
@@ -410,17 +400,6 @@ public final class WebAppUser extends AbstractWebAppPage {
      * http://www.wicket-library.com/wicket-examples-6.0.x/upload/single?1
      */
     private void fileUploadMarkup() {
-
-        /*
-         * Supported types.
-         */
-        add(new Label("file-upload-types-docs",
-                DocContent.getSupportedDocsInfo()));
-
-        add(new Label("file-upload-types-graphics",
-                DocContent.getSupportedGraphicsInfo()));
-
-        add(new Label("file-upload-max-size", maxUploadMb.toString() + " MB"));
 
         /*
          * Create the form.
@@ -502,7 +481,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         /*
          * Create the ajax button used to submit the form.
          */
-        AjaxButton ajaxButton = new AjaxButton("ajaxSubmitFileUpload") {
+        final AjaxButton ajaxButton = new AjaxButton("ajaxSubmitFileUpload") {
 
             private static final long serialVersionUID = 1L;
 
@@ -523,18 +502,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         };
 
-        ajaxButton.add(new AttributeModifier("value",
-                getLocalizer().getString("button-file-upload", this)));
-
         form.add(ajaxButton);
-
-        /*
-         *
-         */
-        final Label labelWrk = new Label("file-upload-reset");
-        labelWrk.add(new AttributeModifier("value",
-                getLocalizer().getString("button-file-upload-reset", this)));
-        form.add(labelWrk);
 
     }
 }

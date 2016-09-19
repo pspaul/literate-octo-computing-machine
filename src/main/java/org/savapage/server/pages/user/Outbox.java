@@ -21,18 +21,16 @@
  */
 package org.savapage.server.pages.user;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
-import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class UserDashboard extends AbstractUserPage {
+public final class Outbox extends AbstractUserPage {
 
     /**
      *
@@ -44,27 +42,15 @@ public final class UserDashboard extends AbstractUserPage {
      * @param parameters
      *            The parameters.
      */
-    public UserDashboard(final PageParameters parameters) {
+    public Outbox(final PageParameters parameters) {
 
         super(parameters);
 
-        final MarkupHelper helper = new MarkupHelper(this);
-
-        helper.encloseLabel("button-user-pw-dialog",
-                this.getLocalizer().getString("button-password", this),
-                ConfigManager.instance()
-                        .isConfigValue(Key.INTERNAL_USERS_CAN_CHANGE_PW));
-
-        helper.encloseLabel("button-user-pin-dialog",
-                this.getLocalizer().getString("button-pin", this), ConfigManager
-                        .instance().isConfigValue(Key.USER_CAN_CHANGE_PIN));
-
-        final boolean hasUriBase = StringUtils.isNotBlank(ConfigManager
-                .instance().getConfigValue(Key.IPP_INTERNET_PRINTER_URI_BASE));
-
-        helper.encloseLabel("button-user-internet-printer-dialog",
-                this.getLocalizer().getString("button-internet-printer", this),
-                hasUriBase);
+        add(new Label("button-back", HtmlButtonEnum.BACK.uiText(getLocale())));
+        add(new Label("button-extend",
+                HtmlButtonEnum.EXTEND.uiText(getLocale())));
+        add(new Label("button-cancel-all",
+                HtmlButtonEnum.CANCEL_ALL.uiText(getLocale())));
 
     }
 }

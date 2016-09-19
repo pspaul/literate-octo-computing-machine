@@ -2,15 +2,15 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -101,45 +101,9 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 	<div data-role="dialog" data-theme="a" id="page-voucher-redeem" />
 	<div data-role="dialog" data-theme="a" id="page-credit-transfer" />
 	<div data-role="dialog" data-theme="a" id="page-info" />
-
-	<div data-role="dialog" data-theme="a" id="page-outbox"
-		style="display: none;" class="sp-initial-hidden">
-
-		<div data-role="header" data-theme="b">
-			<h1>
-				<wicket:message key="outbox-title" />
-			</h1>
-		</div>
-		<div class="ui-content" id="content-outbox">
-
-			<div id="outbox-job-list" />
-
-			<a href="#" id="button-outbox-clear"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"> <wicket:message
-					key="button-cancel-all" />
-			</a> <a href="#" id="button-outbox-extend"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-clock"> <wicket:message
-					key="button-extend" />
-			</a> <a href="#" id="button-outbox-back" data-rel="back"
-				data-direction="reverse"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-					key="button-back" />
-			</a>
-		</div>
-
-		<wicket:remove>
-			<!-- 
-	THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
-	-->
-		</wicket:remove>
-		<div data-role="popup" data-position-to="window"
-			class="sp-msg-popup ui-content" />
-	</div>
-
-	<div data-role="dialog" data-theme="a" id="page-dashboard"
-		style="display: none;" class="sp-initial-hidden">
-		<wicket:fragment wicket:id="page-dashboard-panel"></wicket:fragment>
-	</div>
+	<div data-role="dialog" data-theme="a" id="page-user-internet-printer" />
+	<div data-role="dialog" data-theme="a" id="page-dashboard" />
+	<div data-role="dialog" data-theme="a" id="page-outbox" />
 
 	<div data-role="dialog" data-theme="a" id="page-money-transfer"
 		style="display: none;" class="sp-initial-hidden">
@@ -190,41 +154,6 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 			class="sp-msg-popup ui-content" />
 	</div>
 
-
-	<div data-role="dialog" data-theme="a" id="page-user-internet-printer"
-		style="display: none;" class="sp-initial-hidden">
-
-		<div data-role="header" data-theme="b">
-			<h1>
-				<wicket:message key="internet-printer-title" />
-			</h1>
-		</div>
-
-		<div class="ui-content">
-
-			<div id="page-user-internet-printer-content" />
-
-			<div data-role="controlgroup" data-type="horizontal">
-
-				<a href="#"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-					data-rel="back" data-direction="reverse" tabindex="3"> <wicket:message
-						key="button-back" />
-				</a>
-
-			</div>
-
-		</div>
-
-		<wicket:remove>
-			<!-- 
-    THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
-    -->
-		</wicket:remove>
-		<div data-role="popup" data-position-to="window"
-			class="sp-msg-popup ui-content" />
-	</div>
-
 	<wicket:remove>
 		<!-- ==============================================================  
      See FileDownloadApiPanel     
@@ -242,49 +171,25 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 		style="display: none;" class="sp-initial-hidden">
 
 		<div data-role="header" data-theme="b">
-			<h1>
-				<wicket:message key="file-upload-title" />
-			</h1>
+			<h1 id="file-upload-title" />
 		</div>
 
 		<div class="ui-content">
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="file-upload-supported-docs" />
-					</h3>
-					<div class="sp-txt-info sp-txt-wrap"
-						wicket:id="file-upload-types-docs" />
-				</li>
-				<li>
-					<h3>
-						<wicket:message key="file-upload-supported-graphics" />
-					</h3>
-					<div class="sp-txt-info sp-txt-wrap"
-						wicket:id="file-upload-types-graphics" />
-				</li>
-				<li>
-					<h3>
-						<wicket:message key="file-upload-max-size" />
-					</h3>
-					<div class="sp-txt-info" wicket:id="file-upload-max-size" />
-				</li>
-			</ul>
+
+			<ul data-role="listview" data-inset="true" id="file-upload-addin" />
 
 			<form wicket:id="fileUploadForm" enctype="multipart/form-data">
 				<ul data-role="listview" data-inset="true">
 					<li>
-						<div class="sp-txt-info sp-txt-wrap">
-							<wicket:message key="file-upload-txt-font-family" />
-						</div>
-
+						<div class="sp-txt-info sp-txt-wrap"
+							id="file-upload-txt-font-family" />
 						<select wicket:id="fileUploadFontSelect" tabindex="-1"
 							id="file-upload-fontfamily" data-native-menu="false" />
 					</li>
 					<li>
 						<label for="file-upload-file" />
 						<input id="file-upload-file" wicket:id="fileUpload" type="file"
-							accept="" size="50" />
+							accept="" size="50" style="font-size: 110%;" />
 						<span wicket:id="upload-progress">[[ajax upload
 							progressbar]]</span>
 						<!--  -->
@@ -294,23 +199,22 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 				</ul>
 				<p>
 					<input wicket:id="ajaxSubmitFileUpload" type="button"
-						data-inline="true" data-icon="check" value="button-file-upload"
-						id="button-file-upload-submit" />
+						data-corners="false" data-inline="true" data-icon="check"
+						value="button-file-upload" id="button-file-upload-submit" />
 
-					<input wicket:id="file-upload-reset" type="reset"
-						data-inline="true" data-icon="delete"
-						id="button-file-upload-reset" value="button-file-upload-reset" />
+					<input type="reset" data-inline="true" data-icon="delete"
+						data-corners="false" id="button-file-upload-reset"
+						value="button-file-upload-reset" />
 
 					<a href="#" data-rel="back" data-direction="reverse"
-						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-							key="button-back" />
-					</a>
+						id="button-file-upload-back"
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" />
 				</p>
 			</form>
+
 		</div>
 
 	</div>
-
 </body>
 
 </html>

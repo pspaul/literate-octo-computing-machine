@@ -1,96 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
-<wicket:remove>
-	<!-- These fragments are used in WebAppUserPage -->
-</wicket:remove>
-<wicket:fragment wicket:id="stats-pages-total" />
-<wicket:fragment wicket:id="environmental-impact" />
 
-<wicket:enclosure child="title-financial">
+<div data-role="header" data-theme="b">
+	<h1 id="dashboard-title" />
+</div>
 
-	<li data-role="list-divider" wicket:id="title-financial" />
+<div class="ui-content">
 
-	<li>
-		<wicket:remove>
-			<!--
-    +======================================================================+
-    | http://api.jquerymobile.com/table-reflow/
-    |  ... to use pre-configured  breakpoint, add the ui-responsive class 
-    |  to the table to convert from the stacked presentation to a tabular 
-    |  presentation at 560px (35em)     
-    +======================================================================+
-    -->
-		</wicket:remove>
-		<table data-role="table" data-mode="reflow"
-			class="ui-responsive table-stroke">
-			<thead>
-				<tr>
-					<th data-priority="1" />
-					<th data-priority="2" />
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<th>
-						<wicket:message key="balance" />
-					</th>
-					<td wicket:id="balance" />
-				</tr>
-				<tr>
-					<th>
-						<wicket:message key="credit-limit" />
-					</th>
-					<td wicket:id="credit-limit" />
-				</tr>
-			</tbody>
-		</table>
+	<ul data-role="listview" id="dashboard-list" data-inset="true"
+		class="ui-listview ui-listview-inset ui-corner-all ui-shadow" />
 
-		<div>
-
-			<wicket:enclosure child="button-voucher-redeem">
-				<button id="button-voucher-redeem-page"
-					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-plus"
-					wicket:id="button-voucher-redeem" title="" />
-			</wicket:enclosure>
-
-			<wicket:enclosure child="button-transfer-credit">
-				<button id="button-transfer-credit-page"
-					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-minus"
-					wicket:id="button-transfer-credit" title="" />
-			</wicket:enclosure>
-		</div>
-
-		<wicket:enclosure child="header-gateway">
-			<p />
-			<div class="sp-txt-info sp-txt-wrap" wicket:id="header-gateway" />
-			<p />
+	<div>
+		<wicket:enclosure child="button-user-pw-dialog">
+			<a wicket:id="button-user-pw-dialog"
+				class="sp-internal-user ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit"
+				href="#" id="button-user-pw-dialog" />
 		</wicket:enclosure>
 
-		<div class="sp-txt-wrap">
+		<wicket:enclosure child="button-user-pin-dialog">
+			<a wicket:id="button-user-pin-dialog"
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit" href="#"
+				id="button-user-pin-dialog" />
+		</wicket:enclosure>
 
-			<span wicket:id="payment-methods"> <a href="#"> <img
-						wicket:id="img-payment-method" class="sp-transfer-money-img"
-						src="" title="" data-payment-gateway="" data-payment-method="" /></a>&nbsp;&nbsp;
-			</span>
+		<wicket:enclosure child="button-user-internet-printer-dialog">
+			<a wicket:id="button-user-internet-printer-dialog"
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-cloud" href="#"
+				id="button-user-internet-printer-dialog" />
+		</wicket:enclosure>
 
-			<wicket:enclosure child="img-transfer-bitcoin">
-				<a href="#"> <img wicket:id="img-transfer-bitcoin"
-						id="button-transfer-bitcoin-page" src="" />
-				</a>
-			</wicket:enclosure>
+		<a href="#" data-rel="back" data-direction="reverse"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+				key="button-back" />
+		</a>
 
-		</div>
-	</li>
-</wicket:enclosure>
+	</div>
+
+</div>
+
+<wicket:remove>
+	<!-- 
+	THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+	-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />
+
