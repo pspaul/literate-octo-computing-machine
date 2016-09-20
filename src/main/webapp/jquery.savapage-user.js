@@ -5292,6 +5292,10 @@
 				if (_model.ecoprint && !_userLazyEcoPrint(_model.pdfJobIndex, pageRanges)) {
 					return false;
 				}
+				
+				// Mantis #725
+				_ns.deferAppWakeUp(true); 
+				
 				//
 				window.location.assign(_api.getUrl4Pdf(pageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfGrayscale, _model.pdfJobIndex));
 				_model.myShowUserStatsGet = true;
