@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
+import javax.persistence.PessimisticLockException;
 import javax.print.attribute.standard.MediaSizeName;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -60,6 +61,7 @@ import org.apache.wicket.util.resource.StringBufferResourceStream;
 import org.apache.wicket.util.time.Duration;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hibernate.exception.LockAcquisitionException;
 import org.savapage.core.LetterheadNotFoundException;
 import org.savapage.core.PerformanceLogger;
 import org.savapage.core.PostScriptDrmException;
@@ -2038,7 +2040,12 @@ public final class JsonApiServer extends AbstractPage {
                     + exception.getMessage();
 
             if (!isShutdown) {
-                LOGGER.error(exception.getMessage(), exception);
+                if (exception instanceof LockAcquisitionException
+                        || exception instanceof PessimisticLockException) {
+                    LOGGER.error(exception.getMessage());
+                } else {
+                    LOGGER.error(exception.getMessage(), exception);
+                }
             }
 
         } else {
