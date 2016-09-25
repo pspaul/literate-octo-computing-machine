@@ -2504,7 +2504,7 @@
 						$('#button-file-upload-reset').attr('value', _i18n.format('button-reset')).button('refresh');
 						$('#button-file-upload-submit').attr('value', _i18n.format('button-upload')).button('refresh');
 						// <a>
-						$('#button-file-upload-back').html(_i18n.format('button-back'));						
+						$('#button-file-upload-back').html(_i18n.format('button-back'));
 					}
 					return false;
 				});
@@ -5292,10 +5292,10 @@
 				if (_model.ecoprint && !_userLazyEcoPrint(_model.pdfJobIndex, pageRanges)) {
 					return false;
 				}
-				
+
 				// Mantis #725
-				_ns.deferAppWakeUp(true); 
-				
+				_ns.deferAppWakeUp(true);
+
 				//
 				window.location.assign(_api.getUrl4Pdf(pageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfGrayscale, _model.pdfJobIndex));
 				_model.myShowUserStatsGet = true;
@@ -5351,6 +5351,11 @@
 				, copies = isDelegation ? "1" : ( isJobticket ? $('#number-print-copies').val() : $('#slider-print-copies').val());
 
 				if (_saveSelectedletterhead('#print-letterhead-list')) {
+					return;
+				}
+
+				if (!_model.isMediaSourceMatch() && _model.myPrinterOpt['media-source'] === 'auto') {
+					_view.msgDialogBox(_i18n.format('msg-select-media-source'), 'sp-msg-popup-warn');
 					return;
 				}
 
