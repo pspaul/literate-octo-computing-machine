@@ -359,7 +359,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     ServiceContext.getTransactionDate());
 
         } catch (ProxyPrintException e) {
-            setApiResult(ApiResultCodeEnum.ERROR, e.getMessage());
+            setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
             return;
         }
 
