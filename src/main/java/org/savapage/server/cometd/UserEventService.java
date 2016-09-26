@@ -287,32 +287,27 @@ public final class UserEventService extends AbstractEventService {
      *            Client.
      * @param userEvent
      */
-    private static void publishAdminEvent(final String user,
+    private void publishAdminEvent(final String user,
             final String clientIpAddress, final boolean isWebAppClient,
             final UserEventEnum userEvent) {
 
-        final StringBuilder pubMsg = new StringBuilder(128);
-
-        pubMsg.append("User \"").append(user).append("\" received ");
-
+        final String eventName;
         if (userEvent == UserEventEnum.NULL) {
-            pubMsg.append("timeout");
+            eventName = "timeout";
         } else {
-            pubMsg.append("\"").append(userEvent.getUiText()).append("\"");
+            eventName = userEvent.getUiText();
         }
 
-        pubMsg.append(" event in ");
-
+        final String eventSource;
         if (isWebAppClient) {
-            pubMsg.append("WebApp ");
+            eventSource = "Web App";
         } else {
-            pubMsg.append("Client ");
+            eventSource = "Client";
         }
-
-        pubMsg.append(clientIpAddress);
 
         AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
-                pubMsg.toString());
+                this.localize("user-event", user, eventName, eventSource,
+                        clientIpAddress));
     }
 
     /**
