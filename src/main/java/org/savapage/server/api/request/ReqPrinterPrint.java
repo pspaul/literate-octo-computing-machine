@@ -305,7 +305,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws JsonProcessingException, IOException, ProxyPrintException,
-            IppConnectException, ParseException {
+            ParseException {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
@@ -631,19 +631,24 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
-        /*
-         * Direct Proxy Print integrated with PaperCut?
-         */
-        if (isExtPaperCutPrint) {
-            this.onExtPaperCutPrint(lockedUser, printReq, currencySymbol);
-            return;
-        }
-
-        /*
-         * Direct Proxy Print?
-         */
-        if (isNonSecureProxyPrint) {
-            this.onDirectProxyPrint(lockedUser, printReq, currencySymbol);
+        try {
+            /*
+             * Direct Proxy Print integrated with PaperCut?
+             */
+            if (isExtPaperCutPrint) {
+                this.onExtPaperCutPrint(lockedUser, printReq, currencySymbol);
+                return;
+            }
+            /*
+             * Direct Proxy Print?
+             */
+            if (isNonSecureProxyPrint) {
+                this.onDirectProxyPrint(lockedUser, printReq, currencySymbol);
+                return;
+            }
+        } catch (IppConnectException e) {
+            setApiResult(ApiResultCodeEnum.WARN,
+                    "msg-print-service-unavailable");
             return;
         }
 
