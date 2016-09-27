@@ -2447,11 +2447,6 @@ public final class JsonApiServer extends AbstractPage {
 
         final Map<String, Object> data = new HashMap<String, Object>();
 
-        if (!PROXY_PRINT_SERVICE.isConnectedToCups()) {
-            return setApiResult(data, ApiResultCodeEnum.ERROR,
-                    "msg-printer-connection-broken");
-        }
-
         final JsonPrinterDetail jsonPrinter =
                 PROXY_PRINT_SERVICE.getPrinterDetailUserCopy(
                         getSession().getLocale(), printerName);
