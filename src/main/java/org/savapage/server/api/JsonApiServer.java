@@ -3410,13 +3410,6 @@ public final class JsonApiServer extends AbstractPage {
                 CircuitBreakerEnum.CUPS_LOCAL_IPP_CONNECTION);
 
         /*
-         * Try again when circuit is not closed.
-         */
-        if (!circuit.isCircuitClosed()) {
-            circuit.closeCircuit();
-        }
-
-        /*
          * Re-initialize the CUPS printer cache.
          */
         try {
