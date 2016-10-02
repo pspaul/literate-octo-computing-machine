@@ -5983,7 +5983,7 @@
 				});
 				if (data.result.code === '0') {
 					$('#sp-popup-job-info').popup('close');
-					_view.pages.main.onRefreshPages(0);
+					_view.pages.main.onRefreshPages();
 				}
 				_view.showApiMsg(data);
 			};
