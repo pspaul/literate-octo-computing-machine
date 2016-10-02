@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -38,10 +38,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
-public class ImageServer extends WebPage implements ServiceEntryPoint {
+public final class ImageServer extends WebPage implements ServiceEntryPoint {
 
     /**
      *
@@ -51,8 +51,8 @@ public class ImageServer extends WebPage implements ServiceEntryPoint {
     /**
      * The logegr.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ImageServer.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ImageServer.class);
 
     /**
      * Delivers the a page image.
@@ -84,8 +84,7 @@ public class ImageServer extends WebPage implements ServiceEntryPoint {
         ServiceContext.open();
 
         try {
-            if (SpSession.get().isAuthenticated()
-                    && url.getUser() != null
+            if (SpSession.get().isAuthenticated() && url.getUser() != null
                     && SpSession.get().getUser().getUserId()
                             .equals(url.getUser())) {
                 file = getImageFile(url);
@@ -118,10 +117,9 @@ public class ImageServer extends WebPage implements ServiceEntryPoint {
      * @return
      */
     private static File getErrorImageFile(final ImageUrl url) {
-        File file =
-                OutputProducer.instance().allocateWarningPageImage(
-                        url.getUser(), url.getJob(), url.getPage(),
-                        "Session Expired", null);
+        File file = OutputProducer.instance().allocateWarningPageImage(
+                url.getUser(), url.getJob(), url.getPage(), "Session Expired",
+                null);
         return file;
     }
 
@@ -147,13 +145,12 @@ public class ImageServer extends WebPage implements ServiceEntryPoint {
      * @param url
      * @return
      */
-    private File getImageFile(ImageUrl url) {
+    private File getImageFile(final ImageUrl url) {
 
         return OutputProducer.instance().allocatePageImage(url.getUser(),
-                url.getJob(), url.getPage(), url.getRotate(),
-                url.isThumbnail(), url.isLetterhead(),
-                url.isLetterheadPublic(), getSession().getId());
-
+                url.getJob(), url.getPage(), url.isThumbnail(),
+                url.isLetterhead(), url.isLetterheadPublic(),
+                getSession().getId());
     }
 
 }

@@ -1967,6 +1967,11 @@
 						item += '<span class="sp-thumbnail-page"/>';
 						item += '<span class="sp-thumbnail-tot-pages"/>';
 						item += '<span class="sp-thumbnail-tot-chunk"/>';
+					
+						if (_model.myJobs[page.job].rotate !== "0") {
+							item += " &#x21b7;";
+						} 
+						
 						item += '</a></div>';
 
 						divCur = $(item);
@@ -5978,7 +5983,7 @@
 				});
 				if (data.result.code === '0') {
 					$('#sp-popup-job-info').popup('close');
-					_view.pages.main.onRefreshPages();
+					_view.pages.main.onRefreshPages(0);
 				}
 				_view.showApiMsg(data);
 			};
