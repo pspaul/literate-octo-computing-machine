@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -77,7 +77,14 @@ public final class Main extends AbstractAdminPage {
         final boolean encloseJobtickets;
 
         //
-        if (ConfigManager.isInternalAdmin(user.getUserId())) {
+        if (user == null) {
+            /*
+             * Sometimes we land and keep returning here, in Chromium browser.
+             * Why?
+             */
+            enclosePos = false;
+            encloseJobtickets = false;
+        } else if (ConfigManager.isInternalAdmin(user.getUserId())) {
             enclosePos = true;
             encloseJobtickets = true;
         } else {
