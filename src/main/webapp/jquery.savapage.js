@@ -95,14 +95,14 @@
 				_onAppWakeUp(delta);
 			}
 		};
-		
+
 		/**
 		 * Mantis #717
 		 */
 		_ns.checkAppWakeUpAutoRestore = function() {
 			if (_onAppWakeUpAutoRestore) {
 				var now = new Date().getTime(), delta = (now - _lastAppHeartbeat);
-				_lastAppHeartbeat = now;				
+				_lastAppHeartbeat = now;
 				if (delta > (_watchdogTimeoutSecs * 1000)) {
 					_onAppWakeUpAutoRestore(_deferAppWakeUp);
 				}
@@ -115,11 +115,11 @@
 			_watchdogTimeoutSecs = watchdogTimeoutSecs;
 			_onAppWakeUpAutoRestore = onAppWakeUpAutoRestore;
 		};
-		
+
 		_ns.isAppWakeUpDeferred = function() {
 			return _deferAppWakeUp;
 		};
-		
+
 		_ns.startAppWatchdog = function(defer) {
 
 			_ns.deferAppWakeUp(defer);
@@ -1702,20 +1702,24 @@
 				// SOLUTION: create <form method="post" data-ajax="false">
 				// ----------------------------------------------------------------
 				$(this).keyup(function(e) {
-					var key = e.keyCode || e.which;
+					var key = e.keyCode || e.which, selClick;
 					// 13 = <Enter>, 27 = <ESC>
 					if (key === 13) {
 						if (_modeSelected === _view.AUTH_MODE_NAME) {
-							$(_ID_BTN_LOGIN_NAME).click();
+							selClick = $(_ID_BTN_LOGIN_NAME);
 						} else if (_modeSelected === _view.AUTH_MODE_ID) {
-							$(_ID_BTN_LOGIN_ID).click();
+							selClick = $(_ID_BTN_LOGIN_ID);
 						} else if (_modeSelected === _view.AUTH_MODE_CARD_LOCAL) {
 							$('#sp-login-card-local-number').val(_collectedCardNumber);
-							$(_ID_BTN_LOGIN_CARD_LOCAL).click();
+							selClick = $(_ID_BTN_LOGIN_CARD_LOCAL);
 						} else if (_modeSelected === _view.AUTH_MODE_CARD_IP && $('#sp-login-card-ip-number').val().length > 0) {
-							$(_ID_BTN_LOGIN_CARD_IP).click();
+							selClick = $(_ID_BTN_LOGIN_CARD_IP);
 						} else if (_modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
-							$(_ID_BTN_LOGIN_CARD_ASSOC).click();
+							selClick = $(_ID_BTN_LOGIN_CARD_ASSOC);
+						}
+						// Mantis #735
+						if (!selClick.is(':focus')) {
+							selClick.click();
 						}
 					} else if (key === 27) {
 						if (_modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
