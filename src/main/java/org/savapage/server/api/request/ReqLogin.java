@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -60,6 +60,7 @@ import org.savapage.core.users.InternalUserAuthenticator;
 import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.Messages;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
@@ -86,6 +87,12 @@ public final class ReqLogin extends ApiRequestMixin {
      */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ReqLogin.class);
+
+    /**
+     * <b>Static</b> lock object for synchronization of lazy user creation.
+     */
+    private static final Object LAZY_CREATE_USER_LOCK = new Object() {
+    };
 
     /**
      * .
@@ -705,7 +712,7 @@ public final class ReqLogin extends ApiRequestMixin {
                     }
 
                     /**
-                     * Lazy user insert
+                     * Lazy user insert.
                      */
                     if (userDb == null) {
 
@@ -722,16 +729,9 @@ public final class ReqLogin extends ApiRequestMixin {
                         }
 
                         if (lazyInsert) {
-                            userDb = userDao.findActiveUserByUserIdInsert(
-                                    userAuth, new Date(), Entity.ACTOR_SYSTEM);
-                            /*
-                             * IMPORTANT: ad-hoc commit + begin transaction
-                             */
-                            if (userDb != null) {
-                                ServiceContext.getDaoContext().commit();
-                                ServiceContext.getDaoContext()
-                                        .beginTransaction();
-                            }
+                            userDb = onLazyCreateUser(userDao, userAuth,
+                                    webAppType);
+                            onUserLazyCreated(webAppType, uid, userDb != null);
                         }
                     }
                 }
@@ -1220,6 +1220,87 @@ public final class ReqLogin extends ApiRequestMixin {
             //
             INBOX_SERVICE.pruneOrphanJobs(ConfigManager.getUserHomeDir(uid),
                     userDb);
+        }
+    }
+
+    /**
+     * Lazy creates a user.
+     *
+     * @param userDao
+     *            The {@link UserDao}.
+     * @param userAuth
+     *            The authenticated user.
+     * @param webAppType
+     *            The type of web app.
+     * @return The lazy created user, or {@code null} when user was NOT created.
+     */
+    private User onLazyCreateUser(final UserDao userDao, final User userAuth,
+            final WebAppTypeEnum webAppType) {
+
+        /*
+         * Since the user does not exist in the database (yet) we cannot use SQL
+         * row locking to protect concurrent user creation: therefore we use the
+         * cruder synchronized block.
+         */
+        synchronized (LAZY_CREATE_USER_LOCK) {
+
+            final User userDb = userDao.findActiveUserByUserIdInsert(userAuth,
+                    new Date(), Entity.ACTOR_SYSTEM);
+
+            /*
+             * IMPORTANT: ad-hoc commit + begin transaction
+             */
+            if (userDb != null) {
+                ServiceContext.getDaoContext().commit();
+                ServiceContext.getDaoContext().beginTransaction();
+            }
+            return userDb;
+        }
+    }
+
+    /**
+     * Writes Logging and send notifications.
+     *
+     * @param webAppType
+     *            The type of web app.
+     * @param userid
+     *            The user id.
+     * @param success
+     *            {@code true} when user was created, {@code false} when not.
+     */
+    private void onUserLazyCreated(final WebAppTypeEnum webAppType,
+            final String userid, final boolean success) {
+
+        final String msgKey;
+
+        if (success) {
+            msgKey = "msg-login-user-lazy-create-success";
+
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info(Messages.getLogFileMessage(getClass(), msgKey,
+                        webAppType.getUiText(), userid));
+            }
+
+            final String msg = AppLogHelper.logInfo(getClass(), msgKey,
+                    webAppType.getUiText(), userid);
+
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.CLEAR, msg);
+
+        } else {
+
+            msgKey = "msg-login-user-lazy-create-failed";
+
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error(Messages.getLogFileMessage(getClass(), msgKey,
+                        webAppType.getUiText(), userid));
+            }
+
+            final String msg = AppLogHelper.logError(getClass(), msgKey,
+                    webAppType.getUiText(), userid);
+
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.ERROR, msg);
         }
     }
 
