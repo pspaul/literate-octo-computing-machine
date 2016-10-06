@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -23,6 +23,7 @@ package org.savapage.server.pages;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -102,38 +103,17 @@ public class DocLogItemPanel extends Panel {
 
         final Map<String, String> mapVisible = new HashMap<>();
 
-        mapVisible.put("title", null);
-        mapVisible.put("log-comment", null);
-        mapVisible.put("printin-pie", null);
-        mapVisible.put("pdfout-pie", null);
-        mapVisible.put("printout-pie", null);
-        mapVisible.put("printoutMode", null);
-        mapVisible.put("signature", null);
-        mapVisible.put("destination", null);
-        mapVisible.put("letterhead", null);
-        mapVisible.put("author", null);
-        mapVisible.put("subject", null);
-        mapVisible.put("keywords", null);
-        mapVisible.put("drm", null);
-        mapVisible.put("userpw", null);
-        mapVisible.put("ownerpw", null);
-        mapVisible.put("duplex", null);
-        mapVisible.put("singlex", null);
-        mapVisible.put("color", null);
-        mapVisible.put("grayscale", null);
-        mapVisible.put("papersize", null);
-        mapVisible.put("cost-currency", null);
-        mapVisible.put("cost", null);
-        mapVisible.put("account-trx", null);
-        mapVisible.put("job-id", null);
-        mapVisible.put("job-state", null);
-        mapVisible.put("job-completed-date", null);
-        mapVisible.put("print-in-denied-reason-hyphen", null);
-        mapVisible.put("print-in-denied-reason", null);
-        mapVisible.put("collateCopies", null);
-        mapVisible.put("ecoPrint", null);
-        mapVisible.put("removeGraphics", null);
-        mapVisible.put("extSupplier", null);
+        for (final String attr : new String[] { "title", "log-comment",
+                "printin-pie", "pdfout-pie", "printout-pie", "printoutMode",
+                "signature", "destination", "letterhead", "author", "subject",
+                "keywords", "drm", "userpw", "ownerpw", "duplex", "singlex",
+                "color", "grayscale", "papersize", "cost-currency", "cost",
+                "account-trx", "job-id", "job-state", "job-completed-date",
+                "print-in-denied-reason-hyphen", "print-in-denied-reason",
+                "collateCopies", "ecoPrint", "removeGraphics", "extSupplier",
+                "punch", "staple", "fold", "booklet" }) {
+            mapVisible.put(attr, null);
+        }
 
         MarkupHelper helper = new MarkupHelper(this);
 
@@ -314,6 +294,19 @@ public class DocLogItemPanel extends Panel {
                     mapVisible.put("color", localized("color"));
                 }
 
+                if (obj.isFinishingPunch()) {
+                    mapVisible.put("punch", localized("punch"));
+                }
+                if (obj.isFinishingStaple()) {
+                    mapVisible.put("staple", localized("staple"));
+                }
+                if (obj.isFinishingFold()) {
+                    mapVisible.put("fold", localized("fold"));
+                }
+                if (obj.isFinishingBooklet()) {
+                    mapVisible.put("booklet", localized("booklet"));
+                }
+
                 mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
                 mapVisible.put("job-id", obj.getJobId().toString());
 
@@ -404,6 +397,11 @@ public class DocLogItemPanel extends Panel {
         totals.append(localizedNumber(total));
         key = (total == 1) ? "page" : "pages";
         totals.append(" ").append(localized(key));
+
+        // n-up
+        if (obj.getNumberUp() != null && obj.getNumberUp().intValue() > 1) {
+            totals.append(", ").append(localized("n-up", obj.getNumberUp()));
+        }
 
         //
         if (copies > 1) {
@@ -547,6 +545,21 @@ public class DocLogItemPanel extends Panel {
      */
     protected final String localized(final String key) {
         return getLocalizer().getString(key, this);
+    }
+
+    /**
+     * Localizes and format a string with placeholder arguments.
+     *
+     * @param key
+     *            The key from the XML resource file
+     * @param objects
+     *            The values to fill the placeholders
+     * @return The localized string.
+     */
+    protected final String localized(final String key,
+            final Object... objects) {
+        return MessageFormat.format(getLocalizer().getString(key, this),
+                objects);
     }
 
 }

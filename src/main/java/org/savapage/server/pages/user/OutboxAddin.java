@@ -45,6 +45,7 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
+import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.outbox.OutboxInfoDto;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxAccountTrxInfoSet;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
@@ -139,6 +140,7 @@ public class OutboxAddin extends AbstractUserPage {
 
             final MarkupHelper helper = new MarkupHelper(item);
             final OutboxJobDto job = item.getModelObject();
+            final IppOptionMap optionMap = job.createIppOptionMap();
             final boolean isJobTicketItem = job.getUserId() != null;
 
             Label labelWlk;
@@ -218,9 +220,9 @@ public class OutboxAddin extends AbstractUserPage {
             totals.append(" ").append(localized(key));
 
             // n-up
-            if (job.getNumberUp().intValue() > 1) {
+            if (optionMap.getNumberUp().intValue() > 1) {
                 totals.append(", ")
-                        .append(localized("n-up", job.getNumberUp()));
+                        .append(localized("n-up", optionMap.getNumberUp()));
             }
 
             //
@@ -340,16 +342,16 @@ public class OutboxAddin extends AbstractUserPage {
                 mapVisible.put("ecoPrint", "Eco Print");
             }
 
-            if (job.hasFinishingPunch()) {
+            if (optionMap.hasFinishingPunch()) {
                 mapVisible.put("punch", localized("punch"));
             }
-            if (job.hasFinishingStaple()) {
+            if (optionMap.hasFinishingStaple()) {
                 mapVisible.put("staple", localized("staple"));
             }
-            if (job.hasFinishingFold()) {
+            if (optionMap.hasFinishingFold()) {
                 mapVisible.put("fold", localized("fold"));
             }
-            if (job.hasFinishingBooklet()) {
+            if (optionMap.hasFinishingBooklet()) {
                 mapVisible.put("booklet", localized("booklet"));
             }
 

@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -25,11 +25,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.crypto.CryptoUser;
@@ -43,6 +45,7 @@ import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.ipp.IppJobStateEnum;
+import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocIn;
 import org.savapage.core.jpa.DocLog;
@@ -53,6 +56,7 @@ import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.JsonHelper;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.WebApp;
 
@@ -91,7 +95,13 @@ public final class DocLogItem {
     private String destination;
     private Boolean letterhead;
     private Boolean duplex;
+    private Integer numberUp;
     private Boolean grayscale;
+
+    private boolean finishingPunch;
+    private boolean finishingStaple;
+    private boolean finishingFold;
+    private boolean finishingBooklet;
 
     private Boolean collateCopies;
     private Boolean ecoPrint;
@@ -482,6 +492,27 @@ public final class DocLogItem {
                             log.setCompletedDate(
                                     new Date(printOut.getCupsCompletedTime()
                                             * DateUtil.DURATION_MSEC_SECOND));
+                        }
+
+                        if (NumberUtils.isDigits(printOut.getCupsNumberUp())) {
+                            log.setNumberUp(Integer
+                                    .valueOf(printOut.getCupsNumberUp()));
+                        }
+
+                        final Map<String, String> ippOptions =
+                                JsonHelper.createStringMapOrNull(
+                                        printOut.getIppOptions());
+
+                        if (ippOptions != null) {
+                            final IppOptionMap optionMap =
+                                    new IppOptionMap(ippOptions);
+                            log.setFinishingBooklet(
+                                    optionMap.hasFinishingBooklet());
+                            log.setFinishingFold(optionMap.hasFinishingFold());
+                            log.setFinishingPunch(
+                                    optionMap.hasFinishingPunch());
+                            log.setFinishingStaple(
+                                    optionMap.hasFinishingStaple());
                         }
 
                     } else if (pdfOut != null) {
@@ -1108,12 +1139,52 @@ public final class DocLogItem {
         this.duplex = duplex;
     }
 
+    public Integer getNumberUp() {
+        return numberUp;
+    }
+
+    public void setNumberUp(Integer numberUp) {
+        this.numberUp = numberUp;
+    }
+
     public Boolean getGrayscale() {
         return grayscale;
     }
 
     public void setGrayscale(Boolean grayscale) {
         this.grayscale = grayscale;
+    }
+
+    public boolean isFinishingPunch() {
+        return finishingPunch;
+    }
+
+    public void setFinishingPunch(boolean finishingPunch) {
+        this.finishingPunch = finishingPunch;
+    }
+
+    public boolean isFinishingStaple() {
+        return finishingStaple;
+    }
+
+    public void setFinishingStaple(boolean finishingStaple) {
+        this.finishingStaple = finishingStaple;
+    }
+
+    public boolean isFinishingFold() {
+        return finishingFold;
+    }
+
+    public void setFinishingFold(boolean finishingFold) {
+        this.finishingFold = finishingFold;
+    }
+
+    public boolean isFinishingBooklet() {
+        return finishingBooklet;
+    }
+
+    public void setFinishingBooklet(boolean finishingBooklet) {
+        this.finishingBooklet = finishingBooklet;
     }
 
     public Boolean getCollateCopies() {

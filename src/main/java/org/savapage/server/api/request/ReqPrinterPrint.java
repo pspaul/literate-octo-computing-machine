@@ -49,8 +49,6 @@ import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.RangeAtom;
-import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
-import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.Device;
@@ -443,15 +441,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         /*
-         * Inspect the user printer options.
-         */
-        final String optionSides =
-                dtoReq.getOptions().get(IppDictJobTemplateAttr.ATTR_SIDES);
-
-        final boolean isDuplexPrint = optionSides != null
-                && !optionSides.equals(IppKeyword.SIDES_ONE_SIDED);
-
-        /*
          * Vanilla jobs?
          */
         final boolean chunkVanillaJobs;
@@ -459,9 +448,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         if (dtoReq.getJobIndex().intValue() < 0) {
             iVanillaJob = null;
-            chunkVanillaJobs = isDuplexPrint && printEntireInbox
-                    && jobs.getJobs().size() > 1
-                    && INBOX_SERVICE.isInboxVanilla(jobs);
+            chunkVanillaJobs = false;
         } else {
             iVanillaJob = dtoReq.getJobIndex();
             chunkVanillaJobs = true;
