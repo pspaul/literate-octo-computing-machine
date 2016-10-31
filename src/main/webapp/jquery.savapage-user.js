@@ -2466,7 +2466,7 @@
 					$(".sp-nav-button-txt").hide();
 					$.each($(".sp-nav-button-txt"), function(key, obj) {
 						$(this).hide();
-						$(this).closest("li").attr("title", "\n " + $(this).text() + " \n");
+						$(this).closest("li").attr("title", $(this).text());
 					});
 				}
 
