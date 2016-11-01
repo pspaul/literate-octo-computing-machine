@@ -854,7 +854,7 @@
 
 			_view.pages.admin.onApplyConverters = function() {
 				var props = {};
-				_fillConfigPropsYN(props, ['doc.convert.libreoffice-enabled', 'doc.convert.xpstopdf-enabled']);
+				_fillConfigPropsYN(props, ['doc.convert.libreoffice-enabled', 'soffice.enable', 'doc.convert.xpstopdf-enabled']);
 				_saveConfigProps(props);
 			};
 

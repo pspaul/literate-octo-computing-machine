@@ -37,7 +37,9 @@ import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
+import org.savapage.core.services.SOfficeService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.SOfficeConfigProps;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.slf4j.Logger;
@@ -56,6 +58,12 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
      */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ReqConfigPropsSet.class);
+
+    /**
+     * .
+     */
+    private static final SOfficeService SOFFICE_SERVICE =
+            ServiceContext.getServiceFactory().getSOfficeService();
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
@@ -76,6 +84,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
         final Iterator<String> iter = list.getFieldNames();
 
         boolean isSmartSchoolUpdate = false;
+        boolean isSOfficeUpdate = false;
 
         boolean isValid = true;
         int nJobsRescheduled = 0;
@@ -187,6 +196,10 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 } else if (configKey == Key.SMARTSCHOOL_1_ENABLE
                         || configKey == Key.SMARTSCHOOL_2_ENABLE) {
                     isSmartSchoolUpdate = true;
+
+                } else if (configKey == Key.DOC_CONVERT_LIBRE_OFFICE_ENABLED
+                        || configKey == Key.SOFFICE_ENABLE) {
+                    isSOfficeUpdate = true;
                 }
 
             } else {
@@ -209,6 +222,14 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                     && SmartschoolPrinter.isOnline()) {
                 if (SpJobScheduler.interruptSmartSchoolPoller()) {
                     msgKey = "msg-config-props-applied-smartschool-stopped";
+                }
+            } else if (isSOfficeUpdate) {
+
+                if (cm.isConfigValue(Key.DOC_CONVERT_LIBRE_OFFICE_ENABLED)
+                        && cm.isConfigValue(Key.SOFFICE_ENABLE)) {
+                    SOFFICE_SERVICE.restart(new SOfficeConfigProps());
+                } else {
+                    SOFFICE_SERVICE.shutdown();
                 }
             }
 

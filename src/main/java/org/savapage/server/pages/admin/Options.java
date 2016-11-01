@@ -859,6 +859,10 @@ public final class Options extends AbstractAdminPage {
         labelWrk.add(new AttributeModifier("class", colorInstalled));
         add(labelWrk);
 
+        //
+        labelledCheckbox("libreoffice-soffice-enable",
+                IConfigProp.Key.SOFFICE_ENABLE);
+
         /*
          *
          */
