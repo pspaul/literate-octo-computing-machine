@@ -41,8 +41,8 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
-import org.savapage.core.doc.OfficeToPdf;
 import org.savapage.core.doc.XpsToPdf;
+import org.savapage.core.doc.soffice.SOfficeHelper;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jmx.JmxRemoteProperties;
@@ -844,14 +844,14 @@ public final class Options extends AbstractAdminPage {
         labelledCheckbox("libreoffice-enable",
                 IConfigProp.Key.DOC_CONVERT_LIBRE_OFFICE_ENABLED);
 
-        String version = OfficeToPdf.getLibreOfficeVersion();
+        String version = SOfficeHelper.getLibreOfficeVersion();
         installed = StringUtils.isNotBlank(version);
         colorInstalled = installed ? MarkupHelper.CSS_TXT_VALID
                 : MarkupHelper.CSS_TXT_WARN;
         keyInstalled = installed ? "installed" : "not-installed";
 
         if (!installed) {
-            version = OfficeToPdf.name();
+            version = SOfficeHelper.name();
         }
 
         labelWrk = new Label("version-libreoffice",

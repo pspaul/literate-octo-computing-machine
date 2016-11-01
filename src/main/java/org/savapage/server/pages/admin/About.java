@@ -37,8 +37,8 @@ import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserDao;
-import org.savapage.core.doc.OfficeToPdf;
 import org.savapage.core.doc.XpsToPdf;
+import org.savapage.core.doc.soffice.SOfficeHelper;
 import org.savapage.core.jpa.tools.DbVersionInfo;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
@@ -234,7 +234,7 @@ public final class About extends AbstractAdminPage {
 
         // ---------- LibreOffice
         colorInstalled = null;
-        version = OfficeToPdf.getLibreOfficeVersion();
+        version = SOfficeHelper.getLibreOfficeVersion();
         installed = StringUtils.isNotBlank(version);
         if (!installed) {
             version = localized("not-installed");
