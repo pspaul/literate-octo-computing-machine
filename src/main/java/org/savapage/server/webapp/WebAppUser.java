@@ -28,6 +28,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -48,6 +49,7 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
+import org.savapage.core.UnavailableException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
@@ -212,9 +214,32 @@ public final class WebAppUser extends AbstractWebAppPage {
                 info(getLocalizer().getString("msg-file-process-success",
                         this));
 
-            } catch (Exception e) {
+            } catch (UnavailableException e) {
+
+                final String fileExt = FilenameUtils
+                        .getExtension(uploadedFile.getClientFileName());
+                final String msg;
+                final PubLevelEnum level;
+
+                if (e.getState() == UnavailableException.State.TEMPORARY) {
+                    level = PubLevelEnum.WARN;
+                    msg = localized("msg-file-process-unavailable-temp",
+                            fileExt);
+                    warn(msg);
+                    warn(localized("msg-file-process-try-again-later"));
+                } else {
+                    level = PubLevelEnum.ERROR;
+                    msg = localized("msg-file-process-unavailable", fileExt);
+                    error(msg);
+                }
+
+                AdminPublisher.instance().publish(PubTopicEnum.WEBPRINT, level,
+                        msg);
+
+            } catch (DocContentPrintException | IOException e) {
                 error(localized("msg-file-process-error", e.getMessage()));
             }
+
         }
 
         /**
@@ -223,10 +248,11 @@ public final class WebAppUser extends AbstractWebAppPage {
          * @param uploadedFile
          * @throws DocContentPrintException
          * @throws IOException
+         * @throws UnavailableException
          */
         private void handleFileUpload(final String originatorIp,
-                final FileUpload uploadedFile)
-                throws DocContentPrintException, IOException {
+                final FileUpload uploadedFile) throws DocContentPrintException,
+                IOException, UnavailableException {
 
             final User user = SpSession.get().getUser();
             final String fileName = uploadedFile.getClientFileName();
