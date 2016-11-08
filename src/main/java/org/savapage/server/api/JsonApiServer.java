@@ -2096,7 +2096,7 @@ public final class JsonApiServer extends AbstractPage {
         final IConfigProp.Key configKey;
 
         if (session.getWebAppType() == WebAppTypeEnum.ADMIN) {
-            configKey = IConfigProp.Key.WEB_LOGIN_ADMIN_SESSION_TIMOUT_MINS;
+            configKey = IConfigProp.Key.WEB_LOGIN_ADMIN_SESSION_TIMEOUT_MINS;
         } else {
             configKey = IConfigProp.Key.WEB_LOGIN_USER_SESSION_TIMEOUT_MINS;
         }

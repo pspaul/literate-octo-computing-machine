@@ -966,7 +966,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
                 if (webAppType == WebAppTypeEnum.ADMIN) {
                     configKey =
-                            IConfigProp.Key.WEB_LOGIN_ADMIN_SESSION_TIMOUT_MINS;
+                            IConfigProp.Key.WEB_LOGIN_ADMIN_SESSION_TIMEOUT_MINS;
                 } else {
                     configKey =
                             IConfigProp.Key.WEB_LOGIN_USER_SESSION_TIMEOUT_MINS;
