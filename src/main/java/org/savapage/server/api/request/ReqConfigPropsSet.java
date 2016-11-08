@@ -85,6 +85,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
 
         boolean isSmartSchoolUpdate = false;
         boolean isSOfficeUpdate = false;
+        boolean isSOfficeTrigger = false;
 
         boolean isValid = true;
         int nJobsRescheduled = 0;
@@ -157,9 +158,13 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                     break;
                 case PRINT_IMAP_ENABLE:
                     preValue = cm.isConfigValue(configKey);
+                    isSOfficeTrigger = true;
                     break;
                 case PAPERCUT_ENABLE:
                     preValue = cm.isConfigValue(configKey);
+                    break;
+                case WEB_PRINT_ENABLE:
+                    isSOfficeTrigger = true;
                     break;
                 default:
                     break;
@@ -210,32 +215,64 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
         } // end-while
 
         if (nValid > 0) {
-            ConfigManager.instance().calcRunnable();
+            cm.calcRunnable();
         }
 
         if (isValid) {
 
             if (nJobsRescheduled > 0) {
                 msgKey = "msg-config-props-applied-rescheduled";
+
             } else if (isSmartSchoolUpdate
                     && !ConfigManager.isSmartSchoolPrintActiveAndEnabled()
                     && SmartschoolPrinter.isOnline()) {
+
                 if (SpJobScheduler.interruptSmartSchoolPoller()) {
                     msgKey = "msg-config-props-applied-smartschool-stopped";
                 }
-            } else if (isSOfficeUpdate) {
 
-                if (cm.isConfigValue(Key.DOC_CONVERT_LIBRE_OFFICE_ENABLED)
-                        && cm.isConfigValue(Key.SOFFICE_ENABLE)) {
-                    SOFFICE_SERVICE.restart(new SOfficeConfigProps());
-                } else {
-                    SOFFICE_SERVICE.shutdown();
-                }
+            } else if (isSOfficeTrigger) {
+                evaluateSOfficeService(cm, false);
+            } else if (isSOfficeUpdate) {
+                evaluateSOfficeService(cm, true);
             }
 
             setApiResult(ApiResultCodeEnum.OK, msgKey);
         }
 
+    }
+
+    /**
+     * Evaluates the application configuration and decides to (re)start or
+     * shutdown the {@link SOfficeService}.
+     *
+     * @param cm
+     *            The {@link ConfigManager}.
+     * @param restart
+     *            if {@code true} the service is restarted, if {@code false} it
+     *            is started when currently shutdown.
+     */
+    private static void evaluateSOfficeService(final ConfigManager cm,
+            final boolean restart) {
+
+        final boolean dependentServices = cm.isConfigValue(Key.WEB_PRINT_ENABLE)
+                || cm.isConfigValue(Key.PRINT_IMAP_ENABLE);
+
+        if (dependentServices
+                && cm.isConfigValue(Key.DOC_CONVERT_LIBRE_OFFICE_ENABLED)
+                && cm.isConfigValue(Key.SOFFICE_ENABLE)) {
+
+            final SOfficeConfigProps props = new SOfficeConfigProps();
+
+            if (restart) {
+                SOFFICE_SERVICE.restart(props);
+            } else {
+                SOFFICE_SERVICE.start(props);
+            }
+
+        } else {
+            SOFFICE_SERVICE.shutdown();
+        }
     }
 
     /**
