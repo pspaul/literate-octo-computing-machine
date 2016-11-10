@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -76,6 +76,15 @@ public final class ApiRequestHelper {
     public static boolean isAuthTokenLoginEnabled() {
         return ConfigManager.instance()
                 .isConfigValue(Key.WEB_LOGIN_AUTHTOKEN_ENABLE);
+    }
+
+    /**
+     *
+     * @return {@code true} when Google Sign-In is enabled.
+     */
+    public static boolean isGoogleSignInEnabled() {
+        return ConfigManager.instance()
+                .isConfigValue(Key.WEB_LOGIN_GOOGLE_ENABLE);
     }
 
     /**

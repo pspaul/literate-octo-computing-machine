@@ -6112,12 +6112,15 @@
 			this.init = function() {
 
 				var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER);
-
+				var authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN);
+				
 				_ns.initWebApp('USER');
 
 				_ctrl.init();
 
-				if (user) {
+				if (authMode === _view.AUTH_MODE_GOOGLE_SIGN_IN) {
+					_ctrl.login(authMode);
+				} else if (user) {
 					_ctrl.login(_view.AUTH_MODE_NAME, user, null, _model.authToken.token);
 				} else if (_model.authToken.user && _model.authToken.token) {
 					_ctrl.login(_view.AUTH_MODE_NAME, _model.authToken.user, null, _model.authToken.token);

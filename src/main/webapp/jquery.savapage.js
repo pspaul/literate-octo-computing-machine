@@ -1955,6 +1955,7 @@
 			this.AUTH_MODE_ID = 'id';
 			this.AUTH_MODE_CARD_LOCAL = 'nfc-local';
 			this.AUTH_MODE_CARD_IP = 'nfc-network';
+			this.AUTH_MODE_GOOGLE_SIGN_IN = 'google';
 
 			// Dummy AUTH Modes to associate Card with user.
 			this.AUTH_MODE_CARD_ASSOC = '_CA';

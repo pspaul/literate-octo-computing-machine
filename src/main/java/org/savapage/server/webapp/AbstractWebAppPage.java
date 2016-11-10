@@ -61,6 +61,11 @@ public abstract class AbstractWebAppPage extends AbstractPage
     private static final long serialVersionUID = 1L;
 
     /**
+     *
+     */
+    protected final static String PAGE_PARM_LOGIN = "sp-login";
+
+    /**
      * .
      */
     public static final String WEBJARS_PATH_JQUERY_MOBILE_JS =

@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -69,6 +69,11 @@ public final class SpSession extends WebSession {
      * {@code true} when authenticated by {@link OneTimeAuthToken}.
      */
     private boolean oneTimeAuthToken = false;
+
+    /**
+     * {@code true} when authenticated by Google Sign-In.
+     */
+    private boolean googleSignIn = false;
 
     /**
      *
@@ -189,6 +194,15 @@ public final class SpSession extends WebSession {
     }
 
     /**
+    *
+    * @return {@code true} if {@link User} was authenticated by
+    *         Google Sign-In.
+    */
+   public synchronized boolean isGoogleSignIn() {
+       return this.user != null && this.googleSignIn;
+   }
+
+    /**
      * Checks if session is expired, and touches the validated time.
      *
      * @param timeToLive
@@ -247,6 +261,18 @@ public final class SpSession extends WebSession {
             final boolean authToken) {
         this.user = authUser;
         this.oneTimeAuthToken = authToken;
+        this.googleSignIn = false;
+        dirty();
+    }
+
+    /**
+     *
+     * @param authUser
+     */
+    public synchronized void setGoogleSignIn(final User authUser) {
+        this.user = authUser;
+        this.oneTimeAuthToken = false;
+        this.googleSignIn = true;
         dirty();
     }
 

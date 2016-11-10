@@ -22,6 +22,7 @@
 package org.savapage.server.webapp;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -49,7 +51,10 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
+import org.savapage.core.SpException;
 import org.savapage.core.UnavailableException;
+import org.savapage.core.auth.GoogleSignIn;
+import org.savapage.core.auth.GoogleUserInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
@@ -63,10 +68,12 @@ import org.savapage.core.doc.DocContent;
 import org.savapage.core.doc.DocContentTypeEnum;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.jpa.User;
+import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.print.server.DocContentPrintException;
 import org.savapage.core.print.server.DocContentPrintReq;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.SpSession;
@@ -85,6 +92,11 @@ public final class WebAppUser extends AbstractWebAppPage {
     private final static String PAGE_PARM_AUTH_TOKEN = "auth_token";
     private final static String PAGE_PARM_AUTH_TOKEN_USERID = "auth_user";
 
+    private final static String POST_PARM_GOOGLE_ID_TOKEN = "google_id_token";
+
+    /**
+     *
+     */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(WebAppUser.class);
 
@@ -308,6 +320,94 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     /**
+     *
+     * @param idToken
+     */
+    public void checkGoogleIdToken(final String idToken) {
+
+        /*
+         * TODO.
+         */
+        final String CLIENT_ID = "566026169770.apps.googleusercontent.com";
+
+        try {
+            final GoogleUserInfo user =
+                    GoogleSignIn.getUserInfo(CLIENT_ID, idToken);
+
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(String.format(
+                        "User ID : %s\n" + "Email   : %s (verified: %s)\n"
+                                + "Hosted D: %s\n" + "Name    : %s\n"
+                                + "Picture : %s\n" + "Locale  : %s\n"
+                                + "Name    : [%s] [%s]\n",
+                        //
+                        user.getUserId(), user.getEmail(),
+                        Boolean.valueOf(user.isEmailVerified()),
+                        user.getHostedDomain(), user.getName(),
+                        user.getPictureUrl(), user.getLocale(),
+                        user.getFamilyName(), user.getGivenName()));
+            }
+            final UserEmail userEmail = ServiceContext.getDaoContext()
+                    .getUserEmailDao().findByEmail(user.getEmail());
+
+            if (userEmail == null) {
+                // TODO
+                final String msg = String.format(
+                        "Google sign-in: %s not found.", user.getEmail());
+                // localized("msg-authtoken-user-not-found",
+                // user.getEmail());
+                AdminPublisher.instance().publish(PubTopicEnum.USER,
+                        PubLevelEnum.WARN, msg);
+                LOGGER.warn(msg);
+                return;
+            }
+
+            final User authUser = userEmail.getUser();
+
+            if (authUser.getDeleted().booleanValue()) {
+
+                final String msg = "";
+                String.format("Google sign-in: %s is deleted.",
+                        user.getEmail());
+                // localized("msg-authtoken-user-not-found",
+                // user.getEmail());
+                AdminPublisher.instance().publish(PubTopicEnum.USER,
+                        PubLevelEnum.WARN, msg);
+                LOGGER.warn(msg);
+                return;
+            }
+
+            // TODO
+            final String msg = String.format("Google sign-in of %s (%s)",
+                    user.getEmail(), authUser.getUserId());
+            // localized("msg-authtoken-accepted", authUser.getUserId());
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.INFO, msg);
+
+            if (LOGGER.isTraceEnabled()) {
+                // LOGGER.trace(
+                // String.format("User [%s] authenticated with token: %s",
+                // userid, token));
+            } else if (LOGGER.isInfoEnabled()) {
+                LOGGER.info(msg);
+            }
+
+            final User sessionUser = SpSession.get().getUser();
+
+            if (sessionUser != null
+                    && sessionUser.getUserId().equals(authUser.getUserId())) {
+                return;
+            }
+
+            SpSession.get().setGoogleSignIn(authUser);
+
+        } catch (GeneralSecurityException | IOException e) {
+            // TODO
+            throw new SpException(e);
+        }
+    }
+
+    /**
      * Check if a {@link OneTimeAuthToken} is present and, when valid,
      * authenticates by putting the {@link User} in the {@link SpSession}.
      *
@@ -385,7 +485,32 @@ public final class WebAppUser extends AbstractWebAppPage {
             return;
         }
 
-        checkOneTimeAuthToken(parameters);
+        final String loginMode =
+                this.getParmValue(parameters, true, PAGE_PARM_LOGIN);
+
+        final String googleIdToken =
+                this.getParmValue(POST_PARM_GOOGLE_ID_TOKEN);
+
+        final boolean isGoogleSignInEnabled = ConfigManager.instance()
+                .isConfigValue(Key.WEB_LOGIN_GOOGLE_ENABLE);
+
+        if (isGoogleSignInEnabled && StringUtils.isNotBlank(googleIdToken)) {
+            /*
+             * A Google ID Token was posted, so check it.
+             */
+            checkGoogleIdToken(googleIdToken);
+
+        } else if (isGoogleSignInEnabled && loginMode != null
+                && UserAuth.mode(loginMode) == UserAuth.Mode.GOOGLE_SIGN_IN) {
+
+            if (!SpSession.get().isGoogleSignIn()) {
+                setResponsePage(WebAppGoogleSignIn.class);
+                return;
+            }
+
+        } else {
+            checkOneTimeAuthToken(parameters);
+        }
 
         final String appTitle = getWebAppTitle(null);
 

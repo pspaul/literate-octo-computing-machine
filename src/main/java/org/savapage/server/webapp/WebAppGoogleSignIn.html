@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+    <!-- 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
+    -->
+</wicket:remove>
+
+<head>
+
+<noscript>
+	<h2>Your browser does not support JavaScript or JavaScript is
+		disabled!</h2>
+	<h3>Please enable JavaScript to run this application.</h3>
+	<hr />
+</noscript>
+
+<title wicket:id="app-title">Google Sign-In</title>
+
+<meta name="google-signin-client_id" wicket:id="google-signin-client-id"
+	content="SOMEUNIQUESTRING.apps.googleusercontent.com" />
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+
+<link rel="apple-touch-icon" href="/apple-touch-icon-admin.png" />
+<link rel="apple-touch-icon" sizes="72x72"
+	href="/apple-touch-icon-admin-72x72.png" />
+<link rel="apple-touch-icon" sizes="114x114"
+	href="/apple-touch-icon-admin-114x114.png" />
+<link rel="apple-touch-icon" sizes="144x144"
+	href="/apple-touch-icon-admin-144x144.png" />
+<script type="text/javascript"
+	src="https://apis.google.com/js/platform.js?onload=renderButton" async
+	defer />
+
+</head>
+
+<body>
+
+	<script>
+		/* somehow this empty script block is needed. Why? */
+	</script>
+	
+	<h3>Welcome to SavaPage</h3>
+
+	<div id="my-signin2" />
+
+	<script>
+		function onSuccess(googleUser) {
+			var id_token = googleUser.getAuthResponse().id_token;
+			document.getElementById("google_id_token").value = id_token;
+			document.google_id_token_form.submit();
+		}
+		function onFailure(error) {
+			console.log(error);
+		}
+
+		function renderButton() {
+			var buttonId = 'my-signin2';
+			gapi.signin2.render(buttonId, {
+				'scope' : 'profile',
+				'width' : 240,
+				'height' : 50,
+				'longtitle' : true,
+				//'theme': 'dark',
+				'theme' : 'light',
+				'onsuccess' : onSuccess,
+				'onfailure' : onFailure
+			});
+		}
+	</script>
+
+	<form name="google_id_token_form" method="post"
+			action="/user?sp-login=google">
+		<input type="hidden" name="webAppType" value="USER"
+				wicket:id="webAppType"></input>
+		<input type="hidden" name="google_id_token" id="google_id_token" />
+	</form>
+
+	<!-- 
+	<br>
+	<a href="#" onclick="signOut();">Sign out</a>
+    -->	
+	<script type="text/javascript">
+		function signOut() {
+			var auth2 = gapi.auth2.getAuthInstance();
+			auth2.signOut().then(function() {
+				console.log('User signed out.');
+			});
+		}
+	</script>
+
+</body>
+</html>
