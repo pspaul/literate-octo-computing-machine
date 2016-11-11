@@ -5827,6 +5827,8 @@
 					})
 				});
 
+				_view.pages.login.notifyLogout();
+
 				if (res.result.code !== '0') {
 					/*
 					 * NOTE: when we are disconnected the onDisconnected()
@@ -6078,6 +6080,8 @@
 			//
 			, _cometd, _userEvent, _deviceEvent, _proxyprintEvent, _ctrl
 			//
+			, _nativeLogin
+			//
 			;
 
 			_ns.commonWebAppInit();
@@ -6121,15 +6125,7 @@
 
 			_ctrl = new Controller(_i18n, _model, _view, _api, _cometd, _userEvent, _deviceEvent, _proxyprintEvent);
 
-			this.init = function() {
-
-				var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER);
-				var authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN);
-
-				_ns.initWebApp('USER');
-
-				_ctrl.init();
-
+			_nativeLogin = function(user, authMode) {
 				if (authMode === _view.AUTH_MODE_GOOGLE_SIGN_IN) {
 					_ctrl.login(authMode);
 				} else if (user) {
@@ -6138,8 +6134,32 @@
 					_ctrl.login(_view.AUTH_MODE_NAME, _model.authToken.user, null, _model.authToken.token);
 				} else {
 					_ctrl.initLoginUserInput();
-					// Initial load/show of Login dialog
 					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
+				}
+			};
+
+			this.init = function() {
+
+				var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER), authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN);
+
+				_ns.initWebApp('USER');
+
+				_ctrl.init();
+
+				if (_ns.hasGoogleSignIn()) {
+					gapi.load('auth2', function() {
+						gapi.auth2.init({
+						}).then(function() {
+							var auth2 = gapi.auth2.getAuthInstance();
+							if (auth2.isSignedIn.get()) {
+								_ctrl.login(_view.AUTH_MODE_GOOGLE_SIGN_IN);
+							} else {
+								_nativeLogin(user, authMode);
+							}
+						});
+					});
+				} else {
+					_nativeLogin(user, authMode);
 				}
 			};
 

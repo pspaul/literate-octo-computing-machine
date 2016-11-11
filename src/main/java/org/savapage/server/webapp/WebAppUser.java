@@ -326,10 +326,8 @@ public final class WebAppUser extends AbstractWebAppPage {
      */
     public void checkGoogleIdToken(final String idToken) {
 
-        /*
-         * TODO.
-         */
-        final String CLIENT_ID = "566026169770.apps.googleusercontent.com";
+        final String CLIENT_ID = ConfigManager.instance()
+                .getConfigValue(Key.WEB_LOGIN_GOOGLE_CLIENT_ID);
 
         try {
             final GoogleUserInfo user =
@@ -492,8 +490,17 @@ public final class WebAppUser extends AbstractWebAppPage {
         final String googleIdToken =
                 this.getParmValue(POST_PARM_GOOGLE_ID_TOKEN);
 
-        final boolean isGoogleSignInEnabled = ConfigManager.instance()
-                .isConfigValue(Key.WEB_LOGIN_GOOGLE_ENABLE);
+        final boolean isGoogleSignInEnabled = isGoogleSignInEnabled();
+
+        //
+        final Label label = MarkupHelper.createEncloseLabel(
+                "google-signin-client-id", "", isGoogleSignInEnabled);
+
+        if (isGoogleSignInEnabled) {
+            MarkupHelper.modifyLabelAttr(label, "content", ConfigManager
+                    .instance().getConfigValue(Key.WEB_LOGIN_GOOGLE_CLIENT_ID));
+        }
+        add(label);
 
         if (isGoogleSignInEnabled && StringUtils.isNotBlank(googleIdToken)) {
             /*
@@ -543,7 +550,14 @@ public final class WebAppUser extends AbstractWebAppPage {
 
     @Override
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
-        return EnumSet.allOf(JavaScriptLibrary.class);
+
+        final EnumSet<JavaScriptLibrary> libs =
+                EnumSet.allOf(JavaScriptLibrary.class);
+
+        if (!isGoogleSignInEnabled()) {
+            libs.remove(JavaScriptLibrary.GOOGLE_SIGN_IN);
+        }
+        return libs;
     }
 
     /**

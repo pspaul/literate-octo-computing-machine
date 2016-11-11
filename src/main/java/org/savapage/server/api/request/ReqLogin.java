@@ -22,6 +22,7 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.Map;
 
@@ -33,6 +34,9 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
+import org.savapage.core.SpException;
+import org.savapage.core.auth.GoogleSignIn;
+import org.savapage.core.auth.GoogleUserInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.CometdClientMixin;
 import org.savapage.core.cometd.PubLevelEnum;
@@ -50,6 +54,7 @@ import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Entity;
 import org.savapage.core.jpa.User;
+import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ServiceContext;
@@ -456,10 +461,12 @@ public final class ReqLogin extends ApiRequestMixin {
         final UserAuth theUserAuth = new UserAuth(terminal, null,
                 webAppType == WebAppTypeEnum.ADMIN);
 
-        if (!theUserAuth.isAuthModeAllowed(authMode)) {
-            setApiResult(ApiResultCodeEnum.ERROR, "msg-auth-mode-not-available",
-                    authMode.toString());
-            return;
+        if (authMode != UserAuth.Mode.GOOGLE_SIGN_IN) { // TEST TEST
+            if (!theUserAuth.isAuthModeAllowed(authMode)) {
+                setApiResult(ApiResultCodeEnum.ERROR,
+                        "msg-auth-mode-not-available", authMode.toString());
+                return;
+            }
         }
 
         /*
@@ -546,7 +553,12 @@ public final class ReqLogin extends ApiRequestMixin {
 
         } else {
 
-            if (authMode == UserAuth.Mode.NAME) {
+            if (authMode == UserAuth.Mode.GOOGLE_SIGN_IN && authId != null) {
+
+                reqLoginGoogleSignIn(authId, webAppType);
+                return;
+
+            } else if (authMode == UserAuth.Mode.NAME) {
 
                 /*
                  * Get the "real" username from the alias.
@@ -895,6 +907,116 @@ public final class ReqLogin extends ApiRequestMixin {
                     uid, webAppType.toString(),
                     SpSession.get().isAuthenticated()));
         }
+    }
+
+    /**
+     *
+     * @param authtoken
+     * @param webAppType
+     * @throws IOException
+     */
+    private void reqLoginGoogleSignIn(final String idToken,
+            final WebAppTypeEnum webAppType) throws IOException {
+
+        final String CLIENT_ID = ConfigManager.instance()
+                .getConfigValue(Key.WEB_LOGIN_GOOGLE_CLIENT_ID);
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(
+                    String.format("Login with Google Sing-In ID Token [%s...].",
+                            idToken.substring(0, 10)));
+        }
+
+        GoogleUserInfo guser = null;
+
+        try {
+            guser = GoogleSignIn.getUserInfo(CLIENT_ID, idToken);
+        } catch (GeneralSecurityException e) {
+            throw new SpException(e);
+        }
+
+        if (guser == null) {
+            final String msg =
+                    String.format("Google sign-in: ID Token [%s...] invalid.",
+                            idToken.substring(0, 10));
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.WARN, msg);
+            LOGGER.warn(msg);
+            onLoginFailed(null);
+            return;
+        }
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(String.format(
+                    "User ID : %s\n" + "Email   : %s (verified: %s)\n"
+                            + "Hosted D: %s\n" + "Name    : %s\n"
+                            + "Picture : %s\n" + "Locale  : %s\n"
+                            + "Name    : [%s] [%s]\n",
+                    //
+                    guser.getUserId(), guser.getEmail(),
+                    Boolean.valueOf(guser.isEmailVerified()),
+                    guser.getHostedDomain(), guser.getName(),
+                    guser.getPictureUrl(), guser.getLocale(),
+                    guser.getFamilyName(), guser.getGivenName()));
+        }
+
+        final UserEmail userEmail = ServiceContext.getDaoContext()
+                .getUserEmailDao().findByEmail(guser.getEmail());
+
+        if (userEmail == null) {
+            // TODO
+            final String msg = String.format("Google sign-in: %s not found.",
+                    guser.getEmail());
+            // localized("msg-authtoken-user-not-found",
+            // user.getEmail());
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.WARN, msg);
+            LOGGER.warn(msg);
+
+            onLoginFailed(null);
+            return;
+        }
+
+        final User authUser = userEmail.getUser();
+
+        if (authUser.getDeleted().booleanValue()) {
+
+            final String msg = "";
+            String.format("Google sign-in: %s is deleted.", guser.getEmail());
+            // localized("msg-authtoken-user-not-found",
+            // user.getEmail());
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.WARN, msg);
+            LOGGER.warn(msg);
+            onLoginFailed(null);
+            return;
+        }
+
+        final String uid = authUser.getUserId();
+
+        // TODO
+        final String msg = String.format("Google sign-in of %s (%s)",
+                guser.getEmail(), uid);
+        // localized("msg-authtoken-accepted", uid);
+        AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
+                msg);
+
+        if (LOGGER.isTraceEnabled()) {
+            // LOGGER.trace(
+            // String.format("User [%s] authenticated with token: %s",
+            // userid, token));
+        } else if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(msg);
+        }
+
+        final SpSession session = SpSession.get();
+        session.setGoogleSignIn(authUser);
+
+        onUserLoginGranted(getUserData(), session, webAppType, uid,
+                session.getUser(), null);
+
+        setApiResultOk();
+
     }
 
     /**

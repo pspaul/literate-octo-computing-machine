@@ -46,6 +46,10 @@
 		//
 		;
 
+		_ns.hasGoogleSignIn = function() {
+			return typeof gapi !== 'undefined';
+		};
+
 		/**
 		 * Common initializing actions for all Web App types.
 		 */
@@ -1398,7 +1402,7 @@
 			//
 			, _onLanguage, _onLogin, _onShow
 			//
-			, _authName, _authId, _authCardLocal, _authCardIp
+			, _authName, _authId, _authCardLocal, _authCardIp, _authGoogle
 			//
 			, _authCardPinReq, _authCardSelfAssoc
 			//
@@ -1482,7 +1486,14 @@
 				_onLanguage = foo;
 			};
 
-			//_self.onCardAssocCancel
+			_self.notifyLogout = function() {
+				if (_ns.hasGoogleSignIn()) {
+					var auth2 = gapi.auth2.getAuthInstance();
+					auth2.signOut().then(function() {
+						//console.log('User signed out.');
+					});
+				}
+			};
 
 			/**
 			 * Sets the authentication mode and adapts the visibility of the
@@ -1766,6 +1777,22 @@
 					// anotherfocus is lost because another auth method is selected.
 					$('#sp-login-card-local-focusout').fadeIn(700);
 				});
+
+				if (_ns.hasGoogleSignIn()) {
+					gapi.signin2.render('google-signin-button', {
+						'scope' : 'profile',
+						//'width' : 240,
+						'height' : 35, //50,
+						'longtitle' : false,
+						'theme' : 'light',
+						'onsuccess' : function(googleUser) {
+							_onLogin(_view.AUTH_MODE_GOOGLE_SIGN_IN, googleUser.getAuthResponse().id_token);
+						},
+						'onfailure' : function(error) {
+							alert('Google sign-in FAILED :-(');
+						}
+					});
+				}
 
 				if (_authName) {
 

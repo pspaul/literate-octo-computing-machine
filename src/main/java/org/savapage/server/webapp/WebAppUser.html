@@ -41,6 +41,12 @@ Informs the Apple browser that this is a web app.
 </wicket:remove>
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 
+<wicket:enclosure child="google-signin-client-id">
+	<meta name="google-signin-client_id"
+		wicket:id="google-signin-client-id"
+		content="SOMEUNIQUESTRING.apps.googleusercontent.com" />
+</wicket:enclosure>
+
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 
 <wicket:remove>

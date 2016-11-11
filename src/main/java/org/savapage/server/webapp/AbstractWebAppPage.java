@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -99,6 +99,12 @@ public abstract class AbstractWebAppPage extends AbstractPage
     /**
      * .
      */
+    public static final String APIS_GOOGLE_PLATFORM_JS =
+            "https://apis.google.com/js/platform.js";
+
+    /**
+     * .
+     */
     public static final String WEBJARS_PATH_JQUERY_JQPLOT_CSS =
             "jqplot/current/jquery.jqplot.css";
 
@@ -113,7 +119,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
         /** */
         MOBIPICK,
         /** */
-        SPARKLINE
+        SPARKLINE,
+        /** */
+        GOOGLE_SIGN_IN
     }
 
     private static final String CSS_FILE_WICKET_SAVAPAGE =
@@ -122,6 +130,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
             "jquery.savapage.css";
 
     static final String JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION =
+            "jquery.savapage-page-print-delegation.js";
+
+    static final String JS_URL_GOOGLE_SIGN_IN =
             "jquery.savapage-page-print-delegation.js";
 
     /**
@@ -206,6 +217,14 @@ public abstract class AbstractWebAppPage extends AbstractPage
                 !parameters.get(ZeroPagePanel.PARM_SUBMIT_INDICATOR).isEmpty();
 
         return !isZeroPanel && SpSession.get().getAuthWebAppCount() > 0;
+    }
+
+    /**
+     * @return {@code true} when Google Sign-In is enabled.
+     */
+    protected static boolean isGoogleSignInEnabled() {
+        return ConfigManager.instance()
+                .isConfigValue(Key.WEB_LOGIN_GOOGLE_ENABLE);
     }
 
     /**
@@ -578,6 +597,10 @@ public abstract class AbstractWebAppPage extends AbstractPage
         /*
          * JS files
          */
+        if (jsToRender.contains(JavaScriptLibrary.GOOGLE_SIGN_IN)) {
+            renderJs(response, APIS_GOOGLE_PLATFORM_JS);
+        }
+
         if (!isJqueryCoreRenderedByWicket()) {
             response.render(
                     WebApp.getWebjarsJsRef(WebApp.WEBJARS_PATH_JQUERY_CORE_JS));
