@@ -1746,8 +1746,20 @@
 				$('#file-upload-feedback').hide();
 
 				$('#button-file-upload-submit').on('click', null, null, function() {
+					var _timer;
+
 					$('#file-upload-feedback').show();
 					$('#button-file-upload-reset').click();
+					$.mobile.loading("show");
+
+					// Mantis #747
+					_timer = window.setInterval(function() {
+						if ($('#file-upload-feedback').html().length > 0) {
+							window.clearInterval(_timer);
+							$.mobile.loading("hide");
+						}
+					}, 700);
+
 					return true;
 				});
 
@@ -1967,11 +1979,11 @@
 						item += '<span class="sp-thumbnail-page"/>';
 						item += '<span class="sp-thumbnail-tot-pages"/>';
 						item += '<span class="sp-thumbnail-tot-chunk"/>';
-					
+
 						if (_model.myJobs[page.job].rotate !== "0") {
 							item += " &#x21b7;";
-						} 
-						
+						}
+
 						item += '</a></div>';
 
 						divCur = $(item);
@@ -6113,7 +6125,7 @@
 
 				var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER);
 				var authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN);
-				
+
 				_ns.initWebApp('USER');
 
 				_ctrl.init();

@@ -190,8 +190,10 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 						<label for="file-upload-file" />
 						<input id="file-upload-file" wicket:id="fileUpload" type="file"
 							accept="" size="50" style="font-size: 110%;" />
-						<span wicket:id="upload-progress">[[ajax upload
-							progressbar]]</span>
+						<wicket:enclosure child="upload-progress">
+							<span wicket:id="upload-progress">[[ajax upload
+								progressbar]]</span>
+						</wicket:enclosure>
 						<!--  -->
 						<span class="sp-txt-wrap" wicket:id="fileUploadFeedback"
 							id="file-upload-feedback" />

@@ -77,6 +77,7 @@ import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.SpSession;
+import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -555,7 +556,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         /*
          * Create the form.
          */
-        Form<?> form = new MyFileUploadForm<>("fileUploadForm");
+        final Form<?> form = new MyFileUploadForm<>("fileUploadForm");
 
         form.setMultiPart(false);
 
@@ -573,12 +574,21 @@ public final class WebAppUser extends AbstractWebAppPage {
         form.add(fileUploadField);
 
         /*
-         * The progress bar.
+         * Mantis #747. Hide the progress bar for now.
          */
-        form.add(new UploadProgressBar("upload-progress", form));
+        final boolean showProgressBar = false;
+        final MarkupHelper formHelper = new MarkupHelper(form);
+
+        if (showProgressBar) {
+            form.add(new UploadProgressBar("upload-progress", form));
+        } else {
+            formHelper.discloseLabel("upload-progress");
+        }
 
         /*
-         * The feedback panel.
+         * The feedback panel. NOTE: messages are not displayed real-time on the
+         * client, but are displayed at once after file upload and conversion is
+         * finished.
          */
         final Component feedback = new FeedbackPanel("fileUploadFeedback")
                 .setOutputMarkupPlaceholderTag(true);
