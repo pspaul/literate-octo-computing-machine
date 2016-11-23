@@ -293,6 +293,7 @@
 				$('#user-userid').val(_model.editUser.userName);
 				$('#user-card-number').val(_model.editUser.card);
 				$('#user-id-number').val(_model.editUser.id);
+				$('#user-yubikey-public-id').val(_model.editUser.yubiKeyPubId);				
 				$('#user-pin').val(_model.editUser.pin);
 				$('#user-uuid').val(_model.editUser.uuid);
 
@@ -352,7 +353,8 @@
 				_model.editUser.person = $('#user-isperson').is(':checked');
 				_model.editUser.disabled = $('#user-disabled').is(':checked');
 				_model.editUser.card = $('#user-card-number').val();
-				_model.editUser.id = $('#user-id-number').val();
+				_model.editUser.id = $('#user-id-number').val();				
+				_model.editUser.yubiKeyPubId = $('#user-yubikey-public-id').val();				
 				_model.editUser.pin = $('#user-pin').val();
 				_model.editUser.uuid = $('#user-uuid').val();
 

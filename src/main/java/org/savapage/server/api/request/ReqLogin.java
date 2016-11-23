@@ -37,6 +37,7 @@ import org.apache.wicket.request.http.WebRequest;
 import org.savapage.core.SpException;
 import org.savapage.core.auth.GoogleSignIn;
 import org.savapage.core.auth.GoogleUserInfo;
+import org.savapage.core.auth.YubiKeyOTP;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.CometdClientMixin;
 import org.savapage.core.cometd.PubLevelEnum;
@@ -48,6 +49,7 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.UserNumberDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dto.AbstractDto;
@@ -55,6 +57,7 @@ import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Entity;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserEmail;
+import org.savapage.core.jpa.UserNumber;
 import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ServiceContext;
@@ -80,6 +83,8 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.yubico.client.v2.exceptions.YubicoValidationFailure;
+import com.yubico.client.v2.exceptions.YubicoVerificationException;
 
 /**
  *
@@ -307,6 +312,8 @@ public final class ReqLogin extends ApiRequestMixin {
             }
         }
 
+        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
+
         /*
          * If Google Sign-In is enabled and user was Google authenticated.
          *
@@ -320,7 +327,6 @@ public final class ReqLogin extends ApiRequestMixin {
             /*
              * INVARIANT: User must exist in database.
              */
-            final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
             // We need the JPA attached User.
             final User userDb = userDao
@@ -350,8 +356,6 @@ public final class ReqLogin extends ApiRequestMixin {
                 /*
                  * INVARIANT: User must exist in database.
                  */
-                final UserDao userDao =
-                        ServiceContext.getDaoContext().getUserDao();
 
                 // We need the JPA attached User.
                 final User userDb = userDao
@@ -367,7 +371,6 @@ public final class ReqLogin extends ApiRequestMixin {
 
             } else {
 
-                //
                 final boolean isCliAppAuthApplied;
 
                 if (isAuthTokenLoginEnabled && authMode == UserAuth.Mode.NAME
@@ -461,7 +464,8 @@ public final class ReqLogin extends ApiRequestMixin {
         final UserAuth theUserAuth = new UserAuth(terminal, null,
                 webAppType == WebAppTypeEnum.ADMIN);
 
-        if (authMode != UserAuth.Mode.GOOGLE_SIGN_IN) { // TEST TEST
+        if (authMode != UserAuth.Mode.GOOGLE_SIGN_IN
+                && authMode != UserAuth.Mode.YUBIKEY) { // TEST TEST
             if (!theUserAuth.isAuthModeAllowed(authMode)) {
                 setApiResult(ApiResultCodeEnum.ERROR,
                         "msg-auth-mode-not-available", authMode.toString());
@@ -505,9 +509,9 @@ public final class ReqLogin extends ApiRequestMixin {
         User userDb = null;
 
         /*
-         *
+         * RFID format.
          */
-        RfidNumberFormat rfidNumberFormat = null;
+        final RfidNumberFormat rfidNumberFormat;
 
         if (authMode == UserAuth.Mode.CARD_LOCAL || assocCardNumber != null) {
             if (terminal == null) {
@@ -517,6 +521,8 @@ public final class ReqLogin extends ApiRequestMixin {
                 rfidNumberFormat =
                         DEVICE_SERVICE.createRfidNumberFormat(terminal, lookup);
             }
+        } else {
+            rfidNumberFormat = null;
         }
 
         /*
@@ -553,7 +559,33 @@ public final class ReqLogin extends ApiRequestMixin {
 
         } else {
 
-            if (authMode == UserAuth.Mode.GOOGLE_SIGN_IN && authId != null) {
+            if (authMode == UserAuth.Mode.YUBIKEY) {
+
+                if (authId == null || !YubiKeyOTP.isValidOTPFormat(authId)) {
+                    onLoginFailed(null);
+                    return;
+                }
+
+                final YubiKeyOTP otp = new YubiKeyOTP(authId);
+
+                try {
+                    userDb = reqLoginYubico(otp, webAppType);
+                } catch (YubicoVerificationException e) {
+                    onLoginFailed("msg-login-yubikey-connection-error",
+                            webAppType.getUiText(), otp.getPublicId(),
+                            e.getMessage());
+                } catch (YubicoValidationFailure e) {
+                    throw new SpException(e.getMessage());
+                }
+
+                if (userDb == null) {
+                    onLoginFailed(null);
+                    return;
+                }
+                uid = userDb.getUserId();
+
+            } else if (authMode == UserAuth.Mode.GOOGLE_SIGN_IN
+                    && authId != null) {
 
                 reqLoginGoogleSignIn(authId, webAppType);
                 return;
@@ -716,7 +748,9 @@ public final class ReqLogin extends ApiRequestMixin {
             /*
              * Authenticate
              */
-            if (authMode == UserAuth.Mode.NAME) {
+            if (authMode == UserAuth.Mode.YUBIKEY) {
+                // no code intended
+            } else if (authMode == UserAuth.Mode.NAME) {
 
                 if (isInternalUser) {
 
@@ -907,6 +941,53 @@ public final class ReqLogin extends ApiRequestMixin {
                     uid, webAppType.toString(),
                     SpSession.get().isAuthenticated()));
         }
+    }
+
+    /**
+     *
+     * @param otp
+     * @param webAppType
+     * @return {@code null} when not found or authorized.
+     * @throws IOException
+     * @throws YubicoVerificationException
+     * @throws YubicoValidationFailure
+     */
+    private User reqLoginYubico(final YubiKeyOTP otp,
+            final WebAppTypeEnum webAppType) throws IOException,
+            YubicoVerificationException, YubicoValidationFailure {
+
+        if (!ApiRequestHelper.isYubicoLoginEnabled()) {
+            return null;
+        }
+
+        final String publicId = otp.getPublicId();
+
+        final UserNumberDao userNumberDao =
+                ServiceContext.getDaoContext().getUserNumberDao();
+
+        // We need the JPA attached UserNumber and User.
+        final UserNumber userNumberDb =
+                userNumberDao.findByYubiKeyPubID(publicId);
+
+        final ConfigManager cm = ConfigManager.instance();
+
+        if (userNumberDb == null) {
+            return null;
+        }
+
+        final User userDb = userNumberDb.getUser();
+
+        if (webAppType == WebAppTypeEnum.ADMIN
+                && !userDb.getAdmin().booleanValue()) {
+            return null;
+        }
+
+        if (otp.isOk(cm.getConfigInteger(Key.YUBICO_API_CLIENT_ID),
+                cm.getConfigValue(Key.YUBICO_API_SECRET_KEY))) {
+            return userDb;
+        }
+
+        return null;
     }
 
     /**

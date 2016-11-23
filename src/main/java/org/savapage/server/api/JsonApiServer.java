@@ -4460,6 +4460,8 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("img_base64", false);
 
         //
+        final ConfigManager cm = ConfigManager.instance();
+
         final UserAuth userAuth = new UserAuth(
                 ApiRequestHelper.getHostTerminal(this.getRemoteAddr()),
                 authModeReq,
@@ -4467,6 +4469,8 @@ public final class JsonApiServer extends AbstractPage {
 
         userData.put("authName", userAuth.isVisibleAuthName());
         userData.put("authId", userAuth.isVisibleAuthId());
+        userData.put("authYubiKey",
+                cm.isConfigValue(Key.WEB_LOGIN_YUBIKEY_ENABLE));
         userData.put("authCardLocal", userAuth.isVisibleAuthCardLocal());
         userData.put("authCardIp", userAuth.isVisibleAuthCardIp());
 
@@ -4482,10 +4486,11 @@ public final class JsonApiServer extends AbstractPage {
             userData.put("maxIdleSeconds", maxIdleSeconds);
         }
 
-        final ConfigManager cm = ConfigManager.instance();
-
         userData.put("cardLocalMaxMsecs",
                 cm.getConfigInt(Key.WEBAPP_CARD_LOCAL_KEYSTROKES_MAX_MSECS));
+
+        userData.put("yubikeyMaxMsecs",
+                cm.getConfigInt(Key.WEBAPP_YUBIKEY_KEYSTROKES_MAX_MSECS));
 
         userData.put("cardAssocMaxSecs",
                 cm.getConfigInt(Key.WEBAPP_CARD_ASSOC_DIALOG_MAX_SECS));

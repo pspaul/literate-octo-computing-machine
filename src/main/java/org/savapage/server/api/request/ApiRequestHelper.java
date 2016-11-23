@@ -88,6 +88,15 @@ public final class ApiRequestHelper {
     }
 
     /**
+     *
+     * @return {@code true} when Yubico login is enabled.
+     */
+    public static boolean isYubicoLoginEnabled() {
+        return ConfigManager.instance()
+                .isConfigValue(Key.WEB_LOGIN_YUBIKEY_ENABLE);
+    }
+
+    /**
      * Adds user statistics at the {@code stats} key of jsonData.
      * <p>
      * The User Statistics are used by the Client WebApp to update the Pie-chart

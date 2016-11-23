@@ -246,14 +246,21 @@ public class OutboxAddin extends AbstractUserPage {
                     job.getPages() * job.getCopies() - job.getSheets());
             item.add(new Label("printout-pie", sparklineData));
 
-            //
-            labelWlk = helper.encloseLabel("button-edit-outbox-jobticket",
-                    String.format("%s . . .",
-                            HtmlButtonEnum.EDIT.uiText(getLocale())),
-                    isJobTicketItem);
-            if (isJobTicketItem) {
-                labelWlk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, job.getFile()));
+            // for now, disable
+            if (true) {
+                helper.discloseLabel("button-edit-outbox-jobticket");
+            } else {
+
+                labelWlk =
+                        helper.encloseLabel("button-edit-outbox-jobticket",
+                                String.format("%s . . .",
+                                        HtmlButtonEnum.EDIT
+                                                .uiText(getLocale())),
+                                isJobTicketItem);
+                if (isJobTicketItem) {
+                    labelWlk.add(new AttributeModifier(
+                            MarkupHelper.ATTR_DATA_SAVAPAGE, job.getFile()));
+                }
             }
 
             final String encloseButtonIdRemove;

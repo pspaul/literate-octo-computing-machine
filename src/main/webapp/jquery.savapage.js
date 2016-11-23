@@ -1402,13 +1402,15 @@
 			//
 			, _onLanguage, _onLogin, _onShow
 			//
-			, _authName, _authId, _authCardLocal, _authCardIp, _authGoogle
+			, _authName, _authId, _authCardLocal, _authCardIp, _authYubiKey
 			//
 			, _authCardPinReq, _authCardSelfAssoc
 			//
 			, _ID_MODE_NAME = '#sp-div-login-name'
 			//
 			, _ID_MODE_ID = '#sp-div-login-number'
+			//
+			, _ID_MODE_YUBIKEY = '#sp-div-login-yubikey'
 			//
 			, _ID_MODE_CARD_LOCAL = '#sp-div-login-card-local'
 			//
@@ -1420,6 +1422,8 @@
 			//
 			, _ID_BTN_MODE_ID = '#sp-btn-login-mode-id'
 			//
+			, _ID_BTN_MODE_YUBIKEY = '#sp-btn-login-mode-yubikey'
+			//
 			, _ID_BTN_MODE_CARD_LOCAL = '#sp-btn-login-mode-card-local'
 			//
 			, _ID_BTN_MODE_CARD_IP = '#sp-btn-login-mode-card-ip'
@@ -1427,6 +1431,8 @@
 			, _ID_BTN_LOGIN_NAME = '#sp-btn-login-name'
 			//
 			, _ID_BTN_LOGIN_ID = '#sp-btn-login-number'
+			//
+			, _ID_BTN_LOGIN_YUBIKEY = '#sp-btn-login-yubikey'
 			//
 			, _ID_BTN_LOGIN_CARD_LOCAL = '#sp-btn-login-card-local'
 			//
@@ -1436,15 +1442,22 @@
 			//
 			, _authModeDefault, _onAuthModeSelect, _modeSelected
 			//
-			, _startTimeCardNumber = null
+			, _authKeyLoggerStartTime = null
+			//
 			// The max number of milliseconds allowed for entering the
 			// local card number.
 			, _MAX_CARD_NUMBER_MSECS = 500
-			// The collected local card number from individual keystrokes,
+			//
+			// The max number of milliseconds allowed for entering the
+			// YubiKey OTP.
+			, _MAX_YUBIKEY_MSECS = 1500
+			//
+			// The YubiKey OTP,  or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
-			, _collectedCardNumber
+			, _authKeyLoggerCollected
 			//
 			, _timeoutCardAssoc, _countdownCardAssoc
+			//
 			// Max number of seconds the assoc card dialog is visible.
 			, _MAX_CARD_ASSOC_SECS = 30
 			//
@@ -1502,15 +1515,18 @@
 			 * Example: pages.login.setAuthMode(true, true, true,
 			 * _view.AUTH_MODE_NAME);
 			 */
-			_self.setAuthMode = function(authName, authId, authCardLocal, authCardIp, modeDefault, authCardPinReq, authCardSelfAssoc, cardLocalMaxMsecs, cardAssocMaxSecs) {
+			_self.setAuthMode = function(authName, authId, authYubiKey, authCardLocal, authCardIp, modeDefault, authCardPinReq, authCardSelfAssoc, yubikeyMaxMsecs, cardLocalMaxMsecs, cardAssocMaxSecs) {
 				_authName = authName;
 				_authId = authId;
+				_authYubiKey = authYubiKey;
 				_authCardLocal = authCardLocal;
 				_authCardIp = authCardIp;
 				_authModeDefault = modeDefault;
 				_authCardPinReq = authCardPinReq;
 				_authCardSelfAssoc = authCardSelfAssoc;
 				_MAX_CARD_NUMBER_MSECS = cardLocalMaxMsecs;
+				_MAX_YUBIKEY_MSECS = yubikeyMaxMsecs;
+				// TODO
 				_MAX_CARD_ASSOC_SECS = cardAssocMaxSecs;
 			};
 
@@ -1526,8 +1542,8 @@
 			 *
 			 */
 			_self.notifyCardAssoc = function(cardNumber) {
-				_startTimeCardNumber = new Date().getTime();
-				_collectedCardNumber = cardNumber;
+				_authKeyLoggerStartTime = new Date().getTime();
+				_authKeyLoggerCollected = cardNumber;
 				_onAuthModeSelect(_view.AUTH_MODE_CARD_ASSOC);
 			};
 
@@ -1575,12 +1591,14 @@
 
 				$(_ID_MODE_NAME).hide();
 				$(_ID_MODE_ID).hide();
+				$(_ID_MODE_YUBIKEY).hide();
 				$(_ID_MODE_CARD_LOCAL).hide();
 				$(_ID_MODE_CARD_IP).hide();
 				$(_ID_MODE_CARD_ASSOC).hide();
 
 				$(_ID_BTN_MODE_NAME).hide();
 				$(_ID_BTN_MODE_ID).hide();
+				$(_ID_BTN_MODE_YUBIKEY).hide();
 				$(_ID_BTN_MODE_CARD_LOCAL).hide();
 				$(_ID_BTN_MODE_CARD_IP).hide();
 
@@ -1591,6 +1609,9 @@
 
 					if (_authId) {
 						$(_ID_BTN_MODE_ID).show();
+					}
+					if (_authYubiKey) {
+						$(_ID_BTN_MODE_YUBIKEY).show();
 					}
 					if (_authCardLocal) {
 						$(_ID_BTN_MODE_CARD_LOCAL).show();
@@ -1606,6 +1627,9 @@
 					$(_ID_MODE_ID).show();
 					$(_ID_BTN_MODE_ID).hide();
 
+					if (_authYubiKey) {
+						$(_ID_BTN_MODE_YUBIKEY).show();
+					}
 					if (_authName) {
 						$(_ID_BTN_MODE_NAME).show();
 					}
@@ -1618,6 +1642,34 @@
 
 					$('#sp-login-id-number').focus();
 
+				} else if (modeSelected === _view.AUTH_MODE_YUBIKEY) {
+
+					$(_ID_MODE_YUBIKEY).show();
+					$(_ID_BTN_MODE_YUBIKEY).hide();
+
+					if (_authName) {
+						$(_ID_BTN_MODE_NAME).show();
+					}
+					if (_authId) {
+						$(_ID_BTN_MODE_ID).show();
+					}
+					if (_authCardLocal) {
+						$(_ID_BTN_MODE_CARD_LOCAL).show();
+					}
+					if (_authCardIp) {
+						$(_ID_BTN_MODE_CARD_IP).show();
+					}
+
+					/*
+					 * Note: the <div id=""> must have the tabindex="0" attribute
+					 * to make it focusable.
+					 *
+					 * A trick to make the focus() work :-)
+					 */
+					window.setTimeout(function() {
+						$('#sp-login-yubikey-otp-group').show().focus();
+					}, 1);
+
 				} else if (modeSelected === _view.AUTH_MODE_CARD_LOCAL) {
 
 					$(_ID_MODE_CARD_LOCAL).show();
@@ -1628,6 +1680,9 @@
 					}
 					if (_authId) {
 						$(_ID_BTN_MODE_ID).show();
+					}
+					if (_authYubiKey) {
+						$(_ID_BTN_MODE_YUBIKEY).show();
 					}
 					if (_authCardIp) {
 						$(_ID_BTN_MODE_CARD_IP).show();
@@ -1656,6 +1711,9 @@
 					if (_authId) {
 						$(_ID_BTN_MODE_ID).show();
 					}
+					if (_authYubiKey) {
+						$(_ID_BTN_MODE_YUBIKEY).show();
+					}
 					if (_authCardLocal) {
 						$(_ID_BTN_MODE_CARD_LOCAL).show();
 					}
@@ -1683,7 +1741,7 @@
 					}, 1000);
 
 				} else {
-					_collectedCardNumber = null;
+					_authKeyLoggerCollected = null;
 					$('.sp-login-dialog').show();
 					$('.sp-login-dialog-assoc').hide();
 				}
@@ -1694,12 +1752,16 @@
 				if (_authId) {
 					nMethods++;
 				}
+				if (_authYubiKey) {
+					nMethods++;
+				}
 				if (_authCardLocal) {
 					nMethods++;
 				}
 				if (_authCardIp) {
 					nMethods++;
 				}
+
 				if (nMethods < 2) {
 					$('#sp-login-modes').hide();
 				}
@@ -1721,8 +1783,11 @@
 						} else if (_modeSelected === _view.AUTH_MODE_ID) {
 							selClick = $(_ID_BTN_LOGIN_ID);
 						} else if (_modeSelected === _view.AUTH_MODE_CARD_LOCAL) {
-							$('#sp-login-card-local-number').val(_collectedCardNumber);
+							$('#sp-login-card-local-number').val(_authKeyLoggerCollected);
 							selClick = $(_ID_BTN_LOGIN_CARD_LOCAL);
+						} else if (_modeSelected === _view.AUTH_MODE_YUBIKEY) {
+							$('#sp-login-yubikey').val(_authKeyLoggerCollected);
+							selClick = $(_ID_BTN_LOGIN_YUBIKEY);
 						} else if (_modeSelected === _view.AUTH_MODE_CARD_IP && $('#sp-login-card-ip-number').val().length > 0) {
 							selClick = $(_ID_BTN_LOGIN_CARD_IP);
 						} else if (_modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
@@ -1736,20 +1801,17 @@
 						if (_modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
 							$(_ID_BTN_LOGIN_CARD_ASSOC + '-cancel').click();
 						}
-					} else if (_modeSelected === _view.AUTH_MODE_CARD_LOCAL && $('#sp-login-card-local-number').val().length === 0) {
+					} else if ((_modeSelected === _view.AUTH_MODE_CARD_LOCAL && $('#sp-login-card-local-number').val().length === 0) || (_modeSelected === _view.AUTH_MODE_YUBIKEY && $('#sp-login-yubikey').val().length === 0)) {
 						/*
-						 * IMPORTANT: only look at printable chars. When doing an
-						 * alt-tab
-						 * to return to THIS application we do not want to
-						 * collect
-						 * !!!
+						 * IMPORTANT: only look at printable chars. When doing an alt-tab
+						 * to return to THIS application we do not want to collect !!!
 						 */
 						if (32 < key && key < 127) {
-							if (_startTimeCardNumber === null) {
-								_startTimeCardNumber = new Date().getTime();
-								_collectedCardNumber = '';
+							if (_authKeyLoggerStartTime === null) {
+								_authKeyLoggerStartTime = new Date().getTime();
+								_authKeyLoggerCollected = '';
 							}
-							_collectedCardNumber += String.fromCharCode(key);
+							_authKeyLoggerCollected += String.fromCharCode(key);
 						}
 					}
 				});
@@ -1765,17 +1827,31 @@
 				});
 
 				$('#sp-login-card-local-number-group').focusin(function() {
-					_startTimeCardNumber = null;
+					_authKeyLoggerStartTime = null;
 					$('#sp-login-card-local-focusin').show();
 					$('#sp-login-card-local-focusout').hide();
 				});
 
 				$('#sp-login-card-local-number-group').focusout(function() {
-					_startTimeCardNumber = null;
+					_authKeyLoggerStartTime = null;
 					$('#sp-login-card-local-focusin').hide();
 					// Use the fadeIn to prevent a 'flash' effect when just
 					// anotherfocus is lost because another auth method is selected.
 					$('#sp-login-card-local-focusout').fadeIn(700);
+				});
+
+				$('#sp-login-yubikey-otp-group').focusin(function() {
+					_authKeyLoggerStartTime = null;
+					$('#sp-login-yubikey-focusin').show();
+					$('#sp-login-yubikey-focusout').hide();
+				});
+
+				$('#sp-login-yubikey-otp-group').focusout(function() {
+					_authKeyLoggerStartTime = null;
+					$('#sp-login-yubikey-focusin').hide();
+					// Use the fadeIn to prevent a 'flash' effect when just
+					// anotherfocus is lost because another auth method is selected.
+					$('#sp-login-yubikey-focusout').fadeIn(700);
 				});
 
 				if (_ns.hasGoogleSignIn()) {
@@ -1833,6 +1909,43 @@
 					});
 				}
 
+				if (_authYubiKey) {
+
+					$(_ID_BTN_MODE_YUBIKEY).click(function() {
+						_onAuthModeSelect(_view.AUTH_MODE_YUBIKEY);
+						return false;
+					});
+
+					$(_ID_BTN_LOGIN_YUBIKEY).click(function() {
+						var selCard = $('#sp-login-yubikey'), card = selCard.val()
+						// Elapsed time since the first keyup in the key logger.
+						, authKeyLoggerElapsed
+						//
+						;
+
+						if (card.length === 0) {
+							$('#sp-login-yubikey-otp-group').focus();
+							return false;
+						}
+
+						if (_authKeyLoggerStartTime) {
+							authKeyLoggerElapsed = new Date().getTime() - _authKeyLoggerStartTime;
+							_authKeyLoggerStartTime = null;
+							if (authKeyLoggerElapsed > _MAX_YUBIKEY_MSECS) {
+								selCard.val('');
+								return false;
+							}
+						}
+
+						selCard.val('');
+
+						_onLogin(_view.AUTH_MODE_YUBIKEY, card);
+
+						return false;
+					});
+
+				}
+
 				if (_authCardLocal) {
 
 					$(_ID_BTN_MODE_CARD_LOCAL).click(function() {
@@ -1844,9 +1957,8 @@
 						var selCard = $('#sp-login-card-local-number'), card = selCard.val()
 						//
 						, selPin = $('#sp-login-card-local-pin'), pin = selPin.val()
-						// Elapsed time since the first keyup in the local card
-						// number field.
-						, elapsedTimeCardNumber
+						// Elapsed time since the first keyup in the key logger.
+						, authKeyLoggerElapsed
 						//
 						;
 
@@ -1855,10 +1967,10 @@
 							return false;
 						}
 
-						if (_startTimeCardNumber) {
-							elapsedTimeCardNumber = new Date().getTime() - _startTimeCardNumber;
-							_startTimeCardNumber = null;
-							if (elapsedTimeCardNumber > _MAX_CARD_NUMBER_MSECS) {
+						if (_authKeyLoggerStartTime) {
+							authKeyLoggerElapsed = new Date().getTime() - _authKeyLoggerStartTime;
+							_authKeyLoggerStartTime = null;
+							if (authKeyLoggerElapsed > _MAX_CARD_NUMBER_MSECS) {
 								selCard.val('');
 								return false;
 							}
@@ -1931,7 +2043,7 @@
 
 				if (_authCardSelfAssoc) {
 					$(_ID_BTN_LOGIN_CARD_ASSOC).click(function() {
-						_onLogin(_view.AUTH_MODE_NAME, $('#sp-login-user-name-assoc').val(), $('#sp-login-user-password-assoc').val(), _collectedCardNumber);
+						_onLogin(_view.AUTH_MODE_NAME, $('#sp-login-user-name-assoc').val(), $('#sp-login-user-password-assoc').val(), _authKeyLoggerCollected);
 						return false;
 					});
 					$(_ID_BTN_LOGIN_CARD_ASSOC + '-cancel').click(function() {
@@ -1983,6 +2095,7 @@
 			this.AUTH_MODE_CARD_LOCAL = 'nfc-local';
 			this.AUTH_MODE_CARD_IP = 'nfc-network';
 			this.AUTH_MODE_GOOGLE_SIGN_IN = 'google';
+			this.AUTH_MODE_YUBIKEY = 'yubikey';
 
 			// Dummy AUTH Modes to associate Card with user.
 			this.AUTH_MODE_CARD_ASSOC = '_CA';
