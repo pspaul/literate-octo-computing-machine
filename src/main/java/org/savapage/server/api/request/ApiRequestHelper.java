@@ -83,17 +83,7 @@ public final class ApiRequestHelper {
      * @return {@code true} when Google Sign-In is enabled.
      */
     public static boolean isGoogleSignInEnabled() {
-        return ConfigManager.instance()
-                .isConfigValue(Key.WEB_LOGIN_GOOGLE_ENABLE);
-    }
-
-    /**
-     *
-     * @return {@code true} when Yubico login is enabled.
-     */
-    public static boolean isYubicoLoginEnabled() {
-        return ConfigManager.instance()
-                .isConfigValue(Key.WEB_LOGIN_YUBIKEY_ENABLE);
+        return ConfigManager.instance().isConfigValue(Key.AUTH_MODE_GOOGLE);
     }
 
     /**

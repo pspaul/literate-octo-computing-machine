@@ -341,7 +341,7 @@
 
 				if (!_model.editUser.dbId) {
 					_model.editUser.userName = $('#user-userid').val();
-					if (!_view.checkPwMatch($('#user-user-pw'), $('#user-user-pw-confirm'))) {
+					if (!_view.checkPwMatch($('#user-user-pw'), $('#user-user-pw-confirm'), true)) {
 						return false;
 					}
 					_model.editUser.password = $('#user-user-pw').val();
@@ -692,7 +692,7 @@
 			//
 			, _WEBAPP_USER_IDLE_SECS = 'webapp.user.max-idle-secs'
 			// boolean authentication attributes
-			, _AUTH_ATTR_BOOLS = ['.name', '.id', '.id.pin-required', '.id.is-masked', '.card-local', '.card-ip', '.card.pin-required', '.card.self-association']
+			, _AUTH_ATTR_BOOLS = ['.name', '.yubikey', '.google', '.id', '.id.pin-required', '.id.is-masked', '.card-local', '.card-ip', '.card.pin-required', '.card.self-association']
 			// string authentication attributes
 			, _AUTH_ATTR_STRINGS = []
 			//
@@ -709,6 +709,10 @@
 				//
 				, authCardIp = _view.isCbChecked($("#auth-mode\\.card-ip"))
 				//
+				, authYubikey = _view.isCbChecked($("#auth-mode\\.yubikey"))
+				//
+				, authGoogle = _view.isCbChecked($("#auth-mode\\.google"))
+				//
 				, sel
 				//
 				, nMode = 0
@@ -719,6 +723,8 @@
 				$('#auth-mode-default-id').checkboxradio( authId ? 'enable' : 'disable');
 				$('#auth-mode-default-card-local').checkboxradio( authCardLocal ? 'enable' : 'disable');
 				$('#auth-mode-default-card-network').checkboxradio( authCardIp ? 'enable' : 'disable');
+				$('#auth-mode-default-yubikey').checkboxradio( authYubikey ? 'enable' : 'disable');
+				$('#auth-mode-default-google').checkboxradio( authGoogle ? 'enable' : 'disable');
 
 				if (authUser) {
 					nMode++;
@@ -730,6 +736,14 @@
 					sel.show();
 				} else {
 					sel.hide();
+				}
+
+				if (authYubikey) {
+					nMode++;
+				}
+
+				if (authGoogle) {
+					nMode++;
 				}
 
 				if (authCardLocal) {

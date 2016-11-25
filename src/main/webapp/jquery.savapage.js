@@ -2718,13 +2718,13 @@
 			/**
 			 *
 			 */
-			this.checkPwMatch = function(jqPassw, jqConfirm) {
+			this.checkPwMatch = function(jqPassw, jqConfirm, canBeVoid) {
 
 				var pw_valid = false, pw1 = jqPassw.val(), pw2 = jqConfirm.val(), msg;
 
 				if (pw1 !== pw2) {
 					msg = 'msg-input-mismatch';
-				} else if (!pw1) {
+				} else if (!pw1 && !canBeVoid) {
 					msg = 'msg-input-empty';
 				} else {
 					pw_valid = true;

@@ -321,7 +321,7 @@ public final class ReqLogin extends ApiRequestMixin {
         final boolean isGoogleSignInEnabled =
                 ApiRequestHelper.isGoogleSignInEnabled();
 
-        if (authMode == Mode.GOOGLE_SIGN_IN && isGoogleSignInEnabled
+        if (authMode == Mode.GOOGLE && isGoogleSignInEnabled
                 && session.isGoogleSignIn()) {
 
             /*
@@ -335,7 +335,7 @@ public final class ReqLogin extends ApiRequestMixin {
             if (userDb == null) {
                 onLoginFailed(null);
             } else {
-                onUserLoginGranted(getUserData(), session, webAppType,
+                onUserLoginGranted(getUserData(), session, webAppType, authMode,
                         session.getUser().getUserId(), userDb, null);
                 setApiResultOk();
             }
@@ -365,7 +365,8 @@ public final class ReqLogin extends ApiRequestMixin {
                     onLoginFailed(null);
                 } else {
                     onUserLoginGranted(getUserData(), session, webAppType,
-                            session.getUser().getUserId(), userDb, null);
+                            authMode, session.getUser().getUserId(), userDb,
+                            null);
                     setApiResultOk();
                 }
 
@@ -464,7 +465,7 @@ public final class ReqLogin extends ApiRequestMixin {
         final UserAuth theUserAuth = new UserAuth(terminal, null,
                 webAppType == WebAppTypeEnum.ADMIN);
 
-        if (authMode != UserAuth.Mode.GOOGLE_SIGN_IN
+        if (authMode != UserAuth.Mode.GOOGLE
                 && authMode != UserAuth.Mode.YUBIKEY) { // TEST TEST
             if (!theUserAuth.isAuthModeAllowed(authMode)) {
                 setApiResult(ApiResultCodeEnum.ERROR,
@@ -584,11 +585,15 @@ public final class ReqLogin extends ApiRequestMixin {
                 }
                 uid = userDb.getUserId();
 
-            } else if (authMode == UserAuth.Mode.GOOGLE_SIGN_IN
-                    && authId != null) {
+            } else if (authMode == UserAuth.Mode.GOOGLE && authId != null) {
 
-                reqLoginGoogleSignIn(authId, webAppType);
-                return;
+                userDb = reqLoginGoogleSignIn(authId, webAppType);
+
+                if (userDb == null) {
+                    onLoginFailed(null);
+                    return;
+                }
+                uid = userDb.getUserId();
 
             } else if (authMode == UserAuth.Mode.NAME) {
 
@@ -748,7 +753,8 @@ public final class ReqLogin extends ApiRequestMixin {
             /*
              * Authenticate
              */
-            if (authMode == UserAuth.Mode.YUBIKEY) {
+            if (authMode == UserAuth.Mode.YUBIKEY
+                    || authMode == UserAuth.Mode.GOOGLE) {
                 // no code intended
             } else if (authMode == UserAuth.Mode.NAME) {
 
@@ -926,8 +932,8 @@ public final class ReqLogin extends ApiRequestMixin {
             authToken = null;
         }
 
-        onUserLoginGranted(getUserData(), session, webAppType, uid, userDb,
-                authToken);
+        onUserLoginGranted(getUserData(), session, webAppType, authMode, uid,
+                userDb, authToken);
 
         /*
          * Update session.
@@ -947,7 +953,8 @@ public final class ReqLogin extends ApiRequestMixin {
      *
      * @param otp
      * @param webAppType
-     * @return {@code null} when not found or authorized.
+     * @return The authenticated user or {@code null} when not found or not
+     *         authorized.
      * @throws IOException
      * @throws YubicoVerificationException
      * @throws YubicoValidationFailure
@@ -955,10 +962,6 @@ public final class ReqLogin extends ApiRequestMixin {
     private User reqLoginYubico(final YubiKeyOTP otp,
             final WebAppTypeEnum webAppType) throws IOException,
             YubicoVerificationException, YubicoValidationFailure {
-
-        if (!ApiRequestHelper.isYubicoLoginEnabled()) {
-            return null;
-        }
 
         final String publicId = otp.getPublicId();
 
@@ -982,8 +985,8 @@ public final class ReqLogin extends ApiRequestMixin {
             return null;
         }
 
-        if (otp.isOk(cm.getConfigInteger(Key.YUBICO_API_CLIENT_ID),
-                cm.getConfigValue(Key.YUBICO_API_SECRET_KEY))) {
+        if (otp.isOk(cm.getConfigInteger(Key.AUTH_MODE_YUBIKEY_API_CLIENT_ID),
+                cm.getConfigValue(Key.AUTH_MODE_YUBIKEY_API_SECRET_KEY))) {
             return userDb;
         }
 
@@ -994,13 +997,15 @@ public final class ReqLogin extends ApiRequestMixin {
      *
      * @param authtoken
      * @param webAppType
+     * @return The authenticated user or {@code null} when not found or not
+     *         authorized.
      * @throws IOException
      */
-    private void reqLoginGoogleSignIn(final String idToken,
+    private User reqLoginGoogleSignIn(final String idToken,
             final WebAppTypeEnum webAppType) throws IOException {
 
         final String CLIENT_ID = ConfigManager.instance()
-                .getConfigValue(Key.WEB_LOGIN_GOOGLE_CLIENT_ID);
+                .getConfigValue(Key.AUTH_MODE_GOOGLE_CLIENT_ID);
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
@@ -1023,8 +1028,7 @@ public final class ReqLogin extends ApiRequestMixin {
             AdminPublisher.instance().publish(PubTopicEnum.USER,
                     PubLevelEnum.WARN, msg);
             LOGGER.warn(msg);
-            onLoginFailed(null);
-            return;
+            return null;
         }
 
         if (LOGGER.isTraceEnabled()) {
@@ -1045,59 +1049,27 @@ public final class ReqLogin extends ApiRequestMixin {
                 .getUserEmailDao().findByEmail(guser.getEmail());
 
         if (userEmail == null) {
-            // TODO
             final String msg = String.format("Google sign-in: %s not found.",
                     guser.getEmail());
-            // localized("msg-authtoken-user-not-found",
-            // user.getEmail());
             AdminPublisher.instance().publish(PubTopicEnum.USER,
                     PubLevelEnum.WARN, msg);
             LOGGER.warn(msg);
 
-            onLoginFailed(null);
-            return;
+            return null;
         }
 
         final User authUser = userEmail.getUser();
 
         if (authUser.getDeleted().booleanValue()) {
-
             final String msg = "";
             String.format("Google sign-in: %s is deleted.", guser.getEmail());
-            // localized("msg-authtoken-user-not-found",
-            // user.getEmail());
             AdminPublisher.instance().publish(PubTopicEnum.USER,
                     PubLevelEnum.WARN, msg);
             LOGGER.warn(msg);
-            onLoginFailed(null);
-            return;
+            return null;
         }
 
-        final String uid = authUser.getUserId();
-
-        // TODO
-        final String msg = String.format("Google sign-in of %s (%s)",
-                guser.getEmail(), uid);
-        // localized("msg-authtoken-accepted", uid);
-        AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
-                msg);
-
-        if (LOGGER.isTraceEnabled()) {
-            // LOGGER.trace(
-            // String.format("User [%s] authenticated with token: %s",
-            // userid, token));
-        } else if (LOGGER.isInfoEnabled()) {
-            LOGGER.info(msg);
-        }
-
-        final SpSession session = SpSession.get();
-        session.setGoogleSignIn(authUser);
-
-        onUserLoginGranted(getUserData(), session, webAppType, uid,
-                session.getUser(), null);
-
-        setApiResultOk();
-
+        return userEmail.getUser();
     }
 
     /**
@@ -1154,7 +1126,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
             session.setUser(userDb);
 
-            onUserLoginGranted(getUserData(), session, webAppType, uid,
+            onUserLoginGranted(getUserData(), session, webAppType, null, uid,
                     session.getUser(), authTokenObj);
 
             setApiResultOk();
@@ -1301,7 +1273,7 @@ public final class ReqLogin extends ApiRequestMixin {
             final UserAuthToken authTokenWebApp =
                     reqLoginLazyCreateAuthToken(userId, webAppType);
 
-            onUserLoginGranted(userData, session, webAppType, userId,
+            onUserLoginGranted(userData, session, webAppType, null, userId,
                     session.getUser(), authTokenWebApp);
 
             setApiResultOk();
@@ -1377,6 +1349,9 @@ public final class ReqLogin extends ApiRequestMixin {
      *            The session.
      * @param webAppType
      *            The {@link WebAppTypeEnum}.
+     * @param authMode
+     *            The {@link UserAuth.Mode}. {@code null} when authenticated by
+     *            (WebApp or Client) token.
      * @param uid
      *            The User ID.
      * @param userDb
@@ -1388,8 +1363,8 @@ public final class ReqLogin extends ApiRequestMixin {
      */
     private void onUserLoginGranted(final Map<String, Object> userData,
             final SpSession session, final WebAppTypeEnum webAppType,
-            final String uid, final User userDb, final UserAuthToken authToken)
-            throws IOException {
+            final UserAuth.Mode authMode, final String uid, final User userDb,
+            final UserAuthToken authToken) throws IOException {
 
         userData.put("id", uid);
         userData.put("key_id", userDb.getId());
@@ -1424,7 +1399,7 @@ public final class ReqLogin extends ApiRequestMixin {
         }
         userData.put("cometdToken", cometdToken);
 
-        WebApp.get().onAuthenticatedUser(webAppType, session.getId(),
+        WebApp.get().onAuthenticatedUser(webAppType, authMode, session.getId(),
                 getRemoteAddr(), uid);
 
         if (webAppType == WebAppTypeEnum.USER) {

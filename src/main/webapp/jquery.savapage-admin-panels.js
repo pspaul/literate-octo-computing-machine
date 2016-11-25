@@ -880,6 +880,10 @@
 				//
 				, cardNumber = _view.isCbChecked($("#auth-mode\\.card-local"))
 				//
+				, yubikey = _view.isCbChecked($("#auth-mode\\.yubikey"))
+				//
+				, google = _view.isCbChecked($("#auth-mode\\.google"))
+				//
 				, nMode = 0
 				//
 				;
@@ -887,6 +891,8 @@
 				$('#auth-mode-default-user').checkboxradio( userPw ? 'enable' : 'disable');
 				$('#auth-mode-default-number').checkboxradio( idNumber ? 'enable' : 'disable');
 				$('#auth-mode-default-card').checkboxradio( cardNumber ? 'enable' : 'disable');
+				$('#auth-mode-default-yubikey').checkboxradio( yubikey ? 'enable' : 'disable');
+				$('#auth-mode-default-google').checkboxradio( google ? 'enable' : 'disable');
 
 				_view.visible($('#group-user-auth-mode-name-pw'), userPw);
 				if (userPw) {
@@ -900,6 +906,15 @@
 
 				_view.visible($('#group-user-auth-mode-card-local'), cardNumber);
 				if (cardNumber) {
+					nMode++;
+				}
+
+				_view.visible($('#group-user-auth-mode-yubikey'), yubikey);
+				if (yubikey) {
+					nMode++;
+				}
+				_view.visible($('#group-user-auth-mode-google'), google);
+				if (google) {
 					nMode++;
 				}
 

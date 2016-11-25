@@ -64,6 +64,10 @@ public final class PageDevice extends AbstractAdminPage {
                 DeviceAttrEnum.AUTH_MODE_CARD_LOCAL.getDbName(), false);
         helper.labelledCheckbox("user-auth-mode-card-network",
                 DeviceAttrEnum.AUTH_MODE_CARD_IP.getDbName(), false);
+        helper.labelledCheckbox("user-auth-mode-yubikey",
+                DeviceAttrEnum.AUTH_MODE_YUBIKEY.getDbName(), false);
+        helper.labelledCheckbox("user-auth-mode-google",
+                DeviceAttrEnum.AUTH_MODE_GOOGLE.getDbName(), false);
 
         //
         labelledText("terminal-auto-logout",
@@ -120,6 +124,10 @@ public final class PageDevice extends AbstractAdminPage {
                 IConfigProp.AUTH_MODE_V_CARD_LOCAL, false);
         labelledRadio(wicketIdBase, "-card-network", attrName,
                 IConfigProp.AUTH_MODE_V_CARD_IP, false);
+        labelledRadio(wicketIdBase, "-google", attrName,
+                IConfigProp.AUTH_MODE_V_GOOGLE, false);
+        labelledRadio(wicketIdBase, "-yubikey", attrName,
+                IConfigProp.AUTH_MODE_V_YUBIKEY, false);
     }
 
 }

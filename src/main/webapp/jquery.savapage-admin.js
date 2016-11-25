@@ -194,8 +194,7 @@
 				_model.maxIdleSeconds = res.maxIdleSeconds;
 
 				// NOTE: authCardSelfAssoc is DISABLED
-				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, 
-						res.authCardPinReq, null, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
+				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, null, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
 				// Configures CometD (without starting it)
 				_cometd.configure(res.cometdMaxNetworkDelay);
@@ -716,10 +715,10 @@
 				if (props['proxy-print.non-secure'] === 'Y') {
 					_fillConfigPropsText(props, ['proxy-print.non-secure-printer-group']);
 				}
-				
+
 				key = 'webapp.user.proxy-print.clear-inbox.scope';
 				props[key] = _view.getRadioValue(key);
-				
+
 				_fillConfigPropsText(props, ['proxy-print.fast-expiry-mins', 'proxy-print.hold-expiry-mins', 'proxy-print.direct-expiry-secs', 'webapp.user.proxy-print.max-copies', 'proxy-print.max-pages', 'jobticket.proxy-printer', 'jobticket.proxy-printer-group']);
 
 				_saveConfigProps(props);
@@ -794,7 +793,20 @@
 
 			_view.pages.admin.onApplyUserAuthModeLocal = function() {
 				var props = {};
-				_fillConfigPropsYN(props, ['web-login.authtoken.enable', 'auth-mode.name', 'auth-mode.name.show', 'auth-mode.id', 'auth-mode.id.show', 'auth-mode.id.is-masked', 'auth-mode.id.pin-required', 'auth-mode.card-local', 'auth-mode.card-local.show', 'auth-mode.card.pin-required', 'auth-mode.card.self-association', 'user.can-change-pin', 'webapp.user.auth.trust-cliapp-auth']);
+				_fillConfigPropsYN(props, ['web-login.authtoken.enable',
+				//
+				'auth-mode.name', 'auth-mode.name.show',
+				//
+				'auth-mode.id', 'auth-mode.id.show', 'auth-mode.id.is-masked', 'auth-mode.id.pin-required',
+				//
+				'auth-mode.card-local', 'auth-mode.card-local.show', 'auth-mode.card.pin-required', 'auth-mode.card.self-association',
+				//
+				'auth-mode.yubikey', 'auth-mode.yubikey.show',
+				//
+				'auth-mode.google', 'auth-mode.google.show',
+				//
+				'user.can-change-pin', 'webapp.user.auth.trust-cliapp-auth']);
+				
 				_fillConfigPropsRadio(props, ['auth-mode-default', 'card.number.format', 'card.number.first-byte']);
 				_saveConfigProps(props);
 			};
@@ -1818,7 +1830,7 @@
 
 			_cometd = new _ns.Cometd();
 			_ctrl = new _ns.Controller(_i18n, _model, _view, _api, _cometd);
-			
+
 			/**
 			 *
 			 */

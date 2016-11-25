@@ -139,7 +139,10 @@ public final class WebAppAdmin extends AbstractWebAppPage {
 
     @Override
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
-        return EnumSet.allOf(JavaScriptLibrary.class);
+        final EnumSet<JavaScriptLibrary> libs =
+                EnumSet.allOf(JavaScriptLibrary.class);
+        libs.remove(JavaScriptLibrary.GOOGLE_SIGN_IN);
+        return libs;
     }
 
     /**

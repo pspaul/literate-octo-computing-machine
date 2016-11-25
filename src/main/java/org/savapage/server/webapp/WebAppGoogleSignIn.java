@@ -57,7 +57,7 @@ public final class WebAppGoogleSignIn extends WebPage {
         add(MarkupHelper.modifyLabelAttr(
                 new Label("google-signin-client-id", ""), "content",
                 ConfigManager.instance()
-                        .getConfigValue(Key.WEB_LOGIN_GOOGLE_CLIENT_ID)));
+                        .getConfigValue(Key.AUTH_MODE_GOOGLE_CLIENT_ID)));
     }
 
 }

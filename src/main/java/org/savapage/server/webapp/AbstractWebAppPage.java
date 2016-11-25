@@ -224,7 +224,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
      */
     protected static boolean isGoogleSignInEnabled() {
         return ConfigManager.instance()
-                .isConfigValue(Key.WEB_LOGIN_GOOGLE_ENABLE);
+                .isConfigValue(Key.AUTH_MODE_GOOGLE);
     }
 
     /**

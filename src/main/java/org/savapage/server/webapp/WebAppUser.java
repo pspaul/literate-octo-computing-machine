@@ -327,7 +327,7 @@ public final class WebAppUser extends AbstractWebAppPage {
     public void checkGoogleIdToken(final String idToken) {
 
         final String CLIENT_ID = ConfigManager.instance()
-                .getConfigValue(Key.WEB_LOGIN_GOOGLE_CLIENT_ID);
+                .getConfigValue(Key.AUTH_MODE_GOOGLE_CLIENT_ID);
 
         try {
             final GoogleUserInfo user =
@@ -498,7 +498,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         if (isGoogleSignInEnabled) {
             MarkupHelper.modifyLabelAttr(label, "content", ConfigManager
-                    .instance().getConfigValue(Key.WEB_LOGIN_GOOGLE_CLIENT_ID));
+                    .instance().getConfigValue(Key.AUTH_MODE_GOOGLE_CLIENT_ID));
         }
         add(label);
 
@@ -509,7 +509,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             checkGoogleIdToken(googleIdToken);
 
         } else if (isGoogleSignInEnabled && loginMode != null
-                && UserAuth.mode(loginMode) == UserAuth.Mode.GOOGLE_SIGN_IN) {
+                && UserAuth.mode(loginMode) == UserAuth.Mode.GOOGLE) {
 
             if (!SpSession.get().isGoogleSignIn()) {
                 setResponsePage(WebAppGoogleSignIn.class);

@@ -207,6 +207,11 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.AUTH_MODE_ID);
         labelledCheckbox("user-auth-mode-card-local",
                 IConfigProp.Key.AUTH_MODE_CARD_LOCAL);
+        labelledCheckbox("user-auth-mode-yubikey",
+                IConfigProp.Key.AUTH_MODE_YUBIKEY);
+        labelledCheckbox("user-auth-mode-google",
+                IConfigProp.Key.AUTH_MODE_GOOGLE);
+
         //
         labelledCheckbox("user-auth-mode-name-pw-dialog",
                 IConfigProp.Key.AUTH_MODE_NAME_SHOW);
@@ -257,11 +262,22 @@ public final class Options extends AbstractAdminPage {
         labelledRadio("user-auth-mode-default", "-user",
                 IConfigProp.Key.AUTH_MODE_DEFAULT,
                 IConfigProp.AUTH_MODE_V_NAME);
+
         labelledRadio("user-auth-mode-default", "-number",
                 IConfigProp.Key.AUTH_MODE_DEFAULT, IConfigProp.AUTH_MODE_V_ID);
+
         labelledRadio("user-auth-mode-default", "-card",
                 IConfigProp.Key.AUTH_MODE_DEFAULT,
                 IConfigProp.AUTH_MODE_V_CARD_LOCAL);
+
+        labelledRadio("user-auth-mode-default", "-yubikey",
+                IConfigProp.Key.AUTH_MODE_DEFAULT,
+                IConfigProp.AUTH_MODE_V_YUBIKEY);
+
+        labelledRadio("user-auth-mode-default", "-google",
+                IConfigProp.Key.AUTH_MODE_DEFAULT,
+                IConfigProp.AUTH_MODE_V_GOOGLE);
+
         /*
          *
          */

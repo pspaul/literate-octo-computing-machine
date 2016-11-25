@@ -56,6 +56,7 @@ import org.savapage.core.jpa.tools.DatabaseTypeEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
+import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.Messages;
@@ -316,6 +317,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *
      * @param webAppType
      *            The {@link WebAppTypeEnum}.
+     * @param authMode
+     *            The {@link UserAuth.Mode}. {@code null} when authenticated by
+     *            (WebApp or Client) token.
      * @param sessionId
      *            The session ID as key.
      * @param ipAddr
@@ -324,8 +328,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *            The authenticated user.
      */
     public synchronized void onAuthenticatedUser(
-            final WebAppTypeEnum webAppType, final String sessionId,
-            final String ipAddr, final String user) {
+            final WebAppTypeEnum webAppType, final UserAuth.Mode authMode,
+            final String sessionId, final String ipAddr, final String user) {
 
         /*
          * Removing the old session on same IP address
@@ -382,12 +386,38 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
         /*
          *
          */
+        final String authWord;
+        if (authMode == null) {
+            // #21B7: CLOCKWISE TOP SEMICIRCLE ARROW
+            authWord = "↷";
+        } else {
+            switch (authMode) {
+            case CARD_IP:
+            case CARD_LOCAL:
+                authWord = "NFC";
+                break;
+            case GOOGLE:
+                authWord = "Google";
+                break;
+            case YUBIKEY:
+                authWord = "YubiKey";
+                break;
+            case ID:
+                authWord = "ID";
+                break;
+            case NAME:
+                authWord = "-";
+                break;
+            default:
+                throw new SpException(String.format("AuthMode %s not handled.",
+                        authMode.toString()));
+            }
+
+        }
         AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
-                localize("pub-user-login-success", webAppType.getUiText(), user,
-                        ipAddr));
-        /*
-         *
-         */
+                localize("pub-user-login-success", webAppType.getUiText(),
+                        authWord, user, ipAddr));
+        //
         checkIpUserSessionCache("notifyAuthenticatedUser");
     }
 
