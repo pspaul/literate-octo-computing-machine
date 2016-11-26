@@ -24,6 +24,7 @@ package org.savapage.server.pages.admin;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -32,6 +33,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp;
 import org.savapage.core.dao.ConfigPropertyDao;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
 import org.savapage.core.jpa.ConfigProperty;
@@ -168,13 +171,28 @@ public final class ConfigPropPage extends AbstractAdminListPage {
                 entryList) {
             private static final long serialVersionUID = 1L;
 
+            private final ConfigManager cm = ConfigManager.instance();
+
             @Override
             protected void populateItem(final ListItem<ConfigProperty> item) {
 
                 final ConfigProperty prop = item.getModelObject();
 
+                final IConfigProp.Key configKey =
+                        cm.getConfigKey(prop.getPropertyName());
+
+                final boolean showAsUserEncrypted =
+                        StringUtils.isNotBlank(cm.getConfigValue(configKey))
+                                && cm.isUserEncrypted(configKey);
+
                 item.add(new Label("propertyName"));
-                item.add(new Label("value"));
+
+                if (showAsUserEncrypted) {
+                    item.add(new Label("value", "* * * * * * * *"));
+                } else {
+                    item.add(new Label("value"));
+                }
+
                 item.add(new Label("modifiedBy"));
 
                 /*
