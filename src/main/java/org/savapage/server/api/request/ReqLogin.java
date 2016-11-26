@@ -920,7 +920,7 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         if (userDb == null) {
             onLoginFailed("msg-login-user-not-present", webAppType.getUiText(),
-                    uid);
+                    authMode.toString());
             return;
         }
 
@@ -938,7 +938,11 @@ public final class ReqLogin extends ApiRequestMixin {
         /*
          * Update session.
          */
-        session.setUser(userDb);
+        if (authMode == UserAuth.Mode.GOOGLE) {
+            SpSession.get().setGoogleSignIn(userDb);
+        } else {
+            session.setUser(userDb);
+        }
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(String.format(
@@ -1004,7 +1008,7 @@ public final class ReqLogin extends ApiRequestMixin {
     private User reqLoginGoogleSignIn(final String idToken,
             final WebAppTypeEnum webAppType) throws IOException {
 
-        final String CLIENT_ID = ConfigManager.instance()
+        final String googleClientId = ConfigManager.instance()
                 .getConfigValue(Key.AUTH_MODE_GOOGLE_CLIENT_ID);
 
         if (LOGGER.isTraceEnabled()) {
@@ -1016,7 +1020,7 @@ public final class ReqLogin extends ApiRequestMixin {
         GoogleUserInfo guser = null;
 
         try {
-            guser = GoogleSignIn.getUserInfo(CLIENT_ID, idToken);
+            guser = GoogleSignIn.getUserInfo(googleClientId, idToken);
         } catch (GeneralSecurityException e) {
             throw new SpException(e);
         }
