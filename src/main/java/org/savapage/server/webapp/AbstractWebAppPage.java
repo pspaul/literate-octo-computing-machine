@@ -46,6 +46,7 @@ import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.pages.AbstractPage;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -364,6 +365,27 @@ public abstract class AbstractWebAppPage extends AbstractPage
      */
     protected void renderJs(final IHeaderResponse response, final String url) {
         response.render(JavaScriptHeaderItem.forUrl(url));
+    }
+
+    /**
+     * Adds Google Sign-In meta tag in HTML header, if Google Sign-In is
+     * enabled).
+     *
+     * @param wicketId
+     *            The Wicket ID of the meta fragment.
+     */
+    protected final void addGoogleSignIn(final String wicketId) {
+
+        final boolean isGoogleSignInEnabled = isGoogleSignInEnabled();
+
+        if (isGoogleSignInEnabled) {
+            final WebAppGoogleMetaPanel googleMetaPanel =
+                    new WebAppGoogleMetaPanel(wicketId);
+            add(googleMetaPanel);
+        } else {
+            final MarkupHelper helper = new MarkupHelper(this);
+            helper.discloseLabel(wicketId);
+        }
     }
 
     /**

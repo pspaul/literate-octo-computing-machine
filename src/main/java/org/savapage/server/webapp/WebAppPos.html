@@ -2,15 +2,15 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -46,6 +46,10 @@ Informs the Apple browser that this is a web app.
 	<!--  Prevent chaching in IE: http://support.microsoft.com/kb/234067  -->
 </wicket:remove>
 <META HTTP-EQUIV="Expires" CONTENT="-1">
+
+<wicket:enclosure child="google-signin-head-meta">
+	<wicket:fragment wicket:id="google-signin-head-meta" />
+</wicket:enclosure>
 
 <link rel="shortcut icon" href="/favicon-admin.ico" type="image/x-icon" />
 

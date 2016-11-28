@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -80,6 +80,8 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
         final String appTitle = getWebAppTitle(
                 getLocalizer().getString("webapp-title-suffix", this));
 
+        addGoogleSignIn("google-signin-head-meta");
+
         addZeroPagePanel(WebAppTypeEnum.JOBTICKETS);
 
         add(new Label("app-title", appTitle));
@@ -118,8 +120,12 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
 
     @Override
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
-        return EnumSet.of(JavaScriptLibrary.MOBIPICK,
-                JavaScriptLibrary.SPARKLINE);
+        final EnumSet<JavaScriptLibrary> libs = EnumSet
+                .of(JavaScriptLibrary.MOBIPICK, JavaScriptLibrary.SPARKLINE);
+        if (isGoogleSignInEnabled()) {
+            libs.add(JavaScriptLibrary.GOOGLE_SIGN_IN);
+        }
+        return libs;
     }
 
 }

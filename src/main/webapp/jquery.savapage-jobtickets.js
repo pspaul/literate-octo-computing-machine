@@ -99,10 +99,15 @@
 						_view.pages.jobTickets.load().show();
 					}
 
-				} else if (_view.isLoginPageActive()) {
-					_view.pages.login.notifyLoginFailed(authMode, data.result.txt);
 				} else {
-					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
+					// Reverse a possible Google Sign-In
+					_view.pages.login.notifyLogout();
+
+					if (_view.isLoginPageActive()) {
+						_view.pages.login.notifyLoginFailed(authMode, data.result.txt);
+					} else {
+						_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
+					}
 				}
 			};
 
@@ -140,8 +145,7 @@
 				_model.maxIdleSeconds = res.maxIdleSeconds;
 
 				// NOTE: authCardSelfAssoc is DISABLED
-				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, 
-						res.authCardPinReq, null, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
+				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, null, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
 				language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);
 				if (!language) {
@@ -416,6 +420,8 @@
 			//
 			, _ctrl
 			//
+			, _nativeLogin
+			//
 			;
 
 			_ns.commonWebAppInit();
@@ -444,19 +450,41 @@
 
 			_ctrl = new _ns.Controller(_i18n, _model, _view, _api);
 
+			_nativeLogin = function(user, authMode) {
+				if (authMode === _view.AUTH_MODE_GOOGLE) {
+					_ctrl.login(authMode);
+				} else if (_model.authToken.user && _model.authToken.token) {
+					_ctrl.login(_view.AUTH_MODE_NAME, _model.authToken.user, null, _model.authToken.token);
+				} else {
+					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
+				}
+			};
+
 			/**
 			 *
 			 */
 			this.init = function() {
 
+				var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER), authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN);
+
 				_ns.initWebApp('JOBTICKETS');
 
 				_ctrl.init();
 
-				if (_model.authToken.user && _model.authToken.token) {
-					_ctrl.login(_view.AUTH_MODE_NAME, _model.authToken.user, null, _model.authToken.token);
+				if (_ns.hasGoogleSignIn()) {
+					gapi.load('auth2', function() {
+						gapi.auth2.init({
+						}).then(function() {
+							var auth2 = gapi.auth2.getAuthInstance();
+							if (auth2.isSignedIn.get()) {
+								_ctrl.login(_view.AUTH_MODE_GOOGLE);
+							} else {
+								_nativeLogin(user, authMode);
+							}
+						});
+					});
 				} else {
-					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
+					_nativeLogin(user, authMode);
 				}
 
 				$(window).on('beforeunload', function() {

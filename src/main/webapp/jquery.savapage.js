@@ -1452,7 +1452,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,  or collected local card number from individual keystrokes,
+			// The YubiKey OTP,   or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -1524,9 +1524,9 @@
 				_authModeDefault = modeDefault;
 				_authCardPinReq = authCardPinReq;
 				_authCardSelfAssoc = authCardSelfAssoc;
+
 				_MAX_CARD_NUMBER_MSECS = cardLocalMaxMsecs;
 				_MAX_YUBIKEY_MSECS = yubikeyMaxMsecs;
-				// TODO
 				_MAX_CARD_ASSOC_SECS = cardAssocMaxSecs;
 			};
 
@@ -1602,7 +1602,29 @@
 				$(_ID_BTN_MODE_CARD_LOCAL).hide();
 				$(_ID_BTN_MODE_CARD_IP).hide();
 
-				if (modeSelected === _view.AUTH_MODE_NAME) {
+				if (modeSelected === _view.AUTH_MODE_GOOGLE) {
+
+					if (_authName) {
+						$(_ID_BTN_MODE_NAME).show();
+						$(_ID_BTN_MODE_NAME).click();
+					}
+					if (_authId) {
+						$(_ID_BTN_MODE_ID).show();						
+						if (!_authName) {
+							$(_ID_BTN_MODE_ID).click();
+						}
+					}
+					if (_authYubiKey) {
+						$(_ID_BTN_MODE_YUBIKEY).show();
+					}
+					if (_authCardLocal) {
+						$(_ID_BTN_MODE_CARD_LOCAL).show();
+					}
+					if (_authCardIp) {
+						$(_ID_BTN_MODE_CARD_IP).show();
+					}
+
+				} else if (modeSelected === _view.AUTH_MODE_NAME) {
 
 					$(_ID_MODE_NAME).show();
 					$(_ID_BTN_MODE_NAME).hide();
@@ -1862,7 +1884,7 @@
 						'longtitle' : false,
 						'theme' : 'light',
 						'onsuccess' : function(googleUser) {
-							_onLogin(_view.AUTH_MODE_GOOGLE_SIGN_IN, googleUser.getAuthResponse().id_token);
+							_onLogin(_view.AUTH_MODE_GOOGLE, googleUser.getAuthResponse().id_token);
 						},
 						'onfailure' : function(error) {
 							alert('Google sign-in FAILED :-(');
@@ -2094,7 +2116,7 @@
 			this.AUTH_MODE_ID = 'id';
 			this.AUTH_MODE_CARD_LOCAL = 'nfc-local';
 			this.AUTH_MODE_CARD_IP = 'nfc-network';
-			this.AUTH_MODE_GOOGLE_SIGN_IN = 'google';
+			this.AUTH_MODE_GOOGLE = 'google';
 			this.AUTH_MODE_YUBIKEY = 'yubikey';
 
 			// Dummy AUTH Modes to associate Card with user.

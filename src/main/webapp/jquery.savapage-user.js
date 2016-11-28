@@ -6127,7 +6127,7 @@
 			_ctrl = new Controller(_i18n, _model, _view, _api, _cometd, _userEvent, _deviceEvent, _proxyprintEvent);
 
 			_nativeLogin = function(user, authMode) {
-				if (authMode === _view.AUTH_MODE_GOOGLE_SIGN_IN) {
+				if (authMode === _view.AUTH_MODE_GOOGLE) {
 					_ctrl.login(authMode);
 				} else if (user) {
 					_ctrl.login(_view.AUTH_MODE_NAME, user, null, _model.authToken.token);
@@ -6153,7 +6153,7 @@
 						}).then(function() {
 							var auth2 = gapi.auth2.getAuthInstance();
 							if (auth2.isSignedIn.get()) {
-								_ctrl.login(_view.AUTH_MODE_GOOGLE_SIGN_IN);
+								_ctrl.login(_view.AUTH_MODE_GOOGLE);
 							} else {
 								_nativeLogin(user, authMode);
 							}

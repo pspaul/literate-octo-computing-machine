@@ -537,7 +537,7 @@ public final class ReqLogin extends ApiRequestMixin {
              */
             if (webAppType != WebAppTypeEnum.ADMIN) {
                 onLoginFailed("msg-login-denied", webAppType.getUiText(),
-                        authId);
+                        UserAuth.getUiText(authMode), authId);
                 return;
             }
 
@@ -665,7 +665,8 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (webAppType != WebAppTypeEnum.USER) {
                     onLoginFailed("msg-login-user-not-present",
-                            webAppType.getUiText(), authId);
+                            webAppType.getUiText(),
+                            UserAuth.getUiText(authMode), authId);
                     return;
                 }
 
@@ -675,7 +676,8 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (allowInternalUsersOnly) {
                     onLoginFailed("msg-login-user-not-present",
-                            webAppType.getUiText(), authId);
+                            webAppType.getUiText(),
+                            UserAuth.getUiText(authMode), authId);
                     return;
                 }
 
@@ -685,7 +687,8 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (!isLazyUserInsert) {
                     onLoginFailed("msg-login-user-not-present",
-                            webAppType.getUiText(), authId);
+                            webAppType.getUiText(),
+                            UserAuth.getUiText(authMode), authId);
                     return;
                 }
 
@@ -697,7 +700,8 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (webAppType == WebAppTypeEnum.ADMIN && !userDb.getAdmin()) {
                     onLoginFailed("msg-login-no-admin-rights",
-                            webAppType.getUiText(), userDb.getUserId());
+                            webAppType.getUiText(),
+                            UserAuth.getUiText(authMode), userDb.getUserId());
                     return;
                 }
 
@@ -706,7 +710,7 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (!userDb.getPerson()) {
                     onLoginFailed("msg-login-no-person", webAppType.getUiText(),
-                            userDb.getUserId());
+                            UserAuth.getUiText(authMode), userDb.getUserId());
                     return;
                 }
 
@@ -717,7 +721,7 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (USER_SERVICE.isUserFullyDisabled(userDb, onDate)) {
                     onLoginFailed("msg-login-disabled", webAppType.getUiText(),
-                            userDb.getUserId());
+                            UserAuth.getUiText(authMode), userDb.getUserId());
                     return;
                 }
 
@@ -728,7 +732,9 @@ public final class ReqLogin extends ApiRequestMixin {
                     if (!ACCESSCONTROL_SERVICE.hasAccess(userDb,
                             ACLRoleEnum.WEB_CASHIER)) {
                         onLoginFailed("msg-login-no-access-to-role",
-                                webAppType.getUiText(), userDb.getUserId(),
+                                webAppType.getUiText(),
+                                UserAuth.getUiText(authMode),
+                                userDb.getUserId(),
                                 ACLRoleEnum.WEB_CASHIER.uiText(getLocale()));
                         return;
                     }
@@ -736,7 +742,9 @@ public final class ReqLogin extends ApiRequestMixin {
                     if (!ACCESSCONTROL_SERVICE.hasAccess(userDb,
                             ACLRoleEnum.JOB_TICKET_OPERATOR)) {
                         onLoginFailed("msg-login-no-access-to-role",
-                                webAppType.getUiText(), userDb.getUserId(),
+                                webAppType.getUiText(),
+                                UserAuth.getUiText(authMode),
+                                userDb.getUserId(),
                                 ACLRoleEnum.JOB_TICKET_OPERATOR
                                         .uiText(getLocale()));
                         return;
@@ -920,7 +928,7 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         if (userDb == null) {
             onLoginFailed("msg-login-user-not-present", webAppType.getUiText(),
-                    authMode.toString());
+                    authMode.toString(), "?");
             return;
         }
 

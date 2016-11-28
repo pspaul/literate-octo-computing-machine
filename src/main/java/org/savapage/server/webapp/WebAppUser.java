@@ -390,23 +390,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             return;
         }
 
-        final String loginMode =
-                this.getParmValue(parameters, true, PAGE_PARM_LOGIN);
-
-        final String googleIdToken =
-                this.getParmValue(POST_PARM_GOOGLE_ID_TOKEN);
-
-        final boolean isGoogleSignInEnabled = isGoogleSignInEnabled();
-
-        //
-        final Label label = MarkupHelper.createEncloseLabel(
-                "google-signin-client-id", "", isGoogleSignInEnabled);
-
-        if (isGoogleSignInEnabled) {
-            MarkupHelper.modifyLabelAttr(label, "content", ConfigManager
-                    .instance().getConfigValue(Key.AUTH_MODE_GOOGLE_CLIENT_ID));
-        }
-        add(label);
+        addGoogleSignIn("google-signin-head-meta");
 
         checkOneTimeAuthToken(parameters);
 

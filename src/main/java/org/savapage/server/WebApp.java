@@ -386,37 +386,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
         /*
          *
          */
-        final String authWord;
-        if (authMode == null) {
-            // #21B7: CLOCKWISE TOP SEMICIRCLE ARROW
-            authWord = "↷";
-        } else {
-            switch (authMode) {
-            case CARD_IP:
-            case CARD_LOCAL:
-                authWord = "NFC";
-                break;
-            case GOOGLE:
-                authWord = "Google";
-                break;
-            case YUBIKEY:
-                authWord = "YubiKey";
-                break;
-            case ID:
-                authWord = "ID";
-                break;
-            case NAME:
-                authWord = "-";
-                break;
-            default:
-                throw new SpException(String.format("AuthMode %s not handled.",
-                        authMode.toString()));
-            }
-
-        }
         AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
                 localize("pub-user-login-success", webAppType.getUiText(),
-                        authWord, user, ipAddr));
+                        UserAuth.getUiText(authMode), user, ipAddr));
         //
         checkIpUserSessionCache("notifyAuthenticatedUser");
     }

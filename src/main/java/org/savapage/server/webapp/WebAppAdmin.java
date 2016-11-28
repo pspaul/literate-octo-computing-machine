@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -88,6 +88,8 @@ public final class WebAppAdmin extends AbstractWebAppPage {
             return;
         }
 
+        addGoogleSignIn("google-signin-head-meta");
+
         final String appTitle = getWebAppTitle(
                 getLocalizer().getString("webapp-title-suffix", this));
 
@@ -141,7 +143,9 @@ public final class WebAppAdmin extends AbstractWebAppPage {
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
         final EnumSet<JavaScriptLibrary> libs =
                 EnumSet.allOf(JavaScriptLibrary.class);
-        libs.remove(JavaScriptLibrary.GOOGLE_SIGN_IN);
+        if (!isGoogleSignInEnabled()) {
+            libs.remove(JavaScriptLibrary.GOOGLE_SIGN_IN);
+        }
         return libs;
     }
 
