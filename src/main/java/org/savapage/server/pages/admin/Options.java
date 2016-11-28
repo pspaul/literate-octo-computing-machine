@@ -216,6 +216,12 @@ public final class Options extends AbstractAdminPage {
         labelledCheckbox("user-auth-mode-name-pw-dialog",
                 IConfigProp.Key.AUTH_MODE_NAME_SHOW);
         //
+        labelledCheckbox("user-auth-mode-yubikey-dialog",
+                IConfigProp.Key.AUTH_MODE_YUBIKEY_SHOW);
+        //
+        labelledCheckbox("user-auth-mode-google-dialog",
+                IConfigProp.Key.AUTH_MODE_GOOGLE_SHOW);
+        //
         labelledCheckbox("user-auth-mode-id-number-pin",
                 IConfigProp.Key.AUTH_MODE_ID_PIN_REQUIRED);
         labelledCheckbox("user-auth-mode-id-number-mask",

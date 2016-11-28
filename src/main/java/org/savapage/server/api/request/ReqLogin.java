@@ -927,8 +927,17 @@ public final class ReqLogin extends ApiRequestMixin {
          * Deny access, when the user is still not found in the database.
          */
         if (userDb == null) {
-            onLoginFailed("msg-login-user-not-present", webAppType.getUiText(),
-                    authMode.toString(), "?");
+            if (authMode == UserAuth.Mode.GOOGLE) {
+                /*
+                 * This happens when "sp-login=google" URL parameter is used,
+                 * Login page is shown, and user is not authenticated with
+                 * Google Sign-In (yet).
+                 */
+                onLoginFailed(null);
+            } else {
+                onLoginFailed("msg-login-user-not-present",
+                        webAppType.getUiText(), authMode.toString(), "?");
+            }
             return;
         }
 

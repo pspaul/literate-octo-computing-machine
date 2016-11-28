@@ -1452,7 +1452,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,   or collected local card number from individual keystrokes,
+			// The YubiKey OTP, or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -1609,7 +1609,7 @@
 						$(_ID_BTN_MODE_NAME).click();
 					}
 					if (_authId) {
-						$(_ID_BTN_MODE_ID).show();						
+						$(_ID_BTN_MODE_ID).show();
 						if (!_authName) {
 							$(_ID_BTN_MODE_ID).click();
 						}
@@ -1784,7 +1784,7 @@
 					nMethods++;
 				}
 
-				if (nMethods < 2) {
+				if (nMethods < 2 && modeSelected !== _view.AUTH_MODE_GOOGLE) {
 					$('#sp-login-modes').hide();
 				}
 
