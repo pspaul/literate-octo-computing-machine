@@ -75,6 +75,11 @@ public enum HtmlButtonEnum {
     /**
     *
     */
+    ERASE,
+
+    /**
+    *
+    */
     EXTEND,
 
     /**

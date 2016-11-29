@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.UserAccountingDto;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -43,7 +44,8 @@ public final class PageUser extends AbstractAdminPage {
     private static final long serialVersionUID = 1L;
 
     /**
-     *
+     * @param parameters
+     *            The {@link PageParameters}.
      */
     public PageUser(final PageParameters parameters) {
 
@@ -54,8 +56,10 @@ public final class PageUser extends AbstractAdminPage {
         //
         Label labelWrk = new Label("internal-user",
                 getLocalizer().getString("internal-user", this));
+
         labelWrk.add(new AttributeModifier("class",
                 MarkupHelper.CSS_TXT_INTERNAL_USER));
+
         add(labelWrk);
 
         //
@@ -74,5 +78,12 @@ public final class PageUser extends AbstractAdminPage {
 
         helper.addModifyLabelAttr("credit-limit-individual", "value",
                 UserAccountingDto.CreditLimitEnum.INDIVIDUAL.toString());
+
+        //
+        add(new Label("button-user-pw-reset",
+                HtmlButtonEnum.RESET.uiText(getLocale())));
+
+        add(new Label("button-user-pw-erase",
+                HtmlButtonEnum.ERASE.uiText(getLocale())));
     }
 }

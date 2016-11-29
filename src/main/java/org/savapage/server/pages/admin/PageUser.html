@@ -120,8 +120,8 @@
 			<label for="user-yubikey-public-id">
 				<wicket:message key="user-yubikey-public-id" />
 			</label>
-			<input type="text" id="user-yubikey-public-id" maxlength="12" value=""
-				data-clear-btn="true" />
+			<input type="text" id="user-yubikey-public-id" maxlength="12"
+				value="" data-clear-btn="true" />
 
 			<div id="user-uuid-collapsible" data-role="collapsible"
 				data-collapsed="true" data-mini="true">
@@ -198,17 +198,27 @@
 					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 					<wicket:message key="button-ok" />
 				</button>
-
-				<button id="button-user-pw-dialog"
-					class="sp-internal-user-edit ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
-					<wicket:message key="button-password" />
-				</button>
-
 				<a href="#"
 					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
 					data-rel="back" data-direction="reverse"> <wicket:message
 						key="button-cancel" />
 				</a>
+			</div>
+		</li>
+	</ul>
+	<ul class="sp-internal-user-edit" data-role="listview"
+		data-inset="true">
+		<li data-role="list-divider">
+			<wicket:message key="button-password" />
+		</li>
+		<li>
+			<div>
+				<button id="button-user-pw-dialog" wicket:id="button-user-pw-reset"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
+				</button>
+				<button id="button-user-pw-erase" wicket:id="button-user-pw-erase"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
+				</button>
 			</div>
 		</li>
 	</ul>

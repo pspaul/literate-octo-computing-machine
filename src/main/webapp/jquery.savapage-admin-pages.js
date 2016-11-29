@@ -293,7 +293,7 @@
 				$('#user-userid').val(_model.editUser.userName);
 				$('#user-card-number').val(_model.editUser.card);
 				$('#user-id-number').val(_model.editUser.id);
-				$('#user-yubikey-public-id').val(_model.editUser.yubiKeyPubId);				
+				$('#user-yubikey-public-id').val(_model.editUser.yubiKeyPubId);
 				$('#user-pin').val(_model.editUser.pin);
 				$('#user-uuid').val(_model.editUser.uuid);
 
@@ -314,6 +314,8 @@
 				} else {
 					$('#user-userid').focus();
 				}
+
+				_view.visible($('#button-user-pw-erase'), _model.editUser.internal && _model.editUser.dbId && _model.editUser.internalPw);
 			}
 			//--------------------
 			, _v2m = function() {
@@ -353,8 +355,8 @@
 				_model.editUser.person = $('#user-isperson').is(':checked');
 				_model.editUser.disabled = $('#user-disabled').is(':checked');
 				_model.editUser.card = $('#user-card-number').val();
-				_model.editUser.id = $('#user-id-number').val();				
-				_model.editUser.yubiKeyPubId = $('#user-yubikey-public-id').val();				
+				_model.editUser.id = $('#user-id-number').val();
+				_model.editUser.yubiKeyPubId = $('#user-yubikey-public-id').val();
 				_model.editUser.pin = $('#user-pin').val();
 				_model.editUser.uuid = $('#user-uuid').val();
 
@@ -386,6 +388,11 @@
 					_view.showPageAsync('#page-user-pw-reset', 'UserPasswordReset', function() {
 						$('#user-pw-reset-title').html(_model.editUser.userName);
 					});
+					return false;
+				});
+
+				$(this).on('click', '#button-user-pw-erase', null, function() {
+					_self.onEraseUserPw();
 					return false;
 				});
 

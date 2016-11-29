@@ -64,6 +64,7 @@ import org.savapage.server.api.request.ReqUserGroupSet;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
 import org.savapage.server.api.request.ReqUserInitInternal;
 import org.savapage.server.api.request.ReqUserNotifyAccountChange;
+import org.savapage.server.api.request.ReqUserPasswordErase;
 import org.savapage.server.api.request.ReqUserQuickSearch;
 import org.savapage.server.api.request.ReqUserSet;
 import org.savapage.server.webapp.WebAppTypeEnum;
@@ -245,6 +246,7 @@ public class JsonApiDict {
     public static final String REQ_RESET_JMX_PASSWORD = "reset-jmx-pw";
     public static final String REQ_RESET_ADMIN_PASSWORD = "reset-admin-pw";
     public static final String REQ_RESET_USER_PASSWORD = "reset-user-pw";
+    public static final String REQ_ERASE_USER_PASSWORD = "erase-user-pw";
     public static final String REQ_RESET_USER_PIN = "reset-user-pin";
     public static final String REQ_SEND = "send";
     public static final String REQ_USER_DELETE = "user-delete";
@@ -908,6 +910,10 @@ public class JsonApiDict {
         adm(REQ_RESET_JMX_PASSWORD, DbClaim.NONE, DbAccess.NO);
 
         usr(REQ_RESET_USER_PASSWORD, DbClaim.READ, DbAccess.USER_LOCK);
+
+        usr(REQ_ERASE_USER_PASSWORD, ReqUserPasswordErase.class, DbClaim.READ,
+                DbAccess.USER_LOCK);
+
         usr(REQ_RESET_USER_PIN, DbClaim.READ, DbAccess.USER_LOCK);
         usr(REQ_SEND, DbClaim.READ, DbAccess.USER_LOCK);
         usr(REQ_USER_LAZY_ECOPRINT, DbClaim.NONE, DbAccess.USER_LOCK);

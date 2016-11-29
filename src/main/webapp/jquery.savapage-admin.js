@@ -1053,6 +1053,35 @@
 				}
 			};
 
+			/**
+			 *
+			 */
+			_view.pages.user.onEraseUserPw = function() {
+
+				var res = _api.call({
+					request : 'erase-user-pw',
+					dto : JSON.stringify({
+						userDbId : _model.editUser.dbId
+					})
+				});
+				/*
+				 * Close dialog. Do NOT use $('#button-cancel-user').click();
+				 */
+				_view.changePage($('#page-admin'));
+
+				/*
+				 * Refresh, so any change is displayed
+				 */
+				if (res.result.code === '0') {
+					_view.pages.admin.refreshUsers();
+				}
+				// As last statement, so it displays.
+				_view.showApiMsg(res);
+			};
+
+			/**
+			 *
+			 */
 			_view.pages.admin.onEditConfigProp = function(name) {
 
 				var res = _api.call({
