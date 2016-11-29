@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -24,6 +24,7 @@ package org.savapage.server.pages;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.community.MemberCard;
+import org.savapage.server.SpSession;
 
 /**
  *
@@ -40,8 +41,11 @@ public final class CommunityStatusFooterPanel extends Panel {
     /**
      * @param id
      *            The panel identification.
+     * @param showUserId
+     *            {@code true} when logged-in user id must be shown.
      */
-    public CommunityStatusFooterPanel(final String id) {
+    public CommunityStatusFooterPanel(final String id,
+            final boolean showUserId) {
 
         super(id);
 
@@ -58,7 +62,10 @@ public final class CommunityStatusFooterPanel extends Panel {
             helper.encloseLabel("membership-org", card.getMemberOrganisation(),
                     StringUtils.isNotBlank(card.getMemberOrganisation()));
         }
-
+        //
         helper.encloseLabel("membership-status", memberStatus, cardDesirable);
+        //
+        helper.encloseLabel("user-id", SpSession.get().getUser().getUserId(),
+                showUserId);
     }
 }

@@ -56,7 +56,8 @@ public final class Main extends AbstractAdminPage {
     }
 
     /**
-     *
+     * @param parameters
+     *            The {@link PageParameters}.
      */
     public Main(final PageParameters parameters) {
 
@@ -64,7 +65,8 @@ public final class Main extends AbstractAdminPage {
 
         MarkupHelper helper = new MarkupHelper(this);
 
-        add(new CommunityStatusFooterPanel("community-status-footer-panel"));
+        add(new CommunityStatusFooterPanel("community-status-footer-panel",
+                true));
 
         //
         helper.addModifyLabelAttr("savapage-org-link",
