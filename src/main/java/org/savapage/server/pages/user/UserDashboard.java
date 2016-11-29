@@ -22,9 +22,13 @@
 package org.savapage.server.pages.user;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserService;
+import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -34,6 +38,11 @@ import org.savapage.server.pages.MarkupHelper;
  */
 public final class UserDashboard extends AbstractUserPage {
 
+    /**
+     * .
+     */
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
     /**
      *
      */
@@ -48,12 +57,24 @@ public final class UserDashboard extends AbstractUserPage {
 
         super(parameters);
 
+        final org.savapage.core.jpa.User authUser = SpSession.get().getUser();
+
+        final boolean canResetPassword;
+
+        if (BooleanUtils.isTrue(authUser.getInternal())) {
+
+            canResetPassword = ConfigManager.instance()
+                    .isConfigValue(Key.INTERNAL_USERS_CAN_CHANGE_PW)
+                    && USER_SERVICE.hasInternalPassword(authUser);
+        } else {
+            canResetPassword = false;
+        }
+
         final MarkupHelper helper = new MarkupHelper(this);
 
         helper.encloseLabel("button-user-pw-dialog",
                 this.getLocalizer().getString("button-password", this),
-                ConfigManager.instance()
-                        .isConfigValue(Key.INTERNAL_USERS_CAN_CHANGE_PW));
+                canResetPassword);
 
         helper.encloseLabel("button-user-pin-dialog",
                 this.getLocalizer().getString("button-pin", this), ConfigManager

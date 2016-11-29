@@ -3039,7 +3039,8 @@ public final class JsonApiServer extends AbstractPage {
                     "msg-password-reset-not-allowed", iuser);
         }
 
-        final String encryptedPw = encryptUserPassword(iuser, password);
+        final String encryptedPw =
+                USER_SERVICE.encryptUserPassword(iuser, password);
 
         USER_SERVICE.setUserAttrValue(jpaUser, UserAttrEnum.INTERNAL_PASSWORD,
                 encryptedPw);
@@ -3446,18 +3447,6 @@ public final class JsonApiServer extends AbstractPage {
             setApiResultOK(userData);
         }
         return userData;
-    }
-
-    /**
-     * Encrypts the user password.
-     *
-     * @param userid
-     * @param password
-     * @return
-     */
-    private String encryptUserPassword(final String userid,
-            final String password) {
-        return CryptoUser.getHashedUserPassword(userid, password);
     }
 
     /**
