@@ -809,10 +809,11 @@
 				//
 				'auth-mode.yubikey', 'auth-mode.yubikey.show',
 				//
-				'auth-mode.google', 'auth-mode.google.show',
+				'auth-mode.google',
 				//
 				'user.can-change-pin', 'webapp.user.auth.trust-cliapp-auth']);
 
+				_fillConfigPropsText(props, ['auth-mode.google.hosted-domain']);
 				_fillConfigPropsRadio(props, ['auth-mode-default', 'card.number.format', 'card.number.first-byte']);
 				_saveConfigProps(props);
 			};

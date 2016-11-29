@@ -124,8 +124,6 @@ public final class PageDevice extends AbstractAdminPage {
                 IConfigProp.AUTH_MODE_V_CARD_LOCAL, false);
         labelledRadio(wicketIdBase, "-card-network", attrName,
                 IConfigProp.AUTH_MODE_V_CARD_IP, false);
-        labelledRadio(wicketIdBase, "-google", attrName,
-                IConfigProp.AUTH_MODE_V_GOOGLE, false);
         labelledRadio(wicketIdBase, "-yubikey", attrName,
                 IConfigProp.AUTH_MODE_V_YUBIKEY, false);
     }

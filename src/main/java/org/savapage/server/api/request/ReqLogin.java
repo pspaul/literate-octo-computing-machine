@@ -318,8 +318,8 @@ public final class ReqLogin extends ApiRequestMixin {
          * If Google Sign-In is enabled and user was Google authenticated.
          *
          */
-        final boolean isGoogleSignInEnabled =
-                ApiRequestHelper.isGoogleSignInEnabled();
+        final boolean isGoogleSignInEnabled = ApiRequestHelper
+                .isGoogleSignInEnabled(webAppType, this.getRemoteAddr());
 
         if (authMode == Mode.GOOGLE && isGoogleSignInEnabled
                 && session.isGoogleSignIn()) {

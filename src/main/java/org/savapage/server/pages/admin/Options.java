@@ -219,8 +219,8 @@ public final class Options extends AbstractAdminPage {
         labelledCheckbox("user-auth-mode-yubikey-dialog",
                 IConfigProp.Key.AUTH_MODE_YUBIKEY_SHOW);
         //
-        labelledCheckbox("user-auth-mode-google-dialog",
-                IConfigProp.Key.AUTH_MODE_GOOGLE_SHOW);
+        labelledInput("user-auth-mode-google-hosted-domain",
+                Key.AUTH_MODE_GOOGLE_HOSTED_DOMAIN);
         //
         labelledCheckbox("user-auth-mode-id-number-pin",
                 IConfigProp.Key.AUTH_MODE_ID_PIN_REQUIRED);
@@ -279,10 +279,6 @@ public final class Options extends AbstractAdminPage {
         labelledRadio("user-auth-mode-default", "-yubikey",
                 IConfigProp.Key.AUTH_MODE_DEFAULT,
                 IConfigProp.AUTH_MODE_V_YUBIKEY);
-
-        labelledRadio("user-auth-mode-default", "-google",
-                IConfigProp.Key.AUTH_MODE_DEFAULT,
-                IConfigProp.AUTH_MODE_V_GOOGLE);
 
         /*
          *

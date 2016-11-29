@@ -21,6 +21,7 @@
  */
 package org.savapage.server.webapp;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.config.ConfigManager;
@@ -48,12 +49,26 @@ public class WebAppGoogleMetaPanel extends Panel {
     public WebAppGoogleMetaPanel(final String id) {
         super(id);
 
-        final Label label = new Label("google-signin-client-id", "");
+        final MarkupHelper helper = new MarkupHelper(this);
+        final ConfigManager cm = ConfigManager.instance();
 
-        MarkupHelper.modifyLabelAttr(label, "content", ConfigManager.instance()
-                .getConfigValue(Key.AUTH_MODE_GOOGLE_CLIENT_ID));
-
+        //
+        Label label = new Label("google-signin-client-id", "");
+        MarkupHelper.modifyLabelAttr(label, "content",
+                cm.getConfigValue(Key.AUTH_MODE_GOOGLE_CLIENT_ID));
         add(label);
+
+        //
+        final String hostedDomain = StringUtils.defaultString(
+                cm.getConfigValue(Key.AUTH_MODE_GOOGLE_HOSTED_DOMAIN));
+
+        final boolean enclose = StringUtils.isNotBlank(hostedDomain);
+
+        label = helper.encloseLabel("google-signin-hosted-domain", "", enclose);
+
+        if (enclose) {
+            MarkupHelper.modifyLabelAttr(label, "content", hostedDomain);
+        }
     }
 
 }

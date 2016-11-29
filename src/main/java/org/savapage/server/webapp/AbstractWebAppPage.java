@@ -45,6 +45,7 @@ import org.savapage.server.CustomWebServlet;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
+import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -221,14 +222,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
     }
 
     /**
-     * @return {@code true} when Google Sign-In is enabled.
-     */
-    protected static boolean isGoogleSignInEnabled() {
-        return ConfigManager.instance()
-                .isConfigValue(Key.AUTH_MODE_GOOGLE);
-    }
-
-    /**
      * @return The {@link WebAppTypeEnum} of this Web App.
      */
     protected abstract WebAppTypeEnum getWebAppType();
@@ -386,6 +379,14 @@ public abstract class AbstractWebAppPage extends AbstractPage
             final MarkupHelper helper = new MarkupHelper(this);
             helper.discloseLabel(wicketId);
         }
+    }
+
+    /**
+     * @return {@code true} when Google Sign-In is enabled (for client device).
+     */
+    protected final boolean isGoogleSignInEnabled() {
+        return ApiRequestHelper.isGoogleSignInEnabled(getSessionWebAppType(),
+                this.getClientIpAddr());
     }
 
     /**

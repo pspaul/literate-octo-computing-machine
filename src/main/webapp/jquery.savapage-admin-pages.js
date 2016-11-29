@@ -711,8 +711,6 @@
 				//
 				, authYubikey = _view.isCbChecked($("#auth-mode\\.yubikey"))
 				//
-				, authGoogle = _view.isCbChecked($("#auth-mode\\.google"))
-				//
 				, sel
 				//
 				, nMode = 0
@@ -724,7 +722,6 @@
 				$('#auth-mode-default-card-local').checkboxradio( authCardLocal ? 'enable' : 'disable');
 				$('#auth-mode-default-card-network').checkboxradio( authCardIp ? 'enable' : 'disable');
 				$('#auth-mode-default-yubikey').checkboxradio( authYubikey ? 'enable' : 'disable');
-				$('#auth-mode-default-google').checkboxradio( authGoogle ? 'enable' : 'disable');
 
 				if (authUser) {
 					nMode++;
@@ -739,10 +736,6 @@
 				}
 
 				if (authYubikey) {
-					nMode++;
-				}
-
-				if (authGoogle) {
 					nMode++;
 				}
 

@@ -86,8 +86,6 @@ public final class WebAppUser extends AbstractWebAppPage {
     private final static String PAGE_PARM_AUTH_TOKEN = "auth_token";
     private final static String PAGE_PARM_AUTH_TOKEN_USERID = "auth_user";
 
-    private final static String POST_PARM_GOOGLE_ID_TOKEN = "google_id_token";
-
     /**
      *
      */

@@ -389,11 +389,12 @@
 						<h3>
 							<wicket:message key="user-auth-mode-google" />
 						</h3>
-						<fieldset data-role="controlgroup" data-type="vertical">
-							<label for="" wicket:id="user-auth-mode-google-dialog-label" />
-							<input type="checkbox" id="" value="0"
-								wicket:id="user-auth-mode-google-dialog" />
-						</fieldset>
+						<label for=""
+							wicket:id="user-auth-mode-google-hosted-domain-label" />
+						<input type="text" id=""
+							wicket:id="user-auth-mode-google-hosted-domain" value=""
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
 					</div>
 
 					<div id="group-user-auth-mode-default">
@@ -418,10 +419,6 @@
 								<label for="" wicket:id="user-auth-mode-default-yubikey-label" />
 								<input type="radio" name="" id=""
 									wicket:id="user-auth-mode-default-yubikey" />
-
-								<label for="" wicket:id="user-auth-mode-default-google-label" />
-								<input type="radio" name="" id=""
-									wicket:id="user-auth-mode-default-google" />
 
 							</fieldset>
 						</div>

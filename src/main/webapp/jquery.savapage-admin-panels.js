@@ -892,7 +892,6 @@
 				$('#auth-mode-default-number').checkboxradio( idNumber ? 'enable' : 'disable');
 				$('#auth-mode-default-card').checkboxradio( cardNumber ? 'enable' : 'disable');
 				$('#auth-mode-default-yubikey').checkboxradio( yubikey ? 'enable' : 'disable');
-				$('#auth-mode-default-google').checkboxradio( google ? 'enable' : 'disable');
 
 				_view.visible($('#group-user-auth-mode-name-pw'), userPw);
 				if (userPw) {
@@ -913,10 +912,8 @@
 				if (yubikey) {
 					nMode++;
 				}
+
 				_view.visible($('#group-user-auth-mode-google'), google);
-				if (google) {
-					nMode++;
-				}
 
 				_view.visible($('#group-user-auth-mode-default'), nMode > 1);
 			},
