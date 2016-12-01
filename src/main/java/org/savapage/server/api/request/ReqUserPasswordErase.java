@@ -70,6 +70,6 @@ public final class ReqUserPasswordErase extends ApiRequestMixin {
 
         USER_SERVICE.removeUserAttr(user, UserAttrEnum.INTERNAL_PASSWORD);
 
-        setApiResultText(ApiResultCodeEnum.OK, "Password erased.");
+        setApiResult(ApiResultCodeEnum.OK, "msg-user-password-erased-ok");
     }
 }
