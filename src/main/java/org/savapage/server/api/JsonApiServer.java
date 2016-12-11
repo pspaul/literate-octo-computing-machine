@@ -99,7 +99,6 @@ import org.savapage.core.dto.PosDepositDto;
 import org.savapage.core.dto.PosDepositReceiptDto;
 import org.savapage.core.dto.PrimaryKeyDto;
 import org.savapage.core.dto.ProxyPrinterCostDto;
-import org.savapage.core.dto.ProxyPrinterDto;
 import org.savapage.core.dto.ProxyPrinterMediaSourcesDto;
 import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
@@ -1431,11 +1430,6 @@ public final class JsonApiServer extends AbstractPage {
 
             return reqPrinterDetail(requestingUser,
                     getParmValue(parameters, isGetAction, "printer"));
-
-        case JsonApiDict.REQ_PRINTER_GET:
-
-            return reqPrinterGet(requestingUser,
-                    getParmValue(parameters, isGetAction, "id"));
 
         case JsonApiDict.REQ_PRINT_AUTH_CANCEL:
             return reqPrintAuthCancel(
@@ -3166,35 +3160,6 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("j_device", userObj);
 
         return setApiResultOK(userData);
-    }
-
-    /**
-     *
-     * @param user
-     * @param urlPath
-     * @return
-     * @throws IOException
-     */
-    private Map<String, Object> reqPrinterGet(final String userId,
-            final String id) throws IOException {
-
-        final PrinterDao printerDao =
-                ServiceContext.getDaoContext().getPrinterDao();
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final Printer printer = printerDao.findById(Long.valueOf(id));
-
-        if (printer == null) {
-            setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-printer-not-found", id);
-        } else {
-            final ProxyPrinterDto dto =
-                    PROXY_PRINT_SERVICE.getProxyPrinterDto(printer);
-            userData.put("j_printer", dto.asMap());
-            setApiResultOK(userData);
-        }
-        return userData;
     }
 
     /**

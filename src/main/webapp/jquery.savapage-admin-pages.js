@@ -1218,6 +1218,10 @@
 				_view.checkCb('#printer-disabled', _model.editPrinter.disabled);
 				_view.checkCb('#printer-internal', _model.editPrinter.internal);
 				_view.checkCb('#printer-deleted', _model.editPrinter.deleted);
+				
+				_view.checkCb('#printer-jobticket', _model.editPrinter.jobTicket);
+				$('#printer-jobticket-group').val(_model.editPrinter.jobTicketGroup);
+				
 
 				$('#printer-newname').val('');
 				_view.checkCb('#printer-rename-replace', false);

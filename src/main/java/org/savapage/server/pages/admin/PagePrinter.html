@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -64,7 +64,20 @@
 			<label for="printer-ppd-ext-file">
 				<wicket:message key="printer-ppd-ext-file" />
 			</label>
-			<input type="text" id="printer-ppd-ext-file" value=""
+			<input type="text" id="printer-ppd-ext-file" value="" maxlength="128"
+				autocomplete="off" autocorrect="off" autocapitalize="off"
+				spellcheck="false" />
+		</li>
+		<li class="ui-mini">
+			<label for="printer-jobticket">
+				<wicket:message key="printer-jobticket" />
+			</label>
+			<input type="checkbox" id="printer-jobticket" value="0" />
+
+			<label for="printer-jobticket-group">
+				<wicket:message key="printer-jobticket-group" />
+			</label>
+			<input type="text" id="printer-jobticket-group" value=""
 				maxlength="128" autocomplete="off" autocorrect="off"
 				autocapitalize="off" spellcheck="false" />
 		</li>

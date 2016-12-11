@@ -23,9 +23,12 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dto.ProxyPrinterDto;
 import org.savapage.core.jpa.Printer;
+import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonAbstractBase;
 import org.savapage.core.services.ServiceContext;
@@ -62,6 +65,30 @@ public final class ReqPrinterSet extends ApiRequestMixin {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-printer-not-found",
                     String.valueOf(id));
             return;
+        }
+
+        /*
+         * INVARIANT: When Job Ticket Printer enabled an existing printer group
+         * MUST be specified.
+         */
+        if (BooleanUtils.isTrue(dto.getJobTicket())) {
+
+            final String value = dto.getJobTicketGroup();
+
+            if (StringUtils.isBlank(value)) {
+                setApiResult(ApiResultCodeEnum.ERROR,
+                        "msg-jobticket-group-not-entered");
+                return;
+            }
+
+            final PrinterGroup jpaPrinterGroup = ServiceContext.getDaoContext()
+                    .getPrinterGroupDao().findByName(value);
+
+            if (jpaPrinterGroup == null) {
+                setApiResult(ApiResultCodeEnum.ERROR,
+                        "msg-jobticket-group-not-found", value);
+                return;
+            }
         }
 
         PROXY_PRINT_SERVICE.setProxyPrinterProps(jpaPrinter, dto);

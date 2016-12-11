@@ -413,8 +413,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         /*
          * INVARIANT: when NOT a job ticket the total number of printed pages
-         * MUST be within limits. When Job Ticketing is enabled, this option is
-         * prompted to the user.
+         * MUST be within limits. When Job Ticket printer is present, this
+         * option is prompted to the user.
          */
         if (!isJobTicket) {
 
@@ -425,15 +425,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
             if (maxPages != null && totPages > maxPages.intValue()) {
 
-                if (StringUtils.isBlank(
-                        cm.getConfigValue(Key.JOBTICKET_PROXY_PRINTER))) {
-
-                    setApiResult(ApiResultCodeEnum.ERROR,
-                            "msg-print-exceeds-pagelimit",
-                            String.valueOf(totPages), String.valueOf(maxPages));
-                } else {
+                if (PROXY_PRINT_SERVICE.isJobTicketPrinterPresent()) {
                     setApiResult(ApiResultCodeEnum.WARN,
                             "msg-print-exceeds-jobticket-pagelimit",
+                            String.valueOf(totPages), String.valueOf(maxPages));
+                } else {
+                    setApiResult(ApiResultCodeEnum.ERROR,
+                            "msg-print-exceeds-pagelimit",
                             String.valueOf(totPages), String.valueOf(maxPages));
                 }
                 return;

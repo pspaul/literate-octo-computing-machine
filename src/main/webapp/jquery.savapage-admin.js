@@ -725,7 +725,7 @@
 				key = 'webapp.user.proxy-print.clear-inbox.scope';
 				props[key] = _view.getRadioValue(key);
 
-				_fillConfigPropsText(props, ['proxy-print.fast-expiry-mins', 'proxy-print.hold-expiry-mins', 'proxy-print.direct-expiry-secs', 'webapp.user.proxy-print.max-copies', 'proxy-print.max-pages', 'jobticket.proxy-printer', 'jobticket.proxy-printer-group']);
+				_fillConfigPropsText(props, ['proxy-print.fast-expiry-mins', 'proxy-print.hold-expiry-mins', 'proxy-print.direct-expiry-secs', 'webapp.user.proxy-print.max-copies', 'proxy-print.max-pages']);
 
 				_saveConfigProps(props);
 			};
@@ -1380,10 +1380,12 @@
 			_view.pages.admin.onEditPrinter = function(id) {
 				var res = _api.call({
 					request : 'printer-get',
-					id : id
+					dto : JSON.stringify({
+						id : id
+					})
 				});
 				if (res && res.result.code === '0') {
-					_model.editPrinter = res.j_printer;
+					_model.editPrinter = res.dto;
 					_view.pages.printer.loadShowAsync(function() {
 						$('#sp-printer-page-name').html(_model.editPrinter.printerName);
 					});
@@ -1401,6 +1403,8 @@
 				_model.editPrinter.disabled = $('#printer-disabled').is(':checked');
 				_model.editPrinter.internal = $('#printer-internal').is(':checked');
 				_model.editPrinter.deleted = $('#printer-deleted').is(':checked');
+				_model.editPrinter.jobTicket = $('#printer-jobticket').is(':checked');
+				_model.editPrinter.jobTicketGroup = $('#printer-jobticket-group').val();
 
 				// ProxyPrinterDto
 				var res = _api.call({

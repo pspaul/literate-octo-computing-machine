@@ -291,8 +291,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
      */
     private boolean customConfigPropValidate(Key key, String value) {
 
-        if ((key == Key.PROXY_PRINT_NON_SECURE_PRINTER_GROUP
-                || key == Key.JOBTICKET_PROXY_PRINTER_GROUP)
+        if (key == Key.PROXY_PRINT_NON_SECURE_PRINTER_GROUP
                 && StringUtils.isNotBlank(value)) {
 
             final PrinterGroup jpaPrinterGroup = ServiceContext.getDaoContext()
@@ -305,8 +304,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
             }
         }
 
-        if (key == Key.JOBTICKET_PROXY_PRINTER
-                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
+        if (key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
                 || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX
                 || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
                 || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX

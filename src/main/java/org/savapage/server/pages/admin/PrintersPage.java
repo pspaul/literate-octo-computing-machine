@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -40,7 +40,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.PrinterAttrDao;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.AccessControlScopeEnum;
@@ -213,13 +212,10 @@ public final class PrintersPage extends AbstractAdminListPage {
     private class PrintersListView extends PropertyListView<Printer> {
 
         private static final long serialVersionUID = 1L;
-        private final String jobTicketPrinterName;
 
         public PrintersListView(final String id,
                 final List<Printer> entryList) {
             super(id, entryList);
-            this.jobTicketPrinterName = StringUtils.defaultString(ConfigManager
-                    .instance().getConfigValue(Key.JOBTICKET_PROXY_PRINTER));
         }
 
         private String getProxyPrintAuthMode(final Device device) {
@@ -317,8 +313,8 @@ public final class PrintersPage extends AbstractAdminListPage {
 
             item.add(labelWrk);
 
-            final boolean isJobTicketPrinter = this.jobTicketPrinterName
-                    .equalsIgnoreCase(printer.getPrinterName());
+            final boolean isJobTicketPrinter =
+                    PRINTER_SERVICE.isJobTicketPrinter(printer);
 
             final String imageSrc;
 

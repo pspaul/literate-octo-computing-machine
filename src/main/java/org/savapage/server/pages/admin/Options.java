@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -831,13 +831,6 @@ public final class Options extends AbstractAdminPage {
 
         labelledCheckbox("proxyprint-delegate-papercut-enable",
                 IConfigProp.Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
-
-        // Job Ticket
-        tagInput("proxyprint-jobticket-printer",
-                IConfigProp.Key.JOBTICKET_PROXY_PRINTER);
-
-        tagInput("proxyprint-jobticket-printer-group",
-                IConfigProp.Key.JOBTICKET_PROXY_PRINTER_GROUP);
 
         /*
          * xpstopdf

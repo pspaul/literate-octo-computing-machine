@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -39,6 +39,13 @@ import org.savapage.core.services.ServiceContext;
  *
  */
 public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
+
+    /**
+     * The number of rows to retrieve in the Quick Search result set. This
+     * number must be (substantially) greater then the max number of items
+     * retrieved, since some retrieved items don't qualify for the ACL role.
+     */
+    private static final int MAX_RESULTS = 500;
 
     /**
      *
@@ -88,7 +95,7 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
         while (nUsersSelected < nUsersMax && userListSize == nUsersMax) {
 
             final List<User> userList = userDao.getListChunk(filter,
-                    iStartPosition, nUsersMax, UserDao.Field.USERID, true);
+                    iStartPosition, MAX_RESULTS, UserDao.Field.USERID, true);
 
             userListSize = userList.size();
 
@@ -114,7 +121,7 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
                     break;
                 }
             }
-            iStartPosition += nUsersMax;
+            iStartPosition += MAX_RESULTS;
         }
 
         //

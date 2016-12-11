@@ -168,18 +168,9 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
         // The job
         final OutboxJobDto job = JOBTICKET_SERVICE.getTicket(jobFileName);
 
-        // The job ticket printer.
-        final String printerName = PRINTER_SERVICE.getJobTicketPrinterName();
-
-        if (StringUtils.isBlank(printerName)) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
-                    "No Job Ticket Printer found."));
-            return;
-        }
-
         final JsonPrinterDetail printer =
                 PROXY_PRINT_SERVICE.getPrinterDetailUserCopy(
-                        getSession().getLocale(), printerName);
+                        getSession().getLocale(), job.getPrinterName());
 
         final List<JsonProxyPrinterOpt> optionList = new ArrayList<>();
 
