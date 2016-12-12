@@ -226,7 +226,7 @@
 				target.html(html).filterable("refresh");
 			}
 			//----------------------------------------------------------------
-			, _onUserQuickSearch = function(target, groupId, filter) {
+			, _onUserQuickSearch = function(target, groupId, filter, msgTarget) {
 				/* QuickSearchUserGroupMemberFilterDto */
 				var res, html = "";
 
@@ -259,6 +259,12 @@
 						}
 						html += "</a></li>";
 					});
+
+					if (msgTarget) {
+						msgTarget.html(res.dto.searchMsg || "");
+						_view.visible(msgTarget, res.dto.searchMsg);
+					}
+
 				} else {
 					_view.showApiMsg(res);
 				}
@@ -415,7 +421,7 @@
 						_quickUserGroupSelected[dbkey] = _quickUserGroupCache[dbkey];
 						span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
 					}
-					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val());
+					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), $("#sp-print-delegation-users-select-to-add-msg"));
 				}
 			}
 			//----------------------------------------------------------------
@@ -546,7 +552,7 @@
 					_quickUserSelected = {};
 					_nSelectedUsers = 0;
 
-					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), null, $('#sp-print-delegation-users-select-to-add').val());
+					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), null, $('#sp-print-delegation-users-select-to-add').val(), $("#sp-print-delegation-users-select-to-add-msg"));
 
 					_view.enable($('#sp-print-delegation-button-add'), false);
 
@@ -634,7 +640,7 @@
 				filterableUsers.on("filterablebeforefilter", function(e, data) {
 					var dbkey = _util.getFirstProp(_quickUserGroupSelected);
 					e.preventDefault();
-					_onUserQuickSearch($(this), dbkey, data.input.get(0).value);
+					_onUserQuickSearch($(this), dbkey, data.input.get(0).value, $("#sp-print-delegation-users-select-to-add-msg"));
 				});
 
 				$(this).on('click', '#sp-print-delegation-users-select-to-add-filter li', null, function() {

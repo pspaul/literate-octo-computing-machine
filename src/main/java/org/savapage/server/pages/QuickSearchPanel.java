@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -49,8 +49,8 @@ public class QuickSearchPanel extends Panel {
     /**
      *
      */
-    public void populate(final String htmlBaseId,
-            final String searchPrompt, final String searchPlaceholder) {
+    public void populate(final String htmlBaseId, final String searchPrompt,
+            final String searchPlaceholder) {
 
         Label labelWrk;
 
@@ -67,8 +67,16 @@ public class QuickSearchPanel extends Panel {
         add(labelWrk);
 
         //
+        labelWrk = new Label("search-msg", "");
+        labelWrk.add(new AttributeModifier("id",
+                String.format("%s-msg", htmlBaseId)));
+
+        add(labelWrk);
+
+        //
         labelWrk = new Label("search-filter", "");
-        labelWrk.add(new AttributeModifier("id", htmlBaseId + "-filter"));
+        labelWrk.add(new AttributeModifier("id",
+                String.format("%s-filter", htmlBaseId)));
         labelWrk.add(new AttributeModifier("data-input", "#" + htmlBaseId));
         labelWrk.add(new AttributeModifier("data-filter-placeholder",
                 searchPlaceholder));
