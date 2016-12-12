@@ -3291,7 +3291,7 @@
 					copies = _model.printDelegationCopies;
 					$('#delegated-print-copies').val(copies);
 				} else if (jobTicket) {
-					$.noop();
+					copies = parseInt($('#number-print-copies').val(), 10);
 				} else {
 					copies = parseInt($('#slider-print-copies').val(), 10);
 				}
@@ -3366,6 +3366,10 @@
 				});
 
 				$('#slider-print-copies').change(function() {
+					_setVisibility();
+				});
+
+				$('#number-print-copies').change(function() {
 					_setVisibility();
 				});
 
@@ -4427,8 +4431,7 @@
 
 				_model.prevMsgTime = res.systime;
 
-				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, 
-					res.authModeDefault, res.authCardPinReq, res.authCardSelfAssoc, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
+				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, res.authCardSelfAssoc, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
 				// Configures CometD without starting it.
 				_cometdMaxNetworkDelay = res.cometdMaxNetworkDelay;
