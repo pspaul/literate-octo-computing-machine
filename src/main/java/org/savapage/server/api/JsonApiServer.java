@@ -708,7 +708,7 @@ public final class JsonApiServer extends AbstractPage {
         if (!requestingUserAdmin
                 && !receipt.getUserId().equals(requestingUser)) {
             throw new SpException("User [" + requestingUser
-                    + "] is not autherized to access receipt of user ["
+                    + "] is not authorized to access receipt of user ["
                     + receipt.getUserId() + "].");
         }
 
@@ -3622,8 +3622,10 @@ public final class JsonApiServer extends AbstractPage {
                         dto.getUserEmail());
 
                 mailDepositReceipt(data.getAccountTrxDbId(), dto.getUserEmail(),
-                        requestingUser, false);
-
+                        requestingUser,
+                        getSessionWebAppType().equals(WebAppTypeEnum.POS)
+                                || getSessionWebAppType()
+                                        .equals(WebAppTypeEnum.ADMIN));
                 break;
 
             case NONE:
