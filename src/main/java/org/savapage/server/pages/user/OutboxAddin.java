@@ -44,6 +44,7 @@ import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.ipp.IppSyntaxException;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.outbox.OutboxInfoDto;
@@ -204,6 +205,11 @@ public class OutboxAddin extends AbstractUserPage {
                     isJobTicketItem
                             && StringUtils.isNotBlank(job.getComment()));
 
+            //
+
+            helper.encloseLabel("jobticket-nr", job.getTicketNumber(),
+                    job.getTicketNumber() != null);
+
             /*
              * Totals
              */
@@ -301,7 +307,8 @@ public class OutboxAddin extends AbstractUserPage {
                     "letterhead", "duplex", "singlex", "color", "collate",
                     "grayscale", "accounts", "removeGraphics", "ecoPrint",
                     "extSupplier", "owner-user-name", "drm", "punch", "staple",
-                    "fold", "booklet" }) {
+                    "fold", "booklet", "jobticket-media", "jobticket-copy",
+                    "jobticket-finishing-ext" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -361,6 +368,21 @@ public class OutboxAddin extends AbstractUserPage {
             if (optionMap.hasFinishingBooklet()) {
                 mapVisible.put("booklet", localized("booklet"));
             }
+
+            mapVisible.put("jobticket-media",
+                    PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
+                            IppDictJobTemplateAttr.JOBTICKET_ATTR_MEDIA,
+                            optionMap));
+
+            mapVisible.put("jobticket-copy",
+                    PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
+                            IppDictJobTemplateAttr.JOBTICKET_ATTR_COPY,
+                            optionMap));
+
+            mapVisible.put("jobticket-finishings-ext",
+                    PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
+                            IppDictJobTemplateAttr.JOBTICKET_ATTR_FINISHINGS_EXT,
+                            optionMap));
 
             if (job.isDrm()) {
                 mapVisible.put("drm", "DRM");

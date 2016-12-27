@@ -41,9 +41,13 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
+import org.savapage.core.dao.enums.PrintModeEnum;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
+import org.savapage.core.services.ProxyPrintService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
 import org.savapage.server.WebApp;
@@ -54,6 +58,9 @@ import org.savapage.server.WebApp;
  *
  */
 public class DocLogItemPanel extends Panel {
+
+    private static final ProxyPrintService PROXYPRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     private final NumberFormat fmNumber =
             NumberFormat.getInstance(getSession().getLocale());
@@ -111,7 +118,8 @@ public class DocLogItemPanel extends Panel {
                 "account-trx", "job-id", "job-state", "job-completed-date",
                 "print-in-denied-reason-hyphen", "print-in-denied-reason",
                 "collateCopies", "ecoPrint", "removeGraphics", "extSupplier",
-                "punch", "staple", "fold", "booklet" }) {
+                "punch", "staple", "fold", "booklet", "jobticket-media",
+                "jobticket-copy", "jobticket-finishing-ext" }) {
             mapVisible.put(attr, null);
         }
 
@@ -277,8 +285,17 @@ public class DocLogItemPanel extends Panel {
 
             } else {
 
-                mapVisible.put("printoutMode",
-                        obj.getPrintMode().uiText(getLocale()));
+                final String ticketNumber;
+                if (obj.getPrintMode() == PrintModeEnum.TICKET) {
+                    ticketNumber = obj.getExtId();
+                } else {
+                    ticketNumber = null;
+                }
+
+                mapVisible.put("printoutMode", String
+                        .format("%s %s", obj.getPrintMode().uiText(getLocale()),
+                                StringUtils.defaultString(ticketNumber))
+                        .trim());
 
                 cssClass = MarkupHelper.CSS_PRINT_OUT_PRINTER;
 
@@ -438,6 +455,21 @@ public class DocLogItemPanel extends Panel {
         if (obj.getRemoveGraphics() != null && obj.getRemoveGraphics()) {
             mapVisible.put("removeGraphics", localized("graphics-removed"));
         }
+
+        mapVisible.put("jobticket-media",
+                PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
+                        IppDictJobTemplateAttr.JOBTICKET_ATTR_MEDIA,
+                        obj.getIppOptionMap()));
+
+        mapVisible.put("jobticket-copy",
+                PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
+                        IppDictJobTemplateAttr.JOBTICKET_ATTR_COPY,
+                        obj.getIppOptionMap()));
+
+        mapVisible.put("jobticket-finishings-ext",
+                PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
+                        IppDictJobTemplateAttr.JOBTICKET_ATTR_FINISHINGS_EXT,
+                        obj.getIppOptionMap()));
 
         /*
          * Hide/Show

@@ -54,6 +54,7 @@ import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
+import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
@@ -563,8 +564,11 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                  * Set the common parameters for all print job chunks, and
                  * calculate the cost.
                  */
+                final JsonProxyPrinter proxyPrinter = PROXY_PRINT_SERVICE
+                        .getCachedPrinter(printReq.getPrinterName());
+
                 final ProxyPrintCostParms costParms =
-                        printReq.createProxyPrintCostParms();
+                        printReq.createProxyPrintCostParms(proxyPrinter);
 
                 cost = ACCOUNTING_SERVICE.calcProxyPrintCost(
                         ServiceContext.getLocale(), currencySymbol, lockedUser,
@@ -777,7 +781,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             final ProxyPrintInboxReq printReq, final String currencySymbol,
             final Date deliveryDate) {
 
-        printReq.setPrintMode(PrintModeEnum.PUSH);
+        printReq.setPrintMode(PrintModeEnum.TICKET);
 
         try {
             JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq,

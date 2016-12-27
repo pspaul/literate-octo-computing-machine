@@ -69,6 +69,7 @@ public final class DocLogItem {
 
     private ExternalSupplierEnum extSupplier;
     private ExternalSupplierStatusEnum extSupplierStatus;
+    private String extId;
 
     private String userId;
     private String userName;
@@ -102,6 +103,8 @@ public final class DocLogItem {
     private boolean finishingStaple;
     private boolean finishingFold;
     private boolean finishingBooklet;
+
+    private IppOptionMap ippOptionMap;
 
     private Boolean collateCopies;
     private Boolean ecoPrint;
@@ -138,6 +141,14 @@ public final class DocLogItem {
     public void
             setExtSupplierStatus(ExternalSupplierStatusEnum extSupplierStatus) {
         this.extSupplierStatus = extSupplierStatus;
+    }
+
+    public String getExtId() {
+        return extId;
+    }
+
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
     public List<AccountTrx> getTransactions() {
@@ -381,6 +392,7 @@ public final class DocLogItem {
                 log.setExtSupplier(DaoEnumHelper.getExtSupplier(docLog));
                 log.setExtSupplierStatus(
                         DaoEnumHelper.getExtSupplierStatus(docLog));
+                log.setExtId(docLog.getExternalId());
 
                 log.setUserId(docLog.getUser().getUserId());
                 log.setUserName(docLog.getUser().getFullName());
@@ -506,6 +518,8 @@ public final class DocLogItem {
                         if (ippOptions != null) {
                             final IppOptionMap optionMap =
                                     new IppOptionMap(ippOptions);
+                            log.setIppOptionMap(optionMap);
+
                             log.setFinishingBooklet(
                                     optionMap.hasFinishingBooklet());
                             log.setFinishingFold(optionMap.hasFinishingFold());
@@ -1185,6 +1199,14 @@ public final class DocLogItem {
 
     public void setFinishingBooklet(boolean finishingBooklet) {
         this.finishingBooklet = finishingBooklet;
+    }
+
+    public IppOptionMap getIppOptionMap() {
+        return ippOptionMap;
+    }
+
+    public void setIppOptionMap(IppOptionMap ippOptionMap) {
+        this.ippOptionMap = ippOptionMap;
     }
 
     public Boolean getCollateCopies() {
