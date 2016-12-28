@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -26,6 +26,7 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.List;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -42,6 +43,7 @@ import org.savapage.core.dao.enums.AccountTrxTypeEnum;
 import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
+import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
@@ -219,6 +221,7 @@ public class AccountTrxPage extends AbstractListPage {
             String comment = accountTrx.getComment();
             String imageSrc = null;
             String delegate = null;
+            String jobticket = null;
 
             //
             String msgKey;
@@ -340,6 +343,17 @@ public class AccountTrxPage extends AbstractListPage {
                                 localized("by-delegate", userActor.getUserId());
                     }
                 }
+
+                final PrintModeEnum printMode = EnumUtils
+                        .getEnum(PrintModeEnum.class, printOut.getPrintMode());
+
+                if (printMode == PrintModeEnum.TICKET) {
+                    jobticket = String.format("%s %s",
+                            printMode.uiText(getLocale()),
+                            StringUtils.defaultString(docLog.getExternalId(),
+                                    "???"));
+                }
+
                 break;
 
             default:
@@ -347,7 +361,10 @@ public class AccountTrxPage extends AbstractListPage {
                         "TrxType [" + trxType + "] unknown: not handled");
             }
 
+            //
+
             helper.encloseLabel("delegate", delegate, delegate != null);
+            helper.encloseLabel("jobticket", jobticket, jobticket != null);
 
             final boolean isExtBitcoin =
                     StringUtils.isNotBlank(accountTrx.getExtCurrencyCode())

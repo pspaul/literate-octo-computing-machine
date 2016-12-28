@@ -886,7 +886,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             final ProxyPrintInboxReq printReq, final String currencySymbol)
             throws IppConnectException {
 
-        PAPERCUT_SERVICE.prepareForExtPaperCut(printReq, null);
+        PAPERCUT_SERVICE.prepareForExtPaperCut(printReq, null, null);
 
         try {
             PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, printReq);

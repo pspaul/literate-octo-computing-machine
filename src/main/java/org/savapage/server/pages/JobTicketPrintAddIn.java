@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +34,9 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dto.RedirectPrinterDto;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.ThirdPartyEnum;
+import org.savapage.ext.papercut.PaperCutHelper;
+import org.savapage.server.WebApp;
 
 /**
  *
@@ -95,12 +99,25 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
 
             final RedirectPrinterDto printer = item.getModelObject();
 
+            final String imgHtml;
+
+            if (PaperCutHelper
+                    .isPaperCutPrinter(URI.create(printer.getDeviceUri()))) {
+                imgHtml = String.format(
+                        "<img src=\"%s\" height=\"12\"/>&nbsp;&nbsp;",
+                        WebApp.getThirdPartyEnumImgUrl(
+                                ThirdPartyEnum.PAPERCUT));
+            } else {
+                imgHtml = "";
+            }
+
             final String id = UUID.randomUUID().toString();
 
             Label labelWlk;
 
             //
-            labelWlk = new Label("label", asHtml(printer.getName()));
+            labelWlk = new Label("label",
+                    String.format("%s%s", imgHtml, asHtml(printer.getName())));
             labelWlk.setEscapeModelStrings(false);
             MarkupHelper.modifyLabelAttr(labelWlk, "for", id);
             item.add(labelWlk);

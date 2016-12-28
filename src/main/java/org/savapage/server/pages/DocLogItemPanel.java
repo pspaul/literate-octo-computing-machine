@@ -143,6 +143,15 @@ public class DocLogItemPanel extends Panel {
         } else {
             helper.encloseLabel("extSupplierImg", "", true)
                     .add(new AttributeModifier("src", extSupplierImgUrl));
+            // disable for now ... (how to check thirdparty?)
+            final String thirdPartyUrl = null;
+            // WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT);
+            if (StringUtils.isBlank(thirdPartyUrl)) {
+                helper.discloseLabel("thirdPartyImg");
+            } else {
+                helper.encloseLabel("thirdPartyImg", "", true)
+                        .add(new AttributeModifier("src", thirdPartyUrl));
+            }
         }
 
         //
