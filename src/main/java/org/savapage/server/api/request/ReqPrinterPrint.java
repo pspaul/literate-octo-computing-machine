@@ -63,6 +63,7 @@ import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.services.helpers.PageScalingEnum;
+import org.savapage.core.services.helpers.ProxyPrintCostDto;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
 import org.savapage.core.services.impl.InboxServiceImpl;
 import org.savapage.core.util.BigDecimalUtil;
@@ -550,7 +551,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          */
         final String currencySymbol = SpSession.getAppCurrencySymbol();
 
-        final BigDecimal cost;
+        final ProxyPrintCostDto costResult;
 
         try {
             if (isExtPaperCutPrint) {
@@ -558,7 +559,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                  * No need to calculate the cost since it is taken from PaperCut
                  * after PaperCut reports that job is printed successfully.
                  */
-                cost = BigDecimal.ZERO;
+                costResult = new ProxyPrintCostDto();
             } else {
                 /*
                  * Set the common parameters for all print job chunks, and
@@ -570,7 +571,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 final ProxyPrintCostParms costParms =
                         printReq.createProxyPrintCostParms(proxyPrinter);
 
-                cost = ACCOUNTING_SERVICE.calcProxyPrintCost(
+                costResult = ACCOUNTING_SERVICE.calcProxyPrintCost(
                         ServiceContext.getLocale(), currencySymbol, lockedUser,
                         printer, costParms, printReq.getJobChunkInfo());
             }
@@ -580,9 +581,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
-        printReq.setCost(cost);
-
-        final String localizedCost = localizedPrinterCost(cost, null);
+        printReq.setCostResult(costResult);
 
         /*
          * Job Ticket?
@@ -693,6 +692,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         /*
          * Accounting.
          */
+        final String localizedCost =
+                localizedPrinterCost(costResult.getCostTotal(), null);
+
         if (StringUtils.isNotBlank(localizedCost)) {
             data.put("formattedCost", localizedCost);
 
