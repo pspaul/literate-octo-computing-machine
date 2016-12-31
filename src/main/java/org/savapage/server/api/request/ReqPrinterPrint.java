@@ -554,7 +554,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final ProxyPrintCostDto costResult;
 
         try {
-            if (isExtPaperCutPrint) {
+            /*
+             * NOTE: For JobTickets the SavaPage calculated costs are leading.
+             */
+            if (isExtPaperCutPrint && !isJobTicket) {
                 /*
                  * No need to calculate the cost since it is taken from PaperCut
                  * after PaperCut reports that job is printed successfully.

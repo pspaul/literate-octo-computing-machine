@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -37,6 +37,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  *
@@ -140,6 +141,9 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
         return false;
     }
 
+    private static final String PARM_JOBFILENAME = "jobFileName";
+    private static final String PARM_SETTLE = "settle";
+
     /**
      * @param parameters
      *            The {@link PageParameters}.
@@ -148,12 +152,14 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
 
         super(parameters);
 
-        final String jobFileName = this.getParmValue("jobFileName");
+        final String jobFileName = this.getParmValue(PARM_JOBFILENAME);
 
         if (StringUtils.isBlank(jobFileName)) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
-                    "\"jobFileName\" parameter missing"));
+            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR, String
+                    .format("\"%s\" parameter missing", PARM_JOBFILENAME)));
         }
+
+        final boolean isSettlement = this.getParmBoolean(PARM_SETTLE, false);
 
         //
         final List<RedirectPrinterDto> printerList;
@@ -172,13 +178,32 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
             return;
         }
 
-        add(new RedirectPrinterListView("printer-radio", printerList));
+        final MarkupHelper helper = new MarkupHelper(this);
 
         //
-        final Label label = new Label("btn-print", localized("button-print"));
-        MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_DATA_SAVAPAGE,
-                jobFileName);
-        add(label);
+        final String prompt;
+        final Label labelButton;
+
+        if (isSettlement) {
+            prompt = localized("prompt-header-settle");
+            helper.discloseLabel("btn-print");
+            labelButton = MarkupHelper.createEncloseLabel("btn-settle",
+                    HtmlButtonEnum.SETTLE.uiText(getLocale()), true);
+        } else {
+            prompt = localized("prompt-header-print");
+            helper.discloseLabel("btn-settle");
+            labelButton = MarkupHelper.createEncloseLabel("btn-print",
+                    HtmlButtonEnum.PRINT.uiText(getLocale()), true);
+        }
+
+        MarkupHelper.modifyLabelAttr(labelButton,
+                MarkupHelper.ATTR_DATA_SAVAPAGE, jobFileName);
+        add(labelButton);
+
+        add(new Label("prompt-header", prompt));
+
+        //
+        add(new RedirectPrinterListView("printer-radio", printerList));
     }
 
 }

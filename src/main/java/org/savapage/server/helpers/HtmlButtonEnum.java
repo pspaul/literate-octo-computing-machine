@@ -90,6 +90,11 @@ public enum HtmlButtonEnum {
     /**
      *
      */
+    PREVIEW,
+
+    /**
+    *
+    */
     PRINT,
 
     /**
@@ -101,6 +106,11 @@ public enum HtmlButtonEnum {
      *
      */
     SAVE,
+
+    /**
+    *
+    */
+    SETTLE,
 
     /**
     *

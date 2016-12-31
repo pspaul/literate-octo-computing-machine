@@ -1,7 +1,7 @@
 /*! SavaPage jQuery Mobile Job Tickets Page | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
 
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -16,7 +16,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -104,9 +104,10 @@
 				_refresh();
 			}
 			//
-			, _onPrintPopup = function(jobFileName, positionTo) {
+			, _onPrintPopup = function(jobFileName, positionTo, settle) {
 				var html = _view.getPageHtml('JobTicketPrintAddIn', {
-					jobFileName : jobFileName
+					jobFileName : jobFileName,
+					settle : settle
 				}) || 'error';
 
 				$('#sp-jobticket-popup-addin').html(html);
@@ -135,14 +136,24 @@
 				});
 			}
 			//
-			, _printJob = function(jobFileName, printerId) {
+			, _execJob = function(jobFileName, print, printerId) {
 				return _api.call({
-					request : 'jobticket-print',
+					request : 'jobticket-execute',
 					dto : JSON.stringify({
 						jobFileName : jobFileName,
+						print : print,
 						printerId : printerId
 					})
 				});
+			}
+			//
+			, _onExecJob = function(jobFileName, print) {
+					var res = _execJob(jobFileName, print, _view.getRadioValue('sp-jobticket-redirect-printer'));
+					if (res.result.code === "0") {
+						$('#sp-jobticket-popup').popup('close');
+						_refresh();
+					}
+					_view.showApiMsg(res);
 			}
 			//
 			, _onProcessAll = function(mode) {
@@ -163,7 +174,7 @@
 						var res, msg;
 
 						if (mode === _MODE_PRINT) {
-							res = _printJob($(this).attr('data-savapage'));
+							res = _execJob($(this).attr('data-savapage'), true);
 						} else {
 							res = _cancelJob($(this).attr('data-savapage'));
 						}
@@ -209,6 +220,9 @@
 				}).on('click', '.sp-jobticket-print', null, function() {
 					_onPrintPopup($(this).attr('data-savapage'), $(this));
 
+				}).on('click', '.sp-jobticket-settle', null, function() {
+					_onPrintPopup($(this).attr('data-savapage'), $(this), true);
+
 				}).on('click', '.sp-jobticket-edit', null, function() {
 					_onEditPopup($(this).attr('data-savapage'), $(this));
 
@@ -246,12 +260,9 @@
 					return true;
 
 				}).on('click', "#sp-jobticket-popup-btn-print", null, function() {
-					var res = _printJob($(this).attr('data-savapage'), _view.getRadioValue('sp-jobticket-redirect-printer'));
-					if (res.result.code === "0") {
-						$('#sp-jobticket-popup').popup('close');
-						_refresh();
-					}
-					_view.showApiMsg(res);
+					_onExecJob($(this).attr('data-savapage'), true);
+				}).on('click', "#sp-jobticket-popup-btn-settle", null, function() {
+					_onExecJob($(this).attr('data-savapage'), false);
 				}).on('click', '#sp-jobticket-popup-cancel-all-btn-yes', null, function() {
 					_onProcessAll(_MODE_CANCEL);
 				}).on('click', '#sp-jobticket-popup-print-all-btn-yes', null, function() {

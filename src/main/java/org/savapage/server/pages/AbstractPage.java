@@ -320,14 +320,30 @@ public abstract class AbstractPage extends WebPage
     }
 
     /**
-     * Get the POST-ed parameter
+     * Gets the POST-ed parameter value.
      *
      * @param parm
-     * @return
+     *            Parameter name.
+     * @return The value.
      */
     protected final String getParmValue(final String parm) {
         return getRequestCycle().getRequest().getPostParameters()
                 .getParameterValue(parm).toString();
+    }
+
+    /**
+     * Gets the POST-ed parameter boolean value.
+     *
+     * @param parm
+     *            Parameter name.
+     * @param defaultValue
+     *            The dfaut value.
+     * @return The boolean (default) value.
+     */
+    protected final boolean getParmBoolean(final String parm,
+            final boolean defaultValue) {
+        return getRequestCycle().getRequest().getPostParameters()
+                .getParameterValue(parm).toBoolean(defaultValue);
     }
 
     /**

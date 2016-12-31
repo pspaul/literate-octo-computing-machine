@@ -67,7 +67,7 @@ import org.savapage.server.pages.MessageContent;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
- * A page showing the HOLD proxy print jobs for a user.
+ * A page showing the HOLD or TICKET proxy print jobs for a user.
  * <p>
  * This page is retrieved from the JavaScript Web App.
  * </p>
@@ -264,8 +264,7 @@ public class OutboxAddin extends AbstractUserPage {
                                                 .uiText(getLocale())),
                                 isJobTicketItem);
                 if (isJobTicketItem) {
-                    labelWlk.add(new AttributeModifier(
-                            MarkupHelper.ATTR_DATA_SAVAPAGE, job.getFile()));
+                    this.addJobIdAttr(labelWlk, job);
                 }
             }
 
@@ -284,19 +283,16 @@ public class OutboxAddin extends AbstractUserPage {
                 encloseButtonIdPreview = "button-preview-outbox-job";
             }
 
-            helper.encloseLabel(encloseButtonIdRemove,
-                    getLocalizer().getString("button-cancel", this), true)
-                    .add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
-                            job.getFile()));
+            this.addJobIdAttr(
+                    helper.encloseLabel(encloseButtonIdRemove,
+                            HtmlButtonEnum.CANCEL.uiText(getLocale()), true),
+                    job);
 
             if (job.isDrm()) {
                 helper.discloseLabel(encloseButtonIdPreview);
             } else {
-                helper.encloseLabel(encloseButtonIdPreview,
-                        getLocalizer().getString("button-preview", this), true)
-                        .add(new AttributeModifier(
-                                MarkupHelper.ATTR_DATA_SAVAPAGE,
-                                job.getFile()));
+                this.addJobIdAttr(helper.encloseLabel(encloseButtonIdPreview,
+                        HtmlButtonEnum.PREVIEW.uiText(getLocale()), true), job);
             }
             /*
              * Variable attributes.
@@ -437,13 +433,23 @@ public class OutboxAddin extends AbstractUserPage {
             //
             if (this.isJobticketView && job.getUserId() != null) {
 
-                helper.encloseLabel("button-jobticket-print",
-                        String.format("%s . . .", localized("button-print")),
-                        true)
-                        .add(new AttributeModifier(
-                                MarkupHelper.ATTR_DATA_SAVAPAGE,
-                                job.getFile()));
+                this.addJobIdAttr(
+                        helper.encloseLabel("button-jobticket-print",
+                                String.format("%s . . .",
+                                        HtmlButtonEnum.PRINT
+                                                .uiText(getLocale())),
+                                true),
+                        job);
 
+                this.addJobIdAttr(
+                        helper.encloseLabel("button-jobticket-settle",
+                                String.format("%s . . .",
+                                        HtmlButtonEnum.SETTLE
+                                                .uiText(getLocale())),
+                                true),
+                        job);
+
+                //
                 final org.savapage.core.jpa.User user =
                         USER_DAO.findById(job.getUserId());
 
@@ -472,6 +478,7 @@ public class OutboxAddin extends AbstractUserPage {
             } else {
                 helper.discloseLabel("owner-user-id");
                 helper.discloseLabel("button-jobticket-print");
+                helper.discloseLabel("button-jobticket-settle");
             }
 
             /*
@@ -486,6 +493,21 @@ public class OutboxAddin extends AbstractUserPage {
                 helper.encloseLabel(entry.getKey(), entry.getValue(),
                         StringUtils.isNotBlank(entry.getValue()));
             }
+        }
+
+        /**
+         * Adds job identification as HTML attribute to Label.
+         *
+         * @param label
+         *            The label
+         * @param job
+         *            The job.
+         * @return The same label (for chaining).
+         */
+        private Label addJobIdAttr(final Label label, final OutboxJobDto job) {
+            label.add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
+                    job.getFile()));
+            return label;
         }
     }
 

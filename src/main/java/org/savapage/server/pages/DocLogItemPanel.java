@@ -295,7 +295,9 @@ public class DocLogItemPanel extends Panel {
             } else {
 
                 final String ticketNumber;
-                if (obj.getPrintMode() == PrintModeEnum.TICKET) {
+                if (obj.getPrintMode() == PrintModeEnum.TICKET
+                        || obj.getPrintMode() == PrintModeEnum.TICKET_C
+                        || obj.getPrintMode() == PrintModeEnum.TICKET_E) {
                     ticketNumber = obj.getExtId();
                 } else {
                     ticketNumber = null;

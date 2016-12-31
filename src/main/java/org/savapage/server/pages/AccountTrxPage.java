@@ -347,7 +347,9 @@ public class AccountTrxPage extends AbstractListPage {
                 final PrintModeEnum printMode = EnumUtils
                         .getEnum(PrintModeEnum.class, printOut.getPrintMode());
 
-                if (printMode == PrintModeEnum.TICKET) {
+                if (printMode == PrintModeEnum.TICKET
+                        || printMode == PrintModeEnum.TICKET_C
+                        || printMode == PrintModeEnum.TICKET_E) {
                     jobticket = String.format("%s %s",
                             printMode.uiText(getLocale()),
                             StringUtils.defaultString(docLog.getExternalId(),

@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -39,7 +39,7 @@ import org.savapage.server.api.request.ReqDeviceGet;
 import org.savapage.server.api.request.ReqDeviceSet;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqJobTicketCancel;
-import org.savapage.server.api.request.ReqJobTicketPrint;
+import org.savapage.server.api.request.ReqJobTicketExec;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqLogout;
 import org.savapage.server.api.request.ReqOutboxCancelAll;
@@ -132,7 +132,7 @@ public class JsonApiDict {
     public static final String REQ_LANGUAGE = "language";
 
     public static final String REQ_JOBTICKET_DELETE = "jobticket-delete";
-    public static final String REQ_JOBTICKET_PRINT = "jobticket-print";
+    public static final String REQ_JOBTICKET_EXECUTE = "jobticket-execute";
 
     public static final String REQ_PAPERCUT_TEST = "papercut-test";
 
@@ -805,7 +805,7 @@ public class JsonApiDict {
         acl(REQ_JOBTICKET_DELETE, ReqJobTicketCancel.class, DbClaim.READ,
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
-        acl(REQ_JOBTICKET_PRINT, ReqJobTicketPrint.class, DbClaim.READ,
+        acl(REQ_JOBTICKET_EXECUTE, ReqJobTicketExec.class, DbClaim.READ,
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         usr(REQ_JQPLOT, DbClaim.NONE, DbAccess.YES);

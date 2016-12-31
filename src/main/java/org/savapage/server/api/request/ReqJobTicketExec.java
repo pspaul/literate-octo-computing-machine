@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -32,11 +32,12 @@ import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.ServiceContext;
 
 /**
+ * Job Ticket Executor.
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqJobTicketPrint extends ApiRequestMixin {
+public final class ReqJobTicketExec extends ApiRequestMixin {
 
     /**
      *
@@ -46,8 +47,13 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
     private static class DtoReq extends AbstractDto {
 
         private String jobFileName;
+        private boolean print;
         private Long printerId;
 
+        /**
+         *
+         * @return
+         */
         public String getJobFileName() {
             return jobFileName;
         }
@@ -55,6 +61,19 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setJobFileName(String jobFileName) {
             this.jobFileName = jobFileName;
+        }
+
+        /**
+         * @return {@code true} when ticket job must be printed, {@code false}
+         *         when just settled.
+         */
+        public boolean isPrint() {
+            return print;
+        }
+
+        @SuppressWarnings("unused")
+        public void setPrint(boolean print) {
+            this.print = print;
         }
 
         public Long getPrinterId() {
@@ -102,15 +121,24 @@ public final class ReqJobTicketPrint extends ApiRequestMixin {
 
         try {
 
-            final OutboxJobDto dto = JOBTICKET_SERVICE.printTicket(printer,
-                    dtoReq.getJobFileName());
+            final OutboxJobDto dto;
+
+            if (dtoReq.isPrint()) {
+                dto = JOBTICKET_SERVICE.printTicket(printer,
+                        dtoReq.getJobFileName());
+            } else {
+                dto = JOBTICKET_SERVICE.settleTicket(printer,
+                        dtoReq.getJobFileName());
+            }
 
             final String msgKey;
 
             if (dto == null) {
                 msgKey = "msg-jobticket-print-none";
-            } else {
+            } else if (dtoReq.isPrint()) {
                 msgKey = "msg-jobticket-print-ok";
+            } else {
+                msgKey = "msg-jobticket-settled-ok";
             }
 
             this.setApiResult(ApiResultCodeEnum.OK, msgKey);
