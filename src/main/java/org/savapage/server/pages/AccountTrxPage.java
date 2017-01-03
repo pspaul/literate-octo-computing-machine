@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -331,10 +331,9 @@ public class AccountTrxPage extends AbstractListPage {
 
                 final User userActor = docLog.getUser();
 
-                if (accountType == AccountTypeEnum.SHARED) {
+                if (accountType == AccountTypeEnum.SHARED
+                        || accountType == AccountTypeEnum.GROUP) {
                     delegate = localized("by-user", userActor.getUserId());
-                } else if (accountType == AccountTypeEnum.GROUP) {
-                    // TODO
                 } else {
                     final User userSubject = this.getUserSubject(accountTrx);
                     if (userSubject != null
