@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile Print Delegation Page | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Print Delegation Page | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
 
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -50,6 +50,8 @@
 			, _CLASS_GROUP = '_sp_group', _CLASS_USER = '_sp_user'
 			//
 			, _CLASS_SELECTED_IND = '_sp_selected', _CLASS_SELECTED_TXT = '_sp_selected_txt'
+			// 
+			, _quickUserGroupFilter, _quickUserFilter, _quickAccountFilter
 			//
 			, _quickUserGroupCache, _quickUserCache, _quickAccountCache
 			//
@@ -195,6 +197,10 @@
 				/* QuickSearchFilterUserGroupDto */
 				var res, html = "";
 
+				if (_quickUserGroupFilter === filter) {
+					return;
+				}
+				_quickUserGroupFilter = filter;
 				_quickUserGroupCache = {};
 				_quickUserGroupSelected = {};
 				_nSelectedGroups = 0;
@@ -230,6 +236,10 @@
 				/* QuickSearchUserGroupMemberFilterDto */
 				var res, html = "";
 
+				if (_quickUserFilter === filter) {
+					return;
+				}
+				_quickUserFilter = filter;
 				_quickUserCache = {};
 				_quickUserSelected = {};
 				_nSelectedUsers = 0;
@@ -276,6 +286,10 @@
 				/* QuickSearchFilterDto */
 				var res, html = "";
 
+				if (_quickAccountFilter === filter) {
+					return;
+				}
+				_quickAccountFilter = filter;
 				_quickAccountCache = {};
 				_quickAccountSelected = undefined;
 
@@ -421,6 +435,7 @@
 						_quickUserGroupSelected[dbkey] = _quickUserGroupCache[dbkey];
 						span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
 					}
+					_quickUserFilter = undefined;					
 					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), $("#sp-print-delegation-users-select-to-add-msg"));
 				}
 			}
@@ -548,6 +563,7 @@
 					_revertQuickUserGroupsSelected();
 
 					// Clear users
+					_quickUserFilter = undefined;					
 					_quickUserCache = {};
 					_quickUserSelected = {};
 					_nSelectedUsers = 0;
