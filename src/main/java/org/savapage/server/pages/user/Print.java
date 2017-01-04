@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -35,6 +35,7 @@ import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.server.SpSession;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.QuickSearchPanel;
@@ -124,9 +125,13 @@ public class Print extends AbstractUserPage {
         panel.populate("sp-print-qs-printer", "",
                 getLocalizer().getString("search-printer-placeholder", this));
 
-        //
-        helper.addLabel("print-remove-graphics-label",
-                localized("print-remove-graphics"));
+        // Prepare for hiding ...
+        helper.encloseLabel("print-documents-separate",
+                localized("print-documents-separate"), true);
+
+        // Prepare for hiding ...
+        helper.encloseLabel("print-remove-graphics-label",
+                localized("print-remove-graphics"), true);
 
         //
         helper.encloseLabel("print-ecoprint", "",
@@ -145,6 +150,9 @@ public class Print extends AbstractUserPage {
 
         helper.addLabel("print-ecoprint-label", ecoPrintLabel);
 
+        // Prepare for hiding ...
+        helper.encloseLabel("prompt-jobticket-delivery-datetime",
+                localized("prompt-jobticket-delivery-datetime"), true);
         //
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
 
@@ -161,5 +169,8 @@ public class Print extends AbstractUserPage {
                 privsLetterhead == null || ACLPermissionEnum.READER
                         .isPresent(privsLetterhead.intValue()));
 
+        //
+        add(new Label("button-send-jobticket",
+                HtmlButtonEnum.SEND.uiText(getLocale())));
     }
 }

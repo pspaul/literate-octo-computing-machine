@@ -110,6 +110,11 @@ public enum HtmlButtonEnum {
     /**
     *
     */
+    SEND,
+
+    /**
+    *
+    */
     SETTLE,
 
     /**

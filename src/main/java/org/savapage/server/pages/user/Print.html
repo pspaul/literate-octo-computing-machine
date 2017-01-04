@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -155,14 +155,16 @@
 				</div>
 			</wicket:enclosure>
 
-			<div data-mini="true" data-role="controlgroup">
-				<label for="print-remove-graphics">
-					&nbsp;&nbsp;
-					<img height="12" src="/glyphicons/glyphicons_092_tint.png" />
-					&nbsp;&nbsp; <span wicket:id="print-remove-graphics-label" />
-				</label>
-				<input type="checkbox" id="print-remove-graphics" value="1" />
-			</div>
+			<wicket:enclosure child="print-remove-graphics-label">
+				<div data-mini="true" data-role="controlgroup">
+					<label for="print-remove-graphics">
+						&nbsp;&nbsp;
+						<img height="12" src="/glyphicons/glyphicons_092_tint.png" />
+						&nbsp;&nbsp; <span wicket:id="print-remove-graphics-label" />
+					</label>
+					<input type="checkbox" id="print-remove-graphics" value="1" />
+				</div>
+			</wicket:enclosure>
 
 			<div data-mini="true" data-role="controlgroup" class="print-collate">
 				<label for="print-collate">
@@ -187,6 +189,14 @@
 			</div>
 		</li>
 		<li>
+			<wicket:enclosure child="print-documents-separate">
+				<div data-mini="true" data-role="controlgroup" class="sp-jobticket">
+					<label for="print-documents-separate" wicket:id="print-documents-separate"/>
+					<input type="checkbox" id="print-documents-separate" checked
+						value="1" />
+				</div>
+			</wicket:enclosure>
+
 			<wicket:enclosure child="delete-pages-after-print">
 				<div data-mini="true" data-role="controlgroup">
 					<label for="delete-pages-after-print">
@@ -216,24 +226,27 @@
 		</li>
 
 		<li class="sp-jobticket" data-mini="true">
-			<span class="sp-txt-wrap"><wicket:message
-					key="prompt-jobticket-delivery-datetime" /></span>
-			<table>
-				<tr>
-					<td>
-						<input id="sp-jobticket-date" data-clear-btn="true" />
-					</td>
-					<td>
-						<input type="number" data-clear-btn="true" id="sp-jobticket-hrs"
-							min="0" max="23" step="1" value="" />
-					</td>
-					<td>:</td>
-					<td>
-						<input type="number" data-clear-btn="true" id="sp-jobticket-min"
-							min="0" max="45" step="15" value="" />
-					</td>
-				</tr>
-			</table>
+
+			<wicket:enclosure child="prompt-jobticket-delivery-datetime">
+				<span class="sp-txt-wrap"
+					wicket:id="prompt-jobticket-delivery-datetime" />
+				<table>
+					<tr>
+						<td>
+							<input id="sp-jobticket-date" data-clear-btn="true" />
+						</td>
+						<td>
+							<input type="number" data-clear-btn="true" id="sp-jobticket-hrs"
+								min="0" max="23" step="1" value="" />
+						</td>
+						<td>:</td>
+						<td>
+							<input type="number" data-clear-btn="true" id="sp-jobticket-min"
+								min="0" max="45" step="15" value="" />
+						</td>
+					</tr>
+				</table>
+			</wicket:enclosure>
 
 			<span class="sp-txt-wrap"><wicket:message
 					key="prompt-jobticket-remark" /></span>
@@ -242,17 +255,14 @@
 
 	</ul>
 
-	<wicket:remove>
-		<!-- 
-    <a href="#" id="button-print" class="ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
-        <wicket:message key="button-print"/>        
-    </a>
--->
-	</wicket:remove>
 	<button id="button-print-and-close"
-		class="ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
+		class="sp-proxyprint ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check">
 		<wicket:message key="button-print-and-close" />
 	</button>
+
+	<button id="button-send-jobticket" wicket:id="button-send-jobticket"
+		class="sp-jobticket ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check" />
+
 	<a href="#" data-rel="back" data-direction="reverse"
 		id="button-printer-back"
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message

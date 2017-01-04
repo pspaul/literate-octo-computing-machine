@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile User Web App | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile User Web App | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -3266,6 +3266,7 @@
 				}
 
 				_view.visible($('.sp-jobticket'), _model.myPrinter.jobTicket);
+				_view.visible($('.sp-proxyprint'), !_model.myPrinter.jobTicket);
 			}
 			//
 			, _isDelegatedPrint = function() {
@@ -3278,7 +3279,8 @@
 				if (_view.isCbChecked($("#delete-pages-after-print"))) {
 					clearScope = _view.getRadioValue('delete-pages-after-print-scope');
 				}
-				_this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")), _isDelegatedPrint());
+				_this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")), 
+					_isDelegatedPrint(), _view.isCbChecked($("#print-documents-separate")));
 			}
 			//
 			, _setVisibility = function() {
@@ -3386,12 +3388,12 @@
 					return false;
 				});
 
-				$('#button-print').click(function(e) {
-					_onPrint(false);
+				$('#button-print-and-close').click(function(e) {
+					_onPrint(true);
 					return false;
 				});
 
-				$('#button-print-and-close').click(function(e) {
+				$('#button-send-jobticket').click(function(e) {
 					_onPrint(true);
 					return false;
 				});
@@ -5365,7 +5367,7 @@
 			/**
 			 * Callbacks: page print
 			 */
-			_view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint, collate, isDelegation) {
+			_view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint, collate, isDelegation, separateDocs) {
 
 				var res, sel, cost, visible, date, present, jobTicketDate, isJobticket = _model.myPrinter.jobTicket
 				//
@@ -5404,6 +5406,7 @@
 						removeGraphics : removeGraphics,
 						ecoprint : ecoprint,
 						clearScope : clearScope,
+						separateDocs : separateDocs,
 						options : _model.myPrinterOpt,
 						delegation : isDelegation ? _model.printDelegation : null,
 						jobTicket : isJobticket,

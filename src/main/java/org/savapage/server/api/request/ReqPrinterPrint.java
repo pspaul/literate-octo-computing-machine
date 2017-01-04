@@ -117,6 +117,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Boolean removeGraphics;
         private Boolean ecoprint;
         private InboxSelectScopeEnum clearScope;
+        private Boolean separateDocs;
         private Boolean jobTicket;
         private Long jobTicketDate;
         private Integer jobTicketHrs;
@@ -235,6 +236,15 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setClearScope(InboxSelectScopeEnum clearScope) {
             this.clearScope = clearScope;
+        }
+
+        public Boolean getSeparateDocs() {
+            return separateDocs;
+        }
+
+        @SuppressWarnings("unused")
+        public void setSeparateDocs(Boolean separateDocs) {
+            this.separateDocs = separateDocs;
         }
 
         public Boolean getJobTicket() {
@@ -446,7 +456,15 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final boolean chunkVanillaJobs;
         final Integer iVanillaJob;
 
-        if (dtoReq.getJobIndex().intValue() < 0) {
+        final boolean separateVanillaJobs =
+                BooleanUtils.isTrue(dtoReq.getSeparateDocs()) && isJobTicket
+                        && printEntireInbox
+                        && INBOX_SERVICE.isInboxVanilla(jobs);
+
+        if (separateVanillaJobs) {
+            iVanillaJob = null;
+            chunkVanillaJobs = true;
+        } else if (dtoReq.getJobIndex().intValue() < 0) {
             iVanillaJob = null;
             chunkVanillaJobs = false;
         } else {
