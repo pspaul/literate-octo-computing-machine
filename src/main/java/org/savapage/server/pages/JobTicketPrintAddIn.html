@@ -3,7 +3,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -20,9 +20,21 @@
 <div class="ui-field-contain ui-mini">
 	<fieldset data-role="controlgroup">
 		<wicket:fragment wicket:id="printer-radio">
-			<label for="the-id" wicket:id="label" />
-			<input type="radio" name="sp-jobticket-redirect-printer"
-				wicket:id="input" id="the-id" value="the-printer-key" />
+			<div class="sp-jobticket-redirect-printer-item" tabindex="0">
+				<label for="the-id" wicket:id="label" tabindex="" />
+				<input type="radio" name="sp-jobticket-redirect-printer"
+					wicket:id="input" id="the-id" value="the-printer-key" />
+				<wicket:enclosure child="media-source">
+					<div class="sp-redirect-printer-media-source"
+						style="display: none;" tabindex="-1">
+						<select>
+							<wicket:fragment wicket:id="media-source">
+								<option value="some-tray" wicket:id="choice" />
+							</wicket:fragment>
+						</select>
+					</div>
+				</wicket:enclosure>
+			</div>
 		</wicket:fragment>
 	</fieldset>
 </div>

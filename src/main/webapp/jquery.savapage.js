@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile Common | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Common | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -2660,6 +2660,10 @@
 				$(radio).prop('checked', false);
 				sel.prop('checked', true);
 				$(radio).checkboxradio("refresh");
+			};
+
+			this.getRadioSelected = function(name) {
+				return $("input:radio[name='" + name + "']:checked");
 			};
 
 			this.getRadioValue = function(name) {

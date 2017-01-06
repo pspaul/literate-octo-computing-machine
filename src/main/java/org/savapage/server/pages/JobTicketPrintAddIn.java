@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,10 @@
  */
 package org.savapage.server.pages;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,10 +33,16 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.RedirectPrinterDto;
+import org.savapage.core.ipp.helpers.IppOptionMap;
+import org.savapage.core.jpa.Printer;
+import org.savapage.core.print.proxy.JsonProxyPrinterOptChoice;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.WebApp;
@@ -54,8 +63,51 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
     /**
      * .
      */
+    private static final String PARM_JOBFILENAME = "jobFileName";
+
+    /**
+     * .
+     */
+    private static final String PARM_SETTLE = "settle";
+
+    /**
+     * .
+     */
     private static final JobTicketService JOBTICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
+
+    /**
+     * .
+     */
+    private static class MediaSourceListView
+            extends PropertyListView<JsonProxyPrinterOptChoice> {
+
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * @param id
+         *            The wicket id.
+         * @param list
+         *            The item list.
+         */
+        MediaSourceListView(final String id,
+                final List<JsonProxyPrinterOptChoice> list) {
+            super(id, list);
+        }
+
+        @Override
+        protected void
+                populateItem(final ListItem<JsonProxyPrinterOptChoice> item) {
+            final JsonProxyPrinterOptChoice choice = item.getModelObject();
+
+            Label labelWlk;
+
+            //
+            labelWlk = new Label("choice", choice.getUiText());
+            MarkupHelper.modifyLabelAttr(labelWlk, "value", choice.getChoice());
+            item.add(labelWlk);
+        }
+    }
 
     /**
      * .
@@ -70,15 +122,23 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
 
         /**
          *
+         */
+        private final boolean isSettlement;
+
+        private int tabindexWlk;
+
+        /**
          * @param id
          *            The wicket id.
          * @param list
          *            The item list.
+         * @param settlement
          */
         RedirectPrinterListView(final String id,
-                final List<RedirectPrinterDto> list) {
-
+                final List<RedirectPrinterDto> list, final boolean settlement) {
             super(id, list);
+            this.isSettlement = settlement;
+            this.tabindexWlk = 9;
         }
 
         /**
@@ -121,6 +181,8 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
                     String.format("%s%s", imgHtml, asHtml(printer.getName())));
             labelWlk.setEscapeModelStrings(false);
             MarkupHelper.modifyLabelAttr(labelWlk, "for", id);
+            MarkupHelper.modifyLabelAttr(labelWlk, "tabindex",
+                    String.valueOf(++tabindexWlk));
             item.add(labelWlk);
 
             //
@@ -132,6 +194,76 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
                 MarkupHelper.modifyLabelAttr(labelWlk, "checked", "checked");
             }
             item.add(labelWlk);
+
+            //
+            final MarkupHelper helper = new MarkupHelper(item);
+
+            if (this.isSettlement) {
+                helper.discloseLabel("media-source");
+            } else {
+                final Printer dbPrinter =
+                        ServiceContext.getDaoContext().getPrinterDao()
+                                .findById(item.getModelObject().getId());
+
+                item.add(new MediaSourceListView("media-source",
+                        filterMediaSourcesForUser(
+                                new PrinterAttrLookup(dbPrinter),
+                                printer.getMediaSourceOpt().getChoices())));
+            }
+        }
+
+        /**
+         * Filters the active (configured) media-source choices of a
+         * {@link Printer} for user display, and sets the UI text for each
+         * filtered choice.
+         *
+         * @param lookup
+         *            The attribute lookup for the printer.
+         * @param mediaSourceChoices
+         *            The IPP media-source choices of the printer.
+         * @return The filtered choices.
+         */
+        private List<JsonProxyPrinterOptChoice> filterMediaSourcesForUser(
+                final PrinterAttrLookup lookup,
+                final List<JsonProxyPrinterOptChoice> mediaSourceChoices) {
+
+            final List<JsonProxyPrinterOptChoice> prunedList =
+                    new ArrayList<>();
+
+            final Iterator<JsonProxyPrinterOptChoice> iterChoices =
+                    mediaSourceChoices.iterator();
+
+            while (iterChoices.hasNext()) {
+
+                final JsonProxyPrinterOptChoice optChoice = iterChoices.next();
+
+                final PrinterDao.MediaSourceAttr mediaSourceAttr =
+                        new PrinterDao.MediaSourceAttr(optChoice.getChoice());
+
+                final String json = lookup.get(mediaSourceAttr.getKey());
+
+                if (json == null) {
+                    continue;
+                }
+
+                try {
+                    final IppMediaSourceCostDto dto =
+                            IppMediaSourceCostDto.create(json);
+
+                    if (dto.getActive()) {
+
+                        optChoice.setUiText(dto.getDisplay());
+
+                        if (dto.getMedia() != null) {
+                            prunedList.add(optChoice);
+                        }
+                    }
+                } catch (IOException e) {
+                    // be forgiving
+                    // LOGGER.error(e.getMessage());
+                }
+            }
+            return prunedList;
         }
 
     }
@@ -140,9 +272,6 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
     protected boolean needMembership() {
         return false;
     }
-
-    private static final String PARM_JOBFILENAME = "jobFileName";
-    private static final String PARM_SETTLE = "settle";
 
     /**
      * @param parameters
@@ -165,7 +294,8 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
         final List<RedirectPrinterDto> printerList;
 
         try {
-            printerList = JOBTICKET_SERVICE.getRedirectPrinters(jobFileName);
+            printerList = JOBTICKET_SERVICE.getRedirectPrinters(jobFileName,
+                    IppOptionMap.createVoid());
         } catch (Exception e) {
             setResponsePage(
                     new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
@@ -203,7 +333,8 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
         add(new Label("prompt-header", prompt));
 
         //
-        add(new RedirectPrinterListView("printer-radio", printerList));
+        add(new RedirectPrinterListView("printer-radio", printerList,
+                isSettlement));
     }
 
 }

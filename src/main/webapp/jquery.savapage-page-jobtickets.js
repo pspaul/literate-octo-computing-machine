@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile Job Tickets Page | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Job Tickets Page | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -92,6 +92,14 @@
 				}, 100);
 			}
 			//
+			, _getRedirectPrinterItem = function(inputRadio) {
+				return inputRadio.closest('.sp-jobticket-redirect-printer-item');
+			},
+			//
+			_getRedirectPrinterMediaSource = function(redirectPrinterItem) {
+				return redirectPrinterItem.find('.sp-redirect-printer-media-source');
+			}
+			//
 			, _onSelectUser = function(quickUserSelected) {
 				$("#sp-jobticket-userid").val(quickUserSelected.text);
 				_userKey = quickUserSelected.key;
@@ -114,6 +122,10 @@
 				$('#sp-jobticket-popup').enhanceWithin().popup('open', {
 					positionTo : positionTo
 				});
+
+				if (!settle) {
+					_onRedirectPrinterRadio(_view.getRadioSelected('sp-jobticket-redirect-printer'));
+				}
 			}
 			//
 			, _onEditPopup = function(jobFileName, positionTo) {
@@ -136,24 +148,31 @@
 				});
 			}
 			//
-			, _execJob = function(jobFileName, print, printerId) {
+			, _execJob = function(jobFileName, print, printerId, mediaSource) {
 				return _api.call({
 					request : 'jobticket-execute',
 					dto : JSON.stringify({
 						jobFileName : jobFileName,
 						print : print,
-						printerId : printerId
+						printerId : printerId,
+						mediaSource : mediaSource
 					})
 				});
 			}
 			//
 			, _onExecJob = function(jobFileName, print) {
-					var res = _execJob(jobFileName, print, _view.getRadioValue('sp-jobticket-redirect-printer'));
-					if (res.result.code === "0") {
-						$('#sp-jobticket-popup').popup('close');
-						_refresh();
-					}
-					_view.showApiMsg(res);
+				var res, selPrinter = _view.getRadioSelected('sp-jobticket-redirect-printer'), mediaSource;
+				if (print) {
+					mediaSource = _getRedirectPrinterMediaSource(_getRedirectPrinterItem(selPrinter)).find(':selected').val();
+				}
+				res = _execJob(jobFileName, print, selPrinter.val(), mediaSource);
+							
+				if (res.result.code === "0") {
+					$('#sp-jobticket-popup').popup('close');
+					_refresh();
+				}
+				//_view.showApiMsg(res);
+				_view.message(res.result.txt);
 			}
 			//
 			, _onProcessAll = function(mode) {
@@ -188,6 +207,16 @@
 					_refresh();
 					popup.popup('close');
 				}, 1500);
+			}
+			//
+			, _onRedirectPrinterRadio = function(inputRadio) {
+				var item = _getRedirectPrinterItem(inputRadio), mediaSource = _getRedirectPrinterMediaSource(item);
+				if (mediaSource.length > 0) {
+					_view.visible($('.sp-redirect-printer-media-source'), false);
+					_view.visible(mediaSource, true);
+					$('.sp-jobticket-redirect-printer-item').attr('style', '');
+					item.attr('style', 'border: 4px solid silver;');
+				}
 			}
 			//
 			;
@@ -267,6 +296,8 @@
 					_onProcessAll(_MODE_CANCEL);
 				}).on('click', '#sp-jobticket-popup-print-all-btn-yes', null, function() {
 					_onProcessAll(_MODE_PRINT);
+				}).on('change', "input[name='sp-jobticket-redirect-printer']", null, function() {
+					_onRedirectPrinterRadio($(this));
 				});
 
 				_quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);

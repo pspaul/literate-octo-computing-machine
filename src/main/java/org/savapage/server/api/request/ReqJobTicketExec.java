@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,10 +22,16 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.RedirectPrinterDto;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
+import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.ipp.client.IppConnectException;
+import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
@@ -49,6 +55,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         private String jobFileName;
         private boolean print;
         private Long printerId;
+        private String mediaSource;
 
         /**
          *
@@ -85,6 +92,20 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
             this.printerId = printerId;
         }
 
+        /**
+         * @return The {@link IppDictJobTemplateAttr#ATTR_MEDIA_SOURCE} value
+         *         for the print job. Is irrelevant ({@code null}) when
+         *         settlement.
+         */
+        public String getMediaSource() {
+            return mediaSource;
+        }
+
+        @SuppressWarnings("unused")
+        public void setMediaSource(String mediaSource) {
+            this.mediaSource = mediaSource;
+        }
+
     }
 
     @Override
@@ -93,22 +114,45 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
+        final boolean settlement = dtoReq.isPrint();
+
         Long printerId = dtoReq.getPrinterId();
 
         if (printerId == null) {
 
-            final RedirectPrinterDto dto = JOBTICKET_SERVICE
-                    .getRedirectPrinter(dtoReq.getJobFileName());
-
-            if (dto != null) {
-                printerId = dto.getId();
+            /*
+             * INVARIANT: Settlement MUST have printer.
+             */
+            if (settlement) {
+                this.setApiResultText(ApiResultCodeEnum.ERROR,
+                        "No printer specified or available.");
+                return;
             }
-        }
 
-        if (printerId == null) {
-            this.setApiResultText(ApiResultCodeEnum.ERROR,
-                    "No printer specified or available.");
-            return;
+            /*
+             * Find a compatible printer with media-source choice "auto".
+             */
+            final Map<String, String> filter = new HashMap<>();
+
+            filter.put(IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE,
+                    IppKeyword.MEDIA_SOURCE_AUTO);
+
+            final RedirectPrinterDto dto = JOBTICKET_SERVICE.getRedirectPrinter(
+                    dtoReq.getJobFileName(), new IppOptionMap(filter));
+
+            /*
+             * INVARIANT: Compatible printer MUST be present.
+             */
+            if (dto == null) {
+                this.setApiResultText(ApiResultCodeEnum.ERROR,
+                        "No printer specified or available.");
+                return;
+            }
+
+            printerId = dto.getId();
+
+            // Ad-hoc assign the media-source.
+            dtoReq.setMediaSource(IppKeyword.MEDIA_SOURCE_AUTO);
         }
 
         final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
@@ -124,8 +168,18 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
             final OutboxJobDto dto;
 
             if (dtoReq.isPrint()) {
+                /*
+                 * INVARIANT: media-source MUST be specified.
+                 */
+                if (StringUtils.isBlank(dtoReq.getMediaSource())) {
+                    this.setApiResultText(ApiResultCodeEnum.ERROR,
+                            "No media-source found");
+                    return;
+                }
+
                 dto = JOBTICKET_SERVICE.printTicket(printer,
-                        dtoReq.getJobFileName());
+                        dtoReq.getMediaSource(), dtoReq.getJobFileName());
+
             } else {
                 dto = JOBTICKET_SERVICE.settleTicket(printer,
                         dtoReq.getJobFileName());
@@ -146,7 +200,6 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         } catch (IppConnectException e) {
             this.setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
         }
-
     }
 
 }
