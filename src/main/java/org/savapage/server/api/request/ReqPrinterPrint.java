@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -49,6 +49,8 @@ import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.RangeAtom;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
+import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.Device;
@@ -323,6 +325,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             LOGGER.trace(DtoReq.prettyPrint(getParmValue("dto")));
         }
 
+        /*
+         * INVARIANT: Only one filter allowed.
+         */
         if (dtoReq.getRemoveGraphics() != null && dtoReq.getRemoveGraphics()
                 && dtoReq.getEcoprint() != null && dtoReq.getEcoprint()) {
             setApiResult(ApiResultCodeEnum.INFO,
@@ -568,6 +573,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         /*
          * Calculate the printing cost.
          */
+        final JsonProxyPrinter proxyPrinter =
+                PROXY_PRINT_SERVICE.getCachedPrinter(printReq.getPrinterName());
+
         final String currencySymbol = SpSession.getAppCurrencySymbol();
 
         final ProxyPrintCostDto costResult;
@@ -587,9 +595,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                  * Set the common parameters for all print job chunks, and
                  * calculate the cost.
                  */
-                final JsonProxyPrinter proxyPrinter = PROXY_PRINT_SERVICE
-                        .getCachedPrinter(printReq.getPrinterName());
-
                 final ProxyPrintCostParms costParms =
                         printReq.createProxyPrintCostParms(proxyPrinter);
 
@@ -597,12 +602,20 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                         ServiceContext.getLocale(), currencySymbol, lockedUser,
                         printer, costParms, printReq.getJobChunkInfo());
             }
-
         } catch (ProxyPrintException e) {
             this.setApiResultText(ApiResultCodeEnum.WARN, e.getMessage());
             return;
         }
 
+        /*
+         * INVARIANT:
+         */
+        if (!validatePruneIppOptions(proxyPrinter, printReq.getOptionValues(),
+                costResult)) {
+            return;
+        }
+
+        //
         printReq.setCostResult(costResult);
 
         /*
@@ -757,6 +770,89 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
             setApiResult(ApiResultCodeEnum.WARN, "msg-print-auth-pending");
         }
+    }
+
+    /**
+     * Validates and prunes IPP Media choices according to the list of cost
+     * rules. When not valid,
+     * {@link #setApiResultText(ApiResultCodeEnum, String)} is called with
+     * {@link ApiResultCodeEnum#WARN}.
+     *
+     * @param proxyPrinter
+     *            The proxy printer.
+     * @param ippOptions
+     *            The IPP attribute key/choices.
+     * @param costResult
+     *            The calculated cost result.
+     * @return {@code true} when choices are valid.
+     */
+    private boolean validatePruneIppOptions(final JsonProxyPrinter proxyPrinter,
+            final Map<String, String> ippOptions,
+            final ProxyPrintCostDto costResult) {
+        /*
+         * Media
+         */
+        if (proxyPrinter.hasCustomCostRulesMedia()) {
+
+            // Validate
+            if (costResult.getCostMedia().compareTo(BigDecimal.ZERO) == 0) {
+
+                setApiResultText(ApiResultCodeEnum.WARN, String.format(
+                        "Combination of media options for %s [%s] "
+                                + "is not supported.",
+                        IppDictJobTemplateAttr.ATTR_MEDIA_TYPE, ippOptions
+                                .get(IppDictJobTemplateAttr.ATTR_MEDIA_TYPE)));
+                return false;
+            }
+
+            // Prune irrelevant media-* options.
+            if (!StringUtils
+                    .defaultString(ippOptions
+                            .get(IppDictJobTemplateAttr.ATTR_MEDIA_TYPE))
+                    .equals(IppKeyword.MEDIA_TYPE_PAPER)) {
+
+                for (final String ippKey : IppDictJobTemplateAttr.JOBTICKET_ATTR_MEDIA_TYPE_PAPER) {
+                    ippOptions.remove(ippKey);
+                }
+
+            }
+        }
+
+        // Copy
+        if (proxyPrinter.hasCustomCostRulesCopy()) {
+
+            // Validate
+            if (costResult.getCostCopy().compareTo(BigDecimal.ZERO) == 0) {
+
+                StringBuilder msg = null;
+
+                for (final String[] attrArray : IppDictJobTemplateAttr.JOBTICKET_ATTR_COPY_V_NONE) {
+
+                    final String ippKey = attrArray[0];
+                    final String ippChoice = ippOptions.get(ippKey);
+
+                    if (ippChoice.equals(attrArray[1])) {
+                        continue;
+                    }
+
+                    if (msg == null) {
+                        msg = new StringBuilder();
+                        msg.append("Combination of options for ");
+                    } else {
+                        msg.append(", ");
+                    }
+                    msg.append(ippKey).append(" [").append(ippChoice)
+                            .append("]");
+                }
+
+                if (msg != null) {
+                    msg.append(" is not supported.");
+                    setApiResultText(ApiResultCodeEnum.WARN, msg.toString());
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
