@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -304,7 +304,7 @@ public class OutboxAddin extends AbstractUserPage {
                     "grayscale", "accounts", "removeGraphics", "ecoPrint",
                     "extSupplier", "owner-user-name", "drm", "punch", "staple",
                     "fold", "booklet", "jobticket-media", "jobticket-copy",
-                    "jobticket-finishing-ext" }) {
+                    "jobticket-finishing-ext", "landscape", "portrait" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -339,6 +339,12 @@ public class OutboxAddin extends AbstractUserPage {
                 mapVisible.put("grayscale", localized("grayscale"));
             } else {
                 mapVisible.put("color", localized("color"));
+            }
+
+            if (BooleanUtils.isTrue(job.getLandscape())) {
+                mapVisible.put("landscape", localized("landscape"));
+            } else {
+                mapVisible.put("portrait", localized("portrait"));
             }
 
             if (job.isCollate() && job.getCopies() > 1 && job.getPages() > 1) {
