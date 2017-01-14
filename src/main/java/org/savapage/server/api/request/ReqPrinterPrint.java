@@ -27,7 +27,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -364,8 +363,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();
 
-        final Map<String, Object> data = new HashMap<String, Object>();
-
         final Printer printer;
 
         try {
@@ -666,7 +663,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
              * Direct Proxy Print?
              */
             if (isNonSecureProxyPrint) {
-                this.onDirectProxyPrint(lockedUser, printReq, currencySymbol);
+                this.onNonSecurePrint(lockedUser, printReq,
+                        currencySymbol);
                 return;
             }
         } catch (IppConnectException e) {
@@ -725,20 +723,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         /*
-         * Accounting.
-         */
-        final String localizedCost =
-                localizedPrinterCost(costResult.getCostTotal(), null);
-
-        if (StringUtils.isNotBlank(localizedCost)) {
-            data.put("formattedCost", localizedCost);
-
-            if (StringUtils.isNotBlank(localizedCost)) {
-                data.put("currencySymbol", currencySymbol);
-            }
-        }
-
-        /*
          * Hold Print?
          */
         final ProxyPrintAuthModeEnum authModeEnum =
@@ -750,26 +734,53 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         /*
-         * User WebApp Authenticated Proxy Print.
+         * Secure WebApp Proxy Print.
          */
         printReq.setPrintMode(PrintModeEnum.AUTH);
         printReq.setStatus(ProxyPrintInboxReq.Status.NEEDS_AUTH);
 
         if (ProxyPrintAuthManager.submitRequest(dtoReq.getPrinter(),
                 device.getHostname(), printReq)) {
-            /*
-             * Signal NEEDS_AUTH
-             */
-            data.put("requestStatus", printReq.getStatus().toString());
-            data.put("printAuthExpirySecs",
-                    cm.getConfigInt(Key.PROXY_PRINT_DIRECT_EXPIRY_SECS));
-
-            setApiResultOk();
-
+            onSecurePrint(printReq, currencySymbol);
         } else {
-
             setApiResult(ApiResultCodeEnum.WARN, "msg-print-auth-pending");
         }
+    }
+
+    /**
+     *
+     * @param printReq
+     * @param currencySymbol
+     */
+    private void onSecurePrint(final ProxyPrintInboxReq printReq,
+            final String currencySymbol) {
+
+        final String localizedCost;
+
+        try {
+            localizedCost = localizedPrinterCost(
+                    printReq.getCostResult().getCostTotal(), null);
+        } catch (ParseException e) {
+            throw new SpException(e.getMessage());
+        }
+
+        final Map<String, Object> data = this.getUserData();
+
+        if (StringUtils.isNotBlank(localizedCost)) {
+            data.put("formattedCost", localizedCost);
+
+            if (StringUtils.isNotBlank(localizedCost)) {
+                data.put("currencySymbol", currencySymbol);
+            }
+        }
+        /*
+         * Signal NEEDS_AUTH
+         */
+        data.put("requestStatus", printReq.getStatus().toString());
+        data.put("printAuthExpirySecs", ConfigManager.instance()
+                .getConfigInt(Key.PROXY_PRINT_DIRECT_EXPIRY_SECS));
+
+        setApiResultOk();
     }
 
     /**
@@ -968,7 +979,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *            The currency symbol.
      * @throws IppConnectException
      */
-    private void onDirectProxyPrint(final User lockedUser,
+    private void onNonSecurePrint(final User lockedUser,
             final ProxyPrintInboxReq printReq, final String currencySymbol)
             throws IppConnectException {
 
