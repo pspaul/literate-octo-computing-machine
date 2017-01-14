@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -119,7 +119,7 @@ public class DocLogItemPanel extends Panel {
                 "print-in-denied-reason-hyphen", "print-in-denied-reason",
                 "collateCopies", "ecoPrint", "removeGraphics", "extSupplier",
                 "punch", "staple", "fold", "booklet", "jobticket-media",
-                "jobticket-copy", "jobticket-finishing-ext" }) {
+                "jobticket-copy", "jobticket-finishing-ext", "landscape" }) {
             mapVisible.put(attr, null);
         }
 
@@ -481,6 +481,12 @@ public class DocLogItemPanel extends Panel {
                 PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
                         IppDictJobTemplateAttr.JOBTICKET_ATTR_FINISHINGS_EXT,
                         obj.getIppOptionMap()));
+
+        //
+        if (obj.getIppOptionMap() != null
+                && obj.getIppOptionMap().isLandscapeJob()) {
+            mapVisible.put("landscape", localized("landscape"));
+        }
 
         /*
          * Hide/Show
