@@ -3279,8 +3279,7 @@
 				if (_view.isCbChecked($("#delete-pages-after-print"))) {
 					clearScope = _view.getRadioValue('delete-pages-after-print-scope');
 				}
-				_this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")), 
-					_isDelegatedPrint(), _view.isCbChecked($("#print-documents-separate")));
+				_this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")), _isDelegatedPrint(), _view.isCbChecked($("#print-documents-separate")));
 			}
 			//
 			, _setVisibility = function() {
@@ -5371,6 +5370,8 @@
 
 				var res, sel, cost, visible, date, present, jobTicketDate, isJobticket = _model.myPrinter.jobTicket
 				//
+				, isJobTicketDateTime = $('#sp-jobticket-date').length > 0
+				//
 				, copies = isDelegation ? "1" : ( isJobticket ? $('#number-print-copies').val() : $('#slider-print-copies').val());
 
 				if (_saveSelectedletterhead('#print-letterhead-list')) {
@@ -5383,10 +5384,13 @@
 				}
 
 				if (_model.myPrinter.jobTicket) {
-					sel = $('#sp-jobticket-date');
-					date = _view.mobipickGetDate(sel);
-					present = (sel.val().length > 0);
-					jobTicketDate = ( present ? date.getTime() : null);
+					if (isJobTicketDateTime) {
+						sel = $('#sp-jobticket-date');
+						date = _view.mobipickGetDate(sel);
+						jobTicketDate = sel.val().length > 0 ? date.getTime() : null;
+					} else {
+						jobTicketDate = null;
+					}
 				}
 
 				_model.myPrintTitle = $('#print-title').val();
@@ -5411,8 +5415,8 @@
 						delegation : isDelegation ? _model.printDelegation : null,
 						jobTicket : isJobticket,
 						jobTicketDate : jobTicketDate,
-						jobTicketHrs : isJobticket ? $('#sp-jobticket-hrs').val() : null,
-						jobTicketMin : isJobticket ? $('#sp-jobticket-min').val() : null,
+						jobTicketHrs : isJobticket && isJobTicketDateTime ? $('#sp-jobticket-hrs').val() : null,
+						jobTicketMin : isJobticket && isJobTicketDateTime ? $('#sp-jobticket-min').val() : null,
 						jobTicketRemark : isJobticket ? $('#sp-jobticket-remark').val() : null
 					})
 				});

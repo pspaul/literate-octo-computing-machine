@@ -169,25 +169,6 @@ public class OutboxAddin extends AbstractUserPage {
                     job.getLocaleInfo().getSubmitTime()));
 
             //
-            labelWlk = new Label("timeExpiry",
-                    job.getLocaleInfo().getExpiryTime());
-
-            final long now = System.currentTimeMillis();
-            final String cssClass;
-
-            if (job.getExpiryTime() < now) {
-                cssClass = MarkupHelper.CSS_TXT_ERROR;
-            } else if (job.getExpiryTime()
-                    - now < DateUtil.DURATION_MSEC_HOUR) {
-                cssClass = MarkupHelper.CSS_TXT_WARN;
-            } else {
-                cssClass = MarkupHelper.CSS_TXT_VALID;
-            }
-
-            MarkupHelper.modifyLabelAttr(labelWlk, "class", cssClass);
-            item.add(labelWlk);
-
-            //
             final StringBuilder imgSrc = new StringBuilder();
 
             //
@@ -297,20 +278,45 @@ public class OutboxAddin extends AbstractUserPage {
             /*
              * Variable attributes.
              */
+
+            final boolean isExpiryUndetermined =
+                    job.getSubmitTime() == job.getExpiryTime();
+
+            if (isExpiryUndetermined) {
+                helper.discloseLabel("timeExpiry");
+            } else {
+                labelWlk = new Label("timeExpiry",
+                        job.getLocaleInfo().getExpiryTime());
+
+                final long now = System.currentTimeMillis();
+                final String cssClass;
+
+                if (job.getExpiryTime() < now) {
+                    cssClass = MarkupHelper.CSS_TXT_ERROR;
+                } else if (job.getExpiryTime()
+                        - now < DateUtil.DURATION_MSEC_HOUR) {
+                    cssClass = MarkupHelper.CSS_TXT_WARN;
+                } else {
+                    cssClass = MarkupHelper.CSS_TXT_VALID;
+                }
+
+                MarkupHelper.modifyLabelAttr(labelWlk, "class", cssClass);
+                item.add(labelWlk);
+            }
+
             final Map<String, String> mapVisible = new HashMap<>();
 
-            for (final String attr : new String[] { "title", "papersize",
-                    "letterhead", "duplex", "singlex", "color", "collate",
-                    "grayscale", "accounts", "removeGraphics", "ecoPrint",
-                    "extSupplier", "owner-user-name", "drm", "punch", "staple",
-                    "fold", "booklet", "jobticket-media", "jobticket-copy",
-                    "jobticket-finishing-ext", "landscape", "portrait" }) {
+            for (final String attr : new String[] { "title",
+                    "papersize", "letterhead", "duplex", "singlex", "color",
+                    "collate", "grayscale", "accounts", "removeGraphics",
+                    "ecoPrint", "extSupplier", "owner-user-name", "drm",
+                    "punch", "staple", "fold", "booklet", "jobticket-media",
+                    "jobticket-copy", "jobticket-finishing-ext", "landscape",
+                    "portrait" }) {
                 mapVisible.put(attr, null);
             }
 
-            /*
-             *
-             */
+            //
             mapVisible.put("title", job.getJobName());
 
             //

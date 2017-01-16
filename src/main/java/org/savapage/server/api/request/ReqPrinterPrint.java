@@ -620,33 +620,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          */
         if (isJobTicket) {
 
-            printReq.setComment(dtoReq.getJobTicketRemark());
-
-            Date deliveryDate;
-
-            if (dtoReq.getJobTicketDate() == null) {
-                deliveryDate = new Date();
-            } else {
-                deliveryDate = new Date(dtoReq.getJobTicketDate().longValue());
-            }
-
-            int minutes = 0;
-
-            if (dtoReq.getJobTicketHrs() != null) {
-                minutes += dtoReq.getJobTicketHrs().intValue()
-                        * DateUtil.MINUTES_IN_HOUR;
-            }
-
-            if (dtoReq.getJobTicketMin() != null) {
-                minutes += dtoReq.getJobTicketMin().intValue();
-            }
-
-            deliveryDate = DateUtils.addMinutes(
-                    DateUtils.truncate(deliveryDate, Calendar.DAY_OF_MONTH),
-                    minutes);
-
-            this.onPrintJobTicket(lockedUser, printReq, currencySymbol,
-                    deliveryDate);
+            this.onPrintJobTicket(lockedUser, dtoReq, printReq, currencySymbol);
 
             return;
         }
@@ -663,8 +637,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
              * Direct Proxy Print?
              */
             if (isNonSecureProxyPrint) {
-                this.onNonSecurePrint(lockedUser, printReq,
-                        currencySymbol);
+                this.onNonSecurePrint(lockedUser, printReq, currencySymbol);
                 return;
             }
         } catch (IppConnectException e) {
@@ -899,6 +872,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *
      * @param lockedUser
      *            The locked {@link User} instance, can be {@code null}.
+     * @param dtoReq
+     *            The {@link DtoReq}.
      * @param printReq
      *            The print request.
      * @param currencySymbol
@@ -908,11 +883,45 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      * @param deliveryDate
      *            The requested date of delivery.
      */
-    private void onPrintJobTicket(final User lockedUser,
-            final ProxyPrintInboxReq printReq, final String currencySymbol,
-            final Date deliveryDate) {
+    private void onPrintJobTicket(final User lockedUser, final DtoReq dtoReq,
+            final ProxyPrintInboxReq printReq, final String currencySymbol) {
 
         printReq.setPrintMode(PrintModeEnum.TICKET);
+
+        final boolean isJobTicketDateTime = ConfigManager.instance()
+                .isConfigValue(Key.JOBTICKET_DELIVERY_DATETIME_ENABLE);
+
+        printReq.setComment(dtoReq.getJobTicketRemark());
+
+        Date deliveryDate;
+
+        if (dtoReq.getJobTicketDate() == null) {
+            if (isJobTicketDateTime) {
+                deliveryDate = new Date();
+            } else {
+                deliveryDate = null;
+            }
+        } else {
+            deliveryDate = new Date(dtoReq.getJobTicketDate().longValue());
+        }
+
+        if (isJobTicketDateTime) {
+
+            int minutes = 0;
+
+            if (dtoReq.getJobTicketHrs() != null) {
+                minutes += dtoReq.getJobTicketHrs().intValue()
+                        * DateUtil.MINUTES_IN_HOUR;
+            }
+
+            if (dtoReq.getJobTicketMin() != null) {
+                minutes += dtoReq.getJobTicketMin().intValue();
+            }
+
+            deliveryDate = DateUtils.addMinutes(
+                    DateUtils.truncate(deliveryDate, Calendar.DAY_OF_MONTH),
+                    minutes);
+        }
 
         try {
             JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq,

@@ -129,9 +129,10 @@ public class Print extends AbstractUserPage {
         helper.encloseLabel("print-documents-separate",
                 localized("print-documents-separate"), true);
 
-        // Prepare for hiding ...
+        //
         helper.encloseLabel("print-remove-graphics-label",
-                localized("print-remove-graphics"), true);
+                localized("print-remove-graphics"),
+                cm.isConfigValue(Key.PROXY_PRINT_REMOVE_GRAPHICS_ENABLE));
 
         //
         helper.encloseLabel("print-ecoprint", "",
@@ -150,9 +151,11 @@ public class Print extends AbstractUserPage {
 
         helper.addLabel("print-ecoprint-label", ecoPrintLabel);
 
-        // Prepare for hiding ...
+        //
         helper.encloseLabel("prompt-jobticket-delivery-datetime",
-                localized("prompt-jobticket-delivery-datetime"), true);
+                localized("prompt-jobticket-delivery-datetime"),
+                cm.isConfigValue(Key.JOBTICKET_DELIVERY_DATETIME_ENABLE));
+
         //
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
 

@@ -64,9 +64,11 @@
 		<wicket:enclosure child="jobticket-nr">
 			<span class="sp-txt-info" wicket:id="jobticket-nr" /> &bull; 
 		</wicket:enclosure>
-		<span wicket:id="timeSubmit" /> &bull; <span
-			class="sp-outbox-remaining-time" wicket:id="timeExpiry" /> &bull; <span
-			wicket:id="totals" />
+		<span wicket:id="timeSubmit" />
+		<wicket:enclosure child="timeExpiry">
+			 &bull; <span class="sp-outbox-remaining-time" wicket:id="timeExpiry" />
+		</wicket:enclosure>
+		&bull; <span wicket:id="totals" />
 		<wicket:enclosure child="color"> &bull; <span
 				class="sp-txt-warn" wicket:id="color" />
 		</wicket:enclosure>
@@ -89,7 +91,8 @@
 				class="sp-txt-info" wicket:id="portrait" />
 		</wicket:enclosure>
 		<wicket:enclosure child="landscape"> &bull; <span
-				class="sp-txt-info" style="padding: 2px 6px 2px 6px; border: 1px silver solid;"
+				class="sp-txt-info"
+				style="padding: 2px 6px 2px 6px; border: 1px silver solid;"
 				wicket:id="landscape" />
 		</wicket:enclosure>
 		<wicket:enclosure child="collate"> &bull; <span
