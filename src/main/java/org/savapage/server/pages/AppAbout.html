@@ -34,7 +34,8 @@
 	<wicket:enclosure child="savapage-info-after-inject">
 		<div style="font-size: small;">
 			<hr />
-			<p>Powered by SavaPage Libre Print Management v<span
+			<p>
+				Powered by SavaPage Libre Print Management v<span
 					wicket:id="app-version-number" />
 			</p>
 			<wicket:fragment wicket:id="savapage-info-after-inject" />
@@ -43,9 +44,8 @@
 
 	<div>
 		<a href="#" class="ui-btn ui-btn-inline ui-icon-back ui-btn-icon-left"
-			id="button-appinfo-cancel" data-rel="back" data-direction="reverse">
-			<wicket:message key="button-back" />
-		</a>
+			id="button-appinfo-cancel" data-rel="back" data-direction="reverse"
+			wicket:id="button-back" />
 	</div>
 </div>
 

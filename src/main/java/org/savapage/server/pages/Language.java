@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.savapage.core.util.LocaleHelper;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  *
@@ -42,6 +43,10 @@ public class Language extends AbstractPage {
      *
      */
     public Language() {
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addButton("button-cancel", HtmlButtonEnum.CANCEL);
 
         add(new PropertyListView<Locale>("language-list",
                 LocaleHelper.getAvailableLanguages()) {

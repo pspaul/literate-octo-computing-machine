@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -36,6 +36,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  * Helper methods for a {@link MarkupContainer}.
@@ -218,7 +219,6 @@ public final class MarkupHelper {
      *
      * @param wicketId
      *            The {@code wicket:id} of the {@code <input>} part.
-     *
      * @param checked
      *            {@code true} if the checkbox must be checked.
      * @return The added checkbox.
@@ -231,6 +231,22 @@ public final class MarkupHelper {
             label.add(new AttributeModifier("checked", "checked"));
         }
 
+        add(label);
+        return label;
+    }
+
+    /**
+     * Adds a button.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the {@code <input>} part.
+     * @param button
+     *            The {@link HtmlButtonEnum}.
+     * @return The added button.
+     */
+    public Label addButton(final String wicketId, final HtmlButtonEnum button) {
+        final Label label =
+                new Label(wicketId, button.uiText(this.container.getLocale()));
         add(label);
         return label;
     }
