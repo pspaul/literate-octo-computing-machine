@@ -31,6 +31,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -44,6 +46,9 @@ public final class ACLRoleEnumPanel extends Panel {
      *
      */
     private static final long serialVersionUID = 1L;
+
+    private static final AccessControlService ACCESSCONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
     *
@@ -67,7 +72,19 @@ public final class ACLRoleEnumPanel extends Panel {
             final String htmlId = UUID.randomUUID().toString();
 
             //
-            Label label = new Label("label", value.uiText(getLocale()));
+            final String uiText = value.uiText(getLocale());
+
+            Label label;
+
+            if (ACCESSCONTROL_SERVICE.getTopIndeterminateGranted()
+                    .contains(value)) {
+                label = new Label("label",
+                        String.format("<span class=\"%s\">%s</span>",
+                                MarkupHelper.CSS_TXT_VALID, uiText));
+                label.setEscapeModelStrings(false);
+            } else {
+                label = new Label("label", uiText);
+            }
 
             MarkupHelper.modifyLabelAttr(label, "for", htmlId);
             item.add(label);

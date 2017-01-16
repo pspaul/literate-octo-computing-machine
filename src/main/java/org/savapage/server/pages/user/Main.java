@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ public class Main extends AbstractUserPage {
      *
      */
     private static enum NavButtonEnum {
-        ABOUT, BROWSE, UPLOAD, PDF, LETTERHEAD, SORT
+        ABOUT, BROWSE, UPLOAD, PDF, LETTERHEAD, SORT, PRINT, TICKET
     }
 
     /**
@@ -196,6 +196,15 @@ public class Main extends AbstractUserPage {
                 localized("button-pdf"),
                 buttonPrivileged.contains(NavButtonEnum.PDF)));
 
+        this.add(MarkupHelper.createEncloseLabel("main-arr-action-print",
+                localized("button-print"),
+                buttonPrivileged.contains(NavButtonEnum.PRINT)));
+
+        this.add(MarkupHelper.createEncloseLabel("main-arr-action-ticket",
+                localized("button-ticket"),
+                !buttonPrivileged.contains(NavButtonEnum.PRINT)
+                        && buttonPrivileged.contains(NavButtonEnum.TICKET)));
+
         //
         final String userId;
         final String userName;
@@ -254,6 +263,15 @@ public class Main extends AbstractUserPage {
                 || ACLPermissionEnum.DOWNLOAD.isPresent(inboxPriv.intValue())
                 || ACLPermissionEnum.SEND.isPresent(inboxPriv.intValue())) {
             set.add(navButtonWlk);
+        }
+
+        //
+        if (ACCESS_CONTROL_SERVICE.isAuthorized(user,
+                ACLRoleEnum.PRINT_CREATOR)) {
+            set.add(NavButtonEnum.PRINT);
+        } else if (ACCESS_CONTROL_SERVICE.isAuthorized(user,
+                ACLRoleEnum.JOB_TICKET_CREATOR)) {
+            set.add(NavButtonEnum.TICKET);
         }
 
         //
@@ -355,11 +373,18 @@ public class Main extends AbstractUserPage {
             items.add(itemWlk);
         }
 
-        // ------------
-        // Print
-        // ------------
-        items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS, "ui-icon-main-print",
-                "button-main-print", localized("button-print")));
+        // --------------------------
+        // Print or Ticket (or none)
+        // --------------------------
+        if (buttonPrivileged.contains(NavButtonEnum.PRINT)) {
+            items.add(
+                    new NavBarItem(CSS_CLASS_MAIN_ACTIONS, "ui-icon-main-print",
+                            "button-main-print", localized("button-print")));
+        } else if (buttonPrivileged.contains(NavButtonEnum.TICKET)) {
+            items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
+                    "ui-icon-main-jobticket", "button-main-print",
+                    localized("button-ticket")));
+        }
 
         // ------------
         // Letterhead

@@ -14,9 +14,7 @@
 </wicket:remove>
 
 <div data-role="header" data-theme="b">
-	<h1>
-		<wicket:message key="title" />
-	</h1>
+	<h1 wicket:id="title" />
 </div>
 
 <div class="ui-content" id="content-print">
@@ -191,7 +189,8 @@
 		<li>
 			<wicket:enclosure child="print-documents-separate">
 				<div data-mini="true" data-role="controlgroup" class="sp-jobticket">
-					<label for="print-documents-separate" wicket:id="print-documents-separate"/>
+					<label for="print-documents-separate"
+						wicket:id="print-documents-separate" />
 					<input type="checkbox" id="print-documents-separate" checked
 						value="1" />
 				</div>

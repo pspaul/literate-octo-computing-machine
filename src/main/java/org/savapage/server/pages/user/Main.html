@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -34,6 +34,13 @@
 .ui-icon-main-print:after {
 	background: url(/glyphish-icons/185-printer.png) 50% 50% no-repeat;
 	background-size: 24px 21px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+}
+
+.ui-icon-main-jobticket:after {
+	background: url(/glyphish-icons/14-tag-flipped.png) 50% 50% no-repeat;
+	background-size: 22px 22px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
 }
@@ -469,12 +476,22 @@ POPUP with extra sort mode actions.
 					wicket:id="main-arr-action-pdf">[PDF]</span></a>
 			</li>
 		</wicket:enclosure>
-		<li>
-			<a href="#" id="main-arr-action-print"
-				class="ui-btn ui-btn-icon-left ui-icon-main-print">&nbsp;<wicket:message
-					key="button-print" />
-			</a>
-		</li>
+		<wicket:enclosure child="main-arr-action-print">
+			<li>
+				<a href="#" id="main-arr-action-print"
+					class="ui-btn ui-btn-icon-left ui-icon-main-print">&nbsp;<span
+					wicket:id="main-arr-action-print" />
+				</a>
+			</li>
+		</wicket:enclosure>
+		<wicket:enclosure child="main-arr-action-ticket">
+			<li>
+				<a href="#" id="main-arr-action-print"
+					class="ui-btn ui-btn-icon-left ui-icon-main-jobticket">&nbsp;<span
+					wicket:id="main-arr-action-ticket" />
+				</a>
+			</li>
+		</wicket:enclosure>
 	</ul>
 </div>
 
@@ -519,7 +536,8 @@ POPUP with Page/Job info
 
 				<input type="checkbox" id="sp-popup-job-rotate" value="1" />
 				<label for="sp-popup-job-rotate">
-					<wicket:message key="prompt-job-rotate" /><small>&nbsp;&nbsp;&#x21b7;</small>
+					<wicket:message key="prompt-job-rotate" />
+					<small>&nbsp;&nbsp;&#x21b7;</small>
 				</label>
 			</fieldset>
 

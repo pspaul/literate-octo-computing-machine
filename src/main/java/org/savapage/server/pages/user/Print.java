@@ -67,8 +67,9 @@ public class Print extends AbstractUserPage {
 
         super(parameters);
 
-        final MarkupHelper helper = new MarkupHelper(this);
         final ConfigManager cm = ConfigManager.instance();
+
+        final MarkupHelper helper = new MarkupHelper(this);
 
         helper.addModifyLabelAttr("slider-print-copies", "max",
                 cm.getConfigValue(Key.WEBAPP_USER_PROXY_PRINT_MAX_COPIES));
@@ -171,6 +172,16 @@ public class Print extends AbstractUserPage {
         helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
                 privsLetterhead == null || ACLPermissionEnum.READER
                         .isPresent(privsLetterhead.intValue()));
+
+        //
+        if (ACCESS_CONTROL_SERVICE.hasAccess(user,
+                ACLRoleEnum.JOB_TICKET_CREATOR)
+                && !ACCESS_CONTROL_SERVICE.hasAccess(user,
+                        ACLRoleEnum.PRINT_CREATOR)) {
+            add(new Label("title", localized("title_ticket")));
+        } else {
+            add(new Label("title", localized("title_print")));
+        }
 
         //
         add(new Label("button-send-jobticket",

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -725,6 +725,9 @@ public class JsonApiDict {
                 allowed = EnumSet
                         .of(WebAppTypeEnum.ADMIN, WebAppTypeEnum.JOBTICKETS)
                         .contains(webAppType);
+                break;
+            case PRINT_CREATOR:
+                allowed = webAppType == WebAppTypeEnum.USER;
                 break;
             case PRINT_DELEGATE:
                 allowed = webAppType == WebAppTypeEnum.USER;
