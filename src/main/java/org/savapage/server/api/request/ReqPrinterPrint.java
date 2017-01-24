@@ -815,7 +815,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     final String ippKey = attrArray[0];
                     final String ippChoice = ippOptions.get(ippKey);
 
-                    if (ippChoice.equals(attrArray[1])) {
+                    if (ippChoice == null || ippChoice.equals(attrArray[1])) {
                         continue;
                     }
 
