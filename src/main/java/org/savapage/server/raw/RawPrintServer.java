@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -127,14 +127,38 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
     private static final int BYTE_END_OF_PRINTJOB = 4;
 
     /**
-     * "Carriage Return" byte.
+     * CR (carriage return) byte.
      */
     private static final int BYTE_CR = 13;
 
     /**
-     * "Line Feed" byte.
+     * LF (NL line feed, new line) byte.
      */
     private static final int BYTE_LF = 10;
+
+    /**
+     * The Universal Exit Language (UEL) Command causes the printer to exit the
+     * active printer language. The printer then returns control to PJL. The UEL
+     * command is used at the beginning and end of every PJL job. The syntax is
+     * : {@code <ESC>%-12345X}
+     * <p>
+     * NOTE: This constant is the part <b>after</b> the first {@code <ESC>}
+     * character.
+     * </p>
+     * See <a href="https://en.wikipedia.org/wiki/Printer_Job_Language">
+     * Printer_Job_Language</a> in Wikipedia.
+     */
+    private static final String UEL_SIGNATURE_MINUS_FIRST_ESC = "%-12345X";
+
+    /**
+     * The PJL command prefix (@PJL)
+     */
+    private static final String PJL_COMMAND_PFX = "@PJL";
+
+    /**
+     * The initial {@link StringBuilder} capacity for reading a line.
+     */
+    private static final int STRINGBUILDER_LINE_CAPACITY = 128;
 
     /**
      *
@@ -250,7 +274,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
     private static String readLine(final InputStream istr,
             final OutputStream ostr) throws IOException {
 
-        String line = null;
+        StringBuilder line = null;
+
         int iByte = istr.read();
 
         while ((-1 < iByte)) {
@@ -258,7 +283,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             ostr.write(iByte);
 
             if (line == null) {
-                line = "";
+                line = new StringBuilder(STRINGBUILDER_LINE_CAPACITY);
             }
 
             if ((iByte == BYTE_LF) || (iByte == BYTE_CR)
@@ -266,9 +291,35 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
                 break;
             }
 
-            line += (char) iByte;
+            line.append((char) iByte);
 
             iByte = istr.read();
+        }
+
+        if (line == null) {
+            return null;
+        }
+        return line.toString();
+    }
+
+    /**
+     * Skips any PJL command lines.
+     *
+     * @param istr
+     *            {@link InputStream} to read the line from.
+     * @param ostr
+     *            {@link OutputStream} to write the resulting line to.
+     * @return The first non-PJL command header line, or {@code null} when
+     *         nothing to read.
+     * @throws IOException
+     *             When read or write error.
+     */
+    private static String skipPJLCommandLines(final InputStream istr,
+            final OutputStream ostr) throws IOException {
+
+        String line = readLine(istr, ostr);
+        while (line != null && line.startsWith(PJL_COMMAND_PFX)) {
+            line = readLine(istr, ostr);
         }
         return line;
     }
@@ -295,6 +346,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
         // --------------------------------------------------------------------
         // Print from Windows Vista / 7
+        // --------------------------------------------------------------------
         //
         // %!PS-Adobe-3.0
         // %%Title: Test Page
@@ -322,6 +374,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
         // --------------------------------------------------------------------
         // Print from OS X Mavericks
+        // --------------------------------------------------------------------
         //
         // %!PS-Adobe-3.0
         // %APL_DSC_Encoding: UTF8
@@ -330,6 +383,29 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         // %%Creator: (cgpdftops CUPS filter)
         // %%CreationDate: (Monday, January 06 2014 13:49:07 CET)
         // %%For: (rijk)
+        //
+
+        // --------------------------------------------------------------------
+        // Possible extra header with PJL commands. First line is Universal Exit
+        // Language (UEL) Command: the first '?' character represents 0x1B (ESC)
+        // --------------------------------------------------------------------
+        // ?%-12345X@PJL
+        // @PJL JOB NAME = "Document 1" DISPLAY = "9729 john Document 1"
+        // @PJL SET USERNAME = "john"
+        // @PJL SET JOBATTR="@BANR=OFF"
+        // @PJL ENTER LANGUAGE = POSTSCRIPT
+        // %!PS-Adobe-3.0
+        // %%HiResBoundingBox: 0 0 596.00 842.00
+        // %%Creator: GPL Ghostscript 918 (ps2write)
+        // %%LanguageLevel: 2
+        // %%CreationDate: D:20170125182339+01'00'
+        // %%For: (john)
+        // %%Title: (Document 1)
+        // %RBINumCopies: 1
+        // %%Pages: (atend)
+        // %%BoundingBox: (atend)
+        // %%EndComments
+        // %%BeginProlog
         //
 
         final InputStream istr = socket.getInputStream();
@@ -344,7 +420,6 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         final String PFX_TITLE = "%%Title: ";
         final String PFX_USERID = "%%For: ";
         final String PFX_BEGIN_PROLOG = "%%BeginProlog";
-        final String PFX_APL_PRODUCER = "%APLProducer: ";
 
         final String originatorIp = socket.getInetAddress().getHostAddress();
 
@@ -377,6 +452,16 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             return;
         }
 
+        /*
+         * Mantis #779: Accept JetDirect PostScript stream with UEL header.
+         */
+        if (strline.startsWith(UEL_SIGNATURE_MINUS_FIRST_ESC, 1)) {
+            strline = skipPJLCommandLines(istr, bos);
+        }
+
+        /*
+         * Check for PostScript signature.
+         */
         if (!strline.startsWith(DocContent.HEADER_PS)) {
 
             consumeWithoutProcessing(istr);
@@ -388,26 +473,18 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
         final List<String> lines = new ArrayList<>();
 
-        boolean parenthesesSyntax = false;
-
         while (strline != null) {
 
             lines.add(strline);
 
-            if (strline.startsWith(PFX_APL_PRODUCER)) {
-                parenthesesSyntax =
-                        StringUtils.removeStart(strline, PFX_APL_PRODUCER)
-                                .trim().startsWith("(");
-            } else if (strline.startsWith(PFX_TITLE)) {
-                title = StringUtils.removeStart(strline, PFX_TITLE);
-                if (parenthesesSyntax) {
-                    title = stripParentheses(title);
-                }
+            if (strline.startsWith(PFX_TITLE)) {
+                title = stripParentheses(
+                        StringUtils.removeStart(strline, PFX_TITLE));
+
             } else if (strline.startsWith(PFX_USERID)) {
-                userid = StringUtils.removeStart(strline, PFX_USERID);
-                if (parenthesesSyntax) {
-                    userid = stripParentheses(userid);
-                }
+                userid = stripParentheses(
+                        StringUtils.removeStart(strline, PFX_USERID));
+
             } else if (strline.startsWith(PFX_BEGIN_PROLOG)) {
                 break;
             }
