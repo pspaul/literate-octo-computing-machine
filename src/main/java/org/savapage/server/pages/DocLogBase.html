@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -49,11 +49,11 @@
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
+							<legend class="sp-txt-wrap">
 								<wicket:message key="prompt-type" />
 							</legend>
 
-							<label for="sp-doclog-select-type-all">
+							<label for="sp-doclog-select-type-all" class="sp-txt-wrap">
 								<wicket:message key="type-all" />
 							</label>
 							<input type="radio" name="sp-doclog-select-type"
@@ -105,17 +105,18 @@
 				</li>
 
 				<li>
-					<span><wicket:message key="prompt-period" /></span>
+					<span class="sp-txt-wrap"><wicket:message
+							key="prompt-period" /></span>
 
 					<div class="ui-field-contain">
-						<label for="sp-doclog-date-from">
+						<label for="sp-doclog-date-from" class="sp-txt-wrap">
 							<wicket:message key="prompt-period-from" />
 						</label>
 						<input id="sp-doclog-date-from" data-clear-btn="true" />
 					</div>
 
 					<div class="ui-field-contain">
-						<label for="sp-doclog-date-to">
+						<label for="sp-doclog-date-to" class="sp-txt-wrap">
 							<wicket:message key="prompt-period-to" />
 						</label>
 						<input id="sp-doclog-date-to" data-clear-btn="true" />
@@ -124,7 +125,7 @@
 
 				<li class="sp-doclog-cat-queue">
 					<div class="ui-field-contain">
-						<label for="sp-print-in-queue">
+						<label for="sp-print-in-queue" class="sp-txt-wrap">
 							<wicket:message key="cat-queue" />
 						</label>
 						<select name="sp-print-in-queue" id="sp-print-in-queue"
@@ -157,7 +158,7 @@
 						</wicket:remove>
 
 						<div class="ui-field-contain">
-							<label for="sp-doc-out-destination">
+							<label for="sp-doc-out-destination" class="sp-txt-wrap">
 								<wicket:message key="prompt-destination" />
 							</label>
 							<input type="text" id="sp-doc-out-destination" value=""
@@ -167,7 +168,7 @@
 						<div class="ui-field-contain">
 							<fieldset data-role="controlgroup" data-type="horizontal"
 								class="ui-mini">
-								<legend>
+								<legend class="sp-txt-wrap">
 									<wicket:message key="prompt-letterhead" />
 								</legend>
 
@@ -195,21 +196,21 @@
 
 							<li>
 								<div class="ui-field-contain">
-									<label for="sp-pdf-out-author">
+									<label for="sp-pdf-out-author" class="sp-txt-wrap">
 										<wicket:message key="prompt-author" />
 									</label>
 									<input type="text" id="sp-pdf-out-author" value=""
 										maxlength="128" />
 								</div>
 								<div class="ui-field-contain">
-									<label for="sp-pdf-out-subject">
+									<label for="sp-pdf-out-subject" class="sp-txt-wrap">
 										<wicket:message key="prompt-subject" />
 									</label>
 									<input type="text" id="sp-pdf-out-subject" value=""
 										maxlength="128" />
 								</div>
 								<div class="ui-field-contain">
-									<label for="sp-pdf-out-keywords">
+									<label for="sp-pdf-out-keywords" class="sp-txt-wrap">
 										<wicket:message key="prompt-keywords" />
 									</label>
 									<input type="text" id="sp-pdf-out-keywords" value=""
@@ -219,7 +220,7 @@
 								<div class="ui-field-contain">
 									<fieldset data-role="controlgroup" data-type="horizontal"
 										class="ui-mini">
-										<legend>
+										<legend class="sp-txt-wrap">
 											<wicket:message key="prompt-encryption" />
 										</legend>
 
@@ -265,7 +266,7 @@
 							class="sp-doclog-cat-printer">
 							<li>
 								<div class="ui-field-contain">
-									<label for="sp-print-out-printer">
+									<label for="sp-print-out-printer" class="sp-txt-wrap">
 										<wicket:message key="prompt-printer" />
 									</label>
 									<select name="sp-print-out-printer" id="sp-print-out-printer"
@@ -307,7 +308,7 @@
 								<div class="ui-field-contain">
 									<fieldset data-role="controlgroup" data-type="horizontal"
 										class="ui-mini">
-										<legend>
+										<legend class="sp-txt-wrap">
 											<wicket:message key="prompt-layout" />
 										</legend>
 
@@ -340,7 +341,7 @@
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
+							<legend class="sp-txt-wrap">
 								<wicket:message key="prompt-sort-by" />
 							</legend>
 

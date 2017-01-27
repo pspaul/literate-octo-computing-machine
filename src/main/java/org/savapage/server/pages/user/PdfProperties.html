@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -25,14 +25,14 @@
 
 		<li>
 			<div class="ui-field-contain">
-				<label data-mini="true" for="pdf-job-list">
+				<label data-mini="true" for="pdf-job-list" class="sp-txt-wrap">
 					<wicket:message key="pdf-job-document" />
 				</label>
 				<select data-mini="true" id="pdf-job-list" data-iconpos="left"
 					data-native-menu="false" />
 			</div>
 			<div class="ui-field-contain">
-				<label for="pdf-title">
+				<label for="pdf-title" class="sp-txt-wrap">
 					<wicket:message key="pdf-title" />
 				</label>
 				<input type="text" name="pdf-title" id="pdf-title"
@@ -40,7 +40,7 @@
 			</div>
 
 			<div class="ui-field-contain">
-				<label for="pdf-author">
+				<label for="pdf-author" class="sp-txt-wrap">
 					<wicket:message key="pdf-author" />
 				</label>
 				<input type="text" name="pdf-author" id="pdf-author" value=""
@@ -49,7 +49,7 @@
 			</div>
 
 			<div data-mini="true" class="ui-field-contain">
-				<label for="pdf-page-ranges">
+				<label for="pdf-page-ranges" class="sp-txt-wrap">
 					<wicket:message key="pdf-page-ranges" />
 				</label>
 				<input type="text" id="pdf-page-ranges" value="" pattern="[0-9]*"
@@ -60,7 +60,7 @@
 			<wicket:enclosure child="prompt-letterhead">
 				<div class="ui-field-contain">
 					<label wicket:id="prompt-letterhead" data-mini="true"
-						for="pdf-letterhead-list" />
+						class="sp-txt-wrap" for="pdf-letterhead-list" />
 					<select data-mini="true" id="pdf-letterhead-list"
 						data-iconpos="left" data-native-menu="false"></select>
 				</div>

@@ -87,7 +87,7 @@
 		<li data-mini="true">
 
 			<div class="ui-field-contain">
-				<label data-mini="true" for="print-job-list">
+				<label data-mini="true" for="print-job-list" class="sp-txt-wrap">
 					<wicket:message key="print-job-document" />
 				</label>
 				<select data-mini="true" id="print-job-list" data-iconpos="left"
@@ -95,14 +95,14 @@
 			</div>
 
 			<div class="ui-field-contain">
-				<label for="print-title">
+				<label for="print-title" class="sp-txt-wrap">
 					<wicket:message key="print-title" />
 				</label>
 				<input type="text" data-clear-btn="true" id="print-title" value="" />
 			</div>
 
 			<div class="ui-field-contain" id="slider-print-copies-div">
-				<label for="slider-print-copies">
+				<label for="slider-print-copies" class="sp-txt-wrap">
 					<wicket:message key="print-copies" />
 				</label>
 				<input type="range" id="slider-print-copies"
@@ -110,21 +110,21 @@
 			</div>
 
 			<div class="ui-field-contain" id="number-print-copies-div">
-				<label for="number-print-copies">
+				<label for="number-print-copies" class="sp-txt-wrap">
 					<wicket:message key="print-copies" />
 				</label>
 				<input type="number" id="number-print-copies" value="1" min="1" />
 			</div>
 
 			<div class="ui-field-contain" id="delegated-print-copies-div">
-				<label for="delegated-print-copies">
+				<label for="delegated-print-copies" class="sp-txt-wrap">
 					<wicket:message key="print-copies" />
 				</label>
 				<input type="text" id="delegated-print-copies" disabled />
 			</div>
 
 			<div class="ui-field-contain">
-				<label for="print-page-ranges">
+				<label for="print-page-ranges" class="sp-txt-wrap">
 					<wicket:message key="print-page-ranges" />
 				</label>
 				<input type="text" data-clear-btn="true" id="print-page-ranges"
@@ -135,7 +135,7 @@
 			<wicket:enclosure child="prompt-letterhead">
 				<div data-mini="true" class="ui-field-contain">
 					<label wicket:id="prompt-letterhead" data-mini="true"
-						for="print-letterhead-list" />
+						class="sp-txt-wrap" for="print-letterhead-list" />
 					<select data-mini="true" id="print-letterhead-list"
 						data-iconpos="left" data-native-menu="false"></select>
 				</div>
@@ -143,7 +143,7 @@
 
 			<wicket:enclosure child="print-ecoprint">
 				<div data-mini="true" data-role="controlgroup">
-					<label for="print-ecoprint">
+					<label for="print-ecoprint" class="sp-txt-wrap">
 						&nbsp;&nbsp;
 						<img height="12" src="/glyphicons/glyphicons_001_leaf.png" />
 						&nbsp;&nbsp; <span wicket:id="print-ecoprint-label" />
