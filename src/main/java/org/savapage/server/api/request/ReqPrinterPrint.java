@@ -98,6 +98,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ReqPrinterPrint.class);
 
+    private enum JobTicketTypeEnum {
+        PRINT, COPY
+    }
+
     /**
      *
      * @author Rijk Ravestein
@@ -120,6 +124,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private InboxSelectScopeEnum clearScope;
         private Boolean separateDocs;
         private Boolean jobTicket;
+        private JobTicketTypeEnum jobTicketType;
         private Long jobTicketDate;
         private Integer jobTicketHrs;
         private Integer jobTicketMin;
@@ -257,6 +262,15 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             this.jobTicket = jobTicket;
         }
 
+        public JobTicketTypeEnum getJobTicketType() {
+            return jobTicketType;
+        }
+
+        @SuppressWarnings("unused")
+        public void setJobTicketType(JobTicketTypeEnum jobTicketType) {
+            this.jobTicketType = jobTicketType;
+        }
+
         public Long getJobTicketDate() {
             return jobTicketDate;
         }
@@ -325,6 +339,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         /*
+         *
+         */
+        final boolean isJobTicket = BooleanUtils.isTrue(dtoReq.getJobTicket());
+
+        if (isJobTicket
+                && dtoReq.getJobTicketType() == JobTicketTypeEnum.COPY) {
+            // TODO
+        }
+
+        /*
          * INVARIANT: Only one filter allowed.
          */
         if (dtoReq.getRemoveGraphics() != null && dtoReq.getRemoveGraphics()
@@ -386,9 +410,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          */
         String ranges = dtoReq.getRanges().trim();
 
-        final boolean printEntireInbox = ranges.isEmpty();
+        final boolean isPrintAllPages = ranges.isEmpty();
 
-        if (!printEntireInbox) {
+        if (!isPrintAllPages) {
             /*
              * Remove inner spaces.
              */
@@ -423,8 +447,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
-        final boolean isJobTicket = BooleanUtils.isTrue(dtoReq.getJobTicket());
-
         /*
          * INVARIANT: when NOT a job ticket the total number of printed pages
          * MUST be within limits. When Job Ticket printer is present, this
@@ -455,24 +477,24 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         /*
          * Vanilla jobs?
          */
-        final boolean printAllDocument = dtoReq.getJobIndex().intValue() < 0;
+        final boolean isPrintAllDocuments = dtoReq.getJobIndex().intValue() < 0;
 
-        final boolean chunkVanillaJobs;
+        final boolean doChunkVanillaJobs;
         final Integer iVanillaJob;
 
-        final boolean separateVanillaJobs = printAllDocument
+        final boolean doSeparateVanillaJobs = isPrintAllDocuments
                 && BooleanUtils.isTrue(dtoReq.getSeparateDocs()) && isJobTicket
-                && printEntireInbox && INBOX_SERVICE.isInboxVanilla(jobs);
+                && isPrintAllPages && INBOX_SERVICE.isInboxVanilla(jobs);
 
-        if (separateVanillaJobs) {
+        if (doSeparateVanillaJobs) {
             iVanillaJob = null;
-            chunkVanillaJobs = true;
-        } else if (printAllDocument) {
+            doChunkVanillaJobs = true;
+        } else if (isPrintAllDocuments) {
             iVanillaJob = null;
-            chunkVanillaJobs = false;
+            doChunkVanillaJobs = false;
         } else {
             iVanillaJob = dtoReq.getJobIndex();
-            chunkVanillaJobs = true;
+            doChunkVanillaJobs = true;
         }
 
         /*
@@ -526,7 +548,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
-                dtoReq.getPageScaling(), chunkVanillaJobs, iVanillaJob);
+                dtoReq.getPageScaling(), doChunkVanillaJobs, iVanillaJob);
 
         /*
          * Non-secure Proxy Print, integrated with PaperCut?
@@ -619,9 +641,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          * Job Ticket?
          */
         if (isJobTicket) {
-
             this.onPrintJobTicket(lockedUser, dtoReq, printReq, currencySymbol);
-
             return;
         }
 
@@ -869,29 +889,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     }
 
     /**
+     * Calculates the Job Ticket delivery date.
      *
-     * @param lockedUser
-     *            The locked {@link User} instance, can be {@code null}.
      * @param dtoReq
      *            The {@link DtoReq}.
-     * @param printReq
-     *            The print request.
-     * @param currencySymbol
-     *            The currency symbol.
-     * @param clearAfterPrint
-     *            {@code true} to clear inbox after printing.
-     * @param deliveryDate
-     *            The requested date of delivery.
+     * @return The calculated Job Ticket delivery date.
      */
-    private void onPrintJobTicket(final User lockedUser, final DtoReq dtoReq,
-            final ProxyPrintInboxReq printReq, final String currencySymbol) {
-
-        printReq.setPrintMode(PrintModeEnum.TICKET);
+    private Date calcJobTicketDeliveryDate(final DtoReq dtoReq) {
 
         final boolean isJobTicketDateTime = ConfigManager.instance()
                 .isConfigValue(Key.JOBTICKET_DELIVERY_DATETIME_ENABLE);
-
-        printReq.setComment(dtoReq.getJobTicketRemark());
 
         Date deliveryDate;
 
@@ -922,6 +929,58 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     DateUtils.truncate(deliveryDate, Calendar.DAY_OF_MONTH),
                     minutes);
         }
+        return deliveryDate;
+    }
+
+    /**
+     * Handles a Job Ticket of type {@link JobTicketTypeEnum#COPY}.
+     *
+     * @param lockedUser
+     *            The locked {@link User} instance, can be {@code null}.
+     * @param dtoReq
+     *            The {@link DtoReq}.
+     * @param printReq
+     *            The print request.
+     * @param currencySymbol
+     *            The currency symbol.
+     * @param clearAfterPrint
+     *            {@code true} to clear inbox after printing.
+     * @param deliveryDate
+     *            The requested date of delivery.
+     */
+    private void onCopyJobTicket(final User lockedUser, final DtoReq dtoReq,
+            final ProxyPrintInboxReq printReq, final String currencySymbol) {
+
+        printReq.setPrintMode(PrintModeEnum.TICKET_C);
+        printReq.setComment(dtoReq.getJobTicketRemark());
+
+        final Date deliveryDate = calcJobTicketDeliveryDate(dtoReq);
+
+    }
+
+    /**
+     * Handles a Job Ticket of type {@link JobTicketTypeEnum#PRINT}.
+     *
+     * @param lockedUser
+     *            The locked {@link User} instance, can be {@code null}.
+     * @param dtoReq
+     *            The {@link DtoReq}.
+     * @param printReq
+     *            The print request.
+     * @param currencySymbol
+     *            The currency symbol.
+     * @param clearAfterPrint
+     *            {@code true} to clear inbox after printing.
+     * @param deliveryDate
+     *            The requested date of delivery.
+     */
+    private void onPrintJobTicket(final User lockedUser, final DtoReq dtoReq,
+            final ProxyPrintInboxReq printReq, final String currencySymbol) {
+
+        printReq.setPrintMode(PrintModeEnum.TICKET);
+        printReq.setComment(dtoReq.getJobTicketRemark());
+
+        final Date deliveryDate = calcJobTicketDeliveryDate(dtoReq);
 
         try {
             JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq,
@@ -942,7 +1001,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                 this.getLocale(), currencySymbol);
-
     }
 
     /**

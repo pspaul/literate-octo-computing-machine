@@ -3279,14 +3279,33 @@
 				if (_view.isCbChecked($("#delete-pages-after-print"))) {
 					clearScope = _view.getRadioValue('delete-pages-after-print-scope');
 				}
-				_this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics")), _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate")), _isDelegatedPrint(), _view.isCbChecked($("#print-documents-separate")));
+
+				_this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics"))
+				//
+				, _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate"))
+				//
+				, _isDelegatedPrint(), _view.isCbChecked($("#print-documents-separate"))
+				//
+				, _getJobTicketType(_model.myPrinter.jobTicket));
+			}
+			//
+			, _onJobTicketType = function(ticketType) {
+				_view.visible($('.sp-jobticket-print'), ticketType === 'PRINT');
+			}
+			//
+			, _getJobTicketType = function(isJobTicket) {
+				return isJobTicket ? _view.getRadioValue('sp-print-jobticket-type') || 'PRINT' : 'PRINT';
 			}
 			//
 			, _setVisibility = function() {
 
 				var selCollate = $(".print-collate"), copies, delegatedPrint = _isDelegatedPrint()
 				//
-				, jobTicket = _model.myPrinter && _model.myPrinter.jobTicket;
+				, jobTicket = _model.myPrinter && _model.myPrinter.jobTicket
+				//
+				, jobTicketType = _getJobTicketType(jobTicket);
+				//
+				;
 
 				if (delegatedPrint) {
 					copies = _model.printDelegationCopies;
@@ -3319,6 +3338,8 @@
 				} else {
 					selCollate.hide();
 				}
+
+				_onJobTicketType(jobTicketType);
 
 				_view.visible($('.delete-pages-after-print-scope-enabled'), _view.isCbChecked($('#delete-pages-after-print')));
 			}
@@ -3385,6 +3406,10 @@
 				$('#button-print-delegation').click(function() {
 					_view.showPageAsync('#page-print-delegation', 'PagePrintDelegation');
 					return false;
+				});
+
+				$('input[name="sp-print-jobticket-type"]').click(function() {
+					_onJobTicketType($(this).attr('value'));
 				});
 
 				$('#button-print-and-close').click(function(e) {
@@ -5366,7 +5391,9 @@
 			/**
 			 * Callbacks: page print
 			 */
-			_view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint, collate, isDelegation, separateDocs) {
+			_view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint
+			//
+			, collate, isDelegation, separateDocs, jobTicketType) {
 
 				var res, sel, cost, visible, date, present, jobTicketDate, isJobticket = _model.myPrinter.jobTicket
 				//
@@ -5414,6 +5441,7 @@
 						options : _model.myPrinterOpt,
 						delegation : isDelegation ? _model.printDelegation : null,
 						jobTicket : isJobticket,
+						jobTicketType : jobTicketType,
 						jobTicketDate : jobTicketDate,
 						jobTicketHrs : isJobticket && isJobTicketDateTime ? $('#sp-jobticket-hrs').val() : null,
 						jobTicketMin : isJobticket && isJobTicketDateTime ? $('#sp-jobticket-min').val() : null,

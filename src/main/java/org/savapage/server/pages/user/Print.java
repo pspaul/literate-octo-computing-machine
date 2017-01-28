@@ -184,6 +184,15 @@ public class Print extends AbstractUserPage {
         }
 
         //
+        if (cm.isConfigValue(Key.JOBTICKET_COPIER_ENABLE)) {
+            helper.encloseLabel("jobticket-type", "Type", true);
+            helper.addModifyLabelAttr("jobticket-type-print", "value", "PRINT");
+            helper.addModifyLabelAttr("jobticket-type-copy", "value", "COPY");
+        } else {
+            helper.discloseLabel("jobticket-type");
+        }
+
+        //
         add(new Label("button-send-jobticket",
                 HtmlButtonEnum.SEND.uiText(getLocale())));
     }
