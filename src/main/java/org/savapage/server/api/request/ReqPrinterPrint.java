@@ -475,16 +475,36 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         /*
-         * Vanilla jobs?
+         * Vanilla jobs and job separation?
          */
         final boolean isPrintAllDocuments = dtoReq.getJobIndex().intValue() < 0;
 
+        final boolean isSeparateVanillaJobsCandidate = isPrintAllDocuments
+                && isPrintAllPages && INBOX_SERVICE.isInboxVanilla(jobs);
+
+        final boolean doSeparateVanillaJobs;
+
+        if (isSeparateVanillaJobsCandidate) {
+            if (isJobTicket) {
+                doSeparateVanillaJobs =
+                        BooleanUtils.isTrue(dtoReq.getSeparateDocs());
+            } else {
+                if (cm.isConfigValue(
+                        Key.WEBAPP_USER_PROXY_PRINT_SEPARATE_ENABLE)
+                        && dtoReq.getSeparateDocs() != null) {
+                    doSeparateVanillaJobs =
+                            dtoReq.getSeparateDocs().booleanValue();
+                } else {
+                    doSeparateVanillaJobs = cm.isConfigValue(
+                            Key.WEBAPP_USER_PROXY_PRINT_SEPARATE);
+                }
+            }
+        } else {
+            doSeparateVanillaJobs = false;
+        }
+
         final boolean doChunkVanillaJobs;
         final Integer iVanillaJob;
-
-        final boolean doSeparateVanillaJobs = isPrintAllDocuments
-                && BooleanUtils.isTrue(dtoReq.getSeparateDocs()) && isJobTicket
-                && isPrintAllPages && INBOX_SERVICE.isInboxVanilla(jobs);
 
         if (doSeparateVanillaJobs) {
             iVanillaJob = null;

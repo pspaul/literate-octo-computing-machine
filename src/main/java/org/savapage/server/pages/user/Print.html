@@ -214,14 +214,27 @@
 				<input type="checkbox" id="print-collate" value="1" checked />
 			</div>
 		</li>
-		<li class="sp-jobticket-print">
-			<wicket:enclosure child="print-documents-separate">
+
+		<li>
+			<wicket:enclosure child="print-documents-separate-ticket">
 				<div data-mini="true" data-role="controlgroup"
+					id="print-documents-separate-ticket-div"
 					class="sp-jobticket sp-jobticket-print">
-					<label for="print-documents-separate"
-						wicket:id="print-documents-separate" />
-					<input type="checkbox" id="print-documents-separate" checked
+					<label for="print-documents-separate-ticket"
+						wicket:id="print-documents-separate-ticket" />
+					<input type="checkbox" id="print-documents-separate-ticket" checked
 						value="1" />
+				</div>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="print-documents-separate-print">
+				<div data-mini="true" data-role="controlgroup"
+					id="print-documents-separate-print-div" class="sp-proxyprint">
+					<label for="print-documents-separate-print">
+						<wicket:message key="print-documents-separate" />
+					</label>
+					<input type="checkbox" id="print-documents-separate-print"
+						wicket:id="print-documents-separate-print" value="1" />
 				</div>
 			</wicket:enclosure>
 

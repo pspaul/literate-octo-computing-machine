@@ -127,8 +127,16 @@ public class Print extends AbstractUserPage {
                 getLocalizer().getString("search-printer-placeholder", this));
 
         // Prepare for hiding ...
-        helper.encloseLabel("print-documents-separate",
+        helper.encloseLabel("print-documents-separate-ticket",
                 localized("print-documents-separate"), true);
+
+        //
+        if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_SEPARATE_ENABLE)) {
+            helper.addCheckbox("print-documents-separate-print",
+                    cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_SEPARATE));
+        } else {
+            helper.discloseLabel("print-documents-separate-print");
+        }
 
         //
         helper.encloseLabel("print-remove-graphics-label",

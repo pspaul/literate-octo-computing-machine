@@ -3114,6 +3114,8 @@
 
 			var _this = this
 			//
+			, _TICKETTYPE_PRINT = 'PRINT'
+			//
 			, _quickPrinterCache = []
 			//
 			, _quickPrinterSelected
@@ -3275,26 +3277,37 @@
 			}
 			//
 			, _onPrint = function(isClose) {
-				var clearScope = null;
+
+				var clearScope = null, isJobticket = _model.myPrinter.jobTicket
+				//
+				, separateDocs = null, selWlk;
+
 				if (_view.isCbChecked($("#delete-pages-after-print"))) {
 					clearScope = _view.getRadioValue('delete-pages-after-print-scope');
+				}
+
+				if (isJobticket) {
+					separateDocs = _view.isCbChecked($("#print-documents-separate-ticket"));
+				} else {
+					selWlk = $("#print-documents-separate-print");
+					separateDocs = selWlk.length > 0 ? _view.isCbChecked(selWlk) : null;
 				}
 
 				_this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics"))
 				//
 				, _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate"))
 				//
-				, _isDelegatedPrint(), _view.isCbChecked($("#print-documents-separate"))
+				, _isDelegatedPrint(), separateDocs
 				//
-				, _getJobTicketType(_model.myPrinter.jobTicket));
+				, isJobticket, _getJobTicketType(_model.myPrinter.jobTicket));
 			}
 			//
 			, _onJobTicketType = function(ticketType) {
-				_view.visible($('.sp-jobticket-print'), ticketType === 'PRINT');
+				_view.visible($('.sp-jobticket-print'), ticketType === _TICKETTYPE_PRINT);
 			}
 			//
 			, _getJobTicketType = function(isJobTicket) {
-				return isJobTicket ? _view.getRadioValue('sp-print-jobticket-type') || 'PRINT' : 'PRINT';
+				return isJobTicket ? _view.getRadioValue('sp-print-jobticket-type') || _TICKETTYPE_PRINT : _TICKETTYPE_PRINT;
 			}
 			//
 			, _setVisibility = function() {
@@ -3303,7 +3316,9 @@
 				//
 				, jobTicket = _model.myPrinter && _model.myPrinter.jobTicket
 				//
-				, jobTicketType = _getJobTicketType(jobTicket);
+				, jobTicketType = _getJobTicketType(jobTicket)
+				//
+				, allDocs = _model.canSelectAllDocuments();
 				//
 				;
 
@@ -3342,6 +3357,12 @@
 				_onJobTicketType(jobTicketType);
 
 				_view.visible($('.delete-pages-after-print-scope-enabled'), _view.isCbChecked($('#delete-pages-after-print')));
+
+				_view.visible($('.sp-proxyprint'), !jobTicket);
+				_view.visible($('.sp-jobticket'), jobTicket);
+				
+				_view.visible($('#print-documents-separate-print-div'), !jobTicket && allDocs);
+				_view.visible($('#print-documents-separate-ticket-div'), jobTicket && allDocs);
 			}
 			//
 			;
@@ -3918,6 +3939,10 @@
 
 			this.isLetterhead = function() {
 				return (this.letterheadDefault !== null);
+			};
+
+			this.canSelectAllDocuments = function() {
+				return this.myJobsVanilla && _ns.Utils.countProp(this.mySelectPages) === 0;
 			};
 
 			this.initAuth = function() {
@@ -4729,13 +4754,17 @@
 			 * @param sel
 			 *            The selector, e.g. '#print-job-list'
 			 */
-			this.setJobScopeMenu = function(sel) {
+			this.setJobScopeMenu = function(sel, isPrintDialog) {
 				var options = '<option value="-1">' + _i18n.format('scope-all-documents', null) + '</option>';
-				if (_model.myJobsVanilla && _util.countProp(_model.mySelectPages) === 0) {
+
+				if (_model.canSelectAllDocuments()) {
+
 					$.each(_model.myJobs, function(key, value) {
 						options += '<option value="' + key + '">' + value.title + '</option>';
 					});
+
 				}
+
 				$(sel).empty().append(options);
 				$(sel).val('-1').selectmenu('refresh');
 			};
@@ -5281,7 +5310,7 @@
 			_view.pages.pdfprop.onShow = function() {
 
 				_this.setLetterheadMenu('#pdf-letterhead-list');
-				_this.setJobScopeMenu('#pdf-job-list');
+				_this.setJobScopeMenu('#pdf-job-list', false);
 
 				_model.pdfJobIndex = -1;
 				$('#pdf-title').val(_model.myInboxTitle);
@@ -5393,9 +5422,9 @@
 			 */
 			_view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint
 			//
-			, collate, isDelegation, separateDocs, jobTicketType) {
+			, collate, isDelegation, separateDocs, isJobticket, jobTicketType) {
 
-				var res, sel, cost, visible, date, present, jobTicketDate, isJobticket = _model.myPrinter.jobTicket
+				var res, sel, cost, visible, date, present, jobTicketDate
 				//
 				, isJobTicketDateTime = $('#sp-jobticket-date').length > 0
 				//
@@ -5611,7 +5640,7 @@
 				_view.checkCb('#print-ecoprint', _model.ecoprint);
 
 				_this.setLetterheadMenu('#print-letterhead-list');
-				_this.setJobScopeMenu('#print-job-list');
+				_this.setJobScopeMenu('#print-job-list', true);
 
 				_model.printJobIndex = -1;
 				$('#print-title').val(_model.myInboxTitle);
