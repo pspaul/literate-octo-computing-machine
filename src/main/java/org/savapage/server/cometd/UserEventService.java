@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -239,6 +239,8 @@ public final class UserEventService extends AbstractEventService {
                     break;
 
                 case JOBTICKET_DENIED:
+                case JOBTICKET_SETTLED_COPY:
+                case JOBTICKET_SETTLED_PRINT:
                     eventData = createJobTicketMsg(user,
                             msgIndicator.getMessage(), locale);
                     break;
@@ -815,6 +817,8 @@ public final class UserEventService extends AbstractEventService {
                             break;
 
                         case JOBTICKET_DENIED:
+                        case JOBTICKET_SETTLED_COPY:
+                        case JOBTICKET_SETTLED_PRINT:
                             returnData = createJobTicketMsg(user, msg, locale);
                             break;
 
@@ -1173,32 +1177,39 @@ public final class UserEventService extends AbstractEventService {
     }
 
     /**
+     * Creates a Job Ticket User message.
      *
      * @return
      */
     private Map<String, Object> createJobTicketMsg(final String userId,
             UserMsgIndicator.Msg msgInd, final Locale locale) {
 
-        final Map<String, Object> eventData = new HashMap<String, Object>();
-
-        final JsonUserMsg msg = new JsonUserMsg();
-        msg.setLevel(JsonUserMsg.LEVEL_INFO);
-
         final String text;
+
         switch (msgInd) {
         case JOBTICKET_DENIED:
             text = this.localize(locale, "jobticket-denied");
+            break;
+        case JOBTICKET_SETTLED_COPY:
+            text = this.localize(locale, "jobticket-copy-completed");
+            break;
+        case JOBTICKET_SETTLED_PRINT:
+            text = this.localize(locale, "jobticket-print-completed");
             break;
         default:
             text = "???";
             break;
         }
 
+        final JsonUserMsg msg = new JsonUserMsg();
+        msg.setLevel(JsonUserMsg.LEVEL_INFO);
         msg.setText(text);
 
         final JsonUserMsgNotification json = new JsonUserMsgNotification();
         json.addUserMsg(msg);
         json.setMsgTime(System.currentTimeMillis());
+
+        final Map<String, Object> eventData = new HashMap<String, Object>();
 
         eventData.put(KEY_DATA, json);
         eventData.put(KEY_EVENT, UserEventEnum.JOBTICKET);

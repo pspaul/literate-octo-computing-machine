@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.RedirectPrinterDto;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
@@ -34,6 +35,7 @@ import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
+import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.ServiceContext;
 
@@ -183,6 +185,10 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
             } else {
                 dto = JOBTICKET_SERVICE.settleTicket(printer,
                         dtoReq.getJobFileName());
+
+                if (dto != null) {
+                    notifySettlement(dto);
+                }
             }
 
             final String msgKey;
@@ -199,6 +205,36 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
         } catch (IppConnectException e) {
             this.setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
+        }
+    }
+
+    /**
+     * Notifies the settlement to the requesting user.
+     *
+     * @param dto
+     *            The {@link OutboxJobDto} of the settlement.
+     * @throws IOException
+     *             When error sending the notification.
+     */
+    private void notifySettlement(final OutboxJobDto dto)
+            throws IOException {
+
+        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
+
+        final User user = userDao.findById(dto.getUserId());
+
+        if (UserMsgIndicator.isSafePagesDirPresent(user.getUserId())) {
+
+            final UserMsgIndicator.Msg msg;
+
+            if (dto.isCopyJobTicket()) {
+                msg = UserMsgIndicator.Msg.JOBTICKET_SETTLED_COPY;
+            } else {
+                msg = UserMsgIndicator.Msg.JOBTICKET_SETTLED_PRINT;
+            }
+
+            UserMsgIndicator.write(user.getUserId(),
+                    ServiceContext.getTransactionDate(), msg, null);
         }
     }
 

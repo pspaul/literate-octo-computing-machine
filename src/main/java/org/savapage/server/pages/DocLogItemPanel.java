@@ -336,7 +336,11 @@ public class DocLogItemPanel extends Panel {
                 }
 
                 mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
-                mapVisible.put("job-id", obj.getJobId().toString());
+
+                if (obj.getJobId() != null
+                        && !obj.getJobId().equals(Integer.valueOf(0))) {
+                    mapVisible.put("job-id", obj.getJobId().toString());
+                }
 
                 if (this.showDocLogCost
                         && obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
@@ -455,7 +459,9 @@ public class DocLogItemPanel extends Panel {
         }
 
         //
-        totals.append(", ").append(obj.getHumanReadableByteCount());
+        if (obj.getHumanReadableByteCount() != null) {
+            totals.append(", ").append(obj.getHumanReadableByteCount());
+        }
 
         add(new Label("totals", totals.toString()));
 

@@ -422,8 +422,12 @@ public final class DocLogItem {
                             log.getTransactions().get(0).getCurrencyCode());
                 }
 
-                log.setHumanReadableByteCount(NumberUtil.humanReadableByteCount(
-                        docLog.getNumberOfBytes(), true));
+                if (docLog.getNumberOfBytes() != null
+                        && docLog.getNumberOfBytes().longValue() > 0) {
+                    log.setHumanReadableByteCount(
+                            NumberUtil.humanReadableByteCount(
+                                    docLog.getNumberOfBytes(), true));
+                }
 
                 final DocIn docIn = docLog.getDocIn();
                 final DocOut docOut = docLog.getDocOut();
