@@ -81,9 +81,9 @@
 	<ul class="printer-selected" data-role="listview" data-inset="true">
 
 		<li data-role="list-divider" id="sp-printer-page-name">
-			<wicket:message key="header-job" />
-			<span class="sp-jobticket">Ticket <span
-				id="sp-jobticket-number" /></span>
+			<span class="sp-proxyprint"><wicket:message key="header-job" /></span>
+			<span class="sp-jobticket"><wicket:message key="title_ticket" />
+				<span id="sp-jobticket-number" /></span>
 		</li>
 
 		<li data-mini="true">
@@ -112,7 +112,7 @@
 				</div>
 			</wicket:enclosure>
 
-			<div class="ui-field-contain sp-jobticket-print">
+			<div class="ui-field-contain sp-proxyprint sp-jobticket-print">
 				<label data-mini="true" for="print-job-list" class="sp-txt-wrap">
 					<wicket:message key="print-job-document" />
 				</label>
@@ -159,7 +159,7 @@
 			</div>
 
 			<wicket:enclosure child="prompt-letterhead">
-				<div data-mini="true" class="ui-field-contain sp-jobticket-print">
+				<div data-mini="true" class="ui-field-contain sp-proxyprint sp-jobticket-print">
 					<label wicket:id="prompt-letterhead" data-mini="true"
 						class="sp-txt-wrap" for="print-letterhead-list" />
 					<select data-mini="true" id="print-letterhead-list"
@@ -169,7 +169,7 @@
 
 			<wicket:enclosure child="print-ecoprint">
 				<div data-mini="true" data-role="controlgroup"
-					class="sp-jobticket-print">
+					class="sp-proxyprint sp-jobticket-print">
 					<label for="print-ecoprint" class="sp-txt-wrap">
 						&nbsp;&nbsp;
 						<img height="12" src="/glyphicons/glyphicons_001_leaf.png" />
@@ -182,7 +182,7 @@
 
 			<wicket:enclosure child="print-remove-graphics-label">
 				<div data-mini="true" data-role="controlgroup"
-					class="sp-jobticket-print">
+					class="sp-proxyprint sp-jobticket-print">
 					<label for="print-remove-graphics">
 						&nbsp;&nbsp;
 						<img height="12" src="/glyphicons/glyphicons_092_tint.png" />
@@ -213,9 +213,7 @@
 				</label>
 				<input type="checkbox" id="print-collate" value="1" checked />
 			</div>
-		</li>
 
-		<li>
 			<wicket:enclosure child="print-documents-separate-ticket">
 				<div data-mini="true" data-role="controlgroup"
 					id="print-documents-separate-ticket-div"
@@ -226,7 +224,6 @@
 						value="1" />
 				</div>
 			</wicket:enclosure>
-
 			<wicket:enclosure child="print-documents-separate-print">
 				<div data-mini="true" data-role="controlgroup"
 					id="print-documents-separate-print-div" class="sp-proxyprint">
@@ -237,32 +234,34 @@
 						wicket:id="print-documents-separate-print" value="1" />
 				</div>
 			</wicket:enclosure>
-
 			<wicket:enclosure child="delete-pages-after-print">
-				<div data-mini="true" data-role="controlgroup">
-					<label for="delete-pages-after-print">
-						<wicket:message key="delete-pages-after-print" />
-					</label>
-					<input type="checkbox" id="delete-pages-after-print"
-						wicket:id="delete-pages-after-print" value="1" />
-				</div>
+				<div class="sp-proxyprint sp-jobticket-print">
+					<div data-mini="true" data-role="controlgroup">
+						<label for="delete-pages-after-print">
+							<wicket:message key="delete-pages-after-print" />
+						</label>
+						<input type="checkbox" id="delete-pages-after-print"
+							wicket:id="delete-pages-after-print" value="1" />
+					</div>
 
-				<div class="delete-pages-after-print-scope-enabled"
-					style="margin-left: 20px;">
-					<legend>
-						<small> <wicket:message
-								key="delete-pages-after-print-scope" /></small>
-					</legend>
-					<fieldset data-role="controlgroup" data-mini="true"
-						id="delete-pages-after-print-scope">
-						<wicket:fragment wicket:id="delete-pages-after-print-scope" />
-					</fieldset>
+					<div class="delete-pages-after-print-scope-enabled"
+						style="margin-left: 20px;">
+						<legend>
+							<small> <wicket:message
+									key="delete-pages-after-print-scope" /></small>
+						</legend>
+						<fieldset data-role="controlgroup" data-mini="true"
+							id="delete-pages-after-print-scope">
+							<wicket:fragment wicket:id="delete-pages-after-print-scope" />
+						</fieldset>
+					</div>
 				</div>
 			</wicket:enclosure>
-
 			<wicket:enclosure child="delete-pages-after-print-warn">
-				<small class="sp-txt-wrap sp-txt-info"
-					wicket:id="delete-pages-after-print-warn" />
+				<div class="sp-proxyprint sp-jobticket-print">
+					<small class="sp-txt-wrap sp-txt-info"
+						wicket:id="delete-pages-after-print-warn" />
+				</div>
 			</wicket:enclosure>
 		</li>
 
@@ -293,7 +292,6 @@
 					key="prompt-jobticket-remark" /></span>
 			<textarea name="textarea" id="sp-jobticket-remark" maxlength="255" />
 		</li>
-
 	</ul>
 
 	<button id="button-print-and-close"

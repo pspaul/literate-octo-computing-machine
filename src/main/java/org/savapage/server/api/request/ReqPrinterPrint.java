@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codehaus.jackson.JsonProcessingException;
 import org.savapage.core.SpException;
@@ -48,6 +49,7 @@ import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.RangeAtom;
+import org.savapage.core.ipp.IppMediaSizeEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.ipp.client.IppConnectException;
@@ -59,6 +61,7 @@ import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
+import org.savapage.core.print.proxy.ProxyPrintJobChunkInfo;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
@@ -338,23 +341,17 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             LOGGER.trace(DtoReq.prettyPrint(getParmValue("dto")));
         }
 
-        /*
-         *
-         */
         final boolean isJobTicket = BooleanUtils.isTrue(dtoReq.getJobTicket());
 
-        if (isJobTicket
-                && dtoReq.getJobTicketType() == JobTicketTypeEnum.COPY) {
-            // TODO
+        final boolean isCopyJobTicket = isJobTicket
+                && dtoReq.getJobTicketType() == JobTicketTypeEnum.COPY;
+
+        // Validate
+        if (isCopyJobTicket && !validateJobTicketCopy(dtoReq)) {
+            return;
         }
 
-        /*
-         * INVARIANT: Only one filter allowed.
-         */
-        if (dtoReq.getRemoveGraphics() != null && dtoReq.getRemoveGraphics()
-                && dtoReq.getEcoprint() != null && dtoReq.getEcoprint()) {
-            setApiResult(ApiResultCodeEnum.INFO,
-                    "msg-select-single-pdf-filter");
+        if (!isCopyJobTicket && !validateProxyPrintFiltering(dtoReq)) {
             return;
         }
 
@@ -365,8 +362,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          */
         final InboxSelectScopeEnum clearScope;
 
-        if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
+        if (isCopyJobTicket) {
 
+            clearScope = InboxSelectScopeEnum.NONE;
+
+        } else if (cm.isConfigValue(
+                Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
             /*
              * Overrule scope with system setting.
              */
@@ -383,7 +384,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             clearScope = dtoReq.getClearScope();
         }
 
-        //
+        /*
+         * Printer access?
+         */
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();
 
@@ -399,40 +402,58 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
-        final InboxInfoDto jobs =
-                INBOX_SERVICE.getInboxInfo(lockedUser.getUserId());
+        //
+        final InboxInfoDto jobs;
+        final int nPagesTot;
+        final boolean isPrintAllPages;
 
-        final int nPagesTot = INBOX_SERVICE.calcNumberOfPagesInJobs(jobs);
-        int nPagesPrinted = nPagesTot;
+        int nPagesPrinted;
+        String ranges;
 
-        /*
-         * Validate the ranges.
-         */
-        String ranges = dtoReq.getRanges().trim();
+        if (isCopyJobTicket) {
 
-        final boolean isPrintAllPages = ranges.isEmpty();
+            jobs = null;
+            nPagesTot = Integer.parseInt(dtoReq.getRanges());
+            nPagesPrinted = nPagesTot;
+            ranges = null;
+            isPrintAllPages = true;
 
-        if (!isPrintAllPages) {
+        } else {
+
+            jobs = INBOX_SERVICE.getInboxInfo(lockedUser.getUserId());
+
+            nPagesTot = INBOX_SERVICE.calcNumberOfPagesInJobs(jobs);
+            nPagesPrinted = nPagesTot;
+
             /*
-             * Remove inner spaces.
+             * Validate the ranges.
              */
-            ranges = ranges.replace(" ", "");
-            try {
-                final List<RangeAtom> rangeAtoms =
-                        INBOX_SERVICE.createSortedRangeArray(ranges);
+            ranges = dtoReq.getRanges().trim();
 
-                nPagesPrinted = InboxServiceImpl
-                        .calcSelectedDocPages(rangeAtoms, nPagesTot);
+            isPrintAllPages = ranges.isEmpty();
+
+            if (!isPrintAllPages) {
                 /*
-                 * This gives the SORTED ranges as string: CUPS cannot handle
-                 * ranges like '7-8,5,2' but needs '2,5,7-8'
+                 * Remove inner spaces.
                  */
-                ranges = RangeAtom.asText(rangeAtoms);
+                ranges = ranges.replace(" ", "");
+                try {
+                    final List<RangeAtom> rangeAtoms =
+                            INBOX_SERVICE.createSortedRangeArray(ranges);
 
-            } catch (Exception e) {
-                setApiResult(ApiResultCodeEnum.ERROR,
-                        "msg-clear-range-syntax-error", ranges);
-                return;
+                    nPagesPrinted = InboxServiceImpl
+                            .calcSelectedDocPages(rangeAtoms, nPagesTot);
+                    /*
+                     * This gives the SORTED ranges as string: CUPS cannot
+                     * handle ranges like '7-8,5,2' but needs '2,5,7-8'
+                     */
+                    ranges = RangeAtom.asText(rangeAtoms);
+
+                } catch (Exception e) {
+                    setApiResult(ApiResultCodeEnum.ERROR,
+                            "msg-clear-range-syntax-error", ranges);
+                    return;
+                }
             }
         }
 
@@ -479,8 +500,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          */
         final boolean isPrintAllDocuments = dtoReq.getJobIndex().intValue() < 0;
 
-        final boolean isSeparateVanillaJobsCandidate = isPrintAllDocuments
-                && isPrintAllPages && INBOX_SERVICE.isInboxVanilla(jobs);
+        final boolean isSeparateVanillaJobsCandidate =
+                isPrintAllDocuments && isPrintAllPages && jobs != null
+                        && INBOX_SERVICE.isInboxVanilla(jobs);
 
         final boolean doSeparateVanillaJobs;
 
@@ -535,41 +557,22 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setIdUser(lockedUser.getId());
         printReq.setClearScope(clearScope);
 
-        //
         printReq.setConvertToGrayscale(printReq.isGrayscale()
                 && PROXY_PRINT_SERVICE.isColorPrinter(dtoReq.getPrinter())
                 && PRINTER_SERVICE.isClientSideMonochrome(printer));
 
-        //
-        final PrintDelegationDto delegationDto = dtoReq.getDelegation();
+        final boolean isDelegatedPrint = applyPrintDelegation(dtoReq, printReq);
 
-        final boolean isDelegatedPrint =
-                delegationDto != null && (!delegationDto.getGroups().isEmpty()
-                        || !delegationDto.getUsers().isEmpty());
+        if (isCopyJobTicket) {
 
-        if (isDelegatedPrint) {
+            printReq.setJobChunkInfo(ProxyPrintJobChunkInfo.createCopyJobChunk(
+                    IppMediaSizeEnum.find(printReq.getMediaOption()),
+                    printReq.getNumberOfPages()));
 
-            if (!cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ENABLE)) {
-                throw new SpException("Delegated Print is disabled.");
-            }
-
-            final JsonPrintDelegation jsonDelegation =
-                    JsonPrintDelegation.create(dtoReq.getDelegation());
-
-            final AccountTrxInfoSet infoSet = PRINT_DELEGATION_SERVICE
-                    .createAccountTrxInfoSet(jsonDelegation);
-
-            printReq.setNumberOfCopies(infoSet.getWeightTotal());
-
-            if (printReq.getNumberOfCopies() > 1) {
-                printReq.setCollate(true);
-            }
-            printReq.setAccountTrxInfoSet(infoSet);
+        } else {
+            PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
+                    dtoReq.getPageScaling(), doChunkVanillaJobs, iVanillaJob);
         }
-
-        PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
-                dtoReq.getPageScaling(), doChunkVanillaJobs, iVanillaJob);
-
         /*
          * Non-secure Proxy Print, integrated with PaperCut?
          */
@@ -654,14 +657,21 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
-        //
         printReq.setCostResult(costResult);
 
         /*
-         * Job Ticket?
+         * Copy Job Ticket?
+         */
+        if (isCopyJobTicket) {
+            this.onJobTicketCopy(lockedUser, dtoReq, printReq, currencySymbol);
+            return;
+        }
+
+        /*
+         * Print Job Ticket?
          */
         if (isJobTicket) {
-            this.onPrintJobTicket(lockedUser, dtoReq, printReq, currencySymbol);
+            this.onJobTicketPrint(lockedUser, dtoReq, printReq, currencySymbol);
             return;
         }
 
@@ -761,6 +771,47 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     }
 
     /**
+     * Applies print delegation info into the print request.
+     *
+     * @param dtoReq
+     *            The incoming request.
+     * @param printReq
+     *            The print request.
+     * @return {@code true} when delegated print is applied.
+     */
+    private static boolean applyPrintDelegation(final DtoReq dtoReq,
+            final ProxyPrintInboxReq printReq) {
+
+        final PrintDelegationDto delegationDto = dtoReq.getDelegation();
+
+        final boolean isDelegatedPrint =
+                delegationDto != null && (!delegationDto.getGroups().isEmpty()
+                        || !delegationDto.getUsers().isEmpty());
+
+        if (isDelegatedPrint) {
+
+            if (!ConfigManager.instance()
+                    .isConfigValue(Key.PROXY_PRINT_DELEGATE_ENABLE)) {
+                throw new SpException("Delegated Print is disabled.");
+            }
+
+            final JsonPrintDelegation jsonDelegation =
+                    JsonPrintDelegation.create(dtoReq.getDelegation());
+
+            final AccountTrxInfoSet infoSet = PRINT_DELEGATION_SERVICE
+                    .createAccountTrxInfoSet(jsonDelegation);
+
+            printReq.setNumberOfCopies(infoSet.getWeightTotal());
+
+            if (printReq.getNumberOfCopies() > 1) {
+                printReq.setCollate(true);
+            }
+            printReq.setAccountTrxInfoSet(infoSet);
+        }
+        return isDelegatedPrint;
+    }
+
+    /**
      *
      * @param printReq
      * @param currencySymbol
@@ -794,6 +845,45 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 .getConfigInt(Key.PROXY_PRINT_DIRECT_EXPIRY_SECS));
 
         setApiResultOk();
+    }
+
+    /**
+     * Validates input for Copy Job ticket.
+     *
+     * @param dtoReq
+     *            The user request.
+     * @return {@code true} when input is valid.
+     */
+    private boolean validateJobTicketCopy(final DtoReq dtoReq) {
+
+        if (StringUtils.isBlank(dtoReq.getJobName())) {
+            setApiResult(ApiResultCodeEnum.ERROR, "msg-copyjob-title-missing");
+        } else if (!NumberUtils.isDigits(dtoReq.getRanges())) {
+            setApiResult(ApiResultCodeEnum.ERROR, "msg-copyjob-pages-invalid");
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Validates proxy print filtering.
+     *
+     * @param dtoReq
+     *            The user request.
+     * @return {@code true} when input is valid.
+     */
+    private boolean validateProxyPrintFiltering(final DtoReq dtoReq) {
+        /*
+         * INVARIANT: Only one filter allowed for proxy print.
+         */
+        if (dtoReq.getRemoveGraphics() != null && dtoReq.getRemoveGraphics()
+                && dtoReq.getEcoprint() != null && dtoReq.getEcoprint()) {
+            setApiResult(ApiResultCodeEnum.INFO,
+                    "msg-select-single-pdf-filter");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -956,45 +1046,43 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      * Handles a Job Ticket of type {@link JobTicketTypeEnum#COPY}.
      *
      * @param lockedUser
-     *            The locked {@link User} instance, can be {@code null}.
+     *            The locked {@link User} instance.
      * @param dtoReq
      *            The {@link DtoReq}.
      * @param printReq
      *            The print request.
      * @param currencySymbol
      *            The currency symbol.
-     * @param clearAfterPrint
-     *            {@code true} to clear inbox after printing.
-     * @param deliveryDate
-     *            The requested date of delivery.
      */
-    private void onCopyJobTicket(final User lockedUser, final DtoReq dtoReq,
+    private void onJobTicketCopy(final User lockedUser, final DtoReq dtoReq,
             final ProxyPrintInboxReq printReq, final String currencySymbol) {
 
         printReq.setPrintMode(PrintModeEnum.TICKET_C);
         printReq.setComment(dtoReq.getJobTicketRemark());
 
-        final Date deliveryDate = calcJobTicketDeliveryDate(dtoReq);
+        JOBTICKET_SERVICE.createCopyJob(lockedUser, printReq,
+                calcJobTicketDeliveryDate(dtoReq));
 
+        //
+        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+
+        ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
+                this.getLocale(), currencySymbol);
     }
 
     /**
      * Handles a Job Ticket of type {@link JobTicketTypeEnum#PRINT}.
      *
      * @param lockedUser
-     *            The locked {@link User} instance, can be {@code null}.
+     *            The locked {@link User} instance.
      * @param dtoReq
      *            The {@link DtoReq}.
      * @param printReq
      *            The print request.
      * @param currencySymbol
      *            The currency symbol.
-     * @param clearAfterPrint
-     *            {@code true} to clear inbox after printing.
-     * @param deliveryDate
-     *            The requested date of delivery.
      */
-    private void onPrintJobTicket(final User lockedUser, final DtoReq dtoReq,
+    private void onJobTicketPrint(final User lockedUser, final DtoReq dtoReq,
             final ProxyPrintInboxReq printReq, final String currencySymbol) {
 
         printReq.setPrintMode(PrintModeEnum.TICKET);

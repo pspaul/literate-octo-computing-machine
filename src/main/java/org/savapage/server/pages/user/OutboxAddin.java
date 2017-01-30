@@ -143,6 +143,7 @@ public class OutboxAddin extends AbstractUserPage {
             final OutboxJobDto job = item.getModelObject();
             final IppOptionMap optionMap = job.createIppOptionMap();
             final boolean isJobTicketItem = job.getUserId() != null;
+            final boolean isCopyJobTicket = job.isCopyJobTicket();
 
             Label labelWlk;
 
@@ -174,7 +175,11 @@ public class OutboxAddin extends AbstractUserPage {
             //
             imgSrc.append(WebApp.PATH_IMAGES).append('/');
             if (isJobTicketItem) {
-                imgSrc.append("printer-jobticket-32x32.png");
+                if (isCopyJobTicket) {
+                    imgSrc.append("copy-jobticket-128x128.png");
+                } else {
+                    imgSrc.append("printer-jobticket-32x32.png");
+                }
             } else {
                 imgSrc.append("device-card-reader-16x16.png");
             }
@@ -187,7 +192,6 @@ public class OutboxAddin extends AbstractUserPage {
                             && StringUtils.isNotBlank(job.getComment()));
 
             //
-
             helper.encloseLabel("jobticket-nr", job.getTicketNumber(),
                     job.getTicketNumber() != null);
 
@@ -253,17 +257,24 @@ public class OutboxAddin extends AbstractUserPage {
             final String encloseButtonIdPreview;
 
             if (isJobTicketItem) {
+
                 helper.discloseLabel("button-cancel-outbox-job");
                 helper.discloseLabel("button-preview-outbox-job");
+
                 encloseButtonIdRemove = "button-cancel-outbox-jobticket";
-                encloseButtonIdPreview = "button-preview-outbox-jobticket";
+
+                if (isCopyJobTicket) {
+                    helper.discloseLabel("button-preview-outbox-jobticket");
+                    encloseButtonIdPreview = null;
+                } else {
+                    encloseButtonIdPreview = "button-preview-outbox-jobticket";
+                }
             } else {
                 helper.discloseLabel("button-cancel-outbox-jobticket");
                 helper.discloseLabel("button-preview-outbox-jobticket");
                 encloseButtonIdRemove = "button-cancel-outbox-job";
                 encloseButtonIdPreview = "button-preview-outbox-job";
             }
-
             this.addJobIdAttr(
                     helper.encloseLabel(encloseButtonIdRemove,
                             HtmlButtonEnum.CANCEL.uiText(getLocale()), true),
@@ -271,7 +282,7 @@ public class OutboxAddin extends AbstractUserPage {
 
             if (job.isDrm()) {
                 helper.discloseLabel(encloseButtonIdPreview);
-            } else {
+            } else if (encloseButtonIdPreview != null) {
                 this.addJobIdAttr(helper.encloseLabel(encloseButtonIdPreview,
                         HtmlButtonEnum.PREVIEW.uiText(getLocale()), true), job);
             }
@@ -306,13 +317,12 @@ public class OutboxAddin extends AbstractUserPage {
 
             final Map<String, String> mapVisible = new HashMap<>();
 
-            for (final String attr : new String[] { "title",
-                    "papersize", "letterhead", "duplex", "singlex", "color",
-                    "collate", "grayscale", "accounts", "removeGraphics",
-                    "ecoPrint", "extSupplier", "owner-user-name", "drm",
-                    "punch", "staple", "fold", "booklet", "jobticket-media",
-                    "jobticket-copy", "jobticket-finishing-ext", "landscape",
-                    "portrait" }) {
+            for (final String attr : new String[] { "title", "papersize",
+                    "letterhead", "duplex", "singlex", "color", "collate",
+                    "grayscale", "accounts", "removeGraphics", "ecoPrint",
+                    "extSupplier", "owner-user-name", "drm", "punch", "staple",
+                    "fold", "booklet", "jobticket-media", "jobticket-copy",
+                    "jobticket-finishing-ext", "landscape", "portrait" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -445,13 +455,17 @@ public class OutboxAddin extends AbstractUserPage {
             //
             if (this.isJobticketView && job.getUserId() != null) {
 
-                this.addJobIdAttr(
-                        helper.encloseLabel("button-jobticket-print",
-                                String.format("%s . . .",
-                                        HtmlButtonEnum.PRINT
-                                                .uiText(getLocale())),
-                                true),
-                        job);
+                if (isCopyJobTicket) {
+                    helper.discloseLabel("button-jobticket-print");
+                } else {
+                    this.addJobIdAttr(
+                            helper.encloseLabel("button-jobticket-print",
+                                    String.format("%s . . .",
+                                            HtmlButtonEnum.PRINT
+                                                    .uiText(getLocale())),
+                                    true),
+                            job);
+                }
 
                 this.addJobIdAttr(
                         helper.encloseLabel("button-jobticket-settle",
