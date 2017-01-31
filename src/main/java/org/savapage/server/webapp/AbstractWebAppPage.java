@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
@@ -63,9 +64,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
     private static final long serialVersionUID = 1L;
 
     /**
-     *
+     * .
      */
-    protected final static String PAGE_PARM_LOGIN = "sp-login";
+    protected static final String PAGE_PARM_LOGIN = "sp-login";
 
     /**
      * .
@@ -126,16 +127,29 @@ public abstract class AbstractWebAppPage extends AbstractPage
         GOOGLE_SIGN_IN
     }
 
+    /**
+     * .
+     */
     private static final String CSS_FILE_WICKET_SAVAPAGE =
             "wicket.savapage.css";
+
+    /**
+     * .
+     */
     private static final String CSS_FILE_JQUERY_SAVAPAGE =
             "jquery.savapage.css";
 
+    /**
+     * .
+     */
     static final String JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION =
             "jquery.savapage-page-print-delegation.js";
 
-    static final String JS_URL_GOOGLE_SIGN_IN =
-            "jquery.savapage-page-print-delegation.js";
+    /**
+     * .
+     */
+    static final String CSS_FILE_JQUERY_MOBILE_THEME_ICONS =
+            "jquery.mobile.icons.min.css";
 
     /**
      *
@@ -147,7 +161,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
     /**
      *
      * @param suffix
-     * @return
+     *            The title suffix.
+     * @return The web title
      */
     protected static String getWebAppTitle(final String suffix) {
 
@@ -351,12 +366,15 @@ public abstract class AbstractWebAppPage extends AbstractPage
             final IHeaderResponse response, final String nocache);
 
     /**
+     * Renders a JavaScript file.
      *
      * @param response
      *            The {@link IHeaderResponser}.
      * @param url
+     *            The URL of the file to render.
      */
-    protected void renderJs(final IHeaderResponse response, final String url) {
+    protected final void renderJs(final IHeaderResponse response,
+            final String url) {
         response.render(JavaScriptHeaderItem.forUrl(url));
     }
 
@@ -440,7 +458,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
      *            The property key.
      * @return {@code null} when not found (or empty).
      */
-    private static String getCssFileName(IConfigProp.Key key) {
+    private static String getCssFileName(final IConfigProp.Key key) {
         final String fileName = ConfigManager.instance().getConfigValue(key);
         if (StringUtils.isNotBlank(fileName)) {
             return fileName;
@@ -489,6 +507,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
     }
 
     /**
+     * @param webAppType
+     *            The type of Web App.
      * @return The custom CSS filename, or {@code null} when not applicable.
      */
     private String getCssCustomFileName(final WebAppTypeEnum webAppType) {
@@ -571,9 +591,10 @@ public abstract class AbstractWebAppPage extends AbstractPage
                     String.format("/%s/%s%s", CustomWebServlet.PATH_BASE_THEMES,
                             customThemeCssFileName, nocache)));
 
-            response.render(CssHeaderItem.forUrl(
-                    String.format("%s/%s%s", CustomWebServlet.PATH_BASE_THEMES,
-                            "jquery.mobile.icons.min.css", nocache)));
+            response.render(CssHeaderItem.forUrl(String.format("/%s/%s%s%s",
+                    CustomWebServlet.PATH_BASE_THEMES,
+                    FilenameUtils.getPath(customThemeCssFileName),
+                    CSS_FILE_JQUERY_MOBILE_THEME_ICONS, nocache)));
 
             response.render(WebApp.getWebjarsCssRef(
                     WEBJARS_PATH_JQUERY_MOBILE_STRUCTURE_CSS));
@@ -691,7 +712,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
     }
 
     /**
-     *
+     * @param webAppType
+     *            The type to Web App.
      */
     protected final void addZeroPagePanel(final WebAppTypeEnum webAppType) {
         final ZeroPagePanel zeroPanel = new ZeroPagePanel("zero-page-panel");
