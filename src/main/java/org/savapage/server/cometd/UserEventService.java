@@ -238,6 +238,7 @@ public final class UserEventService extends AbstractEventService {
                     eventData = createAccountMsg(user, locale);
                     break;
 
+                case JOBTICKET_CHANGED:
                 case JOBTICKET_DENIED:
                 case JOBTICKET_SETTLED_COPY:
                 case JOBTICKET_SETTLED_PRINT:
@@ -816,6 +817,7 @@ public final class UserEventService extends AbstractEventService {
                             returnData = createAccountMsg(user, locale);
                             break;
 
+                        case JOBTICKET_CHANGED:
                         case JOBTICKET_DENIED:
                         case JOBTICKET_SETTLED_COPY:
                         case JOBTICKET_SETTLED_PRINT:
@@ -1187,6 +1189,9 @@ public final class UserEventService extends AbstractEventService {
         final String text;
 
         switch (msgInd) {
+        case JOBTICKET_CHANGED:
+            text = this.localize(locale, "jobticket-changed");
+            break;
         case JOBTICKET_DENIED:
             text = this.localize(locale, "jobticket-denied");
             break;

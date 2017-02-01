@@ -40,6 +40,7 @@ import org.savapage.server.api.request.ReqDeviceSet;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqJobTicketCancel;
 import org.savapage.server.api.request.ReqJobTicketExec;
+import org.savapage.server.api.request.ReqJobTicketSave;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqLogout;
 import org.savapage.server.api.request.ReqOutboxCancelAll;
@@ -133,6 +134,7 @@ public class JsonApiDict {
 
     public static final String REQ_JOBTICKET_DELETE = "jobticket-delete";
     public static final String REQ_JOBTICKET_EXECUTE = "jobticket-execute";
+    public static final String REQ_JOBTICKET_SAVE = "jobticket-save";
 
     public static final String REQ_PAPERCUT_TEST = "papercut-test";
 
@@ -806,6 +808,9 @@ public class JsonApiDict {
         usr(REQ_INBOX_IS_VANILLA, DbClaim.NONE, DbAccess.USER_LOCK);
 
         acl(REQ_JOBTICKET_DELETE, ReqJobTicketCancel.class, DbClaim.READ,
+                DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
+
+        acl(REQ_JOBTICKET_SAVE, ReqJobTicketSave.class, DbClaim.READ,
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         acl(REQ_JOBTICKET_EXECUTE, ReqJobTicketExec.class, DbClaim.READ,

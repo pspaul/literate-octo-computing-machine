@@ -85,7 +85,7 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
          */
         private static final long serialVersionUID = 1L;
 
-        private final OutboxJobDto printJob;
+        private final OutboxJobDto jobTicket;
 
         /**
          *
@@ -100,7 +100,7 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
                 final List<JsonProxyPrinterOpt> list, final OutboxJobDto job) {
 
             super(id, list);
-            this.printJob = job;
+            this.jobTicket = job;
         }
 
         @Override
@@ -123,10 +123,21 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
 
             // How to to this the proper wicket:fragment way?
             final StringBuilder choices = new StringBuilder();
+
+            final String ticketChoice = this.jobTicket.getOptionValues()
+                    .get(printerOption.getKeyword());
+
             for (final JsonProxyPrinterOptChoice choice : printerOption
                     .getChoices()) {
+
                 choices.append("<option value=\"").append(choice.getChoice())
-                        .append("\">").append(choice.getUiText())
+                        .append("\"");
+
+                if (ticketChoice != null
+                        && choice.getChoice().equals(ticketChoice)) {
+                    choices.append(" selected");
+                }
+                choices.append(">").append(choice.getUiText())
                         .append("</option>");
             }
 
@@ -183,11 +194,16 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
         add(new PrinterOptionsView("ipp-option-list", optionList, job));
 
         //
-        final Label label =
+        Label label =
                 new Label("btn-save", HtmlButtonEnum.SAVE.uiText(getLocale()));
         MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_DATA_SAVAPAGE,
                 jobFileName);
         add(label);
+
+        //
+        MarkupHelper helper = new MarkupHelper(this);
+        helper.addModifyLabelAttr("jobticket-copies", "value",
+                String.valueOf(job.getCopies()));
 
         //
         add(new Label("btn-cancel", HtmlButtonEnum.CANCEL.uiText(getLocale())));

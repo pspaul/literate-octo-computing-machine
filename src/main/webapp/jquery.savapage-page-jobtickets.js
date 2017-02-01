@@ -160,13 +160,37 @@
 				});
 			}
 			//
+			, _onSaveJob = function(jobFileName) {
+				var res, ippOptions = {};
+
+				$('#sp-jobticket-popup').find('select').each(function() {
+					ippOptions[$(this).attr('data-savapage')] = $(this).find(':selected').val();
+				});
+
+				res = _api.call({
+					request : 'jobticket-save',
+					dto : JSON.stringify({
+						jobFileName : jobFileName,
+						copies : $('#sp-jobticket-edit-copies').val(),
+						ippOptions : ippOptions
+					})
+				});
+				
+				if (res.result.code === "0") {
+					$('#sp-jobticket-popup').popup('close');
+					_refresh();
+				}
+				//_view.showApiMsg(res);
+				_view.message(res.result.txt);
+			}
+			//
 			, _onExecJob = function(jobFileName, print) {
 				var res, selPrinter = _view.getRadioSelected('sp-jobticket-redirect-printer'), mediaSource;
 				if (print) {
 					mediaSource = _getRedirectPrinterMediaSource(_getRedirectPrinterItem(selPrinter)).find(':selected').val();
 				}
 				res = _execJob(jobFileName, print, selPrinter.val(), mediaSource);
-							
+
 				if (res.result.code === "0") {
 					$('#sp-jobticket-popup').popup('close');
 					_refresh();
@@ -298,6 +322,10 @@
 					_onProcessAll(_MODE_PRINT);
 				}).on('change', "input[name='sp-jobticket-redirect-printer']", null, function() {
 					_onRedirectPrinterRadio($(this));
+				}).on('click', '#sp-jobticket-edit-popup-btn-cancel', null, function() {
+					$('#sp-jobticket-popup').popup('close');
+				}).on('click', '#sp-jobticket-edit-popup-btn-save', null, function() {
+					_onSaveJob($(this).attr('data-savapage'));
 				});
 
 				_quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);
