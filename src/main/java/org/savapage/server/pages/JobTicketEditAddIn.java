@@ -33,6 +33,7 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.json.JsonPrinterDetail;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.print.proxy.JsonProxyPrinterOpt;
@@ -187,6 +188,10 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
 
         for (final JsonProxyPrinterOptGroup group : printer.getGroups()) {
             for (final JsonProxyPrinterOpt option : group.getOptions()) {
+                if (option.getKeyword()
+                        .equals(IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE)) {
+                    continue;
+                }
                 optionList.add(option);
             }
         }

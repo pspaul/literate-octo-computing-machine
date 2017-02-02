@@ -28,10 +28,17 @@ import java.util.Map.Entry;
 import org.savapage.core.SpException;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
+import org.savapage.core.ipp.helpers.IppOptionMap;
+import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
 import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
+import org.savapage.core.pdf.PdfPrintCollector;
+import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.ProxyPrintCostDto;
+import org.savapage.core.services.helpers.ProxyPrintCostParms;
 
 /**
  *
@@ -136,8 +143,7 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
         /*
          * Re-calculate the costs.
          */
-
-        // TODO
+        recalcCost(dto);
 
         /*
          * Update.
@@ -147,6 +153,57 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
         } catch (IOException e) {
             throw new SpException(e.getMessage());
         }
+    }
+
+    /**
+     * Recalculates the cost of an {@link OutboxJobDto}, based on its intrinsic
+     * cost parameters.
+     * <p>
+     * Note: {@link OutboxJobDto#setCostResult(ProxyPrintCostDto)} is called to
+     * update the cost.
+     * </p>
+     *
+     * @param dto
+     *            The {@link OutboxJobDto}.
+     */
+    private void recalcCost(final OutboxJobDto dto) {
+
+        final JsonProxyPrinter proxyPrinter =
+                PROXY_PRINT_SERVICE.getCachedPrinter(dto.getPrinterName());
+
+        final ProxyPrintCostParms costParms =
+                new ProxyPrintCostParms(proxyPrinter);
+
+        final IppOptionMap optionMap = new IppOptionMap(dto.getOptionValues());
+
+        // Set parameters.
+        costParms.setDuplex(optionMap.isDuplexJob());
+        costParms.setEcoPrint(dto.isEcoPrint());
+        costParms.setGrayscale(!optionMap.isColorJob());
+        costParms.setPagesPerSide(optionMap.getNumberUp());
+
+        costParms.setIppMediaOption(
+                optionMap.getOptionValue(IppDictJobTemplateAttr.ATTR_MEDIA));
+        costParms.importIppOptionValues(dto.getOptionValues());
+
+        // Calculate cost metrics.
+        costParms.calcCustomCost();
+
+        final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
+                .findByName(dto.getPrinterName());
+
+        costParms.setNumberOfCopies(dto.getCopies());
+        costParms.setNumberOfPages(dto.getPages());
+
+        // Calculate print cost.
+        final ProxyPrintCostDto costResult =
+                ACCOUNTING_SERVICE.calcProxyPrintCost(printer, costParms);
+
+        dto.setCostResult(costResult);
+
+        dto.setSheets(PdfPrintCollector.calcNumberOfPrintedSheets(
+                dto.getPages(), dto.getCopies(), costParms.isDuplex(),
+                costParms.getPagesPerSide(), false, false, false));
     }
 
     /**

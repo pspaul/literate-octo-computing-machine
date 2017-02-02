@@ -85,26 +85,40 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
         private static final long serialVersionUID = 1L;
 
         /**
+         * The default media-source choice.
+         */
+        private final JsonProxyPrinterOptChoice defaultChoice;
+
+        /**
          * @param id
          *            The wicket id.
          * @param list
          *            The item list.
+         * @param choice
+         *            The default media-source choice.
          */
         MediaSourceListView(final String id,
-                final List<JsonProxyPrinterOptChoice> list) {
+                final List<JsonProxyPrinterOptChoice> list,
+                final JsonProxyPrinterOptChoice choice) {
             super(id, list);
+            this.defaultChoice = choice;
         }
 
         @Override
         protected void
                 populateItem(final ListItem<JsonProxyPrinterOptChoice> item) {
+
             final JsonProxyPrinterOptChoice choice = item.getModelObject();
 
-            Label labelWlk;
+            final Label labelWlk = new Label("choice", choice.getUiText());
 
-            //
-            labelWlk = new Label("choice", choice.getUiText());
             MarkupHelper.modifyLabelAttr(labelWlk, "value", choice.getChoice());
+
+            if (this.defaultChoice != null && choice.getChoice()
+                    .equals(this.defaultChoice.getChoice())) {
+                MarkupHelper.modifyLabelAttr(labelWlk, "selected", "selected");
+            }
+
             item.add(labelWlk);
         }
     }
@@ -208,7 +222,8 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
                 item.add(new MediaSourceListView("media-source",
                         filterMediaSourcesForUser(
                                 new PrinterAttrLookup(dbPrinter),
-                                printer.getMediaSourceOpt().getChoices())));
+                                printer.getMediaSourceOpt().getChoices()),
+                        printer.getMediaSourceOptChoice()));
             }
         }
 
