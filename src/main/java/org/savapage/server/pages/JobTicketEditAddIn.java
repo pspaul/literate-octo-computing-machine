@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,7 +40,6 @@ import org.savapage.core.print.proxy.JsonProxyPrinterOpt;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptChoice;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptGroup;
 import org.savapage.core.services.JobTicketService;
-import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -62,12 +61,6 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
      */
     private static final JobTicketService JOBTICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
-
-    /**
-     * .
-     */
-    private static final PrinterService PRINTER_SERVICE =
-            ServiceContext.getServiceFactory().getPrinterService();
 
     /**
      * .

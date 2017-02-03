@@ -324,6 +324,8 @@
 					_onRedirectPrinterRadio($(this));
 				}).on('click', '#sp-jobticket-edit-popup-btn-cancel', null, function() {
 					$('#sp-jobticket-popup').popup('close');
+				}).on('click', '#sp-jobticket-popup-btn-cancel', null, function() {
+					$('#sp-jobticket-popup').popup('close');					
 				}).on('click', '#sp-jobticket-edit-popup-btn-save', null, function() {
 					_onSaveJob($(this).attr('data-savapage'));
 				});

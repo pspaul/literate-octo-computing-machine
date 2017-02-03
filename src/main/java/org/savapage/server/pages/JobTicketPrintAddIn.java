@@ -345,6 +345,9 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
                 MarkupHelper.ATTR_DATA_SAVAPAGE, jobFileName);
         add(labelButton);
 
+        //
+        add(new Label("btn-cancel", HtmlButtonEnum.CANCEL.uiText(getLocale())));
+
         add(new Label("prompt-header", prompt));
 
         //
