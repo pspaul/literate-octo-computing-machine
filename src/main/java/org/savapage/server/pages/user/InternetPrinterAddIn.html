@@ -1,21 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
-<legend>
-	<wicket:message key="prompt-url" />
-	<p class="sp-txt-wrap sp-txt-valid" style="font-family: monospace;"
-		wicket:id="internet-printer-uri" />
-</legend>
-
+<ul data-role="listview" data-inset="true">
+	<li>
+		<h3 class="sp-txt-wrap">
+			<wicket:message key="header" />
+		</h3>
+	</li>
+	<li>
+		<h3>CUPS</h3>
+		<div class="sp-txt-wrap sp-txt-valid" style="font-family: monospace;"
+			wicket:id="internet-printer-uri-cups" />
+		<br />
+		<div>
+			<a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini"
+				href="/client/SAVAPAGE.ppd" target="_blank">SAVAPAGE.ppd</a>
+		</div>
+	</li>
+	<li>
+		<h3>Windows</h3>
+		<div class="sp-txt-wrap sp-txt-valid" style="font-family: monospace;"
+			wicket:id="internet-printer-uri-windows" />
+		<br />
+		<div>
+			<wicket:message key="windows-driver-msg" />
+		</div>
+	</li>
+</ul>
