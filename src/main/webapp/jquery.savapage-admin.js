@@ -1,8 +1,8 @@
-/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1662,10 +1662,6 @@
 				return _view.pages.admin.commonPwReset('reset-jmx-pw', $('#jmx-pw-new'), $('#jmx-pw-confirm'));
 			};
 
-			_view.pages.jobTickets.onClose = function() {
-				_view.pages.admin.show();
-			};
-
 			/**
 			 *
 			 */
@@ -1862,9 +1858,7 @@
 				queue : new _ns.PageQueue(_i18n, _view, _model),
 				printer : new _ns.PagePrinter(_i18n, _view, _model),
 				device : new _ns.PageDevice(_i18n, _view, _model),
-				voucherCreate : new _ns.PageAccountVoucherCreate(_i18n, _view, _model),
-				pointOfSale : new _ns.PagePointOfSale(_i18n, _view, _model, _api),
-				jobTickets : new _ns.PageJobTickets(_i18n, _view, _model, _api)
+				voucherCreate : new _ns.PageAccountVoucherCreate(_i18n, _view, _model)
 			};
 
 			_ns.PanelDashboard.model = _model;

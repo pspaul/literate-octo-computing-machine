@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,12 +23,6 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
-import org.savapage.core.config.ConfigManager;
-import org.savapage.core.dao.enums.ACLRoleEnum;
-import org.savapage.core.jpa.User;
-import org.savapage.core.services.AccessControlService;
-import org.savapage.core.services.ServiceContext;
-import org.savapage.server.SpSession;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -43,12 +37,6 @@ public final class Main extends AbstractAdminPage {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * .
-     */
-    private static final AccessControlService ACCESSCONTROL_SERVICE =
-            ServiceContext.getServiceFactory().getAccessControlService();
 
     @Override
     protected boolean needMembership() {
@@ -72,36 +60,6 @@ public final class Main extends AbstractAdminPage {
         helper.addModifyLabelAttr("savapage-org-link",
                 CommunityDictEnum.SAVAPAGE_DOT_ORG.getWord(), "href",
                 CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG_URL.getWord());
-
-        //
-        final User user = SpSession.get().getUser();
-        final boolean enclosePos;
-        final boolean encloseJobtickets;
-
-        //
-        if (user == null) {
-            /*
-             * Sometimes we land and keep returning here, in Chromium browser.
-             * Why?
-             */
-            enclosePos = false;
-            encloseJobtickets = false;
-        } else if (ConfigManager.isInternalAdmin(user.getUserId())) {
-            enclosePos = true;
-            encloseJobtickets = true;
-        } else {
-            enclosePos = ACCESSCONTROL_SERVICE.hasAccess(user,
-                    ACLRoleEnum.WEB_CASHIER);
-            encloseJobtickets = ACCESSCONTROL_SERVICE.hasAccess(user,
-                    ACLRoleEnum.JOB_TICKET_OPERATOR);
-        }
-
-        helper.encloseLabel("point-of-sale", localized("point-of-sale"),
-                enclosePos);
-
-        helper.encloseLabel("job-tickets", localized("job-tickets"),
-                encloseJobtickets);
-
     }
 
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -120,11 +120,6 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                 "jquery.savapage-admin-panels.js", nocache));
         renderJs(response, String.format("%s%s",
                 "jquery.savapage-admin-pages.js", nocache));
-        renderJs(response,
-                String.format("%s%s", "jquery.savapage-page-pos.js", nocache));
-        renderJs(response, String.format("%s%s",
-                "jquery.savapage-page-jobtickets.js", nocache));
-
         renderJs(response,
                 String.format("%s%s", getSpecializedJsFileName(), nocache));
     }
