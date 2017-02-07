@@ -532,7 +532,7 @@ public final class MarkupHelper {
      * @param wicketId
      *            The {@code wicket:id} of the HTML entity.
      * @param value
-     *            The label value;
+     *            The label value.
      * @param enclose
      *            {@code true} when label should be enclosed.
      * @return The label

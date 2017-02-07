@@ -3,7 +3,7 @@
 	<!-- 
     +========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ..|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein.......| 
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein.......| 
     |........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ......|
     | it under the terms of the GNU Affero General Public License as ........|
@@ -18,6 +18,11 @@
 		<wicket:message key="file-upload-supported-docs" />
 	</h3>
 	<div class="sp-txt-info sp-txt-wrap" wicket:id="file-upload-types-docs" />
+	<wicket:enclosure child="file-upload-types-docs-warning">
+		<br/><small class="sp-txt-info sp-txt-wrap"
+			wicket:id="file-upload-types-docs-warning" />
+	</wicket:enclosure>
+
 </li>
 <li>
 	<h3>
