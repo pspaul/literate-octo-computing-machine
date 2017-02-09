@@ -940,12 +940,23 @@
 					$('.sp-doclog-cat-queue').show();
 				} else if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-out')) {
 					$('.sp-doclog-cat-out').show();
+					$('.sp-doclog-cat-out-detail').show();
 				} else if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-pdf')) {
 					$('.sp-doclog-cat-out').show();
+					$('.sp-doclog-cat-out-detail').show();
 					$('.sp-doclog-cat-pdf').show();
 				} else if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-print')) {
 					$('.sp-doclog-cat-out').show();
+					$('.sp-doclog-cat-out-detail').show();
 					$('.sp-doclog-cat-printer').show();
+					$('.sp-doclog-cat-printer-list').show();
+					$('.sp-doclog-cat-printer-print-layout').show();
+				} else if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-ticket')) {
+					$('.sp-doclog-cat-out').show();
+					$('.sp-doclog-cat-out-detail').hide();
+					$('.sp-doclog-cat-printer').show();
+					$('.sp-doclog-cat-printer-list').hide();
+					$('.sp-doclog-cat-printer-print-layout').hide();
 				}
 			},
 

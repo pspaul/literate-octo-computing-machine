@@ -88,6 +88,15 @@
 								id="sp-doclog-select-type-print" wicket:id="select-type-print"
 								value="" />
 
+							<wicket:enclosure child="select-type-ticket">
+								<label for="sp-doclog-select-type-ticket">
+									<wicket:message key="type-ticket" />
+								</label>
+								<input type="radio" name="sp-doclog-select-type"
+									id="sp-doclog-select-type-ticket"
+									wicket:id="select-type-ticket" value="" />
+							</wicket:enclosure>
+
 						</fieldset>
 					</div>
 
@@ -157,7 +166,7 @@
                         -->
 						</wicket:remove>
 
-						<div class="ui-field-contain">
+						<div class="ui-field-contain sp-doclog-cat-out-detail">
 							<label for="sp-doc-out-destination" class="sp-txt-wrap">
 								<wicket:message key="prompt-destination" />
 							</label>
@@ -165,7 +174,7 @@
 								maxlength="128" autocomplete="off" autocorrect="off"
 								autocapitalize="off" spellcheck="false" />
 						</div>
-						<div class="ui-field-contain">
+						<div class="ui-field-contain sp-doclog-cat-out-detail">
 							<fieldset data-role="controlgroup" data-type="horizontal"
 								class="ui-mini">
 								<legend class="sp-txt-wrap">
@@ -265,7 +274,7 @@
 						<ul data-role="listview" data-inset="true"
 							class="sp-doclog-cat-printer">
 							<li>
-								<div class="ui-field-contain">
+								<div class="ui-field-contain sp-doclog-cat-printer-list">
 									<label for="sp-print-out-printer" class="sp-txt-wrap">
 										<wicket:message key="prompt-printer" />
 									</label>
@@ -305,7 +314,7 @@
 									</select>
 								</div>
 
-								<div class="ui-field-contain">
+								<div class="ui-field-contain sp-doclog-cat-printer-print-layout">
 									<fieldset data-role="controlgroup" data-type="horizontal"
 										class="ui-mini">
 										<legend class="sp-txt-wrap">
@@ -334,7 +343,6 @@
 						</ul>
 					</div>
 				</li>
-
 
 				<li>
 					<div class="ui-field-contain">

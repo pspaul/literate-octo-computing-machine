@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ package org.savapage.server.pages;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -1070,7 +1071,6 @@ public final class DocLogItem {
             if (selDuplex != null) {
                 query.setParameter("duplex", selDuplex);
             }
-
         }
 
         @Override
@@ -1082,6 +1082,49 @@ public final class DocLogItem {
             }
         }
 
+    }
+
+    /**
+     * .
+     */
+    private static class QTicket extends QPrint {
+
+        @Override
+        protected String getExtraWhere(final DocLogPagerReq req) {
+
+            int nWhere = 0;
+
+            final StringBuilder where = new StringBuilder();
+
+            //
+            final String extraWhere = super.getExtraWhere(req);
+            if (extraWhere != null) {
+                where.append(extraWhere);
+                nWhere++;
+            }
+
+            if (nWhere > 0) {
+                where.append(" AND ");
+            }
+            nWhere++;
+
+            where.append("P.printMode IN (:printModes)");
+
+            return where.toString();
+        }
+
+        @Override
+        protected void setExtraParms(final Query query,
+                final DocLogPagerReq req) {
+
+            super.setExtraParms(query, req);
+
+            List<String> names = Arrays.asList(PrintModeEnum.TICKET.toString(),
+                    PrintModeEnum.TICKET_C.toString(),
+                    PrintModeEnum.TICKET_E.toString());
+
+            query.setParameter("printModes", names);
+        }
     }
 
     /**
@@ -1111,6 +1154,8 @@ public final class DocLogItem {
             return new QPdf();
         case PRINT:
             return new QPrint();
+        case TICKET:
+            return new QTicket();
         default:
             throw new SpException(
                     String.format("Unknown doctype [%s]", docType.toString()));
