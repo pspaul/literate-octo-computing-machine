@@ -87,9 +87,14 @@ public class DocLogPage extends AbstractListPage {
 
         final DocLogDao.Type docType = req.getSelect().getDocType();
 
-        Long userId = null;
+        final Long userId;
 
-        if (req.getSelect().getAccountId() == null) {
+        if (this.getSessionWebAppType() == WebAppTypeEnum.JOBTICKETS) {
+
+            showFinancialData = true;
+            userId = null;
+
+        } else if (req.getSelect().getAccountId() == null) {
 
             if (this.getSessionWebAppType() == WebAppTypeEnum.ADMIN) {
                 userId = req.getSelect().getUserId();
@@ -106,6 +111,7 @@ public class DocLogPage extends AbstractListPage {
             }
         } else {
             showFinancialData = true;
+            userId = null;
         }
 
         /*

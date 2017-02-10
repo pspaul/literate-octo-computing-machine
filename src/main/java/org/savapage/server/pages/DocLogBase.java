@@ -74,15 +74,28 @@ public class DocLogBase extends AbstractAuthPage {
             checkAdminAuthorization();
         }
 
-        handlePage(webAppType == WebAppTypeEnum.ADMIN);
+        if (webAppType == WebAppTypeEnum.JOBTICKETS) {
+
+            final User user = SpSession.get().getUser();
+
+            if (user == null || !ACCESS_CONTROL_SERVICE.hasAccess(user,
+                    ACLRoleEnum.JOB_TICKET_OPERATOR)) {
+
+                this.setResponsePage(NotAuthorized.class);
+                setAuthErrorHandled(true);
+            }
+
+        }
+
+        handlePage(webAppType);
     }
 
     /**
      *
-     * @param isAdminWebApp
-     *            If {@code true}, this page is part of the Admin Web App.
+     * @param webAppType
+     *            The Web App Type this page is part of.
      */
-    private void handlePage(final boolean isAdminWebApp) {
+    private void handlePage(final WebAppTypeEnum webAppType) {
 
         final String data = getParmValue(POST_PARM_DATA);
 
@@ -94,13 +107,19 @@ public class DocLogBase extends AbstractAuthPage {
         final boolean userNameVisible;
         final boolean accountNameVisible;
 
-        if (isAdminWebApp) {
+        if (webAppType == WebAppTypeEnum.ADMIN) {
 
             userId = req.getSelect().getUserId();
             userNameVisible = (userId != null);
 
             accountId = req.getSelect().getAccountId();
             accountNameVisible = (accountId != null);
+
+        } else if (webAppType == WebAppTypeEnum.JOBTICKETS) {
+
+            userId = null;
+            userNameVisible = false;
+            accountNameVisible = false;
 
         } else {
             /*
@@ -164,7 +183,8 @@ public class DocLogBase extends AbstractAuthPage {
         //
         final boolean ticketButtonVisible;
 
-        if (isAdminWebApp) {
+        if (webAppType == WebAppTypeEnum.ADMIN
+                || webAppType == WebAppTypeEnum.JOBTICKETS) {
             ticketButtonVisible = true;
         } else {
             final User user = SpSession.get().getUser();
@@ -237,17 +257,17 @@ public class DocLogBase extends AbstractAuthPage {
         /*
          *
          */
-        final Long printerId = req.getSelect().getPrinterId();
-        if (printerId != null) {
+        if (req.getSelect() != null) {
 
-        }
+            final Long printerId = req.getSelect().getPrinterId();
+            if (printerId != null) {
 
-        /*
-         *
-         */
-        final Long queueId = req.getSelect().getQueueId();
-        if (queueId != null) {
+            }
 
+            final Long queueId = req.getSelect().getQueueId();
+            if (queueId != null) {
+
+            }
         }
 
     }

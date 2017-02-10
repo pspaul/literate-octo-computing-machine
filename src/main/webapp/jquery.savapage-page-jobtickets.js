@@ -175,7 +175,7 @@
 						ippOptions : ippOptions
 					})
 				});
-				
+
 				if (res.result.code === "0") {
 					$('#sp-jobticket-popup').popup('close');
 					_refresh();
@@ -247,7 +247,8 @@
 
 			$(_self.id()).on('pagecreate', function(event) {
 
-				var id = 'sp-jobticket-sort-dir';
+				var id = 'sp-jobticket-sort-dir', _pnlDocLog = _ns.PanelDocLogBase;
+
 				_view.checkRadio(id, _expiryAsc ? id + '-asc' : id + '-desc');
 
 				$('#btn-jobtickets-refresh').click(function() {
@@ -325,14 +326,92 @@
 				}).on('click', '#sp-jobticket-edit-popup-btn-cancel', null, function() {
 					$('#sp-jobticket-popup').popup('close');
 				}).on('click', '#sp-jobticket-popup-btn-cancel', null, function() {
-					$('#sp-jobticket-popup').popup('close');					
+					$('#sp-jobticket-popup').popup('close');
 				}).on('click', '#sp-jobticket-edit-popup-btn-save', null, function() {
 					_onSaveJob($(this).attr('data-savapage'));
 				});
 
 				_quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);
 
+				//--------------------------------------------
+				// Common Panel parameters.
+				//--------------------------------------------
+
+				_ns.PanelCommon.view = _view;
+
+				_ns.PanelCommon.refreshPanelCommon = function(wClass, skipBeforeLoad, thePanel) {
+
+					var jqId = thePanel.jqId
+					//
+					, data = thePanel.getInput(thePanel)
+					//
+					, jsonData = JSON.stringify(data)
+					//
+					;
+
+					$.mobile.loading("show");
+					$.ajax({
+						type : "POST",
+						async : true,
+						url : '/pages/' + wClass + _ns.WebAppTypeUrlParm(),
+						data : {
+							user : _ns.PanelCommon.userId,
+							data : jsonData
+						}
+					}).done(function(html) {
+						$(jqId).html(html).enhanceWithin();
+
+						// Hide the top divider with the title
+						$(jqId + ' > ul > .ui-li-divider').hide();
+						// Hide the document type selection
+						_view.visible($('#sp-doclog-cat-type'), false);
+
+						thePanel.onOutput(thePanel, undefined);
+						thePanel.afterload(thePanel);
+
+					}).fail(function() {
+						_ns.PanelCommon.onDisconnected();
+					}).always(function() {
+						$.mobile.loading("hide");
+					});
+
+				};
+
+				//
+				_pnlDocLog.jqId = '#sp-jobtickets-tab-closed';
+				_pnlDocLog.applyDefaultForTicket(_pnlDocLog);
+
+				// Load page
+				$('#sp-jobtickets-tab-closed').html(_view.getPageHtml('DocLogBase')).enhanceWithin();
+
+				$(this).on('click', '#button-doclog-apply', null, function() {
+					var pnl = _ns.PanelDocLogBase;
+					pnl.page(pnl, 1);
+					return false;
+				});
+
+				$(this).on('click', '#button-doclog-default', null, function() {
+					var pnl = _ns.PanelDocLogBase;
+					pnl.applyDefaultForTicket(pnl);
+					pnl.m2v(pnl);
+					return false;
+				});
+
+				$(this).on('change', "input[name='sp-doclog-select-type']", null, function() {
+					var pnl = _ns.PanelDocLogBase;
+					pnl.setVisibility(pnl);
+					return false;
+				});
+
+				$("#sp-a-content-button").click();
+
+				$('#sp-jobtickets-tab-closed-button').click(function() {
+					var pnl = _ns.PanelDocLogBase;
+					pnl.refresh(pnl);
+				});
+
 			}).on("pageshow", function(event, ui) {
+				$('#sp-jobtickets-tab-open-button').click();
 				_initCountdownTimer();
 				_refresh();
 			}).on("pagehide", function(event, ui) {

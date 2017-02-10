@@ -3276,6 +3276,10 @@
 				return sel && !_view.isCbDisabled(sel) && _view.isCbChecked(sel);
 			}
 			//
+			, _getJobTicketType = function(isJobTicket) {
+				return isJobTicket ? _view.getRadioValue('sp-print-jobticket-type') || _TICKETTYPE_PRINT : _TICKETTYPE_PRINT;
+			}
+			//
 			, _onPrint = function(isClose) {
 
 				var clearScope = null, isJobticket = _model.myPrinter.jobTicket
@@ -3302,8 +3306,8 @@
 				, isJobticket, _getJobTicketType(_model.myPrinter.jobTicket));
 			}
 			//
-			, _getJobTicketType = function(isJobTicket) {
-				return isJobTicket ? _view.getRadioValue('sp-print-jobticket-type') || _TICKETTYPE_PRINT : _TICKETTYPE_PRINT;
+			, _onJobTicketType = function(ticketType) {
+				_view.visible($('.sp-jobticket-print'), ticketType === _TICKETTYPE_PRINT);
 			}
 			//
 			, _setVisibility = function() {
@@ -3314,7 +3318,7 @@
 				//
 				, jobTicketType = _getJobTicketType(jobTicket)
 				//
-				, allDocs = _model.canSelectAllDocuments();
+				, allDocs = _model.canSelectAllDocuments()
 				//
 				;
 
@@ -3361,10 +3365,6 @@
 				if (jobTicket) {
 					_onJobTicketType(jobTicketType);
 				}
-			}
-			//
-			, _onJobTicketType = function(ticketType) {
-				_view.visible($('.sp-jobticket-print'), ticketType === _TICKETTYPE_PRINT);
 			}
 			//
 			;
@@ -4900,7 +4900,6 @@
 					$(jqId).html(html).enhanceWithin();
 
 					// Hide the top divider with the title
-					// $(jqId + ' .ui-li-divider').hide();
 					$(jqId + ' > ul > .ui-li-divider').hide();
 
 					/*
@@ -5426,7 +5425,7 @@
 			//
 			, collate, isDelegation, separateDocs, isJobticket, jobTicketType) {
 
-				var res, sel, cost, visible, date, present, jobTicketDate
+				var res, sel, cost, visible, date, jobTicketDate
 				//
 				, isJobTicketDateTime = $('#sp-jobticket-date').length > 0
 				//

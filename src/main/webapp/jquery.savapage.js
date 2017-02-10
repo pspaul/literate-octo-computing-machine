@@ -865,6 +865,11 @@
 				$("#sp-doclog-account-title").html("");
 			},
 
+			applyDefaultForTicket : function(my) {
+				my.applyDefaults(my);
+				my.input.select.doc_type = 'TICKET';
+			},
+
 			/*
 			 * Generic: can be reused
 			 */
@@ -897,7 +902,7 @@
 				my.input.select.letterhead = undefined;
 
 				my.input.select.printer_id = null;
-				my.input.select.job_state = null;
+				my.input.select.job_state = "0";
 				// Boolean
 				my.input.select.duplex = undefined;
 
@@ -984,12 +989,13 @@
 				//---------------------------------
 				if (my.input.select.printer_id) {
 					$('#sp-print-out-printer').val(my.input.select.printer_id).selectmenu('refresh');
-					$('#sp-print-out-state').val(my.input.select.job_state).selectmenu('refresh');
 					my.input.select.doc_type = "PRINT";
 				} else if (my.input.select.queue_id) {
 					$('#sp-print-in-queue').val(my.input.select.queue_id).selectmenu('refresh');
 					my.input.select.doc_type = "IN";
 				}
+
+				$('#sp-print-out-state').val(my.input.select.job_state).selectmenu('refresh');
 
 				//--
 				_view.checkRadioValue('sp-doclog-select-type', my.input.select.doc_type);
@@ -1463,7 +1469,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP, or collected local card number from individual keystrokes,
+			// The YubiKey OTP,  or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
