@@ -3,7 +3,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -83,37 +83,50 @@
 
 					</fieldset>
 				</div>
-
 			</div>
 
-			<div
-				style="width: auto; margin: 10px; height: 5px; background-color: white;">
-				<div id='sp-jobticket-countdown'
-					style="width: 0%; height: 100%; background-color: #ededed;" />
+			<div>
+				<div style="float: left; margin-left: 15px; margin-top: -5px;">
+					<img style="padding: 0px 3px 3px 0px;"
+						id="sp-btn-jobticket-countdown-pause"
+						src="/famfamfam-silk/control_pause.png" />
+					<img style="padding: 0px 3px 3px 0px; display: none;"
+						id="sp-btn-jobticket-countdown-play"
+						src="/famfamfam-silk/control_play.png" />
+				</div>
+				<div style="margin-left: 30px; margin-top: 15px;">
+					<div id='sp-jobticket-countdown-bar'
+						style="width: auto; margin: 10px; height: 5px; background-color: white;">
+						<div id='sp-jobticket-countdown'
+							style="width: 0%; height: 100%; background-color: #ededed;" />
+					</div>
+				</div>
 			</div>
 
-			<button id="btn-jobtickets-refresh"
-				class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-refresh">
-				<wicket:message key="button-refresh-now" />
-			</button>
-			<!--  -->
-			<button id="btn-jobtickets-cancel-all" data-rel="popup"
-				class="ui-btn ui-mini ui-btn-inline sp-jobtickets-all">
-				<wicket:message key="button-cancel-all" />
-				. . .
-			</button>
-			<!--  -->
-			<button id="btn-jobtickets-print-all" data-rel="popup"
-				class="ui-btn ui-mini ui-btn-inline sp-jobtickets-all">
-				<wicket:message key="button-print-all" />
-				. . .
-			</button>
-			<!--  -->
-			<button id="btn-jobtickets-close" data-rel="back"
-				data-direction="reverse" wicket:id="button-logout"
-				class="ui-btn ui-mini ui-btn-inline ui-icon-none" />
-				
-			<div id="jobticket-list" />
+			<div style="float: left; margin-left: -30px;">
+				<button id="btn-jobtickets-refresh"
+					class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-refresh">
+					<wicket:message key="button-refresh-now" />
+				</button>
+				<!--  -->
+				<button id="btn-jobtickets-cancel-all" data-rel="popup"
+					class="ui-btn ui-mini ui-btn-inline sp-jobtickets-all">
+					<wicket:message key="button-cancel-all" />
+					. . .
+				</button>
+				<!--  -->
+				<button id="btn-jobtickets-print-all" data-rel="popup"
+					class="ui-btn ui-mini ui-btn-inline sp-jobtickets-all">
+					<wicket:message key="button-print-all" />
+					. . .
+				</button>
+				<!--  -->
+				<button id="btn-jobtickets-close" data-rel="back"
+					data-direction="reverse" wicket:id="button-logout"
+					class="ui-btn ui-mini ui-btn-inline ui-icon-none" />
+			</div>
+
+			<div style="float: left;" id="jobticket-list" />
 		</div>
 
 		<wicket:remove>

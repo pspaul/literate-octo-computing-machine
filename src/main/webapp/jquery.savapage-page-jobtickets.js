@@ -41,7 +41,9 @@
 			//
 			, _self = _ns.derive(_page)
 			//
-			, _countdownCounter, _countdownTimer
+			, _pnlDocLog = _ns.PanelDocLogBase, _pnlDocLogRefresh = true
+			//
+			, _countdownTimer, _countdownCounter = 1, _countdownPaused
 			//
 			, _MODE_PRINT = '0', _MODE_CANCEL = '1'
 			//
@@ -67,29 +69,32 @@
 
 				_view.enable($('.sp-jobtickets-all'), $('.sp-outbox-job-entry').length > 0);
 
-				_countdownCounter = 1;
+				if (!_countdownPaused) {
+					_countdownCounter = 1;
+					_startCountdownTimer();
+				}
 
 				return false;
 			}
 			//
-			, _clearCountdownTimer = function() {
+			, _stopCountdownTimer = function() {
 				if (_countdownTimer) {
 					window.clearTimeout(_countdownTimer);
 					_countdownTimer = null;
 				}
 			}
 			//
-			, _initCountdownTimer = function() {
-				_clearCountdownTimer();
-				_countdownCounter = 1;
+			, _startCountdownTimer = function() {
+				var msecDelay = 3000, refreshMsec = 60 * 1000;
+				_stopCountdownTimer();
 				_countdownTimer = window.setInterval(function() {
-					var width = 100 * _countdownCounter / 600;
-					$('#sp-jobticket-countdown').width(width + '%');
-					if (_countdownCounter++ === 600) {
+					var widthPerc = 100 * msecDelay * _countdownCounter / refreshMsec;
+					$('#sp-jobticket-countdown').width(widthPerc + '%');
+					if (_countdownCounter++ === refreshMsec / msecDelay) {
 						_countdownCounter = 1;
 						_refresh();
 					}
-				}, 100);
+				}, msecDelay);
 			}
 			//
 			, _getRedirectPrinterItem = function(inputRadio) {
@@ -247,7 +252,7 @@
 
 			$(_self.id()).on('pagecreate', function(event) {
 
-				var id = 'sp-jobticket-sort-dir', _pnlDocLog = _ns.PanelDocLogBase;
+				var id = 'sp-jobticket-sort-dir';
 
 				_view.checkRadio(id, _expiryAsc ? id + '-asc' : id + '-desc');
 
@@ -315,20 +320,42 @@
 
 				}).on('click', "#sp-jobticket-popup-btn-print", null, function() {
 					_onExecJob($(this).attr('data-savapage'), true);
+
 				}).on('click', "#sp-jobticket-popup-btn-settle", null, function() {
 					_onExecJob($(this).attr('data-savapage'), false);
+
 				}).on('click', '#sp-jobticket-popup-cancel-all-btn-yes', null, function() {
 					_onProcessAll(_MODE_CANCEL);
+
 				}).on('click', '#sp-jobticket-popup-print-all-btn-yes', null, function() {
 					_onProcessAll(_MODE_PRINT);
+
 				}).on('change', "input[name='sp-jobticket-redirect-printer']", null, function() {
 					_onRedirectPrinterRadio($(this));
+
 				}).on('click', '#sp-jobticket-edit-popup-btn-cancel', null, function() {
 					$('#sp-jobticket-popup').popup('close');
+
 				}).on('click', '#sp-jobticket-popup-btn-cancel', null, function() {
 					$('#sp-jobticket-popup').popup('close');
+
 				}).on('click', '#sp-jobticket-edit-popup-btn-save', null, function() {
 					_onSaveJob($(this).attr('data-savapage'));
+
+				}).on('click', '#sp-btn-jobticket-countdown-pause', null, function() {
+					if (_countdownTimer) {
+						_stopCountdownTimer();
+						_countdownPaused = true;
+						_view.visible($(this), false);
+						_view.visible($('#sp-btn-jobticket-countdown-play'), true);
+					}
+				}).on('click', '#sp-btn-jobticket-countdown-play', null, function() {
+					if (!_countdownTimer) {
+						_startCountdownTimer();
+						_countdownPaused = false;
+						_view.visible($(this), false);
+						_view.visible($('#sp-btn-jobticket-countdown-pause'), true);
+					}
 				});
 
 				_quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);
@@ -340,7 +367,6 @@
 				_ns.PanelCommon.view = _view;
 
 				_ns.PanelCommon.refreshPanelCommon = function(wClass, skipBeforeLoad, thePanel) {
-
 					var jqId = thePanel.jqId
 					//
 					, data = thePanel.getInput(thePanel)
@@ -374,7 +400,6 @@
 					}).always(function() {
 						$.mobile.loading("hide");
 					});
-
 				};
 
 				//
@@ -384,38 +409,60 @@
 				// Load page
 				$('#sp-jobtickets-tab-closed').html(_view.getPageHtml('DocLogBase')).enhanceWithin();
 
-				$(this).on('click', '#button-doclog-apply', null, function() {
-					var pnl = _ns.PanelDocLogBase;
-					pnl.page(pnl, 1);
-					return false;
-				});
+				$(this).on('click', '#sp-jobtickets-tab-closed-button', null, function() {
+					if (!_countdownPaused) {
+						_stopCountdownTimer();
+					}
+					if (_pnlDocLogRefresh) {
+						_pnlDocLog.refresh(_pnlDocLog);
+					} else {
+						_pnlDocLogRefresh = false;
+						_pnlDocLog.page(_pnlDocLog, 1);
+					}
 
-				$(this).on('click', '#button-doclog-default', null, function() {
-					var pnl = _ns.PanelDocLogBase;
-					pnl.applyDefaultForTicket(pnl);
-					pnl.m2v(pnl);
-					return false;
-				});
+				}).on('click', '#sp-jobtickets-tab-open-button', null, function() {
+					if (!_countdownPaused) {
+						_startCountdownTimer();
+					}
 
-				$(this).on('change', "input[name='sp-doclog-select-type']", null, function() {
-					var pnl = _ns.PanelDocLogBase;
-					pnl.setVisibility(pnl);
+				}).on('click', '#button-doclog-apply', null, function() {
+					_pnlDocLog.page(_pnlDocLog, 1);
+					return false;
+
+				}).on('click', '#button-doclog-default', null, function() {
+					_pnlDocLog.applyDefaultForTicket(_pnlDocLog);
+					_pnlDocLog.m2v(_pnlDocLog);
+					return false;
+
+				}).on('change', "input[name='sp-doclog-select-type']", null, function() {
+					_pnlDocLog.setVisibility(_pnlDocLog);
 					return false;
 				});
 
 				$("#sp-a-content-button").click();
 
-				$('#sp-jobtickets-tab-closed-button').click(function() {
-					var pnl = _ns.PanelDocLogBase;
-					pnl.refresh(pnl);
+				$('#sp-jobticket-popup,#sp-jobticket-popup-cancel-all,#sp-jobticket-popup-print-all').popup({
+					afteropen : function(event, ui) {
+						if (!_countdownPaused) {
+							_stopCountdownTimer();
+						}
+					},
+					afterclose : function(event, ui) {
+						if (!_countdownPaused) {
+							_startCountdownTimer();
+						}
+					}
 				});
+
+			_view.visible($('#sp-btn-jobticket-countdown-play'), false);
 
 			}).on("pageshow", function(event, ui) {
 				$('#sp-jobtickets-tab-open-button').click();
-				_initCountdownTimer();
+				_countdownCounter = 1;
 				_refresh();
+
 			}).on("pagehide", function(event, ui) {
-				_clearCountdownTimer();
+				_stopCountdownTimer();
 			});
 
 			return _self;
