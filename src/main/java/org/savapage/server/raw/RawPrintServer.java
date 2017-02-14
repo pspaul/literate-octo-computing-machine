@@ -155,6 +155,11 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
      */
     private static final String PJL_COMMAND_PFX = "@PJL";
 
+    private static final String PJL_TOKEN_SET = "SET";
+    private static final String PJL_TOKEN_USERNAME = "USERNAME";
+    private static final String PJL_TOKEN_JOB = "JOB";
+    private static final String PJL_TOKEN_NAME = "NAME";
+
     /**
      * The initial {@link StringBuilder} capacity for reading a line.
      */
@@ -309,19 +314,100 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
      *            {@link InputStream} to read the line from.
      * @param ostr
      *            {@link OutputStream} to write the resulting line to.
+     * @param headerLines
+     *            List to append the header lines on.
      * @return The first non-PJL command header line, or {@code null} when
      *         nothing to read.
      * @throws IOException
      *             When read or write error.
      */
     private static String skipPJLCommandLines(final InputStream istr,
-            final OutputStream ostr) throws IOException {
+            final OutputStream ostr, final List<String> headerLines)
+            throws IOException {
 
         String line = readLine(istr, ostr);
         while (line != null && line.startsWith(PJL_COMMAND_PFX)) {
+            headerLines.add(line);
             line = readLine(istr, ostr);
         }
         return line;
+    }
+
+    /**
+     * Logs the header lines as warnming.
+     *
+     * @param comment
+     *            The comment as first lien warning.
+     * @param headerLines
+     *            List of header lines.
+     */
+    private static void warnHeaderLines(final String comment,
+            final List<String> headerLines) {
+        final StringBuilder msg = new StringBuilder(comment);
+        final String lf = System.getProperty("line.separator");
+        for (final String line : headerLines) {
+            final String stripped = StringUtils.strip(line, "\r\n");
+            if (StringUtils.isNotBlank(stripped)) {
+                msg.append(lf).append(stripped);
+            }
+        }
+        LOGGER.warn(msg.toString());
+    }
+
+    /**
+     * Gets the JOB NAME from @PCL header line. Example PJL line: Example:
+     * <p>
+     * {@code @PJL JOB NAME = "Document 1" DISPLAY = "9729 john Document 1"}
+     * </p>
+     *
+     * @param pjlLine
+     *            The PJL line.
+     * @return {@code null} when not found.
+     */
+    private static String getPJLJobName(final String pjlLine) {
+
+        final String[] words = StringUtils.split(pjlLine);
+
+        if (words.length >= 5 && words[0].equalsIgnoreCase(PJL_COMMAND_PFX)
+                && words[1].equalsIgnoreCase(PJL_TOKEN_JOB)
+                && words[2].equalsIgnoreCase(PJL_TOKEN_NAME)) {
+
+            final String rest = StringUtils
+                    .substring(pjlLine, StringUtils.indexOf(pjlLine, "=") + 1)
+                    .trim();
+
+            return StringUtils
+                    .substring(rest, 1, StringUtils.indexOf(rest, '\"', 1))
+                    .trim();
+        }
+        return null;
+    }
+
+    /**
+     * Gets the USERNAME from @PCL header line. Example PJL line:
+     * <p>
+     * {@code @PJL SET USERNAME = "john doe"}
+     * </p>
+     *
+     * @param pjlLine
+     *            The PJL line.
+     * @return {@code null} when not found.
+     */
+    private static String getPJLUserName(final String pjlLine) {
+
+        final String[] words = StringUtils.split(pjlLine);
+
+        if (words.length >= 5 && words[0].equalsIgnoreCase(PJL_COMMAND_PFX)
+                && words[1].equalsIgnoreCase(PJL_TOKEN_SET)
+                && words[2].equalsIgnoreCase(PJL_TOKEN_USERNAME)) {
+            return StringUtils
+                    .strip(StringUtils
+                            .substring(pjlLine,
+                                    StringUtils.indexOf(pjlLine, "=") + 1)
+                            .trim(), "\"\"")
+                    .trim();
+        }
+        return null;
     }
 
     /**
@@ -452,11 +538,30 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             return;
         }
 
+        //
+        final List<String> headerLines = new ArrayList<>();
+
         /*
          * Mantis #779: Accept JetDirect PostScript stream with UEL header.
          */
         if (strline.startsWith(UEL_SIGNATURE_MINUS_FIRST_ESC, 1)) {
-            strline = skipPJLCommandLines(istr, bos);
+            strline = skipPJLCommandLines(istr, bos, headerLines);
+        }
+
+        /*
+         * Search PJL Commands for job and user name.
+         */
+        for (final String pjlLine : headerLines) {
+
+            if (title != null && userid != null) {
+                break;
+            }
+            if (title == null) {
+                title = getPJLJobName(pjlLine);
+            }
+            if (userid == null) {
+                userid = getPJLUserName(pjlLine);
+            }
         }
 
         /*
@@ -471,32 +576,37 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
                     + StringUtils.substring(strline, 0, 10) + "]");
         }
 
-        final List<String> lines = new ArrayList<>();
+        /*
+         * Search PostScript header for job and user name.
+         */
+        if (title == null || userid == null) {
 
-        while (strline != null) {
+            while (strline != null) {
 
-            lines.add(strline);
+                headerLines.add(strline);
 
-            if (strline.startsWith(PFX_TITLE)) {
-                title = stripParentheses(
-                        StringUtils.removeStart(strline, PFX_TITLE));
+                if (strline.startsWith(PFX_BEGIN_PROLOG)) {
+                    break;
+                }
 
-            } else if (strline.startsWith(PFX_USERID)) {
-                userid = stripParentheses(
-                        StringUtils.removeStart(strline, PFX_USERID));
+                if (title == null && strline.startsWith(PFX_TITLE)) {
+                    title = stripParentheses(
+                            StringUtils.removeStart(strline, PFX_TITLE));
+                }
 
-            } else if (strline.startsWith(PFX_BEGIN_PROLOG)) {
-                break;
+                if (userid == null && strline.startsWith(PFX_USERID)) {
+                    userid = stripParentheses(
+                            StringUtils.removeStart(strline, PFX_USERID));
+                }
+
+                strline = readLine(istr, bos);
             }
-
-            if (title != null && userid != null) {
-                break;
-            }
-
-            strline = readLine(istr, bos);
         }
 
         if (title == null || userid == null) {
+
+            warnHeaderLines("IP Print failed: title and/or user missing",
+                    headerLines);
 
             consumeWithoutProcessing(istr);
 
@@ -513,8 +623,8 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
             final int MAX_LINES = 30;
             int i;
-            for (i = 0; i < lines.size() && i < MAX_LINES; i++) {
-                LOGGER.trace(lines.get(i));
+            for (i = 0; i < headerLines.size() && i < MAX_LINES; i++) {
+                LOGGER.trace(headerLines.get(i));
             }
             if (i > MAX_LINES) {
                 LOGGER.trace(
