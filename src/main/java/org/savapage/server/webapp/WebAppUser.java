@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -67,6 +67,7 @@ import org.savapage.core.print.server.DocContentPrintException;
 import org.savapage.core.print.server.DocContentPrintReq;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserService;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.SpSession;
@@ -97,6 +98,12 @@ public final class WebAppUser extends AbstractWebAppPage {
      */
     private static final QueueService QUEUE_SERVICE =
             ServiceContext.getServiceFactory().getQueueService();
+
+    /**
+     *
+     */
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      * "Bean" attribute used for the selected font from the Form. Note: Wicket
@@ -360,6 +367,21 @@ public final class WebAppUser extends AbstractWebAppPage {
             return;
         }
 
+        try {
+            USER_SERVICE.lazyUserHomeDir(authUser);
+        } catch (IOException e) {
+            final String msg =
+                    String.format("User [%s] inbox could not be created: %s",
+                            authUser.getUserId(), e.getMessage());
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.ERROR, msg);
+            LOGGER.error(msg);
+            return;
+        }
+
+        /*
+         * Yes, we are authenticated, and no exceptions.
+         */
         SpSession.get().setUser(authUser, true);
 
         final String msg = localized("msg-authtoken-accepted", userid);
