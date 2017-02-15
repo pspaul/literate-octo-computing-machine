@@ -76,7 +76,6 @@ import org.savapage.ext.papercut.PaperCutServerProxy;
 import org.savapage.ext.papercut.job.PaperCutPrintMonitorJob;
 import org.savapage.server.SpSession;
 import org.savapage.server.api.JsonApiDict;
-import org.savapage.server.api.JsonApiServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1063,8 +1062,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         JOBTICKET_SERVICE.createCopyJob(lockedUser, printReq,
                 calcJobTicketDeliveryDate(dtoReq));
 
-        //
-        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+        setApiResultMsg(printReq);
 
         ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                 this.getLocale(), currencySymbol);
@@ -1093,6 +1091,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         try {
             JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq,
                     deliveryDate);
+
         } catch (EcoPrintPdfTaskPendingException e) {
             setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");
             return;
@@ -1104,8 +1103,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setClearedObjects(
                 PROXY_PRINT_SERVICE.clearInbox(lockedUser, printReq));
 
-        //
-        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+        setApiResultMsg(printReq);
 
         ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                 this.getLocale(), currencySymbol);
@@ -1138,8 +1136,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setClearedObjects(
                 PROXY_PRINT_SERVICE.clearInbox(lockedUser, printReq));
 
-        //
-        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+        setApiResultMsg(printReq);
         ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                 this.getLocale(), currencySymbol);
     }
@@ -1167,7 +1164,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
-        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+        setApiResultMsg(printReq);
 
         if (printReq.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
 
@@ -1202,13 +1199,58 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
-        JsonApiServer.setApiResultMsg(this.getUserData(), printReq);
+        setApiResultMsg(printReq);
 
         if (printReq.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
 
             ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                     this.getLocale(), currencySymbol);
         }
+    }
+
+    /**
+     * Sets the JSON {@code result} and {@code requestStatus} of a Proxy Print
+     * Request on parameter {@code out}.
+     *
+     * @param out
+     *            The Map to put the {@code result} on.
+     * @param printReq
+     *            The Proxy Print Request.
+     * @return the {@code out} parameter.
+     */
+    public static Map<String, Object> setApiResultMsg(
+            final Map<String, Object> out, final ProxyPrintInboxReq printReq) {
+
+        final ApiResultCodeEnum code;
+        switch (printReq.getStatus()) {
+        case ERROR_PRINTER_NOT_FOUND:
+            code = ApiResultCodeEnum.ERROR;
+            break;
+        case PRINTED:
+            code = ApiResultCodeEnum.OK;
+            break;
+        case WAITING_FOR_RELEASE:
+            code = ApiResultCodeEnum.OK;
+            break;
+        default:
+            code = ApiResultCodeEnum.WARN;
+        }
+
+        out.put("requestStatus", printReq.getStatus().toString());
+
+        return createApiResult(out, code, printReq.getUserMsgKey(),
+                printReq.getUserMsg());
+    }
+
+    /**
+     * Sets the JSON {@code result} and {@code requestStatus} of a Proxy Print
+     * Request on parameter {@code out}.
+     *
+     * @param printReq
+     *            The Proxy Print Request.
+     */
+    private void setApiResultMsg(final ProxyPrintInboxReq printReq) {
+        setApiResultMsg(this.getUserData(), printReq);
     }
 
     /**

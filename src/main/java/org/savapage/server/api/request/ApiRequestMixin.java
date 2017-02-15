@@ -303,8 +303,27 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     private void createApiResult(final ApiResultCodeEnum code, final String msg,
             final String txt) {
-
         final Map<String, Object> out = this.getResponseMap();
+        createApiResult(out, code, msg, txt);
+    }
+
+    /**
+     * Creates the API result on parameter {@code out}.
+     *
+     * @param out
+     *            The Map to put the result on.
+     * @param code
+     *            The {@link #ApiResultCodeEnum}.
+     * @param msg
+     *            The key of the message
+     * @param txt
+     *            The message text.
+     * @return the {@code out} parameter.
+     *
+     */
+    public static Map<String, Object> createApiResult(
+            final Map<String, Object> out, final ApiResultCodeEnum code,
+            final String msg, final String txt) {
 
         final Map<String, Object> result = new HashMap<String, Object>();
 
@@ -319,6 +338,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
         if (txt != null) {
             result.put(RSP_KEY_TXT, txt);
         }
+        return out;
     }
 
     /**

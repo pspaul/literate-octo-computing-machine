@@ -191,17 +191,19 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
                 }
             }
 
-            final String msgKey;
-
             if (dto == null) {
-                msgKey = "msg-jobticket-print-none";
-            } else if (dtoReq.isPrint()) {
-                msgKey = "msg-jobticket-print-ok";
+                this.setApiResult(ApiResultCodeEnum.OK,
+                        "msg-jobticket-print-none");
             } else {
-                msgKey = "msg-jobticket-settled-ok";
+                final String msgKey;
+                if (dtoReq.isPrint()) {
+                    msgKey = "msg-jobticket-print-ok";
+                } else {
+                    msgKey = "msg-jobticket-settled-ok";
+                }
+                this.setApiResult(ApiResultCodeEnum.OK, msgKey,
+                        dto.getTicketNumber());
             }
-
-            this.setApiResult(ApiResultCodeEnum.OK, msgKey);
 
         } catch (IppConnectException e) {
             this.setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());

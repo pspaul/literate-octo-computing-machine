@@ -5540,7 +5540,16 @@
 					_model.user.stats = res.stats;
 					_model.myShowUserStats = true;
 				}
-				_view.showApiMsg(res);
+
+				if (isJobticket && res.result.code === '0') {
+					//Perform next step when this event is done.
+					window.setTimeout(function() {
+						_view.msgDialogBox(res.result.txt, 'sp-msg-popup-info');
+					}, 100);
+
+				} else {
+					_view.showApiMsg(res);
+				}
 
 			};
 

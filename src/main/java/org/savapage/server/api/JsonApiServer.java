@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -133,7 +133,6 @@ import org.savapage.core.print.gcp.GcpRegisterPrinterRsp;
 import org.savapage.core.print.imap.ImapListener;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
-import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.reports.JrPosDepositReceipt;
 import org.savapage.core.reports.JrVoucherPageDesign;
 import org.savapage.core.reports.impl.AccountTrxListReport;
@@ -171,6 +170,7 @@ import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ApiRequestHelper;
+import org.savapage.server.api.request.ApiRequestMixin;
 import org.savapage.server.api.request.ApiResultCodeEnum;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.dto.MoneyTransferDto;
@@ -1883,18 +1883,7 @@ public final class JsonApiServer extends AbstractPage {
     private static Map<String, Object> createApiResult(
             final Map<String, Object> out, final ApiResultCodeEnum code,
             final String msg, final String txt) {
-
-        Map<String, Object> result = new HashMap<String, Object>();
-        out.put("result", result);
-
-        result.put("code", code.getValue());
-        if (msg != null) {
-            result.put("msg", msg);
-        }
-        if (txt != null) {
-            result.put("txt", txt);
-        }
-        return out;
+        return ApiRequestMixin.createApiResult(out, code, msg, txt);
     }
 
     /**
@@ -1931,40 +1920,6 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> setApiResult(final Map<String, Object> out,
             final ApiResultCodeEnum code, final String key) {
         return createApiResult(out, code, key, localize(key));
-    }
-
-    /**
-     * Sets the JSON {@code result} and {@code requestStatus} of a Proxy Print
-     * Request on parameter {@code out}.
-     *
-     * @param out
-     *            The Map to put the {@code result} on.
-     * @param printReq
-     *            The Proxy Print Request.
-     * @return the {@code out} parameter.
-     */
-    public static Map<String, Object> setApiResultMsg(
-            final Map<String, Object> out, ProxyPrintInboxReq printReq) {
-
-        final ApiResultCodeEnum code;
-        switch (printReq.getStatus()) {
-        case ERROR_PRINTER_NOT_FOUND:
-            code = ApiResultCodeEnum.ERROR;
-            break;
-        case PRINTED:
-            code = ApiResultCodeEnum.OK;
-            break;
-        case WAITING_FOR_RELEASE:
-            code = ApiResultCodeEnum.OK;
-            break;
-        default:
-            code = ApiResultCodeEnum.WARN;
-        }
-
-        out.put("requestStatus", printReq.getStatus().toString());
-
-        return createApiResult(out, code, printReq.getUserMsgKey(),
-                printReq.getUserMsg());
     }
 
     /**

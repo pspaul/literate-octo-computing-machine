@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -46,6 +46,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.api.JsonApiServer;
 import org.savapage.server.api.request.ApiRequestHelper;
+import org.savapage.server.api.request.ReqPrinterPrint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -361,7 +362,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
 
             request.setUserMsg(this.localize("proxyprint-auth-expired"));
 
-            JsonApiServer.setApiResultMsg(eventData, request);
+            ReqPrinterPrint.setApiResultMsg(eventData, request);
 
         } else if (request.isAuthenticated()) {
 
@@ -387,7 +388,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
 
                 PROXY_PRINT_SERVICE.proxyPrintInbox(lockedUser, request);
 
-                JsonApiServer.setApiResultMsg(eventData, request);
+                ReqPrinterPrint.setApiResultMsg(eventData, request);
 
                 if (request.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
 
@@ -435,7 +436,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
 
             request.setUserMsg(this.localize("proxyprint-auth-failed"));
 
-            JsonApiServer.setApiResultMsg(eventData, request);
+            ReqPrinterPrint.setApiResultMsg(eventData, request);
         }
 
         return eventData;
