@@ -179,11 +179,11 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
                     return;
                 }
 
-                dto = JOBTICKET_SERVICE.printTicket(printer,
+                dto = JOBTICKET_SERVICE.printTicket(requestingUser, printer,
                         dtoReq.getMediaSource(), dtoReq.getJobFileName());
 
             } else {
-                dto = JOBTICKET_SERVICE.settleTicket(printer,
+                dto = JOBTICKET_SERVICE.settleTicket(requestingUser, printer,
                         dtoReq.getJobFileName());
 
                 if (dto != null) {
@@ -216,8 +216,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
      * @throws IOException
      *             When error sending the notification.
      */
-    private void notifySettlement(final OutboxJobDto dto)
-            throws IOException {
+    private void notifySettlement(final OutboxJobDto dto) throws IOException {
 
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 

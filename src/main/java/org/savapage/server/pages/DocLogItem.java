@@ -71,6 +71,7 @@ public final class DocLogItem {
     private ExternalSupplierEnum extSupplier;
     private ExternalSupplierStatusEnum extSupplierStatus;
     private String extId;
+    private String extData;
 
     private String userId;
     private String userName;
@@ -150,6 +151,14 @@ public final class DocLogItem {
 
     public void setExtId(String extId) {
         this.extId = extId;
+    }
+
+    public String getExtData() {
+        return extData;
+    }
+
+    public void setExtData(String extData) {
+        this.extData = extData;
     }
 
     public List<AccountTrx> getTransactions() {
@@ -394,6 +403,7 @@ public final class DocLogItem {
                 log.setExtSupplierStatus(
                         DaoEnumHelper.getExtSupplierStatus(docLog));
                 log.setExtId(docLog.getExternalId());
+                log.setExtData(docLog.getExternalData());
 
                 log.setUserId(docLog.getUser().getUserId());
                 log.setUserName(docLog.getUser().getFullName());
