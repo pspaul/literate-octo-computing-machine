@@ -68,6 +68,7 @@ import org.savapage.core.print.server.DocContentPrintReq;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
+import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.SpSession;
@@ -318,6 +319,23 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     /**
+     * Formats userid for logging.
+     *
+     * @param useridRaw
+     *            The raw userid as received.
+     * @param userid
+     *            The userid used (from alias)
+     * @return The formatted userid
+     */
+    private static String formatUserId(final String useridRaw,
+            final String userid) {
+        if (useridRaw.equals(userid)) {
+            return useridRaw;
+        }
+        return String.format("%s → %s", useridRaw, userid);
+    }
+
+    /**
      * Check if a {@link OneTimeAuthToken} is present and, when valid,
      * authenticates by putting the {@link User} in the {@link SpSession}.
      *
@@ -329,12 +347,18 @@ public final class WebAppUser extends AbstractWebAppPage {
         final String token =
                 this.getParmValue(parameters, false, PAGE_PARM_AUTH_TOKEN);
 
-        final String userid = this.getParmValue(parameters, false,
-                PAGE_PARM_AUTH_TOKEN_USERID);
-
-        if (userid == null || token == null) {
+        if (token == null) {
             return;
         }
+
+        final String useridRaw = this.getParmValue(parameters, false,
+                PAGE_PARM_AUTH_TOKEN_USERID);
+
+        if (useridRaw == null) {
+            return;
+        }
+
+        final String userid = UserAliasList.instance().getUserName(useridRaw);
 
         final User sessionUser = SpSession.get().getUser();
 
@@ -345,8 +369,9 @@ public final class WebAppUser extends AbstractWebAppPage {
         final long msecExpiry = ConfigManager.instance()
                 .getConfigLong(Key.WEB_LOGIN_TTP_TOKEN_EXPIRY_MSECS);
 
-        if (!OneTimeAuthToken.isTokenValid(userid, token, msecExpiry)) {
-            final String msg = localized("msg-authtoken-denied", userid);
+        if (!OneTimeAuthToken.isTokenValid(useridRaw, token, msecExpiry)) {
+            final String msg = localized("msg-authtoken-denied",
+                    formatUserId(useridRaw, userid));
             AdminPublisher.instance().publish(PubTopicEnum.USER,
                     PubLevelEnum.WARN, msg);
             LOGGER.warn(msg);
@@ -358,8 +383,8 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         if (authUser == null) {
 
-            final String msg =
-                    localized("msg-authtoken-user-not-found", userid);
+            final String msg = localized("msg-authtoken-user-not-found",
+                    formatUserId(useridRaw, userid));
             AdminPublisher.instance().publish(PubTopicEnum.USER,
                     PubLevelEnum.WARN, msg);
             LOGGER.warn(msg);
@@ -384,13 +409,14 @@ public final class WebAppUser extends AbstractWebAppPage {
          */
         SpSession.get().setUser(authUser, true);
 
-        final String msg = localized("msg-authtoken-accepted", userid);
+        final String msg = localized("msg-authtoken-accepted",
+                formatUserId(useridRaw, userid));
         AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
                 msg);
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace(String.format("User [%s] authenticated with token: %s",
-                    userid, token));
+            LOGGER.trace(String.format("User %s authenticated with token: %s",
+                    formatUserId(useridRaw, userid), token));
         } else if (LOGGER.isInfoEnabled()) {
             LOGGER.info(msg);
         }
