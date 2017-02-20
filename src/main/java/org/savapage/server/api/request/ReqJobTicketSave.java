@@ -28,6 +28,8 @@ import java.util.Map.Entry;
 import org.savapage.core.SpException;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.dto.IppMediaSourceCostDto;
+import org.savapage.core.ipp.IppMediaSizeEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.Printer;
@@ -37,6 +39,7 @@ import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.pdf.PdfPrintCollector;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ProxyPrintCostDto;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
 
@@ -186,14 +189,27 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
                 optionMap.getOptionValue(IppDictJobTemplateAttr.ATTR_MEDIA));
         costParms.importIppOptionValues(dto.getOptionValues());
 
-        // Calculate cost metrics.
+        // Calculate custom cost metrics.
         costParms.calcCustomCost();
 
+        //
         final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
                 .findByName(dto.getPrinterName());
 
         costParms.setNumberOfCopies(dto.getCopies());
         costParms.setNumberOfPages(dto.getPages());
+
+        // Retrieve the regular media source cost.
+        final PrinterAttrLookup printerAttrLookup =
+                new PrinterAttrLookup(printer);
+
+        final IppMediaSizeEnum ippMediaSize =
+                IppMediaSizeEnum.find(costParms.getIppMediaOption());
+
+        final IppMediaSourceCostDto mediaSourceCost =
+                printerAttrLookup.findAnyMediaSourceForMedia(ippMediaSize);
+
+        costParms.setMediaSourceCost(mediaSourceCost);
 
         // Calculate print cost.
         final ProxyPrintCostDto costResult =
@@ -201,6 +217,7 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
 
         dto.setCostResult(costResult);
 
+        // Number of sheets
         dto.setSheets(PdfPrintCollector.calcNumberOfPrintedSheets(
                 dto.getPages(), dto.getCopies(), costParms.isDuplex(),
                 costParms.getPagesPerSide(), false, false, false));
