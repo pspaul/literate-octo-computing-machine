@@ -21,14 +21,18 @@
 
 <table>
 	<tbody>
-		<tr>
-			<td style="padding: 0px; vertical-align: middle; text-align: right;">
-				Copies&nbsp;</td>
-			<td style="padding: 0px;">
-				<input type="number" id="sp-jobticket-edit-copies" value="?" min="1"
-					wicket:id="jobticket-copies" />
-			</td>
-		</tr>
+		<wicket:enclosure child="jobticket-copies">
+			<tr>
+				<td style="padding: 0px; vertical-align: middle; text-align: right;">
+					<wicket:message key="print-copies" />
+					&nbsp;
+				</td>
+				<td style="padding: 0px;">
+					<input type="number" id="sp-jobticket-edit-copies" value="?"
+						min="1" wicket:id="jobticket-copies" />
+				</td>
+			</tr>
+		</wicket:enclosure>
 		<wicket:fragment wicket:id="ipp-option-list">
 			<tr>
 				<span id="the-id-n" wicket:id="ipp-option-div" />
