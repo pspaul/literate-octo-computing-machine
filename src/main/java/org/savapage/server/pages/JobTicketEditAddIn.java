@@ -199,9 +199,15 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
         add(label);
 
         //
-        MarkupHelper helper = new MarkupHelper(this);
-        helper.addModifyLabelAttr("jobticket-copies", "value",
-                String.valueOf(job.getCopies()));
+        label = MarkupHelper.createEncloseLabel("jobticket-copies", "",
+                !job.isDelegatedPrint());
+
+        if (!job.isDelegatedPrint()) {
+            MarkupHelper.modifyLabelAttr(label, "value",
+                    String.valueOf(job.getCopies()));
+        }
+
+        add(label);
 
         //
         add(new Label("btn-cancel", HtmlButtonEnum.CANCEL.uiText(getLocale())));
