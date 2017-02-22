@@ -237,8 +237,7 @@ public class OutboxAddin extends AbstractUserPage {
                     job.getPages() * job.getCopies() - job.getSheets());
             item.add(new Label("printout-pie", sparklineData));
 
-            // for now, disable
-            if (false) {
+            if (!getSessionWebAppType().equals(WebAppTypeEnum.JOBTICKETS)) {
                 helper.discloseLabel("button-edit-outbox-jobticket");
             } else {
 
