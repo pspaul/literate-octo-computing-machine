@@ -105,15 +105,16 @@ public final class ClientAppHandler {
     }
 
     /**
+     * Gets the {@link URL} template to open the User WebApp.
      *
      * @param userId
      *            The unique user id.
-     * @return The {@link URL} to open the User WebApp.
+     * @return The query part of the {@link URL} to open the User WebApp.
      * @throws MalformedURLException
      * @throws UnknownHostException
      * @throws URISyntaxException
      */
-    private static String getUserWebAppPath(final String userId)
+    private static URL getUserWebAppURLTemplate(final String userId)
             throws URISyntaxException, MalformedURLException,
             UnknownHostException {
 
@@ -123,7 +124,7 @@ public final class ClientAppHandler {
                 .setPath(WebApp.MOUNT_PATH_WEBAPP_USER)
                 .addParameter(AbstractWebAppPage.URL_PARM_USER, userId);
 
-        return builder.build().toURL().getPath();
+        return builder.build().toURL();
     }
 
     /**
@@ -302,11 +303,14 @@ public final class ClientAppHandler {
 
                 } else {
 
+                    final URL urlTemplate = getUserWebAppURLTemplate(userId);
+
                     dto.setUserAuthToken(authToken.getToken());
                     dto.setStatus(ClientAppConnectDto.Status.OK);
 
                     dto.setServerTime(System.currentTimeMillis());
-                    dto.setWebAppPath(getUserWebAppPath(userId).toString());
+                    dto.setWebAppPath(urlTemplate.getPath());
+                    dto.setWebAppQuery(urlTemplate.getQuery());
 
                     final CometdConnectDto cometdConnect =
                             new CometdConnectDto();
@@ -324,7 +328,7 @@ public final class ClientAppHandler {
                     cometdConnect.setChannelSubscribe(
                             UserEventService.CHANNEL_PUBLISH);
 
-                    cometdConnect.setUrlPath(getCometdUrlPath().toString());
+                    cometdConnect.setUrlPath(getCometdUrlPath());
 
                     dto.setCometd(cometdConnect);
                 }
