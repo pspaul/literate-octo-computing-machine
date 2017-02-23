@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>savapage-server</artifactId>
     <groupId>org.savapage</groupId>
-    <version>0.9.11</version>
+    <version>0.9.12</version>
     <name>SavaPage Server</name>
     <packaging>war</packaging>
     <licenses>
@@ -71,12 +71,12 @@
         <dependency>
             <groupId>org.savapage</groupId>
             <artifactId>savapage-core</artifactId>
-            <version>0.9.11</version>
+            <version>0.9.12</version>
         </dependency>
         <dependency>
             <groupId>org.savapage</groupId>
             <artifactId>savapage-ext</artifactId>
-            <version>0.9.11</version>
+            <version>0.9.12</version>
         </dependency>
         <dependency>
             <groupId>org.cometd.java</groupId>
@@ -212,7 +212,7 @@
             </plugin>
         </plugins>
     </build>
-    <description>SavaPage is an Enterprise Printing Solution with a Web App for Print Preview, Editing, PDF Creation and Proxy Printing.</description>
+    <description>SavaPage is a Free Software Solution that uses Open Standards and Commodity Hardware for Secure Pull-Printing, Pay-Per-Print, Delegated Print, Job Ticketing, Auditing and PDF Creation.</description>
     <organization>
         <name>Datraverse B.V.</name>
         <url>https://www.datraverse.com</url>
