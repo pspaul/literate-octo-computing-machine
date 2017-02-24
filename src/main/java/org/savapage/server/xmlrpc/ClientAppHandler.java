@@ -475,6 +475,12 @@ public final class ClientAppHandler {
         cometdConnect.setUrlPath(getCometdUrlPath());
 
         dto.setCometd(cometdConnect);
+
+        /*
+         * Since this may be a first time login, create SafePages home.
+         */
+        ServiceContext.getServiceFactory().getUserService()
+                .lazyUserHomeDir(userId);
     }
 
     /**
