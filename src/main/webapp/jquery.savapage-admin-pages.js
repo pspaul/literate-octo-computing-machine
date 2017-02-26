@@ -1,7 +1,7 @@
-/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
 
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2016 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
@@ -16,7 +16,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -552,28 +552,76 @@
 			var _page = new _ns.Page(_i18n, _view, '#page-shared-account', 'admin.PageSharedAccount')
 			//
 			, _self = _ns.derive(_page)
+			//--------------------
+			, _isSharedAccount = function() {
+				return _model.editAccount.accountType === 'SHARED';
+			}
+			//--------------------
+			, _m2v = function() {
+				var userGroupAccess, isShared = _isSharedAccount();
+
+				$('#sp-shared-account-name').val(_model.editAccount.name);
+				$('#sp-shared-account-balance').val(_model.editAccount.balance);
+				$('#sp-shared-account-name-parent').val(_model.editAccount.parentName);
+				$('#sp-shared-account-notes').val(_model.editAccount.notes);
+
+				_view.visible($('.sp-shared-account-edit'), isShared);
+				_view.visible($('.sp-group-account-edit'), !isShared);
+
+				_view.visible($('.sp-shared-account_user-defined-section'), _model.editAccount.id !== null);
+				_view.checkCb('#sp-shared-account-deleted', _model.editAccount.deleted);
+
+				if (isShared && _model.editAccount.userGroupAccess) {
+					$.each(_model.editAccount.userGroupAccess, function(key, val) {
+						if (userGroupAccess) {
+							userGroupAccess += "\n";
+						} else {
+							userGroupAccess = "";
+						}
+						userGroupAccess += val.groupName;
+					});
+				}
+
+				$('#sp-shared-account-group-access').val(userGroupAccess);
+			}
+			//--------------------
+			, _v2m = function() {
+
+				var userGroupAccess = [];
+
+				if (_isSharedAccount()) {
+					$.each($('#sp-shared-account-group-access').val().split("\n"), function(key, val) {
+						var groupName = val.trim();
+						if (groupName.length > 0) {
+							userGroupAccess.push({
+								groupName : groupName
+							});
+						}
+					});
+				}
+				_model.editAccount.userGroupAccess = userGroupAccess;
+				_model.editAccount.name = $('#sp-shared-account-name').val();
+				_model.editAccount.parentName = $('#sp-shared-account-name-parent').val();
+				_model.editAccount.balance = $('#sp-shared-account-balance').val();
+				_model.editAccount.notes = $('#sp-shared-account-notes').val();
+				_model.editAccount.deleted = $('#sp-shared-account-deleted').is(':checked');
+				
+				return true;
+			}
 			//
 			;
 
 			$(_self.id()).on('pagecreate', function(event) {
 
-				$(this).on('click', '#button-save-shared-account', null, function() {
-					_self.onSaveSharedAccount();
+				$(this).on('click', '#sp-button-save-shared-account', null, function() {
+					if (_v2m()) {
+						_self.onSaveSharedAccount();
+					}
 					return false;
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
-
-				$('#shared-account-name').val(_model.editAccount.name);
-				$('#shared-account-balance').val(_model.editAccount.balance);
-				$('#shared-account-name-parent').val(_model.editAccount.parentName);
-				$('#shared-account-notes').val(_model.editAccount.notes);
-
-				_view.visible($('.sp-shared-account-edit'), _model.editAccount.accountType === 'SHARED');
-				_view.visible($('.sp-group-account-edit'), _model.editAccount.accountType !== 'SHARED');
-
-				_view.visible($('.shared-account_user-defined-section'), _model.editAccount.id !== null);
-				_view.checkCb('#shared-account-deleted', _model.editAccount.deleted);
+				_m2v();
 			});
 			return _self;
 		};
@@ -1218,10 +1266,9 @@
 				_view.checkCb('#printer-disabled', _model.editPrinter.disabled);
 				_view.checkCb('#printer-internal', _model.editPrinter.internal);
 				_view.checkCb('#printer-deleted', _model.editPrinter.deleted);
-				
+
 				_view.checkCb('#printer-jobticket', _model.editPrinter.jobTicket);
 				$('#printer-jobticket-group').val(_model.editPrinter.jobTicketGroup);
-				
 
 				$('#printer-newname').val('');
 				_view.checkCb('#printer-rename-replace', false);
