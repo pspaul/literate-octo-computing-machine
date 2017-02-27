@@ -96,14 +96,16 @@
 						<legend class="sp-txt-wrap" wicket:id="jobticket-type" />
 
 						<label for="sp-print-jobticket-type-print" class="sp-txt-wrap">
-							Print </label>
+							<wicket:message key="jobticket-type-print" />
+						</label>
 						<input type="radio" name="sp-print-jobticket-type"
 							wicket:id="jobticket-type-print"
 							id="sp-print-jobticket-type-print" checked="checked"
 							value="PRINT" />
 
 						<label for="sp-print-jobticket-type-copy" class="sp-txt-wrap">
-							Copy </label>
+							<wicket:message key="jobticket-type-copy" />
+						</label>
 						<input type="radio" name="sp-print-jobticket-type"
 							wicket:id="jobticket-type-copy" id="sp-print-jobticket-type-copy"
 							value="COPY" />
@@ -111,6 +113,28 @@
 					</fieldset>
 				</div>
 			</wicket:enclosure>
+
+			<wicket:enclosure child="print-account-type">
+				<div class="ui-field-contain sp-print-account"
+					id="sp-print-shared-account-div">
+
+					<label data-mini="true" class="sp-txt-wrap"
+						for="sp-print-shared-account-list" wicket:id="print-account-type" />
+
+					<select data-mini="true" id="sp-print-shared-account-list"
+						data-native-menu=true>
+						<option value="0" selected><wicket:message
+								key="account-type-personal" /></option>
+						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+							<wicket:fragment wicket:id="print-shared-account-option">
+								<option value="the-key" wicket:id="option"></option>
+							</wicket:fragment>
+						</optgroup>
+					</select>
+
+				</div>
+			</wicket:enclosure>
+
 
 			<div class="ui-field-contain sp-proxyprint sp-jobticket-print">
 				<label data-mini="true" for="print-job-list" class="sp-txt-wrap">
@@ -159,7 +183,8 @@
 			</div>
 
 			<wicket:enclosure child="prompt-letterhead">
-				<div data-mini="true" class="ui-field-contain sp-proxyprint sp-jobticket-print">
+				<div data-mini="true"
+					class="ui-field-contain sp-proxyprint sp-jobticket-print">
 					<label wicket:id="prompt-letterhead" data-mini="true"
 						class="sp-txt-wrap" for="print-letterhead-list" />
 					<select data-mini="true" id="print-letterhead-list"

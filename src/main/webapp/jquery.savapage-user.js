@@ -3334,6 +3334,7 @@
 				_view.visible($('#slider-print-copies-div'), !delegatedPrint && !jobTicket);
 				_view.visible($('#number-print-copies-div'), !delegatedPrint && jobTicket);
 				_view.visible($('#delegated-print-copies-div'), delegatedPrint);
+				_view.visible($('#sp-print-shared-account-div'), !delegatedPrint);
 
 				if (!delegatedPrint && copies > 1) {
 
@@ -5425,7 +5426,7 @@
 			//
 			, collate, isDelegation, separateDocs, isJobticket, jobTicketType) {
 
-				var res, sel, cost, visible, date, jobTicketDate
+				var res, sel, cost, visible, date, jobTicketDate, accountId
 				//
 				, isJobTicketDateTime = $('#sp-jobticket-date').length > 0
 				//
@@ -5450,12 +5451,17 @@
 					}
 				}
 
+				if (!isDelegation) {
+					accountId = $('#sp-print-shared-account-list').val();
+				}
+
 				_model.myPrintTitle = $('#print-title').val();
 
 				res = _api.call({
 					request : 'printer-print',
 					dto : JSON.stringify({
 						user : _model.user.id,
+						accountId : accountId,
 						printer : _model.myPrinter.name,
 						readerName : _model.myPrinterReaderName,
 						jobName : _model.myPrintTitle,

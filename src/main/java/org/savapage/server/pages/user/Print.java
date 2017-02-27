@@ -22,15 +22,21 @@
 package org.savapage.server.pages.user;
 
 import java.util.EnumSet;
+import java.util.List;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.UserGroupAccountDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
@@ -54,6 +60,9 @@ public class Print extends AbstractUserPage {
 
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
+
+    private static final UserGroupAccountDao USER_GROUP_ACCOUNT_DAO =
+            ServiceContext.getDaoContext().getUserGroupAccountDao();
 
     final String ID_DELETE_PAGES = "delete-pages-after-print";
     final String ID_DELETE_PAGES_WARN = "delete-pages-after-print-warn";
@@ -193,7 +202,8 @@ public class Print extends AbstractUserPage {
 
         //
         if (cm.isConfigValue(Key.JOBTICKET_COPIER_ENABLE)) {
-            helper.encloseLabel("jobticket-type", "Type", true);
+            helper.encloseLabel("jobticket-type",
+                    localized("jobticket-type-prompt"), true);
             helper.addModifyLabelAttr("jobticket-type-print", "value", "PRINT");
             helper.addModifyLabelAttr("jobticket-type-copy", "value", "COPY");
         } else {
@@ -201,7 +211,46 @@ public class Print extends AbstractUserPage {
         }
 
         //
+        final List<SharedAccountDto> sharedAccounts =
+                USER_GROUP_ACCOUNT_DAO.getSortedSharedAccounts(user);
+
+        if (sharedAccounts == null || sharedAccounts.isEmpty()) {
+            helper.discloseLabel("print-account-type");
+        } else {
+            helper.encloseLabel("print-account-type",
+                    localized("account-type-prompt"), true);
+            addSharedAccounts(sharedAccounts);
+        }
+
+        //
         add(new Label("button-send-jobticket",
                 HtmlButtonEnum.SEND.uiText(getLocale())));
     }
+
+    /**
+     * Adds the shared accounts as select options.
+     *
+     * @param sharedAccounts
+     *            The shared accounts.
+     */
+    private void
+            addSharedAccounts(final List<SharedAccountDto> sharedAccounts) {
+
+        add(new PropertyListView<SharedAccountDto>(
+                "print-shared-account-option", sharedAccounts) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(final ListItem<SharedAccountDto> item) {
+                final SharedAccountDto dto = item.getModel().getObject();
+                final Label label = new Label("option",
+                        dto.nameAsHtml());
+                label.setEscapeModelStrings(false);
+                label.add(new AttributeModifier("value", dto.getId()));
+                item.add(label);
+            }
+        });
+    }
+
 }

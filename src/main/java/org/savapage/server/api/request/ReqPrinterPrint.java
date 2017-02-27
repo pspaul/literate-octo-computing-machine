@@ -53,6 +53,7 @@ import org.savapage.core.ipp.IppMediaSizeEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.ipp.client.IppConnectException;
+import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Printer;
@@ -133,6 +134,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private String jobTicketRemark;
         private Map<String, String> options;
         private PrintDelegationDto delegation;
+        private Long accountId;
 
         @SuppressWarnings("unused")
         public String getUser() {
@@ -325,6 +327,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setDelegation(PrintDelegationDto delegation) {
             this.delegation = delegation;
+        }
+
+        public Long getAccountId() {
+            return accountId;
+        }
+
+        public void setAccountId(Long accountId) {
+            this.accountId = accountId;
         }
 
     }
@@ -561,6 +571,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 && PRINTER_SERVICE.isClientSideMonochrome(printer));
 
         final boolean isDelegatedPrint = applyPrintDelegation(dtoReq, printReq);
+        final boolean isSharedAccountPrint;
+
+        if (isDelegatedPrint) {
+            isSharedAccountPrint = false;
+        } else {
+            isSharedAccountPrint = applySharedAccount(dtoReq, printReq);
+        }
 
         if (isCopyJobTicket) {
 
@@ -578,7 +595,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final boolean isNonSecureProxyPrint = dtoReq.getReaderName() == null;
         final boolean isExtPaperCutPrint;
 
-        if (isNonSecureProxyPrint && isDelegatedPrint) {
+        if (isNonSecureProxyPrint
+                && (isDelegatedPrint || isSharedAccountPrint)) {
             /*
              * PaperCut integration enable + PaperCut Managed Printer AND
              * Delegated Print integration with PaperCut?
@@ -805,9 +823,50 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             if (printReq.getNumberOfCopies() > 1) {
                 printReq.setCollate(true);
             }
+
             printReq.setAccountTrxInfoSet(infoSet);
         }
         return isDelegatedPrint;
+    }
+
+    /**
+     * Applies charge to shared account into the print request.
+     *
+     * @param dtoReq
+     *            The incoming request.
+     * @param printReq
+     *            The print request.
+     * @return {@code true} when shared account is applied.
+     */
+    private static boolean applySharedAccount(final DtoReq dtoReq,
+            final ProxyPrintInboxReq printReq) {
+
+        if (dtoReq.getAccountId() == null
+                || dtoReq.getAccountId().equals(Long.valueOf(0))) {
+            return false;
+        }
+
+        final Account account = ACCOUNT_DAO.findById(dtoReq.getAccountId());
+
+        if (account == null) {
+            throw new IllegalStateException(String.format(
+                    "Shared account %d not found", dtoReq.getAccountId()));
+        }
+
+        final AccountTrxInfoSet infoSet =
+                new AccountTrxInfoSet(dtoReq.getCopies().intValue());
+        printReq.setAccountTrxInfoSet(infoSet);
+
+        final List<AccountTrxInfo> trxList = new ArrayList<>();
+        infoSet.setAccountTrxInfoList(trxList);
+
+        final AccountTrxInfo trx = new AccountTrxInfo();
+        trxList.add(trx);
+
+        trx.setWeight(dtoReq.getCopies());
+        trx.setAccount(account);
+
+        return true;
     }
 
     /**
