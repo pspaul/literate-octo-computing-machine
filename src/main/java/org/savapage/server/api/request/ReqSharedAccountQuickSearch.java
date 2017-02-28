@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -25,14 +25,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.savapage.core.dao.AccountDao;
+import org.savapage.core.dao.UserGroupAccountDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.QuickSearchFilterDto;
 import org.savapage.core.dto.QuickSearchItemDto;
-import org.savapage.core.jpa.Account;
-import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.SpSession;
 
 /**
  * Shared Account Quicksearch.
@@ -63,46 +63,35 @@ public final class ReqSharedAccountQuickSearch extends ApiRequestMixin {
     }
 
     @Override
-    protected void
-            onRequest(final String requestingUser, final User lockedUser)
-                    throws IOException {
+    protected void onRequest(final String requestingUser, final User lockedUser)
+            throws IOException {
 
-        final QuickSearchFilterDto dto =
-                AbstractDto.create(QuickSearchFilterDto.class,
-                        this.getParmValue("dto"));
+        final QuickSearchFilterDto dto = AbstractDto
+                .create(QuickSearchFilterDto.class, this.getParmValue("dto"));
 
         final List<QuickSearchItemDto> items = new ArrayList<>();
 
         //
-        final AccountDao.ListFilter filter = new AccountDao.ListFilter();
+        final UserGroupAccountDao.ListFilter filter =
+                new UserGroupAccountDao.ListFilter();
 
-        filter.setAccountType(AccountTypeEnum.SHARED);
+        // shortcut user
+        filter.setUserId(SpSession.get().getUser().getId());
+
         filter.setContainingNameText(dto.getFilter());
-        filter.setDeleted(Boolean.FALSE);
 
-        final AccountDao accountDao =
-                ServiceContext.getDaoContext().getAccountDao();
+        final UserGroupAccountDao dao =
+                ServiceContext.getDaoContext().getUserGroupAccountDao();
 
-        final List<Account> accountList =
-                accountDao.getListChunk(filter, null, dto.getMaxResults(),
-                        AccountDao.Field.NAME, true);
+        final List<SharedAccountDto> accountList =
+                dao.getListChunk(filter, null, dto.getMaxResults());
 
-        final StringBuilder name = new StringBuilder();
-
-        for (final Account account : accountList) {
+        for (final SharedAccountDto account : accountList) {
 
             final QuickSearchItemDto itemWlk = new QuickSearchItemDto();
 
             itemWlk.setKey(account.getId());
-
-            name.setLength(0);
-            name.append(account.getName());
-
-            final Account parent = account.getParent();
-            if (parent != null) {
-                name.append(" (").append(parent.getName()).append(")");
-            }
-            itemWlk.setText(name.toString());
+            itemWlk.setText(account.nameAsQuickSearch());
 
             items.add(itemWlk);
         }

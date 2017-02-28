@@ -300,15 +300,25 @@ public class DocLogItemPanel extends Panel {
                 if (obj.getPrintMode() == PrintModeEnum.TICKET
                         || obj.getPrintMode() == PrintModeEnum.TICKET_C
                         || obj.getPrintMode() == PrintModeEnum.TICKET_E) {
+
                     ticketNumber = obj.getExtId();
-                    final JobTicketSupplierData extData = JobTicketSupplierData
-                            .createFromData(obj.getExtData());
-                    if (extData == null || extData.getOperator() == null) {
+
+                    // Just in case.
+                    if (obj.getExtData() == null) {
                         ticketOperator = null;
                     } else {
-                        ticketOperator =
-                                String.format("(%s)", extData.getOperator());
+
+                        final JobTicketSupplierData extData =
+                                JobTicketSupplierData
+                                        .createFromData(obj.getExtData());
+                        if (extData == null || extData.getOperator() == null) {
+                            ticketOperator = null;
+                        } else {
+                            ticketOperator = String.format("(%s)",
+                                    extData.getOperator());
+                        }
                     }
+
                 } else {
                     ticketNumber = null;
                     ticketOperator = null;

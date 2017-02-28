@@ -211,8 +211,12 @@ public class Print extends AbstractUserPage {
         }
 
         //
+        final UserGroupAccountDao.ListFilter filter =
+                new UserGroupAccountDao.ListFilter();
+        filter.setUserId(SpSession.get().getUser().getId());
+
         final List<SharedAccountDto> sharedAccounts =
-                USER_GROUP_ACCOUNT_DAO.getSortedSharedAccounts(user);
+                USER_GROUP_ACCOUNT_DAO.getListChunk(filter, null, null);
 
         if (sharedAccounts == null || sharedAccounts.isEmpty()) {
             helper.discloseLabel("print-account-type");
@@ -244,8 +248,7 @@ public class Print extends AbstractUserPage {
             @Override
             protected void populateItem(final ListItem<SharedAccountDto> item) {
                 final SharedAccountDto dto = item.getModel().getObject();
-                final Label label = new Label("option",
-                        dto.nameAsHtml());
+                final Label label = new Label("option", dto.nameAsHtml());
                 label.setEscapeModelStrings(false);
                 label.add(new AttributeModifier("value", dto.getId()));
                 item.add(label);
