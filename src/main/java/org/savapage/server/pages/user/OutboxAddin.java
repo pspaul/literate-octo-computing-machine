@@ -173,16 +173,22 @@ public class OutboxAddin extends AbstractUserPage {
             final StringBuilder imgSrc = new StringBuilder();
 
             //
+            String jobticketCopy = null;
+
             imgSrc.append(WebApp.PATH_IMAGES).append('/');
             if (isJobTicketItem) {
                 if (isCopyJobTicket) {
                     imgSrc.append("copy-jobticket-128x128.png");
+                    jobticketCopy = localized("jobticket-type-copy");
                 } else {
                     imgSrc.append("printer-jobticket-32x32.png");
                 }
             } else {
                 imgSrc.append("device-card-reader-16x16.png");
             }
+
+            helper.encloseLabel("jobticket-type-copy", jobticketCopy,
+                    jobticketCopy != null);
 
             helper.addModifyLabelAttr("img-job", "src", imgSrc.toString());
 
