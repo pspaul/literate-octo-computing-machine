@@ -2,8 +2,8 @@
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -127,28 +127,39 @@
 						<label>
 							<wicket:message key="header-account" />
 						</label>
+
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<label for="sp-print-delegation-select-account-group">
-								<wicket:message key="label-group" />
-							</label>
-							<input type="radio"
-								name="sp-print-delegation-select-account-radio"
-								value="[enum value]" wicket:id="radio-account-group"
-								id="sp-print-delegation-select-account-group" checked />
-							<label for="sp-print-delegation-select-account-user">
-								<wicket:message key="label-user" />
-							</label>
-							<input type="radio"
-								name="sp-print-delegation-select-account-radio"
-								value="[enum value]" wicket:id="radio-account-user"
-								id="sp-print-delegation-select-account-user" />
-							<label for="sp-print-delegation-select-account-shared">
-								<wicket:message key="label-shared" />
-							</label>
-							<input type="radio"
-								name="sp-print-delegation-select-account-radio"
-								value="[enum value]" wicket:id="radio-account-shared"
-								id="sp-print-delegation-select-account-shared" />
+
+							<wicket:enclosure child="radio-account-group">
+								<label for="sp-print-delegation-select-account-group">
+									<wicket:message key="label-group" />
+								</label>
+								<input type="radio"
+									name="sp-print-delegation-select-account-radio"
+									value="[enum value]" wicket:id="radio-account-group"
+									id="sp-print-delegation-select-account-group" checked />
+							</wicket:enclosure>
+
+							<wicket:enclosure child="radio-account-user">
+								<label for="sp-print-delegation-select-account-user">
+									<wicket:message key="label-user" />
+								</label>
+								<input type="radio"
+									name="sp-print-delegation-select-account-radio"
+									value="[enum value]" wicket:id="radio-account-user"
+									id="sp-print-delegation-select-account-user" />
+							</wicket:enclosure>
+
+							<wicket:enclosure child="radio-account-shared">
+								<label for="sp-print-delegation-select-account-shared">
+									<wicket:message key="label-shared" />
+								</label>
+								<input type="radio"
+									name="sp-print-delegation-select-account-radio"
+									value="[enum value]" wicket:id="radio-account-shared"
+									id="sp-print-delegation-select-account-shared" />
+							</wicket:enclosure>
+
 						</fieldset>
 					</td>
 					<td>
