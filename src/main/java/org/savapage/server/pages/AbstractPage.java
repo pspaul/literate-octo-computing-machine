@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -42,6 +42,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.server.SpSession;
 import org.savapage.server.api.UserAgentHelper;
+import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,21 @@ public abstract class AbstractPage extends WebPage
      * .
      */
     protected static final String GET_PARM_WEBAPPTYPE = "sp-app";
+
+    /**
+     *
+     */
+    protected static final String POST_PARM_WEBAPPTYPE = "webAppType";
+
+    /**
+     * .
+     */
+    protected static final String PAGE_PARM_LOGIN = "sp-login";
+
+    /**
+     * .
+     */
+    protected static final String PAGE_PARM_LOGIN_LOCAL = "sp-login-local";
 
     /**
      * The logger.
@@ -219,6 +235,23 @@ public abstract class AbstractPage extends WebPage
     }
 
     /**
+     * @return {@code true} when Google Sign-In is enabled (for client device).
+     */
+    protected final boolean isGoogleSignInEnabled() {
+        return ApiRequestHelper.isGoogleSignInEnabled(getSessionWebAppType(),
+                this.getClientIpAddr());
+    }
+
+    /**
+     * @return {@code true} when login is restricted to local methods, i.e.
+     *         Google Sign-In is inactive.
+     */
+    protected final boolean isRestrictedToLocalLogin() {
+        return this.getParmValue(this.getPageParameters(), true,
+                PAGE_PARM_LOGIN_LOCAL) != null;
+    }
+
+    /**
      * @deprecated Gets as localized string of a Number. The locale of the
      *             current session is used.
      *             <p>
@@ -324,7 +357,7 @@ public abstract class AbstractPage extends WebPage
      *
      * @param parm
      *            Parameter name.
-     * @return The value.
+     * @return {@code null} when parameter is not present.
      */
     protected final String getParmValue(final String parm) {
         return getRequestCycle().getRequest().getPostParameters()
@@ -349,9 +382,12 @@ public abstract class AbstractPage extends WebPage
     /**
      *
      * @param getParms
+     *            The {@link PageParameters}.
      * @param isGetAction
+     *            {@code true} when a GET parameter.
      * @param parm
-     * @return
+     *            The parameter name.
+     * @return {@code null} when parameter is not present.
      */
     protected final String getParmValue(final PageParameters getParms,
             final boolean isGetAction, final String parm) {

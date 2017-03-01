@@ -138,7 +138,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
         final EnumSet<JavaScriptLibrary> libs =
                 EnumSet.allOf(JavaScriptLibrary.class);
-        if (!isGoogleSignInEnabled()) {
+        if (!isGoogleSignInActive()) {
             libs.remove(JavaScriptLibrary.GOOGLE_SIGN_IN);
         }
         return libs;

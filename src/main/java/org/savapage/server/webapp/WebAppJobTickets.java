@@ -122,7 +122,7 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
         final EnumSet<JavaScriptLibrary> libs = EnumSet
                 .of(JavaScriptLibrary.MOBIPICK, JavaScriptLibrary.SPARKLINE);
-        if (isGoogleSignInEnabled()) {
+        if (isGoogleSignInActive()) {
             libs.add(JavaScriptLibrary.GOOGLE_SIGN_IN);
         }
         return libs;

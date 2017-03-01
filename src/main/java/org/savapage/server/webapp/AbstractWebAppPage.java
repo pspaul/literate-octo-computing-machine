@@ -46,7 +46,6 @@ import org.savapage.server.CustomWebServlet;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
-import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -62,11 +61,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
      * .
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * .
-     */
-    protected static final String PAGE_PARM_LOGIN = "sp-login";
 
     /**
      * .
@@ -380,16 +374,16 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
     /**
      * Adds Google Sign-In meta tag in HTML header, if Google Sign-In is
-     * enabled).
+     * active).
      *
      * @param wicketId
      *            The Wicket ID of the meta fragment.
      */
     protected final void addGoogleSignIn(final String wicketId) {
 
-        final boolean isGoogleSignInEnabled = isGoogleSignInEnabled();
+        final boolean isGoogleSignInActive = isGoogleSignInActive();
 
-        if (isGoogleSignInEnabled) {
+        if (isGoogleSignInActive) {
             final WebAppGoogleMetaPanel googleMetaPanel =
                     new WebAppGoogleMetaPanel(wicketId);
             add(googleMetaPanel);
@@ -400,11 +394,14 @@ public abstract class AbstractWebAppPage extends AbstractPage
     }
 
     /**
-     * @return {@code true} when Google Sign-In is enabled (for client device).
+     * @return {@code true} when Google Sign-In is active (for client device).
      */
-    protected final boolean isGoogleSignInEnabled() {
-        return ApiRequestHelper.isGoogleSignInEnabled(getSessionWebAppType(),
-                this.getClientIpAddr());
+    protected final boolean isGoogleSignInActive() {
+
+        if (isRestrictedToLocalLogin()) {
+            return false;
+        }
+        return isGoogleSignInEnabled();
     }
 
     /**

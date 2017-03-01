@@ -101,7 +101,7 @@ public final class WebAppPos extends AbstractWebAppPage {
         final EnumSet<JavaScriptLibrary> libs =
                 EnumSet.noneOf(JavaScriptLibrary.class);
 
-        if (isGoogleSignInEnabled()) {
+        if (isGoogleSignInActive()) {
             libs.add(JavaScriptLibrary.GOOGLE_SIGN_IN);
         }
         return libs;

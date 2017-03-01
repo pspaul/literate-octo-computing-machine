@@ -50,6 +50,15 @@
 			return typeof gapi !== 'undefined';
 		};
 
+		window.onerror = function(errorMsg, url, lineNumber) {
+			if (_ns.hasGoogleSignIn()) {
+				// An error occurs when "third-party cookies and site data" are disabled in the browser.
+				// We forward to a page where Google Sign-in is not present.
+				document.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + _ns.URL_PARM.LOGIN_LOCAL;
+			}
+			return false;
+		};
+
 		/**
 		 * Common initializing actions for all Web App types.
 		 */
@@ -1469,7 +1478,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,  or collected local card number from individual keystrokes,
+			// The YubiKey OTP,      or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -1501,9 +1510,13 @@
 			};
 
 			_self.loadShow = function(webAppType) {
-				_self.loadShowAsync(null, {
-					webAppType : webAppType
-				});
+				var data = {
+					webAppType : webAppType,
+				};				
+				if (_ns.Utils.hasUrlParam(_ns.URL_PARM.LOGIN_LOCAL)) {
+					data[_ns.URL_PARM.LOGIN_LOCAL] = "1";
+				}
+				_self.loadShowAsync(null, data);
 			};
 
 			_self.onLogin = function(foo) {

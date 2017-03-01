@@ -474,7 +474,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         final EnumSet<JavaScriptLibrary> libs =
                 EnumSet.allOf(JavaScriptLibrary.class);
 
-        if (!isGoogleSignInEnabled()) {
+        if (!isGoogleSignInActive()) {
             libs.remove(JavaScriptLibrary.GOOGLE_SIGN_IN);
         }
         return libs;

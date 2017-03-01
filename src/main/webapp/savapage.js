@@ -1,8 +1,8 @@
-/*! SavaPage Common | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage Common | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
 
 /*
-* This file is part of the SavaPage project <http://savapage.org>.
-* Copyright (c) 2011-2016 Datraverse B.V.
+* This file is part of the SavaPage project <https://www.savapage.org>.
+* Copyright (c) 2011-2017 Datraverse B.V.
 * Authors: Rijk Ravestein.
 *
 * This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 * GNU Affero General Public License for more details.
 *
 * You should have received a copy of the GNU Affero General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+* along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *
 * For more information, please contact Datraverse B.V. at this
 * address: info@datraverse.com
@@ -62,11 +62,13 @@ String.prototype.vformat = function() {"use strict";
 		 *  WebApp URL parameters.
 		 */
 		_ns.URL_PARM = {
+			WEBAPP_TYPE : 'sp-app',
 			LOG_LEVEL : 'sp-log',
 			USER : 'sp-user',
 			LANGUAGE : 'sp-lang',
 			COUNTRY : 'sp-ctry',
-			LOGIN : 'sp-login'
+			LOGIN : 'sp-login',
+			LOGIN_LOCAL : 'sp-login-local'
 		};
 
 		/**
@@ -82,7 +84,7 @@ String.prototype.vformat = function() {"use strict";
 
 		// URL parameter for HTML pages (/page).
 		_ns.WebAppTypeUrlParm = function(pfx) {
-			return (pfx || '?') + 'sp-app=' + _ns.WEBAPP_TYPE;
+			return (pfx || '?') + _ns.URL_PARM.WEBAPP_TYPE + '=' + _ns.WEBAPP_TYPE;
 		};
 
 		/**
@@ -169,6 +171,10 @@ String.prototype.vformat = function() {"use strict";
 				return null;
 			}
 			return results[1] || 0;
+		};
+
+		_ns.Utils.hasUrlParam = function(name) {
+			return document.location.search.indexOf(name) !== -1;			
 		};
 
 		_ns.Utils.isFunction = function(value) {

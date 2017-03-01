@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -25,6 +25,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
@@ -47,7 +48,9 @@ public final class Login extends AbstractPage {
     /**
      *
      */
-    public Login() {
+    public Login(final PageParameters parameters) {
+
+        super(parameters);
 
         add(new Label("title",
                 localized("title", CommunityDictEnum.SAVAPAGE.getWord())));
@@ -65,14 +68,15 @@ public final class Login extends AbstractPage {
         final IRequestParameters parms =
                 getRequestCycle().getRequest().getPostParameters();
 
-        final WebAppTypeEnum webAppType = EnumUtils.getEnum(
-                WebAppTypeEnum.class, parms.getParameterValue("webAppType")
-                        .toString(WebAppTypeEnum.UNDEFINED.toString()));
+        final WebAppTypeEnum webAppType =
+                EnumUtils.getEnum(WebAppTypeEnum.class,
+                        parms.getParameterValue(POST_PARM_WEBAPPTYPE)
+                                .toString(WebAppTypeEnum.UNDEFINED.toString()));
 
         final HtmlInjectComponent htmlInject = new HtmlInjectComponent(
                 "login-inject", webAppType, HtmlInjectEnum.LOGIN);
 
-        MarkupHelper helper = new MarkupHelper(this);
+        final MarkupHelper helper = new MarkupHelper(this);
 
         if (htmlInject.isInjectAvailable()) {
             add(htmlInject);
@@ -123,5 +127,18 @@ public final class Login extends AbstractPage {
 
         //
         addVisible(userAuth.isAuthIdPinReq(), "login-id-pin", "");
+
+        //
+        final boolean localLoginRestricted = parms
+                .getParameterValue(PAGE_PARM_LOGIN_LOCAL).toString() != null;
+
+        if (localLoginRestricted && isGoogleSignInEnabled()) {
+            helper.encloseLabel("google-signin-enable-msg",
+                    localized("google-signin-enable-msg"), true);
+        } else {
+            helper.discloseLabel("google-signin-enable-msg");
+        }
+
     }
+
 }
