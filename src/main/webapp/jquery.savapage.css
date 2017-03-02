@@ -1,4 +1,4 @@
-/*! SavaPage | (c) 2011-2016 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
@@ -200,6 +200,19 @@
 	border-radius: 8px;
 }
 
+.sp-jobticket-type-copy-ind {
+	background-color: #fcfcfc;
+	padding: 6px;
+	margin-right: 10px;
+	border: 1px #DDDDDD solid;
+	float: right;
+	color: gray;
+	font-size: 90%;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	-khtml-border-radius: 7px;
+	border-radius: 7px;
+}
 .sp-font-monospace {
 	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 }
