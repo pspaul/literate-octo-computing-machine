@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -45,6 +45,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.SpSession;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -168,6 +169,9 @@ public final class UsersPage extends AbstractAdminListPage {
         add(new PropertyListView<User>("users-view", entryList) {
 
             private static final long serialVersionUID = 1L;
+
+            private final boolean isAppReady =
+                    ConfigManager.instance().isAppReadyToUse();
 
             /**
              *
@@ -337,10 +341,10 @@ public final class UsersPage extends AbstractAdminListPage {
                  * Set the uid in 'data-savapage' attribute, so it can be picked
                  * up in JavaScript for editing.
                  */
-                final boolean visible = !user.getDeleted();
+                final boolean visible = !user.getDeleted() && this.isAppReady;
 
                 labelWrk = new Label("button-edit",
-                        getLocalizer().getString("button-edit", this)) {
+                        HtmlButtonEnum.EDIT.uiText(getLocale())) {
 
                     private static final long serialVersionUID = 1L;
 
@@ -356,29 +360,25 @@ public final class UsersPage extends AbstractAdminListPage {
 
                 item.add(labelWrk);
 
-                /*
-                 *
-                 */
-                labelWrk = new Label("button-log",
-                        getLocalizer().getString("button-log", this));
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
-                item.add(labelWrk);
-
-                /*
-                 *
-                 */
-                labelWrk = new Label("button-transaction",
-                        getLocalizer().getString("button-transaction", this));
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
-                item.add(labelWrk);
-
-                /*
-                 *
-                 */
+                if (this.isAppReady) {
+                    //
+                    labelWrk = new Label("button-log",
+                            getLocalizer().getString("button-log", this));
+                    labelWrk.add(new AttributeModifier(
+                            MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
+                    item.add(labelWrk);
+                    //
+                    labelWrk = new Label("button-transaction", getLocalizer()
+                            .getString("button-transaction", this));
+                    labelWrk.add(new AttributeModifier(
+                            MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
+                    item.add(labelWrk);
+                } else {
+                    helper.discloseLabel("button-log");
+                    helper.discloseLabel("button-transaction");
+                }
+                //
                 evaluateVisible(item, mapVisible);
-
             }
         });
 

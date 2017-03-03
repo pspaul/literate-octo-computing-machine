@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -94,13 +94,18 @@
 
 	<li>
 		<div>
-			<button id="button-show-add-remove-user-groups"
-				class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit">
-				<wicket:message key="button-add-remove" />
-			</button>
-
-			<wicket:fragment wicket:id="tooltip-add-remove"></wicket:fragment>
+			<wicket:enclosure child="button-add-remove">
+				<button id="button-show-add-remove-user-groups"
+					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit"
+					wicket:id="button-add-remove" />
+				<wicket:fragment wicket:id="tooltip-add-remove"></wicket:fragment>
+			</wicket:enclosure>
+			<wicket:enclosure child="warn-not-ready-to-use">
+				<span class="sp-txt-warn sp-txt-wrap"
+					wicket:id="warn-not-ready-to-use" />
+			</wicket:enclosure>
 		</div>
+
 	</li>
 
 	<li id="sp-user-group-list-page"></li>

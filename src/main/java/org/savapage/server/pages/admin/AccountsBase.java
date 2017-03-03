@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -39,6 +39,17 @@ public class AccountsBase extends AbstractAdminPage {
     private static final long serialVersionUID = 1L;
 
     /**
+     * .
+     */
+    private static final String WICKET_ID_BUTTON_NEW = "button-new";
+
+    /**
+     * .
+     */
+    private static final String WICKET_ID_TXT_NOT_READY =
+            "warn-not-ready-to-use";
+
+    /**
      *
      */
     public AccountsBase(final PageParameters parameters) {
@@ -53,7 +64,15 @@ public class AccountsBase extends AbstractAdminPage {
         helper.addModifyLabelAttr("account-type-shared", "value",
                 AccountTypeEnum.SHARED.toString());
 
-        addVisible(ConfigManager.isInternalUsersEnabled(), "button-new",
-                localized("button-new"));
+        if (ConfigManager.instance().isAppReadyToUse()) {
+            addVisible(ConfigManager.isInternalUsersEnabled(),
+                    WICKET_ID_BUTTON_NEW, localized("button-new"));
+            helper.discloseLabel(WICKET_ID_TXT_NOT_READY);
+        } else {
+            helper.discloseLabel(WICKET_ID_BUTTON_NEW);
+            helper.encloseLabel(WICKET_ID_TXT_NOT_READY,
+                    localized("warn-not-ready-to-use"), true);
+        }
+
     }
 }

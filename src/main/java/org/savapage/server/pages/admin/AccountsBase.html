@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -152,15 +152,19 @@
 		</div>
 	</li>
 
-	<wicket:enclosure child="button-new">
-		<li>
-			<div>
+	<li>
+		<div>
+			<wicket:enclosure child="button-new">
 				<button id="button-create-account"
 					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit"
 					wicket:id="button-new" />
-			</div>
-		</li>
-	</wicket:enclosure>
+			</wicket:enclosure>
+			<wicket:enclosure child="warn-not-ready-to-use">
+				<span class="sp-txt-warn sp-txt-wrap"
+					wicket:id="warn-not-ready-to-use" />
+			</wicket:enclosure>
+		</div>
+	</li>
 
 	<li id="sp-shared-account-list-page"></li>
 
