@@ -3,7 +3,7 @@
 	<!-- 
     +========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ..|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein.......| 
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein.......| 
     |........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ......|
     | it under the terms of the GNU Affero General Public License as ........|
@@ -137,7 +137,14 @@
 							<th>
 								<wicket:message key="jvm-memory-prompt" />
 							</th>
-							<td wicket:id="jvm-memory" class="sp-txt-wrap sp-txt-info" />
+							<td>
+								<span wicket:id="jvm-memory" class="sp-txt-wrap sp-txt-info" />
+							</td>
+							<td>
+								<div style="margin-top: -15px;">
+									<wicket:fragment wicket:id="tooltip-jvm-memory" />
+								</div>
+							</td>
 						</tr>
 					</wicket:enclosure>
 					<wicket:enclosure child="threads-info">

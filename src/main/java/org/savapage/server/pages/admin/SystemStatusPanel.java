@@ -80,6 +80,7 @@ import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.pages.StatsEnvImpactPanel;
 import org.savapage.server.pages.StatsPageTotalPanel;
+import org.savapage.server.pages.TooltipPanel;
 
 /**
  *
@@ -692,6 +693,12 @@ public final class SystemStatusPanel extends Panel {
         }
 
         helper.encloseLabel("jvm-memory", memoryInfo, showTechInfo);
+
+        if (showTechInfo) {
+            final TooltipPanel tooltip = new TooltipPanel("tooltip-jvm-memory");
+            tooltip.populate(helper.localized("tooltip-jvm-memory"));
+            add(tooltip);
+        }
 
         /*
          * Threads info.
