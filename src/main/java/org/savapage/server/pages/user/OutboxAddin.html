@@ -32,6 +32,11 @@
 			<span class="sp-jobticket-type-copy-ind"
 				wicket:id="jobticket-type-copy" />
 		</wicket:enclosure>
+		<wicket:enclosure child="job-state-ind">
+			<div class="sp-jobticket-state-ind">
+				<span wicket:id="job-state-ind" />
+			</div>
+		</wicket:enclosure>
 	</h4>
 
 	<div class="sp-txt-wrap">
@@ -76,6 +81,12 @@
 		<wicket:enclosure child="color"> &bull; <span
 				class="sp-txt-warn" wicket:id="color" />
 		</wicket:enclosure>
+
+		<wicket:enclosure child="job-id"> &bull; <wicket:message
+				key="job-id" />
+			<span wicket:id="job-id" /> &bull; <span wicket:id="job-state" />
+		</wicket:enclosure>
+
 		<wicket:enclosure child="grayscale"> &bull; <span
 				class="sp-txt-valid" wicket:id="grayscale" />
 		</wicket:enclosure>
@@ -149,7 +160,6 @@
 
 	<p />
 
-
 	<wicket:enclosure child="button-edit-outbox-jobticket">
 		<button data-savapage="the-unique-filename"
 			class="sp-jobticket-edit ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
@@ -192,6 +202,25 @@
 			data-position-to="window" data-transition="pop"
 			class="sp-jobticket-print ui-btn ui-mini ui-btn-inline ui-btn-icon-none "
 			wicket:id="button-jobticket-print" />
+	</wicket:enclosure>
+
+	<wicket:enclosure child="button-jobticket-print-close">
+		<button data-savapage="the-unique-filename"
+			class="sp-jobticket-print-close ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
+			wicket:id="button-jobticket-print-close" />
+	</wicket:enclosure>
+
+	<wicket:enclosure child="button-jobticket-print-cancel">
+		<button data-savapage="the-unique-filename"
+			class="sp-jobticket-print-cancel ui-btn ui-mini ui-btn-inline ui-btn-icon-none"
+			wicket:id="button-jobticket-print-cancel" />
+	</wicket:enclosure>
+
+	<wicket:enclosure child="button-jobticket-print-retry">
+		<button data-savapage="the-unique-filename" data-rel="popup"
+			data-position-to="window" data-transition="pop"
+			class="sp-jobticket-print-retry ui-btn ui-mini ui-btn-inline ui-btn-icon-none "
+			wicket:id="button-jobticket-print-retry" />
 	</wicket:enclosure>
 
 

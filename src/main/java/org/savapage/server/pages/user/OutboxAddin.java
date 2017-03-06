@@ -40,13 +40,16 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.DaoContext;
+import org.savapage.core.dao.PrintOutDao;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
+import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.ipp.helpers.IppOptionMap;
+import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.outbox.OutboxInfoDto;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxAccountTrxInfoSet;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
@@ -115,6 +118,46 @@ public class OutboxAddin extends AbstractUserPage {
     /**
      * .
      */
+    private static final PrintOutDao PRINTOUT_DAO =
+            ServiceContext.getDaoContext().getPrintOutDao();
+
+    private static final String WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET =
+            "button-edit-outbox-jobticket";
+
+    private static final String WICKET_ID_BTN_CANCEL_OUTBOX_JOB =
+            "button-cancel-outbox-job";
+
+    private static final String WICKET_ID_BTN_CANCEL_OUTBOX_JOBTICKET =
+            "button-cancel-outbox-jobticket";
+
+    private static final String WICKET_ID_BTN_PREVIEW_OUTBOX_JOB =
+            "button-preview-outbox-job";
+
+    private static final String WICKET_ID_BTN_PREVIEW_OUTBOX_JOBTICKET =
+            "button-preview-outbox-jobticket";
+
+    private static final String WICKET_ID_BTN_JOBTICKET_SETTLE =
+            "button-jobticket-settle";
+
+    private static final String WICKET_ID_BTN_JOBTICKET_PRINT =
+            "button-jobticket-print";
+
+    private static final String WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL =
+            "button-jobticket-print-cancel";
+
+    private static final String WICKET_ID_BTN_JOBTICKET_PRINT_CLOSE =
+            "button-jobticket-print-close";
+
+    private static final String WICKET_ID_BTN_JOBTICKET_PRINT_RETRY =
+            "button-jobticket-print-retry";
+
+    private static final String WICKET_ID_OWNER_USER_ID = "owner-user-id";
+    private static final String WICKET_ID_JOB_STATE = "job-state";
+    private static final String WICKET_ID_JOB_STATE_IND = "job-state-ind";
+
+    /**
+     * .
+     */
     private class OutboxJobView extends PropertyListView<OutboxJobDto> {
 
         /**
@@ -144,6 +187,14 @@ public class OutboxAddin extends AbstractUserPage {
             final IppOptionMap optionMap = job.createIppOptionMap();
             final boolean isJobTicketItem = job.getUserId() != null;
             final boolean isCopyJobTicket = job.isCopyJobTicket();
+
+            final PrintOut printOut;
+
+            if (job.getPrintOutId() != null) {
+                printOut = PRINTOUT_DAO.findById(job.getPrintOutId());
+            } else {
+                printOut = null;
+            }
 
             Label labelWlk;
 
@@ -243,16 +294,15 @@ public class OutboxAddin extends AbstractUserPage {
                     job.getPages() * job.getCopies() - job.getSheets());
             item.add(new Label("printout-pie", sparklineData));
 
-            if (!getSessionWebAppType().equals(WebAppTypeEnum.JOBTICKETS)) {
-                helper.discloseLabel("button-edit-outbox-jobticket");
+            if (!getSessionWebAppType().equals(WebAppTypeEnum.JOBTICKETS)
+                    || printOut != null) {
+                helper.discloseLabel(WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET);
             } else {
 
-                labelWlk =
-                        helper.encloseLabel("button-edit-outbox-jobticket",
-                                String.format("%s . . .",
-                                        HtmlButtonEnum.EDIT
-                                                .uiText(getLocale())),
-                                isJobTicketItem);
+                labelWlk = helper.encloseLabel(
+                        WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET,
+                        HtmlButtonEnum.EDIT.uiTextDottedSfx(getLocale()),
+                        isJobTicketItem);
                 if (isJobTicketItem) {
                     this.addJobIdAttr(labelWlk, job);
                 }
@@ -263,27 +313,32 @@ public class OutboxAddin extends AbstractUserPage {
 
             if (isJobTicketItem) {
 
-                helper.discloseLabel("button-cancel-outbox-job");
-                helper.discloseLabel("button-preview-outbox-job");
+                helper.discloseLabel(WICKET_ID_BTN_CANCEL_OUTBOX_JOB);
+                helper.discloseLabel(WICKET_ID_BTN_PREVIEW_OUTBOX_JOB);
 
-                encloseButtonIdRemove = "button-cancel-outbox-jobticket";
+                encloseButtonIdRemove = WICKET_ID_BTN_CANCEL_OUTBOX_JOBTICKET;
 
                 if (isCopyJobTicket) {
-                    helper.discloseLabel("button-preview-outbox-jobticket");
+                    helper.discloseLabel(
+                            WICKET_ID_BTN_PREVIEW_OUTBOX_JOBTICKET);
                     encloseButtonIdPreview = null;
                 } else {
-                    encloseButtonIdPreview = "button-preview-outbox-jobticket";
+                    encloseButtonIdPreview =
+                            WICKET_ID_BTN_PREVIEW_OUTBOX_JOBTICKET;
                 }
             } else {
-                helper.discloseLabel("button-cancel-outbox-jobticket");
-                helper.discloseLabel("button-preview-outbox-jobticket");
-                encloseButtonIdRemove = "button-cancel-outbox-job";
-                encloseButtonIdPreview = "button-preview-outbox-job";
+                helper.discloseLabel(WICKET_ID_BTN_CANCEL_OUTBOX_JOBTICKET);
+                helper.discloseLabel(WICKET_ID_BTN_PREVIEW_OUTBOX_JOBTICKET);
+                encloseButtonIdRemove = WICKET_ID_BTN_CANCEL_OUTBOX_JOB;
+                encloseButtonIdPreview = WICKET_ID_BTN_PREVIEW_OUTBOX_JOB;
             }
-            this.addJobIdAttr(
-                    helper.encloseLabel(encloseButtonIdRemove,
-                            HtmlButtonEnum.CANCEL.uiText(getLocale()), true),
-                    job);
+
+            if (printOut == null) {
+                this.addJobIdAttr(helper.encloseLabel(encloseButtonIdRemove,
+                        HtmlButtonEnum.CANCEL.uiText(getLocale()), true), job);
+            } else {
+                helper.discloseLabel(encloseButtonIdRemove);
+            }
 
             if (job.isDrm()) {
                 helper.discloseLabel(encloseButtonIdPreview);
@@ -294,7 +349,6 @@ public class OutboxAddin extends AbstractUserPage {
             /*
              * Variable attributes.
              */
-
             final boolean isExpiryUndetermined =
                     job.getSubmitTime() == job.getExpiryTime();
 
@@ -327,7 +381,8 @@ public class OutboxAddin extends AbstractUserPage {
                     "grayscale", "accounts", "removeGraphics", "ecoPrint",
                     "extSupplier", "owner-user-name", "drm", "punch", "staple",
                     "fold", "booklet", "jobticket-media", "jobticket-copy",
-                    "jobticket-finishing-ext", "landscape", "portrait" }) {
+                    "jobticket-finishing-ext", "landscape", "portrait",
+                    "job-id" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -457,41 +512,115 @@ public class OutboxAddin extends AbstractUserPage {
                         .add(new AttributeModifier("src", extSupplierImgUrl));
             }
 
-            //
-            if (this.isJobticketView && job.getUserId() != null) {
+            if (printOut == null) {
+
+                helper.discloseLabel(WICKET_ID_JOB_STATE_IND);
+
+            } else {
+
+                final IppJobStateEnum jobState = IppJobStateEnum
+                        .asEnum(printOut.getCupsJobState().intValue());
+
+                final String cssClass = MarkupHelper.getCssTxtClass(jobState);
+
+                //
+                labelWlk = helper.encloseLabel(WICKET_ID_JOB_STATE,
+                        jobState.uiText(getLocale()), true);
+                MarkupHelper.appendLabelAttr(labelWlk, "class", cssClass);
+
+                //
+                labelWlk = helper.encloseLabel(WICKET_ID_JOB_STATE_IND,
+                        jobState.uiText(getLocale()), true);
+                MarkupHelper.appendLabelAttr(labelWlk, "class", cssClass);
+
+            }
+
+            if (printOut != null && getSessionWebAppType()
+                    .equals(WebAppTypeEnum.JOBTICKETS)) {
+
+                final IppJobStateEnum jobState = IppJobStateEnum
+                        .asEnum(printOut.getCupsJobState().intValue());
+
+                if (jobState.isPresentOnQueue()) {
+                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_CLOSE);
+                } else {
+                    this.addJobIdAttr(helper.encloseLabel(
+                            WICKET_ID_BTN_JOBTICKET_PRINT_CLOSE,
+                            HtmlButtonEnum.CLOSE.uiText(getLocale()), true),
+                            job);
+                }
+                if (jobState.equals(IppJobStateEnum.IPP_JOB_COMPLETED)) {
+                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL);
+                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_RETRY);
+                } else if (jobState.isPresentOnQueue()) {
+                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_RETRY);
+                    this.addJobIdAttr(helper.encloseLabel(
+                            WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL,
+                            HtmlButtonEnum.CANCEL.uiText(getLocale()), true),
+                            job);
+                } else {
+                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL);
+                    this.addJobIdAttr(helper.encloseLabel(
+                            WICKET_ID_BTN_JOBTICKET_PRINT_RETRY,
+                            HtmlButtonEnum.RETRY.uiText(getLocale()), true),
+                            job);
+                }
+            } else {
+
+                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL);
+                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_CLOSE);
+                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_RETRY);
+            }
+
+            final boolean readUser;
+
+            if (printOut != null) {
+
+                mapVisible.put("job-id", printOut.getCupsJobId().toString());
+
+                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
+                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE);
+
+                readUser = true;
+
+            } else if (this.isJobticketView && job.getUserId() != null) {
 
                 if (isCopyJobTicket) {
-                    helper.discloseLabel("button-jobticket-print");
+                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
                 } else {
-                    this.addJobIdAttr(
-                            helper.encloseLabel("button-jobticket-print",
-                                    String.format("%s . . .",
-                                            HtmlButtonEnum.PRINT
-                                                    .uiText(getLocale())),
-                                    true),
-                            job);
+                    this.addJobIdAttr(helper.encloseLabel(
+                            WICKET_ID_BTN_JOBTICKET_PRINT,
+                            HtmlButtonEnum.PRINT.uiTextDottedSfx(getLocale()),
+                            true), job);
                 }
 
                 this.addJobIdAttr(
-                        helper.encloseLabel("button-jobticket-settle",
-                                String.format("%s . . .",
-                                        HtmlButtonEnum.SETTLE
-                                                .uiText(getLocale())),
+                        helper.encloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE,
+                                HtmlButtonEnum.SETTLE
+                                        .uiTextDottedSfx(getLocale()),
                                 true),
                         job);
 
-                //
+                readUser = true;
+
+            } else {
+                helper.discloseLabel(WICKET_ID_OWNER_USER_ID);
+                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
+                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE);
+                readUser = false;
+            }
+
+            if (readUser) {
                 final org.savapage.core.jpa.User user =
                         USER_DAO.findById(job.getUserId());
-
                 if (user == null) {
-                    labelWlk = helper.encloseLabel("owner-user-id",
+                    labelWlk = helper.encloseLabel(WICKET_ID_OWNER_USER_ID,
                             "*** USER NOT FOUND ***", true);
                     MarkupHelper.appendLabelAttr(labelWlk, "class",
                             MarkupHelper.CSS_TXT_WARN);
                 } else {
-                    helper.encloseLabel("owner-user-id", user.getUserId(),
-                            true);
+                    helper.encloseLabel(WICKET_ID_OWNER_USER_ID,
+                            user.getUserId(), true);
                     mapVisible.put("owner-user-name", user.getFullName());
 
                     final String email =
@@ -506,12 +635,7 @@ public class OutboxAddin extends AbstractUserPage {
                                 String.format("mailto:%s", email));
                     }
                 }
-            } else {
-                helper.discloseLabel("owner-user-id");
-                helper.discloseLabel("button-jobticket-print");
-                helper.discloseLabel("button-jobticket-settle");
             }
-
             /*
              * Hide/Show
              */

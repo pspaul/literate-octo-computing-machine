@@ -213,6 +213,20 @@
 	-khtml-border-radius: 7px;
 	border-radius: 7px;
 }
+
+.sp-jobticket-state-ind {
+	background-color: #f9f9f9;
+	padding: 6px;
+	margin-right: 10px;
+	border: 1px #DDDDDD solid;
+	float: right;
+	font-size: 90%;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	-khtml-border-radius: 7px;
+	border-radius: 7px;
+}
+
 .sp-font-monospace {
 	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 }

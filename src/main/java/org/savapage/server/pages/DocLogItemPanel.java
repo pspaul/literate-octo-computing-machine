@@ -376,36 +376,11 @@ public class DocLogItemPanel extends Panel {
                     mapVisible.put("cost", localizedDecimal(obj.getCost()));
                 }
 
-                String sfx = null;
-
-                switch (obj.getJobState()) {
-                case IPP_JOB_ABORTED:
-                    sfx = "aborted";
-                    break;
-                case IPP_JOB_CANCELED:
-                    sfx = "canceled";
-                    break;
-                case IPP_JOB_COMPLETED:
-                    sfx = "completed";
-                    break;
-                case IPP_JOB_HELD:
-                    sfx = "held";
-                    break;
-                case IPP_JOB_PENDING:
-                    sfx = "pending";
-                    break;
-                case IPP_JOB_PROCESSING:
-                    sfx = "processing";
-                    break;
-                case IPP_JOB_STOPPED:
-                    sfx = "stopped";
-                    break;
-                }
-
                 cssJobState = MarkupHelper.getCssTxtClass(obj.getJobState());
 
-                if (sfx != null) {
-                    mapVisible.put("job-state", localized("job-state-" + sfx));
+                if (obj.getJobState() != null) {
+                    mapVisible.put("job-state",
+                            obj.getJobState().uiText(getLocale()));
                     if (obj.getCompletedDate() != null) {
                         mapVisible.put("job-completed-date",
                                 localizedShortTime(obj.getCompletedDate()));

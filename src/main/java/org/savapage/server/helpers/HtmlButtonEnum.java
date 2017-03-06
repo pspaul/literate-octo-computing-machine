@@ -113,6 +113,11 @@ public enum HtmlButtonEnum {
     RESET,
 
     /**
+    *
+    */
+    RETRY,
+
+    /**
      *
      */
     SAVE,
@@ -141,4 +146,12 @@ public enum HtmlButtonEnum {
         return LocaleHelper.uiText(this, locale);
     }
 
+    /**
+     * @param locale
+     *            The {@link Locale}.
+     * @return The localized text with " . . ." suffix.
+     */
+    public String uiTextDottedSfx(final Locale locale) {
+        return String.format("%s . . .", this.uiText(locale));
+    }
 }
