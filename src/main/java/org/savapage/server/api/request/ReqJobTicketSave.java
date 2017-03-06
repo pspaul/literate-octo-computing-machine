@@ -124,7 +124,13 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
      */
     private void saveJobTicket(final DtoReq dtoReq, final OutboxJobDto dto) {
 
-        dto.setCopies(dtoReq.getCopies());
+        /*
+         * In a Delegated Print, copies are fixed, because determined by number
+         * of delegators, and therefore cannot be edited/set.
+         */
+        if (!dto.isDelegatedPrint()) {
+            dto.setCopies(dtoReq.getCopies());
+        }
 
         for (final Entry<String, String> entry : dtoReq.getIppOptions()
                 .entrySet()) {
