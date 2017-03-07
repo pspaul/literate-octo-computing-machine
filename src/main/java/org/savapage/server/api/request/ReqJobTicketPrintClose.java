@@ -23,12 +23,15 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
+import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
 
 /**
@@ -37,6 +40,12 @@ import org.savapage.core.services.ServiceContext;
  *
  */
 public final class ReqJobTicketPrintClose extends ApiRequestMixin {
+
+    /**
+     * .
+     */
+    private static final JobTicketService JOBTICKET_SERVICE =
+            ServiceContext.getServiceFactory().getJobTicketService();
 
     /**
      *
@@ -73,20 +82,24 @@ public final class ReqJobTicketPrintClose extends ApiRequestMixin {
             msgKey = "msg-outbox-jobticket-print-close-none";
         } else {
             msgKey = "msg-outbox-jobticket-print-close";
-            notifyUser(dto.getUserId(), dto.getIppJobState());
+            notifyUser(requestingUser, dto);
         }
 
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);
     }
 
     /**
-     * @param userKey
-     *            The user database key
+     *
+     * @param requestingUser
+     * @param dto
      * @throws IOException
      *             When IO error.
      */
-    private void notifyUser(final Long userKey, final IppJobStateEnum jobState)
+    private void notifyUser(final String requestingUser, final OutboxJobDto dto)
             throws IOException {
+
+        final Long userKey = dto.getUserId();
+        final IppJobStateEnum jobState = dto.getIppJobState();
 
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
@@ -106,6 +119,38 @@ public final class ReqJobTicketPrintClose extends ApiRequestMixin {
             UserMsgIndicator.write(user.getUserId(),
                     ServiceContext.getTransactionDate(), userMsgInd, null);
         }
+
+        sendEmailNotification(requestingUser, user, dto, jobState);
+    }
+
+    /**
+     *
+     * @param requestingUser
+     * @param user
+     * @param dto
+     * @param ippState
+     * @return
+     */
+    private String sendEmailNotification(final String requestingUser,
+            final User user, final OutboxJobDto dto,
+            final IppJobStateEnum ippState) {
+
+        /*
+         * INVARIANT: Print must be completed.
+         */
+        if (ippState != IppJobStateEnum.IPP_JOB_COMPLETED) {
+            return null;
+        }
+        /*
+         * INVARIANT: Notification must be enabled.
+         */
+        if (!ConfigManager.instance()
+                .isConfigValue(Key.JOBTICKET_NOTIFY_EMAIL_COMPLETED_ENABLE)) {
+            return null;
+        }
+
+        return JOBTICKET_SERVICE.notifyTicketCompletedByEmail(dto,
+                requestingUser, user, ConfigManager.getDefaultLocale());
     }
 
 }
