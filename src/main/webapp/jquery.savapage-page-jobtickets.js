@@ -117,10 +117,11 @@
 				_refresh();
 			}
 			//
-			, _onPrintPopup = function(jobFileName, positionTo, settle) {
+			, _onPrintPopup = function(jobFileName, positionTo, settle, retry) {
 				var html = _view.getPageHtml('JobTicketPrintAddIn', {
 					jobFileName : jobFileName,
-					settle : settle
+					settle : settle,
+					retry : retry
 				}) || 'error';
 
 				$('#sp-jobticket-popup-addin').html(html);
@@ -133,19 +134,35 @@
 				}
 			}
 			//
+			, _onPrintRetry = function(jobFileName, positionTo) {
+				_onPrintPopup(jobFileName, positionTo, false, true);
+			}
+			// For now ..
+			, _loadingIconFoo = function(foo, p1, p2, p3, p4, p5) {
+				$.mobile.loading("show");
+				window.setTimeout(function() {
+					foo(p1, p2, p3, p4, p5);
+					$.mobile.loading("hide");
+				}, 500);
+			}
+			//
 			, _onPrintCancel = function(jobFileName) {
-				var res = _api.call({
-					request : 'jobticket-print-cancel',
-					dto : JSON.stringify({
-						jobFileName : jobFileName
-					})
-				});
-				if (res.result.code === "0") {
-					_view.showApiMsg(res);
-					_refresh();
-				} else {
-					_view.message(res.result.txt);
-				}			}
+
+				_loadingIconFoo(function(jobfileName) {
+					var res = _api.call({
+						request : 'jobticket-print-cancel',
+						dto : JSON.stringify({
+							jobFileName : jobFileName
+						})
+					});
+					if (res.result.code === "0") {
+						_view.showApiMsg(res);
+						_refresh();
+					} else {
+						_view.message(res.result.txt);
+					}
+				}, jobFileName);
+			}
 			//
 			, _onPrintClose = function(jobFileName) {
 				var res = _api.call({
@@ -160,10 +177,6 @@
 				} else {
 					_view.message(res.result.txt);
 				}
-			}
-			//
-			, _onPrintRetry = function(jobFileName, positionTo) {
-				alert('Not implemented yes.');
 			}
 			//
 			, _onEditPopup = function(jobFileName, positionTo) {
@@ -186,12 +199,13 @@
 				});
 			}
 			//
-			, _execJob = function(jobFileName, print, printerId, mediaSource) {
+			, _execJob = function(jobFileName, print, retry, printerId, mediaSource) {
 				return _api.call({
 					request : 'jobticket-execute',
 					dto : JSON.stringify({
 						jobFileName : jobFileName,
 						print : print,
+						retry : retry,
 						printerId : printerId,
 						mediaSource : mediaSource
 					})
@@ -222,19 +236,23 @@
 				_view.message(res.result.txt);
 			}
 			//
-			, _onExecJob = function(jobFileName, print) {
-				var res, selPrinter = _view.getRadioSelected('sp-jobticket-redirect-printer'), mediaSource;
-				if (print) {
-					mediaSource = _getRedirectPrinterMediaSource(_getRedirectPrinterItem(selPrinter)).find(':selected').val();
-				}
-				res = _execJob(jobFileName, print, selPrinter.val(), mediaSource);
+			, _onExecJob = function(jobFileName, print, retry) {
+				_loadingIconFoo(function(jobFileName, print, retry) {
+					var res, selPrinter = _view.getRadioSelected('sp-jobticket-redirect-printer'), mediaSource;
+					if (print) {
+						mediaSource = _getRedirectPrinterMediaSource(_getRedirectPrinterItem(selPrinter)).find(':selected').val();
+					}
+					res = _execJob(jobFileName, print, retry, selPrinter.val(), mediaSource);
 
-				if (res.result.code === "0") {
-					$('#sp-jobticket-popup').popup('close');
-					_refresh();
-				}
-				//_view.showApiMsg(res);
-				_view.message(res.result.txt);
+					if (res.result.code === "0") {
+						$('#sp-jobticket-popup').popup('close');
+						_refresh();
+					}
+
+					$.mobile.loading("hide");
+					//_view.showApiMsg(res);
+					_view.message(res.result.txt);
+				}, jobFileName, print, retry);
 			}
 			//
 			, _onProcessAll = function(mode) {
@@ -242,7 +260,7 @@
 				var logPfx = (mode === _MODE_PRINT ? 'Print' : 'Cancel')
 				//
 				, popup = (mode === _MODE_PRINT ? $('#sp-jobticket-popup-print-all') : $('#sp-jobticket-popup-cancel-all'))
-				//
+				// NOTE: Tickets with cancel button are candidates for batch processing.
 				, tickets = $('.sp-outbox-cancel-jobticket');
 
 				popup.find('.ui-content:eq(0)').hide();
@@ -362,6 +380,9 @@
 
 				}).on('click', "#sp-jobticket-popup-btn-print", null, function() {
 					_onExecJob($(this).attr('data-savapage'), true);
+
+				}).on('click', "#sp-jobticket-popup-btn-print-retry", null, function() {
+					_onExecJob($(this).attr('data-savapage'), true, true);
 
 				}).on('click', "#sp-jobticket-popup-btn-settle", null, function() {
 					_onExecJob($(this).attr('data-savapage'), false);

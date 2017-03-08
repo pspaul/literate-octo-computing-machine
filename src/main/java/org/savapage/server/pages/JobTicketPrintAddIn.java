@@ -73,6 +73,11 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
     /**
      * .
      */
+    private static final String PARM_RETRY = "retry";
+
+    /**
+     * .
+     */
     private static final JobTicketService JOBTICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
 
@@ -304,6 +309,7 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
         }
 
         final boolean isSettlement = this.getParmBoolean(PARM_SETTLE, false);
+        final boolean isRetry = this.getParmBoolean(PARM_RETRY, false);
 
         //
         final List<RedirectPrinterDto> printerList;
@@ -332,13 +338,22 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
         if (isSettlement) {
             prompt = localized("prompt-header-settle");
             helper.discloseLabel("btn-print");
+            helper.discloseLabel("btn-print-retry");
             labelButton = MarkupHelper.createEncloseLabel("btn-settle",
                     HtmlButtonEnum.SETTLE.uiText(getLocale()), true);
         } else {
             prompt = localized("prompt-header-print");
             helper.discloseLabel("btn-settle");
-            labelButton = MarkupHelper.createEncloseLabel("btn-print",
-                    HtmlButtonEnum.PRINT.uiText(getLocale()), true);
+
+            if (isRetry) {
+                labelButton = MarkupHelper.createEncloseLabel("btn-print-retry",
+                        HtmlButtonEnum.PRINT.uiText(getLocale()), true);
+                helper.discloseLabel("btn-print");
+            } else {
+                labelButton = MarkupHelper.createEncloseLabel("btn-print",
+                        HtmlButtonEnum.PRINT.uiText(getLocale()), true);
+                helper.discloseLabel("btn-print-retry");
+            }
         }
 
         MarkupHelper.modifyLabelAttr(labelButton,

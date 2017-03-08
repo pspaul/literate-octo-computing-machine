@@ -199,8 +199,8 @@ public class OutboxAddin extends AbstractUserPage {
             Label labelWlk;
 
             //
-            final JsonProxyPrinter cachedPrinter =
-                    PROXYPRINT_SERVICE.getCachedPrinter(job.getPrinterName());
+            final JsonProxyPrinter cachedPrinter = PROXYPRINT_SERVICE
+                    .getCachedPrinter(job.getPrinterJobTicket());
 
             final String printerDisplayName;
 
@@ -209,7 +209,7 @@ public class OutboxAddin extends AbstractUserPage {
             } else {
                 printerDisplayName = StringUtils.defaultString(
                         cachedPrinter.getDbPrinter().getDisplayName(),
-                        job.getPrinterName());
+                        job.getPrinterJobTicket());
             }
 
             /*
@@ -382,7 +382,7 @@ public class OutboxAddin extends AbstractUserPage {
                     "extSupplier", "owner-user-name", "drm", "punch", "staple",
                     "fold", "booklet", "jobticket-media", "jobticket-copy",
                     "jobticket-finishing-ext", "landscape", "portrait",
-                    "job-id" }) {
+                    "job-id", "job-printer" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -577,6 +577,8 @@ public class OutboxAddin extends AbstractUserPage {
             if (printOut != null) {
 
                 mapVisible.put("job-id", printOut.getCupsJobId().toString());
+                mapVisible.put("job-printer",
+                        printOut.getPrinter().getDisplayName());
 
                 helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
                 helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE);

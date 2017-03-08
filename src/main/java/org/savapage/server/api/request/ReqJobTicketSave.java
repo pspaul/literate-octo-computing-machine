@@ -178,7 +178,7 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
     private void recalcCost(final OutboxJobDto dto) {
 
         final JsonProxyPrinter proxyPrinter =
-                PROXY_PRINT_SERVICE.getCachedPrinter(dto.getPrinterName());
+                PROXY_PRINT_SERVICE.getCachedPrinter(dto.getPrinterJobTicket());
 
         final ProxyPrintCostParms costParms =
                 new ProxyPrintCostParms(proxyPrinter);
@@ -200,7 +200,7 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
 
         //
         final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
-                .findByName(dto.getPrinterName());
+                .findByName(dto.getPrinterJobTicket());
 
         costParms.setNumberOfCopies(dto.getCopies());
         costParms.setNumberOfPages(dto.getPages());

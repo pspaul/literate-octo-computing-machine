@@ -56,6 +56,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
         private String jobFileName;
         private boolean print;
+        private boolean retry;
         private Long printerId;
         private String mediaSource;
 
@@ -83,6 +84,15 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setPrint(boolean print) {
             this.print = print;
+        }
+
+        public boolean isRetry() {
+            return retry;
+        }
+
+        @SuppressWarnings("unused")
+        public void setRetry(boolean retry) {
+            this.retry = retry;
         }
 
         public Long getPrinterId() {
@@ -116,11 +126,11 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
-        final boolean settlement = dtoReq.isPrint();
-
         Long printerId = dtoReq.getPrinterId();
 
         if (printerId == null) {
+
+            final boolean settlement = !dtoReq.isPrint();
 
             /*
              * INVARIANT: Settlement MUST have printer.
@@ -179,8 +189,16 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
                     return;
                 }
 
-                dto = JOBTICKET_SERVICE.printTicket(requestingUser, printer,
-                        dtoReq.getMediaSource(), dtoReq.getJobFileName());
+                if (dtoReq.isRetry()) {
+
+                    dto = JOBTICKET_SERVICE.retryTicketPrint(requestingUser,
+                            printer, dtoReq.getMediaSource(),
+                            dtoReq.getJobFileName());
+
+                } else {
+                    dto = JOBTICKET_SERVICE.printTicket(requestingUser, printer,
+                            dtoReq.getMediaSource(), dtoReq.getJobFileName());
+                }
 
             } else {
                 dto = JOBTICKET_SERVICE.settleTicket(requestingUser, printer,
