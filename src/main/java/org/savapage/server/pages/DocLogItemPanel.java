@@ -39,7 +39,6 @@ import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DocLogDao;
-import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
@@ -51,7 +50,6 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketSupplierData;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
-import org.savapage.server.WebApp;
 
 /**
  *
@@ -118,52 +116,24 @@ public class DocLogItemPanel extends Panel {
                 "color", "grayscale", "papersize", "cost-currency", "cost",
                 "account-trx", "job-id", "job-state", "job-completed-date",
                 "print-in-denied-reason-hyphen", "print-in-denied-reason",
-                "collateCopies", "ecoPrint", "removeGraphics", "extSupplier",
-                "punch", "staple", "fold", "booklet", "jobticket-media",
+                "collateCopies", "ecoPrint", "removeGraphics", "punch",
+                "staple", "fold", "booklet", "jobticket-media",
                 "jobticket-copy", "jobticket-finishing-ext", "landscape" }) {
             mapVisible.put(attr, null);
         }
 
-        MarkupHelper helper = new MarkupHelper(this);
+        final MarkupHelper helper = new MarkupHelper(this);
 
         //
-        final String extSupplierImgUrl;
-
         final boolean isExtSupplier = obj.getExtSupplier() != null;
-
         if (isExtSupplier) {
-            mapVisible.put("extSupplier", obj.getExtSupplier().getUiText());
-            extSupplierImgUrl =
-                    WebApp.getExtSupplierEnumImgUrl(obj.getExtSupplier());
+            final ExtSupplierStatusPanel panel =
+                    new ExtSupplierStatusPanel("extSupplierPanel");
+            panel.populate(obj.getExtSupplier(), obj.getExtSupplierStatus(),
+                    null);
+            add(panel);
         } else {
-            extSupplierImgUrl = null;
-        }
-
-        if (StringUtils.isBlank(extSupplierImgUrl)) {
-            helper.discloseLabel("extSupplierImg");
-        } else {
-            helper.encloseLabel("extSupplierImg", "", true)
-                    .add(new AttributeModifier("src", extSupplierImgUrl));
-            // disable for now ... (how to check thirdparty?)
-            final String thirdPartyUrl = null;
-            // WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT);
-            if (StringUtils.isBlank(thirdPartyUrl)) {
-                helper.discloseLabel("thirdPartyImg");
-            } else {
-                helper.encloseLabel("thirdPartyImg", "", true)
-                        .add(new AttributeModifier("src", thirdPartyUrl));
-            }
-        }
-
-        //
-        final ExternalSupplierStatusEnum extSupplierStatus =
-                obj.getExtSupplierStatus();
-
-        if (extSupplierStatus == null) {
-            helper.discloseLabel("extStatus");
-        } else {
-            addVisible(true, "extStatus", extSupplierStatus.uiText(getLocale()),
-                    MarkupHelper.getCssTxtClass(extSupplierStatus));
+            helper.discloseLabel("extSupplierPanel");
         }
 
         //

@@ -62,9 +62,9 @@
 		<wicket:enclosure child="papersize"> &bull; <span
 				wicket:id="papersize" />
 		</wicket:enclosure>
-        <wicket:enclosure child="landscape"> &bull; <span
-                class="sp-txt-info" wicket:id="landscape" />
-        </wicket:enclosure>
+		<wicket:enclosure child="landscape"> &bull; <span
+				class="sp-txt-info" wicket:id="landscape" />
+		</wicket:enclosure>
 		<wicket:enclosure child="letterhead"> &bull; <span
 				wicket:id="letterhead" />
 		</wicket:enclosure>
@@ -143,22 +143,8 @@
 		</p>
 	</wicket:enclosure>
 
-	<wicket:enclosure child="extSupplier">
-		<p class="sp-txt-wrap">
-			<wicket:enclosure child="extSupplierImg">
-				<img wicket:id="extSupplierImg" src="" height="12" />
-			</wicket:enclosure>
-			<wicket:enclosure child="extSupplier">
-				<span style="font-size: small;" wicket:id="extSupplier" />
-			</wicket:enclosure>
-			<wicket:enclosure child="extStatus">
-                    &bull; 
-                <wicket:enclosure child="thirdPartyImg">
-					<img wicket:id="thirdPartyImg" src="" height="12" />
-				</wicket:enclosure>
-				<span style="font-size: small;" wicket:id="extStatus" />
-			</wicket:enclosure>
-		</p>
+	<wicket:enclosure child="extSupplierPanel">
+		<wicket:fragment wicket:id="extSupplierPanel" />
 	</wicket:enclosure>
 
 	<p class="ui-li-aside">

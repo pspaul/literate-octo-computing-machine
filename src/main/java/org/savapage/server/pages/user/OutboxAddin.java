@@ -43,7 +43,9 @@ import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.PrintOutDao;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
+import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
@@ -65,6 +67,7 @@ import org.savapage.core.util.MediaUtils;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.ExtSupplierStatusPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.webapp.WebAppTypeEnum;
@@ -493,7 +496,7 @@ public class OutboxAddin extends AbstractUserPage {
                     StringUtils.replace(cost.toString(), " ", "&nbsp;"))
                             .setEscapeModelStrings(false));
 
-            //
+            // Job Ticket Supplier
             final String extSupplierImgUrl;
 
             if (job.getExternalSupplierInfo() != null) {
@@ -512,6 +515,41 @@ public class OutboxAddin extends AbstractUserPage {
                         .add(new AttributeModifier("src", extSupplierImgUrl));
             }
 
+            // External Print Management (by PaperCut)
+            final ExtSupplierStatusPanel panelExtPrintStatus;
+            final ExternalSupplierStatusEnum extPrintStatus;
+
+            if (printOut == null) {
+                panelExtPrintStatus = null;
+                extPrintStatus = null;
+            } else {
+                final org.savapage.core.jpa.DocLog docLog =
+                        printOut.getDocOut().getDocLog();
+
+                final ExternalSupplierEnum supplier =
+                        DaoEnumHelper.getExtSupplier(docLog);
+
+                if (supplier == null) {
+                    panelExtPrintStatus = null;
+                    extPrintStatus = null;
+                } else {
+                    extPrintStatus = DaoEnumHelper.getExtSupplierStatus(docLog);
+
+                    panelExtPrintStatus =
+                            new ExtSupplierStatusPanel("extSupplierPanel");
+                    panelExtPrintStatus.populate(supplier, extPrintStatus,
+                            PROXYPRINT_SERVICE.getExtPrinterManager(
+                                    printOut.getPrinter().getPrinterName()));
+                }
+            }
+
+            if (panelExtPrintStatus == null) {
+                helper.discloseLabel("extSupplierPanel");
+            } else {
+                item.add(panelExtPrintStatus);
+            }
+
+            //
             if (printOut == null) {
 
                 helper.discloseLabel(WICKET_ID_JOB_STATE_IND);
@@ -549,22 +587,37 @@ public class OutboxAddin extends AbstractUserPage {
                             HtmlButtonEnum.CLOSE.uiText(getLocale()), true),
                             job);
                 }
+
+                boolean enableRetryButton;
+
                 if (jobState.equals(IppJobStateEnum.IPP_JOB_COMPLETED)) {
                     helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL);
-                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_RETRY);
+
+                    enableRetryButton =
+                            extPrintStatus == ExternalSupplierStatusEnum.CANCELLED
+                                    || extPrintStatus == ExternalSupplierStatusEnum.EXPIRED
+                                    || extPrintStatus == ExternalSupplierStatusEnum.ERROR;
+
                 } else if (jobState.isPresentOnQueue()) {
-                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_RETRY);
+                    enableRetryButton = false;
                     this.addJobIdAttr(helper.encloseLabel(
                             WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL,
                             HtmlButtonEnum.CANCEL.uiText(getLocale()), true),
                             job);
                 } else {
                     helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL);
+                    enableRetryButton = true;
+                }
+
+                if (enableRetryButton) {
                     this.addJobIdAttr(helper.encloseLabel(
                             WICKET_ID_BTN_JOBTICKET_PRINT_RETRY,
                             HtmlButtonEnum.RETRY.uiText(getLocale()), true),
                             job);
+                } else {
+                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_RETRY);
                 }
+
             } else {
 
                 helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL);

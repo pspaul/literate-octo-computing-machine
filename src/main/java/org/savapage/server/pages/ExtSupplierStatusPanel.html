@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
+    -->
+</wicket:remove>
+
+<wicket:panel>
+	<p class="sp-txt-wrap">
+		<wicket:enclosure child="extSupplierImg">
+			<img wicket:id="extSupplierImg" src="" height="12" />
+		</wicket:enclosure>
+		<span style="font-size: small;" wicket:id="extSupplier" />
+		<wicket:enclosure child="extStatus"> &bull; 
+        <wicket:enclosure child="thirdPartyImg">
+				<img wicket:id="thirdPartyImg" src="" height="12" />
+			</wicket:enclosure>
+			<span style="font-size: small;" wicket:id="extStatus" />
+		</wicket:enclosure>
+	</p>
+</wicket:panel>
