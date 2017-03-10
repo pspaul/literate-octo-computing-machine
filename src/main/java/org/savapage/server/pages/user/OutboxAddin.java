@@ -567,9 +567,20 @@ public class OutboxAddin extends AbstractUserPage {
                 MarkupHelper.appendLabelAttr(labelWlk, "class", cssClass);
 
                 //
+                final String cssClassInd;
+                final String jobStateInd;
+
+                if (extPrintStatus == null) {
+                    cssClassInd = cssClass;
+                    jobStateInd = jobState.uiText(getLocale());
+                } else {
+                    jobStateInd = extPrintStatus.uiText(getLocale());
+                    cssClassInd = MarkupHelper.getCssTxtClass(extPrintStatus);
+                }
+
                 labelWlk = helper.encloseLabel(WICKET_ID_JOB_STATE_IND,
-                        jobState.uiText(getLocale()), true);
-                MarkupHelper.appendLabelAttr(labelWlk, "class", cssClass);
+                        jobStateInd, true);
+                MarkupHelper.appendLabelAttr(labelWlk, "class", cssClassInd);
 
             }
 

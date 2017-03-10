@@ -52,6 +52,7 @@ import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserAccount;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.JobTicketSupplierData;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
@@ -349,10 +350,18 @@ public class AccountTrxPage extends AbstractListPage {
                 if (printMode == PrintModeEnum.TICKET
                         || printMode == PrintModeEnum.TICKET_C
                         || printMode == PrintModeEnum.TICKET_E) {
-                    jobticket = String.format("%s %s",
+
+                    final JobTicketSupplierData supplierData =
+                            JobTicketSupplierData.create(
+                                    JobTicketSupplierData.class,
+                                    docLog.getExternalData());
+
+                    jobticket = String.format("%s %s (%s)",
                             printMode.uiText(getLocale()),
                             StringUtils.defaultString(docLog.getExternalId(),
-                                    "???"));
+                                    "???"),
+                            StringUtils.defaultString(
+                                    supplierData.getOperator(), "???"));
                 }
 
                 break;
