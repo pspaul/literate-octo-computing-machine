@@ -1174,7 +1174,7 @@
 		function PagePdfProp(_i18n, _view, _model) {
 			var _this = this
 			//
-			, _setVisibility, _m2V, _v2M, _allowAll, _validate;
+			, _setVisibility, _m2V, _v2M, _allowAll, _validate, _onJobListChange;
 
 			/*
 			 *
@@ -1315,6 +1315,27 @@
 			/*
 			 *
 			 */
+			_onJobListChange = function() {
+				var sel = $('#pdf-job-list :selected'), selTitle = $('#pdf-title');
+
+				if (_model.pdfJobIndex === '-1') {
+					_model.myInboxTitle = selTitle.val();
+				}
+
+				_model.pdfJobIndex = sel.val();
+
+				if (sel.val() === '-1') {
+					selTitle.val(_model.myInboxTitle);
+				} else {
+					selTitle.val(sel.text());
+				}
+				_model.myPrintTitle = selTitle.val();
+
+			};
+
+			/*
+			 *
+			 */
 			$('#page-pdf-properties').on('pagecreate', function(event) {
 
 				$("#pdf-encryption").on("change", null, null, function(event, ui) {
@@ -1359,27 +1380,14 @@
 				});
 
 				$('#pdf-job-list').change(function(event) {
-
-					var sel = $('#pdf-job-list :selected'), selTitle = $('#pdf-title');
-
-					if (_model.pdfJobIndex === '-1') {
-						_model.myInboxTitle = selTitle.val();
-					}
-
-					_model.pdfJobIndex = sel.val();
-
-					if (sel.val() === '-1') {
-						selTitle.val(_model.myInboxTitle);
-					} else {
-						selTitle.val(sel.text());
-					}
-					_model.myPrintTitle = selTitle.val();
+					_onJobListChange();
 					return false;
 				});
 
 			}).on("pagebeforeshow", function(event, ui) {
 				_m2V();
 				_this.onShow();
+				_onJobListChange();
 			}).on('pagebeforehide', function(event, ui) {
 				if (_validate()) {
 					_v2M();
@@ -3368,6 +3376,23 @@
 				}
 			}
 			//
+			, _onJobListChange = function() {
+				var sel = $('#print-job-list :selected'), selTitle = $('#print-title');
+
+				if (_model.printJobIndex === '-1') {
+					_model.myInboxTitle = selTitle.val();
+				}
+
+				_model.printJobIndex = sel.val();
+
+				if (sel.val() === '-1') {
+					selTitle.val(_model.myInboxTitle);
+				} else {
+					selTitle.val(sel.text());
+				}
+				_model.myPrintTitle = selTitle.val();
+			}
+			//
 			;
 
 			this.clearInput = function() {
@@ -3462,21 +3487,7 @@
 				});
 
 				$('#print-job-list').change(function(event) {
-
-					var sel = $('#print-job-list :selected'), selTitle = $('#print-title');
-
-					if (_model.printJobIndex === '-1') {
-						_model.myInboxTitle = selTitle.val();
-					}
-
-					_model.printJobIndex = sel.val();
-
-					if (sel.val() === '-1') {
-						selTitle.val(_model.myInboxTitle);
-					} else {
-						selTitle.val(sel.text());
-					}
-					_model.myPrintTitle = selTitle.val();
+					_onJobListChange();
 					return false;
 				});
 
@@ -3485,6 +3496,7 @@
 			}).on("pagebeforeshow", function(event, ui) {
 				_setVisibility();
 				_this.onShow();
+				_onJobListChange();
 				if (_fastPrintAvailable) {
 					_this.onFastProxyPrintRenew(false);
 				}
@@ -4758,18 +4770,24 @@
 			 *            The selector, e.g. '#print-job-list'
 			 */
 			this.setJobScopeMenu = function(sel, isPrintDialog) {
-				var options = '<option value="-1">' + _i18n.format('scope-all-documents', null) + '</option>';
+				var keyAll = '-1', keySelect = keyAll, options = '';
+
+				if (_model.canSelectAllDocuments() && _model.myJobs.length === 1) {
+					keySelect = '0';
+				} else {
+					options = '<option value="' + keyAll + '">' + _i18n.format('scope-all-documents', null) + '</option>';
+				}
 
 				if (_model.canSelectAllDocuments()) {
-
 					$.each(_model.myJobs, function(key, value) {
 						options += '<option value="' + key + '">' + value.title + '</option>';
 					});
-
 				}
 
 				$(sel).empty().append(options);
-				$(sel).val('-1').selectmenu('refresh');
+				$(sel).val(keySelect).selectmenu('refresh');
+
+				return keySelect;
 			};
 
 			/**
@@ -5312,9 +5330,9 @@
 			_view.pages.pdfprop.onShow = function() {
 
 				_this.setLetterheadMenu('#pdf-letterhead-list');
-				_this.setJobScopeMenu('#pdf-job-list', false);
 
-				_model.pdfJobIndex = -1;
+				_model.pdfJobIndex = _this.setJobScopeMenu('#pdf-job-list', false);
+
 				$('#pdf-title').val(_model.myInboxTitle);
 
 				_view.checkCb('#pdf-remove-graphics', _model.removeGraphics);
@@ -5656,9 +5674,8 @@
 				_view.checkCb('#print-ecoprint', _model.ecoprint);
 
 				_this.setLetterheadMenu('#print-letterhead-list');
-				_this.setJobScopeMenu('#print-job-list', true);
 
-				_model.printJobIndex = -1;
+				_model.printJobIndex = _this.setJobScopeMenu('#print-job-list', true);
 				$('#print-title').val(_model.myInboxTitle);
 
 				// Refreshes display of possible changed inbox media.
