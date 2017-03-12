@@ -39,12 +39,18 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.ipp.IppSyntaxException;
+import org.savapage.core.ipp.client.IppConnectException;
+import org.savapage.core.jpa.Device;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.SpSession;
+import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
 import org.savapage.server.pages.MarkupHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -54,6 +60,11 @@ import org.savapage.server.pages.MarkupHelper;
 public class Main extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+    *
+    */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     private static final String CSS_CLASS_MAIN_ACTIONS = "main_actions";
 
@@ -246,7 +257,7 @@ public class Main extends AbstractUserPage {
      *            The user.
      * @return The privileged navigation buttons.
      */
-    private static Set<NavButtonEnum>
+    private Set<NavButtonEnum>
             getNavButtonPriv(final org.savapage.core.jpa.User user) {
 
         final Set<NavButtonEnum> set = new HashSet<>();
@@ -266,9 +277,30 @@ public class Main extends AbstractUserPage {
         }
 
         //
+
         if (ACCESS_CONTROL_SERVICE.isAuthorized(user,
                 ACLRoleEnum.PRINT_CREATOR)) {
-            set.add(NavButtonEnum.PRINT);
+
+            final Device terminal =
+                    ApiRequestHelper.getHostTerminal(this.getClientIpAddr());
+
+            try {
+
+                final NavButtonEnum navButtonPrint;
+
+                if (ServiceContext.getServiceFactory().getProxyPrintService()
+                        .areJobTicketPrintersOnly(terminal, user.getUserId())) {
+                    navButtonPrint = NavButtonEnum.TICKET;
+                } else {
+                    navButtonPrint = NavButtonEnum.PRINT;
+                }
+
+                set.add(navButtonPrint);
+
+            } catch (IppConnectException | IppSyntaxException e) {
+                LOGGER.error(e.getMessage());
+            }
+
         } else if (ACCESS_CONTROL_SERVICE.isAuthorized(user,
                 ACLRoleEnum.JOB_TICKET_CREATOR)) {
             set.add(NavButtonEnum.TICKET);
