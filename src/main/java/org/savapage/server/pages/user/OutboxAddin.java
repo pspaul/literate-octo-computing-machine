@@ -203,7 +203,7 @@ public class OutboxAddin extends AbstractUserPage {
 
             //
             final JsonProxyPrinter cachedPrinter = PROXYPRINT_SERVICE
-                    .getCachedPrinter(job.getPrinterJobTicket());
+                    .getCachedPrinter(job.getPrinter());
 
             final String printerDisplayName;
 
@@ -212,7 +212,7 @@ public class OutboxAddin extends AbstractUserPage {
             } else {
                 printerDisplayName = StringUtils.defaultString(
                         cachedPrinter.getDbPrinter().getDisplayName(),
-                        job.getPrinterJobTicket());
+                        job.getPrinter());
             }
 
             /*

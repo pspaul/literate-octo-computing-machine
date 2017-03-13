@@ -175,7 +175,7 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
 
         final JsonPrinterDetail printer =
                 PROXY_PRINT_SERVICE.getPrinterDetailUserCopy(
-                        getSession().getLocale(), job.getPrinterJobTicket());
+                        getSession().getLocale(), job.getPrinter());
 
         final List<JsonProxyPrinterOpt> optionList = new ArrayList<>();
 
