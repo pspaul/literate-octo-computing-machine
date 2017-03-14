@@ -1933,6 +1933,27 @@
 
 			};
 
+			// Initialize with URL parameter.
+			this.initialView = _ns.Utils.getUrlParam(_ns.URL_PARM.SHOW);
+
+			// One-time initial view.
+			this.setInitialView = function() {
+				if (_this.initialView) {
+					if (_model.myJobPages.length > 0) {
+						if (_this.initialView === _ns.URL_PARM_SHOW_PDF) {
+							_ns.Utils.asyncFoo(function() {
+								$('#button-main-pdf-properties').click();
+							});
+						} else if (_this.initialView === _ns.URL_PARM_SHOW_PRINT) {
+							_ns.Utils.asyncFoo(function() {
+								$('#button-main-print').click();
+							});
+						}
+					}
+					_this.initialView = null;
+				}
+			};
+
 			/**
 			 *
 			 */
@@ -2077,6 +2098,9 @@
 
 				//
 				_tnUrl2Img();
+
+				//
+				_this.setInitialView();
 			};
 
 			/*

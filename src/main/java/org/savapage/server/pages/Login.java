@@ -33,6 +33,7 @@ import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
+import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
@@ -129,8 +130,9 @@ public final class Login extends AbstractPage {
         addVisible(userAuth.isAuthIdPinReq(), "login-id-pin", "");
 
         //
-        final boolean localLoginRestricted = parms
-                .getParameterValue(PAGE_PARM_LOGIN_LOCAL).toString() != null;
+        final boolean localLoginRestricted =
+                parms.getParameterValue(WebAppParmEnum.SP_LOGIN_LOCAL.parm())
+                        .toString() != null;
 
         if (localLoginRestricted && isGoogleSignInEnabled()) {
             helper.encloseLabel("google-signin-enable-msg",

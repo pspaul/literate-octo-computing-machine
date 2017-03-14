@@ -41,6 +41,7 @@ import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.server.SpSession;
+import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.webapp.WebAppTypeEnum;
@@ -62,24 +63,9 @@ public abstract class AbstractPage extends WebPage
     private static final long serialVersionUID = 1L;
 
     /**
-     * .
-     */
-    protected static final String GET_PARM_WEBAPPTYPE = "sp-app";
-
-    /**
      *
      */
     protected static final String POST_PARM_WEBAPPTYPE = "webAppType";
-
-    /**
-     * .
-     */
-    protected static final String PAGE_PARM_LOGIN = "sp-login";
-
-    /**
-     * .
-     */
-    protected static final String PAGE_PARM_LOGIN_LOCAL = "sp-login-local";
 
     /**
      * The logger.
@@ -137,7 +123,7 @@ public abstract class AbstractPage extends WebPage
     protected final WebAppTypeEnum
             getWebAppTypeEnum(final PageParameters parameters) {
         return EnumUtils.getEnum(WebAppTypeEnum.class,
-                parameters.get(GET_PARM_WEBAPPTYPE).toString());
+                parameters.get(WebAppParmEnum.SP_APP.parm()).toString());
     }
 
     /**
@@ -248,7 +234,7 @@ public abstract class AbstractPage extends WebPage
      */
     protected final boolean isRestrictedToLocalLogin() {
         return this.getParmValue(this.getPageParameters(), true,
-                PAGE_PARM_LOGIN_LOCAL) != null;
+                WebAppParmEnum.SP_LOGIN_LOCAL.parm()) != null;
     }
 
     /**

@@ -50,11 +50,28 @@
 			return typeof gapi !== 'undefined';
 		};
 
+		// 
 		window.onerror = function(errorMsg, url, lineNumber) {
+			var redirect, parmsCur, parmsChk, parmsChkLen, key, i;
+
 			if (_ns.hasGoogleSignIn()) {
 				// An error occurs when "third-party cookies and site data" are disabled in the browser.
 				// We forward to a page where Google Sign-in is not present.
-				document.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + _ns.URL_PARM.LOGIN_LOCAL;
+				parmsCur = _ns.Utils.parseUriQuery(document.location.search);
+
+				redirect = window.location.protocol + "//" + window.location.host + window.location.pathname;
+				redirect += '?' + _ns.URL_PARM.LOGIN_LOCAL;
+
+				// Preserve existing "sp-" parameters
+				parmsChk = [_ns.URL_PARM.LOG_LEVEL, _ns.URL_PARM.USER, _ns.URL_PARM.LANGUAGE, _ns.URL_PARM.COUNTRY, _ns.URL_PARM.LOGIN, _ns.URL_PARM.SHOW];
+				parmsChkLen = parmsChk.length;
+				for (i = 0; i < parmsChkLen; i++) {
+					key = parmsChk[i];
+					if (parmsCur[key]) {
+						redirect += '&' + key + '=' + parmsCur[key];
+					}
+				}
+				document.location.href = redirect;
 			}
 			return false;
 		};
@@ -1478,7 +1495,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,      or collected local card number from individual keystrokes,
+			// The YubiKey OTP,          or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -1511,8 +1528,8 @@
 
 			_self.loadShow = function(webAppType) {
 				var data = {
-					webAppType : webAppType,
-				};				
+					webAppType : webAppType
+				};
 				if (_ns.Utils.hasUrlParam(_ns.URL_PARM.LOGIN_LOCAL)) {
 					data[_ns.URL_PARM.LOGIN_LOCAL] = "1";
 				}

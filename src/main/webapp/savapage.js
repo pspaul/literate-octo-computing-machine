@@ -68,8 +68,12 @@ String.prototype.vformat = function() {"use strict";
 			LANGUAGE : 'sp-lang',
 			COUNTRY : 'sp-ctry',
 			LOGIN : 'sp-login',
-			LOGIN_LOCAL : 'sp-login-local'
+			LOGIN_LOCAL : 'sp-login-local',
+			SHOW : 'sp-show'
 		};
+
+		_ns.URL_PARM_SHOW_PDF = 'pdf';
+		_ns.URL_PARM_SHOW_PRINT = 'print';
 
 		/**
 		 *
@@ -103,6 +107,13 @@ String.prototype.vformat = function() {"use strict";
 		 *
 		 */
 		_ns.Utils = {};
+
+		// Execute foo async with max 5 parameters.
+		_ns.Utils.asyncFoo = function(foo, p1, p2, p3, p4, p5) {
+			window.setTimeout(function() {
+				foo(p1, p2, p3, p4, p5);
+			}, 10);
+		};
 
 		_ns.Utils.isMobileOrTablet = function() {
 			var check = false;
@@ -155,6 +166,17 @@ String.prototype.vformat = function() {"use strict";
 			var p = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 			return p.test(val);
 		};
+
+		// Turns URI query string like hello=1&another=2 into object {hello: 1, another: 2}
+		_ns.Utils.parseUriQuery = function(qstr) {
+			var query = {}, a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&'), i, b;
+			for ( i = 0; i < a.length; i++) {
+				b = a[i].split('=');
+				query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
+			}
+			return query;
+		};
+
 		/**
 		 * Gets the value of parameter of URL of current document.
 		 *
@@ -174,7 +196,7 @@ String.prototype.vformat = function() {"use strict";
 		};
 
 		_ns.Utils.hasUrlParam = function(name) {
-			return document.location.search.indexOf(name) !== -1;			
+			return document.location.search.indexOf(name) !== -1;
 		};
 
 		_ns.Utils.isFunction = function(value) {

@@ -46,11 +46,11 @@ import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.Messages;
 import org.savapage.server.WebApp;
+import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.cometd.UserEventService;
-import org.savapage.server.webapp.AbstractWebAppPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +128,7 @@ public final class ClientAppHandler {
 
         builder.setScheme("http").setHost("dummy").setPort(443)
                 .setPath(WebApp.MOUNT_PATH_WEBAPP_USER)
-                .addParameter(AbstractWebAppPage.URL_PARM_USER, userId);
+                .addParameter(WebAppParmEnum.SP_USER.parm(), userId);
 
         return builder.build().toURL();
     }
@@ -459,6 +459,9 @@ public final class ClientAppHandler {
         dto.setServerTime(System.currentTimeMillis());
         dto.setWebAppPath(urlTemplate.getPath());
         dto.setWebAppQuery(urlTemplate.getQuery());
+
+        dto.setWebAppQueryPrintIn(ConfigManager.instance()
+                .getConfigValue(Key.CLIAPP_URL_QUERY_PRINT_IN));
 
         final CometdConnectDto cometdConnect = new CometdConnectDto();
 

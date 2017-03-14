@@ -30,6 +30,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -38,11 +39,6 @@ import org.savapage.server.pages.MarkupHelper;
  *
  */
 public final class WebAppCountExceededMsg extends AbstractWebAppPage {
-
-    /**
-     * .
-     */
-    public static final String PARM_WEBAPPTYPE = "sp-app";
 
     /**
      *
@@ -65,9 +61,10 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
 
         final WebAppTypeEnum webAppTypeAuth = SpSession.get().getWebAppType();
 
-        final WebAppTypeEnum webAppTypeRequested = EnumUtils
-                .getEnum(WebAppTypeEnum.class, parameters.get(PARM_WEBAPPTYPE)
-                        .toString(WebAppTypeEnum.UNDEFINED.toString()));
+        final WebAppTypeEnum webAppTypeRequested =
+                EnumUtils.getEnum(WebAppTypeEnum.class,
+                        parameters.get(WebAppParmEnum.SP_APP.parm())
+                                .toString(WebAppTypeEnum.UNDEFINED.toString()));
 
         final String message;
         final String messageCss;

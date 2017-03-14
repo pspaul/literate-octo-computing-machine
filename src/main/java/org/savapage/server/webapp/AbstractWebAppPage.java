@@ -45,6 +45,7 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.server.CustomWebServlet;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.MarkupHelper;
@@ -199,7 +200,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
      */
     protected final void setWebAppCountExceededResponse() {
         final PageParameters parms = new PageParameters();
-        parms.set(WebAppCountExceededMsg.PARM_WEBAPPTYPE, this.getWebAppType());
+        parms.set(WebAppParmEnum.SP_APP.parm(), this.getWebAppType());
         setResponsePage(WebAppCountExceededMsg.class, parms);
     }
 
@@ -225,7 +226,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
         }
 
         final boolean isZeroPanel =
-                !parameters.get(ZeroPagePanel.PARM_SUBMIT_INDICATOR).isEmpty();
+                !parameters.get(WebAppParmEnum.SP_ZERO.parm()).isEmpty();
 
         return !isZeroPanel && SpSession.get().getAuthWebAppCount() > 0;
     }
@@ -275,16 +276,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
                     + "%s" + "\n" + "/*]]>*/" + "\n</script>\n";
 
     /**
-     * The prefix for SavaPage URL parameters.
-     */
-    private static final String URL_PARM_PFX = "sp-";
-
-    /**
-     * URL parameter to pass user id.
-     */
-    public static final String URL_PARM_USER = URL_PARM_PFX + "user";
-
-    /**
      * Renders tiny JavaScript snippet at the very start of the page to
      * workaround the Browser F5 refresh problem.
      * <p>
@@ -325,15 +316,27 @@ public abstract class AbstractWebAppPage extends AbstractPage
         /*
          * ... and append our own sp-* URL parameters.
          */
+        int nParms = 0;
+
         for (final NamedPair pair : this.getPageParameters().getAllNamed()) {
-            if (pair.getKey().startsWith(URL_PARM_PFX)) {
-                if (mountPath.length() > 0) {
+
+            // Skip transient parameter.
+            if (pair.getKey().equals(WebAppParmEnum.SP_ZERO.parm())) {
+                continue;
+            }
+
+            if (pair.getKey().startsWith(WebAppParmEnum.parmPrefix())) {
+
+                if (nParms == 0) {
                     mountPath.append("?");
                 } else {
                     mountPath.append("&");
                 }
+
                 mountPath.append(pair.getKey()).append("=")
                         .append(pair.getValue());
+
+                nParms++;
             }
         }
 
@@ -715,7 +718,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
     protected final void addZeroPagePanel(final WebAppTypeEnum webAppType) {
         final ZeroPagePanel zeroPanel = new ZeroPagePanel("zero-page-panel");
         add(zeroPanel);
-        zeroPanel.populate(webAppType);
+        zeroPanel.populate(webAppType, this.getPageParameters());
     }
 
 }

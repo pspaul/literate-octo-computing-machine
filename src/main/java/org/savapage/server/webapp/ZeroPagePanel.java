@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,10 +31,11 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
+import org.savapage.server.WebAppParmEnum;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public final class ZeroPagePanel extends Panel {
@@ -43,12 +44,6 @@ public final class ZeroPagePanel extends Panel {
      *
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * A {@link PageParameters} value indicating that a submit was encountered
-     * on the {@link ZeroPagePanel}.
-     */
-    public static final String PARM_SUBMIT_INDICATOR = "zero-refresh";
 
     /**
      *
@@ -63,8 +58,11 @@ public final class ZeroPagePanel extends Panel {
      *
      * @param webAppType
      *            The {@link WebAppTypeEnum} this panel is used in.
+     * @param webAppParms
+     *            The page parameters of the Web App container.
      */
-    public void populate(final WebAppTypeEnum webAppType) {
+    public void populate(final WebAppTypeEnum webAppType,
+            final PageParameters webAppParms) {
 
         final Form<?> form = new Form<Void>("refresh-page-form") {
             private static final long serialVersionUID = 1L;
@@ -85,7 +83,7 @@ public final class ZeroPagePanel extends Panel {
                             final Form<?> form) {
 
                         final PageParameters parms = new PageParameters();
-                        parms.set(PARM_SUBMIT_INDICATOR, "1");
+                        parms.set(WebAppParmEnum.SP_ZERO.parm(), "1");
 
                         switch (webAppType) {
                         case ADMIN:
@@ -113,11 +111,12 @@ public final class ZeroPagePanel extends Panel {
         form.add(continueButton);
         add(form);
 
-        add(new Label("zero-page-title", MessageFormat.format(this
-                .getLocalizer().getString("zero-page-title", this),
-                CommunityDictEnum.SAVAPAGE.getWord())));
+        add(new Label("zero-page-title",
+                MessageFormat.format(
+                        this.getLocalizer().getString("zero-page-title", this),
+                        CommunityDictEnum.SAVAPAGE.getWord())));
 
-        continueButton.add(new AttributeModifier("value", this.getLocalizer()
-                .getString("button-continue", this)));
+        continueButton.add(new AttributeModifier("value",
+                this.getLocalizer().getString("button-continue", this)));
     }
 }
