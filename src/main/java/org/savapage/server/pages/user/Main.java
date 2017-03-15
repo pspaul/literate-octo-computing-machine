@@ -413,7 +413,7 @@ public class Main extends AbstractUserPage {
                     new NavBarItem(CSS_CLASS_MAIN_ACTIONS, "ui-icon-main-print",
                             "button-main-print", localized("button-print")));
         } else if (buttonPrivileged.contains(NavButtonEnum.TICKET)) {
-            items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
+            items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                     "ui-icon-main-jobticket", "button-main-print",
                     localized("button-ticket")));
         }

@@ -2921,7 +2921,11 @@
 				//
 				, singleMediaSourceMedia, singleJobMedia
 				//
-				, isScaling, isSingleMediaMatch;
+				, isScaling, isSingleMediaMatch
+				//
+				, hasInboxDocs = _model.hasInboxDocs()
+				//
+				;
 
 				if (ippOption === 'media-source') {
 
@@ -2964,10 +2968,13 @@
 
 				isScaling = !(isSingleMediaMatch || isAuto || (!isAuto && _model.printSelectedMedia === singleJobMedia));
 
-				_view.visible($('.sp-print-job-scaling'), isScaling);
-				_view.visible($('.sp-print-job-media-info'), isScaling);
+				_view.visible($('.sp-print-job-scaling'), isScaling && hasInboxDocs);
+				_view.visible($('.sp-print-job-media-info'), isScaling && hasInboxDocs);
 
-				_model.setJobsMatchMedia(_view);
+				_view.visible($('.sp-print-job-info'), hasInboxDocs);
+				if (hasInboxDocs) {
+					_model.setJobsMatchMedia(_view);
+				}
 
 			}
 			//
@@ -3003,6 +3010,11 @@
 			}
 			//
 			;
+
+			// A way to set visibility of media and scaling, also in other parts of the application.
+			this.m2v = function() {
+				_m2v();
+			};
 
 			$('#page-printer-settings').on('pagecreate', function(event) {
 
@@ -3146,7 +3158,7 @@
 
 			var _this = this
 			//
-			, _TICKETTYPE_PRINT = 'PRINT'
+			, _TICKETTYPE_PRINT = 'PRINT', _TICKETTYPE_COPY = 'COPY'
 			//
 			, _quickPrinterCache = []
 			//
@@ -3348,9 +3360,9 @@
 				//
 				, jobTicket = _model.myPrinter && _model.myPrinter.jobTicket
 				//
-				, jobTicketType = _getJobTicketType(jobTicket)
-				//
 				, allDocs = _model.canSelectAllDocuments()
+				//
+				, jobTicketType, hasInboxDocs = _model.hasInboxDocs()
 				//
 				;
 
@@ -3396,8 +3408,18 @@
 				_view.visible($('#print-documents-separate-ticket-div'), jobTicket && allDocs);
 
 				if (jobTicket) {
+					// (1) first enable.
+					_view.enable($('#sp-print-jobticket-type-print'), hasInboxDocs);
+					if (hasInboxDocs) {
+						jobTicketType = _getJobTicketType(jobTicket);
+					} else {
+						jobTicketType = _TICKETTYPE_COPY;
+					}
+					// (2) then check to see enabled/disabled state.
+					_view.checkRadioValue('sp-print-jobticket-type', jobTicketType);
 					_onJobTicketType(jobTicketType);
 				}
+				_view.visible($('.sp-print-job-info'), hasInboxDocs);
 			}
 			//
 			, _onJobListChange = function() {
@@ -3518,12 +3540,17 @@
 				_view.mobipick($("#sp-jobticket-date"));
 
 			}).on("pagebeforeshow", function(event, ui) {
+				
 				_setVisibility();
 				_this.onShow();
 				_onJobListChange();
+				
+				_view.pages.printSettings.m2v();
+								
 				if (_fastPrintAvailable) {
 					_this.onFastProxyPrintRenew(false);
 				}
+				
 			}).on('pagebeforehide', function(event, ui) {
 				_this.onHide();
 			});
@@ -3712,6 +3739,13 @@
 			this.user = new _ns.User();
 
 			this.propPdf = this.propPdfDefault;
+
+			/**
+			 *
+			 */
+			this.hasInboxDocs = function() {
+				return this.myJobs.length > 0;
+			};
 
 			/**
 			 * Creates job media map: ippMedia -> count, mediaUi
@@ -6229,7 +6263,7 @@
 				main : new PageMain(_i18n, _view, _model),
 				print : new PagePrint(_i18n, _view, _model, _api),
 				printDelegation : new _ns.PagePrintDelegation(_i18n, _view, _model, _api),
-				print_settings : new PagePrintSettings(_i18n, _view, _model),
+				printSettings : new PagePrintSettings(_i18n, _view, _model),
 				fileUpload : new PageFileUpload(_i18n, _view, _model),
 				userPinReset : new PageUserPinReset(_i18n, _view, _model),
 				userInternetPrinter : new PageUserInternetPrinter(_i18n, _view, _model),
