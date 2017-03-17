@@ -514,6 +514,13 @@ public class AccountTrxPage extends AbstractListPage {
             item.add(createVisibleLabel(StringUtils.isNotBlank(printOutInfo),
                     "printOut", printOutInfo));
 
+            if (printOut != null) {
+                final PrintOutOptionsPanel panel =
+                        new PrintOutOptionsPanel("printout-options");
+                panel.populate(printOut);
+                item.add(panel);
+            }
+
             if (trxType == AccountTrxTypeEnum.GATEWAY
                     && accountTrx.getExtAmount() != null) {
 
