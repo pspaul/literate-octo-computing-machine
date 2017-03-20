@@ -46,6 +46,8 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
+import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
@@ -202,8 +204,8 @@ public class OutboxAddin extends AbstractUserPage {
             Label labelWlk;
 
             //
-            final JsonProxyPrinter cachedPrinter = PROXYPRINT_SERVICE
-                    .getCachedPrinter(job.getPrinter());
+            final JsonProxyPrinter cachedPrinter =
+                    PROXYPRINT_SERVICE.getCachedPrinter(job.getPrinter());
 
             final String printerDisplayName;
 
@@ -267,8 +269,8 @@ public class OutboxAddin extends AbstractUserPage {
 
             //
             totals.append(helper.localizedNumber(total));
-            key = (total == 1) ? "page" : "pages";
-            totals.append(" ").append(localized(key));
+            totals.append(" ")
+                    .append(helper.localized(PrintOutNounEnum.PAGE, total > 1));
 
             // n-up
             if (optionMap.getNumberUp().intValue() > 1) {
@@ -277,17 +279,18 @@ public class OutboxAddin extends AbstractUserPage {
             }
 
             //
-            if (copies > 1) {
-                totals.append(", ").append(copies).append(" ")
-                        .append(localized("copies"));
+            if (copies > 0) {
+                totals.append(", ").append(copies).append(" ").append(
+                        helper.localized(PrintOutNounEnum.COPY, copies > 1));
             }
 
             //
             total = job.getSheets();
             if (total > 0) {
-                key = (total == 1) ? "sheet" : "sheets";
-                totals.append(" (").append(total).append(" ")
-                        .append(localized(key)).append(")");
+                totals.append(" (").append(total)
+                        .append(" ").append(helper
+                                .localized(PrintOutNounEnum.SHEET, total > 1))
+                        .append(")");
             }
 
             item.add(new Label("totals", totals.toString()));
@@ -380,7 +383,7 @@ public class OutboxAddin extends AbstractUserPage {
             final Map<String, String> mapVisible = new HashMap<>();
 
             for (final String attr : new String[] { "title", "papersize",
-                    "letterhead", "duplex", "singlex", "color", "collate",
+                    "letterhead", "duplex", "simplex", "color", "collate",
                     "grayscale", "accounts", "removeGraphics", "ecoPrint",
                     "extSupplier", "owner-user-name", "drm", "punch", "staple",
                     "fold", "booklet", "jobticket-media", "jobticket-copy",
@@ -409,25 +412,32 @@ public class OutboxAddin extends AbstractUserPage {
             }
 
             if (ProxyPrintInboxReq.isDuplex(job.getOptionValues())) {
-                mapVisible.put("duplex", localized("duplex"));
+                mapVisible.put("duplex",
+                        helper.localized(PrintOutNounEnum.DUPLEX));
             } else {
-                mapVisible.put("singlex", localized("singlex"));
+                mapVisible.put("simplex",
+                        helper.localized(PrintOutNounEnum.SIMPLEX));
             }
 
             if (ProxyPrintInboxReq.isGrayscale(job.getOptionValues())) {
-                mapVisible.put("grayscale", localized("grayscale"));
+                mapVisible.put("grayscale",
+                        helper.localized(PrintOutNounEnum.GRAYSCALE));
             } else {
-                mapVisible.put("color", localized("color"));
+                mapVisible.put("color",
+                        helper.localized(PrintOutNounEnum.COLOR));
             }
 
             if (BooleanUtils.isTrue(job.getLandscape())) {
-                mapVisible.put("landscape", localized("landscape"));
+                mapVisible.put("landscape",
+                        helper.localized(PrintOutNounEnum.LANDSCAPE));
             } else {
-                mapVisible.put("portrait", localized("portrait"));
+                mapVisible.put("portrait",
+                        helper.localized(PrintOutNounEnum.PORTRAIT));
             }
 
             if (job.isCollate() && job.getCopies() > 1 && job.getPages() > 1) {
-                mapVisible.put("collate", localized("collate"));
+                mapVisible.put("collate",
+                        helper.localized(PrintOutVerbEnum.COLLATE));
             }
 
             if (job.isRemoveGraphics()) {
@@ -438,16 +448,19 @@ public class OutboxAddin extends AbstractUserPage {
             }
 
             if (optionMap.hasFinishingPunch()) {
-                mapVisible.put("punch", localized("punch"));
+                mapVisible.put("punch",
+                        helper.localized(PrintOutVerbEnum.PUNCH));
             }
             if (optionMap.hasFinishingStaple()) {
-                mapVisible.put("staple", localized("staple"));
+                mapVisible.put("staple",
+                        helper.localized(PrintOutVerbEnum.STAPLE));
             }
             if (optionMap.hasFinishingFold()) {
-                mapVisible.put("fold", localized("fold"));
+                mapVisible.put("fold", helper.localized(PrintOutVerbEnum.FOLD));
             }
             if (optionMap.hasFinishingBooklet()) {
-                mapVisible.put("booklet", localized("booklet"));
+                mapVisible.put("booklet",
+                        helper.localized(PrintOutNounEnum.BOOKLET));
             }
 
             mapVisible.put("jobticket-media",
@@ -482,13 +495,10 @@ public class OutboxAddin extends AbstractUserPage {
                 final int nAccounts = trxInfoSet.getTransactions().size();
 
                 if (nAccounts > 0) {
-                    cost.append(" (").append(nAccounts).append(" ");
-                    if (nAccounts == 1) {
-                        cost.append(localized("account"));
-                    } else {
-                        cost.append(localized("accounts"));
-                    }
-                    cost.append(")");
+                    cost.append(" (").append(nAccounts).append(" ")
+                            .append(helper.localized(PrintOutNounEnum.ACCOUNT,
+                                    nAccounts > 1))
+                            .append(")");
                 }
             }
 

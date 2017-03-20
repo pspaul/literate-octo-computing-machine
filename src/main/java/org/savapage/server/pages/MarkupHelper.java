@@ -34,6 +34,8 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
+import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -117,6 +119,41 @@ public final class MarkupHelper {
      */
     public Localizer getLocalizer() {
         return container.getApplication().getResourceSettings().getLocalizer();
+    }
+
+    /**
+     * Gives the localized string for a verb.
+     *
+     * @param verb
+     *            The verb.
+     * @return The localized string.
+     */
+    public String localized(final PrintOutVerbEnum verb) {
+        return verb.uiText(container.getLocale());
+    }
+
+    /**
+     * Gives the localized string for a noun.
+     *
+     * @param noun
+     *            The noun.
+     * @return The localized string.
+     */
+    public String localized(final PrintOutNounEnum noun) {
+        return noun.uiText(container.getLocale());
+    }
+
+    /**
+     * Gives the localized string for a noun.
+     *
+     * @param noun
+     *            The noun.
+     * @param plural
+     *            {@code true} when plural form.
+     * @return The localized string.
+     */
+    public String localized(final PrintOutNounEnum noun, final boolean plural) {
+        return noun.uiText(container.getLocale(), plural);
     }
 
     /**

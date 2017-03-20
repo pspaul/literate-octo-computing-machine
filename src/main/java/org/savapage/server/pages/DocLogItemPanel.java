@@ -41,6 +41,8 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
+import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
@@ -112,11 +114,11 @@ public class DocLogItemPanel extends Panel {
         for (final String attr : new String[] { "title", "log-comment",
                 "printin-pie", "pdfout-pie", "printout-pie", "printoutMode",
                 "signature", "destination", "letterhead", "author", "subject",
-                "keywords", "drm", "userpw", "ownerpw", "duplex", "singlex",
+                "keywords", "drm", "userpw", "ownerpw", "duplex", "simplex",
                 "color", "grayscale", "papersize", "cost-currency", "cost",
                 "account-trx", "job-id", "job-state", "job-completed-date",
                 "print-in-denied-reason-hyphen", "print-in-denied-reason",
-                "collateCopies", "ecoPrint", "removeGraphics", "punch",
+                "collate", "ecoPrint", "removeGraphics", "punch",
                 "staple", "fold", "booklet", "jobticket-media",
                 "jobticket-copy", "jobticket-finishing-ext", "landscape" }) {
             mapVisible.put(attr, null);
@@ -306,28 +308,36 @@ public class DocLogItemPanel extends Panel {
                 cssClass = MarkupHelper.CSS_PRINT_OUT_PRINTER;
 
                 if (obj.getDuplex()) {
-                    mapVisible.put("duplex", localized("duplex"));
+                    mapVisible.put("duplex",
+                            helper.localized(PrintOutNounEnum.DUPLEX));
                 } else {
-                    mapVisible.put("singlex", localized("singlex"));
+                    mapVisible.put("simplex",
+                            helper.localized(PrintOutNounEnum.SIMPLEX));
                 }
 
                 if (obj.getGrayscale()) {
-                    mapVisible.put("grayscale", localized("grayscale"));
+                    mapVisible.put("grayscale",
+                            helper.localized(PrintOutNounEnum.GRAYSCALE));
                 } else {
-                    mapVisible.put("color", localized("color"));
+                    mapVisible.put("color",
+                            helper.localized(PrintOutNounEnum.COLOR));
                 }
 
                 if (obj.isFinishingPunch()) {
-                    mapVisible.put("punch", localized("punch"));
+                    mapVisible.put("punch",
+                            helper.localized(PrintOutVerbEnum.PUNCH));
                 }
                 if (obj.isFinishingStaple()) {
-                    mapVisible.put("staple", localized("staple"));
+                    mapVisible.put("staple",
+                            helper.localized(PrintOutVerbEnum.STAPLE));
                 }
                 if (obj.isFinishingFold()) {
-                    mapVisible.put("fold", localized("fold"));
+                    mapVisible.put("fold",
+                            helper.localized(PrintOutVerbEnum.FOLD));
                 }
                 if (obj.isFinishingBooklet()) {
-                    mapVisible.put("booklet", localized("booklet"));
+                    mapVisible.put("booklet",
+                            helper.localized(PrintOutNounEnum.BOOKLET));
                 }
 
                 mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
@@ -397,8 +407,8 @@ public class DocLogItemPanel extends Panel {
 
         //
         totals.append(localizedNumber(total));
-        key = (total == 1) ? "page" : "pages";
-        totals.append(" ").append(localized(key));
+        totals.append(" ")
+                .append(helper.localized(PrintOutNounEnum.PAGE, total > 1));
 
         // n-up
         if (obj.getNumberUp() != null && obj.getNumberUp().intValue() > 1) {
@@ -407,24 +417,16 @@ public class DocLogItemPanel extends Panel {
 
         //
         if (copies > 1) {
-            totals.append(", ").append(copies).append(" ");
-            if (obj.getCollateCopies() != null) {
-                if (obj.getCollateCopies()) {
-                    key = "collated";
-                } else {
-                    key = "uncollated";
-                }
-                totals.append(localized(key)).append(" ");
-            }
 
-            totals.append(localized("copies"));
+            totals.append(", ").append(copies).append(" ")
+                    .append(helper.localized(PrintOutNounEnum.COPY, true));
         }
 
         //
         total = obj.getTotalSheets();
         if (total > 0) {
-            key = (total == 1) ? "sheet" : "sheets";
-            totals.append(" (").append(total).append(" ").append(localized(key))
+            totals.append(" (").append(total).append(" ")
+                    .append(helper.localized(PrintOutNounEnum.SHEET, total > 1))
                     .append(")");
         }
 
@@ -434,6 +436,13 @@ public class DocLogItemPanel extends Panel {
         }
 
         add(new Label("totals", totals.toString()));
+
+        //
+        if (copies > 1 && obj.getCollateCopies() != null
+                && obj.getCollateCopies()) {
+            mapVisible.put("collate",
+                    helper.localized(PrintOutVerbEnum.COLLATE));
+        }
 
         if (obj.getEcoPrint() != null && obj.getEcoPrint()) {
             mapVisible.put("ecoPrint", "EcoPrint");
@@ -461,7 +470,8 @@ public class DocLogItemPanel extends Panel {
         //
         if (obj.getIppOptionMap() != null
                 && obj.getIppOptionMap().isLandscapeJob()) {
-            mapVisible.put("landscape", localized("landscape"));
+            mapVisible.put("landscape",
+                    helper.localized(PrintOutNounEnum.LANDSCAPE));
         }
 
         /*

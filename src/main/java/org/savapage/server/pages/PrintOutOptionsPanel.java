@@ -22,10 +22,13 @@
 package org.savapage.server.pages;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.savapage.core.i18n.PrintOutNounEnum;
+import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.PrintOut;
@@ -69,11 +72,12 @@ public final class PrintOutOptionsPanel extends Panel {
     public void populate(final PrintOut printOut) {
 
         final MarkupHelper helper = new MarkupHelper(this);
+        final Locale locale = this.getLocale();
 
         final Map<String, String> mapVisible = new HashMap<>();
 
         for (final String attr : new String[] { "landscape", "duplex",
-                "singlex", "grayscale", "color", "punch", "staple", "fold",
+                "simplex", "grayscale", "color", "punch", "staple", "fold",
                 "booklet", "jobticket-media", "jobticket-copy",
                 "jobticket-finishing-ext", }) {
             mapVisible.put(attr, null);
@@ -82,27 +86,17 @@ public final class PrintOutOptionsPanel extends Panel {
         helper.addLabel("papersize", printOut.getPaperSize().toUpperCase());
 
         if (BooleanUtils.isTrue(printOut.getDuplex())) {
-            mapVisible.put("duplex", localized("duplex"));
+            mapVisible.put("duplex", PrintOutNounEnum.DUPLEX.uiText(locale));
         } else {
-            mapVisible.put("singlex", localized("singlex"));
+            mapVisible.put("simplex", PrintOutNounEnum.SIMPLEX.uiText(locale));
         }
 
         if (BooleanUtils.isTrue(printOut.getGrayscale())) {
-            mapVisible.put("grayscale", localized("grayscale"));
+            mapVisible.put("grayscale",
+                    PrintOutNounEnum.GRAYSCALE.uiText(locale));
         } else {
-            mapVisible.put("color", localized("color"));
+            mapVisible.put("color", PrintOutNounEnum.COLOR.uiText(locale));
         }
-
-        // printOut.getCollateCopies();
-        // printOut.getPaperSize();
-        // printOut.getNumberOfSheets();
-        // printOut.getNumberOfCopies();
-
-        // PrintModeEnum.valueOf(printOut.getPrintMode());
-        //
-        // if (NumberUtils.isDigits(printOut.getCupsNumberUp())) {
-        // Integer.valueOf(printOut.getCupsNumberUp());
-        // }
 
         final Map<String, String> ippOptions =
                 JsonHelper.createStringMapOrNull(printOut.getIppOptions());
@@ -111,16 +105,18 @@ public final class PrintOutOptionsPanel extends Panel {
             final IppOptionMap optionMap = new IppOptionMap(ippOptions);
 
             if (optionMap.hasFinishingPunch()) {
-                mapVisible.put("punch", localized("punch"));
+                mapVisible.put("punch", PrintOutVerbEnum.PUNCH.uiText(locale));
             }
             if (optionMap.hasFinishingStaple()) {
-                mapVisible.put("staple", localized("staple"));
+                mapVisible.put("staple",
+                        PrintOutVerbEnum.STAPLE.uiText(locale));
             }
             if (optionMap.hasFinishingFold()) {
-                mapVisible.put("fold", localized("fold"));
+                mapVisible.put("fold", PrintOutVerbEnum.FOLD.uiText(locale));
             }
             if (optionMap.hasFinishingBooklet()) {
-                mapVisible.put("booklet", localized("booklet"));
+                mapVisible.put("booklet",
+                        PrintOutNounEnum.BOOKLET.uiText(locale));
             }
 
             mapVisible.put("jobticket-media",
@@ -139,7 +135,8 @@ public final class PrintOutOptionsPanel extends Panel {
                             optionMap));
 
             if (optionMap.isLandscapeJob()) {
-                mapVisible.put("landscape", localized("landscape"));
+                mapVisible.put("landscape",
+                        PrintOutNounEnum.LANDSCAPE.uiText(locale));
             }
         }
 

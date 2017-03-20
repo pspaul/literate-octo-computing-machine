@@ -45,6 +45,7 @@ import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocLog;
@@ -218,7 +219,7 @@ public class AccountTrxPage extends AbstractListPage {
             final boolean showDocLogTitle = ConfigManager.instance()
                     .isConfigValue(Key.WEBAPP_DOCLOG_SHOW_DOC_TITLE);
 
-            String printOutInfo = null;
+            StringBuilder printOutInfo = new StringBuilder();
             String comment = accountTrx.getComment();
             String imageSrc = null;
             String delegate = null;
@@ -288,13 +289,12 @@ public class AccountTrxPage extends AbstractListPage {
                 int totalPagesIn = docLog.getNumberOfPages().intValue()
                         * accountTrx.getTransactionWeight().intValue();
 
-                if (totalPagesIn == 1) {
-                    msgKey = "printed-pages-one";
-                } else {
-                    msgKey = "printed-pages-multiple";
-                }
+                printOutInfo.append(String.format("%d %s", totalPagesIn,
+                        PrintOutNounEnum.PAGE.uiText(getLocale(),
+                                totalPagesIn > 1)));
 
-                printOutInfo = localized(msgKey, String.valueOf(totalPagesIn));
+                helper.encloseLabel("printOutCopies", "", false);
+                helper.encloseLabel("printOutSheets", "", false);
 
                 comment = cmt.toString();
 
@@ -309,17 +309,32 @@ public class AccountTrxPage extends AbstractListPage {
 
                 key = "type-print-out";
 
-                int totalPagesOut = docLog.getNumberOfPages().intValue()
-                        * accountTrx.getTransactionWeight().intValue();
+                final int totalPagesOut = docLog.getNumberOfPages().intValue();
 
-                if (totalPagesOut == 1) {
-                    msgKey = "printed-pages-one";
-                } else {
-                    msgKey = "printed-pages-multiple";
-                }
+                printOutInfo.append(String.format("%d %s", totalPagesOut,
+                        PrintOutNounEnum.PAGE.uiText(getLocale(),
+                                totalPagesOut > 1)));
 
-                printOutInfo = localized(msgKey, String.valueOf(totalPagesOut));
+                final int nCopies =
+                        accountTrx.getTransactionWeight().intValue();
 
+                //
+                final int nSheets =
+                        nCopies * printOut.getNumberOfSheets().intValue()
+                                / printOut.getNumberOfCopies().intValue();
+
+                helper.encloseLabel("printOutCopies",
+                        String.format("%d %s",
+                                nCopies, PrintOutNounEnum.COPY
+                                        .uiText(getLocale(), nCopies > 1)),
+                        true);
+
+                helper.encloseLabel("printOutSheets",
+                        String.format("%d %s",
+                                nSheets, PrintOutNounEnum.SHEET
+                                        .uiText(getLocale(), nSheets > 1)),
+                        true);
+                //
                 comment = printOut.getPrinter().getDisplayName();
 
                 if (showDocLogTitle
@@ -351,17 +366,23 @@ public class AccountTrxPage extends AbstractListPage {
                         || printMode == PrintModeEnum.TICKET_C
                         || printMode == PrintModeEnum.TICKET_E) {
 
-                    final JobTicketSupplierData supplierData =
-                            JobTicketSupplierData.create(
-                                    JobTicketSupplierData.class,
-                                    docLog.getExternalData());
+                    final String operator;
 
+                    if (docLog.getExternalData() == null) {
+                        operator = null;
+
+                    } else {
+                        final JobTicketSupplierData supplierData =
+                                JobTicketSupplierData.create(
+                                        JobTicketSupplierData.class,
+                                        docLog.getExternalData());
+                        operator = supplierData.getOperator();
+                    }
                     jobticket = String.format("%s %s (%s)",
                             printMode.uiText(getLocale()),
                             StringUtils.defaultString(docLog.getExternalId(),
                                     "???"),
-                            StringUtils.defaultString(
-                                    supplierData.getOperator(), "???"));
+                            StringUtils.defaultString(operator, "???"));
                 }
 
                 break;
@@ -511,8 +532,8 @@ public class AccountTrxPage extends AbstractListPage {
             item.add(createVisibleLabel(StringUtils.isNotBlank(comment),
                     "comment", comment));
             //
-            item.add(createVisibleLabel(StringUtils.isNotBlank(printOutInfo),
-                    "printOut", printOutInfo));
+            item.add(createVisibleLabel(printOutInfo.length() > 0, "printOut",
+                    printOutInfo.toString()));
 
             if (printOut != null) {
                 final PrintOutOptionsPanel panel =
