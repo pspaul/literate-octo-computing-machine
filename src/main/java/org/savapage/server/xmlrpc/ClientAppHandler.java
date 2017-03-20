@@ -448,6 +448,8 @@ public final class ClientAppHandler {
             final String userId, final UserAuthToken authToken,
             final String clientIpAddress) throws Exception {
 
+        final ConfigManager cm = ConfigManager.instance();
+
         final URL urlTemplate = getUserWebAppURLTemplate(userId);
 
         if (authToken != null) {
@@ -460,8 +462,11 @@ public final class ClientAppHandler {
         dto.setWebAppPath(urlTemplate.getPath());
         dto.setWebAppQuery(urlTemplate.getQuery());
 
-        dto.setWebAppQueryPrintIn(ConfigManager.instance()
-                .getConfigValue(Key.CLIAPP_URL_QUERY_PRINT_IN));
+        dto.setWebAppQueryPrintIn(
+                cm.getConfigValue(Key.CLIAPP_PRINT_IN_URL_QUERY));
+
+        dto.setPrintInActionButton(
+                cm.getConfigValue(Key.CLIAPP_PRINT_IN_DIALOG_BUTTON_OPEN));
 
         final CometdConnectDto cometdConnect = new CometdConnectDto();
 
