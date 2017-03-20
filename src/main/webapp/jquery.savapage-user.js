@@ -3312,7 +3312,7 @@
 				}
 
 				_view.visible($('.sp-jobticket'), _model.myPrinter.jobTicket);
-				_view.visible($('.sp-proxyprint'), !_model.myPrinter.jobTicket);
+				_view.visible($('.sp-proxyprint'), !_model.myPrinter.jobTicket);			
 			}
 			//
 			, _isDelegatedPrint = function() {
@@ -3453,10 +3453,14 @@
 				$('#sp-jobticket-date').val('');
 				$('#sp-jobticket-hrs').val('');
 				$('#sp-jobticket-min').val('');
+				$('#print-title').val('');
 
 				if (selCbClear[0] && !$('#delete-pages-after-print')[0].disabled) {
 					_view.checkCb("#delete-pages-after-print", false);
 				}
+
+				_view.checkRadioValue('sp-print-jobticket-type', _TICKETTYPE_PRINT);
+				_view.setSelectedValue($('#sp-print-shared-account-list'), "0");
 			};
 
 			$('#page-print').on('pagecreate', function(event) {
@@ -3540,17 +3544,17 @@
 				_view.mobipick($("#sp-jobticket-date"));
 
 			}).on("pagebeforeshow", function(event, ui) {
-				
+
 				_setVisibility();
 				_this.onShow();
 				_onJobListChange();
-				
+
 				_view.pages.printSettings.m2v();
-								
+
 				if (_fastPrintAvailable) {
 					_this.onFastProxyPrintRenew(false);
 				}
-				
+
 			}).on('pagebeforehide', function(event, ui) {
 				_this.onHide();
 			});

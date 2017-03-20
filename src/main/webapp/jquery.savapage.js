@@ -50,7 +50,7 @@
 			return typeof gapi !== 'undefined';
 		};
 
-		// 
+		//
 		window.onerror = function(errorMsg, url, lineNumber) {
 			var redirect, parmsCur, parmsChk, parmsChkLen, key, i;
 
@@ -65,7 +65,7 @@
 				// Preserve existing "sp-" parameters
 				parmsChk = [_ns.URL_PARM.LOG_LEVEL, _ns.URL_PARM.USER, _ns.URL_PARM.LANGUAGE, _ns.URL_PARM.COUNTRY, _ns.URL_PARM.LOGIN, _ns.URL_PARM.SHOW];
 				parmsChkLen = parmsChk.length;
-				for (i = 0; i < parmsChkLen; i++) {
+				for ( i = 0; i < parmsChkLen; i++) {
 					key = parmsChk[i];
 					if (parmsCur[key]) {
 						redirect += '&' + key + '=' + parmsCur[key];
@@ -1495,7 +1495,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,          or collected local card number from individual keystrokes,
+			// The YubiKey OTP,            or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -2722,7 +2722,14 @@
 			};
 
 			/**
-			 * Get array with selected values from (multiple) "select" element.
+			 * Set JQM selectmenu value.
+			 */
+			this.setSelectedValue = function(sel, val) {
+				sel.val(val).selectmenu('refresh');
+			};
+
+			/**
+			 * Get array with JQM selected values from (multiple) "select" element.
 			 */
 			this.selectedValues = function(id) {
 				var values = [], i = 0;
