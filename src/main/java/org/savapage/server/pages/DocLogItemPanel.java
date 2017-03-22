@@ -115,12 +115,13 @@ public class DocLogItemPanel extends Panel {
                 "printin-pie", "pdfout-pie", "printout-pie", "printoutMode",
                 "signature", "destination", "letterhead", "author", "subject",
                 "keywords", "drm", "userpw", "ownerpw", "duplex", "simplex",
-                "color", "grayscale", "papersize", "cost-currency", "cost",
-                "account-trx", "job-id", "job-state", "job-completed-date",
-                "print-in-denied-reason-hyphen", "print-in-denied-reason",
-                "collate", "ecoPrint", "removeGraphics", "punch",
-                "staple", "fold", "booklet", "jobticket-media",
-                "jobticket-copy", "jobticket-finishing-ext", "landscape" }) {
+                "color", "grayscale", "papersize", "media-source",
+                "cost-currency", "cost", "account-trx", "job-id", "job-state",
+                "job-completed-date", "print-in-denied-reason-hyphen",
+                "print-in-denied-reason", "collate", "ecoPrint",
+                "removeGraphics", "punch", "staple", "fold", "booklet",
+                "jobticket-media", "jobticket-copy", "jobticket-finishing-ext",
+                "landscape" }) {
             mapVisible.put(attr, null);
         }
 
@@ -341,6 +342,17 @@ public class DocLogItemPanel extends Panel {
                 }
 
                 mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
+
+                final String mediaSource = obj.getIppOptionMap().getOptionValue(
+                        IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE);
+
+                if (mediaSource != null) {
+                    mapVisible.put("media-source",
+                            PROXYPRINT_SERVICE.localizePrinterOptValue(
+                                    getLocale(),
+                                    IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE,
+                                    mediaSource));
+                }
 
                 if (obj.getJobId() != null
                         && !obj.getJobId().equals(Integer.valueOf(0))) {
