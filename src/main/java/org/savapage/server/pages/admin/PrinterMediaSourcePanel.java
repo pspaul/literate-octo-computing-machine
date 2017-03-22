@@ -293,16 +293,22 @@ public final class PrinterMediaSourcePanel extends Panel {
         final boolean hasMediaSourceAuto =
                 PROXYPRINT_SERVICE.hasMediaSourceAuto(printer.getPrinterName());
 
+        //
         for (final IppMediaSourceCostDto dto : PROXYPRINT_SERVICE
                 .getProxyPrinterCostMediaSource(printer)) {
 
-            final boolean isManual = dto.isManualSource();
-
-            if (dtoManual == null && isManual) {
-                dtoManual = dto;
-            } else if (!isManual) {
-                mediaSourceList.add(dto);
+            if (dto.isAutoSource()) {
+                continue;
             }
+
+            if (dto.isManualSource()) {
+                if (dtoManual == null) {
+                    dtoManual = dto;
+                }
+                continue;
+            }
+
+            mediaSourceList.add(dto);
         }
 
         final MarkupHelper helper = new MarkupHelper(this);
