@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -99,7 +99,8 @@ public final class PrinterMediaSourcePanel extends Panel {
 
             final JsonProxyPrinterOptChoice dto = item.getModelObject();
 
-            final Label label = new Label("media-source-media", dto.getUiText());
+            final Label label =
+                    new Label("media-source-media", dto.getUiText());
 
             label.add(new AttributeModifier("value", dto.getChoice()));
 
@@ -281,30 +282,25 @@ public final class PrinterMediaSourcePanel extends Panel {
 
         final List<IppMediaSourceCostDto> mediaSourceList = new ArrayList<>();
 
-        IppMediaSourceCostDto dtoAuto = null;
         IppMediaSourceCostDto dtoManual = null;
 
         final boolean isColorPrinter =
                 PROXYPRINT_SERVICE.isColorPrinter(printer.getPrinterName());
+
         final boolean isDuplexPrinter =
                 PROXYPRINT_SERVICE.isDuplexPrinter(printer.getPrinterName());
+
         final boolean hasMediaSourceAuto =
                 PROXYPRINT_SERVICE.hasMediaSourceAuto(printer.getPrinterName());
 
         for (final IppMediaSourceCostDto dto : PROXYPRINT_SERVICE
                 .getProxyPrinterCostMediaSource(printer)) {
 
-            final boolean isAuto = dto.isAutoSource();
             final boolean isManual = dto.isManualSource();
 
-            if (dtoAuto == null && isAuto) {
-                dtoAuto = dto;
-            } else if (dtoManual == null && isManual) {
+            if (dtoManual == null && isManual) {
                 dtoManual = dto;
-            } else if (!isAuto && !isManual) {
-                /*
-                 * Believe it or not, some printers report 'auto' twice :-)
-                 */
+            } else if (!isManual) {
                 mediaSourceList.add(dto);
             }
         }
@@ -314,14 +310,15 @@ public final class PrinterMediaSourcePanel extends Panel {
         Label labelWrk;
 
         //
-        final String signalMediaSourecAuto;
+        final String signalMediaSourceAuto;
 
         if (hasMediaSourceAuto) {
-            signalMediaSourecAuto = DEFAULT_MARKER + "auto";
+            signalMediaSourceAuto =
+                    String.format("%s%s", DEFAULT_MARKER, "auto");
         } else {
-            signalMediaSourecAuto = "";
+            signalMediaSourceAuto = "";
         }
-        helper.addLabel("signal-media-source-auto", signalMediaSourecAuto);
+        helper.addLabel("signal-media-source-auto", signalMediaSourceAuto);
 
         /*
          * For now, ALWAYS hide media-source: auto
