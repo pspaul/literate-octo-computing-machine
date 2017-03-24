@@ -913,7 +913,7 @@
 				//
 				my.input.select.account_id = null;
 
-				// ALL, IN, OUT, PDF, PRINT
+				// ALL, IN, OUT, PDF, PRINT, TICKET
 				my.input.select.doc_type = "ALL";
 
 				my.input.select.date_from = null;
@@ -939,6 +939,8 @@
 				my.input.select.ownerpw = '';
 				// Boolean
 				my.input.select.encrypted = undefined;
+
+				my.input.select.ticket_number = '';
 
 				my.input.sort.field = 'date';
 				my.input.sort.ascending = false;
@@ -966,6 +968,7 @@
 				$('.sp-doclog-cat-pdf').hide();
 				$('.sp-doclog-cat-queue').hide();
 				$('.sp-doclog-cat-printer').hide();
+				$('.sp-doclog-cat-ticket').hide();
 
 				if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-in')) {
 					$('.sp-doclog-cat-queue').show();
@@ -983,6 +986,7 @@
 					$('.sp-doclog-cat-printer-list').show();
 					$('.sp-doclog-cat-printer-print-layout').show();
 				} else if (_view.isRadioIdSelected('sp-doclog-select-type', 'sp-doclog-select-type-ticket')) {
+					$('.sp-doclog-cat-ticket').show();
 					$('.sp-doclog-cat-out').show();
 					$('.sp-doclog-cat-out-detail').hide();
 					$('.sp-doclog-cat-printer').show();
@@ -997,6 +1001,7 @@
 				, _view = _ns.PanelCommon.view;
 
 				$('#sp-doclog-document-name').val(my.input.select.doc_name);
+				$('#sp-doclog-ticket-number').val(my.input.select.ticket_number);
 
 				// For future use.
 				//$('#sp-doc-out-signature').val(my.input.select.signature);
@@ -1138,6 +1143,11 @@
 				val = _view.getRadioValue('sp-pdf-out-encrypt');
 				my.input.select.encrypted = (val === "" ? undefined : (val === "1"));
 
+				//
+				sel = $('#sp-doclog-ticket-number');
+				present = (sel.val().length > 0);
+				my.input.select.ticket_number = ( present ? sel.val() : null);
+
 			},
 
 			// JSON input
@@ -1151,7 +1161,8 @@
 					doc_type : "ALL",
 					user_id : null,
 					printer_id : null,
-					queue_id : null
+					queue_id : null,
+					ticket_number : null
 				},
 				sort : {
 					field : 'date', // date | name | queue | printer
@@ -1495,7 +1506,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,            or collected local card number from individual keystrokes,
+			// The YubiKey OTP,              or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//

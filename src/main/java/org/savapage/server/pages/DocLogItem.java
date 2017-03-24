@@ -1113,6 +1113,7 @@ public final class DocLogItem {
                 nWhere++;
             }
 
+            //
             if (nWhere > 0) {
                 where.append(" AND ");
             }
@@ -1120,6 +1121,17 @@ public final class DocLogItem {
 
             where.append("P.printMode IN (:printModes)");
 
+            //
+            if (req.getSelect().getTicketNumber() != null) {
+                if (nWhere > 0) {
+                    where.append(" AND ");
+                }
+                nWhere++;
+
+                where.append(
+                        "lower(D.externalId) like :containingExternalIdText");
+            }
+            //
             return where.toString();
         }
 
@@ -1134,6 +1146,12 @@ public final class DocLogItem {
                     PrintModeEnum.TICKET_E.toString());
 
             query.setParameter("printModes", names);
+
+            final String ticket = req.getSelect().getTicketNumber();
+            if (ticket != null) {
+                query.setParameter("containingExternalIdText",
+                        String.format("%%%s%%", ticket.toLowerCase()));
+            }
         }
     }
 
