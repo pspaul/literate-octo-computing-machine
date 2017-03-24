@@ -115,7 +115,7 @@ public class DocLogItemPanel extends Panel {
                 "printin-pie", "pdfout-pie", "printout-pie", "printoutMode",
                 "signature", "destination", "letterhead", "author", "subject",
                 "keywords", "drm", "userpw", "ownerpw", "duplex", "simplex",
-                "color", "grayscale", "papersize", "media-source",
+                "color", "grayscale", "papersize", "media-source", "output-bin",
                 "cost-currency", "cost", "account-trx", "job-id", "job-state",
                 "job-completed-date", "print-in-denied-reason-hyphen",
                 "print-in-denied-reason", "collate", "ecoPrint",
@@ -343,6 +343,7 @@ public class DocLogItemPanel extends Panel {
 
                 mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
 
+                //
                 final String mediaSource = obj.getIppOptionMap().getOptionValue(
                         IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE);
 
@@ -352,8 +353,22 @@ public class DocLogItemPanel extends Panel {
                                     getLocale(),
                                     IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE,
                                     mediaSource));
+
+                    final String outputBin =
+                            obj.getIppOptionMap().getOptionValue(
+                                    IppDictJobTemplateAttr.ATTR_OUTPUT_BIN);
+
+                    if (mediaSource != null) {
+                        mapVisible.put("output-bin",
+                                PROXYPRINT_SERVICE.localizePrinterOptValue(
+                                        getLocale(),
+                                        IppDictJobTemplateAttr.ATTR_OUTPUT_BIN,
+                                        outputBin));
+                    }
+
                 }
 
+                //
                 if (obj.getJobId() != null
                         && !obj.getJobId().equals(Integer.valueOf(0))) {
                     mapVisible.put("job-id", obj.getJobId().toString());

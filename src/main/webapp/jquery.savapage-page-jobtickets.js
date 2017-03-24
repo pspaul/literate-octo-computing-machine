@@ -99,10 +99,14 @@
 			//
 			, _getRedirectPrinterItem = function(inputRadio) {
 				return inputRadio.closest('.sp-jobticket-redirect-printer-item');
-			},
+			}
 			//
-			_getRedirectPrinterMediaSource = function(redirectPrinterItem) {
+			, _getRedirectPrinterMediaSource = function(redirectPrinterItem) {
 				return redirectPrinterItem.find('.sp-redirect-printer-media-source');
+			}
+			//
+			, _getRedirectPrinterOutputBin = function(redirectPrinterItem) {
+				return redirectPrinterItem.find('.sp-redirect-printer-output-bin');
 			}
 			//
 			, _onSelectUser = function(quickUserSelected) {
@@ -199,7 +203,7 @@
 				});
 			}
 			//
-			, _execJob = function(jobFileName, print, retry, printerId, mediaSource) {
+			, _execJob = function(jobFileName, print, retry, printerId, mediaSource, outputBin) {
 				return _api.call({
 					request : 'jobticket-execute',
 					dto : JSON.stringify({
@@ -207,7 +211,8 @@
 						print : print,
 						retry : retry,
 						printerId : printerId,
-						mediaSource : mediaSource
+						mediaSource : mediaSource,
+						outputBin : outputBin
 					})
 				});
 			}
@@ -238,11 +243,13 @@
 			//
 			, _onExecJob = function(jobFileName, print, retry) {
 				_loadingIconFoo(function(jobFileName, print, retry) {
-					var res, selPrinter = _view.getRadioSelected('sp-jobticket-redirect-printer'), mediaSource;
+					var res, selPrinter = _view.getRadioSelected('sp-jobticket-redirect-printer'), mediaSource, outputBin, selItem;
 					if (print) {
-						mediaSource = _getRedirectPrinterMediaSource(_getRedirectPrinterItem(selPrinter)).find(':selected').val();
+						selItem = _getRedirectPrinterItem(selPrinter);
+						mediaSource = _getRedirectPrinterMediaSource(selItem).find(':selected').val();
+						outputBin = _getRedirectPrinterOutputBin(selItem).find(':selected').val();
 					}
-					res = _execJob(jobFileName, print, retry, selPrinter.val(), mediaSource);
+					res = _execJob(jobFileName, print, retry, selPrinter.val(), mediaSource, outputBin);
 
 					if (res.result.code === "0") {
 						$('#sp-jobticket-popup').popup('close');
@@ -290,10 +297,12 @@
 			}
 			//
 			, _onRedirectPrinterRadio = function(inputRadio) {
-				var item = _getRedirectPrinterItem(inputRadio), mediaSource = _getRedirectPrinterMediaSource(item);
+				var item = _getRedirectPrinterItem(inputRadio), mediaSource = _getRedirectPrinterMediaSource(item), outputBin = _getRedirectPrinterOutputBin(item);
 				if (mediaSource.length > 0) {
 					_view.visible($('.sp-redirect-printer-media-source'), false);
+					_view.visible($('.sp-redirect-printer-output-bin'), false);
 					_view.visible(mediaSource, true);
+					_view.visible(outputBin, true);
 					$('.sp-jobticket-redirect-printer-item').attr('style', '');
 					item.attr('style', 'border: 4px solid silver;');
 				}

@@ -39,6 +39,7 @@ import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.RedirectPrinterDto;
 import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.Printer;
+import org.savapage.core.print.proxy.JsonProxyPrinterOpt;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptChoice;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
@@ -84,7 +85,7 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
     /**
      * .
      */
-    private static class MediaSourceListView
+    private static class PrinterOptListView
             extends PropertyListView<JsonProxyPrinterOptChoice> {
 
         private static final long serialVersionUID = 1L;
@@ -100,9 +101,9 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
          * @param list
          *            The item list.
          * @param choice
-         *            The default media-source choice.
+         *            The default choice.
          */
-        MediaSourceListView(final String id,
+        PrinterOptListView(final String id,
                 final List<JsonProxyPrinterOptChoice> list,
                 final JsonProxyPrinterOptChoice choice) {
             super(id, list);
@@ -219,16 +220,28 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
 
             if (this.isSettlement) {
                 helper.discloseLabel("media-source");
+                helper.discloseLabel("output-bin");
             } else {
                 final Printer dbPrinter =
                         ServiceContext.getDaoContext().getPrinterDao()
                                 .findById(item.getModelObject().getId());
 
-                item.add(new MediaSourceListView("media-source",
+                item.add(new PrinterOptListView("media-source",
                         filterMediaSourcesForUser(
                                 new PrinterAttrLookup(dbPrinter),
                                 printer.getMediaSourceOpt().getChoices()),
                         printer.getMediaSourceOptChoice()));
+
+                final JsonProxyPrinterOpt outputBinOpt =
+                        printer.getOutputBinOpt();
+
+                if (outputBinOpt == null) {
+                    helper.discloseLabel("output-bin");
+                } else {
+                    item.add(new PrinterOptListView("output-bin",
+                            printer.getOutputBinOpt().getChoices(),
+                            printer.getOutputBinOptChoice()));
+                }
             }
         }
 
@@ -316,7 +329,7 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
 
         try {
             printerList = JOBTICKET_SERVICE.getRedirectPrinters(jobFileName,
-                    IppOptionMap.createVoid());
+                    IppOptionMap.createVoid(), getLocale());
         } catch (Exception e) {
             setResponsePage(
                     new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));

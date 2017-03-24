@@ -34,6 +34,16 @@
 						</select>
 					</div>
 				</wicket:enclosure>
+				<wicket:enclosure child="output-bin">
+					<div class="sp-redirect-printer-output-bin" style="display: none;"
+						tabindex="-1">
+						<select data-icon="bars">
+							<wicket:fragment wicket:id="output-bin">
+								<option value="some-bin" wicket:id="choice" />
+							</wicket:fragment>
+						</select>
+					</div>
+				</wicket:enclosure>
 			</div>
 		</wicket:fragment>
 	</fieldset>
@@ -44,8 +54,9 @@
 		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
 </wicket:enclosure>
 <wicket:enclosure child="btn-print-retry">
-    <button id="sp-jobticket-popup-btn-print-retry" wicket:id="btn-print-retry"
-        class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
+	<button id="sp-jobticket-popup-btn-print-retry"
+		wicket:id="btn-print-retry"
+		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
 </wicket:enclosure>
 <wicket:enclosure child="btn-settle">
 	<button id="sp-jobticket-popup-btn-settle" wicket:id="btn-settle"

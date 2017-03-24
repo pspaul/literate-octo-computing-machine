@@ -59,6 +59,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         private boolean retry;
         private Long printerId;
         private String mediaSource;
+        private String outputBin;
 
         /**
          *
@@ -118,6 +119,21 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
             this.mediaSource = mediaSource;
         }
 
+        /**
+         *
+         * @return
+         * @return The {@link IppDictJobTemplateAttr#ATTR_OUTPUT_BIN} value for
+         *         the print job. Is irrelevant ({@code null}) when settlement.
+         */
+        public String getOutputBin() {
+            return outputBin;
+        }
+
+        @SuppressWarnings("unused")
+        public void setOutputBin(String outputBin) {
+            this.outputBin = outputBin;
+        }
+
     }
 
     @Override
@@ -150,7 +166,8 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
                     IppKeyword.MEDIA_SOURCE_AUTO);
 
             final RedirectPrinterDto dto = JOBTICKET_SERVICE.getRedirectPrinter(
-                    dtoReq.getJobFileName(), new IppOptionMap(filter));
+                    dtoReq.getJobFileName(), new IppOptionMap(filter),
+                    getLocale());
 
             /*
              * INVARIANT: Compatible printer MUST be present.
@@ -193,11 +210,12 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
                     dto = JOBTICKET_SERVICE.retryTicketPrint(requestingUser,
                             printer, dtoReq.getMediaSource(),
-                            dtoReq.getJobFileName());
+                            dtoReq.getOutputBin(), dtoReq.getJobFileName());
 
                 } else {
                     dto = JOBTICKET_SERVICE.printTicket(requestingUser, printer,
-                            dtoReq.getMediaSource(), dtoReq.getJobFileName());
+                            dtoReq.getMediaSource(), dtoReq.getOutputBin(),
+                            dtoReq.getJobFileName());
                 }
 
             } else {
