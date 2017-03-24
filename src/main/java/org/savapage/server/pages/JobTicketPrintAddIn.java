@@ -221,28 +221,41 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
             if (this.isSettlement) {
                 helper.discloseLabel("media-source");
                 helper.discloseLabel("output-bin");
+                helper.discloseLabel("jog-offset");
+                return;
+            }
+
+            //
+            final Printer dbPrinter = ServiceContext.getDaoContext()
+                    .getPrinterDao().findById(item.getModelObject().getId());
+
+            item.add(new PrinterOptListView("media-source",
+                    filterMediaSourcesForUser(new PrinterAttrLookup(dbPrinter),
+                            printer.getMediaSourceOpt().getChoices()),
+                    printer.getMediaSourceOptChoice()));
+
+            final JsonProxyPrinterOpt outputBinOpt = printer.getOutputBinOpt();
+
+            if (outputBinOpt == null) {
+                helper.discloseLabel("output-bin");
+                helper.discloseLabel("jog-offset");
             } else {
-                final Printer dbPrinter =
-                        ServiceContext.getDaoContext().getPrinterDao()
-                                .findById(item.getModelObject().getId());
+                item.add(new PrinterOptListView("output-bin",
+                        outputBinOpt.getChoices(),
+                        printer.getOutputBinOptChoice()));
 
-                item.add(new PrinterOptListView("media-source",
-                        filterMediaSourcesForUser(
-                                new PrinterAttrLookup(dbPrinter),
-                                printer.getMediaSourceOpt().getChoices()),
-                        printer.getMediaSourceOptChoice()));
+                final JsonProxyPrinterOpt jogOffsetOpt =
+                        printer.getJogOffsetOpt();
 
-                final JsonProxyPrinterOpt outputBinOpt =
-                        printer.getOutputBinOpt();
-
-                if (outputBinOpt == null) {
-                    helper.discloseLabel("output-bin");
+                if (jogOffsetOpt == null) {
+                    helper.discloseLabel("jog-offset");
                 } else {
-                    item.add(new PrinterOptListView("output-bin",
-                            printer.getOutputBinOpt().getChoices(),
-                            printer.getOutputBinOptChoice()));
+                    item.add(new PrinterOptListView("jog-offset",
+                            jogOffsetOpt.getChoices(),
+                            printer.getJogOffsetOptChoice()));
                 }
             }
+
         }
 
         /**

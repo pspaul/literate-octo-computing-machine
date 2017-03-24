@@ -116,12 +116,12 @@ public class DocLogItemPanel extends Panel {
                 "signature", "destination", "letterhead", "author", "subject",
                 "keywords", "drm", "userpw", "ownerpw", "duplex", "simplex",
                 "color", "grayscale", "papersize", "media-source", "output-bin",
-                "cost-currency", "cost", "account-trx", "job-id", "job-state",
-                "job-completed-date", "print-in-denied-reason-hyphen",
-                "print-in-denied-reason", "collate", "ecoPrint",
-                "removeGraphics", "punch", "staple", "fold", "booklet",
-                "jobticket-media", "jobticket-copy", "jobticket-finishing-ext",
-                "landscape" }) {
+                "jog-offset", "cost-currency", "cost", "account-trx", "job-id",
+                "job-state", "job-completed-date",
+                "print-in-denied-reason-hyphen", "print-in-denied-reason",
+                "collate", "ecoPrint", "removeGraphics", "punch", "staple",
+                "fold", "booklet", "jobticket-media", "jobticket-copy",
+                "jobticket-finishing-ext", "landscape" }) {
             mapVisible.put(attr, null);
         }
 
@@ -347,6 +347,8 @@ public class DocLogItemPanel extends Panel {
                 final String mediaSource = obj.getIppOptionMap().getOptionValue(
                         IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE);
 
+                String ippKeywordWlk;
+
                 if (mediaSource != null) {
                     mapVisible.put("media-source",
                             PROXYPRINT_SERVICE.localizePrinterOptValue(
@@ -354,16 +356,30 @@ public class DocLogItemPanel extends Panel {
                                     IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE,
                                     mediaSource));
 
-                    final String outputBin =
-                            obj.getIppOptionMap().getOptionValue(
-                                    IppDictJobTemplateAttr.ATTR_OUTPUT_BIN);
+                    ippKeywordWlk = IppDictJobTemplateAttr.ATTR_OUTPUT_BIN;
 
-                    if (mediaSource != null) {
+                    final String outputBin =
+                            obj.getIppOptionMap().getOptionValue(ippKeywordWlk);
+
+                    if (outputBin != null) {
                         mapVisible.put("output-bin",
                                 PROXYPRINT_SERVICE.localizePrinterOptValue(
-                                        getLocale(),
-                                        IppDictJobTemplateAttr.ATTR_OUTPUT_BIN,
-                                        outputBin));
+                                        getLocale(), ippKeywordWlk, outputBin));
+
+                        ippKeywordWlk =
+                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_JOG_OFFSET;
+
+                        final String jogOfset = obj.getIppOptionMap()
+                                .getOptionValue(ippKeywordWlk);
+
+                        if (jogOfset != null) {
+                            mapVisible.put("jog-offset",
+                                    PROXYPRINT_SERVICE.localizePrinterOptValue(
+                                            getLocale(),
+                                            ippKeywordWlk,
+                                            jogOfset));
+                        }
+
                     }
 
                 }

@@ -109,6 +109,10 @@
 				return redirectPrinterItem.find('.sp-redirect-printer-output-bin');
 			}
 			//
+			, _getRedirectPrinterJogOffset = function(redirectPrinterItem) {
+				return redirectPrinterItem.find('.sp-redirect-printer-jog-offset');
+			}
+			//
 			, _onSelectUser = function(quickUserSelected) {
 				$("#sp-jobticket-userid").val(quickUserSelected.text);
 				_userKey = quickUserSelected.key;
@@ -203,7 +207,7 @@
 				});
 			}
 			//
-			, _execJob = function(jobFileName, print, retry, printerId, mediaSource, outputBin) {
+			, _execJob = function(jobFileName, print, retry, printerId, mediaSource, outputBin, jogOffset) {
 				return _api.call({
 					request : 'jobticket-execute',
 					dto : JSON.stringify({
@@ -212,7 +216,8 @@
 						retry : retry,
 						printerId : printerId,
 						mediaSource : mediaSource,
-						outputBin : outputBin
+						outputBin : outputBin,
+						jogOffset : jogOffset
 					})
 				});
 			}
@@ -243,13 +248,17 @@
 			//
 			, _onExecJob = function(jobFileName, print, retry) {
 				_loadingIconFoo(function(jobFileName, print, retry) {
-					var res, selPrinter = _view.getRadioSelected('sp-jobticket-redirect-printer'), mediaSource, outputBin, selItem;
+					var res, selPrinter = _view.getRadioSelected('sp-jobticket-redirect-printer')
+					//
+					, mediaSource, outputBin, jogOffset, selItem;
+					
 					if (print) {
 						selItem = _getRedirectPrinterItem(selPrinter);
 						mediaSource = _getRedirectPrinterMediaSource(selItem).find(':selected').val();
 						outputBin = _getRedirectPrinterOutputBin(selItem).find(':selected').val();
+						jogOffset = _getRedirectPrinterJogOffset(selItem).find(':selected').val();
 					}
-					res = _execJob(jobFileName, print, retry, selPrinter.val(), mediaSource, outputBin);
+					res = _execJob(jobFileName, print, retry, selPrinter.val(), mediaSource, outputBin, jogOffset);
 
 					if (res.result.code === "0") {
 						$('#sp-jobticket-popup').popup('close');
@@ -297,12 +306,27 @@
 			}
 			//
 			, _onRedirectPrinterRadio = function(inputRadio) {
-				var item = _getRedirectPrinterItem(inputRadio), mediaSource = _getRedirectPrinterMediaSource(item), outputBin = _getRedirectPrinterOutputBin(item);
+				var item = _getRedirectPrinterItem(inputRadio)
+				//
+				, mediaSource = _getRedirectPrinterMediaSource(item)
+				//
+				, outputBin = _getRedirectPrinterOutputBin(item)
+				//
+				, jogOffset = _getRedirectPrinterJogOffset(item)
+				//
+				;
 				if (mediaSource.length > 0) {
+
+					// Hide all.
 					_view.visible($('.sp-redirect-printer-media-source'), false);
 					_view.visible($('.sp-redirect-printer-output-bin'), false);
+					_view.visible($('.sp-redirect-printer-jog-offset'), false);
+
+					// Show this one.
 					_view.visible(mediaSource, true);
 					_view.visible(outputBin, true);
+					_view.visible(jogOffset, true);
+
 					$('.sp-jobticket-redirect-printer-item').attr('style', '');
 					item.attr('style', 'border: 4px solid silver;');
 				}

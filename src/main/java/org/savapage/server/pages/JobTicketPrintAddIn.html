@@ -44,6 +44,16 @@
 						</select>
 					</div>
 				</wicket:enclosure>
+                <wicket:enclosure child="jog-offset">
+                    <div class="sp-redirect-printer-jog-offset" style="display: none;"
+                        tabindex="-1">
+                        <select data-icon="bullets">
+                            <wicket:fragment wicket:id="jog-offset">
+                                <option value="some-offset" wicket:id="choice" />
+                            </wicket:fragment>
+                        </select>
+                    </div>
+                </wicket:enclosure>
 			</div>
 		</wicket:fragment>
 	</fieldset>

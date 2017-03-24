@@ -60,6 +60,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         private Long printerId;
         private String mediaSource;
         private String outputBin;
+        private String jogOffset;
 
         /**
          *
@@ -120,8 +121,6 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         }
 
         /**
-         *
-         * @return
          * @return The {@link IppDictJobTemplateAttr#ATTR_OUTPUT_BIN} value for
          *         the print job. Is irrelevant ({@code null}) when settlement.
          */
@@ -132,6 +131,21 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setOutputBin(String outputBin) {
             this.outputBin = outputBin;
+        }
+
+        /**
+         * @return The
+         *         {@link IppDictJobTemplateAttr#ORG_SAVAPAGE_ATTR_FINISHINGS_JOG_OFFSET}
+         *         value for the print job. Is irrelevant ({@code null}) when
+         *         settlement.
+         */
+        public String getJogOffset() {
+            return jogOffset;
+        }
+
+        @SuppressWarnings("unused")
+        public void setJogOffset(String jogOffset) {
+            this.jogOffset = jogOffset;
         }
 
     }
@@ -210,12 +224,13 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
                     dto = JOBTICKET_SERVICE.retryTicketPrint(requestingUser,
                             printer, dtoReq.getMediaSource(),
-                            dtoReq.getOutputBin(), dtoReq.getJobFileName());
+                            dtoReq.getOutputBin(), dtoReq.getJogOffset(),
+                            dtoReq.getJobFileName());
 
                 } else {
                     dto = JOBTICKET_SERVICE.printTicket(requestingUser, printer,
                             dtoReq.getMediaSource(), dtoReq.getOutputBin(),
-                            dtoReq.getJobFileName());
+                            dtoReq.getJogOffset(), dtoReq.getJobFileName());
                 }
 
             } else {
