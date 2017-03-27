@@ -13,13 +13,11 @@
     -->
 </wicket:remove>
 
-<div data-role="header" data-theme="b">
-	<h1 id="title-printer-settings"></h1>
-</div>
-
 <div class="ui-content" id="print-settings">
 
 	<ul data-role="listview" data-inset="true">
+
+		<li data-role="list-divider" id="title-printer-settings" />
 
 		<li class="sp-print-job-info">
 			<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
@@ -63,8 +61,7 @@
 		</li>
 	</ul>
 
-	<a href="#" data-rel="back" data-direction="reverse"
-		wicket:id="button-back"
+	<a href="#page-print" id="button-print-settings-back" wicket:id="button-back"
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" />
 
 	<button id="button-print-settings-default" wicket:id="button-default"

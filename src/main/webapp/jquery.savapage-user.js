@@ -2887,11 +2887,9 @@
 		 */
 		function PagePrintSettings(_i18n, _view, _model) {
 
-			var PRINT_OPT_PFX = 'print-opt-'
+			var _this = this
 			//
-			, PRINT_OPT_DIV_SFX = '-div'
-			//
-			, CUSTOM_HTML5_DATA_ATTR = 'data-savapage'
+			, PRINT_OPT_PFX = 'print-opt-', PRINT_OPT_DIV_SFX = '-div', CUSTOM_HTML5_DATA_ATTR = 'data-savapage'
 			//
 			, _getPrinterOptionId = function(ippKeyword) {
 
@@ -2996,17 +2994,21 @@
 			//
 			// Choices from view to model.
 			//
-			, _v2m = function() {
+			, _v2Options = function(printerOptions) {
 
 				var i = 0;
 
 				$.each(_model.myPrinterOpt, function(key, value) {
-					_model.myPrinterOpt[key] = $('#' + PRINT_OPT_PFX + i).val();
+					printerOptions[key] = $('#' + PRINT_OPT_PFX + i).val();
 					i += 1;
 				});
-
+			}
+			//
+			// Choices from view to model.
+			//
+			, _v2m = function() {
+				_v2Options(_model.myPrinterOpt);
 				_model.printPageScaling = _view.getRadioValue('print-page-scaling-enum');
-
 			}
 			//
 			;
@@ -3017,6 +3019,16 @@
 			};
 
 			$('#page-printer-settings').on('pagecreate', function(event) {
+
+				$('#button-print-settings-back').click(function() {
+					var printerOptions = {};
+					_v2Options(printerOptions);
+					if (_this.onPrinterOptValidate(printerOptions)) {
+						_v2m();
+						return true;
+					}
+					return false;
+				});
 
 				$('#button-print-settings-default').click(function() {
 					_model.setPrinterDefaults();
@@ -3081,8 +3093,8 @@
 
 						selExpr = PRINT_OPT_PFX + i;
 
-						html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '">';
-						html += '<label for="' + selExpr + '">' + option.uiText + '</label>';
+						html += '<div class="ui-field-contain" id="' + selExpr + PRINT_OPT_DIV_SFX + '">';
+						html += '<label class="sp-txt-wrap" for="' + selExpr + '">' + option.uiText + '</label>';
 						html += '<select ' + CUSTOM_HTML5_DATA_ATTR + '="' + keyword + '" id="' + selExpr + '" data-native-menu="false">';
 
 						$.each(option.choices, function(key, val) {
@@ -3145,9 +3157,6 @@
 					}
 					i += 1;
 				});
-
-			}).on('pagebeforehide', function(event, ui) {
-				_v2m();
 			});
 		}
 
@@ -3312,7 +3321,7 @@
 				}
 
 				_view.visible($('.sp-jobticket'), _model.myPrinter.jobTicket);
-				_view.visible($('.sp-proxyprint'), !_model.myPrinter.jobTicket);			
+				_view.visible($('.sp-proxyprint'), !_model.myPrinter.jobTicket);
 			}
 			//
 			, _isDelegatedPrint = function() {
@@ -5497,6 +5506,27 @@
 					printer : _model.myPrinter.name
 				});
 				_view.message(res.result.txt);
+			};
+
+			/**
+			 * For now, validate Job Tickets only.
+			 */
+			_view.pages.printSettings.onPrinterOptValidate = function(printerOptions) {
+				var res, valid = true;
+				if (_model.myPrinter.jobTicket) {
+					res = _api.call({
+						request : 'printer-opt-validate',
+						dto : JSON.stringify({
+							printer : _model.myPrinter.name,
+							options : printerOptions
+						})
+					});
+					valid = res.result.code === '0';
+					if (!valid) {
+						_view.showApiMsg(res);
+					}
+				}
+				return valid;
 			};
 
 			/**

@@ -51,6 +51,7 @@ import org.savapage.server.api.request.ReqOutboxExtend;
 import org.savapage.server.api.request.ReqPosDepositQuickSearch;
 import org.savapage.server.api.request.ReqPrintDelegationSet;
 import org.savapage.server.api.request.ReqPrinterGet;
+import org.savapage.server.api.request.ReqPrinterOptValidate;
 import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqPrinterQuickSearch;
 import org.savapage.server.api.request.ReqPrinterSet;
@@ -227,6 +228,9 @@ public class JsonApiDict {
 
     public static final String REQ_PRINTER_OPT_DOWNLOAD =
             "printer-opt-download";
+
+    public static final String REQ_PRINTER_OPT_VALIDATE =
+            "printer-opt-validate";
 
     public static final String REQ_PRINTER_DETAIL = "printer-detail";
     public static final String REQ_PRINTER_GET = "printer-get";
@@ -903,6 +907,9 @@ public class JsonApiDict {
         usr(REQ_PRINT_AUTH_CANCEL, DbClaim.NONE, DbAccess.NO);
         usr(REQ_PRINT_FAST_RENEW, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_PRINTER_DETAIL, DbClaim.NONE, DbAccess.YES);
+
+        usr(REQ_PRINTER_OPT_VALIDATE, ReqPrinterOptValidate.class, DbClaim.NONE,
+                DbAccess.NO);
 
         adm(REQ_PRINTER_GET, ReqPrinterGet.class, DbClaim.NONE, DbAccess.YES);
 
