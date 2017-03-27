@@ -70,7 +70,6 @@ public final class AppAbout extends AbstractPage {
             helper.discloseLabel("savapage-info-after-inject");
             helper.encloseLabel("app-version",
                     ConfigManager.getAppNameVersion(), true);
-            add(new Label("app-name", appName));
             add(new Label("app-slogan",
                     CommunityDictEnum.SAVAPAGE_SLOGAN.getWord()));
             add(new AppAboutPanel("savapage-info"));
