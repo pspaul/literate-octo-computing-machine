@@ -60,6 +60,11 @@ public enum HtmlButtonEnum {
     /**
      *
      */
+    DEFAULT,
+
+    /**
+    *
+    */
     DELETE,
 
     /**

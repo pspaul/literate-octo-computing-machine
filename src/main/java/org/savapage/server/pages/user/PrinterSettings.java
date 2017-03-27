@@ -23,6 +23,8 @@ package org.savapage.server.pages.user;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.services.helpers.PageScalingEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -54,6 +56,10 @@ public class PrinterSettings extends AbstractUserPage {
         labelledRadio("page-scaling", "-shrink", htmlRadioName,
                 PageScalingEnum.SHRINK.toString(), true);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addButton("button-back", HtmlButtonEnum.BACK);
+        helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
     }
 
 }
