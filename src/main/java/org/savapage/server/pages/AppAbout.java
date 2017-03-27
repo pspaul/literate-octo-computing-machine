@@ -56,16 +56,23 @@ public final class AppAbout extends AbstractPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
+        final String appName =
+                CommunityDictEnum.SAVAPAGE.getWord(Locale.getDefault());
+
         if (inject.isInjectAvailable()) {
             helper.discloseLabel("app-version");
             add(new AppAboutPanel("savapage-info-after-inject"));
-            add(new Label("app-version-number", ConfigManager.getAppVersion()));
+            add(new Label("app-product-name", appName));
+            add(new Label("app-product-slogan",
+                    CommunityDictEnum.SAVAPAGE_SLOGAN.getWord()));
+            add(new Label("app-product-version", ConfigManager.getAppVersion()));
         } else {
             helper.discloseLabel("savapage-info-after-inject");
             helper.encloseLabel("app-version",
                     ConfigManager.getAppNameVersion(), true);
-            add(new Label("app-name",
-                    CommunityDictEnum.SAVAPAGE.getWord(Locale.getDefault())));
+            add(new Label("app-name", appName));
+            add(new Label("app-slogan",
+                    CommunityDictEnum.SAVAPAGE_SLOGAN.getWord()));
             add(new AppAboutPanel("savapage-info"));
         }
 
