@@ -13,11 +13,9 @@
     -->
 </wicket:remove>
 
-<div data-role="header" data-theme="b">
-	<h1 wicket:id="title" />
-</div>
-
 <div class="ui-content" id="content-print">
+
+	<!-- <span wicket:id="title" /> -->
 
 	<ul data-role="listview" data-inset="true">
 
@@ -28,7 +26,8 @@
 		<li>
 			<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
 
-				<button class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-info">
+				<button
+					class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-info">
 					<span class="sp-txt-wrap sp-print-job-media-sources-info">&nbsp;</span>
 				</button>
 
@@ -327,8 +326,7 @@
 	<button id="button-send-jobticket" wicket:id="button-send-jobticket"
 		class="sp-jobticket ui-btn ui-btn-inline printer-selected ui-btn-icon-left ui-icon-check" />
 
-	<a href="#" data-rel="back" data-direction="reverse"
-		id="button-printer-back"
+	<a href="#page-main" id="button-printer-back"
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
 			key="button-back" />
 	</a>
