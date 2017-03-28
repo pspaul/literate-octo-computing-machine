@@ -962,8 +962,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             final Map<String, String> ippOptions,
             final ProxyPrintCostDto costResult) {
 
-        final String msg = PROXY_PRINT_SERVICE.validateCustomCostRules(proxyPrinter,
-                ippOptions, getLocale());
+        final String msg = PROXY_PRINT_SERVICE
+                .validateCustomCostRules(proxyPrinter, ippOptions, getLocale());
 
         if (msg != null) {
             setApiResultText(ApiResultCodeEnum.WARN, msg);

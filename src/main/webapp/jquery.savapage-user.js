@@ -2994,9 +2994,9 @@
 				});
 
 				_onChangeMediaSource(selMediaSource);
-				
+
 				// resolve visibility
-				_onChangeMediaSource($("select[data-savapage='media-type']"));				
+				_onChangeMediaSource($("select[data-savapage='media-type']"));
 			}
 			//
 			// Choices from view to model.
@@ -3103,7 +3103,7 @@
 						selExpr = PRINT_OPT_PFX + i;
 
 						html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '"';
-						
+
 						if (keyword === 'media-color' || keyword === 'org.savapage-media-weight-metric') {
 							html += ' class="sp-printer-media-type-paper-opt"';
 						}
@@ -3166,7 +3166,7 @@
 
 				// resolve visibility
 				_onChangeMediaSource($("select[data-savapage='media-type']"));
-				
+
 				selMediaSource = $("select[data-savapage='media-source']");
 				_onChangeMediaSource(selMediaSource);
 
@@ -3472,6 +3472,11 @@
 				_model.myPrintTitle = selTitle.val();
 			}
 			//
+			, _resetPrinterSearch = function() {
+				$("#sp-print-qs-printer").val('');
+				_onQuickPrinterSearch($("#sp-print-qs-printer-filter"), '');
+			}
+			//
 			;
 
 			this.clearInput = function() {
@@ -3544,6 +3549,15 @@
 					_onJobTicketType($(this).attr('value'));
 				});
 
+				$('#button-printer-back').click(function(e) {
+					if (_model.PROXY_PRINT_CLEAR_PRINTER) {
+						_view.pages.print.onClearPrinter();
+					}
+					_model.myShowUserStatsGet = true;					
+					_view.changePage($('#page-main'));
+					return false;
+				});
+
 				$('#button-print-and-close').click(function(e) {
 					_onPrint(true);
 					return false;
@@ -3577,6 +3591,13 @@
 				_view.mobipick($("#sp-jobticket-date"));
 
 			}).on("pagebeforeshow", function(event, ui) {
+
+				if (_model.isPrintDialogFromMain) {
+					_model.isPrintDialogFromMain = false;
+					if (_model.PROXY_PRINT_CLEAR_PRINTER) {
+						_resetPrinterSearch();
+					}
+				}
 
 				_setVisibility();
 				_this.onShow();
@@ -3721,6 +3742,9 @@
 			this.myFirstPageShowLetterhead = true;
 
 			this.preservePrintJobSettings = false;
+
+			this.isPrintDialogFromMain = true;
+			this.PROXY_PRINT_CLEAR_PRINTER = false;
 
 			this.myInboxTitle = null;
 			this.myPrintTitle = null;
@@ -4413,14 +4437,7 @@
 				_model.letterheads = null;
 				_model.propPdfDefault.desc.author = _model.user.fullname;
 
-				/*
-				 * _api.call({ request : 'exit-event-monitor' });
-				 * THIS IS NOT NEEDED, because server-side login took care of
-				 * this.
-				 */
-				/*
-				 *
-				 */
+				//
 				res = _api.call({
 					'request' : 'pdf-get-properties'
 				});
@@ -4607,6 +4624,9 @@
 
 				_model.MY_THUMBNAIL_WIDTH = res['thumbnail-width'];
 				_model.propPdfDefault = res['pdf-prop-default'];
+
+				//
+				_model.PROXY_PRINT_CLEAR_PRINTER = res.proxyPrintClearPrinter;
 
 				_view.imgBase64 = res.img_base64;
 
@@ -5148,7 +5168,10 @@
 				$('#sp-popup-print-auth').popup('close');
 
 				if (_model.closePrintDlg) {
-					//Do NOT use $('#button-printer-back').click();
+					if (_model.PROXY_PRINT_CLEAR_PRINTER) {
+						_view.pages.print.onClearPrinter();
+					}
+					// Do NOT use $('#button-printer-back').click();
 					_view.changePage($('#page-main'));
 				}
 
@@ -5670,13 +5693,16 @@
 				}
 
 				if (res.result.code === '0') {
+
 					_view.pages.print.clearInput();
+
 					if (isClose) {
 						$('#button-printer-back').click();
 					}
 					if (clearScope !== null) {
 						_view.pages.main.onRefreshPages();
 					}
+
 					_model.user.stats = res.stats;
 					_model.myShowUserStats = true;
 				}
@@ -6239,6 +6265,7 @@
 			 */
 			_view.pages.main.onShowPrintDialog = function() {
 				if (_checkVanillaJobs()) {
+					_model.isPrintDialogFromMain = true;
 					_view.showUserPageAsync('#page-print', 'Print');
 				}
 			};

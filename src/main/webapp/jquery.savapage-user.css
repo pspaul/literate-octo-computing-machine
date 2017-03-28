@@ -1,4 +1,4 @@
-/*! SavaPage | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
@@ -227,6 +227,27 @@ a:hover.poll_button {
   position: relative;
   top: 15px;
 }
+
+#page-print .ui-dialog-contain {
+  margin: 15px auto 15px auto;
+  padding: 0;
+  position: relative;
+  top: 5px;
+}
+
+#page-printer-settings .ui-dialog-contain {
+  margin: 15px auto 15px auto;
+  padding: 0;
+  position: relative;
+  top: 5px;
+}
+ 
+#page-pdf-properties  .ui-dialog-contain {
+  margin: 15px auto 15px auto;
+  padding: 0;
+  position: relative;
+  top: 5px;
+}
  
 #page-print-delegation .ui-dialog-contain {
   width: 92.5%;
@@ -234,7 +255,7 @@ a:hover.poll_button {
   margin: 15px auto 15px auto;
   padding: 0;
   position: relative;
-  top: 15px;
+  top: 5px;
 }
 
 #page-doclog .ui-content {

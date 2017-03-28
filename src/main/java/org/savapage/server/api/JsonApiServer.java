@@ -4426,6 +4426,10 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("showNavButtonTxt", cm.getConfigEnum(OnOffEnum.class,
                 Key.WEBAPP_USER_MAIN_NAV_BUTTON_TEXT));
 
+        //
+        userData.put("proxyPrintClearPrinter",
+                cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_PRINTER));
+
         return userData;
     }
 
