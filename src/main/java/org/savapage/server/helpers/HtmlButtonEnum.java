@@ -100,12 +100,22 @@ public enum HtmlButtonEnum {
     /**
      *
      */
+    NEXT,
+
+    /**
+     *
+     */
     OK,
 
     /**
      *
      */
     PREVIEW,
+
+    /**
+    *
+    */
+    PREVIOUS,
 
     /**
     *

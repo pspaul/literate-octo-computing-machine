@@ -2925,6 +2925,10 @@
 				//
 				;
 
+				if (ippOption === 'media-type') {
+					_view.visible($('.sp-printer-media-type-paper-opt'), target.val() === 'paper');
+				}
+
 				if (ippOption === 'media-source') {
 
 					isAuto = target.val() === 'auto';
@@ -2990,6 +2994,9 @@
 				});
 
 				_onChangeMediaSource(selMediaSource);
+				
+				// resolve visibility
+				_onChangeMediaSource($("select[data-savapage='media-type']"));				
 			}
 			//
 			// Choices from view to model.
@@ -3020,7 +3027,7 @@
 
 			$('#page-printer-settings').on('pagecreate', function(event) {
 
-				$('#button-print-settings-back').click(function() {
+				$('#button-print-settings-next').click(function() {
 					var printerOptions = {};
 					_v2Options(printerOptions);
 					if (_this.onPrinterOptValidate(printerOptions)) {
@@ -3056,9 +3063,7 @@
 
 			}).on("pagebeforeshow", function(event, ui) {
 
-				var i = 0, selExpr, html, selMediaSource
-				//
-				;
+				var i = 0, selExpr, html, selMediaSource;
 
 				_model.myFirstPageShowPrintSettings = false;
 
@@ -3071,13 +3076,13 @@
 
 				_model.hasPrinterManualMedia = false;
 
-				html = '';
+				html = '<ul data-role="listview">';
 
 				i = 0;
 
 				$.each(_model.myPrinter.groups, function(key, group) {
 
-					var isMediaSourceMatch = _model.isMediaSourceMatch();
+					var isMediaSourceMatch = _model.isMediaSourceMatch(), j = 0;
 
 					$.each(group.options, function(key, option) {
 
@@ -3091,9 +3096,18 @@
 						//
 						;
 
+						if (j === 0) {
+							html += '<li>';
+						}
+
 						selExpr = PRINT_OPT_PFX + i;
 
-						html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '">';
+						html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '"';
+						
+						if (keyword === 'media-color' || keyword === 'org.savapage-media-weight-metric') {
+							html += ' class="sp-printer-media-type-paper-opt"';
+						}
+						html += '>';
 						html += '<label class="sp-txt-wrap" for="' + selExpr + '">' + option.uiText + '</label>';
 						html += '<select ' + CUSTOM_HTML5_DATA_ATTR + '="' + keyword + '" id="' + selExpr + '" data-mini="true" data-native-menu="false">';
 
@@ -3135,14 +3149,24 @@
 						html += '</div>';
 
 						i += 1;
+						j += 1;
 					});
 
+					if (j > 0) {
+						html += '</li>';
+					}
+
 				});
+
+				html += '</ul>';
 
 				$('#printer-options').html(html);
 
 				$(this).enhanceWithin();
 
+				// resolve visibility
+				_onChangeMediaSource($("select[data-savapage='media-type']"));
+				
 				selMediaSource = $("select[data-savapage='media-source']");
 				_onChangeMediaSource(selMediaSource);
 

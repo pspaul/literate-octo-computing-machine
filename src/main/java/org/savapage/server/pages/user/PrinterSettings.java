@@ -58,7 +58,7 @@ public class PrinterSettings extends AbstractUserPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        helper.addButton("button-back", HtmlButtonEnum.BACK);
+        helper.addButton("button-next", HtmlButtonEnum.NEXT);
         helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
     }
 

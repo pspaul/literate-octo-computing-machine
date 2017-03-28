@@ -961,69 +961,33 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     private boolean validatePruneIppOptions(final JsonProxyPrinter proxyPrinter,
             final Map<String, String> ippOptions,
             final ProxyPrintCostDto costResult) {
+
+        final String msg = PROXY_PRINT_SERVICE.validateCustomCostRules(proxyPrinter,
+                ippOptions, getLocale());
+
+        if (msg != null) {
+            setApiResultText(ApiResultCodeEnum.WARN, msg);
+            return false;
+        }
+
         /*
-         * Media
+         * Prune irrelevant media-* options: i.e. all paper related media-*
+         * options.
          */
-        if (proxyPrinter.hasCustomCostRulesMedia()) {
+        if (proxyPrinter.hasCustomCostRulesMedia()
+                && !StringUtils
+                        .defaultString(ippOptions
+                                .get(IppDictJobTemplateAttr.ATTR_MEDIA_TYPE))
+                        .equals(IppKeyword.MEDIA_TYPE_PAPER)) {
 
-            // Validate
-            if (costResult.getCostMedia().compareTo(BigDecimal.ZERO) == 0) {
+            final String[] attrToRemove =
+                    IppDictJobTemplateAttr.JOBTICKET_ATTR_MEDIA_TYPE_PAPER;
 
-                setApiResultText(ApiResultCodeEnum.WARN, String.format(
-                        "Combination of media options for %s [%s] "
-                                + "is not supported.",
-                        IppDictJobTemplateAttr.ATTR_MEDIA_TYPE, ippOptions
-                                .get(IppDictJobTemplateAttr.ATTR_MEDIA_TYPE)));
-                return false;
-            }
-
-            // Prune irrelevant media-* options.
-            if (!StringUtils
-                    .defaultString(ippOptions
-                            .get(IppDictJobTemplateAttr.ATTR_MEDIA_TYPE))
-                    .equals(IppKeyword.MEDIA_TYPE_PAPER)) {
-
-                for (final String ippKey : IppDictJobTemplateAttr.JOBTICKET_ATTR_MEDIA_TYPE_PAPER) {
-                    ippOptions.remove(ippKey);
-                }
-
+            for (final String ippKey : attrToRemove) {
+                ippOptions.remove(ippKey);
             }
         }
 
-        // Copy
-        if (proxyPrinter.hasCustomCostRulesCopy()) {
-
-            // Validate
-            if (costResult.getCostCopy().compareTo(BigDecimal.ZERO) == 0) {
-
-                StringBuilder msg = null;
-
-                for (final String[] attrArray : IppDictJobTemplateAttr.JOBTICKET_ATTR_COPY_V_NONE) {
-
-                    final String ippKey = attrArray[0];
-                    final String ippChoice = ippOptions.get(ippKey);
-
-                    if (ippChoice == null || ippChoice.equals(attrArray[1])) {
-                        continue;
-                    }
-
-                    if (msg == null) {
-                        msg = new StringBuilder();
-                        msg.append("Combination of options for ");
-                    } else {
-                        msg.append(", ");
-                    }
-                    msg.append(ippKey).append(" [").append(ippChoice)
-                            .append("]");
-                }
-
-                if (msg != null) {
-                    msg.append(" is not supported.");
-                    setApiResultText(ApiResultCodeEnum.WARN, msg.toString());
-                    return false;
-                }
-            }
-        }
         return true;
     }
 
