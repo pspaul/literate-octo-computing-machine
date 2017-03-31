@@ -2925,10 +2925,6 @@
 				//
 				;
 
-				if (ippOption === 'media-type') {
-					_view.visible($('.sp-printer-media-type-paper-opt'), target.val() === 'paper');
-				}
-
 				if (ippOption === 'media-source') {
 
 					isAuto = target.val() === 'auto';
@@ -3102,12 +3098,7 @@
 
 						selExpr = PRINT_OPT_PFX + i;
 
-						html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '"';
-
-						if (keyword === 'media-color' || keyword === 'org.savapage-media-weight-metric') {
-							html += ' class="sp-printer-media-type-paper-opt"';
-						}
-						html += '>';
+						html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '">';
 						html += '<label class="sp-txt-wrap" for="' + selExpr + '">' + option.uiText + '</label>';
 						html += '<select ' + CUSTOM_HTML5_DATA_ATTR + '="' + keyword + '" id="' + selExpr + '" data-mini="true" data-native-menu="false">';
 

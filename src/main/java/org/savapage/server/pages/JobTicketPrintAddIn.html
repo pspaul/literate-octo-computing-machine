@@ -24,6 +24,14 @@
 				<label for="the-id" wicket:id="label" tabindex="" />
 				<input type="radio" name="sp-jobticket-redirect-printer"
 					wicket:id="input" id="the-id" value="the-printer-key" />
+				<wicket:enclosure child="media-type">
+					<div class="sp-redirect-printer-media-type"
+						style="display: none;" tabindex="-1">
+						<select data-icon="check">
+							<option value="some-type" wicket:id="media-type" />
+						</select>
+					</div>
+				</wicket:enclosure>
 				<wicket:enclosure child="media-source">
 					<div class="sp-redirect-printer-media-source"
 						style="display: none;" tabindex="-1">
@@ -44,16 +52,16 @@
 						</select>
 					</div>
 				</wicket:enclosure>
-                <wicket:enclosure child="jog-offset">
-                    <div class="sp-redirect-printer-jog-offset" style="display: none;"
-                        tabindex="-1">
-                        <select data-icon="bullets">
-                            <wicket:fragment wicket:id="jog-offset">
-                                <option value="some-offset" wicket:id="choice" />
-                            </wicket:fragment>
-                        </select>
-                    </div>
-                </wicket:enclosure>
+				<wicket:enclosure child="jog-offset">
+					<div class="sp-redirect-printer-jog-offset" style="display: none;"
+						tabindex="-1">
+						<select data-icon="bullets">
+							<wicket:fragment wicket:id="jog-offset">
+								<option value="some-offset" wicket:id="choice" />
+							</wicket:fragment>
+						</select>
+					</div>
+				</wicket:enclosure>
 			</div>
 		</wicket:fragment>
 	</fieldset>

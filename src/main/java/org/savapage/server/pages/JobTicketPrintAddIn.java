@@ -82,6 +82,13 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
     private static final JobTicketService JOBTICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
 
+    private static final String WICKET_ID_CHOICE = "choice";
+    private static final String WICKET_ID_MEDIA_SOURCE = "media-source";
+
+    private static final String WICKET_ID_OUTPUT_BIN = "output-bin";
+    private static final String WICKET_ID_JOG_OFFSET = "jog-offset";
+    private static final String WICKET_ID_MEDIA_TYPE = "media-type";
+
     /**
      * .
      */
@@ -116,7 +123,8 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
 
             final JsonProxyPrinterOptChoice choice = item.getModelObject();
 
-            final Label labelWlk = new Label("choice", choice.getUiText());
+            final Label labelWlk =
+                    new Label(WICKET_ID_CHOICE, choice.getUiText());
 
             MarkupHelper.modifyLabelAttr(labelWlk, "value", choice.getChoice());
 
@@ -219,28 +227,42 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
             final MarkupHelper helper = new MarkupHelper(item);
 
             if (this.isSettlement) {
-                helper.discloseLabel("media-source");
-                helper.discloseLabel("output-bin");
-                helper.discloseLabel("jog-offset");
+                helper.discloseLabel(WICKET_ID_MEDIA_SOURCE);
+                helper.discloseLabel(WICKET_ID_OUTPUT_BIN);
+                helper.discloseLabel(WICKET_ID_JOG_OFFSET);
+                helper.discloseLabel(WICKET_ID_MEDIA_TYPE);
                 return;
+            }
+
+            //
+            final JsonProxyPrinterOptChoice mediaTypeOptChoice =
+                    printer.getMediaTypeOptChoice();
+
+            if (mediaTypeOptChoice == null) {
+                helper.discloseLabel(WICKET_ID_MEDIA_TYPE);
+            } else {
+                helper.addModifyLabelAttr(WICKET_ID_MEDIA_TYPE,
+                        mediaTypeOptChoice.getUiText(), "value",
+                        mediaTypeOptChoice.getChoice());
             }
 
             //
             final Printer dbPrinter = ServiceContext.getDaoContext()
                     .getPrinterDao().findById(item.getModelObject().getId());
 
-            item.add(new PrinterOptListView("media-source",
+            item.add(new PrinterOptListView(WICKET_ID_MEDIA_SOURCE,
                     filterMediaSourcesForUser(new PrinterAttrLookup(dbPrinter),
                             printer.getMediaSourceOpt().getChoices()),
                     printer.getMediaSourceOptChoice()));
 
+            //
             final JsonProxyPrinterOpt outputBinOpt = printer.getOutputBinOpt();
 
             if (outputBinOpt == null) {
-                helper.discloseLabel("output-bin");
-                helper.discloseLabel("jog-offset");
+                helper.discloseLabel(WICKET_ID_OUTPUT_BIN);
+                helper.discloseLabel(WICKET_ID_JOG_OFFSET);
             } else {
-                item.add(new PrinterOptListView("output-bin",
+                item.add(new PrinterOptListView(WICKET_ID_OUTPUT_BIN,
                         outputBinOpt.getChoices(),
                         printer.getOutputBinOptChoice()));
 
@@ -248,9 +270,9 @@ public final class JobTicketPrintAddIn extends AbstractAuthPage {
                         printer.getJogOffsetOpt();
 
                 if (jogOffsetOpt == null) {
-                    helper.discloseLabel("jog-offset");
+                    helper.discloseLabel(WICKET_ID_JOG_OFFSET);
                 } else {
-                    item.add(new PrinterOptListView("jog-offset",
+                    item.add(new PrinterOptListView(WICKET_ID_JOG_OFFSET,
                             jogOffsetOpt.getChoices(),
                             printer.getJogOffsetOptChoice()));
                 }

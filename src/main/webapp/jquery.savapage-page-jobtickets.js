@@ -101,6 +101,10 @@
 				return inputRadio.closest('.sp-jobticket-redirect-printer-item');
 			}
 			//
+			, _getRedirectPrinterMediaType = function(redirectPrinterItem) {
+				return redirectPrinterItem.find('.sp-redirect-printer-media-type');
+			}
+			//
 			, _getRedirectPrinterMediaSource = function(redirectPrinterItem) {
 				return redirectPrinterItem.find('.sp-redirect-printer-media-source');
 			}
@@ -251,7 +255,7 @@
 					var res, selPrinter = _view.getRadioSelected('sp-jobticket-redirect-printer')
 					//
 					, mediaSource, outputBin, jogOffset, selItem;
-					
+
 					if (print) {
 						selItem = _getRedirectPrinterItem(selPrinter);
 						mediaSource = _getRedirectPrinterMediaSource(selItem).find(':selected').val();
@@ -310,22 +314,20 @@
 				//
 				, mediaSource = _getRedirectPrinterMediaSource(item)
 				//
-				, outputBin = _getRedirectPrinterOutputBin(item)
-				//
-				, jogOffset = _getRedirectPrinterJogOffset(item)
-				//
 				;
 				if (mediaSource.length > 0) {
 
 					// Hide all.
+					_view.visible($('.sp-redirect-printer-media-type'), false);
 					_view.visible($('.sp-redirect-printer-media-source'), false);
 					_view.visible($('.sp-redirect-printer-output-bin'), false);
 					_view.visible($('.sp-redirect-printer-jog-offset'), false);
 
 					// Show this one.
+					_view.visible(_getRedirectPrinterMediaType(item), true);
 					_view.visible(mediaSource, true);
-					_view.visible(outputBin, true);
-					_view.visible(jogOffset, true);
+					_view.visible(_getRedirectPrinterOutputBin(item), true);
+					_view.visible(_getRedirectPrinterJogOffset(item), true);
 
 					$('.sp-jobticket-redirect-printer-item').attr('style', '');
 					item.attr('style', 'border: 4px solid silver;');
