@@ -670,7 +670,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          * INVARIANT:
          */
         if (!validatePruneIppOptions(proxyPrinter, printReq.getOptionValues(),
-                costResult)) {
+                costResult, isJobTicket)) {
             return;
         }
 
@@ -956,11 +956,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *            The IPP attribute key/choices.
      * @param costResult
      *            The calculated cost result.
+     * @param isJobTicket
+     *            {@code true} when these are Job Ticket options.
      * @return {@code true} when choices are valid.
      */
     private boolean validatePruneIppOptions(final JsonProxyPrinter proxyPrinter,
             final Map<String, String> ippOptions,
-            final ProxyPrintCostDto costResult) {
+            final ProxyPrintCostDto costResult, final boolean isJobTicket) {
 
         final String msg = PROXY_PRINT_SERVICE
                 .validateCustomCostRules(proxyPrinter, ippOptions, getLocale());
@@ -974,7 +976,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          * Prune irrelevant media-* options: i.e. all paper related media-*
          * options.
          */
-        if (proxyPrinter.hasCustomCostRulesMedia()
+        if (!isJobTicket && proxyPrinter.hasCustomCostRulesMedia()
                 && !StringUtils
                         .defaultString(ippOptions
                                 .get(IppDictJobTemplateAttr.ATTR_MEDIA_TYPE))
