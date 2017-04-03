@@ -26,10 +26,17 @@ import java.text.ParseException;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonProcessingException;
+import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.dto.IppMediaCostDto;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
+import org.savapage.core.ipp.attribute.syntax.IppKeyword;
+import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.print.proxy.ProxyPrintException;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,8 +102,12 @@ public final class ReqPrinterOptValidate extends ApiRequestMixin {
         final JsonProxyPrinter proxyPrinter =
                 PROXY_PRINT_SERVICE.getCachedPrinter(dtoReq.getPrinter());
 
-        final String msg = PROXY_PRINT_SERVICE.validateCustomCostRules(proxyPrinter,
-                dtoReq.getOptions(), getLocale());
+        // Get the assigned media
+        mediaFromMediaSource(dtoReq.getOptions(), dtoReq.getPrinter());
+
+        //
+        final String msg = PROXY_PRINT_SERVICE.validateCustomCostRules(
+                proxyPrinter, dtoReq.getOptions(), getLocale());
 
         if (msg == null) {
             setApiResultOk();
@@ -105,4 +116,40 @@ public final class ReqPrinterOptValidate extends ApiRequestMixin {
         }
     }
 
+    /**
+     * Updates the IPP media from the selected media-source.
+     *
+     * @param options
+     *            The IPP option map.
+     * @param printerName
+     *            The printer name.
+     */
+    private void mediaFromMediaSource(final Map<String, String> options,
+            final String printerName) {
+
+        final String requestedMediaSource =
+                options.get(IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE);
+
+        if (requestedMediaSource == null
+                || requestedMediaSource.equals(IppKeyword.MEDIA_SOURCE_AUTO)) {
+            return;
+        }
+
+        final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
+                .findByName(printerName);
+
+        final PrinterAttrLookup printerAttrLookup =
+                new PrinterAttrLookup(printer);
+
+        if (printerAttrLookup.isMediaSourcePresent()) {
+
+            final IppMediaCostDto mediaCostDto = printerAttrLookup
+                    .get(new PrinterDao.MediaSourceAttr(requestedMediaSource))
+                    .getMedia();
+
+            final String requestedMedia = mediaCostDto.getMedia();
+
+            options.put(IppDictJobTemplateAttr.ATTR_MEDIA, requestedMedia);
+        }
+    }
 }
