@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -461,6 +461,7 @@ public final class PrintersPage extends AbstractAdminListPage {
             String deviceUriText = "";
             String deviceUriImgUrl = null;
 
+            final int nCupsClassMembers;
             if (cupsPrinter != null) {
                 final URI deviceUri = cupsPrinter.getDeviceUri();
                 if (deviceUri != null) {
@@ -470,9 +471,17 @@ public final class PrintersPage extends AbstractAdminListPage {
                                 ThirdPartyEnum.PAPERCUT);
                     }
                 }
+                nCupsClassMembers = cupsPrinter.getCupsClassMembers();
+            } else {
+                nCupsClassMembers = 0;
             }
 
             item.add(new Label("deviceUri", deviceUriText));
+
+            //
+            item.add(createVisibleLabel(nCupsClassMembers > 0,
+                    "cups-printer-class-members",
+                    String.valueOf(nCupsClassMembers)));
 
             //
             labelWrk = createVisibleLabel(deviceUriImgUrl != null,

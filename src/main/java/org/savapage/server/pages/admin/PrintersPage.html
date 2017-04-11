@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wicket:remove>
 	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
     -->
 </wicket:remove>
 
@@ -29,8 +29,11 @@
 			</h3>
 			<p>
 				<span wicket:id="printer-pie" class="sparkline-printer-pie" />&nbsp;<span
-					class="sp-printer-opt-download" wicket:id="printerName" /> &bull; <span
-					class="sp-txt-wrap" wicket:id="deviceUri" />
+					class="sp-printer-opt-download" wicket:id="printerName" />
+				<wicket:enclosure child="cups-printer-class-members"> (<span
+						class="sp-txt-wrap" wicket:id="cups-printer-class-members" />)
+				</wicket:enclosure>
+				&bull; <span class="sp-txt-wrap" wicket:id="deviceUri" />
 			</p>
 			<p>
 				<span wicket:id="printer-sparkline" class="sparkline-printer-line" />
