@@ -50,7 +50,7 @@
 			, _CLASS_GROUP = '_sp_group', _CLASS_USER = '_sp_user'
 			//
 			, _CLASS_SELECTED_IND = '_sp_selected', _CLASS_SELECTED_TXT = '_sp_selected_txt'
-			// 
+			//
 			, _quickUserGroupFilter, _quickUserFilter, _quickAccountFilter
 			//
 			, _quickUserGroupCache, _quickUserCache, _quickAccountCache
@@ -435,7 +435,7 @@
 						_quickUserGroupSelected[dbkey] = _quickUserGroupCache[dbkey];
 						span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
 					}
-					_quickUserFilter = undefined;					
+					_quickUserFilter = undefined;
 					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), $("#sp-print-delegation-users-select-to-add-msg"));
 				}
 			}
@@ -563,7 +563,7 @@
 					_revertQuickUserGroupsSelected();
 
 					// Clear users
-					_quickUserFilter = undefined;					
+					_quickUserFilter = undefined;
 					_quickUserCache = {};
 					_quickUserSelected = {};
 					_nSelectedUsers = 0;
@@ -579,7 +579,20 @@
 				}
 			}
 			//
+			, _updateModel = function() {
+				_model.printDelegation = _delegationModel();
+				_model.printDelegationCopies = _nDelegatorGroupMembers + _nDelegatorUsers;
+			}
+			//
 			;
+
+			//--------
+			this.clear = function() {
+				_onDelegatorSelectAll();
+				_onDelegatorRemoveSelected();
+				_updateModel();
+				_this.onBeforeHide();
+			};
 
 			//----------------------------------------------------------------
 			$('#page-print-delegation').on('pagecreate', function(event) {
@@ -681,8 +694,7 @@
 			}).on("pagebeforeshow", function(event, ui) {
 				_setVisibility();
 			}).on("pagebeforehide", function(event, ui) {
-				_model.printDelegation = _delegationModel();
-				_model.printDelegationCopies = _nDelegatorGroupMembers + _nDelegatorUsers;
+				_updateModel();
 				_this.onBeforeHide();
 			});
 		};

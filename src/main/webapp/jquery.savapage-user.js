@@ -5686,6 +5686,10 @@
 				if (res.result.code === '0') {
 
 					_view.pages.print.clearInput();
+					
+					if (res.clearDelegate) {
+						_view.pages.printDelegation.clear();
+					}					
 
 					if (isClose) {
 						$('#button-printer-back').click();

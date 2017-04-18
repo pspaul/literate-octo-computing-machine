@@ -80,6 +80,7 @@ import org.savapage.server.api.JsonApiDict;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -337,6 +338,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             this.accountId = accountId;
         }
 
+        @JsonIgnore
+        public boolean isDelegatedPrint() {
+            return this.delegation != null
+                    && (!this.delegation.getGroups().isEmpty()
+                            || !this.delegation.getUsers().isEmpty());
+        }
     }
 
     @Override
@@ -697,14 +704,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
              * Direct Proxy Print integrated with PaperCut?
              */
             if (isExtPaperCutPrint) {
-                this.onExtPaperCutPrint(lockedUser, printReq, currencySymbol);
+                this.onExtPaperCutPrint(lockedUser, dtoReq, printReq,
+                        currencySymbol);
                 return;
             }
             /*
              * Direct Proxy Print?
              */
             if (isNonSecureProxyPrint) {
-                this.onNonSecurePrint(lockedUser, printReq, currencySymbol);
+                this.onNonSecurePrint(lockedUser, dtoReq, printReq,
+                        currencySymbol);
                 return;
             }
         } catch (IppConnectException e) {
@@ -769,7 +778,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 DEVICE_SERVICE.getProxyPrintAuthMode(device.getId());
 
         if (authModeEnum.isHoldRelease()) {
-            this.onHoldPrint(lockedUser, printReq, currencySymbol);
+            this.onHoldPrint(lockedUser, dtoReq, printReq, currencySymbol);
             return;
         }
 
@@ -799,11 +808,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     private static boolean applyPrintDelegation(final DtoReq dtoReq,
             final ProxyPrintInboxReq printReq) {
 
-        final PrintDelegationDto delegationDto = dtoReq.getDelegation();
-
-        final boolean isDelegatedPrint =
-                delegationDto != null && (!delegationDto.getGroups().isEmpty()
-                        || !delegationDto.getUsers().isEmpty());
+        final boolean isDelegatedPrint = dtoReq.isDelegatedPrint();
 
         if (isDelegatedPrint) {
 
@@ -1087,7 +1092,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         JOBTICKET_SERVICE.createCopyJob(lockedUser, printReq,
                 calcJobTicketDeliveryDate(dtoReq));
 
-        setApiResultMsg(printReq);
+        setApiResultMsg(dtoReq, printReq);
 
         ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                 this.getLocale(), currencySymbol);
@@ -1128,7 +1133,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setClearedObjects(
                 PROXY_PRINT_SERVICE.clearInbox(lockedUser, printReq));
 
-        setApiResultMsg(printReq);
+        setApiResultMsg(dtoReq, printReq);
 
         ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                 this.getLocale(), currencySymbol);
@@ -1138,12 +1143,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *
      * @param lockedUser
      *            The locked {@link User} instance, can be {@code null}.
+     * @param dtoReq
+     *            The {@link DtoReq}.
      * @param printReq
      *            The print request.
      * @param currencySymbol
      *            The currency symbol.
      */
-    private void onHoldPrint(final User lockedUser,
+    private void onHoldPrint(final User lockedUser, final DtoReq dtoReq,
             final ProxyPrintInboxReq printReq, final String currencySymbol) {
 
         printReq.setPrintMode(PrintModeEnum.HOLD);
@@ -1161,7 +1168,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setClearedObjects(
                 PROXY_PRINT_SERVICE.clearInbox(lockedUser, printReq));
 
-        setApiResultMsg(printReq);
+        setApiResultMsg(dtoReq, printReq);
         ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                 this.getLocale(), currencySymbol);
     }
@@ -1170,13 +1177,15 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *
      * @param lockedUser
      *            The locked {@link User} instance, can be {@code null}.
+     * @param dtoReq
+     *            The {@link DtoReq}.
      * @param printReq
      *            The print request.
      * @param currencySymbol
      *            The currency symbol.
      * @throws IppConnectException
      */
-    private void onNonSecurePrint(final User lockedUser,
+    private void onNonSecurePrint(final User lockedUser, final DtoReq dtoReq,
             final ProxyPrintInboxReq printReq, final String currencySymbol)
             throws IppConnectException {
 
@@ -1189,7 +1198,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
-        setApiResultMsg(printReq);
+        setApiResultMsg(dtoReq, printReq);
 
         if (printReq.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
 
@@ -1206,11 +1215,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *
      * @param lockedUser
      *            The locked {@link User} instance, can be {@code null}.
+     * @param dtoReq
+     *            The {@link DtoReq}.
      * @param printReq
      * @param currencySymbol
      * @throws IppConnectException
      */
-    private void onExtPaperCutPrint(final User lockedUser,
+    private void onExtPaperCutPrint(final User lockedUser, final DtoReq dtoReq,
             final ProxyPrintInboxReq printReq, final String currencySymbol)
             throws IppConnectException {
 
@@ -1224,7 +1235,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return;
         }
 
-        setApiResultMsg(printReq);
+        setApiResultMsg(dtoReq, printReq);
 
         if (printReq.getStatus() == ProxyPrintInboxReq.Status.PRINTED) {
 
@@ -1268,14 +1279,23 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     }
 
     /**
-     * Sets the JSON {@code result} and {@code requestStatus} of a Proxy Print
-     * Request on parameter {@code out}.
+     * Sets the JSON {@code result}, {@code clearDelegate} indicator, and
+     * {@code requestStatus} of a Proxy Print Request on parameter {@code out}.
      *
+     * @param dtoReq
+     *            The incoming request.
      * @param printReq
      *            The Proxy Print Request.
      */
-    private void setApiResultMsg(final ProxyPrintInboxReq printReq) {
+    private void setApiResultMsg(final DtoReq dtoReq,
+            final ProxyPrintInboxReq printReq) {
+
         setApiResultMsg(this.getUserData(), printReq);
+
+        this.getUserData().put("clearDelegate",
+                dtoReq.isDelegatedPrint()
+                        && ConfigManager.instance().isConfigValue(
+                                Key.WEBAPP_USER_PROXY_PRINT_CLEAR_DELEGATE));
     }
 
     /**
