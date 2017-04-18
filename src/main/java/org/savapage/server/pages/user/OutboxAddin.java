@@ -661,7 +661,7 @@ public class OutboxAddin extends AbstractUserPage {
 
             } else if (this.isJobticketView && job.getUserId() != null) {
 
-                if (isCopyJobTicket) {
+                if (isCopyJobTicket || optionMap.isJobTicketSettleOnly()) {
                     helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
                 } else {
                     this.addJobIdAttr(helper.encloseLabel(
