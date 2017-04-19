@@ -28,6 +28,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -106,6 +107,7 @@ public class DocLogItemPanel extends Panel {
     public void populate(final IModel<DocLogItem> model) {
 
         final DocLogItem obj = model.getObject();
+        final Locale locale = getLocale();
 
         String cssClass = null;
 
@@ -351,8 +353,7 @@ public class DocLogItemPanel extends Panel {
 
                 if (mediaSource != null) {
                     mapVisible.put("media-source",
-                            PROXYPRINT_SERVICE.localizePrinterOptValue(
-                                    getLocale(),
+                            PROXYPRINT_SERVICE.localizePrinterOptValue(locale,
                                     IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE,
                                     mediaSource));
 
@@ -364,7 +365,7 @@ public class DocLogItemPanel extends Panel {
                     if (outputBin != null) {
                         mapVisible.put("output-bin",
                                 PROXYPRINT_SERVICE.localizePrinterOptValue(
-                                        getLocale(), ippKeywordWlk, outputBin));
+                                        locale, ippKeywordWlk, outputBin));
 
                         ippKeywordWlk =
                                 IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_JOG_OFFSET;
@@ -375,8 +376,7 @@ public class DocLogItemPanel extends Panel {
                         if (jogOfset != null) {
                             mapVisible.put("jog-offset",
                                     PROXYPRINT_SERVICE.localizePrinterOptValue(
-                                            getLocale(),
-                                            ippKeywordWlk,
+                                            locale, ippKeywordWlk,
                                             jogOfset));
                         }
 
@@ -403,7 +403,7 @@ public class DocLogItemPanel extends Panel {
 
                 if (obj.getJobState() != null) {
                     mapVisible.put("job-state",
-                            obj.getJobState().uiText(getLocale()));
+                            obj.getJobState().uiText(locale));
                     if (obj.getCompletedDate() != null) {
                         mapVisible.put("job-completed-date",
                                 localizedShortTime(obj.getCompletedDate()));
@@ -496,17 +496,17 @@ public class DocLogItemPanel extends Panel {
         }
 
         mapVisible.put("jobticket-media",
-                PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
+                PROXYPRINT_SERVICE.getJobTicketOptionsUiText(locale,
                         IppDictJobTemplateAttr.JOBTICKET_ATTR_MEDIA,
                         obj.getIppOptionMap()));
 
         mapVisible.put("jobticket-copy",
-                PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
+                PROXYPRINT_SERVICE.getJobTicketOptionsUiText(locale,
                         IppDictJobTemplateAttr.JOBTICKET_ATTR_COPY,
                         obj.getIppOptionMap()));
 
         mapVisible.put("jobticket-finishings-ext",
-                PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
+                PROXYPRINT_SERVICE.getJobTicketOptionsUiText(locale,
                         IppDictJobTemplateAttr.JOBTICKET_ATTR_FINISHINGS_EXT,
                         obj.getIppOptionMap()));
 
