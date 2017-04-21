@@ -152,6 +152,8 @@ public enum HtmlButtonEnum {
     */
     UPLOAD;
 
+    public static final String DOTTED_SUFFIX = " . . .";
+
     /**
      * @param locale
      *            The {@link Locale}.
@@ -167,6 +169,6 @@ public enum HtmlButtonEnum {
      * @return The localized text with " . . ." suffix.
      */
     public String uiTextDottedSfx(final Locale locale) {
-        return String.format("%s . . .", this.uiText(locale));
+        return String.format("%s%s", this.uiText(locale), DOTTED_SUFFIX);
     }
 }

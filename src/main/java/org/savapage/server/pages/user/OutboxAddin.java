@@ -129,6 +129,9 @@ public class OutboxAddin extends AbstractUserPage {
     private static final String WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET =
             "button-edit-outbox-jobticket";
 
+    private static final String WICKET_ID_BTN_SETTINGS_OUTBOX_JOBTICKET =
+            "button-settings-outbox-jobticket";
+
     private static final String WICKET_ID_BTN_CANCEL_OUTBOX_JOB =
             "button-cancel-outbox-job";
 
@@ -303,6 +306,7 @@ public class OutboxAddin extends AbstractUserPage {
             if (!getSessionWebAppType().equals(WebAppTypeEnum.JOBTICKETS)
                     || printOut != null) {
                 helper.discloseLabel(WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET);
+                helper.discloseLabel(WICKET_ID_BTN_SETTINGS_OUTBOX_JOBTICKET);
             } else {
 
                 labelWlk = helper.encloseLabel(
@@ -312,6 +316,14 @@ public class OutboxAddin extends AbstractUserPage {
                 if (isJobTicketItem) {
                     this.addJobIdAttr(labelWlk, job);
                 }
+
+                labelWlk = helper.encloseLabel(
+                        WICKET_ID_BTN_SETTINGS_OUTBOX_JOBTICKET,
+                        HtmlButtonEnum.DOTTED_SUFFIX, isJobTicketItem);
+                if (isJobTicketItem) {
+                    this.addJobIdAttr(labelWlk, job);
+                }
+
             }
 
             final String encloseButtonIdRemove;

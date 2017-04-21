@@ -46,90 +46,92 @@
 
 		<div id="sp-jobtickets-tab-open" class="ui-content">
 
-			<div data-role="collapsible" data-collapsed="true" class="ui-mini">
-				<h3>
-					<wicket:message key="select-and-sort" />
-				</h3>
+			<div id="sp-jobtickets-tab-open-header">
+				<div data-role="collapsible" data-collapsed="true" class="ui-mini">
+					<h3>
+						<wicket:message key="select-and-sort" />
+					</h3>
 
-				<div class="ui-field-contain">
-					<label for="sp-jobticket-userid">
-						<wicket:message key="prompt-userid" />
-					</label>
-					<input tabindex="1" type="text" id="sp-jobticket-userid" value=""
-						maxlength="128" autofocus data-type="search" autocomplete="off"
-						autocorrect="off" autocapitalize="off" spellcheck="false" />
-				</div>
-				<ul id="sp-jobticket-userid-filter" data-role="listview"
-					data-filter="true" data-input="#sp-jobticket-userid"
-					data-filter-placeholder="Find a User by ID..."
-					data-filter-theme="a" data-inset="true" />
-
-				<div class="ui-field-contain">
-					<fieldset data-role="controlgroup" data-type="horizontal"
-						class="ui-mini">
-
-						<legend>
-							<wicket:message key="prompt-expiration" />
-						</legend>
-
-						<input type="radio" name="sp-jobticket-sort-dir"
-							id="sp-jobticket-sort-dir-asc" checked="checked" />
-						<label for="sp-jobticket-sort-dir-asc">
-							<wicket:message key="sort-asc" />
+					<div class="ui-field-contain">
+						<label for="sp-jobticket-userid">
+							<wicket:message key="prompt-userid" />
 						</label>
+						<input tabindex="1" type="text" id="sp-jobticket-userid" value=""
+							maxlength="128" autofocus data-type="search" autocomplete="off"
+							autocorrect="off" autocapitalize="off" spellcheck="false" />
+					</div>
+					<ul id="sp-jobticket-userid-filter" data-role="listview"
+						data-filter="true" data-input="#sp-jobticket-userid"
+						data-filter-placeholder="Find a User by ID..."
+						data-filter-theme="a" data-inset="true" />
 
-						<input type="radio" name="sp-jobticket-sort-dir"
-							id="sp-jobticket-sort-dir-desc" />
-						<label for="sp-jobticket-sort-dir-desc">
-							<wicket:message key="sort-desc" />
-						</label>
+					<div class="ui-field-contain">
+						<fieldset data-role="controlgroup" data-type="horizontal"
+							class="ui-mini">
 
-					</fieldset>
-				</div>
-			</div>
+							<legend>
+								<wicket:message key="prompt-expiration" />
+							</legend>
 
-			<div>
-				<div style="float: left; margin-left: 15px; margin-top: -5px;">
-					<img style="padding: 0px 3px 3px 0px;"
-						id="sp-btn-jobticket-countdown-pause"
-						src="/famfamfam-silk/control_pause.png" />
-					<img style="padding: 0px 3px 3px 0px; display: none;"
-						id="sp-btn-jobticket-countdown-play"
-						src="/famfamfam-silk/control_play.png" />
-				</div>
-				<div style="margin-left: 30px; margin-top: 15px;">
-					<div id='sp-jobticket-countdown-bar'
-						style="width: auto; margin: 10px; height: 5px; background-color: white;">
-						<div id='sp-jobticket-countdown'
-							style="width: 0%; height: 100%; background-color: #ededed;" />
+							<input type="radio" name="sp-jobticket-sort-dir"
+								id="sp-jobticket-sort-dir-asc" checked="checked" />
+							<label for="sp-jobticket-sort-dir-asc">
+								<wicket:message key="sort-asc" />
+							</label>
+
+							<input type="radio" name="sp-jobticket-sort-dir"
+								id="sp-jobticket-sort-dir-desc" />
+							<label for="sp-jobticket-sort-dir-desc">
+								<wicket:message key="sort-desc" />
+							</label>
+
+						</fieldset>
 					</div>
 				</div>
-			</div>
 
-			<div style="float: left; margin-left: -30px;">
-				<button id="btn-jobtickets-refresh"
-					class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-refresh">
-					<wicket:message key="button-refresh-now" />
-				</button>
-				<!--  -->
-				<button id="btn-jobtickets-cancel-all" data-rel="popup"
-					class="ui-btn ui-mini ui-btn-inline sp-jobtickets-all">
-					<wicket:message key="button-cancel-all" />
-					. . .
-				</button>
-				<!--  -->
-				<button id="btn-jobtickets-print-all" data-rel="popup"
-					class="ui-btn ui-mini ui-btn-inline sp-jobtickets-all">
-					<wicket:message key="button-print-all" />
-					. . .
-				</button>
-				<!--  -->
-				<button id="btn-jobtickets-close" data-rel="back"
-					data-direction="reverse" wicket:id="button-logout"
-					class="ui-btn ui-mini ui-btn-inline ui-icon-none" />
-			</div>
+				<div>
+					<div style="float: left; margin-left: 15px; margin-top: -5px;">
+						<img style="padding: 0px 3px 3px 0px;"
+							id="sp-btn-jobticket-countdown-pause"
+							src="/famfamfam-silk/control_pause.png" />
+						<img style="padding: 0px 3px 3px 0px; display: none;"
+							id="sp-btn-jobticket-countdown-play"
+							src="/famfamfam-silk/control_play.png" />
+					</div>
+					<div style="margin-left: 30px; margin-top: 15px;">
+						<div id='sp-jobticket-countdown-bar'
+							style="width: auto; margin: 10px; height: 5px; background-color: white;">
+							<div id='sp-jobticket-countdown'
+								style="width: 0%; height: 100%; background-color: #ededed;" />
+						</div>
+					</div>
+				</div>
 
+				<div>
+					<button id="btn-jobtickets-refresh"
+						class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-refresh">
+						<wicket:message key="button-refresh-now" />
+					</button>
+					<!--  -->
+					<button id="btn-jobtickets-cancel-all" data-rel="popup"
+						class="ui-btn ui-btn-inline ui-mini sp-jobtickets-all">
+						<wicket:message key="button-cancel-all" />
+						. . .
+					</button>
+					<!--  -->
+					<button id="btn-jobtickets-print-all" data-rel="popup"
+						class="ui-btn ui-btn-inline ui-mini sp-jobtickets-all">
+						<wicket:message key="button-print-all" />
+						. . .
+					</button>
+					<!--  -->
+					<button id="btn-jobtickets-close" data-rel="back"
+						data-direction="reverse" wicket:id="button-logout"
+						class="ui-btn ui-btn-inline ui-mini ui-icon-none" />
+				</div>
+			</div>
 			<div style="float: left;" id="jobticket-list" />
+			<div style="float: left; margin-left: -30px;"></div>
 		</div>
 
 		<wicket:remove>
@@ -143,7 +145,7 @@
 
 
 <div data-role="popup" id="sp-jobticket-popup" data-theme="a"
-	data-overlay-theme="a" data-arrow="l">
+	data-overlay-theme="a" data-arrow="true">
 	<div class="ui-content">
 		<h3 class="ui-title" id="sp-jobticket-popup-title">
 			<wicket:message key="title-print-popup" />
