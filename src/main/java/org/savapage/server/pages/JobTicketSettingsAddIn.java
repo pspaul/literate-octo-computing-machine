@@ -23,6 +23,7 @@ package org.savapage.server.pages;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -33,7 +34,6 @@ import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.helpers.IppOptionMap;
-import org.savapage.core.json.JsonPrinterDetail;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
@@ -138,23 +138,6 @@ public final class JobTicketSettingsAddIn extends AbstractAuthPage {
         // The job
         final OutboxJobDto job = JOBTICKET_SERVICE.getTicket(jobFileName);
 
-        final JsonPrinterDetail printer =
-                PROXY_PRINT_SERVICE.getPrinterDetailUserCopy(
-                        getSession().getLocale(), job.getPrinter());
-
-        //
-        // final List<JsonProxyPrinterOpt> optionList = new ArrayList<>();
-        //
-        // for (final JsonProxyPrinterOptGroup group : printer.getGroups()) {
-        // for (final JsonProxyPrinterOpt option : group.getOptions()) {
-        // if (option.getKeyword()
-        // .equals(IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE)) {
-        // continue;
-        // }
-        // optionList.add(option);
-        // }
-        // }
-
         final List<String[]> options = new ArrayList<>();
         final IppOptionMap optionMap = job.createIppOptionMap();
 
@@ -162,11 +145,14 @@ public final class JobTicketSettingsAddIn extends AbstractAuthPage {
         String tdWlk;
 
         // ---------- Tray
-        thWlk = "Tray";
+        thWlk = PrintOutNounEnum.TRAY.uiText(getLocale());
 
         // media
-        tdWlk = "??";
-        options.add(new String[] { thWlk, tdWlk });
+        tdWlk = optionMap.getOptionValue(IppDictJobTemplateAttr.ATTR_MEDIA);
+
+        options.add(new String[] { thWlk,
+                PROXY_PRINT_SERVICE.localizePrinterOptValue(getLocale(),
+                        IppDictJobTemplateAttr.ATTR_MEDIA, tdWlk) });
 
         thWlk = null;
 
@@ -221,12 +207,57 @@ public final class JobTicketSettingsAddIn extends AbstractAuthPage {
 
         thWlk = null;
 
+        if (optionMap.getNumberUp() != null) {
+            final int nUp = optionMap.getNumberUp().intValue();
+            if (nUp > 1) {
+                options.add(new String[] { thWlk, PrintOutNounEnum.N_UP.uiText(
+                        getLocale(), optionMap.getNumberUp().toString()) });
+            }
+        }
+
         // ---------- Finishings
-        // :
-        // : Job Ticket options
+        thWlk = PrintOutNounEnum.FINISHING.uiText(getLocale());
+
+        //
+        thWlk = addOptions(optionMap, options, getLocale(),
+                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_V_NONE,
+                thWlk);
+
+        thWlk = addOptions(optionMap, options, getLocale(),
+                IppDictJobTemplateAttr.JOBTICKET_ATTR_COPY_V_NONE, thWlk);
 
         //
         add(new PrinterOptionsView("setting-row", options));
     }
 
+    /**
+     *
+     * @param optionMap
+     *            The chosen option map.
+     * @param options
+     *            The list to append options on.
+     * @param locale
+     *            The locale.
+     * @param attrNone
+     *            The array with IPP attribute NONE values.
+     * @param thWlkStart
+     *            The header text to start with.
+     * @return The current header text.
+     */
+    private static String addOptions(final IppOptionMap optionMap,
+            final List<String[]> options, final Locale locale,
+            final String[][] attrNone, final String thWlkStart) {
+        String thWlk = thWlkStart;
+        String tdWlk;
+        for (final String[] finishing : attrNone) {
+            tdWlk = optionMap.getOptionValue(finishing[0]);
+            if (tdWlk == null || tdWlk.equals(finishing[1])) {
+                continue;
+            }
+            options.add(new String[] { thWlk, PROXY_PRINT_SERVICE
+                    .localizePrinterOptValue(locale, finishing[0], tdWlk) });
+            thWlk = null;
+        }
+        return thWlk;
+    }
 }
