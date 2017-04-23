@@ -22,6 +22,7 @@
 <div class="ui-content">
 
 	<div data-role="tabs" id="sp-jobtickets-tabs" data-active="0">
+
 		<div data-role="navbar">
 			<ul>
 				<li>
@@ -107,31 +108,28 @@
 					</div>
 				</div>
 
-				<div>
-					<button id="btn-jobtickets-refresh"
-						class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-refresh">
-						<wicket:message key="button-refresh-now" />
-					</button>
-					<!--  -->
+				<div data-role="controlgroup" data-type="horizontal">
+
+					<button id="btn-jobtickets-refresh" wicket:id="button-refresh"
+						class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-refresh" />
+
 					<button id="btn-jobtickets-cancel-all" data-rel="popup"
-						class="ui-btn ui-btn-inline ui-mini sp-jobtickets-all">
-						<wicket:message key="button-cancel-all" />
-						. . .
-					</button>
-					<!--  -->
+						wicket:id="button-cancel-all"
+						class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete" />
+
 					<button id="btn-jobtickets-print-all" data-rel="popup"
-						class="ui-btn ui-btn-inline ui-mini sp-jobtickets-all">
-						<wicket:message key="button-print-all" />
-						. . .
-					</button>
-					<!--  -->
+						wicket:id="button-print-all"
+						class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action" />
+
 					<button id="btn-jobtickets-close" data-rel="back"
 						data-direction="reverse" wicket:id="button-logout"
-						class="ui-btn ui-btn-inline ui-mini ui-icon-none" />
+						class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-power" />
+
 				</div>
 			</div>
-			<div style="float: left;" id="jobticket-list" />
-			<div style="float: left; margin-left: -30px;"></div>
+
+			<div id="jobticket-list" />
+
 		</div>
 
 		<wicket:remove>

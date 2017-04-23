@@ -130,8 +130,12 @@ public enum HtmlButtonEnum {
     /**
     *
     */
-    RESET,
+    REFRESH,
 
+    /**
+    *
+    */
+    RESET,
     /**
     *
     */
@@ -150,6 +154,11 @@ public enum HtmlButtonEnum {
     /**
     *
     */
+    SETTINGS,
+
+    /**
+    *
+    */
     SETTLE,
 
     /**
@@ -162,6 +171,9 @@ public enum HtmlButtonEnum {
      */
     YES;
 
+    /**
+     * Dotted suffix for localized text.
+     */
     public static final String DOTTED_SUFFIX = " . . .";
 
     /**
@@ -174,11 +186,26 @@ public enum HtmlButtonEnum {
     }
 
     /**
+     *
      * @param locale
      *            The {@link Locale}.
-     * @return The localized text with " . . ." suffix.
+     * @param dottedSuffix
+     *            {@code true} when localized text has {@link #DOTTED_SUFFIX}.
+     * @return The localized text.
+     */
+    public String uiText(final Locale locale, final boolean dottedSuffix) {
+        if (dottedSuffix) {
+            return String.format("%s%s", this.uiText(locale), DOTTED_SUFFIX);
+        }
+        return uiText(locale);
+    }
+
+    /**
+     * @param locale
+     *            The {@link Locale}.
+     * @return The localized text with {@link #DOTTED_SUFFIX}.
      */
     public String uiTextDottedSfx(final Locale locale) {
-        return String.format("%s%s", this.uiText(locale), DOTTED_SUFFIX);
+        return uiText(locale, true);
     }
 }

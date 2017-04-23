@@ -1500,6 +1500,7 @@
 						type : 'pie',
 						sliceColors : [_view.colorPrinter, _view.colorSheet]
 					});
+					_view.visible($('#button-outbox-extend'), $('#outbox-job-list .sp-outbox-item-type-hold').length > 0);
 				}
 				return false;
 			}
@@ -3544,7 +3545,7 @@
 					if (_model.PROXY_PRINT_CLEAR_PRINTER) {
 						_view.pages.print.onClearPrinter();
 					}
-					_model.myShowUserStatsGet = true;					
+					_model.myShowUserStatsGet = true;
 					_view.changePage($('#page-main'));
 					return false;
 				});
@@ -5686,10 +5687,10 @@
 				if (res.result.code === '0') {
 
 					_view.pages.print.clearInput();
-					
+
 					if (res.clearDelegate) {
 						_view.pages.printDelegation.clear();
-					}					
+					}
 
 					if (isClose) {
 						$('#button-printer-back').click();

@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages;
 
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
@@ -47,8 +49,31 @@ public final class PageJobTickets extends AbstractAuthPage {
     public PageJobTickets(final PageParameters parameters) {
 
         super(parameters);
+
         final MarkupHelper helper = new MarkupHelper(this);
-        helper.addButton("button-logout", HtmlButtonEnum.LOGOUT);
+
+        addTitle(helper.addButton("button-refresh", HtmlButtonEnum.REFRESH));
+        addTitle(helper.addButton("button-logout", HtmlButtonEnum.LOGOUT));
+
+        add(addTitle(new Label("button-print-all", String.format("%s%s",
+                localized("button-print-all"), HtmlButtonEnum.DOTTED_SUFFIX))));
+
+        add(addTitle(new Label("button-cancel-all",
+                String.format("%s%s", localized("button-cancel-all"),
+                        HtmlButtonEnum.DOTTED_SUFFIX))));
     }
 
+    /**
+     *
+     * @param label
+     *            The label.
+     * @return The same label for chaining.
+     */
+    private Label addTitle(final Label label) {
+
+        label.add(new AttributeModifier(MarkupHelper.ATTR_TITLE,
+                label.getDefaultModelObjectAsString()));
+
+        return label;
+    }
 }

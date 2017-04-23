@@ -173,6 +173,11 @@ public class OutboxAddin extends AbstractUserPage {
          */
         private static final long serialVersionUID = 1L;
 
+        private static final String CSS_CLASS_TICKET =
+                "sp-outbox-item-type-ticket";
+
+        private static final String CSS_CLASS_HOLD = "sp-outbox-item-type-hold";
+
         private final boolean isJobticketView;
 
         /**
@@ -249,7 +254,16 @@ public class OutboxAddin extends AbstractUserPage {
             helper.encloseLabel("jobticket-type-copy", jobticketCopy,
                     jobticketCopy != null);
 
-            helper.addModifyLabelAttr("img-job", "src", imgSrc.toString());
+            final Label labelImg = helper.addModifyLabelAttr("img-job",
+                    MarkupHelper.ATTR_SRC, imgSrc.toString());
+
+            if (isJobTicketItem) {
+                MarkupHelper.modifyLabelAttr(labelImg, MarkupHelper.ATTR_CLASS,
+                        CSS_CLASS_TICKET);
+            } else {
+                MarkupHelper.modifyLabelAttr(labelImg, MarkupHelper.ATTR_CLASS,
+                        CSS_CLASS_HOLD);
+            }
 
             //
             helper.encloseLabel("jobticket-remark", job.getComment(),
@@ -313,13 +327,16 @@ public class OutboxAddin extends AbstractUserPage {
                         WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET,
                         HtmlButtonEnum.EDIT.uiTextDottedSfx(getLocale()),
                         isJobTicketItem);
+
                 if (isJobTicketItem) {
                     this.addJobIdAttr(labelWlk, job);
                 }
 
                 labelWlk = helper.encloseLabel(
                         WICKET_ID_BTN_SETTINGS_OUTBOX_JOBTICKET,
-                        HtmlButtonEnum.DOTTED_SUFFIX, isJobTicketItem);
+                        HtmlButtonEnum.SETTINGS.uiTextDottedSfx(getLocale()),
+                        isJobTicketItem);
+
                 if (isJobTicketItem) {
                     this.addJobIdAttr(labelWlk, job);
                 }
@@ -352,8 +369,12 @@ public class OutboxAddin extends AbstractUserPage {
             }
 
             if (printOut == null) {
-                this.addJobIdAttr(helper.encloseLabel(encloseButtonIdRemove,
-                        HtmlButtonEnum.CANCEL.uiText(getLocale()), true), job);
+                this.addJobIdAttr(
+                        helper.encloseLabel(
+                                encloseButtonIdRemove, HtmlButtonEnum.CANCEL
+                                        .uiText(getLocale(), isJobticketView),
+                                true),
+                        job);
             } else {
                 helper.discloseLabel(encloseButtonIdRemove);
             }
@@ -739,7 +760,7 @@ public class OutboxAddin extends AbstractUserPage {
         }
 
         /**
-         * Adds job identification as HTML attribute to Label.
+         * Adds job identification and title as HTML attribute to Label.
          *
          * @param label
          *            The label
@@ -749,7 +770,9 @@ public class OutboxAddin extends AbstractUserPage {
          */
         private Label addJobIdAttr(final Label label, final OutboxJobDto job) {
             label.add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
-                    job.getFile()));
+                    job.getFile()))
+                    .add(new AttributeModifier(MarkupHelper.ATTR_TITLE,
+                            label.getDefaultModelObjectAsString()));
             return label;
         }
     }
