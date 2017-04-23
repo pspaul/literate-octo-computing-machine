@@ -54,17 +54,12 @@ import org.savapage.server.helpers.HtmlButtonEnum;
  * @author Rijk Ravestein
  *
  */
-public final class JobTicketPrintAddIn extends AbstractAuthPage {
+public final class JobTicketPrintAddIn extends JobTicketAddInBase {
 
     /**
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * .
-     */
-    private static final String PARM_JOBFILENAME = "jobFileName";
 
     /**
      * .

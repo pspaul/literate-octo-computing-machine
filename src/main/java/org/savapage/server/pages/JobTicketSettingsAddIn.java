@@ -44,7 +44,7 @@ import org.savapage.core.services.ServiceContext;
  * @author Rijk Ravestein
  *
  */
-public final class JobTicketSettingsAddIn extends AbstractAuthPage {
+public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
 
     /**
      * Version for serialization.
@@ -62,6 +62,38 @@ public final class JobTicketSettingsAddIn extends AbstractAuthPage {
      */
     private static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /**
+     * IPP attribute keywords for setting the Tray.
+     */
+    public static final String[] ATTR_SET_TRAY = new String[] {
+            /* */
+            IppDictJobTemplateAttr.ATTR_MEDIA,
+            /* */
+            IppDictJobTemplateAttr.ATTR_MEDIA_COLOR,
+            /* */
+            IppDictJobTemplateAttr.ATTR_MEDIA_TYPE,
+            //
+    };
+
+    /**
+     * IPP attribute keywords for driver.
+     */
+    public static final String[] ATTR_SET_DRIVER = new String[] {
+            /* */
+            IppDictJobTemplateAttr.ATTR_COPIES,
+            /* */
+            IppDictJobTemplateAttr.ATTR_SIDES,
+            /* */
+            IppDictJobTemplateAttr.ATTR_NUMBER_UP,
+            /* */
+            IppDictJobTemplateAttr.ATTR_PRINTER_RESOLUTION,
+            /* */
+            IppDictJobTemplateAttr.ATTR_PRINT_COLOR_MODE,
+            /* */
+            IppDictJobTemplateAttr.ATTR_SHEET_COLLATE
+            //
+    };
 
     /**
      * .
@@ -128,11 +160,11 @@ public final class JobTicketSettingsAddIn extends AbstractAuthPage {
      */
     private void populate() {
 
-        final String jobFileName = this.getParmValue("jobFileName");
+        final String jobFileName = this.getParmValue(PARM_JOBFILENAME);
 
         if (StringUtils.isBlank(jobFileName)) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
-                    "\"jobFileName\" parameter missing"));
+            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR, String
+                    .format("\"%s\" parameter missing", PARM_JOBFILENAME)));
         }
 
         // The job
@@ -147,83 +179,68 @@ public final class JobTicketSettingsAddIn extends AbstractAuthPage {
         // ---------- Tray
         thWlk = PrintOutNounEnum.TRAY.uiText(getLocale());
 
-        // media
-        tdWlk = optionMap.getOptionValue(IppDictJobTemplateAttr.ATTR_MEDIA);
+        for (final String keyword : ATTR_SET_TRAY) {
 
-        options.add(new String[] { thWlk,
-                PROXY_PRINT_SERVICE.localizePrinterOptValue(getLocale(),
-                        IppDictJobTemplateAttr.ATTR_MEDIA, tdWlk) });
+            tdWlk = optionMap.getOptionValue(keyword);
 
-        thWlk = null;
-
-        // media-color
-        tdWlk = optionMap
-                .getOptionValue(IppDictJobTemplateAttr.ATTR_MEDIA_COLOR);
-        if (tdWlk != null) {
-            options.add(new String[] { thWlk,
-                    PROXY_PRINT_SERVICE.localizePrinterOptValue(getLocale(),
-                            IppDictJobTemplateAttr.ATTR_MEDIA_COLOR, tdWlk) });
-        }
-
-        // media-type
-        tdWlk = optionMap
-                .getOptionValue(IppDictJobTemplateAttr.ATTR_MEDIA_TYPE);
-        if (tdWlk != null) {
-            options.add(new String[] { thWlk,
-                    PROXY_PRINT_SERVICE.localizePrinterOptValue(getLocale(),
-                            IppDictJobTemplateAttr.ATTR_MEDIA_TYPE, tdWlk) });
+            if (tdWlk == null) {
+                continue;
+            }
+            options.add(new String[] { thWlk, PROXY_PRINT_SERVICE
+                    .localizePrinterOptValue(getLocale(), keyword, tdWlk) });
+            thWlk = null;
         }
 
         // ---------- Setting
-        thWlk = "Setting";
+        thWlk = PrintOutNounEnum.SETTING.uiText(getLocale());
 
-        // copies
-        options.add(new String[] { thWlk,
-                String.format("%d %s", job.getCopies(), PrintOutNounEnum.COPY
-                        .uiText(getLocale(), job.getCopies() > 1)) });
-        thWlk = null;
+        for (final String keyword : ATTR_SET_DRIVER) {
 
-        // sides
-        tdWlk = optionMap.getOptionValue(IppDictJobTemplateAttr.ATTR_SIDES);
-        if (tdWlk != null) {
-            options.add(new String[] { thWlk,
-                    PROXY_PRINT_SERVICE.localizePrinterOptValue(getLocale(),
-                            IppDictJobTemplateAttr.ATTR_SIDES, tdWlk) });
-        }
+            tdWlk = null;
 
-        // collate
-        if (job.isCollate()) {
-            options.add(new String[] { thWlk,
-                    PrintOutVerbEnum.COLLATE.uiText(getLocale()) });
-        }
+            if (keyword.equals(IppDictJobTemplateAttr.ATTR_COPIES)) {
 
-        // color-mode
-        if (optionMap.isColorJob()) {
-            tdWlk = PrintOutNounEnum.COLOR.uiText(getLocale());
-        } else {
-            tdWlk = PrintOutNounEnum.GRAYSCALE.uiText(getLocale());
-        }
-        options.add(new String[] { thWlk, tdWlk });
+                tdWlk = String.format("%d %s", job.getCopies(),
+                        PrintOutNounEnum.COPY.uiText(getLocale(),
+                                job.getCopies() > 1));
+            } else if (keyword
+                    .equals(IppDictJobTemplateAttr.ATTR_SHEET_COLLATE)) {
 
-        thWlk = null;
+                if (job.isCollate()) {
+                    tdWlk = PrintOutVerbEnum.COLLATE.uiText(getLocale());
+                }
+            } else if (keyword.equals(IppDictJobTemplateAttr.ATTR_NUMBER_UP)) {
 
-        if (optionMap.getNumberUp() != null) {
-            final int nUp = optionMap.getNumberUp().intValue();
-            if (nUp > 1) {
-                options.add(new String[] { thWlk, PrintOutNounEnum.N_UP.uiText(
-                        getLocale(), optionMap.getNumberUp().toString()) });
+                if (optionMap.getNumberUp() != null) {
+                    final int nUp = optionMap.getNumberUp().intValue();
+                    if (nUp > 1) {
+                        tdWlk = PrintOutNounEnum.N_UP.uiText(getLocale(),
+                                optionMap.getNumberUp().toString());
+                    } else {
+                        tdWlk = null;
+                    }
+                }
+            } else {
+                tdWlk = optionMap.getOptionValue(keyword);
             }
+
+            if (tdWlk == null) {
+                continue;
+            }
+            options.add(new String[] { thWlk, PROXY_PRINT_SERVICE
+                    .localizePrinterOptValue(getLocale(), keyword, tdWlk) });
+
+            thWlk = null;
         }
 
         // ---------- Finishings
         thWlk = PrintOutNounEnum.FINISHING.uiText(getLocale());
 
-        //
-        thWlk = addOptions(optionMap, options, getLocale(),
+        thWlk = addOptionsWhenSet(optionMap, options, getLocale(),
                 IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_V_NONE,
                 thWlk);
 
-        thWlk = addOptions(optionMap, options, getLocale(),
+        thWlk = addOptionsWhenSet(optionMap, options, getLocale(),
                 IppDictJobTemplateAttr.JOBTICKET_ATTR_COPY_V_NONE, thWlk);
 
         //
@@ -231,6 +248,7 @@ public final class JobTicketSettingsAddIn extends AbstractAuthPage {
     }
 
     /**
+     * Adds options when present and set (not-none).
      *
      * @param optionMap
      *            The chosen option map.
@@ -239,18 +257,24 @@ public final class JobTicketSettingsAddIn extends AbstractAuthPage {
      * @param locale
      *            The locale.
      * @param attrNone
-     *            The array with IPP attribute NONE values.
+     *            Array of 2-element array elements, one for each IPP attribute:
+     *            the first element is the IPP option key, and the second
+     *            element its NONE value.
      * @param thWlkStart
      *            The header text to start with.
      * @return The current header text.
      */
-    private static String addOptions(final IppOptionMap optionMap,
+    private static String addOptionsWhenSet(final IppOptionMap optionMap,
             final List<String[]> options, final Locale locale,
             final String[][] attrNone, final String thWlkStart) {
+
         String thWlk = thWlkStart;
         String tdWlk;
+
         for (final String[] finishing : attrNone) {
+
             tdWlk = optionMap.getOptionValue(finishing[0]);
+
             if (tdWlk == null || tdWlk.equals(finishing[1])) {
                 continue;
             }

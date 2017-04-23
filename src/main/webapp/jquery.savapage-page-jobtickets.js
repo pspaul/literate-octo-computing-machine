@@ -191,6 +191,17 @@
 				}
 			}
 			//
+			, _onCancelPopup = function(jobFileName, positionTo) {
+				var html = _view.getPageHtml('JobTicketCancelAddIn', {
+					jobFileName : jobFileName
+				}) || 'error';
+
+				$('#sp-jobticket-popup-addin').html(html);
+				$('#sp-jobticket-popup').enhanceWithin().popup('open', {
+					positionTo : positionTo
+				});
+			}
+			//
 			, _onEditPopup = function(jobFileName, positionTo) {
 				var html = _view.getPageHtml('JobTicketEditAddIn', {
 					jobFileName : jobFileName
@@ -359,11 +370,7 @@
 				});
 
 				$(this).on('click', '.sp-outbox-cancel-jobticket', null, function() {
-					var res = _cancelJob($(this).attr('data-savapage'));
-					if (res.result.code === "0") {
-						_refresh();
-					}
-					_view.showApiMsg(res);
+					_onCancelPopup($(this).attr('data-savapage'), $(this));
 
 				}).on('click', '.sp-outbox-preview-job', null, function() {
 					_api.download("pdf-outbox", null, $(this).attr('data-savapage'));
@@ -454,6 +461,17 @@
 				}).on('click', '#sp-jobticket-edit-popup-btn-save', null, function() {
 					_onSaveJob($(this).attr('data-savapage'));
 
+				}).on('click', '#sp-jobticket-cancel-popup-btn-yes', null, function() {
+					var res = _cancelJob($(this).attr('data-savapage'));
+					if (res.result.code === "0") {
+						$('#sp-jobticket-popup').popup('close');
+						_refresh();
+					}
+					_view.showApiMsg(res);
+
+				}).on('click', '#sp-jobticket-cancel-popup-btn-no', null, function() {
+					$('#sp-jobticket-popup').popup('close');
+					
 				}).on('click', '#sp-btn-jobticket-countdown-pause', null, function() {
 					if (_countdownTimer) {
 						_stopCountdownTimer();

@@ -103,6 +103,11 @@ public enum HtmlButtonEnum {
     NEXT,
 
     /**
+     * As opposite of {@link #YES}.
+     */
+    NO,
+
+    /**
      *
      */
     OK,
@@ -150,7 +155,12 @@ public enum HtmlButtonEnum {
     /**
     *
     */
-    UPLOAD;
+    UPLOAD,
+
+    /**
+     * As opposite of {@link #NO}.
+     */
+    YES;
 
     public static final String DOTTED_SUFFIX = " . . .";
 

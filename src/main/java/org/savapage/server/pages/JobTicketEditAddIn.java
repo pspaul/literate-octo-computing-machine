@@ -49,7 +49,7 @@ import org.savapage.server.helpers.HtmlButtonEnum;
  * @author Rijk Ravestein
  *
  */
-public final class JobTicketEditAddIn extends AbstractAuthPage {
+public final class JobTicketEditAddIn extends JobTicketAddInBase {
 
     /**
      * Version for serialization.
@@ -163,11 +163,11 @@ public final class JobTicketEditAddIn extends AbstractAuthPage {
 
         super(parameters);
 
-        final String jobFileName = this.getParmValue("jobFileName");
+        final String jobFileName = this.getParmValue(PARM_JOBFILENAME);
 
         if (StringUtils.isBlank(jobFileName)) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
-                    "\"jobFileName\" parameter missing"));
+            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR, String
+                    .format("\"%s\" parameter missing", PARM_JOBFILENAME)));
         }
 
         // The job
