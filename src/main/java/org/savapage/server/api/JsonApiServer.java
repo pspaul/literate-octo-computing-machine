@@ -775,7 +775,7 @@ public final class JsonApiServer extends AbstractPage {
 
             emailParms.setToAddress(toAddress);
             emailParms.setSubject(subject);
-            emailParms.setBodyFromTemplate(subject, body);
+            emailParms.setBodyInStationary(subject, body, getLocale(), true);
             emailParms.setFileAttach(tempPdfFile);
             emailParms.setFileName(getUserFriendlyFilename(receipt));
 
@@ -786,7 +786,6 @@ public final class JsonApiServer extends AbstractPage {
                 tempPdfFile.delete();
             }
         }
-
     }
 
     /**
@@ -2260,7 +2259,8 @@ public final class JsonApiServer extends AbstractPage {
 
                 emailParms.setToAddress(mailto);
                 emailParms.setSubject(subject);
-                emailParms.setBodyFromTemplate(fileName, body);
+                emailParms.setBodyInStationary(fileName, body, getLocale(),
+                        true);
                 emailParms.setFileAttach(fileAttach);
                 emailParms.setFileName(fileName);
 
@@ -2615,7 +2615,7 @@ public final class JsonApiServer extends AbstractPage {
 
             emailParms.setToAddress(mailto);
             emailParms.setSubject(subject);
-            emailParms.setBodyFromTemplate(subject, body);
+            emailParms.setBodyInStationary(subject, body, getLocale(), true);
 
             EMAIL_SERVICE.sendEmail(emailParms);
 
