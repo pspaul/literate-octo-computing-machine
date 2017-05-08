@@ -187,7 +187,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
         super(parameters);
 
-        final String language = parameters.get("language").toString();
+        final String language =
+                parameters.get(WebAppParmEnum.SP_LANG.parm()).toString();
 
         if (language != null) {
             getSession().setLocale(new Locale(language));
@@ -306,7 +307,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
      */
     protected final void
             renderInitialJavaScript(final IHeaderResponse response) {
-
         /*
          * Use the current URL path as mount path ...
          */
@@ -322,6 +322,11 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
             // Skip transient parameter.
             if (pair.getKey().equals(WebAppParmEnum.SP_ZERO.parm())) {
+                continue;
+            }
+
+            // Skip OAuth parameter, since OAuth is already handled.
+            if (pair.getKey().equals(WebAppParmEnum.SP_OAUTH.parm())) {
                 continue;
             }
 

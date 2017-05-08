@@ -1030,7 +1030,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
-                    String.format("Login with Google Sing-In ID Token [%s...].",
+                    String.format("Login with Google Sign-In ID Token [%s...].",
                             idToken.substring(0, 10)));
         }
 

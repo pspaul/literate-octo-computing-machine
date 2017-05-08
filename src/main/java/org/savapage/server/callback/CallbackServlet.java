@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -45,6 +45,7 @@ import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.util.AppLogHelper;
+import org.savapage.ext.ServerPlugin;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayPlugin.CallbackResponse;
@@ -56,13 +57,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Callback servlet for Web API providers.
  *
- * @author Datraverse B.V.
- * @since 0.9.9
+ * @author Rijk Ravestein
+ *
  */
 @WebServlet(name = "CallbackServlet",
         urlPatterns = { CallbackServlet.SERVLET_URL_PATTERN })
-public final class CallbackServlet extends HttpServlet implements
-        ServiceEntryPoint {
+public final class CallbackServlet extends HttpServlet
+        implements ServiceEntryPoint {
 
     /**
      * .
@@ -92,8 +93,8 @@ public final class CallbackServlet extends HttpServlet implements
     /**
      * The {@link Logger}.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(CallbackServlet.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(CallbackServlet.class);
 
     /**
      * .
@@ -112,11 +113,38 @@ public final class CallbackServlet extends HttpServlet implements
     public static URL getCallBackUrl(final PaymentGatewayPlugin plugin)
             throws MalformedURLException {
 
+        final String subPath1;
+
+        if (plugin.isLive()) {
+            subPath1 = SUB_PATH_1_LIVE;
+        } else {
+            subPath1 = SUB_PATH_1_TEST;
+        }
+
+        return getCallBackUrl(plugin, SUB_PATH_0_PAYMENT, subPath1);
+    }
+
+    /**
+     * Gets the callback {@link URL} for a {@link ServerPlugin}.
+     *
+     * @param plugin
+     *            The {@link ServerPlugin}.
+     * @param subPath0
+     *            The first "node" of the URL sub path.
+     * @param subPath1
+     *            The second "node"of the URL sub path. Can be {@code null}.
+     * @return The callback {@link URL}.
+     * @throws MalformedURLException
+     *             When format of the URL is invalid.
+     */
+    private static URL getCallBackUrl(final ServerPlugin plugin,
+            final String subPath0, final String subPath1)
+            throws MalformedURLException {
+
         final StringBuilder url = new StringBuilder();
 
-        final String urlBase =
-                ConfigManager.instance().getConfigValue(
-                        Key.EXT_WEBAPI_CALLBACK_URL_BASE);
+        final String urlBase = ConfigManager.instance()
+                .getConfigValue(Key.EXT_WEBAPI_CALLBACK_URL_BASE);
 
         if (StringUtils.isBlank(urlBase)) {
             throw new IllegalStateException(
@@ -124,15 +152,13 @@ public final class CallbackServlet extends HttpServlet implements
         }
 
         url.append(urlBase).append('/').append(PATH_BASE).append('/')
-                .append(SUB_PATH_0_PAYMENT).append('/');
+                .append(subPath0).append('/');
 
-        if (plugin.isLive()) {
-            url.append(SUB_PATH_1_LIVE);
-        } else {
-            url.append(SUB_PATH_1_TEST);
+        if (subPath1 != null) {
+            url.append(subPath1).append('/');
         }
 
-        url.append('/').append(plugin.getId());
+        url.append(plugin.getId());
 
         return new URL(url.toString());
     }
@@ -145,12 +171,17 @@ public final class CallbackServlet extends HttpServlet implements
      *            The {@link HttpServletRequest}.
      * @return {@code null} when the pathInfo is not valid.
      */
-    private static String[] chunkPathInfo(final HttpServletRequest httpRequest) {
+    private static String[]
+            chunkPathInfo(final HttpServletRequest httpRequest) {
 
         final String[] pathChunks =
                 StringUtils.split(httpRequest.getPathInfo(), '/');
 
-        if (pathChunks != null && pathChunks.length == 3
+        if (pathChunks == null || pathChunks.length == 0) {
+            return null;
+        }
+
+        if (pathChunks.length == 3
                 && pathChunks[0].equals(SUB_PATH_0_PAYMENT)) {
 
             if (pathChunks[1].equals(SUB_PATH_1_LIVE)
@@ -160,6 +191,109 @@ public final class CallbackServlet extends HttpServlet implements
         }
 
         return null;
+    }
+
+    /**
+     * Handles the Payment callback.
+     *
+     * @param plugin
+     *            The plug-in.
+     * @param httpRequest
+     *            The {@link HttpServletRequest}.
+     * @param httpResponse
+     *            The {@link HttpServletResponse}.
+     * @param isPostRequest
+     *            {@code true} when callback is a POST request.
+     * @param isLive
+     *            {@code true} when this is a live callback. {@code false} when
+     *            this is a test callback.
+     * @return The {@link CallbackResponse}.
+     * @throws ServletException
+     *             When internal error.
+     * @throws IOException
+     *             When IO error.
+     */
+    private CallbackResponse onCallback(final PaymentGatewayPlugin plugin,
+            final HttpServletRequest httpRequest,
+            final HttpServletResponse httpResponse, final boolean isPostRequest,
+            final boolean isLive) throws ServletException, IOException {
+
+        CallbackResponse callbackResponse =
+                new CallbackResponse(HttpStatus.OK_200);
+
+        final PrintWriter writer =
+                new PrintWriter(httpResponse.getOutputStream(), true);
+
+        ReadWriteLockEnum.DATABASE_READONLY.setReadLock(true);
+        ServiceContext.open();
+
+        final DaoContext daoContext = ServiceContext.getDaoContext();
+        daoContext.beginTransaction();
+
+        try {
+
+            final BufferedReader reader;
+
+            if (isPostRequest) {
+                /*
+                 * Do NOT get the reader to prevent IllegalStateException when
+                 * getting the calling httpRequest.getParameterMap() later on:
+                 * all data is passed in POST parameters.
+                 */
+                reader = null;
+            } else {
+                reader = httpRequest.getReader();
+            }
+
+            callbackResponse = plugin.onCallBack(httpRequest.getParameterMap(),
+                    isLive, ConfigManager.getAppCurrency(), reader, writer);
+
+            daoContext.commit();
+
+            plugin.onCallBackCommitted(callbackResponse.getPluginObject());
+
+        } catch (PaymentGatewayException e) {
+            /*
+             * CAUTION: do NOT expose the urlQueryString in the logging, since
+             * (depending on the plug-in) it could contain sensitive (secret)
+             * data.
+             */
+            final String msg = AppLogHelper.logWarning(getClass(),
+                    "paymentgateway-warning", plugin.getId(),
+                    httpRequest.getPathInfo(), e.getMessage(),
+                    String.valueOf(callbackResponse.getHttpStatus()));
+
+            AdminPublisher.instance().publish(PubTopicEnum.PAYMENT_GATEWAY,
+                    PubLevelEnum.WARN, msg);
+
+        } catch (Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            /*
+             * WARNING: see warning above.
+             */
+            final String msg = AppLogHelper.logError(getClass(),
+                    "paymentgateway-exception", plugin.getId(),
+                    httpRequest.getPathInfo(), e.getClass().getSimpleName(),
+                    e.getMessage());
+
+            AdminPublisher.instance().publish(PubTopicEnum.PAYMENT_GATEWAY,
+                    PubLevelEnum.ERROR, msg);
+
+            throw new ServletException(e.getMessage(), e);
+
+        } finally {
+            daoContext.rollback();
+            ServiceContext.close();
+            ReadWriteLockEnum.DATABASE_READONLY.setReadLock(false);
+        }
+
+        // IMPORTANT: flush anything left in the buffer!
+        writer.flush();
+
+        //
+        return callbackResponse;
     }
 
     /**
@@ -174,15 +308,12 @@ public final class CallbackServlet extends HttpServlet implements
      * @throws IOException
      *             if an input or output error is detected when the servlet
      *             handles the GET request.
-     *
      * @throws ServletException
      *             if the request for the GET could not be handled.
      */
-    private void
-            onCallback(final HttpServletRequest httpRequest,
-                    final HttpServletResponse httpResponse,
-                    final boolean isPostRequest) throws IOException,
-                    ServletException {
+    private void onCallback(final HttpServletRequest httpRequest,
+            final HttpServletResponse httpResponse, final boolean isPostRequest)
+            throws IOException, ServletException {
 
         final String pathInfo = httpRequest.getPathInfo();
 
@@ -218,90 +349,17 @@ public final class CallbackServlet extends HttpServlet implements
             final ServerPluginManager pluginManager =
                     WebApp.get().getPluginManager();
 
-            final PaymentGatewayPlugin plugin =
-                    pluginManager.getPaymentPlugins().get(pathChunks[2]);
+            if (pathChunks[0].equals(SUB_PATH_0_PAYMENT)) {
 
-            if (plugin != null) {
+                final PaymentGatewayPlugin plugin =
+                        pluginManager.getPaymentPlugins().get(pathChunks[2]);
 
-                final PrintWriter writer =
-                        new PrintWriter(httpResponse.getOutputStream(), true);
-
-                ReadWriteLockEnum.DATABASE_READONLY.setReadLock(true);
-                ServiceContext.open();
-                final DaoContext daoContext = ServiceContext.getDaoContext();
-                daoContext.beginTransaction();
-
-                try {
-
-                    final BufferedReader reader;
-
-                    if (isPostRequest) {
-                        /*
-                         * Do NOT get the reader to prevent
-                         * IllegalStateException when getting the calling
-                         * httpRequest.getParameterMap() later on: all data is
-                         * passed in POST parameters.
-                         */
-                        reader = null;
-                    } else {
-                        reader = httpRequest.getReader();
-                    }
-
-                    callbackResponse =
-                            plugin.onCallBack(httpRequest.getParameterMap(),
-                                    pathChunks[1].equals(SUB_PATH_1_LIVE),
-                                    ConfigManager.getAppCurrency(), reader,
-                                    writer);
-
-                    daoContext.commit();
-
-                    plugin.onCallBackCommitted(callbackResponse
-                            .getPluginObject());
-
-                } catch (PaymentGatewayException e) {
-                    /*
-                     * CAUTION: do NOT expose the urlQueryString in the logging,
-                     * since (depending on the plug-in) it could contain
-                     * sensitive (secret) data.
-                     */
-                    final String msg =
-                            AppLogHelper.logWarning(getClass(),
-                                    "paymentgateway-warning", plugin.getId(),
-                                    pathInfo, e.getMessage(), String
-                                            .valueOf(callbackResponse
-                                                    .getHttpStatus()));
-
-                    AdminPublisher.instance().publish(
-                            PubTopicEnum.PAYMENT_GATEWAY, PubLevelEnum.WARN,
-                            msg);
-
-                } catch (Exception e) {
-
-                    LOGGER.error(e.getMessage(), e);
-
-                    /*
-                     * WARNING: see warning above.
-                     */
-                    final String msg =
-                            AppLogHelper.logError(getClass(),
-                                    "paymentgateway-exception", plugin.getId(),
-                                    pathInfo, e.getClass().getSimpleName(),
-                                    e.getMessage());
-
-                    AdminPublisher.instance().publish(
-                            PubTopicEnum.PAYMENT_GATEWAY, PubLevelEnum.ERROR,
-                            msg);
-
-                    throw new ServletException(e.getMessage(), e);
-
-                } finally {
-                    daoContext.rollback();
-                    ServiceContext.close();
-                    ReadWriteLockEnum.DATABASE_READONLY.setReadLock(false);
+                if (plugin != null) {
+                    final boolean isLive =
+                            pathChunks[1].equals(SUB_PATH_1_LIVE);
+                    callbackResponse = onCallback(plugin, httpRequest,
+                            httpResponse, isPostRequest, isLive);
                 }
-
-                // IMPORTANT: flush anything left in the buffer!
-                writer.flush();
             }
         }
 
@@ -319,16 +377,16 @@ public final class CallbackServlet extends HttpServlet implements
 
     @Override
     public void doGet(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse) throws IOException,
-            ServletException {
+            final HttpServletResponse httpResponse)
+            throws IOException, ServletException {
 
         onCallback(httpRequest, httpResponse, false);
     }
 
     @Override
     public void doPost(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse) throws IOException,
-            ServletException {
+            final HttpServletResponse httpResponse)
+            throws IOException, ServletException {
 
         onCallback(httpRequest, httpResponse, true);
     }

@@ -25,6 +25,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.server.webapp.ZeroPagePanel;
 
 /**
+ * URL parameters on Main Web App.
  *
  * @author Rijk Ravestein
  *
@@ -61,9 +62,13 @@ public enum WebAppParmEnum {
      */
     SP_LOGIN_LOCAL(WebAppParmEnum.PFX + "login-local"),
 
+    /**
+     * .
+     */
+    SP_OAUTH(WebAppParmEnum.PFX + "oauth"),
 
     /**
-     * The initial view : main | print | pdf
+     * The initial view : main | print | pdf.
      */
     SP_SHOW(WebAppParmEnum.PFX + "show"),
 
@@ -99,7 +104,7 @@ public enum WebAppParmEnum {
     }
 
     /**
-     * @return The default localized text.
+     * @return The URL parameter name.
      */
     public String parm() {
         return this.pageParm;

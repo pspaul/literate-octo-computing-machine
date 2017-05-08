@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
@@ -46,9 +48,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
+import org.apache.wicket.util.string.StringValue;
+import org.savapage.core.SpException;
 import org.savapage.core.UnavailableException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
@@ -63,6 +68,7 @@ import org.savapage.core.doc.DocContent;
 import org.savapage.core.doc.DocContentTypeEnum;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.jpa.User;
+import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.print.server.DocContentPrintException;
 import org.savapage.core.print.server.DocContentPrintReq;
 import org.savapage.core.services.QueueService;
@@ -71,7 +77,14 @@ import org.savapage.core.services.UserService;
 import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
+import org.savapage.ext.oauth.OAuthClientPlugin;
+import org.savapage.ext.oauth.OAuthPluginException;
+import org.savapage.ext.oauth.OAuthProviderEnum;
+import org.savapage.ext.oauth.OAuthUserInfo;
 import org.savapage.server.SpSession;
+import org.savapage.server.WebApp;
+import org.savapage.server.WebAppParmEnum;
+import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -336,6 +349,97 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     /**
+     * .
+     */
+    private void checkOAuthToken() {
+
+        final IRequestParameters reqParms =
+                this.getRequestCycle().getRequest().getRequestParameters();
+
+        final StringValue oauthProviderValue =
+                reqParms.getParameterValue(WebAppParmEnum.SP_OAUTH.parm());
+
+        if (oauthProviderValue.isEmpty()) {
+            return;
+        }
+
+        final String oauthProvider = oauthProviderValue.toString();
+
+        final ServerPluginManager pluginManager =
+                WebApp.get().getPluginManager();
+
+        OAuthClientPlugin plugin = null;
+
+        for (final OAuthProviderEnum value : OAuthProviderEnum.values()) {
+            if (oauthProvider.equalsIgnoreCase(value.toString())) {
+                plugin = pluginManager.getOAuthClient(value);
+            }
+            if (plugin == null) {
+                continue;
+            }
+            break;
+        }
+
+        if (plugin == null) {
+            return;
+        }
+
+        final Map<String, String> parms = new HashMap<>();
+
+        for (final String name : reqParms.getParameterNames()) {
+            final StringValue value = reqParms.getParameterValue(name);
+            if (!value.isEmpty()) {
+                parms.put(name, value.toString());
+            }
+        }
+
+        final OAuthUserInfo userInfo;
+        try {
+            userInfo = plugin.onCallBack(parms);
+        } catch (IOException | OAuthPluginException e) {
+            throw new SpException(e.getMessage());
+        }
+
+        //
+        if (userInfo == null) {
+            return;
+        }
+
+        final String userid = userInfo.getUserId();
+        final String email = userInfo.getEmail();
+
+        if (userid == null && email == null) {
+            return;
+        }
+
+        final User authUser;
+
+        if (userid == null) {
+            final UserEmail userEmail = ServiceContext.getDaoContext()
+                    .getUserEmailDao().findByEmail(email);
+            if (userEmail == null) {
+                return;
+            }
+            authUser = userEmail.getUser();
+
+        } else if (email == null) {
+            authUser = ServiceContext.getDaoContext().getUserDao()
+                    .findActiveUserByUserId(userid);
+        } else {
+            return;
+        }
+
+        if (authUser.getDeleted().booleanValue()
+                || authUser.getDisabledPrintIn().booleanValue()) {
+            return;
+        }
+        /*
+         * Yes, we are authenticated, and no exceptions.
+         */
+        SpSession.get().setUser(authUser, true);
+    }
+
+    /**
      * Check if a {@link OneTimeAuthToken} is present and, when valid,
      * authenticates by putting the {@link User} in the {@link SpSession}.
      *
@@ -439,6 +543,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         addGoogleSignIn("google-signin-head-meta");
 
         checkOneTimeAuthToken(parameters);
+        checkOAuthToken(); // TEST
 
         final String appTitle = getWebAppTitle(null);
 
