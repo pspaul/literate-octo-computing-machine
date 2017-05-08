@@ -88,8 +88,6 @@ public final class WebAppAdmin extends AbstractWebAppPage {
             return;
         }
 
-        addGoogleSignIn("google-signin-head-meta");
-
         final String appTitle = getWebAppTitle(
                 getLocalizer().getString("webapp-title-suffix", this));
 
@@ -138,9 +136,6 @@ public final class WebAppAdmin extends AbstractWebAppPage {
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
         final EnumSet<JavaScriptLibrary> libs =
                 EnumSet.allOf(JavaScriptLibrary.class);
-        if (!isGoogleSignInActive()) {
-            libs.remove(JavaScriptLibrary.GOOGLE_SIGN_IN);
-        }
         return libs;
     }
 

@@ -221,10 +221,10 @@ public abstract class AbstractPage extends WebPage
     }
 
     /**
-     * @return {@code true} when Google Sign-In is enabled (for client device).
+     * @return {@code true} when Google OAuth is enabled (for client device).
      */
-    protected final boolean isGoogleSignInEnabled() {
-        return ApiRequestHelper.isGoogleSignInEnabled(getSessionWebAppType(),
+    protected final boolean isOAuthGoogleEnabled() {
+        return ApiRequestHelper.isOAuthGoogleEnabled(getSessionWebAppType(),
                 this.getClientIpAddr());
     }
 

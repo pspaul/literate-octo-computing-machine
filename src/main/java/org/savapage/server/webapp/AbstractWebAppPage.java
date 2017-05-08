@@ -48,7 +48,6 @@ import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.pages.AbstractPage;
-import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -97,12 +96,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
     /**
      * .
      */
-    public static final String APIS_GOOGLE_PLATFORM_JS =
-            "https://apis.google.com/js/platform.js";
-
-    /**
-     * .
-     */
     public static final String WEBJARS_PATH_JQUERY_JQPLOT_CSS =
             "jqplot/current/jquery.jqplot.css";
 
@@ -117,9 +110,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
         /** */
         MOBIPICK,
         /** */
-        SPARKLINE,
-        /** */
-        GOOGLE_SIGN_IN
+        SPARKLINE
     }
 
     /**
@@ -381,38 +372,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
     }
 
     /**
-     * Adds Google Sign-In meta tag in HTML header, if Google Sign-In is
-     * active).
-     *
-     * @param wicketId
-     *            The Wicket ID of the meta fragment.
-     */
-    protected final void addGoogleSignIn(final String wicketId) {
-
-        final boolean isGoogleSignInActive = isGoogleSignInActive();
-
-        if (isGoogleSignInActive) {
-            final WebAppGoogleMetaPanel googleMetaPanel =
-                    new WebAppGoogleMetaPanel(wicketId);
-            add(googleMetaPanel);
-        } else {
-            final MarkupHelper helper = new MarkupHelper(this);
-            helper.discloseLabel(wicketId);
-        }
-    }
-
-    /**
-     * @return {@code true} when Google Sign-In is active (for client device).
-     */
-    protected final boolean isGoogleSignInActive() {
-
-        if (isRestrictedToLocalLogin()) {
-            return false;
-        }
-        return isGoogleSignInEnabled();
-    }
-
-    /**
      * Returns the 'nocache' URL parameter to be appended to rendered SavaPage
      * files.
      * <p>
@@ -646,10 +605,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
         /*
          * JS files
          */
-        if (jsToRender.contains(JavaScriptLibrary.GOOGLE_SIGN_IN)) {
-            renderJs(response, APIS_GOOGLE_PLATFORM_JS);
-        }
-
         if (!isJqueryCoreRenderedByWicket()) {
             response.render(
                     WebApp.getWebjarsJsRef(WebApp.WEBJARS_PATH_JQUERY_CORE_JS));

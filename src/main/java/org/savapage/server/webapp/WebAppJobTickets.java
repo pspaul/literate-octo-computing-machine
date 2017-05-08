@@ -80,8 +80,6 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
         final String appTitle = getWebAppTitle(
                 getLocalizer().getString("webapp-title-suffix", this));
 
-        addGoogleSignIn("google-signin-head-meta");
-
         addZeroPagePanel(WebAppTypeEnum.JOBTICKETS);
 
         add(new Label("app-title", appTitle));
@@ -122,9 +120,6 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
         final EnumSet<JavaScriptLibrary> libs = EnumSet
                 .of(JavaScriptLibrary.MOBIPICK, JavaScriptLibrary.SPARKLINE);
-        if (isGoogleSignInActive()) {
-            libs.add(JavaScriptLibrary.GOOGLE_SIGN_IN);
-        }
         return libs;
     }
 

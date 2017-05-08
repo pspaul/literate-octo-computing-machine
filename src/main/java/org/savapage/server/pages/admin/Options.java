@@ -219,8 +219,8 @@ public final class Options extends AbstractAdminPage {
         labelledCheckbox("user-auth-mode-yubikey-dialog",
                 IConfigProp.Key.AUTH_MODE_YUBIKEY_SHOW);
         //
-        labelledInput("user-auth-mode-google-hosted-domain",
-                Key.AUTH_MODE_GOOGLE_HOSTED_DOMAIN);
+        add(new Label("user-auth-mode-google-hosted-domain", ""));
+
         //
         labelledCheckbox("user-auth-mode-id-number-pin",
                 IConfigProp.Key.AUTH_MODE_ID_PIN_REQUIRED);

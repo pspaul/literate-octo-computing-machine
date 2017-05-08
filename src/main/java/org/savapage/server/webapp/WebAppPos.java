@@ -57,8 +57,6 @@ public final class WebAppPos extends AbstractWebAppPage {
         final String appTitle = getWebAppTitle(
                 getLocalizer().getString("webapp-title-suffix", this));
 
-        addGoogleSignIn("google-signin-head-meta");
-
         addZeroPagePanel(WebAppTypeEnum.POS);
 
         add(new Label("app-title", appTitle));
@@ -100,10 +98,6 @@ public final class WebAppPos extends AbstractWebAppPage {
     protected Set<JavaScriptLibrary> getJavaScriptToRender() {
         final EnumSet<JavaScriptLibrary> libs =
                 EnumSet.noneOf(JavaScriptLibrary.class);
-
-        if (isGoogleSignInActive()) {
-            libs.add(JavaScriptLibrary.GOOGLE_SIGN_IN);
-        }
         return libs;
     }
 

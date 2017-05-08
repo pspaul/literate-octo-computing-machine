@@ -85,9 +85,9 @@ public final class ApiRequestHelper {
      *            The {@link WebAppTypeEnum}.
      * @param clientIpAddr
      *            The client IP address.
-     * @return {@code true} when Google Sign-In is enabled (for client device).
+     * @return {@code true} when Google OAuth is enabled (for client device).
      */
-    public static boolean isGoogleSignInEnabled(final WebAppTypeEnum webAppType,
+    public static boolean isOAuthGoogleEnabled(final WebAppTypeEnum webAppType,
             final String clientIpAddr) {
 
         final UserAuth userAuth =

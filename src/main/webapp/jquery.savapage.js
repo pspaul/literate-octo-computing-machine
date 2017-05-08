@@ -46,36 +46,6 @@
 		//
 		;
 
-		_ns.hasGoogleSignIn = function() {
-			return typeof gapi !== 'undefined';
-		};
-
-		//
-		window.onerror = function(errorMsg, url, lineNumber) {
-			var redirect, parmsCur, parmsChk, parmsChkLen, key, i;
-
-			if (_ns.hasGoogleSignIn()) {
-				// An error occurs when "third-party cookies and site data" are disabled in the browser.
-				// We forward to a page where Google Sign-in is not present.
-				parmsCur = _ns.Utils.parseUriQuery(document.location.search);
-
-				redirect = window.location.protocol + "//" + window.location.host + window.location.pathname;
-				redirect += '?' + _ns.URL_PARM.LOGIN_LOCAL;
-
-				// Preserve existing "sp-" parameters
-				parmsChk = [_ns.URL_PARM.LOG_LEVEL, _ns.URL_PARM.USER, _ns.URL_PARM.LANGUAGE, _ns.URL_PARM.COUNTRY, _ns.URL_PARM.LOGIN, _ns.URL_PARM.SHOW];
-				parmsChkLen = parmsChk.length;
-				for ( i = 0; i < parmsChkLen; i++) {
-					key = parmsChk[i];
-					if (parmsCur[key]) {
-						redirect += '&' + key + '=' + parmsCur[key];
-					}
-				}
-				document.location.href = redirect;
-			}
-			return false;
-		};
-
 		/**
 		 * Common initializing actions for all Web App types.
 		 */
@@ -1506,7 +1476,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,              or collected local card number from individual keystrokes,
+			// The YubiKey OTP,  or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -1558,12 +1528,6 @@
 			};
 
 			_self.notifyLogout = function() {
-				if (_ns.hasGoogleSignIn()) {
-					var auth2 = gapi.auth2.getAuthInstance();
-					auth2.signOut().then(function() {
-						//console.log('User signed out.');
-					});
-				}
 			};
 
 			/**
@@ -1660,29 +1624,7 @@
 				$(_ID_BTN_MODE_CARD_LOCAL).hide();
 				$(_ID_BTN_MODE_CARD_IP).hide();
 
-				if (modeSelected === _view.AUTH_MODE_GOOGLE) {
-
-					if (_authName) {
-						$(_ID_BTN_MODE_NAME).show();
-						$(_ID_BTN_MODE_NAME).click();
-					}
-					if (_authId) {
-						$(_ID_BTN_MODE_ID).show();
-						if (!_authName) {
-							$(_ID_BTN_MODE_ID).click();
-						}
-					}
-					if (_authYubiKey) {
-						$(_ID_BTN_MODE_YUBIKEY).show();
-					}
-					if (_authCardLocal) {
-						$(_ID_BTN_MODE_CARD_LOCAL).show();
-					}
-					if (_authCardIp) {
-						$(_ID_BTN_MODE_CARD_IP).show();
-					}
-
-				} else if (modeSelected === _view.AUTH_MODE_NAME) {
+				if (modeSelected === _view.AUTH_MODE_NAME) {
 
 					$(_ID_MODE_NAME).show();
 					$(_ID_BTN_MODE_NAME).hide();
@@ -1842,7 +1784,7 @@
 					nMethods++;
 				}
 
-				if (nMethods < 2 && modeSelected !== _view.AUTH_MODE_GOOGLE) {
+				if (nMethods < 2) {
 					$('#sp-login-modes').hide();
 				}
 
@@ -1906,6 +1848,21 @@
 					return false;
 				});
 
+				$('.sp-btn-login-mode-oauth').click(function() {
+					var res = _api.call({
+						request : "oauth-url",
+						dto : JSON.stringify({
+							provider : $(this).attr('data-savapage')
+						})
+					});
+
+					if (res.result.code === '0') {
+						window.location.assign(res.dto.url);
+					} else {
+						_view.showApiMsg(res);
+					}
+				});
+
 				$('#sp-login-card-local-number-group').focusin(function() {
 					_authKeyLoggerStartTime = null;
 					$('#sp-login-card-local-focusin').show();
@@ -1933,22 +1890,6 @@
 					// anotherfocus is lost because another auth method is selected.
 					$('#sp-login-yubikey-focusout').fadeIn(700);
 				});
-
-				if (_ns.hasGoogleSignIn()) {
-					gapi.signin2.render('google-signin-button', {
-						'scope' : 'profile',
-						//'width' : 240,
-						'height' : 35, //50,
-						'longtitle' : false,
-						'theme' : 'light',
-						'onsuccess' : function(googleUser) {
-							_onLogin(_view.AUTH_MODE_GOOGLE, googleUser.getAuthResponse().id_token);
-						},
-						'onfailure' : function(error) {
-							alert('Google sign-in FAILED :-(');
-						}
-					});
-				}
 
 				if (_authName) {
 
@@ -2174,7 +2115,6 @@
 			this.AUTH_MODE_ID = 'id';
 			this.AUTH_MODE_CARD_LOCAL = 'nfc-local';
 			this.AUTH_MODE_CARD_IP = 'nfc-network';
-			this.AUTH_MODE_GOOGLE = 'google';
 			this.AUTH_MODE_YUBIKEY = 'yubikey';
 
 			// Dummy AUTH Modes to associate Card with user.

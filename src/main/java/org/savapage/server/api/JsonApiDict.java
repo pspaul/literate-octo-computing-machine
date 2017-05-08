@@ -45,6 +45,7 @@ import org.savapage.server.api.request.ReqJobTicketPrintClose;
 import org.savapage.server.api.request.ReqJobTicketSave;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqLogout;
+import org.savapage.server.api.request.ReqOAuthUrl;
 import org.savapage.server.api.request.ReqOutboxCancelAll;
 import org.savapage.server.api.request.ReqOutboxCancelJob;
 import org.savapage.server.api.request.ReqOutboxExtend;
@@ -169,6 +170,9 @@ public class JsonApiDict {
     public static final String REQ_LETTERHEAD_SET = "letterhead-set";
 
     public static final String REQ_LOGIN = "login";
+
+    public static final String REQ_OAUTH_URL =
+            "oauth-url";
 
     public static final String REQ_LOGOUT = "logout";
 
@@ -849,6 +853,8 @@ public class JsonApiDict {
 
         put(REQ_LOGIN, ReqLogin.class, AuthReq.NONE, DbClaim.READ,
                 DbAccess.YES);
+
+        non(REQ_OAUTH_URL, ReqOAuthUrl.class);
 
         put(REQ_LOGOUT, ReqLogout.class, AuthReq.NONE, DbClaim.NONE,
                 DbAccess.NO);

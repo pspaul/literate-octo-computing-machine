@@ -232,22 +232,20 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 						class="ui-btn ui-btn-inline ui-mini">
 						<span class="sp-txt-info"><wicket:message key="label-card" /></span>
 					</button>
+
 					<button id="sp-btn-login-mode-yubikey"
 						class="ui-btn ui-btn-inline ui-mini">
 						<span class="sp-txt-info">YubiKey</span>
 					</button>
-					<div style="margin-top: -7px;">
-						<span style="border: 1px solid #ddd;"
-							class="ui-btn-inline ui-mini" id="google-signin-button" />
-					</div>
+
+					<span wicket:id="oauth-buttons">
+						<button data-savapage="????" wicket:id="oauth-button"
+							class="ui-btn ui-btn-inline ui-mini sp-btn-login-mode-oauth">
+						</button>
+					</span>
+
 				</div>
 
-				<wicket:enclosure child="google-signin-enable-msg">
-					<div style="padding-top: 15px;">
-						<small class="sp-txt-info sp-txt-wrap"
-							wicket:id="google-signin-enable-msg" />
-					</div>
-				</wicket:enclosure>
 			</div>
 
 		</li>

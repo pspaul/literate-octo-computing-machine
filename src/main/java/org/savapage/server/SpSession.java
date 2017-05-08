@@ -71,11 +71,6 @@ public final class SpSession extends WebSession {
     private boolean oneTimeAuthToken = false;
 
     /**
-     * {@code true} when authenticated by Google Sign-In.
-     */
-    private boolean googleSignIn = false;
-
-    /**
      *
      */
     private int authWebAppCount = 0;
@@ -194,15 +189,6 @@ public final class SpSession extends WebSession {
     }
 
     /**
-    *
-    * @return {@code true} if {@link User} was authenticated by
-    *         Google Sign-In.
-    */
-   public synchronized boolean isGoogleSignIn() {
-       return this.user != null && this.googleSignIn;
-   }
-
-    /**
      * Checks if session is expired, and touches the validated time.
      *
      * @param timeToLive
@@ -261,18 +247,6 @@ public final class SpSession extends WebSession {
             final boolean authToken) {
         this.user = authUser;
         this.oneTimeAuthToken = authToken;
-        this.googleSignIn = false;
-        dirty();
-    }
-
-    /**
-     *
-     * @param authUser
-     */
-    public synchronized void setGoogleSignIn(final User authUser) {
-        this.user = authUser;
-        this.oneTimeAuthToken = false;
-        this.googleSignIn = true;
         dirty();
     }
 

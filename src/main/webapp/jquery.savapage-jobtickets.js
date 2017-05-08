@@ -100,7 +100,6 @@
 					}
 
 				} else {
-					// Reverse a possible Google Sign-In
 					_view.pages.login.notifyLogout();
 
 					if (_view.isLoginPageActive()) {
@@ -451,9 +450,7 @@
 			_ctrl = new _ns.Controller(_i18n, _model, _view, _api);
 
 			_nativeLogin = function(user, authMode) {
-				if (authMode === _view.AUTH_MODE_GOOGLE) {
-					_ctrl.login(authMode);
-				} else if (_model.authToken.user && _model.authToken.token) {
+				if (_model.authToken.user && _model.authToken.token) {
 					_ctrl.login(_view.AUTH_MODE_NAME, _model.authToken.user, null, _model.authToken.token);
 				} else {
 					_view.pages.login.loadShow(_ns.WEBAPP_TYPE);
@@ -471,21 +468,7 @@
 
 				_ctrl.init();
 
-				if (_ns.hasGoogleSignIn()) {
-					gapi.load('auth2', function() {
-						gapi.auth2.init({
-						}).then(function() {
-							var auth2 = gapi.auth2.getAuthInstance();
-							if (auth2.isSignedIn.get()) {
-								_ctrl.login(_view.AUTH_MODE_GOOGLE);
-							} else {
-								_nativeLogin(user, authMode);
-							}
-						});
-					});
-				} else {
-					_nativeLogin(user, authMode);
-				}
+				_nativeLogin(user, authMode);
 
 				$(window).on('beforeunload', function() {
 					// By NOT returning anything the unload dialog will not show.

@@ -21,9 +21,14 @@
  */
 package org.savapage.server.pages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
@@ -33,7 +38,10 @@ import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
+import org.savapage.ext.oauth.OAuthProviderEnum;
+import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
+import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
@@ -129,18 +137,61 @@ public final class Login extends AbstractPage {
         //
         addVisible(userAuth.isAuthIdPinReq(), "login-id-pin", "");
 
-        //
-        final boolean localLoginRestricted =
-                parms.getParameterValue(WebAppParmEnum.SP_LOGIN_LOCAL.parm())
+        isOAuthGoogleEnabled();
+
+        // TODO: for now restrict OAuth to User Web App only...
+        final boolean localLoginRestricted = webAppType != WebAppTypeEnum.USER
+                || parms.getParameterValue(WebAppParmEnum.SP_LOGIN_LOCAL.parm())
                         .toString() != null;
 
-        if (localLoginRestricted && isGoogleSignInEnabled()) {
-            helper.encloseLabel("google-signin-enable-msg",
-                    localized("google-signin-enable-msg"), true);
-        } else {
-            helper.discloseLabel("google-signin-enable-msg");
-        }
-
+        addOAuthButtons(localLoginRestricted);
     }
 
+    /**
+     *
+     * @param localLoginRestricted
+     */
+    private void addOAuthButtons(final boolean localLoginRestricted) {
+
+        final List<OAuthProviderEnum> list = new ArrayList<>();
+
+        if (!localLoginRestricted) {
+            final ServerPluginManager mgr = WebApp.get().getPluginManager();
+
+            for (final OAuthProviderEnum value : mgr.getOAuthClientPlugins()
+                    .keySet()) {
+                switch (value) {
+                case GOOGLE:
+                    list.add(value);
+                    break;
+                case SMARTSCHOOL:
+                    list.add(value);
+                default:
+                    break;
+                }
+            }
+        }
+
+        add(new PropertyListView<OAuthProviderEnum>("oauth-buttons", list) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void
+                    populateItem(final ListItem<OAuthProviderEnum> item) {
+                final OAuthProviderEnum provider = item.getModelObject();
+                final Label label =
+                        new Label("oauth-button",
+                                String.format(
+                                        "<span class=\"sp-txt-info\">%s</span>",
+                                        provider.uiText()));
+                label.setEscapeModelStrings(false);
+                MarkupHelper.modifyLabelAttr(label,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, provider.toString());
+                item.add(label);
+            }
+
+        });
+
+    }
 }

@@ -540,10 +540,8 @@ public final class WebAppUser extends AbstractWebAppPage {
             return;
         }
 
-        addGoogleSignIn("google-signin-head-meta");
-
         checkOneTimeAuthToken(parameters);
-        checkOAuthToken(); // TEST
+        checkOAuthToken();
 
         final String appTitle = getWebAppTitle(null);
 
@@ -579,9 +577,6 @@ public final class WebAppUser extends AbstractWebAppPage {
         final EnumSet<JavaScriptLibrary> libs =
                 EnumSet.allOf(JavaScriptLibrary.class);
 
-        if (!isGoogleSignInActive()) {
-            libs.remove(JavaScriptLibrary.GOOGLE_SIGN_IN);
-        }
         return libs;
     }
 
