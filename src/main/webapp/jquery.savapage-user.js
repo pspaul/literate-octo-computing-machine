@@ -6378,13 +6378,20 @@
 
 			this.init = function() {
 
-				var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER), authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN);
-
+				var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER), authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN)
+				//
+				, isLoginOAuth = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN_OAUTH);
+ 
 				_ns.initWebApp('USER');
 
 				_ctrl.init();
 
-				_nativeLogin(user, authMode);
+				if (isLoginOAuth) {
+					_ctrl.login(_view.AUTH_MODE_OAUTH);
+				} else {
+					_nativeLogin(user, authMode);
+				}
+				
 			};
 
 			$(window).on('beforeunload', function() {

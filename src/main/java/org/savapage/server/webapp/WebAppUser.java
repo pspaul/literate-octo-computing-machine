@@ -54,6 +54,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValue;
 import org.savapage.core.SpException;
+import org.savapage.core.SpInfo;
 import org.savapage.core.UnavailableException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
@@ -349,9 +350,10 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     /**
-     * .
+     *
+     * @return {@code true} when OAuth is applicable.
      */
-    private void checkOAuthToken() {
+    private boolean checkOAuthToken() {
 
         final IRequestParameters reqParms =
                 this.getRequestCycle().getRequest().getRequestParameters();
@@ -359,8 +361,10 @@ public final class WebAppUser extends AbstractWebAppPage {
         final StringValue oauthProviderValue =
                 reqParms.getParameterValue(WebAppParmEnum.SP_OAUTH.parm());
 
-        if (oauthProviderValue.isEmpty()) {
-            return;
+        final boolean isOAuth = !oauthProviderValue.isEmpty();
+
+        if (!isOAuth) {
+            return isOAuth;
         }
 
         final String oauthProvider = oauthProviderValue.toString();
@@ -381,7 +385,9 @@ public final class WebAppUser extends AbstractWebAppPage {
         }
 
         if (plugin == null) {
-            return;
+            LOGGER.error(String.format("OAuth [%s]: plugin not found.",
+                    oauthProvider));
+            return isOAuth;
         }
 
         final Map<String, String> parms = new HashMap<>();
@@ -402,14 +408,19 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         //
         if (userInfo == null) {
-            return;
+            LOGGER.error(
+                    String.format("OAuth [%s]: no userinfo.", oauthProvider));
+            return isOAuth;
         }
 
         final String userid = userInfo.getUserId();
         final String email = userInfo.getEmail();
 
         if (userid == null && email == null) {
-            return;
+            LOGGER.error(
+                    String.format("OAuth [%s]: no userid or email in userinfo.",
+                            oauthProvider));
+            return isOAuth;
         }
 
         final User authUser;
@@ -418,25 +429,45 @@ public final class WebAppUser extends AbstractWebAppPage {
             final UserEmail userEmail = ServiceContext.getDaoContext()
                     .getUserEmailDao().findByEmail(email);
             if (userEmail == null) {
-                return;
+                LOGGER.warn(String.format("OAuth [%s] email [%s]: not found.",
+                        oauthProvider, email));
+                return isOAuth;
             }
             authUser = userEmail.getUser();
 
         } else if (email == null) {
             authUser = ServiceContext.getDaoContext().getUserDao()
                     .findActiveUserByUserId(userid);
+            if (authUser == null) {
+                LOGGER.warn(String.format("OAuth [%s] user [%s]: not found.",
+                        oauthProvider, email));
+                return isOAuth;
+            }
         } else {
-            return;
+            return isOAuth;
         }
 
         if (authUser.getDeleted().booleanValue()
                 || authUser.getDisabledPrintIn().booleanValue()) {
-            return;
+            LOGGER.warn(
+                    String.format("OAuth [%s] user [%s]: deleted or disabled.",
+                            oauthProvider, authUser.getUserId()));
+            return isOAuth;
         }
+
         /*
-         * Yes, we are authenticated, and no exceptions.
+         * Yes, we are authenticated.
          */
-        SpSession.get().setUser(authUser, true);
+        final SpSession session = SpSession.get();
+        session.bind();
+
+        SpInfo.instance()
+                .log(String.format("OAuth [%s] user [%s]: OK [session: %s]",
+                        oauthProvider, authUser.getUserId(), session.getId()));
+
+        session.setUser(authUser, true);
+
+        return isOAuth;
     }
 
     /**
@@ -540,8 +571,9 @@ public final class WebAppUser extends AbstractWebAppPage {
             return;
         }
 
-        checkOneTimeAuthToken(parameters);
-        checkOAuthToken();
+        if (!checkOAuthToken()) {
+            checkOneTimeAuthToken(parameters);
+        }
 
         final String appTitle = getWebAppTitle(null);
 

@@ -257,6 +257,11 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
             final GoogleOAuthPayload payload = GoogleOAuthPayload.create(json);
             final OAuthUserInfo userInfo = new OAuthUserInfo();
             userInfo.setEmail(payload.getFirstEmail());
+
+            if (userInfo.getEmail() == null) {
+                LOGGER.error(String.format("No email found:\n%s", json));
+                return null;
+            }
             return userInfo;
 
         } catch (InterruptedException | ExecutionException e) {

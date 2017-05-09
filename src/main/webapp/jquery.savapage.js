@@ -2116,6 +2116,7 @@
 			this.AUTH_MODE_CARD_LOCAL = 'nfc-local';
 			this.AUTH_MODE_CARD_IP = 'nfc-network';
 			this.AUTH_MODE_YUBIKEY = 'yubikey';
+			this.AUTH_MODE_OAUTH = 'oauth';
 
 			// Dummy AUTH Modes to associate Card with user.
 			this.AUTH_MODE_CARD_ASSOC = '_CA';

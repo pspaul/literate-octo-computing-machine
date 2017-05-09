@@ -311,16 +311,31 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
         for (final NamedPair pair : this.getPageParameters().getAllNamed()) {
 
-            // Skip transient parameter.
+            /*
+             * Skip transient parameters.
+             */
             if (pair.getKey().equals(WebAppParmEnum.SP_ZERO.parm())) {
                 continue;
             }
-
-            // Skip OAuth parameter, since OAuth is already handled.
-            if (pair.getKey().equals(WebAppParmEnum.SP_OAUTH.parm())) {
+            if (pair.getKey().equals(WebAppParmEnum.SP_LOGIN_OAUTH.parm())) {
                 continue;
             }
 
+            /*
+             * IMPORTANT: The WebAppParmEnum.SP_OAUTH, at this point, means that
+             * the OAuth callback is already handled. Therefore we add a
+             * separate indicator parameter so javascript can identify OAuth and
+             * further handle the login.
+             */
+            if (pair.getKey().equals(WebAppParmEnum.SP_OAUTH.parm())) {
+                mountPath.append("?")
+                        .append(WebAppParmEnum.SP_LOGIN_OAUTH.parm())
+                        .append("=").append(pair.getValue());
+                nParms++;
+                continue;
+            }
+
+            //
             if (pair.getKey().startsWith(WebAppParmEnum.parmPrefix())) {
 
                 if (nParms == 0) {

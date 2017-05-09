@@ -58,6 +58,7 @@ import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
+import org.savapage.core.services.helpers.UserAuth.Mode;
 import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.users.IUserSource;
 import org.savapage.core.users.InternalUserAuthenticator;
@@ -310,15 +311,12 @@ public final class ReqLogin extends ApiRequestMixin {
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
         /*
-         * If user authentication token (browser local storage) is disabled or
-         * user was authenticated by OneTimeAuthToken, we fall back to the user
-         * in the active session.
+         * If user was AOuth Sign-In is enabled and user was Google authenticated.
+         *
          */
-        final boolean isAuthTokenLoginEnabled =
-                ApiRequestHelper.isAuthTokenLoginEnabled();
 
-        if ((!isAuthTokenLoginEnabled || session.isOneTimeAuthToken())
-                && session.getUser() != null) {
+        // TODO: check if OAuth is enabled.
+        if (authMode == Mode.OAUTH && session.getUser() != null) {
 
             /*
              * INVARIANT: User must exist in database.
@@ -337,33 +335,63 @@ public final class ReqLogin extends ApiRequestMixin {
             }
 
         } else {
+            /*
+             * If user authentication token (browser local storage) is disabled
+             * or user was authenticated by OneTimeAuthToken, we fall back to
+             * the user in the active session.
+             */
+            final boolean isAuthTokenLoginEnabled =
+                    ApiRequestHelper.isAuthTokenLoginEnabled();
 
-            final boolean isCliAppAuthApplied;
+            if ((!isAuthTokenLoginEnabled || session.isOneTimeAuthToken())
+                    && session.getUser() != null) {
 
-            if (isAuthTokenLoginEnabled && authMode == UserAuth.Mode.NAME
-                    && StringUtils.isBlank(authPw)) {
-                isCliAppAuthApplied =
-                        this.reqLoginAuthTokenCliApp(getUserData(), authId,
-                                this.getRemoteAddr(), webAppType);
+                /*
+                 * INVARIANT: User must exist in database.
+                 */
+
+                // We need the JPA attached User.
+                final User userDb = userDao
+                        .findActiveUserByUserId(session.getUser().getUserId());
+
+                if (userDb == null) {
+                    onLoginFailed(null);
+                } else {
+                    onUserLoginGranted(getUserData(), session, webAppType,
+                            authMode, session.getUser().getUserId(), userDb,
+                            null);
+                    setApiResultOk();
+                }
+
             } else {
-                isCliAppAuthApplied = false;
-            }
 
-            if (!isCliAppAuthApplied) {
+                final boolean isCliAppAuthApplied;
 
                 if (isAuthTokenLoginEnabled && authMode == UserAuth.Mode.NAME
-                        && StringUtils.isBlank(authPw)
-                        && StringUtils.isNotBlank(authToken)) {
-
-                    reqLoginAuthTokenWebApp(authId, authToken, webAppType);
-
+                        && StringUtils.isBlank(authPw)) {
+                    isCliAppAuthApplied =
+                            this.reqLoginAuthTokenCliApp(getUserData(), authId,
+                                    this.getRemoteAddr(), webAppType);
                 } else {
-                    reqLoginNew(authMode, authId, authPw, assocCardNumber,
-                            webAppType);
+                    isCliAppAuthApplied = false;
+                }
+
+                if (!isCliAppAuthApplied) {
+
+                    if (isAuthTokenLoginEnabled
+                            && authMode == UserAuth.Mode.NAME
+                            && StringUtils.isBlank(authPw)
+                            && StringUtils.isNotBlank(authToken)) {
+
+                        reqLoginAuthTokenWebApp(authId, authToken, webAppType);
+
+                    } else {
+                        reqLoginNew(authMode, authId, authPw, assocCardNumber,
+                                webAppType);
+                    }
                 }
             }
         }
-
         getUserData().put("sessionid", SpSession.get().getId());
 
         if (isApiResultOk()) {
@@ -429,7 +457,7 @@ public final class ReqLogin extends ApiRequestMixin {
         final UserAuth theUserAuth = new UserAuth(terminal, null,
                 webAppType == WebAppTypeEnum.ADMIN);
 
-        if (authMode != UserAuth.Mode.GOOGLE
+        if (authMode != UserAuth.Mode.OAUTH
                 && authMode != UserAuth.Mode.YUBIKEY) { // TEST TEST
             if (!theUserAuth.isAuthModeAllowed(authMode)) {
                 setApiResult(ApiResultCodeEnum.ERROR,
@@ -715,7 +743,8 @@ public final class ReqLogin extends ApiRequestMixin {
             /*
              * Authenticate
              */
-            if (authMode == UserAuth.Mode.YUBIKEY) {
+            if (authMode == UserAuth.Mode.YUBIKEY
+                    || authMode == UserAuth.Mode.OAUTH) {
                 // no code intended
             } else if (authMode == UserAuth.Mode.NAME) {
 
@@ -880,8 +909,17 @@ public final class ReqLogin extends ApiRequestMixin {
          * Deny access, when the user is still not found in the database.
          */
         if (userDb == null) {
-            onLoginFailed("msg-login-user-not-present", webAppType.getUiText(),
-                    authMode.toString(), "?");
+            if (authMode == UserAuth.Mode.OAUTH) {
+                /*
+                 * This happens when "sp-login-oauth" URL parameter is still
+                 * there, as backlash of a previous OAuth, and the Login page is
+                 * shown, and user is not authenticated with Google OAuth (yet).
+                 */
+                onLoginFailed(null);
+            } else {
+                onLoginFailed("msg-login-user-not-present",
+                        webAppType.getUiText(), authMode.toString(), "?");
+            }
             return;
         }
 

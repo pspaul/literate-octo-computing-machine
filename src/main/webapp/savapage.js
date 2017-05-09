@@ -69,6 +69,7 @@ String.prototype.vformat = function() {"use strict";
 			COUNTRY : 'sp-ctry',
 			LOGIN : 'sp-login',
 			LOGIN_LOCAL : 'sp-login-local',
+			LOGIN_OAUTH : 'sp-login-oauth',
 			SHOW : 'sp-show'
 		};
 
