@@ -33,6 +33,10 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 -->
 </wicket:remove>
 
+<div wicket:id="ext-supplier-icons">
+	<style wicket:id="ext-supplier-icon" />
+</div>
+
 <div class="ui-content" id="page-login-content">
 
 	<label wicket:id="login-inject" />
@@ -239,9 +243,8 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 					</button>
 
 					<span wicket:id="oauth-buttons">
-						<button data-savapage="????" wicket:id="oauth-button"
-							class="ui-btn ui-btn-inline ui-mini sp-btn-login-mode-oauth">
-						</button>
+						<button title="???" wicket:id="oauth-button"
+							class="sp-btn-login-mode-oauth ui-mini ui-btn ui-btn-inline ui-btn-icon-left" />
 					</span>
 
 				</div>

@@ -35,12 +35,14 @@ import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.ext.oauth.OAuthProviderEnum;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
+import org.savapage.server.ext.ServerPluginHelper;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
@@ -172,6 +174,37 @@ public final class Login extends AbstractPage {
             }
         }
 
+        add(new PropertyListView<OAuthProviderEnum>("ext-supplier-icons",
+                list) {
+
+            private static final long serialVersionUID = 1L;
+
+            private static final String OAUTH_PROVIDER_ICON_FORMAT =
+                    ".ui-icon-ext-oauth-provider-%s:after { " + "background: "
+                            + "url(%s) " + "50%% 50%% no-repeat; "
+                            + "background-size: 22px 22px; "
+                            + "padding-left: 15px; "
+                            + "-webkit-border-radius: 0 !important; "
+                            + "border-radius: 0 !important; }";
+
+            @Override
+            protected void
+                    populateItem(final ListItem<OAuthProviderEnum> item) {
+
+                final OAuthProviderEnum provider = item.getModelObject();
+                final ExternalSupplierEnum supplier =
+                        ServerPluginHelper.getEnum(provider);
+
+                final Label label = new Label("ext-supplier-icon",
+                        String.format(OAUTH_PROVIDER_ICON_FORMAT,
+                                provider.toString().toLowerCase(), WebApp
+                                        .getExtSupplierEnumImgUrl(supplier)));
+
+                label.setEscapeModelStrings(false);
+                item.add(label);
+            }
+        });
+
         add(new PropertyListView<OAuthProviderEnum>("oauth-buttons", list) {
 
             private static final long serialVersionUID = 1L;
@@ -179,15 +212,25 @@ public final class Login extends AbstractPage {
             @Override
             protected void
                     populateItem(final ListItem<OAuthProviderEnum> item) {
+
                 final OAuthProviderEnum provider = item.getModelObject();
+                final ExternalSupplierEnum supplier =
+                        ServerPluginHelper.getEnum(provider);
+
                 final Label label =
-                        new Label("oauth-button",
-                                String.format(
-                                        "<span class=\"sp-txt-info\">%s</span>",
-                                        provider.uiText()));
-                label.setEscapeModelStrings(false);
+                        new Label("oauth-button", "&nbsp;");
+
+                MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_CLASS,
+                        String.format("ui-icon-ext-oauth-provider-%s",
+                                provider.toString().toLowerCase()));
+
+                MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_TITLE,
+                        provider.uiText());
+
                 MarkupHelper.modifyLabelAttr(label,
                         MarkupHelper.ATTR_DATA_SAVAPAGE, provider.toString());
+
+                label.setEscapeModelStrings(false);
                 item.add(label);
             }
 
