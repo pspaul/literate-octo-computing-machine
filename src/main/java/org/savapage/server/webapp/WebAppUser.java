@@ -54,7 +54,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValue;
 import org.savapage.core.SpException;
-import org.savapage.core.SpInfo;
 import org.savapage.core.UnavailableException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
@@ -459,11 +458,11 @@ public final class WebAppUser extends AbstractWebAppPage {
          * Yes, we are authenticated.
          */
         final SpSession session = SpSession.get();
-        session.bind();
 
-        SpInfo.instance()
-                .log(String.format("OAuth [%s] user [%s]: OK [session: %s]",
-                        oauthProvider, authUser.getUserId(), session.getId()));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("OAuth [%s] user [%s]: OK [session: %s]",
+                    oauthProvider, authUser.getUserId(), session.getId()));
+        }
 
         session.setUser(authUser, true);
 

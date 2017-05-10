@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.savapage.ext.ServerPluginException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,6 +86,12 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
             PROP_KEY_OAUTH_PFX + "callback-url";
 
     /**
+     * Hosted domain.
+     */
+    private static final String PROP_KEY_OAUTH_PARM_HD =
+            PROP_KEY_OAUTH_PFX + "parm.hd";
+
+    /**
      * OAuth scope.
      */
     private static final String OAUTH_SCOPE = "email";
@@ -101,6 +108,17 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
             "https://www.googleapis.com/plus/v1/people/me";
 
     private static final String NETWORK_NAME = "G+";
+
+    // ------------------------------------------------------------------
+    // https://developers.google.com/identity/protocols/OpenIDConnect
+    // ------------------------------------------------------------------
+    private static final String OAUTH_ACCESS_TYPE_PARM = "access_type";
+    private static final String OAUTH_ACCESS_TYPE_VAL_ONLINE = "online";
+
+    private static final String OAUTH_PROMPT_PARM = "prompt";
+    private static final String OAUTH_PROMPT_VAL_VOID = "";
+
+    private static final String OAUTH_HD_PARM = "hd";
 
     /**
      *
@@ -126,6 +144,12 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
      * URL the OAuth provider should redirect after authorization.
      */
     private URL callbackUrl;
+
+    /**
+     * Formatted as "example.com". When {@code null} all authenticated Google
+     * accounts are welcome.
+     */
+    private String hostedDomain;
 
     @Override
     public String getId() {
@@ -178,16 +202,15 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
          */
         final Map<String, String> additionalParams = new HashMap<>();
 
-        /*
-         * Pass access_type=offline to get refresh token.
-         */
-        additionalParams.put("access_type", "offline");
+        additionalParams.put(OAUTH_ACCESS_TYPE_PARM,
+                OAUTH_ACCESS_TYPE_VAL_ONLINE);
+        additionalParams.put(OAUTH_PROMPT_PARM, OAUTH_PROMPT_VAL_VOID);
 
-        /*
-         * Force to re-get refresh token (if users are asked not the first
-         * time).
-         */
-        additionalParams.put("prompt", "consent");
+        hostedDomain = props.getProperty(PROP_KEY_OAUTH_PARM_HD);
+        if (StringUtils.isNotBlank(hostedDomain)) {
+            hostedDomain = hostedDomain.trim();
+            additionalParams.put(OAUTH_HD_PARM, hostedDomain);
+        }
 
         try {
 
@@ -229,12 +252,11 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
             //
 
             /*
-             * Trade the Request Token and Verifier for the Access Token.
+             * Get the Access Token. Since this is just a quick peek at the
+             * email address, a refresh token is not relevant.
              */
-            OAuth2AccessToken accessToken = oauthService.getAccessToken(code);
-
-            accessToken = oauthService
-                    .refreshAccessToken(accessToken.getRefreshToken());
+            final OAuth2AccessToken accessToken =
+                    oauthService.getAccessToken(code);
 
             /*
              * Ask for a protected resource.
@@ -262,6 +284,17 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
                 LOGGER.error(String.format("No email found:\n%s", json));
                 return null;
             }
+            /*
+             * Just to be sure...
+             */
+            if (hostedDomain != null
+                    && !userInfo.getEmail().endsWith(hostedDomain)) {
+                LOGGER.error(
+                        String.format("User [%s] is not a member [%s] domain.",
+                                userInfo.getEmail(), hostedDomain));
+                return null;
+            }
+
             return userInfo;
 
         } catch (InterruptedException | ExecutionException e) {
@@ -299,16 +332,27 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
         System.out.println("=== " + NETWORK_NAME + "'s OAuth Workflow ===");
         System.out.println();
 
-        // Obtain the Authorization URL
+        /*
+         * Obtain the Authorization URL.
+         */
         System.out.println("Fetching the Authorization URL...");
-        // pass access_type=offline to get refresh token
-        // https://developers.google.com/identity/protocols/OAuth2WebServer#preparing-to-start-the-oauth-20-flow
+
         final Map<String, String> additionalParams = new HashMap<>();
+
+        /*
+         * pass access_type=offline to get refresh token
+         */
         additionalParams.put("access_type", "offline");
-        // force to reget refresh token (if usera are asked not the first time)
+
+        /*
+         * Force to re-get refresh token (if users are asked not the first
+         * time).
+         */
         additionalParams.put("prompt", "consent");
+
         final String authorizationUrl =
                 service.getAuthorizationUrl(additionalParams);
+
         System.out.println("Got the Authorization URL!");
         System.out.println("Now go and authorize ScribeJava here:");
         System.out.println(authorizationUrl);
@@ -320,7 +364,9 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
         System.out.println("And paste the state from server here. "
                 + "We have set 'secretState'='" + secretState + "'.");
         System.out.print(">>");
+
         final String value = in.nextLine();
+
         if (secretState.equals(value)) {
             System.out.println("State value does match!");
         } else {
@@ -330,22 +376,30 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
             System.out.println();
         }
 
-        // Trade the Request Token and Verfier for the Access Token
+        /*
+         * Trade the Request Token and Verifier for the Access Token.
+         */
         System.out.println("Trading the Request Token for an Access Token...");
         OAuth2AccessToken accessToken = service.getAccessToken(code);
+
         System.out.println("Got the Access Token!");
         System.out.println("(if your curious it looks like this: " + accessToken
                 + ", 'rawResponse'='" + accessToken.getRawResponse() + "')");
 
         System.out.println("Refreshing the Access Token...");
+
         accessToken = service.refreshAccessToken(accessToken.getRefreshToken());
+
         System.out.println("Refreshed the Access Token!");
         System.out.println("(if your curious it looks like this: " + accessToken
                 + ", 'rawResponse'='" + accessToken.getRawResponse() + "')");
         System.out.println();
 
-        // Now let's go and ask for a protected resource!
+        /*
+         * Now let's go and ask for a protected resource!
+         */
         System.out.println("Now we're going to access a protected resource...");
+
         while (true) {
             System.out.println(
                     "Paste fieldnames to fetch (leave empty to get profile, "
