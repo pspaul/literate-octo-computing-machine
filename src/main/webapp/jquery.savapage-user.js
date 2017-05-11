@@ -4126,7 +4126,7 @@
 					this.setCountry(country);
 				}
 			};
-
+			
 			/**
 			 *
 			 */
@@ -6379,9 +6379,9 @@
 			this.init = function() {
 
 				var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER), authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN)
-				//
-				, isLoginOAuth = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN_OAUTH);
- 
+				// Note: getUrlParam() does not work properly for LOGIN_OAUTH
+				, isLoginOAuth = _ns.Utils.hasUrlParam(_ns.URL_PARM.LOGIN_OAUTH);
+
 				_ns.initWebApp('USER');
 
 				_ctrl.init();
@@ -6391,7 +6391,7 @@
 				} else {
 					_nativeLogin(user, authMode);
 				}
-				
+
 			};
 
 			$(window).on('beforeunload', function() {

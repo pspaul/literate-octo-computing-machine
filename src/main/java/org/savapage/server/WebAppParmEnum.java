@@ -63,7 +63,7 @@ public enum WebAppParmEnum {
     SP_LOGIN_LOCAL(WebAppParmEnum.PFX + "login-local"),
 
     /**
-     * Used as internal redirect.
+     * Internal indicator that login with OAuth occurred.
      */
     SP_LOGIN_OAUTH(WebAppParmEnum.PFX + "login-oauth"),
 

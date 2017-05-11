@@ -308,14 +308,17 @@ public final class ReqLogin extends ApiRequestMixin {
             }
         }
 
+        final boolean isAuthTokenLoginEnabled =
+                ApiRequestHelper.isAuthTokenLoginEnabled();
+
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
         /*
-         * If user was AOuth Sign-In is enabled and user was Google authenticated.
+         * If user was AOuth Sign-In is enabled and user was authenticated by
+         * OAuth provider.
          *
+         * TODO: check if OAuth is enabled.
          */
-
-        // TODO: check if OAuth is enabled.
         if (authMode == Mode.OAUTH && session.getUser() != null) {
 
             /*
@@ -327,10 +330,22 @@ public final class ReqLogin extends ApiRequestMixin {
                     .findActiveUserByUserId(session.getUser().getUserId());
 
             if (userDb == null) {
+
                 onLoginFailed(null);
+
             } else {
+
+                final UserAuthToken token;
+
+                if (ApiRequestHelper.isAuthTokenLoginEnabled()) {
+                    token = reqLoginLazyCreateAuthToken(userDb.getUserId(),
+                            webAppType);
+                } else {
+                    token = null;
+                }
+
                 onUserLoginGranted(getUserData(), session, webAppType, authMode,
-                        session.getUser().getUserId(), userDb, null);
+                        session.getUser().getUserId(), userDb, token);
                 setApiResultOk();
             }
 
@@ -340,9 +355,6 @@ public final class ReqLogin extends ApiRequestMixin {
              * or user was authenticated by OneTimeAuthToken, we fall back to
              * the user in the active session.
              */
-            final boolean isAuthTokenLoginEnabled =
-                    ApiRequestHelper.isAuthTokenLoginEnabled();
-
             if ((!isAuthTokenLoginEnabled || session.isOneTimeAuthToken())
                     && session.getUser() != null) {
 
@@ -913,7 +925,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 /*
                  * This happens when "sp-login-oauth" URL parameter is still
                  * there, as backlash of a previous OAuth, and the Login page is
-                 * shown, and user is not authenticated with Google OAuth (yet).
+                 * shown, and user is not authenticated by OAuth (yet).
                  */
                 onLoginFailed(null);
             } else {

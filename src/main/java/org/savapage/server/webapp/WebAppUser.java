@@ -389,6 +389,9 @@ public final class WebAppUser extends AbstractWebAppPage {
             return isOAuth;
         }
 
+        /*
+         * Collect the parameters for the callback.
+         */
         final Map<String, String> parms = new HashMap<>();
 
         for (final String name : reqParms.getParameterNames()) {
@@ -398,6 +401,14 @@ public final class WebAppUser extends AbstractWebAppPage {
             }
         }
 
+        /*
+         * Leave no trace, clear all parameters.
+         */
+        this.getPageParameters().clearNamed();
+
+        /*
+         * Perform the callback.
+         */
         final OAuthUserInfo userInfo;
         try {
             userInfo = plugin.onCallBack(parms);
@@ -464,7 +475,14 @@ public final class WebAppUser extends AbstractWebAppPage {
                     oauthProvider, authUser.getUserId(), session.getId()));
         }
 
-        session.setUser(authUser, true);
+        session.setUser(authUser);
+
+        /*
+         * Pass the WebAppParmEnum.SP_LOGIN_OAUTH.parm() so JavaScript can
+         * act upon it.
+         */
+        this.getPageParameters().add(WebAppParmEnum.SP_LOGIN_OAUTH.parm(),
+                oauthProvider);
 
         return isOAuth;
     }

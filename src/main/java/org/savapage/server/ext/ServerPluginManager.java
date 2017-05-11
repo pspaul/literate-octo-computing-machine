@@ -1190,8 +1190,8 @@ public final class ServerPluginManager
                         entry.getValue().getClass().getName()));
                 builder.append("\n| ")
                         .append(entry.getValue().getAuthorizationUrl());
+                builder.append('\n').append(delim);
             }
-            builder.append('\n').append(delim);
         }
 
         if (!this.paymentPlugins.isEmpty()) {

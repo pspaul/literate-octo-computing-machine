@@ -298,17 +298,9 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
             return userInfo;
 
         } catch (InterruptedException e) {
-            // no code intended
-        } catch (Exception e) {
-            /*
-             * getAccessToken() can throw an exception caused by:
-             * com.github.scribejava.core.model.OAuth2AccessTokenErrorResponse:
-             * { "error": "invalid_grant", "error_description":
-             * "Code was already redeemed." }
-             *
-             * For now, just logging.
-             */
             LOGGER.warn(e.getMessage());
+        } catch (ExecutionException e) {
+            throw new OAuthPluginException(e.getMessage());
         }
         return null;
     }

@@ -162,15 +162,7 @@ public final class Login extends AbstractPage {
 
             for (final OAuthProviderEnum value : mgr.getOAuthClientPlugins()
                     .keySet()) {
-                switch (value) {
-                case GOOGLE:
-                    list.add(value);
-                    break;
-                case SMARTSCHOOL:
-                    list.add(value);
-                default:
-                    break;
-                }
+                list.add(value);
             }
         }
 
@@ -217,8 +209,7 @@ public final class Login extends AbstractPage {
                 final ExternalSupplierEnum supplier =
                         ServerPluginHelper.getEnum(provider);
 
-                final Label label =
-                        new Label("oauth-button", "&nbsp;");
+                final Label label = new Label("oauth-button", "&nbsp;");
 
                 MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_CLASS,
                         String.format("ui-icon-ext-oauth-provider-%s",

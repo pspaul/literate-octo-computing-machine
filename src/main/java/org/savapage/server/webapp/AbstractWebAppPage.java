@@ -317,9 +317,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
             if (pair.getKey().equals(WebAppParmEnum.SP_ZERO.parm())) {
                 continue;
             }
-            if (pair.getKey().equals(WebAppParmEnum.SP_LOGIN_OAUTH.parm())) {
-                continue;
-            }
 
             /*
              * IMPORTANT: The WebAppParmEnum.SP_OAUTH, at this point, means that
@@ -335,7 +332,14 @@ public abstract class AbstractWebAppPage extends AbstractPage
                 continue;
             }
 
-            //
+            /*
+             * IMPORTANT: Keep the WebAppParmEnum.SP_LOGIN_OAUTH.parm().
+             */
+
+
+            /*
+             * Preserve sp-* parms.
+             */
             if (pair.getKey().startsWith(WebAppParmEnum.parmPrefix())) {
 
                 if (nParms == 0) {
@@ -350,7 +354,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
                 nParms++;
             }
         }
-
         final String javascript =
                 String.format(INITIAL_JAVASCRIPT_FORMAT, mountPath.toString());
 
