@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -63,9 +63,13 @@ public final class UserDashboard extends AbstractUserPage {
 
         if (BooleanUtils.isTrue(authUser.getInternal())) {
 
+            final org.savapage.core.jpa.User jpaUser = ServiceContext
+                    .getDaoContext().getUserDao().findById(authUser.getId());
+
             canResetPassword = ConfigManager.instance()
                     .isConfigValue(Key.INTERNAL_USERS_CAN_CHANGE_PW)
-                    && USER_SERVICE.hasInternalPassword(authUser);
+                    && USER_SERVICE.hasInternalPassword(jpaUser);
+
         } else {
             canResetPassword = false;
         }
