@@ -147,7 +147,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
     /**
      *
      * @param suffix
-     *            The title suffix.
+     *            The title suffix, {@code null}. when not applicable.
      * @return The web title
      */
     protected static String getWebAppTitle(final String suffix) {
@@ -335,7 +335,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
             /*
              * IMPORTANT: Keep the WebAppParmEnum.SP_LOGIN_OAUTH.parm().
              */
-
 
             /*
              * Preserve sp-* parms.

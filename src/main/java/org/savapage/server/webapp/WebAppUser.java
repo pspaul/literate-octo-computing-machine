@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -349,10 +350,15 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     /**
+     * Checks OAuth login request.
      *
-     * @return {@code true} when OAuth is applicable.
+     * @param mutableProvider
+     *            The AOuth provider, or {@code null} when not found.
+     * @return {@code null} when OAuth is <i>not</i> applicable.
+     *         {@link Boolean#FALSE} when authentication failed.
      */
-    private boolean checkOAuthToken() {
+    private Boolean checkOAuthToken(
+            final MutableObject<OAuthProviderEnum> mutableProvider) {
 
         final IRequestParameters reqParms =
                 this.getRequestCycle().getRequest().getRequestParameters();
@@ -360,10 +366,8 @@ public final class WebAppUser extends AbstractWebAppPage {
         final StringValue oauthProviderValue =
                 reqParms.getParameterValue(WebAppParmEnum.SP_OAUTH.parm());
 
-        final boolean isOAuth = !oauthProviderValue.isEmpty();
-
-        if (!isOAuth) {
-            return isOAuth;
+        if (oauthProviderValue.isEmpty()) {
+            return null;
         }
 
         final String oauthProvider = oauthProviderValue.toString();
@@ -386,8 +390,10 @@ public final class WebAppUser extends AbstractWebAppPage {
         if (plugin == null) {
             LOGGER.error(String.format("OAuth [%s]: plugin not found.",
                     oauthProvider));
-            return isOAuth;
+            return Boolean.FALSE;
         }
+
+        mutableProvider.setValue(plugin.getProvider());
 
         /*
          * Collect the parameters for the callback.
@@ -420,7 +426,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         if (userInfo == null) {
             LOGGER.error(
                     String.format("OAuth [%s]: no userinfo.", oauthProvider));
-            return isOAuth;
+            return Boolean.FALSE;
         }
 
         final String userid = userInfo.getUserId();
@@ -430,7 +436,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             LOGGER.error(
                     String.format("OAuth [%s]: no userid or email in userinfo.",
                             oauthProvider));
-            return isOAuth;
+            return Boolean.FALSE;
         }
 
         final User authUser;
@@ -441,7 +447,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             if (userEmail == null) {
                 LOGGER.warn(String.format("OAuth [%s] email [%s]: not found.",
                         oauthProvider, email));
-                return isOAuth;
+                return Boolean.FALSE;
             }
             authUser = userEmail.getUser();
 
@@ -451,10 +457,10 @@ public final class WebAppUser extends AbstractWebAppPage {
             if (authUser == null) {
                 LOGGER.warn(String.format("OAuth [%s] user [%s]: not found.",
                         oauthProvider, email));
-                return isOAuth;
+                return Boolean.FALSE;
             }
         } else {
-            return isOAuth;
+            return Boolean.FALSE;
         }
 
         if (authUser.getDeleted().booleanValue()
@@ -462,7 +468,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             LOGGER.warn(
                     String.format("OAuth [%s] user [%s]: deleted or disabled.",
                             oauthProvider, authUser.getUserId()));
-            return isOAuth;
+            return Boolean.FALSE;
         }
 
         /*
@@ -478,13 +484,13 @@ public final class WebAppUser extends AbstractWebAppPage {
         session.setUser(authUser);
 
         /*
-         * Pass the WebAppParmEnum.SP_LOGIN_OAUTH.parm() so JavaScript can
-         * act upon it.
+         * Pass the WebAppParmEnum.SP_LOGIN_OAUTH.parm() so JavaScript can act
+         * upon it.
          */
         this.getPageParameters().add(WebAppParmEnum.SP_LOGIN_OAUTH.parm(),
                 oauthProvider);
 
-        return isOAuth;
+        return Boolean.TRUE;
     }
 
     /**
@@ -588,8 +594,25 @@ public final class WebAppUser extends AbstractWebAppPage {
             return;
         }
 
-        if (!checkOAuthToken()) {
+        final MutableObject<OAuthProviderEnum> mutableProvider =
+                new MutableObject<>();
+
+        final Boolean oauth = checkOAuthToken(mutableProvider);
+
+        if (oauth == null) {
+
             checkOneTimeAuthToken(parameters);
+
+        } else if (!oauth.booleanValue()) {
+
+            final PageParameters parms = new PageParameters();
+
+            parms.set(WebAppParmEnum.SP_APP.parm(), this.getWebAppType());
+            parms.set(WebAppParmEnum.SP_LOGIN_OAUTH.parm(),
+                    mutableProvider.toString());
+
+            setResponsePage(WebAppOAuthMsg.class, parms);
+            return;
         }
 
         final String appTitle = getWebAppTitle(null);

@@ -21,16 +21,8 @@
  */
 package org.savapage.server.webapp;
 
-import java.util.EnumSet;
-import java.util.Set;
-
-import org.apache.commons.lang3.EnumUtils;
-import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.community.CommunityDictEnum;
-import org.savapage.server.SpSession;
-import org.savapage.server.WebApp;
-import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -38,7 +30,7 @@ import org.savapage.server.pages.MarkupHelper;
  * @author Rijk Ravestein
  *
  */
-public final class WebAppCountExceededMsg extends AbstractWebAppPage {
+public final class WebAppCountExceededMsg extends AbstractWebAppMsg {
 
     /**
      *
@@ -51,24 +43,21 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
      *            The {@link PageParameters}.
      */
     public WebAppCountExceededMsg(final PageParameters parameters) {
-
         super(parameters);
+    }
 
-        final MarkupHelper helper = new MarkupHelper(this);
-
-        helper.addLabel("app-title", getWebAppTitle(null));
-        helper.addLabel("title", CommunityDictEnum.SAVAPAGE.getWord());
-
-        final WebAppTypeEnum webAppTypeAuth = SpSession.get().getWebAppType();
-
-        final WebAppTypeEnum webAppTypeRequested =
-                EnumUtils.getEnum(WebAppTypeEnum.class,
-                        parameters.get(WebAppParmEnum.SP_APP.parm())
-                                .toString(WebAppTypeEnum.UNDEFINED.toString()));
+    @Override
+    protected WebAppTypeEnum getDisplayInfo(final PageParameters parameters,
+            final WebAppTypeEnum webAppTypeAuth,
+            final WebAppTypeEnum webAppTypeRequested,
+            final MutableObject<String> messageObj,
+            final MutableObject<String> messageCssObj,
+            final MutableObject<String> remedyObj) {
 
         final String message;
         final String messageCss;
         final String remedy;
+
         final WebAppTypeEnum webAppTypeLogin;
 
         if (webAppTypeAuth == null
@@ -110,77 +99,11 @@ public final class WebAppCountExceededMsg extends AbstractWebAppPage {
             }
         }
 
-        helper.addAppendLabelAttr("message", message, "class", messageCss);
+        messageObj.setValue(message);
+        messageCssObj.setValue(messageCss);
+        remedyObj.setValue(remedy);
 
-        if (remedy == null) {
-            helper.discloseLabel("remedy");
-        } else {
-            helper.encloseLabel("remedy", remedy, true);
-        }
-
-        if (webAppTypeLogin == null) {
-            helper.discloseLabel("button-login");
-        } else {
-            helper.encloseLabel("button-login", localized("button-login"),
-                    true);
-            helper.addModifyLabelAttr("sp-webapp-mountpath", "value",
-                    this.getMountPathRequested(webAppTypeLogin));
-        }
-    }
-
-    /**
-     *
-     * @param webAppTypeRequested
-     *            The requested web app.
-     * @return The mount path.
-     */
-    private String
-            getMountPathRequested(final WebAppTypeEnum webAppTypeRequested) {
-        switch (webAppTypeRequested) {
-        case ADMIN:
-            return WebApp.MOUNT_PATH_WEBAPP_ADMIN;
-        case JOBTICKETS:
-            return WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
-        case POS:
-            return WebApp.MOUNT_PATH_WEBAPP_POS;
-        case USER:
-        case UNDEFINED:
-        default:
-            return WebApp.MOUNT_PATH_WEBAPP_USER;
-        }
-    }
-
-    @Override
-    protected boolean isJqueryCoreRenderedByWicket() {
-        return false;
-    }
-
-    @Override
-    protected WebAppTypeEnum getWebAppType() {
-        // Meaningless in our case.
-        return null;
-    }
-
-    @Override
-    protected String getSpecializedCssFileName() {
-        return null;
-    }
-
-    @Override
-    protected String getSpecializedJsFileName() {
-        return "jquery.savapage-exceeded.js";
-    }
-
-    @Override
-    protected Set<JavaScriptLibrary> getJavaScriptToRender() {
-        return EnumSet.noneOf(JavaScriptLibrary.class);
-    }
-
-    @Override
-    protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
-            final String nocache) {
-        renderJs(response,
-                String.format("%s%s", getSpecializedJsFileName(), nocache));
+        return webAppTypeLogin;
     }
 
 }
