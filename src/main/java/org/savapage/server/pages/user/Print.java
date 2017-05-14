@@ -213,7 +213,9 @@ public class Print extends AbstractUserPage {
         //
         final UserGroupAccountDao.ListFilter filter =
                 new UserGroupAccountDao.ListFilter();
+
         filter.setUserId(SpSession.get().getUser().getId());
+        filter.setDisabled(Boolean.FALSE);
 
         final List<SharedAccountDto> sharedAccounts =
                 USER_GROUP_ACCOUNT_DAO.getListChunk(filter, null, null);

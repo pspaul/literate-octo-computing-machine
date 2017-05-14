@@ -36,9 +36,9 @@
 					key="label-account-name" /></span>
 		</li>
 		<li>
-			<input type="text" id="sp-shared-account-name" value="" maxlength="255"
-				autofocus autocomplete="on" autocorrect="off" autocapitalize="off"
-				spellcheck="false" />
+			<input type="text" id="sp-shared-account-name" value=""
+				maxlength="255" autofocus autocomplete="on" autocorrect="off"
+				autocapitalize="off" spellcheck="false" />
 		</li>
 		<li data-role="list-divider">
 			<span> <img width="16" height="16"
@@ -52,17 +52,30 @@
 				autocapitalize="off" spellcheck="false" />
 		</li>
 
+		<li class="sp-shared-account-edit">
+			<div data-mini="true" data-role="controlgroup">
+				<label for="sp-shared-account-disabled">
+					<wicket:message key="label-disabled" />
+				</label>
+				<input type="checkbox" id="sp-shared-account-disabled" value="0" />
+			</div>
+		</li>
+
 	</ul>
-	
-	<ul data-role="listview" data-inset="true" class="sp-shared-account-edit">
-		<li data-role="list-divider">Access control</li>
+
+	<ul data-role="listview" data-inset="true"
+		class="sp-shared-account-edit">
+
+		<li data-role="list-divider">
+			<wicket:message key="header-access-control" />
+		</li>
 		<li>
 			<label class="sp-txt-wrap" for="sp-shared-account-group-access">
-				Groups </label>
+				<wicket:message key="label-user-groups" />
+			</label>
 			<textarea id="sp-shared-account-group-access" autocomplete="off"
 				autocorrect="off" autocapitalize="off" spellcheck="false" />
 		</li>
-
 	</ul>
 
 	<ul data-role="listview" data-inset="true">

@@ -78,7 +78,9 @@ public final class ReqSharedAccountQuickSearch extends ApiRequestMixin {
         // shortcut user
         filter.setUserId(SpSession.get().getUser().getId());
 
+        //
         filter.setContainingNameText(dto.getFilter());
+        filter.setDisabled(Boolean.FALSE);
 
         final UserGroupAccountDao dao =
                 ServiceContext.getDaoContext().getUserGroupAccountDao();

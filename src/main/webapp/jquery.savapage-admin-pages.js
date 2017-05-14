@@ -571,6 +571,10 @@
 				_view.visible($('.sp-shared-account_user-defined-section'), _model.editAccount.id !== null);
 				_view.checkCb('#sp-shared-account-deleted', _model.editAccount.deleted);
 
+				if (isShared) {
+					_view.checkCb('#sp-shared-account-disabled', _model.editAccount.disabled);
+				}
+
 				if (isShared && _model.editAccount.userGroupAccess) {
 					$.each(_model.editAccount.userGroupAccess, function(key, val) {
 						if (userGroupAccess) {
@@ -581,15 +585,14 @@
 						userGroupAccess += val.groupName;
 					});
 				}
-
 				$('#sp-shared-account-group-access').val(userGroupAccess);
 			}
 			//--------------------
 			, _v2m = function() {
 
-				var userGroupAccess = [];
+				var userGroupAccess = [], isShared = _isSharedAccount();
 
-				if (_isSharedAccount()) {
+				if (isShared) {
 					$.each($('#sp-shared-account-group-access').val().split("\n"), function(key, val) {
 						var groupName = val.trim();
 						if (groupName.length > 0) {
@@ -605,7 +608,11 @@
 				_model.editAccount.balance = $('#sp-shared-account-balance').val();
 				_model.editAccount.notes = $('#sp-shared-account-notes').val();
 				_model.editAccount.deleted = $('#sp-shared-account-deleted').is(':checked');
-				
+
+				if (isShared) {
+					_model.editAccount.disabled = $('#sp-shared-account-disabled').is(':checked');
+				}
+
 				return true;
 			}
 			//

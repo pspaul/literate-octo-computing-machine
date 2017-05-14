@@ -207,6 +207,9 @@ public final class AccountsPage extends AbstractAdminListPage {
                 if (account.getDeleted()) {
                     color = MarkupHelper.CSS_TXT_ERROR;
                     signalKey = "signal-deleted";
+                } else if (account.getDisabled()) {
+                    color = MarkupHelper.CSS_TXT_ERROR;
+                    signalKey = "signal-disabled";
                 }
 
                 String signal = "";
