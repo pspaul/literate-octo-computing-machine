@@ -170,6 +170,11 @@ public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
         // The job
         final OutboxJobDto job = JOBTICKET_SERVICE.getTicket(jobFileName);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+        helper.encloseLabel("jobticket-remark", job.getComment(),
+                        StringUtils.isNotBlank(job.getComment()));
+
+        // Options
         final List<String[]> options = new ArrayList<>();
         final IppOptionMap optionMap = job.createIppOptionMap();
 
