@@ -3015,6 +3015,20 @@
 				_model.printPageScaling = _view.getRadioValue('print-page-scaling-enum');
 			}
 			//
+			, _m2vPrintScaling = function() {
+				var name = 'print-page-scaling-enum', radio = 'input[name="' + name + '"]'
+				//
+				, sel = $(radio + '[value="' + _model.PRINT_SCALING_ENUM.NONE + '"]')
+				//
+				;
+				_view.enableCheckboxRadio(sel, _model.myPrinter.printScalingExt);
+
+				if (!_model.myPrinter.printScalingExt) {
+					_view.checkRadioValue(name, _model.PRINT_SCALING_ENUM.FIT);
+				}
+				_model.printPageScaling = _view.getRadioValue(name);				
+			}
+			//
 			;
 
 			// A way to set visibility of media and scaling, also in other parts of the application.
@@ -3157,6 +3171,7 @@
 				$(this).enhanceWithin();
 
 				// resolve visibility
+				_m2vPrintScaling();
 				_onChangeMediaSource($("select[data-savapage='media-type']"));
 
 				selMediaSource = $("select[data-savapage='media-source']");
@@ -3173,6 +3188,7 @@
 					}
 					i += 1;
 				});
+
 			});
 		}
 
@@ -3614,7 +3630,7 @@
 			var
 			//_super = new Base()
 			//, _self = derive(_super)
-			_this = this
+			_this = this, _model = this
 			//
 			, _LOC_AUTH_NAME = 'sp.auth.user.name'
 			//
@@ -3695,6 +3711,12 @@
 				CLASH : 2
 			};
 
+			//
+			this.PRINT_SCALING_ENUM = {
+				NONE : 'NONE',
+				FIT : 'FIT'
+			};
+
 			/*
 			 * Value: this.MediaMatchEnum.
 			 */
@@ -3704,7 +3726,7 @@
 			/*
 			 * PageScalingEnum
 			 */
-			this.printPageScaling = 'CROP';
+			this.printPageScaling = this.PRINT_SCALING_ENUM.NONE;
 
 			/**
 			 *
@@ -3945,12 +3967,10 @@
 
 						if (media && mediaWlk !== media) {
 							this.jobsMatchMedia = this.MediaMatchEnum.CLASH;
-							if (this.printPageScaling === 'CROP') {
-								html += 'sp-ipp-media-info-crop';
-							} else if (this.printPageScaling === 'EXPAND') {
-								html += 'sp-ipp-media-info-expand';
+							if (this.printPageScaling === this.PRINT_SCALING_ENUM.NONE) {
+								html += 'sp-ipp-media-info-none';
 							} else {
-								html += 'sp-ipp-media-info-shrink';
+								html += 'sp-ipp-media-info-fit';
 							}
 						} else {
 							html += 'sp-ipp-media-info-match';
@@ -4006,12 +4026,10 @@
 
 							this.jobsMatchMediaSources = this.MediaMatchEnum.CLASH;
 
-							if (this.printPageScaling === 'CROP') {
-								html += 'sp-ipp-media-info-crop';
-							} else if (this.printPageScaling === 'EXPAND') {
-								html += 'sp-ipp-media-info-expand';
+							if (this.printPageScaling === _this.PRINT_SCALING_ENUM.NONE) {
+								html += 'sp-ipp-media-info-none';
 							} else {
-								html += 'sp-ipp-media-info-shrink';
+								html += 'sp-ipp-media-info-fit';
 							}
 
 						} else {
@@ -4126,7 +4144,7 @@
 					this.setCountry(country);
 				}
 			};
-			
+
 			/**
 			 *
 			 */
@@ -5780,7 +5798,7 @@
 			_view.pages.print.onClearPrinter = function() {
 				_model.myPrinter = undefined;
 				_model.isPrintManualFeed = false;
-				_model.printPageScaling = 'CROP';
+				_model.printPageScaling = _model.PRINT_SCALING_ENUM.NONE;
 				_model.setJobsMatchMediaSources(_view);
 				_model.setJobsMatchMedia(_view);
 				_model.myPrinterOpt = [];

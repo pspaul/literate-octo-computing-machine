@@ -47,14 +47,11 @@ public class PrinterSettings extends AbstractUserPage {
 
         final String htmlRadioName = "print-page-scaling-enum";
 
-        labelledRadio("page-scaling", "-crop", htmlRadioName,
-                PageScalingEnum.CROP.toString(), false);
+        labelledRadio("page-scaling", "-none", htmlRadioName,
+                PageScalingEnum.NONE.toString(), false);
 
-        labelledRadio("page-scaling", "-expand", htmlRadioName,
-                PageScalingEnum.EXPAND.toString(), false);
-
-        labelledRadio("page-scaling", "-shrink", htmlRadioName,
-                PageScalingEnum.SHRINK.toString(), true);
+        labelledRadio("page-scaling", "-fit", htmlRadioName,
+                PageScalingEnum.FIT.toString(), false);
 
         final MarkupHelper helper = new MarkupHelper(this);
 

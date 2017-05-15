@@ -85,20 +85,16 @@ img.active {
     background: #FAF0E6 !important;
 }
 
-.sp-ipp-media-info-crop {
+.sp-ipp-media-info-none {
     color: #DC5C05;
     padding: 2px;
     border: 1px #DDDDDD solid;
 }
-.sp-ipp-media-info-expand {
+
+.sp-ipp-media-info-fit {
     color: #DC5C05;
     padding: 2px;
     border: 1px #006600 solid;
-}
-.sp-ipp-media-info-shrink {
-    color: #DC5C05;
-    padding: 2px;
-    border: 1px #006600 dotted;
 }
 
 .sp-thumbnail-cut {
