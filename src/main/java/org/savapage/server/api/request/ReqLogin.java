@@ -314,26 +314,37 @@ public final class ReqLogin extends ApiRequestMixin {
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
         /*
-         * If user was AOuth Sign-In is enabled and user was authenticated by
-         * OAuth provider.
+         * If user was AOuth Sign-In is enabled
          *
          * TODO: check if OAuth is enabled.
          */
-        if (authMode == Mode.OAUTH && session.getUser() != null) {
+        if (authMode == Mode.OAUTH) {
 
             /*
              * INVARIANT: User must exist in database.
              */
 
             // We need the JPA attached User.
-            final User userDb = userDao
-                    .findActiveUserByUserId(session.getUser().getUserId());
+            final User userDb;
+
+            if (session.getUser() == null) {
+                /*
+                 * User logged out?
+                 */
+                userDb = null;
+            } else {
+                /*
+                 * User was authenticated by OAuth provider.
+                 */
+                userDb = userDao
+                        .findActiveUserByUserId(session.getUser().getUserId());
+            }
 
             if (userDb == null) {
 
                 onLoginFailed(null);
 
-            } else {
+            } else if (userDb != null) {
 
                 final UserAuthToken token;
 
@@ -346,6 +357,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
                 onUserLoginGranted(getUserData(), session, webAppType, authMode,
                         session.getUser().getUserId(), userDb, token);
+
                 setApiResultOk();
             }
 
