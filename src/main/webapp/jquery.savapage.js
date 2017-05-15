@@ -1783,8 +1783,8 @@
 				if (_authCardIp) {
 					nMethods++;
 				}
-
-				if (nMethods < 2) {
+				
+				if ($('.sp-btn-login-mode-oauth').length === 0 && nMethods < 2) {
 					$('#sp-login-modes').hide();
 				}
 
