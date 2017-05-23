@@ -179,6 +179,7 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 			<ul data-role="listview" data-inset="true" id="file-upload-addin" />
 
 			<form wicket:id="fileUploadForm" enctype="multipart/form-data">
+
 				<ul data-role="listview" data-inset="true">
 					<li>
 						<div class="sp-txt-info sp-txt-wrap"
@@ -195,24 +196,27 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 								progressbar]]</span>
 						</wicket:enclosure>
 						<!--  -->
-						<span class="sp-txt-wrap" wicket:id="fileUploadFeedback"
-							id="file-upload-feedback" />
+						<div class="sp-txt-wrap" wicket:id="fileUploadFeedback"
+							id="file-upload-feedback" style="margin-bottom: 20px;" />
+
+						<input wicket:id="ajaxSubmitFileUpload" type="button"
+							data-corners="false" data-inline="true" data-icon="arrow-u"
+							value="button-file-upload" id="button-file-upload-submit" />
+
+						<input type="reset" data-inline="true" data-icon="delete"
+							data-corners="false" id="button-file-upload-reset"
+							value="button-file-upload-reset" />
+
 					</li>
 				</ul>
-				<p>
-					<input wicket:id="ajaxSubmitFileUpload" type="button"
-						data-corners="false" data-inline="true" data-icon="check"
-						value="button-file-upload" id="button-file-upload-submit" />
-
-					<input type="reset" data-inline="true" data-icon="delete"
-						data-corners="false" id="button-file-upload-reset"
-						value="button-file-upload-reset" />
-
-					<a href="#" data-rel="back" data-direction="reverse"
-						id="button-file-upload-back"
-						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" />
-				</p>
 			</form>
+
+			<div style="opacity: 0.8;">
+				<wicket:fragment wicket:id="next-buttons">
+					<button id="[ID]" wicket:id="next-button"
+						class="ui-btn ui-btn-inline ui-btn-icon-left" />
+				</wicket:fragment>
+			</div>
 
 		</div>
 

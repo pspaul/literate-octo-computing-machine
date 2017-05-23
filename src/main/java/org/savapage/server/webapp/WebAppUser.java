@@ -44,6 +44,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -86,6 +88,7 @@ import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.ext.ServerPluginManager;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,6 +165,74 @@ public final class WebAppUser extends AbstractWebAppPage {
                 JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION, nocache));
         renderJs(response,
                 String.format("%s%s", getSpecializedJsFileName(), nocache));
+    }
+
+    /**
+     *
+     * @author Rijk Ravestein
+     *
+     */
+    private enum UploadNextButton {
+        PRINT, PDF, INBOX;
+    }
+
+    /**
+     * We use this workaround, because <wicket:enclosure> does not work (Wicket
+     * bug?).
+     */
+    private final class UploadNextButtonView
+            extends PropertyListView<UploadNextButton> {
+
+        private static final long serialVersionUID = 1L;
+
+        /**
+         *
+         * @param id
+         * @param entryList
+         */
+        UploadNextButtonView(final String id,
+                final List<UploadNextButton> entryList) {
+            super(id, entryList);
+        }
+
+        @Override
+        protected void populateItem(final ListItem<UploadNextButton> item) {
+
+            final UploadNextButton button = item.getModelObject();
+
+            final String htmlId;
+            final String cssClass;
+            final String uiText;
+
+            switch (button) {
+            case PRINT:
+                htmlId = "sp-file-upload-print-button";
+                cssClass = "ui-icon-main-print";
+                uiText = HtmlButtonEnum.PRINT.uiText(getPage().getLocale());
+                break;
+
+            case PDF:
+                htmlId = "sp-file-upload-pdf-button";
+                cssClass = "ui-icon-main-pdf-properties";
+                uiText = "PDF";
+                break;
+
+            default:
+                htmlId = "sp-file-upload-inbox-button";
+                cssClass = "ui-icon-main-arr-return";
+                uiText = getLocalizer().getString("button-inbox", getPage());
+                break;
+            }
+
+            //
+            Label label = new Label("next-button", uiText);
+
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_ID, htmlId);
+            MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_CLASS,
+                    cssClass);
+
+            item.add(label);
+        }
     }
 
     /**
@@ -615,6 +686,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             return;
         }
 
+        //
         final String appTitle = getWebAppTitle(null);
 
         add(new Label("app-title", appTitle));
@@ -631,6 +703,16 @@ public final class WebAppUser extends AbstractWebAppPage {
         fileUploadMarkup();
 
         addFileDownloadApiPanel();
+
+        //
+        final List<UploadNextButton> nextButtons = new ArrayList<>();
+
+        nextButtons.add(UploadNextButton.PRINT);
+        nextButtons.add(UploadNextButton.PDF);
+        nextButtons.add(UploadNextButton.INBOX);
+
+        add(new UploadNextButtonView("next-buttons", nextButtons));
+
     }
 
     @Override
@@ -770,6 +852,5 @@ public final class WebAppUser extends AbstractWebAppPage {
         };
 
         form.add(ajaxButton);
-
     }
 }

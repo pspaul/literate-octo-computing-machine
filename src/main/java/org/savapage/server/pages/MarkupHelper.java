@@ -54,6 +54,7 @@ import org.savapage.server.helpers.HtmlButtonEnum;
  */
 public final class MarkupHelper {
 
+    public static final String ATTR_ID = "id";
     public static final String ATTR_TITLE = "title";
     public static final String ATTR_SRC = "src";
     public static final String ATTR_CLASS = "class";
