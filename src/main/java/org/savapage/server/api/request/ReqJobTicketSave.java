@@ -22,6 +22,7 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -102,12 +103,19 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
         final String msgKey;
 
         if (dto == null) {
+
             msgKey = "msg-outbox-changed-jobticket-none";
+
         } else {
 
-            this.saveJobTicket(dtoReq, dto);
-            notifyUser(dto.getUserId());
+            try {
+                this.saveJobTicket(dtoReq, dto);
+            } catch (IllegalStateException e) {
+                this.setApiResultText(ApiResultCodeEnum.WARN, e.getMessage());
+                return;
+            }
 
+            notifyUser(dto.getUserId());
             msgKey = "msg-outbox-changed-jobticket";
         }
 
@@ -121,6 +129,8 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
      *            The changes.
      * @param dto
      *            The current ticket.
+     * @throws IllegalStateException
+     *             When IPP option choice context is invalid.
      */
     private void saveJobTicket(final DtoReq dtoReq, final OutboxJobDto dto) {
 
@@ -132,9 +142,14 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
             dto.setCopies(dtoReq.getCopies());
         }
 
+        /*
+         * Collect options in temporary map for validation.
+         */
+        final Map<String, String> optionValuesTmp = new HashMap<>();
+
         for (final Entry<String, String> entry : dtoReq.getIppOptions()
                 .entrySet()) {
-            dto.getOptionValues().put(entry.getKey(), entry.getValue());
+            optionValuesTmp.put(entry.getKey(), entry.getValue());
         }
 
         /*
@@ -146,13 +161,25 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
         /*
          * Validate combinations.
          */
+        final JsonProxyPrinter proxyPrinter =
+                PROXY_PRINT_SERVICE.getCachedPrinter(dto.getPrinter());
 
-        // TODO
+        final String userMsg = PROXY_PRINT_SERVICE.validateCustomCostRules(
+                proxyPrinter, optionValuesTmp, getLocale());
+
+        if (userMsg != null) {
+            throw new IllegalStateException(userMsg);
+        }
+
+        /*
+         * Now options are valid, finalize them in the dto.
+         */
+        dto.setOptionValues(optionValuesTmp);
 
         /*
          * Re-calculate the costs.
          */
-        recalcCost(dto);
+        recalcCost(dto, proxyPrinter);
 
         /*
          * Update.
@@ -174,11 +201,11 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
      *
      * @param dto
      *            The {@link OutboxJobDto}.
+     * @param proxyPrinter
+     *            The {@link JsonProxyPrinter}.
      */
-    private void recalcCost(final OutboxJobDto dto) {
-
-        final JsonProxyPrinter proxyPrinter =
-                PROXY_PRINT_SERVICE.getCachedPrinter(dto.getPrinter());
+    private void recalcCost(final OutboxJobDto dto,
+            final JsonProxyPrinter proxyPrinter) {
 
         final ProxyPrintCostParms costParms =
                 new ProxyPrintCostParms(proxyPrinter);

@@ -420,8 +420,8 @@ public class OutboxAddin extends AbstractUserPage {
                     "grayscale", "accounts", "removeGraphics", "ecoPrint",
                     "extSupplier", "owner-user-name", "drm", "punch", "staple",
                     "fold", "booklet", "jobticket-media", "jobticket-copy",
-                    "jobticket-finishing-ext", "landscape", "portrait",
-                    "job-id", "job-printer" }) {
+                    "jobticket-finishing-ext", "jobticket-custom-ext",
+                    "landscape", "portrait", "job-id", "job-printer" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -511,6 +511,11 @@ public class OutboxAddin extends AbstractUserPage {
                             IppDictJobTemplateAttr.JOBTICKET_ATTR_FINISHINGS_EXT,
                             optionMap));
 
+            mapVisible.put("jobticket-custom-ext",
+                    PROXYPRINT_SERVICE.getJobTicketOptionsExtHtml(getLocale(),
+                            job.getOptionValues()));
+
+            //
             if (job.isDrm()) {
                 mapVisible.put("drm", "DRM");
             }

@@ -123,7 +123,8 @@ public class DocLogItemPanel extends Panel {
                 "print-in-denied-reason-hyphen", "print-in-denied-reason",
                 "collate", "ecoPrint", "removeGraphics", "punch", "staple",
                 "fold", "booklet", "jobticket-media", "jobticket-copy",
-                "jobticket-finishing-ext", "landscape" }) {
+                "jobticket-finishing-ext", "jobticket-custom-ext",
+                "landscape" }) {
             mapVisible.put(attr, null);
         }
 
@@ -376,8 +377,7 @@ public class DocLogItemPanel extends Panel {
                         if (jogOfset != null) {
                             mapVisible.put("jog-offset",
                                     PROXYPRINT_SERVICE.localizePrinterOptValue(
-                                            locale, ippKeywordWlk,
-                                            jogOfset));
+                                            locale, ippKeywordWlk, jogOfset));
                         }
 
                     }
@@ -509,6 +509,10 @@ public class DocLogItemPanel extends Panel {
                 PROXYPRINT_SERVICE.getJobTicketOptionsUiText(locale,
                         IppDictJobTemplateAttr.JOBTICKET_ATTR_FINISHINGS_EXT,
                         obj.getIppOptionMap()));
+
+        mapVisible.put("jobticket-custom-ext",
+                PROXYPRINT_SERVICE.getJobTicketOptionsExtHtml(getLocale(),
+                        obj.getIppOptions()));
 
         //
         if (obj.getIppOptionMap() != null

@@ -79,7 +79,7 @@ public final class PrintOutOptionsPanel extends Panel {
         for (final String attr : new String[] { "landscape", "duplex",
                 "simplex", "grayscale", "color", "punch", "staple", "fold",
                 "booklet", "jobticket-media", "jobticket-copy",
-                "jobticket-finishing-ext", }) {
+                "jobticket-finishing-ext", "jobticket-custom-ext" }) {
             mapVisible.put(attr, null);
         }
 
@@ -133,6 +133,9 @@ public final class PrintOutOptionsPanel extends Panel {
                     PROXYPRINT_SERVICE.getJobTicketOptionsUiText(getLocale(),
                             IppDictJobTemplateAttr.JOBTICKET_ATTR_FINISHINGS_EXT,
                             optionMap));
+
+            mapVisible.put("jobticket-custom-ext", PROXYPRINT_SERVICE
+                    .getJobTicketOptionsExtHtml(getLocale(), ippOptions));
 
             if (optionMap.isLandscapeJob()) {
                 mapVisible.put("landscape",

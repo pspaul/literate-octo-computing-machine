@@ -106,6 +106,8 @@ public final class DocLogItem {
     private boolean finishingFold;
     private boolean finishingBooklet;
 
+    private Map<String, String> ippOptions;
+
     private IppOptionMap ippOptionMap;
 
     private Boolean collateCopies;
@@ -531,6 +533,9 @@ public final class DocLogItem {
                                         printOut.getIppOptions());
 
                         if (ippOptions != null) {
+
+                            log.setIppOptions(ippOptions);
+
                             final IppOptionMap optionMap =
                                     new IppOptionMap(ippOptions);
                             log.setIppOptionMap(optionMap);
@@ -1276,6 +1281,14 @@ public final class DocLogItem {
 
     public void setFinishingBooklet(boolean finishingBooklet) {
         this.finishingBooklet = finishingBooklet;
+    }
+
+    public Map<String, String> getIppOptions() {
+        return ippOptions;
+    }
+
+    public void setIppOptions(Map<String, String> ippOptions) {
+        this.ippOptions = ippOptions;
     }
 
     public IppOptionMap getIppOptionMap() {

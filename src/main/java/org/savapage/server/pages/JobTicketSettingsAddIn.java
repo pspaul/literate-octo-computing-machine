@@ -24,6 +24,8 @@ package org.savapage.server.pages;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -172,7 +174,7 @@ public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
 
         final MarkupHelper helper = new MarkupHelper(this);
         helper.encloseLabel("jobticket-remark", job.getComment(),
-                        StringUtils.isNotBlank(job.getComment()));
+                StringUtils.isNotBlank(job.getComment()));
 
         // Options
         final List<String[]> options = new ArrayList<>();
@@ -248,6 +250,9 @@ public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
         thWlk = addOptionsWhenSet(optionMap, options, getLocale(),
                 IppDictJobTemplateAttr.JOBTICKET_ATTR_COPY_V_NONE, thWlk);
 
+        thWlk = addOptionsExtWhenSet(job.getOptionValues(), options,
+                getLocale(), thWlk);
+
         //
         add(new PrinterOptionsView("setting-row", options));
     }
@@ -289,4 +294,43 @@ public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
         }
         return thWlk;
     }
+
+    /**
+     * Adds Customer Ext options when present and set (not-none).
+     *
+     * @param optionMap
+     *            The chosen option map.
+     * @param options
+     *            The list to append options on.
+     * @param locale
+     *            The locale.
+     * @param thWlkStart
+     *            The header text to start with.
+     * @return The current header text.
+     */
+    private static String addOptionsExtWhenSet(
+            final Map<String, String> optionMap, final List<String[]> options,
+            final Locale locale, final String thWlkStart) {
+
+        String thWlk = thWlkStart;
+
+        for (final Entry<String, String> entry : optionMap.entrySet()) {
+
+            if (!IppDictJobTemplateAttr.isCustomExtAttr(entry.getKey())
+                    || IppDictJobTemplateAttr
+                            .isCustomExtAttrValueNone(entry.getValue())) {
+                continue;
+            }
+
+            options.add(new String[] { thWlk,
+                    String.format("%s %s",
+                            PROXY_PRINT_SERVICE.localizePrinterOpt(locale,
+                                    entry.getKey()),
+                            PROXY_PRINT_SERVICE.localizePrinterOptValue(locale,
+                                    entry.getKey(), entry.getValue())) });
+            thWlk = null;
+        }
+        return thWlk;
+    }
+
 }
