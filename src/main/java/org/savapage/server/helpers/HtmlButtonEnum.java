@@ -164,6 +164,11 @@ public enum HtmlButtonEnum {
     /**
     *
     */
+    START,
+
+    /**
+    *
+    */
     UPLOAD,
 
     /**
