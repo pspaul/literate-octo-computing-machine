@@ -662,12 +662,18 @@ public final class WebServer {
             handlerArray = new Handler[] { webAppContext };
         }
 
-        final HandlerList handlerList = new HandlerList();
-        handlerList.setHandlers(handlerArray);
+        /*
+         * Set cookies to HttpOnly.
+         */
+        webAppContext.getSessionHandler().getSessionManager()
+                .getSessionCookieConfig().setHttpOnly(true);
 
         /*
          * Set the handler(s).
          */
+        final HandlerList handlerList = new HandlerList();
+        handlerList.setHandlers(handlerArray);
+
         server.setHandler(handlerList);
 
         /*
