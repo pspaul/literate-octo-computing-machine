@@ -3,7 +3,7 @@
 	<!-- 
     +========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ..|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein.......| 
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein.......| 
     |........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ......|
     | it under the terms of the GNU Affero General Public License as ........|
@@ -14,34 +14,37 @@
 </wicket:remove>
 
 <wicket:panel>
-	<p class="sp-txt-wrap">
-		Copyright &copy; 2011-<span wicket:id="current-year"></span> by <span
-			wicket:id="app-copyright-owner" />
-	</p>
+	<div style="font-size: small;">
 
-	<table cellpadding="10">
-		<tr>
-			<td valign="top" width="64">
-				<a class="sp-plain-link" href="https://opensource.org/"
-					target="_blank"><img width="64"
-						src="/images/thirdparty/osi_logo_100X133_90ppi_0.png" /></a>
-			</td>
-			<td valign="top">
-				SavaPage is <a class="sp-plain-link" href="https://opensource.org/"
-					target="_blank">OSI Certified Open Source Software</a>, licensed
-				under the <a class="sp-plain-link"
-					href="https://www.gnu.org/licenses/agpl.html" target="_blank">GNU
-					Affero General Public License (AGPL)</a> as published by the <a
-					class="sp-plain-link" href="https://www.fsf.org/" target="_blank">Free
-					Software Foundation</a>, either version&nbsp;3 of the License, or (at
-				your option) any later version.
-			</td>
-		</tr>
-	</table>
+		<p class="sp-txt-wrap">
+			Copyright &copy; 2011-<span wicket:id="current-year"></span> by <span
+				wicket:id="app-copyright-owner" />
+		</p>
 
-	<wicket:enclosure child="translator-info">
-		<p class="sp-txt-wrap" wicket:id="translator-info" />
-	</wicket:enclosure>
+		<table cellpadding="10">
+			<tr>
+				<td valign="top" width="64">
+					<a class="sp-plain-link" href="https://opensource.org/"
+						target="_blank"><img width="64"
+							src="/images/thirdparty/osi_logo_100X133_90ppi_0.png" /></a>
+				</td>
+				<td valign="top">
+					<span wicket:id="app-name" /> is <a class="sp-plain-link"
+						href="https://opensource.org/" target="_blank">OSI Certified
+						Open Source Software</a>, licensed under the <a class="sp-plain-link"
+						href="https://www.gnu.org/licenses/agpl.html" target="_blank">GNU
+						Affero General Public License (AGPL)</a> as published by the <a
+						class="sp-plain-link" href="https://www.fsf.org/" target="_blank">Free
+						Software Foundation</a>, either version&nbsp;3 of the License, or (at
+					your option) any later version.
+				</td>
+			</tr>
+		</table>
+
+		<wicket:enclosure child="translator-info">
+			<p class="sp-txt-wrap" wicket:id="translator-info" />
+		</wicket:enclosure>
+	</div>
 
 	<p>
 		<a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini"

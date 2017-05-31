@@ -137,8 +137,8 @@ public final class AppAboutPanel extends Panel {
             }
         }
 
-        add(MarkupHelper.createEncloseLabel("translator-info", translatorInfo,
-                StringUtils.isNotBlank(translatorInfo)));
+        helper.encloseLabel("translator-info", translatorInfo,
+                StringUtils.isNotBlank(translatorInfo));
 
     }
 
