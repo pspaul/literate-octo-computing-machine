@@ -1355,10 +1355,15 @@ public final class ReqLogin extends ApiRequestMixin {
             /*
              * Make sure that any User Web App long poll for this user is
              * interrupted.
+             *
+             * Note that user home directory might not exist (yet). If it does
+             * not exists, there is no point interrupting the long poll, since
+             * we know this poll cannot be pending. See Mantis #792.
              */
-            ApiRequestHelper.interruptPendingLongPolls(userDb.getUserId(),
-                    this.getRemoteAddr());
-
+            if (USER_SERVICE.doesUserHomeDirExist(uid)) {
+                ApiRequestHelper.interruptPendingLongPolls(uid,
+                        this.getRemoteAddr());
+            }
             /*
              * Check for expired inbox jobs.
              */
