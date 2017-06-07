@@ -421,7 +421,8 @@ public class OutboxAddin extends AbstractUserPage {
                     "extSupplier", "owner-user-name", "drm", "punch", "staple",
                     "fold", "booklet", "jobticket-media", "jobticket-copy",
                     "jobticket-finishing-ext", "jobticket-custom-ext",
-                    "landscape", "portrait", "job-id", "job-printer" }) {
+                    "landscape", "portrait", "job-id", "job-completed-time",
+                    "job-printer" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -613,6 +614,14 @@ public class OutboxAddin extends AbstractUserPage {
                 labelWlk = helper.encloseLabel(WICKET_ID_JOB_STATE,
                         jobState.uiText(getLocale()), true);
                 MarkupHelper.appendLabelAttr(labelWlk, "class", cssClass);
+
+                if (printOut.getCupsCompletedTime() != null) {
+                    mapVisible.put("job-completed-time",
+                            DateUtil.localizedShortTime(
+                                    PROXYPRINT_SERVICE.getCupsDate(
+                                            printOut.getCupsCompletedTime()),
+                                    getLocale()));
+                }
 
                 //
                 final String cssClassInd;
