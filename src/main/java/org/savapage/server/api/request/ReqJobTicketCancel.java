@@ -23,6 +23,8 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
@@ -72,7 +74,8 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
             msgKey = "msg-outbox-cancelled-jobticket-none";
         } else {
             msgKey = "msg-outbox-cancelled-jobticket";
-            notifyUser(dto.getUserId());
+            final User user = notifyUser(dto.getUserId());
+            sendEmailNotification(requestingUser, dto, user);
         }
 
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);
@@ -83,8 +86,9 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
      *            The user database key
      * @throws IOException
      *             When IO error.
+     * @return The User.
      */
-    private void notifyUser(final Long userKey) throws IOException {
+    private User notifyUser(final Long userKey) throws IOException {
 
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
@@ -96,6 +100,31 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
                     ServiceContext.getTransactionDate(),
                     UserMsgIndicator.Msg.JOBTICKET_DENIED, null);
         }
+        return user;
+    }
+
+    /**
+     *
+     * @param operator
+     *            The Ticket Operator.
+     * @param dto
+     *            The Ticket.
+     * @param user
+     *            The User
+     * @return The email address or {@code null} when not send.
+     */
+    private String sendEmailNotification(final String operator,
+            final OutboxJobDto dto, final User user) {
+        /*
+         * INVARIANT: Notification must be enabled.
+         */
+        if (!ConfigManager.instance()
+                .isConfigValue(Key.JOBTICKET_NOTIFY_EMAIL_COMPLETED_ENABLE)) {
+            return null;
+        }
+
+        return JOBTICKET_SERVICE.notifyTicketCanceledByEmail(dto, operator,
+                user, ConfigManager.getDefaultLocale());
     }
 
 }
