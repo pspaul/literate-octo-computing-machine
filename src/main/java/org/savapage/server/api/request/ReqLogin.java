@@ -54,6 +54,7 @@ import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Entity;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserNumber;
+import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ServiceContext;
@@ -1360,7 +1361,7 @@ public final class ReqLogin extends ApiRequestMixin {
              * not exists, there is no point interrupting the long poll, since
              * we know this poll cannot be pending. See Mantis #792.
              */
-            if (USER_SERVICE.doesUserHomeDirExist(uid)) {
+            if (UserMsgIndicator.isSafePagesDirPresent(uid)) {
                 ApiRequestHelper.interruptPendingLongPolls(uid,
                         this.getRemoteAddr());
             }
