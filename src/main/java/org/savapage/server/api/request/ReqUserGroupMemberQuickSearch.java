@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.QuickSearchUserGroupMemberFilterDto;
 import org.savapage.core.dto.QuickSearchUserGroupMemberItemDto;
@@ -113,8 +114,21 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
 
             nUsersConsumed++;
 
-            if (dto.getAclRole() != null && !ACCESSCONTROL_SERVICE
-                    .isAuthorized(user, dto.getAclRole())) {
+            final boolean selectUser;
+
+            if (dto.getAclRole() == null) {
+                // Not restricted by role.
+                selectUser = true;
+            } else if (dto.getAclRole() == ACLRoleEnum.PRINT_DELEGATOR
+                    && user.getUserId().equals(requestingUser)) {
+                // Requesting user can be its own print delegator.
+                selectUser = true;
+            } else {
+                selectUser = ACCESSCONTROL_SERVICE.isAuthorized(user,
+                        dto.getAclRole());
+            }
+
+            if (!selectUser) {
                 continue;
             }
 
