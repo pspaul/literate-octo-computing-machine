@@ -342,7 +342,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         public boolean isDelegatedPrint() {
             return this.delegation != null
                     && (!this.delegation.getGroups().isEmpty()
-                            || !this.delegation.getUsers().isEmpty());
+                            || !this.delegation.getUsers().isEmpty()
+                            || !this.delegation.getCopies().isEmpty());
         }
     }
 

@@ -63,10 +63,19 @@ public final class PagePrintDelegation extends AbstractPage {
         }
 
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_ENABLE)) {
+
             helper.addModifyLabelAttr("radio-account-shared", "value",
                     PrintDelegationDto.DelegatorAccountEnum.SHARED.toString());
+
+            helper.encloseLabel("radio-add-copies",
+                    localized("label-add-copies"), true);
+
+            helper.encloseLabel("copies-to-add", "", true);
+
         } else {
             helper.discloseLabel("radio-account-shared");
+            helper.discloseLabel("radio-add-copies");
+            helper.discloseLabel("copies-to-add");
         }
 
         //

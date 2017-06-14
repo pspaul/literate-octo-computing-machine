@@ -66,15 +66,6 @@
 					<wicket:message key="button-remove-selected" />
 				</button>
 
-				<wicket:remove>
-					<!-- 
-					<button id="sp-print-delegation-button-save"
-						class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon">
-						<wicket:message key="button-save" />
-					</button>
-				 -->
-				</wicket:remove>
-
 				<a href="#" data-rel="back" data-direction="reverse"
 					class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
 						key="button-close" />
@@ -86,28 +77,40 @@
 	<ul id="sp-print-delegation-edit-area" data-role="listview"
 		data-inset="true" class="ui-mini">
 		<li>
-			<fieldset data-role="controlgroup" data-type="horizontal">
+			<table cellpadding="0" border="0">
+				<tr>
+					<td>
+						<fieldset data-role="controlgroup" data-type="horizontal">
 
-				<label for="sp-print-delegation-edit-radio-add-groups">
-					<wicket:message key="label-add-groups" />
-				</label>
-				<input type="radio" name="sp-print-delegation-edit-radio"
-					id="sp-print-delegation-edit-radio-add-groups" checked />
+							<label for="sp-print-delegation-edit-radio-add-groups">
+								<wicket:message key="label-add-groups" />
+							</label>
+							<input type="radio" name="sp-print-delegation-edit-radio"
+								id="sp-print-delegation-edit-radio-add-groups" checked />
 
-				<label for="sp-print-delegation-edit-radio-add-users">
-					<wicket:message key="label-add-users" />
-				</label>
-				<input type="radio" name="sp-print-delegation-edit-radio"
-					id="sp-print-delegation-edit-radio-add-users" />
+							<label for="sp-print-delegation-edit-radio-add-users">
+								<wicket:message key="label-add-users" />
+							</label>
+							<input type="radio" name="sp-print-delegation-edit-radio"
+								id="sp-print-delegation-edit-radio-add-users" />
 
-				<wicket:remove>
-					<!-- 
-        <label for="sp-print-delegation-edit-radio-edit"><wicket:message key="label-edit"/></label>
-        <input type="radio" name="sp-print-delegation-edit-radio" id="sp-print-delegation-edit-radio-edit" />
--->
-				</wicket:remove>
-
-			</fieldset>
+							<wicket:enclosure child="radio-add-copies">
+								<label for="sp-print-delegation-edit-radio-add-copies"
+									id="sp-print-delegation-edit-radio-add-copies-label"
+									wicket:id="radio-add-copies" />
+								<input type="radio" name="sp-print-delegation-edit-radio"
+									id="sp-print-delegation-edit-radio-add-copies" />
+							</wicket:enclosure>
+						</fieldset>
+					</td>
+					<wicket:enclosure child="copies-to-add">
+						<td style="max-width: 70px">
+							<input type="number" id="sp-print-delegation-copies-to-add"
+								wicket:id="copies-to-add" value="1" min="1" />
+						</td>
+					</wicket:enclosure>
+				</tr>
+			</table>
 
 			<table width="100%" cellpadding="5">
 				<tr>

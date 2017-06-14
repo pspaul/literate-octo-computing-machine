@@ -47,7 +47,7 @@
 			//
 			, _IND_SELECTED = '+', _IND_DESELECTED = '&nbsp;', _QS_MAX_RESULTS = 5
 			//
-			, _CLASS_GROUP = '_sp_group', _CLASS_USER = '_sp_user'
+			, _CLASS_GROUP = '_sp_group', _CLASS_USER = '_sp_user', _CLASS_COPIES = '_sp_copies'
 			//
 			, _CLASS_SELECTED_IND = '_sp_selected', _CLASS_SELECTED_TXT = '_sp_selected_txt'
 			//
@@ -59,20 +59,21 @@
 			//
 			, _nSelectedGroups, _nSelectedUsers
 			//
-			, _delegatorGroups = {}, _delegatorUsers = {}
+			, _delegatorGroups = {}, _delegatorUsers = {}, _delegatorCopies = {}
 			//
-			, _nDelegatorGroups = 0, _nDelegatorUsers = 0, _nDelegatorGroupMembers = 0
+			, _nDelegatorGroups = 0, _nDelegatorUsers = 0, _nDelegatorGroupMembers = 0, _nDelegatorCopies = 0
 			//
-			, _delegatorGroupsSelected, _delegatorUsersSelected
+			, _delegatorGroupsSelected, _delegatorUsersSelected, _delegatorCopiesSelected
 			//
-			, _nSelectedDelegatorGroups, _nSelectedDelegatorUsers
+			, _nSelectedDelegatorGroups, _nSelectedDelegatorUsers, _nSelectedDelegatorCopies
 
 			//----------------------------------------------------------------
 			, _delegationModel = function() {
 				return {
 					name : 'a name',
 					groups : _delegatorGroups,
-					users : _delegatorUsers
+					users : _delegatorUsers,
+					copies : _delegatorCopies
 				};
 			}
 			//----------------------------------------------------------------
@@ -120,14 +121,9 @@
 			}
 			//
 			, _setVisibilityDelegatorsEdit = function() {
-				var selectedRows = _nSelectedDelegatorGroups + _nSelectedDelegatorUsers > 0;
+				var selectedRows = _nSelectedDelegatorGroups + _nSelectedDelegatorUsers + _nSelectedDelegatorCopies > 0;
 
-				/*
-				*  For future use: when #sp-print-delegation-edit-radio-edit is present.
-				*/
-				//_view.enableCheckboxRadio($("#sp-print-delegation-edit-radio-edit"), selectedRows);
-
-				_view.enable($('.sp-print-delegator-rows'), _nDelegatorGroups + _nDelegatorUsers > 0);
+				_view.enable($('.sp-print-delegator-rows'), _nDelegatorGroups + _nDelegatorUsers + _nDelegatorCopies > 0);
 				_view.enable($('.sp-print-delegator-rows-selected'), selectedRows);
 				_view.enable($('.sp-print-delegation-mode-edit'), selectedRows);
 				_view.enable($('#sp-print-delegation-button-remove-selected'), selectedRows);
@@ -136,8 +132,12 @@
 			, _initDelegatorSelection = function() {
 				_nSelectedDelegatorGroups = 0;
 				_nSelectedDelegatorUsers = 0;
+				_nSelectedDelegatorCopies = 0;
+
 				_delegatorGroupsSelected = {};
 				_delegatorUsersSelected = {};
+				_delegatorCopiesSelected = {};
+
 				_setVisibilityDelegatorsEdit();
 			}
 			//----------------------------------------------------------------
@@ -149,6 +149,10 @@
 				return $('#sp-print-delegation-edit-radio-add-users').is(':checked');
 			}
 			//----------------------------------------------------------------
+			, _isModeAddCopies = function() {
+				return $('#sp-print-delegation-edit-radio-add-copies').is(':checked');
+			}
+			//----------------------------------------------------------------
 			, _setVisibility = function() {
 				var showButtonAdd, enableButtonAdd, showAddGroups, showAddUsers, showEditPanel;
 
@@ -156,14 +160,18 @@
 					showAddGroups = true;
 					showButtonAdd = true;
 					enableButtonAdd = _nSelectedGroups > 0;
-
 				} else if (_isModeAddUsers()) {
 					showAddGroups = true;
 					showAddUsers = true;
 					showButtonAdd = true;
 					enableButtonAdd = _nSelectedUsers > 0;
+				} else if (_isModeAddCopies()) {
+					showAddGroups = false;
+					showAddUsers = false;
+					showButtonAdd = true;
+					enableButtonAdd = true;
 				} else {
-					showEditPanel = _nSelectedDelegatorGroups + _nSelectedDelegatorUsers > 0;
+					showEditPanel = _nSelectedDelegatorGroups + _nSelectedDelegatorUsers + _nSelectedDelegatorCopies > 0;
 				}
 
 				_view.visible($('.sp-print-delegation-mode-add'), showAddGroups || showAddUsers);
@@ -319,18 +327,18 @@
 				target.html(html).filterable("refresh");
 			}
 			//----------------------------------------------------------------
-			, _appendDelegatorRow = function(tbody, item, account, isGroup) {
-				var html;
+			, _appendDelegatorRow = function(tbody, item, account, cssClass) {
+				var html, isGroup = cssClass === _CLASS_GROUP, isCopies = cssClass === _CLASS_COPIES;
 
 				html = '<tr class="';
-				html += isGroup ? _CLASS_GROUP : _CLASS_USER;
+				html += cssClass;
 				html += '" data-savapage="' + item.key + '">';
 				html += '<th><span class="' + _CLASS_SELECTED_TXT + '">&nbsp;</span>&nbsp;';
 				html += '<img src="/famfamfam-silk/';
-				html += isGroup ? 'group.png' : 'user_gray.png';
+				html += isGroup ? 'group.png' : isCopies ? 'tag_green.png' : 'user_gray.png';
 				html += '"/>&nbsp;&nbsp;&nbsp;';
 
-				if (isGroup) {
+				if (isGroup || isCopies) {
 					html += item.text;
 				} else {
 					html += item.fullName;
@@ -339,7 +347,7 @@
 					}
 				}
 				html += '</th>';
-				html += '<td>' + ( isGroup ? item.userCount : 1) + '</td>';
+				html += '<td>' + (isGroup || isCopies ? item.userCount : 1) + '</td>';
 				html += '<td><img src="/famfamfam-silk/';
 
 				if (account.accountType === _ACCOUNT_ENUM_GROUP) {
@@ -347,7 +355,7 @@
 				} else if (account.accountType === _ACCOUNT_ENUM_USER) {
 					html += 'user_gray.png';
 				} else {
-					html += "tag_green.png";
+					html += 'tag_green.png';
 				}
 				html += '"/>';
 
@@ -371,7 +379,7 @@
 					if (!_delegatorGroups[item.key]) {
 
 						_delegatorGroups[item.key] = _createModelAccount(account, item.userCount);
-						_appendDelegatorRow(tbody, item, account, true);
+						_appendDelegatorRow(tbody, item, account, _CLASS_GROUP);
 						_nDelegatorGroups++;
 						_nDelegatorGroupMembers += item.userCount;
 					}
@@ -389,12 +397,36 @@
 					if (!_delegatorUsers[item.key]) {
 
 						_delegatorUsers[item.key] = _createModelAccount(account, 1);
-						_appendDelegatorRow(tbody, item, account, false);
+						_appendDelegatorRow(tbody, item, account, _CLASS_USER);
 						_nDelegatorUsers++;
 					}
 				});
 
 				_revertQuickUserSelected();
+				_setVisibilityDelegatorsEdit();
+			}
+			//----------------------------------------------------------------
+			, _onAddCopies = function() {
+				var selCopies = $('#sp-print-delegation-copies-to-add')
+				//
+				, userCount = parseInt(selCopies.val(), 10)
+				//
+				, tbody = _getDelegatorRowBody(), account = _getAccount()
+				//
+				, item = {
+					key : account.id,
+					text : $('#sp-print-delegation-edit-radio-add-copies-label').text(),
+					userCount : userCount
+				};
+
+				if (!_delegatorCopies[item.key]) {
+					_delegatorCopies[item.key] = _createModelAccount(account, userCount);
+					_appendDelegatorRow(tbody, item, account, _CLASS_COPIES);
+					_nDelegatorCopies += userCount;
+				}
+
+				selCopies.val(1);
+				
 				_setVisibilityDelegatorsEdit();
 			}
 			//----------------------------------------------------------------
@@ -483,6 +515,8 @@
 				//
 				, isGroup = selection.hasClass(_CLASS_GROUP)
 				//
+				, isCopies = selection.hasClass(_CLASS_COPIES)
+				//
 				, dbkey = selection.attr('data-savapage')
 				//
 				;
@@ -494,6 +528,16 @@
 					} else {
 						_nSelectedDelegatorGroups++;
 						_delegatorGroupsSelected[dbkey] = _delegatorGroups[dbkey];
+						span.html(_IND_SELECTED);
+					}
+				} else if (isCopies) {
+					if (_delegatorCopiesSelected[dbkey]) {
+						_nSelectedDelegatorCopies--;
+						delete _delegatorCopiesSelected[dbkey];
+						span.html(_IND_DESELECTED);
+					} else {
+						_nSelectedDelegatorCopies++;
+						_delegatorCopiesSelected[dbkey] = _delegatorCopies[dbkey];
 						span.html(_IND_SELECTED);
 					}
 				} else {
@@ -534,6 +578,10 @@
 						_nDelegatorGroupMembers -= _delegatorGroups[dbkey].userCount;
 						delete _delegatorGroups[dbkey];
 						$(this).remove();
+					} else if (_delegatorCopiesSelected[dbkey]) {
+						_nDelegatorCopies -= _delegatorCopies[dbkey].userCount;
+						delete _delegatorCopies[dbkey];
+						$(this).remove();
 					} else if (_delegatorUsersSelected[dbkey]) {
 						_nDelegatorUsers--;
 						delete _delegatorUsers[dbkey];
@@ -545,17 +593,27 @@
 			}
 			//
 			, _onChangeEditMode = function(id) {
+				var isCopies = id === 'sp-print-delegation-edit-radio-add-copies';
 
-				if (id === 'sp-print-delegation-edit-radio-add-groups') {
+				if (isCopies) {
+
+					_view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_SHARED);
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), false);
+
+				} else if (id === 'sp-print-delegation-edit-radio-add-groups') {
 
 					_view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
 
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), true);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), true);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
 
 				} else if (id === 'sp-print-delegation-edit-radio-add-users') {
 
 					_view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
+					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), true);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), false);
 
@@ -577,11 +635,13 @@
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), true);
 					_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
 				}
+
+				_view.visible($('#sp-print-delegation-copies-to-add'), isCopies);
 			}
 			//
 			, _updateModel = function() {
 				_model.printDelegation = _delegationModel();
-				_model.printDelegationCopies = _nDelegatorGroupMembers + _nDelegatorUsers;
+				_model.printDelegationCopies = _nDelegatorGroupMembers + _nDelegatorUsers + _nDelegatorCopies;
 			}
 			//
 			;
@@ -625,6 +685,8 @@
 				$('#sp-print-delegation-button-add').click(function() {
 					if (_isModeAddGroups()) {
 						_onAddGroups();
+					} else if (_isModeAddCopies()) {
+						_onAddCopies();
 					} else {
 						_onAddUsers();
 					}
