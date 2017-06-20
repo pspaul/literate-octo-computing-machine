@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.UserGroupMemberDao;
+import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.QuickSearchFilterUserGroupDto;
@@ -65,16 +66,14 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
     }
 
     @Override
-    protected void
-            onRequest(final String requestingUser, final User lockedUser)
-                    throws IOException {
+    protected void onRequest(final String requestingUser, final User lockedUser)
+            throws IOException {
 
         final UserGroupMemberDao groupMemberDao =
                 ServiceContext.getDaoContext().getUserGroupMemberDao();
 
-        final QuickSearchFilterUserGroupDto dto =
-                AbstractDto.create(QuickSearchFilterUserGroupDto.class,
-                        this.getParmValue("dto"));
+        final QuickSearchFilterUserGroupDto dto = AbstractDto.create(
+                QuickSearchFilterUserGroupDto.class, this.getParmValue("dto"));
 
         final List<QuickSearchItemDto> items = new ArrayList<>();
 
@@ -88,20 +87,22 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
          * Since we locally filter out reserved groups we need to retrieve more
          * results.
          */
-        final int maxResult =
-                dto.getMaxResults().intValue()
-                        + ReservedUserGroupEnum.values().length;
+        final int maxResult = dto.getMaxResults().intValue()
+                + ReservedUserGroupEnum.values().length;
 
         final UserGroupDao userGroupDao =
                 ServiceContext.getDaoContext().getUserGroupDao();
 
-        final List<UserGroup> userGroupList =
-                userGroupDao.getListChunk(filter, null,
-                        Integer.valueOf(maxResult), UserGroupDao.Field.NAME,
-                        true);
+        final List<UserGroup> userGroupList = userGroupDao.getListChunk(filter,
+                null, Integer.valueOf(maxResult), UserGroupDao.Field.NAME,
+                true);
 
         final UserGroupMemberDao.GroupFilter groupFilter =
                 new UserGroupMemberDao.GroupFilter();
+
+        if (dto.getAclRole() == ACLRoleEnum.PRINT_DELEGATOR) {
+            groupFilter.setDisabledPrintOut(Boolean.FALSE);
+        }
 
         int i = 0;
 
@@ -114,15 +115,20 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
                 continue;
             }
 
+            groupFilter.setGroupId(group.getId());
+            final long userCount = groupMemberDao.getUserCount(groupFilter);
+
+            if (userCount == 0) {
+                continue;
+            }
+
             final QuickSearchUserGroupItemDto itemWlk =
                     new QuickSearchUserGroupItemDto();
 
             itemWlk.setKey(group.getId());
             itemWlk.setText(group.getGroupName());
 
-            groupFilter.setGroupId(group.getId());
-            itemWlk.setUserCount(groupMemberDao.getUserCount(groupFilter));
-
+            itemWlk.setUserCount(userCount);
             items.add(itemWlk);
 
             if (++i < dto.getMaxResults()) {
