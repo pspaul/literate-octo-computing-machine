@@ -76,7 +76,7 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 -->
 	</wicket:remove>
 	<div data-role="dialog" id="page-zero" style="display: none;">
-		<wicket:fragment wicket:id="zero-page-panel"></wicket:fragment>
+		<wicket:panel wicket:id="zero-page-panel"/>
 	</div>
 
 	<wicket:remove>
@@ -159,7 +159,7 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
      See FileDownloadApiPanel     
      ================================================================== -->
 	</wicket:remove>
-	<wicket:fragment wicket:id="file-download-api-panel"></wicket:fragment>
+	<wicket:panel wicket:id="file-download-api-panel"/>
 
 	<wicket:remove>
 		<!-- ==============================================================  
@@ -212,10 +212,10 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 			</form>
 
 			<div style="opacity: 0.8;">
-				<wicket:fragment wicket:id="next-buttons">
+				<wicket:panel wicket:id="next-buttons">
 					<button id="[ID]" wicket:id="next-button"
 						class="ui-btn ui-btn-inline ui-btn-icon-left" />
-				</wicket:fragment>
+				</wicket:panel>
 			</div>
 
 		</div>

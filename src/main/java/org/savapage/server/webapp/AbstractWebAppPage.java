@@ -21,7 +21,6 @@
  */
 package org.savapage.server.webapp;
 
-import java.io.File;
 import java.util.Locale;
 import java.util.Set;
 
@@ -36,7 +35,6 @@ import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.VersionInfo;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
@@ -372,8 +370,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
      *            The "nocache" string.
      *
      */
-    protected abstract void renderWebAppTypeJsFiles(
-            final IHeaderResponse response, final String nocache);
+    protected abstract void renderWebAppTypeJsFiles(IHeaderResponse response,
+            String nocache);
 
     /**
      * Renders a JavaScript file.
@@ -393,7 +391,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
      * files.
      * <p>
      * This is needed so the web browser is triggered to reload the JS and CSS
-     * files when the {@link VersionInfo#VERSION_D_BUILD} value changes.
+     * files when there is a new Web App version.
      * </p>
      *
      * @return the URL parameter.
@@ -450,8 +448,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
     /**
      * @param webAppType
      *            The {@link WebAppTypeEnum}.
-     * @return The jQuery Mobile Theme CSS {@link File}, or {@code null} when
-     *         not applicable.
+     * @return The jQuery Mobile Theme CSS file, or {@code null} when not
+     *         applicable.
      */
     private String getCssThemeFileName(final WebAppTypeEnum webAppType) {
 
@@ -636,7 +634,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
             response.render(
                     WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_JQPLOT_JS));
 
-            for (String plugin : new String[] { "jqplot.highlighter.js",
+            for (String plugin : new String[] {"jqplot.highlighter.js",
                     "jqplot.pieRenderer.js", "jqplot.json2.js",
                     "jqplot.logAxisRenderer.js",
                     "jqplot.dateAxisRenderer.js" }) {
@@ -683,9 +681,10 @@ public abstract class AbstractWebAppPage extends AbstractPage
      *
      */
     protected final void addFileDownloadApiPanel() {
-        FileDownloadApiPanel apiPanel = new FileDownloadApiPanel(
-                "file-download-api-panel", this.getWebAppType());
+        FileDownloadApiPanel apiPanel =
+                new FileDownloadApiPanel("file-download-api-panel");
         add(apiPanel);
+        apiPanel.populate(this.getWebAppType());
     }
 
     /**
@@ -694,8 +693,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
      */
     protected final void addZeroPagePanel(final WebAppTypeEnum webAppType) {
         final ZeroPagePanel zeroPanel = new ZeroPagePanel("zero-page-panel");
-        add(zeroPanel);
         zeroPanel.populate(webAppType, this.getPageParameters());
+        add(zeroPanel);
     }
 
 }

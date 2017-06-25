@@ -41,14 +41,17 @@ public final class FileDownloadApiPanel extends Panel {
      *
      * @param id
      *            The Wicket ID.
+     */
+    public FileDownloadApiPanel(final String id) {
+        super(id);
+    }
+
+    /**
+     *
      * @param webAppType
      *            The {@link WebAppTypeEnum} context.
      */
-    public FileDownloadApiPanel(final String id,
-            final WebAppTypeEnum webAppType) {
-
-        super(id);
-
+    public void populate(final WebAppTypeEnum webAppType) {
         final MarkupHelper helper = new MarkupHelper(this);
 
         MarkupHelper.modifyLabelAttr(
@@ -56,5 +59,4 @@ public final class FileDownloadApiPanel extends Panel {
                         JsonApiDict.PARM_WEBAPP_TYPE),
                 "value", webAppType.toString());
     }
-
 }

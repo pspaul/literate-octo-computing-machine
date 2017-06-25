@@ -53,7 +53,7 @@
 				</wicket:enclosure>
 			</div>
 
-			<wicket:fragment wicket:id="quicksearch-printer" />
+			<wicket:panel wicket:id="quicksearch-printer" />
 
 			<ul class="printer-selected" data-role="listview" data-inset="true">
 				<li class="ui-li-has-icon sp-txt-wrap" data-icon="gear">
@@ -125,9 +125,9 @@
 						<option value="0" selected><wicket:message
 								key="account-type-personal" /></option>
 						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
-							<wicket:fragment wicket:id="print-shared-account-option">
+							<wicket:panel wicket:id="print-shared-account-option">
 								<option value="the-key" wicket:id="option"></option>
-							</wicket:fragment>
+							</wicket:panel>
 						</optgroup>
 					</select>
 
@@ -276,7 +276,7 @@
 						</legend>
 						<fieldset data-role="controlgroup" data-mini="true"
 							id="delete-pages-after-print-scope">
-							<wicket:fragment wicket:id="delete-pages-after-print-scope" />
+							<wicket:panel wicket:id="delete-pages-after-print-scope" />
 						</fieldset>
 					</div>
 				</div>

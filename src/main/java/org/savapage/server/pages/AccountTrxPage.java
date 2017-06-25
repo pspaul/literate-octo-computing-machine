@@ -161,11 +161,9 @@ public class AccountTrxPage extends AbstractListPage {
             item.add(new Label("trxActor", accountTrx.getTransactedBy()));
 
             //
-            final String currencySymbol =
-                    String.format("%s ",
-                            CurrencyUtil.getCurrencySymbol(
-                                    accountTrx.getCurrencyCode(),
-                                    getSession().getLocale()));
+            final String currencySymbol = String.format("%s ",
+                    CurrencyUtil.getCurrencySymbol(accountTrx.getCurrencyCode(),
+                            getSession().getLocale()));
 
             final String amount;
             final String balance;
@@ -535,7 +533,9 @@ public class AccountTrxPage extends AbstractListPage {
             item.add(createVisibleLabel(printOutInfo.length() > 0, "printOut",
                     printOutInfo.toString()));
 
-            if (printOut != null) {
+            if (printOut == null) {
+                helper.discloseLabel("printout-options");
+            } else {
                 final PrintOutOptionsPanel panel =
                         new PrintOutOptionsPanel("printout-options");
                 panel.populate(printOut);

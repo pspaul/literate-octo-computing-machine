@@ -2,8 +2,8 @@
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -89,7 +89,7 @@
 				</tr>
 			</wicket:enclosure>
 
-			<wicket:fragment wicket:id="media-source-row">
+			<wicket:panel wicket:id="media-source-row">
 				<tr>
 					<td colspan="5">
 						<hr />
@@ -126,13 +126,13 @@
 						style="vertical-align: middle; horizontal-align: right;">
 						<select id="" data-native-menu="false" class="ui-mini">
 							<option value=""><wicket:message key="media-size" /></option>
-							<wicket:fragment wicket:id="media-source-media-select">
+							<wicket:panel wicket:id="media-source-media-select">
 								<option wicket:id="media-source-media" />
-							</wicket:fragment>
+							</wicket:panel>
 						</select>
 					</td>
 				</tr>
-			</wicket:fragment>
+			</wicket:panel>
 
 			<wicket:enclosure child="media-source-manual-display-name">
 				<tr>

@@ -2,8 +2,8 @@
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -20,9 +20,9 @@
 <p>
 	<select class="sp-select-user-groups" id="sp-select-user-groups-to-add"
 		multiple data-role="none" size="10">
-		<wicket:fragment wicket:id="groups-add">
+		<wicket:panel wicket:id="groups-add">
 			<option wicket:id="option-add" />
-		</wicket:fragment>
+		</wicket:panel>
 	</select>
 <p />
 <h4>
@@ -33,8 +33,8 @@
 	<select class="sp-select-user-groups"
 		id="sp-select-user-groups-to-remove" multiple data-role="none"
 		size="10">
-		<wicket:fragment wicket:id="groups-remove">
+		<wicket:panel wicket:id="groups-remove">
 			<option wicket:id="option-remove" />
-		</wicket:fragment>
+		</wicket:panel>
 	</select>
 </p>

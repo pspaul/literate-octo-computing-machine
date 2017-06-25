@@ -19,7 +19,7 @@
 
 <div class="ui-field-contain ui-mini">
 	<fieldset data-role="controlgroup">
-		<wicket:fragment wicket:id="printer-radio">
+		<wicket:panel wicket:id="printer-radio">
 			<div class="sp-jobticket-redirect-printer-item" tabindex="0">
 				<label for="the-id" wicket:id="label" tabindex="" />
 				<input type="radio" name="sp-jobticket-redirect-printer"
@@ -36,9 +36,9 @@
 					<div class="sp-redirect-printer-media-source"
 						style="display: none;" tabindex="-1">
 						<select>
-							<wicket:fragment wicket:id="media-source">
+							<wicket:panel wicket:id="media-source">
 								<option value="some-tray" wicket:id="choice" />
-							</wicket:fragment>
+							</wicket:panel>
 						</select>
 					</div>
 				</wicket:enclosure>
@@ -46,9 +46,9 @@
 					<div class="sp-redirect-printer-output-bin" style="display: none;"
 						tabindex="-1">
 						<select data-icon="bars">
-							<wicket:fragment wicket:id="output-bin">
+							<wicket:panel wicket:id="output-bin">
 								<option value="some-bin" wicket:id="choice" />
-							</wicket:fragment>
+							</wicket:panel>
 						</select>
 					</div>
 				</wicket:enclosure>
@@ -56,14 +56,14 @@
 					<div class="sp-redirect-printer-jog-offset" style="display: none;"
 						tabindex="-1">
 						<select data-icon="bullets">
-							<wicket:fragment wicket:id="jog-offset">
+							<wicket:panel wicket:id="jog-offset">
 								<option value="some-offset" wicket:id="choice" />
-							</wicket:fragment>
+							</wicket:panel>
 						</select>
 					</div>
 				</wicket:enclosure>
 			</div>
-		</wicket:fragment>
+		</wicket:panel>
 	</fieldset>
 </div>
 <br />

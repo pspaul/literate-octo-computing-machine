@@ -80,10 +80,9 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
         final String appTitle = getWebAppTitle(
                 getLocalizer().getString("webapp-title-suffix", this));
 
-        addZeroPagePanel(WebAppTypeEnum.JOBTICKETS);
-
         add(new Label("app-title", appTitle));
 
+        addZeroPagePanel(WebAppTypeEnum.JOBTICKETS);
         addFileDownloadApiPanel();
     }
 

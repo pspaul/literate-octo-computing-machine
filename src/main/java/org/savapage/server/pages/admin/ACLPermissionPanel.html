@@ -2,8 +2,8 @@
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -15,7 +15,7 @@
 
 <wicket:panel>
 
-	<wicket:fragment wicket:id="enum-oids">
+	<wicket:panel wicket:id="enum-oids">
 
 		<div class="sp-acl-oid">
 
@@ -26,29 +26,29 @@
 			<div class="sp-acl-oid-perms" style="margin-left: 30px;">
 
 				<fieldset data-role="controlgroup" class="sp-acl-oid-perms-roles">
-					<wicket:fragment wicket:id="enum-perms">
+					<wicket:panel wicket:id="enum-perms">
 						<label wicket:id="label-radio" for="[ID]" />
 						<input wicket:id="input-radio" type="radio" name="[NAME]"
 							id="[ID]" />
-					</wicket:fragment>
+					</wicket:panel>
 				</fieldset>
 				<div class="sp-acl-oid-perms-reader">
-					<wicket:fragment wicket:id="enum-perms-reader">
+					<wicket:panel wicket:id="enum-perms-reader">
 						<label wicket:id="label-checkbox" for="[ID]" />
 						<input wicket:id="input-checkbox" type="checkbox" id="[ID]" />
-					</wicket:fragment>
+					</wicket:panel>
 				</div>
 				<div class="sp-acl-oid-perms-editor">
-					<wicket:fragment wicket:id="enum-perms-editor">
+					<wicket:panel wicket:id="enum-perms-editor">
 						<label wicket:id="label-checkbox" for="[ID]" />
 						<input wicket:id="input-checkbox" type="checkbox" id="[ID]" />
-					</wicket:fragment>
+					</wicket:panel>
 				</div>
 
 			</div>
 		</div>
 
-	</wicket:fragment>
+	</wicket:panel>
 
 
 </wicket:panel>

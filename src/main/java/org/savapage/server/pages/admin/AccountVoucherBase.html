@@ -2,8 +2,8 @@
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -37,9 +37,9 @@
 				<option value="0">-
 					<wicket:message key="option-all" /> -
 				</option>
-				<wicket:fragment wicket:id="option-list-batch">
+				<wicket:panel wicket:id="option-list-batch">
 					<option value="the-key" wicket:id="option-batch"></option>
-				</wicket:fragment>
+				</wicket:panel>
 			</select>
 		</div>
 
@@ -64,7 +64,7 @@
 						</label>
 						<select tabindex="-1" id="sp-voucher-card-print-format"
 							data-native-menu="false">
-							<wicket:fragment wicket:id="voucher-card-format-options" />
+							<wicket:panel wicket:id="voucher-card-format-options" />
 						</select>
 					</div>
 
