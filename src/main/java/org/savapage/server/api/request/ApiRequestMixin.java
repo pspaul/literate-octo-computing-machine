@@ -349,6 +349,21 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     }
 
     /**
+     * Creates API result with a single text message.
+     *
+     * @param code
+     *            The {@link ApiResultCodeEnum}.
+     * @param text
+     *            The message text
+     * @return the {@code out} parameter.
+     */
+    public static Map<String, Object> createApiResultText(
+            final ApiResultCodeEnum code, final String text) {
+        final Map<String, Object> out = new HashMap<>();
+        return createApiResult(out, code, "msg-single-parm", text);
+    }
+
+    /**
      * Sets the API result with a single text message.
      *
      * @param code

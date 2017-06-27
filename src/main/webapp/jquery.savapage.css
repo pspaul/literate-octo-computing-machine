@@ -2,7 +2,7 @@
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -229,6 +229,10 @@
 
 .sp-font-monospace {
 	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+}
+
+.sp-dropzone-hover {
+	border: 5px #74b042 dashed !important;
 }
 
 /* end-of-file */

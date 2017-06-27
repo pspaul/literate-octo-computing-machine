@@ -179,6 +179,7 @@ import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.webapp.WebAppTypeEnum;
+import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -660,11 +661,9 @@ public final class JsonApiServer extends AbstractPage {
                 tempExportFile.delete();
             }
 
-            requestHandler =
-                    new TextRequestHandler("text/html", "UTF-8",
-                            "<h2 style='color: red;'>"
-                                    + e.getClass().getSimpleName() + "</h2><p>"
-                                    + e.getMessage() + "</p>");
+            requestHandler = new TextRequestHandler("text/html", "UTF-8",
+                    "<h2 style='color: red;'>" + e.getClass().getSimpleName()
+                            + "</h2><p>" + e.getMessage() + "</p>");
         }
 
         if (requestHandler != null) {
@@ -4430,6 +4429,10 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("proxyPrintClearPrinter",
                 cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_PRINTER));
 
+        //
+        userData.put("webPrintEnabled",
+                WebPrintHelper.isWebPrintEnabled(this.getRemoteAddr()));
+        //
         return userData;
     }
 

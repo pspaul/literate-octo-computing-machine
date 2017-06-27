@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -77,6 +77,7 @@ import org.savapage.server.webapp.WebAppJobTickets;
 import org.savapage.server.webapp.WebAppPos;
 import org.savapage.server.webapp.WebAppTypeEnum;
 import org.savapage.server.webapp.WebAppUser;
+import org.savapage.server.webprint.DropZoneResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,6 +134,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * Used in this class to set mountPage().
      */
     private static final String MOUNT_PATH_API = "/api";
+
+    /**
+     * Mount path for WenPrint drop zone.
+     */
+    public static final String MOUNT_PATH_UPLOAD_WEBPRINT = "/upload/webprint";
 
     /**
      *
@@ -561,6 +567,12 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              * CLASSPATH.
              */
             WicketWebjars.install(this);
+
+            /*
+             *
+             */
+            mountResource(MOUNT_PATH_UPLOAD_WEBPRINT,
+                    new DropZoneResourceReference("webprint"));
 
             /*
              * Mount a page class to a given path

@@ -62,19 +62,13 @@ import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.crypto.OneTimeAuthToken;
-import org.savapage.core.dao.enums.DocLogProtocolEnum;
-import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.doc.DocContent;
-import org.savapage.core.doc.DocContentTypeEnum;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.print.server.DocContentPrintException;
-import org.savapage.core.print.server.DocContentPrintReq;
-import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.users.conf.UserAliasList;
@@ -90,6 +84,7 @@ import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,12 +109,6 @@ public final class WebAppUser extends AbstractWebAppPage {
     /**
      *
      */
-    private static final QueueService QUEUE_SERVICE =
-            ServiceContext.getServiceFactory().getQueueService();
-
-    /**
-     *
-     */
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
 
@@ -137,12 +126,21 @@ public final class WebAppUser extends AbstractWebAppPage {
     /**
      *
      */
-    private Long maxUploadMb;
+    private Bytes maxUploadSize;
 
+    /**
+     *
+     * @return The font family.
+     */
     public InternalFontFamilyEnum getSelectedUploadFont() {
         return selectedUploadFont;
     }
 
+    /**
+     *
+     * @param selectedUploadFont
+     *            The selected font family.
+     */
     public void setSelectedUploadFont(
             final InternalFontFamilyEnum selectedUploadFont) {
         this.selectedUploadFont = selectedUploadFont;
@@ -245,8 +243,9 @@ public final class WebAppUser extends AbstractWebAppPage {
         /**
          *
          * @param id
+         *            The wicket id.
          */
-        public MyFileUploadForm(String id) {
+        MyFileUploadForm(final String id) {
             super(id);
 
         }
@@ -340,19 +339,25 @@ public final class WebAppUser extends AbstractWebAppPage {
         }
 
         /**
+         * Handles the uploaded file.
          *
          * @param originatorIp
+         *            The client IP address.
          * @param uploadedFile
+         *            The uploaded file.
+         *
          * @throws DocContentPrintException
+         *             When conversion to PDF failed.
          * @throws IOException
+         *             When IO error.
          * @throws UnavailableException
+         *             When service is unavailable.
          */
         private void handleFileUpload(final String originatorIp,
                 final FileUpload uploadedFile) throws DocContentPrintException,
                 IOException, UnavailableException {
 
             final User user = SpSession.get().getUser();
-            final String fileName = uploadedFile.getClientFileName();
 
             final InternalFontFamilyEnum preferredFont =
                     ((WebAppUser) this.getParent()).getSelectedUploadFont();
@@ -366,37 +371,8 @@ public final class WebAppUser extends AbstractWebAppPage {
             ServiceContext.open();
 
             try {
-
-                DocContentTypeEnum contentType = DocContent
-                        .getContentTypeFromMime(uploadedFile.getContentType());
-
-                if (contentType == null) {
-                    contentType = DocContent.getContentTypeFromFile(
-                            uploadedFile.getClientFileName());
-
-                    if (LOGGER.isWarnEnabled()) {
-                        LOGGER.warn(String.format(
-                                "No content type found for [%s], "
-                                        + "using [%s] based on file extension.",
-                                uploadedFile.getContentType(), contentType));
-                    }
-                }
-
-                final DocContentPrintReq docContentPrintReq =
-                        new DocContentPrintReq();
-
-                docContentPrintReq.setContentType(contentType);
-                docContentPrintReq.setFileName(fileName);
-                docContentPrintReq.setOriginatorEmail(null);
-                docContentPrintReq.setOriginatorIp(originatorIp);
-                docContentPrintReq.setPreferredOutputFont(preferredFont);
-                docContentPrintReq.setProtocol(DocLogProtocolEnum.HTTP);
-                docContentPrintReq.setTitle(fileName);
-
-                QUEUE_SERVICE.printDocContent(ReservedIppQueueEnum.WEBPRINT,
-                        user, true, docContentPrintReq,
-                        uploadedFile.getInputStream());
-
+                WebPrintHelper.handleFileUpload(originatorIp, user,
+                        uploadedFile, preferredFont);
             } finally {
                 ServiceContext.close();
             }
@@ -693,12 +669,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         addZeroPagePanel(WebAppTypeEnum.USER);
 
-        maxUploadMb = ConfigManager.instance()
-                .getConfigLong(Key.WEB_PRINT_MAX_FILE_MB);
-
-        if (maxUploadMb == null) {
-            maxUploadMb = IConfigProp.WEBPRINT_MAX_FILE_MB_V_DEFAULT;
-        }
+        maxUploadSize = WebPrintHelper.getMaxUploadSize();
 
         fileUploadMarkup();
 
@@ -747,8 +718,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         final Form<?> form = new MyFileUploadForm<>("fileUploadForm");
 
         form.setMultiPart(false);
-
-        form.setMaxSize(Bytes.megabytes(maxUploadMb));
+        form.setMaxSize(maxUploadSize);
 
         add(form);
 

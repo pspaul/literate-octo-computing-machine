@@ -34,8 +34,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
@@ -44,11 +42,11 @@ import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.util.InetUtils;
 import org.savapage.server.SpSession;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,11 +165,8 @@ public class Main extends AbstractUserPage {
         buttonCandidates.add(NavButtonEnum.BROWSE);
         buttonCandidates.add(NavButtonEnum.ABOUT);
 
-        final boolean isUpload = (ConfigManager.isWebPrintEnabled()
-                && InetUtils.isIp4AddrInCidrRanges(
-                        ConfigManager.instance().getConfigValue(
-                                Key.WEB_PRINT_LIMIT_IP_ADDRESSES),
-                        getClientIpAddr()));
+        final boolean isUpload =
+                WebPrintHelper.isWebPrintEnabled(getClientIpAddr());
 
         if (isUpload) {
             buttonCandidates.add(NavButtonEnum.UPLOAD);

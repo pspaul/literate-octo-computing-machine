@@ -1867,11 +1867,12 @@
 			//
 			, _IMG_WIDTH = function() {
 				return _model.MY_THUMBNAIL_WIDTH;
-			}
+			},
 			//
 			/**
 			 * Set job expiration marker in thumbnail subscript.
-			 */, _setThumbnailExpiry = function() {
+			 */
+			_setThumbnailExpiry = function() {
 				var subscripts = $('.sp-thumbnail-subscript'), i = 0;
 				$.each(_model.myJobPages, function(key, page) {
 					if (page.expiryTime > 0 && page.expiryTime - _model.prevMsgTime < page.expiryTimeSignal) {
@@ -2531,6 +2532,17 @@
 				, widthImg = (_IMG_WIDTH() + 2 * _IMG_PADDING + 2 * _IMG_BORDER)
 				// Use the ratio of ISO A4 + extra padding
 				, maxHeight = widthImg * (297 / 210) + 8 * _IMG_PADDING + 2 * _IMG_BORDER;
+
+				//
+				if (_model.isWebPrintEnabled && _ns.DropZone.isSupported()) {
+					_ns.DropZone.setCallbacks($('#page-main-thumbnail-viewport'), 'sp-dropzone-hover', '/upload/webprint'
+					//
+					, function() {
+						_ns.userEvent.pause();
+					}, function() {
+						_ns.userEvent.resume();
+					});
+				}
 
 				$('#page-main-thumbnail-viewport').css({
 					'height' : +maxHeight + 'px'
@@ -3723,6 +3735,9 @@
 				return ranges;
 			};
 
+			//
+			this.isWebPrintEnabled = false;
+
 			/**
 			 * Creates a string with page range format from the cut pages.
 			 *
@@ -4655,6 +4670,9 @@
 				_model.prevMsgTime = res.systime;
 
 				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, res.authCardSelfAssoc, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
+
+				// WebPrint
+				_model.isWebPrintEnabled = res.webPrintEnabled;
 
 				// Configures CometD without starting it.
 				_cometdMaxNetworkDelay = res.cometdMaxNetworkDelay;
@@ -6446,7 +6464,7 @@
 				}
 
 			};
-
+			
 			$(window).on('beforeunload', function() {
 				// By NOT returning anything the unload dialog will not show.
 				$.noop();

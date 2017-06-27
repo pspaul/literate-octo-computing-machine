@@ -57,6 +57,14 @@
 			 * We remove the attribute here. Mantis #701.
 			 */
 			$('.sp-initial-hidden').attr('style', '');
+
+			/*
+			 * Disable the default browser action for file drops on the document.
+			 * Specific drop zones must be explicitly activated.
+			 */
+			$(document).bind('drop dragover', function(e) {
+				e.preventDefault();
+			});
 		};
 
 		/*
@@ -1476,7 +1484,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,  or collected local card number from individual keystrokes,
+			// The YubiKey OTP,                         or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -1783,7 +1791,7 @@
 				if (_authCardIp) {
 					nMethods++;
 				}
-				
+
 				if ($('.sp-btn-login-mode-oauth').length === 0 && nMethods < 2) {
 					$('#sp-login-modes').hide();
 				}
@@ -2773,3 +2781,112 @@
 
 		};
 	}(jQuery, this, this.document, this.org.savapage));
+
+//--------------------------------------------------------------
+// Drop & Drop File Upload
+//--------------------------------------------------------------
+( function(window, document, navigator, _ns) {"use strict";
+
+		_ns.DropZone = {
+
+			/**
+			 * Is FileReader object supported?
+			 */
+			hasFileReader : function() {
+				return typeof FileReader != 'undefined';
+			},
+
+			/**
+			 *
+			 */
+			hasDraggable : function() {
+				return 'draggable' in document.createElement('span');
+			},
+
+			/**
+			 * The FormData interface is needed for XMLHttpRequest.send().
+			 */
+			hasFormData : function() {
+				return !!window.FormData;
+			},
+
+			/**
+			 *
+			 */
+			hasProgress : function() {
+				return "upload" in new XMLHttpRequest;
+			},
+
+			/**
+			 * Is DropZone supported?
+			 */
+			isSupported : function() {
+				return !_ns.Utils.isMobileOrTablet() && this.hasDraggable() && this.hasFormData && this.hasFileReader;
+			},
+
+			/**
+			 *
+			 */
+			sendFiles : function(files, url, fooBefore, fooAfter) {
+				var i, formData = new FormData();
+
+				for (i = 0; i < files.length; i++) {
+					formData.append('file', files[i]);
+				}
+
+				if (fooBefore) {
+					fooBefore();
+				}
+
+				$.mobile.loading("show");
+
+				$.ajax({
+					url : url,
+					type : 'POST',
+					data : formData,
+					async : true,
+					cache : false,
+					contentType : false,
+					processData : false,
+					dataType : 'json'
+				}).done(function(res) {
+					if (res.result.code !== '0') {
+						_ns.PanelCommon.view.showApiMsg(res);
+					}
+				}).fail(function() {
+					_ns.PanelCommon.onDisconnected();
+				}).always(function() {
+					$.mobile.loading("hide");
+					if (fooAfter) {
+						fooAfter();
+					}
+				});
+			},
+
+			/**
+			 *
+			 * @param {Object} dropzone (JQuery selector).
+			 */
+			setCallbacks : function(dropzone, cssClassDragover, url, fooBeforeSend, fooAfterSend) {
+				var _obj = this;
+
+				dropzone.bind('dragover', function(e) {
+					$(this).addClass(cssClassDragover);
+					return false;
+				});
+
+				dropzone.bind('dragleave dragend', function(e) {
+					$(this).removeClass(cssClassDragover);
+					return false;
+				});
+
+				dropzone.bind('drop', function(e) {
+					$(this).removeClass(cssClassDragover);
+					_obj.sendFiles(e.originalEvent.dataTransfer.files, url, fooBeforeSend, fooAfterSend);
+					return false;
+				});
+			}
+		};
+
+	}(this, this.document, this.navigator, this.org.savapage));
+
