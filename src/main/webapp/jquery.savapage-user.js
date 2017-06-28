@@ -2534,7 +2534,7 @@
 				, maxHeight = widthImg * (297 / 210) + 8 * _IMG_PADDING + 2 * _IMG_BORDER;
 
 				//
-				if (_model.webPrintEnabled && _ns.DropZone.isSupported()) {
+				if (_model.webPrintDropZoneEnabled && _ns.DropZone.isSupported()) {
 					_ns.DropZone.setCallbacks($('#page-main-thumbnail-viewport'), 'sp-dropzone-hover'
 					//
 					, _model.webPrintUploadUrl, _model.webPrintUploadFileParm
@@ -3740,7 +3740,7 @@
 			};
 
 			//
-			this.webPrintEnabled = false;
+			this.webPrintDropZoneEnabled = false;
 			this.webPrintMaxBytes = 0;
 			this.webPrintFileExt = [];
 			this.webPrintUploadUrl;
@@ -4680,7 +4680,7 @@
 				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, res.authCardSelfAssoc, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
 				// WebPrint
-				_model.webPrintEnabled = res.webPrintEnabled;
+				_model.webPrintDropZoneEnabled = res.webPrintDropZoneEnabled;
 				_model.webPrintMaxBytes = res.webPrintMaxBytes;
 				_model.webPrintFileExt = res.webPrintFileExt;
 				_model.webPrintUploadUrl = res.webPrintUploadUrl;

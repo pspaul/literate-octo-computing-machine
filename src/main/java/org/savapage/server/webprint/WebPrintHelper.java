@@ -86,6 +86,17 @@ public final class WebPrintHelper {
 
     /**
      *
+     * @param originatorIp
+     *            The client IP address.
+     * @return {@code true} when WebPrint and DropZone is enabled.
+     */
+    public static boolean isWebPrintDropZoneEnabled(final String originatorIp) {
+        return isWebPrintEnabled(originatorIp) && ConfigManager.instance()
+                .isConfigValue(Key.WEB_PRINT_DROPZONE_ENABLE);
+    }
+
+    /**
+     *
      * @return The max upload size.
      */
     public static Bytes getMaxUploadSize() {

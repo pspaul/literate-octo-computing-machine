@@ -543,10 +543,11 @@
 				return (res.result.code === '0');
 			};
 
-			_view.pages.admin.onApplyWebPrint = function(enabled) {
+			_view.pages.admin.onApplyWebPrint = function(enabled, dropzone) {
 				var props = {};
 				props['web-print.enable'] = enabled ? 'Y' : 'N';
 				if (enabled) {
+					props['web-print.dropzone-enable'] = dropzone ? 'Y' : 'N';
 					_fillConfigPropsText(props, ['web-print.max-file-mb', 'web-print.limit-ip-addresses']);
 				}
 				_saveConfigProps(props);

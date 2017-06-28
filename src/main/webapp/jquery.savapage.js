@@ -1484,7 +1484,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,                                         or collected local card number from individual keystrokes,
+			// The YubiKey OTP,                                                 or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -2848,23 +2848,35 @@
 			 *
 			 */
 			sendFiles : function(files, url, fileField, maxBytes, fileExt, i18n, fooBefore, fooAfter) {
-				var i, formData = new FormData(), file, msg;
+				var i, formData = new FormData(), totBytes = 0, file, msg, allFileNames = ''
+				//
+				, CSS_WARN = 'sp-msg-popup-warn';
 
 				for ( i = 0; i < files.length; i++) {
+
 					file = files[i];
-					if (file.size > maxBytes) {
-						msg = i18n.format('msg-file-upload-size-exceeded', [file.name, this.humanFileSize(file.size), this.humanFileSize(maxBytes)]);
-						break;
-					}
+
 					if (!this.isFileTypeSupported(fileExt, file)) {
-						msg = i18n.format('msg-file-upload-type-unsupported', [file.name]);
-						break;
+						_ns.view.msgDialogBox(i18n.format('msg-file-upload-type-unsupported', [file.name]), CSS_WARN);
+						return;
 					}
-					formData.append(fileField, file);
+
+					if (i > 0) {
+						allFileNames += ' + ';
+					}
+					allFileNames += file.name;
+
+					if (file.size > 0) {
+						formData.append(fileField, file);
+						totBytes += file.size;
+					}
 				}
 
-				if (msg) {
-					_ns.view.message(msg);
+				if (totBytes === 0) {
+					_ns.view.msgDialogBox(i18n.format('msg-file-upload-size-zero', [allFileNames]), CSS_WARN);
+					return;
+				} else if (totBytes > maxBytes) {
+					_ns.view.msgDialogBox(i18n.format('msg-file-upload-size-exceeded', [allFileNames, this.humanFileSize(totBytes), this.humanFileSize(maxBytes)]), CSS_WARN);
 					return;
 				}
 
@@ -2915,8 +2927,12 @@
 				});
 
 				dropzone.bind('drop', function(e) {
+					var files = e.originalEvent.dataTransfer.files;
 					$(this).removeClass(cssClassDragover);
-					_obj.sendFiles(e.originalEvent.dataTransfer.files, url, fileField, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend);
+					// A drop of meaningless item(s) results in files.length === zero.
+					if (files.length > 0) {
+						_obj.sendFiles(files, url, fileField, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend);
+					}
 					return false;
 				});
 			}

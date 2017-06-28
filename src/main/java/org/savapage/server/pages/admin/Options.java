@@ -610,6 +610,8 @@ public final class Options extends AbstractAdminPage {
          * Web Print
          */
         labelledCheckbox("webprint-enable", IConfigProp.Key.WEB_PRINT_ENABLE);
+        labelledCheckbox("webprint-enable-dropzone",
+                IConfigProp.Key.WEB_PRINT_DROPZONE_ENABLE);
         labelledInput("webprint-max-file-mb",
                 IConfigProp.Key.WEB_PRINT_MAX_FILE_MB);
         labelledInput("webprint-ip-allowed",

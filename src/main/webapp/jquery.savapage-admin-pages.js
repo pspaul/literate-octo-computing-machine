@@ -2346,8 +2346,8 @@
 					_panel.Options.onAuthModeLocalEnabled();
 				});
 
-				$(this).on('click', '#apply-webprint', null, function() {
-					_self.onApplyWebPrint(_view.isCbChecked($('#web-print\\.enable')));
+				$(this).on('click', '#apply-webprint', null, function() {				
+					_self.onApplyWebPrint(_view.isCbChecked($('#web-print\\.enable')), _view.isCbChecked($('#web-print\\.dropzone-enable')));
 					return false;
 				});
 

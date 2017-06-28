@@ -4431,12 +4431,12 @@ public final class JsonApiServer extends AbstractPage {
                 cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_PRINTER));
 
         // Web Print
-        final boolean isWebPrintEnabled =
-                WebPrintHelper.isWebPrintEnabled(this.getRemoteAddr());
+        final boolean isWebPrintDropZoneEnabled =
+                WebPrintHelper.isWebPrintDropZoneEnabled(this.getRemoteAddr());
 
-        userData.put("webPrintEnabled", isWebPrintEnabled);
+        userData.put("webPrintDropZoneEnabled", isWebPrintDropZoneEnabled);
 
-        if (isWebPrintEnabled) {
+        if (isWebPrintDropZoneEnabled) {
             userData.put("webPrintMaxBytes",
                     WebPrintHelper.getMaxUploadSize().bytes());
             userData.put("webPrintUploadUrl",
