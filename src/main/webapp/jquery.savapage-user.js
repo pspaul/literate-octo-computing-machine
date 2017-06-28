@@ -2534,8 +2534,12 @@
 				, maxHeight = widthImg * (297 / 210) + 8 * _IMG_PADDING + 2 * _IMG_BORDER;
 
 				//
-				if (_model.isWebPrintEnabled && _ns.DropZone.isSupported()) {
-					_ns.DropZone.setCallbacks($('#page-main-thumbnail-viewport'), 'sp-dropzone-hover', '/upload/webprint'
+				if (_model.webPrintEnabled && _ns.DropZone.isSupported()) {
+					_ns.DropZone.setCallbacks($('#page-main-thumbnail-viewport'), 'sp-dropzone-hover'
+					//
+					, _model.webPrintUploadUrl, _model.webPrintUploadFileParm
+					//
+					, _model.webPrintMaxBytes, _model.webPrintFileExt, _i18n
 					//
 					, function() {
 						_ns.userEvent.pause();
@@ -3736,7 +3740,11 @@
 			};
 
 			//
-			this.isWebPrintEnabled = false;
+			this.webPrintEnabled = false;
+			this.webPrintMaxBytes = 0;
+			this.webPrintFileExt = [];
+			this.webPrintUploadUrl;
+			this.webPrintUploadFileParm;
 
 			/**
 			 * Creates a string with page range format from the cut pages.
@@ -4672,7 +4680,11 @@
 				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, res.authCardSelfAssoc, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
 				// WebPrint
-				_model.isWebPrintEnabled = res.webPrintEnabled;
+				_model.webPrintEnabled = res.webPrintEnabled;
+				_model.webPrintMaxBytes = res.webPrintMaxBytes;
+				_model.webPrintFileExt = res.webPrintFileExt;
+				_model.webPrintUploadUrl = res.webPrintUploadUrl;
+				_model.webPrintUploadFileParm = res.webPrintUploadFileParm;
 
 				// Configures CometD without starting it.
 				_cometdMaxNetworkDelay = res.cometdMaxNetworkDelay;
@@ -6431,6 +6443,9 @@
 			_ns.model = _model;
 			//
 
+			_ns.view = _view;
+
+			//
 			_deviceEvent = new DeviceEvent(_cometd);
 			_proxyprintEvent = new ProxyPrintEvent(_cometd);
 
@@ -6464,7 +6479,7 @@
 				}
 
 			};
-			
+
 			$(window).on('beforeunload', function() {
 				// By NOT returning anything the unload dialog will not show.
 				$.noop();

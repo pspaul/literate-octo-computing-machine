@@ -179,6 +179,7 @@ import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.webapp.WebAppTypeEnum;
+import org.savapage.server.webprint.DropZoneFileResource;
 import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -4429,9 +4430,22 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("proxyPrintClearPrinter",
                 cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_PRINTER));
 
-        //
-        userData.put("webPrintEnabled",
-                WebPrintHelper.isWebPrintEnabled(this.getRemoteAddr()));
+        // Web Print
+        final boolean isWebPrintEnabled =
+                WebPrintHelper.isWebPrintEnabled(this.getRemoteAddr());
+
+        userData.put("webPrintEnabled", isWebPrintEnabled);
+
+        if (isWebPrintEnabled) {
+            userData.put("webPrintMaxBytes",
+                    WebPrintHelper.getMaxUploadSize().bytes());
+            userData.put("webPrintUploadUrl",
+                    WebApp.MOUNT_PATH_UPLOAD_WEBPRINT);
+            userData.put("webPrintUploadFileParm",
+                    DropZoneFileResource.FILE_UPLOAD_PARAM_NAME);
+            userData.put("webPrintFileExt",
+                    WebPrintHelper.getSupportedFileExtensions(true));
+        }
         //
         return userData;
     }

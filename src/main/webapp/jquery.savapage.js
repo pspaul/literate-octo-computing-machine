@@ -1484,7 +1484,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,                         or collected local card number from individual keystrokes,
+			// The YubiKey OTP,                                         or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -2827,11 +2827,45 @@
 			/**
 			 *
 			 */
-			sendFiles : function(files, url, fooBefore, fooAfter) {
-				var i, formData = new FormData();
+			humanFileSize : function(size) {
+				var i = Math.floor(Math.log(size) / Math.log(1024));
+				return (size / Math.pow(1024, i) ).toFixed(2) * 1 + '&nbsp;' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+			},
 
-				for (i = 0; i < files.length; i++) {
-					formData.append('file', files[i]);
+			/**
+			 *
+			 */
+			isFileTypeSupported : function(fileExt, file) {
+				var i, name = file.name.toLowerCase(), arrayLength = fileExt.length;
+				for ( i = 0; i < arrayLength; i++) {
+					if (name.endsWith(fileExt[i])) {
+						return true;
+					}
+				}
+				return false;
+			},
+			/**
+			 *
+			 */
+			sendFiles : function(files, url, fileField, maxBytes, fileExt, i18n, fooBefore, fooAfter) {
+				var i, formData = new FormData(), file, msg;
+
+				for ( i = 0; i < files.length; i++) {
+					file = files[i];
+					if (file.size > maxBytes) {
+						msg = i18n.format('msg-file-upload-size-exceeded', [file.name, this.humanFileSize(file.size), this.humanFileSize(maxBytes)]);
+						break;
+					}
+					if (!this.isFileTypeSupported(fileExt, file)) {
+						msg = i18n.format('msg-file-upload-type-unsupported', [file.name]);
+						break;
+					}
+					formData.append(fileField, file);
+				}
+
+				if (msg) {
+					_ns.view.message(msg);
+					return;
 				}
 
 				if (fooBefore) {
@@ -2851,7 +2885,7 @@
 					dataType : 'json'
 				}).done(function(res) {
 					if (res.result.code !== '0') {
-						_ns.PanelCommon.view.showApiMsg(res);
+						_ns.view.showApiMsg(res);
 					}
 				}).fail(function() {
 					_ns.PanelCommon.onDisconnected();
@@ -2867,7 +2901,7 @@
 			 *
 			 * @param {Object} dropzone (JQuery selector).
 			 */
-			setCallbacks : function(dropzone, cssClassDragover, url, fooBeforeSend, fooAfterSend) {
+			setCallbacks : function(dropzone, cssClassDragover, url, fileField, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend) {
 				var _obj = this;
 
 				dropzone.bind('dragover', function(e) {
@@ -2882,7 +2916,7 @@
 
 				dropzone.bind('drop', function(e) {
 					$(this).removeClass(cssClassDragover);
-					_obj.sendFiles(e.originalEvent.dataTransfer.files, url, fooBeforeSend, fooAfterSend);
+					_obj.sendFiles(e.originalEvent.dataTransfer.files, url, fileField, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend);
 					return false;
 				});
 			}

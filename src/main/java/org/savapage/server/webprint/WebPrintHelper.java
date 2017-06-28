@@ -22,6 +22,8 @@
 package org.savapage.server.webprint;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.util.lang.Bytes;
@@ -90,6 +92,36 @@ public final class WebPrintHelper {
         return Bytes.megabytes(ConfigManager.instance().getConfigLong(
                 Key.WEB_PRINT_MAX_FILE_MB,
                 IConfigProp.WEBPRINT_MAX_FILE_MB_V_DEFAULT));
+    }
+
+    /**
+     *
+     * @param dotPfx
+     *            if {@code true} a '.' is prepended to each extension.
+     * @return The list of supported Web Print file extensions.
+     */
+    public static List<String>
+            getSupportedFileExtensions(final boolean dotPfx) {
+
+        final List<String> list = new ArrayList<>();
+
+        for (final DocContentTypeEnum contentType : DocContentTypeEnum
+                .values()) {
+            if (DocContent.isSupported(contentType)) {
+                for (final String ext : DocContent
+                        .getFileExtensions(contentType)) {
+                    if (ext == null) {
+                        continue;
+                    }
+                    if (dotPfx) {
+                        list.add(String.format(".%s", ext));
+                    } else {
+                        list.add(ext);
+                    }
+                }
+            }
+        }
+        return list;
     }
 
     /**

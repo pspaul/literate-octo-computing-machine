@@ -34,7 +34,6 @@ import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.AbstractResource;
-import org.apache.wicket.util.lang.Bytes;
 import org.savapage.core.SpException;
 import org.savapage.core.UnavailableException;
 import org.savapage.core.UnavailableException.State;
@@ -57,6 +56,10 @@ import org.slf4j.LoggerFactory;
  * the request parameters and prints them to the user's inbox.
  * <p>
  * Additionally it writes the response's content type and body.
+ * </p>
+ * <p>
+ * Checks for max upload size and supported file type are also done at the
+ * client (JavaScript) side, before sending the file(s).
  * </p>
  *
  * @author Rijk Ravestein
@@ -129,7 +132,8 @@ public final class DropZoneFileResource extends AbstractResource {
             }
 
             final MultipartServletWebRequest multiPartRequest =
-                    webRequest.newMultipartWebRequest(getMaxSize(), "ignored");
+                    webRequest.newMultipartWebRequest(
+                            WebPrintHelper.getMaxUploadSize(), "ignored");
 
             /*
              * CRUCIAL: parse the file parts first, before getting the files :-)
@@ -211,19 +215,6 @@ public final class DropZoneFileResource extends AbstractResource {
                 attributes.getResponse().write(responseContent);
             }
         });
-    }
-
-    /**
-     * Defines what is the maximum size of the uploaded files.
-     * <p>
-     * TODO: integrate this in FileUploadBehavior to set the max size at the
-     * client side too.
-     * </p>
-     *
-     * @return Max upload size.
-     */
-    private Bytes getMaxSize() {
-        return WebPrintHelper.getMaxUploadSize();
     }
 
 }
