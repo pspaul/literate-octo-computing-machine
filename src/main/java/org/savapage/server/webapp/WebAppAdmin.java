@@ -23,6 +23,7 @@ package org.savapage.server.webapp;
 
 import java.io.File;
 import java.nio.file.FileSystems;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.EnumSet;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.slf4j.Logger;
@@ -111,7 +113,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
     }
 
     @Override
-    protected void renderWebAppTypeJsFiles(IHeaderResponse response,
+    protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
 
         renderJs(response, String.format("%s%s",
@@ -146,23 +148,14 @@ public final class WebAppAdmin extends AbstractWebAppPage {
      */
     private void memberCardUploadMarkup() {
 
-        /*
-         * create a feedback panel
-         */
         final Component feedback = new FeedbackPanel("memberCardUploadFeedback")
                 .setOutputMarkupPlaceholderTag(true);
         add(feedback);
 
-        /*
-         * create the form
-         */
-        Form<?> form = new Form<Void>("memberCardUploadForm") {
+        final Form<?> form = new Form<Void>("memberCardUploadForm") {
 
             private static final long serialVersionUID = 1L;
 
-            /**
-             * @see org.apache.wicket.markup.html.form.Form#onSubmit()
-             */
             @Override
             protected void onSubmit() {
 
@@ -170,35 +163,29 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                         memberCardFileUpload.getFileUploads();
 
                 if (uploads == null || uploads.isEmpty()) {
-                    /*
-                     * display uploaded info
-                     */
+                    // display uploaded info
                     warn(getLocalizer()
                             .getString("msg-membercard-import-no-file", this));
                     return;
                 }
 
-                FileUpload uploadedFile =
+                final FileUpload uploadedFile =
                         memberCardFileUpload.getFileUploads().get(0);
 
                 if (uploadedFile == null) {
-                    /*
-                     * display uploaded info
-                     */
+                    // display uploaded info
                     warn(getLocalizer()
                             .getString("msg-membercard-import-no-file", this));
                     return;
                 }
 
-                boolean isValid = true;
-
-                File finalFile = MemberCard.getMemberCardFile();
+                final File finalFile = MemberCard.getMemberCardFile();
 
                 /*
                  * write to a temporary file
                  */
-                File tempFile = new File(System.getProperty("java.io.tmpdir")
-                        + "/" + uploadedFile.getClientFileName());
+                final File tempFile = Paths.get(ConfigManager.getAppTmpDir(),
+                        uploadedFile.getClientFileName()).toFile();
 
                 if (tempFile.exists()) {
                     tempFile.delete();
@@ -214,16 +201,11 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                     tempFile.createNewFile();
                     uploadedFile.writeTo(tempFile);
 
-                    // info("saved file: " +
-                    // uploadedFile.getClientFileName());
-
-                    isValid = MemberCard.instance()
+                    final boolean isValid = MemberCard.instance()
                             .isMemberCardFormatValid(tempFile);
 
                     if (isValid) {
-                        /*
-                         * Rename to standard Menber Card file name
-                         */
+                        // Rename to standard Member Card file name
                         java.nio.file.Files.move(
                                 FileSystems.getDefault()
                                         .getPath(tempFile.getAbsolutePath()),
@@ -246,9 +228,6 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                                     uploadedFile.getClientFileName(),
                                     CommunityDictEnum.MEMBER_CARD.getWord()));
                         }
-                        // + " File-Size: "
-                        // +
-                        // Bytes.bytes(uploadedFile.getSize()).toString());
                     }
 
                     daoContext.commit();
@@ -263,21 +242,19 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                     throw new IllegalStateException(e);
 
                 } finally {
-
                     ServiceContext.close();
 
                     if (tempFile.exists()) {
                         tempFile.delete();
                     }
-                }
 
+                    uploadedFile.delete();
+                }
             }
         };
 
         form.setMultiPart(false);
-
         form.setMaxSize(Bytes.kilobytes(MAX_UPLOAD_KB));
-
         add(form);
 
         /*
@@ -287,10 +264,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
 
         form.add(memberCardFileUpload);
 
-        /*
-         * Create the ajax button used to submit the form.
-         */
-        AjaxButton ajaxButton = new AjaxButton("ajaxSubmit") {
+        final AjaxButton ajaxButton = new AjaxButton("ajaxSubmit") {
 
             private static final long serialVersionUID = 1L;
 
@@ -317,11 +291,9 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                 // ajax-update the feedback panel
                 target.add(feedback);
             }
-
         };
 
         form.add(ajaxButton);
-
     }
 
 }

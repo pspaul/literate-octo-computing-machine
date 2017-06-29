@@ -156,41 +156,48 @@ public final class WebPrintHelper {
             final InternalFontFamilyEnum preferredFont)
             throws DocContentPrintException, IOException, UnavailableException {
 
-        final String fileName = uploadedFile.getClientFileName();
+        try {
+            final String fileName = uploadedFile.getClientFileName();
 
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace(String.format("User [%s] uploaded file [%s] [%s]",
-                    user.getUserId(), uploadedFile.getContentType(),
-                    uploadedFile.getClientFileName()));
-        }
-
-        DocContentTypeEnum contentType = DocContent
-                .getContentTypeFromMime(uploadedFile.getContentType());
-
-        if (contentType == null) {
-            contentType = DocContent
-                    .getContentTypeFromFile(uploadedFile.getClientFileName());
-
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(String.format(
-                        "No content type found for [%s], "
-                                + "using [%s] based on file extension.",
-                        uploadedFile.getContentType(), contentType));
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(String.format("User [%s] uploaded file [%s] [%s]",
+                        user.getUserId(), uploadedFile.getContentType(),
+                        uploadedFile.getClientFileName()));
             }
+
+            DocContentTypeEnum contentType = DocContent
+                    .getContentTypeFromMime(uploadedFile.getContentType());
+
+            if (contentType == null) {
+                contentType = DocContent.getContentTypeFromFile(
+                        uploadedFile.getClientFileName());
+
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn(String.format(
+                            "No content type found for [%s], "
+                                    + "using [%s] based on file extension.",
+                            uploadedFile.getContentType(), contentType));
+                }
+            }
+
+            final DocContentPrintReq docContentPrintReq =
+                    new DocContentPrintReq();
+
+            docContentPrintReq.setContentType(contentType);
+            docContentPrintReq.setFileName(fileName);
+            docContentPrintReq.setOriginatorEmail(null);
+            docContentPrintReq.setOriginatorIp(originatorIp);
+            docContentPrintReq.setPreferredOutputFont(preferredFont);
+            docContentPrintReq.setProtocol(DocLogProtocolEnum.HTTP);
+            docContentPrintReq.setTitle(fileName);
+
+            QUEUE_SERVICE.printDocContent(ReservedIppQueueEnum.WEBPRINT, user,
+                    true, docContentPrintReq, uploadedFile.getInputStream());
+
+        } finally {
+            // Don't wait for garbage collect: delete now.
+            uploadedFile.delete();
         }
-
-        final DocContentPrintReq docContentPrintReq = new DocContentPrintReq();
-
-        docContentPrintReq.setContentType(contentType);
-        docContentPrintReq.setFileName(fileName);
-        docContentPrintReq.setOriginatorEmail(null);
-        docContentPrintReq.setOriginatorIp(originatorIp);
-        docContentPrintReq.setPreferredOutputFont(preferredFont);
-        docContentPrintReq.setProtocol(DocLogProtocolEnum.HTTP);
-        docContentPrintReq.setTitle(fileName);
-
-        QUEUE_SERVICE.printDocContent(ReservedIppQueueEnum.WEBPRINT, user, true,
-                docContentPrintReq, uploadedFile.getInputStream());
     }
 
 }
