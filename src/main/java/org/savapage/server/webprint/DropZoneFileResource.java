@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -68,9 +69,14 @@ import org.slf4j.LoggerFactory;
 public final class DropZoneFileResource extends AbstractResource {
 
     /**
-     * As in <input type="file">.
+     * As in: {@code <input type="file">} .
      */
-    public static final String FILE_UPLOAD_PARAM_NAME = "file";
+    public static final String UPLOAD_PARAM_NAME_FILE = "file";
+
+    /**
+     * As in: {@code ?font=CJK} .
+     */
+    public static final String UPLOAD_PARAM_NAME_FONT = "font";
 
     /**
      * .
@@ -135,6 +141,12 @@ public final class DropZoneFileResource extends AbstractResource {
                     webRequest.newMultipartWebRequest(
                             WebPrintHelper.getMaxUploadSize(), "ignored");
 
+            final InternalFontFamilyEnum selectedFont = EnumUtils.getEnum(
+                    InternalFontFamilyEnum.class,
+                    multiPartRequest.getUrl()
+                            .getQueryParameterValue(UPLOAD_PARAM_NAME_FONT)
+                            .toString(defaultFont.toString()));
+
             /*
              * CRUCIAL: parse the file parts first, before getting the files :-)
              */
@@ -143,12 +155,12 @@ public final class DropZoneFileResource extends AbstractResource {
             final Map<String, List<FileItem>> files =
                     multiPartRequest.getFiles();
 
-            final List<FileItem> fileItems = files.get(FILE_UPLOAD_PARAM_NAME);
+            final List<FileItem> fileItems = files.get(UPLOAD_PARAM_NAME_FILE);
 
             for (FileItem fileItem : fileItems) {
 
                 WebPrintHelper.handleFileUpload(originatorIp, user,
-                        new FileUpload(fileItem), defaultFont);
+                        new FileUpload(fileItem), selectedFont);
 
             }
 

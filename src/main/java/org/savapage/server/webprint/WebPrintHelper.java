@@ -86,6 +86,15 @@ public final class WebPrintHelper {
 
     /**
      *
+     * @return {@code true} when WebPrint DropZone is enabled.
+     */
+    public static boolean isWebPrintDropZoneEnabled() {
+        return ConfigManager.instance()
+                .isConfigValue(Key.WEB_PRINT_DROPZONE_ENABLE);
+    }
+
+    /**
+     *
      * @param originatorIp
      *            The client IP address.
      * @return {@code true} when WebPrint and DropZone is enabled.

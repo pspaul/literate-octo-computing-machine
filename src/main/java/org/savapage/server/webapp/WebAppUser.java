@@ -23,56 +23,33 @@ package org.savapage.server.webapp;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.markup.html.form.upload.UploadProgressBar;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.IRequestParameters;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValue;
 import org.savapage.core.SpException;
-import org.savapage.core.UnavailableException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.crypto.OneTimeAuthToken;
-import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserEmail;
-import org.savapage.core.print.server.DocContentPrintException;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.users.conf.UserAliasList;
-import org.savapage.core.util.InetUtils;
-import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.oauth.OAuthClientPlugin;
 import org.savapage.ext.oauth.OAuthPluginException;
 import org.savapage.ext.oauth.OAuthProviderEnum;
@@ -82,6 +59,7 @@ import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
@@ -110,40 +88,6 @@ public final class WebAppUser extends AbstractWebAppPage {
      */
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
-
-    /**
-     * "Bean" attribute used for the selected font from the Form. Note: Wicket
-     * needs the getter.
-     */
-    private InternalFontFamilyEnum selectedUploadFont;
-
-    /**
-     *
-     */
-    private FileUploadField fileUploadField;
-
-    /**
-     *
-     */
-    private Bytes maxUploadSize;
-
-    /**
-     *
-     * @return The font family.
-     */
-    public InternalFontFamilyEnum getSelectedUploadFont() {
-        return selectedUploadFont;
-    }
-
-    /**
-     *
-     * @param selectedUploadFont
-     *            The selected font family.
-     */
-    public void setSelectedUploadFont(
-            final InternalFontFamilyEnum selectedUploadFont) {
-        this.selectedUploadFont = selectedUploadFont;
-    }
 
     @Override
     protected boolean isJqueryCoreRenderedByWicket() {
@@ -185,7 +129,9 @@ public final class WebAppUser extends AbstractWebAppPage {
         /**
          *
          * @param id
+         *            Wicket id.
          * @param entryList
+         *            Button list.
          */
         UploadNextButtonView(final String id,
                 final List<UploadNextButton> entryList) {
@@ -229,152 +175,6 @@ public final class WebAppUser extends AbstractWebAppPage {
                     cssClass);
 
             item.add(label);
-        }
-    }
-
-    /**
-     *
-     */
-    private class MyFileUploadForm<Leeg> extends Form<Void> {
-
-        private static final long serialVersionUID = 1L;
-
-        /**
-         *
-         * @param id
-         *            The wicket id.
-         */
-        MyFileUploadForm(final String id) {
-            super(id);
-
-        }
-
-        /**
-         * @see org.apache.wicket.markup.html.form.Form#onSubmit()
-         */
-        @Override
-        protected void onSubmit() {
-
-            final String originatorIp =
-                    ((ServletWebRequest) RequestCycle.get().getRequest())
-                            .getContainerRequest().getRemoteAddr();
-
-            if (!InetUtils
-                    .isIp4AddrInCidrRanges(
-                            ConfigManager.instance().getConfigValue(
-                                    Key.WEB_PRINT_LIMIT_IP_ADDRESSES),
-                            originatorIp)) {
-
-                error(localized("msg-file-upload-ip-not-allowed"));
-                return;
-            }
-
-            final List<FileUpload> uploads = fileUploadField.getFileUploads();
-
-            if (uploads == null || uploads.isEmpty()) {
-                /*
-                 * display uploaded info
-                 */
-                warn(getLocalizer().getString("msg-file-upload-no-file", this));
-                return;
-            }
-
-            FileUpload uploadedFile = fileUploadField.getFileUploads().get(0);
-
-            if (uploadedFile == null) {
-                /*
-                 * display uploaded info
-                 */
-                warn(getLocalizer().getString("msg-file-upload-no-file", this));
-                return;
-            }
-
-            final String fileSize = NumberUtil
-                    .humanReadableByteCount(uploadedFile.getSize(), true);
-
-            info(String.format("%s (%s)", uploadedFile.getClientFileName(),
-                    fileSize));
-
-            try {
-
-                AdminPublisher.instance().publish(PubTopicEnum.WEBPRINT,
-                        PubLevelEnum.INFO,
-                        localized("msg-admin-file-upload",
-                                SpSession.get().getUser().getUserId(),
-                                uploadedFile.getClientFileName(), fileSize));
-
-                // Convert file to PDF.
-                handleFileUpload(originatorIp, uploadedFile);
-
-                info(getLocalizer().getString("msg-file-process-success",
-                        this));
-
-            } catch (UnavailableException e) {
-
-                final String fileExt = FilenameUtils
-                        .getExtension(uploadedFile.getClientFileName());
-                final String msg;
-                final PubLevelEnum level;
-
-                if (e.getState() == UnavailableException.State.TEMPORARY) {
-                    level = PubLevelEnum.WARN;
-                    msg = localized("msg-file-process-unavailable-temp",
-                            fileExt);
-                    warn(msg);
-                    warn(localized("msg-file-process-try-again-later"));
-                } else {
-                    level = PubLevelEnum.ERROR;
-                    msg = localized("msg-file-process-unavailable", fileExt);
-                    error(msg);
-                }
-
-                AdminPublisher.instance().publish(PubTopicEnum.WEBPRINT, level,
-                        msg);
-
-            } catch (DocContentPrintException | IOException e) {
-                error(localized("msg-file-process-error", e.getMessage()));
-            }
-
-        }
-
-        /**
-         * Handles the uploaded file.
-         *
-         * @param originatorIp
-         *            The client IP address.
-         * @param uploadedFile
-         *            The uploaded file.
-         *
-         * @throws DocContentPrintException
-         *             When conversion to PDF failed.
-         * @throws IOException
-         *             When IO error.
-         * @throws UnavailableException
-         *             When service is unavailable.
-         */
-        private void handleFileUpload(final String originatorIp,
-                final FileUpload uploadedFile) throws DocContentPrintException,
-                IOException, UnavailableException {
-
-            final User user = SpSession.get().getUser();
-
-            final InternalFontFamilyEnum preferredFont =
-                    ((WebAppUser) this.getParent()).getSelectedUploadFont();
-
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(String.format("User [%s] uploaded file [%s] [%s]",
-                        user.getUserId(), uploadedFile.getContentType(),
-                        uploadedFile.getClientFileName()));
-            }
-
-            ServiceContext.open();
-
-            try {
-                WebPrintHelper.handleFileUpload(originatorIp, user,
-                        uploadedFile, preferredFont);
-            } finally {
-                ServiceContext.close();
-            }
         }
     }
 
@@ -668,9 +468,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         addZeroPagePanel(WebAppTypeEnum.USER);
 
-        maxUploadSize = WebPrintHelper.getMaxUploadSize();
-
-        fileUploadMarkup();
+        webPrintdMarkup();
 
         addFileDownloadApiPanel();
 
@@ -724,121 +522,20 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     /**
-     * Creates the markup for the Ajax File upload.
-     *
-     * http://www.wicket-library.com/wicket-examples-6.0.x/upload/single?1
+     * Creates the markup for the Web Print File upload.
      */
-    private void fileUploadMarkup() {
+    private void webPrintdMarkup() {
 
-        /*
-         * Create the form.
-         */
-        final Form<?> form = new MyFileUploadForm<>("fileUploadForm");
-
-        form.setMultiPart(false);
-        form.setMaxSize(maxUploadSize);
-
-        add(form);
-
-        /*
-         * Create the file upload field.
-         */
-        fileUploadField = new FileUploadField("fileUpload");
+        final Label fileUploadField = new Label("fileUpload");
         fileUploadField
                 .add(new AttributeModifier("accept", getHtmlAcceptString()));
+        add(fileUploadField);
 
-        form.add(fileUploadField);
-
-        /*
-         * Mantis #747. Hide the progress bar for now.
-         */
-        final boolean showProgressBar = false;
-        final MarkupHelper formHelper = new MarkupHelper(form);
-
-        if (showProgressBar) {
-            form.add(new UploadProgressBar("upload-progress", form));
-        } else {
-            formHelper.discloseLabel("upload-progress");
-        }
-
-        /*
-         * The feedback panel. NOTE: messages are not displayed real-time on the
-         * client, but are displayed at once after file upload and conversion is
-         * finished.
-         */
-        final Component feedback = new FeedbackPanel("fileUploadFeedback")
-                .setOutputMarkupPlaceholderTag(true);
-        form.add(feedback);
-
-        /*
-         *
-         */
-        this.setSelectedUploadFont(ConfigManager
+        //
+        final FontOptionsPanel fontOptionsPanel =
+                new FontOptionsPanel("file-upload-fontfamily-options");
+        fontOptionsPanel.populate(ConfigManager
                 .getConfigFontFamily(Key.REPORTS_PDF_INTERNAL_FONT_FAMILY));
-
-        final DropDownChoice<InternalFontFamilyEnum> fileUploadFontDropDown =
-                new DropDownChoice<>("fileUploadFontSelect",
-                        new PropertyModel<InternalFontFamilyEnum>(this,
-                                "selectedUploadFont"),
-                        new LoadableDetachableModel<List<InternalFontFamilyEnum>>() {
-
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            protected List<InternalFontFamilyEnum> load() {
-                                return new ArrayList<>(Arrays.asList(
-                                        InternalFontFamilyEnum.values()));
-                            }
-                        }, new IChoiceRenderer<InternalFontFamilyEnum>() {
-
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            public Object getDisplayValue(
-                                    final InternalFontFamilyEnum object) {
-                                return object.uiText(getLocale());
-                            }
-
-                            @Override
-                            public String getIdValue(
-                                    final InternalFontFamilyEnum object,
-                                    final int index) {
-                                return object.toString();
-                            }
-
-                            @Override
-                            public InternalFontFamilyEnum getObject(String arg0,
-                                    IModel<? extends List<? extends InternalFontFamilyEnum>> arg1) {
-                                return InternalFontFamilyEnum.valueOf(arg0);
-                            }
-                        });
-
-        form.add(fileUploadFontDropDown);
-
-        /*
-         * Create the ajax button used to submit the form.
-         */
-        final AjaxButton ajaxButton = new AjaxButton("ajaxSubmitFileUpload") {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSubmit(final AjaxRequestTarget target,
-                    final Form<?> form) {
-                // ajax-update the feedback panel
-                target.add(feedback);
-            }
-
-            @Override
-            protected void onError(final AjaxRequestTarget target,
-                    final Form<?> form) {
-                LOGGER.error("error uploading file");
-                // ajax-update the feedback panel
-                target.add(feedback);
-            }
-
-        };
-
-        form.add(ajaxButton);
+        add(fontOptionsPanel);
     }
 }

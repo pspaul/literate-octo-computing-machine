@@ -4431,18 +4431,22 @@ public final class JsonApiServer extends AbstractPage {
                 cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_PRINTER));
 
         // Web Print
-        final boolean isWebPrintDropZoneEnabled =
-                WebPrintHelper.isWebPrintDropZoneEnabled(this.getRemoteAddr());
+        final boolean isWebPrintEnabled =
+                WebPrintHelper.isWebPrintEnabled(this.getRemoteAddr());
 
-        userData.put("webPrintDropZoneEnabled", isWebPrintDropZoneEnabled);
+        userData.put("webPrintEnabled", isWebPrintEnabled);
 
-        if (isWebPrintDropZoneEnabled) {
+        if (isWebPrintEnabled) {
+            userData.put("webPrintDropZoneEnabled",
+                    WebPrintHelper.isWebPrintDropZoneEnabled());
             userData.put("webPrintMaxBytes",
                     WebPrintHelper.getMaxUploadSize().bytes());
             userData.put("webPrintUploadUrl",
                     WebApp.MOUNT_PATH_UPLOAD_WEBPRINT);
             userData.put("webPrintUploadFileParm",
-                    DropZoneFileResource.FILE_UPLOAD_PARAM_NAME);
+                    DropZoneFileResource.UPLOAD_PARAM_NAME_FILE);
+            userData.put("webPrintUploadFontParm",
+                    DropZoneFileResource.UPLOAD_PARAM_NAME_FONT);
             userData.put("webPrintFileExt",
                     WebPrintHelper.getSupportedFileExtensions(true));
         }

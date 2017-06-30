@@ -1769,31 +1769,39 @@
 
 			$(_self.id()).on('pagecreate', function(event) {
 
-				// initial hide
-				$('#file-upload-feedback').hide();
+				$('#sp-webprint-upload-feedback').hide();
 
-				$('#button-file-upload-submit').on('click', null, null, function() {
-					var _timer;
+				$('#sp-webprint-upload-form').submit(function(e) {
+					var files = document.getElementById('sp-webprint-upload-file').files;
+					e.preventDefault();
 
-					$('#file-upload-feedback').show();
-					$('#button-file-upload-reset').click();
-					$.mobile.loading("show");
-
-					// Mantis #747
-					_timer = window.setInterval(function() {
-						if ($('#file-upload-feedback').html().length > 0) {
-							window.clearInterval(_timer);
-							$.mobile.loading("hide");
-							_view.pages.main.onRefreshPages();
-							_setVisibility();
+					_ns.DropZone.sendFiles(files,
+					//
+					_model.webPrintUploadUrl, _model.webPrintUploadFileParm
+					//
+					, _model.webPrintUploadFontParm, $('#file-upload-fontfamily').val()
+					//
+					, _model.webPrintMaxBytes, _model.webPrintFileExt, _i18n
+					//
+					, function() {// before send
+						$('#sp-button-file-upload-reset').click();
+						$('#sp-webprint-upload-feedback').removeClass('sp-txt-warn').addClass('sp-txt-valid').html('&nbsp;').show();
+					}, function() {// after send
+						_view.pages.main.onRefreshPages();
+						_setVisibility();
+					}, function(msg) {
+						if (msg) {
+							$('#sp-webprint-upload-feedback').removeClass('sp-txt-valid').addClass('sp-txt-warn').html('&bull; ' + msg).show();
+						} else {
+							$('#sp-webprint-upload-feedback').html('&bull; ' + _i18n.format('msg-file-upload-completed', null));
 						}
-					}, 700);
+					});
 
-					return true;
+					return false;
 				});
 
-				$('#button-file-upload-reset').click(function() {
-					$('#file-upload-feedback').html('').hide();
+				$('#sp-button-file-upload-reset').click(function() {
+					$('#sp-webprint-upload-feedback').html('').hide();
 					return true;
 				});
 
@@ -1820,7 +1828,7 @@
 				/*
 				 * Clear and Hide content
 				 */
-				$('#button-file-upload-reset').click();
+				$('#sp-button-file-upload-reset').click();
 
 				/*
 				* IMPORTANT: _ns.deferAppWakeUp(false) is performed in
@@ -2534,10 +2542,12 @@
 				, maxHeight = widthImg * (297 / 210) + 8 * _IMG_PADDING + 2 * _IMG_BORDER;
 
 				//
-				if (_model.webPrintDropZoneEnabled && _ns.DropZone.isSupported()) {
+				if (_model.webPrintEnabled && _model.webPrintDropZoneEnabled && _ns.DropZone.isSupported()) {
 					_ns.DropZone.setCallbacks($('#page-main-thumbnail-viewport'), 'sp-dropzone-hover'
 					//
 					, _model.webPrintUploadUrl, _model.webPrintUploadFileParm
+					//
+					, null, null
 					//
 					, _model.webPrintMaxBytes, _model.webPrintFileExt, _i18n
 					//
@@ -2545,6 +2555,10 @@
 						_ns.userEvent.pause();
 					}, function() {
 						_ns.userEvent.resume();
+					}, function(msg) {
+						if (msg) {
+							_view.msgDialogBox(msg, 'sp-msg-popup-warn');
+						}
 					});
 				}
 
@@ -2602,8 +2616,8 @@
 						//
 						selAddIn.html(html).listview('refresh');
 
-						$('#button-file-upload-reset').attr('value', _i18n.format('button-reset')).button('refresh');
-						$('#button-file-upload-submit').attr('value', _i18n.format('button-upload')).button('refresh');
+						$('#sp-button-file-upload-reset').attr('value', _i18n.format('button-reset')).button('refresh');
+						$('#sp-button-file-upload-submit').attr('value', _i18n.format('button-upload')).button('refresh');
 					}
 					return false;
 				});
@@ -3740,11 +3754,13 @@
 			};
 
 			//
+			this.webPrintEnabled = false;
 			this.webPrintDropZoneEnabled = false;
 			this.webPrintMaxBytes = 0;
 			this.webPrintFileExt = [];
-			this.webPrintUploadUrl;
-			this.webPrintUploadFileParm;
+			this.webPrintUploadUrl
+			this.webPrintUploadFileParm
+			this.webPrintUploadFontParm
 
 			/**
 			 * Creates a string with page range format from the cut pages.
@@ -4680,11 +4696,13 @@
 				_view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, res.authCardSelfAssoc, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
 				// WebPrint
+				_model.webPrintEnabled = res.webPrintEnabled;
 				_model.webPrintDropZoneEnabled = res.webPrintDropZoneEnabled;
 				_model.webPrintMaxBytes = res.webPrintMaxBytes;
 				_model.webPrintFileExt = res.webPrintFileExt;
 				_model.webPrintUploadUrl = res.webPrintUploadUrl;
 				_model.webPrintUploadFileParm = res.webPrintUploadFileParm;
+				_model.webPrintUploadFontParm = res.webPrintUploadFontParm;
 
 				// Configures CometD without starting it.
 				_cometdMaxNetworkDelay = res.cometdMaxNetworkDelay;

@@ -2844,20 +2844,25 @@
 				}
 				return false;
 			},
+						
 			/**
 			 *
 			 */
-			sendFiles : function(files, url, fileField, maxBytes, fileExt, i18n, fooBefore, fooAfter) {
-				var i, formData = new FormData(), totBytes = 0, file, msg, allFileNames = ''
-				//
-				, CSS_WARN = 'sp-msg-popup-warn';
+			sendFiles : function(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBefore, fooAfter, fooWarn) {
+				var i, formData = new FormData(), totBytes = 0, file, allFileNames = '';
+
+
+				if (files.length === 0) {
+					fooWarn(i18n.format('msg-file-upload-size-zero', [' '])); // todo
+					return;
+				}
 
 				for ( i = 0; i < files.length; i++) {
 
 					file = files[i];
 
 					if (!this.isFileTypeSupported(fileExt, file)) {
-						_ns.view.msgDialogBox(i18n.format('msg-file-upload-type-unsupported', [file.name]), CSS_WARN);
+						fooWarn(i18n.format('msg-file-upload-type-unsupported', [file.name]));
 						return;
 					}
 
@@ -2873,10 +2878,10 @@
 				}
 
 				if (totBytes === 0) {
-					_ns.view.msgDialogBox(i18n.format('msg-file-upload-size-zero', [allFileNames]), CSS_WARN);
+					fooWarn(i18n.format('msg-file-upload-size-zero', [allFileNames]));
 					return;
 				} else if (totBytes > maxBytes) {
-					_ns.view.msgDialogBox(i18n.format('msg-file-upload-size-exceeded', [allFileNames, this.humanFileSize(totBytes), this.humanFileSize(maxBytes)]), CSS_WARN);
+					fooWarn(i18n.format('msg-file-upload-size-exceeded', [allFileNames, this.humanFileSize(totBytes), this.humanFileSize(maxBytes)]));
 					return;
 				}
 
@@ -2887,7 +2892,7 @@
 				$.mobile.loading("show");
 
 				$.ajax({
-					url : url,
+					url : (fontField && fontEnum) ? url + '?' + fontField + '=' + fontEnum : url,
 					type : 'POST',
 					data : formData,
 					async : true,
@@ -2897,7 +2902,9 @@
 					dataType : 'json'
 				}).done(function(res) {
 					if (res.result.code !== '0') {
-						_ns.view.showApiMsg(res);
+						fooWarn(res.result.txt);
+					} else {
+						fooWarn(null); // ended OK.						
 					}
 				}).fail(function() {
 					_ns.PanelCommon.onDisconnected();
@@ -2913,7 +2920,7 @@
 			 *
 			 * @param {Object} dropzone (JQuery selector).
 			 */
-			setCallbacks : function(dropzone, cssClassDragover, url, fileField, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend) {
+			setCallbacks : function(dropzone, cssClassDragover, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn) {
 				var _obj = this;
 
 				dropzone.bind('dragover', function(e) {
@@ -2931,7 +2938,7 @@
 					$(this).removeClass(cssClassDragover);
 					// A drop of meaningless item(s) results in files.length === zero.
 					if (files.length > 0) {
-						_obj.sendFiles(files, url, fileField, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend);
+						_obj.sendFiles(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn);
 					}
 					return false;
 				});

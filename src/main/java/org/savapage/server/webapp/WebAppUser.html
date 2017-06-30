@@ -76,7 +76,7 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 -->
 	</wicket:remove>
 	<div data-role="dialog" id="page-zero" style="display: none;">
-		<wicket:panel wicket:id="zero-page-panel"/>
+		<wicket:panel wicket:id="zero-page-panel" />
 	</div>
 
 	<wicket:remove>
@@ -159,7 +159,7 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
      See FileDownloadApiPanel     
      ================================================================== -->
 	</wicket:remove>
-	<wicket:panel wicket:id="file-download-api-panel"/>
+	<wicket:panel wicket:id="file-download-api-panel" />
 
 	<wicket:remove>
 		<!-- ==============================================================  
@@ -178,38 +178,38 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 
 			<ul data-role="listview" data-inset="true" id="file-upload-addin" />
 
-			<form wicket:id="fileUploadForm" enctype="multipart/form-data">
 
-				<ul data-role="listview" data-inset="true">
-					<li>
-						<div class="sp-txt-info sp-txt-wrap"
-							id="file-upload-txt-font-family" />
-						<select wicket:id="fileUploadFontSelect" tabindex="-1"
-							id="file-upload-fontfamily" data-native-menu="false" />
-					</li>
-					<li>
-						<label for="file-upload-file" />
-						<input id="file-upload-file" wicket:id="fileUpload" type="file"
-							accept="" size="50" style="font-size: 110%;" />
-						<wicket:enclosure child="upload-progress">
-							<span wicket:id="upload-progress">[[ajax upload
-								progressbar]]</span>
-						</wicket:enclosure>
-						<!--  -->
-						<div class="sp-txt-wrap" wicket:id="fileUploadFeedback"
-							id="file-upload-feedback" style="margin-bottom: 20px;" />
+			<ul data-role="listview" data-inset="true">
+				<li>
+					<div class="sp-txt-info sp-txt-wrap"
+						id="file-upload-txt-font-family" />
+					<select tabindex="-1" id="file-upload-fontfamily"
+						data-native-menu="false" data-mini="true">
+						<wicket:panel wicket:id="file-upload-fontfamily-options" />
+					</select>
+				</li>
+				<li>
+					<form id="sp-webprint-upload-form" enctype="multipart/form-data">
 
-						<input wicket:id="ajaxSubmitFileUpload" type="button"
-							data-corners="false" data-inline="true" data-icon="arrow-u"
-							value="button-file-upload" id="button-file-upload-submit" />
+						<label for="sp-webprint-upload-file" />
+						<input id="sp-webprint-upload-file" wicket:id="fileUpload"
+							type="file" accept="" size="50" style="font-size: 110%;" multiple />
+
+						<div class="sp-txt-wrap" id="sp-webprint-upload-feedback"
+							style="margin-bottom: 20px;" />
+
+						<input type="submit" data-corners="false" data-inline="true"
+							data-icon="arrow-u" value="button-file-upload"
+							id="sp-button-file-upload-submit" />
 
 						<input type="reset" data-inline="true" data-icon="delete"
-							data-corners="false" id="button-file-upload-reset"
+							data-corners="false" id="sp-button-file-upload-reset"
 							value="button-file-upload-reset" />
 
-					</li>
-				</ul>
-			</form>
+					</form>
+
+				</li>
+			</ul>
 
 			<div style="opacity: 0.8;">
 				<wicket:panel wicket:id="next-buttons">
