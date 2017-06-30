@@ -64,7 +64,6 @@ import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.crypto.OneTimeAuthToken;
-import org.savapage.core.doc.DocContent;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserEmail;
@@ -706,6 +705,25 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     /**
+     *
+     * @return the
+     */
+    private static String getHtmlAcceptString() {
+
+        final StringBuilder html = new StringBuilder();
+
+        for (final String ext : WebPrintHelper
+                .getSupportedFileExtensions(true)) {
+            if (html.length() > 0) {
+                html.append(",");
+            }
+            html.append(ext);
+        }
+
+        return html.toString();
+    }
+
+    /**
      * Creates the markup for the Ajax File upload.
      *
      * http://www.wicket-library.com/wicket-examples-6.0.x/upload/single?1
@@ -726,8 +744,8 @@ public final class WebAppUser extends AbstractWebAppPage {
          * Create the file upload field.
          */
         fileUploadField = new FileUploadField("fileUpload");
-        fileUploadField.add(new AttributeModifier("accept",
-                DocContent.getHtmlAcceptString()));
+        fileUploadField
+                .add(new AttributeModifier("accept", getHtmlAcceptString()));
 
         form.add(fileUploadField);
 
