@@ -107,17 +107,24 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
     private static final String PROTECTED_RESOURCE_URL =
             "https://www.googleapis.com/plus/v1/people/me";
 
+    /** */
     private static final String NETWORK_NAME = "G+";
 
     // ------------------------------------------------------------------
     // https://developers.google.com/identity/protocols/OpenIDConnect
     // ------------------------------------------------------------------
+
+    /** */
     private static final String OAUTH_ACCESS_TYPE_PARM = "access_type";
+    /** */
     private static final String OAUTH_ACCESS_TYPE_VAL_ONLINE = "online";
 
+    /** */
     private static final String OAUTH_PROMPT_PARM = "prompt";
+    /** */
     private static final String OAUTH_PROMPT_VAL_VOID = "";
 
+    /** */
     private static final String OAUTH_HD_PARM = "hd";
 
     /**
@@ -185,17 +192,14 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
         final String secretState = String.format("%s%d",
                 this.getClass().getSimpleName(), new Random().nextInt(999_999));
 
-        this.oauthService =
-                new ServiceBuilder()
-                        .apiKey(props.getProperty(PROP_KEY_OAUTH_CLIENT_ID))
-                        .apiSecret(
-                                props.getProperty(PROP_KEY_OAUTH_CLIENT_SECRET))
-                        .scope(OAUTH_SCOPE)
-                        //
-                        .state(secretState)
-                        .callback(
-                                props.getProperty(PROP_KEY_OAUTH_CALLBACK_URL))
-                        .build(GoogleApi20.instance());
+        this.oauthService = new ServiceBuilder()
+                .apiKey(props.getProperty(PROP_KEY_OAUTH_CLIENT_ID))
+                .apiSecret(props.getProperty(PROP_KEY_OAUTH_CLIENT_SECRET))
+                .scope(OAUTH_SCOPE)
+                //
+                .state(secretState)
+                .callback(props.getProperty(PROP_KEY_OAUTH_CALLBACK_URL))
+                .build(GoogleApi20.instance());
 
         /*
          * Prepare the authorization URL.
@@ -313,11 +317,15 @@ public final class GoogleOAuthPlugin implements OAuthClientPlugin {
      * com.github.scribejava.apis.examples.Google20Example
      *
      * @param args
+     *            The arguments.
      * @throws IOException
+     *             IO errors.
      * @throws InterruptedException
+     *             When interrupted.
      * @throws ExecutionException
+     *             Task execution error.
      */
-    public static void main(String[] args)
+    public static void main(final String[] args)
             throws IOException, InterruptedException, ExecutionException {
 
         final String clientId = args[0];

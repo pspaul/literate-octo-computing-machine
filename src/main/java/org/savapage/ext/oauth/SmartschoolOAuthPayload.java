@@ -62,56 +62,110 @@ public final class SmartschoolOAuthPayload extends JsonAbstractBase {
     private String username;
 
     /**
-     * "https://uwschool.smartschool.be"
+     * "https://uwschool.smartschool.be".
      */
     private String platform;
 
+    /**
+     *
+     * @return user id.
+     */
     public String getUserID() {
         return userID;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
+    /**
+     *
+     * @param id
+     *            user id.
+     */
+    public void setUserID(final String id) {
+        this.userID = id;
     }
 
+    /**
+     *
+     * @return The name, e.g. "John".
+     */
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    /**
+     *
+     * @param fname
+     *            The name, e.g. "John".
+     */
+    public void setName(final String fname) {
+        this.name = fname;
     }
 
+    /**
+     *
+     * @return Surname, e.g. "Brown".
+     */
     public String getSurname() {
         return surname;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    /**
+     *
+     * @param sname
+     *            Surname, e.g. "Brown".
+     */
+    public void setSurname(final String sname) {
+        this.surname = sname;
     }
 
+    /**
+     *
+     * @return E.g. "john.brown".
+     */
     public String getFullname() {
         return fullname;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    /**
+     *
+     * @param fname
+     *            E.g. "john.brown".
+     */
+    public void setFullname(final String fname) {
+        this.fullname = fname;
     }
 
+    /**
+     *
+     * @return User name.
+     */
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    /**
+     *
+     * @param uname
+     *            User name.
+     */
+    public void setUsername(final String uname) {
+        this.username = uname;
     }
 
+    /**
+     *
+     * @return Like "https://uwschool.smartschool.be".
+     */
     public String getPlatform() {
         return platform;
     }
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
+    /**
+     *
+     * @param pform
+     *            Like "https://uwschool.smartschool.be".
+     */
+    public void setPlatform(final String pform) {
+        this.platform = pform;
     }
 
     /**

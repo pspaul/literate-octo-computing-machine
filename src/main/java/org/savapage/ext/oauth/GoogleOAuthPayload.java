@@ -47,46 +47,87 @@ public final class GoogleOAuthPayload extends JsonAbstractBase {
      */
     public static final class Email extends JsonAbstractBase {
 
+        /** */
         private String value;
+
+        /** */
         private String type;
 
+        /**
+         *
+         * @return Email value.
+         */
         public String getValue() {
             return value;
         }
 
-        public void setValue(String value) {
-            this.value = value;
+        /**
+         *
+         * @param evalue
+         *            Email value.
+         */
+        public void setValue(final String evalue) {
+            this.value = evalue;
         }
 
+        /**
+         *
+         * @return Email type.
+         */
         public String getType() {
             return type;
         }
 
-        public void setType(String type) {
-            this.type = type;
+        /**
+         *
+         * @param etype
+         *            Email type.
+         */
+        public void setType(final String etype) {
+            this.type = etype;
         }
     }
 
+    /** */
     @JsonProperty("displayName")
     private String displayName;
 
+    /** */
     @JsonProperty("emails")
     private List<Email> emails;
 
+    /**
+     *
+     * @return The display name.
+     */
     public String getDisplayName() {
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    /**
+     *
+     * @param name
+     *            The display name.
+     */
+    public void setDisplayName(final String name) {
+        this.displayName = name;
     }
 
+    /**
+     *
+     * @return Email list.
+     */
     public List<Email> getEmails() {
         return emails;
     }
 
-    public void setEmails(List<Email> emails) {
-        this.emails = emails;
+    /**
+     *
+     * @param list
+     *            Email list.
+     */
+    public void setEmails(final List<Email> list) {
+        this.emails = list;
     }
 
     /**
