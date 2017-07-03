@@ -71,7 +71,10 @@ public final class ClientAppHandler {
      * IMPORTANT: changing this value invalidates any previously issued API KEY.
      * </p>
      */
-    public final static String API_CLIENT_ID = "savapage-client";
+    public static final String API_CLIENT_ID = "savapage-client";
+
+    /** */
+    private static final int SSL_PORT = 443;
 
     /**
      *
@@ -83,6 +86,7 @@ public final class ClientAppHandler {
      * Checks is the apiKey is valid.
      *
      * @param apiId
+     *            The API id.
      * @param apiKey
      *            The apiKey.
      * @return {@code true} when valid
@@ -100,13 +104,15 @@ public final class ClientAppHandler {
 
     /**
      *
-     * @return
+     * @return the ComnetD URL path.
      * @throws MalformedURLException
+     *             If URL syntax error.
      * @throws UnknownHostException
+     *             If URL host error.
      */
     private static String getCometdUrlPath()
             throws MalformedURLException, UnknownHostException {
-        return new URL("https", "dummy", 443, WebApp.MOUNT_PATH_COMETD)
+        return new URL("https", "dummy", SSL_PORT, WebApp.MOUNT_PATH_COMETD)
                 .getPath();
     }
 
@@ -117,8 +123,11 @@ public final class ClientAppHandler {
      *            The unique user id.
      * @return The query part of the {@link URL} to open the User WebApp.
      * @throws MalformedURLException
+     *             If URL syntax error.
      * @throws UnknownHostException
+     *             If URL host error.
      * @throws URISyntaxException
+     *             If URI syntax error.
      */
     private static URL getUserWebAppURLTemplate(final String userId)
             throws URISyntaxException, MalformedURLException,
@@ -126,7 +135,7 @@ public final class ClientAppHandler {
 
         final URIBuilder builder = new URIBuilder();
 
-        builder.setScheme("http").setHost("dummy").setPort(443)
+        builder.setScheme("http").setHost("dummy").setPort(SSL_PORT)
                 .setPath(WebApp.MOUNT_PATH_WEBAPP_USER)
                 .addParameter(WebAppParmEnum.SP_USER.parm(), userId);
 
@@ -134,14 +143,14 @@ public final class ClientAppHandler {
     }
 
     /**
-     *
+     * @param object
+     *            The object to stringify.
      * @return The JSON string of this object.
      * @throws IOException
      *             When something goes wrong.
      */
     private String stringify(final Object object) throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
-        mapper.generateJsonSchema(object.getClass()).toString();
         return mapper.writeValueAsString(object);
     }
 
