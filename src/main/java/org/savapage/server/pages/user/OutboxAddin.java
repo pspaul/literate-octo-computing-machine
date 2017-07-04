@@ -39,6 +39,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.PrintOutDao;
 import org.savapage.core.dao.UserDao;
@@ -53,6 +54,8 @@ import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.ipp.helpers.IppOptionMap;
+import org.savapage.core.jpa.Account;
+import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.outbox.OutboxInfoDto;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxAccountTrxInfoSet;
@@ -89,6 +92,12 @@ public class OutboxAddin extends AbstractUserPage {
      * .
      */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * .
+     */
+    private static final AccountDao ACCOUNT_DAO =
+            ServiceContext.getDaoContext().getAccountDao();
 
     /**
      * .
@@ -534,11 +543,43 @@ public class OutboxAddin extends AbstractUserPage {
                 final int nAccounts = trxInfoSet.getTransactions().size();
 
                 if (nAccounts > 0) {
-                    cost.append(" (").append(nAccounts).append(" ")
-                            .append(helper.localized(PrintOutNounEnum.ACCOUNT,
-                                    nAccounts > 1))
-                            .append(")");
+
+                    cost.append(" (");
+
+                    final boolean showAccountSum;
+
+                    if (nAccounts == 1) {
+
+                        final Account account = ACCOUNT_DAO.findById(trxInfoSet
+                                .getTransactions().get(0).getAccountId());
+
+                        final AccountTypeEnum accountType = AccountTypeEnum
+                                .valueOf(account.getAccountType());
+
+                        showAccountSum = accountType != AccountTypeEnum.SHARED;
+
+                        if (!showAccountSum) {
+                            if (account.getParent() != null) {
+                                cost.append(account.getParent().getName())
+                                        .append("\\");
+                            }
+                            account.getName();
+                            cost.append(account.getName());
+                        }
+
+                    } else {
+                        showAccountSum = true;
+                    }
+
+                    if (showAccountSum) {
+                        cost.append(nAccounts).append(" ")
+                                .append(helper.localized(
+                                        PrintOutNounEnum.ACCOUNT,
+                                        nAccounts > 1));
+                    }
+                    cost.append(")");
                 }
+
             }
 
             item.add(new Label("cost",

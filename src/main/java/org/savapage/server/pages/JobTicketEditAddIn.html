@@ -36,7 +36,7 @@
 		<wicket:panel wicket:id="ipp-option-list">
 			<tr>
 				<span id="the-id-n" wicket:id="ipp-option-div" />
-				<wicket:panel wicket:id="ipp-option-select">
+				<wicket:fragment wicket:id="ipp-option-select">
 					<td
 						style="padding: 0px; vertical-align: middle; text-align: right;"
 						wicket:id="label" />
@@ -44,15 +44,15 @@
 						<select data-savapage="[ipp-keyword]" id="the-id" data-mini="true"
 							data-native-menu="false" wicket:id="select" />
 					</td>
-				</wicket:panel>
+				</wicket:fragment>
 			</tr>
 		</wicket:panel>
 	</tbody>
 </table>
 
-<wicket:panel wicket:id="ipp-choice">
+<wicket:fragment wicket:id="ipp-choice">
 	<option value="ipp-option-value" wicket:id="option" />
-</wicket:panel>
+</wicket:fragment>
 
 <br />
 

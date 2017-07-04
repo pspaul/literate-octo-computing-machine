@@ -23,7 +23,6 @@ package org.savapage.server.pages;
 
 import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -83,10 +82,6 @@ public abstract class AbstractPage extends WebPage
     /** */
     private final DateFormat dfShortDateTime = DateFormat.getDateTimeInstance(
             DateFormat.SHORT, DateFormat.SHORT, getSession().getLocale());
-
-    /** */
-    private final NumberFormat fmNumber =
-            NumberFormat.getInstance(getSession().getLocale());
 
     /** */
     private final DateFormat dfShortDate = DateFormat
@@ -236,21 +231,6 @@ public abstract class AbstractPage extends WebPage
     }
 
     /**
-     * @deprecated Gets as localized string of a Number. The locale of the
-     *             current session is used.
-     *             <p>
-     *             Use {@link MarkupHelper#localizedNumber(long)}.
-     *             </p>
-     *
-     * @param number
-     * @return The localized string.
-     */
-    @Deprecated
-    protected final String localizedNumber(final long number) {
-        return fmNumber.format(number);
-    }
-
-    /**
      * Gets as localized (long) date string of a Date. The locale of the current
      * session is used.
      *
@@ -381,16 +361,20 @@ public abstract class AbstractPage extends WebPage
         return getParmValue(parm);
     }
 
-    protected DateFormat getDfShortDate() {
+    /**
+     *
+     * @return {@link DateFormat} for a short date.
+     */
+    protected final DateFormat getDfShortDate() {
         return dfShortDate;
     }
 
     /**
      * Gets the IP address of the client.
      *
-     * @return
+     * @return IP address.
      */
-    protected String getClientIpAddr() {
+    protected final String getClientIpAddr() {
         return ((ServletWebRequest) RequestCycle.get().getRequest())
                 .getContainerRequest().getRemoteAddr();
     }
@@ -463,7 +447,7 @@ public abstract class AbstractPage extends WebPage
     /**
      * @return The {@link UserAgentHelper}.
      */
-    protected UserAgentHelper createUserAgentHelper() {
+    protected final UserAgentHelper createUserAgentHelper() {
         final HttpServletRequest request =
                 (HttpServletRequest) getRequestCycle().getRequest()
                         .getContainerRequest();
@@ -481,39 +465,13 @@ public abstract class AbstractPage extends WebPage
      * @param attrValue
      *            The value of the HTML 'value' attribute of this radio button.
      */
-    protected void labelledText(final String wicketId, final String attrIdFor,
-            final String attrValue) {
+    protected final void labelledText(final String wicketId,
+            final String attrIdFor, final String attrValue) {
         Label labelWrk = new Label(wicketId);
         labelWrk.add(new AttributeModifier("id", attrIdFor));
         labelWrk.add(new AttributeModifier("value", attrValue));
         add(labelWrk);
         tagLabel(wicketId + "-label", wicketId, attrIdFor);
-    }
-
-    /**
-     * @deprecated Adds a checkbox.
-     *             <p>
-     *             Use {@link MarkupHelper#addCheckbox(String, String, boolean)}
-     *             .
-     *             </p>
-     *
-     * @param wicketId
-     *            The {@code wicket:id} of the {@code <input>} part.
-     *
-     * @param htmlId
-     *            The HTML 'id' of the {@code <input>} part.
-     * @param checked
-     *            {@code true} if the checkbox must be checked.
-     */
-    @Deprecated
-    protected void tagCheckbox(final String wicketId, final String htmlId,
-            final boolean checked) {
-        Label labelWrk = new Label(wicketId);
-        labelWrk.add(new AttributeModifier("id", htmlId));
-        if (checked) {
-            labelWrk.add(new AttributeModifier("checked", "checked"));
-        }
-        add(labelWrk);
     }
 
     /**
@@ -531,8 +489,8 @@ public abstract class AbstractPage extends WebPage
      *            The value of the HTML 'for' attribute.
      */
     @Deprecated
-    protected void tagLabel(final String wicketId, final String localizerKey,
-            final String attrFor) {
+    protected final void tagLabel(final String wicketId,
+            final String localizerKey, final String attrFor) {
         Label labelWrk = new Label(wicketId,
                 getLocalizer().getString(localizerKey, this));
         labelWrk.add(new AttributeModifier("for", attrFor));
@@ -550,18 +508,17 @@ public abstract class AbstractPage extends WebPage
      * @param attrValue
      *            The value of the HTML 'value' attribute of this radio button.
      * @param checked
+     *            If {@code true} radio button is checked.
      */
-    protected void labelledRadio(final String wicketIdBase,
+    protected final void labelledRadio(final String wicketIdBase,
             final String wicketIdSuffix, final String attrName,
             final String attrValue, final boolean checked) {
 
         final String attrId = attrName + wicketIdSuffix;
         tagRadio(wicketIdBase + wicketIdSuffix, attrName, attrId, attrValue,
                 checked);
-        /*
-         *
-         */
-        Label labelWrk = new Label(wicketIdBase + wicketIdSuffix + "-label",
+        final Label labelWrk = new Label(
+                wicketIdBase + wicketIdSuffix + "-label",
                 getLocalizer().getString(wicketIdBase + wicketIdSuffix, this));
         labelWrk.add(new AttributeModifier("for", attrId));
         add(labelWrk);
@@ -578,35 +535,21 @@ public abstract class AbstractPage extends WebPage
      * @param attrValue
      *            The value of the HTML 'value' attribute of this radio button.
      * @param checked
+     *            If {@code true} radio button is checked.
      */
-    protected void tagRadio(final String wicketId, final String attrName,
+    protected final void tagRadio(final String wicketId, final String attrName,
             final String attrId, final String attrValue,
             final boolean checked) {
-        Label labelWrk = new Label(wicketId);
+
+        final Label labelWrk = new Label(wicketId);
+
         labelWrk.add(new AttributeModifier("name", attrName));
         labelWrk.add(new AttributeModifier("id", attrId));
         labelWrk.add(new AttributeModifier("value", attrValue));
+
         if (checked) {
             labelWrk.add(new AttributeModifier("checked", "checked"));
         }
-        add(labelWrk);
-    }
-
-    /**
-     * @deprecated Adds input of type text.
-     *             <p>
-     *             Use {@link MarkupHelper#addTextInput(String, String)}.
-     *             </p>
-     *
-     * @param wicketId
-     * @param value
-     */
-    @Deprecated
-    protected final void addTextInput(final String wicketId,
-            final String value) {
-
-        Label labelWrk = new Label(wicketId);
-        labelWrk.add(new AttributeModifier("value", value));
         add(labelWrk);
     }
 
