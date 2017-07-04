@@ -754,7 +754,7 @@
 			//
 			, _WEBAPP_USER_IDLE_SECS = 'webapp.user.max-idle-secs'
 			// boolean authentication attributes
-			, _AUTH_ATTR_BOOLS = ['.name', '.yubikey', '.google', '.id', '.id.pin-required', '.id.is-masked', '.card-local', '.card-ip', '.card.pin-required', '.card.self-association']
+			, _AUTH_ATTR_BOOLS = ['.name', '.yubikey', '.id', '.id.pin-required', '.id.is-masked', '.card-local', '.card-ip', '.card.pin-required', '.card.self-association']
 			// string authentication attributes
 			, _AUTH_ATTR_STRINGS = []
 			//

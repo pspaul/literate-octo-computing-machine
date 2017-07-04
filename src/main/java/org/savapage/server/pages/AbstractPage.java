@@ -43,7 +43,6 @@ import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.UserAgentHelper;
-import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,24 +72,31 @@ public abstract class AbstractPage extends WebPage
     private static final Logger LOGGER =
             LoggerFactory.getLogger(AbstractPage.class);
 
+    /** */
     private final DateFormat dfLongDate = DateFormat
             .getDateInstance(DateFormat.LONG, getSession().getLocale());
 
+    /** */
     private final DateFormat dfDateTime = DateFormat.getDateTimeInstance(
             DateFormat.LONG, DateFormat.LONG, getSession().getLocale());
 
+    /** */
     private final DateFormat dfShortDateTime = DateFormat.getDateTimeInstance(
             DateFormat.SHORT, DateFormat.SHORT, getSession().getLocale());
 
+    /** */
     private final NumberFormat fmNumber =
             NumberFormat.getInstance(getSession().getLocale());
 
+    /** */
     private final DateFormat dfShortDate = DateFormat
             .getDateInstance(DateFormat.SHORT, getSession().getLocale());
 
+    /** */
     private final DateFormat dfMediumDate = DateFormat
             .getDateInstance(DateFormat.MEDIUM, getSession().getLocale());
 
+    /** */
     private boolean serviceContextOpened = false;
 
     /**
@@ -218,14 +224,6 @@ public abstract class AbstractPage extends WebPage
         }
 
         return webAppType;
-    }
-
-    /**
-     * @return {@code true} when Google OAuth is enabled (for client device).
-     */
-    protected final boolean isOAuthGoogleEnabled() {
-        return ApiRequestHelper.isOAuthGoogleEnabled(getSessionWebAppType(),
-                this.getClientIpAddr());
     }
 
     /**

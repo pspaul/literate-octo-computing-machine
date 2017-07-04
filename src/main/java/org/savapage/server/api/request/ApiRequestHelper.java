@@ -39,7 +39,6 @@ import org.savapage.core.outbox.OutboxInfoDto;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.webapp.WebAppTypeEnum;
@@ -77,24 +76,6 @@ public final class ApiRequestHelper {
     public static boolean isAuthTokenLoginEnabled() {
         return ConfigManager.instance()
                 .isConfigValue(Key.WEB_LOGIN_AUTHTOKEN_ENABLE);
-    }
-
-    /**
-     *
-     * @param webAppType
-     *            The {@link WebAppTypeEnum}.
-     * @param clientIpAddr
-     *            The client IP address.
-     * @return {@code true} when Google OAuth is enabled (for client device).
-     */
-    public static boolean isOAuthGoogleEnabled(final WebAppTypeEnum webAppType,
-            final String clientIpAddr) {
-
-        final UserAuth userAuth =
-                new UserAuth(ApiRequestHelper.getHostTerminal(clientIpAddr),
-                        null, webAppType.equals(WebAppTypeEnum.ADMIN));
-
-        return userAuth.isAllowAuthGoogle();
     }
 
     /**

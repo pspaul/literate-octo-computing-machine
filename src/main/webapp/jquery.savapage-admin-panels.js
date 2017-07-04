@@ -882,8 +882,6 @@
 				//
 				, yubikey = _view.isCbChecked($("#auth-mode\\.yubikey"))
 				//
-				, google = _view.isCbChecked($("#auth-mode\\.google"))
-				//
 				, nMode = 0
 				//
 				;
@@ -912,8 +910,6 @@
 				if (yubikey) {
 					nMode++;
 				}
-
-				_view.visible($('#group-user-auth-mode-google'), google);
 
 				_view.visible($('#group-user-auth-mode-default'), nMode > 1);
 			},

@@ -809,8 +809,6 @@
 				//
 				'auth-mode.yubikey', 'auth-mode.yubikey.show',
 				//
-				'auth-mode.google',
-				//
 				'user.can-change-pin', 'webapp.user.auth.trust-cliapp-auth']);
 
 				_fillConfigPropsRadio(props, ['auth-mode-default', 'card.number.format', 'card.number.first-byte']);

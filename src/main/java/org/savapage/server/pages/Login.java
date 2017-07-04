@@ -58,6 +58,8 @@ public final class Login extends AbstractPage {
 
     /**
      *
+     * @param parameters
+     *            The page parameters.
      */
     public Login(final PageParameters parameters) {
 
@@ -139,9 +141,7 @@ public final class Login extends AbstractPage {
         //
         addVisible(userAuth.isAuthIdPinReq(), "login-id-pin", "");
 
-        isOAuthGoogleEnabled();
-
-        // TODO: for now restrict OAuth to User Web App only...
+        // For now, restrict OAuth to User Web App only...
         final boolean localLoginRestricted = webAppType != WebAppTypeEnum.USER
                 || parms.getParameterValue(WebAppParmEnum.SP_LOGIN_LOCAL.parm())
                         .toString() != null;
@@ -152,6 +152,7 @@ public final class Login extends AbstractPage {
     /**
      *
      * @param localLoginRestricted
+     *            If {@code true}, login is restricted to local methods.
      */
     private void addOAuthButtons(final boolean localLoginRestricted) {
 
@@ -206,8 +207,6 @@ public final class Login extends AbstractPage {
                     populateItem(final ListItem<OAuthProviderEnum> item) {
 
                 final OAuthProviderEnum provider = item.getModelObject();
-                final ExternalSupplierEnum supplier =
-                        ServerPluginHelper.getEnum(provider);
 
                 final Label label = new Label("oauth-button", "&nbsp;");
 

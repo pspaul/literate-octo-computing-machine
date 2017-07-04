@@ -209,8 +209,6 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.AUTH_MODE_CARD_LOCAL);
         labelledCheckbox("user-auth-mode-yubikey",
                 IConfigProp.Key.AUTH_MODE_YUBIKEY);
-        labelledCheckbox("user-auth-mode-google",
-                IConfigProp.Key.AUTH_MODE_GOOGLE);
 
         //
         labelledCheckbox("user-auth-mode-name-pw-dialog",
@@ -218,8 +216,6 @@ public final class Options extends AbstractAdminPage {
         //
         labelledCheckbox("user-auth-mode-yubikey-dialog",
                 IConfigProp.Key.AUTH_MODE_YUBIKEY_SHOW);
-        //
-        add(new Label("user-auth-mode-google-hosted-domain", ""));
 
         //
         labelledCheckbox("user-auth-mode-id-number-pin",
