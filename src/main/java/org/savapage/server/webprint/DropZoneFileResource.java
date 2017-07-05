@@ -22,6 +22,7 @@
 package org.savapage.server.webprint;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -128,6 +129,8 @@ public final class DropZoneFileResource extends AbstractResource {
         ApiResultCodeEnum resultCode = ApiResultCodeEnum.OK;
         String resultText = "";
 
+        final Map<String, Boolean> filesStatus = new HashMap<>();
+
         ServiceContext.open();
 
         try {
@@ -159,9 +162,13 @@ public final class DropZoneFileResource extends AbstractResource {
 
             for (FileItem fileItem : fileItems) {
 
+                final String fileKey = fileItem.getName();
+                filesStatus.put(fileKey, Boolean.FALSE);
+
                 WebPrintHelper.handleFileUpload(originatorIp, user,
                         new FileUpload(fileItem), selectedFont);
 
+                filesStatus.put(fileKey, Boolean.TRUE);
             }
 
         } catch (FileUploadException | DocContentPrintException
@@ -186,7 +193,7 @@ public final class DropZoneFileResource extends AbstractResource {
             ServiceContext.close();
         }
 
-        writeResponse(resourceResponse, resultCode, resultText);
+        writeResponse(resourceResponse, resultCode, resultText, filesStatus);
 
         return resourceResponse;
     }
@@ -200,17 +207,23 @@ public final class DropZoneFileResource extends AbstractResource {
      *            The result code.
      * @param text
      *            The result text.
+     * @param fileStatus
+     *            The status of each file uploaded.
      */
     private void writeResponse(final ResourceResponse response,
-            final ApiResultCodeEnum code, final String text) {
+            final ApiResultCodeEnum code, final String text,
+            final Map<String, Boolean> fileStatus) {
 
         response.setContentType("application/json");
 
         final String responseContent;
 
         try {
-            responseContent = JsonHelper.objectMapAsString(
-                    ApiRequestMixin.createApiResultText(code, text));
+            final Map<String, Object> result =
+                    ApiRequestMixin.createApiResultText(code, text);
+
+            result.put("filesStatus", fileStatus);
+            responseContent = JsonHelper.objectMapAsString(result);
 
         } catch (IOException e) {
             throw new SpException(e);

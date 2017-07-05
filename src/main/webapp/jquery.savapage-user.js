@@ -1797,8 +1797,8 @@
 				_showResetButton(true);
 			}
 			//
-			, _onUploadMsgWarn = function(warn) {
-				$('#sp-webprint-upload-feedback').addClass('sp-txt-warn').html(warn).show();
+			, _onUploadMsgWarn = function(warn, files, filesStatus) {
+				$('#sp-webprint-upload-feedback').html(_ns.DropZone.getHtmlWarning(_i18n, warn, files, filesStatus)).show();
 				_showUploadButton(false);
 				_showResetButton(true);
 				$('#sp-webprint-upload-file').val('');
@@ -1841,9 +1841,9 @@
 
 				if (_DROPZONE) {
 					zone = $('#sp-webprint-upload-feedback');
-					zone.addClass('sp-dropzone');
+					zone.addClass('sp-dropzone-small');
 
-					_ns.DropZone.setCallbacks(zone, 'sp-dropzone-hover'
+					_ns.DropZone.setCallbacks(zone, 'sp-dropzone-hover-small'
 					//
 					, _model.webPrintUploadUrl, _model.webPrintUploadFileParm
 					//
@@ -1855,8 +1855,8 @@
 						_onUploadStart();
 					}, function() {// after send
 						_onUploadDone();
-					}, function(warn) {
-						_onUploadMsgWarn(warn);
+					}, function(warn, infoArray, filesStatus) {
+						_onUploadMsgWarn(warn, infoArray, filesStatus);
 					}, function(files) {
 						_onUploadMsgInfo(files);
 					});
@@ -2652,8 +2652,8 @@
 						_ns.userEvent.pause();
 					}, function() {
 						_ns.userEvent.resume();
-					}, function(warn) {
-						_view.msgDialogBox(warn, 'sp-msg-popup-warn');
+					}, function(warn, files, filesStatus) {
+						_view.msgDialogBox(_ns.DropZone.getHtmlWarning(_i18n, warn, files, filesStatus), 'sp-msg-popup-warn');
 					});
 				}
 

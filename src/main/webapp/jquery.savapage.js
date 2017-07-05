@@ -1484,7 +1484,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,                                                  or collected local card number from individual keystrokes,
+			// The YubiKey OTP,                                                    or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -2790,6 +2790,37 @@
 		_ns.DropZone = {
 
 			/**
+			 * Format warning as HTML.
+			 */
+			getHtmlWarning : function(i18n, warn, files, filesStatus) {
+				var i, pfx, nameWlk, statWlk, htmlWlk, htmlAccepted = '', htmlRejected = '';
+
+				if (files && filesStatus) {
+					for ( i = 0; i < files.length; i++) {
+						nameWlk = files[i].name;
+						statWlk = filesStatus[nameWlk];
+						if (statWlk !== undefined) {
+							htmlWlk = '<span class="sp-txt-' + ( statWlk ? 'valid' : 'warn') + '">';
+							htmlWlk += '&bull; ' + nameWlk + ' (' + this.humanFileSize(files[i].size) + ')</span><br>';
+							if (statWlk) {
+								htmlAccepted += htmlWlk;
+							} else {
+								htmlRejected += htmlWlk;
+							}
+						}
+					}
+				}
+				htmlWlk = htmlAccepted;
+				if (htmlWlk.length > 0) {
+					htmlWlk += '<span class="sp-txt-valid">&bull; ' + i18n.format('msg-file-upload-completed') + '</span><br>';
+				}
+				htmlWlk += htmlRejected;
+				pfx = htmlWlk.length > 0 ? '&bull; ' : '';  
+				
+				return htmlWlk + '<span class="sp-txt-warn">' + pfx + warn + '</span>';
+			},
+
+			/**
 			 * Is FileReader object supported?
 			 */
 			hasFileReader : function() {
@@ -2875,13 +2906,11 @@
 					if (file.size > 0) {
 						formData.append(fileField, file);
 						totBytes += file.size;
-						
-						if (fooInfo) {
-							infoArray.push({
-								name : file.name,
-								size : file.size
-							});
-						}
+
+						infoArray.push({
+							name : file.name,
+							size : file.size
+						});
 					}
 
 				}
@@ -2889,7 +2918,7 @@
 				if (totBytes === 0) {
 					fooWarn(i18n.format('msg-file-upload-size-zero', [allFileNames]));
 					return;
-				} 
+				}
 				if (totBytes > maxBytes) {
 					fooWarn(i18n.format('msg-file-upload-size-exceeded', [allFileNames, this.humanFileSize(totBytes), this.humanFileSize(maxBytes)]));
 					return;
@@ -2912,10 +2941,9 @@
 					dataType : 'json'
 				}).done(function(res) {
 					if (res.result.code !== '0') {
-						fooWarn(res.result.txt);
+						fooWarn(res.result.txt, infoArray, res.filesStatus);
 					} else if (fooInfo) {
 						fooInfo(infoArray);
-						// ended OK.
 					}
 				}).fail(function() {
 					_ns.PanelCommon.onDisconnected();
