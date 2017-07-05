@@ -1484,7 +1484,7 @@
 			// YubiKey OTP.
 			, _MAX_YUBIKEY_MSECS = 1500
 			//
-			// The YubiKey OTP,                                                 or collected local card number from individual keystrokes,
+			// The YubiKey OTP,                                                  or collected local card number from individual keystrokes,
 			// or the cached Card Number to associate with a user.
 			, _authKeyLoggerCollected
 			//
@@ -2845,16 +2845,16 @@
 				}
 				return false;
 			},
-						
+
 			/**
 			 *
 			 */
 			sendFiles : function(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBefore, fooAfter, fooWarn, fooInfo) {
 				var i, formData = new FormData(), totBytes = 0, file, allFileNames = '', infoArray = [];
 
-
 				if (files.length === 0) {
-					fooWarn(i18n.format('msg-file-upload-size-zero', [' '])); // todo
+					fooWarn(i18n.format('msg-file-upload-size-zero', [' ']));
+					// todo
 					return;
 				}
 
@@ -2875,17 +2875,22 @@
 					if (file.size > 0) {
 						formData.append(fileField, file);
 						totBytes += file.size;
+						
+						if (fooInfo) {
+							infoArray.push({
+								name : file.name,
+								size : file.size
+							});
+						}
 					}
-					
-					if (fooInfo) {
-						infoArray.push({ name : file.name, size : file.size});
-					}
+
 				}
 
 				if (totBytes === 0) {
 					fooWarn(i18n.format('msg-file-upload-size-zero', [allFileNames]));
 					return;
-				} else if (totBytes > maxBytes) {
+				} 
+				if (totBytes > maxBytes) {
 					fooWarn(i18n.format('msg-file-upload-size-exceeded', [allFileNames, this.humanFileSize(totBytes), this.humanFileSize(maxBytes)]));
 					return;
 				}
@@ -2909,7 +2914,8 @@
 					if (res.result.code !== '0') {
 						fooWarn(res.result.txt);
 					} else if (fooInfo) {
-						fooInfo(infoArray); // ended OK.						
+						fooInfo(infoArray);
+						// ended OK.
 					}
 				}).fail(function() {
 					_ns.PanelCommon.onDisconnected();

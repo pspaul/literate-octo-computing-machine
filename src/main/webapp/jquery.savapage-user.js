@@ -1742,6 +1742,8 @@
 			 */
 			var _page = new _ns.Page(_i18n, _view, '#page-file-upload')
 			//
+			, _DROPZONE, _DROPZONE_HTML
+			//
 			, _self = _ns.derive(_page)
 			//
 			, _isPdfVisible = function() {
@@ -1750,6 +1752,24 @@
 			//
 			, _isPrintVisible = function() {
 				return $('#button-main-print').length > 0;
+			}
+			//
+			, _showUploadButton = function(enable) {
+				_view.visible($('#sp-button-file-upload-submit').parent(), enable);
+			}
+			//
+			, _showResetButton = function(enable) {
+				_view.visible($('#sp-button-file-upload-reset').parent(), enable);
+			}
+			//
+			, _setUploadFeedbackDefault = function(dropzone) {
+				var feedback = $('#sp-webprint-upload-feedback');
+				feedback.removeClass('sp-txt-warn').removeClass('sp-txt-valid').addClass('sp-txt-info');
+				if (dropzone) {
+					feedback.html(_DROPZONE_HTML);
+				} else {
+					feedback.html('').hide();
+				}
 			}
 			//
 			, _setButtonVisibility = function(sel, visible, hasInboxDocs) {
@@ -1765,14 +1785,86 @@
 				_setButtonVisibility($('#sp-file-upload-pdf-button'), _isPdfVisible(), hasInboxDocs);
 			}
 			//
+			, _onUploadStart = function() {
+				$('#sp-button-file-upload-reset').click();
+				$('#sp-webprint-upload-feedback').html('&nbsp;').show();
+			}
+			//
+			, _onUploadDone = function() {
+				_view.pages.main.onRefreshPages();
+				_setVisibility();
+				_showUploadButton(false);
+				_showResetButton(true);
+			}
+			//
+			, _onUploadMsgWarn = function(warn) {
+				$('#sp-webprint-upload-feedback').addClass('sp-txt-warn').html(warn).show();
+				_showUploadButton(false);
+				_showResetButton(true);
+				$('#sp-webprint-upload-file').val('');
+			}
+			//
+			, _onUploadMsgInfo = function(files) {
+				var i, html = '';
+				for ( i = 0; i < files.length; i++) {
+					html += '&bull; ' + files[i].name + ' (' + _ns.DropZone.humanFileSize(files[i].size) + ')<br>';
+				}
+				html += '&bull; ' + _i18n.format('msg-file-upload-completed', null);
+				$('#sp-webprint-upload-feedback').addClass('sp-txt-valid').html(html);
+				_showResetButton(true);
+			}
+			//
 			;
 
 			$(_self.id()).on('pagecreate', function(event) {
 
-				$('#sp-webprint-upload-feedback').hide();
+				var zone, html, selAddIn = $('#file-upload-addin');
+
+				if (selAddIn.children().length === 0) {
+					html = _view.getUserPageHtml('FileUploadAddIn');
+					$('#file-upload-title').html(_i18n.format('file-upload-title'));
+					$('#file-upload-txt-font-family').html(_i18n.format('file-upload-txt-font-family'));
+					//
+					selAddIn.html(html).listview('refresh');
+
+					$('#sp-button-file-upload-reset').attr('value', _i18n.format('button-reset')).button('refresh');
+					$('#sp-button-file-upload-submit').attr('value', _i18n.format('button-upload')).button('refresh');
+				}
+
+				_DROPZONE = _model.webPrintDropZoneEnabled && _ns.DropZone.isSupported();
+				_DROPZONE_HTML = _i18n.format('file-upload-dropzone-prompt-dialog');
+
+				_showUploadButton(false);
+				_showResetButton(false);
+
+				_setUploadFeedbackDefault(_DROPZONE);
+
+				if (_DROPZONE) {
+					zone = $('#sp-webprint-upload-feedback');
+					zone.addClass('sp-dropzone');
+
+					_ns.DropZone.setCallbacks(zone, 'sp-dropzone-hover'
+					//
+					, _model.webPrintUploadUrl, _model.webPrintUploadFileParm
+					//
+					, null, null
+					//
+					, _model.webPrintMaxBytes, _model.webPrintFileExt, _i18n
+					//
+					, function() {// before send
+						_onUploadStart();
+					}, function() {// after send
+						_onUploadDone();
+					}, function(warn) {
+						_onUploadMsgWarn(warn);
+					}, function(files) {
+						_onUploadMsgInfo(files);
+					});
+				}
 
 				$('#sp-webprint-upload-form').submit(function(e) {
 					var files = document.getElementById('sp-webprint-upload-file').files;
+
 					e.preventDefault();
 
 					_ns.DropZone.sendFiles(files,
@@ -1784,27 +1876,29 @@
 					, _model.webPrintMaxBytes, _model.webPrintFileExt, _i18n
 					//
 					, function() {// before send
-						$('#sp-button-file-upload-reset').click();
-						$('#sp-webprint-upload-feedback').removeClass('sp-txt-warn').addClass('sp-txt-valid').html('&nbsp;').show();
+						_onUploadStart();
 					}, function() {// after send
-						_view.pages.main.onRefreshPages();
-						_setVisibility();
+						_onUploadDone();
 					}, function(warn) {
-						$('#sp-webprint-upload-feedback').removeClass('sp-txt-valid').addClass('sp-txt-warn').html(warn).show();
+						_onUploadMsgWarn(warn);
 					}, function(files) {
-						var i, html = '';
-						for ( i = 0; i < files.length; i++) {
-							html += '&bull; ' + files[i].name + ' (' + _ns.DropZone.humanFileSize(files[i].size) + ')<br>';
-						}
-						html += '&bull; ' + _i18n.format('msg-file-upload-completed', null);
-						$('#sp-webprint-upload-feedback').html(html);
+						_onUploadMsgInfo(files);
 					});
 
 					return false;
 				});
 
+				$(this).on('change', '#sp-webprint-upload-file', function() {
+					var show = $(this).val();
+					_showUploadButton(show);
+					_showResetButton(show);
+					_setUploadFeedbackDefault(_DROPZONE);
+				});
+
 				$('#sp-button-file-upload-reset').click(function() {
-					$('#sp-webprint-upload-feedback').html('').hide();
+					_setUploadFeedbackDefault(_DROPZONE);
+					_showUploadButton(false);
+					_showResetButton(false);
 					return true;
 				});
 
@@ -2604,22 +2698,12 @@
 				});
 
 				$('#button-mini-upload').click(function() {
-					var html, pageId = '#page-file-upload', selAddIn = $('#file-upload-addin');
+					var pageId = '#page-file-upload';
 					/*
 					 * This page is a fixed part of WebAppUserPage.html
 					 */
 					_view.changePage(pageId);
 
-					if (selAddIn.children().length === 0) {
-						html = _view.getUserPageHtml('FileUploadAddIn');
-						$('#file-upload-title').html(_i18n.format('file-upload-title'));
-						$('#file-upload-txt-font-family').html(_i18n.format('file-upload-txt-font-family'));
-						//
-						selAddIn.html(html).listview('refresh');
-
-						$('#sp-button-file-upload-reset').attr('value', _i18n.format('button-reset')).button('refresh');
-						$('#sp-button-file-upload-submit').attr('value', _i18n.format('button-upload')).button('refresh');
-					}
 					return false;
 				});
 
@@ -3759,9 +3843,9 @@
 			this.webPrintDropZoneEnabled = false;
 			this.webPrintMaxBytes = 0;
 			this.webPrintFileExt = [];
-			this.webPrintUploadUrl
-			this.webPrintUploadFileParm
-			this.webPrintUploadFontParm
+			this.webPrintUploadUrl = null;
+			this.webPrintUploadFileParm = null;
+			this.webPrintUploadFontParm = null;
 
 			/**
 			 * Creates a string with page range format from the cut pages.

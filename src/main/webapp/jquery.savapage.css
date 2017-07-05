@@ -231,8 +231,13 @@
 	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
+.sp-dropzone {
+	border: 5px #ddd dashed !important;
+}
+
 .sp-dropzone-hover {
 	border: 5px #74b042 dashed !important;
 }
+
 
 /* end-of-file */
