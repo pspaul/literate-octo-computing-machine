@@ -42,6 +42,7 @@ import org.savapage.core.print.server.DocContentPrintReq;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
+import org.savapage.core.util.NumberUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,9 +110,11 @@ public final class WebPrintHelper {
      * @return The max upload size.
      */
     public static Bytes getMaxUploadSize() {
-        return Bytes.megabytes(ConfigManager.instance().getConfigLong(
+        // Note: Bytes.megabytes() is MiB (not MB).
+        return Bytes.bytes(ConfigManager.instance().getConfigLong(
                 Key.WEB_PRINT_MAX_FILE_MB,
-                IConfigProp.WEBPRINT_MAX_FILE_MB_V_DEFAULT));
+                IConfigProp.WEBPRINT_MAX_FILE_MB_V_DEFAULT)
+                * NumberUtil.INT_THOUSAND * NumberUtil.INT_THOUSAND);
     }
 
     /**

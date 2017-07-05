@@ -181,10 +181,6 @@ public final class DropZoneFileResource extends AbstractResource {
             resultText = e.getMessage();
 
             LOGGER.error("An error occurred while uploading a file.", e);
-            //
-            // throw new AbortWithHttpErrorCodeException(
-            // HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-            // e.getMessage());
 
         } finally {
             ServiceContext.close();

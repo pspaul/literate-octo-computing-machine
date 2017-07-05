@@ -2827,9 +2827,10 @@
 			/**
 			 *
 			 */
-			humanFileSize : function(size) {
-				var i = Math.floor(Math.log(size) / Math.log(1024));
-				return (size / Math.pow(1024, i) ).toFixed(2) * 1 + '&nbsp;' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+			humanFileSize : function(size, bin) {
+				var i, decimals = 1, unit = bin ? 1024 : 1000, unitArray = bin ? ['', 'Ki', 'Mi', 'Gi', 'Ti'] : ['', 'k', 'M', 'G', 'T'];
+				i = Math.floor(Math.log(size) / Math.log(unit));
+				return (size / Math.pow(unit, i) ).toFixed(decimals) * 1 + '&nbsp;' + unitArray[i] + 'B';
 			},
 
 			/**
@@ -2848,8 +2849,8 @@
 			/**
 			 *
 			 */
-			sendFiles : function(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBefore, fooAfter, fooWarn) {
-				var i, formData = new FormData(), totBytes = 0, file, allFileNames = '';
+			sendFiles : function(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBefore, fooAfter, fooWarn, fooInfo) {
+				var i, formData = new FormData(), totBytes = 0, file, allFileNames = '', infoArray = [];
 
 
 				if (files.length === 0) {
@@ -2874,6 +2875,10 @@
 					if (file.size > 0) {
 						formData.append(fileField, file);
 						totBytes += file.size;
+					}
+					
+					if (fooInfo) {
+						infoArray.push({ name : file.name, size : file.size});
 					}
 				}
 
@@ -2903,8 +2908,8 @@
 				}).done(function(res) {
 					if (res.result.code !== '0') {
 						fooWarn(res.result.txt);
-					} else {
-						fooWarn(null); // ended OK.						
+					} else if (fooInfo) {
+						fooInfo(infoArray); // ended OK.						
 					}
 				}).fail(function() {
 					_ns.PanelCommon.onDisconnected();
@@ -2920,7 +2925,7 @@
 			 *
 			 * @param {Object} dropzone (JQuery selector).
 			 */
-			setCallbacks : function(dropzone, cssClassDragover, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn) {
+			setCallbacks : function(dropzone, cssClassDragover, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo) {
 				var _obj = this;
 
 				dropzone.bind('dragover', function(e) {
@@ -2938,7 +2943,7 @@
 					$(this).removeClass(cssClassDragover);
 					// A drop of meaningless item(s) results in files.length === zero.
 					if (files.length > 0) {
-						_obj.sendFiles(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn);
+						_obj.sendFiles(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo);
 					}
 					return false;
 				});

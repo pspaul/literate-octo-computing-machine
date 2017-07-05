@@ -1789,12 +1789,15 @@
 					}, function() {// after send
 						_view.pages.main.onRefreshPages();
 						_setVisibility();
-					}, function(msg) {
-						if (msg) {
-							$('#sp-webprint-upload-feedback').removeClass('sp-txt-valid').addClass('sp-txt-warn').html('&bull; ' + msg).show();
-						} else {
-							$('#sp-webprint-upload-feedback').html('&bull; ' + _i18n.format('msg-file-upload-completed', null));
+					}, function(warn) {
+						$('#sp-webprint-upload-feedback').removeClass('sp-txt-valid').addClass('sp-txt-warn').html(warn).show();
+					}, function(files) {
+						var i, html = '';
+						for ( i = 0; i < files.length; i++) {
+							html += '&bull; ' + files[i].name + ' (' + _ns.DropZone.humanFileSize(files[i].size) + ')<br>';
 						}
+						html += '&bull; ' + _i18n.format('msg-file-upload-completed', null);
+						$('#sp-webprint-upload-feedback').html(html);
 					});
 
 					return false;
@@ -2555,10 +2558,8 @@
 						_ns.userEvent.pause();
 					}, function() {
 						_ns.userEvent.resume();
-					}, function(msg) {
-						if (msg) {
-							_view.msgDialogBox(msg, 'sp-msg-popup-warn');
-						}
+					}, function(warn) {
+						_view.msgDialogBox(warn, 'sp-msg-popup-warn');
 					});
 				}
 
