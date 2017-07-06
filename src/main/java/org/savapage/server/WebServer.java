@@ -399,6 +399,30 @@ public final class WebServer {
     }
 
     /**
+     * @return {@code true} when Java 8 runtime.
+     */
+    private static boolean checkJava8() {
+        try {
+            // Pick a class that was introduced in Java 8.
+            final String java8ClassCheck = "java.time.Duration";
+            Class.forName(java8ClassCheck);
+            return true;
+        } catch (ClassNotFoundException e) {
+            // no code intended.
+        }
+
+        final String msg =
+                "\n+=================================================+"
+                        + "\n| SavaPage NOT started: "
+                        + "Java 8 MUST be installed. |"
+                        + "\n+========================"
+                        + "=========================+";
+        System.err.println(new Date().toString() + " : " + msg);
+        LOGGER.error(msg);
+        return false;
+    }
+
+    /**
      * Starts the Web Server.
      * <p>
      * References:
@@ -415,6 +439,10 @@ public final class WebServer {
      *             When unexpected things happen.
      */
     public static void main(final String[] args) throws Exception {
+
+        if (!checkJava8()) {
+            return;
+        }
 
         ConfigManager.setDefaultServerPort(ConfigDefaults.SERVER_PORT);
         ConfigManager.setDefaultServerSslPort(ConfigDefaults.SERVER_SSL_PORT);
@@ -441,11 +469,10 @@ public final class WebServer {
         serverPortSsl = Integer.parseInt(propsServer.getProperty(
                 PROP_KEY_SERVER_PORT_SSL, ConfigDefaults.SERVER_SSL_PORT));
 
-        serverSslRedirect =
-                !isSSLOnly() && BooleanUtils.toBooleanDefaultIfNull(
-                        BooleanUtils.toBooleanObject(propsServer
-                                .getProperty(PROP_KEY_HTML_REDIRECT_SSL)),
-                        false);
+        serverSslRedirect = !isSSLOnly() && BooleanUtils.toBooleanDefaultIfNull(
+                BooleanUtils.toBooleanObject(
+                        propsServer.getProperty(PROP_KEY_HTML_REDIRECT_SSL)),
+                false);
         /*
          *
          */
