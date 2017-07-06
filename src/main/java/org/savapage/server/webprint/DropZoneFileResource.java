@@ -131,6 +131,8 @@ public final class DropZoneFileResource extends AbstractResource {
 
         final Map<String, Boolean> filesStatus = new HashMap<>();
 
+        final Map<String, FileItem> fileItemsToHandle = new HashMap<>();
+
         ServiceContext.open();
 
         try {
@@ -160,7 +162,11 @@ public final class DropZoneFileResource extends AbstractResource {
 
             final List<FileItem> fileItems = files.get(UPLOAD_PARAM_NAME_FILE);
 
-            for (FileItem fileItem : fileItems) {
+            for (final FileItem fileItem : fileItems) {
+                fileItemsToHandle.put(fileItem.getName(), fileItem);
+            }
+
+            for (final FileItem fileItem : fileItems) {
 
                 final String fileKey = fileItem.getName();
                 filesStatus.put(fileKey, Boolean.FALSE);
@@ -169,6 +175,7 @@ public final class DropZoneFileResource extends AbstractResource {
                         new FileUpload(fileItem), selectedFont);
 
                 filesStatus.put(fileKey, Boolean.TRUE);
+                fileItemsToHandle.remove(fileKey);
             }
 
         } catch (FileUploadException | DocContentPrintException
@@ -190,6 +197,12 @@ public final class DropZoneFileResource extends AbstractResource {
             LOGGER.error("An error occurred while uploading a file.", e);
 
         } finally {
+
+            // Clean up any file items not handled.
+            for (final FileItem fileItem : fileItemsToHandle.values()) {
+                fileItem.delete();
+            }
+
             ServiceContext.close();
         }
 
