@@ -158,6 +158,22 @@ public final class About extends AbstractAdminPage {
         add(new Label("jre-os-version", System.getProperty("os.version")));
         add(new Label("jre-os-arch", System.getProperty("os.arch")));
 
+        add(new Label("jre-java.io.tmpdir",
+                System.getProperty("java.io.tmpdir")));
+
+        add(new Label("app.dir.tmp-key",
+                ConfigManager.SERVER_PROP_APP_DIR_TMP));
+        add(new Label("app.dir.tmp", ConfigManager.getAppTmpDir()));
+
+        add(new Label("app.dir.safepages-key",
+                ConfigManager.SERVER_PROP_APP_DIR_SAFEPAGES));
+        add(new Label("app.dir.safepages",
+                ConfigManager.getSafePagesHomeDir()));
+
+        add(new Label("app.dir.letterheads-key",
+                ConfigManager.SERVER_PROP_APP_DIR_LETTERHEADS));
+        add(new Label("app.dir.letterheads", ConfigManager.getLetterheadDir()));
+
         // ---------- CUPS
         version = PROXY_PRINT_SERVICE.getCupsVersion();
         installed = StringUtils.isNotBlank(version);
