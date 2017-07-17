@@ -3,7 +3,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -27,8 +27,14 @@
 		data-filter-placeholder="[placeholder]" data-filter-theme="a"
 		data-inset="true" />
 
-	<span wicket:id="search-msg" id="[sp-unique-id]-msg"
-		style="display: none; margin-left: 30px;"
-		class="sp-txt-info sp-txt-wrap" />
+	<fieldset data-role="controlgroup" data-type="horizontal"
+		style="display: none; margin-left: 0px;" data-mini="true"
+		class="sp-quicksearch-buttons">
+
+		<button data-savapage="0"
+			class="sp-button-first ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-none">1</button>
+		<button data-savapage="1"
+			class="sp-button-next ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-none">&gt;</button>
+	</fieldset>
 
 </wicket:panel>

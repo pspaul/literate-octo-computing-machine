@@ -57,7 +57,7 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
 
         private List<QuickSearchUserGroupMemberItemDto> items;
 
-        private String searchMsg;
+        private Integer nextPosition;
 
         @SuppressWarnings("unused")
         public List<QuickSearchUserGroupMemberItemDto> getItems() {
@@ -69,13 +69,14 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
         }
 
         @SuppressWarnings("unused")
-        public String getSearchMsg() {
-            return searchMsg;
+        public Integer getNextPosition() {
+            return nextPosition;
         }
 
-        public void setSearchMsg(String searchMsg) {
-            this.searchMsg = searchMsg;
+        public void setNextPosition(Integer nextPosition) {
+            this.nextPosition = nextPosition;
         }
+
     }
 
     @Override
@@ -96,19 +97,19 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
         filter.setUserGroupId(dto.getGroupId());
         filter.setContainingNameText(dto.getFilter());
         filter.setDeleted(Boolean.FALSE);
+        filter.setDisabled(Boolean.FALSE);
 
         final int nUsersMax = dto.getMaxResults();
 
         int nUsersConsumed = 0;
         int nUsersSelected = 0;
-        int iStartPosition = 0;
+        Integer startPosition = dto.getStartPosition();
 
         // The number of rows to retrieve in the Quick Search result set.
         final int maxListChunkResults = MAX_RESULTS_FACTOR * nUsersMax;
 
-        final List<User> userListChunkFirst =
-                userDao.getListChunk(filter, iStartPosition,
-                        maxListChunkResults, UserDao.Field.USERID, true);
+        final List<User> userListChunkFirst = userDao.getListChunk(filter,
+                startPosition, maxListChunkResults, UserDao.Field.USERID, true);
 
         for (final User user : userListChunkFirst) {
 
@@ -155,22 +156,22 @@ public final class ReqUserGroupMemberQuickSearch extends ApiRequestMixin {
         rsp.setItems(items);
 
         // Assume there are next candidates.
-        String msg = ". . .";
+        Integer nextPosition = null;
 
         if (nUsersConsumed == maxListChunkResults) {
             // Is next chunk available?
-            iStartPosition += maxListChunkResults;
+            startPosition += maxListChunkResults;
             final List<User> userListChunkNext = userDao.getListChunk(filter,
-                    iStartPosition, 1, UserDao.Field.USERID, true);
+                    startPosition, 1, UserDao.Field.USERID, true);
 
-            if (userListChunkNext.isEmpty()) {
-                msg = null;
+            if (!userListChunkNext.isEmpty()) {
+                nextPosition = startPosition;
             }
-        } else if (nUsersConsumed != nUsersMax) {
-            msg = null;
+        } else if (nUsersConsumed == nUsersMax) {
+            nextPosition = startPosition + nUsersMax;
         }
 
-        rsp.setSearchMsg(msg);
+        rsp.setNextPosition(nextPosition);
 
         setResponse(rsp);
         setApiResultOk();

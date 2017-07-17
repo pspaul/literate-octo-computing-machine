@@ -67,13 +67,6 @@ public class QuickSearchPanel extends Panel {
         add(labelWrk);
 
         //
-        labelWrk = new Label("search-msg", "");
-        labelWrk.add(new AttributeModifier("id",
-                String.format("%s-msg", htmlBaseId)));
-
-        add(labelWrk);
-
-        //
         labelWrk = new Label("search-filter", "");
         labelWrk.add(new AttributeModifier("id",
                 String.format("%s-filter", htmlBaseId)));

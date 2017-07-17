@@ -240,11 +240,13 @@
 				target.html(html).filterable("refresh");
 			}
 			//----------------------------------------------------------------
-			, _onUserQuickSearch = function(target, groupId, filter, msgTarget) {
+			, _onUserQuickSearch = function(target, groupId, filter, startPosition, paging) {
 				/* QuickSearchUserGroupMemberFilterDto */
-				var res, html = "";
+				var res, selWlk, html = ""
+				//
+				, qsButtons = $("#sp-print-delegation-quicksearch-users .sp-quicksearch-buttons");
 
-				if (_quickUserFilter === filter) {
+				if (!paging && _quickUserFilter === filter) {
 					return;
 				}
 				_quickUserFilter = filter;
@@ -257,6 +259,7 @@
 					dto : JSON.stringify({
 						groupId : groupId,
 						filter : filter,
+						startPosition : startPosition,
 						maxResults : _QS_MAX_RESULTS,
 						aclRole : 'PRINT_DELEGATOR'
 					})
@@ -278,9 +281,13 @@
 						html += "</a></li>";
 					});
 
-					if (msgTarget) {
-						msgTarget.html(res.dto.searchMsg || "");
-						_view.visible(msgTarget, res.dto.searchMsg);
+					if (qsButtons) {
+						selWlk = qsButtons.find('.sp-button-next');
+						if (res.dto.nextPosition) {
+							selWlk.attr('data-savapage', res.dto.nextPosition).show();
+						}
+						_view.enable(selWlk, res.dto.nextPosition);
+						_view.visible(qsButtons, paging || res.dto.nextPosition);
 					}
 
 				} else {
@@ -426,7 +433,7 @@
 				}
 
 				selCopies.val(1);
-				
+
 				_setVisibilityDelegatorsEdit();
 			}
 			//----------------------------------------------------------------
@@ -468,7 +475,7 @@
 						span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
 					}
 					_quickUserFilter = undefined;
-					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), $("#sp-print-delegation-users-select-to-add-msg"));
+					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), 0);
 				}
 			}
 			//----------------------------------------------------------------
@@ -626,7 +633,7 @@
 					_quickUserSelected = {};
 					_nSelectedUsers = 0;
 
-					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), null, $('#sp-print-delegation-users-select-to-add').val(), $("#sp-print-delegation-users-select-to-add-msg"));
+					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), null, $('#sp-print-delegation-users-select-to-add').val(), 0);
 
 					_view.enable($('#sp-print-delegation-button-add'), false);
 
@@ -731,7 +738,7 @@
 				filterableUsers.on("filterablebeforefilter", function(e, data) {
 					var dbkey = _util.getFirstProp(_quickUserGroupSelected);
 					e.preventDefault();
-					_onUserQuickSearch($(this), dbkey, data.input.get(0).value, $("#sp-print-delegation-users-select-to-add-msg"));
+					_onUserQuickSearch($(this), dbkey, data.input.get(0).value, 0);
 				});
 
 				$(this).on('click', '#sp-print-delegation-users-select-to-add-filter li', null, function() {
@@ -748,6 +755,14 @@
 
 				$(this).on('click', '#sp-print-delegation-select-shared-account-filter li', null, function() {
 					_onAccountSelected($(this));
+				});
+
+				//-----------------------
+				// User list navigation
+				//-----------------------
+				$("#sp-print-delegation-quicksearch-users .sp-quicksearch-buttons .ui-btn").click(function() {
+					var dbkey = _util.getFirstProp(_quickUserGroupSelected), nextPosition = $(this).attr('data-savapage');
+					_onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), nextPosition, true);
 				});
 
 				// Show available accounts on first open
