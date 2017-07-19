@@ -23,6 +23,7 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -235,7 +236,7 @@ public final class ReqLogin extends ApiRequestMixin {
     private void reqLogin(final UserAuth.Mode authMode, final String authId,
             final String authPw, final String authToken,
             final String assocCardNumber, final WebAppTypeEnum webAppType)
-            throws IOException {
+                    throws IOException {
 
         final UserAgentHelper userAgentHelper = this.createUserAgentHelper();
 
@@ -419,7 +420,17 @@ public final class ReqLogin extends ApiRequestMixin {
         }
         getUserData().put("sessionid", SpSession.get().getId());
 
-        if (isApiResultOk()) {
+        //
+        final EnumSet<ApiResultCodeEnum> validResultCodes;
+
+        if (webAppType == WebAppTypeEnum.ADMIN) {
+            validResultCodes = EnumSet.of(ApiResultCodeEnum.OK,
+                    ApiResultCodeEnum.INFO, ApiResultCodeEnum.WARN);
+        } else {
+            validResultCodes = EnumSet.of(ApiResultCodeEnum.OK);
+        }
+
+        if (isApiResultCode(validResultCodes)) {
             this.setSessionTimeoutSeconds(webAppType);
             session.setWebAppType(webAppType);
             session.incrementAuthWebApp();
@@ -753,7 +764,7 @@ public final class ReqLogin extends ApiRequestMixin {
                                 UserAuth.getUiText(authMode),
                                 userDb.getUserId(),
                                 ACLRoleEnum.JOB_TICKET_OPERATOR
-                                        .uiText(getLocale()));
+                                .uiText(getLocale()));
                         return;
                     }
                 }
@@ -843,9 +854,9 @@ public final class ReqLogin extends ApiRequestMixin {
                 isAuthenticated = (authMode == UserAuth.Mode.ID
                         && !theUserAuth.isAuthIdPinReq())
                         || (authMode == UserAuth.Mode.CARD_IP
-                                && !theUserAuth.isAuthCardPinReq())
+                        && !theUserAuth.isAuthCardPinReq())
                         || (authMode == UserAuth.Mode.CARD_LOCAL
-                                && !theUserAuth.isAuthCardPinReq());
+                        && !theUserAuth.isAuthCardPinReq());
 
                 if (!isAuthenticated) {
 
@@ -968,8 +979,8 @@ public final class ReqLogin extends ApiRequestMixin {
             LOGGER.trace(String.format(
                     "Setting user [%s] in session of %s WebApp"
                             + ": isAuthenticated [%s]",
-                    uid, webAppType.toString(),
-                    SpSession.get().isAuthenticated()));
+                            uid, webAppType.toString(),
+                            SpSession.get().isAuthenticated()));
         }
     }
 
@@ -985,7 +996,7 @@ public final class ReqLogin extends ApiRequestMixin {
      */
     private User reqLoginYubico(final YubiKeyOTP otp,
             final WebAppTypeEnum webAppType) throws IOException,
-            YubicoVerificationException, YubicoValidationFailure {
+    YubicoVerificationException, YubicoValidationFailure {
 
         final String publicId = otp.getPublicId();
 
@@ -1029,7 +1040,7 @@ public final class ReqLogin extends ApiRequestMixin {
      */
     private void reqLoginAuthTokenWebApp(final String uid,
             final String authtoken, final WebAppTypeEnum webAppType)
-            throws IOException {
+                    throws IOException {
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
@@ -1194,7 +1205,7 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         if (ServiceContext.getTransactionDate().getTime()
                 - authTokenCliApp.getCreateTime() > 2
-                        * UserEventService.getMaxMonitorMsec()) {
+                * UserEventService.getMaxMonitorMsec()) {
             return false;
         }
 

@@ -22,6 +22,7 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -173,7 +174,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     public final Map<String, Object> process(final RequestCycle requestCycle,
             final PageParameters parameters, final boolean isGetAction,
             final String requestingUser, final User lockedUser)
-            throws Exception {
+                    throws Exception {
 
         this.requestCycle = requestCycle;
         this.pageParameters = parameters;
@@ -382,20 +383,37 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @return {@code true} when result is OK.
      */
     protected static boolean
-            isApiResultOk(final AbstractJsonRpcMethodResponse rpcResponse) {
+    isApiResultOk(final AbstractJsonRpcMethodResponse rpcResponse) {
         return rpcResponse.isResult();
     }
 
     /**
      * @param code
      *            The {@link #ApiResultCodeEnum}.
-     * @return
+     * @return {@code true} if the result code equals the enum value.
      */
     protected boolean isApiResultCode(final ApiResultCodeEnum code) {
+        return isApiResultCode(EnumSet.of(code));
+    }
+
+    /**
+     *
+     * @param set
+     *            The {@link EnumSet} of codes to checks.
+     * @return {@code true} if the result code equals one of the codes in the
+     *         {@link EnumSet}.
+     */
+    protected boolean isApiResultCode(final EnumSet<ApiResultCodeEnum> set) {
         @SuppressWarnings("unchecked")
         final Map<String, Object> result =
-                (Map<String, Object>) responseMap.get("result");
-        return result.get("code").equals(code.getValue());
+        (Map<String, Object>) responseMap.get("result");
+
+        for (final ApiResultCodeEnum code : set) {
+            if (result.get("code").equals(code.getValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -412,7 +430,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      *            The {@link AbstractJsonRpcMethodResponse}.
      */
     protected final void
-            setApiResultText(final AbstractJsonRpcMethodResponse rpcResponse) {
+    setApiResultText(final AbstractJsonRpcMethodResponse rpcResponse) {
 
         if (rpcResponse.isResult()) {
 
@@ -515,7 +533,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     protected final UserAgentHelper createUserAgentHelper() {
         final HttpServletRequest request =
                 (HttpServletRequest) this.requestCycle.getRequest()
-                        .getContainerRequest();
+                .getContainerRequest();
         return new UserAgentHelper(request);
     }
 
