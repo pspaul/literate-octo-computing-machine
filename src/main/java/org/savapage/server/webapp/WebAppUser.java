@@ -162,7 +162,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
             default:
                 htmlId = "sp-file-upload-inbox-button";
-                cssClass = "ui-icon-main-arr-return";
+                cssClass = "ui-icon-main-inbox";
                 uiText = HtmlButtonEnum.INBOX.uiText(getPage().getLocale());
                 break;
             }

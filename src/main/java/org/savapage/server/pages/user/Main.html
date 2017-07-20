@@ -23,12 +23,32 @@
 	</div>
 
 	<style>
+	
+.ui-icon-main-left-arrow:after {
+	background: url(/glyphicons/glyphicons_210_left_arrow.png) 50% 50%
+		no-repeat;
+	background-size: 20px 18px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .8;
+}
+
+.ui-icon-main-right-arrow:after {
+	background: url(/glyphicons/glyphicons_211_right_arrow.png) 50% 50%
+		no-repeat;
+	background-size: 20px 18px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .8;
+}
+
 .ui-icon-main-refresh:after {
 	background: url(/glyphicons/glyphicons_081_refresh.png) 50% 50%
 		no-repeat;
 	background-size: 22px 23px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-print:after {
@@ -36,6 +56,7 @@
 	background-size: 24px 21px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-jobticket:after {
@@ -50,6 +71,7 @@
 	background-size: 18px 26px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-pdf-properties:after {
@@ -57,6 +79,7 @@
 	background-size: 17px 24px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-letterhead:after {
@@ -65,6 +88,7 @@
 	background-size: 22px 22px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-arr-cut:after {
@@ -116,7 +140,7 @@
 	border-radius: 0 !important;
 }
 
-.ui-icon-main-arr-return:after {
+.ui-icon-main-inbox:after {
 	background: url(/glyphish-icons/44-shoebox.png) 50% 50% no-repeat;
 	background-size: 24px 22px;
 	-webkit-border-radius: 0 !important;
@@ -128,6 +152,7 @@
 	background-size: 22px 23px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-doclog:after {
@@ -136,6 +161,7 @@
 	background-size: 22px 24px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-upload:after {
@@ -144,6 +170,7 @@
 	background-size: 16px 18px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-browse:after {
@@ -152,6 +179,7 @@
 	background-size: 20px 20px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-about:after {
@@ -160,6 +188,7 @@
 	background-size: 22px 22px;
 	-webkit-border-radius: 0 !important;
 	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-mini-cut:after {
@@ -304,14 +333,12 @@
 				</li>
 			</ul>
 			<ul>
-				<li class="main_actions main_arr_edit">
-
-					<a href="#sp-popup-arr-action" data-rel="popup"
+				<li class="main_actions main_arr_edit"><a
+						href="#sp-popup-arr-action" data-rel="popup"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-action-popup">
 						<span class="sp-nav-button-txt"><wicket:message
 								key="button-more-actions" /></span>
-					</a>
-				</li>
+					</a></li>
 				<li class="main_actions main_arr_edit">
 					<button id="main-arr-unselect-all"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-unselect-all">
@@ -328,7 +355,7 @@
 				</li>
 				<li>
 					<button id="main-arr-return"
-						class="ui-btn ui-btn-icon-top ui-icon-main-arr-return">
+						class="ui-btn ui-btn-icon-top ui-icon-main-inbox">
 						<span class="sp-nav-button-txt"><wicket:message
 								key="button-inbox" /></span>
 					</button>
@@ -470,27 +497,22 @@ POPUP with extra sort mode actions.
 		data-icon="false">
 
 		<wicket:enclosure child="main-arr-action-pdf">
-			<li>
-				<a href="#" id="main-arr-action-pdf"
-					class="ui-btn ui-btn-icon-left ui-icon-main-pdf-properties">&nbsp;<span
-					wicket:id="main-arr-action-pdf">[PDF]</span></a>
-			</li>
+			<li><a href="#" id="main-arr-action-pdf"
+					class="ui-btn ui-btn-icon-left ui-icon-main-pdf-properties">
+					&nbsp;<span wicket:id="main-arr-action-pdf">[PDF]</span>
+				</a></li>
 		</wicket:enclosure>
 		<wicket:enclosure child="main-arr-action-print">
-			<li>
-				<a href="#" id="main-arr-action-print"
-					class="ui-btn ui-btn-icon-left ui-icon-main-print">&nbsp;<span
-					wicket:id="main-arr-action-print" />
-				</a>
-			</li>
+			<li><a href="#" id="main-arr-action-print"
+					class="ui-btn ui-btn-icon-left ui-icon-main-print">
+					&nbsp;<span wicket:id="main-arr-action-print" />
+				</a></li>
 		</wicket:enclosure>
 		<wicket:enclosure child="main-arr-action-ticket">
-			<li>
-				<a href="#" id="main-arr-action-print"
-					class="ui-btn ui-btn-icon-left ui-icon-main-jobticket">&nbsp;<span
-					wicket:id="main-arr-action-ticket" />
-				</a>
-			</li>
+			<li><a href="#" id="main-arr-action-print"
+					class="ui-btn ui-btn-icon-left ui-icon-main-jobticket">
+					&nbsp;<span wicket:id="main-arr-action-ticket" />
+				</a></li>
 		</wicket:enclosure>
 	</ul>
 </div>
@@ -510,16 +532,14 @@ POPUP with Page/Job info
 	<h4 class="sp-txt-wrap sp-txt-info" id="popup-job-info-name" />
 
 	<ul data-role="listview" data-inset="true">
-		<li>
-			<legend>
+		<li><legend>
 				<wicket:message key="prompt-job-pages" />
 				<span id="popup-job-info-pages" /> <span class="sp-txt-warn"
 					id="popup-job-info-pages-deleted">&bull; <span /> <wicket:message
 						key="prompt-deleted" />
 				</span> &bull; <span id="popup-job-info-media" /> <span
 					class="sp-msg-popup-warn sp-txt-wrap" id="popup-job-info-drm" />
-			</legend>
-		</li>
+			</legend></li>
 		<li>
 			<fieldset data-role="controlgroup" data-type="vertical">
 
@@ -529,15 +549,12 @@ POPUP with Page/Job info
 					<span />
 				</button>
 
-				<input type="checkbox" id="sp-popup-job-undelete" value="1" />
-				<label for="sp-popup-job-undelete">
-					<wicket:message key="prompt-job-undelete" />
-				</label>
-
-				<input type="checkbox" id="sp-popup-job-rotate" value="1" />
-				<label for="sp-popup-job-rotate">
-					<wicket:message key="prompt-job-rotate" />
-					<small>&nbsp;&nbsp;&#x21b7;</small>
+				<input type="checkbox" id="sp-popup-job-undelete" value="1" /> <label
+					for="sp-popup-job-undelete"> <wicket:message
+						key="prompt-job-undelete" />
+				</label> <input type="checkbox" id="sp-popup-job-rotate" value="1" /> <label
+					for="sp-popup-job-rotate"> <wicket:message
+						key="prompt-job-rotate" /> <small>&nbsp;&nbsp;&#x21b7;</small>
 				</label>
 			</fieldset>
 
@@ -547,8 +564,9 @@ POPUP with Page/Job info
 					<wicket:message key="button-apply" />
 				</button>
 				<a href="#" data-rel="back"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"><wicket:message
-						key="button-close" /></a>
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+					<wicket:message key="button-close" />
+				</a>
 			</div>
 		</li>
 	</ul>
@@ -556,8 +574,7 @@ POPUP with Page/Job info
 		<li class="ui-mini">
 			<div class="sp-txt-wrap">
 				<wicket:message key="prompt-delete-document" />
-			</div>
-			<br />
+			</div> <br />
 			<button id="sp-popup-job-delete"
 				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete ui-mini">
 				<wicket:message key="button-delete-document" />

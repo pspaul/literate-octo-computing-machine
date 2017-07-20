@@ -604,17 +604,15 @@
          *
          */
         function PageBrowser(_i18n, _view, _model) {
-            var _this = this
-            //
-            ,
-                cssClassRotated = 'sp-img-rotated'
-            //
-            ,
+            var _this = this,
+                cssClassRotated = 'sp-img-rotated',
+
+            /** */
                 _setSliderValue = function(value) {
                 $('#browser-slider').val(value).slider("refresh").trigger('change');
-            }
-            //
-            ,
+            },
+
+            /** */
                 _navSlider = function(increment) {
                 var selSlider = $('#browser-slider'),
                     max = parseInt(selSlider.attr('max'), 10),
@@ -632,22 +630,22 @@
                     value = 1;
                 }
                 _setSliderValue(value);
-            }
-            //
-            ,
-                navRight = function() {
+            },
+
+            /** */
+                _navRight = function() {
                 _navSlider(1);
-            }
-            //
-            ,
-                navLeft = function() {
+            },
+
+            /** */
+                _navLeft = function() {
                 _navSlider(-1);
             };
 
             /**
              * Adds (replace) page images to the browser.
              */
-            this.addImages = function() {
+            this.addImages = function(nPageInView) {
 
                 var width100Percent;
 
@@ -664,7 +662,7 @@
                 }
 
                 this.adjustImages();
-                this.adjustSlider();
+                this.adjustSlider(nPageInView);
             };
 
             /**
@@ -680,9 +678,7 @@
 
                 var yContentPadding,
                     yImagePadding,
-                    yFooter
-                //
-                ,
+                    yFooter,
                     yImage,
                     yViewPort;
 
@@ -749,19 +745,14 @@
                     url,
                     imgCache,
                     parent,
-                    images
-                //
-                ,
+                    images,
                     imgWlk,
                     urlArray = [],
                     iPageArray = [],
                     imgArray = [],
-                    iImgUsed = {}
-                //
-                ,
+                    iImgUsed = {},
                     i,
                     j,
-                //
                     idImgBase = 'sp-browse-image-',
                     prop = {};
 
@@ -820,10 +811,6 @@
                                  */
                                 iImgUsed[imgCache.i] = true;
                                 imgWlk = imgCache.img;
-                                //window.console.log('[' + i + '] FOUND [' +
-                                // iPageArray[i] + '] at position [' + imgCache.i
-                                // +
-                                // ']');
                             }
                         }
 
@@ -884,7 +871,7 @@
             /**
              *
              */
-            this.adjustSlider = function() {
+            this.adjustSlider = function(valRequested) {
                 var selSlider = $('#browser-slider'),
                     nPages,
                     val,
@@ -911,6 +898,10 @@
                 selSlider.attr('min', min);
                 selSlider.attr('max', nPages);
 
+                if (valRequested && valRequested < nPages) {
+                    val = valRequested;
+                }
+
                 _setSliderValue(val);
 
                 _view.visible(selSlider, nPages > 1);
@@ -919,13 +910,13 @@
             /**
              *
              */
-            this.setImages = function() {
+            this.setImages = function(nPageInView) {
                 if ($('#page-browser').children().length === 0) {
                     // not loaded
                     return;
                 }
                 if (_model.myJobPages !== null) {
-                    this.addImages();
+                    this.addImages(nPageInView);
                 }
             };
 
@@ -968,21 +959,21 @@
                 });
 
                 $("#browser-nav-right").click(function() {
-                    navRight();
+                    _navRight();
                     return false;
                 });
 
                 $("#browser-nav-left").click(function() {
-                    navLeft();
+                    _navLeft();
                     return false;
                 });
 
                 $('#page-browser-images').on('vmousedown', null, null, function(event) {
                     event.preventDefault();
                 }).on('swipeleft', null, null, function(event) {
-                    navRight();
+                    _navRight();
                 }).on('swiperight', null, null, function(event) {
-                    navLeft();
+                    _navLeft();
                 }).on('tap', null, null, function(event) {
                     // ----------------------------------------------------------
                     // IMPORTANT: make sure to handle this event last!
@@ -1013,7 +1004,8 @@
                 });
 
                 $("#browser-delete").click(function() {
-                    $('#button-main-clear').click();
+                    var val = $('#browser-slider').val();
+                    _this.onClear(val);
                     return false;
                 });
 
@@ -1043,9 +1035,7 @@
          *
          */
         function PageClear(_i18n, _view, _model) {
-            var _this = this
-            //
-            ;
+            var _this = this;
 
             $('#page-clear').on('pagecreate', function(event) {
 
@@ -1061,12 +1051,8 @@
                 });
 
                 $('#button-clear-pages-ok').click(function(e) {
-                    var _ranges
-                    //
-                    ,
-                        selected = $("input:radio[name='clear-pages']:checked").val()
-                    //
-                    ;
+                    var _ranges,
+                        selected = $("input:radio[name='clear-pages']:checked").val();
 
                     if (selected === 'clear-pages-all') {
                         _ranges = '1-';
@@ -1081,8 +1067,9 @@
                         return false;
                     }
 
-                    _this.onClear(_ranges);
-
+                    if (_this.onClear(_ranges)) {
+                        $('#button-clear-pages-cancel').click();
+                    }
                     return false;
                 });
             }).on("pagebeforeshow", function(event, ui) {
@@ -5413,7 +5400,7 @@
             /**
              *
              */
-            _handleSafePageEvent = function(res) {
+            _handleSafePageEvent = function(res, nPageInView) {
 
                 _model.user.stats = res.stats;
 
@@ -5443,7 +5430,7 @@
 
                     _view.pages.main.setThumbnails();
 
-                    _view.pages.pagebrowser.setImages();
+                    _view.pages.pagebrowser.setImages(nPageInView);
 
                     if (_view.isPageActive('page-main')) {
                         _view.pages.main.showUserStats();
@@ -5759,12 +5746,28 @@
                 var res = _api.call({
                     request : 'page-delete',
                     ranges : ranges
-                });
-                if (res.result.code === "0") {
+                }),
+                    isOk = res.result.code === "0";
+
+                if (isOk) {
                     _view.pages.main.onRefreshPages();
-                    $('#button-clear-pages-cancel').click();
                 }
                 _view.showApiMsg(res);
+                return isOk;
+            };
+
+            _view.pages.pagebrowser.onClear = function(nPage) {
+                var res = _api.call({
+                    request : 'page-delete',
+                    ranges : nPage
+                }),
+                    isOk = res.result.code === "0";
+                if (isOk) {
+                    _model.refreshUniqueImgUrlValue4Browser();
+                    _view.pages.main.onExpandPage(nPage - 1);
+                }
+                _view.showApiMsg(res);
+                return isOk;
             };
 
             /**
@@ -6687,7 +6690,7 @@
                     base64 : _view.imgBase64
                 });
                 if (data.result.code === '0') {
-                    _handleSafePageEvent(data);
+                    _handleSafePageEvent(data, nPage);
                 } else {
                     _view.showApiMsg(data);
                 }
