@@ -186,86 +186,85 @@ a:hover.poll_button {
 }
 
 .print_collate_sheet_first {
-    width:15px;
-    height:18px;
-    background-color:white;
-    border:1px silver solid;
+    width: 15px;
+    height: 18px;
+    background-color: white;
+    border: 1px silver solid;
     font-size: 11px;
-    text-align: right; 
+    text-align: right;
     margin-top: -10px;
     padding: 2px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     -khtml-border-radius: 3px;
-    border-radius: 3px; 
+    border-radius: 3px;
 }
-.print_collate_sheet_next { 	
-    width:15px;
-    height:18px;
-    background-color:white;
-    border:1px silver solid;
+.print_collate_sheet_next {
+    width: 15px;
+    height: 18px;
+    background-color: white;
+    border: 1px silver solid;
     font-size: 11px;
-    text-align: right; 
+    text-align: right;
     margin-left: 9px;
     padding: 2px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     -khtml-border-radius: 3px;
-    border-radius: 3px; 
+    border-radius: 3px;
 }
 
-
 #page-user-internet-printer .ui-dialog-contain {
-  width: 80%;
-  max-width: 1920px;
-  margin: 15px auto 15px auto;
-  padding: 0;
-  position: relative;
-  top: 15px;
+    width: 80%;
+    max-width: 1920px;
+    margin: 15px auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: 15px;
 }
 
 #page-print .ui-dialog-contain {
-  margin: 15px auto 15px auto;
-  padding: 0;
-  position: relative;
-  top: 5px;
+    margin: 15px auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: 5px;
 }
 
 #page-printer-settings .ui-dialog-contain {
-  margin: 15px auto 15px auto;
-  padding: 0;
-  position: relative;
-  top: 5px;
+    margin: 15px auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: 5px;
 }
- 
+
 #page-pdf-properties  .ui-dialog-contain {
-  margin: 15px auto 15px auto;
-  padding: 0;
-  position: relative;
-  top: 5px;
+    margin: 15px auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: 5px;
 }
- 
+
 #page-print-delegation .ui-dialog-contain {
-  width: 92.5%;
-  max-width: 1920px;
-  margin: 15px auto 15px auto;
-  padding: 0;
-  position: relative;
-  top: 5px;
+    width: 92.5%;
+    max-width: 1920px;
+    margin: 15px auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: 5px;
 }
 
 #page-doclog .ui-content {
-	margin-left: auto;
-	margin-right: auto;
-	width: 90%;
-	max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    max-width: 700px;
 }
 
 #page-accounttrx .ui-content {
-	margin-left: auto;
-	margin-right: auto;
-	width: 90%;
-	max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    max-width: 700px;
 }
 
 /* end-of-file */

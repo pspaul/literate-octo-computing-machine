@@ -24,97 +24,96 @@
 
 /* JQM 1.4.1 override */
 .ui-dialog-contain {
-	width: 92.5%;
-	max-width: 500px;
-	/* margin: 10% auto 15px auto; */
-	margin: 5% auto 15px auto;
-	padding: 0;
-	position: relative;
-	top: -15px;
+    width: 92.5%;
+    max-width: 500px;
+    /* margin: 10% auto 15px auto; */
+    margin: 5% auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: -15px;
 }
 
 .sp-plain-link {
-	/* */
-	color: #74b042 !important;
-	font-weight: normal !important;
-	text-decoration: none !important;
-	/* */
+    /* */
+    color: #74b042 !important;
+    font-weight: normal !important;
+    text-decoration: none !important;
+    /* */
 }
 
 .sp-plain-community {
-	color: #74b042 !important;
-	font-weight: normal !important;
-	text-decoration: none !important;
+    color: #74b042 !important;
+    font-weight: normal !important;
+    text-decoration: none !important;
 }
 .sp-plain-info {
-	color: #666666 !important;
-	font-weight: normal !important;
-	text-decoration: none !important;
+    color: #666666 !important;
+    font-weight: normal !important;
+    text-decoration: none !important;
 }
 .sp-plain-warn {
-	color: #DC5C05 !important;
-	font-weight: normal !important;
-	text-decoration: none !important;
+    color: #DC5C05 !important;
+    font-weight: normal !important;
+    text-decoration: none !important;
 }
 .sp-plain-error {
-	color: red !important;
-	font-weight: normal !important;
-	text-decoration: none !important;
+    color: red !important;
+    font-weight: normal !important;
+    text-decoration: none !important;
 }
 
 .sp-amount-min {
-	color: red;
+    color: red;
 }
 
 .sp-txt-wrap {
-	white-space: normal;
+    white-space: normal;
 }
 
 .sp-txt-info {
-	/* */
-	color: #666666;
-	/* */
+    /* */
+    color: #666666;
+    /* */
 }
 
 .sp-txt-warn {
-	color: #DC5C05;
+    color: #DC5C05;
 }
 
 .sp-txt-error {
-	color: red;
+    color: red;
 }
 
 .sp-txt-valid {
-	color: #006600;
+    color: #006600;
 }
 
 .sp-txt-community {
-	color: #74b042;
+    color: #74b042;
 }
 
 .sp-txt-internal-user {
-	color: #DC5C05;
+    color: #DC5C05;
 }
 
 .sp-txt-job-finishing {
-	color: #C0392B;
+    color: #C0392B;
 }
 
 .sp-txt-job-ticket-attr {
     color: purple;
 }
 
-
 .sp-print-in-queue {
-	color: #000099;
+    color: #000099;
 }
 
 .sp-print-out-printer {
-	color: #990000;
+    color: #990000;
 }
 
 .sp-print-out-pdf {
-	color: #006600;
+    color: #006600;
 }
 
 .sp-msg-popup {
@@ -122,37 +121,37 @@
 }
 
 .sp-msg-popup-error {
-	color: red;
+    color: red;
 }
 
 .sp-msg-popup-warn {
-	color: #DC5C05;
+    color: #DC5C05;
 }
 
 .sp-msg-popup-info {
-	color: #666666;
+    color: #666666;
 }
 
 .ui-btn.sp-tooltip-btn, .ui-btn.sp-tooltip-btn:hover, .ui-btn.sp-tooltip-btn:active {
-	background: none;
-	border: 0;
-	opacity: 0.4;
+    background: none;
+    border: 0;
+    opacity: 0.4;
 }
 
 /* Classes for tri-state checkbox */
 .sp-checkbox-tristate-label {
 }
 .sp-tristate-null {
-	/* IE 8 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-	/* IE 5-7 */
-	filter: alpha(opacity=30);
-	/* Netscape */
-	-moz-opacity: 0.3;
-	/* Safari 1.x */
-	-khtml-opacity: 0.3;
-	/* Good browsers */
-	opacity: 0.3;
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    /* IE 5-7 */
+    filter: alpha(opacity=30);
+    /* Netscape */
+    -moz-opacity: 0.3;
+    /* Safari 1.x */
+    -khtml-opacity: 0.3;
+    /* Good browsers */
+    opacity: 0.3;
 }
 .sp-tristate-on {
 }
@@ -160,87 +159,87 @@
 }
 
 .sp-outbox-remaining-time {
-	color: #DC5C05;
-	padding: 0px;
+    color: #DC5C05;
+    padding: 0px;
 }
 .sp-outbox-jobs {
-	color: #444444;
-	padding: 2px 5px 2px 5px;
-	border: 1px #DDDDDD solid;
+    color: #444444;
+    padding: 2px 5px 2px 5px;
+    border: 1px #DDDDDD solid;
 }
 .sp-outbox-pages {
-	color: #888888;
-	padding: 2px 5px 2px 5px;
-	border: 1px #DDDDDD solid;
+    color: #888888;
+    padding: 2px 5px 2px 5px;
+    border: 1px #DDDDDD solid;
 }
 .sp-outbox-cost {
-	color: #888888;
-	padding: 2px 5px 2px 5px;
-	border: 1px #DDDDDD solid;
+    color: #888888;
+    padding: 2px 5px 2px 5px;
+    border: 1px #DDDDDD solid;
 }
 
 .sp-outbox-job-entry {
-	background-color: #fcfcfc;
-	padding: 0px 5px 5px 8px;
-	margin: 10px;
-	border: 1px #DDDDDD solid;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
-	-khtml-border-radius: 8px;
-	border-radius: 8px;
+    background-color: #fcfcfc;
+    padding: 0px 5px 5px 8px;
+    margin: 10px;
+    border: 1px #DDDDDD solid;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    border-radius: 8px;
 }
 
 .sp-outbox-jobticket-remark {
-	padding: 5px 5px 5px 5px;
-	margin: 8px;
-	border: 2px orange dotted;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
-	-khtml-border-radius: 8px;
-	border-radius: 8px;
+    padding: 5px 5px 5px 5px;
+    margin: 8px;
+    border: 2px orange dotted;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    border-radius: 8px;
 }
 
 .sp-jobticket-type-copy-ind {
-	background-color: #fcfcfc;
-	padding: 6px;
-	margin-right: 10px;
-	border: 1px #DDDDDD solid;
-	float: right;
-	color: gray;
-	font-size: 90%;
-	-moz-border-radius: 7px;
-	-webkit-border-radius: 7px;
-	-khtml-border-radius: 7px;
-	border-radius: 7px;
+    background-color: #fcfcfc;
+    padding: 6px;
+    margin-right: 10px;
+    border: 1px #DDDDDD solid;
+    float: right;
+    color: gray;
+    font-size: 90%;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    -khtml-border-radius: 7px;
+    border-radius: 7px;
 }
 
 .sp-jobticket-state-ind {
-	background-color: #f9f9f9;
-	padding: 6px;
-	margin-right: 10px;
-	border: 1px #DDDDDD solid;
-	float: right;
-	font-size: 90%;
-	-moz-border-radius: 7px;
-	-webkit-border-radius: 7px;
-	-khtml-border-radius: 7px;
-	border-radius: 7px;
+    background-color: #f9f9f9;
+    padding: 6px;
+    margin-right: 10px;
+    border: 1px #DDDDDD solid;
+    float: right;
+    font-size: 90%;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    -khtml-border-radius: 7px;
+    border-radius: 7px;
 }
 
 .sp-font-monospace {
-	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
 .sp-dropzone-small {
-	border: 4px #ddd dotted !important;
+    border: 4px #ddd dotted !important;
 }
 
 .sp-dropzone-hover {
-	border: 5px #74b042 dotted !important;
+    border: 5px #74b042 dotted !important;
 }
 
 .sp-dropzone-hover-small {
-	border: 4px #74b042 dotted !important;
+    border: 4px #74b042 dotted !important;
 }
 
 /* end-of-file */

@@ -21,36 +21,36 @@
  * address: info@datraverse.com
  */
 body {
-	background:#dddddd;
+    background: #dddddd;
 }
 #page-jobtickets .ui-content {
-	margin-left:auto;
-	margin-right:auto;
-	width:90%;
-	max-width:700px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    max-width: 700px;
 }
 
 #sp-jobtickets-tab-open-header {
-	background-color: #fcfcfc;
-	padding: 0px 5px 5px 8px;
-	margin: 10px;
-	border: 2px #DDDDDD solid;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
-	-khtml-border-radius: 8px;
-	border-radius: 8px;
+    background-color: #fcfcfc;
+    padding: 0px 5px 5px 8px;
+    margin: 10px;
+    border: 2px #DDDDDD solid;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    border-radius: 8px;
 }
 
 /* */
 table.sp-jobtickets-settings {
-	text-align:left;
+    text-align: left;
 }
 table.sp-jobtickets-settingssub th, table.sp-jobtickets-settings td {
-	padding:7px;
+    padding: 7px;
 }
-tr.sp-jobtickets-settings-cat> th {
-	border-top:1px solid silver;
+tr.sp-jobtickets-settings-cat > th {
+    border-top: 1px solid silver;
 }
-tr.sp-jobtickets-settings-cat> td {
-	border-top:1px solid silver;
+tr.sp-jobtickets-settings-cat > td {
+    border-top: 1px solid silver;
 }

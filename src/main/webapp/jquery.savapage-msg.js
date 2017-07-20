@@ -1,4 +1,5 @@
-/*! SavaPage jQuery Mobile Exceeded WebApp | (c) 2011-2015 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Exceeded WebApp | (c) 2011-2015 Datraverse B.V. | GNU
+ * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
@@ -33,84 +34,89 @@
  * SavaPage jQuery Mobile Web App to handle exceeded WebApp count in browser
  * session.
  */
-( function($, window, document, JSON, _ns) {"use strict";
+( function($, window, document, JSON, _ns) {
+        "use strict";
 
-		/**
-		 * Constructor
-		 */
-		_ns.Controller = function(_i18n, _model, _view, _api) {
+        /**
+         * Constructor
+         */
+        _ns.Controller = function(_i18n, _model, _view, _api) {
 
-			/*
-			 *
-			 */
-			this.init = function() {
-				$.noop();
-			};
+            /*
+             *
+             */
+            this.init = function() {
+                $.noop();
+            };
 
-			/*
-			 *
-			 */
-			_view.onDisconnected = function() {
-				alert('Disconnected');
-			};
+            /*
+             *
+             */
+            _view.onDisconnected = function() {
+                alert('Disconnected');
+            };
 
-		};
-		/**
-		 *
-		 */
-		_ns.Model = function(_i18n) {
-			this.user = new _ns.User();
-		};
-		/**
-		 *
-		 */
-		$.SavaPageApp = function(name) {
+        };
+        /**
+         *
+         */
+        _ns.Model = function(_i18n) {
+            this.user = new _ns.User();
+        };
+        /**
+         *
+         */
+        $.SavaPageApp = function(name) {
 
-			var _i18n = null
-			//
-			, _model = new _ns.Model(_i18n)
-			//
-			, _api = new _ns.Api(_i18n, _model.user)
-			//
-			, _view = new _ns.View(_i18n, _api)
-			//
-			, _ctrl = new _ns.Controller(_i18n, _model, _view, _api)
-			//
-			;
+            var _i18n = null
+            //
+            ,
+                _model = new _ns.Model(_i18n)
+            //
+            ,
+                _api = new _ns.Api(_i18n, _model.user)
+            //
+            ,
+                _view = new _ns.View(_i18n, _api)
+            //
+            ,
+                _ctrl = new _ns.Controller(_i18n, _model, _view, _api)
+            //
+            ;
 
-			this.init = function() {
+            this.init = function() {
 
-				_ctrl.init();
+                _ctrl.init();
 
-				$('#button-login').click(function() {
+                $('#button-login').click(function() {
 
-					var res = _api.call({
-						request : 'webapp-close-session'
-					});
+                    var res = _api.call({
+                        request : 'webapp-close-session'
+                    });
 
-					if (res.result.code === '0') {
-						window.location.replace(window.location.protocol + "//" + window.location.host + $('#sp-webapp-mountpath').attr('value'));
-						return false;
-					}
-					alert('error');
-					return true;
-				});
+                    if (res.result.code === '0') {
+                        window.location.replace(window.location.protocol + "//" + window.location.host + $('#sp-webapp-mountpath').attr('value'));
+                        return false;
+                    }
+                    alert('error');
+                    return true;
+                });
 
-			};
-		};
+            };
+        };
 
-		$(function() {
-			$.savapageApp = new $.SavaPageApp();
-			// do NOT initialize here (to early for some browsers, like Opera)
-		});
+        $(function() {
+            $.savapageApp = new $.SavaPageApp();
+            // do NOT initialize here (to early for some browsers, like Opera)
+        });
 
-		$(document).on("mobileinit", null, null, function() {
-			$.mobile.defaultPageTransition = "none";
-			$.mobile.defaultDialogTransition = "none";
-		}).on("ready", null, null, function() {
-			// Initialize AFTER document is read
-			$.savapageApp.init();
+        $(document).on("mobileinit", null, null, function() {
+            $.mobile.defaultPageTransition = "none";
+            $.mobile.defaultDialogTransition = "none";
+        }).on("ready", null, null, function() {
+            // Initialize AFTER document is read
+            $.savapageApp.init();
 
-		});
+        });
 
-	}(jQuery, this, this.document, JSON, this.org.savapage));
+    }(jQuery, this, this.document, JSON, this.org.savapage));
