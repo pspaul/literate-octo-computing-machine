@@ -58,19 +58,30 @@ public class Print extends AbstractUserPage {
      */
     private static final long serialVersionUID = 1L;
 
+    /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
 
+    /** */
     private static final UserGroupAccountDao USER_GROUP_ACCOUNT_DAO =
             ServiceContext.getDaoContext().getUserGroupAccountDao();
 
-    final String ID_DELETE_PAGES = "delete-pages-after-print";
-    final String ID_DELETE_PAGES_WARN = "delete-pages-after-print-warn";
-    final String ID_DELETE_PAGES_SCOPE = "delete-pages-after-print-scope";
-    final String HTML_NAME_DELETE_PAGES_SCOPE = ID_DELETE_PAGES_SCOPE;
+    /** */
+    private static final String ID_DELETE_PAGES = "delete-pages-after-print";
+    /** */
+    private static final String ID_DELETE_PAGES_WARN =
+            "delete-pages-after-print-warn";
+    /** */
+    private static final String ID_DELETE_PAGES_SCOPE =
+            "delete-pages-after-print-scope";
+    /** */
+    private static final String HTML_NAME_DELETE_PAGES_SCOPE =
+            ID_DELETE_PAGES_SCOPE;
 
     /**
      *
+     * @param parameters
+     *            The page parms.
      */
     public Print(final PageParameters parameters) {
 
@@ -188,7 +199,7 @@ public class Print extends AbstractUserPage {
 
         helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
                 privsLetterhead == null || ACLPermissionEnum.READER
-                        .isPresent(privsLetterhead.intValue()));
+                .isPresent(privsLetterhead.intValue()));
 
         //
         if (ACCESS_CONTROL_SERVICE.hasAccess(user,
@@ -228,9 +239,10 @@ public class Print extends AbstractUserPage {
             addSharedAccounts(sharedAccounts);
         }
 
-        //
         add(new Label("button-send-jobticket",
                 HtmlButtonEnum.SEND.uiText(getLocale())));
+        add(new Label("button-inbox",
+                HtmlButtonEnum.INBOX.uiText(getLocale())));
     }
 
     /**
@@ -240,7 +252,7 @@ public class Print extends AbstractUserPage {
      *            The shared accounts.
      */
     private void
-            addSharedAccounts(final List<SharedAccountDto> sharedAccounts) {
+    addSharedAccounts(final List<SharedAccountDto> sharedAccounts) {
 
         add(new PropertyListView<SharedAccountDto>(
                 "print-shared-account-option", sharedAccounts) {

@@ -122,7 +122,7 @@ public final class WebAppUser extends AbstractWebAppPage {
      * bug?).
      */
     private final class UploadNextButtonView
-            extends PropertyListView<UploadNextButton> {
+    extends PropertyListView<UploadNextButton> {
 
         private static final long serialVersionUID = 1L;
 
@@ -163,7 +163,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             default:
                 htmlId = "sp-file-upload-inbox-button";
                 cssClass = "ui-icon-main-arr-return";
-                uiText = getLocalizer().getString("button-inbox", getPage());
+                uiText = HtmlButtonEnum.INBOX.uiText(getPage().getLocale());
                 break;
             }
 
@@ -528,7 +528,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         final Label fileUploadField = new Label("fileUpload");
         fileUploadField
-                .add(new AttributeModifier("accept", getHtmlAcceptString()));
+        .add(new AttributeModifier("accept", getHtmlAcceptString()));
         add(fileUploadField);
 
         //

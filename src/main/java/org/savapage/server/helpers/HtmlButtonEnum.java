@@ -38,8 +38,8 @@ public enum HtmlButtonEnum {
     APPLY,
 
     /**
-    *
-    */
+     *
+     */
     BACK,
 
     /**
@@ -48,13 +48,13 @@ public enum HtmlButtonEnum {
     CANCEL,
 
     /**
-    *
-    */
+     *
+     */
     CANCEL_ALL,
 
     /**
-    *
-    */
+     *
+     */
     CLOSE,
 
     /**
@@ -63,13 +63,13 @@ public enum HtmlButtonEnum {
     DEFAULT,
 
     /**
-    *
-    */
+     *
+     */
     DELETE,
 
     /**
-    *
-    */
+     *
+     */
     DOWNLOAD,
 
     /**
@@ -78,23 +78,28 @@ public enum HtmlButtonEnum {
     EDIT,
 
     /**
-    *
-    */
+     *
+     */
     ERASE,
 
     /**
-    *
-    */
+     *
+     */
     EXTEND,
 
     /**
-    *
-    */
+     *
+     */
+    INBOX,
+
+    /**
+     *
+     */
     LOGIN,
 
     /**
-    *
-    */
+     *
+     */
     LOGOUT,
 
     /**
@@ -118,27 +123,27 @@ public enum HtmlButtonEnum {
     PREVIEW,
 
     /**
-    *
-    */
+     *
+     */
     PREVIOUS,
 
     /**
-    *
-    */
+     *
+     */
     PRINT,
 
     /**
-    *
-    */
+     *
+     */
     REFRESH,
 
     /**
-    *
-    */
+     *
+     */
     RESET,
     /**
-    *
-    */
+     *
+     */
     RETRY,
 
     /**
@@ -147,28 +152,28 @@ public enum HtmlButtonEnum {
     SAVE,
 
     /**
-    *
-    */
+     *
+     */
     SEND,
 
     /**
-    *
-    */
+     *
+     */
     SETTINGS,
 
     /**
-    *
-    */
+     *
+     */
     SETTLE,
 
     /**
-    *
-    */
+     *
+     */
     START,
 
     /**
-    *
-    */
+     *
+     */
     UPLOAD,
 
     /**
