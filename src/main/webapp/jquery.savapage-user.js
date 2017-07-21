@@ -3616,28 +3616,10 @@
                     _view.visible($('#content-print .printer-fast-print-info'), _fastPrintAvailable);
 
                     $.each(_quickPrinterCache, function(key, item) {
-
-                        var authMode = item.printer.authMode
-                        //
-                        ,
-                            enabled = (authMode !== 'FAST')
-                        //
-                        ;
-
                         html += "<li class=\"ui-mini ui-li-has-icon\" data-icon=\"false\" data-savapage=\"" + key + "\">";
-
-                        if (enabled) {
-                            html += "<a tabindex=\"2\" href=\"#\">";
-                        }
-
+                        html += "<a tabindex=\"2\" href=\"#\">";
                         html += _getQuickPrinterHtml(item);
-
-                        if (enabled) {
-                            html += "</a>";
-                        }
-
-                        html += "</li>";
-
+                        html += "</a></li>";
                     });
                 } else {
                     _view.showApiMsg(res);
