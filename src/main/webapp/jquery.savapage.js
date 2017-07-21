@@ -1564,7 +1564,7 @@
             ,
                 _MAX_YUBIKEY_MSECS = 1500
             //
-            // The YubiKey OTP,   or collected local card number from individual
+            // The YubiKey OTP,    or collected local card number from individual
             // keystrokes,  or the cached Card Number to associate with a user.
             ,
                 _authKeyLoggerCollected
@@ -3096,7 +3096,7 @@
              *
              * @param {Object} dropzone (JQuery selector).
              */
-            setCallbacks : function(dropzone, cssClassDragover, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo) {
+            setCallbacks : function(dropzone, cssClassDragover, url, fileField, fontField, fooFontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo) {
                 var _obj = this;
 
                 dropzone.bind('dragover', function(e) {
@@ -3115,7 +3115,7 @@
                     // A drop of meaningless item(s) results in files.length ===
                     // zero.
                     if (files.length > 0) {
-                        _obj.sendFiles(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo);
+                        _obj.sendFiles(files, url, fileField, fontField, fooFontEnum(), maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo);
                     }
                     return false;
                 });

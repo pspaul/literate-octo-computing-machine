@@ -1933,7 +1933,11 @@
                     //
                     , _model.webPrintUploadUrl, _model.webPrintUploadFileParm
                     //
-                    , null, null
+                    , _model.webPrintUploadFontParm
+                    //
+                    , function() {
+                        return $('#file-upload-fontfamily').val();
+                    }
                     //
                     , _model.webPrintMaxBytes, _model.webPrintFileExt, _i18n
                     //
@@ -2786,7 +2790,11 @@
                     //
                     , _model.webPrintUploadUrl, _model.webPrintUploadFileParm
                     //
-                    , null, null
+                    , _model.webPrintUploadFontParm
+                    //
+                    , function() {
+                        return $('#file-upload-fontfamily').val();
+                    }
                     //
                     , _model.webPrintMaxBytes, _model.webPrintFileExt, _i18n
                     //
