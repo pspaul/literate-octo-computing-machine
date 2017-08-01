@@ -28,11 +28,13 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -84,7 +86,9 @@ import org.savapage.core.dao.AccountTrxDao;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.UserAccountDao;
+import org.savapage.core.dao.UserAttrDao;
 import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.UserEmailDao;
 import org.savapage.core.dao.enums.DeviceAttrEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.DocLogProtocolEnum;
@@ -118,6 +122,8 @@ import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
+import org.savapage.core.jpa.UserAttr;
+import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.json.JsonAbstractBase;
 import org.savapage.core.json.JsonPrinterDetail;
 import org.savapage.core.json.PdfProperties;
@@ -166,6 +172,8 @@ import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.smartschool.SmartschoolPrintMonitor;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
+import org.savapage.lib.pgp.PGPBaseException;
+import org.savapage.lib.pgp.PGPPublicKeyInfo;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.request.ApiRequestHandler;
@@ -2617,13 +2625,41 @@ public final class JsonApiServer extends AbstractPage {
             emailParms.setSubject(subject);
             emailParms.setBodyInStationary(subject, body, getLocale(), true);
 
+            // PGP/MIME Encrypt?
+            final UserEmailDao daoUserEmail =
+                    ServiceContext.getDaoContext().getUserEmailDao();
+
+            final UserEmail userEmail =
+                    daoUserEmail.findByEmail(mailto.toLowerCase());
+
+            if (userEmail != null) {
+
+                final UserAttrDao daoUserAttr =
+                        ServiceContext.getDaoContext().getUserAttrDao();
+
+                final UserAttr pgpPubAttr = daoUserAttr.findByName(
+                        userEmail.getUser(), UserAttrEnum.PGP_PUBKEY_ID);
+
+                if (pgpPubAttr != null) {
+
+                    final PGPPublicKeyInfo info = ServiceContext
+                            .getServiceFactory().getPGPPublicKeyService()
+                            .lookup(pgpPubAttr.getValue().toUpperCase());
+
+                    if (info != null) {
+                        final List<PGPPublicKeyInfo> list = new ArrayList<>();
+                        list.add(info);
+                        emailParms.setPublicKeyList(list);
+                    }
+                }
+            }
             EMAIL_SERVICE.sendEmail(emailParms);
 
             setApiResult(userData, ApiResultCodeEnum.OK, "msg-mail-sent",
                     mailto);
 
         } catch (MessagingException | IOException | InterruptedException
-                | CircuitBreakerException e) {
+                | CircuitBreakerException | PGPBaseException e) {
 
             String msg = e.getMessage();
 

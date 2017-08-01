@@ -154,6 +154,11 @@ public enum HtmlButtonEnum {
     /**
      *
      */
+    SEARCH,
+
+    /**
+    *
+    */
     SEND,
 
     /**

@@ -324,6 +324,7 @@
                 $('#user-card-number').val(_model.editUser.card);
                 $('#user-id-number').val(_model.editUser.id);
                 $('#user-yubikey-public-id').val(_model.editUser.yubiKeyPubId);
+                $('#user-pgp-pubkey-id').val(_model.editUser.pgpPubKeyId);
                 $('#user-pin').val(_model.editUser.pin);
                 $('#user-uuid').val(_model.editUser.uuid);
 
@@ -389,6 +390,7 @@
                 _model.editUser.card = $('#user-card-number').val();
                 _model.editUser.id = $('#user-id-number').val();
                 _model.editUser.yubiKeyPubId = $('#user-yubikey-public-id').val();
+                _model.editUser.pgpPubKeyId = $('#user-pgp-pubkey-id').val();
                 _model.editUser.pin = $('#user-pin').val();
                 _model.editUser.uuid = $('#user-uuid').val();
 
@@ -434,6 +436,11 @@
 
                 $(this).on('click', ".sp-checkbox-tristate-label", null, function(event) {
                     return _ns.TriStateCheckbox.onLabelClick($(this));
+                });
+                
+                $(this).on('click', '#sp-button-pgp-pubkey-preview', null, function() {
+                    alert('Not implemented yet :-(');
+                    return false;
                 });
 
             }).on("pagebeforeshow", function(event, ui) {

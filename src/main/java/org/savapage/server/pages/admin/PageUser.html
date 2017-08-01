@@ -35,18 +35,15 @@
 
 		<li>
 			<div class="sp-user-create ui-field-contain">
-				<label for="user-userid">
-					<wicket:message key="user-id" />
-				</label>
-				<input type="text" id="user-userid" value="" maxlength="50"
+				<label for="user-userid"> <wicket:message key="user-id" />
+				</label> <input type="text" id="user-userid" value="" maxlength="50"
 					autocomplete="off" autocorrect="off" autocapitalize="off"
 					spellcheck="false" />
 			</div>
 			<div class="ui-field-contain">
-				<label for="user-fullname">
-					<wicket:message key="user-fullname" />
-				</label>
-				<input type="text" id="user-fullname" value="" maxlength="128"
+				<label for="user-fullname"> <wicket:message
+						key="user-fullname" />
+				</label> <input type="text" id="user-fullname" value="" maxlength="128"
 					autofocus autocomplete="off" autocorrect="off" autocapitalize="off"
 					spellcheck="false" />
 			</div>
@@ -54,20 +51,12 @@
 		</li>
 		<li>
 			<fieldset data-role="controlgroup" data-type="vertical">
-				<label for="user-isadmin">
-					<wicket:message key="user-admin" />
-				</label>
-				<input type="checkbox" id="user-isadmin" value="0" />
-
-				<label for="user-isperson">
-					<wicket:message key="user-person" />
-				</label>
-				<input type="checkbox" id="user-isperson" value="0" />
-
-				<label for="user-disabled">
-					<wicket:message key="user-disabled" />
-				</label>
-				<input type="checkbox" id="user-disabled" value="0" />
+				<label for="user-isadmin"> <wicket:message key="user-admin" />
+				</label> <input type="checkbox" id="user-isadmin" value="0" /> <label
+					for="user-isperson"> <wicket:message key="user-person" />
+				</label> <input type="checkbox" id="user-isperson" value="0" /> <label
+					for="user-disabled"> <wicket:message key="user-disabled" />
+				</label> <input type="checkbox" id="user-disabled" value="0" />
 			</fieldset>
 
 			<div data-role="collapsible" data-collapsed="false">
@@ -82,46 +71,45 @@
 
 		</li>
 
-		<li>
-			<label for="user-email">
-				<wicket:message key="user-email" />
-			</label>
-			<input type="text" id="user-email" value="" maxlength="128"
-				autocomplete="off" autocorrect="off" autocapitalize="off"
-				spellcheck="false" />
+		<li><label for="user-email"> <wicket:message
+					key="user-email" />
+		</label> <input type="text" id="user-email" value="" maxlength="128"
+			autocomplete="off" autocorrect="off" autocapitalize="off"
+			spellcheck="false" /> <label for="user-email-other"> <wicket:message
+					key="user-email-other" />
+		</label> <textarea id="user-email-other" autocomplete="off" autocorrect="off"
+				autocapitalize="off" spellcheck="false" /></li>
 
-			<label for="user-email-other">
-				<wicket:message key="user-email-other" />
-			</label>
-			<textarea id="user-email-other" autocomplete="off" autocorrect="off"
-				autocapitalize="off" spellcheck="false" />
+		<li><label for="user-card-number"> <wicket:message
+					key="user-card-number" />
+		</label> <input type="text" id="user-card-number" maxlength="32" value=""
+			data-clear-btn="true" /> <label for="user-id-number"> <wicket:message
+					key="user-id-number" />
+		</label> <input type="text" id="user-id-number" maxlength="32" value=""
+			data-clear-btn="true" /> <label for="user-pin"> <wicket:message
+					key="user-pin" />
+		</label> <input type="password" id="user-pin" maxlength="6" pattern="[0-9]*"
+			value="" data-clear-btn="true" /> <label
+			for="user-yubikey-public-id"> <wicket:message
+					key="user-yubikey-public-id" />
+		</label> <input type="text" id="user-yubikey-public-id" maxlength="12"
+			value="" data-clear-btn="true" />
 
-		</li>
-
-		<li>
-			<label for="user-card-number">
-				<wicket:message key="user-card-number" />
-			</label>
-			<input type="text" id="user-card-number" maxlength="32" value=""
-				data-clear-btn="true" />
-
-			<label for="user-id-number">
-				<wicket:message key="user-id-number" />
-			</label>
-			<input type="text" id="user-id-number" maxlength="32" value=""
-				data-clear-btn="true" />
-
-			<label for="user-pin">
-				<wicket:message key="user-pin" />
-			</label>
-			<input type="password" id="user-pin" maxlength="6" pattern="[0-9]*"
-				value="" data-clear-btn="true" />
-
-			<label for="user-yubikey-public-id">
-				<wicket:message key="user-yubikey-public-id" />
-			</label>
-			<input type="text" id="user-yubikey-public-id" maxlength="12"
-				value="" data-clear-btn="true" />
+			<div id="user-uuid-collapsible" data-role="collapsible"
+				data-collapsed="true" data-mini="true">
+				<h3>OpenPGP</h3>
+				<label for="user-pgp-pubkey-id"> <wicket:message
+						key="user-pgp-pubkey-id" />
+				</label> <input type="text" id="user-pgp-pubkey-id" maxlength="16" value=""
+					data-clear-btn="true" />
+				<div>
+					<a href="" target="_blank" wicket:id="button-pgp-pubkey-search"
+						class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-search" />
+					<a href="" target="_blank" wicket:id="button-pgp-pubkey-preview"
+						id="sp-button-pgp-pubkey-preview"
+						class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-eye" />
+				</div>
+			</div>
 
 			<div id="user-uuid-collapsible" data-role="collapsible"
 				data-collapsed="true" data-mini="true">
@@ -133,31 +121,23 @@
 					class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-recycle">
 					<wicket:message key="button-generate" />
 				</button>
-			</div>
-		</li>
+			</div></li>
 
-		<li class="sp-user-create">
-			<label for="user-user-pw">
-				<wicket:message key="user-password" />
-			</label>
-			<input type="password" id="user-user-pw" maxlength="32" value="" />
+		<li class="sp-user-create"><label for="user-user-pw"> <wicket:message
+					key="user-password" />
+		</label> <input type="password" id="user-user-pw" maxlength="32" value="" />
 
-			<label for="user-user-pw-confirm">
-				<wicket:message key="user-password-confirm" />
-			</label>
-			<input type="password" id="user-user-pw-confirm" maxlength="32"
-				value="" />
-		</li>
+			<label for="user-user-pw-confirm"> <wicket:message
+					key="user-password-confirm" />
+		</label> <input type="password" id="user-user-pw-confirm" maxlength="32"
+			value="" /></li>
 
-		<li data-role="list-divider">
-			<wicket:message key="label-financial" />
-		</li>
-		<li>
-			<label for="user-account-balance">
-				<wicket:message key="label-balance" />
-			</label>
-			<input type="text" id="user-account-balance" value="" maxlength="10"
-				pattern="[0-9]*" />
+		<li data-role="list-divider"><wicket:message
+				key="label-financial" /></li>
+		<li><label for="user-account-balance"> <wicket:message
+					key="label-balance" />
+		</label> <input type="text" id="user-account-balance" value="" maxlength="10"
+			pattern="[0-9]*" />
 
 			<fieldset class="ui-mini" data-role="controlgroup"
 				data-type="horizontal">
@@ -166,31 +146,24 @@
 					<wicket:message key="label-credit-limit" />
 				</legend>
 
-				<label for="user-account-credit-limit-none">
-					<wicket:message key="label-credit-limit-none" />
-				</label>
-				<input type="radio" name="user-account-credit-limit-type"
+				<label for="user-account-credit-limit-none"> <wicket:message
+						key="label-credit-limit-none" />
+				</label> <input type="radio" name="user-account-credit-limit-type"
 					id="user-account-credit-limit-none" wicket:id="credit-limit-none" />
 
-				<label for="user-account-credit-limit-default">
-					<wicket:message key="label-credit-limit-default" />
-				</label>
-				<input type="radio" name="user-account-credit-limit-type"
+				<label for="user-account-credit-limit-default"> <wicket:message
+						key="label-credit-limit-default" />
+				</label> <input type="radio" name="user-account-credit-limit-type"
 					id="user-account-credit-limit-default"
-					wicket:id="credit-limit-default" />
-
-				<label for="user-account-credit-limit-individual">
-					<wicket:message key="label-credit-limit-individual" />
-				</label>
-				<input type="radio" name="user-account-credit-limit-type"
+					wicket:id="credit-limit-default" /> <label
+					for="user-account-credit-limit-individual"> <wicket:message
+						key="label-credit-limit-individual" />
+				</label> <input type="radio" name="user-account-credit-limit-type"
 					id="user-account-credit-limit-individual"
 					wicket:id="credit-limit-individual" />
 
-			</fieldset>
-
-			<input type="text" id="user-account-credit-limit-amount" value=""
-				maxlength="10" pattern="[0-9]*" />
-		</li>
+			</fieldset> <input type="text" id="user-account-credit-limit-amount" value=""
+			maxlength="10" pattern="[0-9]*" /></li>
 
 		<li>
 			<div>
@@ -200,17 +173,16 @@
 				</button>
 				<a href="#"
 					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-					data-rel="back" data-direction="reverse"> <wicket:message
-						key="button-cancel" />
+					data-rel="back" data-direction="reverse">
+					<wicket:message key="button-cancel" />
 				</a>
 			</div>
 		</li>
 	</ul>
 	<ul class="sp-internal-user-edit" data-role="listview"
 		data-inset="true">
-		<li data-role="list-divider">
-			<wicket:message key="button-password" />
-		</li>
+		<li data-role="list-divider"><wicket:message
+				key="button-password" /></li>
 		<li>
 			<div>
 				<button id="button-user-pw-dialog" wicket:id="button-user-pw-reset"
@@ -225,9 +197,8 @@
 
 	<ul class="sp-user-edit" data-role="listview" data-inset="true">
 
-		<li data-role="list-divider" data-theme="b">
-			<wicket:message key="header-delete" />
-		</li>
+		<li data-role="list-divider" data-theme="b"><wicket:message
+				key="header-delete" /></li>
 
 		<li>
 			<div class="sp-txt-wrap">
@@ -239,8 +210,8 @@
 					<wicket:message key="button-delete" />
 				</button>
 				<a href="#" data-rel="back" data-direction="reverse"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-						key="button-cancel" />
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+					<wicket:message key="button-cancel" />
 				</a>
 			</div>
 		</li>

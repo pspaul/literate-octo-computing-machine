@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,14 @@
  */
 package org.savapage.server.pages.admin;
 
+import java.net.MalformedURLException;
 import java.util.EnumSet;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.SpException;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.UserAccountingDto;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -85,5 +88,23 @@ public final class PageUser extends AbstractAdminPage {
 
         add(new Label("button-user-pw-erase",
                 HtmlButtonEnum.ERASE.uiText(getLocale())));
+
+        try {
+            helper.addModifyLabelAttr("button-pgp-pubkey-search",
+                    HtmlButtonEnum.SEARCH.uiText(getLocale()),
+                    MarkupHelper.ATTR_HREF, ConfigManager.instance()
+                            .getPGPPublicKeySearchUrl().toString());
+
+            helper.addModifyLabelAttr("button-pgp-pubkey-preview",
+                    HtmlButtonEnum.PREVIEW.uiText(getLocale()),
+                    MarkupHelper.ATTR_HREF,
+                    ConfigManager.instance()
+                            .getPGPPublicKeyPreviewUrl("1234567890123456")
+                            .toString());
+
+        } catch (MalformedURLException e) {
+            throw new SpException(e.getMessage(), e);
+        }
+
     }
 }
