@@ -173,6 +173,26 @@ public class OutboxAddin extends AbstractUserPage {
     private static final String WICKET_ID_JOB_STATE_IND = "job-state-ind";
 
     /**
+     * Boolean.
+     */
+    private static final String PAGE_PARM_JOBTICKETS = "jobTickets";
+
+    /**
+     * String.
+     */
+    private static final String PAGE_PARM_USERKEY = "userKey";
+
+    /**
+     * Boolean.
+     */
+    private static final String PAGE_PARM_EXPIRY_ASC = "expiryAsc";
+
+    /**
+     * Integer.
+     */
+    private static final String PAGE_PARM_MAX_ITEMS = "maxItems";
+
+    /**
      * .
      */
     private class OutboxJobView extends PropertyListView<OutboxJobDto> {
@@ -202,7 +222,7 @@ public class OutboxAddin extends AbstractUserPage {
         }
 
         @Override
-        protected void populateItem(ListItem<OutboxJobDto> item) {
+        protected void populateItem(final ListItem<OutboxJobDto> item) {
 
             final MarkupHelper helper = new MarkupHelper(item);
             final OutboxJobDto job = item.getModelObject();
@@ -843,7 +863,7 @@ public class OutboxAddin extends AbstractUserPage {
                 getRequestCycle().getRequest().getPostParameters();
 
         final boolean isJobticketView =
-                parms.getParameterValue("jobTickets").toBoolean();
+                parms.getParameterValue(PAGE_PARM_JOBTICKETS).toBoolean();
 
         if (isJobticketView
                 && getSessionWebAppType() != WebAppTypeEnum.JOBTICKETS
@@ -876,10 +896,11 @@ public class OutboxAddin extends AbstractUserPage {
              * Job Tickets mix-in.
              */
             final Long userKey =
-                    parms.getParameterValue("userKey").toOptionalLong();
+                    parms.getParameterValue(PAGE_PARM_USERKEY).toOptionalLong();
 
-            final boolean expiryAsc = BooleanUtils.isTrue(
-                    parms.getParameterValue("expiryAsc").toOptionalBoolean());
+            final boolean expiryAsc = BooleanUtils
+                    .isTrue(parms.getParameterValue(PAGE_PARM_EXPIRY_ASC)
+                            .toOptionalBoolean());
 
             final List<OutboxJobDto> tickets;
 
@@ -908,8 +929,17 @@ public class OutboxAddin extends AbstractUserPage {
                 }
             });
 
+            final Integer maxItems = parms
+                    .getParameterValue(PAGE_PARM_MAX_ITEMS).toOptionalInteger();
+
+            int iItems = 0;
+
             for (final OutboxJobDto dto : tickets) {
                 outboxInfo.addJob(dto.getFile(), dto);
+                if (maxItems != null && maxItems.intValue() > 0
+                        && ++iItems >= maxItems.intValue()) {
+                    break;
+                }
             }
 
         } else {

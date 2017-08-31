@@ -24,6 +24,8 @@ package org.savapage.server.pages;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -44,7 +46,9 @@ public final class PageJobTickets extends AbstractAuthPage {
     }
 
     /**
-     * .
+     *
+     * @param parameters
+     *            The page parameters.
      */
     public PageJobTickets(final PageParameters parameters) {
 
@@ -61,6 +65,20 @@ public final class PageJobTickets extends AbstractAuthPage {
         add(addTitle(new Label("button-cancel-all",
                 String.format("%s%s", localized("button-cancel-all"),
                         HtmlButtonEnum.DOTTED_SUFFIX))));
+
+        final ConfigManager cm = ConfigManager.instance();
+
+        final Label slider = helper.addModifyLabelAttr("jobtickets-max-items",
+                MarkupHelper.ATTR_VALUE, String.valueOf(
+                        cm.getConfigInt(Key.WEBAPP_JOBTICKETS_LIST_SIZE, 0)));
+
+        MarkupHelper.modifyLabelAttr(slider, MarkupHelper.ATTR_SLIDER_MIN,
+                String.valueOf(cm
+                        .getConfigInt(Key.WEBAPP_JOBTICKETS_LIST_SIZE_MIN, 0)));
+
+        MarkupHelper.modifyLabelAttr(slider, MarkupHelper.ATTR_SLIDER_MAX,
+                String.valueOf(cm
+                        .getConfigInt(Key.WEBAPP_JOBTICKETS_LIST_SIZE_MAX, 0)));
     }
 
     /**

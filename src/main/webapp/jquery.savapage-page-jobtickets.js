@@ -64,13 +64,18 @@
             ,
                 _quickUserSearch = new _ns.QuickUserSearch(_view, _api)
             //
+            ,  _maxItems = function() {
+            	return $('#jobtickets-max-items').val();
+            }
+            //
             ,
                 _refresh = function() {
 
                 var html = _view.getUserPageHtml('OutboxAddin', {
                     jobTickets : true,
                     userKey : _userKey,
-                    expiryAsc : _expiryAsc
+                    expiryAsc : _expiryAsc,
+                    maxItems : _maxItems()
                 });
 
                 if (html) {

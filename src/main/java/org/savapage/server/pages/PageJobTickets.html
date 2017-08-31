@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
@@ -88,6 +89,15 @@
 
 						</fieldset>
 					</div>
+
+					<div class="ui-field-contain">
+						<label for="jobtickets-max-items">
+							<wicket:message key="prompt-number" />
+						</label>
+						<input id="jobtickets-max-items" wicket:id="jobtickets-max-items"
+							min="0" max="50" step="1" value="0" type="range" />
+					</div>
+
 				</div>
 
 				<div>
@@ -221,3 +231,4 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+</html>
