@@ -590,7 +590,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         if (isCopyJobTicket) {
-            addCopyJobRequestOptions(printer, printReq);
+            if (!validateAddCopyJobRequestOpts(printer, printReq)) {
+                return;
+            }
         } else {
             PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
                     dtoReq.getPageScaling(), doChunkVanillaJobs, iVanillaJob);
@@ -796,14 +798,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     }
 
     /**
-     * Adds dummy options to the proxy print request for a Copy Job.
+     * Adds and validates dummy options to the proxy print request for a Copy
+     * Job.
      *
      * @param printer
      *            The printer.
      * @param printReq
      *            The request.
+     * @return {@code false} when validation error (and API result is set).
      */
-    private static void addCopyJobRequestOptions(final Printer printer,
+    private boolean validateAddCopyJobRequestOpts(final Printer printer,
             final ProxyPrintInboxReq printReq) {
 
         final PrinterAttrLookup printerAttrLookup =
@@ -813,11 +817,18 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 printerAttrLookup.get(new PrinterDao.MediaSourceAttr(
                         printReq.getMediaSourceOption()));
 
+        if (mediaSourceCost == null || mediaSourceCost.getMedia() == null) {
+            setApiResult(ApiResultCodeEnum.ERROR, "msg-copyjob-media-missing");
+            return false;
+        }
+
         printReq.setMediaSourceOption(mediaSourceCost.getSource());
         printReq.setMediaOption(mediaSourceCost.getMedia().getMedia());
 
         printReq.setJobChunkInfo(ProxyPrintJobChunkInfo.createCopyJobChunk(
                 mediaSourceCost, printReq.getNumberOfPages()));
+
+        return true;
     }
 
     /**
