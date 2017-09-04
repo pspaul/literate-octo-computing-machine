@@ -40,16 +40,17 @@ import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DeviceDao;
+import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.JsonPrintDelegation;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.RangeAtom;
-import org.savapage.core.ipp.IppMediaSizeEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.ipp.client.IppConnectException;
@@ -68,6 +69,7 @@ import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.services.helpers.PageScalingEnum;
+import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ProxyPrintCostDto;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
 import org.savapage.core.services.impl.InboxServiceImpl;
@@ -588,11 +590,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         if (isCopyJobTicket) {
-
-            printReq.setJobChunkInfo(ProxyPrintJobChunkInfo.createCopyJobChunk(
-                    IppMediaSizeEnum.find(printReq.getMediaOption()),
-                    printReq.getNumberOfPages()));
-
+            addCopyJobRequestOptions(printer, printReq);
         } else {
             PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
                     dtoReq.getPageScaling(), doChunkVanillaJobs, iVanillaJob);
@@ -795,6 +793,31 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         } else {
             setApiResult(ApiResultCodeEnum.WARN, "msg-print-auth-pending");
         }
+    }
+
+    /**
+     * Adds dummy options to the proxy print request for a Copy Job.
+     *
+     * @param printer
+     *            The printer.
+     * @param printReq
+     *            The request.
+     */
+    private static void addCopyJobRequestOptions(final Printer printer,
+            final ProxyPrintInboxReq printReq) {
+
+        final PrinterAttrLookup printerAttrLookup =
+                new PrinterAttrLookup(printer);
+
+        final IppMediaSourceCostDto mediaSourceCost =
+                printerAttrLookup.get(new PrinterDao.MediaSourceAttr(
+                        printReq.getMediaSourceOption()));
+
+        printReq.setMediaSourceOption(mediaSourceCost.getSource());
+        printReq.setMediaOption(mediaSourceCost.getMedia().getMedia());
+
+        printReq.setJobChunkInfo(ProxyPrintJobChunkInfo.createCopyJobChunk(
+                mediaSourceCost, printReq.getNumberOfPages()));
     }
 
     /**
