@@ -22,6 +22,7 @@
 package org.savapage.server.pages.admin;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.EnumSet;
 
 import org.apache.wicket.AttributeModifier;
@@ -90,17 +91,29 @@ public final class PageUser extends AbstractAdminPage {
                 HtmlButtonEnum.ERASE.uiText(getLocale())));
 
         try {
-            helper.addModifyLabelAttr("button-pgp-pubkey-search",
-                    HtmlButtonEnum.SEARCH.uiText(getLocale()),
-                    MarkupHelper.ATTR_HREF, ConfigManager.instance()
-                            .getPGPPublicKeySearchUrl().toString());
+            final URL pgpPublicKeySearchUrl =
+                    ConfigManager.instance().getPGPPublicKeySearchUrl();
 
-            helper.addModifyLabelAttr("button-pgp-pubkey-preview",
-                    HtmlButtonEnum.PREVIEW.uiText(getLocale()),
-                    MarkupHelper.ATTR_HREF,
-                    ConfigManager.instance()
-                            .getPGPPublicKeyPreviewUrl("1234567890123456")
-                            .toString());
+            final URL pgpPublicKeyPreviewUrl = ConfigManager.instance()
+                    .getPGPPublicKeyPreviewUrl("1234567890123456");
+
+            if (pgpPublicKeySearchUrl == null
+                    || pgpPublicKeyPreviewUrl == null) {
+
+                helper.discloseLabel("button-pgp-pubkey-search");
+
+            } else {
+
+                helper.addModifyLabelAttr("button-pgp-pubkey-search",
+                        HtmlButtonEnum.SEARCH.uiText(getLocale()),
+                        MarkupHelper.ATTR_HREF,
+                        pgpPublicKeySearchUrl.toString());
+
+                helper.addModifyLabelAttr("button-pgp-pubkey-preview",
+                        HtmlButtonEnum.PREVIEW.uiText(getLocale()),
+                        MarkupHelper.ATTR_HREF,
+                        pgpPublicKeyPreviewUrl.toString());
+            }
 
         } catch (MalformedURLException e) {
             throw new SpException(e.getMessage(), e);
