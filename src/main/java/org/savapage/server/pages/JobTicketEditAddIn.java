@@ -25,21 +25,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.json.JsonPrinterDetail;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.print.proxy.JsonProxyPrinterOpt;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptChoice;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptGroup;
-import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -55,12 +52,6 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * .
-     */
-    private static final JobTicketService JOBTICKET_SERVICE =
-            ServiceContext.getServiceFactory().getJobTicketService();
 
     /**
      * .
@@ -163,15 +154,13 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
 
         super(parameters);
 
-        final String jobFileName = this.getParmValue(PARM_JOBFILENAME);
+        final OutboxJobDto job = this.getJobTicket();
 
-        if (StringUtils.isBlank(jobFileName)) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR, String
-                    .format("\"%s\" parameter missing", PARM_JOBFILENAME)));
+        if (job == null) {
+            final MarkupHelper helper = new MarkupHelper(this);
+            helper.discloseLabel("btn-save");
+            return;
         }
-
-        // The job
-        final OutboxJobDto job = JOBTICKET_SERVICE.getTicket(jobFileName);
 
         final JsonPrinterDetail printer =
                 PROXY_PRINT_SERVICE.getPrinterDetailUserCopy(
@@ -192,6 +181,8 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
         add(new PrinterOptionsView("ipp-option-list", optionList, job));
 
         //
+        final String jobFileName = this.getJobFileName();
+
         Label label =
                 new Label("btn-save", HtmlButtonEnum.SAVE.uiText(getLocale()));
         MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_DATA_SAVAPAGE,

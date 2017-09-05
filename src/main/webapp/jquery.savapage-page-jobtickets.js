@@ -441,6 +441,10 @@
                 }).on('click', '.sp-jobticket-print-close', null, function() {
                     _onPrintClose($(this).attr('data-savapage'));
 
+                }).on('click', '.sp-jobticket-notfound-refresh', null, function() {
+                    $('#sp-jobticket-popup').popup('close');
+                    _refresh();
+                    
                 }).on('click', '.sp-jobticket-print-cancel', null, function() {
                     _onPrintCancel($(this).attr('data-savapage'));
 

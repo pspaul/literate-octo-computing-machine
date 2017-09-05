@@ -41,7 +41,6 @@ import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.print.proxy.JsonProxyPrinterOpt;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptChoice;
-import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
@@ -70,12 +69,6 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
      * .
      */
     private static final String PARM_RETRY = "retry";
-
-    /**
-     * .
-     */
-    private static final JobTicketService JOBTICKET_SERVICE =
-            ServiceContext.getServiceFactory().getJobTicketService();
 
     private static final String WICKET_ID_CHOICE = "choice";
     private static final String WICKET_ID_MEDIA_SOURCE = "media-source";
@@ -344,35 +337,29 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
 
         super(parameters);
 
-        final String jobFileName = this.getParmValue(PARM_JOBFILENAME);
+        final String jobFileName = this.getJobFileName();
+
+        final List<RedirectPrinterDto> printerList;
 
         if (StringUtils.isBlank(jobFileName)) {
             setResponsePage(new MessageContent(AppLogLevelEnum.ERROR, String
                     .format("\"%s\" parameter missing", PARM_JOBFILENAME)));
+            printerList = null;
+        } else {
+            printerList = JOBTICKET_SERVICE.getRedirectPrinters(jobFileName,
+                    IppOptionMap.createVoid(), getLocale());
+        }
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        if (printerList == null) {
+            setResponsePage(JobTicketNotFound.class);
+            helper.discloseLabel("printer-radio");
+            return;
         }
 
         final boolean isSettlement = this.getParmBoolean(PARM_SETTLE, false);
         final boolean isRetry = this.getParmBoolean(PARM_RETRY, false);
-
-        //
-        final List<RedirectPrinterDto> printerList;
-
-        try {
-            printerList = JOBTICKET_SERVICE.getRedirectPrinters(jobFileName,
-                    IppOptionMap.createVoid(), getLocale());
-        } catch (Exception e) {
-            setResponsePage(
-                    new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
-            return;
-        }
-
-        if (printerList == null) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.WARN,
-                    localized("msg-jobticket-not-found")));
-            return;
-        }
-
-        final MarkupHelper helper = new MarkupHelper(this);
 
         //
         final String prompt;

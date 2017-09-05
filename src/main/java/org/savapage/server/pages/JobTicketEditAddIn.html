@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
@@ -13,51 +14,52 @@
     -->
 </wicket:remove>
 
-<!-- 
-<legend class="sp-txt-wrap">
-	<wicket:message key="prompt-header" />
-</legend>
- -->
+<wicket:enclosure child="btn-save">
 
-<table>
-	<tbody>
-		<wicket:enclosure child="jobticket-copies">
-			<tr>
-				<td style="padding: 0px; vertical-align: middle; text-align: right;">
-					<wicket:message key="print-copies" />
-					&nbsp;
-				</td>
-				<td style="padding: 0px;">
-					<input type="number" id="sp-jobticket-edit-copies" value="?"
-						min="1" wicket:id="jobticket-copies" />
-				</td>
-			</tr>
-		</wicket:enclosure>
-		<wicket:panel wicket:id="ipp-option-list">
-			<tr>
-				<span id="the-id-n" wicket:id="ipp-option-div" />
-				<wicket:fragment wicket:id="ipp-option-select">
+	<table>
+		<tbody>
+			<wicket:enclosure child="jobticket-copies">
+				<tr>
 					<td
-						style="padding: 0px; vertical-align: middle; text-align: right;"
-						wicket:id="label" />
-					<td style="padding: 0px;">
-						<select data-savapage="[ipp-keyword]" id="the-id" data-mini="true"
-							data-native-menu="false" wicket:id="select" />
+						style="padding: 0px; vertical-align: middle; text-align: right;">
+						<wicket:message key="print-copies" />
+						&nbsp;
 					</td>
-				</wicket:fragment>
-			</tr>
-		</wicket:panel>
-	</tbody>
-</table>
+					<td style="padding: 0px;">
+						<input type="number" id="sp-jobticket-edit-copies" value="?"
+							min="1" wicket:id="jobticket-copies" />
+					</td>
+				</tr>
+			</wicket:enclosure>
+			<wicket:panel wicket:id="ipp-option-list">
+				<tr>
+					<span id="the-id-n" wicket:id="ipp-option-div" />
+					<wicket:fragment wicket:id="ipp-option-select">
+						<td
+							style="padding: 0px; vertical-align: middle; text-align: right;"
+							wicket:id="label" />
+						<td style="padding: 0px;">
+							<select data-savapage="[ipp-keyword]" id="the-id"
+								data-mini="true" data-native-menu="false" wicket:id="select" />
+						</td>
+					</wicket:fragment>
+				</tr>
+			</wicket:panel>
+		</tbody>
+	</table>
 
-<wicket:fragment wicket:id="ipp-choice">
-	<option value="ipp-option-value" wicket:id="option" />
-</wicket:fragment>
+	<wicket:fragment wicket:id="ipp-choice">
+		<option value="ipp-option-value" wicket:id="option" />
+	</wicket:fragment>
 
-<br />
+	<br />
 
-<button id="sp-jobticket-edit-popup-btn-save" wicket:id="btn-save"
-	class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
+	<button id="sp-jobticket-edit-popup-btn-save" wicket:id="btn-save"
+		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
 
-<button id="sp-jobticket-edit-popup-btn-cancel" wicket:id="btn-cancel"
-	class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-delete" />
+	<button id="sp-jobticket-edit-popup-btn-cancel" wicket:id="btn-cancel"
+		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-delete" />
+
+</wicket:enclosure>
+
+</html>

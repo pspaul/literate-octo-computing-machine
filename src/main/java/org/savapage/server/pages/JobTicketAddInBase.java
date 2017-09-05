@@ -21,7 +21,12 @@
  */
 package org.savapage.server.pages;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
+import org.savapage.core.services.JobTicketService;
+import org.savapage.core.services.ServiceContext;
 
 /**
  *
@@ -29,6 +34,12 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  *
  */
 abstract class JobTicketAddInBase extends AbstractAuthPage {
+
+    /**
+     * .
+     */
+    protected static final JobTicketService JOBTICKET_SERVICE =
+            ServiceContext.getServiceFactory().getJobTicketService();
 
     /**
      * Version for serialization.
@@ -52,6 +63,30 @@ abstract class JobTicketAddInBase extends AbstractAuthPage {
     @Override
     protected boolean needMembership() {
         return false;
+    }
+
+    /**
+     * Gets the job ticket.
+     *
+     * @return {@code null} when job is not found, due to being processed by
+     *         another user. In that case the response page is set.
+     */
+    protected OutboxJobDto getJobTicket() {
+
+        final String jobFileName = this.getParmValue(PARM_JOBFILENAME);
+        final OutboxJobDto job;
+
+        if (StringUtils.isBlank(jobFileName)) {
+            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR, String
+                    .format("\"%s\" parameter missing", PARM_JOBFILENAME)));
+            job = null;
+        } else {
+            job = JOBTICKET_SERVICE.getTicket(jobFileName);
+            if (job == null) {
+                setResponsePage(JobTicketNotFound.class);
+            }
+        }
+        return job;
     }
 
     /**

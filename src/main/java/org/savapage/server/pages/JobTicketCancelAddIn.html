@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
@@ -13,16 +14,22 @@
     -->
 </wicket:remove>
 
-<p class="ui-title">
-	<wicket:message key="prompt-cancel" />
-</p>
+<wicket:enclosure child="btn-no">
 
-<p class="sp-txt-warn">
-	<wicket:message key="warn-cancel" />
-</p>
+	<p class="ui-title">
+		<wicket:message key="prompt-cancel" />
+	</p>
 
-<button id="sp-jobticket-cancel-popup-btn-no" wicket:id="btn-no"
-	class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete" />
+	<p class="sp-txt-warn">
+		<wicket:message key="warn-cancel" />
+	</p>
 
-<button id="sp-jobticket-cancel-popup-btn-yes" wicket:id="btn-yes"
-	class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
+	<button id="sp-jobticket-cancel-popup-btn-no" wicket:id="btn-no"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete" />
+
+	<button id="sp-jobticket-cancel-popup-btn-yes" wicket:id="btn-yes"
+		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
+
+</wicket:enclosure>
+
+</html>

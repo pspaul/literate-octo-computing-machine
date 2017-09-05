@@ -14,34 +14,12 @@
     -->
 </wicket:remove>
 
-<wicket:enclosure child="setting-row">
+<p>
+	<wicket:message key="msg-notfound" />
+</p>
 
-	<table class="sp-jobtickets-settings">
-
-		<wicket:container wicket:id="setting-row">
-			<wicket:enclosure child="cat-th">
-				<tr class="sp-jobtickets-settings-cat">
-					<th wicket:id="cat-th" />
-					<td wicket:id="cat-td" />
-				</tr>
-			</wicket:enclosure>
-			<wicket:enclosure child="td">
-				<tr>
-					<th />
-					<td wicket:id="td" />
-				</tr>
-			</wicket:enclosure>
-		</wicket:container>
-
-		<wicket:enclosure child="jobticket-remark">
-			<tr valign="top" class="sp-jobtickets-settings-cat">
-				<td colspan="2" style="max-width: 350px;"
-					wicket:id="jobticket-remark"></td>
-			</tr>
-		</wicket:enclosure>
-
-	</table>
-
-</wicket:enclosure>
+<button wicket:id="btn-refresh"
+	class="sp-jobticket-notfound-refresh ui-btn ui-mini ui-btn-inline 
+	   ui-btn-icon-left ui-icon-refresh" />
 
 </html>

@@ -31,13 +31,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
-import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 
@@ -52,12 +50,6 @@ public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * .
-     */
-    private static final JobTicketService JOBTICKET_SERVICE =
-            ServiceContext.getServiceFactory().getJobTicketService();
 
     /**
      * .
@@ -162,22 +154,34 @@ public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
      */
     private void populate() {
 
-        final String jobFileName = this.getParmValue(PARM_JOBFILENAME);
-
-        if (StringUtils.isBlank(jobFileName)) {
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR, String
-                    .format("\"%s\" parameter missing", PARM_JOBFILENAME)));
-        }
-
-        // The job
-        final OutboxJobDto job = JOBTICKET_SERVICE.getTicket(jobFileName);
+        final OutboxJobDto job = this.getJobTicket();
 
         final MarkupHelper helper = new MarkupHelper(this);
+
+        if (job == null) {
+            helper.discloseLabel("setting-row");
+            return;
+        }
+
         helper.encloseLabel("jobticket-remark", job.getComment(),
                 StringUtils.isNotBlank(job.getComment()));
 
-        // Options
-        final List<String[]> options = new ArrayList<>();
+        final List<String[]> displayOptions = new ArrayList<>();
+        fillOptions(job, displayOptions);
+        add(new PrinterOptionsView("setting-row", displayOptions));
+    }
+
+    /**
+     * Fills the display options from the job ticket.
+     *
+     * @param job
+     *            The job ticket.
+     * @param options
+     *            The display options.
+     */
+    private void fillOptions(final OutboxJobDto job,
+            final List<String[]> options) {
+
         final IppOptionMap optionMap = job.createIppOptionMap();
 
         String thWlk;
@@ -252,9 +256,6 @@ public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
 
         thWlk = addOptionsExtWhenSet(job.getOptionValues(), options,
                 getLocale(), thWlk);
-
-        //
-        add(new PrinterOptionsView("setting-row", options));
     }
 
     /**

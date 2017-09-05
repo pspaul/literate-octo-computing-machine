@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
@@ -13,72 +14,77 @@
     -->
 </wicket:remove>
 
-<legend class="sp-txt-wrap" wicket:id="prompt-header" />
+<wicket:enclosure child="printer-radio">
 
-<br />
+	<legend class="sp-txt-wrap" wicket:id="prompt-header" />
 
-<div class="ui-field-contain ui-mini">
-	<fieldset data-role="controlgroup">
-		<wicket:container wicket:id="printer-radio">
-			<div class="sp-jobticket-redirect-printer-item" tabindex="0">
-				<label for="the-id" wicket:id="label" tabindex="" />
-				<input type="radio" name="sp-jobticket-redirect-printer"
-					wicket:id="input" id="the-id" value="the-printer-key" />
-				<wicket:enclosure child="media-type">
-					<div class="sp-redirect-printer-media-type"
-						style="display: none;" tabindex="-1">
-						<select data-icon="check">
-							<option value="some-type" wicket:id="media-type" />
-						</select>
-					</div>
-				</wicket:enclosure>
-				<wicket:enclosure child="media-source">
-					<div class="sp-redirect-printer-media-source"
-						style="display: none;" tabindex="-1">
-						<select>
-							<wicket:panel wicket:id="media-source">
-								<option value="some-tray" wicket:id="choice" />
-							</wicket:panel>
-						</select>
-					</div>
-				</wicket:enclosure>
-				<wicket:enclosure child="output-bin">
-					<div class="sp-redirect-printer-output-bin" style="display: none;"
-						tabindex="-1">
-						<select data-icon="bars">
-							<wicket:panel wicket:id="output-bin">
-								<option value="some-bin" wicket:id="choice" />
-							</wicket:panel>
-						</select>
-					</div>
-				</wicket:enclosure>
-				<wicket:enclosure child="jog-offset">
-					<div class="sp-redirect-printer-jog-offset" style="display: none;"
-						tabindex="-1">
-						<select data-icon="bullets">
-							<wicket:panel wicket:id="jog-offset">
-								<option value="some-offset" wicket:id="choice" />
-							</wicket:panel>
-						</select>
-					</div>
-				</wicket:enclosure>
-			</div>
-		</wicket:container>
-	</fieldset>
-</div>
-<br />
-<wicket:enclosure child="btn-print">
-	<button id="sp-jobticket-popup-btn-print" wicket:id="btn-print"
-		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
+	<br />
+
+	<div class="ui-field-contain ui-mini">
+		<fieldset data-role="controlgroup">
+			<wicket:container wicket:id="printer-radio">
+				<div class="sp-jobticket-redirect-printer-item" tabindex="0">
+					<label for="the-id" wicket:id="label" tabindex="" />
+					<input type="radio" name="sp-jobticket-redirect-printer"
+						wicket:id="input" id="the-id" value="the-printer-key" />
+					<wicket:enclosure child="media-type">
+						<div class="sp-redirect-printer-media-type" style="display: none;"
+							tabindex="-1">
+							<select data-icon="check">
+								<option value="some-type" wicket:id="media-type" />
+							</select>
+						</div>
+					</wicket:enclosure>
+					<wicket:enclosure child="media-source">
+						<div class="sp-redirect-printer-media-source"
+							style="display: none;" tabindex="-1">
+							<select>
+								<wicket:panel wicket:id="media-source">
+									<option value="some-tray" wicket:id="choice" />
+								</wicket:panel>
+							</select>
+						</div>
+					</wicket:enclosure>
+					<wicket:enclosure child="output-bin">
+						<div class="sp-redirect-printer-output-bin" style="display: none;"
+							tabindex="-1">
+							<select data-icon="bars">
+								<wicket:panel wicket:id="output-bin">
+									<option value="some-bin" wicket:id="choice" />
+								</wicket:panel>
+							</select>
+						</div>
+					</wicket:enclosure>
+					<wicket:enclosure child="jog-offset">
+						<div class="sp-redirect-printer-jog-offset" style="display: none;"
+							tabindex="-1">
+							<select data-icon="bullets">
+								<wicket:panel wicket:id="jog-offset">
+									<option value="some-offset" wicket:id="choice" />
+								</wicket:panel>
+							</select>
+						</div>
+					</wicket:enclosure>
+				</div>
+			</wicket:container>
+		</fieldset>
+	</div>
+	<br />
+	<wicket:enclosure child="btn-print">
+		<button id="sp-jobticket-popup-btn-print" wicket:id="btn-print"
+			class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
+	</wicket:enclosure>
+	<wicket:enclosure child="btn-print-retry">
+		<button id="sp-jobticket-popup-btn-print-retry"
+			wicket:id="btn-print-retry"
+			class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
+	</wicket:enclosure>
+	<wicket:enclosure child="btn-settle">
+		<button id="sp-jobticket-popup-btn-settle" wicket:id="btn-settle"
+			class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-shop" />
+	</wicket:enclosure>
+	<button id="sp-jobticket-popup-btn-cancel" wicket:id="btn-cancel"
+		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-delete" />
+
 </wicket:enclosure>
-<wicket:enclosure child="btn-print-retry">
-	<button id="sp-jobticket-popup-btn-print-retry"
-		wicket:id="btn-print-retry"
-		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
-</wicket:enclosure>
-<wicket:enclosure child="btn-settle">
-	<button id="sp-jobticket-popup-btn-settle" wicket:id="btn-settle"
-		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-shop" />
-</wicket:enclosure>
-<button id="sp-jobticket-popup-btn-cancel" wicket:id="btn-cancel"
-	class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-delete" />
+</html>

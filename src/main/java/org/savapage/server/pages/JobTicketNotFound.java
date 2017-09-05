@@ -1,7 +1,7 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2017 Datraverse B.V.
- * Authors: Rijk Ravestein.
+ * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,47 +21,24 @@
  */
 package org.savapage.server.pages;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
+ * Page displaying job ticket not found message and follow-up action.
  *
  * @author Rijk Ravestein
  *
  */
-public final class JobTicketCancelAddIn extends JobTicketAddInBase {
+public class JobTicketNotFound extends AbstractPage {
 
-    /**
-     * Version for serialization.
-     */
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param parameters
-     *            The {@link PageParameters}.
+     *
      */
-    public JobTicketCancelAddIn(final PageParameters parameters) {
-
-        super(parameters);
-
-        final OutboxJobDto job = this.getJobTicket();
-
-        if (job == null) {
-            final MarkupHelper helper = new MarkupHelper(this);
-            helper.discloseLabel("btn-no");
-            return;
-        }
-
-        add(new Label("btn-no", HtmlButtonEnum.NO.uiText(getLocale())));
-
-        final Label labelButton =
-                new Label("btn-yes", HtmlButtonEnum.YES.uiText(getLocale()));
-        MarkupHelper.modifyLabelAttr(labelButton,
-                MarkupHelper.ATTR_DATA_SAVAPAGE, this.getJobFileName());
-        add(labelButton);
-
+    public JobTicketNotFound() {
+        final MarkupHelper helper = new MarkupHelper(this);
+        helper.addButton("btn-refresh", HtmlButtonEnum.REFRESH);
     }
 
 }
