@@ -63,6 +63,7 @@ import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
 import org.savapage.core.services.AppLogService;
+import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.DateUtil;
@@ -131,6 +132,12 @@ public final class SystemStatusPanel extends Panel {
      */
     private static final QueueService QUEUE_SERVICE =
             ServiceContext.getServiceFactory().getQueueService();
+
+    /**
+     * .
+     */
+    private static final JobTicketService TICKET_SERVICE =
+            ServiceContext.getServiceFactory().getJobTicketService();
 
     /**
      * @param panelId
@@ -738,8 +745,16 @@ public final class SystemStatusPanel extends Panel {
         if (showTechInfo) {
             size = ProxyPrintJobStatusMonitor.getPendingJobs();
         }
-
         helper.encloseLabel("proxy-print-queue-size", String.valueOf(size),
+                showTechInfo);
+
+        /*
+         * Job Tickets
+         */
+        if (showTechInfo) {
+            size = TICKET_SERVICE.getJobTicketQueueSize();
+        }
+        helper.encloseLabel("job-tickets-queue-size", String.valueOf(size),
                 showTechInfo);
 
         /*
