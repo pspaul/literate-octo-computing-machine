@@ -31,159 +31,69 @@ import org.savapage.core.util.LocaleHelper;
  *
  */
 public enum HtmlButtonEnum {
-
-    /**
-     *
-     */
+    /**  */
     APPLY,
-
-    /**
-     *
-     */
+    /**  */
     BACK,
-
-    /**
-     *
-     */
+    /**  */
     CANCEL,
-
-    /**
-     *
-     */
+    /**  */
     CANCEL_ALL,
-
-    /**
-     *
-     */
+    /**  */
+    CHECK,
+    /**  */
     CLOSE,
-
-    /**
-     *
-     */
+    /**  */
     DEFAULT,
-
-    /**
-     *
-     */
+    /**  */
     DELETE,
-
-    /**
-     *
-     */
+    /**  */
     DOWNLOAD,
-
-    /**
-     *
-     */
+    /**  */
     EDIT,
-
-    /**
-     *
-     */
+    /**  */
     ERASE,
-
-    /**
-     *
-     */
+    /**  */
     EXTEND,
-
-    /**
-     *
-     */
+    /**  */
     INBOX,
-
-    /**
-     *
-     */
+    /**  */
     LOGIN,
-
-    /**
-     *
-     */
+    /**  */
     LOGOUT,
-
-    /**
-     *
-     */
+    /**  */
     NEXT,
-
-    /**
-     * As opposite of {@link #YES}.
-     */
+    /** As opposite of {@link #YES}. */
     NO,
-
-    /**
-     *
-     */
+    /**  */
     OK,
-
-    /**
-     *
-     */
+    /**  */
     PREVIEW,
-
-    /**
-     *
-     */
+    /**  */
     PREVIOUS,
-
-    /**
-     *
-     */
+    /**  */
     PRINT,
-
-    /**
-     *
-     */
+    /**  */
     REFRESH,
-
-    /**
-     *
-     */
+    /**  */
     RESET,
-    /**
-     *
-     */
+    /**  */
     RETRY,
-
-    /**
-     *
-     */
+    /**  */
     SAVE,
-
-    /**
-     *
-     */
+    /**  */
     SEARCH,
-
-    /**
-    *
-    */
+    /**  */
     SEND,
-
-    /**
-     *
-     */
+    /**  */
     SETTINGS,
-
-    /**
-     *
-     */
+    /**  */
     SETTLE,
-
-    /**
-     *
-     */
+    /**  */
     START,
-
-    /**
-     *
-     */
+    /**  */
     UPLOAD,
-
-    /**
-     * As opposite of {@link #NO}.
-     */
+    /** As opposite of {@link #NO}. */
     YES;
 
     /**

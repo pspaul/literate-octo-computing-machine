@@ -437,9 +437,17 @@
                 $(this).on('click', ".sp-checkbox-tristate-label", null, function(event) {
                     return _ns.TriStateCheckbox.onLabelClick($(this));
                 });
-                
+
                 $(this).on('click', '#sp-button-pgp-pubkey-preview', null, function() {
-                    alert('Not implemented yet :-(');
+                    var tmpl = $('#sp-pgp-pubkey-preview-url-template').val(),
+                        url = tmpl.vformat([$('#user-pgp-pubkey-id').val()]);
+                    var win = window.open(url, '_blank');
+                    if (win) {
+                        win.focus();
+                    } else {
+                        //Browser has blocked it
+                        alert('Please allow popups for this website');
+                    }
                     return false;
                 });
 

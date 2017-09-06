@@ -94,11 +94,11 @@ public final class PageUser extends AbstractAdminPage {
             final URL pgpPublicKeySearchUrl =
                     ConfigManager.instance().getPGPPublicKeySearchUrl();
 
-            final URL pgpPublicKeyPreviewUrl = ConfigManager.instance()
-                    .getPGPPublicKeyPreviewUrl("1234567890123456");
+            final String pgpPublicKeyPreviewUrlTemplate = ConfigManager
+                    .instance().getPGPPublicKeyPreviewUrlTemplate();
 
             if (pgpPublicKeySearchUrl == null
-                    || pgpPublicKeyPreviewUrl == null) {
+                    || pgpPublicKeyPreviewUrlTemplate == null) {
 
                 helper.discloseLabel("button-pgp-pubkey-search");
 
@@ -109,10 +109,13 @@ public final class PageUser extends AbstractAdminPage {
                         MarkupHelper.ATTR_HREF,
                         pgpPublicKeySearchUrl.toString());
 
-                helper.addModifyLabelAttr("button-pgp-pubkey-preview",
-                        HtmlButtonEnum.PREVIEW.uiText(getLocale()),
-                        MarkupHelper.ATTR_HREF,
-                        pgpPublicKeyPreviewUrl.toString());
+                helper.addLabel("button-pgp-pubkey-preview",
+                        HtmlButtonEnum.CHECK.uiText(getLocale()));
+
+                helper.addModifyLabelAttr("pgp-pubkey-preview-url-template",
+                        MarkupHelper.ATTR_VALUE,
+                        pgpPublicKeyPreviewUrlTemplate);
+
             }
 
         } catch (MalformedURLException e) {

@@ -120,19 +120,25 @@
 				data-collapsed="true" data-mini="true">
 				<h3>OpenPGP</h3>
 				<label for="user-pgp-pubkey-id">
-					<wicket:message key="user-pgp-pubkey-id" />
+					<span class="sp-txt-wrap"> <wicket:message
+							key="user-pgp-pubkey-id" /> &nbsp;<small>&bull;</small>&nbsp;<small><wicket:message
+								key="user-pgp-pubkey-id-format" /></small>
+					</span>
 				</label>
 				<input type="text" id="user-pgp-pubkey-id" maxlength="16" value=""
 					data-clear-btn="true" />
-					
+
 				<wicket:enclosure child="button-pgp-pubkey-search">
 					<div>
 						<a href="" target="_blank" wicket:id="button-pgp-pubkey-search"
 							class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-search" />
-						<a href="" target="_blank" wicket:id="button-pgp-pubkey-preview"
+
+						<button wicket:id="button-pgp-pubkey-preview"
 							id="sp-button-pgp-pubkey-preview"
 							class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-eye" />
 					</div>
+					<input type="hidden" id="sp-pgp-pubkey-preview-url-template"
+						wicket:id="pgp-pubkey-preview-url-template" />
 				</wicket:enclosure>
 			</div>
 
