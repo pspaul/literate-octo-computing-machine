@@ -32,6 +32,8 @@ import org.savapage.core.util.LocaleHelper;
  */
 public enum HtmlButtonEnum {
     /**  */
+    ABOUT,
+    /**  */
     APPLY,
     /**  */
     BACK,

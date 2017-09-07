@@ -151,6 +151,21 @@
 	</div>
 </div>
 
+<div data-role="footer" data-position="fixed">
+	<fieldset data-role="controlgroup" data-type="horizontal"
+		data-mini="true">
+
+		<wicket:enclosure child="mini-sys-maintenance">
+			<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-alert">
+				<span wicket:id="mini-sys-maintenance" class="sp-txt-warn" />
+			</button>
+		</wicket:enclosure>
+
+		<wicket:panel wicket:id="community-status-footer-panel" />
+
+	</fieldset>
+</div>
+
 
 <div data-role="popup" id="sp-jobticket-popup" data-theme="a"
 	data-overlay-theme="a" data-arrow="true">

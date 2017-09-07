@@ -958,6 +958,17 @@ public final class UserEventService extends AbstractEventService {
     }
 
     /**
+     * Creates a simple {@link UserEventEnum#SYS_MAINTENANCE} event.
+     *
+     * @return The event data.
+     */
+    private static Map<String, Object> createSysMaintenanceEvent() {
+        final Map<String, Object> userData = new HashMap<String, Object>();
+        userData.put(KEY_EVENT, UserEventEnum.SYS_MAINTENANCE);
+        return userData;
+    }
+
+    /**
      * Gets the event for new or deleted jobs since pageOffset.
      *
      * @param userName
@@ -1026,33 +1037,41 @@ public final class UserEventService extends AbstractEventService {
                         "user [" + userName + "] not found.");
             }
 
-            USER_SERVICE.lazyUserHomeDir(userName);
+            if (isWebAppClient && !lockedUser.getAdmin().booleanValue()
+                    && ConfigManager.isSysMaintenance()) {
 
-            final PageImages pages = INBOX_SERVICE.getPageChunks(userName, null,
-                    uniqueUrlValue, base64);
+                userData = createSysMaintenanceEvent();
 
-            long totPages = 0;
+            } else {
 
-            for (final PageImage image : pages.getPages()) {
-                totPages += image.getPages();
-            }
+                USER_SERVICE.lazyUserHomeDir(userName);
 
-            /*
-             * NOTE: we compare with NOT EQUAL, so any change (new jobs, or old
-             * jobs deleted) is identified.
-             */
-            if (totPages != nPageOffset.longValue()) {
+                final PageImages pages = INBOX_SERVICE.getPageChunks(userName,
+                        null, uniqueUrlValue, base64);
 
-                userData = createPrintInEvent(msgTime);
-                userData.put(KEY_JOBS, pages.getJobs());
-                userData.put(KEY_PAGES, pages.getPages());
-                userData.put(KEY_URL_TEMPLATE,
-                        ImageUrl.composeDetailPageTemplate(userName, base64));
+                long totPages = 0;
 
-                if (isWebAppClient) {
-                    ApiRequestHelper.addUserStats(userData, lockedUser,
-                            ServiceContext.getLocale(),
-                            ServiceContext.getAppCurrencySymbol());
+                for (final PageImage image : pages.getPages()) {
+                    totPages += image.getPages();
+                }
+
+                /*
+                 * NOTE: we compare with NOT EQUAL, so any change (new jobs, or
+                 * old jobs deleted) is identified.
+                 */
+                if (totPages != nPageOffset.longValue()) {
+
+                    userData = createPrintInEvent(msgTime);
+                    userData.put(KEY_JOBS, pages.getJobs());
+                    userData.put(KEY_PAGES, pages.getPages());
+                    userData.put(KEY_URL_TEMPLATE, ImageUrl
+                            .composeDetailPageTemplate(userName, base64));
+
+                    if (isWebAppClient) {
+                        ApiRequestHelper.addUserStats(userData, lockedUser,
+                                ServiceContext.getLocale(),
+                                ServiceContext.getAppCurrencySymbol());
+                    }
                 }
             }
 

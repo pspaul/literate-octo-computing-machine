@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
@@ -147,6 +148,15 @@ public final class Login extends AbstractPage {
                         .toString() != null;
 
         addOAuthButtons(localLoginRestricted);
+
+        //
+        if (ConfigManager.isSysMaintenance()) {
+            helper.addLabel("maintenance-header",
+                    localized("maintenance-header"));
+            helper.addLabel("maintenance-body", localized("maintenance-body"));
+        } else {
+            helper.discloseLabel("maintenance-header");
+        }
     }
 
     /**
@@ -225,6 +235,5 @@ public final class Login extends AbstractPage {
             }
 
         });
-
     }
 }

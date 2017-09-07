@@ -107,6 +107,7 @@ import org.savapage.core.dto.ProxyPrinterMediaSourcesDto;
 import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.imaging.EcoPrintPdfTask;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.imaging.ImageUrl;
@@ -2155,12 +2156,20 @@ public final class JsonApiServer extends AbstractPage {
             }
         }
 
-        //
         if (authorized) {
+
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("User [" + uid + "] is owner of session "
                         + session.getId());
             }
+
+            if (!session.getUser().getAdmin().booleanValue()
+                    && ConfigManager.isSysMaintenance()) {
+                userData = new HashMap<String, Object>();
+                createApiResult(userData, ApiResultCodeEnum.WARN, "",
+                        PhraseEnum.SYS_MAINTENANCE.uiText(getLocale()));
+            }
+
         } else {
             userData = new HashMap<String, Object>();
             setApiResult(userData, ApiResultCodeEnum.UNAUTH,

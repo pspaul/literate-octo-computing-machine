@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
@@ -45,6 +47,15 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 		<h3 class="sp-login-dialog" wicket:id="title" />
 		<h3 class="sp-login-dialog-assoc" wicket:id="title-assoc" />
 		<div class="sp-login-dialog" wicket:id="login-descript" />
+	</wicket:enclosure>
+
+	<wicket:enclosure child="maintenance-header">
+		<ul class="sp-login-dialog" data-role="listview" data-inset="true">
+			<li>
+				<h3 class="sp-txt-warn" wicket:id="maintenance-header" />
+				<div class="sp-txt-warn sp-txt-wrap" wicket:id="maintenance-body" />
+			</li>
+		</ul>
 	</wicket:enclosure>
 
 	<ul data-role="listview" data-inset="true">
@@ -275,3 +286,5 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+</html>

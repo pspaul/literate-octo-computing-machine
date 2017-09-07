@@ -338,6 +338,11 @@
                     _ns.logger.debug('UserEvent: event ' + res.event + ( _paused ? ' (paused)' : ''));
                 }
 
+                if (res.event === "SYS_MAINTENANCE") {
+                    _this.onSysMaintenance();
+                    return;
+                }
+
                 _longPollStartTime = null;
 
                 if (!_paused) {
@@ -5651,9 +5656,9 @@
             };
 
             //--------------------------------------------------
-            //_userEvent.onEventIgnored = function() {
-            // $('#cometd-status-poll').empty().append('event (ignored)');
-            //};
+            _userEvent.onSysMaintenance = function(msg) {
+                _view.pages.main.onLogout();
+            };
 
             _userEvent.onEventError = function(msg) {
                 _view.message(msg);

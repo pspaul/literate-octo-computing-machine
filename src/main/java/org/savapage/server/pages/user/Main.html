@@ -23,7 +23,6 @@
 	</div>
 
 	<style>
-	
 .ui-icon-main-left-arrow:after {
 	background: url(/glyphicons/glyphicons_210_left_arrow.png) 50% 50%
 		no-repeat;
@@ -333,12 +332,13 @@
 				</li>
 			</ul>
 			<ul>
-				<li class="main_actions main_arr_edit"><a
-						href="#sp-popup-arr-action" data-rel="popup"
+				<li class="main_actions main_arr_edit">
+					<a href="#sp-popup-arr-action" data-rel="popup"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-action-popup">
 						<span class="sp-nav-button-txt"><wicket:message
 								key="button-more-actions" /></span>
-					</a></li>
+					</a>
+				</li>
 				<li class="main_actions main_arr_edit">
 					<button id="main-arr-unselect-all"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-unselect-all">
@@ -380,7 +380,13 @@
 		data-mini="true">
 
 		<button id="button-cometd-status"
-			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-info">&nbsp;</button>
+			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-notext ui-btn-icon-left ui-icon-info">&nbsp;</button>
+
+		<wicket:enclosure child="mini-sys-maintenance">
+			<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-alert">
+				<span wicket:id="mini-sys-maintenance" class="sp-txt-warn" />
+			</button>
+		</wicket:enclosure>
 
 		<wicket:enclosure child="button-mini-about">
 			<button wicket:id="button-mini-about" id="button-about"
@@ -406,7 +412,7 @@
 			<button
 				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-mini-user ">
 				<span wicket:id="mini-user-name" class="sp-txt-info"
-					id="mini-user-name">rijk</span>
+					id="mini-user-name" />
 			</button>
 		</wicket:enclosure>
 
@@ -464,6 +470,7 @@
 			class="sp-button-mini-print-n-up sp-main-status-ind ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
 
 		<wicket:panel wicket:id="community-status-footer-panel" />
+
 	</fieldset>
 
 </div>
@@ -497,22 +504,28 @@ POPUP with extra sort mode actions.
 		data-icon="false">
 
 		<wicket:enclosure child="main-arr-action-pdf">
-			<li><a href="#" id="main-arr-action-pdf"
+			<li>
+				<a href="#" id="main-arr-action-pdf"
 					class="ui-btn ui-btn-icon-left ui-icon-main-pdf-properties">
 					&nbsp;<span wicket:id="main-arr-action-pdf">[PDF]</span>
-				</a></li>
+				</a>
+			</li>
 		</wicket:enclosure>
 		<wicket:enclosure child="main-arr-action-print">
-			<li><a href="#" id="main-arr-action-print"
-					class="ui-btn ui-btn-icon-left ui-icon-main-print">
-					&nbsp;<span wicket:id="main-arr-action-print" />
-				</a></li>
+			<li>
+				<a href="#" id="main-arr-action-print"
+					class="ui-btn ui-btn-icon-left ui-icon-main-print"> &nbsp;<span
+					wicket:id="main-arr-action-print" />
+				</a>
+			</li>
 		</wicket:enclosure>
 		<wicket:enclosure child="main-arr-action-ticket">
-			<li><a href="#" id="main-arr-action-print"
-					class="ui-btn ui-btn-icon-left ui-icon-main-jobticket">
-					&nbsp;<span wicket:id="main-arr-action-ticket" />
-				</a></li>
+			<li>
+				<a href="#" id="main-arr-action-print"
+					class="ui-btn ui-btn-icon-left ui-icon-main-jobticket"> &nbsp;<span
+					wicket:id="main-arr-action-ticket" />
+				</a>
+			</li>
 		</wicket:enclosure>
 	</ul>
 </div>
@@ -532,14 +545,16 @@ POPUP with Page/Job info
 	<h4 class="sp-txt-wrap sp-txt-info" id="popup-job-info-name" />
 
 	<ul data-role="listview" data-inset="true">
-		<li><legend>
+		<li>
+			<legend>
 				<wicket:message key="prompt-job-pages" />
 				<span id="popup-job-info-pages" /> <span class="sp-txt-warn"
 					id="popup-job-info-pages-deleted">&bull; <span /> <wicket:message
 						key="prompt-deleted" />
 				</span> &bull; <span id="popup-job-info-media" /> <span
 					class="sp-msg-popup-warn sp-txt-wrap" id="popup-job-info-drm" />
-			</legend></li>
+			</legend>
+		</li>
 		<li>
 			<fieldset data-role="controlgroup" data-type="vertical">
 
@@ -549,12 +564,14 @@ POPUP with Page/Job info
 					<span />
 				</button>
 
-				<input type="checkbox" id="sp-popup-job-undelete" value="1" /> <label
-					for="sp-popup-job-undelete"> <wicket:message
-						key="prompt-job-undelete" />
-				</label> <input type="checkbox" id="sp-popup-job-rotate" value="1" /> <label
-					for="sp-popup-job-rotate"> <wicket:message
-						key="prompt-job-rotate" /> <small>&nbsp;&nbsp;&#x21b7;</small>
+				<input type="checkbox" id="sp-popup-job-undelete" value="1" />
+				<label for="sp-popup-job-undelete">
+					<wicket:message key="prompt-job-undelete" />
+				</label>
+				<input type="checkbox" id="sp-popup-job-rotate" value="1" />
+				<label for="sp-popup-job-rotate">
+					<wicket:message key="prompt-job-rotate" />
+					<small>&nbsp;&nbsp;&#x21b7;</small>
 				</label>
 			</fieldset>
 
@@ -564,8 +581,8 @@ POPUP with Page/Job info
 					<wicket:message key="button-apply" />
 				</button>
 				<a href="#" data-rel="back"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-					<wicket:message key="button-close" />
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+						key="button-close" />
 				</a>
 			</div>
 		</li>
@@ -574,7 +591,8 @@ POPUP with Page/Job info
 		<li class="ui-mini">
 			<div class="sp-txt-wrap">
 				<wicket:message key="prompt-delete-document" />
-			</div> <br />
+			</div>
+			<br />
 			<button id="sp-popup-job-delete"
 				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete ui-mini">
 				<wicket:message key="button-delete-document" />

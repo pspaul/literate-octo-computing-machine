@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -236,7 +236,7 @@ public final class ReqLogin extends ApiRequestMixin {
     private void reqLogin(final UserAuth.Mode authMode, final String authId,
             final String authPw, final String authToken,
             final String assocCardNumber, final WebAppTypeEnum webAppType)
-                    throws IOException {
+            throws IOException {
 
         final UserAgentHelper userAgentHelper = this.createUserAgentHelper();
 
@@ -249,8 +249,6 @@ public final class ReqLogin extends ApiRequestMixin {
                     + userAgentHelper.isSafariBrowserMobile() + "] UserAgent ["
                     + userAgentHelper.getUserAgentHeader() + "]");
         }
-
-        // final Map<String, Object> userData = new HashMap<String, Object>();
 
         final ConfigManager cm = ConfigManager.instance();
         final SpSession session = SpSession.get();
@@ -418,6 +416,16 @@ public final class ReqLogin extends ApiRequestMixin {
                 }
             }
         }
+
+        /*
+         * INVARIANT: If system maintenance the only login possible is as admin.
+         */
+        if (ConfigManager.isSysMaintenance() && session.getUser() != null
+                && !session.getUser().getAdmin().booleanValue()) {
+            setApiResult(ApiResultCodeEnum.ERROR, "msg-login-not-possible");
+            return;
+        }
+
         getUserData().put("sessionid", SpSession.get().getId());
 
         //
@@ -662,11 +670,27 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (userDb == null) {
 
-                    getUserData().put("authCardSelfAssoc",
-                            Boolean.valueOf(theUserAuth.isAuthCardSelfAssoc()));
+                    if (ConfigManager.isSysMaintenance()) {
+                        setApiResult(ApiResultCodeEnum.ERROR,
+                                "msg-login-not-possible");
+                    } else {
+                        final boolean selfAssoc =
+                                webAppType == WebAppTypeEnum.USER
+                                        && Boolean.valueOf(theUserAuth
+                                                .isAuthCardSelfAssoc());
 
-                    setApiResult(ApiResultCodeEnum.ERROR,
-                            "msg-login-unregistered-card");
+                        getUserData().put("authCardSelfAssoc", selfAssoc);
+
+                        if (selfAssoc) {
+                            setApiResult(ApiResultCodeEnum.ERROR,
+                                    "msg-login-unregistered-card");
+                        } else {
+                            onLoginFailed("msg-login-card-unknown",
+                                    webAppType.getUiText(),
+                                    UserAuth.getUiText(authMode),
+                                    normalizedCardNumber);
+                        }
+                    }
                     return;
                 }
                 uid = userDb.getUserId();
@@ -764,7 +788,7 @@ public final class ReqLogin extends ApiRequestMixin {
                                 UserAuth.getUiText(authMode),
                                 userDb.getUserId(),
                                 ACLRoleEnum.JOB_TICKET_OPERATOR
-                                .uiText(getLocale()));
+                                        .uiText(getLocale()));
                         return;
                     }
                 }
@@ -854,9 +878,9 @@ public final class ReqLogin extends ApiRequestMixin {
                 isAuthenticated = (authMode == UserAuth.Mode.ID
                         && !theUserAuth.isAuthIdPinReq())
                         || (authMode == UserAuth.Mode.CARD_IP
-                        && !theUserAuth.isAuthCardPinReq())
+                                && !theUserAuth.isAuthCardPinReq())
                         || (authMode == UserAuth.Mode.CARD_LOCAL
-                        && !theUserAuth.isAuthCardPinReq());
+                                && !theUserAuth.isAuthCardPinReq());
 
                 if (!isAuthenticated) {
 
@@ -979,8 +1003,8 @@ public final class ReqLogin extends ApiRequestMixin {
             LOGGER.trace(String.format(
                     "Setting user [%s] in session of %s WebApp"
                             + ": isAuthenticated [%s]",
-                            uid, webAppType.toString(),
-                            SpSession.get().isAuthenticated()));
+                    uid, webAppType.toString(),
+                    SpSession.get().isAuthenticated()));
         }
     }
 
@@ -996,7 +1020,7 @@ public final class ReqLogin extends ApiRequestMixin {
      */
     private User reqLoginYubico(final YubiKeyOTP otp,
             final WebAppTypeEnum webAppType) throws IOException,
-    YubicoVerificationException, YubicoValidationFailure {
+            YubicoVerificationException, YubicoValidationFailure {
 
         final String publicId = otp.getPublicId();
 
@@ -1040,7 +1064,7 @@ public final class ReqLogin extends ApiRequestMixin {
      */
     private void reqLoginAuthTokenWebApp(final String uid,
             final String authtoken, final WebAppTypeEnum webAppType)
-                    throws IOException {
+            throws IOException {
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
@@ -1205,7 +1229,7 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         if (ServiceContext.getTransactionDate().getTime()
                 - authTokenCliApp.getCreateTime() > 2
-                * UserEventService.getMaxMonitorMsec()) {
+                        * UserEventService.getMaxMonitorMsec()) {
             return false;
         }
 

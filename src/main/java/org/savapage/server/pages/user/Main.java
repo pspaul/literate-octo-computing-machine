@@ -34,9 +34,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Device;
@@ -244,6 +246,10 @@ public class Main extends AbstractUserPage {
                     userId, true);
             add(name.add(new AttributeModifier("title", userName)));
         }
+
+        helper.encloseLabel("mini-sys-maintenance",
+                NounEnum.MAINTENANCE.uiText(getLocale()),
+                ConfigManager.isSysMaintenance());
     }
 
     /**

@@ -64,8 +64,9 @@
             ,
                 _quickUserSearch = new _ns.QuickUserSearch(_view, _api)
             //
-            ,  _maxItems = function() {
-            	return $('#jobtickets-max-items').val();
+            ,
+                _maxItems = function() {
+                return $('#jobtickets-max-items').val();
             }
             //
             ,
@@ -444,7 +445,7 @@
                 }).on('click', '.sp-jobticket-notfound-refresh', null, function() {
                     $('#sp-jobticket-popup').popup('close');
                     _refresh();
-                    
+
                 }).on('click', '.sp-jobticket-print-cancel', null, function() {
                     _onPrintCancel($(this).attr('data-savapage'));
 

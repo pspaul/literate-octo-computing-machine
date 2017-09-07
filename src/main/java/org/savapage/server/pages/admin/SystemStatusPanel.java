@@ -59,6 +59,7 @@ import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
@@ -177,10 +178,23 @@ public final class SystemStatusPanel extends Panel {
             msg = getLocalizer().getString("sys-status-ready", this);
         }
 
+        //
         labelWrk = new Label("sys-status", msg);
-
-        labelWrk.add(new AttributeModifier("class", cssColor));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, cssColor));
         add(labelWrk);
+
+        //
+        if (ConfigManager.isSysMaintenance()) {
+            labelWrk = helper.encloseLabel("sys-maintenance",
+                    NounEnum.MAINTENANCE.uiText(getLocale()), true);
+            MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
+                    MarkupHelper.CSS_TXT_WARN);
+
+            add(new Label("sys-maintenance-prompt",
+                    NounEnum.MODE.uiText(getLocale())));
+        } else {
+            helper.discloseLabel("sys-maintenance");
+        }
 
         //
         add(new Label("sys-uptime", DateUtil.formatDuration(
@@ -241,7 +255,8 @@ public final class SystemStatusPanel extends Panel {
             }
 
             labelWrk = helper.encloseLabel("mailprint-status", msgText, true);
-            MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
+            MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
+                    cssColor);
 
             labelWrk = helper.addCheckbox("flipswitch-mailprint-online",
                     ImapPrinter.isOnline());
@@ -288,7 +303,8 @@ public final class SystemStatusPanel extends Panel {
             labelWrk = helper.encloseLabel("gcp-status", msgText, true);
 
             if (msgKey != null) {
-                MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
+                        cssColor);
             }
 
             labelWrk = helper.addCheckbox("flipswitch-gcp-online", isGcpOnline);
@@ -397,7 +413,8 @@ public final class SystemStatusPanel extends Panel {
             labelWrk = helper.encloseLabel("smartschool-print-status", msgText,
                     true);
 
-            MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
+            MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
+                    cssColor);
 
             labelWrk = helper.addCheckbox("flipswitch-smartschool-online",
                     SmartschoolPrinter.isOnline());
@@ -450,7 +467,7 @@ public final class SystemStatusPanel extends Panel {
         } else {
             labelWrk = helper.encloseLabel("cups-connection",
                     circuit.getCircuitState().uiText(getLocale()), true);
-            labelWrk.add(new AttributeModifier("class",
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
                     String.format("%s %s", MarkupHelper.CSS_TXT_WRAP, clazz)));
         }
 
@@ -573,18 +590,18 @@ public final class SystemStatusPanel extends Panel {
                         CommunityDictEnum.MEMBER.getWord().toLowerCase())));
         labelWrk =
                 new Label("membership-org", memberCard.getMemberOrganisation());
-        labelWrk.add(new AttributeModifier("class", cssColor));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, cssColor));
         add(labelWrk);
 
         //
         labelWrk = new Label("membership-status", memberStat);
-        labelWrk.add(new AttributeModifier("class", cssColor));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, cssColor));
         add(labelWrk);
 
         //
         labelWrk = new Label("membership-participants",
                 helper.localizedNumber(memberCard.getMemberParticipants()));
-        labelWrk.add(new AttributeModifier("class", cssColor));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, cssColor));
         add(labelWrk);
 
         //
@@ -597,7 +614,7 @@ public final class SystemStatusPanel extends Panel {
         labelWrk = MarkupHelper.createEncloseLabel("membership-valid-till",
                 enclosedValue, enclosedValue != null);
 
-        labelWrk.add(new AttributeModifier("class", cssColor));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, cssColor));
         add(labelWrk);
 
         //
@@ -608,7 +625,7 @@ public final class SystemStatusPanel extends Panel {
         labelWrk = MarkupHelper.createEncloseLabel(
                 "membership-valid-days-remaining", enclosedValue,
                 enclosedValue != null);
-        labelWrk.add(new AttributeModifier("class", cssColor));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, cssColor));
         add(labelWrk);
 
         /*
@@ -620,8 +637,8 @@ public final class SystemStatusPanel extends Panel {
         Label labelErr =
                 new Label("error-count", helper.localizedNumber(errors));
         if (errors > 0) {
-            labelErr.add(
-                    new AttributeModifier("class", MarkupHelper.CSS_TXT_ERROR));
+            labelErr.add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
+                    MarkupHelper.CSS_TXT_ERROR));
         }
         add(labelErr);
 
@@ -632,8 +649,8 @@ public final class SystemStatusPanel extends Panel {
         Label labelWarn =
                 new Label("warning-count", helper.localizedNumber(warnings));
         if (warnings > 0) {
-            labelWarn.add(
-                    new AttributeModifier("class", MarkupHelper.CSS_TXT_WARN));
+            labelWarn.add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
+                    MarkupHelper.CSS_TXT_WARN));
         }
         add(labelWarn);
 
@@ -664,7 +681,8 @@ public final class SystemStatusPanel extends Panel {
         labelWrk =
                 helper.encloseLabel("ssl-expiry", certText, certText != null);
         if (certClass != null) {
-            labelWrk.add(AttributeAppender.append("class", certClass));
+            labelWrk.add(AttributeAppender.append(MarkupHelper.ATTR_CLASS,
+                    certClass));
         }
 
         /*

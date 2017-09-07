@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -79,6 +80,14 @@ public final class PageJobTickets extends AbstractAuthPage {
         MarkupHelper.modifyLabelAttr(slider, MarkupHelper.ATTR_SLIDER_MAX,
                 String.valueOf(cm
                         .getConfigInt(Key.WEBAPP_JOBTICKETS_LIST_SIZE_MAX, 0)));
+
+        //
+        helper.encloseLabel("mini-sys-maintenance",
+                NounEnum.MAINTENANCE.uiText(getLocale()),
+                ConfigManager.isSysMaintenance());
+
+        add(new CommunityStatusFooterPanel("community-status-footer-panel",
+                true));
     }
 
     /**

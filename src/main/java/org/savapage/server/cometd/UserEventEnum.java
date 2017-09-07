@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -24,7 +24,15 @@ package org.savapage.server.cometd;
 import org.savapage.core.jpa.PrintOut;
 
 /**
- * TODO: move this class to savapage-common project.
+ * User Events.
+ *
+ * <p>
+ * <b>WARNING</b>: <i>This enum is duplicated in
+ * org.savapage.client.cometd.UserEventMsgListener.UserEventEnum</i>
+ * </p>
+ * <p>
+ * <b>TODO</b>: Move to org.savapage.common.
+ * </p>
  *
  * @author Rijk Ravestein
  *
@@ -69,14 +77,29 @@ public enum UserEventEnum {
     /**
      * Server shutdown in progress.
      */
-    SERVER_SHUTDOWN("Server Shutdowm");
+    SERVER_SHUTDOWN("Server Shutdown"),
 
+    /**
+     * System maintenance.
+     */
+    SYS_MAINTENANCE("System Maintenance");
+
+    /**
+     * The UI text.
+     */
     private final String uiText;
 
-    private UserEventEnum(final String uiText) {
-        this.uiText = uiText;
+    /**
+     * @param text
+     *            The UI text.
+     */
+    UserEventEnum(final String text) {
+        this.uiText = text;
     }
 
+    /**
+     * @return The UI text.
+     */
     public String getUiText() {
         return uiText;
     }
