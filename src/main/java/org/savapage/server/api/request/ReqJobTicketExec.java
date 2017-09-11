@@ -59,6 +59,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         private boolean retry;
         private Long printerId;
         private String mediaSource;
+        private String mediaSourceJobSheet;
         private String outputBin;
         private String jogOffset;
 
@@ -118,6 +119,22 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setMediaSource(String mediaSource) {
             this.mediaSource = mediaSource;
+        }
+
+        /**
+         * @return The {@link IppDictJobTemplateAttr#ATTR_MEDIA_SOURCE} value
+         *         for the Job Sheet print job. Is irrelevant ({@code null})
+         *         when settlement.
+         */
+        public String getMediaSourceJobSheet() {
+            return mediaSourceJobSheet;
+        }
+
+        /**
+         * @param mediaSourceJobSheet
+         */
+        public void setMediaSourceJobSheet(String mediaSourceJobSheet) {
+            this.mediaSourceJobSheet = mediaSourceJobSheet;
         }
 
         /**
@@ -220,17 +237,25 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
                     return;
                 }
 
+                // For now.
+                if (dtoReq.getMediaSourceJobSheet() == null) {
+                    dtoReq.setMediaSourceJobSheet(dtoReq.getMediaSource());
+                }
+
                 if (dtoReq.isRetry()) {
 
                     dto = JOBTICKET_SERVICE.retryTicketPrint(requestingUser,
                             printer, dtoReq.getMediaSource(),
+                            dtoReq.getMediaSourceJobSheet(),
                             dtoReq.getOutputBin(), dtoReq.getJogOffset(),
                             dtoReq.getJobFileName());
 
                 } else {
                     dto = JOBTICKET_SERVICE.printTicket(requestingUser, printer,
-                            dtoReq.getMediaSource(), dtoReq.getOutputBin(),
-                            dtoReq.getJogOffset(), dtoReq.getJobFileName());
+                            dtoReq.getMediaSource(),
+                            dtoReq.getMediaSourceJobSheet(),
+                            dtoReq.getOutputBin(), dtoReq.getJogOffset(),
+                            dtoReq.getJobFileName());
                 }
 
             } else {
