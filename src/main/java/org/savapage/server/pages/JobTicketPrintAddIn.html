@@ -24,9 +24,22 @@
 		<fieldset data-role="controlgroup">
 			<wicket:container wicket:id="printer-radio">
 				<div class="sp-jobticket-redirect-printer-item" tabindex="0">
+
 					<label for="the-id" wicket:id="label" tabindex="" />
 					<input type="radio" name="sp-jobticket-redirect-printer"
 						wicket:id="input" id="the-id" value="the-printer-key" />
+
+					<wicket:enclosure child="media-source-job-sheet">
+						<div class="sp-redirect-printer-media-source-job-sheet"
+							style="display: none;" tabindex="-1">
+							<select data-icon="comment">
+								<wicket:panel wicket:id="media-source-job-sheet">
+									<option value="some-tray" wicket:id="choice" />
+								</wicket:panel>
+							</select>
+						</div>
+					</wicket:enclosure>
+
 					<wicket:enclosure child="media-type">
 						<div class="sp-redirect-printer-media-type" style="display: none;"
 							tabindex="-1">

@@ -38,6 +38,9 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.JobTicketExecParms;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Job Ticket Executor.
@@ -133,6 +136,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         /**
          * @param mediaSourceJobSheet
          */
+        @SuppressWarnings("unused")
         public void setMediaSourceJobSheet(String mediaSourceJobSheet) {
             this.mediaSourceJobSheet = mediaSourceJobSheet;
         }
@@ -163,6 +167,32 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setJogOffset(String jogOffset) {
             this.jogOffset = jogOffset;
+        }
+
+        /**
+         * Creates parameter object.
+         *
+         * @param operator
+         *            The operator.
+         * @param printer
+         *            The printer.
+         * @return The parameter object.
+         */
+        @JsonIgnore
+        public JobTicketExecParms createExecParms(final String operator,
+                final Printer printer) {
+
+            final JobTicketExecParms parms = new JobTicketExecParms();
+
+            parms.setOperator(operator);
+            parms.setPrinter(printer);
+            parms.setIppMediaSource(this.getMediaSource());
+            parms.setIppMediaSourceJobSheet(this.getMediaSourceJobSheet());
+            parms.setIppOutputBin(this.getOutputBin());
+            parms.setIppJogOffset(this.getJogOffset());
+            parms.setFileName(this.getJobFileName());
+
+            return parms;
         }
 
     }
@@ -237,25 +267,13 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
                     return;
                 }
 
-                // For now.
-                if (dtoReq.getMediaSourceJobSheet() == null) {
-                    dtoReq.setMediaSourceJobSheet(dtoReq.getMediaSource());
-                }
+                final JobTicketExecParms parms =
+                        dtoReq.createExecParms(requestingUser, printer);
 
                 if (dtoReq.isRetry()) {
-
-                    dto = JOBTICKET_SERVICE.retryTicketPrint(requestingUser,
-                            printer, dtoReq.getMediaSource(),
-                            dtoReq.getMediaSourceJobSheet(),
-                            dtoReq.getOutputBin(), dtoReq.getJogOffset(),
-                            dtoReq.getJobFileName());
-
+                    dto = JOBTICKET_SERVICE.retryTicketPrint(parms);
                 } else {
-                    dto = JOBTICKET_SERVICE.printTicket(requestingUser, printer,
-                            dtoReq.getMediaSource(),
-                            dtoReq.getMediaSourceJobSheet(),
-                            dtoReq.getOutputBin(), dtoReq.getJogOffset(),
-                            dtoReq.getJobFileName());
+                    dto = JOBTICKET_SERVICE.printTicket(parms);
                 }
 
             } else {

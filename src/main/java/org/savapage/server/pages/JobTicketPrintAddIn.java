@@ -39,8 +39,10 @@ import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.RedirectPrinterDto;
 import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.Printer;
+import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.print.proxy.JsonProxyPrinterOpt;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptChoice;
+import org.savapage.core.print.proxy.TicketJobSheetDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
@@ -71,7 +73,10 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
     private static final String PARM_RETRY = "retry";
 
     private static final String WICKET_ID_CHOICE = "choice";
+
     private static final String WICKET_ID_MEDIA_SOURCE = "media-source";
+    private static final String WICKET_ID_MEDIA_SOURCE_JOB_SHEET =
+            WICKET_ID_MEDIA_SOURCE + "-job-sheet";
 
     private static final String WICKET_ID_OUTPUT_BIN = "output-bin";
     private static final String WICKET_ID_JOG_OFFSET = "jog-offset";
@@ -141,6 +146,14 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
          */
         private final boolean isSettlement;
 
+        /**
+         *
+         */
+        private final TicketJobSheetDto jobSheetDto;
+
+        /**
+         *
+         */
         private int tabindexWlk;
 
         /**
@@ -151,9 +164,12 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
          * @param settlement
          */
         RedirectPrinterListView(final String id,
-                final List<RedirectPrinterDto> list, final boolean settlement) {
+                final List<RedirectPrinterDto> list, final boolean settlement,
+                final TicketJobSheetDto jobSheet) {
+
             super(id, list);
             this.isSettlement = settlement;
+            this.jobSheetDto = jobSheet;
             this.tabindexWlk = 9;
         }
 
@@ -215,6 +231,7 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
             final MarkupHelper helper = new MarkupHelper(item);
 
             if (this.isSettlement) {
+                helper.discloseLabel(WICKET_ID_MEDIA_SOURCE_JOB_SHEET);
                 helper.discloseLabel(WICKET_ID_MEDIA_SOURCE);
                 helper.discloseLabel(WICKET_ID_OUTPUT_BIN);
                 helper.discloseLabel(WICKET_ID_JOG_OFFSET);
@@ -238,8 +255,21 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
             final Printer dbPrinter = ServiceContext.getDaoContext()
                     .getPrinterDao().findById(item.getModelObject().getId());
 
+            final PrinterAttrLookup printerAttrLookup =
+                    new PrinterAttrLookup(dbPrinter);
+
+            if (this.jobSheetDto == null || !this.jobSheetDto.isEnabled()) {
+                helper.discloseLabel(WICKET_ID_MEDIA_SOURCE_JOB_SHEET);
+            } else {
+                item.add(new PrinterOptListView(
+                        WICKET_ID_MEDIA_SOURCE_JOB_SHEET,
+                        filterMediaSourcesForUser(printerAttrLookup,
+                                printer.getMediaSourceOpt().getChoices()),
+                        printer.getMediaSourceJobSheetOptChoice()));
+            }
+            //
             item.add(new PrinterOptListView(WICKET_ID_MEDIA_SOURCE,
-                    filterMediaSourcesForUser(new PrinterAttrLookup(dbPrinter),
+                    filterMediaSourcesForUser(printerAttrLookup,
                             printer.getMediaSourceOpt().getChoices()),
                     printer.getMediaSourceOptChoice()));
 
@@ -265,7 +295,6 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
                             printer.getJogOffsetOptChoice()));
                 }
             }
-
         }
 
         /**
@@ -339,14 +368,24 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
 
         final String jobFileName = this.getJobFileName();
 
+        final TicketJobSheetDto jobSheetDto;
         final List<RedirectPrinterDto> printerList;
 
         if (StringUtils.isBlank(jobFileName)) {
+
             setResponsePage(new MessageContent(AppLogLevelEnum.ERROR, String
                     .format("\"%s\" parameter missing", PARM_JOBFILENAME)));
             printerList = null;
+            jobSheetDto = null;
+
         } else {
-            printerList = JOBTICKET_SERVICE.getRedirectPrinters(jobFileName,
+
+            final OutboxJobDto job = JOBTICKET_SERVICE.getTicket(jobFileName);
+
+            jobSheetDto = JOBTICKET_SERVICE
+                    .getTicketJobSheet(job.createIppOptionMap());
+
+            printerList = JOBTICKET_SERVICE.getRedirectPrinters(job,
                     IppOptionMap.createVoid(), getLocale());
         }
 
@@ -397,7 +436,7 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
 
         //
         add(new RedirectPrinterListView("printer-radio", printerList,
-                isSettlement));
+                isSettlement, jobSheetDto));
     }
 
 }

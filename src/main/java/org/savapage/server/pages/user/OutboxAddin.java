@@ -62,6 +62,7 @@ import org.savapage.core.outbox.OutboxInfoDto.OutboxAccountTrxInfoSet;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
+import org.savapage.core.print.proxy.TicketJobSheetDto;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
@@ -309,7 +310,6 @@ public class OutboxAddin extends AbstractUserPage {
             StringBuilder totals = new StringBuilder();
 
             //
-            String key = null;
             int total = job.getPages();
             int copies = job.getCopies();
 
@@ -339,6 +339,16 @@ public class OutboxAddin extends AbstractUserPage {
                         .append(")");
             }
 
+            if (isJobTicketItem) {
+                final TicketJobSheetDto jobSheet = JOBTICKET_SERVICE
+                        .getTicketJobSheet(job.createIppOptionMap());
+                if (jobSheet.isEnabled()) {
+                    totals.append(" + ")
+                            .append(PROXYPRINT_SERVICE.localizePrinterOpt(
+                                    getLocale(),
+                                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_JOB_SHEETS));
+                }
+            }
             item.add(new Label("totals", totals.toString()));
 
             //

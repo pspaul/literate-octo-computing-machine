@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +========================================================================+ 
@@ -78,6 +79,7 @@
 		<wicket:enclosure child="timeExpiry">
 			 &bull; <span class="sp-outbox-remaining-time" wicket:id="timeExpiry" />
 		</wicket:enclosure>
+		
 		&bull; <span wicket:id="totals" />
 		<wicket:enclosure child="color"> &bull; <span
 				class="sp-txt-warn" wicket:id="color" />
@@ -88,9 +90,9 @@
 			<span wicket:id="job-id" /> &bull; <span wicket:id="job-state" />
 		</wicket:enclosure>
 
-        <wicket:enclosure child="job-completed-time"> &bull; <span
-                wicket:id="job-completed-time" />
-        </wicket:enclosure>
+		<wicket:enclosure child="job-completed-time"> &bull; <span
+				wicket:id="job-completed-time" />
+		</wicket:enclosure>
 
 		<wicket:enclosure child="grayscale"> &bull; <span
 				class="sp-txt-valid" wicket:id="grayscale" />
@@ -245,5 +247,5 @@
 		</wicket:enclosure>
 
 	</div>
-
 </div>
+</html>
