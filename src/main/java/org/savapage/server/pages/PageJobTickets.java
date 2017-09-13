@@ -41,6 +41,9 @@ public final class PageJobTickets extends AbstractAuthPage {
      */
     private static final long serialVersionUID = 1L;
 
+    /** */
+    private static final String WICKET_ID_BUTTON_PRINT_ALL = "button-print-all";
+
     @Override
     protected boolean needMembership() {
         return false;
@@ -55,19 +58,23 @@ public final class PageJobTickets extends AbstractAuthPage {
 
         super(parameters);
 
+        final ConfigManager cm = ConfigManager.instance();
         final MarkupHelper helper = new MarkupHelper(this);
 
         addTitle(helper.addButton("button-refresh", HtmlButtonEnum.REFRESH));
         addTitle(helper.addButton("button-logout", HtmlButtonEnum.LOGOUT));
 
-        add(addTitle(new Label("button-print-all", String.format("%s%s",
-                localized("button-print-all"), HtmlButtonEnum.DOTTED_SUFFIX))));
+        if (cm.isConfigValue(Key.WEBAPP_JOBTICKETS_PRINT_ALL_ENABLE)) {
+            add(addTitle(new Label(WICKET_ID_BUTTON_PRINT_ALL,
+                    String.format("%s%s", localized("button-print-all"),
+                            HtmlButtonEnum.DOTTED_SUFFIX))));
+        } else {
+            helper.discloseLabel(WICKET_ID_BUTTON_PRINT_ALL);
+        }
 
         add(addTitle(new Label("button-cancel-all",
                 String.format("%s%s", localized("button-cancel-all"),
                         HtmlButtonEnum.DOTTED_SUFFIX))));
-
-        final ConfigManager cm = ConfigManager.instance();
 
         final Label slider = helper.addModifyLabelAttr("jobtickets-max-items",
                 MarkupHelper.ATTR_VALUE, String.valueOf(

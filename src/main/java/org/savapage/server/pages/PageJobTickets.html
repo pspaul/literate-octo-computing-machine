@@ -127,10 +127,12 @@
 						wicket:id="button-cancel-all"
 						class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete" />
 
-					<button id="btn-jobtickets-print-all" data-rel="popup"
-						wicket:id="button-print-all"
-						class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action" />
-
+					<wicket:enclosure child="button-print-all">
+						<button id="btn-jobtickets-print-all" data-rel="popup"
+							wicket:id="button-print-all"
+							class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action" />
+					</wicket:enclosure>
+					
 					<button id="btn-jobtickets-close" data-rel="back"
 						data-direction="reverse" wicket:id="button-logout"
 						class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-power" />
