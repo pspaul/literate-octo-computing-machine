@@ -199,8 +199,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final DtoReq dtoReq =
-                DtoReq.create(DtoReq.class, getParmValue(getParmValueDto()));
+        final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValueDto());
 
         Long printerId = dtoReq.getPrinterId();
 
