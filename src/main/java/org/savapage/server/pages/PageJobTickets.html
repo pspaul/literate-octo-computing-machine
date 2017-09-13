@@ -14,6 +14,16 @@
     -->
 </wicket:remove>
 
+<style>
+.ui-icon-jobticket:after {
+	background: url(/images/printer-jobticket-32x32.png) 50% 50% no-repeat;
+	background-size: 18px 18px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .8;
+}
+</style>
+
 <div data-role="header" data-theme="b">
 	<h1>
 		<wicket:message key="title" />
@@ -132,7 +142,7 @@
 							wicket:id="button-print-all"
 							class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action" />
 					</wicket:enclosure>
-					
+
 					<button id="btn-jobtickets-close" data-rel="back"
 						data-direction="reverse" wicket:id="button-logout"
 						class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-power" />

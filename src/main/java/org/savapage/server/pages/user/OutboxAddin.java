@@ -272,10 +272,10 @@ public class OutboxAddin extends AbstractUserPage {
             imgSrc.append(WebApp.PATH_IMAGES).append('/');
             if (isJobTicketItem) {
                 if (isCopyJobTicket) {
-                    imgSrc.append("copy-jobticket-128x128.png");
+                    imgSrc.append("scanner-32x32.png");
                     jobticketCopy = localized("jobticket-type-copy");
                 } else {
-                    imgSrc.append("printer-jobticket-32x32.png");
+                    imgSrc.append("printer-26x26.png");
                 }
             } else {
                 imgSrc.append("device-card-reader-16x16.png");
@@ -293,6 +293,24 @@ public class OutboxAddin extends AbstractUserPage {
             } else {
                 MarkupHelper.modifyLabelAttr(labelImg, MarkupHelper.ATTR_CLASS,
                         CSS_CLASS_HOLD);
+            }
+
+            //
+            final TicketJobSheetDto jobSheet;
+            if (isJobTicketItem) {
+                jobSheet = JOBTICKET_SERVICE
+                        .getTicketJobSheet(job.createIppOptionMap());
+            } else {
+                jobSheet = null;
+            }
+            if (jobSheet != null && jobSheet.isEnabled()) {
+                imgSrc.setLength(0);
+                imgSrc.append(WebApp.PATH_IMAGES).append('/');
+                imgSrc.append("printer-jobticket-32x32.png");
+                helper.addModifyLabelAttr("img-job-sheet",
+                        MarkupHelper.ATTR_SRC, imgSrc.toString());
+            } else {
+                helper.discloseLabel("img-job-sheet");
             }
 
             //
@@ -339,16 +357,6 @@ public class OutboxAddin extends AbstractUserPage {
                         .append(")");
             }
 
-            if (isJobTicketItem) {
-                final TicketJobSheetDto jobSheet = JOBTICKET_SERVICE
-                        .getTicketJobSheet(job.createIppOptionMap());
-                if (jobSheet.isEnabled()) {
-                    totals.append(" + ")
-                            .append(PROXYPRINT_SERVICE.localizePrinterOpt(
-                                    getLocale(),
-                                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_JOB_SHEETS));
-                }
-            }
             item.add(new Label("totals", totals.toString()));
 
             //

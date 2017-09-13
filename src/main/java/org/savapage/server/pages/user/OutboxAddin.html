@@ -58,8 +58,10 @@
 	</div>
 
 	<div class="sp-txt-wrap">
+		&nbsp;
 		<img wicket:id="img-job" src="" height="16"
-			class="sp-outbox-item-type-???" />
+			style="margin-bottom: -1px;" class="sp-outbox-item-type-???" />
+		&nbsp;
 		<wicket:enclosure child="owner-user-id">
 			<wicket:enclosure child="owner-user-name">
 				<span wicket:id="owner-user-name" />
@@ -72,14 +74,19 @@
 			</wicket:enclosure>
 			<p />
 		</wicket:enclosure>
+
 		<wicket:enclosure child="jobticket-nr">
-			<span class="sp-txt-info" wicket:id="jobticket-nr" /> &bull; 
+			<span class="sp-txt-info" wicket:id="jobticket-nr" />
+			<wicket:enclosure child="img-job-sheet">
+				<img wicket:id="img-job-sheet" src="" height="14" />
+			</wicket:enclosure>
+			&bull; 
 		</wicket:enclosure>
 		<span wicket:id="timeSubmit" />
 		<wicket:enclosure child="timeExpiry">
 			 &bull; <span class="sp-outbox-remaining-time" wicket:id="timeExpiry" />
 		</wicket:enclosure>
-		
+
 		&bull; <span wicket:id="totals" />
 		<wicket:enclosure child="color"> &bull; <span
 				class="sp-txt-warn" wicket:id="color" />

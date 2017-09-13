@@ -14,6 +14,11 @@
     -->
 </wicket:remove>
 
+<wicket:remove>
+    <!-- For custom ui icons see <style></style> in PageJobTickets.html 
+-->
+</wicket:remove>
+ 
 <wicket:enclosure child="printer-radio">
 
 	<legend class="sp-txt-wrap" wicket:id="prompt-header" />
@@ -32,7 +37,7 @@
 					<wicket:enclosure child="media-source-job-sheet">
 						<div class="sp-redirect-printer-media-source-job-sheet"
 							style="display: none;" tabindex="-1">
-							<select data-icon="comment">
+							<select data-icon="jobticket">
 								<wicket:panel wicket:id="media-source-job-sheet">
 									<option value="some-tray" wicket:id="choice" />
 								</wicket:panel>

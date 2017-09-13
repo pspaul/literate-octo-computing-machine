@@ -136,7 +136,6 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         /**
          * @param mediaSourceJobSheet
          */
-        @SuppressWarnings("unused")
         public void setMediaSourceJobSheet(String mediaSourceJobSheet) {
             this.mediaSourceJobSheet = mediaSourceJobSheet;
         }
@@ -194,14 +193,14 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
             return parms;
         }
-
     }
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
+        final DtoReq dtoReq =
+                DtoReq.create(DtoReq.class, getParmValue(getParmValueDto()));
 
         Long printerId = dtoReq.getPrinterId();
 
@@ -243,6 +242,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
             // Ad-hoc assign the media-source.
             dtoReq.setMediaSource(IppKeyword.MEDIA_SOURCE_AUTO);
+            dtoReq.setMediaSourceJobSheet(IppKeyword.MEDIA_SOURCE_AUTO);
         }
 
         final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
@@ -269,6 +269,30 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
                 final JobTicketExecParms parms =
                         dtoReq.createExecParms(requestingUser, printer);
+
+                /*
+                 * INVARIANT: When org.savapage-job-sheet is specified,
+                 * output-bin can NOT be auto.
+                 */
+                if (parms.getIppMediaSourceJobSheet() != null
+                        && parms.getIppOutputBin() != null) {
+                    if (parms.getIppOutputBin()
+                            .equals(IppKeyword.OUTPUT_BIN_AUTO)) {
+                        this.setApiResult(ApiResultCodeEnum.WARN,
+                                "msg-jobticket-option-mismatch",
+                                PROXY_PRINT_SERVICE.localizePrinterOpt(
+                                        getLocale(),
+                                        IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_JOB_SHEETS),
+                                PROXY_PRINT_SERVICE.localizePrinterOpt(
+                                        getLocale(),
+                                        IppDictJobTemplateAttr.ATTR_OUTPUT_BIN),
+                                PROXY_PRINT_SERVICE.localizePrinterOptValue(
+                                        getLocale(),
+                                        IppDictJobTemplateAttr.ATTR_OUTPUT_BIN,
+                                        IppKeyword.OUTPUT_BIN_AUTO));
+                        return;
+                    }
+                }
 
                 if (dtoReq.isRetry()) {
                     dto = JOBTICKET_SERVICE.retryTicketPrint(parms);
