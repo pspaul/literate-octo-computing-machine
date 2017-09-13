@@ -15,10 +15,10 @@
 </wicket:remove>
 
 <wicket:remove>
-    <!-- For custom ui icons see <style></style> in PageJobTickets.html 
+	<!-- For custom ui icons see <style></style> in PageJobTickets.html 
 -->
 </wicket:remove>
- 
+
 <wicket:enclosure child="printer-radio">
 
 	<legend class="sp-txt-wrap" wicket:id="prompt-header" />
@@ -28,7 +28,9 @@
 	<div class="ui-field-contain ui-mini">
 		<fieldset data-role="controlgroup">
 			<wicket:container wicket:id="printer-radio">
-				<div class="sp-jobticket-redirect-printer-item" tabindex="0">
+				<div
+					class="sp-jobticket-redirect-printer-item  ui-nodisc-icon ui-alt-icon"
+					tabindex="0">
 
 					<label for="the-id" wicket:id="label" tabindex="" />
 					<input type="radio" name="sp-jobticket-redirect-printer"
@@ -56,7 +58,7 @@
 					<wicket:enclosure child="media-source">
 						<div class="sp-redirect-printer-media-source"
 							style="display: none;" tabindex="-1">
-							<select>
+							<select data-icon="carat-d">
 								<wicket:panel wicket:id="media-source">
 									<option value="some-tray" wicket:id="choice" />
 								</wicket:panel>

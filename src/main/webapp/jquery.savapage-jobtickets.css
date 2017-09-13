@@ -54,3 +54,11 @@ tr.sp-jobtickets-settings-cat > th {
 tr.sp-jobtickets-settings-cat > td {
     border-top: 1px solid silver;
 }
+
+.ui-icon-jobticket:after {
+    background: url(/images/printer-jobticket-32x32.png) 50% 50% no-repeat;
+    background-size: 18px 18px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    /* opacity: .8; */
+}
