@@ -164,7 +164,7 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
 
         final JsonPrinterDetail printer =
                 PROXY_PRINT_SERVICE.getPrinterDetailUserCopy(
-                        getSession().getLocale(), job.getPrinter());
+                        getSession().getLocale(), job.getPrinter(), true);
 
         final List<JsonProxyPrinterOpt> optionList = new ArrayList<>();
 

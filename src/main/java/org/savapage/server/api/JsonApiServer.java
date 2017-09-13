@@ -2417,7 +2417,7 @@ public final class JsonApiServer extends AbstractPage {
 
         final JsonPrinterDetail jsonPrinter =
                 PROXY_PRINT_SERVICE.getPrinterDetailUserCopy(
-                        getSession().getLocale(), printerName);
+                        getSession().getLocale(), printerName, false);
 
         if (jsonPrinter == null) {
 
