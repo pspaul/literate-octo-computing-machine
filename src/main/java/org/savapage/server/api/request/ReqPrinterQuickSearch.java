@@ -97,11 +97,6 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
             throw new SpException(e.getMessage());
         }
 
-        if (jsonPrinterList.getDfault() != null) {
-            PROXY_PRINT_SERVICE.localize(this.getLocale(),
-                    jsonPrinterList.getDfault());
-        }
-
         return jsonPrinterList;
     }
 
