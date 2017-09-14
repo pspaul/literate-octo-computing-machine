@@ -48,6 +48,7 @@ import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
+import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketSupplierData;
@@ -60,6 +61,9 @@ import org.savapage.core.util.CurrencyUtil;
  *
  */
 public class DocLogItemPanel extends Panel {
+
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
 
     private static final ProxyPrintService PROXYPRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
@@ -79,6 +83,11 @@ public class DocLogItemPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
     /**
+     * Number of decimals for decimal scaling.
+     */
+    final int scale;
+
+    /**
      * Number of currency decimals to display.
      */
     private final int currencyDecimals;
@@ -96,6 +105,7 @@ public class DocLogItemPanel extends Panel {
 
         super(id, model);
 
+        this.scale = ConfigManager.getFinancialDecimalsInDatabase();
         this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
         this.showDocLogCost = showFinancialData;
     }
@@ -118,13 +128,12 @@ public class DocLogItemPanel extends Panel {
                 "signature", "destination", "letterhead", "author", "subject",
                 "keywords", "drm", "userpw", "ownerpw", "duplex", "simplex",
                 "color", "grayscale", "papersize", "media-source", "output-bin",
-                "jog-offset", "cost-currency", "cost", "account-trx", "job-id",
-                "job-state", "job-completed-date",
-                "print-in-denied-reason-hyphen", "print-in-denied-reason",
-                "collate", "ecoPrint", "removeGraphics", "punch", "staple",
-                "fold", "booklet", "jobticket-media", "jobticket-copy",
-                "jobticket-finishing-ext", "jobticket-custom-ext",
-                "landscape" }) {
+                "jog-offset", "cost-currency", "cost", "job-id", "job-state",
+                "job-completed-date", "print-in-denied-reason-hyphen",
+                "print-in-denied-reason", "collate", "ecoPrint",
+                "removeGraphics", "punch", "staple", "fold", "booklet",
+                "jobticket-media", "jobticket-copy", "jobticket-finishing-ext",
+                "jobticket-custom-ext", "landscape" }) {
             mapVisible.put(attr, null);
         }
 
@@ -132,6 +141,7 @@ public class DocLogItemPanel extends Panel {
 
         //
         final boolean isExtSupplier = obj.getExtSupplier() != null;
+
         if (isExtSupplier) {
             final ExtSupplierStatusPanel panel =
                     new ExtSupplierStatusPanel("extSupplierPanel");
@@ -156,6 +166,7 @@ public class DocLogItemPanel extends Panel {
             final StringBuilder builder = new StringBuilder();
 
             int totWeightDelegators = 0;
+            int copiesDelegatorsImplicit = 0;
 
             for (final AccountTrx trx : obj.getTransactions()) {
 
@@ -171,9 +182,12 @@ public class DocLogItemPanel extends Panel {
                     continue;
                 }
 
+                copiesDelegatorsImplicit +=
+                        trx.getTransactionWeight().intValue();
+
                 final Account accountParent = account.getParent();
 
-                builder.append(" • ");
+                builder.append(" &bull; ");
 
                 if (accountParent != null) {
                     builder.append(accountParent.getName()).append('\\');
@@ -185,21 +199,44 @@ public class DocLogItemPanel extends Panel {
                     builder.append(" ")
                             .append(CurrencyUtil.getCurrencySymbol(
                                     trx.getCurrencyCode(), getLocale()))
-                            .append(" ")
+                            .append("&nbsp;")
                             .append(localizedDecimal(trx.getAmount()));
                 }
 
-                builder.append(" (").append(trx.getTransactionWeight())
+                builder.append("&nbsp;(").append(trx.getTransactionWeight())
                         .append(')');
             }
 
+            final int copiesDelegatorsIndividual =
+                    obj.getCopies() - copiesDelegatorsImplicit;
+
+            if (copiesDelegatorsIndividual > 0 && obj.getCopies() > 1) {
+
+                final BigDecimal amount = ACCOUNTING_SERVICE.calcWeightedAmount(
+                        obj.getCost(), obj.getCopies(),
+                        copiesDelegatorsIndividual, this.scale);
+
+                if (amount.compareTo(BigDecimal.ZERO) != 0) {
+                    builder.append(" &bull; ")
+                            .append(CurrencyUtil.getCurrencySymbol(
+                                    obj.getCurrencyCode(), getLocale()))
+                            .append("&nbsp;")
+                            .append(localizedDecimal(amount.negate()));
+                    builder.append("&nbsp;(").append(copiesDelegatorsIndividual)
+                            .append(")");
+                }
+            }
+
             if (isExtSupplier && totWeightDelegators > 0) {
-                builder.append(" • ");
+                builder.append(" &bull; ");
                 builder.append(localized("delegators")).append(" (")
                         .append(totWeightDelegators).append(")");
             }
 
-            mapVisible.put("account-trx", builder.toString());
+            add(new Label("account-trx", builder.toString())
+                    .setEscapeModelStrings(false));
+        } else {
+            helper.discloseLabel("account-trx");
         }
 
         //
@@ -443,8 +480,6 @@ public class DocLogItemPanel extends Panel {
         final StringBuilder totals = new StringBuilder();
 
         //
-        String key = null;
-
         int total = obj.getTotalPages();
         int copies = obj.getCopies();
 
@@ -510,9 +545,8 @@ public class DocLogItemPanel extends Panel {
                         IppDictJobTemplateAttr.JOBTICKET_ATTR_FINISHINGS_EXT,
                         obj.getIppOptionMap()));
 
-        mapVisible.put("jobticket-custom-ext",
-                PROXYPRINT_SERVICE.getJobTicketOptionsExtHtml(getLocale(),
-                        obj.getIppOptions()));
+        mapVisible.put("jobticket-custom-ext", PROXYPRINT_SERVICE
+                .getJobTicketOptionsExtHtml(getLocale(), obj.getIppOptions()));
 
         //
         if (obj.getIppOptionMap() != null
@@ -570,7 +604,7 @@ public class DocLogItemPanel extends Panel {
     /**
      * Gets the localized string for a BigDecimal.
      *
-     * @param vlaue
+     * @param value
      *            The {@link BigDecimal}.
      * @return The localized string.
      */
@@ -588,6 +622,7 @@ public class DocLogItemPanel extends Panel {
      * is used.
      *
      * @param number
+     *            The number.
      * @return The localized string.
      */
     protected final String localizedNumber(final long number) {

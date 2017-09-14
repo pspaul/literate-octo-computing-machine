@@ -786,7 +786,7 @@ public final class ServerPluginManager
         dto.setPaymentMethodAddress(trx.getTransactionAddress());
         dto.setPaymentMethodAmount(
                 BigDecimal.valueOf(trx.getSatoshi()).divide(SATOSHIS_IN_BTC));
-        dto.setPaymentMethodCurrency(CurrencyUtil.BITCOIN_CURRENCY_CODE);
+        dto.setPaymentMethodCurrency(CurrencyUtil.CURRENCY_CODE_BITCOIN);
         dto.setPaymentMethodDetails(null);
         dto.setPaymentMethodFee(BigDecimal.ZERO);
         dto.setTransactionId(trx.getTransactionId());
@@ -1014,7 +1014,7 @@ public final class ServerPluginManager
                 localize("payment-confirmed",
                         //
                         String.format("%s %s (%s %s)",
-                                CurrencyUtil.BITCOIN_CURRENCY_CODE,
+                                CurrencyUtil.CURRENCY_CODE_BITCOIN,
                                 dto.getPaymentMethodAmount().toPlainString(),
                                 dto.getCurrencyCode(), baseCurrencyAmount),
                         //

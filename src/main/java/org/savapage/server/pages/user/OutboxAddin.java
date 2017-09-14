@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.user;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,6 +41,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.SpException;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.PrintOutDao;
@@ -58,16 +62,20 @@ import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.outbox.OutboxInfoDto;
+import org.savapage.core.outbox.OutboxInfoDto.OutboxAccountTrxInfo;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxAccountTrxInfoSet;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.print.proxy.TicketJobSheetDto;
+import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
+import org.savapage.core.services.helpers.ProxyPrintCostDto;
+import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.server.SpSession;
@@ -99,6 +107,12 @@ public class OutboxAddin extends AbstractUserPage {
      */
     private static final AccountDao ACCOUNT_DAO =
             ServiceContext.getDaoContext().getAccountDao();
+
+    /**
+     * .
+     */
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
 
     /**
      * .
@@ -211,6 +225,16 @@ public class OutboxAddin extends AbstractUserPage {
         private final boolean isJobticketView;
 
         /**
+         * Number of decimals for decimal scaling.
+         */
+        final int scale;
+
+        /**
+         * Number of currency decimals to display.
+         */
+        private final int currencyDecimals;
+
+        /**
          *
          * @param id
          * @param list
@@ -220,6 +244,8 @@ public class OutboxAddin extends AbstractUserPage {
                 final boolean jobticketView) {
             super(id, list);
             this.isJobticketView = jobticketView;
+            this.scale = ConfigManager.getFinancialDecimalsInDatabase();
+            this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
         }
 
         @Override
@@ -306,7 +332,7 @@ public class OutboxAddin extends AbstractUserPage {
             if (jobSheet != null && jobSheet.isEnabled()) {
                 imgSrc.setLength(0);
                 imgSrc.append(WebApp.PATH_IMAGES).append('/');
-                imgSrc.append("printer-jobticket-32x32.png");
+                imgSrc.append("copy-jobticket-128x128.png");
                 helper.addModifyLabelAttr("img-job-sheet",
                         MarkupHelper.ATTR_SRC, imgSrc.toString());
             } else {
@@ -569,60 +595,8 @@ public class OutboxAddin extends AbstractUserPage {
             }
 
             // Cost
-            final StringBuilder cost = new StringBuilder();
-            cost.append(job.getLocaleInfo().getCost());
-
-            //
-            final OutboxAccountTrxInfoSet trxInfoSet =
-                    job.getAccountTransactions();
-
-            if (trxInfoSet != null) {
-
-                final int nAccounts = trxInfoSet.getTransactions().size();
-
-                if (nAccounts > 0) {
-
-                    cost.append(" (");
-
-                    final boolean showAccountSum;
-
-                    if (nAccounts == 1) {
-
-                        final Account account = ACCOUNT_DAO.findById(trxInfoSet
-                                .getTransactions().get(0).getAccountId());
-
-                        final AccountTypeEnum accountType = AccountTypeEnum
-                                .valueOf(account.getAccountType());
-
-                        showAccountSum = accountType != AccountTypeEnum.SHARED;
-
-                        if (!showAccountSum) {
-                            if (account.getParent() != null) {
-                                cost.append(account.getParent().getName())
-                                        .append("\\");
-                            }
-                            account.getName();
-                            cost.append(account.getName());
-                        }
-
-                    } else {
-                        showAccountSum = true;
-                    }
-
-                    if (showAccountSum) {
-                        cost.append(nAccounts).append(" ")
-                                .append(helper.localized(
-                                        PrintOutNounEnum.ACCOUNT,
-                                        nAccounts > 1));
-                    }
-                    cost.append(")");
-                }
-
-            }
-
-            item.add(new Label("cost",
-                    StringUtils.replace(cost.toString(), " ", "&nbsp;"))
-                            .setEscapeModelStrings(false));
+            item.add(new Label("cost", getCostHtml(helper, job))
+                    .setEscapeModelStrings(false));
 
             // Job Ticket Supplier
             final String extSupplierImgUrl;
@@ -867,6 +841,111 @@ public class OutboxAddin extends AbstractUserPage {
                     .add(new AttributeModifier(MarkupHelper.ATTR_TITLE,
                             label.getDefaultModelObjectAsString()));
             return label;
+        }
+
+        /**
+         * Gets HTML with extra cost details.
+         *
+         * @param helper
+         *            The helper.
+         * @param job
+         *            The job.
+         * @return The HTML string.
+         */
+        private String getCostHtml(final MarkupHelper helper,
+                final OutboxJobDto job) {
+
+            final StringBuilder cost = new StringBuilder();
+            cost.append(job.getLocaleInfo().getCost());
+
+            //
+            final OutboxAccountTrxInfoSet trxInfoSet =
+                    job.getAccountTransactions();
+
+            if (trxInfoSet == null) {
+                return cost.toString();
+            }
+
+            final ProxyPrintCostDto costResult = job.getCostResult();
+            final BigDecimal costTotal = costResult.getCostTotal();
+
+            final int copies = trxInfoSet.getWeightTotal();
+            int copiesDelegatorsImplicit = 0;
+
+            final String currencySymbol = SpSession.getAppCurrencySymbol();
+
+            for (final OutboxAccountTrxInfo trxInfo : trxInfoSet
+                    .getTransactions()) {
+
+                final int weight = trxInfo.getWeight();
+
+                final Account account =
+                        ACCOUNT_DAO.findById(trxInfo.getAccountId());
+
+                final AccountTypeEnum accountType =
+                        AccountTypeEnum.valueOf(account.getAccountType());
+
+                if (accountType != AccountTypeEnum.SHARED
+                        && accountType != AccountTypeEnum.GROUP) {
+                    continue;
+                }
+
+                copiesDelegatorsImplicit += weight;
+
+                final Account accountParent = account.getParent();
+
+                cost.append(" &bull; ");
+
+                if (accountParent != null) {
+                    cost.append(accountParent.getName()).append("\\");
+                }
+
+                cost.append(account.getName());
+
+                final BigDecimal weightedCost =
+                        ACCOUNTING_SERVICE.calcWeightedAmount(costTotal, copies,
+                                weight, this.scale);
+
+                if (weightedCost.compareTo(BigDecimal.ZERO) != 0) {
+                    cost.append(" ").append(currencySymbol).append("&nbsp;")
+                            .append(localizedDecimal(weightedCost.negate()));
+                }
+
+                cost.append("&nbsp;(").append(weight).append(')');
+                //
+            }
+
+            final int copiesDelegatorsIndividual =
+                    copies - copiesDelegatorsImplicit;
+
+            if (copiesDelegatorsIndividual > 0) {
+                cost.append(" &bull; ");
+                cost.append(" ").append(currencySymbol).append("&nbsp;")
+                        .append(localizedDecimal(ACCOUNTING_SERVICE
+                                .calcWeightedAmount(costTotal, copies,
+                                        copiesDelegatorsIndividual, this.scale)
+                                .negate()));
+                cost.append("&nbsp;(").append(copiesDelegatorsIndividual)
+                        .append(")");
+            }
+
+            return cost.toString();
+        }
+
+        /**
+         * Gets the localized string for a BigDecimal.
+         *
+         * @param value
+         *            The {@link BigDecimal}.
+         * @return The localized string.
+         */
+        protected final String localizedDecimal(final BigDecimal value) {
+            try {
+                return BigDecimalUtil.localize(value, this.currencyDecimals,
+                        getLocale(), true);
+            } catch (ParseException e) {
+                throw new SpException(e);
+            }
         }
     }
 

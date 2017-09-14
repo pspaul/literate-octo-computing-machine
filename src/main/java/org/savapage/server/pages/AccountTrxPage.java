@@ -398,7 +398,7 @@ public class AccountTrxPage extends AbstractListPage {
             final boolean isExtBitcoin =
                     StringUtils.isNotBlank(accountTrx.getExtCurrencyCode())
                             && accountTrx.getExtCurrencyCode()
-                                    .equals(CurrencyUtil.BITCOIN_CURRENCY_CODE);
+                                    .equals(CurrencyUtil.CURRENCY_CODE_BITCOIN);
 
             // External supplier
             final ExternalSupplierEnum extSupplierEnum =
