@@ -51,6 +51,7 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
+import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
@@ -855,24 +856,33 @@ public class OutboxAddin extends AbstractUserPage {
         private String getCostHtml(final MarkupHelper helper,
                 final OutboxJobDto job) {
 
-            final StringBuilder cost = new StringBuilder();
-            cost.append(job.getLocaleInfo().getCost());
-
-            //
-            final OutboxAccountTrxInfoSet trxInfoSet =
-                    job.getAccountTransactions();
-
-            if (trxInfoSet == null) {
-                return cost.toString();
-            }
-
             final ProxyPrintCostDto costResult = job.getCostResult();
             final BigDecimal costTotal = costResult.getCostTotal();
 
-            final int copies = trxInfoSet.getWeightTotal();
-            int copiesDelegatorsImplicit = 0;
+            final OutboxAccountTrxInfoSet trxInfoSet =
+                    job.getAccountTransactions();
 
             final String currencySymbol = SpSession.getAppCurrencySymbol();
+
+            final StringBuilder sbAccTrx = new StringBuilder();
+
+            sbAccTrx.append(StringUtils.replace(job.getLocaleInfo().getCost(),
+                    " ", "&nbsp;"));
+
+            if (trxInfoSet == null) {
+                if (costTotal.compareTo(BigDecimal.ZERO) != 0) {
+                    sbAccTrx.append(" &bull; ")
+                            .append(PrintOutAdjectiveEnum.PERSONAL
+                                    .uiText(getLocale()))
+                            .append(" ").append(currencySymbol).append("&nbsp;")
+                            .append(localizedDecimal(costTotal.negate()))
+                            .append("&nbsp;(").append(job.getCopies()).append(")");
+                }
+                return sbAccTrx.toString();
+            }
+
+            final int copies = trxInfoSet.getWeightTotal();
+            int copiesDelegatorsImplicit = 0;
 
             for (final OutboxAccountTrxInfo trxInfo : trxInfoSet
                     .getTransactions()) {
@@ -894,42 +904,40 @@ public class OutboxAddin extends AbstractUserPage {
 
                 final Account accountParent = account.getParent();
 
-                cost.append(" &bull; ");
+                sbAccTrx.append(" &bull; ");
 
                 if (accountParent != null) {
-                    cost.append(accountParent.getName()).append("\\");
+                    sbAccTrx.append(accountParent.getName()).append("\\");
                 }
 
-                cost.append(account.getName());
+                sbAccTrx.append(account.getName());
 
                 final BigDecimal weightedCost =
                         ACCOUNTING_SERVICE.calcWeightedAmount(costTotal, copies,
                                 weight, this.scale);
 
                 if (weightedCost.compareTo(BigDecimal.ZERO) != 0) {
-                    cost.append(" ").append(currencySymbol).append("&nbsp;")
+                    sbAccTrx.append(" ").append(currencySymbol).append("&nbsp;")
                             .append(localizedDecimal(weightedCost.negate()));
                 }
 
-                cost.append("&nbsp;(").append(weight).append(')');
-                //
+                sbAccTrx.append("&nbsp;(").append(weight).append(')');
             }
 
             final int copiesDelegatorsIndividual =
                     copies - copiesDelegatorsImplicit;
 
             if (copiesDelegatorsIndividual > 0) {
-                cost.append(" &bull; ");
-                cost.append(" ").append(currencySymbol).append("&nbsp;")
+                sbAccTrx.append(" &bull; ");
+                sbAccTrx.append(" ").append(currencySymbol).append("&nbsp;")
                         .append(localizedDecimal(ACCOUNTING_SERVICE
                                 .calcWeightedAmount(costTotal, copies,
                                         copiesDelegatorsIndividual, this.scale)
                                 .negate()));
-                cost.append("&nbsp;(").append(copiesDelegatorsIndividual)
+                sbAccTrx.append("&nbsp;(").append(copiesDelegatorsIndividual)
                         .append(")");
             }
-
-            return cost.toString();
+            return sbAccTrx.toString();
         }
 
         /**

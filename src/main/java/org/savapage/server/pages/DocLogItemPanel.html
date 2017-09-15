@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
@@ -49,6 +50,9 @@
 	</div>
 	<div class="sp-txt-wrap">
 		<wicket:enclosure child="printoutMode"> &bull;
+            <wicket:enclosure child="img-job-sheet">
+				<img wicket:id="img-job-sheet" src="" height="14" />
+			</wicket:enclosure>
 			<span class="sp-txt-info" wicket:id="printoutMode" /> &bull; 
 		</wicket:enclosure>
 		<span wicket:id="totals" />
@@ -167,3 +171,4 @@
 	</p>
 
 </wicket:panel>
+</html>
