@@ -4577,12 +4577,6 @@
 
             /**
              */
-            this.getDelegatedPrintCopies = function() {
-                return _ns.Utils.countProp(this.printDelegation.groups);
-            };
-
-            /**
-             */
             this.getPageCount = function() {
                 var tot = 0;
                 if (this.myJobPages) {

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
@@ -34,6 +35,7 @@
 						<th data-priority="2">
 							<wicket:message key="header-members" />
 						</th>
+						<th data-priority="2" wicket:id="header-copies" />
 						<th data-priority="2">
 							<wicket:message key="header-account" />
 						</th>
@@ -50,27 +52,32 @@
 				</tbody>
 			</table>
 			<br />
-			<div>
-				<button id="sp-print-delegation-button-select-all"
-					class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon">
-					<wicket:message key="button-select-all" />
-				</button>
 
-				<button id="sp-print-delegation-button-deselect-all"
-					class="sp-print-delegator-rows-selected ui-btn ui-btn-inline ui-btn-no-icon">
-					<wicket:message key="button-deselect-all" />
-				</button>
+			<table cellpadding="0" border="0">
+				<tr>
+					<td>
+						<button id="sp-print-delegation-button-select-all"
+							class="sp-print-delegator-rows ui-btn ui-btn-inline ui-btn-no-icon">
+							<wicket:message key="button-select-all" />
+						</button>
 
-				<button id="sp-print-delegation-button-remove-selected"
-					class="sp-print-delegator-rows-selected ui-btn ui-btn-inline ui-btn-no-icon">
-					<wicket:message key="button-remove-selected" />
-				</button>
+						<button id="sp-print-delegation-button-deselect-all"
+							class="sp-print-delegator-rows-selected ui-btn ui-btn-inline ui-btn-no-icon">
+							<wicket:message key="button-deselect-all" />
+						</button>
 
-				<a href="#" data-rel="back" data-direction="reverse"
-					class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
-						key="button-close" />
-				</a>
-			</div>
+						<button id="sp-print-delegation-button-remove-selected"
+							class="sp-print-delegator-rows-selected ui-btn ui-btn-inline ui-btn-no-icon">
+							<wicket:message key="button-remove-selected" />
+						</button>
+
+						<a href="#" data-rel="back" data-direction="reverse"
+							class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
+								key="button-close" />
+						</a>
+					</td>
+				</tr>
+			</table>
 		</li>
 	</ul>
 
@@ -94,21 +101,15 @@
 							<input type="radio" name="sp-print-delegation-edit-radio"
 								id="sp-print-delegation-edit-radio-add-users" />
 
-							<wicket:enclosure child="radio-add-copies">
+							<wicket:enclosure child="radio-add-extra">
 								<label for="sp-print-delegation-edit-radio-add-copies"
 									id="sp-print-delegation-edit-radio-add-copies-label"
-									wicket:id="radio-add-copies" />
+									wicket:id="radio-add-extra" />
 								<input type="radio" name="sp-print-delegation-edit-radio"
 									id="sp-print-delegation-edit-radio-add-copies" />
 							</wicket:enclosure>
 						</fieldset>
 					</td>
-					<wicket:enclosure child="copies-to-add">
-						<td style="max-width: 70px">
-							<input type="number" id="sp-print-delegation-copies-to-add"
-								wicket:id="copies-to-add" value="1" min="1" />
-						</td>
-					</wicket:enclosure>
 				</tr>
 			</table>
 
@@ -165,19 +166,37 @@
 						</fieldset>
 					</td>
 					<td>
-						<br />
-						<button id="sp-print-delegation-button-apply"
-							class="sp-print-delegation-mode-edit ui-btn ui-btn-inline">
-							<wicket:message key="button-apply" />
-						</button>
-						<button id="sp-print-delegation-button-add"
-							class="sp-print-delegation-mode-add ui-btn ui-btn-inline">
-							<wicket:message key="button-add" />
-						</button>
-						<a href="#" data-rel="back" data-direction="reverse"
-							class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
-								key="button-close" />
-						</a>
+						<table cellpadding="0" border="0">
+							<tr>
+								<td wicket:id="member-copies" />
+								<td>&nbsp;</td>
+								<td style="max-width: 70px">
+									<input type="number" id="sp-print-delegation-member-copies"
+										value="1" min="1" />
+								</td>
+								<wicket:enclosure child="extra-to-add">
+									<td style="max-width: 70px">
+										<input type="number" id="sp-print-delegation-copies-to-add"
+											wicket:id="extra-to-add" value="1" min="1" />
+									</td>
+								</wicket:enclosure>
+							</tr>
+						</table>
+
+						<div>
+							<button id="sp-print-delegation-button-apply"
+								class="sp-print-delegation-mode-edit ui-btn ui-btn-inline">
+								<wicket:message key="button-apply" />
+							</button>
+							<button id="sp-print-delegation-button-add"
+								class="sp-print-delegation-mode-add ui-btn ui-btn-inline">
+								<wicket:message key="button-add" />
+							</button>
+							<a href="#" data-rel="back" data-direction="reverse"
+								class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
+									key="button-close" />
+							</a>
+						</div>
 					</td>
 				</tr>
 				<tr class="sp-print-delegation-select-shared-account">
@@ -198,3 +217,5 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-dismissible="true" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+</html>

@@ -440,8 +440,8 @@
 
                 $(this).on('click', '#sp-button-pgp-pubkey-preview', null, function() {
                     var tmpl = $('#sp-pgp-pubkey-preview-url-template').val(),
-                        url = tmpl.vformat([$('#user-pgp-pubkey-id').val()]);
-                    var win = window.open(url, '_blank');
+                        url = tmpl.vformat([$('#user-pgp-pubkey-id').val()]),
+                        win = window.open(url, '_blank');
                     if (win) {
                         win.focus();
                     } else {

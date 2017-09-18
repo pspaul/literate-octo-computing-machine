@@ -21,9 +21,11 @@
  */
 package org.savapage.server.pages;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dto.PrintDelegationDto;
+import org.savapage.core.i18n.PrintOutNounEnum;
 
 /**
  *
@@ -46,6 +48,11 @@ public final class PagePrintDelegation extends AbstractPage {
         final MarkupHelper helper = new MarkupHelper(this);
 
         //
+        add(new Label("header-copies",
+                PrintOutNounEnum.COPY.uiText(getLocale(), true)));
+        add(new Label("member-copies",
+                PrintOutNounEnum.COPY.uiText(getLocale(), true)));
+        //
         final ConfigManager cm = ConfigManager.instance();
 
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_GROUP_ENABLE)) {
@@ -63,15 +70,15 @@ public final class PagePrintDelegation extends AbstractPage {
             helper.addModifyLabelAttr("radio-account-shared", "value",
                     PrintDelegationDto.DelegatorAccountEnum.SHARED.toString());
 
-            helper.encloseLabel("radio-add-copies",
-                    localized("label-add-copies"), true);
+            helper.encloseLabel("radio-add-extra",
+                    localized("label-add-extra"), true);
 
-            helper.encloseLabel("copies-to-add", "", true);
+            helper.encloseLabel("extra-to-add", "", true);
 
         } else {
             helper.discloseLabel("radio-account-shared");
-            helper.discloseLabel("radio-add-copies");
-            helper.discloseLabel("copies-to-add");
+            helper.discloseLabel("radio-add-extra");
+            helper.discloseLabel("extra-to-add");
         }
 
         //

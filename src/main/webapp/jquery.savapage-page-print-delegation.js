@@ -97,7 +97,10 @@
                 _nDelegatorGroups = 0,
                 _nDelegatorUsers = 0,
                 _nDelegatorGroupMembers = 0,
-                _nDelegatorCopies = 0
+                _nDelegatorCopies = 0,
+
+                _nDelegatorUsersCopies = 0,
+                _nDelegatorGroupMembersCopies = 0
             //
             ,
                 _delegatorGroupsSelected,
@@ -121,12 +124,13 @@
             }
             //----------------------------------------------------------------
             ,
-                _createModelAccount = function(account, userCount) {
+                _createModelAccount = function(account, userCount, userCopies) {
                 // Java: PrintDelegationDto.DelegatorAccount
                 return {
                     type : account.accountType,
                     id : account.id,
-                    userCount : userCount
+                    userCount : userCount,
+                    userCopies : userCopies
                 };
             }
             //----------------------------------------------------------------
@@ -244,6 +248,11 @@
                 _view.visible($('.sp-print-delegation-select-shared-account'), _isAccountSharedSelected());
 
                 _setVisibilityDelegatorsEdit();
+            }
+            //----------------------------------------------------------------
+            ,
+                _getMemberCopies = function() {
+                return parseInt($('#sp-print-delegation-member-copies').val(), 10);
             }
             //----------------------------------------------------------------
             ,
@@ -402,10 +411,11 @@
             }
             //----------------------------------------------------------------
             ,
-                _appendDelegatorRow = function(tbody, item, account, cssClass) {
+                _appendDelegatorRow = function(tbody, item, account, cssClass, nCopies) {
                 var html,
                     isGroup = cssClass === _CLASS_GROUP,
-                    isCopies = cssClass === _CLASS_COPIES;
+                    isCopies = cssClass === _CLASS_COPIES,
+                    nMembers = isGroup || isCopies ? item.userCount : 1;
 
                 html = '<tr class="';
                 html += cssClass;
@@ -415,7 +425,9 @@
                 html += isGroup ? 'group.png' : isCopies ? 'tag_green.png' : 'user_gray.png';
                 html += '"/>&nbsp;&nbsp;&nbsp;';
 
-                if (isGroup || isCopies) {
+                if (isCopies) {
+                    html += '';
+                } else if (isGroup) {
                     html += item.text;
                 } else {
                     html += item.fullName;
@@ -424,7 +436,9 @@
                     }
                 }
                 html += '</th>';
-                html += '<td>' + (isGroup || isCopies ? item.userCount : 1) + '</td>';
+
+                html += '<td>' + ( isCopies ? '' : nMembers) + '</td>';
+                html += '<td>' + nCopies + '</td>';
                 html += '<td><img src="/famfamfam-silk/';
 
                 if (account.accountType === _ACCOUNT_ENUM_GROUP) {
@@ -452,16 +466,18 @@
             ,
                 _onAddGroups = function() {
                 var tbody = _getDelegatorRowBody(),
-                    account = _getAccount();
+                    account = _getAccount(),
+                    memberCopies = _getMemberCopies();
 
                 $.each(_quickUserGroupSelected, function(key, item) {
-
+                    var copiesWlk;
                     if (!_delegatorGroups[item.key]) {
-
-                        _delegatorGroups[item.key] = _createModelAccount(account, item.userCount);
-                        _appendDelegatorRow(tbody, item, account, _CLASS_GROUP);
+                        copiesWlk = item.userCount * memberCopies;
+                        _delegatorGroups[item.key] = _createModelAccount(account, item.userCount, memberCopies);
+                        _appendDelegatorRow(tbody, item, account, _CLASS_GROUP, copiesWlk);
                         _nDelegatorGroups++;
                         _nDelegatorGroupMembers += item.userCount;
+                        _nDelegatorGroupMembersCopies += copiesWlk;
                     }
                 });
 
@@ -472,15 +488,16 @@
             ,
                 _onAddUsers = function() {
                 var tbody = _getDelegatorRowBody(),
-                    account = _getAccount();
+                    account = _getAccount(),
+                    memberCopies = _getMemberCopies();
 
                 $.each(_quickUserSelected, function(key, item) {
 
                     if (!_delegatorUsers[item.key]) {
-
-                        _delegatorUsers[item.key] = _createModelAccount(account, 1);
-                        _appendDelegatorRow(tbody, item, account, _CLASS_USER);
+                        _delegatorUsers[item.key] = _createModelAccount(account, 1, memberCopies);
+                        _appendDelegatorRow(tbody, item, account, _CLASS_USER, memberCopies);
                         _nDelegatorUsers++;
+                        _nDelegatorUsersCopies += memberCopies;
                     }
                 });
 
@@ -507,8 +524,8 @@
                 };
 
                 if (!_delegatorCopies[item.key]) {
-                    _delegatorCopies[item.key] = _createModelAccount(account, userCount);
-                    _appendDelegatorRow(tbody, item, account, _CLASS_COPIES);
+                    _delegatorCopies[item.key] = _createModelAccount(account, userCount, userCount);
+                    _appendDelegatorRow(tbody, item, account, _CLASS_COPIES, userCount);
                     _nDelegatorCopies += userCount;
                 }
 
@@ -678,6 +695,7 @@
                     if (_delegatorGroupsSelected[dbkey]) {
                         _nDelegatorGroups--;
                         _nDelegatorGroupMembers -= _delegatorGroups[dbkey].userCount;
+                        _nDelegatorGroupMembersCopies -= _delegatorGroups[dbkey].userCount * _delegatorGroups[dbkey].userCopies;
                         delete _delegatorGroups[dbkey];
                         $(this).remove();
                     } else if (_delegatorCopiesSelected[dbkey]) {
@@ -686,6 +704,7 @@
                         $(this).remove();
                     } else if (_delegatorUsersSelected[dbkey]) {
                         _nDelegatorUsers--;
+                        _nDelegatorUsersCopies -= _delegatorUsers[dbkey].userCopies;
                         delete _delegatorUsers[dbkey];
                         $(this).remove();
                     }
@@ -739,19 +758,21 @@
                     _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
                 }
 
-                _view.visible($('#sp-print-delegation-copies-to-add'), isCopies);
+                _view.visible($('#sp-print-delegation-copies-to-add').parent(), isCopies);
+                _view.visible($('#sp-print-delegation-member-copies').parent(), !isCopies);
             }
             //
             ,
                 _updateModel = function() {
                 _model.printDelegation = _delegationModel();
-                _model.printDelegationCopies = _nDelegatorGroupMembers + _nDelegatorUsers + _nDelegatorCopies;
+                _model.printDelegationCopies = _nDelegatorGroupMembersCopies + _nDelegatorUsersCopies + _nDelegatorCopies;
             }
             //
             ;
 
             //--------
             this.clear = function() {
+                $('#sp-print-delegation-member-copies').val(1);
                 _onDelegatorSelectAll();
                 _onDelegatorRemoveSelected();
                 _updateModel();
