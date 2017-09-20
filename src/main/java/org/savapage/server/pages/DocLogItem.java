@@ -68,6 +68,7 @@ import org.savapage.server.WebApp;
  */
 public final class DocLogItem {
 
+    private Long docLogId;
     private ExternalSupplierEnum extSupplier;
     private ExternalSupplierStatusEnum extSupplierStatus;
     private String extId;
@@ -129,6 +130,14 @@ public final class DocLogItem {
     private Boolean ownerPw;
 
     private List<AccountTrx> transactions;
+
+    public Long getDocLogId() {
+        return docLogId;
+    }
+
+    public void setDocLogId(Long docLogId) {
+        this.docLogId = docLogId;
+    }
 
     public ExternalSupplierEnum getExtSupplier() {
         return extSupplier;
@@ -401,6 +410,7 @@ public final class DocLogItem {
 
                 DocLogItem log = new DocLogItem();
 
+                log.setDocLogId(docLog.getId());
                 log.setExtSupplier(DaoEnumHelper.getExtSupplier(docLog));
                 log.setExtSupplierStatus(
                         DaoEnumHelper.getExtSupplierStatus(docLog));

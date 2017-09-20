@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
@@ -15,14 +16,26 @@
 
 <span style="display: none;" class="json-rsp" wicket:id="json-rsp"></span>
 
-<wicket:panel wicket:id="nav-bar-1"/>
+<wicket:panel wicket:id="nav-bar-1" />
 <br />
 <div>
 	<ul data-role="listview" data-filter="false">
 		<li wicket:id="doc-entry-view">
-			<wicket:panel wicket:id="doc-entry"/>
+			<wicket:panel wicket:id="doc-entry" />
 		</li>
 	</ul>
 </div>
 <p>&nbsp;</p>
-<wicket:panel wicket:id="nav-bar-2"/>
+<wicket:panel wicket:id="nav-bar-2" />
+
+<div data-role="popup" id="sp-doclog-popup" data-theme="a"
+	data-overlay-theme="a" data-arrow="true">
+	<div class="ui-content">
+		<h3 class="ui-title" id="sp-doclog-popup-title">&nbsp;</h3>
+		<div id="sp-doclog-popup-addin" />
+		<a href="#" data-rel="back"
+			class="ui-btn ui-mini ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" />
+	</div>
+</div>
+
+</html>

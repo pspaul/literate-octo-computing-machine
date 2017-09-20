@@ -213,9 +213,7 @@
                         _view.message(res.result.txt);
                     }
                 }, jobFileName);
-            }
-            //
-            ,
+            },
                 _onPrintClose = function(jobFileName) {
                 var res = _api.call({
                     request : 'jobticket-print-close',
@@ -229,9 +227,7 @@
                 } else {
                     _view.message(res.result.txt);
                 }
-            }
-            //
-            ,
+            },
                 _onCancelPopup = function(jobFileName, positionTo) {
                 var html = _view.getPageHtml('JobTicketCancelAddIn', {
                     jobFileName : jobFileName
@@ -241,9 +237,7 @@
                 $('#sp-jobticket-popup').enhanceWithin().popup('open', {
                     positionTo : positionTo
                 });
-            }
-            //
-            ,
+            },
                 _onEditPopup = function(jobFileName, positionTo) {
                 var html = _view.getPageHtml('JobTicketEditAddIn', {
                     jobFileName : jobFileName
@@ -253,9 +247,7 @@
                 $('#sp-jobticket-popup').enhanceWithin().popup('open', {
                     positionTo : positionTo
                 });
-            }
-            //
-            ,
+            },
                 _onSettingsPopup = function(jobFileName, positionTo) {
                 var html = _view.getPageHtml('JobTicketSettingsAddIn', {
                     jobFileName : jobFileName
@@ -265,9 +257,17 @@
                 $('#sp-jobticket-popup').enhanceWithin().popup('open', {
                     positionTo : positionTo
                 });
-            }
-            //
-            ,
+            },
+                _onDocLogAccountTrxPopup = function(docLogId, positionTo) {
+                var html = _view.getPageHtml('DocLogAccountTrxAddin', {
+                    docLogId : docLogId
+                }) || 'error';
+
+                $('#sp-jobticket-popup-addin').html(html);
+                $('#sp-jobticket-popup').enhanceWithin().popup('open', {
+                    positionTo : positionTo
+                });
+            },
                 _cancelJob = function(jobFileName) {
                 return _api.call({
                     request : 'jobticket-delete',
@@ -275,9 +275,7 @@
                         jobFileName : jobFileName
                     })
                 });
-            }
-            //
-            ,
+            },
                 _execJob = function(jobFileName, print, retry, printerId, mediaSource, mediaSourceJobSheet, outputBin, jogOffset) {
                 return _api.call({
                     request : 'jobticket-execute',
@@ -470,6 +468,9 @@
 
                 }).on('click', '.sp-jobticket-settings', null, function() {
                     _onSettingsPopup($(this).attr('data-savapage'), $(this));
+
+                }).on('click', '.sp-doclog-accounttrx-info', null, function() {
+                    _onDocLogAccountTrxPopup($(this).attr('data-savapage'), $(this));
 
                 }).on('change', "input[name='sp-jobticket-sort-dir']", null, function() {
                     _expiryAsc = $(this).attr('id') === 'sp-jobticket-sort-dir-asc';

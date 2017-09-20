@@ -2125,6 +2125,17 @@
                     return false;
                 });
 
+                $(this).on('click', '.sp-doclog-accounttrx-info', null, function() {
+                    var html = _view.getPageHtml('DocLogAccountTrxAddin', {
+                        docLogId : $(this).attr('data-savapage')
+                    }) || 'error';
+                    $('#sp-doclog-popup-addin').html(html);
+                    $('#sp-doclog-popup-title').text($(this).attr('title'));
+                    $('#sp-doclog-popup').enhanceWithin().popup('open', {
+                        positionTo : $(this)
+                    });
+                });
+
                 /*
                  * Users Panel
                  */

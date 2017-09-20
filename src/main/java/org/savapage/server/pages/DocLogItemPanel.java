@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -36,12 +35,12 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
@@ -58,7 +57,9 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketSupplierData;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
+import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *
@@ -173,6 +174,7 @@ public class DocLogItemPanel extends Panel {
 
         if (obj.getTransactions().isEmpty()) {
             helper.discloseLabel("account-trx");
+            helper.discloseLabel("btn-account-trx-info");
         } else {
             final String currencySymbol = CurrencyUtil
                     .getCurrencySymbol(obj.getCurrencyCode(), getLocale());
@@ -253,6 +255,26 @@ public class DocLogItemPanel extends Panel {
 
             add(new Label("account-trx", sbAccTrx.toString())
                     .setEscapeModelStrings(false));
+
+            final WebAppTypeEnum webAppType = SpSession.get().getWebAppType();
+
+            if (webAppType == WebAppTypeEnum.JOBTICKETS
+                    || webAppType == WebAppTypeEnum.ADMIN
+                    || webAppType == WebAppTypeEnum.USER) {
+                final Label labelBtn = helper
+                        .encloseLabel("btn-account-trx-info", "&nbsp;", true);
+                labelBtn.setEscapeModelStrings(false);
+
+                MarkupHelper.modifyLabelAttr(labelBtn,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        obj.getDocLogId().toString());
+
+                MarkupHelper.modifyLabelAttr(labelBtn, MarkupHelper.ATTR_TITLE,
+                        NounEnum.TRANSACTION.uiText(getLocale(), true));
+
+            } else {
+                helper.discloseLabel("btn-account-trx-info");
+            }
         }
 
         //
@@ -593,7 +615,6 @@ public class DocLogItemPanel extends Panel {
             addVisible(StringUtils.isNotBlank(entry.getValue()), entry.getKey(),
                     entry.getValue(), cssClassWlk);
         }
-
     }
 
     /**
@@ -651,12 +672,8 @@ public class DocLogItemPanel extends Panel {
      * @return The localized string.
      */
     protected final String localizedDecimal(final BigDecimal value) {
-        try {
-            return BigDecimalUtil.localize(value, this.currencyDecimals,
-                    getSession().getLocale(), true);
-        } catch (ParseException e) {
-            throw new SpException(e);
-        }
+        return BigDecimalUtil.localizeUc(value, this.currencyDecimals,
+                getSession().getLocale(), true);
     }
 
     /**

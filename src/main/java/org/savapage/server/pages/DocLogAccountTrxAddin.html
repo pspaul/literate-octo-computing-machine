@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!-- 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
+    -->
+</wicket:remove>
+
+<wicket:enclosure child="setting-row">
+
+	<table class="sp-doclog-accounttrx-info-table">
+		<wicket:container wicket:id="setting-row">
+			<tr>
+				<th align="left" wicket:id="account" />
+				<td align="right" wicket:id="copies" />
+				<td align="right" wicket:id="cost" />
+			</tr>
+		</wicket:container>
+	</table>
+	<wicket:enclosure child="persons">
+		<hr />
+		<small wicket:id="persons" />
+	</wicket:enclosure>
+</wicket:enclosure>
+
+</html>

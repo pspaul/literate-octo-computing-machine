@@ -1164,9 +1164,7 @@
 
             var
             // DocLog (common for Admin and User WebApp)
-            _panel = _ns.PanelDocLogBase
-            //
-            ;
+            _panel = _ns.PanelDocLogBase;
 
             _panel.jqId = '#content-doclog';
 
@@ -1197,6 +1195,17 @@
                 $(this).on('click', '#button-goto-accounttrx', null, function() {
                     _view.showUserPageAsync('#page-accounttrx', 'AccountTrx');
                     return false;
+                });
+
+                $(this).on('click', '.sp-doclog-accounttrx-info', null, function() {
+                    var html = _view.getPageHtml('DocLogAccountTrxAddin', {
+                        docLogId : $(this).attr('data-savapage')
+                    }) || 'error';
+                    $('#sp-doclog-popup-addin').html(html);
+                    $('#sp-doclog-popup-title').text($(this).attr('title'));
+                    $('#sp-doclog-popup').enhanceWithin().popup('open', {
+                        positionTo : $(this)
+                    });
                 });
 
             }).on("pagebeforeshow", function(event, ui) {

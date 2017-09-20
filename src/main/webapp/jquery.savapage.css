@@ -242,4 +242,14 @@
     border: 4px #74b042 dotted !important;
 }
 
+/* */
+table.sp-doclog-accounttrx-info-table {
+    text-align: left;
+}
+table.sp-doclog-accounttrx-info-table th, table.sp-doclog-accounttrx-info-table td {
+    padding: 7px;
+}
+    
+}
+
 /* end-of-file */
