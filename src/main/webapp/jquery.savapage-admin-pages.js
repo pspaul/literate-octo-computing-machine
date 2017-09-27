@@ -2659,6 +2659,20 @@
                     return false;
                 });
 
+                $(this).on('click', '#sp-database-stats', null, function() {
+                    $('#sp-options-popup').enhanceWithin().popup('open', {
+                        positionTo : $(this)
+                    });
+                    $('#sp-options-popup-title').text($(this).attr('title'));
+                    // Anticipate some waiting time for high production systems.
+                    $.mobile.loading("show");
+                    _ns.Utils.asyncFoo(function() {
+                        var html = _view.getAdminPageHtml('DatabaseStatsAddin', {}) || 'error';
+                        $('#sp-options-popup-addin').html(html);
+                        $.mobile.loading("hide");
+                    });
+                });
+
                 $(this).on('click', '#backup-now', null, function() {
                     _self.onBackupNow();
                     return false;

@@ -243,13 +243,19 @@
 }
 
 /* */
+table.sp-info-table {
+    text-align: left;
+}
+table.sp-info-table th, table.sp-info-table td {
+    padding: 7px;
+}
+
+/* */
 table.sp-doclog-accounttrx-info-table {
     text-align: left;
 }
 table.sp-doclog-accounttrx-info-table th, table.sp-doclog-accounttrx-info-table td {
     padding: 7px;
-}
-    
 }
 
 /* end-of-file */

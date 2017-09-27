@@ -43,6 +43,7 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.doc.XpsToPdf;
 import org.savapage.core.doc.soffice.SOfficeHelper;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jmx.JmxRemoteProperties;
@@ -885,6 +886,9 @@ public final class Options extends AbstractAdminPage {
         }
         add(new Label("backup-last-run", lastRun));
 
+        helper.addModifyLabelAttr("sp-database-stats",
+                NounEnum.DATABASE.uiText(getLocale()), MarkupHelper.ATTR_TITLE,
+                NounEnum.STATISTICS.uiText(getLocale()));
         /*
          *
          */

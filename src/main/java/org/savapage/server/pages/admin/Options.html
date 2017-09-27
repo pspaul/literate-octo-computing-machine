@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
@@ -1114,7 +1115,7 @@
 						autocomplete="off" autocorrect="off" autocapitalize="off"
 						pattern="[0-9]*" spellcheck="false" />
 
-					<label for="webprint-enable-dropzone" 
+					<label for="webprint-enable-dropzone"
 						wicket:id="webprint-enable-dropzone-label" />
 					<input type="checkbox" id="webprint-enable-dropzone" value="0"
 						wicket:id="webprint-enable-dropzone" />
@@ -1530,6 +1531,7 @@
 					</div>
 				</li>
 			</ul>
+
 			<ul data-role="listview" data-inset="true">
 				<li>
 					<h3>
@@ -1545,7 +1547,7 @@
 					</fieldset>
 				</li>
 				<wicket:remove>
-					<!-- NOTE: Use style="float: right;" to posotion label to the right of input. -->
+					<!-- NOTE: Use style="float: right;" to position label to the right of input. -->
 					<!-- Using a CSS class in label like e.g. sp-label-right does NOT work (overruled by JQM?) -->
 				</wicket:remove>
 				<li>
@@ -1602,6 +1604,9 @@
 							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 							<wicket:message key="button-apply" />
 						</button>
+						<button id="sp-database-stats" title="the-title"
+							wicket:id="sp-database-stats"
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info" />
 					</div>
 				</li>
 			</ul>
@@ -1874,3 +1879,15 @@
 		</div>
 	</li>
 </ul>
+
+<div data-role="popup" id="sp-options-popup" data-theme="a"
+	data-overlay-theme="a" data-arrow="true">
+	<div class="ui-content">
+		<h3 class="ui-title" id="sp-options-popup-title">&nbsp;</h3>
+		<div id="sp-options-popup-addin" />
+		<a href="#" data-rel="back"
+			class="ui-btn ui-mini ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" />
+	</div>
+</div>
+
+</html>
