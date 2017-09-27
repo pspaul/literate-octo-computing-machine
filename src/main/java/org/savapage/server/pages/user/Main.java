@@ -35,6 +35,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
@@ -46,6 +47,7 @@ import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.SpSession;
 import org.savapage.server.api.request.ApiRequestHelper;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.webprint.WebPrintHelper;
@@ -247,9 +249,26 @@ public class Main extends AbstractUserPage {
             add(name.add(new AttributeModifier("title", userName)));
         }
 
+        //
         helper.encloseLabel("mini-sys-maintenance",
                 NounEnum.MAINTENANCE.uiText(getLocale()),
                 ConfigManager.isSysMaintenance());
+        //
+        final ConfigManager cm = ConfigManager.instance();
+
+        final String urlHelp = cm.getConfigValue(Key.WEBAPP_USER_HELP_URL);
+
+        if (StringUtils.isNotBlank(urlHelp)
+                && cm.isConfigValue(Key.WEBAPP_USER_HELP_URL_FOOTER_BUTTON)) {
+
+            final Label btn = helper.encloseLabel("button-mini-help",
+                    HtmlButtonEnum.HELP.uiText(getLocale()), true);
+
+            MarkupHelper.modifyLabelAttr(btn, MarkupHelper.ATTR_HREF, urlHelp);
+
+        } else {
+            helper.discloseLabel("button-mini-help");
+        }
     }
 
     /**

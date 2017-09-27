@@ -380,7 +380,7 @@
 		data-mini="true">
 
 		<button id="button-cometd-status"
-			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-notext ui-btn-icon-left ui-icon-info">&nbsp;</button>
+			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-notext ui-btn-icon-left ui-icon-star">&nbsp;</button>
 
 		<wicket:enclosure child="mini-sys-maintenance">
 			<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-alert">
@@ -392,6 +392,11 @@
 			<button wicket:id="button-mini-about" id="button-about"
 				data-dialog="true"
 				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-text" />
+		</wicket:enclosure>
+
+		<wicket:enclosure child="button-mini-help">
+			<a href="user-defined-url" target="_blank" wicket:id="button-mini-help"
+				class="ui-btn ui-corner-all ui-shadow ui-btn-icon-left ui-icon-info ui-btn-inline"/>
 		</wicket:enclosure>
 
 		<wicket:enclosure child="mini-user-details-name">

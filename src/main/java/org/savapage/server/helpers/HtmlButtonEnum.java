@@ -58,6 +58,8 @@ public enum HtmlButtonEnum {
     /**  */
     EXTEND,
     /**  */
+    HELP,
+    /**  */
     INBOX,
     /**  */
     LOGIN,
