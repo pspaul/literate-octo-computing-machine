@@ -924,7 +924,11 @@
                     // not loaded
                     return;
                 }
-                if (_model.myJobPages !== null) {
+
+                if (_model.myJobPages == null || _model.myJobPages.length == 0) {
+                    // Mantis #873 
+                    $('#page-browser-images img').attr('src', '');
+                } else {
                     this.addImages(nPageInView);
                 }
             };
