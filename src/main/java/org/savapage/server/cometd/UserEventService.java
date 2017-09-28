@@ -642,8 +642,9 @@ public final class UserEventService extends AbstractEventService {
         final WatchService watchService =
                 FileSystems.getDefault().newWatchService();
 
-        final Path path2WatchJob =
-                Paths.get(ConfigManager.getUserHomeDir(user));
+        final String userHomeDir = ConfigManager.getUserHomeDir(user);
+
+        final Path path2WatchJob = Paths.get(userHomeDir);
 
         final WatchKey watchKeyJob = path2WatchJob.register(watchService,
                 ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
@@ -676,6 +677,8 @@ public final class UserEventService extends AbstractEventService {
                  */
                 WatchKey key = watchService.poll(MSECS_WAIT_BETWEEN_POLLS,
                         TimeUnit.MILLISECONDS);
+
+                boolean bUserHomeInaccessible = false;
 
                 boolean bJobsCreated = false;
                 boolean bJobsDeleted = false;
@@ -781,26 +784,35 @@ public final class UserEventService extends AbstractEventService {
                     } // end-for (events)
 
                     /*
-                     * Reset key and remove from set if directory no longer
-                     * accessible
+                     * Reset key for next iteration.
                      */
-                    boolean valid = key.reset();
-                    if (!valid) {
-                        watchKeys.remove(key);
+                    if (!key.reset()) {
                         /*
-                         * All directories are inaccessible
+                         * Reset failed, because watch key is no longer valid!
                          */
-                        if (watchKeys.isEmpty()) {
-                            throw new SpException(
-                                    "User directory is inaccessible");
-                        }
+
+                        // Remove watch key from from the set.
+                        watchKeys.remove(key);
+
+                        // Just one location to watch, so check if set is empty.
+                        bUserHomeInaccessible = watchKeys.isEmpty();
                     }
                 } // end-if
 
                 /*
-                 * Find out about changes
+                 * Find out about changes.
                  */
-                if (bMsgCreated) {
+                if (bUserHomeInaccessible) {
+                    /*
+                     * STOP if user home directory is inaccessible.
+                     */
+                    LOGGER.warn(String.format("[%s] is inaccessible.",
+                            userHomeDir));
+                    returnData = createErrorMsg(
+                            this.localize(locale, "user-inbox-inaccessible"));
+                    break;
+
+                } else if (bMsgCreated) {
 
                     final UserMsgIndicator msgIndicator =
                             UserMsgIndicator.read(user);
@@ -1261,6 +1273,27 @@ public final class UserEventService extends AbstractEventService {
 
         eventData.put(KEY_DATA, json);
         eventData.put(KEY_EVENT, UserEventEnum.PRINT_IN_EXPIRED);
+        eventData.put(KEY_MSG_TIME, json.getMsgTime());
+
+        return eventData;
+    }
+
+    /**
+     *
+     * @param msg
+     *            The error message.
+     * @return
+     */
+    private static Map<String, Object> createErrorMsg(final String msg) {
+
+        final Map<String, Object> eventData = new HashMap<String, Object>();
+        final JsonUserMsgNotification json = new JsonUserMsgNotification();
+
+        json.setMsgTime(new Date().getTime());
+
+        eventData.put(KEY_EVENT, UserEventEnum.ERROR);
+        eventData.put(KEY_ERROR, msg);
+        eventData.put(KEY_DATA, json);
         eventData.put(KEY_MSG_TIME, json.getMsgTime());
 
         return eventData;

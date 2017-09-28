@@ -5668,7 +5668,7 @@
             };
 
             _userEvent.onEventError = function(msg) {
-                _view.message(msg);
+                _view.msgDialogBox(msg, 'sp-msg-popup-error');
             };
 
             _userEvent.onException = function(msg) {
