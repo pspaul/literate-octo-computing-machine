@@ -258,6 +258,16 @@
                     positionTo : positionTo
                 });
             },
+                _onJobTicketAccountTrxPopup = function(jobFileName, positionTo) {
+                var html = _view.getPageHtml('OutboxAccountTrxAddin', {
+                    jobFileName : jobFileName,
+                    jobticket : true
+                }) || 'error';
+                $('#sp-jobticket-popup-addin').html(html);
+                $('#sp-jobticket-popup').enhanceWithin().popup('open', {
+                    positionTo : positionTo
+                });
+            },
                 _onDocLogAccountTrxPopup = function(docLogId, positionTo) {
                 var html = _view.getPageHtml('DocLogAccountTrxAddin', {
                     docLogId : docLogId
@@ -471,6 +481,9 @@
 
                 }).on('click', '.sp-doclog-accounttrx-info', null, function() {
                     _onDocLogAccountTrxPopup($(this).attr('data-savapage'), $(this));
+
+                }).on('click', '.sp-outbox-account-trx-info-jobticket', null, function() {
+                    _onJobTicketAccountTrxPopup($(this).attr('data-savapage'), $(this));
 
                 }).on('change', "input[name='sp-jobticket-sort-dir']", null, function() {
                     _expiryAsc = $(this).attr('id') === 'sp-jobticket-sort-dir-asc';

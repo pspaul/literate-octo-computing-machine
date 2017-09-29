@@ -51,6 +51,7 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
@@ -171,6 +172,12 @@ public class OutboxAddin extends AbstractUserPage {
 
     private static final String WICKET_ID_BTN_JOBTICKET_SETTLE =
             "button-jobticket-settle";
+
+    private static final String WICKET_ID_BTN_ACCOUNT_TRX_INFO_JOB =
+            "button-account-trx-info-job";
+
+    private static final String WICKET_ID_BTN_ACCOUNT_TRX_INFO_JOBTICKET =
+            "button-account-trx-info-jobticket";
 
     private static final String WICKET_ID_BTN_JOBTICKET_PRINT =
             "button-jobticket-print";
@@ -396,7 +403,6 @@ public class OutboxAddin extends AbstractUserPage {
                 helper.discloseLabel(WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET);
                 helper.discloseLabel(WICKET_ID_BTN_SETTINGS_OUTBOX_JOBTICKET);
             } else {
-
                 labelWlk = helper.encloseLabel(
                         WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET,
                         HtmlButtonEnum.EDIT.uiTextDottedSfx(getLocale()),
@@ -414,9 +420,24 @@ public class OutboxAddin extends AbstractUserPage {
                 if (isJobTicketItem) {
                     this.addJobIdAttr(labelWlk, job);
                 }
-
             }
 
+            // AccounTrx preview
+            final String encloseButtonIdTrx;
+            if (isJobTicketItem) {
+                helper.discloseLabel(WICKET_ID_BTN_ACCOUNT_TRX_INFO_JOB);
+                encloseButtonIdTrx = WICKET_ID_BTN_ACCOUNT_TRX_INFO_JOBTICKET;
+            } else {
+                helper.discloseLabel(WICKET_ID_BTN_ACCOUNT_TRX_INFO_JOBTICKET);
+                encloseButtonIdTrx = WICKET_ID_BTN_ACCOUNT_TRX_INFO_JOB;
+            }
+            this.addJobIdAttr(helper.encloseLabel(encloseButtonIdTrx,
+                    String.format("%s%s",
+                            NounEnum.TRANSACTION.uiText(getLocale(), true),
+                            HtmlButtonEnum.DOTTED_SUFFIX),
+                    true), job);
+
+            //
             final String encloseButtonIdRemove;
             final String encloseButtonIdPreview;
 
@@ -876,7 +897,8 @@ public class OutboxAddin extends AbstractUserPage {
                                     .uiText(getLocale()))
                             .append(" ").append(currencySymbol).append("&nbsp;")
                             .append(localizedDecimal(costTotal.negate()))
-                            .append("&nbsp;(").append(job.getCopies()).append(")");
+                            .append("&nbsp;(").append(job.getCopies())
+                            .append(")");
                 }
                 return sbAccTrx.toString();
             }

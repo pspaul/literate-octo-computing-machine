@@ -926,7 +926,7 @@
                 }
 
                 if (_model.myJobPages == null || _model.myJobPages.length == 0) {
-                    // Mantis #873 
+                    // Mantis #873
                     $('#page-browser-images img').attr('src', '');
                 } else {
                     this.addImages(nPageInView);
@@ -1582,6 +1582,20 @@
                 return false;
             }
             //
+            ,
+                _onAccountTrxInfo = function(src, jobticket) {
+                var html = _view.getPageHtml('OutboxAccountTrxAddin', {
+                    jobFileName : src.attr('data-savapage'),
+                    jobticket : jobticket
+                }) || 'error';
+                $('#sp-outbox-popup-addin').html(html);
+                // remove trailing poit suffix
+                $('#sp-outbox-popup-title').text(src.attr('title').replace('. . .', ''));
+                $('#sp-outbox-popup').enhanceWithin().popup('open', {
+                    positionTo : src
+                });
+            }
+            //
             ;
 
             $('#page-outbox').on("pagecreate", function(event) {
@@ -1602,22 +1616,22 @@
                         return _refresh();
                     }
                     return _close();
-                });
-                $(this).on('click', '.sp-outbox-cancel-jobticket', null, function() {
+                }).on('click', '.sp-outbox-cancel-jobticket', null, function() {
                     _this.onOutboxDeleteJob($(this).attr('data-savapage'), true);
                     if (_model.user.stats.outbox.jobCount > 0) {
                         return _refresh();
                     }
                     return _close();
-                });
-
-                $(this).on('click', '.sp-outbox-preview-job', null, function() {
+                }).on('click', '.sp-outbox-preview-job', null, function() {
                     _api.download("pdf-outbox", null, $(this).attr('data-savapage'));
                     return false;
-                });
-                $(this).on('click', '.sp-outbox-preview-jobticket', null, function() {
+                }).on('click', '.sp-outbox-preview-jobticket', null, function() {
                     _api.download("pdf-jobticket", null, $(this).attr('data-savapage'));
                     return false;
+                }).on('click', '.sp-outbox-account-trx-info-job', null, function() {
+                    _onAccountTrxInfo($(this), false);
+                }).on('click', '.sp-outbox-account-trx-info-jobticket', null, function() {
+                    _onAccountTrxInfo($(this), true);
                 });
 
             }).on("pageshow", function(event, ui) {

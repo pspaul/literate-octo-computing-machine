@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
@@ -43,3 +44,15 @@
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+<div data-role="popup" id="sp-outbox-popup" data-theme="a"
+	data-overlay-theme="a" data-arrow="true">
+	<div class="ui-content">
+		<h3 class="ui-title" id="sp-outbox-popup-title">&nbsp;</h3>
+		<div id="sp-outbox-popup-addin" />
+		<a href="#" data-rel="back"
+			class="ui-btn ui-mini ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" />
+	</div>
+</div>
+
+</html>
