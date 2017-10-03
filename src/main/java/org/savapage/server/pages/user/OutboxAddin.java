@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -578,14 +579,23 @@ public class OutboxAddin extends AbstractUserPage {
 
             if (optionMap.hasFinishingPunch()) {
                 mapVisible.put("punch",
-                        helper.localized(PrintOutVerbEnum.PUNCH));
+                        uiIppKeywordValue(getLocale(),
+                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH,
+                                optionMap));
             }
             if (optionMap.hasFinishingStaple()) {
                 mapVisible.put("staple",
-                        helper.localized(PrintOutVerbEnum.STAPLE));
+                        uiIppKeywordValue(getLocale(),
+                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE,
+                                optionMap));
             }
             if (optionMap.hasFinishingFold()) {
-                mapVisible.put("fold", helper.localized(PrintOutVerbEnum.FOLD));
+                mapVisible.put("fold",
+                        String.format("%s %s",
+                                helper.localized(PrintOutVerbEnum.FOLD),
+                                uiIppKeywordValue(getLocale(),
+                                        IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_FOLD,
+                                        optionMap)));
             }
             if (optionMap.hasFinishingBooklet()) {
                 mapVisible.put("booklet",
@@ -846,6 +856,12 @@ public class OutboxAddin extends AbstractUserPage {
                 helper.encloseLabel(entry.getKey(), entry.getValue(),
                         StringUtils.isNotBlank(entry.getValue()));
             }
+        }
+
+        private String uiIppKeywordValue(final Locale locale,
+                final String ippKeyword, final IppOptionMap map) {
+            return PROXYPRINT_SERVICE.localizePrinterOptValue(locale,
+                    ippKeyword, map.getOptionValue(ippKeyword));
         }
 
         /**

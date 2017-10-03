@@ -407,15 +407,23 @@ public class DocLogItemPanel extends Panel {
 
                 if (obj.isFinishingPunch()) {
                     mapVisible.put("punch",
-                            helper.localized(PrintOutVerbEnum.PUNCH));
+                            uiIppKeywordValue(locale,
+                                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH,
+                                    obj));
                 }
                 if (obj.isFinishingStaple()) {
                     mapVisible.put("staple",
-                            helper.localized(PrintOutVerbEnum.STAPLE));
+                            uiIppKeywordValue(locale,
+                                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE,
+                                    obj));
                 }
                 if (obj.isFinishingFold()) {
                     mapVisible.put("fold",
-                            helper.localized(PrintOutVerbEnum.FOLD));
+                            String.format("%s %s",
+                                    helper.localized(PrintOutVerbEnum.FOLD),
+                                    uiIppKeywordValue(locale,
+                                            IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_FOLD,
+                                            obj)));
                 }
                 if (obj.isFinishingBooklet()) {
                     mapVisible.put("booklet",
@@ -615,6 +623,19 @@ public class DocLogItemPanel extends Panel {
             addVisible(StringUtils.isNotBlank(entry.getValue()), entry.getKey(),
                     entry.getValue(), cssClassWlk);
         }
+    }
+
+    /**
+     *
+     * @param locale
+     * @param ippKeyword
+     * @param obj
+     * @return
+     */
+    private String uiIppKeywordValue(final Locale locale,
+            final String ippKeyword, final DocLogItem obj) {
+        return PROXYPRINT_SERVICE.localizePrinterOptValue(locale, ippKeyword,
+                obj.getIppOptionMap().getOptionValue(ippKeyword));
     }
 
     /**
