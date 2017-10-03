@@ -105,14 +105,24 @@ public final class PrintOutOptionsPanel extends Panel {
             final IppOptionMap optionMap = new IppOptionMap(ippOptions);
 
             if (optionMap.hasFinishingPunch()) {
-                mapVisible.put("punch", PrintOutVerbEnum.PUNCH.uiText(locale));
+                mapVisible.put("punch",
+                        uiIppKeywordValue(getLocale(),
+                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH,
+                                optionMap));
             }
             if (optionMap.hasFinishingStaple()) {
                 mapVisible.put("staple",
-                        PrintOutVerbEnum.STAPLE.uiText(locale));
+                        uiIppKeywordValue(getLocale(),
+                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE,
+                                optionMap));
             }
             if (optionMap.hasFinishingFold()) {
-                mapVisible.put("fold", PrintOutVerbEnum.FOLD.uiText(locale));
+                mapVisible.put("fold",
+                        String.format("%s %s",
+                                helper.localized(PrintOutVerbEnum.FOLD),
+                                uiIppKeywordValue(getLocale(),
+                                        IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_FOLD,
+                                        optionMap)));
             }
             if (optionMap.hasFinishingBooklet()) {
                 mapVisible.put("booklet",
@@ -155,6 +165,12 @@ public final class PrintOutOptionsPanel extends Panel {
             }
         }
 
+    }
+
+    private String uiIppKeywordValue(final Locale locale,
+            final String ippKeyword, final IppOptionMap map) {
+        return PROXYPRINT_SERVICE.localizePrinterOptValue(locale, ippKeyword,
+                map.getOptionValue(ippKeyword));
     }
 
     /**
