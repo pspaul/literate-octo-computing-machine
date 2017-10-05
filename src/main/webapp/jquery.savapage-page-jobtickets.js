@@ -62,7 +62,8 @@
                 _expiryAsc = true
             //
             ,
-                _quickUserSearch = new _ns.QuickUserSearch(_view, _api)
+                _quickUserSearch = new _ns.QuickUserSearch(_view, _api),
+                _quickUserSearchDocLog = new _ns.QuickUserSearch(_view, _api)
             //
             ,
                 _maxItems = function() {
@@ -162,6 +163,20 @@
                 $("#sp-jobticket-userid").val('');
                 _userKey = null;
                 _refresh();
+            }
+            //
+            ,
+                _onSelectUserDocLog = function(quickUserSelected) {
+                $("#sp-doclog-select-userid").val(quickUserSelected.text);
+                $('#sp-doclog-hidden-user-id').val(quickUserSelected.key);
+                _pnlDocLog.page(_pnlDocLog, 1);
+            }
+            //
+            ,
+                _onClearUserDocLog = function() {
+                $("#sp-doclog-select-userid").val('');
+                $('#sp-doclog-hidden-user-id').val('');
+                _pnlDocLog.page(_pnlDocLog, 1);
             }
             //
             ,
@@ -573,6 +588,7 @@
                 });
 
                 _quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);
+                _quickUserSearchDocLog.onCreate($(this), 'sp-doclog-select-userid-filter', _onSelectUserDocLog, _onClearUserDocLog);
 
                 //--------------------------------------------
                 // Common Panel parameters.
@@ -619,11 +635,11 @@
                 };
 
                 //
-                _pnlDocLog.jqId = '#sp-jobtickets-tab-closed';
+                _pnlDocLog.jqId = '#sp-jobtickets-tab-closed-doclog';
                 _pnlDocLog.applyDefaultForTicket(_pnlDocLog);
 
                 // Load page
-                $('#sp-jobtickets-tab-closed').html(_view.getPageHtml('DocLogBase')).enhanceWithin();
+                $('#sp-jobtickets-tab-closed-doclog').html(_view.getPageHtml('DocLogBase')).enhanceWithin();
 
                 $(this).on('click', '#sp-jobtickets-tab-closed-button', null, function() {
                     if (!_countdownPaused) {

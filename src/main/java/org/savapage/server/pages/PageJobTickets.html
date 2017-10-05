@@ -148,7 +148,30 @@
 			<!-- TAB: Closed -->
 		</wicket:remove>
 
-		<div id="sp-jobtickets-tab-closed" class="ui-content" />
+		<div id="sp-jobtickets-tab-closed" class="ui-content">
+
+			<input type="hidden" id="sp-doclog-hidden-user-id" />
+
+			<ul data-role="listview" data-inset="true">
+				<li class="ui-mini">
+					<div class="ui-field-contain">
+						<label for="sp-doclog-select-userid">
+							<wicket:message key="prompt-userid" />
+						</label>
+						<input tabindex="1" type="text" id="sp-doclog-select-userid"
+							value="" maxlength="128" autofocus data-type="search"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+					</div>
+					<ul id="sp-doclog-select-userid-filter" data-role="listview"
+						data-filter="true" data-input="#sp-doclog-select-userid"
+						data-filter-placeholder="Find a User by ID..."
+						data-filter-theme="a" data-inset="true" />
+				</li>
+			</ul>
+
+			<div id="sp-jobtickets-tab-closed-doclog" />
+		</div>
 
 	</div>
 </div>
