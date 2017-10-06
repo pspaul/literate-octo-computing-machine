@@ -351,8 +351,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
-            throws JsonProcessingException, IOException, ProxyPrintException,
-            ParseException {
+            throws JsonProcessingException, IOException, ParseException {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
 
@@ -594,8 +593,17 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 return;
             }
         } else {
-            PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
-                    dtoReq.getPageScaling(), doChunkVanillaJobs, iVanillaJob);
+            try {
+                PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
+                        dtoReq.getPageScaling(), doChunkVanillaJobs,
+                        iVanillaJob);
+            } catch (ProxyPrintException e) {
+                if (e.hasLogFileMessage()) {
+                    LOGGER.warn(e.getLogFileMessage());
+                }
+                setApiResultText(ApiResultCodeEnum.WARN, e.getMessage());
+                return;
+            }
         }
         /*
          * Non-secure Proxy Print, integrated with PaperCut?
