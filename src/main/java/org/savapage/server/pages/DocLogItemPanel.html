@@ -170,7 +170,12 @@
 		<div data-role="controlgroup" data-type="horizontal" data-mini="true">
 			<button data-savapage="the-doc-log-db-key"
 				wicket:id="btn-account-trx-info"
-				class="sp-doclog-accounttrx-info ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-shop"/>
+				class="sp-doclog-accounttrx-info ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-shop" />
+			<wicket:enclosure child="btn-account-trx-refund">
+				<button data-savapage="the-doc-log-db-key"
+					wicket:id="btn-account-trx-refund"
+					class="sp-doclog-accounttrx-refund ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-recycle" />
+			</wicket:enclosure>
 		</div>
 	</wicket:enclosure>
 

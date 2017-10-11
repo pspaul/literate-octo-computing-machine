@@ -243,54 +243,55 @@
                     _view.message(res.result.txt);
                 }
             },
-                _onCancelPopup = function(jobFileName, positionTo) {
-                var html = _view.getPageHtml('JobTicketCancelAddIn', {
-                    jobFileName : jobFileName
-                }) || 'error';
-
+                _showPopUp = function(html, positionTo) {
                 $('#sp-jobticket-popup-addin').html(html);
                 $('#sp-jobticket-popup').enhanceWithin().popup('open', {
                     positionTo : positionTo
                 });
+            },
+                _onCancelPopup = function(jobFileName, positionTo) {
+                var html = _view.getPageHtml('JobTicketCancelAddIn', {
+                    jobFileName : jobFileName
+                }) || 'error';
+                _showPopUp(html, positionTo);
             },
                 _onEditPopup = function(jobFileName, positionTo) {
                 var html = _view.getPageHtml('JobTicketEditAddIn', {
                     jobFileName : jobFileName
                 }) || 'error';
-
-                $('#sp-jobticket-popup-addin').html(html);
-                $('#sp-jobticket-popup').enhanceWithin().popup('open', {
-                    positionTo : positionTo
-                });
+                _showPopUp(html, positionTo);
             },
                 _onSettingsPopup = function(jobFileName, positionTo) {
                 var html = _view.getPageHtml('JobTicketSettingsAddIn', {
                     jobFileName : jobFileName
                 }) || 'error';
-
-                $('#sp-jobticket-popup-addin').html(html);
-                $('#sp-jobticket-popup').enhanceWithin().popup('open', {
-                    positionTo : positionTo
-                });
+                _showPopUp(html, positionTo);
             },
                 _onJobTicketAccountTrxPopup = function(jobFileName, positionTo) {
                 var html = _view.getPageHtml('OutboxAccountTrxAddin', {
                     jobFileName : jobFileName,
                     jobticket : true
                 }) || 'error';
-                $('#sp-jobticket-popup-addin').html(html);
-                $('#sp-jobticket-popup').enhanceWithin().popup('open', {
-                    positionTo : positionTo
-                });
+                _showPopUp(html, positionTo);
             },
                 _onDocLogAccountTrxPopup = function(docLogId, positionTo) {
                 var html = _view.getPageHtml('DocLogAccountTrxAddin', {
                     docLogId : docLogId
                 }) || 'error';
-
-                $('#sp-jobticket-popup-addin').html(html);
-                $('#sp-jobticket-popup').enhanceWithin().popup('open', {
-                    positionTo : positionTo
+                _showPopUp(html, positionTo);
+            },
+                _onDocLogAccountTrxRefundPopup = function(docLogId, positionTo) {
+                var html = _view.getPageHtml('DocLogAccountTrxRefundAddin', {
+                    docLogId : docLogId
+                }) || 'error';
+                _showPopUp(html, positionTo);
+            },
+                _refundAccountTrx = function(docLogId) {
+                return _api.call({
+                    request : 'doclog-refund',
+                    dto : JSON.stringify({
+                        docLogId : docLogId
+                    })
                 });
             },
                 _cancelJob = function(jobFileName) {
@@ -494,6 +495,9 @@
                 }).on('click', '.sp-jobticket-settings', null, function() {
                     _onSettingsPopup($(this).attr('data-savapage'), $(this));
 
+                }).on('click', '.sp-doclog-accounttrx-refund', null, function() {
+                    _onDocLogAccountTrxRefundPopup($(this).attr('data-savapage'), $(this));
+
                 }).on('click', '.sp-doclog-accounttrx-info', null, function() {
                     _onDocLogAccountTrxPopup($(this).attr('data-savapage'), $(this));
 
@@ -567,6 +571,16 @@
                         _refresh();
                     }
                     _view.showApiMsg(res);
+
+                }).on('click', '#sp-doclog-accounttrx-refund-btn-yes', null, function() {
+                    var res = _refundAccountTrx($(this).attr('data-savapage'));
+                    $('#sp-jobticket-popup').popup('close');
+                    if (res.result.code === "0") {
+                        _refresh();
+                    }
+                    _ns.Utils.asyncFoo(function(res) {
+                        _view.showApiMsg(res);
+                    }, res);
 
                 }).on('click', '#sp-jobticket-cancel-popup-btn-no', null, function() {
                     $('#sp-jobticket-popup').popup('close');

@@ -80,6 +80,8 @@ public enum HtmlButtonEnum {
     /**  */
     REFRESH,
     /**  */
+    REFUND,
+    /**  */
     RESET,
     /**  */
     RETRY,

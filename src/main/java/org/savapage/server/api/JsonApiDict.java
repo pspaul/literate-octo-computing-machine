@@ -37,6 +37,7 @@ import org.savapage.server.api.request.ReqDbBackup;
 import org.savapage.server.api.request.ReqDeviceDelete;
 import org.savapage.server.api.request.ReqDeviceGet;
 import org.savapage.server.api.request.ReqDeviceSet;
+import org.savapage.server.api.request.ReqDocLogRefund;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqJobTicketCancel;
 import org.savapage.server.api.request.ReqJobTicketExec;
@@ -115,6 +116,9 @@ public class JsonApiDict {
 
     public static final String REQ_DEVICE_GET = "device-get";
     public static final String REQ_DEVICE_SET = "device-set";
+
+    public static final String REQ_DOCLOG_REFUND = "doclog-refund";
+
     public static final String REQ_EXIT_EVENT_MONITOR = "exit-event-monitor";
     public static final String REQ_GCP_GET_DETAILS = "gcp-get-details";
     public static final String REQ_GCP_ONLINE = "gcp-online";
@@ -171,8 +175,7 @@ public class JsonApiDict {
 
     public static final String REQ_LOGIN = "login";
 
-    public static final String REQ_OAUTH_URL =
-            "oauth-url";
+    public static final String REQ_OAUTH_URL = "oauth-url";
 
     public static final String REQ_LOGOUT = "logout";
 
@@ -795,6 +798,9 @@ public class JsonApiDict {
         adm(REQ_DEVICE_NEW_TERMINAL, DbClaim.NONE, DbAccess.NO);
         adm(REQ_DEVICE_GET, ReqDeviceGet.class, DbClaim.NONE, DbAccess.YES);
         adm(REQ_DEVICE_SET, ReqDeviceSet.class, DbClaim.READ, DbAccess.YES);
+
+        acl(REQ_DOCLOG_REFUND, ReqDocLogRefund.class, DbClaim.READ,
+                DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         usr(REQ_EXIT_EVENT_MONITOR, DbClaim.NONE, DbAccess.NO);
         adm(REQ_GCP_GET_DETAILS, DbClaim.READ, DbAccess.YES);

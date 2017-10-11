@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!-- 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
+    -->
+</wicket:remove>
+
+<p class="sp-txt-warn">
+	This refund action reverses all financial transactions.
+	<wicket:remove>
+		<!--  
+	<wicket:message key="warn-cancel-all" />
+	-->
+	</wicket:remove>
+</p>
+
+<a href="#" id="sp-doclog-accounttrx-refund-btn-no" wicket:id="btn-no"
+	class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
+	data-rel="back" />
+<!--  -->
+<button id="sp-doclog-accounttrx-refund-btn-yes" wicket:id="btn-yes"
+	class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
+
+</html>

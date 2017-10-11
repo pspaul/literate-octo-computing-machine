@@ -87,6 +87,7 @@ public final class DocLogItem {
 
     private String currencyCode;
     private BigDecimal cost;
+    private BigDecimal costOriginal;
 
     private String humanReadableByteCount;
     private int totalPages;
@@ -425,6 +426,7 @@ public final class DocLogItem {
                 log.setDrmRestricted(docLog.getDrmRestricted());
                 log.setCreatedDate(docLog.getCreatedDate());
                 log.setCost(docLog.getCost());
+                log.setCostOriginal(docLog.getCostOriginal());
 
                 if (docLog.getNumberOfPages() == null) {
                     log.setTotalPages(0);
@@ -1484,6 +1486,14 @@ public final class DocLogItem {
 
     public void setCost(BigDecimal cost) {
         this.cost = cost;
+    }
+
+    public BigDecimal getCostOriginal() {
+        return costOriginal;
+    }
+
+    public void setCostOriginal(BigDecimal costOriginal) {
+        this.costOriginal = costOriginal;
     }
 
 }

@@ -59,6 +59,7 @@ import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
 import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
@@ -261,8 +262,9 @@ public class DocLogItemPanel extends Panel {
             if (webAppType == WebAppTypeEnum.JOBTICKETS
                     || webAppType == WebAppTypeEnum.ADMIN
                     || webAppType == WebAppTypeEnum.USER) {
-                final Label labelBtn = helper
-                        .encloseLabel("btn-account-trx-info", "&nbsp;", true);
+
+                Label labelBtn = helper.encloseLabel("btn-account-trx-info",
+                        "&nbsp;", true);
                 labelBtn.setEscapeModelStrings(false);
 
                 MarkupHelper.modifyLabelAttr(labelBtn,
@@ -271,6 +273,26 @@ public class DocLogItemPanel extends Panel {
 
                 MarkupHelper.modifyLabelAttr(labelBtn, MarkupHelper.ATTR_TITLE,
                         NounEnum.TRANSACTION.uiText(getLocale(), true));
+
+                if (webAppType == WebAppTypeEnum.JOBTICKETS
+                        && !obj.getCost().equals(BigDecimal.ZERO)
+                        && obj.getCost().equals(obj.getCostOriginal())) {
+
+                    labelBtn = helper.encloseLabel("btn-account-trx-refund",
+                            "&nbsp;", true);
+                    labelBtn.setEscapeModelStrings(false);
+
+                    MarkupHelper.modifyLabelAttr(labelBtn,
+                            MarkupHelper.ATTR_DATA_SAVAPAGE,
+                            obj.getDocLogId().toString());
+
+                    MarkupHelper.modifyLabelAttr(labelBtn,
+                            MarkupHelper.ATTR_TITLE,
+                            HtmlButtonEnum.REFUND.uiText(getLocale(), true));
+
+                } else {
+                    helper.discloseLabel("btn-account-trx-refund");
+                }
 
             } else {
                 helper.discloseLabel("btn-account-trx-info");
