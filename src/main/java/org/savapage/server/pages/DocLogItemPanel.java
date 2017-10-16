@@ -257,6 +257,10 @@ public class DocLogItemPanel extends Panel {
             add(new Label("account-trx", sbAccTrx.toString())
                     .setEscapeModelStrings(false));
 
+            helper.encloseLabel("account-trx-refund",
+                    NounEnum.REFUND.uiText(locale),
+                    !obj.getCost().equals(obj.getCostOriginal()));
+
             final WebAppTypeEnum webAppType = SpSession.get().getWebAppType();
 
             if (webAppType == WebAppTypeEnum.JOBTICKETS

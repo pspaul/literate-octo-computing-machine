@@ -103,8 +103,7 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
                 PROXY_PRINT_SERVICE.refundProxyPrintPaperCut(chg);
             }
 
-            this.setApiResultText(ApiResultCodeEnum.OK,
-                    "Successfully refunded.");
+            this.setApiResult(ApiResultCodeEnum.OK, "msg-refund-ok");
 
         } catch (PaperCutException e) {
             /*

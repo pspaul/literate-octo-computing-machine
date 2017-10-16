@@ -576,7 +576,7 @@
                     var res = _refundAccountTrx($(this).attr('data-savapage'));
                     $('#sp-jobticket-popup').popup('close');
                     if (res.result.code === "0") {
-                        _refresh();
+                        _pnlDocLog.refresh(_pnlDocLog);
                     }
                     _ns.Utils.asyncFoo(function(res) {
                         _view.showApiMsg(res);

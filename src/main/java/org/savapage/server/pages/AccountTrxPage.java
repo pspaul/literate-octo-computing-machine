@@ -45,6 +45,7 @@ import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
@@ -181,6 +182,11 @@ public class AccountTrxPage extends AbstractListPage {
                 throw new SpException(e);
             }
 
+            helper.encloseLabel("amount-refund",
+                    NounEnum.REFUND.uiText(getLocale()).toLowerCase(),
+                    printOut != null && accountTrx.getAmount()
+                            .compareTo(BigDecimal.ZERO) > 0);
+
             Label labelWrk;
 
             labelWrk = new Label("balance", balance);
@@ -224,7 +230,6 @@ public class AccountTrxPage extends AbstractListPage {
             String jobticket = null;
 
             //
-            String msgKey;
             String key;
 
             switch (trxType) {
@@ -391,7 +396,6 @@ public class AccountTrxPage extends AbstractListPage {
             }
 
             //
-
             helper.encloseLabel("delegate", delegate, delegate != null);
             helper.encloseLabel("jobticket", jobticket, jobticket != null);
 
