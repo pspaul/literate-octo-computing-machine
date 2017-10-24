@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.savapage.core.SpException;
+import org.savapage.core.concurrent.ReadLockObtainFailedException;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLRoleEnum;
@@ -546,10 +547,13 @@ public class JsonApiDict {
 
     /**
      * @param claim
+     *            The {@link DbClaim}.
+     * @throws ReadLockObtainFailedException
+     *             When lock could not be acquired.
      */
-    public void lock(final DbClaim claim) {
+    public void lock(final DbClaim claim) throws ReadLockObtainFailedException {
         if (claim == JsonApiDict.DbClaim.READ) {
-            ReadWriteLockEnum.DATABASE_READONLY.setReadLock(true);
+            ReadWriteLockEnum.DATABASE_READONLY.tryReadLock();
         } else if (claim == JsonApiDict.DbClaim.EXCLUSIVE) {
             ReadWriteLockEnum.DATABASE_READONLY.setWriteLock(true);
         }

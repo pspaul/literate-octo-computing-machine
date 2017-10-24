@@ -76,6 +76,7 @@ import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
+import org.savapage.core.concurrent.ReadLockObtainFailedException;
 import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
@@ -350,6 +351,8 @@ public final class JsonApiServer extends AbstractPage {
          * Lock indicators
          */
         JsonApiDict.DbClaim dbClaim = JsonApiDict.DbClaim.NONE;
+        boolean dbClaimLockDone = false;
+
         JsonApiDict.LetterheadLock letterheadLock =
                 JsonApiDict.LetterheadLock.NONE;
 
@@ -384,7 +387,9 @@ public final class JsonApiServer extends AbstractPage {
                 dbClaim = API_DICTIONARY.getDbClaimNeeded(requestId);
 
                 API_DICTIONARY.lock(letterheadLock);
+
                 API_DICTIONARY.lock(dbClaim);
+                dbClaimLockDone = true;
 
                 /*
                  * Database transaction.
@@ -523,8 +528,27 @@ public final class JsonApiServer extends AbstractPage {
         } catch (Exception t) {
 
             try {
-                jsonArray = new ObjectMapper()
-                        .writeValueAsString(handleException(requestId, t));
+
+                final Map<String, Object> apiRes;
+
+                if (t instanceof ReadLockObtainFailedException) {
+
+                    apiRes = setApiResult(new HashMap<String, Object>(),
+                            ApiResultCodeEnum.UNAVAILABLE,
+                            "msg-system-temp-unavailable");
+
+                    if (!dbClaimLockDone) {
+                        // dbClaim locking failed or was not executed: reset to
+                        // NONE to prevent error when unlocking later on.
+                        dbClaim = JsonApiDict.DbClaim.NONE;
+                    }
+
+                } else {
+                    apiRes = handleException(requestId, t);
+                }
+
+                jsonArray = new ObjectMapper().writeValueAsString(apiRes);
+
             } catch (Exception e1) {
                 LOGGER.error(e1.getMessage());
             }

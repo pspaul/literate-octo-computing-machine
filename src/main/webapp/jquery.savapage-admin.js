@@ -205,7 +205,7 @@
                  * have), no fancy stuff (cause jQuery might not be working).
                  */
                 if (res.result.code !== '0') {
-                    _view.message('connection to server is lost');
+                    _view.message(res.result.txt || 'connection to server is lost');
                     return;
                 }
 

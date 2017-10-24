@@ -2594,7 +2594,7 @@
                 var title;
                 if (result.code === "1") {
                     title = _i18n.string('title-info');
-                } else if (result.code === "2") {
+                } else if (result.code === "2" || result.code === "5") {
                     title = _i18n.string('title-warning');
                 } else {
                     title = _i18n.string('title-error');
@@ -2606,7 +2606,7 @@
                 var klas;
                 if (result.code === "1") {
                     klas = 'sp-msg-popup-info';
-                } else if (result.code === "2") {
+                } else if (result.code === "2" || result.code === "5") {
                     klas = 'sp-msg-popup-warn';
                 } else {
                     klas = 'sp-msg-popup-error';

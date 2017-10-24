@@ -5057,7 +5057,7 @@
                  * have), no fancy stuff (cause jQuery might not be working).
                  */
                 if (!res || res.result.code !== '0') {
-                    _view.message('connection to server is lost');
+                    _view.message(res.result.txt || 'connection to server is lost');
                     return;
                 }
                 _ns.configAppWatchdog(_this.onWakeUp, res.watchdogHeartbeatSecs, res.watchdogTimeoutSecs, _this.onWakeUpAutoRestore);
