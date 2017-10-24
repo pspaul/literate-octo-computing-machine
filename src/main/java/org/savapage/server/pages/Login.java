@@ -23,6 +23,7 @@ package org.savapage.server.pages;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.AttributeModifier;
@@ -40,7 +41,9 @@ import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
+import org.savapage.core.util.LocaleHelper;
 import org.savapage.ext.oauth.OAuthProviderEnum;
+import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.ext.ServerPluginHelper;
@@ -66,6 +69,19 @@ public final class Login extends AbstractPage {
 
         super(parameters);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        final List<Locale> availableLocales =
+                LocaleHelper.getAvailableLanguages();
+
+        if (availableLocales.size() == 1) {
+            SpSession.get().setLocale(availableLocales.get(0));
+        }
+
+        helper.encloseLabel("button-lang", getString("button-lang"),
+                availableLocales.size() > 1);
+
+        //
         add(new Label("title",
                 localized("title", CommunityDictEnum.SAVAPAGE.getWord())));
 
@@ -89,8 +105,6 @@ public final class Login extends AbstractPage {
 
         final HtmlInjectComponent htmlInject = new HtmlInjectComponent(
                 "login-inject", webAppType, HtmlInjectEnum.LOGIN);
-
-        final MarkupHelper helper = new MarkupHelper(this);
 
         if (htmlInject.isInjectAvailable()) {
             add(htmlInject);
