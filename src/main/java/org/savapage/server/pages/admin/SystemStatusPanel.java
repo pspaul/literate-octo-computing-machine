@@ -52,6 +52,8 @@ import org.savapage.core.circuitbreaker.CircuitStateEnum;
 import org.savapage.core.circuitbreaker.CircuitTrippingException;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
+import org.savapage.core.concurrent.ReadLockObtainFailedException;
+import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
@@ -149,6 +151,26 @@ public final class SystemStatusPanel extends Panel {
     }
 
     /**
+     * @return {@code true} when application is temporarily unavailable.
+     */
+    private static boolean isTempUnavailable() {
+
+        boolean acquired = false;
+
+        try {
+            ReadWriteLockEnum.DATABASE_READONLY.tryReadLock();
+            acquired = true;
+        } catch (ReadLockObtainFailedException e) {
+            acquired = false;
+        } finally {
+            if (acquired) {
+                ReadWriteLockEnum.DATABASE_READONLY.setReadLock(false);
+            }
+        }
+        return !acquired;
+    }
+
+    /**
      *
      */
     public void populate() {
@@ -168,6 +190,9 @@ public final class SystemStatusPanel extends Panel {
         if (!cm.isAppReadyToUse()) {
             cssColor = MarkupHelper.CSS_TXT_ERROR;
             msg = getLocalizer().getString("sys-status-setup-needed", this);
+        } else if (isTempUnavailable()) {
+            cssColor = MarkupHelper.CSS_TXT_WARN;
+            msg = getLocalizer().getString("sys-status-not-available", this);
         } else if (memberCard.isMembershipDesirable()) {
             cssColor = MarkupHelper.CSS_TXT_WARN;
             msg = MessageFormat.format(getLocalizer()

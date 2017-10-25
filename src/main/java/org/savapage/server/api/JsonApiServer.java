@@ -384,7 +384,9 @@ public final class JsonApiServer extends AbstractPage {
                  */
                 letterheadLock = API_DICTIONARY.getLetterheadLockNeeded(
                         requestId, SpSession.get().isAdmin());
-                dbClaim = API_DICTIONARY.getDbClaimNeeded(requestId);
+
+                dbClaim = API_DICTIONARY.getDbClaimNeeded(requestId,
+                        requestingWebAppType);
 
                 API_DICTIONARY.lock(letterheadLock);
 

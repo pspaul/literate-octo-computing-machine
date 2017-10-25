@@ -527,16 +527,10 @@ public class JsonApiDict {
     }
 
     /**
-     * Checks which DbClaim the request needs.
      *
-     * @param request
-     *            The id string of the request.
-     * @return The database claim needed.
+     * @param lock
+     *            The {@link LetterheadLock}.
      */
-    public DbClaim getDbClaimNeeded(final String request) {
-        return dict.get(request).dbClaim;
-    }
-
     public void lock(final LetterheadLock lock) {
         if (lock == JsonApiDict.LetterheadLock.READ) {
             ReadWriteLockEnum.LETTERHEAD_STORE.setReadLock(true);
@@ -559,6 +553,11 @@ public class JsonApiDict {
         }
     }
 
+    /**
+     *
+     * @param lock
+     *            The {@link LetterheadLock}.
+     */
     public void unlock(final LetterheadLock lock) {
         if (lock == JsonApiDict.LetterheadLock.READ) {
             ReadWriteLockEnum.LETTERHEAD_STORE.setReadLock(false);
@@ -579,6 +578,41 @@ public class JsonApiDict {
     }
 
     /**
+     * Checks which DbClaim the request needs.
+     *
+     * @param request
+     *            The id string of the request.
+     * @param webAppType
+     *            the requesting Web App type.
+     * @return The database claim needed.
+     */
+    public DbClaim getDbClaimNeeded(final String request,
+            final WebAppTypeEnum webAppType) {
+
+        final DbClaim dbClaim;
+
+        switch (webAppType) {
+        case ADMIN:
+            if (request.equals(REQ_LOGIN)) {
+                dbClaim = DbClaim.NONE;
+            } else {
+                dbClaim = null;
+            }
+            break;
+
+        default:
+            dbClaim = null;
+            break;
+        }
+
+        if (dbClaim != null) {
+            return dbClaim;
+        }
+
+        return dict.get(request).dbClaim;
+    }
+
+    /**
      * Checks which Public Letterhead lock is needed for a request.
      * <p>
      * For convenience, we are conservative and assume that request that use
@@ -591,7 +625,7 @@ public class JsonApiDict {
      * @param request
      *            The id string of the request.
      * @param isAdmin
-     *            {@code true} if e requesting is an administrator.
+     *            {@code true} if requesting user is an administrator.
      * @return The {@link LetterheadLock} needed.
      */
     public LetterheadLock getLetterheadLockNeeded(final String request,
@@ -792,7 +826,8 @@ public class JsonApiDict {
                 DbAccess.YES);
         adm(REQ_CONFIG_SET_PROPS, ReqConfigPropsSet.class, DbClaim.READ,
                 DbAccess.YES);
-        put(REQ_CONSTANTS, AuthReq.NONE, DbClaim.READ, DbAccess.YES);
+
+        put(REQ_CONSTANTS, AuthReq.NONE, DbClaim.NONE, DbAccess.YES);
 
         adm(REQ_DB_BACKUP, ReqDbBackup.class, DbClaim.NONE, DbAccess.NO);
 
