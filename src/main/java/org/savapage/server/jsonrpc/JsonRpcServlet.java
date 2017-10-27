@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -212,6 +212,7 @@ public final class JsonRpcServlet extends HttpServlet
          * INVARIANT: (for now) localhost access only.
          */
         final String serverAdress;
+
         try {
             serverAdress = InetUtils.getServerHostAddress();
         } catch (UnknownHostException e1) {
@@ -479,6 +480,11 @@ public final class JsonRpcServlet extends HttpServlet
                 rpcResponse = USER_GROUP_SERVICE.syncUserGroup(batchCommitter,
                         methodParser.getParams(ParamsUniqueName.class)
                                 .getUniqueName());
+                break;
+
+            case SYSTEM_STATUS:
+                rpcResponse = JsonRpcMethodResult.createEnumResult(
+                        ConfigManager.instance().getSystemStatus());
                 break;
 
             default:
