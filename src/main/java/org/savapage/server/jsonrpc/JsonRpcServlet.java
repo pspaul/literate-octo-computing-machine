@@ -24,7 +24,9 @@ package org.savapage.server.jsonrpc;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Currency;
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,11 +37,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
+import org.savapage.core.SpInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.helpers.DaoBatchCommitter;
@@ -56,6 +60,7 @@ import org.savapage.core.json.rpc.JsonRpcMethodParser;
 import org.savapage.core.json.rpc.JsonRpcMethodResult;
 import org.savapage.core.json.rpc.ParamsPaging;
 import org.savapage.core.json.rpc.impl.ParamsAddInternalUser;
+import org.savapage.core.json.rpc.impl.ParamsAuthUserSource;
 import org.savapage.core.json.rpc.impl.ParamsChangeBaseCurrency;
 import org.savapage.core.json.rpc.impl.ParamsPrinterAccessControl;
 import org.savapage.core.json.rpc.impl.ParamsPrinterSnmp;
@@ -73,7 +78,9 @@ import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
 import org.savapage.core.snmp.SnmpConnectException;
+import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.util.AppLogHelper;
+import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.InetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,9 +92,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  * @author Rijk Ravestein
  *
  */
-@WebServlet(name = "JsonRpcServlet", urlPatterns = { "/jsonrpc" })
+@WebServlet(name = "JsonRpcServlet", urlPatterns = {
+        JsonRpcServlet.URL_PATTERN_BASE, JsonRpcServlet.URL_PATTERN_BASE_V1 })
 public final class JsonRpcServlet extends HttpServlet
         implements ServiceEntryPoint {
+
+    public static final String URL_PATTERN_BASE = "/jsonrpc";
+    public static final String URL_PATTERN_BASE_V1 = URL_PATTERN_BASE + "/v1";
+
+    /** */
+    private static final String HEADER_X_AUTH_KEY = "X-Auth-Key";
 
     /**
      *
@@ -96,8 +110,6 @@ public final class JsonRpcServlet extends HttpServlet
             LoggerFactory.getLogger(JsonRpcServlet.class);
 
     private static final long serialVersionUID = 1L;
-
-    private static final String LOOPBACK_ADDRESS = "127.0.0.1";
 
     /**
      * .
@@ -129,25 +141,132 @@ public final class JsonRpcServlet extends HttpServlet
     private static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
 
+    /**
+     * JSON-RPC public methods.
+     */
+    private static final EnumSet<JsonRpcMethodName> PUBLIC_METHODS =
+            EnumSet.of(JsonRpcMethodName.AUTH_USER_SOURCE,
+                    JsonRpcMethodName.SYSTEM_STATUS);
+
+    /** */
+    private static final AtomicLong ACCESS_VIOLATION_COUNTER_PRIVATE =
+            new AtomicLong(0L);
+
+    /** */
+    private static final AtomicLong ACCESS_VIOLATION_COUNTER_PUBLIC =
+            new AtomicLong(0L);
+
+    /** */
+    private static final long ACCESS_VIOLATION_CHECK_MSEC =
+            DateUtil.DURATION_MSEC_HOUR;
+
+    /** */
+    private static long lastAccessViolationsCheck;
+
+    /** */
+    private static Thread threadSignalAccessViolation =
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    lastAccessViolationsCheck = System.currentTimeMillis();
+
+                    try {
+                        while (true) {
+                            Thread.sleep(ACCESS_VIOLATION_CHECK_MSEC);
+                            checkAccessViolations();
+                        }
+                    } catch (InterruptedException e) {
+                        // no code intended
+                    }
+                }
+            });
+
+    /**
+     * Checks and logs access violations.
+     */
+    private static void checkAccessViolations() {
+
+        final long lastAccessViolationsCheckPrv = lastAccessViolationsCheck;
+        lastAccessViolationsCheck = System.currentTimeMillis();
+
+        final long countPrv = ACCESS_VIOLATION_COUNTER_PRIVATE.getAndSet(0);
+        final long countPub = ACCESS_VIOLATION_COUNTER_PUBLIC.getAndSet(0);
+
+        if (countPrv == 0 && countPub == 0) {
+            return;
+        }
+
+        final StringBuilder msg = new StringBuilder();
+
+        msg.append("JSON-RPC denied during last ")
+                .append(DateUtil.formatDuration(lastAccessViolationsCheck
+                        - lastAccessViolationsCheckPrv))
+                .append(" :");
+
+        if (countPrv > 0) {
+            msg.append(" ").append(countPrv).append(" private");
+        }
+
+        if (countPrv > 0 && countPub > 0) {
+            msg.append(",");
+        }
+
+        if (countPub > 0) {
+            msg.append(" ").append(countPub).append(" public");
+        }
+        msg.append(" (see server.log for details).");
+
+        LOGGER.warn(msg.toString());
+        AdminPublisher.instance().publish(PubTopicEnum.SERVER_COMMAND,
+                PubLevelEnum.WARN, msg.toString());
+        AppLogHelper.log(AppLogLevelEnum.WARN, msg.toString());
+
+    }
+
     @Override
     public void init() {
+        threadSignalAccessViolation.start();
+        SpInfo.instance().log("JSON-RPC monitoring started.");
+    }
+
+    @Override
+    public void destroy() {
+        checkAccessViolations();
+        SpInfo.instance().log("Shutting down JSON-RPC monitor ...");
+        super.destroy();
+    }
+
+    /**
+     * @param isPrivateApi
+     *            If {@code true}, this is a private JSON-RPC access violation.
+     */
+    private static void onAccessViolation(final boolean isPrivateApi) {
+        if (isPrivateApi) {
+            ACCESS_VIOLATION_COUNTER_PRIVATE.incrementAndGet();
+        } else {
+            ACCESS_VIOLATION_COUNTER_PUBLIC.incrementAndGet();
+        }
     }
 
     /**
      * Creates a method exception.
      *
      * @param ex
-     *            The {@link Exception}.
+     *            The {@link Throwable}.
+     * @param log
+     *            If {@code true}, log exception as error.
      * @return The {@link JsonRpcMethodError}.
      */
-    private JsonRpcMethodError createMethodException(final Exception ex) {
+    private JsonRpcMethodError createMethodException(final Throwable ex,
+            final boolean log) {
 
-        LOGGER.error(ex.getMessage(), ex);
-
+        if (log) {
+            LOGGER.error(ex.getMessage(), ex);
+        }
         return JsonRpcMethodError.createBasicError(
-                JsonRpcError.Code.INTERNAL_ERROR,
-                "Server exception: " + ex.getClass().getSimpleName(),
-                ex.getMessage());
+                JsonRpcError.Code.INTERNAL_ERROR, ex.getMessage());
     }
 
     @Override
@@ -155,22 +274,11 @@ public final class JsonRpcServlet extends HttpServlet
             final HttpServletResponse httpResponse)
             throws IOException, ServletException {
 
-        AbstractJsonRpcMessage rpcResponse = null;
-
-        try {
-            rpcResponse = handleRequest(httpRequest);
-        } catch (Exception e) {
-            rpcResponse = createMethodException(e);
-        }
-
-        /*
-         * Write the response.
-         */
+        final AbstractJsonRpcMessage rpcResponse = handleRequest(httpRequest);
         final String jsonOut = rpcResponse.stringifyPrettyPrinted();
 
         httpResponse.getOutputStream().print(jsonOut);
         httpResponse.setContentType(JsonRpcConfig.INTERNET_MEDIA_TYPE);
-
     }
 
     /**
@@ -184,6 +292,11 @@ public final class JsonRpcServlet extends HttpServlet
     private static void setDatabaseLock(final JsonRpcMethodName methodName,
             final boolean lock) {
 
+        if (methodName == JsonRpcMethodName.SYSTEM_STATUS
+                || methodName == JsonRpcMethodName.AUTH_USER_SOURCE) {
+            return;
+        }
+
         if (methodName == JsonRpcMethodName.CHANGE_BASE_CURRENCY) {
             ReadWriteLockEnum.DATABASE_READONLY.setWriteLock(lock);
         } else {
@@ -192,25 +305,34 @@ public final class JsonRpcServlet extends HttpServlet
     }
 
     /**
+     * Checks invariants.
      *
      * @param httpRequest
-     * @return
+     * @param methodParser
+     * @param methodName
+     * @return {@code null} when all invariants are satisfied.
      */
-    private AbstractJsonRpcMessage
-            handleRequest(final HttpServletRequest httpRequest) {
+    private JsonRpcMethodError checkInvariants(
+            final HttpServletRequest httpRequest,
+            final JsonRpcMethodParser methodParser,
+            final JsonRpcMethodName methodName) {
+
+        final String secretKey = httpRequest.getHeader(HEADER_X_AUTH_KEY);
+        final boolean isPrivateApi = StringUtils.isBlank(secretKey);
 
         /*
-         * INVARIANT: secure access only.
+         * INVARIANT (ACCESS): SSL only.
          */
         if (!httpRequest.isSecure()) {
+
+            onAccessViolation(isPrivateApi);
+
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INVALID_REQUEST, "Access denied.",
                     "Secure connection required.");
         }
 
-        /*
-         * INVARIANT: (for now) localhost access only.
-         */
+        final String clientAddress = httpRequest.getRemoteAddr();
         final String serverAdress;
 
         try {
@@ -221,57 +343,49 @@ public final class JsonRpcServlet extends HttpServlet
                     "Server IP address could not be retrieved.");
         }
 
-        if (!httpRequest.getRemoteAddr().equals(serverAdress)
-                && !httpRequest.getRemoteAddr().equals(LOOPBACK_ADDRESS)) {
+        /*
+         * INVARIANT (ACCESS): Public API, valid API key and client IP on white
+         * list.
+         */
+        if (!isPrivateApi) {
+
+            final String cidrRanges = ConfigManager.instance()
+                    .getConfigValue(Key.API_JSONRPC_IP_ADDRESSES_ALLOWED);
+
+            if (StringUtils.isBlank(cidrRanges)
+                    || !InetUtils.isIp4AddrInCidrRanges(cidrRanges,
+                            clientAddress)
+                    || !secretKey.equals(ConfigManager.instance()
+                            .getConfigValue(Key.API_JSONRPC_SECRET_KEY))) {
+
+                onAccessViolation(isPrivateApi);
+
+                return JsonRpcMethodError.createBasicError(
+                        JsonRpcError.Code.INVALID_REQUEST, "Access denied.",
+                        "Not authorized");
+            }
+        }
+
+        /*
+         * INVARIANT (ACCESS): Private API, localhost access only.
+         */
+        if (isPrivateApi && !clientAddress.equals(serverAdress)) {
+
+            onAccessViolation(isPrivateApi);
+
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INVALID_REQUEST, "Access denied.",
                     "Client must be localhost.");
         }
 
         /*
-         * Read the request.
-         */
-        String jsonInput;
-        try {
-            jsonInput = IOUtils.toString(httpRequest.getInputStream());
-        } catch (IOException e) {
-            return createMethodException(e);
-        }
-
-        /*
-         * IMPORTANT: do NOT log since it exposes the API Key.
-         */
-        // theLogger.trace(jsonInput);
-
-        /*
-         * Is JSON well-formed?
-         */
-
-        // JsonRpcMethod rpcRequest = null;
-
-        JsonRpcMethodParser methodParser;
-
-        try {
-
-            methodParser = new JsonRpcMethodParser(jsonInput);
-
-        } catch (IOException e) {
-            return JsonRpcMethodError.createBasicError(
-                    JsonRpcError.Code.PARSE_ERROR, "JSON parsing error.",
-                    "JSON syntax is not valid.");
-        }
-
-        /*
-         * Is JSON valid?
+         * INVARIANT: JSON must be valid.
          */
         if (methodParser.getMethod() == null) {
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INVALID_REQUEST, "Invalid request.",
                     "No method specified.");
         }
-
-        final JsonRpcMethodName methodName =
-                JsonRpcMethodName.asEnum(methodParser.getMethod());
 
         if (methodName == null) {
             return JsonRpcMethodError.createBasicError(
@@ -291,29 +405,88 @@ public final class JsonRpcServlet extends HttpServlet
                     "Wrong JSON-RPC version [" + methodParser.getJsonrpc()
                             + "].");
         }
-        //
-        if (!methodParser.hasParams()) {
+        /*
+         * INVARIANT (ACCESS): API key MUST be present.
+         */
+        if (isPrivateApi && !methodParser.hasParams()) {
+            onAccessViolation(isPrivateApi);
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INVALID_REQUEST, "Invalid request.",
                     "Parameters are missing.");
         }
 
         /*
-         * INVARIANT: API key MUST be valid.
+         * INVARIANT (ACCESS): API key MUST be valid.
          */
-        final String apiKey = methodParser.getApiKey();
+        if (isPrivateApi) {
 
-        if (apiKey == null) {
+            final String apiKey = methodParser.getApiKey();
+
+            if (apiKey == null) {
+                onAccessViolation(isPrivateApi);
+                return JsonRpcMethodError.createBasicError(
+                        JsonRpcError.Code.INVALID_REQUEST, "Invalid request.",
+                        "API Key is missing.");
+            }
+
+            if (!JsonRpcConfig.isApiKeyValid(JsonRpcConfig.API_INTERNAL_ID,
+                    apiKey)) {
+                onAccessViolation(isPrivateApi);
+                return JsonRpcMethodError.createBasicError(
+                        JsonRpcError.Code.INVALID_REQUEST, "Invalid request.",
+                        "Invalid API Key.");
+            }
+
+        } else if (!PUBLIC_METHODS.contains(methodName)) {
+            onAccessViolation(isPrivateApi);
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INVALID_REQUEST, "Invalid request.",
-                    "API Key is missing.");
+                    "Method [" + methodParser.getMethod()
+                            + "] is not supported.");
         }
 
-        if (!JsonRpcConfig.isApiKeyValid(JsonRpcConfig.API_INTERNAL_ID,
-                apiKey)) {
+        return null;
+    }
+
+    /**
+     *
+     * @param httpRequest
+     *            The HTTP request.
+     * @return The response message.
+     */
+    private AbstractJsonRpcMessage
+            handleRequest(final HttpServletRequest httpRequest) {
+
+        final String jsonInput;
+
+        try {
+            jsonInput = IOUtils.toString(httpRequest.getInputStream());
+        } catch (IOException e) {
+            return createMethodException(e, false);
+        }
+
+        // IMPORTANT: do NOT log since it exposes the API Key.
+
+        final JsonRpcMethodParser methodParser;
+
+        try {
+            methodParser = new JsonRpcMethodParser(jsonInput);
+        } catch (IOException e) {
             return JsonRpcMethodError.createBasicError(
-                    JsonRpcError.Code.INVALID_REQUEST, "Invalid request.",
-                    "Invalid API Key.");
+                    JsonRpcError.Code.PARSE_ERROR, "JSON parsing error.",
+                    "JSON syntax is not valid.");
+        }
+
+        final JsonRpcMethodName methodName =
+                JsonRpcMethodName.asEnum(methodParser.getMethod());
+
+        final JsonRpcMethodError rpcMethodError =
+                checkInvariants(httpRequest, methodParser, methodName);
+
+        if (rpcMethodError != null) {
+            rpcMethodError.setId(methodParser.getId());
+            logResponse(methodName, rpcMethodError, httpRequest);
+            return rpcMethodError;
         }
 
         /*
@@ -350,6 +523,28 @@ public final class JsonRpcServlet extends HttpServlet
                 rpcResponse = USER_GROUP_SERVICE.addUserGroup(batchCommitter,
                         methodParser.getParams(ParamsUniqueName.class)
                                 .getUniqueName());
+                break;
+
+            case AUTH_USER_SOURCE:
+
+                final IExternalUserAuthenticator userAuth =
+                        ConfigManager.instance().getUserAuthenticator();
+
+                if (userAuth == null) {
+                    rpcResponse = JsonRpcMethodError.createBasicError(
+                            JsonRpcError.Code.INTERNAL_ERROR,
+                            "External user source not configured.");
+                } else {
+                    final ParamsAuthUserSource authParms =
+                            methodParser.getParams(ParamsAuthUserSource.class);
+                    try {
+                        rpcResponse = JsonRpcMethodResult.createBooleanResult(
+                                userAuth.authenticate(authParms.getUserName(),
+                                        authParms.getPassword()) != null);
+                    } catch (Throwable e) {
+                        rpcResponse = createMethodException(e, false);
+                    }
+                }
                 break;
 
             case CHANGE_BASE_CURRENCY:
@@ -513,9 +708,9 @@ public final class JsonRpcServlet extends HttpServlet
                     JsonRpcError.Code.INTERNAL_ERROR, "SNMP connect error.",
                     e.getMessage());
 
-        } catch (IOException e) {
+        } catch (Throwable e) {
 
-            rpcResponse = createMethodException(e);
+            rpcResponse = createMethodException(e, true);
 
         } finally {
 
@@ -535,9 +730,7 @@ public final class JsonRpcServlet extends HttpServlet
         }
 
         rpcResponse.setId(methodParser.getId());
-
-        logResponse(methodName, rpcResponse);
-
+        logResponse(methodName, rpcResponse, httpRequest);
         return rpcResponse;
     }
 
@@ -549,7 +742,8 @@ public final class JsonRpcServlet extends HttpServlet
      *            The {@link AbstractJsonRpcMessage}.
      */
     private static void logResponse(final JsonRpcMethodName methodName,
-            final AbstractJsonRpcMessage rpcResponse) {
+            final AbstractJsonRpcMessage rpcResponse,
+            final HttpServletRequest httpRequest) {
 
         final PubLevelEnum level;
         final String msg;
@@ -561,7 +755,10 @@ public final class JsonRpcServlet extends HttpServlet
 
             if (methodRsp.isError()) {
                 level = PubLevelEnum.ERROR;
-                msg = methodRsp.asError().getError().getMessage();
+
+                final JsonRpcMethodError methodError = methodRsp.asError();
+                msg = methodError.getError().getMessage();
+
             } else {
                 level = PubLevelEnum.INFO;
                 msg = null;
@@ -579,34 +776,43 @@ public final class JsonRpcServlet extends HttpServlet
             level = PubLevelEnum.INFO;
         }
 
-        final StringBuilder msgTxt =
-                new StringBuilder().append("Server Command \"")
-                        .append(methodName.getMethodName()).append("\"");
+        final StringBuilder msgTxt = new StringBuilder();
 
-        if (StringUtils.isNotBlank(msg)) {
-            msgTxt.append(": ").append(msg);
+        if (StringUtils.isBlank(httpRequest.getHeader(HEADER_X_AUTH_KEY))) {
+            msgTxt.append("Server Command");
+        } else {
+            msgTxt.append("JSON-RPC");
         }
 
-        AdminPublisher.instance().publish(PubTopicEnum.SERVER_COMMAND, level,
-                msgTxt.toString());
+        if (methodName != null) {
+            msgTxt.append(" \"").append(methodName.getMethodName())
+                    .append("\"");
+        }
 
-        final AppLogLevelEnum logLevel;
+        msgTxt.append(" from ").append(httpRequest.getRemoteAddr());
+
+        if (StringUtils.isNotBlank(msg)) {
+            msgTxt.append(" : ").append(msg);
+        }
+
+        final String message = msgTxt.toString();
+
+        AdminPublisher.instance().publish(PubTopicEnum.SERVER_COMMAND, level,
+                message);
 
         switch (level) {
         case ERROR:
-            logLevel = AppLogLevelEnum.ERROR;
+            LOGGER.error(message);
             break;
         case WARN:
-            logLevel = AppLogLevelEnum.WARN;
+            LOGGER.warn(message);
             break;
         case INFO:
             // no break intended
         default:
-            logLevel = AppLogLevelEnum.INFO;
+            LOGGER.info(message);
             break;
         }
-
-        AppLogHelper.log(logLevel, msgTxt.toString());
     }
 
     /**
