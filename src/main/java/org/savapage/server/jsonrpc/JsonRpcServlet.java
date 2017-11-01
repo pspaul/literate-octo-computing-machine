@@ -58,6 +58,7 @@ import org.savapage.core.json.rpc.JsonRpcMethodError;
 import org.savapage.core.json.rpc.JsonRpcMethodName;
 import org.savapage.core.json.rpc.JsonRpcMethodParser;
 import org.savapage.core.json.rpc.JsonRpcMethodResult;
+import org.savapage.core.json.rpc.JsonRpcParserException;
 import org.savapage.core.json.rpc.ParamsPaging;
 import org.savapage.core.json.rpc.impl.ParamsAddInternalUser;
 import org.savapage.core.json.rpc.impl.ParamsAuthUserSource;
@@ -696,7 +697,7 @@ public final class JsonRpcServlet extends HttpServlet
                 batchCommitter.commit();
             }
 
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException | JsonRpcParserException e) {
 
             rpcResponse = JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.PARSE_ERROR, "JSON parsing error.",
