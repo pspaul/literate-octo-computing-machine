@@ -137,7 +137,7 @@ public final class WebServer {
              * modules are not prepared for SSL yet.
              */
             if (request.getPathInfo()
-                    .startsWith(SpXmlRpcServlet.SERVLET_URL_PATTERN)) {
+                    .startsWith(SpXmlRpcServlet.URL_PATTERN_BASE)) {
                 return;
             }
 

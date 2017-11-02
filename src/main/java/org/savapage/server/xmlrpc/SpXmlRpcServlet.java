@@ -47,7 +47,9 @@ import org.apache.xmlrpc.webserver.XmlRpcServlet;
  *
  */
 @WebServlet(name = "XmlRpcServlet",
-        urlPatterns = { SpXmlRpcServlet.SERVLET_URL_PATTERN }, initParams = {
+        urlPatterns = { SpXmlRpcServlet.URL_PATTERN_BASE,
+                SpXmlRpcServlet.URL_PATTERN_BASE_V1 },
+        initParams = {
                 @WebInitParam(name = "enabledForExtensions", value = "true"), })
 public final class SpXmlRpcServlet extends XmlRpcServlet {
 
@@ -56,7 +58,8 @@ public final class SpXmlRpcServlet extends XmlRpcServlet {
     /**
      * .
      */
-    public static final String SERVLET_URL_PATTERN = "/xmlrpc";
+    public static final String URL_PATTERN_BASE = "/xmlrpc";
+    public static final String URL_PATTERN_BASE_V1 = URL_PATTERN_BASE + "/v1";
 
     private static final String HANDLER_KEY_ADMIN = "admin";
     private static final String HANDLER_KEY_CLIENT = "client";
