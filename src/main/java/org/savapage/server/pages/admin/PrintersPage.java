@@ -656,22 +656,13 @@ public final class PrintersPage extends AbstractAdminListPage {
 
         /*
          * Check for new/changed printers.
-         *
-         * We need a transaction because of the lazy creation of Printer
-         * objects.
          */
-        ServiceContext.getDaoContext().beginTransaction();
-
         try {
-
             PROXY_PRINT_SERVICE.lazyInitPrinterCache();
             handlePage();
-
         } catch (IppConnectException e) {
-
             setResponsePage(new MessageContent(AppLogLevelEnum.WARN,
                     localized("ipp-connect-error", e.getMessage())));
-
         } catch (IppSyntaxException e) {
             throw new SpException(e);
         }
