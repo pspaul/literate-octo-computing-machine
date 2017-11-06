@@ -568,12 +568,19 @@ public final class JsonRpcServlet extends HttpServlet
 
             case DELETE_USER:
                 rpcResponse = USER_SERVICE.deleteUserAutoCorrect(methodParser
-                        .getParams(ParamsUniqueName.class).getUniqueName());
+                        .getParams(ParamsUniqueName.class).getUniqueName(),
+                        false);
                 break;
 
             case DELETE_USER_GROUP:
                 rpcResponse = USER_GROUP_SERVICE.deleteUserGroup(methodParser
                         .getParams(ParamsUniqueName.class).getUniqueName());
+                break;
+
+            case ERASE_USER:
+                rpcResponse = USER_SERVICE.deleteUserAutoCorrect(methodParser
+                        .getParams(ParamsUniqueName.class).getUniqueName(),
+                        true);
                 break;
 
             case LIST_USERS:

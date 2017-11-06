@@ -27,10 +27,12 @@
         </wicket:enclosure>
 		<span wicket:id="header" />
 	</h3>
-	<div class="sp-txt-wrap">
-		<wicket:message key="prompt-user" />
-		: <strong wicket:id="user-name" />
-	</div>
+	<wicket:enclosure child="user-name">
+		<div class="sp-txt-wrap">
+			<wicket:message key="prompt-user" />
+			: <strong wicket:id="user-name" />
+		</div>
+	</wicket:enclosure>
 	<div class="sp-txt-wrap">
 		<wicket:enclosure child="title">
 			<span wicket:id="title" />

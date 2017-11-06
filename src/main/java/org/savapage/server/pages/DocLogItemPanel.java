@@ -49,6 +49,7 @@ import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
+import org.savapage.core.jpa.User;
 import org.savapage.core.print.proxy.TicketJobSheetDto;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.JobTicketService;
@@ -133,17 +134,18 @@ public class DocLogItemPanel extends Panel {
 
         final Map<String, String> mapVisible = new HashMap<>();
 
-        for (final String attr : new String[] { "title", "log-comment",
-                "printin-pie", "pdfout-pie", "printout-pie", "printoutMode",
-                "signature", "destination", "letterhead", "author", "subject",
-                "keywords", "drm", "userpw", "ownerpw", "duplex", "simplex",
-                "color", "grayscale", "papersize", "media-source", "output-bin",
-                "jog-offset", "cost-currency", "cost", "job-id", "job-state",
-                "job-completed-date", "print-in-denied-reason-hyphen",
-                "print-in-denied-reason", "collate", "ecoPrint",
-                "removeGraphics", "punch", "staple", "fold", "booklet",
-                "jobticket-media", "jobticket-copy", "jobticket-finishing-ext",
-                "jobticket-custom-ext", "landscape" }) {
+        for (final String attr : new String[] { "user-name", "title",
+                "log-comment", "printin-pie", "pdfout-pie", "printout-pie",
+                "printoutMode", "signature", "destination", "letterhead",
+                "author", "subject", "keywords", "drm", "userpw", "ownerpw",
+                "duplex", "simplex", "color", "grayscale", "papersize",
+                "media-source", "output-bin", "jog-offset", "cost-currency",
+                "cost", "job-id", "job-state", "job-completed-date",
+                "print-in-denied-reason-hyphen", "print-in-denied-reason",
+                "collate", "ecoPrint", "removeGraphics", "punch", "staple",
+                "fold", "booklet", "jobticket-media", "jobticket-copy",
+                "jobticket-finishing-ext", "jobticket-custom-ext",
+                "landscape" }) {
             mapVisible.put(attr, null);
         }
 
@@ -537,7 +539,10 @@ public class DocLogItemPanel extends Panel {
         add(labelWlk);
 
         //
-        add(new Label("user-name", obj.getUserId()));
+        if (!obj.getUserId().equals(User.ERASED_USER_ID)) {
+            mapVisible.put("user-name", obj.getUserId());
+        }
+
         //
         add(new Label("dateCreated",
                 localizedShortDateTime(obj.getCreatedDate())));
