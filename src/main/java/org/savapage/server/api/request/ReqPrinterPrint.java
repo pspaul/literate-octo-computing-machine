@@ -826,7 +826,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                         printReq.getMediaSourceOption()));
 
         if (mediaSourceCost == null || mediaSourceCost.getMedia() == null) {
-            setApiResult(ApiResultCodeEnum.ERROR, "msg-copyjob-media-missing");
+            setApiResult(ApiResultCodeEnum.ERROR,
+                    "msg-copyjob-media-source-missing");
             return false;
         }
 
