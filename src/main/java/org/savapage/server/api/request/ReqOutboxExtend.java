@@ -24,7 +24,7 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 
 import org.savapage.core.jpa.User;
-import org.savapage.server.SpSession;
+import org.savapage.server.session.SpSession;
 
 /**
  *

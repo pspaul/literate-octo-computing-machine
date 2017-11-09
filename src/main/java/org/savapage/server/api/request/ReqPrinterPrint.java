@@ -77,8 +77,8 @@ import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
 import org.savapage.ext.papercut.PaperCutServerProxy;
 import org.savapage.ext.papercut.job.PaperCutPrintMonitorJob;
-import org.savapage.server.SpSession;
 import org.savapage.server.api.JsonApiDict;
+import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

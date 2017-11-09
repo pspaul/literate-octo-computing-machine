@@ -58,9 +58,9 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketSupplierData;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
-import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**

@@ -39,6 +39,8 @@ import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketExecParms;
+import org.savapage.server.session.JobTicketSession;
+import org.savapage.server.session.SpSession;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -299,6 +301,10 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
                     dto = JOBTICKET_SERVICE.printTicket(parms);
                 }
 
+                if (dtoReq.getPrinterId() != null) {
+                    saveToSession(dtoReq);
+                }
+
             } else {
                 dto = JOBTICKET_SERVICE.settleTicket(requestingUser, printer,
                         dtoReq.getJobFileName());
@@ -325,6 +331,44 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         } catch (IppConnectException e) {
             this.setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
         }
+    }
+
+    /**
+     * Saves printer options to server session.
+     *
+     * @param dto
+     *            The request.
+     */
+    private void saveToSession(final DtoReq dto) {
+
+        JobTicketSession session = SpSession.get().getJobTicketSession();
+
+        if (session == null) {
+            session = new JobTicketSession();
+            SpSession.get().setJobTicketSession(session);
+        }
+
+        session.setJogOffsetOption(dto.getJogOffset());
+
+        Map<Long, Map<JobTicketSession.PrinterOpt, String>> printerOpts =
+                session.getRedirectPrinterOptions();
+
+        if (printerOpts == null) {
+            printerOpts = new HashMap<>();
+        }
+
+        final Map<JobTicketSession.PrinterOpt, String> opts = new HashMap<>();
+
+        opts.put(JobTicketSession.PrinterOpt.MEDIA_SOURCE,
+                dto.getMediaSource());
+        opts.put(JobTicketSession.PrinterOpt.MEDIA_SOURCE_SHEET,
+                dto.getMediaSourceJobSheet());
+        opts.put(JobTicketSession.PrinterOpt.OUTPUT_BIN, dto.getOutputBin());
+
+        //
+        printerOpts.put(dto.getPrinterId(), opts);
+
+        session.setRedirectPrinterOptions(printerOpts);
     }
 
     /**

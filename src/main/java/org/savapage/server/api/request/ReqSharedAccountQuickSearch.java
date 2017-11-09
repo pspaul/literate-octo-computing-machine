@@ -32,7 +32,7 @@ import org.savapage.core.dto.QuickSearchItemDto;
 import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.server.SpSession;
+import org.savapage.server.session.SpSession;
 
 /**
  * Shared Account Quicksearch.

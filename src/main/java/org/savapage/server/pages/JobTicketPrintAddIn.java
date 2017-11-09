@@ -26,6 +26,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +38,7 @@ import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.RedirectPrinterDto;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
@@ -49,6 +51,8 @@ import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.session.JobTicketSession;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -187,6 +191,81 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
                     "&nbsp;");
         }
 
+        /**
+         * Gets the last {@link JobTicketSession.PrinterOpt} choice from server
+         * session.
+         *
+         * @param printerId
+         *            The printer primary database key.
+         * @param printerOpt
+         *            The {@link JobTicketSession.PrinterOpt}.
+         * @param choices
+         *            The list of options.
+         * @param dfltChoice
+         *            The default choice when not found in session.
+         * @return The last choice.
+         */
+        private JsonProxyPrinterOptChoice getLastIppChoice(final Long printerId,
+                final JobTicketSession.PrinterOpt printerOpt,
+                final ArrayList<JsonProxyPrinterOptChoice> choices,
+                final JsonProxyPrinterOptChoice dfltChoice) {
+
+            final JobTicketSession session =
+                    SpSession.get().getJobTicketSession();
+
+            if (session == null) {
+                return dfltChoice;
+            }
+
+            final Map<Long, Map<JobTicketSession.PrinterOpt, String>> opts =
+                    session.getRedirectPrinterOptions();
+
+            if (opts != null && opts.containsKey(printerId)) {
+
+                final String lastChoice = opts.get(printerId).get(printerOpt);
+
+                if (lastChoice == null) {
+                    return dfltChoice;
+                }
+
+                for (final JsonProxyPrinterOptChoice choice : choices) {
+                    if (choice.getChoice().equals(lastChoice)) {
+                        return choice;
+                    }
+                }
+            }
+            return dfltChoice;
+        }
+
+        /**
+         * Gets the last
+         * {@link IppDictJobTemplateAttr#ORG_SAVAPAGE_ATTR_FINISHINGS_JOG_OFFSET}
+         * choice from server session.
+         *
+         * @param choices
+         * @param dfltChoice
+         *            The default choice when not found in session.
+         * @return The last choice.
+         */
+        private JsonProxyPrinterOptChoice getLastJogOffsetChoice(
+                final ArrayList<JsonProxyPrinterOptChoice> choices,
+                final JsonProxyPrinterOptChoice dfltChoice) {
+
+            final JobTicketSession session =
+                    SpSession.get().getJobTicketSession();
+
+            if (session != null
+                    && StringUtils.isNotBlank(session.getJogOffsetOption())) {
+                for (final JsonProxyPrinterOptChoice choice : choices) {
+                    if (choice.getChoice()
+                            .equals(session.getJogOffsetOption())) {
+                        return choice;
+                    }
+                }
+            }
+            return dfltChoice;
+        }
+
         @Override
         protected void populateItem(final ListItem<RedirectPrinterDto> item) {
 
@@ -265,13 +344,19 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
                         WICKET_ID_MEDIA_SOURCE_JOB_SHEET,
                         filterMediaSourcesForUser(printerAttrLookup,
                                 printer.getMediaSourceOpt().getChoices()),
-                        printer.getMediaSourceJobSheetOptChoice()));
+                        this.getLastIppChoice(printer.getId(),
+                                JobTicketSession.PrinterOpt.MEDIA_SOURCE_SHEET,
+                                printer.getMediaSourceOpt().getChoices(),
+                                printer.getMediaSourceJobSheetOptChoice())));
+
             }
-            //
             item.add(new PrinterOptListView(WICKET_ID_MEDIA_SOURCE,
                     filterMediaSourcesForUser(printerAttrLookup,
                             printer.getMediaSourceOpt().getChoices()),
-                    printer.getMediaSourceOptChoice()));
+                    this.getLastIppChoice(printer.getId(),
+                            JobTicketSession.PrinterOpt.MEDIA_SOURCE,
+                            printer.getMediaSourceOpt().getChoices(),
+                            printer.getMediaSourceJobSheetOptChoice())));
 
             //
             final JsonProxyPrinterOpt outputBinOpt = printer.getOutputBinOpt();
@@ -282,7 +367,10 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
             } else {
                 item.add(new PrinterOptListView(WICKET_ID_OUTPUT_BIN,
                         outputBinOpt.getChoices(),
-                        printer.getOutputBinOptChoice()));
+                        this.getLastIppChoice(printer.getId(),
+                                JobTicketSession.PrinterOpt.OUTPUT_BIN,
+                                outputBinOpt.getChoices(),
+                                printer.getOutputBinOptChoice())));
 
                 final JsonProxyPrinterOpt jogOffsetOpt =
                         printer.getJogOffsetOpt();
@@ -292,7 +380,8 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
                 } else {
                     item.add(new PrinterOptListView(WICKET_ID_JOG_OFFSET,
                             jogOffsetOpt.getChoices(),
-                            printer.getJogOffsetOptChoice()));
+                            getLastJogOffsetChoice(jogOffsetOpt.getChoices(),
+                                    printer.getJogOffsetOptChoice())));
                 }
             }
         }

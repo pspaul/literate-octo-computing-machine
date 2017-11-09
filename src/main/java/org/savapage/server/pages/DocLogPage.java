@@ -34,7 +34,7 @@ import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.server.SpSession;
+import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

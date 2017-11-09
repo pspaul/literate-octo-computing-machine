@@ -25,6 +25,7 @@ import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -25,8 +25,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *

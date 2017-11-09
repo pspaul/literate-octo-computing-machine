@@ -72,6 +72,7 @@ import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.admin.AbstractAdminPage;
 import org.savapage.server.pages.user.AbstractUserPage;
 import org.savapage.server.raw.RawPrintServer;
+import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppAdmin;
 import org.savapage.server.webapp.WebAppJobTickets;
 import org.savapage.server.webapp.WebAppPos;

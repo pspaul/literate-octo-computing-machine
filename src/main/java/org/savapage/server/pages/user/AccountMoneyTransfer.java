@@ -36,11 +36,11 @@ import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.ext.payment.PaymentMethodInfo;
-import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
+import org.savapage.server.session.SpSession;
 
 /**
  *

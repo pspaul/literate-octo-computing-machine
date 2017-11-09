@@ -43,11 +43,11 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.ext.oauth.OAuthProviderEnum;
-import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.ext.ServerPluginHelper;
 import org.savapage.server.ext.ServerPluginManager;
+import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**

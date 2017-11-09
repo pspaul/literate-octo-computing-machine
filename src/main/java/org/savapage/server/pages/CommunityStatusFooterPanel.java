@@ -24,7 +24,7 @@ package org.savapage.server.pages;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.community.MemberCard;
-import org.savapage.server.SpSession;
+import org.savapage.server.session.SpSession;
 
 /**
  *

@@ -48,11 +48,11 @@ import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.payment.bitcoin.BitcoinGateway;
-import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
+import org.savapage.server.session.SpSession;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;

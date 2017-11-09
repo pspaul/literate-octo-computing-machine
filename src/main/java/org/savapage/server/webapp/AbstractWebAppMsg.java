@@ -29,11 +29,11 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
-import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *

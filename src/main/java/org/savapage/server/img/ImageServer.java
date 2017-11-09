@@ -32,7 +32,7 @@ import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.inbox.OutputProducer;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
-import org.savapage.server.SpSession;
+import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

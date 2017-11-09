@@ -31,7 +31,7 @@ import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.server.SpSession;
+import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**

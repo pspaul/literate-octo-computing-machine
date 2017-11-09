@@ -55,8 +55,8 @@ import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.papercut.services.PaperCutService;
-import org.savapage.server.SpSession;
 import org.savapage.server.api.UserAgentHelper;
+import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**

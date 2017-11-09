@@ -33,10 +33,10 @@ import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
-import org.savapage.server.SpSession;
 import org.savapage.server.ipp.IppPrintServerUrlParms;
 import org.savapage.server.pages.AbstractAuthPage;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**

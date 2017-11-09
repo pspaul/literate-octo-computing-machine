@@ -44,9 +44,9 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.NumberUtil;
-import org.savapage.server.SpSession;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *

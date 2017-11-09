@@ -28,8 +28,8 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
-import org.savapage.server.SpSession;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *

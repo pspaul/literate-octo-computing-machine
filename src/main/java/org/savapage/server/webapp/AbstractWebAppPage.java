@@ -41,11 +41,11 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.server.CustomWebServlet;
-import org.savapage.server.SpSession;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.pages.AbstractPage;
+import org.savapage.server.session.SpSession;
 
 /**
  *

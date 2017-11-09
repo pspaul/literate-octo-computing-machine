@@ -30,9 +30,9 @@ import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.server.SpSession;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.WebAppUserAuthManager;
+import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 import com.fasterxml.jackson.annotation.JsonInclude;

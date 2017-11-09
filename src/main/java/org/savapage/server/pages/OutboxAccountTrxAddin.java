@@ -29,7 +29,7 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.server.SpSession;
+import org.savapage.server.session.SpSession;
 
 /**
  *

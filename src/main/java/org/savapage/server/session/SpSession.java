@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server;
+package org.savapage.server.session;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -84,6 +84,11 @@ public final class SpSession extends WebSession {
     *
     */
     private long lastValidateTime;
+
+    /**
+     *
+     */
+    private JobTicketSession jobTicketSession;
 
     /**
      *
@@ -273,6 +278,14 @@ public final class SpSession extends WebSession {
             webAppType = WebAppTypeEnum.valueOf(value);
         }
         return webAppType;
+    }
+
+    public JobTicketSession getJobTicketSession() {
+        return jobTicketSession;
+    }
+
+    public void setJobTicketSession(JobTicketSession jobTicketSession) {
+        this.jobTicketSession = jobTicketSession;
     }
 
 }

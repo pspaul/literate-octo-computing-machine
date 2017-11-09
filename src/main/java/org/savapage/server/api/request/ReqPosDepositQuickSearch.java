@@ -42,7 +42,7 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.QuickSearchDate;
-import org.savapage.server.SpSession;
+import org.savapage.server.session.SpSession;
 
 /**
  * POS Deposit Quicksearch.

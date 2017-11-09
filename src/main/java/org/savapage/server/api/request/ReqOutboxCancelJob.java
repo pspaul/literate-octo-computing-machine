@@ -26,7 +26,7 @@ import java.io.IOException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
-import org.savapage.server.SpSession;
+import org.savapage.server.session.SpSession;
 
 /**
  *
