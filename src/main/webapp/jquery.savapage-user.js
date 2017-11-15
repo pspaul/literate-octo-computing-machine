@@ -3798,7 +3798,7 @@
                 _view.visible($('#delegated-print-copies-div'), delegatedPrint);
                 _view.visible($('#sp-print-shared-account-div'), !delegatedPrint);
 
-                if (!delegatedPrint && copies > 1) {
+                if (copies > 1) {
 
                     selCollate.show();
 
