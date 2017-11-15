@@ -3918,7 +3918,7 @@
                     _setVisibility();
                 });
 
-                $('#number-print-copies').change(function() {
+                $('#number-print-copies').on("input", function() {
                     _setVisibility();
                 });
 
