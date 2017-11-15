@@ -180,14 +180,16 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 
 
 			<ul data-role="listview" data-inset="true">
-				<li>
-					<div class="sp-txt-info sp-txt-wrap"
-						id="file-upload-txt-font-family" />
-					<select tabindex="-1" id="file-upload-fontfamily"
-						data-native-menu="false" data-mini="true">
-						<wicket:panel wicket:id="file-upload-fontfamily-options" />
-					</select>
-				</li>
+				<wicket:enclosure child="file-upload-fontfamily-options">
+					<li>
+						<div class="sp-txt-info sp-txt-wrap"
+							id="file-upload-txt-font-family" />
+						<select tabindex="-1" id="file-upload-fontfamily"
+							data-native-menu="false" data-mini="true">
+							<wicket:panel wicket:id="file-upload-fontfamily-options" />
+						</select>
+					</li>
+				</wicket:enclosure>
 				<li>
 					<form id="sp-webprint-upload-form" enctype="multipart/form-data">
 

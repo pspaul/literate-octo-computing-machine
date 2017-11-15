@@ -45,6 +45,7 @@ import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.crypto.OneTimeAuthToken;
+import org.savapage.core.doc.DocContentTypeEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.services.ServiceContext;
@@ -76,6 +77,9 @@ public final class WebAppUser extends AbstractWebAppPage {
 
     private final static String PAGE_PARM_AUTH_TOKEN = "auth_token";
     private final static String PAGE_PARM_AUTH_TOKEN_USERID = "auth_user";
+
+    private final static String WICKET_ID_FILE_UPLOAD_FONTFAMILY_OPT =
+            "file-upload-fontfamily-options";
 
     /**
      *
@@ -532,10 +536,18 @@ public final class WebAppUser extends AbstractWebAppPage {
         add(fileUploadField);
 
         //
-        final FontOptionsPanel fontOptionsPanel =
-                new FontOptionsPanel("file-upload-fontfamily-options");
-        fontOptionsPanel.populate(ConfigManager
-                .getConfigFontFamily(Key.REPORTS_PDF_INTERNAL_FONT_FAMILY));
-        add(fontOptionsPanel);
+        final Set<DocContentTypeEnum> excludeTypes =
+                WebPrintHelper.getExcludeTypes();
+
+        if (excludeTypes.contains(DocContentTypeEnum.TXT)) {
+            final MarkupHelper helper = new MarkupHelper(this);
+            helper.discloseLabel(WICKET_ID_FILE_UPLOAD_FONTFAMILY_OPT);
+        } else {
+            final FontOptionsPanel fontOptionsPanel =
+                    new FontOptionsPanel(WICKET_ID_FILE_UPLOAD_FONTFAMILY_OPT);
+            fontOptionsPanel.populate(ConfigManager
+                    .getConfigFontFamily(Key.REPORTS_PDF_INTERNAL_FONT_FAMILY));
+            add(fontOptionsPanel);
+        }
     }
 }
