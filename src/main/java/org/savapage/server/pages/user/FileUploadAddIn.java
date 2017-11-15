@@ -23,14 +23,18 @@ package org.savapage.server.pages.user;
 
 import java.util.AbstractMap;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.doc.DocContent;
+import org.savapage.core.doc.DocContentTypeEnum;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.webprint.WebPrintHelper;
 
 /**
  * A page showing the HOLD proxy print jobs for a user.
@@ -57,11 +61,13 @@ public class FileUploadAddIn extends AbstractUserPage {
 
         super(parameters);
 
+        final Set<DocContentTypeEnum> excludeTypes =
+                WebPrintHelper.getExcludeTypes();
         /*
          * Supported types.
          */
         final List<AbstractMap.SimpleEntry<String, Boolean>> list =
-                DocContent.getSupportedDocsInfo();
+                DocContent.getSupportedDocsInfo(excludeTypes);
 
         final StringBuilder supported = new StringBuilder();
 
@@ -101,9 +107,18 @@ public class FileUploadAddIn extends AbstractUserPage {
                 disclaimer, hasNonOpen.booleanValue()));
 
         //
-        add(new Label("file-upload-types-graphics",
-                DocContent.getSupportedGraphicsInfo()));
+        final String graphicsInfo;
+        if (ConfigManager.instance()
+                .isConfigValue(Key.WEB_PRINT_GRAPHICS_ENABLE)) {
+            graphicsInfo = DocContent.getSupportedGraphicsInfo(excludeTypes);
+        } else {
+            graphicsInfo = null;
+        }
+        final MarkupHelper helper = new MarkupHelper(this);
+        helper.encloseLabel("file-upload-types-graphics", graphicsInfo,
+                StringUtils.isNotEmpty(graphicsInfo));
 
+        //
         final Long maxUploadMb = ConfigManager.instance().getConfigLong(
                 Key.WEB_PRINT_MAX_FILE_MB,
                 IConfigProp.WEBPRINT_MAX_FILE_MB_V_DEFAULT);

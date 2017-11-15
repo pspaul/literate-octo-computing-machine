@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +========================================================================+ 
@@ -19,21 +20,25 @@
 	</h3>
 	<div class="sp-txt-info sp-txt-wrap" wicket:id="file-upload-types-docs" />
 	<wicket:enclosure child="file-upload-types-docs-warning">
-		<br/><small class="sp-txt-info sp-txt-wrap"
+		<br />
+		<small class="sp-txt-info sp-txt-wrap"
 			wicket:id="file-upload-types-docs-warning" />
 	</wicket:enclosure>
 
 </li>
-<li>
-	<h3>
-		<wicket:message key="file-upload-supported-graphics" />
-	</h3>
-	<div class="sp-txt-info sp-txt-wrap"
-		wicket:id="file-upload-types-graphics" />
-</li>
+<wicket:enclosure child="file-upload-types-graphics">
+	<li>
+		<h3>
+			<wicket:message key="file-upload-supported-graphics" />
+		</h3>
+		<div class="sp-txt-info sp-txt-wrap"
+			wicket:id="file-upload-types-graphics" />
+	</li>
+</wicket:enclosure>
 <li>
 	<h3>
 		<wicket:message key="file-upload-max-size" />
 	</h3>
 	<div class="sp-txt-info" wicket:id="file-upload-max-size" />
 </li>
+</html>

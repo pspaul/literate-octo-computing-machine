@@ -23,8 +23,11 @@ package org.savapage.server.webprint;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.util.lang.Bytes;
 import org.savapage.core.UnavailableException;
@@ -118,19 +121,63 @@ public final class WebPrintHelper {
     }
 
     /**
+     * Gets the {@link DocContentTypeEnum} objects that are excluded from Web
+     * Print.
+     *
+     * @return The {@link DocContentTypeEnum} objects (can be empty).
+     */
+    public static Set<DocContentTypeEnum> getExcludeTypes() {
+
+        final Set<DocContentTypeEnum> excludeTypes = new HashSet<>();
+
+        for (final String ext : ConfigManager.instance()
+                .getConfigSet(Key.WEB_PRINT_FILE_EXT_EXCLUDE)) {
+
+            final DocContentTypeEnum contentType = DocContent
+                    .getContentTypeFromExt(StringUtils.removeStart(ext, "."));
+
+            if (contentType == null) {
+                LOGGER.warn(String.format(
+                        "Config item [%s]: [%s] extension is not supported.",
+                        ConfigManager.instance().getConfigKey(
+                                Key.WEB_PRINT_FILE_EXT_EXCLUDE),
+                        ext));
+            } else {
+                excludeTypes.add(contentType);
+            }
+        }
+        return excludeTypes;
+    }
+
+    /**
      *
      * @param dotPfx
-     *            if {@code true} a '.' is prepended to each extension.
+     *            If {@code true}, a '.' is prepended to each extension.
      * @return The list of supported Web Print file extensions.
      */
     public static List<String>
             getSupportedFileExtensions(final boolean dotPfx) {
 
+        final boolean includeImages = ConfigManager.instance()
+                .isConfigValue(Key.WEB_PRINT_GRAPHICS_ENABLE);
+
         final List<String> list = new ArrayList<>();
+
+        final Set<DocContentTypeEnum> excludeTypes = getExcludeTypes();
 
         for (final DocContentTypeEnum contentType : DocContentTypeEnum
                 .values()) {
+
+            if (excludeTypes.contains(contentType)) {
+                continue;
+            }
+
+            if (!includeImages && DocContent.isImage(contentType)) {
+                continue;
+            }
+
             if (DocContent.isSupported(contentType)) {
+
                 for (final String ext : DocContent
                         .getFileExtensions(contentType)) {
                     if (ext == null) {

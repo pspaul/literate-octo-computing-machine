@@ -42,6 +42,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.SOfficeConfigProps;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
+import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,6 +210,9 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 } else if (configKey == Key.DOC_CONVERT_LIBRE_OFFICE_ENABLED
                         || configKey == Key.SOFFICE_ENABLE) {
                     isSOfficeUpdate = true;
+                } else if (configKey == Key.WEB_PRINT_FILE_EXT_EXCLUDE) {
+                    // Provoke errors/warnings in server.log.
+                    WebPrintHelper.getExcludeTypes();
                 }
 
             } else {
