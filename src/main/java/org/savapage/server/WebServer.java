@@ -239,8 +239,8 @@ public final class WebServer {
     private static final String PROP_KEY_SSL_KEY_PW = "server.ssl.key-password";
 
     /** */
-    private static final String PROP_KEY_WEBAPP_CUSTOM_I18N_ENABLE =
-            "webapp.custom.i18n.enable";
+    private static final String PROP_KEY_WEBAPP_CUSTOM_I18N =
+            "webapp.custom.i18n";
 
     /**
      * .
@@ -491,8 +491,8 @@ public final class WebServer {
 
         //
         webAppCustomI18n = BooleanUtils.toBooleanDefaultIfNull(
-                BooleanUtils.toBooleanObject(propsServer
-                        .getProperty(PROP_KEY_WEBAPP_CUSTOM_I18N_ENABLE)),
+                BooleanUtils.toBooleanObject(
+                        propsServer.getProperty(PROP_KEY_WEBAPP_CUSTOM_I18N)),
                 false);
         //
         final QueuedThreadPool threadPool = new QueuedThreadPool();
