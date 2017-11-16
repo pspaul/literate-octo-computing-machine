@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -238,6 +238,10 @@ public final class WebServer {
      */
     private static final String PROP_KEY_SSL_KEY_PW = "server.ssl.key-password";
 
+    /** */
+    private static final String PROP_KEY_WEBAPP_CUSTOM_I18N_ENABLE =
+            "webapp.custom.i18n.enable";
+
     /**
      * .
      */
@@ -258,10 +262,21 @@ public final class WebServer {
      */
     private static SslCertInfo sslCertInfo;
 
+    /** */
+    private static boolean webAppCustomI18n;
+
     /**
     *
     */
     private WebServer() {
+    }
+
+    /**
+     *
+     * @return {@code true} when custom Web App i18n is to be applied.
+     */
+    public static boolean isWebAppCustomI18n() {
+        return webAppCustomI18n;
     }
 
     /**
@@ -473,9 +488,13 @@ public final class WebServer {
                 BooleanUtils.toBooleanObject(
                         propsServer.getProperty(PROP_KEY_HTML_REDIRECT_SSL)),
                 false);
-        /*
-         *
-         */
+
+        //
+        webAppCustomI18n = BooleanUtils.toBooleanDefaultIfNull(
+                BooleanUtils.toBooleanObject(propsServer
+                        .getProperty(PROP_KEY_WEBAPP_CUSTOM_I18N_ENABLE)),
+                false);
+        //
         final QueuedThreadPool threadPool = new QueuedThreadPool();
         final String poolName = "jetty-threadpool";
 

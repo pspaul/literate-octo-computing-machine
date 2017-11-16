@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -42,6 +43,7 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.savapage.common.ConfigDefaults;
 import org.savapage.core.SpException;
 import org.savapage.core.SpInfo;
@@ -73,6 +75,7 @@ import org.savapage.server.pages.admin.AbstractAdminPage;
 import org.savapage.server.pages.user.AbstractUserPage;
 import org.savapage.server.raw.RawPrintServer;
 import org.savapage.server.session.SpSession;
+import org.savapage.server.webapp.CustomStringResourceLoader;
 import org.savapage.server.webapp.WebAppAdmin;
 import org.savapage.server.webapp.WebAppJobTickets;
 import org.savapage.server.webapp.WebAppPos;
@@ -691,6 +694,10 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              */
             ConfigManager.instance().initScheduler();
 
+            if (WebServer.isWebAppCustomI18n()) {
+                SpInfo.instance().log("Web App Custom i18n enabled.");
+            }
+
             /*
              * Server plug-in manager.
              */
@@ -796,12 +803,31 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     /**
+     * Add the {@link CustomStringResourceLoader} as first resource loader.
+     */
+    private void addCustomStringResourceLoader() {
+        /*
+         * Retrieve ResourceSettings and then the list of resource loaders.
+         */
+        final List<IStringResourceLoader> resourceLoaders =
+                getResourceSettings().getStringResourceLoaders();
+        /*
+         * Add custom resource loader as first.
+         */
+        resourceLoaders.add(0, new CustomStringResourceLoader());
+    }
+
+    /**
      * @see org.apache.wicket.Application#init()
      */
     @Override
     public void init() {
 
         super.init();
+
+        if (WebServer.isWebAppCustomI18n()) {
+            addCustomStringResourceLoader();
+        }
 
         applyWicketApplicationSettings();
 
