@@ -305,6 +305,7 @@
 .ui-icon-mini-print-mono:after {
     background: url(/glyphicons/glyphicons_091_adjust.png) 50% 50% no-repeat;
     background-size: 15px 15px;
+    opacity: .6;
 }
 
 .ui-icon-mini-delegated-print:after {

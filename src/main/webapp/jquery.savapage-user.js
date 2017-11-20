@@ -2969,7 +2969,12 @@
                 });
 
                 $('#button-main-print').click(function() {
-                    _this.onShowPrintDialog();
+                    _model.myShowPrinterInd = true;
+                    if (_model.hasMultiplePrinters) {
+                        _this.onShowPrintDialog();
+                    } else {
+                        _view.showUserPageAsync('#page-printer-settings', 'PrinterSettings');
+                    }
                     return false;
                 });
 
@@ -3398,6 +3403,11 @@
 
                 $('#button-print-settings-back').click(function(e) {
                     _model.myShowUserStatsGet = true;
+                    if (_model.PROXY_PRINT_CLEAR_PRINTER) {
+                        $('#button-print-settings-default').click();
+                        _model.myShowPrinterInd = false;
+                        _view.pages.print.onClearPrinterInd();
+                    }
                     _view.changePage($('#page-main'));
                     return false;
                 });
@@ -3566,7 +3576,7 @@
         /**
          *
          */
-        function PagePrint(_i18n, _view, _model, _api) {
+        function PagePrint(_i18n, _view, _model, _api, _ctrl) {
 
             var _this = this
             //
@@ -3919,13 +3929,21 @@
                     _onQuickPrinterSearch($(this), data.input.get(0).value);
                 });
 
-                // Show available printers on first open
-                _onQuickPrinterSearch(filterablePrinter, "");
-
                 $(this).on('click', '#sp-print-qs-printer-filter li', null, function() {
                     _onSelectPrinter($(this), filterablePrinter);
                 });
 
+                // Show available printers on first open
+                _onQuickPrinterSearch(filterablePrinter, "");
+
+                if ($('#sp-print-qs-printer-filter li').length === 1) {
+                    // Just one printer found: select.
+                    $('#sp-print-qs-printer-filter li').click();
+                    _view.visible($('#sp-print-quicksearch-printer-div'), false);
+                    _model.hasMultiplePrinters = false;
+                }
+
+                //
                 $("#print-collate").on("change", null, null, function(event, ui) {
                     _setVisibility();
                 });
@@ -3957,7 +3975,11 @@
 
                 $('#button-printer-back').click(function(e) {
                     if (_model.PROXY_PRINT_CLEAR_PRINTER) {
-                        _view.pages.print.onClearPrinter();
+                        _model.myShowPrinterInd = false;
+                        $('#button-print-settings-default').click();
+                        if (_model.hasMultiplePrinters) {
+                            _view.pages.print.onClearPrinter();
+                        }
                     }
                     _model.myShowUserStatsGet = true;
                     _view.changePage($('#page-main'));
@@ -3998,9 +4020,11 @@
 
             }).on("pagebeforeshow", function(event, ui) {
 
+                var isFromMain = _model.isPrintDialogFromMain;
+
                 if (_model.isPrintDialogFromMain) {
                     _model.isPrintDialogFromMain = false;
-                    if (_model.PROXY_PRINT_CLEAR_PRINTER) {
+                    if (_model.hasMultiplePrinters && _model.PROXY_PRINT_CLEAR_PRINTER) {
                         _resetPrinterSearch();
                     }
                 }
@@ -4175,6 +4199,7 @@
 
             this.preservePrintJobSettings = false;
 
+            this.hasMultiplePrinters = true;
             this.isPrintDialogFromMain = true;
             this.PROXY_PRINT_CLEAR_PRINTER = false;
 
@@ -4189,6 +4214,8 @@
             this.myJobPages = [];
             this.myTotPages = 0;
             this.myPrinter = null;
+
+            this.myShowPrinterInd = true;
 
             /*
              * map: key(ipp keyword), value
@@ -4834,6 +4861,14 @@
                 _saveSelectedletterhead('#print-letterhead-list');
                 _saveRemoveGraphics('#print-remove-graphics');
                 _saveEcoprint('#print-ecoprint');
+
+                if (!_model.myShowPrinterInd) {
+                    _view.visible(trgColor, false);
+                    _view.visible(trgMono, false);
+                    _view.visible(trgNup, false);
+                    _view.visible(trgDuplex, false);
+                    return;
+                }
 
                 // Check IPP attributes value
                 ippAttrVal = _model.myPrinterOpt['print-color-mode'];
@@ -5658,7 +5693,7 @@
                 $('#sp-popup-print-auth').popup('close');
 
                 if (_model.closePrintDlg) {
-                    if (_model.PROXY_PRINT_CLEAR_PRINTER) {
+                    if (_model.PROXY_PRINT_CLEAR_PRINTER && _model.hasMultiplePrinters) {
                         _view.pages.print.onClearPrinter();
                     }
                     // Do NOT use $('#button-printer-back').click();
@@ -6314,6 +6349,10 @@
                 _refreshPrinterInd();
             };
 
+            _view.pages.print.onClearPrinterInd = function() {
+                _refreshPrinterInd();
+            };
+
             _view.pages.print.onShow = function() {
 
                 if (_model.preservePrintJobSettings) {
@@ -6349,6 +6388,8 @@
                 // When opened from SafePage Sort mode, selected page ranges are
                 // filled.
                 $('#print-page-ranges').val(_model.getSelectPageRanges());
+
+                _model.myShowPrinterInd = true;
 
                 _refreshPrinterInd();
             };
@@ -6687,6 +6728,7 @@
                     }
                     _view.pages.main.showUserStats();
                 }
+
             };
 
             _view.pages.main.onHide = function() {
