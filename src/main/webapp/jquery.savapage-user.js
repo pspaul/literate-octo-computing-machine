@@ -2948,7 +2948,7 @@
                     _this.onLogout();
                     return false;
                 });
-                
+
                 /*
                  *
                  */
@@ -3772,6 +3772,13 @@
             }
             //
             ,
+                _setVisibilityPrintSeparately = function(allDocs, jobTicket) {
+                var jobTicketWrk = jobTicket || (_model.myPrinter && _model.myPrinter.jobTicket);
+                _view.visible($('#print-documents-separate-print-div'), !jobTicket && allDocs);
+                _view.visible($('#print-documents-separate-ticket-div'), jobTicket && allDocs);
+            }
+            //
+            ,
                 _setVisibility = function() {
 
                 var selCollate = $(".print-collate"),
@@ -3782,7 +3789,7 @@
                     jobTicket = _model.myPrinter && _model.myPrinter.jobTicket
                 //
                 ,
-                    allDocs = _model.canSelectAllDocuments()
+                    allDocs = _model.canSelectAllDocuments() && _model.myJobs.length > 1
                 //
                 ,
                     jobTicketType,
@@ -3830,8 +3837,7 @@
                     _view.visible($('.sp-jobticket'), jobTicket);
                 }
 
-                _view.visible($('#print-documents-separate-print-div'), !jobTicket && allDocs);
-                _view.visible($('#print-documents-separate-ticket-div'), jobTicket && allDocs);
+                _setVisibilityPrintSeparately(allDocs, jobTicket);
 
                 if (jobTicket) {
                     // (1) first enable.
@@ -3851,7 +3857,9 @@
             ,
                 _onJobListChange = function() {
                 var sel = $('#print-job-list :selected'),
-                    selTitle = $('#print-title');
+                    selTitle = $('#print-title'),
+                    jobTicket = _model.myPrinter && _model.myPrinter.jobTicket,
+                    isAllDocsSelected = sel.val() === '-1';
 
                 if (_model.printJobIndex === '-1') {
                     _model.myInboxTitle = selTitle.val();
@@ -3865,6 +3873,8 @@
                     selTitle.val(sel.text());
                 }
                 _model.myPrintTitle = selTitle.val();
+
+                _setVisibilityPrintSeparately(isAllDocsSelected);
             }
             //
             ,
