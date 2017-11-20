@@ -242,7 +242,7 @@ public class Print extends AbstractUserPage {
         add(new Label("button-send-jobticket",
                 HtmlButtonEnum.SEND.uiText(getLocale())));
         add(new Label("button-inbox",
-                HtmlButtonEnum.INBOX.uiText(getLocale())));
+                HtmlButtonEnum.BACK.uiText(getLocale())));
     }
 
     /**

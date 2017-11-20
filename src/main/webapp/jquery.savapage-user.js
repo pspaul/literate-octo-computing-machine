@@ -2870,7 +2870,7 @@
                     e.preventDefault();
                 });
 
-                $('#button-about').click(function() {
+                $('.sp-btn-about').click(function() {
                     _view.showPageAsync('#page-info', 'AppAbout');
                     return false;
                 });
@@ -2895,7 +2895,7 @@
                     return false;
                 });
 
-                $('#button-mini-user').click(function() {
+                $('.sp-button-user-details').click(function() {
 
                     var html,
                         xydata,
@@ -2948,7 +2948,7 @@
                     _this.onLogout();
                     return false;
                 });
-
+                
                 /*
                  *
                  */
@@ -3395,6 +3395,12 @@
             };
 
             $('#page-printer-settings').on('pagecreate', function(event) {
+
+                $('#button-print-settings-back').click(function(e) {
+                    _model.myShowUserStatsGet = true;
+                    _view.changePage($('#page-main'));
+                    return false;
+                });
 
                 $('#button-print-settings-next').click(function() {
                     var printerOptions = {};
@@ -4849,7 +4855,7 @@
             };
 
             _tbIndUser = function() {
-                $('#mini-user-name').html(_model.user.id);
+                //$('#mini-user-name').html(_model.user.id);
             };
 
             _initUser = function(loginRes) {

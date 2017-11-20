@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,14 +14,16 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
 package org.savapage.server.pages.user;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  *
@@ -37,6 +39,10 @@ public class Clear extends AbstractUserPage {
      */
     public Clear(final PageParameters parameters) {
         super(parameters);
+
+        add(new Label("button-back", HtmlButtonEnum.BACK.uiText(getLocale())));
+        add(new Label("button-clear",
+                HtmlButtonEnum.DELETE.uiText(getLocale())));
     }
 
 }

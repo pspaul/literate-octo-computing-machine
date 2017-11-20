@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -57,6 +57,7 @@ public class PrinterSettings extends AbstractUserPage {
 
         helper.addButton("button-next", HtmlButtonEnum.NEXT);
         helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
+        helper.addButton("button-inbox", HtmlButtonEnum.BACK);
     }
 
 }

@@ -201,6 +201,9 @@ public class Main extends AbstractUserPage {
         addVisible(buttonCandidates.contains(NavButtonEnum.ABOUT),
                 "button-mini-about", localized("button-about"));
 
+        this.add(new Label("btn-about-popup-menu",
+                HtmlButtonEnum.ABOUT.uiText(getLocale())));
+
         //
         this.add(MarkupHelper.createEncloseLabel("main-arr-action-pdf",
                 localized("button-pdf"),
@@ -227,27 +230,27 @@ public class Main extends AbstractUserPage {
             userId = user.getUserId();
         }
 
-        final boolean showMiniUserDetails =
+        //
+        final boolean showUserBalance =
+                ACCESS_CONTROL_SERVICE.hasUserPermission(user,
+                        ACLOidEnum.U_FINANCIAL, ACLPermissionEnum.READER);
+
+        helper.encloseLabel("mini-user-balance", "", showUserBalance);
+
+        //
+        final Label name = MarkupHelper.createEncloseLabel("mini-user-name",
+                userName, true);
+
+        final boolean showUserDetails =
                 ACCESS_CONTROL_SERVICE.hasUserAccess(user, ACLOidEnum.U_USER);
 
-        if (showMiniUserDetails) {
-
-            helper.encloseLabel("mini-user-balance", "",
-                    ACCESS_CONTROL_SERVICE.hasUserPermission(user,
-                            ACLOidEnum.U_FINANCIAL, ACLPermissionEnum.READER));
-
-            helper.addModifyLabelAttr("mini-user-details-name", userId, "title",
-                    userName);
-
-            helper.discloseLabel("mini-user-name");
-
-        } else {
-
-            helper.discloseLabel("mini-user-details-name");
-            final Label name = MarkupHelper.createEncloseLabel("mini-user-name",
-                    userId, true);
-            add(name.add(new AttributeModifier("title", userName)));
+        if (showUserDetails) {
+            MarkupHelper.appendLabelAttr(name, MarkupHelper.ATTR_CLASS,
+                    "sp-button-user-details");
         }
+        helper.encloseLabel("sparkline-user-pie", "", showUserDetails);
+
+        add(name.add(new AttributeModifier("title", userId)));
 
         //
         helper.encloseLabel("mini-sys-maintenance",

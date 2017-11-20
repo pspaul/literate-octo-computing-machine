@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
@@ -13,6 +14,57 @@
     -->
 </wicket:remove>
 
+<div data-role="header">
+
+	<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
+
+		<a href="#sp-main-menu" data-rel="popup"
+			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-main-header-menu">&nbsp;
+		</a>
+
+		<div id="sp-main-menu" data-role="popup" data-arrow="t"
+			style="margin-top: 15px;" class="ui-content">
+
+			<center>
+				<img height="75" src="images/savapage-logo.png" alt="SavaPage" />
+			</center>
+
+			<button wicket:id="btn-about-popup-menu"
+				class="sp-btn-about ui-mini ui-btn-inline ui-btn ui-btn-icon-left ui-icon-main-header-about"/>
+		</div>
+
+		<wicket:panel wicket:id="community-status-footer-panel" />
+
+		<button
+			class="sp-button-user-details sp-plain-info ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-none ">
+			<wicket:enclosure child="sparkline-user-pie">
+				<span wicket:id="sparkline-user-pie" id="sparkline-user-pie" /> &nbsp;
+			</wicket:enclosure>
+			<span wicket:id="mini-user-name" class="sp-txt-info"
+				id="mini-user-name" />
+		</button>
+
+		<wicket:enclosure child="button-mini-help">
+			<a href="user-defined-url" target="_blank"
+				wicket:id="button-mini-help"
+				class="sp-plain-info ui-btn ui-btn-icon-left ui-icon-main-header-help" />
+		</wicket:enclosure>
+
+		<wicket:enclosure child="mini-sys-maintenance">
+			<a
+				class="sp-plain-info ui-btn ui-btn-icon-left ui-icon-main-header-warning">
+				<span wicket:id="mini-sys-maintenance" class="sp-txt-warn" />
+			</a>
+		</wicket:enclosure>
+
+		<wicket:enclosure child="button-mini-about">
+			<a wicket:id="button-mini-about"
+				class="sp-anchor sp-btn-about ui-btn ui-btn-icon-notext ui-icon-main-header-about" />
+		</wicket:enclosure>
+
+	</div>
+</div>
+
 <div class="ui-content" id="main">
 
 	<div id="page-main-thumbnail-viewport"
@@ -21,251 +73,6 @@
 		<div id="thumbnail_nav_l" class="thumbnail_nav thumbnail_nav_l" />
 		<div id="thumbnail_nav_r" class="thumbnail_nav thumbnail_nav_r" />
 	</div>
-
-	<style>
-.ui-icon-main-left-arrow:after {
-	background: url(/glyphicons/glyphicons_210_left_arrow.png) 50% 50%
-		no-repeat;
-	background-size: 20px 18px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-right-arrow:after {
-	background: url(/glyphicons/glyphicons_211_right_arrow.png) 50% 50%
-		no-repeat;
-	background-size: 20px 18px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-refresh:after {
-	background: url(/glyphicons/glyphicons_081_refresh.png) 50% 50%
-		no-repeat;
-	background-size: 22px 23px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-print:after {
-	background: url(/glyphish-icons/185-printer.png) 50% 50% no-repeat;
-	background-size: 24px 21px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-jobticket:after {
-	background: url(/glyphish-icons/14-tag-flipped.png) 50% 50% no-repeat;
-	background-size: 22px 22px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-}
-
-.ui-icon-main-clear:after {
-	background: url(/glyphicons/glyphicons_016_bin.png) 50% 50% no-repeat;
-	background-size: 18px 26px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-pdf-properties:after {
-	background: url(/glyphicons/glyphicons_258_pdf.png) 100% 100% no-repeat;
-	background-size: 17px 24px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-letterhead:after {
-	background: url(/glyphicons/glyphicons_153_more_windows.png) 50% 50%
-		no-repeat;
-	background-size: 22px 22px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-arr-cut:after {
-	background: url(/glyfx/cut-selected.png) 50% 50% no-repeat;
-	background-size: 23px 23px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-}
-
-.ui-icon-main-arr-paste-right:after {
-	background: url(/glyfx/paste-selected.png) 50% 50% no-repeat;
-	background-size: 25px 25px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-}
-
-.ui-icon-main-arr-paste-left:after {
-	background: url(/glyfx/paste-selected-left.png) 50% 50% no-repeat;
-	background-size: 25px 25px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-}
-
-.ui-icon-main-arr-action-popup:after {
-	background: url(/glyphicons/glyphicons_187_more.png) 50% 50% no-repeat;
-	background-size: 22px 7px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-}
-
-.ui-icon-main-arr-unselect-all:after {
-	background: url(/glyfx/copy-unselected.png) 50% 50% no-repeat;
-	background-size: 25px 25px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-}
-
-.ui-icon-main-arr-undo:after {
-	background: url(/glyfx/undo.png) 50% 50% no-repeat;
-	background-size: 25px 25px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-}
-
-.ui-icon-main-arr-edit:after {
-	background: url(/glyphicons/glyphicons_075_sort.png) 50% 50% no-repeat;
-	background-size: 25px 25px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-}
-
-.ui-icon-main-inbox:after {
-	background: url(/glyphish-icons/44-shoebox.png) 50% 50% no-repeat;
-	background-size: 24px 22px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-}
-
-.ui-icon-main-logout:after {
-	background: url(/glyphicons/glyphicons_063_power.png) 50% 50% no-repeat;
-	background-size: 22px 23px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-doclog:after {
-	background: url(/glyphicons/glyphicons_087_log_book.png) 50% 50%
-		no-repeat;
-	background-size: 22px 24px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-upload:after {
-	background: url(/glyphicons/glyphicons_213_up_arrow.png) 50% 50%
-		no-repeat;
-	background-size: 16px 18px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-browse:after {
-	background: url(/glyphicons/glyphicons_236_zoom_in.png) 50% 50%
-		no-repeat;
-	background-size: 20px 20px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-main-about:after {
-	background: url(/glyphicons/glyphicons_195_circle_info.png) 50% 50%
-		no-repeat;
-	background-size: 22px 22px;
-	-webkit-border-radius: 0 !important;
-	border-radius: 0 !important;
-	opacity: .8;
-}
-
-.ui-icon-mini-cut:after {
-	background: url(/glyfx/cut-selected.png) 50% 50% no-repeat;
-	background-size: 16px 16px;
-}
-
-.ui-icon-mini-select:after {
-	background: url(/glyphicons/glyphicons_335_pin_classic.png) 50% 50%
-		no-repeat;
-	background-size: 16px 16px;
-}
-
-.ui-icon-mini-no-graphics:after {
-	background: url(/glyphicons/glyphicons_092_tint.png) 50% 50% no-repeat;
-	background-size: 13px 15px;
-}
-
-.ui-icon-mini-ecoprint:after {
-	background: url(/glyphicons/glyphicons_001_leaf.png) 50% 50% no-repeat;
-	background-size: 13px 15px;
-}
-
-.ui-icon-mini-letterhead:after {
-	background: url(/glyphicons/glyphicons_153_more_windows.png) 50% 50%
-		no-repeat;
-	background-size: 14px 14px;
-}
-
-.ui-icon-mini-lock:after {
-	background: url(/glyphish-icons/54-lock.png) 50% 50% no-repeat;
-	background-size: 12px 14px;
-}
-
-.ui-icon-mini-keys:after {
-	background: url(/glyphicons/glyphicons_044_keys.png) 50% 50% no-repeat;
-	background-size: 13px 14px;
-}
-
-.ui-icon-mini-n-up:after {
-	background: url(/glyphicons/glyphicons_154_show_big_thumbnails.png) 50%
-		50% no-repeat;
-	background-size: 14px 14px;
-}
-
-.ui-icon-mini-duplex:after {
-	background: url(/glyphicons/glyphicons_351_book_open.png) 50% 50%
-		no-repeat;
-	background-size: 16px 14px;
-}
-
-.ui-icon-mini-print-color:after {
-	background: url(/silkicons/color_wheel.png) 50% 50% no-repeat;
-	background-size: 16px 16px;
-}
-
-.ui-icon-mini-print-mono:after {
-	background: url(/glyphicons/glyphicons_091_adjust.png) 50% 50% no-repeat;
-	background-size: 15px 15px;
-}
-
-.ui-icon-mini-delegated-print:after {
-	background: url(/famfamfam-silk/group.png) 50% 50% no-repeat;
-	background-size: 16px 16px;
-}
-
-.ui-icon-mini-user:after {
-	background: url(/famfamfam-silk/user_gray.png) 50% 50% no-repeat;
-	background-size: 16px 16px;
-}
-
-.ui-icon-mini-expired-clock:after {
-	background: url(/glyphicons/glyphicons_057_history.png) 50% 50%
-		no-repeat;
-	background-size: 18px 18px;
-	opacity: 0.5;
-}
-</style>
 
 	<div class='ui-content'>
 
@@ -355,9 +162,9 @@
 				</li>
 				<li>
 					<button id="main-arr-return"
-						class="ui-btn ui-btn-icon-top ui-icon-main-inbox">
+						class="ui-btn ui-btn-icon-top ui-icon-main-arr-back">
 						<span class="sp-nav-button-txt"><wicket:message
-								key="button-inbox" /></span>
+								key="button-back" /></span>
 					</button>
 				</li>
 			</ul>
@@ -379,102 +186,75 @@
 	<fieldset data-role="controlgroup" data-type="horizontal"
 		data-mini="true">
 
-		<button id="button-cometd-status"
-			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-notext ui-btn-icon-left ui-icon-star">&nbsp;</button>
+		<a id="button-cometd-status"
+			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-star">&nbsp;</a>
 
-		<wicket:enclosure child="mini-sys-maintenance">
-			<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-alert">
-				<span wicket:id="mini-sys-maintenance" class="sp-txt-warn" />
-			</button>
-		</wicket:enclosure>
-
-		<wicket:enclosure child="button-mini-about">
-			<button wicket:id="button-mini-about" id="button-about"
-				data-dialog="true"
-				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-text" />
-		</wicket:enclosure>
-
-		<wicket:enclosure child="button-mini-help">
-			<a href="user-defined-url" target="_blank" wicket:id="button-mini-help"
-				class="ui-btn ui-corner-all ui-shadow ui-btn-icon-left ui-icon-info ui-btn-inline"/>
-		</wicket:enclosure>
-
-		<wicket:enclosure child="mini-user-details-name">
-			<button data-dialog="true" id="button-mini-user"
-				class="ui-btn ui-btn-inline">
-				<span id="sparkline-user-pie" />
-				<wicket:enclosure child="mini-user-balance">
-				&nbsp;<span class="sp-txt-wrap" id="mini-user-balance"
-						wicket:id="mini-user-balance" />
-					<span class="sp-plain-info">&nbsp;&bull;</span>
-				</wicket:enclosure>
-				&nbsp;<span class="sp-txt-info" id="mini-user-name"
-					wicket:id="mini-user-details-name" />
-			</button>
-		</wicket:enclosure>
-
-		<wicket:enclosure child="mini-user-name">
-			<button
-				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-mini-user ">
-				<span wicket:id="mini-user-name" class="sp-txt-info"
-					id="mini-user-name" />
+		<wicket:enclosure child="mini-user-balance">
+			<button data-dialog="true"
+				class="ui-btn ui-btn-inline sp-button-user-details">
+				<span class="sp-txt-wrap" id="mini-user-balance"
+					wicket:id="mini-user-balance" />
 			</button>
 		</wicket:enclosure>
 
 		<wicket:enclosure child="button-upload">
 			<button data-dialog="true" id="button-mini-upload"
-				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-arrow-u"
+				class="ui-btn ui-btn-icon-left ui-icon-arrow-u"
 				wicket:id="button-upload" />
 		</wicket:enclosure>
 
 		<wicket:enclosure child="button-print-delegation">
 			<button wicket:id="button-print-delegation"
 				id="button-print-delegation-main"
-				class="ui-btn ui-corner-all ui-shadow sp-plain-info sp-button-mini-print-delegation 
-                        ui-icon-mini-delegated-print ui-shadow ui-btn ui-corner-all ui-btn-icon-left" />
+				class="sp-plain-info sp-button-mini-print-delegation 
+                        ui-icon-mini-delegated-print ui-btn ui-corner-all ui-btn-icon-left" />
 		</wicket:enclosure>
 
 		<button id="button-mini-outbox"
-			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-clock">
+			class="ui-btn ui-btn-icon-left ui-icon-clock">
 			<span class="sp-outbox-remaining-time" />&nbsp;&nbsp;<span
 				class="sp-outbox-jobs" /><span class="sp-outbox-pages" /><span
 				class="sp-outbox-cost" />
 		</button>
-		<button
-			class="ui-btn ui-btn-inline ui-btn-icon-text ui-icon-none sp-print-job-media-sources-info">
-			&nbsp;</button>
 
 		<button
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-mini-select"
+			class="ui-btn ui-btn-icon-text ui-icon-none sp-print-job-media-sources-info">
+			&nbsp;</button>
+
+		<button class="ui-btn ui-btn-icon-left ui-icon-mini-select"
 			id="button-mini-select">
 			<span id="main-page-range-select" />
 		</button>
 
-		<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-mini-cut"
+		<button class="ui-btn ui-btn-icon-left ui-icon-mini-cut"
 			id="button-mini-cut">
 			<span id="main-page-range-cut" />
 		</button>
 
-		<button id="button-mini-lock"
-			class="sp-main-status-ind ui-icon-mini-lock ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
-		<button id="button-mini-keys"
-			class="sp-main-status-ind ui-icon-mini-keys ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
-		<button id="button-mini-letterhead"
-			class="sp-main-status-ind ui-icon-mini-letterhead ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
-		<button
-			class="sp-button-mini-print-color sp-main-status-ind ui-icon-mini-print-color ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
-		<button
-			class="sp-button-mini-print-mono sp-main-status-ind ui-icon-mini-print-mono ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
-		<button id="button-mini-no-graphics"
-			class="sp-main-status-ind ui-icon-mini-no-graphics ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
-		<button id="button-mini-ecoprint"
-			class="sp-main-status-ind ui-icon-mini-ecoprint ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
-		<button
-			class="sp-button-mini-print-duplex sp-main-status-ind ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
-		<button
-			class="sp-button-mini-print-n-up sp-main-status-ind ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-left">&nbsp;</button>
+		<!-- mini buttons  -->
+		<a id="button-mini-lock"
+			class="sp-main-status-ind ui-icon-mini-lock ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
 
-		<wicket:panel wicket:id="community-status-footer-panel" />
+		<a id="button-mini-keys"
+			class="sp-main-status-ind ui-icon-mini-keys ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
+
+		<a id="button-mini-letterhead"
+			class="sp-main-status-ind ui-icon-mini-letterhead ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
+
+		<a
+			class="sp-button-mini-print-color sp-main-status-ind ui-icon-mini-print-color ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
+		<a
+			class="sp-button-mini-print-mono sp-main-status-ind ui-icon-mini-print-mono ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
+
+		<a id="button-mini-no-graphics"
+			class="sp-main-status-ind ui-icon-mini-no-graphics ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
+
+		<a id="button-mini-ecoprint"
+			class="sp-main-status-ind ui-icon-mini-ecoprint ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
+		<a
+			class="sp-button-mini-print-duplex sp-main-status-ind ui-icon-mini-duplex ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
+		<a
+			class="sp-button-mini-print-n-up sp-main-status-ind ui-icon-mini-n-up ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
 
 	</fieldset>
 
@@ -617,3 +397,5 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+</html>

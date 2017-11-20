@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -50,17 +51,12 @@
 		pattern="[0-9]*" autocomplete="off" autocorrect="off"
 		autocapitalize="off" spellcheck="false" />
 
-	<button
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
-		id="button-clear-pages-ok">
-		<wicket:message key="button-clear" />
-	</button>
+	<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
+		wicket:id="button-clear" id="button-clear-pages-ok"/>
 
 	<a href="#" data-rel="back" data-direction="reverse"
-		id="button-clear-pages-cancel"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-		<wicket:message key="button-cancel" />
-	</a>
+		wicket:id="button-back" id="button-clear-pages-cancel"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back" />
 
 </div>
 
@@ -71,3 +67,5 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+</html>
