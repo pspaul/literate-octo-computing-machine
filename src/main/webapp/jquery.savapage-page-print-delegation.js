@@ -256,6 +256,11 @@
             }
             //----------------------------------------------------------------
             ,
+                _resetMemberCopies = function() {
+                $('#sp-print-delegation-member-copies').val(1);
+            }
+            //----------------------------------------------------------------
+            ,
                 _getAccount = function() {
                 var account = {
                     accountType : _view.getRadioValue(_RADIO_ACCOUNT_NAME)
@@ -482,6 +487,7 @@
                 });
 
                 _revertQuickUserGroupsSelected();
+                _resetMemberCopies();
                 _setVisibilityDelegatorsEdit();
             }
             //----------------------------------------------------------------
@@ -502,6 +508,7 @@
                 });
 
                 _revertQuickUserSelected();
+                _resetMemberCopies();
                 _setVisibilityDelegatorsEdit();
             }
             //----------------------------------------------------------------
@@ -772,7 +779,8 @@
 
             //--------
             this.clear = function() {
-                $('#sp-print-delegation-member-copies').val(1);
+                _resetMemberCopies();
+                $('#sp-print-delegation-copies-to-add').val(1);
                 _onDelegatorSelectAll();
                 _onDelegatorRemoveSelected();
                 _updateModel();
