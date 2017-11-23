@@ -178,7 +178,6 @@
 
                 _view.enable($('.sp-print-delegator-rows'), _nDelegatorGroups + _nDelegatorUsers + _nDelegatorCopies > 0);
                 _view.enable($('.sp-print-delegator-rows-selected'), selectedRows);
-                _view.enable($('.sp-print-delegation-mode-edit'), selectedRows);
                 _view.enable($('#sp-print-delegation-button-remove-selected'), selectedRows);
             }
             //----------------------------------------------------------------
@@ -215,8 +214,7 @@
                 var showButtonAdd,
                     enableButtonAdd,
                     showAddGroups,
-                    showAddUsers,
-                    showEditPanel;
+                    showAddUsers;
 
                 if (_isModeAddGroups()) {
                     showAddGroups = true;
@@ -232,15 +230,12 @@
                     showAddUsers = false;
                     showButtonAdd = true;
                     enableButtonAdd = true;
-                } else {
-                    showEditPanel = _nSelectedDelegatorGroups + _nSelectedDelegatorUsers + _nSelectedDelegatorCopies > 0;
                 }
 
                 _view.visible($('.sp-print-delegation-mode-add'), showAddGroups || showAddUsers);
 
                 _view.visible($('.sp-print-delegation-mode-add-groups'), showAddGroups);
                 _view.visible($('.sp-print-delegation-mode-add-users'), showAddUsers);
-                _view.visible($('.sp-print-delegation-mode-edit'), showEditPanel);
 
                 _view.visible($('#sp-print-delegation-button-add'), showButtonAdd);
                 _view.enable($('#sp-print-delegation-button-add'), enableButtonAdd);
@@ -252,12 +247,18 @@
             //----------------------------------------------------------------
             ,
                 _getMemberCopies = function() {
-                return parseInt($('#sp-print-delegation-member-copies').val(), 10);
+                return parseInt($('#sp-print-delegation-member-copies').val(), 10) || 1;
             }
             //----------------------------------------------------------------
             ,
                 _resetMemberCopies = function() {
                 $('#sp-print-delegation-member-copies').val(1);
+            }
+            //----------------------------------------------------------------
+            ,
+                _clearUserList = function() {
+                $("#sp-print-delegation-quicksearch-users .sp-quicksearch-buttons").hide();
+                $("#sp-print-delegation-users-select-to-add-filter").html("");
             }
             //----------------------------------------------------------------
             ,
@@ -275,12 +276,36 @@
             }
             //----------------------------------------------------------------
             ,
-                _onGroupQuickSearch = function(target, filter) {
+                _setQuickSearchNavigation = function(qsButtons, res) {
+                var selWlk;
+                if (qsButtons) {
+                    selWlk = qsButtons.find('.sp-button-prev');
+                    selWlk.attr('data-savapage', res.dto.prevPosition).show();
+
+                    selWlk = qsButtons.find('.sp-button-curr');
+                    selWlk.attr('data-savapage', res.dto.currPosition).show();
+                    selWlk.html(res.dto.currPage);
+
+                    selWlk = qsButtons.find('.sp-button-next');
+                    selWlk.attr('data-savapage', res.dto.nextPosition).show();
+
+                    selWlk = qsButtons.find('.sp-button-last');
+                    selWlk.attr('data-savapage', res.dto.lastPosition).show();
+                    selWlk.html(res.dto.lastPage);
+
+                    _view.visible(qsButtons, res.dto.lastPosition > 0);
+                }
+            }
+            //----------------------------------------------------------------
+            ,
+                _onGroupQuickSearch = function(target, filter, startPosition, paging) {
                 /* QuickSearchFilterUserGroupDto */
                 var res,
-                    html = "";
+                    selWlk,
+                    html = "",
+                    qsButtons = $("#sp-print-delegation-quicksearch-groups .sp-quicksearch-buttons");
 
-                if (_quickUserGroupFilter === filter) {
+                if (!paging && _quickUserGroupFilter === filter) {
                     return;
                 }
                 _quickUserGroupFilter = filter;
@@ -293,6 +318,7 @@
                     dto : JSON.stringify({
                         filter : filter,
                         maxResults : _QS_MAX_RESULTS,
+                        startPosition : startPosition,
                         aclRole : 'PRINT_DELEGATOR'
                     })
                 });
@@ -300,14 +326,17 @@
                 if (res.result.code === '0') {
 
                     $.each(res.dto.items, function(key, item) {
-
                         _quickUserGroupCache[item.key] = item;
 
                         html += "<li class=\"ui-mini ui-li-has-icon\" data-icon=\"false\" data-savapage=\"" + item.key + "\">";
                         html += "<a href=\"#\">";
                         html += "<span class=\"" + _CLASS_SELECTED_TXT + "\" style=\"font-family: monospace;\">&nbsp;</span>&nbsp;";
                         html += item.text + "<span class=\"ui-li-count\">" + item.userCount + "</span></a></li>";
+
                     });
+
+                    _setQuickSearchNavigation(qsButtons, res);
+
                 } else {
                     _view.showApiMsg(res);
                 }
@@ -320,9 +349,7 @@
                 /* QuickSearchUserGroupMemberFilterDto */
                 var res,
                     selWlk,
-                    html = ""
-                //
-                ,
+                    html = "",
                     qsButtons = $("#sp-print-delegation-quicksearch-users .sp-quicksearch-buttons");
 
                 if (!paging && _quickUserFilter === filter) {
@@ -360,14 +387,7 @@
                         html += "</a></li>";
                     });
 
-                    if (qsButtons) {
-                        selWlk = qsButtons.find('.sp-button-next');
-                        if (res.dto.nextPosition) {
-                            selWlk.attr('data-savapage', res.dto.nextPosition).show();
-                        }
-                        _view.enable(selWlk, res.dto.nextPosition);
-                        _view.visible(qsButtons, paging || res.dto.nextPosition);
-                    }
+                    _setQuickSearchNavigation(qsButtons, res);
 
                 } else {
                     _view.showApiMsg(res);
@@ -466,6 +486,60 @@
             ,
                 _getDelegatorRowBody = function() {
                 return $('#sp-selected-print-delegation tbody');
+            }
+            //
+            ,
+                _moveCopiesButtons = function(selTarget) {
+                var src = $('#sp-print-delegation-table-copies-add'),
+                    html;
+                html = src.html();
+                if (!html || html.length == 0) {
+                    src = $("#sp-print-delegation-quicksearch-groups .sp-quicksearch-button-group-inject");
+                    html = src.html();
+                    if (!html || html.length == 0) {
+                        src = $("#sp-print-delegation-quicksearch-users .sp-quicksearch-button-group-inject");
+                        html = src.html();
+                        if (!html || html.length == 0) {
+                            src = $("#sp-print-delegation-edit-radio-inject");
+                            html = src.html();
+                        }
+                    }
+                }
+
+                // Remove the current handler ...
+                $('#sp-print-delegation-button-add').off('click');
+
+                // ... move the html ...
+                src.empty();
+                selTarget.html(html);
+
+                // .. and add new handler.
+                $('#sp-print-delegation-button-add').on('click', function() {
+                    if (_isModeAddGroups()) {
+                        _onAddGroups();
+                    } else if (_isModeAddCopies()) {
+                        _onAddCopies();
+                    } else {
+                        _onAddUsers();
+                    }
+                    return false;
+                });
+
+            }
+            //
+            ,
+                _moveCopiesButtons2Groups = function() {
+                _moveCopiesButtons($("#sp-print-delegation-quicksearch-groups .sp-quicksearch-button-group-inject"));
+            }
+            //
+            ,
+                _moveCopiesButtons2Users = function() {
+                _moveCopiesButtons($("#sp-print-delegation-quicksearch-users .sp-quicksearch-button-group-inject"));
+            }
+            //
+            ,
+                _moveCopiesButtons2Extra = function() {
+                _moveCopiesButtons($("#sp-print-delegation-edit-radio-inject"));
             }
             //----------------------------------------------------------------
             ,
@@ -582,7 +656,9 @@
                         span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
                     }
                     _quickUserFilter = undefined;
+
                     _onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), 0);
+
                 }
             }
             //----------------------------------------------------------------
@@ -731,6 +807,8 @@
                     _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
                     _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), false);
 
+                    _moveCopiesButtons2Extra();
+
                 } else if (id === 'sp-print-delegation-edit-radio-add-groups') {
 
                     _view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
@@ -739,12 +817,16 @@
                     _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), true);
                     _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
 
+                    _moveCopiesButtons2Groups();
+
                 } else if (id === 'sp-print-delegation-edit-radio-add-users') {
 
                     _view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
                     _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), true);
                     _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
                     _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), false);
+
+                    _moveCopiesButtons2Users();
 
                     // Deselect all groups
                     _revertQuickUserGroupsSelected();
@@ -817,17 +899,6 @@
                     _onSaveModel();
                 });
 
-                $('#sp-print-delegation-button-add').click(function() {
-                    if (_isModeAddGroups()) {
-                        _onAddGroups();
-                    } else if (_isModeAddCopies()) {
-                        _onAddCopies();
-                    } else {
-                        _onAddUsers();
-                    }
-                    return false;
-                });
-
                 $('input[name="sp-print-delegation-edit-radio"]').click(function() {
                     _onChangeEditMode($(this).attr('id'));
                     _setVisibility();
@@ -850,7 +921,7 @@
                 //---------------------
                 filterableGroups.on("filterablebeforefilter", function(e, data) {
                     e.preventDefault();
-                    _onGroupQuickSearch($(this), data.input.get(0).value);
+                    _onGroupQuickSearch($(this), data.input.get(0).value, 0);
                 });
 
                 $(this).on('click', '#sp-print-delegation-groups-select-to-add-filter li', null, function() {
@@ -858,7 +929,7 @@
                 });
 
                 // Show available groups on first open
-                _onGroupQuickSearch(filterableGroups, "");
+                _onGroupQuickSearch(filterableGroups, "", 0);
 
                 //---------------------
                 // User selection
@@ -883,6 +954,13 @@
 
                 $(this).on('click', '#sp-print-delegation-select-shared-account-filter li', null, function() {
                     _onAccountSelected($(this));
+                });
+
+                //-----------------------
+                // Group list navigation
+                //-----------------------
+                $("#sp-print-delegation-quicksearch-groups .sp-quicksearch-buttons .ui-btn").click(function() {
+                    _onGroupQuickSearch($("#sp-print-delegation-groups-select-to-add-filter"), $('#sp-print-delegation-groups-select-to-add').val(), $(this).attr('data-savapage'), true);
                 });
 
                 //-----------------------

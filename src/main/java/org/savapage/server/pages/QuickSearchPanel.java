@@ -50,21 +50,34 @@ public class QuickSearchPanel extends Panel {
      *
      */
     public void populate(final String htmlBaseId, final String searchPrompt,
-            final String searchPlaceholder) {
+            final String searchPlaceholder, final boolean compact) {
+
+        final MarkupHelper helper = new MarkupHelper(this);
 
         Label labelWrk;
 
-        //
-        labelWrk = new Label("search-label", searchPrompt);
-        labelWrk.add(new AttributeModifier("for", htmlBaseId));
+        if (compact) {
 
-        add(labelWrk);
+            labelWrk = new Label("search-label-compact", searchPrompt);
+            add(labelWrk);
 
-        //
-        labelWrk = new Label("search-input", "");
-        labelWrk.add(new AttributeModifier("id", htmlBaseId));
+            labelWrk = new Label("search-input-compact", "");
+            labelWrk.add(new AttributeModifier("id", htmlBaseId));
+            add(labelWrk);
 
-        add(labelWrk);
+            helper.discloseLabel("search-label");
+
+        } else {
+            labelWrk = new Label("search-label", searchPrompt);
+            labelWrk.add(new AttributeModifier("for", htmlBaseId));
+            add(labelWrk);
+
+            labelWrk = new Label("search-input", "");
+            labelWrk.add(new AttributeModifier("id", htmlBaseId));
+            add(labelWrk);
+
+            helper.discloseLabel("search-label-compact");
+        }
 
         //
         labelWrk = new Label("search-filter", "");
@@ -75,7 +88,6 @@ public class QuickSearchPanel extends Panel {
                 searchPlaceholder));
 
         add(labelWrk);
-
     }
 
 }

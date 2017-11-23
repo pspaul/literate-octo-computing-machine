@@ -50,8 +50,6 @@ public final class PagePrintDelegation extends AbstractPage {
         //
         add(new Label("header-copies",
                 PrintOutNounEnum.COPY.uiText(getLocale(), true)));
-        add(new Label("member-copies",
-                PrintOutNounEnum.COPY.uiText(getLocale(), true)));
         //
         final ConfigManager cm = ConfigManager.instance();
 
@@ -65,13 +63,21 @@ public final class PagePrintDelegation extends AbstractPage {
         helper.addModifyLabelAttr("radio-account-user", "value",
                 PrintDelegationDto.DelegatorAccountEnum.USER.toString());
 
+        helper.encloseLabel("member-copies",
+                PrintOutNounEnum.COPY.uiText(getLocale(), true),
+                cm.isConfigValue(
+                        Key.PROXY_PRINT_DELEGATE_MULTIPLE_MEMBER_COPIES_ENABLE));
+
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_ENABLE)) {
+
+            helper.addLabel("sp-label-invoicing-shared",
+                    localized("sp-label-invoicing-shared"));
 
             helper.addModifyLabelAttr("radio-account-shared", "value",
                     PrintDelegationDto.DelegatorAccountEnum.SHARED.toString());
 
-            helper.encloseLabel("radio-add-extra",
-                    localized("label-add-extra"), true);
+            helper.encloseLabel("radio-add-extra", localized("label-add-extra"),
+                    true);
 
             helper.encloseLabel("extra-to-add", "", true);
 
@@ -86,7 +92,7 @@ public final class PagePrintDelegation extends AbstractPage {
                 new QuickSearchPanel("quicksearch-user-groups");
         add(panel);
         panel.populate("sp-print-delegation-groups-select-to-add",
-                getLocalizer().getString("label-groups", this), "");
+                getLocalizer().getString("label-groups", this), "", true);
 
         //
         final QuickSearchPanel panelUsers =
@@ -94,7 +100,7 @@ public final class PagePrintDelegation extends AbstractPage {
         add(panelUsers);
 
         panelUsers.populate("sp-print-delegation-users-select-to-add",
-                getLocalizer().getString("label-users", this), "");
+                getLocalizer().getString("label-users", this), "", true);
 
         //
         final QuickSearchPanel panelAccounts =
@@ -102,7 +108,7 @@ public final class PagePrintDelegation extends AbstractPage {
         add(panelAccounts);
 
         panelAccounts.populate("sp-print-delegation-select-shared-account", "",
-                "");
+                "", false);
     }
 
 }

@@ -144,7 +144,8 @@ public class Print extends AbstractUserPage {
         add(panel);
 
         panel.populate("sp-print-qs-printer", "",
-                getLocalizer().getString("search-printer-placeholder", this));
+                getLocalizer().getString("search-printer-placeholder", this),
+                false);
 
         // Prepare for hiding ...
         helper.encloseLabel("print-documents-separate-ticket",
@@ -199,7 +200,7 @@ public class Print extends AbstractUserPage {
 
         helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
                 privsLetterhead == null || ACLPermissionEnum.READER
-                .isPresent(privsLetterhead.intValue()));
+                        .isPresent(privsLetterhead.intValue()));
 
         //
         if (ACCESS_CONTROL_SERVICE.hasAccess(user,
@@ -241,8 +242,7 @@ public class Print extends AbstractUserPage {
 
         add(new Label("button-send-jobticket",
                 HtmlButtonEnum.SEND.uiText(getLocale())));
-        add(new Label("button-inbox",
-                HtmlButtonEnum.BACK.uiText(getLocale())));
+        add(new Label("button-inbox", HtmlButtonEnum.BACK.uiText(getLocale())));
     }
 
     /**
@@ -252,7 +252,7 @@ public class Print extends AbstractUserPage {
      *            The shared accounts.
      */
     private void
-    addSharedAccounts(final List<SharedAccountDto> sharedAccounts) {
+            addSharedAccounts(final List<SharedAccountDto> sharedAccounts) {
 
         add(new PropertyListView<SharedAccountDto>(
                 "print-shared-account-option", sharedAccounts) {

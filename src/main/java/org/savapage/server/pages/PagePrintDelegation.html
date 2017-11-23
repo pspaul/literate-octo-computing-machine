@@ -30,14 +30,14 @@
 					    
 					<tr>
 						<th data-priority="1">
-							<wicket:message key="header-delegator" />
+							<wicket:message key="header-selection" />
 						</th>
 						<th data-priority="2">
 							<wicket:message key="header-members" />
 						</th>
 						<th data-priority="2" wicket:id="header-copies" />
 						<th data-priority="2">
-							<wicket:message key="header-account" />
+							<wicket:message key="header-invoicing" />
 						</th>
 					</tr>
 					  
@@ -73,7 +73,7 @@
 
 						<a href="#" data-rel="back" data-direction="reverse"
 							class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
-								key="button-close" />
+								key="button-save" />
 						</a>
 					</td>
 				</tr>
@@ -110,13 +110,15 @@
 							</wicket:enclosure>
 						</fieldset>
 					</td>
+					<td id="sp-print-delegation-edit-radio-inject" />
 				</tr>
 			</table>
 
 			<table width="100%" cellpadding="5">
 				<tr>
 					<td valign="top" width="50%">
-						<div class="sp-print-delegation-mode-add-groups">
+						<div class="sp-print-delegation-mode-add-groups"
+							id="sp-print-delegation-quicksearch-groups">
 							<wicket:panel wicket:id="quicksearch-user-groups" />
 						</div>
 					</td>
@@ -130,14 +132,14 @@
 				<tr>
 					<td>
 						<label>
-							<wicket:message key="header-account" />
+							<wicket:message key="header-invoicing" />
 						</label>
 
 						<fieldset data-role="controlgroup" data-type="horizontal">
 
 							<wicket:enclosure child="radio-account-group">
 								<label for="sp-print-delegation-select-account-group">
-									<wicket:message key="label-group" />
+									<wicket:message key="sp-label-invoicing-group" />
 								</label>
 								<input type="radio"
 									name="sp-print-delegation-select-account-radio"
@@ -146,7 +148,7 @@
 							</wicket:enclosure>
 
 							<label for="sp-print-delegation-select-account-user">
-								<wicket:message key="label-user" />
+								<wicket:message key="sp-label-invoicing-user" />
 							</label>
 							<input type="radio"
 								name="sp-print-delegation-select-account-radio"
@@ -154,9 +156,8 @@
 								id="sp-print-delegation-select-account-user" />
 
 							<wicket:enclosure child="radio-account-shared">
-								<label for="sp-print-delegation-select-account-shared">
-									<wicket:message key="label-shared" />
-								</label>
+								<label wicket:id="sp-label-invoicing-shared"
+									for="sp-print-delegation-select-account-shared"> </label>
 								<input type="radio"
 									name="sp-print-delegation-select-account-radio"
 									value="[enum value]" wicket:id="radio-account-shared"
@@ -166,37 +167,37 @@
 						</fieldset>
 					</td>
 					<td>
-						<table cellpadding="0" border="0">
+						<table cellpadding="0" border="0"
+							id="sp-print-delegation-table-copies-add">
 							<tr>
-								<td wicket:id="member-copies" />
-								<td>&nbsp;</td>
-								<td style="max-width: 70px">
-									<input type="number" id="sp-print-delegation-member-copies"
-										value="1" min="1" />
-								</td>
+								<wicket:enclosure child="member-copies">
+									<td wicket:id="member-copies" />
+									<td>&nbsp;</td>
+									<td style="max-width: 70px; padding-right: 2px;">
+										<input type="number" id="sp-print-delegation-member-copies"
+											value="1" min="1" />
+									</td>
+								</wicket:enclosure>
+
 								<wicket:enclosure child="extra-to-add">
-									<td style="max-width: 70px">
+									<td style="max-width: 70px; padding-right: 2px;">
 										<input type="number" id="sp-print-delegation-copies-to-add"
 											wicket:id="extra-to-add" value="1" min="1" />
 									</td>
 								</wicket:enclosure>
+
+								<td>
+									<button id="sp-print-delegation-button-add"
+										class="sp-print-delegation-mode-add ui-btn ui-btn-inline">
+										<wicket:message key="button-add" />
+									</button>
+									<a href="#" data-rel="back" data-direction="reverse"
+										class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
+											key="button-save" />
+									</a>
+								</td>
 							</tr>
 						</table>
-
-						<div>
-							<button id="sp-print-delegation-button-apply"
-								class="sp-print-delegation-mode-edit ui-btn ui-btn-inline">
-								<wicket:message key="button-apply" />
-							</button>
-							<button id="sp-print-delegation-button-add"
-								class="sp-print-delegation-mode-add ui-btn ui-btn-inline">
-								<wicket:message key="button-add" />
-							</button>
-							<a href="#" data-rel="back" data-direction="reverse"
-								class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
-									key="button-close" />
-							</a>
-						</div>
 					</td>
 				</tr>
 				<tr class="sp-print-delegation-select-shared-account">

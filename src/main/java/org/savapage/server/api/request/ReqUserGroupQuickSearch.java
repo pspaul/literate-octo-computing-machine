@@ -28,7 +28,6 @@ import java.util.List;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.UserGroupMemberDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
-import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.QuickSearchFilterUserGroupDto;
 import org.savapage.core.dto.QuickSearchItemDto;
@@ -36,6 +35,7 @@ import org.savapage.core.dto.QuickSearchUserGroupItemDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.api.request.ReqQuickSearchMixin.DtoQuickSearchRsp;
 
 /**
  * User Group Quicksearch.
@@ -50,7 +50,7 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
      * @author Rijk Ravestein
      *
      */
-    private static class DtoRsp extends AbstractDto {
+    private static class DtoRsp extends DtoQuickSearchRsp {
 
         private List<QuickSearchItemDto> items;
 
@@ -69,58 +69,47 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final UserGroupMemberDao groupMemberDao =
-                ServiceContext.getDaoContext().getUserGroupMemberDao();
-
         final QuickSearchFilterUserGroupDto dto = AbstractDto.create(
                 QuickSearchFilterUserGroupDto.class, this.getParmValue("dto"));
 
-        final List<QuickSearchItemDto> items = new ArrayList<>();
+        final int maxResult = dto.getMaxResults().intValue();
+        final int currPosition = dto.getStartPosition();
 
         //
-        final UserGroupDao.ListFilter filter = new UserGroupDao.ListFilter();
-
-        filter.setContainingText(dto.getFilter());
-        filter.setAclRole(dto.getAclRole());
-
-        /*
-         * Since we locally filter out reserved groups we need to retrieve more
-         * results.
-         */
-        final int maxResult = dto.getMaxResults().intValue()
-                + ReservedUserGroupEnum.values().length;
-
         final UserGroupDao userGroupDao =
                 ServiceContext.getDaoContext().getUserGroupDao();
 
-        final List<UserGroup> userGroupList = userGroupDao.getListChunk(filter,
-                null, Integer.valueOf(maxResult), UserGroupDao.Field.NAME,
-                true);
+        final UserGroupDao.ListFilter groupFilter =
+                new UserGroupDao.ListFilter();
 
-        final UserGroupMemberDao.GroupFilter groupFilter =
+        groupFilter.setContainingText(dto.getFilter());
+        groupFilter.setAclRole(dto.getAclRole());
+
+        final int nTotalGroups = (int) userGroupDao.getListCount(groupFilter);
+
+        final List<UserGroup> userGroupList = userGroupDao.getListChunk(
+                groupFilter, Integer.valueOf(currPosition), dto.getMaxResults(),
+                UserGroupDao.Field.NAME, true);
+
+        //
+        final UserGroupMemberDao groupMemberDao =
+                ServiceContext.getDaoContext().getUserGroupMemberDao();
+
+        final UserGroupMemberDao.GroupFilter groupMemberFilter =
                 new UserGroupMemberDao.GroupFilter();
 
         if (dto.getAclRole() == ACLRoleEnum.PRINT_DELEGATOR) {
-            groupFilter.setDisabledPrintOut(Boolean.FALSE);
+            groupMemberFilter.setDisabledPrintOut(Boolean.FALSE);
         }
 
-        int i = 0;
+        //
+        final List<QuickSearchItemDto> items = new ArrayList<>();
 
         for (final UserGroup group : userGroupList) {
 
-            final ReservedUserGroupEnum reservedGroup =
-                    ReservedUserGroupEnum.fromDbName(group.getGroupName());
-
-            if (reservedGroup != null) {
-                continue;
-            }
-
-            groupFilter.setGroupId(group.getId());
-            final long userCount = groupMemberDao.getUserCount(groupFilter);
-
-            if (userCount == 0) {
-                continue;
-            }
+            groupMemberFilter.setGroupId(group.getId());
+            final long userCount =
+                    groupMemberDao.getUserCount(groupMemberFilter);
 
             final QuickSearchUserGroupItemDto itemWlk =
                     new QuickSearchUserGroupItemDto();
@@ -130,16 +119,12 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
 
             itemWlk.setUserCount(userCount);
             items.add(itemWlk);
-
-            if (++i < dto.getMaxResults()) {
-                continue;
-            }
-            break;
         }
 
         //
         final DtoRsp rsp = new DtoRsp();
         rsp.setItems(items);
+        rsp.calcNavPositions(maxResult, currPosition, nTotalGroups);
 
         setResponse(rsp);
         setApiResultOk();

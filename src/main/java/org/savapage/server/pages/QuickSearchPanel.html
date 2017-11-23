@@ -16,27 +16,57 @@
 
 <wicket:panel>
 
-	<label wicket:id="search-label" for="[sp-unique-id]" />
+	<wicket:enclosure child="search-label">
+		<label wicket:id="search-label" for="[sp-unique-id]" />
+		<input wicket:id="search-input" id="[sp-unique-id]" data-type="search"
+			type="text" value="" maxlength="128" tabindex="1" autofocus
+			autocomplete="off" autocorrect="off" autocapitalize="off"
+			spellcheck="false" />
+	</wicket:enclosure>
 
-	<input wicket:id="search-input" id="[sp-unique-id]" data-type="search"
-		type="text" value="" maxlength="128" tabindex="1" autofocus
-		autocomplete="off" autocorrect="off" autocapitalize="off"
-		spellcheck="false" />
+	<wicket:enclosure child="search-label-compact">
+		<table>
+			<tr>
+				<td style="padding-right: 5px;">
+					<span wicket:id="search-label-compact" />
+				</td>
+				<td>
+					<input wicket:id="search-input-compact" id="[sp-unique-id]"
+						data-type="search" type="text" value="" maxlength="128"
+						tabindex="1" autofocus autocomplete="off" autocorrect="off"
+						autocapitalize="off" spellcheck="false" />
+				</td>
+			</tr>
+		</table>
+	</wicket:enclosure>
 
 	<ul wicket:id="search-filter" id="[sp-unique-id]-filter"
 		data-role="listview" data-filter="true" data-input="#[sp-unique-id]"
 		data-filter-placeholder="[placeholder]" data-filter-theme="a"
 		data-inset="true" />
 
-	<fieldset data-role="controlgroup" data-type="horizontal"
-		style="display: none; margin-left: 0px;" data-mini="true"
-		class="sp-quicksearch-buttons">
+	<table style="padding: 0px;">
+		<tr>
+			<td>
+				<fieldset data-role="controlgroup" data-type="horizontal"
+					style="display: none; margin-left: 0px;" data-mini="true"
+					class="sp-quicksearch-buttons">
 
-		<button data-savapage="0"
-			class="sp-button-first ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-none">1</button>
-		<button data-savapage="1"
-			class="sp-button-next ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-none">&gt;</button>
-	</fieldset>
+					<button data-savapage="0"
+						class="sp-button-first ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-none">1</button>
+					<button data-savapage="1"
+						class="sp-button-prev ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-none">&lt;</button>
+					<button data-savapage="0"
+						class="sp-button-curr ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-none">?</button>
+					<button data-savapage="1"
+						class="sp-button-next ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-none">&gt;</button>
+					<button data-savapage="0"
+						class="sp-button-last ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-none">??</button>
+				</fieldset>
+			</td>
+			<td class="sp-quicksearch-button-group-inject"/>
+		</tr>
+	</table>
 
 </wicket:panel>
 
