@@ -163,6 +163,11 @@
             }
             //
             ,
+                _switchQuickUserGroupToSingleSelect = function() {
+                $('#sp-print-delegation-groups-select-to-add-filter .' + _CLASS_SELECTED_TXT).addClass(_CLASS_SELECTED_IND);
+            }
+            //
+            ,
                 _revertQuickUserSelected = function() {
                 _quickUserSelected = {};
                 _nSelectedUsers = 0;
@@ -817,7 +822,8 @@
             //
             ,
                 _onChangeEditMode = function(id) {
-                var isCopies = id === 'sp-print-delegation-edit-radio-add-copies';
+                var dbkey,
+                    isCopies = id === 'sp-print-delegation-edit-radio-add-copies';
 
                 if (isCopies) {
 
@@ -847,8 +853,14 @@
 
                     _moveCopiesButtons2Users();
 
-                    // Deselect all groups
-                    _revertQuickUserGroupsSelected();
+                    // Deselect all groups when multiple groups are selected
+                    if (_nSelectedGroups > 1) {
+                        dbkey = null;
+                        _revertQuickUserGroupsSelected();
+                    } else {
+                        _switchQuickUserGroupToSingleSelect();
+                        dbkey = _util.getFirstProp(_quickUserGroupSelected);
+                    }
 
                     // Clear users
                     _quickUserFilter = undefined;
@@ -856,7 +868,7 @@
                     _quickUserSelected = {};
                     _nSelectedUsers = 0;
 
-                    _onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), null, $('#sp-print-delegation-users-select-to-add').val(), 0);
+                    _onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), 0);
 
                     _view.enable($('#sp-print-delegation-button-add'), false);
 

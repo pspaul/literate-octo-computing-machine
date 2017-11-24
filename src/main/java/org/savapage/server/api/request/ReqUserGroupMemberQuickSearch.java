@@ -61,57 +61,6 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
         }
     }
 
-    /**
-     *
-     * @param role
-     * @param withinGroup
-     * @return
-     */
-    private static UserDao.ACLFilter createACLFilter(final ACLRoleEnum role,
-            final boolean withinGroup) {
-
-        final UserDao.ACLFilter filter = new UserDao.ACLFilter();
-        filter.setAclRole(role);
-
-        if (withinGroup) {
-            filter.setAclUserExternal(true);
-            filter.setAclUserInternal(true);
-            return filter;
-        }
-
-        final Boolean authExt = ACCESSCONTROL_SERVICE.isGroupAuthorized(
-                USER_GROUP_SERVICE.getExternalUserGroup(), role);
-
-        final Boolean authInt = ACCESSCONTROL_SERVICE.isGroupAuthorized(
-                USER_GROUP_SERVICE.getInternalUserGroup(), role);
-
-        if (authExt != null && authInt != null) {
-
-            filter.setAclUserExternal(authExt.booleanValue());
-            filter.setAclUserInternal(authInt.booleanValue());
-
-        } else {
-
-            final Boolean authAll =
-                    BooleanUtils.isTrue(ACCESSCONTROL_SERVICE.isGroupAuthorized(
-                            USER_GROUP_SERVICE.getAllUserGroup(), role));
-
-            if (authExt == null) {
-                filter.setAclUserExternal(authAll.booleanValue());
-            } else {
-                filter.setAclUserExternal(authExt.booleanValue());
-            }
-
-            if (authInt == null) {
-                filter.setAclUserInternal(authAll.booleanValue());
-            } else {
-                filter.setAclUserInternal(authInt.booleanValue());
-            }
-        }
-
-        return filter;
-    }
-
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
@@ -172,4 +121,58 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
         setApiResultOk();
     }
 
+    /**
+     * Creates an {@link UserDao.ACLFilter} for a {@link ACLRoleEnum}.
+     *
+     * @param role
+     *            The role.
+     * @param withinGroup
+     *            If {@code true}, a filter is created that will work within
+     *            User Group scope only.
+     * @return The filter.
+     */
+    private static UserDao.ACLFilter createACLFilter(final ACLRoleEnum role,
+            final boolean withinGroup) {
+
+        final UserDao.ACLFilter filter = new UserDao.ACLFilter();
+        filter.setAclRole(role);
+
+        if (withinGroup) {
+            filter.setAclUserExternal(true);
+            filter.setAclUserInternal(true);
+            return filter;
+        }
+
+        final Boolean authExt = ACCESSCONTROL_SERVICE.isGroupAuthorized(
+                USER_GROUP_SERVICE.getExternalUserGroup(), role);
+
+        final Boolean authInt = ACCESSCONTROL_SERVICE.isGroupAuthorized(
+                USER_GROUP_SERVICE.getInternalUserGroup(), role);
+
+        if (authExt != null && authInt != null) {
+
+            filter.setAclUserExternal(authExt.booleanValue());
+            filter.setAclUserInternal(authInt.booleanValue());
+
+        } else {
+
+            final Boolean authAll =
+                    BooleanUtils.isTrue(ACCESSCONTROL_SERVICE.isGroupAuthorized(
+                            USER_GROUP_SERVICE.getAllUserGroup(), role));
+
+            if (authExt == null) {
+                filter.setAclUserExternal(authAll.booleanValue());
+            } else {
+                filter.setAclUserExternal(authExt.booleanValue());
+            }
+
+            if (authInt == null) {
+                filter.setAclUserInternal(authAll.booleanValue());
+            } else {
+                filter.setAclUserInternal(authInt.booleanValue());
+            }
+        }
+
+        return filter;
+    }
 }

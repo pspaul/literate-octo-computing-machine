@@ -150,7 +150,6 @@ public abstract class ReqQuickSearchMixin extends ApiRequestMixin {
                         totalResultsCalc - totalResultsCalc % maxResult;
             }
         }
-
     }
 
 }

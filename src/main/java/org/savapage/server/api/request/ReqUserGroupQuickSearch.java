@@ -103,6 +103,8 @@ public final class ReqUserGroupQuickSearch extends ReqQuickSearchMixin {
         final UserGroupMemberDao.GroupFilter groupMemberFilter =
                 new UserGroupMemberDao.GroupFilter();
 
+        groupMemberFilter.setAclRoleNotFalse(dto.getAclRole());
+
         if (dto.getAclRole() == ACLRoleEnum.PRINT_DELEGATOR) {
             groupMemberFilter.setDisabledPrintOut(Boolean.FALSE);
         }
