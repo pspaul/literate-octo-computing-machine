@@ -45,6 +45,8 @@ public abstract class ReqQuickSearchMixin extends ApiRequestMixin {
         private Integer currPage;
         private Integer lastPage;
 
+        private Integer totalResults;
+
         public Integer getNextPosition() {
             return nextPosition;
         }
@@ -93,6 +95,14 @@ public abstract class ReqQuickSearchMixin extends ApiRequestMixin {
             this.lastPage = lastPage;
         }
 
+        public Integer getTotalResults() {
+            return totalResults;
+        }
+
+        public void setTotalResults(Integer totalResults) {
+            this.totalResults = totalResults;
+        }
+
         /**
          * Calculates and set position and page attributes.
          *
@@ -100,58 +110,45 @@ public abstract class ReqQuickSearchMixin extends ApiRequestMixin {
          *            Size of page chunk.
          * @param currPositionCalc
          *            The current position.
-         * @param nTotalItems
+         * @param totalResultsCalc
          *            Total number of items.
          */
         public void calcNavPositions(final int maxResult,
-                final int currPositionCalc, final int nTotalItems) {
+                final int currPositionCalc, final int totalResultsCalc) {
 
-            final int lastPageCalc;
-            if (nTotalItems % maxResult == 0) {
-                lastPageCalc = nTotalItems / maxResult;
-            } else {
-                lastPageCalc = nTotalItems / maxResult + 1;
-            }
-            this.setLastPage(lastPageCalc);
+            this.currPosition = currPositionCalc;
+            this.totalResults = totalResultsCalc;
 
-            if (currPositionCalc == 0) {
-                this.setCurrPage(1);
+            if (totalResultsCalc % maxResult == 0) {
+                this.lastPage = totalResultsCalc / maxResult;
             } else {
-                this.setCurrPage(1 + currPositionCalc / maxResult);
+                this.lastPage = totalResultsCalc / maxResult + 1;
             }
 
             if (currPositionCalc == 0) {
-                this.setCurrPage(1);
+                this.currPage = 1;
             } else {
-                this.setCurrPage(1 + currPositionCalc / maxResult);
+                this.currPage = 1 + currPositionCalc / maxResult;
             }
 
-            this.setCurrPosition(currPositionCalc);
-
-            final int prevPositionCalc;
             if (currPositionCalc - maxResult > 0) {
-                prevPositionCalc = currPositionCalc - maxResult;
+                this.prevPosition = currPositionCalc - maxResult;
             } else {
-                prevPositionCalc = 0;
-            }
-            this.setPrevPosition(prevPositionCalc);
-
-            final int nextPositionCalc;
-            if (currPositionCalc + maxResult < nTotalItems) {
-                nextPositionCalc = currPositionCalc + maxResult;
-            } else {
-                nextPositionCalc = currPositionCalc;
+                this.prevPosition = 0;
             }
 
-            final int lastPositionCalc;
-            if (nTotalItems % maxResult == 0) {
-                lastPositionCalc = nTotalItems - maxResult;
+            if (currPositionCalc + maxResult < totalResultsCalc) {
+                this.nextPosition = currPositionCalc + maxResult;
             } else {
-                lastPositionCalc = nTotalItems - nTotalItems % maxResult;
+                this.nextPosition = currPositionCalc;
             }
 
-            this.setNextPosition(nextPositionCalc);
-            this.setLastPosition(lastPositionCalc);
+            if (totalResultsCalc % maxResult == 0) {
+                this.lastPosition = totalResultsCalc - maxResult;
+            } else {
+                this.lastPosition =
+                        totalResultsCalc - totalResultsCalc % maxResult;
+            }
         }
 
     }

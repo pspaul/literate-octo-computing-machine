@@ -35,7 +35,6 @@ import org.savapage.core.dto.QuickSearchUserGroupItemDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.server.api.request.ReqQuickSearchMixin.DtoQuickSearchRsp;
 
 /**
  * User Group Quicksearch.
@@ -43,7 +42,7 @@ import org.savapage.server.api.request.ReqQuickSearchMixin.DtoQuickSearchRsp;
  * @author Rijk Ravestein
  *
  */
-public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
+public final class ReqUserGroupQuickSearch extends ReqQuickSearchMixin {
 
     /**
      *
@@ -85,7 +84,13 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
         groupFilter.setContainingText(dto.getFilter());
         groupFilter.setAclRole(dto.getAclRole());
 
-        final int nTotalGroups = (int) userGroupDao.getListCount(groupFilter);
+        final int totalResults;
+
+        if (dto.getTotalResults() == null) {
+            totalResults = (int) userGroupDao.getListCount(groupFilter);
+        } else {
+            totalResults = dto.getTotalResults().intValue();
+        }
 
         final List<UserGroup> userGroupList = userGroupDao.getListChunk(
                 groupFilter, Integer.valueOf(currPosition), dto.getMaxResults(),
@@ -124,7 +129,7 @@ public final class ReqUserGroupQuickSearch extends ApiRequestMixin {
         //
         final DtoRsp rsp = new DtoRsp();
         rsp.setItems(items);
-        rsp.calcNavPositions(maxResult, currPosition, nTotalGroups);
+        rsp.calcNavPositions(maxResult, currPosition, totalResults);
 
         setResponse(rsp);
         setApiResultOk();

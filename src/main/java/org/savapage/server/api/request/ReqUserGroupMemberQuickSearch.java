@@ -59,7 +59,6 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
         public void setItems(List<QuickSearchUserGroupMemberItemDto> items) {
             this.items = items;
         }
-
     }
 
     /**
@@ -137,7 +136,13 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
                     dto.getGroupId() != null));
         }
 
-        final int nUserTotal = (int) userDao.getListCount(userFilter);
+        final int totalResults;
+
+        if (dto.getTotalResults() == null) {
+            totalResults = (int) userDao.getListCount(userFilter);
+        } else {
+            totalResults = dto.getTotalResults().intValue();
+        }
 
         final List<User> userListChunkFirst =
                 userDao.getListChunk(userFilter, dto.getStartPosition(),
@@ -161,7 +166,7 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
         final DtoRsp rsp = new DtoRsp();
         rsp.setItems(items);
         rsp.calcNavPositions(dto.getMaxResults().intValue(),
-                dto.getStartPosition().intValue(), nUserTotal);
+                dto.getStartPosition().intValue(), totalResults);
 
         setResponse(rsp);
         setApiResultOk();

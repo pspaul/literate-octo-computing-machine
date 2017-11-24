@@ -40,14 +40,14 @@ import org.savapage.server.session.SpSession;
  * @author Rijk Ravestein
  *
  */
-public final class ReqSharedAccountQuickSearch extends ApiRequestMixin {
+public final class ReqSharedAccountQuickSearch extends ReqQuickSearchMixin {
 
     /**
      *
      * @author Rijk Ravestein
      *
      */
-    private static class DtoRsp extends AbstractDto {
+    private static class DtoRsp extends DtoQuickSearchRsp {
 
         private List<QuickSearchItemDto> items;
 
@@ -69,6 +69,9 @@ public final class ReqSharedAccountQuickSearch extends ApiRequestMixin {
         final QuickSearchFilterDto dto = AbstractDto
                 .create(QuickSearchFilterDto.class, this.getParmValue("dto"));
 
+        final int maxResult = dto.getMaxResults().intValue();
+        final int currPosition = dto.getStartPosition();
+
         final List<QuickSearchItemDto> items = new ArrayList<>();
 
         //
@@ -85,8 +88,16 @@ public final class ReqSharedAccountQuickSearch extends ApiRequestMixin {
         final UserGroupAccountDao dao =
                 ServiceContext.getDaoContext().getUserGroupAccountDao();
 
-        final List<SharedAccountDto> accountList =
-                dao.getListChunk(filter, null, dto.getMaxResults());
+        final int totalResults;
+
+        if (dto.getTotalResults() == null) {
+            totalResults = (int) dao.getListCount(filter);
+        } else {
+            totalResults = dto.getTotalResults().intValue();
+        }
+
+        final List<SharedAccountDto> accountList = dao.getListChunk(filter,
+                Integer.valueOf(currPosition), dto.getMaxResults());
 
         for (final SharedAccountDto account : accountList) {
 
@@ -101,6 +112,7 @@ public final class ReqSharedAccountQuickSearch extends ApiRequestMixin {
         //
         final DtoRsp rsp = new DtoRsp();
         rsp.setItems(items);
+        rsp.calcNavPositions(maxResult, currPosition, totalResults);
 
         setResponse(rsp);
         setApiResultOk();
