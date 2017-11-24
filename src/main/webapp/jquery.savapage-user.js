@@ -925,7 +925,7 @@
                     return;
                 }
 
-                if (_model.myJobPages == null || _model.myJobPages.length == 0) {
+                if (_model.myJobPages === null || _model.myJobPages.length === 0) {
                     // Mantis #873
                     $('#page-browser-images img').attr('src', '');
                 } else {
@@ -3783,7 +3783,6 @@
             //
             ,
                 _setVisibilityPrintSeparately = function(allDocs, jobTicket) {
-                var jobTicketWrk = jobTicket || (_model.myPrinter && _model.myPrinter.jobTicket);
                 _view.visible($('#print-documents-separate-print-div'), !jobTicket && allDocs);
                 _view.visible($('#print-documents-separate-ticket-div'), jobTicket && allDocs);
             }
@@ -3868,7 +3867,6 @@
                 _onJobListChange = function() {
                 var sel = $('#print-job-list :selected'),
                     selTitle = $('#print-title'),
-                    jobTicket = _model.myPrinter && _model.myPrinter.jobTicket,
                     isAllDocsSelected = sel.val() === '-1';
 
                 if (_model.printJobIndex === '-1') {
@@ -4019,8 +4017,6 @@
                 _view.mobipick($("#sp-jobticket-date"));
 
             }).on("pagebeforeshow", function(event, ui) {
-
-                var isFromMain = _model.isPrintDialogFromMain;
 
                 if (_model.isPrintDialogFromMain) {
                     _model.isPrintDialogFromMain = false;
