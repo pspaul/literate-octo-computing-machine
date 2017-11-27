@@ -56,6 +56,13 @@
                 _RADIO_ACCOUNT_ID_SHARED = 'sp-print-delegation-select-account-shared'
             //
             ,
+                _RADIO_EDIT_NAME = 'sp-print-delegation-edit-radio',
+                _RADIO_EDIT_ID_GROUPS = 'sp-print-delegation-edit-radio-add-groups',
+                _RADIO_EDIT_ID_USERS = 'sp-print-delegation-edit-radio-add-users',
+                _RADIO_EDIT_ID_COPIES = 'sp-print-delegation-edit-radio-add-copies'
+
+            //
+            ,
                 _IND_SELECTED = '+',
                 _IND_DESELECTED = '&nbsp;',
                 _QS_MAX_RESULTS = 5
@@ -175,6 +182,16 @@
                 $.each($('#sp-print-delegation-users-select-to-add-filter .' + _CLASS_SELECTED_TXT), function() {
                     $(this).html(_IND_DESELECTED);
                 });
+            }
+            //
+            ,
+                _isAccountGroupSelected = function() {
+                return _view.isRadioIdSelected(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_GROUP);
+            }
+            //
+            ,
+                _isAccountUserSelected = function() {
+                return _view.isRadioIdSelected(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
             }
             //
             ,
@@ -819,6 +836,14 @@
                 });
                 _initDelegatorSelection();
             }
+            //----------------------------------------------------------------
+            ,
+                _enableClickCheckboxRadio = function(name, id, enable) {
+                _view.enableCheckboxRadio($('#' + id), enable);
+                if (enable) {
+                    _view.checkRadio(name, id);
+                }
+            }
             //
             ,
                 _onChangeEditMode = function(id) {
@@ -827,29 +852,41 @@
 
                 if (isCopies) {
 
-                    _view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_SHARED);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), false);
+                    //_view.checkRadio(_RADIO_ACCOUNT_NAME,
+                    // _RADIO_ACCOUNT_ID_SHARED);
+                    //_view.enableCheckboxRadio($('#' +
+                    // _RADIO_ACCOUNT_ID_SHARED), true);
+                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP),
+                    // false);
+                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER),
+                    // false);
 
                     _moveCopiesButtons2Extra();
 
                 } else if (id === 'sp-print-delegation-edit-radio-add-groups') {
 
-                    _view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
+                    //_view.checkRadio(_RADIO_ACCOUNT_NAME,
+                    // _RADIO_ACCOUNT_ID_USER);
 
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), true);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), true);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
+                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER),
+                    // true);
+                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP),
+                    // true);
+                    //_view.enableCheckboxRadio($('#' +
+                    // _RADIO_ACCOUNT_ID_SHARED), true);
 
                     _moveCopiesButtons2Groups();
 
                 } else if (id === 'sp-print-delegation-edit-radio-add-users') {
 
-                    _view.checkRadio(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), true);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), false);
+                    //_view.checkRadio(_RADIO_ACCOUNT_NAME,
+                    // _RADIO_ACCOUNT_ID_USER);
+                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER),
+                    // true);
+                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP),
+                    // false);
+                    //_view.enableCheckboxRadio($('#' +
+                    // _RADIO_ACCOUNT_ID_SHARED), false);
 
                     _moveCopiesButtons2Users();
 
@@ -873,13 +910,45 @@
                     _view.enable($('#sp-print-delegation-button-add'), false);
 
                 } else {
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP), false);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER), true);
-                    _view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_SHARED), true);
+                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP),
+                    // false);
+                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER),
+                    // true);
+                    //_view.enableCheckboxRadio($('#' +
+                    // _RADIO_ACCOUNT_ID_SHARED), true);
                 }
 
                 _view.visible($('#sp-print-delegation-copies-to-add').parent(), isCopies);
                 _view.visible($('#sp-print-delegation-member-copies').parent(), !isCopies);
+            }
+            //----------------------------------------------------------------
+            ,
+                _onChangeAccountType = function() {
+                var enableGroups,
+                    enableUsers,
+                    enableCopies;
+
+                if (_isAccountGroupSelected()) {
+                    enableGroups = true;
+                } else if (_isAccountUserSelected()) {
+                    enableGroups = true;
+                    enableUsers = true;
+                } else if (_isAccountSharedSelected()) {
+                    enableGroups = true;
+                    enableCopies = true;
+                }
+
+                _view.enableCheckboxRadio($('#' + _RADIO_EDIT_ID_GROUPS), enableGroups);
+                _view.enableCheckboxRadio($('#' + _RADIO_EDIT_ID_USERS), enableUsers);
+                _view.enableCheckboxRadio($('#' + _RADIO_EDIT_ID_COPIES), enableCopies);
+
+                if (enableGroups) {
+                    _enableClickCheckboxRadio(_RADIO_EDIT_NAME, _RADIO_EDIT_ID_GROUPS, enableGroups);
+                } else {
+                    _enableClickCheckboxRadio(_RADIO_EDIT_NAME, _RADIO_EDIT_ID_USERS, enableUsers);
+                }
+
+                _onChangeEditMode( enableGroups ? _RADIO_EDIT_ID_GROUPS : _RADIO_EDIT_ID_USERS);
             }
             //
             ,
@@ -936,6 +1005,7 @@
                 });
 
                 $('input[name="' + _RADIO_ACCOUNT_NAME + '"]').click(function() {
+                    _onChangeAccountType();
                     _setVisibility();
                 });
 
@@ -944,8 +1014,10 @@
                     _onDelegatorSelectRow($(this));
                 });
 
-                // Start with Add Groups (and trigger visibility actions).
-                $('#sp-print-delegation-edit-radio-add-groups').click();
+                // Start with first account option (and trigger visibility
+                // actions).
+                _view.checkRadioFirst(_RADIO_ACCOUNT_NAME);
+                _onChangeAccountType();
 
                 //---------------------
                 // Group selection

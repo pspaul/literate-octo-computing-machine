@@ -3761,11 +3761,11 @@
                 }
 
                 if (isJobticket) {
-                    separateDocs = _view.isCbChecked($("#print-documents-separate-ticket"));
+                    selWlk = $("#print-documents-separate-ticket");
                 } else {
                     selWlk = $("#print-documents-separate-print");
-                    separateDocs = selWlk.length > 0 ? _view.isCbChecked(selWlk) : null;
                 }
+                separateDocs = selWlk.length > 0 ? _view.isCbChecked(selWlk) : null;
 
                 _this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics"))
                 //

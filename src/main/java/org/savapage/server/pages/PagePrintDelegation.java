@@ -107,8 +107,8 @@ public final class PagePrintDelegation extends AbstractPage {
                 new QuickSearchPanel("quicksearch-shared-account");
         add(panelAccounts);
 
-        panelAccounts.populate("sp-print-delegation-select-shared-account", "",
-                "", false);
+        panelAccounts.populate("sp-print-delegation-select-shared-account",
+                PrintOutNounEnum.ACCOUNT.uiText(getLocale()), "", true);
     }
 
 }
