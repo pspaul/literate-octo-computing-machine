@@ -47,9 +47,11 @@ public final class PagePrintDelegation extends AbstractPage {
         //
         final MarkupHelper helper = new MarkupHelper(this);
 
+        final String txtCopies =
+                PrintOutNounEnum.COPY.uiText(getLocale(), true);
         //
-        add(new Label("header-copies",
-                PrintOutNounEnum.COPY.uiText(getLocale(), true)));
+        add(new Label("header-copies", txtCopies));
+
         //
         final ConfigManager cm = ConfigManager.instance();
 
@@ -63,10 +65,8 @@ public final class PagePrintDelegation extends AbstractPage {
         helper.addModifyLabelAttr("radio-account-user", "value",
                 PrintDelegationDto.DelegatorAccountEnum.USER.toString());
 
-        helper.encloseLabel("member-copies",
-                PrintOutNounEnum.COPY.uiText(getLocale(), true),
-                cm.isConfigValue(
-                        Key.PROXY_PRINT_DELEGATE_MULTIPLE_MEMBER_COPIES_ENABLE));
+        helper.encloseLabel("member-copies", txtCopies, cm.isConfigValue(
+                Key.PROXY_PRINT_DELEGATE_MULTIPLE_MEMBER_COPIES_ENABLE));
 
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_ENABLE)) {
 
@@ -80,6 +80,7 @@ public final class PagePrintDelegation extends AbstractPage {
                     true);
 
             helper.encloseLabel("extra-to-add", "", true);
+            helper.addLabel("member-copies-2", txtCopies);
 
         } else {
             helper.discloseLabel("radio-account-shared");

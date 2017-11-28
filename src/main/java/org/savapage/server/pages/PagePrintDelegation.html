@@ -98,6 +98,10 @@
 				</wicket:enclosure>
 
 				<label for="sp-print-delegation-select-account-user">
+					<!-- 
+					<span
+						class="ui-icon-mini-delegated-print ui-btn-icon-notext sp-inline-icon" />
+						 -->
 					<wicket:message key="sp-label-invoicing-user" />
 				</label>
 				<input type="radio" name="sp-print-delegation-select-account-radio"
@@ -177,39 +181,44 @@
 
 </div>
 
-<!-- This table is moved to another location in JavaScript, depending on user choice -->
-<table cellpadding="0" border="0"
+<!-- This div is moved to another location in JavaScript, depending on user choice -->
+<div style="display: inline-block; float: left;"
 	id="sp-print-delegation-table-copies-add">
-	<tr>
-		<wicket:enclosure child="member-copies">
-			<td wicket:id="member-copies" />
-			<td>&nbsp;</td>
-			<td style="max-width: 70px; padding-right: 2px;">
+
+	<wicket:enclosure child="member-copies">
+		<div style="float: left;" class="sp-print-delegation-copies-div">
+			<div style="display: inline-block;" wicket:id="member-copies" />
+			<div
+				style="display: inline-block; max-width: 70px; padding-left: 5px; padding-right: 2px;">
 				<input type="number" id="sp-print-delegation-member-copies"
 					value="1" min="1" />
-			</td>
-		</wicket:enclosure>
+			</div>
+		</div>
+	</wicket:enclosure>
 
-		<wicket:enclosure child="extra-to-add">
-			<td style="max-width: 70px; padding-right: 2px;">
+	<wicket:enclosure child="extra-to-add">
+		<div style="float: left;" class="sp-print-delegation-copies-div">
+			<div style="display: inline-block;" wicket:id="member-copies-2" />
+			<div
+				style="display: inline-block; max-width: 70px; padding-left: 5px; padding-right: 2px;">
 				<input type="number" id="sp-print-delegation-copies-to-add"
 					wicket:id="extra-to-add" value="1" min="1" />
-			</td>
-		</wicket:enclosure>
+			</div>
+		</div>
+	</wicket:enclosure>
 
-		<td>
-			<button id="sp-print-delegation-button-add"
-				class="sp-print-delegation-mode-add ui-btn ui-btn-inline">
-				<wicket:message key="button-add" />
-			</button>
-			<a href="#" data-rel="back" data-direction="reverse"
-				class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
-					key="button-close" />
-			</a>
-		</td>
-	</tr>
-</table>
+	<div style="float: left;">
+		<button id="sp-print-delegation-button-add"
+			class="sp-print-delegation-mode-add ui-btn ui-btn-inline">
+			<wicket:message key="button-add" />
+		</button>
+		<a href="#" data-rel="back" data-direction="reverse"
+			class="ui-btn ui-btn-inline ui-btn-no-icon"> <wicket:message
+				key="button-close" />
+		</a>
+	</div>
 
+</div>
 
 <wicket:remove>
 	<!-- 

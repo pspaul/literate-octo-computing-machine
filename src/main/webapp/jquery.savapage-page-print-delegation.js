@@ -44,22 +44,16 @@
                 _ACCOUNT_ENUM_SHARED = 'SHARED'
             //
             ,
-                _RADIO_ACCOUNT_NAME = 'sp-print-delegation-select-account-radio'
-            //
-            ,
-                _RADIO_ACCOUNT_ID_GROUP = 'sp-print-delegation-select-account-group'
-            //
-            ,
-                _RADIO_ACCOUNT_ID_USER = 'sp-print-delegation-select-account-user'
-            //
-            ,
+                _RADIO_ACCOUNT_NAME = 'sp-print-delegation-select-account-radio',
+                _RADIO_ACCOUNT_ID_GROUP = 'sp-print-delegation-select-account-group',
+                _RADIO_ACCOUNT_ID_USER = 'sp-print-delegation-select-account-user',
                 _RADIO_ACCOUNT_ID_SHARED = 'sp-print-delegation-select-account-shared'
             //
             ,
                 _RADIO_EDIT_NAME = 'sp-print-delegation-edit-radio',
-                _RADIO_EDIT_ID_GROUPS = 'sp-print-delegation-edit-radio-add-groups',
-                _RADIO_EDIT_ID_USERS = 'sp-print-delegation-edit-radio-add-users',
-                _RADIO_EDIT_ID_COPIES = 'sp-print-delegation-edit-radio-add-copies'
+                _RADIO_EDIT_ID_GROUPS = _RADIO_EDIT_NAME + '-add-groups',
+                _RADIO_EDIT_ID_USERS = _RADIO_EDIT_NAME + '-add-users',
+                _RADIO_EDIT_ID_COPIES = _RADIO_EDIT_NAME + '-add-copies'
 
             //
             ,
@@ -239,24 +233,20 @@
             ,
                 _setVisibility = function() {
                 var showButtonAdd,
-                    enableButtonAdd,
                     showAddGroups,
                     showAddUsers;
 
                 if (_isModeAddGroups()) {
                     showAddGroups = true;
                     showButtonAdd = true;
-                    enableButtonAdd = _nSelectedGroups > 0;
                 } else if (_isModeAddUsers()) {
                     showAddGroups = true;
                     showAddUsers = true;
                     showButtonAdd = true;
-                    enableButtonAdd = _nSelectedUsers > 0;
                 } else if (_isModeAddCopies()) {
                     showAddGroups = false;
                     showAddUsers = false;
                     showButtonAdd = true;
-                    enableButtonAdd = true;
                 }
 
                 _view.visible($('.sp-print-delegation-mode-add'), showAddGroups || showAddUsers);
@@ -265,7 +255,6 @@
                 _view.visible($('.sp-print-delegation-mode-add-users'), showAddUsers);
 
                 _view.visible($('#sp-print-delegation-button-add'), showButtonAdd);
-                _view.enable($('#sp-print-delegation-button-add'), enableButtonAdd);
 
                 _view.visible($('.sp-print-delegation-select-shared-account'), _isAccountSharedSelected());
 
@@ -319,7 +308,20 @@
             }
             //----------------------------------------------------------------
             ,
-                _onGroupQuickSearch = function(target, filter, startPosition, paging) {
+                _selectQuickSearchSingleResult = function(selList) {
+                var li = selList.find('li');
+                if (li.length === 1) {
+                    li.click();
+                }
+            }
+            //----------------------------------------------------------------
+            ,
+                _onQuickSearchInputVisibility = function(refId, filter, totResults) {
+                _view.visible($('#' + refId + ' .sp-quicksearch-input'), filter.length !== 0 || totResults > 1);
+            }
+            //----------------------------------------------------------------
+            ,
+                _onQuickSearchGroup = function(target, filter, startPosition, paging) {
                 /* QuickSearchFilterUserGroupDto */
                 var res,
                     html = "",
@@ -368,10 +370,12 @@
                 }
 
                 target.html(html).filterable("refresh");
+                _selectQuickSearchSingleResult(target);
+                _onButtonAddVisibility();
             }
             //----------------------------------------------------------------
             ,
-                _onUserQuickSearch = function(target, groupId, filter, startPosition, paging) {
+                _onQuickSearchUser = function(target, groupId, filter, startPosition, paging) {
                 /* QuickSearchUserGroupMemberFilterDto */
                 var res,
                     html = "",
@@ -417,7 +421,6 @@
                     });
 
                     _setQuickSearchNavigation(qsButtons, res);
-
                     _quickUserTotalResults = res.dto.totalResults;
 
                 } else {
@@ -425,14 +428,17 @@
                 }
 
                 target.html(html).filterable("refresh");
+                _selectQuickSearchSingleResult(target);
+                _onButtonAddVisibility();
             }
             //----------------------------------------------------------------
             ,
-                _onAccountQuickSearch = function(target, filter, startPosition, paging) {
+                _onQuickSearchAccount = function(target, filter, startPosition, paging) {
                 /* QuickSearchFilterDto */
                 var res,
                     html = "",
-                    qsButtons = $("#sp-print-delegation-quicksearch-accounts .sp-quicksearch-buttons");
+                    refId = 'sp-print-delegation-quicksearch-accounts',
+                    qsButtons = $('#' + refId + ' .sp-quicksearch-buttons');
 
                 if (!paging && _quickAccountFilter === filter) {
                     return;
@@ -475,6 +481,9 @@
                 }
 
                 target.html(html).filterable("refresh");
+                _selectQuickSearchSingleResult(target);
+                _onButtonAddVisibility();
+                _onQuickSearchInputVisibility(refId, filter, _quickAccountTotalResults);
             }
             //----------------------------------------------------------------
             ,
@@ -551,6 +560,7 @@
                 _revertQuickUserGroupsSelected();
                 _resetMemberCopies();
                 _setVisibilityDelegatorsEdit();
+                _onButtonAddVisibility();
             }
             //----------------------------------------------------------------
             ,
@@ -572,6 +582,7 @@
                 _revertQuickUserSelected();
                 _resetMemberCopies();
                 _setVisibilityDelegatorsEdit();
+                _onButtonAddVisibility();
             }
             //----------------------------------------------------------------
             ,
@@ -601,6 +612,7 @@
                 selCopies.val(1);
 
                 _setVisibilityDelegatorsEdit();
+                _onButtonAddVisibility();
             }
             //
             ,
@@ -615,8 +627,12 @@
                         src = $("#sp-print-delegation-quicksearch-users .sp-quicksearch-button-group-inject");
                         html = src.html();
                         if (!html || html.length === 0) {
-                            src = $("#sp-print-delegation-edit-radio-inject");
+                            src = $("#sp-print-delegation-quicksearch-accounts .sp-quicksearch-button-group-inject");
                             html = src.html();
+                            if (!html || html.length === 0) {
+                                src = $("#sp-print-delegation-edit-radio-inject");
+                                html = src.html();
+                            }
                         }
                     }
                 }
@@ -652,8 +668,25 @@
             }
             //
             ,
+                _moveCopiesButtons2Accounts = function() {
+                _moveCopiesButtons($("#sp-print-delegation-quicksearch-accounts .sp-quicksearch-button-group-inject"));
+            }
+            //
+            ,
                 _moveCopiesButtons2Extra = function() {
                 _moveCopiesButtons($("#sp-print-delegation-edit-radio-inject"));
+            }
+            //----------------------------------------------------------------
+            ,
+                _onButtonAddVisibility = function() {
+                var sel = $('#sp-print-delegation-button-add');
+                if (_isModeAddGroups()) {
+                    _view.enable(sel, _nSelectedGroups > 0 && (_isAccountSharedSelected() ? _quickAccountSelected : true));
+                } else if (_isModeAddUsers()) {
+                    _view.enable(sel, _nSelectedUsers > 0);
+                } else if (_isModeAddCopies()) {
+                    _view.enable(sel, _quickAccountSelected);
+                }
             }
             //----------------------------------------------------------------
             ,
@@ -677,7 +710,6 @@
                         _quickUserGroupSelected[dbkey] = _quickUserGroupCache[dbkey];
                         span.html(_IND_SELECTED);
                     }
-                    _view.enable($('#sp-print-delegation-button-add'), _nSelectedGroups > 0);
 
                 } else {
 
@@ -698,9 +730,10 @@
                     }
                     _quickUserFilter = undefined;
 
-                    _onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), 0);
+                    _onQuickSearchUser($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), 0);
 
                 }
+                _onButtonAddVisibility();
             }
             //----------------------------------------------------------------
             ,
@@ -721,7 +754,7 @@
                     _quickUserSelected[dbkey] = _quickUserCache[dbkey];
                     span.html(_IND_SELECTED);
                 }
-                _view.enable($('#sp-print-delegation-button-add'), _nSelectedUsers > 0);
+                _onButtonAddVisibility();
             }
             //----------------------------------------------------------------
             ,
@@ -744,6 +777,9 @@
                 }
                 _quickAccountSelected = _quickAccountCache[dbkey];
                 span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
+
+                _onButtonAddVisibility();
+
             }
             //----------------------------------------------------------------
             ,
@@ -848,45 +884,18 @@
             ,
                 _onChangeEditMode = function(id) {
                 var dbkey,
-                    isCopies = id === 'sp-print-delegation-edit-radio-add-copies';
+                    selWlk,
+                    isCopies = id === _RADIO_EDIT_ID_COPIES;
 
                 if (isCopies) {
 
-                    //_view.checkRadio(_RADIO_ACCOUNT_NAME,
-                    // _RADIO_ACCOUNT_ID_SHARED);
-                    //_view.enableCheckboxRadio($('#' +
-                    // _RADIO_ACCOUNT_ID_SHARED), true);
-                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP),
-                    // false);
-                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER),
-                    // false);
-
-                    _moveCopiesButtons2Extra();
+                    _moveCopiesButtons2Accounts();
 
                 } else if (id === 'sp-print-delegation-edit-radio-add-groups') {
-
-                    //_view.checkRadio(_RADIO_ACCOUNT_NAME,
-                    // _RADIO_ACCOUNT_ID_USER);
-
-                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER),
-                    // true);
-                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP),
-                    // true);
-                    //_view.enableCheckboxRadio($('#' +
-                    // _RADIO_ACCOUNT_ID_SHARED), true);
 
                     _moveCopiesButtons2Groups();
 
                 } else if (id === 'sp-print-delegation-edit-radio-add-users') {
-
-                    //_view.checkRadio(_RADIO_ACCOUNT_NAME,
-                    // _RADIO_ACCOUNT_ID_USER);
-                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER),
-                    // true);
-                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP),
-                    // false);
-                    //_view.enableCheckboxRadio($('#' +
-                    // _RADIO_ACCOUNT_ID_SHARED), false);
 
                     _moveCopiesButtons2Users();
 
@@ -905,21 +914,20 @@
                     _quickUserSelected = {};
                     _nSelectedUsers = 0;
 
-                    _onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), 0);
+                    _onQuickSearchUser($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), 0);
 
                     _view.enable($('#sp-print-delegation-button-add'), false);
-
-                } else {
-                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_GROUP),
-                    // false);
-                    //_view.enableCheckboxRadio($('#' + _RADIO_ACCOUNT_ID_USER),
-                    // true);
-                    //_view.enableCheckboxRadio($('#' +
-                    // _RADIO_ACCOUNT_ID_SHARED), true);
                 }
 
-                _view.visible($('#sp-print-delegation-copies-to-add').parent(), isCopies);
-                _view.visible($('#sp-print-delegation-member-copies').parent(), !isCopies);
+                selWlk = $('#sp-print-delegation-member-copies');
+                //_view.visible(selWlk.parent(), !isCopies);
+                _view.visible(selWlk.closest('.sp-print-delegation-copies-div'), !isCopies);
+
+                selWlk = $('#sp-print-delegation-copies-to-add');
+                //_view.visible(selWlk.parent(), isCopies);
+                _view.visible(selWlk.closest('.sp-print-delegation-copies-div'), isCopies);
+
+                _onButtonAddVisibility();
             }
             //----------------------------------------------------------------
             ,
@@ -927,7 +935,8 @@
                 var enableGroups,
                     enableUsers,
                     enableCopies;
-
+                // Note: AccountGroup and/or AccountShared might not be present,
+                // due to customization (config items).
                 if (_isAccountGroupSelected()) {
                     enableGroups = true;
                 } else if (_isAccountUserSelected()) {
@@ -938,13 +947,13 @@
                     enableCopies = true;
                 }
 
-                _view.enableCheckboxRadio($('#' + _RADIO_EDIT_ID_GROUPS), enableGroups);
-                _view.enableCheckboxRadio($('#' + _RADIO_EDIT_ID_USERS), enableUsers);
                 _view.enableCheckboxRadio($('#' + _RADIO_EDIT_ID_COPIES), enableCopies);
 
                 if (enableGroups) {
+                    _view.enableCheckboxRadio($('#' + _RADIO_EDIT_ID_USERS), enableUsers);
                     _enableClickCheckboxRadio(_RADIO_EDIT_NAME, _RADIO_EDIT_ID_GROUPS, enableGroups);
                 } else {
+                    _view.enableCheckboxRadio($('#' + _RADIO_EDIT_ID_GROUPS), enableGroups);
                     _enableClickCheckboxRadio(_RADIO_EDIT_NAME, _RADIO_EDIT_ID_USERS, enableUsers);
                 }
 
@@ -999,7 +1008,7 @@
                     _onSaveModel();
                 });
 
-                $('input[name="sp-print-delegation-edit-radio"]').click(function() {
+                $('input[name="' + _RADIO_EDIT_NAME + '"]').click(function() {
                     _onChangeEditMode($(this).attr('id'));
                     _setVisibility();
                 });
@@ -1024,7 +1033,7 @@
                 //---------------------
                 filterableGroups.on("filterablebeforefilter", function(e, data) {
                     e.preventDefault();
-                    _onGroupQuickSearch($(this), data.input.get(0).value, 0);
+                    _onQuickSearchGroup($(this), data.input.get(0).value, 0);
                 });
 
                 $(this).on('click', '#sp-print-delegation-groups-select-to-add-filter li', null, function() {
@@ -1032,7 +1041,7 @@
                 });
 
                 // Show available groups on first open
-                _onGroupQuickSearch(filterableGroups, "", 0);
+                _onQuickSearchGroup(filterableGroups, "", 0);
 
                 //---------------------
                 // User selection
@@ -1040,7 +1049,7 @@
                 filterableUsers.on("filterablebeforefilter", function(e, data) {
                     var dbkey = _util.getFirstProp(_quickUserGroupSelected);
                     e.preventDefault();
-                    _onUserQuickSearch($(this), dbkey, data.input.get(0).value, 0);
+                    _onQuickSearchUser($(this), dbkey, data.input.get(0).value, 0);
                 });
 
                 $(this).on('click', '#sp-print-delegation-users-select-to-add-filter li', null, function() {
@@ -1052,7 +1061,7 @@
                 //---------------------
                 filterableAccounts.on("filterablebeforefilter", function(e, data) {
                     e.preventDefault();
-                    _onAccountQuickSearch($(this), data.input.get(0).value, 0);
+                    _onQuickSearchAccount($(this), data.input.get(0).value, 0);
                 });
 
                 $(this).on('click', '#sp-print-delegation-select-shared-account-filter li', null, function() {
@@ -1063,7 +1072,7 @@
                 // Group list navigation
                 //-----------------------
                 $("#sp-print-delegation-quicksearch-groups .sp-quicksearch-buttons .ui-btn").click(function() {
-                    _onGroupQuickSearch($("#sp-print-delegation-groups-select-to-add-filter"), $('#sp-print-delegation-groups-select-to-add').val(), $(this).attr('data-savapage'), true);
+                    _onQuickSearchGroup($("#sp-print-delegation-groups-select-to-add-filter"), $('#sp-print-delegation-groups-select-to-add').val(), $(this).attr('data-savapage'), true);
                 });
 
                 //-----------------------
@@ -1072,18 +1081,18 @@
                 $("#sp-print-delegation-quicksearch-users .sp-quicksearch-buttons .ui-btn").click(function() {
                     var dbkey = _util.getFirstProp(_quickUserGroupSelected),
                         nextPosition = $(this).attr('data-savapage');
-                    _onUserQuickSearch($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), nextPosition, true);
+                    _onQuickSearchUser($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), nextPosition, true);
                 });
 
                 //-----------------------
                 // Account list navigation
                 //-----------------------
                 $("#sp-print-delegation-quicksearch-accounts .sp-quicksearch-buttons .ui-btn").click(function() {
-                    _onAccountQuickSearch($("#sp-print-delegation-select-shared-account-filter"), $('#sp-print-delegation-select-shared-account').val(), $(this).attr('data-savapage'), true);
+                    _onQuickSearchAccount($("#sp-print-delegation-select-shared-account-filter"), $('#sp-print-delegation-select-shared-account').val(), $(this).attr('data-savapage'), true);
                 });
 
                 // Show available accounts on first open
-                _onAccountQuickSearch(filterableAccounts, "", 0);
+                _onQuickSearchAccount(filterableAccounts, "", 0);
 
             }).on("pagebeforeshow", function(event, ui) {
                 _setVisibility();

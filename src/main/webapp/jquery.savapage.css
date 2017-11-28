@@ -242,6 +242,17 @@
     border: 4px #74b042 dotted !important;
 }
 
+/* E.g. icon in radiobutton. */
+.sp-inline-icon {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    width: auto !important;
+}
+.sp-icon-nodisk:after {
+    background-color: transparent;
+}
+
 /* */
 table.sp-info-table {
     text-align: left;
