@@ -186,24 +186,47 @@
 	id="sp-print-delegation-table-copies-add">
 
 	<wicket:enclosure child="member-copies">
-		<div style="float: left;" class="sp-print-delegation-copies-div">
-			<div style="display: inline-block;" wicket:id="member-copies" />
-			<div
-				style="display: inline-block; max-width: 70px; padding-left: 5px; padding-right: 2px;">
-				<input type="number" id="sp-print-delegation-member-copies"
-					value="1" min="1" />
-			</div>
+
+		<div style="display: inline-block; float: left;"
+			class="sp-print-delegation-copies-div">
+
+			<table cellpadding="0">
+				<tr>
+					<td>
+						<div style="display: inline-block;" wicket:id="member-copies" />
+					</td>
+					<td>
+						<div
+							style="display: inline-block; max-width: 70px; padding-left: 5px; padding-right: 2px;">
+							<input type="number" id="sp-print-delegation-member-copies"
+								value="1" min="1" />
+						</div>
+					</td>
+				</tr>
+			</table>
 		</div>
+
 	</wicket:enclosure>
 
 	<wicket:enclosure child="extra-to-add">
-		<div style="float: left;" class="sp-print-delegation-copies-div">
-			<div style="display: inline-block;" wicket:id="member-copies-2" />
-			<div
-				style="display: inline-block; max-width: 70px; padding-left: 5px; padding-right: 2px;">
-				<input type="number" id="sp-print-delegation-copies-to-add"
-					wicket:id="extra-to-add" value="1" min="1" />
-			</div>
+
+		<div style="display: inline-block; float: left;"
+			class="sp-print-delegation-copies-div">
+
+			<table cellpadding="0">
+				<tr>
+					<td>
+						<div style="display: inline-block;" wicket:id="member-copies-2" />
+					</td>
+					<td>
+						<div
+							style="display: inline-block; max-width: 70px; padding-left: 5px; padding-right: 2px;">
+							<input type="number" id="sp-print-delegation-copies-to-add"
+								wicket:id="extra-to-add" value="1" min="1" />
+						</div>
+					</td>
+				</tr>
+			</table>
 		</div>
 	</wicket:enclosure>
 
