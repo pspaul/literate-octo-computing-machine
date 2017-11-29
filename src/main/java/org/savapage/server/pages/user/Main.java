@@ -46,6 +46,7 @@ import org.savapage.core.jpa.Device;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.api.request.ApiRequestHelper;
+import org.savapage.server.helpers.CssClassEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
 import org.savapage.server.pages.MarkupHelper;
@@ -201,8 +202,9 @@ public class Main extends AbstractUserPage {
         addVisible(buttonCandidates.contains(NavButtonEnum.ABOUT),
                 "button-mini-about", localized("button-about"));
 
-        this.add(new Label("btn-about-popup-menu",
-                HtmlButtonEnum.ABOUT.uiText(getLocale())));
+        helper.addAppendLabelAttr("btn-about-popup-menu",
+                HtmlButtonEnum.ABOUT.uiText(getLocale()),
+                MarkupHelper.ATTR_CLASS, CssClassEnum.SP_BTN_ABOUT.clazz());
 
         //
         this.add(MarkupHelper.createEncloseLabel("main-arr-action-pdf",
@@ -386,8 +388,9 @@ public class Main extends AbstractUserPage {
             candidate = NavButtonEnum.ABOUT;
             if (buttonCandidates.contains(candidate)) {
                 item = new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
-                        "ui-icon-main-about", "button-about",
-                        localized("button-about"));
+                        String.format("%s %s", "ui-icon-main-about",
+                                CssClassEnum.SP_BTN_ABOUT.clazz()),
+                        "button-about", localized("button-about"));
             }
         }
 

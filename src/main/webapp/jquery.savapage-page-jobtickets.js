@@ -683,6 +683,9 @@
                 }).on('change', "input[name='sp-doclog-select-type']", null, function() {
                     _pnlDocLog.setVisibility(_pnlDocLog);
                     return false;
+                }).on('click', '.sp-btn-about-org', function() {
+                    // About Dialog closess immediately, why?
+                    //_view.showPageAsync('#page-info', 'AppAbout');
                 });
 
                 $("#sp-a-content-button").click();

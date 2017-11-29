@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,10 @@
 package org.savapage.server.pages;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.community.MemberCard;
+import org.savapage.server.helpers.CssClassEnum;
 import org.savapage.server.session.SpSession;
 
 /**
@@ -56,12 +58,18 @@ public final class CommunityStatusFooterPanel extends Panel {
         final String memberStatus = card.getStatusUserText(getLocale());
         final boolean cardDesirable = card.isMembershipDesirable();
 
+        final Label labelOrg;
+
         if (card.isVisitorCard()) {
-            helper.encloseLabel("membership-org", memberStatus, !cardDesirable);
+            labelOrg = helper.encloseLabel("membership-org", memberStatus,
+                    !cardDesirable);
         } else {
-            helper.encloseLabel("membership-org", card.getMemberOrganisation(),
+            labelOrg = helper.encloseLabel("membership-org",
+                    card.getMemberOrganisation(),
                     StringUtils.isNotBlank(card.getMemberOrganisation()));
         }
+        MarkupHelper.appendLabelAttr(labelOrg, MarkupHelper.ATTR_CLASS,
+                CssClassEnum.SP_BTN_ABOUT_ORG.clazz());
         //
         helper.encloseLabel("membership-status", memberStatus, cardDesirable);
         //
