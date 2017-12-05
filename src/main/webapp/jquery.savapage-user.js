@@ -2025,7 +2025,7 @@
                 });
 
                 $('#sp-file-upload-print-button').click(function() {
-                    _view.pages.main.onShowPrintDialog();
+                    $('#button-main-print').click();
                     return true;
                 });
                 $('#sp-file-upload-pdf-button').click(function() {
@@ -3972,7 +3972,7 @@
                 });
 
                 $('#button-printer-back').click(function(e) {
-                    if (_model.PROXY_PRINT_CLEAR_PRINTER) {
+                    if (_model.PROXY_PRINT_CLEAR_PRINTER && _model.myPrinter) {
                         _model.myShowPrinterInd = false;
                         $('#button-print-settings-default').click();
                         if (_model.hasMultiplePrinters) {
@@ -5138,7 +5138,12 @@
 
                 //
                 _model.PROXY_PRINT_CLEAR_PRINTER = res.proxyPrintClearPrinter;
+                //
+                if (res.delegatorNameId) {
+                    _model.DELEGATOR_NAME_ID = res.delegatorNameId;
+                }
 
+                //
                 _view.imgBase64 = res.img_base64;
 
                 language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);
@@ -5860,6 +5865,10 @@
              */
             _view.pages.printDelegation.onBeforeHide = function() {
                 _refreshPrinterInd();
+            };
+
+            _view.pages.printDelegation.onButtonBack = function() {
+                $('#button-printer-back').click();
             };
 
             /**

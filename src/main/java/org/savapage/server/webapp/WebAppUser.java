@@ -479,12 +479,11 @@ public final class WebAppUser extends AbstractWebAppPage {
         //
         final List<UploadNextButton> nextButtons = new ArrayList<>();
 
-        nextButtons.add(UploadNextButton.PRINT);
-        nextButtons.add(UploadNextButton.PDF);
         nextButtons.add(UploadNextButton.INBOX);
+        nextButtons.add(UploadNextButton.PDF);
+        nextButtons.add(UploadNextButton.PRINT);
 
         add(new UploadNextButtonView("next-buttons", nextButtons));
-
     }
 
     @Override

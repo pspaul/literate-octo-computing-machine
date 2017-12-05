@@ -359,6 +359,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             LOGGER.trace(DtoReq.prettyPrint(getParmValue("dto")));
         }
 
+        if (dtoReq.getCopies().intValue() <= 0) {
+            setApiResultText(ApiResultCodeEnum.ERROR,
+                    "Invalid number of copies.");
+            return;
+        }
+
         final boolean isJobTicket = BooleanUtils.isTrue(dtoReq.getJobTicket());
 
         final boolean isCopyJobTicket = isJobTicket

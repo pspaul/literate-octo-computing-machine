@@ -2855,6 +2855,10 @@
                 }
             };
 
+            this.visibleCheckboxRadio = function(jqsel, show) {
+                this.visible(jqsel.parent(), show);
+            };
+
             /**
              * Enables/Disables jQuery selector (this does not work for radio
              * buttons).

@@ -251,6 +251,13 @@
     opacity: .6;
 }
 
+.ui-icon-mini-selected-green:after {
+    background: url(/images/selected-green-16x16.png) 50% 50% no-repeat;
+    background-size: 12px 12px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
 .ui-icon-mini-cut:after {
     background: url(/glyfx/cut-selected.png) 50% 50% no-repeat;
     background-size: 16px 16px;

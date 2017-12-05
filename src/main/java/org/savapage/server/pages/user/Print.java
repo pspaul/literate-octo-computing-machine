@@ -96,29 +96,37 @@ public class Print extends AbstractUserPage {
 
         if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE)) {
 
-            final InboxSelectScopeEnum clearScope =
-                    cm.getConfigEnum(InboxSelectScopeEnum.class,
-                            Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE);
-
-            final String keyWarn;
-            switch (clearScope) {
-            case ALL:
-                keyWarn = "delete-pages-after-print-info-all";
-                break;
-            case JOBS:
-                keyWarn = "delete-pages-after-print-info-jobs";
-                break;
-            case PAGES:
-                keyWarn = "delete-pages-after-print-info-pages";
-                break;
-            case NONE:
-            default:
-                throw new SpException(String.format("%s is not handled.",
-                        clearScope.toString()));
-            }
-
             helper.discloseLabel(ID_DELETE_PAGES);
-            helper.encloseLabel(ID_DELETE_PAGES_WARN, localized(keyWarn), true);
+
+            if (cm.isConfigValue(
+                    Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_PROMPT)) {
+
+                final InboxSelectScopeEnum clearScope =
+                        cm.getConfigEnum(InboxSelectScopeEnum.class,
+                                Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_SCOPE);
+
+                final String keyWarn;
+                switch (clearScope) {
+                case ALL:
+                    keyWarn = "delete-pages-after-print-info-all";
+                    break;
+                case JOBS:
+                    keyWarn = "delete-pages-after-print-info-jobs";
+                    break;
+                case PAGES:
+                    keyWarn = "delete-pages-after-print-info-pages";
+                    break;
+                case NONE:
+                default:
+                    throw new SpException(String.format("%s is not handled.",
+                            clearScope.toString()));
+                }
+
+                helper.encloseLabel(ID_DELETE_PAGES_WARN, localized(keyWarn),
+                        true);
+            } else {
+                helper.discloseLabel(ID_DELETE_PAGES_WARN);
+            }
 
         } else {
 

@@ -40,7 +40,7 @@ public class Clear extends AbstractUserPage {
     public Clear(final PageParameters parameters) {
         super(parameters);
 
-        add(new Label("button-back", HtmlButtonEnum.BACK.uiText(getLocale())));
+        add(new Label("button-back", HtmlButtonEnum.CANCEL.uiText(getLocale())));
         add(new Label("button-clear",
                 HtmlButtonEnum.DELETE.uiText(getLocale())));
     }

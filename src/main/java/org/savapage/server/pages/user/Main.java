@@ -180,10 +180,11 @@ public class Main extends AbstractUserPage {
         //
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
 
-        final boolean isPrintDelegate = user != null && ACCESS_CONTROL_SERVICE
-                .hasAccess(user, ACLRoleEnum.PRINT_DELEGATE);
+        // final boolean isPrintDelegate = user != null &&
+        // ACCESS_CONTROL_SERVICE
+        // .hasAccess(user, ACLRoleEnum.PRINT_DELEGATE);
 
-        addVisible(isPrintDelegate, "button-print-delegation", "-");
+        addVisible(false, "button-print-delegation", "-");
 
         //
         add(new CommunityStatusFooterPanel("community-status-footer-panel",

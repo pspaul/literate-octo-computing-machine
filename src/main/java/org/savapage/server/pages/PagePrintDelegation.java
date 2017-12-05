@@ -26,6 +26,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.i18n.PrintOutNounEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  *
@@ -50,7 +51,11 @@ public final class PagePrintDelegation extends AbstractPage {
         final String txtCopies =
                 PrintOutNounEnum.COPY.uiText(getLocale(), true);
         //
-        add(new Label("header-copies", txtCopies));
+        add(new Label("header-copies-1", txtCopies));
+        add(new Label("header-copies-2", txtCopies));
+
+        helper.addButton("btn-next", HtmlButtonEnum.NEXT);
+        helper.addButton("button-inbox", HtmlButtonEnum.BACK);
 
         //
         final ConfigManager cm = ConfigManager.instance();
