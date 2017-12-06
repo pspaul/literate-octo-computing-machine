@@ -2726,6 +2726,13 @@
             /**
              * Returns boolean.
              */
+            this.isFlipswitchDisabled = function(sel) {
+                return sel.flipswitch("option", "disabled");
+            };
+
+            /**
+             * Returns boolean.
+             */
             this.isCbChecked = function(sel) {
                 return sel.is(':checked');
             };
@@ -2874,6 +2881,10 @@
 
             this.enableCheckboxRadio = function(jqsel, enable) {
                 jqsel.checkboxradio( enable ? 'enable' : 'disable');
+            };
+
+            this.enableFlipswitch = function(jqsel, enable) {
+                jqsel.flipswitch( enable ? 'enable' : 'disable');
             };
 
             /**

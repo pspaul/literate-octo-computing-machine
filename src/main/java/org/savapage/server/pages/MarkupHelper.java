@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -34,6 +35,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
+import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
@@ -462,6 +464,19 @@ public final class MarkupHelper {
     public static Label modifyLabelAttr(final Label label,
             final String attribute, final String value) {
         label.add(new AttributeModifier(attribute, value));
+        return label;
+    }
+
+    /**
+     * Sets the on/off texts for a jQuery Mobile Flipswitch.
+     *
+     * @param label
+     *            The flipswitch {@link Label}.
+     */
+    public static Label setFlipswitchOnOffText(final Label label,
+            final Locale locale) {
+        modifyLabelAttr(label, "data-on-text", AdverbEnum.ON.uiText(locale));
+        modifyLabelAttr(label, "data-off-text", AdverbEnum.OFF.uiText(locale));
         return label;
     }
 

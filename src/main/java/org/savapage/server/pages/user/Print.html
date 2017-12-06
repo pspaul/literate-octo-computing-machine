@@ -43,15 +43,7 @@
 					class="sp-button-mini-print-duplex ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
 				<button
 					class="sp-button-mini-print-n-up ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
-				<wicket:enclosure child="button-print-delegation">
-					<label for="print-as-delegate">
-						<wicket:message key="print-as-delegate" />
-					</label>
-					<input type="checkbox" id="print-as-delegate" value="1" checked />
-					<button wicket:id="button-print-delegation"
-						id="button-print-delegation"
-						class="sp-button-mini-print-delegation sp-plain-info ui-icon-mini-delegated-print ui-shadow ui-btn ui-corner-all ui-btn-icon-left" />
-				</wicket:enclosure>
+
 			</div>
 
 			<div id="sp-print-quicksearch-printer-div">
@@ -78,6 +70,7 @@
 			</ul>
 
 		</li>
+
 	</ul>
 
 	<ul class="printer-selected" data-role="listview" data-inset="true">
@@ -116,6 +109,36 @@
 				</div>
 			</wicket:enclosure>
 
+			<wicket:enclosure child="button-print-delegation">
+
+				<div class="ui-field-contain">
+
+					<label data-mini="true" class="sp-txt-wrap"
+						for="sp-print-invoicing-div">Facturatie </label>
+
+					<div data-role="controlgroup" data-type="horizontal"
+						id="sp-print-invoicing-div" class="ui-mini">
+
+						<div style="float: left;">
+
+							<div data-role="controlgroup" data-type="horizontal"
+								class="ui-mini" style="float: left; margin-right: 15px;">
+								<button id="button-print-delegation"
+									class="ui-btn ui-shadow ui-corner-all ui-btn-icon-right ui-icon-user">
+									<span wicket:id="button-print-delegation" /> &nbsp; <span
+										class="sp-button-mini-print-delegation sp-txt-info" /> &nbsp;&nbsp;
+								</button>
+							</div>
+
+							<input type="checkbox" data-role="flipswitch" data-on-text="On"
+								wicket:id="flipswitch-print-as-delegate" style="float: right;"
+								data-off-text="Off" id="print-as-delegate" value="1" checked />
+
+						</div>
+					</div>
+				</div>
+			</wicket:enclosure>
+
 			<wicket:enclosure child="print-account-type">
 				<div class="ui-field-contain sp-print-account"
 					id="sp-print-shared-account-div">
@@ -136,7 +159,6 @@
 
 				</div>
 			</wicket:enclosure>
-
 
 			<div class="ui-field-contain sp-proxyprint sp-jobticket-print">
 				<label data-mini="true" for="print-job-list" class="sp-txt-wrap">

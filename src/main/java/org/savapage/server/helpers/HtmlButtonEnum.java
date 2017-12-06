@@ -90,6 +90,8 @@ public enum HtmlButtonEnum {
     /**  */
     SEARCH,
     /**  */
+    SELECT,
+    /**  */
     SEND,
     /**  */
     SETTINGS,

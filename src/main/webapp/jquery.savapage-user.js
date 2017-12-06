@@ -3591,7 +3591,8 @@
                 _quickPrinterSelected
             //
             ,
-                _fastPrintAvailable
+                _fastPrintAvailable,
+                _hasDelegatedPrint
             //
             ,
                 _getPrinterImg = function(item, isDirect) {
@@ -3738,7 +3739,10 @@
             ,
                 _isDelegatedPrint = function() {
                 var sel = $('#print-as-delegate');
-                return sel && !_view.isCbDisabled(sel) && _view.isCbChecked(sel);
+                if (_hasDelegatedPrint && sel.length === 0 && _model.printDelegationCopies > 0) {
+                    return true;
+                }
+                return sel && !_view.isFlipswitchDisabled(sel) && _view.isCbChecked(sel);
             }
             //
             ,
@@ -3817,8 +3821,10 @@
 
                 _view.visible($('#slider-print-copies-div'), !delegatedPrint && !jobTicket);
                 _view.visible($('#number-print-copies-div'), !delegatedPrint && jobTicket);
-                _view.visible($('#delegated-print-copies-div'), delegatedPrint);
                 _view.visible($('#sp-print-shared-account-div'), !delegatedPrint);
+                
+                // Hide for now.
+                _view.visible($('#delegated-print-copies-div'), false);
 
                 if (copies > 1) {
 
@@ -3920,6 +3926,8 @@
                 var filterablePrinter = $("#sp-print-qs-printer-filter");
 
                 filterablePrinter.focus();
+                //
+                _hasDelegatedPrint = $('#button-print-delegation').length > 0;
 
                 //
                 filterablePrinter.on("filterablebeforefilter", function(e, data) {
@@ -3958,7 +3966,7 @@
                     _setVisibility();
                 });
 
-                $('#print-as-delegate').click(function() {
+                $(this).on('change', "input:checkbox[id='print-as-delegate']", null, function(e) {
                     _setVisibility();
                 });
 
@@ -4849,7 +4857,7 @@
                 ;
 
                 if (trgDelegated) {
-                    _view.enableCheckboxRadio($('#print-as-delegate'), _model.printDelegationCopies > 0);
+                    _view.enableFlipswitch($('#print-as-delegate'), _model.printDelegationCopies > 0);
                     trgDelegated.html(_model.printDelegationCopies || '-');
                 }
 

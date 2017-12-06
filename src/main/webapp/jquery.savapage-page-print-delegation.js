@@ -626,6 +626,7 @@
 
                 if (_delegatorCopies[item.key]) {
                     _delegatorCopies[item.key].userCopies += userCount;
+                    _delegatorCopies[item.key].userCount += userCount;
                     _updateDelegatorRow(tbody, _delegatorCopies[item.key], _CLASS_COPIES);
                 } else {
                     _delegatorCopies[item.key] = _createModelAccount(account, userCount, userCount);
@@ -945,6 +946,7 @@
 
                 if (_isAccountSharedSelected()) {
                     selWlk = $('#sp-print-delegation-select-shared-account-filter');
+                    _onQuickSearchAccount(selWlk, "", 0, true);
                     _view.visible(selWlk, selWlk.find('li').length !== 1);
                 }
 
@@ -1097,6 +1099,13 @@
 
                 $(this).on('click', '#sp-print-delegation-select-shared-account-filter li', null, function() {
                     _onAccountSelected($(this));
+                });
+
+                //-----------------------------------
+                // User | Group | Account selection
+                //-----------------------------------
+                $(this).on('click', '#sp-print-delegation-mode-add-table img', null, function(event) {
+                    event.preventDefault();
                 });
 
                 //-----------------------

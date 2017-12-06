@@ -37,6 +37,7 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.SharedAccountDto;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
@@ -199,7 +200,21 @@ public class Print extends AbstractUserPage {
         final boolean isPrintDelegate = ACCESS_CONTROL_SERVICE.hasAccess(user,
                 ACLRoleEnum.PRINT_DELEGATE);
 
-        addVisible(isPrintDelegate, "button-print-delegation", "-");
+        addVisible(isPrintDelegate, "button-print-delegation",
+                PrintOutNounEnum.COPY.uiText(getLocale(), true));
+
+        if (isPrintDelegate) {
+
+            if (cm.isConfigValue(
+                    Key.WEBAPP_USER_PROXY_PRINT_DELEGATE_COPIES_APPLY_SWITCH)) {
+
+                MarkupHelper.setFlipswitchOnOffText(
+                        helper.addLabel("flipswitch-print-as-delegate", ""),
+                        getLocale());
+            } else {
+                helper.discloseLabel("flipswitch-print-as-delegate");
+            }
+        }
 
         //
         final Integer privsLetterhead = ACCESS_CONTROL_SERVICE

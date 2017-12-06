@@ -837,11 +837,7 @@ public final class SystemStatusPanel extends Panel {
      *            The flipswitch {@link Label}.
      */
     private void setFlipswitchOnOffText(final Label label) {
-
-        MarkupHelper.modifyLabelAttr(label, "data-on-text",
-                getLocalizer().getString("flipswitch-on", this));
-        MarkupHelper.modifyLabelAttr(label, "data-off-text",
-                getLocalizer().getString("flipswitch-off", this));
+        MarkupHelper.setFlipswitchOnOffText(label, getLocale());
     }
 
     /**
