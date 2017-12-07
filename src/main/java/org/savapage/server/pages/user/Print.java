@@ -37,6 +37,7 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.SharedAccountDto;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
@@ -262,9 +263,10 @@ public class Print extends AbstractUserPage {
             addSharedAccounts(sharedAccounts);
         }
 
-        add(new Label("button-send-jobticket",
-                HtmlButtonEnum.SEND.uiText(getLocale())));
-        add(new Label("button-inbox", HtmlButtonEnum.BACK.uiText(getLocale())));
+        helper.addButton("button-send-jobticket", HtmlButtonEnum.SEND);
+        helper.addButton("button-inbox", HtmlButtonEnum.BACK);
+        helper.addLabel("label-invoicing", NounEnum.INVOICING);
+        helper.addLabel("header-job", PrintOutNounEnum.JOB);
     }
 
     /**

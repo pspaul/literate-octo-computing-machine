@@ -36,6 +36,7 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
@@ -416,6 +417,37 @@ public final class MarkupHelper {
         return labelWrk;
     }
 
+    /**
+     * Adds a noun label.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param noun
+     *            The {@link NounEnum}.
+     * @return The added {@link Label}.
+     */
+    public Label addLabel(final String wicketId, final NounEnum noun) {
+        final Label label =
+                new Label(wicketId, noun.uiText(this.container.getLocale()));
+        add(label);
+        return label;
+    }
+
+    /**
+     * Adds a noun label.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param noun
+     *            The {@link PrintOutNounEnum}.
+     * @return The added {@link Label}.
+     */
+    public Label addLabel(final String wicketId, final PrintOutNounEnum noun) {
+        final Label label =
+                new Label(wicketId, noun.uiText(this.container.getLocale()));
+        add(label);
+        return label;
+    }
     /**
      * Adds input of type text.
      *

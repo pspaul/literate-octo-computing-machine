@@ -3399,6 +3399,17 @@
                 _model.printPageScaling = _view.getRadioValue(name);
             }
             //
+            ,
+                _onNext = function() {
+                var printerOptions = {};
+                _v2Options(printerOptions);
+                if (_this.onPrinterOptValidate(printerOptions)) {
+                    _v2m();
+                    return true;
+                }
+                return false;
+            }
+            //
             ;
 
             // A way to set visibility of media and scaling, also in other parts
@@ -3410,22 +3421,33 @@
             $('#page-printer-settings').on('pagecreate', function(event) {
 
                 $('#button-print-settings-back').click(function(e) {
+                    
                     _model.myShowUserStatsGet = true;
+
+                    if (_model.PROXY_PRINT_CLEAR_DELEGATE) {
+                        _view.pages.printDelegation.clear();
+                    }
+
                     if (_model.PROXY_PRINT_CLEAR_PRINTER) {
                         $('#button-print-settings-default').click();
                         _model.myShowPrinterInd = false;
                         _view.pages.print.onClearPrinterInd();
                     }
+
                     _view.changePage($('#page-main'));
                     return false;
                 });
 
                 $('#button-print-settings-next').click(function() {
-                    var printerOptions = {};
-                    _v2Options(printerOptions);
-                    if (_this.onPrinterOptValidate(printerOptions)) {
-                        _v2m();
-                        return true;
+                    if (_onNext()) {
+                        _view.changePage($('#page-print'));
+                    }
+                    return false;
+                });
+
+                $('#button-print-settings-next-invoicing').click(function() {
+                    if (_onNext()) {
+                        $('#button-print-delegation').click();
                     }
                     return false;
                 });
@@ -3988,6 +4010,10 @@
                 });
 
                 $('#button-printer-back').click(function(e) {
+                    
+                    if (_model.PROXY_PRINT_CLEAR_DELEGATE) {
+                        _view.pages.printDelegation.clear();
+                    }
                     if (_model.PROXY_PRINT_CLEAR_PRINTER && _model.myPrinter) {
                         _model.myShowPrinterInd = false;
                         $('#button-print-settings-default').click();
@@ -4214,6 +4240,7 @@
             this.hasMultiplePrinters = true;
             this.isPrintDialogFromMain = true;
             this.PROXY_PRINT_CLEAR_PRINTER = false;
+            this.PROXY_PRINT_CLEAR_DELEGATE = false;
 
             this.myInboxTitle = null;
             this.myPrintTitle = null;
@@ -5154,6 +5181,8 @@
 
                 //
                 _model.PROXY_PRINT_CLEAR_PRINTER = res.proxyPrintClearPrinter;
+                _model.PROXY_PRINT_CLEAR_DELEGATE = res.proxyPrintClearDelegate;
+
                 //
                 if (res.delegatorNameId) {
                     _model.DELEGATOR_NAME_ID = res.delegatorNameId;
@@ -5885,6 +5914,14 @@
 
             _view.pages.printDelegation.onButtonBack = function() {
                 $('#button-printer-back').click();
+            };
+
+            _view.pages.printDelegation.onButtonNext = function(previousPageId) {
+                if (previousPageId !== '#' + _view.pages.main.id) {
+                    $('#button-print-settings-next').click();
+                } else {
+                    _view.pages.printDelegation.onButtonBack();
+                }
             };
 
             /**

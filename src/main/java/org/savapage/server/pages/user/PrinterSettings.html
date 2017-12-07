@@ -21,11 +21,21 @@
 		<li data-role="list-divider" id="title-printer-settings" />
 
 		<li class="sp-print-job-info">
-			<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
-				<button
-					class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-sources-info" />
-				<button
-					class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info" />
+			<div style="width: 100%; float: left;">
+				<div style="float: left;">
+					<div data-role="controlgroup" data-type="horizontal"
+						class="ui-mini">
+						<button
+							class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-sources-info" />
+						<button
+							class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info" />
+					</div>
+				</div>
+				<div style="float: right; margin-right: 10px;">
+					<button id="button-print-settings-default"
+						wicket:id="button-default"
+						class="ui-mini ui-btn ui-btn-icon-right ui-icon-recycle ui-shadow ui-corner-all sp-txt-info" />
+				</div>
 			</div>
 		</li>
 
@@ -62,13 +72,15 @@
 	</ul>
 
 	<button id="button-print-settings-back" wicket:id="button-inbox"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home"></button>
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home" />
 
-	<button id="button-print-settings-default" wicket:id="button-default"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle" />
+	<wicket:enclosure child="button-next-invoicing">
+		<button id="button-print-settings-next-invoicing"
+			wicket:id="button-next-invoicing"
+			class="ui-btn ui-btn-inline ui-btn-icon-right ui-icon-arrow-r" />
+	</wicket:enclosure>
 
-	<a href="#page-print" id="button-print-settings-next"
-		wicket:id="button-next"
+	<button id="button-print-settings-next" wicket:id="button-next"
 		class="ui-btn ui-btn-inline ui-btn-icon-right ui-icon-arrow-r" />
 
 </div>

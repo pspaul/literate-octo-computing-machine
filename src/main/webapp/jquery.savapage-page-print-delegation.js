@@ -39,6 +39,9 @@
                 _this = this
             //
             ,
+                _previousPageId
+            //
+            ,
                 _ACCOUNT_ENUM_GROUP = 'GROUP',
                 _ACCOUNT_ENUM_USER = 'USER',
                 _ACCOUNT_ENUM_SHARED = 'SHARED'
@@ -1025,6 +1028,10 @@
                     _this.onButtonBack();
                 });
 
+                $('#sp-print-delegation-button-next').click(function() {
+                    _this.onButtonNext(_previousPageId);
+                });
+
                 $('#sp-print-delegation-button-select-all').click(function() {
                     _onDelegatorSelectAll();
                 });
@@ -1135,6 +1142,7 @@
                 _onQuickSearchAccount(filterableAccounts, "", 0);
 
             }).on("pagebeforeshow", function(event, ui) {
+                _previousPageId = ui.prevPage.attr('id');
                 _setVisibility();
             }).on("pagebeforehide", function(event, ui) {
                 _updateModel();

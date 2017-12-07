@@ -22,9 +22,15 @@
 package org.savapage.server.pages.user;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PageScalingEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -37,6 +43,9 @@ public class PrinterSettings extends AbstractUserPage {
      *
      */
     private static final long serialVersionUID = 1L;
+
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      *
@@ -55,9 +64,18 @@ public class PrinterSettings extends AbstractUserPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        helper.addButton("button-next", HtmlButtonEnum.NEXT);
         helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
+
         helper.addButton("button-inbox", HtmlButtonEnum.BACK);
+
+        if (ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
+                ACLRoleEnum.PRINT_DELEGATE)) {
+            helper.addLabel("button-next-invoicing", NounEnum.INVOICING);
+        } else {
+            helper.discloseLabel("button-next-invoicing");
+        }
+
+        helper.addLabel("button-next", PrintOutNounEnum.JOB);
     }
 
 }

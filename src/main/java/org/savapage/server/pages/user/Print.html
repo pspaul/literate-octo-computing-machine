@@ -76,9 +76,9 @@
 	<ul class="printer-selected" data-role="listview" data-inset="true">
 
 		<li data-role="list-divider" id="sp-printer-page-name">
-			<span class="sp-proxyprint"><wicket:message key="header-job" /></span>
-			<span class="sp-jobticket"><wicket:message key="title_ticket" />
-				<span id="sp-jobticket-number" /></span>
+			<span class="sp-proxyprint" wicket:id="header-job" /> <span
+				class="sp-jobticket"><wicket:message key="title_ticket" /> <span
+				id="sp-jobticket-number" /></span>
 		</li>
 
 		<li data-mini="true">
@@ -114,7 +114,7 @@
 				<div class="ui-field-contain">
 
 					<label data-mini="true" class="sp-txt-wrap"
-						for="sp-print-invoicing-div">Facturatie </label>
+						for="sp-print-invoicing-div" wicket:id="label-invoicing" />
 
 					<div data-role="controlgroup" data-type="horizontal"
 						id="sp-print-invoicing-div" class="ui-mini">
@@ -124,9 +124,10 @@
 							<div data-role="controlgroup" data-type="horizontal"
 								class="ui-mini" style="float: left; margin-right: 15px;">
 								<button id="button-print-delegation"
-									class="ui-btn ui-shadow ui-corner-all ui-btn-icon-right ui-icon-user">
+									class="ui-btn ui-shadow ui-corner-all ui-btn-icon-right ui-icon-arrow-r">
 									<span wicket:id="button-print-delegation" /> &nbsp; <span
-										class="sp-button-mini-print-delegation sp-txt-info" /> &nbsp;&nbsp;
+										class="sp-button-mini-print-delegation sp-txt-info" />
+									&nbsp;&nbsp;
 								</button>
 							</div>
 
