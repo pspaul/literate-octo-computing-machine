@@ -60,6 +60,7 @@ public final class MarkupHelper {
     public static final String ATTR_TITLE = "title";
     public static final String ATTR_SRC = "src";
     public static final String ATTR_CLASS = "class";
+    public static final String ATTR_STYLE = "style";
     public static final String ATTR_HREF = "href";
     public static final String ATTR_VALUE = "value";
     public static final String ATTR_SLIDER_MIN = "min";

@@ -2181,6 +2181,7 @@
                     });
 
                     _view.visible($('#button-mini-outbox'), outbox.jobCount > 0);
+                    _view.enable($('#button-main-outbox'), outbox.jobCount > 0);
 
                     $('#button-mini-outbox .sp-outbox-remaining-time').html(outbox.localeInfo.remainTime);
                     $('#button-mini-outbox .sp-outbox-jobs').html(outbox.jobCount);
@@ -2890,9 +2891,16 @@
                     return false;
                 });
 
-                $('#button-mini-outbox').click(function() {
+                $('.sp-btn-show-outbox').click(function() {
                     _view.showUserPage('#page-outbox', 'Outbox');
                     return false;
+                });
+
+                $('#button-main-help').click(function() {
+                    // shift focus from this button...
+                    $('#page-main').focus();
+                    // ... and open help page in new tab.
+                    window.open($('#sp-button-mini-help').attr('href'), '_blank').focus();
                 });
 
                 $('.sp-button-user-details').click(function() {
@@ -3822,7 +3830,7 @@
                 _view.visible($('#slider-print-copies-div'), !delegatedPrint && !jobTicket);
                 _view.visible($('#number-print-copies-div'), !delegatedPrint && jobTicket);
                 _view.visible($('#sp-print-shared-account-div'), !delegatedPrint);
-                
+
                 // Hide for now.
                 _view.visible($('#delegated-print-copies-div'), false);
 

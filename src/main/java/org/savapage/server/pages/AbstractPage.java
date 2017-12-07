@@ -41,6 +41,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.UserAgentHelper;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
@@ -314,6 +315,17 @@ public abstract class AbstractPage extends WebPage
      */
     protected final String localized(final String key) {
         return getLocalizer().getString(key, this);
+    }
+
+    /**
+     * Gives the localized text for a button.
+     *
+     * @param btn
+     *            The button.
+     * @return The localized button text.
+     */
+    protected final String localized(final HtmlButtonEnum btn) {
+        return btn.uiText(getLocale());
     }
 
     /**

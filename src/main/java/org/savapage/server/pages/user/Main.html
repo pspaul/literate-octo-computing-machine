@@ -45,7 +45,7 @@
 		</button>
 
 		<wicket:enclosure child="button-mini-help">
-			<a href="user-defined-url" target="_blank"
+			<a href="user-defined-url" target="_blank" id="sp-button-mini-help"
 				wicket:id="button-mini-help"
 				class="sp-plain-info ui-btn ui-btn-icon-left ui-icon-main-header-help" />
 		</wicket:enclosure>
@@ -133,8 +133,7 @@
 				<li class="main_actions main_arr_edit">
 					<button id="main-arr-delete"
 						class="ui-btn ui-btn-icon-top ui-icon-main-clear">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-clear" /></span>
+						<span class="sp-nav-button-txt" wicket:id="button-delete" />
 					</button>
 				</li>
 			</ul>
@@ -163,8 +162,7 @@
 				<li>
 					<button id="main-arr-return"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-back">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-back" /></span>
+						<span class="sp-nav-button-txt" wicket:id="button-back" />
 					</button>
 				</li>
 			</ul>
@@ -211,7 +209,7 @@
 		</wicket:enclosure>
 
 		<button id="button-mini-outbox"
-			class="ui-btn ui-btn-icon-left ui-icon-clock">
+			class="ui-btn ui-btn-icon-left ui-icon-clock sp-btn-show-outbox">
 			<span class="sp-outbox-remaining-time" />&nbsp;&nbsp;<span
 				class="sp-outbox-jobs" /><span class="sp-outbox-pages" /><span
 				class="sp-outbox-cost" />

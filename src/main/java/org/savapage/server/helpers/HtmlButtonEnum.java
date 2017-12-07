@@ -38,6 +38,8 @@ public enum HtmlButtonEnum {
     /**  */
     BACK,
     /**  */
+    BROWSE,
+    /**  */
     CANCEL,
     /**  */
     CANCEL_ALL,
@@ -97,6 +99,8 @@ public enum HtmlButtonEnum {
     SETTINGS,
     /**  */
     SETTLE,
+    /**  */
+    SORT,
     /**  */
     START,
     /**  */

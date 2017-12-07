@@ -120,6 +120,22 @@
     border-radius: 0 !important;
 }
 
+.ui-icon-main-hold-jobs:after {
+    background: url(/glyphish-icons/11-clock.png) 50% 50% no-repeat;
+    background-size: 22px 22px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
+.ui-icon-main-help:after {
+    background: url(/glyphish-icons/90-life-buoy.png) 50% 50% no-repeat;
+    background-size: 22px 22px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    /* opacity: .6; */
+}
+
+
 .ui-icon-main-clear:after {
     background: url(/glyphicons/glyphicons_016_bin.png) 50% 50% no-repeat;
     background-size: 18px 26px;
