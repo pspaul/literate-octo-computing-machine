@@ -104,7 +104,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ReqPrinterPrint.class);
 
-    private enum JobTicketTypeEnum {
+    public enum JobTicketTypeEnum {
         PRINT, COPY
     }
 

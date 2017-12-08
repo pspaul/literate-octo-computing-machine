@@ -3421,7 +3421,7 @@
             $('#page-printer-settings').on('pagecreate', function(event) {
 
                 $('#button-print-settings-back').click(function(e) {
-                    
+
                     _model.myShowUserStatsGet = true;
 
                     if (_model.PROXY_PRINT_CLEAR_DELEGATE) {
@@ -3608,19 +3608,9 @@
          */
         function PagePrint(_i18n, _view, _model, _api, _ctrl) {
 
-            var _this = this
-            //
-            ,
-                _TICKETTYPE_PRINT = 'PRINT',
-                _TICKETTYPE_COPY = 'COPY'
-            //
-            ,
-                _quickPrinterCache = []
-            //
-            ,
-                _quickPrinterSelected
-            //
-            ,
+            var _this = this,
+                _quickPrinterCache = [],
+                _quickPrinterSelected,
                 _fastPrintAvailable,
                 _hasDelegatedPrint
             //
@@ -3777,7 +3767,7 @@
             //
             ,
                 _getJobTicketType = function(isJobTicket) {
-                return isJobTicket ? _view.getRadioValue('sp-print-jobticket-type') || _TICKETTYPE_PRINT : _TICKETTYPE_PRINT;
+                return isJobTicket ? _view.getRadioValue('sp-print-jobticket-type') || _model.TICKETTYPE_PRINT : _model.TICKETTYPE_PRINT;
             }
             //
             ,
@@ -3812,13 +3802,15 @@
             //
             ,
                 _onJobTicketType = function(ticketType) {
-                _view.visible($('.sp-jobticket-print'), ticketType === _TICKETTYPE_PRINT);
+                var allDocs = ticketType === _model.TICKETTYPE_PRINT && _model.canSelectAllDocuments() && _model.myJobs.length > 1;
+                _view.visible($('.sp-jobticket-print'), ticketType === _model.TICKETTYPE_PRINT);
+                _setVisibilityPrintSeparately(allDocs, true);
             }
             //
             ,
                 _setVisibilityPrintSeparately = function(allDocs, jobTicket) {
-                _view.visible($('#print-documents-separate-print-div'), !jobTicket && allDocs);
-                _view.visible($('#print-documents-separate-ticket-div'), jobTicket && allDocs);
+                _view.visible($('#print-documents-separate-print-div'), allDocs && !jobTicket);
+                _view.visible($('#print-documents-separate-ticket-div'), allDocs && jobTicket);
             }
             //
             ,
@@ -3890,7 +3882,7 @@
                     if (hasInboxDocs) {
                         jobTicketType = _getJobTicketType(jobTicket);
                     } else {
-                        jobTicketType = _TICKETTYPE_COPY;
+                        jobTicketType = _model.TICKETTYPE_COPY;
                     }
                     // (2) then check to see enabled/disabled state.
                     _view.checkRadioValue('sp-print-jobticket-type', jobTicketType);
@@ -3947,7 +3939,7 @@
                     _view.checkCb("#delete-pages-after-print", false);
                 }
 
-                _view.checkRadioValue('sp-print-jobticket-type', _TICKETTYPE_PRINT);
+                _view.checkRadioValue('sp-print-jobticket-type', _model.TICKETTYPE_PRINT);
                 _view.setSelectedValue($('#sp-print-shared-account-list'), "0");
             };
 
@@ -4010,7 +4002,9 @@
                 });
 
                 $('#button-printer-back').click(function(e) {
-                    
+
+                    _view.checkRadioValue('sp-print-jobticket-type', _model.TICKETTYPE_PRINT);
+
                     if (_model.PROXY_PRINT_CLEAR_DELEGATE) {
                         _view.pages.printDelegation.clear();
                     }
@@ -4109,6 +4103,9 @@
                 _getPageRangesFormatted
             //
             ;
+
+            this.TICKETTYPE_PRINT = 'PRINT';
+            this.TICKETTYPE_COPY = 'COPY';
 
             /**
              * Creates a string with page range format from pages array.
@@ -6163,12 +6160,14 @@
             _view.pages.printSettings.onPrinterOptValidate = function(printerOptions) {
                 var res,
                     valid = true;
+
                 if (_model.myPrinter.jobTicket) {
                     res = _api.call({
                         request : 'printer-opt-validate',
                         dto : JSON.stringify({
                             printer : _model.myPrinter.name,
-                            options : printerOptions
+                            options : printerOptions,
+                            jobTicketType : _view.getRadioValue('sp-print-jobticket-type')
                         })
                     });
                     valid = res.result.code === '0';
@@ -6204,7 +6203,7 @@
                     return;
                 }
 
-                if (!_model.isMediaSourceMatch() && _model.myPrinterOpt['media-source'] === 'auto') {
+                if (_model.myPrinterOpt['media-source'] === 'auto' && !_model.isMediaSourceMatch()) {
                     _view.msgDialogBox(_i18n.format('msg-select-media-source'), 'sp-msg-popup-warn');
                     return;
                 }

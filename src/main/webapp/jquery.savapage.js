@@ -2860,6 +2860,7 @@
                 } else {
                     jqsel.hide();
                 }
+                return jqsel;
             };
 
             this.visibleCheckboxRadio = function(jqsel, show) {

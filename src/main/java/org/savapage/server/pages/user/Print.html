@@ -124,7 +124,7 @@
 							<div data-role="controlgroup" data-type="horizontal"
 								class="ui-mini" style="float: left; margin-right: 15px;">
 								<button id="button-print-delegation"
-									class="ui-btn ui-shadow ui-corner-all ui-btn-icon-right ui-icon-arrow-r">
+									class="ui-btn ui-shadow ui-corner-all ui-btn-icon-right ui-icon-user">
 									<span wicket:id="button-print-delegation" /> &nbsp; <span
 										class="sp-button-mini-print-delegation sp-txt-info" />
 									&nbsp;&nbsp;
@@ -265,15 +265,18 @@
 			</div>
 
 			<wicket:enclosure child="print-documents-separate-ticket">
-				<div data-mini="true" data-role="controlgroup"
-					id="print-documents-separate-ticket-div"
-					class="sp-jobticket sp-jobticket-print">
-					<label for="print-documents-separate-ticket"
-						wicket:id="print-documents-separate-ticket" />
-					<input type="checkbox" id="print-documents-separate-ticket"
-						value="1" />
+				<div id="print-documents-separate-ticket-div">
+					<div data-mini="true" data-role="controlgroup"
+						class="sp-jobticket sp-jobticket-print">
+						<label for="print-documents-separate-ticket">
+							<wicket:message key="print-documents-separate" />
+						</label>
+						<input type="checkbox" id="print-documents-separate-ticket"
+							wicket:id="print-documents-separate-ticket" value="1" />
+					</div>
 				</div>
 			</wicket:enclosure>
+
 			<wicket:enclosure child="print-documents-separate-print">
 				<div data-mini="true" data-role="controlgroup"
 					id="print-documents-separate-print-div" class="sp-proxyprint">
@@ -284,6 +287,7 @@
 						wicket:id="print-documents-separate-print" value="1" />
 				</div>
 			</wicket:enclosure>
+
 			<wicket:enclosure child="delete-pages-after-print">
 				<div class="sp-proxyprint sp-jobticket-print">
 					<div data-mini="true" data-role="controlgroup">
@@ -307,6 +311,7 @@
 					</div>
 				</div>
 			</wicket:enclosure>
+
 			<wicket:enclosure child="delete-pages-after-print-warn">
 				<div class="sp-proxyprint sp-jobticket-print">
 					<small class="sp-txt-wrap sp-txt-info"
