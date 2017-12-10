@@ -4499,6 +4499,10 @@ public final class JsonApiServer extends AbstractPage {
                 Key.WEBAPP_USER_MAIN_NAV_BUTTON_TEXT));
 
         //
+        userData.put("jobticketCopierEnable",
+                cm.isConfigValue(Key.JOBTICKET_COPIER_ENABLE));
+
+        //
         userData.put("proxyPrintClearPrinter",
                 cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_PRINTER));
 

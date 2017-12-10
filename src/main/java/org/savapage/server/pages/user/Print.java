@@ -93,6 +93,9 @@ public class Print extends AbstractUserPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
+        helper.addLabel("label-copy",
+                PrintOutNounEnum.COPY.uiText(getLocale()));
+
         helper.addModifyLabelAttr("slider-print-copies", "max",
                 cm.getConfigValue(Key.WEBAPP_USER_PROXY_PRINT_MAX_COPIES));
 

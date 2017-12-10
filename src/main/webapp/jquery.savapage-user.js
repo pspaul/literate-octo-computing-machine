@@ -2189,7 +2189,7 @@
                     $('#button-mini-outbox .sp-outbox-cost').html(outbox.localeInfo.cost);
                 }
 
-                _model.setJobsMatchMediaSources(_view);
+                _model.showJobsMatchMediaSources(_view);
             };
 
             /**
@@ -2981,6 +2981,10 @@
                     if (_model.hasMultiplePrinters) {
                         _this.onShowPrintDialog();
                     } else {
+                        _model.determineCopyJobTicket();
+                        if (_model.isCopyJobTicket) {
+                            _view.checkRadioValue('sp-print-jobticket-type', _model.TICKETTYPE_COPY);
+                        }
                         _view.showUserPageAsync('#page-printer-settings', 'PrinterSettings');
                     }
                     return false;
@@ -3285,7 +3289,7 @@
                     isSingleMediaMatch
                 //
                 ,
-                    hasInboxDocs = _model.hasInboxDocs()
+                    isInboxDocs2Print = _model.hasInboxDocs() && !_model.isCopyJobTicket
                 //
                 ;
 
@@ -3315,6 +3319,7 @@
                     }
 
                     _model.isPrintManualFeed = isManual;
+                    _model.selectedMediaSourceUI = isAuto ? '&nbsp;-&nbsp;' : target.find(":selected").text();
 
                 } else if (ippOption === 'media') {
                     _model.printSelectedMedia = target.val();
@@ -3330,12 +3335,14 @@
 
                 isScaling = !(isSingleMediaMatch || isAuto || (!isAuto && _model.printSelectedMedia === singleJobMedia));
 
-                _view.visible($('.sp-print-job-scaling'), isScaling && hasInboxDocs);
-                _view.visible($('.sp-print-job-media-info'), isScaling && hasInboxDocs);
+                _view.visible($('.sp-print-job-scaling'), isScaling && isInboxDocs2Print);
+                _view.visible($('.sp-print-job-media-info'), isScaling && isInboxDocs2Print);
+                _view.visible($('.sp-print-job-info'), isInboxDocs2Print);
 
-                _view.visible($('.sp-print-job-info'), hasInboxDocs);
-                if (hasInboxDocs) {
-                    _model.setJobsMatchMedia(_view);
+                _model.showCopyJobMedia(_view);
+
+                if (isInboxDocs2Print) {
+                    _model.showJobsMatchMedia(_view);
                 }
 
             }
@@ -3421,20 +3428,7 @@
             $('#page-printer-settings').on('pagecreate', function(event) {
 
                 $('#button-print-settings-back').click(function(e) {
-
-                    _model.myShowUserStatsGet = true;
-
-                    if (_model.PROXY_PRINT_CLEAR_DELEGATE) {
-                        _view.pages.printDelegation.clear();
-                    }
-
-                    if (_model.PROXY_PRINT_CLEAR_PRINTER) {
-                        $('#button-print-settings-default').click();
-                        _model.myShowPrinterInd = false;
-                        _view.pages.print.onClearPrinterInd();
-                    }
-
-                    _view.changePage($('#page-main'));
+                    $('#button-printer-back').click();
                     return false;
                 });
 
@@ -3455,7 +3449,8 @@
                 $('#button-print-settings-default').click(function() {
                     _model.setPrinterDefaults();
                     _m2v();
-                    _model.setJobsMatchMediaSources(_view);
+                    _model.showJobsMatchMediaSources(_view);
+                    _model.showCopyJobMedia(_view);
                     return false;
                 });
 
@@ -3464,8 +3459,8 @@
                  */
                 $('input[name=print-page-scaling-enum]:radio').change(function(event) {
                     _model.printPageScaling = _view.getRadioValue('print-page-scaling-enum');
-                    _model.setJobsMatchMedia(_view);
-                    _model.setJobsMatchMediaSources(_view);
+                    _model.showJobsMatchMedia(_view);
+                    _model.showJobsMatchMediaSources(_view);
                 });
 
                 /*
@@ -3473,7 +3468,7 @@
                  */
                 $('#printer-options').change(function(event) {
                     _onChangeMediaSource($(event.target));
-                    _model.setJobsMatchMediaSources(_view);
+                    _model.showJobsMatchMediaSources(_view);
                 });
 
             }).on("pagebeforeshow", function(event, ui) {
@@ -3488,9 +3483,6 @@
                 $('#title-printer-settings').html(_model.myPrinter.alias);
 
                 _view.visible($('.sp-print-job-media-info'), false);
-
-                // Set visibility of widgets based on job media status.
-                _model.setJobsMatchMediaSources(_view);
 
                 _model.hasPrinterManualMedia = false;
 
@@ -3587,6 +3579,10 @@
 
                 selMediaSource = $("select[data-savapage='media-source']");
                 _onChangeMediaSource(selMediaSource);
+
+                // Set visibility of widgets based on job media status.
+                _model.showJobsMatchMediaSources(_view);
+                _model.showCopyJobMedia(_view);
 
                 i = 0;
 
@@ -3802,9 +3798,19 @@
             //
             ,
                 _onJobTicketType = function(ticketType) {
-                var allDocs = ticketType === _model.TICKETTYPE_PRINT && _model.canSelectAllDocuments() && _model.myJobs.length > 1;
-                _view.visible($('.sp-jobticket-print'), ticketType === _model.TICKETTYPE_PRINT);
+                var isPrint = ticketType === _model.TICKETTYPE_PRINT,
+                    allDocs = isPrint && _model.canSelectAllDocuments() && _model.myJobs.length > 1;
+
+                _view.visible($('.sp-jobticket-print'), isPrint);
                 _setVisibilityPrintSeparately(allDocs, true);
+
+                _model.isCopyJobTicket = !isPrint;
+                _model.showCopyJobMedia(_view);
+
+                if (!_model.isCopyJobTicket) {
+                    _model.showJobsMatchMediaSources(_view);
+                }
+                _model.showPrintJobMedia(_view);
             }
             //
             ,
@@ -3910,7 +3916,7 @@
                 }
                 _model.myPrintTitle = selTitle.val();
 
-                _setVisibilityPrintSeparately(isAllDocsSelected);
+                _setVisibilityPrintSeparately(!_model.isCopyJobTicket && isAllDocsSelected);
             }
             //
             ,
@@ -3999,11 +4005,19 @@
 
                 $('input[name="sp-print-jobticket-type"]').click(function() {
                     _onJobTicketType($(this).attr('value'));
+
+                    if (_model.isCopyJobTicket) {
+                        if (_model.isMediaSourceAuto()) {
+                            $('#button-print-settings').click();
+                        }
+                    }
+
                 });
 
                 $('#button-printer-back').click(function(e) {
 
                     _view.checkRadioValue('sp-print-jobticket-type', _model.TICKETTYPE_PRINT);
+                    _model.isCopyJobTicket = false;
 
                     if (_model.PROXY_PRINT_CLEAR_DELEGATE) {
                         _view.pages.printDelegation.clear();
@@ -4208,6 +4222,8 @@
             /**
              *
              */
+            this.selectedMediaSourceUI = null;
+
             this.printSelectedMedia = null;
             this.hasPrinterManualMedia = false;
             this.isPrintManualFeed = false;
@@ -4238,6 +4254,10 @@
             this.isPrintDialogFromMain = true;
             this.PROXY_PRINT_CLEAR_PRINTER = false;
             this.PROXY_PRINT_CLEAR_DELEGATE = false;
+            this.JOBTICKET_COPIER_ENABLE = false;
+
+            // state
+            this.isCopyJobTicket = false;
 
             this.myInboxTitle = null;
             this.myPrintTitle = null;
@@ -4295,6 +4315,10 @@
             this.user = new _ns.User();
 
             this.propPdf = this.propPdfDefault;
+
+            this.determineCopyJobTicket = function() {
+                this.isCopyJobTicket = this.JOBTICKET_COPIER_ENABLE && this.myPrinter && this.myPrinter.jobTicket && this.myJobs.length === 0;
+            };
 
             /**
              *
@@ -4418,11 +4442,30 @@
                 return mapMediaSources;
             };
 
+            this.showCopyJobMedia = function(_view) {
+                _view.visible($('.sp-copy-job-info'), this.isCopyJobTicket);
+                if (this.isCopyJobTicket) {
+                    $('.sp-copy-job-media-sources-info').html(this.selectedMediaSourceUI);
+                }
+            };
+
+            this.showPrintJobMedia = function(_view) {
+                var hasPrintable = !this.isCopyJobTicket && _model.hasInboxDocs();
+                _view.visible($('.sp-print-job-info'), hasPrintable);
+                _view.visible($('.sp-print-job-media-sources-info'), hasPrintable);
+
+                if (hasPrintable) {
+                    this.showJobsMatchMedia(_view);
+                } else {
+                    _view.visible($('.sp-print-job-media-info'), false);
+                }
+            };
+
             /**
              * Displays info about job media and selected 'media' ands sets
              * this.jobsMatchMedia.
              */
-            this.setJobsMatchMedia = function(_view) {
+            this.showJobsMatchMedia = function(_view) {
 
                 var html = '',
                     mediaWlk
@@ -4470,6 +4513,7 @@
                     _view.visible(selJobMediaInfo, false);
                 } else {
                     selJobMediaInfo.empty().append(html);
+                    _view.visible(selJobMediaInfo, this.jobsMatchMedia !== this.MediaMatchEnum.MATCH);
                 }
             };
 
@@ -4477,7 +4521,7 @@
              * Displays info about job media and available 'media-source' for
              * the selected printer ands sets this.jobsMatchMediaSources.
              */
-            this.setJobsMatchMediaSources = function(_view) {
+            this.showJobsMatchMediaSources = function(_view) {
 
                 var html = '',
                     selHtml
@@ -4547,6 +4591,10 @@
              */
             this.isMediaSourceMatch = function() {
                 return this.jobsMatchMediaSources === this.MediaMatchEnum.MATCH;
+            };
+
+            this.isMediaSourceAuto = function() {
+                return this.myPrinterOpt['media-source'] === 'auto';
             };
 
             /**
@@ -5179,6 +5227,8 @@
                 //
                 _model.PROXY_PRINT_CLEAR_PRINTER = res.proxyPrintClearPrinter;
                 _model.PROXY_PRINT_CLEAR_DELEGATE = res.proxyPrintClearDelegate;
+
+                _model.JOBTICKET_COPIER_ENABLE = res.jobticketCopierEnable;
 
                 //
                 if (res.delegatorNameId) {
@@ -6203,7 +6253,7 @@
                     return;
                 }
 
-                if (_model.myPrinterOpt['media-source'] === 'auto' && !_model.isMediaSourceMatch()) {
+                if (_model.isMediaSourceAuto() && !_model.isMediaSourceMatch()) {
                     _view.msgDialogBox(_i18n.format('msg-select-media-source'), 'sp-msg-popup-warn');
                     return;
                 }
@@ -6400,8 +6450,11 @@
                 _model.myPrinter = undefined;
                 _model.isPrintManualFeed = false;
                 _model.printPageScaling = _model.PRINT_SCALING_ENUM.NONE;
-                _model.setJobsMatchMediaSources(_view);
-                _model.setJobsMatchMedia(_view);
+
+                _model.showJobsMatchMediaSources(_view);
+                _model.showJobsMatchMedia(_view);
+                _model.showCopyJobMedia(_view);
+
                 _model.myPrinterOpt = [];
                 _refreshPrinterInd();
             };
@@ -6419,7 +6472,9 @@
                 }
 
                 if (_model.myFirstPageShowPrint) {
-                    _model.setJobsMatchMediaSources(_view);
+                    _model.showJobsMatchMediaSources(_view);
+                    _model.showCopyJobMedia(_view);
+
                     _model.myFirstPageShowPrint = false;
                 }
 
@@ -6440,7 +6495,7 @@
                 $('#print-title').val(_model.myInboxTitle);
 
                 // Refreshes display of possible changed inbox media.
-                _model.setJobsMatchMedia(_view);
+                _model.showJobsMatchMedia(_view);
 
                 // When opened from SafePage Sort mode, selected page ranges are
                 // filled.

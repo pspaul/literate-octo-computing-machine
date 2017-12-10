@@ -76,6 +76,9 @@ public class PrinterSettings extends AbstractUserPage {
         }
 
         helper.addLabel("button-next", PrintOutNounEnum.JOB);
+
+        helper.addLabel("label-copy",
+                PrintOutNounEnum.COPY.uiText(getLocale()));
     }
 
 }

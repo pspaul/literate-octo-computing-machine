@@ -482,13 +482,24 @@ public class Main extends AbstractUserPage {
         // Print or Ticket (or none)
         // --------------------------
         if (buttonPrivileged.contains(NavButtonEnum.PRINT)) {
+
             items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-print", "button-main-print",
                     localized(HtmlButtonEnum.PRINT)));
+
         } else if (buttonPrivileged.contains(NavButtonEnum.TICKET)) {
-            items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
-                    "ui-icon-main-jobticket", "button-main-print",
-                    localized("button-ticket")));
+
+            final String cssClass;
+
+            if (ConfigManager.instance()
+                    .isConfigValue(Key.JOBTICKET_COPIER_ENABLE)) {
+                cssClass = CSS_CLASS_MAIN_ACTIONS_BASE;
+            } else {
+                cssClass = CSS_CLASS_MAIN_ACTIONS;
+            }
+
+            items.add(new NavBarItem(cssClass, "ui-icon-main-jobticket",
+                    "button-main-print", localized("button-ticket")));
         }
 
         // ------------

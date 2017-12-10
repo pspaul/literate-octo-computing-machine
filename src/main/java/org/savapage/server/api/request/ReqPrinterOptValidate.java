@@ -121,7 +121,7 @@ public final class ReqPrinterOptValidate extends ApiRequestMixin {
         final boolean isAssignedMediaSource = requestedMediaSource != null
                 && !requestedMediaSource.equals(IppKeyword.MEDIA_SOURCE_AUTO);
 
-        if (proxyPrinter.getJobTicket()
+        if (proxyPrinter.getJobTicket() && dtoReq.getJobTicketType() != null
                 && dtoReq.getJobTicketType()
                         .equals(ReqPrinterPrint.JobTicketTypeEnum.COPY)
                 && !isAssignedMediaSource) {
