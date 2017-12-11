@@ -39,7 +39,6 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
-import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
@@ -88,7 +87,7 @@ public class Main extends AbstractUserPage {
      */
     private static enum NavButtonEnum {
         ABOUT, BROWSE, UPLOAD, PDF, LETTERHEAD, SORT, PRINT, TICKET,
-        TICKETS_PENDING, HELP
+        TICKET_QUEUE, HELP
     }
 
     /**
@@ -193,7 +192,7 @@ public class Main extends AbstractUserPage {
         }
 
         if (buttonPrivileged.contains(NavButtonEnum.TICKET)) {
-            buttonSubstCandidates.add(NavButtonEnum.TICKETS_PENDING);
+            buttonSubstCandidates.add(NavButtonEnum.TICKET_QUEUE);
         }
 
         this.populateNavBar(buttonPrivileged, buttonSubstCandidates);
@@ -399,11 +398,11 @@ public class Main extends AbstractUserPage {
 
         // #2
         if (item == null) {
-            candidate = NavButtonEnum.TICKETS_PENDING;
+            candidate = NavButtonEnum.TICKET_QUEUE;
             if (buttonCandidates.contains(candidate)) {
                 item = new NavBarItem(CSS_CLASS_MAIN_ACTION_OUTBOX,
                         "ui-icon-main-hold-jobs", "button-main-outbox",
-                        AdjectiveEnum.PENDING.uiText(getLocale()));
+                        NounEnum.QUEUE.uiText(getLocale()));
             }
         }
 

@@ -4032,6 +4032,8 @@
                         $('#button-print-settings-default').click();
                         if (_model.hasMultiplePrinters) {
                             _view.pages.print.onClearPrinter();
+                        } else {
+                            _view.pages.print.onClearPrinterInd();
                         }
                     }
                     _model.myShowUserStatsGet = true;
