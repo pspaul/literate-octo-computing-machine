@@ -3834,6 +3834,7 @@
                 //
                 ,
                     jobTicketType,
+                    isPrintJob,
                     hasInboxDocs = _model.hasInboxDocs()
                 //
                 ;
@@ -3893,8 +3894,12 @@
                     // (2) then check to see enabled/disabled state.
                     _view.checkRadioValue('sp-print-jobticket-type', jobTicketType);
                     _onJobTicketType(jobTicketType);
+
+                    isPrintJob = jobTicketType !== _model.TICKETTYPE_COPY;
+                } else {
+                    isPrintJob = true;
                 }
-                _view.visible($('.sp-print-job-info'), hasInboxDocs);
+                _view.visible($('.sp-print-job-info'), isPrintJob && hasInboxDocs);
             }
             //
             ,
