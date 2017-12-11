@@ -146,6 +146,21 @@
 				</div>
 			</wicket:enclosure>
 
+			<wicket:enclosure child="label-jobticket-tag">
+				<div class="ui-field-contain sp-jobticket"
+					id="sp-jobticket-tag-list-div">
+
+					<label data-mini="true" class="sp-txt-wrap"
+						for="sp-jobticket-tag-list" wicket:id="label-jobticket-tag" />
+
+					<select data-mini="true" id="sp-jobticket-tag-list">
+						<wicket:panel wicket:id="jobticket-tag-option">
+							<option value="the-key" wicket:id="option"></option>
+						</wicket:panel>
+					</select>
+				</div>
+			</wicket:enclosure>
+
 			<wicket:enclosure child="print-account-type">
 				<div class="ui-field-contain sp-print-account"
 					id="sp-print-shared-account-div">
@@ -167,11 +182,13 @@
 				</div>
 			</wicket:enclosure>
 
+			<hr style="opacity: 0.2;" />
+
 			<div class="ui-field-contain sp-proxyprint sp-jobticket-print">
 				<label data-mini="true" for="print-job-list" class="sp-txt-wrap">
 					<wicket:message key="print-job-document" />
 				</label>
-				<select data-mini="true" id="print-job-list" data-iconpos="left"
+				<select data-mini="true" id="print-job-list" data-iconpos="right"
 					data-native-menu="false" />
 			</div>
 

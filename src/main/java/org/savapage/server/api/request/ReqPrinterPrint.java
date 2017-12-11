@@ -131,6 +131,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Boolean separateDocs;
         private Boolean jobTicket;
         private JobTicketTypeEnum jobTicketType;
+        private String jobTicketTag;
         private Long jobTicketDate;
         private Integer jobTicketHrs;
         private Integer jobTicketMin;
@@ -276,6 +277,15 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setJobTicketType(JobTicketTypeEnum jobTicketType) {
             this.jobTicketType = jobTicketType;
+        }
+
+        public String getJobTicketTag() {
+            return jobTicketTag;
+        }
+
+        @SuppressWarnings("unused")
+        public void setJobTicketTag(String jobTicketTag) {
+            this.jobTicketTag = jobTicketTag;
         }
 
         public Long getJobTicketDate() {
@@ -1140,7 +1150,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setComment(dtoReq.getJobTicketRemark());
 
         JOBTICKET_SERVICE.createCopyJob(lockedUser, printReq,
-                calcJobTicketDeliveryDate(dtoReq));
+                calcJobTicketDeliveryDate(dtoReq), dtoReq.getJobTicketTag());
 
         setApiResultMsg(dtoReq, printReq);
 
@@ -1170,7 +1180,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         try {
             JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq,
-                    deliveryDate);
+                    deliveryDate, dtoReq.getJobTicketTag());
 
         } catch (EcoPrintPdfTaskPendingException e) {
             setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");

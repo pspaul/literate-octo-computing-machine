@@ -21,8 +21,11 @@
  */
 package org.savapage.server.pages.user;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -40,6 +43,7 @@ import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -65,6 +69,10 @@ public class Print extends AbstractUserPage {
             ServiceContext.getServiceFactory().getAccessControlService();
 
     /** */
+    private static final JobTicketService JOBTICKET_SERVICE =
+            ServiceContext.getServiceFactory().getJobTicketService();
+
+    /** */
     private static final UserGroupAccountDao USER_GROUP_ACCOUNT_DAO =
             ServiceContext.getDaoContext().getUserGroupAccountDao();
 
@@ -79,6 +87,34 @@ public class Print extends AbstractUserPage {
     /** */
     private static final String HTML_NAME_DELETE_PAGES_SCOPE =
             ID_DELETE_PAGES_SCOPE;
+
+    /**
+     *
+     * @author Rijk Ravestein
+     *
+     */
+    private static final class JobTicketTagDto {
+
+        private String id;
+        private String word;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getWord() {
+            return word;
+        }
+
+        public void setWord(final String word) {
+            this.word = word;
+        }
+
+    }
 
     /**
      *
@@ -266,6 +302,19 @@ public class Print extends AbstractUserPage {
             addSharedAccounts(sharedAccounts);
         }
 
+        //
+        final SortedMap<String, String> jobTicketTags =
+                JOBTICKET_SERVICE.getTicketTags();
+
+        if (jobTicketTags.isEmpty()) {
+            helper.discloseLabel("label-jobticket-tag");
+        } else {
+            helper.encloseLabel("label-jobticket-tag",
+                    NounEnum.TAG.uiText(getLocale()), true);
+            addJobTicketTags(jobTicketTags);
+        }
+
+        //
         helper.addButton("button-send-jobticket", HtmlButtonEnum.SEND);
         helper.addButton("button-inbox", HtmlButtonEnum.BACK);
         helper.addLabel("label-invoicing", NounEnum.INVOICING);
@@ -297,4 +346,37 @@ public class Print extends AbstractUserPage {
         });
     }
 
+    /**
+     * Adds the Job Tickets tags as select options.
+     *
+     * @param jobTicketTags
+     *            The job ticket tags.
+     */
+    private void
+            addJobTicketTags(final SortedMap<String, String> jobTicketTags) {
+
+        final List<JobTicketTagDto> tags = new ArrayList<>();
+
+        for (final Entry<String, String> entry : jobTicketTags.entrySet()) {
+            final JobTicketTagDto dto = new JobTicketTagDto();
+            // NOTE: the Set is sorted by tag word (not by id).
+            dto.setId(entry.getValue());
+            dto.setWord(entry.getKey());
+            tags.add(dto);
+        }
+
+        add(new PropertyListView<JobTicketTagDto>("jobticket-tag-option",
+                tags) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(final ListItem<JobTicketTagDto> item) {
+                final JobTicketTagDto dto = item.getModel().getObject();
+                final Label label = new Label("option", dto.getWord());
+                label.add(new AttributeModifier("value", dto.getId()));
+                item.add(label);
+            }
+        });
+    }
 }

@@ -3417,6 +3417,105 @@
                 return false;
             }
             //
+            ,
+                _showPrinterOptions = function(thisPage) {
+
+                var i = 0,
+                    selExpr,
+                    html = '<ul data-role="listview">';
+
+                _model.hasPrinterManualMedia = false;
+
+                $.each(_model.myPrinter.groups, function(key, group) {
+
+                    var j = 0,
+                        skip,
+                        isMediaSourceMatch = _model.isMediaSourceMatch();
+
+                    $.each(group.options, function(key, option) {
+
+                        var keyword = option.keyword,
+                            selected = _model.myPrinterOpt[keyword],
+                            selectedSkipped = false,
+                            firstChoice;
+
+                        // Skip?
+                        if (keyword === 'number-up') {
+                            skip = _model.isCopyJobTicket;
+                        }
+
+                        if (skip) {
+                            i += 1;
+                            // continue by returning this function.
+                            return;
+                        }
+
+                        if (j === 0) {
+                            html += '<li>';
+                        }
+
+                        selExpr = PRINT_OPT_PFX + i;
+
+                        html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '">';
+                        html += '<label class="sp-txt-wrap" for="' + selExpr + '">' + option.uiText + '</label>';
+                        html += '<select ' + CUSTOM_HTML5_DATA_ATTR + '="' + keyword + '" id="' + selExpr + '" data-mini="true" data-native-menu="false">';
+
+                        $.each(option.choices, function(key, val) {
+
+                            skip = false;
+
+                            if (keyword === 'media-source' && val.choice === 'manual') {
+                                _model.hasPrinterManualMedia = true;
+                            }
+
+                            // Skip?
+                            if (keyword === 'media-source') {
+                                skip = val.choice === 'auto' && (_model.isCopyJobTicket || !isMediaSourceMatch);
+                            }
+
+                            if (skip) {
+
+                                if (selected === val.choice) {
+                                    selectedSkipped = true;
+                                }
+
+                            } else {
+
+                                if (!firstChoice) {
+                                    firstChoice = val.choice;
+                                }
+
+                                html += '<option value="' + val.choice + '"';
+                                if (selected === val.choice) {
+                                    html += ' selected';
+                                }
+                                html += '>' + val.uiText + '</option>';
+                            }
+                        });
+
+                        if (selectedSkipped) {
+                            _model.myPrinterOpt[keyword] = firstChoice;
+                            option.defchoiceOverride = firstChoice;
+                        }
+
+                        html += '</select>';
+                        html += '</div>';
+
+                        i += 1;
+                        j += 1;
+                    });
+
+                    if (j > 0) {
+                        html += '</li>';
+                    }
+
+                });
+
+                html += '</ul>';
+                $('#printer-options').html(html);
+                thisPage.enhanceWithin();
+            }
+            //
             ;
 
             // A way to set visibility of media and scaling, also in other parts
@@ -3474,106 +3573,16 @@
             }).on("pagebeforeshow", function(event, ui) {
 
                 var i = 0,
-                    selExpr,
-                    html,
                     selMediaSource;
 
                 _model.myFirstPageShowPrintSettings = false;
 
                 $('#title-printer-settings').html(_model.myPrinter.alias);
-
                 _view.visible($('.sp-print-job-media-info'), false);
 
-                _model.hasPrinterManualMedia = false;
+                _showPrinterOptions($(this));
 
-                html = '<ul data-role="listview">';
-
-                i = 0;
-
-                $.each(_model.myPrinter.groups, function(key, group) {
-
-                    var isMediaSourceMatch = _model.isMediaSourceMatch(),
-                        j = 0;
-
-                    $.each(group.options, function(key, option) {
-
-                        var keyword = option.keyword
-                        //
-                        ,
-                            selected = _model.myPrinterOpt[keyword]
-                        //
-                        ,
-                            selectedSkipped = false
-                        //
-                        ,
-                            firstChoice
-                        //
-                        ;
-
-                        if (j === 0) {
-                            html += '<li>';
-                        }
-
-                        selExpr = PRINT_OPT_PFX + i;
-
-                        html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '">';
-                        html += '<label class="sp-txt-wrap" for="' + selExpr + '">' + option.uiText + '</label>';
-                        html += '<select ' + CUSTOM_HTML5_DATA_ATTR + '="' + keyword + '" id="' + selExpr + '" data-mini="true" data-native-menu="false">';
-
-                        $.each(option.choices, function(key, val) {
-                            var skip = false;
-
-                            if (keyword === 'media-source' && val.choice === 'manual') {
-                                _model.hasPrinterManualMedia = true;
-                            }
-
-                            skip = !isMediaSourceMatch && keyword === 'media-source' && val.choice === 'auto';
-
-                            if (skip) {
-
-                                if (selected === val.choice) {
-                                    selectedSkipped = true;
-                                }
-
-                            } else {
-
-                                if (!firstChoice) {
-                                    firstChoice = val.choice;
-                                }
-
-                                html += '<option value="' + val.choice + '"';
-                                if (selected === val.choice) {
-                                    html += ' selected';
-                                }
-                                html += '>' + val.uiText + '</option>';
-                            }
-                        });
-
-                        if (selectedSkipped) {
-                            _model.myPrinterOpt[keyword] = firstChoice;
-                            option.defchoiceOverride = firstChoice;
-                        }
-
-                        html += '</select>';
-                        html += '</div>';
-
-                        i += 1;
-                        j += 1;
-                    });
-
-                    if (j > 0) {
-                        html += '</li>';
-                    }
-
-                });
-
-                html += '</ul>';
-
-                $('#printer-options').html(html);
-
-                $(this).enhanceWithin();
-
-                // resolve visibility
+                // Resolve visibility
                 _m2vPrintScaling();
                 _onChangeMediaSource($("select[data-savapage='media-type']"));
 
@@ -3810,7 +3819,10 @@
                 if (!_model.isCopyJobTicket) {
                     _model.showJobsMatchMediaSources(_view);
                 }
+
                 _model.showPrintJobMedia(_view);
+
+                _this.onChangeJobTicketType(_model.isCopyJobTicket);
             }
             //
             ,
@@ -4968,7 +4980,7 @@
                 _view.visible(trgMono, _model.myPrinter && !isColor);
 
                 // Check IPP attributes value
-                ippAttrVal = _model.myPrinterOpt['number-up'];
+                ippAttrVal = _model.isCopyJobTicket ? null : _model.myPrinterOpt['number-up'];
                 _view.visible(trgNup, ippAttrVal && ippAttrVal !== '1');
 
                 // Check IPP attributes value
@@ -6212,6 +6224,16 @@
             };
 
             /**
+             *
+             */
+            _view.pages.print.onChangeJobTicketType = function(isCopyJob) {
+                if (isCopyJob) {
+                    _model.myPrinterOpt['number-up'] = '1';
+                    _refreshPrinterInd();
+                }
+            };
+
+            /**
              * For now, validate Job Tickets only.
              */
             _view.pages.printSettings.onPrinterOptValidate = function(printerOptions) {
@@ -6248,6 +6270,7 @@
                     visible,
                     date,
                     jobTicketDate,
+                    jobTicketTag,
                     accountId
                 //
                 ,
@@ -6279,6 +6302,9 @@
                     accountId = $('#sp-print-shared-account-list').val();
                 }
 
+                sel = $('#sp-jobticket-tag-list');
+                jobTicketTag = sel.length > 0 ? sel.val() : null;
+
                 _model.myPrintTitle = $('#print-title').val();
 
                 res = _api.call({
@@ -6302,6 +6328,7 @@
                         delegation : isDelegation ? _model.printDelegation : null,
                         jobTicket : isJobticket,
                         jobTicketType : jobTicketType,
+                        jobTicketTag : jobTicketTag,
                         jobTicketDate : jobTicketDate,
                         jobTicketHrs : isJobticket && isJobTicketDateTime ? $('#sp-jobticket-hrs').val() : null,
                         jobTicketMin : isJobticket && isJobTicketDateTime ? $('#sp-jobticket-min').val() : null,
