@@ -26,6 +26,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.internal.Enclosure;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.util.Messages;
@@ -62,7 +63,15 @@ public final class CustomStringResourceLoader implements IStringResourceLoader {
             final String key, final Locale locale, final String style,
             final String variation) {
 
-        return loadStringResource(component.getClass(), key, locale, style,
+        final Component componentWlk;
+
+        if (component instanceof Enclosure) {
+            componentWlk = component.getParent();
+        } else {
+            componentWlk = component;
+        }
+
+        return loadStringResource(componentWlk.getClass(), key, locale, style,
                 variation);
     }
 

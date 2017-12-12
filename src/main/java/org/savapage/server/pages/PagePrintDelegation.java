@@ -75,9 +75,6 @@ public final class PagePrintDelegation extends AbstractPage {
 
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_ENABLE)) {
 
-            helper.addLabel("sp-label-invoicing-shared",
-                    localized("sp-label-invoicing-shared"));
-
             helper.addModifyLabelAttr("radio-account-shared", "value",
                     PrintDelegationDto.DelegatorAccountEnum.SHARED.toString());
 
