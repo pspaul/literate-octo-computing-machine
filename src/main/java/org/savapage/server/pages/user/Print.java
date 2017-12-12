@@ -40,6 +40,7 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.SharedAccountDto;
+import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.services.AccessControlService;
@@ -310,7 +311,7 @@ public class Print extends AbstractUserPage {
             helper.discloseLabel("label-jobticket-tag");
         } else {
             helper.encloseLabel("label-jobticket-tag",
-                    NounEnum.TAG.uiText(getLocale()), true);
+                    JobTicketNounEnum.TAG.uiText(getLocale()), true);
             addJobTicketTags(jobTicketTags);
         }
 
