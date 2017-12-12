@@ -106,6 +106,10 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
         if (outboxJob == null) {
             trxList = null;
         } else {
+            if (outboxJob.getAccountTransactions() == null
+                    && outboxJob.getUserId() == null) {
+                outboxJob.setUserId(SpSession.get().getUser().getId());
+            }
             trxList = ServiceContext.getServiceFactory().getAccountingService()
                     .createAccountTrxsUI(outboxJob);
         }
