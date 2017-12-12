@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2017 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,6 +37,7 @@ import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
+import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.SOfficeService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.SOfficeConfigProps;
@@ -65,6 +66,10 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
      */
     private static final SOfficeService SOFFICE_SERVICE =
             ServiceContext.getServiceFactory().getSOfficeService();
+
+    /** */
+    private static final JobTicketService JOBTICKET_SERVICE =
+            ServiceContext.getServiceFactory().getJobTicketService();
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
@@ -293,7 +298,8 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
      * @return {@code null} when NO validation error, or the userData object
      *         filled with the error message when an error is encountered..
      */
-    private boolean customConfigPropValidate(Key key, String value) {
+    private boolean customConfigPropValidate(final Key key,
+            final String value) {
 
         if (key == Key.PROXY_PRINT_NON_SECURE_PRINTER_GROUP
                 && StringUtils.isNotBlank(value)) {
@@ -327,6 +333,15 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                             "msg-printer-not-found", value);
                     return false;
                 }
+            }
+        }
+
+        if (key == Key.JOBTICKET_TAGS && StringUtils.isNotBlank(value)) {
+            try {
+                JOBTICKET_SERVICE.parseTicketTags(value);
+            } catch (IllegalArgumentException e) {
+                setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
+                return false;
             }
         }
 

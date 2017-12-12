@@ -39,6 +39,7 @@ import org.savapage.core.dao.UserGroupAccountDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.dto.JobTicketTagDto;
 import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
@@ -88,34 +89,6 @@ public class Print extends AbstractUserPage {
     /** */
     private static final String HTML_NAME_DELETE_PAGES_SCOPE =
             ID_DELETE_PAGES_SCOPE;
-
-    /**
-     *
-     * @author Rijk Ravestein
-     *
-     */
-    private static final class JobTicketTagDto {
-
-        private String id;
-        private String word;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getWord() {
-            return word;
-        }
-
-        public void setWord(final String word) {
-            this.word = word;
-        }
-
-    }
 
     /**
      *
@@ -304,8 +277,8 @@ public class Print extends AbstractUserPage {
         }
 
         //
-        final SortedMap<String, String> jobTicketTags =
-                JOBTICKET_SERVICE.getTicketTags();
+        final SortedMap<String, JobTicketTagDto> jobTicketTags =
+                JOBTICKET_SERVICE.getTicketTagsByWord();
 
         if (jobTicketTags.isEmpty()) {
             helper.discloseLabel("label-jobticket-tag");
@@ -353,17 +326,14 @@ public class Print extends AbstractUserPage {
      * @param jobTicketTags
      *            The job ticket tags.
      */
-    private void
-            addJobTicketTags(final SortedMap<String, String> jobTicketTags) {
+    private void addJobTicketTags(
+            final SortedMap<String, JobTicketTagDto> jobTicketTags) {
 
         final List<JobTicketTagDto> tags = new ArrayList<>();
 
-        for (final Entry<String, String> entry : jobTicketTags.entrySet()) {
-            final JobTicketTagDto dto = new JobTicketTagDto();
-            // NOTE: the Set is sorted by tag word (not by id).
-            dto.setId(entry.getValue());
-            dto.setWord(entry.getKey());
-            tags.add(dto);
+        for (final Entry<String, JobTicketTagDto> entry : jobTicketTags
+                .entrySet()) {
+            tags.add(entry.getValue());
         }
 
         add(new PropertyListView<JobTicketTagDto>("jobticket-tag-option",
