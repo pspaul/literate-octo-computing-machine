@@ -22,10 +22,9 @@
 package org.savapage.server.pages.user;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.SortedMap;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -277,7 +276,7 @@ public class Print extends AbstractUserPage {
         }
 
         //
-        final SortedMap<String, JobTicketTagDto> jobTicketTags =
+        final Collection<JobTicketTagDto> jobTicketTags =
                 JOBTICKET_SERVICE.getTicketTagsByWord();
 
         if (jobTicketTags.isEmpty()) {
@@ -326,14 +325,13 @@ public class Print extends AbstractUserPage {
      * @param jobTicketTags
      *            The job ticket tags.
      */
-    private void addJobTicketTags(
-            final SortedMap<String, JobTicketTagDto> jobTicketTags) {
+    private void
+            addJobTicketTags(final Collection<JobTicketTagDto> jobTicketTags) {
 
         final List<JobTicketTagDto> tags = new ArrayList<>();
 
-        for (final Entry<String, JobTicketTagDto> entry : jobTicketTags
-                .entrySet()) {
-            tags.add(entry.getValue());
+        for (final JobTicketTagDto tag : jobTicketTags) {
+            tags.add(tag);
         }
 
         add(new PropertyListView<JobTicketTagDto>("jobticket-tag-option",

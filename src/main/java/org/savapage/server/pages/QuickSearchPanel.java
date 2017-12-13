@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -55,37 +56,38 @@ public class QuickSearchPanel extends Panel {
         final MarkupHelper helper = new MarkupHelper(this);
 
         Label labelWrk;
+        final Label labelInput;
 
         if (compact) {
 
-            labelWrk = new Label("search-label-compact", searchPrompt);
-            add(labelWrk);
-
-            labelWrk = new Label("search-input-compact", "");
-            labelWrk.add(new AttributeModifier("id", htmlBaseId));
-            add(labelWrk);
-
+            add(new Label("search-label-compact", searchPrompt));
+            labelInput = new Label("search-input-compact", "");
             helper.discloseLabel("search-label");
 
         } else {
+
             labelWrk = new Label("search-label", searchPrompt);
             labelWrk.add(new AttributeModifier("for", htmlBaseId));
             add(labelWrk);
 
-            labelWrk = new Label("search-input", "");
-            labelWrk.add(new AttributeModifier("id", htmlBaseId));
-            add(labelWrk);
+            labelInput = new Label("search-input", "");
 
             helper.discloseLabel("search-label-compact");
         }
+
+        //
+        labelInput.add(new AttributeModifier("id", htmlBaseId));
+        if (StringUtils.isNotBlank(searchPlaceholder)) {
+            labelInput.add(
+                    new AttributeModifier("placeholder", searchPlaceholder));
+        }
+        add(labelInput);
 
         //
         labelWrk = new Label("search-filter", "");
         labelWrk.add(new AttributeModifier("id",
                 String.format("%s-filter", htmlBaseId)));
         labelWrk.add(new AttributeModifier("data-input", "#" + htmlBaseId));
-        labelWrk.add(new AttributeModifier("data-filter-placeholder",
-                searchPlaceholder));
 
         add(labelWrk);
     }
