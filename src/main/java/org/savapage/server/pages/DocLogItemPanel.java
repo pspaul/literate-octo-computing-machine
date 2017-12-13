@@ -40,6 +40,7 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
+import org.savapage.core.dto.JobTicketTagDto;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
@@ -376,11 +377,22 @@ public class DocLogItemPanel extends Panel {
 
                 final String ticketNumber;
                 final String ticketOperator;
+                final String ticketTag;
+
                 if (obj.getPrintMode() == PrintModeEnum.TICKET
                         || obj.getPrintMode() == PrintModeEnum.TICKET_C
                         || obj.getPrintMode() == PrintModeEnum.TICKET_E) {
 
                     ticketNumber = obj.getExtId();
+
+                    final JobTicketTagDto tag =
+                            JOBTICKET_SERVICE.getTicketNumberTag(ticketNumber);
+
+                    if (tag == null) {
+                        ticketTag = null;
+                    } else {
+                        ticketTag = String.format("• %s", tag.getWord());
+                    }
 
                     // Just in case.
                     if (obj.getExtData() == null) {
@@ -403,16 +415,18 @@ public class DocLogItemPanel extends Panel {
                 } else {
                     ticketNumber = null;
                     ticketOperator = null;
+                    ticketTag = null;
                     helper.discloseLabel("img-job-sheet");
                 }
 
                 mapVisible.put(
                         "printoutMode", String
-                                .format("%s %s %s",
+                                .format("%s %s %s %s",
                                         obj.getPrintMode().uiText(getLocale()),
                                         StringUtils.defaultString(ticketNumber),
                                         StringUtils
-                                                .defaultString(ticketOperator))
+                                                .defaultString(ticketOperator),
+                                        StringUtils.defaultString(ticketTag))
                                 .trim());
 
                 cssClass = MarkupHelper.CSS_PRINT_OUT_PRINTER;

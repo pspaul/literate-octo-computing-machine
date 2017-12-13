@@ -40,6 +40,7 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.SOfficeService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.JobTicketTagCache;
 import org.savapage.core.services.helpers.SOfficeConfigProps;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
@@ -215,9 +216,15 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 } else if (configKey == Key.DOC_CONVERT_LIBRE_OFFICE_ENABLED
                         || configKey == Key.SOFFICE_ENABLE) {
                     isSOfficeUpdate = true;
+
                 } else if (configKey == Key.WEB_PRINT_FILE_EXT_EXCLUDE) {
                     // Provoke errors/warnings in server.log.
                     WebPrintHelper.getExcludeTypes();
+
+                } else if (configKey == Key.JOBTICKET_TAGS
+                        && StringUtils.isNotBlank(value)) {
+                    JobTicketTagCache.setTicketTags(
+                            JobTicketTagCache.parseTicketTags(value));
                 }
 
             } else {
@@ -338,7 +345,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
 
         if (key == Key.JOBTICKET_TAGS && StringUtils.isNotBlank(value)) {
             try {
-                JOBTICKET_SERVICE.parseTicketTags(value);
+                JobTicketTagCache.parseTicketTags(value);
             } catch (IllegalArgumentException e) {
                 setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
                 return false;
