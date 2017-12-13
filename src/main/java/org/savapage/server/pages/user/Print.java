@@ -276,17 +276,27 @@ public class Print extends AbstractUserPage {
         }
 
         //
-        final Collection<JobTicketTagDto> jobTicketTags =
-                JOBTICKET_SERVICE.getTicketTagsByWord();
+        final Collection<JobTicketTagDto> jobTicketTags;
 
-        if (jobTicketTags.isEmpty()) {
-            helper.discloseLabel("label-jobticket-tag");
+        if (cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE)) {
+
+            jobTicketTags = JOBTICKET_SERVICE.getTicketTagsByWord();
+
+            if (!jobTicketTags.isEmpty()) {
+                helper.encloseLabel("label-jobticket-tag",
+                        JobTicketNounEnum.TAG.uiText(getLocale()), true);
+                helper.addLabel("jobticket-tag-option-select",
+                        HtmlButtonEnum.SELECT.uiText(getLocale(), true)
+                                .toLowerCase());
+                addJobTicketTags(jobTicketTags);
+            }
         } else {
-            helper.encloseLabel("label-jobticket-tag",
-                    JobTicketNounEnum.TAG.uiText(getLocale()), true);
-            addJobTicketTags(jobTicketTags);
+            jobTicketTags = null;
         }
 
+        if (jobTicketTags == null || jobTicketTags.isEmpty()) {
+            helper.discloseLabel("label-jobticket-tag");
+        }
         //
         helper.addButton("button-send-jobticket", HtmlButtonEnum.SEND);
         helper.addButton("button-inbox", HtmlButtonEnum.BACK);

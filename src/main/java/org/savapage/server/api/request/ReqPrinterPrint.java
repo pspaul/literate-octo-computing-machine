@@ -48,6 +48,7 @@ import org.savapage.core.dao.helpers.JsonPrintDelegation;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.PrintDelegationDto;
+import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.RangeAtom;
@@ -377,6 +378,18 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         final boolean isJobTicket = BooleanUtils.isTrue(dtoReq.getJobTicket());
 
+        final ConfigManager cm = ConfigManager.instance();
+
+        // INVARIANT
+        if (isJobTicket && cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE)
+                && cm.isConfigValue(Key.JOBTICKET_TAGS_REQUIRED)
+                && StringUtils.isBlank(dtoReq.getJobTicketTag())) {
+
+            setApiResult(ApiResultCodeEnum.WARN, "msg-jobticket-tag-required",
+                    JobTicketNounEnum.TAG.uiText(getLocale()));
+            return;
+        }
+
         final boolean isCopyJobTicket = isJobTicket
                 && dtoReq.getJobTicketType() == JobTicketTypeEnum.COPY;
 
@@ -388,8 +401,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         if (!isCopyJobTicket && !validateProxyPrintFiltering(dtoReq)) {
             return;
         }
-
-        final ConfigManager cm = ConfigManager.instance();
 
         /*
          * If/how to clear the inbox.

@@ -359,11 +359,17 @@ public class OutboxAddin extends AbstractUserPage {
                     job.getTicketNumber() != null);
 
             if (job.getTicketNumber() != null) {
+
                 final JobTicketTagDto tag = JOBTICKET_SERVICE
                         .getTicketNumberTag(job.getTicketNumber());
-                if (tag != null) {
-                    helper.encloseLabel("jobticket-tag", tag.getWord(), true);
+                final String tagWord;
+                if (tag == null) {
+                    tagWord = null;
+                } else {
+                    tagWord = tag.getWord();
                 }
+                helper.encloseLabel("jobticket-tag",
+                        StringUtils.defaultString(tagWord), tagWord != null);
             }
 
             /*
