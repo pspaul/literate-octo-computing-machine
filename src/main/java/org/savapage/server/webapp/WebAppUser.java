@@ -430,6 +430,12 @@ public final class WebAppUser extends AbstractWebAppPage {
         }
     }
 
+    /** */
+    private void discloseAll() {
+        final MarkupHelper helper = new MarkupHelper(this);
+        helper.discloseLabel(WICKET_ID_FILE_UPLOAD_FONTFAMILY_OPT);
+    }
+
     /**
      *
      * @param parameters
@@ -440,6 +446,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         super(parameters);
 
         if (isWebAppCountExceeded(parameters)) {
+            discloseAll();
             this.setWebAppCountExceededResponse();
             return;
         }
@@ -454,6 +461,8 @@ public final class WebAppUser extends AbstractWebAppPage {
             checkOneTimeAuthToken(parameters);
 
         } else if (!oauth.booleanValue()) {
+
+            discloseAll();
 
             final PageParameters parms = new PageParameters();
 
