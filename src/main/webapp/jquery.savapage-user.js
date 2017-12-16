@@ -6438,7 +6438,16 @@
                         _model.myFirstPageShowPrintSettings = true;
 
                         _view.visible($('#button-print-settings'), _model.myPrinter.groups.length > 0);
-                        _view.showUserPageAsync('#page-printer-settings', 'PrinterSettings');
+
+                        /* This method might be called to implicitly select a
+                         * single printer, so printer settings are shown
+                         * immediately (just before the page-print is shown).
+                         * The asyncFoo wrapper is used, to satisfy iOS,
+                         * otherwise the settings will not show.
+                         */
+                        _ns.Utils.asyncFoo(function() {
+                            _view.showUserPageAsync('#page-printer-settings', 'PrinterSettings');
+                        });
 
                     } else {
                         retValue = false;
