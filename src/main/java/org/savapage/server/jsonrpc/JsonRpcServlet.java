@@ -63,6 +63,7 @@ import org.savapage.core.json.rpc.ParamsPaging;
 import org.savapage.core.json.rpc.impl.ParamsAddInternalUser;
 import org.savapage.core.json.rpc.impl.ParamsAuthUserSource;
 import org.savapage.core.json.rpc.impl.ParamsChangeBaseCurrency;
+import org.savapage.core.json.rpc.impl.ParamsNameValue;
 import org.savapage.core.json.rpc.impl.ParamsPrinterAccessControl;
 import org.savapage.core.json.rpc.impl.ParamsPrinterSnmp;
 import org.savapage.core.json.rpc.impl.ParamsSetUserGroupProperties;
@@ -72,6 +73,7 @@ import org.savapage.core.json.rpc.impl.ParamsSourceGroupMembers;
 import org.savapage.core.json.rpc.impl.ParamsUniqueName;
 import org.savapage.core.json.rpc.impl.ResultUserGroupAccess;
 import org.savapage.core.services.AccountingService;
+import org.savapage.core.services.ConfigPropertyService;
 import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
@@ -117,6 +119,12 @@ public final class JsonRpcServlet extends HttpServlet
      */
     private static final AccountingService ACCOUNTING_SERVICE =
             ServiceContext.getServiceFactory().getAccountingService();
+
+    /**
+     * .
+     */
+    private static final ConfigPropertyService CONFIG_PROPERTY_SERVICE =
+            ServiceContext.getServiceFactory().getConfigPropertyService();
 
     /**
      * .
@@ -583,6 +591,17 @@ public final class JsonRpcServlet extends HttpServlet
                         true);
                 break;
 
+            case GET_CONFIG_PROPERTY:
+                rpcResponse = CONFIG_PROPERTY_SERVICE.getPropertyValue(
+                        methodParser.getParams(ParamsUniqueName.class)
+                                .getUniqueName());
+                break;
+
+            case SET_CONFIG_PROPERTY:
+                rpcResponse = CONFIG_PROPERTY_SERVICE.setPropertyValue(
+                        methodParser.getParams(ParamsNameValue.class)
+                                );
+                break;
             case LIST_USERS:
 
                 final ParamsPaging parmsListUsers =

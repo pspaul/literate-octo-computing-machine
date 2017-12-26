@@ -37,7 +37,6 @@ import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
-import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.SOfficeService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketTagCache;
@@ -62,15 +61,9 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ReqConfigPropsSet.class);
 
-    /**
-     * .
-     */
+    /** */
     private static final SOfficeService SOFFICE_SERVICE =
             ServiceContext.getServiceFactory().getSOfficeService();
-
-    /** */
-    private static final JobTicketService JOBTICKET_SERVICE =
-            ServiceContext.getServiceFactory().getJobTicketService();
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
