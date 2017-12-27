@@ -286,8 +286,10 @@ public final class JsonRpcServlet extends HttpServlet
         final AbstractJsonRpcMessage rpcResponse = handleRequest(httpRequest);
         final String jsonOut = rpcResponse.stringifyPrettyPrinted();
 
-        httpResponse.getOutputStream().print(jsonOut);
         httpResponse.setContentType(JsonRpcConfig.INTERNET_MEDIA_TYPE);
+        httpResponse.setCharacterEncoding(JsonRpcConfig.CHAR_ENCODING);
+
+        httpResponse.getOutputStream().print(jsonOut);
     }
 
     /**
@@ -599,8 +601,7 @@ public final class JsonRpcServlet extends HttpServlet
 
             case SET_CONFIG_PROPERTY:
                 rpcResponse = CONFIG_PROPERTY_SERVICE.setPropertyValue(
-                        methodParser.getParams(ParamsNameValue.class)
-                                );
+                        methodParser.getParams(ParamsNameValue.class));
                 break;
             case LIST_USERS:
 

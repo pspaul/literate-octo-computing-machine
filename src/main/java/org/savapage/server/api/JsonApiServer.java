@@ -605,7 +605,7 @@ public final class JsonApiServer extends AbstractPage {
 
             requestCycle.scheduleRequestHandlerAfterCurrent(
                     new TextRequestHandler(JsonRpcConfig.INTERNET_MEDIA_TYPE,
-                            "UTF-8", jsonArray));
+                            JsonRpcConfig.CHAR_ENCODING, jsonArray));
         }
 
         PerformanceLogger.log(this.getClass(), "constructor", perfStartTime,
