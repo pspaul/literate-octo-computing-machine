@@ -33,7 +33,6 @@ import java.util.Map;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codehaus.jackson.JsonProcessingException;
 import org.savapage.core.SpException;
@@ -133,6 +132,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Boolean jobTicket;
         private JobTicketTypeEnum jobTicketType;
         private String jobTicketTag;
+        private Integer jobTicketCopyPages;
         private Long jobTicketDate;
         private Integer jobTicketHrs;
         private Integer jobTicketMin;
@@ -289,6 +289,15 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             this.jobTicketTag = jobTicketTag;
         }
 
+        public Integer getJobTicketCopyPages() {
+            return jobTicketCopyPages;
+        }
+
+        @SuppressWarnings("unused")
+        public void setJobTicketCopyPages(Integer jobTicketCopyPages) {
+            this.jobTicketCopyPages = jobTicketCopyPages;
+        }
+
         public Long getJobTicketDate() {
             return jobTicketDate;
         }
@@ -370,9 +379,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             LOGGER.trace(DtoReq.prettyPrint(getParmValue("dto")));
         }
 
-        if (dtoReq.getCopies().intValue() <= 0) {
-            setApiResultText(ApiResultCodeEnum.ERROR,
-                    "Invalid number of copies.");
+        // Validate
+        if (!validateCommon(dtoReq)) {
             return;
         }
 
@@ -458,7 +466,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         if (isCopyJobTicket) {
 
             jobs = null;
-            nPagesTot = Integer.parseInt(dtoReq.getRanges());
+            nPagesTot = dtoReq.getJobTicketCopyPages().intValue();
             nPagesPrinted = nPagesTot;
             ranges = null;
             isPrintAllPages = true;
@@ -982,6 +990,49 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     }
 
     /**
+     * Validates input for all cases.
+     *
+     * @param dtoReq
+     *            The user request.
+     * @return {@code true} when input is valid.
+     */
+    private boolean validateCommon(final DtoReq dtoReq) {
+
+        final int copies = dtoReq.getCopies().intValue();
+
+        if (copies <= 0) {
+            setApiResultText(ApiResultCodeEnum.ERROR,
+                    "Invalid number of copies.");
+            return false;
+        }
+
+        final Map<String, String> options = dtoReq.getOptions();
+
+        if (options == null) {
+            return true;
+        }
+
+        String optValWlk = null;
+
+        optValWlk = options.get(
+                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_BOOKLET);
+
+        if (copies > 1 && !StringUtils
+                .defaultString(optValWlk,
+                        IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_BOOKLET_NONE)
+                .equals(IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_BOOKLET_NONE)) {
+
+            if (BooleanUtils.isFalse(dtoReq.getCollate())) {
+                setApiResult(ApiResultCodeEnum.WARN,
+                        "msg-print-booklet-collate-mismatch");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Validates input for Copy Job ticket.
      *
      * @param dtoReq
@@ -992,7 +1043,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         if (StringUtils.isBlank(dtoReq.getJobName())) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-copyjob-title-missing");
-        } else if (!NumberUtils.isDigits(dtoReq.getRanges())) {
+        } else if (dtoReq.getJobTicketCopyPages() == null
+                || dtoReq.getJobTicketCopyPages().intValue() < 1) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-copyjob-pages-invalid");
         } else {
             return true;

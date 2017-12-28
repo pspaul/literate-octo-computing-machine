@@ -1569,7 +1569,8 @@
             ,
                 _refresh = function() {
                 var html = _view.getUserPageHtml('OutboxAddin', {
-                    jobTickets : false
+                    jobTickets : false,
+                    expiryAsc : false,
                 });
                 if (html) {
                     $('#outbox-job-list').html(html).enhanceWithin();
@@ -3811,6 +3812,9 @@
                     allDocs = isPrint && _model.canSelectAllDocuments() && _model.myJobs.length > 1;
 
                 _view.visible($('.sp-jobticket-print'), isPrint);
+                _view.visible($('#sp-print-page-ranges-div'), isPrint);
+                _view.visible($('#sp-jobticket-copy-pages-div'), !isPrint);
+
                 _setVisibilityPrintSeparately(allDocs, true);
 
                 _model.isCopyJobTicket = !isPrint;
@@ -3912,6 +3916,8 @@
                     isPrintJob = true;
                 }
                 _view.visible($('.sp-print-job-info'), isPrintJob && hasInboxDocs);
+                _view.visible($('#sp-jobticket-copy-pages-div'), jobTicket && !isPrintJob);
+                _view.visible($('#sp-print-page-ranges-div'), isPrintJob);
             }
             //
             ,
@@ -3952,6 +3958,7 @@
                 $('#delegated-print-copies').val(1);
                 $('#number-print-copies').val(1);
                 $('#print-page-ranges').val('');
+                $('#sp-jobticket-copy-pages').val(1);
                 $('#sp-jobticket-remark').val('');
                 $('#sp-jobticket-date').val('');
                 $('#sp-jobticket-hrs').val('');
@@ -6327,6 +6334,7 @@
                         options : _model.myPrinterOpt,
                         delegation : isDelegation ? _model.printDelegation : null,
                         jobTicket : isJobticket,
+                        jobTicketCopyPages : isJobticket ? $('#sp-jobticket-copy-pages').val() : null,
                         jobTicketType : jobTicketType,
                         jobTicketTag : jobTicketTag,
                         jobTicketDate : jobTicketDate,

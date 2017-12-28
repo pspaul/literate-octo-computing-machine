@@ -302,6 +302,10 @@ public class Print extends AbstractUserPage {
         helper.addButton("button-inbox", HtmlButtonEnum.BACK);
         helper.addLabel("label-invoicing", NounEnum.INVOICING);
         helper.addLabel("header-job", PrintOutNounEnum.JOB);
+
+        helper.addModifyLabelAttr("jobticket-copy-pages",
+                MarkupHelper.ATTR_TITLE,
+                localized("sp-jobticket-copy-pages-tooltip"));
     }
 
     /**
