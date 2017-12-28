@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -120,6 +121,7 @@ import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.job.SpJobScheduler;
+import org.savapage.core.job.SpJobType;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.Printer;
@@ -2617,19 +2619,26 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqUserSync(final String user,
             final boolean isTest, final boolean deleteUsers) {
 
-        Map<String, Object> data = new HashMap<String, Object>();
+        final Map<String, Object> data = new HashMap<String, Object>();
 
-        try {
-            SpJobScheduler.instance().scheduleOneShotUserSync(isTest,
-                    deleteUsers);
+        if (SpJobScheduler.isJobCurrentlyExecuting(
+                EnumSet.of(SpJobType.SYNC_USERS, SpJobType.SYNC_USER_GROUPS))) {
 
-            setApiResult(data, ApiResultCodeEnum.OK, "msg-user-sync-busy");
+            setApiResult(data, ApiResultCodeEnum.WARN, "msg-user-sync-busy");
 
-        } catch (Exception e) {
-            setApiResult(data, ApiResultCodeEnum.ERROR, "msg-tech-error",
-                    e.getMessage());
+        } else {
+
+            try {
+                SpJobScheduler.instance().scheduleOneShotUserSync(isTest,
+                        deleteUsers);
+
+                setApiResult(data, ApiResultCodeEnum.OK, "msg-user-sync-busy");
+
+            } catch (Exception e) {
+                setApiResult(data, ApiResultCodeEnum.ERROR, "msg-tech-error",
+                        e.getMessage());
+            }
         }
-
         return data;
     }
 

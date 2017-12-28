@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.SpInfo;
@@ -48,6 +49,7 @@ import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.helpers.DaoBatchCommitter;
 import org.savapage.core.dao.helpers.JsonUserGroupAccess;
+import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.jpa.Entity;
 import org.savapage.core.json.rpc.AbstractJsonRpcMessage;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
@@ -70,6 +72,7 @@ import org.savapage.core.json.rpc.impl.ParamsSetUserGroupProperties;
 import org.savapage.core.json.rpc.impl.ParamsSetUserProperties;
 import org.savapage.core.json.rpc.impl.ParamsSingleFilterList;
 import org.savapage.core.json.rpc.impl.ParamsSourceGroupMembers;
+import org.savapage.core.json.rpc.impl.ParamsSyncUsers;
 import org.savapage.core.json.rpc.impl.ParamsUniqueName;
 import org.savapage.core.json.rpc.impl.ResultUserGroupAccess;
 import org.savapage.core.services.AccountingService;
@@ -703,6 +706,15 @@ public final class JsonRpcServlet extends HttpServlet
                 rpcResponse = USER_GROUP_SERVICE.syncUserGroup(batchCommitter,
                         methodParser.getParams(ParamsUniqueName.class)
                                 .getUniqueName());
+                break;
+
+            case SYNC_USERS_AND_GROUPS:
+
+                SpJobScheduler.instance().scheduleOneShotUserSync(false,
+                        BooleanUtils.isTrue(
+                                methodParser.getParams(ParamsSyncUsers.class)
+                                        .getDeleteUsers()));
+                rpcResponse = JsonRpcMethodResult.createOkResult();
                 break;
 
             case SYSTEM_STATUS:
