@@ -1044,11 +1044,15 @@ public class OutboxAddin extends AbstractUserPage {
 
         final SpSession session = SpSession.get();
 
-        final OutboxInfoDto outboxInfo;
+        final OutboxInfoDto outboxInfo = new OutboxInfoDto();
+
+        final Integer maxItems;
+        final List<OutboxJobDto> tickets;
 
         if (isJobticketView) {
 
-            outboxInfo = new OutboxInfoDto();
+            maxItems = parms.getParameterValue(PAGE_PARM_MAX_ITEMS)
+                    .toOptionalInteger();
 
             /*
              * Job Tickets mix-in.
@@ -1056,51 +1060,15 @@ public class OutboxAddin extends AbstractUserPage {
             final Long userKey =
                     parms.getParameterValue(PAGE_PARM_USERKEY).toOptionalLong();
 
-            final boolean expiryAsc = BooleanUtils
-                    .isTrue(parms.getParameterValue(PAGE_PARM_EXPIRY_ASC)
-                            .toOptionalBoolean());
-
-            final List<OutboxJobDto> tickets;
-
             if (userKey == null) {
                 tickets = JOBTICKET_SERVICE.getTickets();
             } else {
                 tickets = JOBTICKET_SERVICE.getTickets(userKey);
             }
 
-            Collections.sort(tickets, new Comparator<OutboxJobDto>() {
-                @Override
-                public int compare(final OutboxJobDto left,
-                        final OutboxJobDto right) {
-                    final int ret;
-                    if (left.getExpiryTime() < right.getExpiryTime()) {
-                        ret = -1;
-                    } else if (left.getExpiryTime() > right.getExpiryTime()) {
-                        ret = 1;
-                    } else {
-                        ret = 0;
-                    }
-                    if (expiryAsc) {
-                        return ret;
-                    }
-                    return -ret;
-                }
-            });
-
-            final Integer maxItems = parms
-                    .getParameterValue(PAGE_PARM_MAX_ITEMS).toOptionalInteger();
-
-            int iItems = 0;
-
-            for (final OutboxJobDto dto : tickets) {
-                outboxInfo.addJob(dto.getFile(), dto);
-                if (maxItems != null && maxItems.intValue() > 0
-                        && ++iItems >= maxItems.intValue()) {
-                    break;
-                }
-            }
-
         } else {
+            maxItems = null;
+
             final DaoContext daoContext = ServiceContext.getDaoContext();
             /*
              * Lock user while getting the OutboxInfo.
@@ -1110,11 +1078,50 @@ public class OutboxAddin extends AbstractUserPage {
             final org.savapage.core.jpa.User lockedUser =
                     daoContext.getUserDao().lock(session.getUser().getId());
 
-            outboxInfo = OUTBOX_SERVICE.getOutboxJobTicketInfo(lockedUser,
-                    ServiceContext.getTransactionDate());
-
+            final OutboxInfoDto outboxInfoTmp =
+                    OUTBOX_SERVICE.getOutboxJobTicketInfo(lockedUser,
+                            ServiceContext.getTransactionDate());
             // unlock
             daoContext.rollback();
+
+            tickets = new ArrayList<>();
+            tickets.addAll(outboxInfoTmp.getJobs().values());
+        }
+
+        final boolean expiryAsc = BooleanUtils.isTrue(parms
+                .getParameterValue(PAGE_PARM_EXPIRY_ASC).toOptionalBoolean());
+
+        final Comparator<OutboxJobDto> comparator =
+                new Comparator<OutboxJobDto>() {
+                    @Override
+                    public int compare(final OutboxJobDto left,
+                            final OutboxJobDto right) {
+                        final int ret;
+                        if (left.getExpiryTime() < right.getExpiryTime()) {
+                            ret = -1;
+                        } else if (left.getExpiryTime() > right
+                                .getExpiryTime()) {
+                            ret = 1;
+                        } else {
+                            ret = 0;
+                        }
+                        if (expiryAsc) {
+                            return ret;
+                        }
+                        return -ret;
+                    }
+                };
+
+        Collections.sort(tickets, comparator);
+
+        int iItems = 0;
+
+        for (final OutboxJobDto dto : tickets) {
+            outboxInfo.addJob(dto.getFile(), dto);
+            if (maxItems != null && maxItems.intValue() > 0
+                    && ++iItems >= maxItems.intValue()) {
+                break;
+            }
         }
 
         OUTBOX_SERVICE.applyLocaleInfo(outboxInfo, session.getLocale(),
