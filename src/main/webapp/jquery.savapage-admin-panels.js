@@ -901,6 +901,11 @@
                 _view.visible($('#internal-users-parms'), enabled);
             },
 
+            onAuthLdapUseSsl : function(enabled) {
+                var _view = _ns.PanelCommon.view;
+                _view.visible($('#ldap-use-ssl-parms'), enabled);
+            },
+
             onAuthModeLocalEnabled : function() {
                 var
                 //
@@ -1066,6 +1071,8 @@
                 my.onProxyPrintClearInboxEnabled(_view.isCbChecked($('#webapp\\.user\\.proxy-print\\.clear-inbox\\.enable')));
                 my.onWebPrintEnabled(_view.isCbChecked($('#web-print\\.enable')));
                 my.onEcoPrintEnabled(_view.isCbChecked($('#eco-print\\.enable')));
+                my.onAuthLdapUseSsl(_view.isCbChecked($('#auth\\.ldap\\.use-ssl')));
+                my.onInternalUsersEnabled(_view.isCbChecked($('#internal-users\\.enable')));
 
                 my.onSmartSchoolEnabled(_view.isCbChecked($('#smartschool\\.1\\.enable')), _view.isCbChecked($('#smartschool\\.2\\.enable')));
                 my.onSmartSchoolNodeEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.enable')), _view.isCbChecked($('#smartschool\\.2\\.soap\\.print\\.node\\.enable')));

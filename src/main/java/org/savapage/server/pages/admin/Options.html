@@ -66,8 +66,18 @@
 							pattern="[0-9]*" autocomplete="off" autocorrect="off"
 							autocapitalize="off" spellcheck="false" />
 					</div>
+
 					<label for="" wicket:id="ldap-use-ssl-label" />
-					<input type="checkbox" id="" value="0" wicket:id="ldap-use-ssl" />
+					<input type="checkbox" id="" value="0" data-mini="true"
+						wicket:id="ldap-use-ssl" />
+
+					<div id="ldap-use-ssl-parms">
+						<label for="" wicket:id="ldap-use-ssl-trust-self-signed-label" />
+						<input type="checkbox" id="" value="0" data-mini="true"
+							wicket:id="ldap-use-ssl-trust-self-signed" />
+					</div>
+				</li>
+				<li class="ldap-parms">
 					<label for="" wicket:id="ldap-basedn-label" />
 					<input type="text" id="" wicket:id="ldap-basedn" value=""
 						autocomplete="off" autocorrect="off" autocapitalize="off"

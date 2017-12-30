@@ -135,6 +135,8 @@ public final class Options extends AbstractAdminPage {
         labelledInput("ldap-port", Key.AUTH_LDAP_PORT);
 
         labelledCheckbox("ldap-use-ssl", Key.AUTH_LDAP_USE_SSL);
+        labelledCheckbox("ldap-use-ssl-trust-self-signed",
+                Key.AUTH_LDAP_USE_SSL_TRUST_SELF_SIGNED);
 
         labelledInput("ldap-basedn", Key.AUTH_LDAP_BASE_DN);
         labelledInput("ldap-admin-dn", Key.AUTH_LDAP_ADMIN_DN);

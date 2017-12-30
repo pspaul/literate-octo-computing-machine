@@ -2335,6 +2335,10 @@
                     _panel.Options.onInternalUsersEnabled($(this).is(':checked'));
                 });
 
+                $(this).on('change', "input:checkbox[id='auth.ldap.use-ssl']", null, function(e) {
+                    _panel.Options.onAuthLdapUseSsl($(this).is(':checked'));
+                });
+
                 $(this).on('click', '#apply-mail', null, function() {
                     _self.onApplyMail();
                     return false;

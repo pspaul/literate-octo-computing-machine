@@ -410,7 +410,7 @@
                 if (method === 'ldap') {
                     props['ldap.schema.type'] = _view.getRadioValue('ldap.schema.type');
                     _fillConfigPropsText(props, ['auth.ldap.host', 'auth.ldap.port', 'auth.ldap.basedn', 'auth.ldap.admin-dn', 'auth.ldap.admin-password', 'ldap.schema.user-id-number-field', 'ldap.schema.user-card-number-field']);
-                    _fillConfigPropsYN(props, ['auth.ldap.use-ssl']);
+                    _fillConfigPropsYN(props, ['auth.ldap.use-ssl', 'auth.ldap.use-ssl.trust-self-signed']);
                     _fillConfigPropsRadio(props, ['ldap.user-card-number.first-byte', 'ldap.user-card-number.format']);
                 }
                 _saveConfigProps(props);
