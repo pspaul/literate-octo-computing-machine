@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -277,8 +277,15 @@ public final class JsonRpcServlet extends HttpServlet
         if (log) {
             LOGGER.error(ex.getMessage(), ex);
         }
+
+        if (ex.getCause() == null) {
+            return JsonRpcMethodError.createBasicError(
+                    JsonRpcError.Code.INTERNAL_ERROR, ex.getMessage());
+        }
+
         return JsonRpcMethodError.createBasicError(
-                JsonRpcError.Code.INTERNAL_ERROR, ex.getMessage());
+                JsonRpcError.Code.INTERNAL_ERROR, ex.getMessage(),
+                ex.getCause().getMessage());
     }
 
     @Override
