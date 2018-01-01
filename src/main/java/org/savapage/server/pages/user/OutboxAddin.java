@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -194,6 +194,8 @@ public class OutboxAddin extends AbstractUserPage {
             "button-jobticket-print-retry";
 
     private static final String WICKET_ID_OWNER_USER_ID = "owner-user-id";
+    private static final String WICKET_ID_OWNER_USER_EMAIL = "owner-user-email";
+
     private static final String WICKET_ID_JOB_STATE = "job-state";
     private static final String WICKET_ID_JOB_STATE_IND = "job-state-ind";
 
@@ -795,52 +797,44 @@ public class OutboxAddin extends AbstractUserPage {
 
             final boolean readUser;
 
+            boolean enclosePrintSettle = true;
+
             if (printOut != null) {
 
                 mapVisible.put("job-id", printOut.getCupsJobId().toString());
                 mapVisible.put("job-printer",
                         printOut.getPrinter().getDisplayName());
 
-                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
-                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE);
-
+                enclosePrintSettle = false;
                 readUser = true;
 
             } else if (this.isJobticketView && job.getUserId() != null) {
-
-                if (isCopyJobTicket || optionMap.isJobTicketSettleOnly()) {
-                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
-                } else {
-                    this.addJobIdAttr(helper.encloseLabel(
-                            WICKET_ID_BTN_JOBTICKET_PRINT,
-                            HtmlButtonEnum.PRINT.uiTextDottedSfx(getLocale()),
-                            true), job);
-                }
-
-                this.addJobIdAttr(
-                        helper.encloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE,
-                                HtmlButtonEnum.SETTLE
-                                        .uiTextDottedSfx(getLocale()),
-                                true),
-                        job);
 
                 readUser = true;
 
             } else {
                 helper.discloseLabel(WICKET_ID_OWNER_USER_ID);
-                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
-                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE);
+                helper.discloseLabel(WICKET_ID_OWNER_USER_EMAIL);
+
+                enclosePrintSettle = false;
                 readUser = false;
             }
 
             if (readUser) {
+
                 final org.savapage.core.jpa.User user =
                         USER_DAO.findById(job.getUserId());
+
                 if (user == null) {
                     labelWlk = helper.encloseLabel(WICKET_ID_OWNER_USER_ID,
                             "*** USER NOT FOUND ***", true);
                     MarkupHelper.appendLabelAttr(labelWlk, "class",
                             MarkupHelper.CSS_TXT_WARN);
+
+                    helper.discloseLabel(WICKET_ID_OWNER_USER_EMAIL);
+
+                    enclosePrintSettle = false;
+
                 } else {
                     helper.encloseLabel(WICKET_ID_OWNER_USER_ID,
                             user.getUserId(), true);
@@ -859,6 +853,28 @@ public class OutboxAddin extends AbstractUserPage {
                     }
                 }
             }
+
+            if (enclosePrintSettle) {
+                if (isCopyJobTicket || optionMap.isJobTicketSettleOnly()) {
+                    helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
+                } else {
+                    this.addJobIdAttr(helper.encloseLabel(
+                            WICKET_ID_BTN_JOBTICKET_PRINT,
+                            HtmlButtonEnum.PRINT.uiTextDottedSfx(getLocale()),
+                            true), job);
+                }
+
+                this.addJobIdAttr(
+                        helper.encloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE,
+                                HtmlButtonEnum.SETTLE
+                                        .uiTextDottedSfx(getLocale()),
+                                true),
+                        job);
+            } else {
+                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
+                helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE);
+            }
+
             /*
              * Hide/Show
              */
@@ -873,6 +889,13 @@ public class OutboxAddin extends AbstractUserPage {
             }
         }
 
+        /**
+         *
+         * @param locale
+         * @param ippKeyword
+         * @param map
+         * @return
+         */
         private String uiIppKeywordValue(final Locale locale,
                 final String ippKeyword, final IppOptionMap map) {
             return PROXYPRINT_SERVICE.localizePrinterOptValue(locale,

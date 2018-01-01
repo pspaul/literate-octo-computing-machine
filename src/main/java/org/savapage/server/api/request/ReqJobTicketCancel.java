@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -75,18 +75,26 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
         } else {
             msgKey = "msg-outbox-cancelled-jobticket";
             final User user = notifyUser(dto.getUserId());
-            sendEmailNotification(requestingUser, dto, user);
+            if (user != null) {
+                sendEmailNotification(requestingUser, dto, user);
+            }
         }
 
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);
     }
 
     /**
+     * Notifies a user.
+     * <p>
+     * In case the Ticket was canceled because a user is not found, {@code null}
+     * is returned.
+     * </p>
+     *
      * @param userKey
      *            The user database key
      * @throws IOException
      *             When IO error.
-     * @return The User.
+     * @return The User, or {@code null} when user is not found.
      */
     private User notifyUser(final Long userKey) throws IOException {
 
@@ -94,7 +102,8 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
 
         final User user = userDao.findById(userKey);
 
-        if (UserMsgIndicator.isSafePagesDirPresent(user.getUserId())) {
+        if (user != null
+                && UserMsgIndicator.isSafePagesDirPresent(user.getUserId())) {
 
             UserMsgIndicator.write(user.getUserId(),
                     ServiceContext.getTransactionDate(),
