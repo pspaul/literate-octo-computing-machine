@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -686,6 +686,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final JsonProxyPrinter proxyPrinter =
                 PROXY_PRINT_SERVICE.getCachedPrinter(printReq.getPrinterName());
 
+        /*
+         * INVARIANT:
+         */
+        if (!validateOptions(proxyPrinter, printReq.getOptionValues())) {
+            return;
+        }
+
         final String currencySymbol = SpSession.getAppCurrencySymbol();
 
         final ProxyPrintCostDto costResult;
@@ -1067,6 +1074,33 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 && dtoReq.getEcoprint() != null && dtoReq.getEcoprint()) {
             setApiResult(ApiResultCodeEnum.INFO,
                     "msg-select-single-pdf-filter");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validates IPP choices constraint rules. When not valid,
+     * {@link #setApiResultText(ApiResultCodeEnum, String)} is called with
+     * {@link ApiResultCodeEnum#WARN}.
+     *
+     * @param proxyPrinter
+     *            The proxy printer.
+     * @param ippOptions
+     *            The IPP attribute key/choices.
+     * @param costResult
+     *            The calculated cost result.
+     * @param isJobTicket
+     *            {@code true} when these are Job Ticket options.
+     * @return {@code true} when choices are valid.
+     */
+    private boolean validateOptions(final JsonProxyPrinter proxyPrinter,
+            final Map<String, String> ippOptions) {
+
+        final String msg = PROXY_PRINT_SERVICE
+                .validateContraintsMsg(proxyPrinter, ippOptions, getLocale());
+        if (msg != null) {
+            setApiResultText(ApiResultCodeEnum.WARN, msg);
             return false;
         }
         return true;

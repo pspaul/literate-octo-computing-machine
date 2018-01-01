@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -135,8 +135,14 @@ public final class ReqPrinterOptValidate extends ApiRequestMixin {
         mediaFromMediaSource(requestedMediaSource, dtoReq.getOptions(),
                 dtoReq.getPrinter());
 
-        final String msg = PROXY_PRINT_SERVICE.validateCustomCostRules(
-                proxyPrinter, dtoReq.getOptions(), getLocale());
+        //
+        String msg = PROXY_PRINT_SERVICE.validateContraintsMsg(proxyPrinter,
+                dtoReq.getOptions(), getLocale());
+
+        if (msg == null) {
+            msg = PROXY_PRINT_SERVICE.validateCustomCostRules(proxyPrinter,
+                    dtoReq.getOptions(), getLocale());
+        }
 
         if (msg == null) {
             setApiResultOk();

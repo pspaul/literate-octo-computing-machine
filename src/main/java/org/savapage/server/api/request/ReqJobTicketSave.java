@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -159,13 +159,19 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
         // TODO
 
         /*
-         * Validate combinations.
+         * Validate constraints.
          */
         final JsonProxyPrinter proxyPrinter =
                 PROXY_PRINT_SERVICE.getCachedPrinter(dto.getPrinter());
 
-        final String userMsg = PROXY_PRINT_SERVICE.validateCustomCostRules(
-                proxyPrinter, optionValuesTmp, getLocale());
+        //
+        String userMsg = PROXY_PRINT_SERVICE.validateContraintsMsg(proxyPrinter,
+                optionValuesTmp, getLocale());
+
+        if (userMsg == null) {
+            userMsg = PROXY_PRINT_SERVICE.validateCustomCostRules(proxyPrinter,
+                    optionValuesTmp, getLocale());
+        }
 
         if (userMsg != null) {
             throw new IllegalStateException(userMsg);
@@ -229,9 +235,6 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
         final Printer printer = ServiceContext.getDaoContext().getPrinterDao()
                 .findByName(dto.getPrinter());
 
-        costParms.setNumberOfCopies(dto.getCopies());
-        costParms.setNumberOfPages(dto.getPages());
-
         // Retrieve the regular media source cost.
         final PrinterAttrLookup printerAttrLookup =
                 new PrinterAttrLookup(printer);
@@ -244,16 +247,21 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
 
         costParms.setMediaSourceCost(mediaSourceCost);
 
-        // Calculate print cost.
+        // Set number of sheets first ...
+        dto.setSheets(PdfPrintCollector.calcNumberOfPrintedSheets(
+                dto.getPages(), dto.getCopies(), costParms.isDuplex(),
+                costParms.getPagesPerSide(), false, false, false));
+
+        // .. and set ...
+        costParms.setNumberOfCopies(dto.getCopies());
+        costParms.setNumberOfPages(dto.getPages());
+        costParms.setNumberOfSheets(dto.getSheets());
+
+        // .. and finally calculate print cost.
         final ProxyPrintCostDto costResult =
                 ACCOUNTING_SERVICE.calcProxyPrintCost(printer, costParms);
 
         dto.setCostResult(costResult);
-
-        // Number of sheets
-        dto.setSheets(PdfPrintCollector.calcNumberOfPrintedSheets(
-                dto.getPages(), dto.getCopies(), costParms.isDuplex(),
-                costParms.getPagesPerSide(), false, false, false));
     }
 
     /**
