@@ -2656,7 +2656,7 @@
                 html += '<h3 class="ui-title ' + cssClass + '">' + title + '</h3>';
                 html += '<p class="sp-txt-wrap ' + cssClass + '">' + txt + '</p>';
                 html += '<div data-iconpos="none" data-mini="true" data-role="collapsible" data-collapsed="true">';
-                html += '<h3 style="width: 50px;">. . .</h3>';
+                html += '<h3 style="width: 60px;">&nbsp;&middot;&nbsp;&middot;&nbsp;&middot;</h3>';
                 html += '<textarea onclick="this.focus();this.select()" readonly="readonly" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">' + txt + '</textarea>';
                 html += '</div>';
 
