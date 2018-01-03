@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -143,6 +143,7 @@ import org.savapage.core.print.gcp.GcpRegisterPrinterRsp;
 import org.savapage.core.print.imap.ImapListener;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
+import org.savapage.core.reports.JrExportFileExtEnum;
 import org.savapage.core.reports.JrPosDepositReceipt;
 import org.savapage.core.reports.JrVoucherPageDesign;
 import org.savapage.core.reports.impl.AccountTrxListReport;
@@ -662,7 +663,14 @@ public final class JsonApiServer extends AbstractPage {
 
             case JsonApiDict.REQ_REPORT:
             case JsonApiDict.REQ_REPORT_USER:
+
                 requestHandler = exportReport(tempExportFile,
+                        EnumUtils.getEnum(JrExportFileExtEnum.class,
+                                StringUtils.defaultString(
+                                        StringUtils.stripToNull(parameters
+                                                .get(JsonApiDict.PARM_REQ_PARM)
+                                                .toString()),
+                                        JrExportFileExtEnum.PDF.toString())),
                         parameters.get(JsonApiDict.PARM_REQ_SUB).toString(),
                         parameters.get(JsonApiDict.PARM_DATA).toString(),
                         requestingUser, request.equals(JsonApiDict.REQ_REPORT));
@@ -956,8 +964,10 @@ public final class JsonApiServer extends AbstractPage {
      * {@link IRequestHandler}.
      * </p>
      *
-     * @param tempPdfFile
-     *            The temporary PDF {@link File}.
+     * @param tempExportFile
+     *            The temporary {@link File}.
+     * @param fileExt
+     *            The export file type to create.
      * @param reportId
      *            The unique report ID
      * @param jsonData
@@ -970,10 +980,10 @@ public final class JsonApiServer extends AbstractPage {
      * @throws JRException
      *             When Jasper Report error.
      */
-    private IRequestHandler exportReport(final File tempPdfFile,
-            final String reportId, final String jsonData,
-            final String requestingUser, final boolean requestingUserAdmin)
-            throws JRException {
+    private IRequestHandler exportReport(final File tempExportFile,
+            final JrExportFileExtEnum fileExt, final String reportId,
+            final String jsonData, final String requestingUser,
+            final boolean requestingUserAdmin) throws JRException {
 
         final Locale locale = getSession().getLocale();
 
@@ -994,13 +1004,13 @@ public final class JsonApiServer extends AbstractPage {
                     "Report [" + reportId + "] is NOT supported");
         }
 
-        report.create(tempPdfFile);
+        report.create(tempExportFile, fileExt);
 
-        //
         final ResourceStreamRequestHandler handler =
-                new DownloadRequestHandler(tempPdfFile);
+                new DownloadRequestHandler(tempExportFile);
 
-        final String userFriendlyFilename = reportId + ".pdf";
+        final String userFriendlyFilename = String.format("%s.%s", reportId,
+                fileExt.toString().toLowerCase());
 
         handler.setContentDisposition(ContentDisposition.ATTACHMENT);
         handler.setFileName(userFriendlyFilename);

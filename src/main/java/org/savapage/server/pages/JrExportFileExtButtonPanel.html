@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
@@ -14,23 +15,9 @@
 </wicket:remove>
 
 <wicket:panel>
-
-	<wicket:remove>
-		<!--
-NOTE: Method GET is used, because Android native browser cannot handle POST. 
-I.e. the commit on the form is issued twice + the 2nd time the values of the
-hidden input is void.   
--->
-	</wicket:remove>
-
-	<form id="sp-file-download-api-form" action="/api" method="get"
-		target="_blank">
-		<input type="hidden" name="" value="" wicket:id="webAppType" />
-		<input type="hidden" name="request" wicket:id="request" />
-		<input type="hidden" name="request-sub" wicket:id="request-sub" />
-		<input type="hidden" name="request-parm" wicket:id="request-parm" />
-		<input type="hidden" name="user" wicket:id="user" />
-		<input type="hidden" name="data" wicket:id="data" />
-	</form>
-
+	<button wicket:id="button-report-pdf"
+		class="sp-btn-users-report ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-sp-file-type-pdf" />
+	<button wicket:id="button-report-csv"
+		class="sp-btn-users-report ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-sp-file-type-csv" />
 </wicket:panel>
+</html>

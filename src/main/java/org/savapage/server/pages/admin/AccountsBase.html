@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -138,10 +139,7 @@
 						</button>
 						<wicket:remove>
 							<!-- 
-						<button id="button-accounts-report"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-grid ui-state-disabled">
-							<wicket:message key="button-report" />
-						</button>
+                        <wicket:panel wicket:id="report-button-panel" />
     -->
 						</wicket:remove>
 						<button
@@ -169,3 +167,4 @@
 	<li id="sp-shared-account-list-page"></li>
 
 </ul>
+</html>

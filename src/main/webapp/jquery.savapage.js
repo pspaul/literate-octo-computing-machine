@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Common | (c) 2011-2017 Datraverse B.V. | GNU Affero
+/*! SavaPage jQuery Mobile Common | (c) 2011-2018 Datraverse B.V. | GNU Affero
  * General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -515,10 +515,11 @@
             /**
              * Downloads a file.
              */
-            this.download = function(request, data, requestSub) {
+            this.download = function(request, data, requestSub, requestParm) {
                 var form = "#sp-file-download-api-form";
                 $(form + " input[name='request']").attr("value", request);
                 $(form + " input[name='request-sub']").attr("value", requestSub);
+                $(form + " input[name='request-parm']").attr("value", requestParm);
                 $(form + " input[name='user']").attr("value", _user.id);
                 $(form + " input[name='data']").attr("value", JSON.stringify(data));
                 $(form).submit();

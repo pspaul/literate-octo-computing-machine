@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -63,6 +63,7 @@ public final class MarkupHelper {
     public static final String ATTR_CLASS = "class";
     public static final String ATTR_STYLE = "style";
     public static final String ATTR_HREF = "href";
+    public static final String ATTR_NAME = "name";
     public static final String ATTR_VALUE = "value";
     public static final String ATTR_SLIDER_MIN = "min";
     public static final String ATTR_SLIDER_MAX = "max";

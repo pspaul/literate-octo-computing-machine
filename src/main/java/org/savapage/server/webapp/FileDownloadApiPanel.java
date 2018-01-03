@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,6 +39,13 @@ public final class FileDownloadApiPanel extends Panel {
 
     /**
      *
+     */
+    private static final String[] WICKET_ID_DONWLOAD_PARMS = {
+            JsonApiDict.PARM_DATA, JsonApiDict.PARM_USER, JsonApiDict.PARM_REQ,
+            JsonApiDict.PARM_REQ_PARM, JsonApiDict.PARM_REQ_SUB };
+
+    /**
+     *
      * @param id
      *            The Wicket ID.
      */
@@ -52,11 +59,16 @@ public final class FileDownloadApiPanel extends Panel {
      *            The {@link WebAppTypeEnum} context.
      */
     public void populate(final WebAppTypeEnum webAppType) {
+
         final MarkupHelper helper = new MarkupHelper(this);
 
         MarkupHelper.modifyLabelAttr(
-                helper.addModifyLabelAttr("webAppType", "name",
+                helper.addModifyLabelAttr("webAppType", MarkupHelper.ATTR_NAME,
                         JsonApiDict.PARM_WEBAPP_TYPE),
-                "value", webAppType.toString());
+                MarkupHelper.ATTR_VALUE, webAppType.toString());
+
+        for (final String parm : WICKET_ID_DONWLOAD_PARMS) {
+            helper.addModifyLabelAttr(parm, MarkupHelper.ATTR_NAME, parm);
+        }
     }
 }

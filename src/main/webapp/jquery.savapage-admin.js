@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2017 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2018 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -516,8 +516,8 @@
                 _view.pages.admin.refreshAccountVouchers();
             };
 
-            _view.pages.admin.onDownload = function(request, data, requestSub) {
-                _api.download(request, data, requestSub);
+            _view.pages.admin.onDownload = function(request, data, requestSub, requestParm) {
+                _api.download(request, data, requestSub, requestParm);
             };
 
             _view.pages.admin.onVoucherDeleteExpired = function() {

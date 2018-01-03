@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2017 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2018 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1938,10 +1938,10 @@
                     return false;
                 });
 
-                $(this).on('click', '#button-accounts-report', null, function() {
+                $(this).on('click', '.sp-btn-accounts-report', null, function() {
                     var pnl = _panel.AccountsBase;
                     pnl.v2m(pnl);
-                    _self.onDownload("report", pnl.input, "AccountList");
+                    _self.onDownload("report", pnl.input, "AccountList", $(this).attr('data-savapage'));
                     return true;
                 });
 
@@ -1961,10 +1961,10 @@
                     return false;
                 });
 
-                $(this).on('click', '#button-accounttrx-report', null, function() {
+                $(this).on('click', '.sp-btn-accounttrx-report', null, function() {
                     var pnl = _panel.AccountTrxBase;
                     pnl.v2m(pnl);
-                    _self.onDownload("report", pnl.input, "AccountTrxList");
+                    _self.onDownload("report", pnl.input, "AccountTrxList", $(this).attr('data-savapage'));
                     return true;
                 });
 
@@ -2180,10 +2180,10 @@
                     return false;
                 });
 
-                $(this).on('click', '#button-users-report', null, function() {
+                $(this).on('click', '.sp-btn-users-report', null, function() {
                     var pnl = _panel.UsersBase;
                     pnl.v2m(pnl);
-                    _self.onDownload("report", pnl.input, "UserList");
+                    _self.onDownload("report", pnl.input, "UserList", $(this).attr('data-savapage'));
                     return true;
                 });
 
@@ -2232,10 +2232,10 @@
                     return false;
                 });
 
-                $(this).on('click', '#button-user-groups-report', null, function() {
+                $(this).on('click', '.sp-btn-user-groups-report', null, function() {
                     var pnl = _panel.UserGroupsBase;
                     pnl.v2m(pnl);
-                    _self.onDownload("report", pnl.input, "UserGroupsList");
+                    _self.onDownload("report", pnl.input, "UserGroupsList", $(this).attr('data-savapage'));
                     return true;
                 });
 

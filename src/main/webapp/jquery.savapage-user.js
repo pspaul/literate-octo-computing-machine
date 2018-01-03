@@ -1129,9 +1129,9 @@
                     return false;
                 });
 
-                $(this).on('click', '#button-accounttrx-report', null, function() {
+                $(this).on('click', '.sp-btn-accounttrx-report', null, function() {
                     _panel.v2m(_panel);
-                    _api.download("report-user", _panel.input, "AccountTrxList");
+                    _api.download("report-user", _panel.input, "AccountTrxList", $(this).attr('data-savapage'));
                     return true;
                 });
 

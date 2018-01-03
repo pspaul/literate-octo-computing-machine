@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.pages.JrExportFileExtButtonPanel;
 
 /**
  *
@@ -71,6 +72,9 @@ public final class UsersBase extends AbstractAdminPage {
 
         addVisible(!isAppReady, WICKET_ID_TXT_NOT_READY,
                 localized("warn-not-ready-to-use"));
+
+        add(new JrExportFileExtButtonPanel("report-button-panel",
+                "sp-btn-users-report"));
 
         //
         final UserGroupDao userGroupDao =
