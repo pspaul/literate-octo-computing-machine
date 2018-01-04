@@ -57,6 +57,7 @@ import org.savapage.server.helpers.HtmlButtonEnum;
  */
 public final class MarkupHelper {
 
+    public static final String ATTR_CHECKED = "checked";
     public static final String ATTR_ID = "id";
     public static final String ATTR_TITLE = "title";
     public static final String ATTR_SRC = "src";
@@ -279,7 +280,7 @@ public final class MarkupHelper {
         final Label label = new Label(wicketId, "");
 
         if (checked) {
-            label.add(new AttributeModifier("checked", "checked"));
+            label.add(new AttributeModifier(ATTR_CHECKED, "checked"));
         }
 
         add(label);
@@ -322,7 +323,7 @@ public final class MarkupHelper {
         modifyLabelAttr(labelWrk, "id", htmlId);
 
         if (checked) {
-            labelWrk.add(new AttributeModifier("checked", "checked"));
+            labelWrk.add(new AttributeModifier(ATTR_CHECKED, "checked"));
         }
         return labelWrk;
     }
@@ -375,7 +376,7 @@ public final class MarkupHelper {
         }
 
         if (checked) {
-            labelWrk.add(new AttributeModifier("checked", "checked"));
+            labelWrk.add(new AttributeModifier(ATTR_CHECKED, "checked"));
         }
 
         add(labelWrk);
@@ -449,6 +450,7 @@ public final class MarkupHelper {
         add(label);
         return label;
     }
+
     /**
      * Adds input of type text.
      *

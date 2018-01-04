@@ -891,6 +891,8 @@
             // The HTML id attribute of the Panel.
             jqId : null,
 
+            doc_type_default: undefined,
+            
             clearHiddenUserid : function() {
                 $('#sp-doclog-hidden-user-id').val("");
                 $("#sp-doclog-user-title").html("");
@@ -922,7 +924,7 @@
                 my.input.select.account_id = null;
 
                 // ALL, IN, OUT, PDF, PRINT, TICKET
-                my.input.select.doc_type = "ALL";
+                my.input.select.doc_type = my.doc_type_default;
 
                 my.input.select.date_from = null;
                 my.input.select.date_to = null;
@@ -1039,6 +1041,12 @@
                 $('#sp-print-out-state').val(my.input.select.job_state).selectmenu('refresh');
 
                 //--
+                if (!my.doc_type_default) {
+                    // Initialize default from first-time setting. 
+                    my.doc_type_default = _view.getRadioValue('sp-doclog-select-type');
+                    my.input.select.doc_type = my.doc_type_default;
+                }
+                
                 _view.checkRadioValue('sp-doclog-select-type', my.input.select.doc_type);
 
                 val = my.input.select.letterhead;
@@ -1124,9 +1132,10 @@
                 present = (sel.val().length > 0);
                 my.input.select.destination = ( present ? sel.val() : null);
 
-                //
+                // val is undefined when radiobutton 'sp-doc-out-lh' is missing,
+                // due to user privileges. 
                 val = _view.getRadioValue('sp-doc-out-lh');
-                my.input.select.letterhead = (val === "" ? undefined : (val === "1"));
+                my.input.select.letterhead = (!val || val === "" ? undefined : (val === "1"));
 
                 //
                 val = _view.getRadioValue('sp-print-out-duplex');

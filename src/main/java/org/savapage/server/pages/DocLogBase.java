@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
@@ -28,9 +29,13 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.PrinterDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.jpa.Account;
@@ -38,7 +43,9 @@ import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.DocLogScopeEnum;
 import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
@@ -50,8 +57,16 @@ public class DocLogBase extends AbstractAuthPage {
 
     private static final long serialVersionUID = 1L;
 
+    /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
+    private static final QueueService QUEUE_SERVICE =
+            ServiceContext.getServiceFactory().getQueueService();
+
+    /** */
+    private static final ConfigManager CONFIG_MNGR = ConfigManager.instance();
 
     /**
      *
@@ -168,36 +183,126 @@ public class DocLogBase extends AbstractAuthPage {
         //
         final MarkupHelper helper = new MarkupHelper(this);
 
-        final String htmlAttrValue = "value";
-
-        helper.addModifyLabelAttr("select-type-all", htmlAttrValue,
-                DocLogDao.Type.ALL.toString());
-        helper.addModifyLabelAttr("select-type-in", htmlAttrValue,
-                DocLogDao.Type.IN.toString());
-        helper.addModifyLabelAttr("select-type-out", htmlAttrValue,
-                DocLogDao.Type.OUT.toString());
-        helper.addModifyLabelAttr("select-type-pdf", htmlAttrValue,
-                DocLogDao.Type.PDF.toString());
-        helper.addModifyLabelAttr("select-type-print", htmlAttrValue,
-                DocLogDao.Type.PRINT.toString());
         //
-        final boolean ticketButtonVisible;
+        final boolean btnVisiblePdf;
+        final boolean btnVisiblePrint;
+        final boolean btnVisibleTicket;
+        final boolean visibleLetterhead;
+
+        DocLogScopeEnum defaultScope = DocLogScopeEnum.ALL;
+
+        final List<Printer> printerList = getPrinterList(webAppType);
 
         if (webAppType == WebAppTypeEnum.ADMIN
                 || webAppType == WebAppTypeEnum.JOBTICKETS) {
-            ticketButtonVisible = true;
+
+            btnVisiblePdf = true;
+            btnVisiblePrint = true;
+            btnVisibleTicket = true;
+            visibleLetterhead = true;
+
         } else {
+
             final User user = SpSession.get().getUser();
-            ticketButtonVisible = user != null && ACCESS_CONTROL_SERVICE
+
+            final List<ACLPermissionEnum> permissions = ACCESS_CONTROL_SERVICE
+                    .getUserPermission(user, ACLOidEnum.U_INBOX);
+
+            visibleLetterhead = user != null
+                    && (permissions == null || ACCESS_CONTROL_SERVICE
+                            .hasUserAccess(user, ACLOidEnum.U_LETTERHEAD));
+
+            btnVisiblePdf = user != null && (permissions == null
+                    || ACCESS_CONTROL_SERVICE.hasUserPermission(permissions,
+                            ACLPermissionEnum.DOWNLOAD)
+                    || ACCESS_CONTROL_SERVICE.hasUserPermission(permissions,
+                            ACLPermissionEnum.SEND));
+
+            btnVisiblePrint = !printerList.isEmpty() && user != null
+                    && ACCESS_CONTROL_SERVICE.hasAccess(user,
+                            ACLRoleEnum.PRINT_CREATOR);
+
+            btnVisibleTicket = user != null && ACCESS_CONTROL_SERVICE
                     .hasAccess(user, ACLRoleEnum.JOB_TICKET_CREATOR);
+
+            final List<DocLogScopeEnum> typeDefaultOrder =
+                    CONFIG_MNGR.getConfigEnumList(DocLogScopeEnum.class,
+                            Key.WEBAPP_USER_DOCLOG_SELECT_TYPE_DEFAULT_ORDER);
+
+            DocLogScopeEnum scopeSecondChoice = null;
+            for (final DocLogScopeEnum scope : typeDefaultOrder) {
+                if ((scope == DocLogScopeEnum.PDF && btnVisiblePdf)
+                        || (scope == DocLogScopeEnum.PRINT && btnVisiblePrint)
+                        || (scope == DocLogScopeEnum.TICKET
+                                && btnVisibleTicket)) {
+                    defaultScope = scope;
+                    break;
+                }
+                if (scopeSecondChoice == null && (scope == DocLogScopeEnum.IN
+                        || scope == DocLogScopeEnum.OUT)) {
+                    scopeSecondChoice = scope;
+                }
+            }
+
+            if (defaultScope == DocLogScopeEnum.ALL
+                    && scopeSecondChoice != null) {
+                defaultScope = scopeSecondChoice;
+            }
         }
 
-        if (ticketButtonVisible) {
-            helper.addModifyLabelAttr("select-type-ticket", htmlAttrValue,
-                    DocLogDao.Type.TICKET.toString());
+        Label selectTypeToCheck = helper.addModifyLabelAttr("select-type-all",
+                MarkupHelper.ATTR_VALUE, DocLogDao.Type.ALL.toString());
+
+        Label labelWlk;
+
+        labelWlk = helper.addModifyLabelAttr("select-type-in",
+                MarkupHelper.ATTR_VALUE, DocLogDao.Type.IN.toString());
+        if (defaultScope == DocLogScopeEnum.IN) {
+            selectTypeToCheck = labelWlk;
+        }
+
+        labelWlk = helper.addModifyLabelAttr("select-type-out",
+                MarkupHelper.ATTR_VALUE, DocLogDao.Type.OUT.toString());
+        if (defaultScope == DocLogScopeEnum.OUT) {
+            selectTypeToCheck = labelWlk;
+        }
+
+        if (btnVisiblePdf) {
+            labelWlk = helper.addModifyLabelAttr("select-type-pdf",
+                    MarkupHelper.ATTR_VALUE, DocLogDao.Type.PDF.toString());
+            if (defaultScope == DocLogScopeEnum.PDF) {
+                selectTypeToCheck = labelWlk;
+            }
+        } else {
+            helper.discloseLabel("select-type-pdf");
+        }
+
+        if (btnVisiblePrint) {
+            labelWlk = helper.addModifyLabelAttr("select-type-print",
+                    MarkupHelper.ATTR_VALUE, DocLogDao.Type.PRINT.toString());
+            if (defaultScope == DocLogScopeEnum.PRINT) {
+                selectTypeToCheck = labelWlk;
+            }
+        } else {
+            helper.discloseLabel("select-type-print");
+        }
+
+        if (btnVisibleTicket) {
+            labelWlk = helper.addModifyLabelAttr("select-type-ticket",
+                    MarkupHelper.ATTR_VALUE, DocLogDao.Type.TICKET.toString());
+            if (defaultScope == DocLogScopeEnum.TICKET) {
+                selectTypeToCheck = labelWlk;
+            }
         } else {
             helper.discloseLabel("select-type-ticket");
         }
+
+        MarkupHelper.modifyLabelAttr(selectTypeToCheck,
+                MarkupHelper.ATTR_CHECKED, MarkupHelper.ATTR_CHECKED);
+
+        //
+        helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
+                visibleLetterhead);
 
         //
         helper.encloseLabel("select-and-sort-user", userName, userNameVisible);
@@ -207,14 +312,8 @@ public class DocLogBase extends AbstractAuthPage {
         /*
          * Option list: Queues
          */
-        final IppQueueDao queueDao =
-                ServiceContext.getDaoContext().getIppQueueDao();
-
-        final List<IppQueue> queueList =
-                queueDao.getListChunk(new IppQueueDao.ListFilter(), null, null,
-                        IppQueueDao.Field.URL_PATH, true);
-
-        add(new PropertyListView<IppQueue>("option-list-queues", queueList) {
+        add(new PropertyListView<IppQueue>("option-list-queues",
+                getQueueList(webAppType)) {
 
             private static final long serialVersionUID = 1L;
 
@@ -232,13 +331,6 @@ public class DocLogBase extends AbstractAuthPage {
         /*
          * Option list: Printers
          */
-        final PrinterDao printerDao =
-                ServiceContext.getDaoContext().getPrinterDao();
-
-        final List<Printer> printerList =
-                printerDao.getListChunk(new PrinterDao.ListFilter(), null, null,
-                        PrinterDao.Field.DISPLAY_NAME, true);
-
         add(new PropertyListView<Printer>("option-list-printers", printerList) {
 
             private static final long serialVersionUID = 1L;
@@ -270,6 +362,65 @@ public class DocLogBase extends AbstractAuthPage {
             }
         }
 
+    }
+
+    /**
+     * Gets the Queue list.
+     *
+     * @param webAppType
+     *            The Web App Type.
+     * @return The list.
+     */
+    private static List<IppQueue>
+            getQueueList(final WebAppTypeEnum webAppType) {
+
+        final IppQueueDao dao = ServiceContext.getDaoContext().getIppQueueDao();
+
+        final IppQueueDao.ListFilter filter = new IppQueueDao.ListFilter();
+
+        if (webAppType == WebAppTypeEnum.USER) {
+            filter.setDeleted(Boolean.FALSE);
+            filter.setDisabled(Boolean.FALSE);
+        }
+
+        final List<IppQueue> list = dao.getListChunk(filter, null, null,
+                IppQueueDao.Field.URL_PATH, true);
+
+        if (webAppType == WebAppTypeEnum.USER) {
+            final Iterator<IppQueue> iter = list.iterator();
+            while (iter.hasNext()) {
+                if (!QUEUE_SERVICE.isActiveQueue(iter.next())) {
+                    iter.remove();
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Gets the Printer list.
+     *
+     * @param webAppType
+     *            The Web App Type.
+     * @return The list.
+     */
+    private static List<Printer>
+            getPrinterList(final WebAppTypeEnum webAppType) {
+
+        final PrinterDao dao = ServiceContext.getDaoContext().getPrinterDao();
+
+        final PrinterDao.ListFilter filter = new PrinterDao.ListFilter();
+
+        filter.setJobTicket(Boolean.FALSE);
+
+        if (webAppType == WebAppTypeEnum.USER) {
+            filter.setDeleted(Boolean.FALSE);
+            filter.setDisabled(Boolean.FALSE);
+            filter.setInternal(Boolean.FALSE);
+        }
+
+        return dao.getListChunk(filter, null, null,
+                PrinterDao.Field.DISPLAY_NAME, true);
     }
 
     @Override

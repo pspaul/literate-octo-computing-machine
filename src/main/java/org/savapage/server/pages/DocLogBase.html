@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -56,7 +57,7 @@
 								<wicket:message key="type-all" />
 							</label>
 							<input type="radio" name="sp-doclog-select-type"
-								id="sp-doclog-select-type-all" checked="checked"
+								id="sp-doclog-select-type-all"
 								wicket:id="select-type-all" value="" />
 
 							<label for="sp-doclog-select-type-in">
@@ -73,19 +74,23 @@
 								id="sp-doclog-select-type-out" wicket:id="select-type-out"
 								value="" />
 
-							<label for="sp-doclog-select-type-pdf">
-								<wicket:message key="type-pdf" />
-							</label>
-							<input type="radio" name="sp-doclog-select-type"
-								id="sp-doclog-select-type-pdf" wicket:id="select-type-pdf"
-								value="" />
+							<wicket:enclosure child="select-type-pdf">
+								<label for="sp-doclog-select-type-pdf">
+									<wicket:message key="type-pdf" />
+								</label>
+								<input type="radio" name="sp-doclog-select-type"
+									id="sp-doclog-select-type-pdf" wicket:id="select-type-pdf"
+									value="" />
+							</wicket:enclosure>
 
-							<label for="sp-doclog-select-type-print">
-								<wicket:message key="type-print" />
-							</label>
-							<input type="radio" name="sp-doclog-select-type"
-								id="sp-doclog-select-type-print" wicket:id="select-type-print"
-								value="" />
+							<wicket:enclosure child="select-type-print">
+								<label for="sp-doclog-select-type-print">
+									<wicket:message key="type-print" />
+								</label>
+								<input type="radio" name="sp-doclog-select-type"
+									id="sp-doclog-select-type-print" wicket:id="select-type-print"
+									value="" />
+							</wicket:enclosure>
 
 							<wicket:enclosure child="select-type-ticket">
 								<label for="sp-doclog-select-type-ticket">
@@ -173,31 +178,33 @@
 								maxlength="128" autocomplete="off" autocorrect="off"
 								autocapitalize="off" spellcheck="false" />
 						</div>
-						<div class="ui-field-contain sp-doclog-cat-out-detail">
-							<fieldset data-role="controlgroup" data-type="horizontal"
-								class="ui-mini">
-								<legend class="sp-txt-wrap">
-									<wicket:message key="prompt-letterhead" />
-								</legend>
 
-								<label for="sp-doc-out-lh-all">-</label>
-								<input type="radio" name="sp-doc-out-lh" id="sp-doc-out-lh-all"
-									value="" checked="checked" />
+						<wicket:enclosure child="prompt-letterhead">
+							<div class="ui-field-contain sp-doclog-cat-out-detail">
+								<fieldset data-role="controlgroup" data-type="horizontal"
+									class="ui-mini">
 
-								<label for="sp-doc-out-lh-y">
-									<wicket:message key="option-yes" />
-								</label>
-								<input type="radio" name="sp-doc-out-lh" id="sp-doc-out-lh-y"
-									value="1" />
+									<legend class="sp-txt-wrap" wicket:id="prompt-letterhead" />
 
-								<label for="sp-doc-out-lh-n">
-									<wicket:message key="option-no" />
-								</label>
-								<input type="radio" name="sp-doc-out-lh" id="sp-doc-out-lh-n"
-									value="0" />
+									<label for="sp-doc-out-lh-all">-</label>
+									<input type="radio" name="sp-doc-out-lh" id="sp-doc-out-lh-all"
+										value="" checked="checked" />
 
-							</fieldset>
-						</div>
+									<label for="sp-doc-out-lh-y">
+										<wicket:message key="option-yes" />
+									</label>
+									<input type="radio" name="sp-doc-out-lh" id="sp-doc-out-lh-y"
+										value="1" />
+
+									<label for="sp-doc-out-lh-n">
+										<wicket:message key="option-no" />
+									</label>
+									<input type="radio" name="sp-doc-out-lh" id="sp-doc-out-lh-n"
+										value="0" />
+
+								</fieldset>
+							</div>
+						</wicket:enclosure>
 
 						<ul data-role="listview" data-inset="true"
 							class="sp-doclog-cat-pdf">
@@ -427,3 +434,4 @@
 
 </ul>
 
+</html>
