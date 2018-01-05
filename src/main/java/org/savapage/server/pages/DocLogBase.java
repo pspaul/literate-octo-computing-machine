@@ -193,13 +193,21 @@ public class DocLogBase extends AbstractAuthPage {
 
         final List<Printer> printerList = getPrinterList(webAppType);
 
-        if (webAppType == WebAppTypeEnum.ADMIN
-                || webAppType == WebAppTypeEnum.JOBTICKETS) {
+        if (webAppType == WebAppTypeEnum.ADMIN) {
 
             btnVisiblePdf = true;
             btnVisiblePrint = true;
             btnVisibleTicket = true;
             visibleLetterhead = true;
+
+        } else if (webAppType == WebAppTypeEnum.JOBTICKETS) {
+
+            defaultScope = DocLogScopeEnum.TICKET;
+
+            btnVisiblePdf = false;
+            btnVisiblePrint = false;
+            btnVisibleTicket = true;
+            visibleLetterhead = false;
 
         } else {
 
