@@ -3440,11 +3440,9 @@
                             selectedSkipped = false,
                             firstChoice;
 
-                        // Skip?
-                        if (keyword === 'number-up') {
-                            skip = _model.isCopyJobTicket;
-                        }
+                        // Set skip = true, if keyword must be skipped ...
 
+                        // .. and if skipped ...
                         if (skip) {
                             i += 1;
                             // continue by returning this function.
@@ -4987,7 +4985,7 @@
                 _view.visible(trgMono, _model.myPrinter && !isColor);
 
                 // Check IPP attributes value
-                ippAttrVal = _model.isCopyJobTicket ? null : _model.myPrinterOpt['number-up'];
+                ippAttrVal = _model.myPrinterOpt['number-up'];
                 _view.visible(trgNup, ippAttrVal && ippAttrVal !== '1');
 
                 // Check IPP attributes value
@@ -6234,10 +6232,6 @@
              *
              */
             _view.pages.print.onChangeJobTicketType = function(isCopyJob) {
-                if (isCopyJob) {
-                    _model.myPrinterOpt['number-up'] = '1';
-                    _refreshPrinterInd();
-                }
             };
 
             /**
