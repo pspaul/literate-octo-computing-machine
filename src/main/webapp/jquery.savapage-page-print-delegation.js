@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Print Delegation Page | (c) 2011-2017 Datraverse B.V.
+/*! SavaPage jQuery Mobile Print Delegation Page | (c) 2011-2018 Datraverse B.V.
  * | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -966,30 +966,39 @@
                 _onChangeAccountType = function() {
                 var enableGroups,
                     enableUsers,
-                    enableCopies;
+                    enableCopies,
+                    editMode;
                 // Note: AccountGroup and/or AccountShared might not be present,
                 // due to customization (config items).
                 if (_isAccountGroupSelected()) {
                     enableGroups = true;
+                    editMode = _RADIO_EDIT_ID_GROUPS;
                 } else if (_isAccountUserSelected()) {
                     enableGroups = true;
                     enableUsers = true;
+                    editMode = _RADIO_EDIT_ID_GROUPS;
                 } else if (_isAccountSharedSelected()) {
-                    enableGroups = true;
+                    enableGroups = _model.DELEGATE_ACCOUNT_SHARED_GROUP;
                     enableCopies = true;
+                    editMode = enableGroups ? _RADIO_EDIT_ID_GROUPS : _RADIO_EDIT_ID_COPIES;
                 }
 
+                _view.visibleCheckboxRadio($('#' + _RADIO_EDIT_ID_GROUPS), enableGroups);
                 _view.visibleCheckboxRadio($('#' + _RADIO_EDIT_ID_COPIES), enableCopies);
 
                 if (enableGroups) {
                     _view.visibleCheckboxRadio($('#' + _RADIO_EDIT_ID_USERS), enableUsers);
                     _visibleClickCheckboxRadio(_RADIO_EDIT_NAME, _RADIO_EDIT_ID_GROUPS, enableGroups);
                 } else {
-                    _view.visibleCheckboxRadio($('#' + _RADIO_EDIT_ID_GROUPS), enableGroups);
-                    _visibleClickCheckboxRadio(_RADIO_EDIT_NAME, _RADIO_EDIT_ID_USERS, enableUsers);
+                    if (enableUsers) {
+                        _visibleClickCheckboxRadio(_RADIO_EDIT_NAME, _RADIO_EDIT_ID_USERS, true);
+                    } else if (enableCopies) {
+                        _view.visibleCheckboxRadio($('#' + _RADIO_EDIT_ID_USERS), false);
+                        _visibleClickCheckboxRadio(_RADIO_EDIT_NAME, _RADIO_EDIT_ID_COPIES, true);
+                    }
                 }
 
-                _onChangeEditMode( enableGroups ? _RADIO_EDIT_ID_GROUPS : _RADIO_EDIT_ID_USERS);
+                _onChangeEditMode(editMode);
             }
             //
             ,

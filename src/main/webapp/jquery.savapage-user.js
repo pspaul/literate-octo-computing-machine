@@ -5259,6 +5259,8 @@
                     _model.DELEGATOR_NAME_ID = res.delegatorNameId;
                 }
 
+                _model.DELEGATE_ACCOUNT_SHARED_GROUP = res.delegateAccountSharedGroup;
+
                 //
                 _view.imgBase64 = res.img_base64;
 
