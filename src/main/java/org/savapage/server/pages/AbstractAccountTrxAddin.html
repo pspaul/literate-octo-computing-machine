@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -19,9 +19,14 @@
 	<table class="sp-doclog-accounttrx-info-table">
 		<wicket:container wicket:id="setting-row">
 			<tr>
+				<td align="left">
+					<img wicket:id="img-choice" />
+				</td>
 				<th align="left" wicket:id="account" />
+				<td align="right" wicket:id="delegators" />
 				<td align="right" wicket:id="copies" />
 				<td align="right" wicket:id="cost" />
+				<td align="left" wicket:id="remark" />
 			</tr>
 		</wicket:container>
 	</table>

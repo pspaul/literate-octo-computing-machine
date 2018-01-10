@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,14 +23,21 @@ package org.savapage.server.pages;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
@@ -49,11 +56,27 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
      */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * .
-     */
+    /** */
+    private static final class TrxLine {
+        private String imgSrcChoice;
+        private String accountName;
+        private String delegators;
+        private String copies;
+        private String formattedCost;
+        private String remark;
+    }
+
+    /** */
+    private static final class DelegatorItem {
+        private int sourceGroups;
+        private int sourcePersonal;
+        private int copies;
+        private int copiesRefund;
+    }
+
+    /** */
     protected static final class AccountTrxView
-            extends PropertyListView<String[]> {
+            extends PropertyListView<TrxLine> {
 
         /**
          * .
@@ -67,19 +90,28 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
          * @param list
          *            The item list.
          */
-        AccountTrxView(final String id, final List<String[]> list) {
+        AccountTrxView(final String id, final List<TrxLine> list) {
             super(id, list);
         }
 
         @Override
-        protected void populateItem(final ListItem<String[]> item) {
+        protected void populateItem(final ListItem<TrxLine> item) {
 
-            final String[] column = item.getModelObject();
+            final TrxLine trxLine = item.getModelObject();
             final MarkupHelper helper = new MarkupHelper(item);
 
-            helper.addLabel("account", column[0]);
-            helper.addLabel("copies", column[1]);
-            helper.addLabel("cost", column[2]).setEscapeModelStrings(false);
+            helper.addModifyLabelAttr("img-choice", MarkupHelper.ATTR_SRC,
+                    trxLine.imgSrcChoice);
+
+            helper.addLabel("account", trxLine.accountName);
+            helper.addLabel("delegators", trxLine.delegators);
+            helper.addLabel("copies", trxLine.copies);
+            helper.addLabel("cost", trxLine.formattedCost)
+                    .setEscapeModelStrings(false);
+            MarkupHelper.appendLabelAttr(
+                    helper.addLabel("remark",
+                            StringUtils.defaultString(trxLine.remark)),
+                    MarkupHelper.ATTR_CLASS, MarkupHelper.CSS_TXT_WARN);
         }
     }
 
@@ -111,12 +143,119 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             return;
         }
 
-        final List<String[]> displayOptions = new ArrayList<>();
-        final String personalDelegators = fillOptions(trxList, displayOptions);
+        final List<TrxLine> displayOptions = new ArrayList<>();
 
+        final SortedMap<String, DelegatorItem> delegators =
+                fillOptions(trxList, displayOptions);
+
+        add(new AccountTrxView("setting-row", displayOptions));
+
+        final String personalDelegators = formatDelegatorDetails(delegators);
         helper.encloseLabel("persons", personalDelegators,
                 StringUtils.isNotBlank(personalDelegators));
-        add(new AccountTrxView("setting-row", displayOptions));
+    }
+
+    /**
+     * Formats delegator information.
+     *
+     * @param delegators
+     *            The delegators.
+     * @return The formatted result.
+     */
+    private String formatDelegatorDetails(
+            final SortedMap<String, DelegatorItem> delegators) {
+
+        final StringBuilder details = new StringBuilder();
+
+        int totCopies = 0;
+        int totCopiesRefund = 0;
+
+        for (final Entry<String, DelegatorItem> entry : delegators.entrySet()) {
+
+            if (details.length() > 0) {
+                details.append(", ");
+            }
+
+            final DelegatorItem item = entry.getValue();
+            if (item.sourceGroups + item.sourcePersonal > 1) {
+                details.append("* ");
+            }
+
+            details.append(entry.getKey()).append(" (");
+
+            if (item.copies > 0) {
+                details.append(item.copies);
+                totCopies += item.copies;
+            }
+            if (item.copiesRefund > 0) {
+                details.append("-").append(item.copiesRefund);
+                totCopiesRefund += item.copiesRefund;
+            }
+            details.append(")");
+        }
+
+        final StringBuilder pfx = new StringBuilder();
+
+        if (delegators.size() > 1) {
+            pfx.append(delegators.size());
+            pfx.append(" ").append(
+                    NounEnum.DELEGATOR.uiText(getLocale(), true).toLowerCase())
+                    .append(" (");
+
+            if (totCopies > 0) {
+                pfx.append(totCopies);
+            }
+            if (totCopiesRefund > 0) {
+                pfx.append("-").append(totCopiesRefund);
+            }
+
+            pfx.append(" ").append(PrintOutNounEnum.COPY
+                    .uiText(getLocale(), true).toLowerCase());
+            pfx.append(") : ");
+        }
+
+        return String.format("%s%s", pfx.toString(), details.toString());
+    }
+
+    /**
+     * Collects delegator totals per Group Account.
+     *
+     * @param accountTrxList
+     *            The account transactions.
+     * @return The counters.
+     */
+    private static Map<String, Integer> collectAccountNameDelegatorCount(
+            final List<AccountTrx> accountTrxList) {
+
+        final Map<String, Integer> groupDelegatorCount = new HashMap<>();
+
+        for (final AccountTrx trx : accountTrxList) {
+
+            final Account account = trx.getAccount();
+
+            final AccountTypeEnum accountType =
+                    AccountTypeEnum.valueOf(account.getAccountType());
+
+            if (accountType == AccountTypeEnum.SHARED
+                    || accountType == AccountTypeEnum.GROUP) {
+                continue;
+            }
+
+            // Weak link to account name.
+            final String accountName = trx.getExtDetails();
+
+            if (accountName != null) {
+                if (groupDelegatorCount.containsKey(accountName)) {
+                    groupDelegatorCount.put(accountName,
+                            groupDelegatorCount.get(accountName).intValue()
+                                    + 1);
+                } else {
+                    groupDelegatorCount.put(accountName, 1);
+                }
+            }
+        }
+
+        return groupDelegatorCount;
     }
 
     /**
@@ -126,20 +265,27 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
      *            The account transactions.
      * @param options
      *            The display values.
-     * @return The string of persons that are charged.
+     * @return The map of delegators that are charged.
      */
-    private String fillOptions(final List<AccountTrx> accountTrxList,
-            final List<String[]> options) {
+    private SortedMap<String, DelegatorItem> fillOptions(
+            final List<AccountTrx> accountTrxList,
+            final List<TrxLine> options) {
 
-        final StringBuilder personalDelegators = new StringBuilder();
+        final Map<String, Integer> accountNameDelegatorCount =
+                collectAccountNameDelegatorCount(accountTrxList);
+
+        final SortedMap<String, DelegatorItem> delegatorItemMap =
+                new TreeMap<>();
 
         final int currencyDecimals = ConfigManager.getUserBalanceDecimals();
 
-        int totPersonalDelegators = 0;
-        int totPersonalDelegatorsWeight = 0;
-        int totImplicitDelegatorsWeight = 0;
+        int totIndividualDelegators = 0;
+        int totIndividualDelegatorsWeight = 0;
+        BigDecimal totIndividualCost = BigDecimal.ZERO;
 
-        BigDecimal totPersonalCost = BigDecimal.ZERO;
+        int totIndividualDelegatorsRefund = 0;
+        int totIndividualDelegatorsWeightRefund = 0;
+        BigDecimal totIndividualCostRefund = BigDecimal.ZERO;
 
         String currencySymbolWlk = null;
 
@@ -153,38 +299,88 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             final AccountTypeEnum accountType =
                     AccountTypeEnum.valueOf(account.getAccountType());
 
+            final boolean isRefund =
+                    trx.getAmount().compareTo(BigDecimal.ZERO) == 1;
+
             if (accountType != AccountTypeEnum.SHARED
                     && accountType != AccountTypeEnum.GROUP) {
 
-                if (totPersonalDelegators > 0) {
-                    personalDelegators.append(", ");
-                }
-                personalDelegators.append(trx.getAccount().getName())
-                        .append(" (").append(trx.getTransactionWeight())
-                        .append(")");
+                final DelegatorItem item;
 
-                totPersonalDelegators++;
-                totPersonalDelegatorsWeight +=
-                        trx.getTransactionWeight().intValue();
-                totPersonalCost = totPersonalCost.add(trx.getAmount());
+                if (delegatorItemMap.containsKey(account.getName())) {
+                    item = delegatorItemMap.get(account.getName());
+                } else {
+                    item = new DelegatorItem();
+                    item.sourceGroups = 0;
+                    item.sourcePersonal = 0;
+                    item.copies = 0;
+                    item.copiesRefund = 0;
+                    delegatorItemMap.put(account.getName(), item);
+                }
+
+                if (isRefund) {
+                    item.copiesRefund += trx.getTransactionWeight();
+                } else {
+                    item.copies += trx.getTransactionWeight();
+                }
+
+                if (StringUtils.isBlank(trx.getExtDetails())) {
+
+                    if (isRefund) {
+                        totIndividualDelegatorsRefund++;
+                        totIndividualDelegatorsWeightRefund +=
+                                trx.getTransactionWeight().intValue();
+                        totIndividualCostRefund =
+                                totIndividualCostRefund.add(trx.getAmount());
+                    } else {
+                        totIndividualDelegators++;
+                        totIndividualDelegatorsWeight +=
+                                trx.getTransactionWeight().intValue();
+                        totIndividualCost =
+                                totIndividualCost.add(trx.getAmount());
+                        item.sourceGroups++;
+                    }
+                } else {
+                    if (!isRefund) {
+                        item.sourcePersonal++;
+                    }
+                }
+
                 continue;
             }
 
-            totImplicitDelegatorsWeight +=
-                    trx.getTransactionWeight().intValue();
+            final TrxLine trxLine = new TrxLine();
+
+            if (accountType == AccountTypeEnum.GROUP) {
+                if (accountNameDelegatorCount.containsKey(account.getName())) {
+                    trxLine.delegators = accountNameDelegatorCount
+                            .get(account.getName()).toString();
+                } else {
+                    trxLine.delegators = "-";
+                }
+            } else {
+                trxLine.delegators = "-";
+            }
+
+            trxLine.imgSrcChoice = MarkupHelper.getImgUrlPath(accountType);
 
             final Account accountParent = account.getParent();
 
-            final String[] values = new String[3];
-
             if (accountParent == null) {
-                values[0] = account.getName();
+                trxLine.accountName = account.getName();
             } else {
-                values[0] = String.format("%s \\ %s", accountParent.getName(),
-                        account.getName());
+                trxLine.accountName = String.format("%s \\ %s",
+                        accountParent.getName(), account.getName());
             }
 
-            values[1] = trx.getTransactionWeight().toString();
+            if (isRefund) {
+                trxLine.copies =
+                        String.valueOf(-trx.getTransactionWeight().intValue());
+                trxLine.remark =
+                        NounEnum.REFUND.uiText(getLocale()).toLowerCase();
+            } else {
+                trxLine.copies = trx.getTransactionWeight().toString();
+            }
 
             final StringBuilder sbAccTrx = new StringBuilder();
 
@@ -192,31 +388,84 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                     .append(BigDecimalUtil.localizeUc(trx.getAmount(),
                             currencyDecimals, getSession().getLocale(), true));
 
-            values[2] = sbAccTrx.toString();
+            trxLine.formattedCost = sbAccTrx.toString();
+            options.add(trxLine);
+        }
+
+        if (totIndividualDelegators > 0) {
+
+            final TrxLine values = getPersonCatOptions(
+                    PrintOutAdjectiveEnum.PERSONAL.uiText(getLocale()),
+                    totIndividualDelegators, totIndividualDelegatorsWeight,
+                    totIndividualCost, currencySymbolWlk, currencyDecimals,
+                    options.size() > 1 || totIndividualDelegators > 1);
+
             options.add(values);
         }
 
-        if (totPersonalDelegators > 0) {
-            final String[] values = new String[3];
+        if (totIndividualDelegatorsRefund > 0) {
 
-            final String personal =
-                    PrintOutAdjectiveEnum.PERSONAL.uiText(getLocale());
-
-            if (totPersonalDelegators > 1) {
-                values[0] = String.format("%s (%d)", personal,
-                        totPersonalDelegators);
-            } else {
-                values[0] = personal;
-            }
-
-            values[1] = String.valueOf(totPersonalDelegatorsWeight);
-            values[2] = String.format("%s&nbsp;%s", currencySymbolWlk,
-                    BigDecimalUtil.localizeUc(totPersonalCost, currencyDecimals,
-                            getSession().getLocale(), true));
+            final TrxLine values = getPersonCatOptions(
+                    PrintOutAdjectiveEnum.PERSONAL.uiText(getLocale()),
+                    totIndividualDelegatorsRefund,
+                    totIndividualDelegatorsWeightRefund,
+                    totIndividualCostRefund, currencySymbolWlk,
+                    currencyDecimals,
+                    options.size() > 1 || totIndividualDelegatorsRefund > 1);
 
             options.add(values);
         }
-        return personalDelegators.toString();
+
+        return delegatorItemMap;
+    }
+
+    /**
+     * Creates an {@link TrxLine} for delegators.
+     *
+     * @param uiName
+     *            The name.
+     * @param totDelegators
+     *            Number of delegators.
+     * @param totDelegatorsWeight
+     *            Number of copies.
+     * @param totCost
+     *            Cost.
+     * @param currencySymbolWlk
+     *            Currency symbol.
+     * @param currencyDecimals
+     *            Number of currency decimals.
+     * @param showTotDelegators
+     *            {@code true} when number of delegators must be shown.
+     * @return The line.
+     */
+    private TrxLine getPersonCatOptions(final String uiName,
+            final int totDelegators, final int totDelegatorsWeight,
+            final BigDecimal totCost, final String currencySymbolWlk,
+            final int currencyDecimals, final boolean showTotDelegators) {
+
+        final TrxLine trxLine = new TrxLine();
+
+        trxLine.accountName = uiName;
+        if (showTotDelegators) {
+            trxLine.delegators = String.valueOf(totDelegators);
+        } else {
+            trxLine.delegators = "";
+        }
+
+        trxLine.imgSrcChoice = MarkupHelper.getImgUrlPath(AccountTypeEnum.USER);
+
+        trxLine.formattedCost = String.format("%s&nbsp;%s", currencySymbolWlk,
+                BigDecimalUtil.localizeUc(totCost, currencyDecimals,
+                        getSession().getLocale(), true));
+
+        if (totCost.compareTo(BigDecimal.ZERO) == 1) {
+            trxLine.copies = String.valueOf(-totDelegatorsWeight);
+            trxLine.remark = NounEnum.REFUND.uiText(getLocale()).toLowerCase();
+        } else {
+            trxLine.copies = String.valueOf(totDelegatorsWeight);
+        }
+
+        return trxLine;
     }
 
 }
