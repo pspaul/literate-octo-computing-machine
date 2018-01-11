@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -554,7 +554,7 @@ public final class SystemStatusPanel extends Panel {
             if (memberCard.isVisitorCard()) {
                 memberStat = CommunityDictEnum.VISITOR.getWord();
             } else {
-                memberStat = CommunityDictEnum.FELLOW.getWord();
+                memberStat = CommunityDictEnum.CARD_HOLDER.getWord();
             }
             break;
 
@@ -571,12 +571,6 @@ public final class SystemStatusPanel extends Panel {
             break;
 
         case WRONG_VERSION:
-            cssColor = MarkupHelper.CSS_TXT_WARN;
-            memberStat = getLocalizer()
-                    .getString("membership-status-wrong-version", this);
-            break;
-
-        case WRONG_VERSION_WITH_GRACE:
             cssColor = MarkupHelper.CSS_TXT_WARN;
             memberStat = getLocalizer()
                     .getString("membership-status-wrong-version", this);
@@ -622,8 +616,11 @@ public final class SystemStatusPanel extends Panel {
 
         //
         if (memberCard.getDaysTillExpiry() != null) {
-            enclosedValue = helper.localizedNumber(
-                    memberCard.getDaysTillExpiry().longValue());
+            final long daysLeft = memberCard.getDaysTillExpiry().longValue();
+            if (daysLeft <= MemberCard.DAYS_WARN_BEFORE_EXPIRE) {
+                cssColor = MarkupHelper.CSS_TXT_WARN;
+            }
+            enclosedValue = helper.localizedNumber(daysLeft);
         }
         labelWrk = MarkupHelper.createEncloseLabel(
                 "membership-valid-days-remaining", enclosedValue,

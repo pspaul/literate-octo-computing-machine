@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -185,6 +185,8 @@ public final class ReqLogin extends ApiRequestMixin {
             throws IOException {
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
+
+        MemberCard.instance().recalcStatus(new Date());
 
         reqLogin(UserAuth.mode(dtoReq.getAuthMode()), dtoReq.getAuthId(),
                 dtoReq.getAuthPw(), dtoReq.getAuthToken(),
@@ -1532,7 +1534,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
         final MemberCard memberCard = MemberCard.instance();
 
-        Long daysLeft = memberCard.getDaysLeftInVisitorPeriod(
+        final Long daysLeft = memberCard.getDaysLeftInVisitorPeriod(
                 ServiceContext.getTransactionDate());
 
         switch (memberCard.getStatus()) {
@@ -1572,12 +1574,6 @@ public final class ReqLogin extends ApiRequestMixin {
             setApiResult(ApiResultCodeEnum.INFO, "msg-membership-version",
                     CommunityDictEnum.MEMBERSHIP.getWord(getLocale()),
                     CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(getLocale()),
-                    CommunityDictEnum.MEMBER_CARD.getWord(getLocale()));
-            break;
-        case WRONG_VERSION_WITH_GRACE:
-            setApiResult(ApiResultCodeEnum.INFO, "msg-membership-version-grace",
-                    CommunityDictEnum.MEMBERSHIP.getWord(getLocale()),
-                    daysLeft.toString(),
                     CommunityDictEnum.MEMBER_CARD.getWord(getLocale()));
             break;
         case VISITOR_EDITION:
