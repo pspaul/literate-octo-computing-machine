@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
     | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -32,21 +33,24 @@
 			<span><img class="sp-shared-account-edit" width="16"
 					height="16" wicket:id="sharedAccountImage" /> <img
 					class="sp-group-account-edit" width="16" height="16"
-					wicket:id="groupAccountImage" />&nbsp; </span><span><wicket:message
-					key="label-account-name" /></span>
+					wicket:id="groupAccountImage" />&nbsp; </span> <span
+				class="sp-shared-account-edit"><wicket:message
+					key="label-account-name" /></span> <span class="sp-group-account-edit"
+				id="sp-group-account-name" />
 		</li>
-		<li>
+		<li class="sp-shared-account-edit">
 			<input type="text" id="sp-shared-account-name" value=""
 				maxlength="255" autofocus autocomplete="on" autocorrect="off"
 				autocapitalize="off" spellcheck="false" />
 		</li>
-		<li data-role="list-divider">
+
+		<li class="sp-shared-account-edit" data-role="list-divider">
 			<span> <img width="16" height="16"
 					wicket:id="parentAccountImage" />&nbsp;&nbsp;
 			</span><span><wicket:message key="label-account-name-parent" /></span>
 
 		</li>
-		<li>
+		<li class="sp-shared-account-edit">
 			<input type="text" id="sp-shared-account-name-parent" value=""
 				maxlength="255" autofocus autocomplete="on" autocorrect="off"
 				autocapitalize="off" spellcheck="false" />
@@ -120,3 +124,5 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+</html>

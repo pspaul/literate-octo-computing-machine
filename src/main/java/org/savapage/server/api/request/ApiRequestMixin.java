@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -456,7 +456,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
                 final boolean hasMessage = text.length() > 0;
 
                 if (hasMessage) {
-                    text.append(" :");
+                    text.append(" : ");
                 }
                 text.append(errorData.getReason());
             }

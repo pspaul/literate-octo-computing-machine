@@ -633,6 +633,8 @@
 
                 if (isShared) {
                     _view.checkCb('#sp-shared-account-disabled', _model.editAccount.disabled);
+                } else {
+                    $('#sp-group-account-name').html(_model.editAccount.name);
                 }
 
                 if (isShared && _model.editAccount.userGroupAccess) {
