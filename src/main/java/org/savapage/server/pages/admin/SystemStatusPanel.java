@@ -554,7 +554,7 @@ public final class SystemStatusPanel extends Panel {
             if (memberCard.isVisitorCard()) {
                 memberStat = CommunityDictEnum.VISITOR.getWord();
             } else {
-                memberStat = CommunityDictEnum.CARD_HOLDER.getWord();
+                memberStat = CommunityDictEnum.CARD_HOLDER.getWord(getLocale());
             }
             break;
 
