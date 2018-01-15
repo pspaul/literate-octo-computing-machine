@@ -872,7 +872,7 @@ public final class SystemStatusPanel extends Panel {
                         url.append("&v_revision=")
                                 .append(VersionInfo.VERSION_C_REVISION);
                         url.append("&v_build=")
-                                .append(VersionInfo.VERSION_D_BUILD);
+                                .append(VersionInfo.VERSION_E_BUILD);
 
                         return new HttpGet(url.toString());
                     }
