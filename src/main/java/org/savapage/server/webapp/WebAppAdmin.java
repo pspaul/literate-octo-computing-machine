@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,11 +23,11 @@ package org.savapage.server.webapp;
 
 import java.io.File;
 import java.nio.file.FileSystems;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -42,7 +42,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
-import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.slf4j.Logger;
@@ -182,10 +181,14 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                 final File finalFile = MemberCard.getMemberCardFile();
 
                 /*
-                 * write to a temporary file
+                 * Write to a temporary file in SAME directory as final member
+                 * card. Do NOT use AppTmpDir(), since its location may be
+                 * configured to be on another partition, making the ATOMIC_MOVE
+                 * fail with java.nio.file.AtomicMoveNotSupportedException.
                  */
-                final File tempFile = Paths.get(ConfigManager.getAppTmpDir(),
-                        uploadedFile.getClientFileName()).toFile();
+                final File tempFile = new File(
+                        String.format("%s.%s", finalFile.getAbsolutePath(),
+                                UUID.randomUUID().toString()));
 
                 if (tempFile.exists()) {
                     tempFile.delete();
