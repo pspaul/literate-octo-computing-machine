@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -68,16 +68,22 @@ public class DocLogBase extends AbstractAuthPage {
     /** */
     private static final ConfigManager CONFIG_MNGR = ConfigManager.instance();
 
+    /** */
+    private static final String WICKET_ID_PROMPT_LETTERHEAD =
+            "prompt-letterhead";
+    /** */
+    private static final String WICKET_ID_SELECT_AND_SORT_USER =
+            "select-and-sort-user";
+    /** */
+    private static final String WICKET_ID_SELECT_AND_SORT_ACCOUNT =
+            "select-and-sort-account";
+
     /**
      *
      */
     public DocLogBase(final PageParameters parameters) {
 
         super(parameters);
-
-        if (isAuthErrorHandled()) {
-            return;
-        }
 
         final WebAppTypeEnum webAppType = this.getSessionWebAppType();
 
@@ -99,7 +105,6 @@ public class DocLogBase extends AbstractAuthPage {
                 this.setResponsePage(NotAuthorized.class);
                 setAuthErrorHandled(true);
             }
-
         }
 
         handlePage(webAppType);
@@ -309,12 +314,13 @@ public class DocLogBase extends AbstractAuthPage {
                 MarkupHelper.ATTR_CHECKED, MarkupHelper.ATTR_CHECKED);
 
         //
-        helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
-                visibleLetterhead);
+        helper.encloseLabel(WICKET_ID_PROMPT_LETTERHEAD,
+                localized("prompt-letterhead"), visibleLetterhead);
 
         //
-        helper.encloseLabel("select-and-sort-user", userName, userNameVisible);
-        helper.encloseLabel("select-and-sort-account", accountName,
+        helper.encloseLabel(WICKET_ID_SELECT_AND_SORT_USER, userName,
+                userNameVisible);
+        helper.encloseLabel(WICKET_ID_SELECT_AND_SORT_ACCOUNT, accountName,
                 accountNameVisible);
 
         /*
