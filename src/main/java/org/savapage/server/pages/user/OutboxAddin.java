@@ -53,6 +53,7 @@ import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dto.JobTicketTagDto;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
@@ -89,6 +90,8 @@ import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A page showing the HOLD or TICKET proxy print jobs for a user.
@@ -100,6 +103,10 @@ import org.savapage.server.webapp.WebAppTypeEnum;
  *
  */
 public class OutboxAddin extends AbstractUserPage {
+
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(OutboxAddin.class);
 
     /**
      * .
@@ -522,7 +529,8 @@ public class OutboxAddin extends AbstractUserPage {
                     cssClass = MarkupHelper.CSS_TXT_VALID;
                 }
 
-                MarkupHelper.modifyLabelAttr(labelWlk, "class", cssClass);
+                MarkupHelper.modifyLabelAttr(labelWlk, MarkupHelper.ATTR_CLASS,
+                        cssClass);
                 item.add(labelWlk);
             }
 
@@ -535,7 +543,7 @@ public class OutboxAddin extends AbstractUserPage {
                     "fold", "booklet", "jobticket-media", "jobticket-copy",
                     "jobticket-finishing-ext", "jobticket-custom-ext",
                     "landscape", "portrait", "job-id", "job-completed-time",
-                    "job-printer" }) {
+                    "job-printer", "msg-invalid" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -644,8 +652,20 @@ public class OutboxAddin extends AbstractUserPage {
             }
 
             // Cost
-            item.add(new Label("cost", getCostHtml(helper, job))
+            final StringBuilder sbAccTrx = new StringBuilder();
+            final int nAccountsMissing = getCostHtml(helper, job, sbAccTrx);
+
+            item.add(new Label("cost", sbAccTrx.toString())
                     .setEscapeModelStrings(false));
+
+            if (nAccountsMissing == 1) {
+                mapVisible.put("msg-invalid", localized("msg-missing-account"));
+            } else if (nAccountsMissing > 1) {
+                mapVisible.put("msg-invalid",
+                        localized("msg-missing-accounts", nAccountsMissing));
+            }
+
+            final boolean allAccountsArePresent = nAccountsMissing == 0;
 
             // Job Ticket Supplier
             final String extSupplierImgUrl;
@@ -703,7 +723,18 @@ public class OutboxAddin extends AbstractUserPage {
             //
             if (printOut == null) {
 
-                helper.discloseLabel(WICKET_ID_JOB_STATE_IND);
+                if (allAccountsArePresent) {
+                    helper.discloseLabel(WICKET_ID_JOB_STATE_IND);
+                } else {
+                    MarkupHelper
+                            .appendLabelAttr(
+                                    helper.encloseLabel(WICKET_ID_JOB_STATE_IND,
+                                            AdjectiveEnum.INVALID
+                                                    .uiText(getLocale()),
+                                            true),
+                                    MarkupHelper.ATTR_CLASS,
+                                    MarkupHelper.CSS_TXT_ERROR);
+                }
 
             } else {
 
@@ -715,7 +746,8 @@ public class OutboxAddin extends AbstractUserPage {
                 //
                 labelWlk = helper.encloseLabel(WICKET_ID_JOB_STATE,
                         jobState.uiText(getLocale()), true);
-                MarkupHelper.appendLabelAttr(labelWlk, "class", cssClass);
+                MarkupHelper.appendLabelAttr(labelWlk, MarkupHelper.ATTR_CLASS,
+                        cssClass);
 
                 if (printOut.getCupsCompletedTime() != null) {
                     mapVisible.put("job-completed-time",
@@ -739,7 +771,8 @@ public class OutboxAddin extends AbstractUserPage {
 
                 labelWlk = helper.encloseLabel(WICKET_ID_JOB_STATE_IND,
                         jobStateInd, true);
-                MarkupHelper.appendLabelAttr(labelWlk, "class", cssClassInd);
+                MarkupHelper.appendLabelAttr(labelWlk, MarkupHelper.ATTR_CLASS,
+                        cssClassInd);
 
             }
 
@@ -797,7 +830,9 @@ public class OutboxAddin extends AbstractUserPage {
 
             final boolean readUser;
 
-            boolean enclosePrintSettle = true;
+            // Assign default: set to false in exceptional situations, where
+            // Ticket must not be processed.
+            boolean enclosePrintSettle = allAccountsArePresent;
 
             if (printOut != null) {
 
@@ -828,8 +863,8 @@ public class OutboxAddin extends AbstractUserPage {
                 if (user == null) {
                     labelWlk = helper.encloseLabel(WICKET_ID_OWNER_USER_ID,
                             "*** USER NOT FOUND ***", true);
-                    MarkupHelper.appendLabelAttr(labelWlk, "class",
-                            MarkupHelper.CSS_TXT_WARN);
+                    MarkupHelper.appendLabelAttr(labelWlk,
+                            MarkupHelper.ATTR_CLASS, MarkupHelper.CSS_TXT_WARN);
 
                     helper.discloseLabel(WICKET_ID_OWNER_USER_EMAIL);
 
@@ -848,7 +883,8 @@ public class OutboxAddin extends AbstractUserPage {
                     } else {
                         labelWlk = helper.encloseLabel("owner-user-email",
                                 email, true);
-                        MarkupHelper.appendLabelAttr(labelWlk, "href",
+                        MarkupHelper.appendLabelAttr(labelWlk,
+                                MarkupHelper.ATTR_HREF,
                                 String.format("mailto:%s", email));
                     }
                 }
@@ -920,16 +956,43 @@ public class OutboxAddin extends AbstractUserPage {
         }
 
         /**
+         *
+         * @param costTotal
+         * @param weight
+         * @param copies
+         * @param currencySymbol
+         * @param sbAccTrx
+         */
+        private void appendAccountCost(final BigDecimal costTotal,
+                final int weight, final int copies, final String currencySymbol,
+                final StringBuilder sbAccTrx) {
+
+            final BigDecimal weightedCost = ACCOUNTING_SERVICE
+                    .calcWeightedAmount(costTotal, copies, weight, this.scale);
+
+            if (weightedCost.compareTo(BigDecimal.ZERO) != 0) {
+                sbAccTrx.append(" ").append(currencySymbol).append("&nbsp;")
+                        .append(localizedDecimal(weightedCost.negate()));
+            }
+
+            sbAccTrx.append("&nbsp;(").append(weight).append(')');
+        }
+
+        /**
          * Gets HTML with extra cost details.
          *
          * @param helper
          *            The helper.
          * @param job
          *            The job.
-         * @return The HTML string.
+         * @param sbAccTrx
+         *            Builder to append on.
+         * @return The number of missing accounts.
          */
-        private String getCostHtml(final MarkupHelper helper,
-                final OutboxJobDto job) {
+        private int getCostHtml(final MarkupHelper helper,
+                final OutboxJobDto job, final StringBuilder sbAccTrx) {
+
+            int missingAccounts = 0;
 
             final ProxyPrintCostDto costResult = job.getCostResult();
             final BigDecimal costTotal = costResult.getCostTotal();
@@ -938,8 +1001,6 @@ public class OutboxAddin extends AbstractUserPage {
                     job.getAccountTransactions();
 
             final String currencySymbol = SpSession.getAppCurrencySymbol();
-
-            final StringBuilder sbAccTrx = new StringBuilder();
 
             sbAccTrx.append(StringUtils.replace(job.getLocaleInfo().getCost(),
                     " ", "&nbsp;"));
@@ -954,11 +1015,12 @@ public class OutboxAddin extends AbstractUserPage {
                             .append("&nbsp;(").append(job.getCopies())
                             .append(")");
                 }
-                return sbAccTrx.toString();
+                return missingAccounts;
             }
 
             final int copies = trxInfoSet.getWeightTotal();
             int copiesDelegatorsImplicit = 0;
+            int missingCopies = 0;
 
             for (final OutboxAccountTrxInfo trxInfo : trxInfoSet
                     .getTransactions()) {
@@ -967,6 +1029,26 @@ public class OutboxAddin extends AbstractUserPage {
 
                 final Account account =
                         ACCOUNT_DAO.findById(trxInfo.getAccountId());
+
+                if (account == null) {
+
+                    sbAccTrx.append(" &bull; <span class=\"")
+                            .append(MarkupHelper.CSS_TXT_ERROR).append("\">");
+
+                    if (StringUtils.isNotBlank(trxInfo.getExtDetails())) {
+                        sbAccTrx.append(trxInfo.getExtDetails());
+                    }
+
+                    appendAccountCost(costTotal, weight, copies, currencySymbol,
+                            sbAccTrx);
+
+                    sbAccTrx.append("</span>");
+
+                    missingAccounts++;
+                    missingCopies += weight;
+
+                    continue;
+                }
 
                 final AccountTypeEnum accountType =
                         AccountTypeEnum.valueOf(account.getAccountType());
@@ -988,20 +1070,12 @@ public class OutboxAddin extends AbstractUserPage {
 
                 sbAccTrx.append(account.getName());
 
-                final BigDecimal weightedCost =
-                        ACCOUNTING_SERVICE.calcWeightedAmount(costTotal, copies,
-                                weight, this.scale);
-
-                if (weightedCost.compareTo(BigDecimal.ZERO) != 0) {
-                    sbAccTrx.append(" ").append(currencySymbol).append("&nbsp;")
-                            .append(localizedDecimal(weightedCost.negate()));
-                }
-
-                sbAccTrx.append("&nbsp;(").append(weight).append(')');
+                appendAccountCost(costTotal, weight, copies, currencySymbol,
+                        sbAccTrx);
             }
 
             final int copiesDelegatorsIndividual =
-                    copies - copiesDelegatorsImplicit;
+                    copies - copiesDelegatorsImplicit - missingCopies;
 
             if (copiesDelegatorsIndividual > 0) {
                 sbAccTrx.append(" &bull; ");
@@ -1013,7 +1087,8 @@ public class OutboxAddin extends AbstractUserPage {
                 sbAccTrx.append("&nbsp;(").append(copiesDelegatorsIndividual)
                         .append(")");
             }
-            return sbAccTrx.toString();
+
+            return missingAccounts;
         }
 
         /**

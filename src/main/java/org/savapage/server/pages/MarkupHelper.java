@@ -715,18 +715,21 @@ public final class MarkupHelper {
 
         final String imageSrc;
 
-        switch (accountType) {
-        case GROUP:
-            imageSrc = "group.png";
-            break;
-        case SHARED:
-            imageSrc = "tag_green.png";
-            break;
-        default:
-            imageSrc = "user_gray.png";
-            break;
+        if (accountType == null) {
+            imageSrc = "cross.png";
+        } else {
+            switch (accountType) {
+            case GROUP:
+                imageSrc = "group.png";
+                break;
+            case SHARED:
+                imageSrc = "tag_green.png";
+                break;
+            default:
+                imageSrc = "user_gray.png";
+                break;
+            }
         }
-
         return String.format("/%s/%s", "famfamfam-silk", imageSrc);
     }
 }

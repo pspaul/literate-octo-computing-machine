@@ -56,6 +56,11 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Dummy name for a missing account.
+     */
+    private static final String MISSING_ACCOUNT_NAME = "";
+
     /** */
     private static final class TrxLine {
         private String imgSrcChoice;
@@ -233,16 +238,22 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
 
             final Account account = trx.getAccount();
 
-            final AccountTypeEnum accountType =
-                    AccountTypeEnum.valueOf(account.getAccountType());
-
-            if (accountType == AccountTypeEnum.SHARED
-                    || accountType == AccountTypeEnum.GROUP) {
-                continue;
-            }
-
             // Weak link to account name.
-            final String accountName = trx.getExtDetails();
+            final String accountName;
+
+            if (account == null) {
+                accountName = MISSING_ACCOUNT_NAME;
+            } else {
+                final AccountTypeEnum accountType =
+                        AccountTypeEnum.valueOf(account.getAccountType());
+
+                if (accountType == AccountTypeEnum.SHARED
+                        || accountType == AccountTypeEnum.GROUP) {
+                    continue;
+                }
+
+                accountName = trx.getExtDetails();
+            }
 
             if (accountName != null) {
                 if (groupDelegatorCount.containsKey(accountName)) {
@@ -296,13 +307,21 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
 
             final Account account = trx.getAccount();
 
-            final AccountTypeEnum accountType =
-                    AccountTypeEnum.valueOf(account.getAccountType());
+            final AccountTypeEnum accountType;
+            final String accountNameWlk;
+
+            if (account == null) {
+                accountType = null;
+                accountNameWlk = MISSING_ACCOUNT_NAME;
+            } else {
+                accountType = AccountTypeEnum.valueOf(account.getAccountType());
+                accountNameWlk = account.getName();
+            }
 
             final boolean isRefund =
                     trx.getAmount().compareTo(BigDecimal.ZERO) == 1;
 
-            if (accountType != AccountTypeEnum.SHARED
+            if (account != null && accountType != AccountTypeEnum.SHARED
                     && accountType != AccountTypeEnum.GROUP) {
 
                 final DelegatorItem item;
@@ -364,10 +383,16 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
 
             trxLine.imgSrcChoice = MarkupHelper.getImgUrlPath(accountType);
 
-            final Account accountParent = account.getParent();
+            final Account accountParent;
+
+            if (account == null) {
+                accountParent = null;
+            } else {
+                accountParent = account.getParent();
+            }
 
             if (accountParent == null) {
-                trxLine.accountName = account.getName();
+                trxLine.accountName = accountNameWlk;
             } else {
                 trxLine.accountName = String.format("%s \\ %s",
                         accountParent.getName(), account.getName());
