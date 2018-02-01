@@ -409,11 +409,12 @@
                     })
                 });
             },
-                _cancelJob = function(jobFileName) {
+                _cancelJob = function(jobFileName, reason) {
                 return _api.call({
                     request : 'jobticket-delete',
                     dto : JSON.stringify({
-                        jobFileName : jobFileName
+                        jobFileName : jobFileName,
+                        reason : reason
                     })
                 });
             },
@@ -680,7 +681,7 @@
                     _onSaveJob($(this).attr('data-savapage'));
 
                 }).on('click', '#sp-jobticket-cancel-popup-btn-yes', null, function() {
-                    var res = _cancelJob($(this).attr('data-savapage'));
+                    var res = _cancelJob($(this).attr('data-savapage'), $('#sp-jobticket-cancel-popup-reason').val());
                     if (res.result.code === "0") {
                         $('#sp-jobticket-popup').popup('close');
                         _refresh();

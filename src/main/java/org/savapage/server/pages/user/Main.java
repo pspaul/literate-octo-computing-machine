@@ -101,23 +101,14 @@ public class Main extends AbstractUserPage {
         private final String imgCssClass;
         private final String buttonHtmlId;
         private final String buttonText;
-        private final Character accessKey;
 
         public NavBarItem(final String itemCssClass, final String imgCssClass,
-                final String buttonHtmlId, final String buttonText,
-                final Character akey) {
+                final String buttonHtmlId, final String buttonText) {
             this.imgCssClass = imgCssClass;
             this.itemCssClass = itemCssClass;
             this.buttonHtmlId = buttonHtmlId;
             this.buttonText = buttonText;
-            this.accessKey = akey;
         }
-
-        public NavBarItem(final String itemCssClass, final String imgCssClass,
-                final String buttonHtmlId, final String buttonText) {
-            this(itemCssClass, imgCssClass, buttonHtmlId, buttonText, null);
-        }
-
 
     }
 
@@ -157,16 +148,12 @@ public class Main extends AbstractUserPage {
             //
             final WebMarkupContainer contButton =
                     new WebMarkupContainer("button");
+
             contButton
                     .add(new AttributeAppender(MarkupHelper.ATTR_CLASS,
                             String.format(" %s", navBarItem.imgCssClass)))
                     .add(new AttributeModifier(MarkupHelper.ATTR_ID,
                             navBarItem.buttonHtmlId));
-
-            if (navBarItem.accessKey != null) {
-                contButton.add(new AttributeModifier(
-                        MarkupHelper.ATTR_ACCESSKEY, navBarItem.accessKey));
-            }
 
             contButton.add(new Label("button-text", navBarItem.buttonText));
 
@@ -488,7 +475,7 @@ public class Main extends AbstractUserPage {
         if (buttonPrivileged.contains(NavButtonEnum.PDF)) {
             itemWlk = new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-pdf-properties", "button-main-pdf-properties",
-                    localized("button-pdf"), 'f');
+                    localized("button-pdf"));
         } else {
             itemWlk = useButtonCandidate(buttonCandidates);
         }
@@ -504,7 +491,7 @@ public class Main extends AbstractUserPage {
 
             items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-print", "button-main-print",
-                    localized(HtmlButtonEnum.PRINT), 'p'));
+                    localized(HtmlButtonEnum.PRINT)));
 
         } else if (buttonPrivileged.contains(NavButtonEnum.TICKET)) {
 
@@ -518,7 +505,7 @@ public class Main extends AbstractUserPage {
             }
 
             items.add(new NavBarItem(cssClass, "ui-icon-main-jobticket",
-                    "button-main-print", localized("button-ticket"), 'p'));
+                    "button-main-print", localized("button-ticket")));
         }
 
         // ------------
@@ -527,7 +514,7 @@ public class Main extends AbstractUserPage {
         if (buttonPrivileged.contains(NavButtonEnum.LETTERHEAD)) {
             itemWlk = new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                     "ui-icon-main-letterhead", "button-main-letterhead",
-                    localized("button-letterhead"), 'l');
+                    localized("button-letterhead"));
         } else {
             itemWlk = useButtonCandidate(buttonCandidates);
         }
@@ -552,20 +539,20 @@ public class Main extends AbstractUserPage {
 
         items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                 "ui-icon-main-logout", "button-logout",
-                localized(HtmlButtonEnum.LOGOUT), 'q'));
+                localized(HtmlButtonEnum.LOGOUT)));
 
         items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                 "ui-icon-main-refresh", "button-main-refresh",
-                localized(HtmlButtonEnum.REFRESH), 'r'));
+                localized(HtmlButtonEnum.REFRESH)));
 
         items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                 "ui-icon-main-doclog", "button-main-doclog",
-                localized("button-doclog"), 'o'));
+                localized("button-doclog")));
 
         if (buttonPrivileged.contains(NavButtonEnum.SORT)) {
             itemWlk = new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-arr-edit", "main-arr-edit",
-                    localized(HtmlButtonEnum.SORT), 's');
+                    localized(HtmlButtonEnum.SORT));
         } else {
             itemWlk = useButtonCandidate(buttonCandidates);
         }

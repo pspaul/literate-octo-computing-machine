@@ -2,8 +2,8 @@
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -38,13 +38,13 @@
 				<span wicket:id="currency-symbol" />&nbsp;
 			</td>
 			<td width="80px">
-				<input tabindex="1" type="text" id="money-credit-transfer-main"
-					value="" style="text-align: right;" maxlength="3" pattern="[0-9]*" />
+				<input type="text" id="money-credit-transfer-main" value=""
+					style="text-align: right;" maxlength="3" pattern="[0-9]*" />
 			</td>
 			<td wicket:id="decimal-separator" />
 			<td width="50px">
-				<input tabindex="1" type="text" id="money-credit-transfer-cents"
-					value="00" maxlength="2" pattern="[0-9]*" />
+				<input type="text" id="money-credit-transfer-cents" value="00"
+					maxlength="2" pattern="[0-9]*" />
 			</td>
 		</tr>
 	</table>
@@ -54,25 +54,24 @@
 	</label>
 	<input type="text" id="money-credit-transfer-user" value=""
 		data-clear-btn="true" autocorrect="off" autocapitalize="off"
-		spellcheck="false" tabindex="2" />
+		spellcheck="false" />
 
 	<wicket:enclosure child="prompt-comment">
 		<label wicket:id="prompt-comment" for="money-credit-transfer-comment" />
 		<input type="text" id="money-credit-transfer-comment" value=""
 			data-clear-btn="true" autocorrect="off" autocapitalize="off"
-			spellcheck="false" tabindex="3" />
+			spellcheck="false" />
 	</wicket:enclosure>
 
 	<div>
 		<button id="button-transfer-credit-ok"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
-			tabindex="4">
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 			<wicket:message key="button-transfer" />
 		</button>
 
 		<a href="#" data-rel="back" data-direction="reverse"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-			tabindex="4"> <wicket:message key="button-back" />
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+				key="button-back" />
 		</a>
 	</div>
 

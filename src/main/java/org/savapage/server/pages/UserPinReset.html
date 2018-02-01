@@ -2,8 +2,8 @@
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -27,23 +27,22 @@
 		<wicket:message key="pin" />
 	</label>
 	<input type="password" id="user-pin-reset" maxlength="8" value=""
-		autofocus pattern="[0-9]*" tabindex="1" />
+		autofocus pattern="[0-9]*" />
 
 	<label for="user-pin-reset-confirm">
 		<wicket:message key="pin-confirm" />
 	</label>
 	<input type="password" id="user-pin-reset-confirm" maxlength="8"
-		value="" pattern="[0-9]*" tabindex="2" />
+		value="" pattern="[0-9]*" />
 
 	<div>
 		<button id="button-user-pin-reset"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
-			tabindex="3">
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 			<wicket:message key="button-apply" />
 		</button>
 
 		<a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-			data-rel="back" data-direction="reverse" tabindex="4"> <wicket:message
+			data-rel="back" data-direction="reverse"> <wicket:message
 				key="button-cancel" />
 		</a>
 	</div>

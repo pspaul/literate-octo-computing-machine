@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -17,12 +17,20 @@
 <wicket:enclosure child="btn-no">
 
 	<p class="ui-title">
-		<wicket:message key="prompt-cancel" />
+		<wicket:message key="sp-cancel-question" />
 	</p>
 
 	<p class="sp-txt-warn">
-		<wicket:message key="warn-cancel" />
+		<wicket:message key="sp-cancel-warning" />
 	</p>
+
+	<wicket:enclosure child="label-reason">
+		<div class="ui-field-contain">
+			<label for="sp-jobticket-cancel-popup-reason"
+				wicket:id="label-reason" />
+			<textarea id="sp-jobticket-cancel-popup-reason" />
+		</div>
+	</wicket:enclosure>
 
 	<button id="sp-jobticket-cancel-popup-btn-no" wicket:id="btn-no"
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete" />

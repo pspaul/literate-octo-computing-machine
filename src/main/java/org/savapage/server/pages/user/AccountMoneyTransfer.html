@@ -2,8 +2,8 @@
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -45,12 +45,12 @@
 			<span wicket:id="currency-symbol" />&nbsp;
 		</td>
 		<td width="80px">
-			<input tabindex="2" type="text" style="text-align: right;"
+			<input type="text" style="text-align: right;"
 				id="money-transfer-main" value="" maxlength="3" pattern="[0-9]*" />
 		</td>
 		<td wicket:id="decimal-separator" />
 		<td width="50px">
-			<input tabindex="2" type="text" id="money-transfer-cents" value="00"
+			<input type="text" id="money-transfer-cents" value="00"
 				maxlength="2" pattern="[0-9]*" />
 		</td>
 	</tr>
@@ -61,7 +61,7 @@
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-action">
 		<wicket:message key="button-start" />
 	</button>
-	<a href="#" data-rel="back" data-direction="reverse"
+	<a href="#" data-rel="back" data-direction="reverse" 
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
 			key="button-back" />
 	</a>

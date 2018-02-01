@@ -3958,8 +3958,11 @@
             //
             ,
                 _resetPrinterSearch = function() {
-                $("#sp-print-qs-printer").val('');
-                _onQuickPrinterSearch($("#sp-print-qs-printer-filter"), '');
+                var val = '',
+                    sel = $("#sp-print-qs-printer");
+                sel.val('');
+                _onQuickPrinterSearch($("#sp-print-qs-printer-filter"), val);
+                _view.asyncFocus(sel);
             }
             //
             ;
@@ -4107,6 +4110,8 @@
                 _view.mobipick($("#sp-jobticket-date"));
 
             }).on("pagebeforeshow", function(event, ui) {
+
+                _lastPrinterFilter = undefined;
 
                 if (_model.isPrintDialogFromMain) {
                     _model.isPrintDialogFromMain = false;

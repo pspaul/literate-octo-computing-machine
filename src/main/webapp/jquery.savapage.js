@@ -2699,6 +2699,11 @@
                 return this.activePage().attr('id') === 'page-login';
             };
 
+            this.asyncFocus = function(sel) {
+                _ns.Utils.asyncFoo(function(sel) {
+                    sel.focus();
+                }, sel);
+            };
             /**
              * @since JQM 1.4.0
              */

@@ -23,6 +23,7 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserDao;
@@ -47,6 +48,7 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
     private static class DtoReq extends AbstractDto {
 
         private String jobFileName;
+        private String reason;
 
         public String getJobFileName() {
             return jobFileName;
@@ -55,6 +57,14 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setJobFileName(String jobFileName) {
             this.jobFileName = jobFileName;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
         }
 
     }
@@ -74,9 +84,15 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
             msgKey = "msg-outbox-cancelled-jobticket-none";
         } else {
             msgKey = "msg-outbox-cancelled-jobticket";
+
             final User user = notifyUser(dto.getUserId());
+
             if (user != null) {
-                sendEmailNotification(requestingUser, dto, user);
+                sendEmailNotification(requestingUser, dto,
+                        StringUtils.defaultString(
+                                StringUtils.trimToNull(dtoReq.getReason()),
+                                "-"),
+                        user);
             }
         }
 
@@ -123,7 +139,7 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
      * @return The email address or {@code null} when not send.
      */
     private String sendEmailNotification(final String operator,
-            final OutboxJobDto dto, final User user) {
+            final OutboxJobDto dto, final String reason, final User user) {
         /*
          * INVARIANT: Notification must be enabled.
          */
@@ -133,7 +149,7 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
         }
 
         return JOBTICKET_SERVICE.notifyTicketCanceledByEmail(dto, operator,
-                user, ConfigManager.getDefaultLocale());
+                user, reason, ConfigManager.getDefaultLocale());
     }
 
 }
