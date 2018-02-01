@@ -1270,13 +1270,20 @@
 
             var _this,
                 _quickUserCache = [],
-                _quickUserSelected
+                _quickUserSelected,
+                _lastFilter
             //
             ,
                 _onQuickUserSearch = function(target, filter) {
                 /* QuickSearchFilterDto */
                 var res,
                     html = "";
+
+                // Prevent duplicate search on "focusout" of search field.
+                if (_lastFilter === filter) {
+                    return;
+                }
+                _lastFilter = filter;
 
                 _quickUserCache = [];
                 _quickUserSelected = undefined;
@@ -1292,7 +1299,7 @@
                     if (res.result.code === '0') {
                         _quickUserCache = res.dto.items;
                         $.each(_quickUserCache, function(key, item) {
-                            html += "<li class=\"ui-mini\" data-savapage=\"" + key + "\"><a tabindex=\"2\" href=\"#\">" + item.text + " &bull; " + (item.email || "&nbsp;") + "</a></li>";
+                            html += "<li class=\"ui-mini\" data-icon=\"false\" data-savapage=\"" + key + "\"><a tabindex=\"0\" href=\"#\">" + item.text + " &bull; " + (item.email || "&nbsp;") + "</a></li>";
                         });
                     } else {
                         _view.showApiMsg(res);

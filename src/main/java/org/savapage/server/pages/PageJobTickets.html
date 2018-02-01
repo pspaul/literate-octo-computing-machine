@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -58,14 +58,32 @@
 						<label for="sp-jobticket-userid">
 							<wicket:message key="prompt-userid" />
 						</label>
-						<input tabindex="1" type="text" id="sp-jobticket-userid" value=""
+
+						<input tabindex="0" type="text" id="sp-jobticket-userid" value=""
 							maxlength="128" autofocus data-type="search" autocomplete="off"
 							autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+						<ul id="sp-jobticket-userid-filter" data-role="listview"
+							data-filter="true" data-input="#sp-jobticket-userid"
+							data-filter-theme="a" data-inset="true" style="float: right;" />
+
 					</div>
-					<ul id="sp-jobticket-userid-filter" data-role="listview"
-						data-filter="true" data-input="#sp-jobticket-userid"
-						data-filter-placeholder="Find a User by ID..."
-						data-filter-theme="a" data-inset="true" />
+
+					<div class="ui-field-contain">
+						<label for="sp-jobticket-search-ticket">
+							<span class="sp-txt-wrap" wicket:id="prompt-ticket" />
+						</label>
+
+						<input type="text" id="sp-jobticket-search-ticket" value=""
+							placeholder="" maxlength="32" data-type="search"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" data-clear-btn="true" />
+
+						<ul id="sp-jobticket-search-ticket-filter" data-role="listview"
+							data-filter="true" data-input="#sp-jobticket-search-ticket"
+							data-filter-theme="a" data-inset="true" style="float: right;" />
+
+					</div>
 
 					<div class="ui-field-contain">
 						<fieldset data-role="controlgroup" data-type="horizontal"
@@ -116,11 +134,15 @@
 								style="width: 0%; height: 100%; background-color: #ededed;" />
 						</div>
 					</div>
+
+					<div id="div-ticket-queue-info" style="float: right; margin: 10px;" />
+
 				</div>
 
 				<div data-role="controlgroup" data-type="horizontal">
 
 					<button id="btn-jobtickets-refresh" wicket:id="button-refresh"
+						accesskey="r"
 						class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-refresh" />
 
 					<button id="btn-jobtickets-cancel-all" data-rel="popup"
@@ -133,11 +155,12 @@
 							class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action" />
 					</wicket:enclosure>
 
-					<button id="btn-jobtickets-close" data-rel="back"
+					<button id="btn-jobtickets-close" data-rel="back" accesskey="q"
 						data-direction="reverse" wicket:id="button-logout"
 						class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-power" />
 
 				</div>
+
 			</div>
 
 			<div id="jobticket-list" />
@@ -158,15 +181,16 @@
 						<label for="sp-doclog-select-userid">
 							<wicket:message key="prompt-userid" />
 						</label>
-						<input tabindex="1" type="text" id="sp-doclog-select-userid"
+						<input tabindex="0" type="text" id="sp-doclog-select-userid"
 							value="" maxlength="128" autofocus data-type="search"
 							autocomplete="off" autocorrect="off" autocapitalize="off"
 							spellcheck="false" />
+
+						<ul id="sp-doclog-select-userid-filter" data-role="listview"
+							data-filter="true" data-input="#sp-doclog-select-userid"
+							data-filter-placeholder="Find a User by ID..."
+							data-filter-theme="a" data-inset="true" style="float: right;" />
 					</div>
-					<ul id="sp-doclog-select-userid-filter" data-role="listview"
-						data-filter="true" data-input="#sp-doclog-select-userid"
-						data-filter-placeholder="Find a User by ID..."
-						data-filter-theme="a" data-inset="true" />
 				</li>
 			</ul>
 

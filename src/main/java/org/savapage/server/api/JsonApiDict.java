@@ -44,6 +44,7 @@ import org.savapage.server.api.request.ReqJobTicketCancel;
 import org.savapage.server.api.request.ReqJobTicketExec;
 import org.savapage.server.api.request.ReqJobTicketPrintCancel;
 import org.savapage.server.api.request.ReqJobTicketPrintClose;
+import org.savapage.server.api.request.ReqJobTicketQuickSearch;
 import org.savapage.server.api.request.ReqJobTicketSave;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqLogout;
@@ -152,6 +153,9 @@ public class JsonApiDict {
             "jobticket-print-close";
     public static final String REQ_JOBTICKET_PRINT_RETRY =
             "jobticket-print-retry";
+
+    public static final String REQ_JOBTICKET_QUICK_SEARCH =
+            "jobticket-quick-search";
 
     public static final String REQ_PAPERCUT_TEST = "papercut-test";
 
@@ -886,6 +890,9 @@ public class JsonApiDict {
         acl(REQ_JOBTICKET_PRINT_CLOSE, ReqJobTicketPrintClose.class,
                 DbClaim.READ, DbAccess.YES,
                 EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
+
+        put(REQ_JOBTICKET_QUICK_SEARCH, ReqJobTicketQuickSearch.class,
+                AuthReq.NONE, DbClaim.NONE, DbAccess.NO);
 
         usr(REQ_JQPLOT, DbClaim.NONE, DbAccess.YES);
         non(REQ_LANGUAGE);

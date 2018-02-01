@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -18,7 +18,7 @@
 
 	<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
 
-		<a href="#sp-main-menu" data-rel="popup"
+		<a href="#sp-main-menu" data-rel="popup" tabindex="0"
 			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-main-header-menu">&nbsp;
 		</a>
 
@@ -46,19 +46,19 @@
 
 		<wicket:enclosure child="button-mini-help">
 			<a href="user-defined-url" target="_blank" id="sp-button-mini-help"
-				wicket:id="button-mini-help"
+				wicket:id="button-mini-help" tabindex="0"
 				class="sp-plain-info ui-btn ui-btn-icon-left ui-icon-main-header-help" />
 		</wicket:enclosure>
 
 		<wicket:enclosure child="mini-sys-maintenance">
-			<a
+			<a tabindex="-1"
 				class="sp-plain-info ui-btn ui-btn-icon-left ui-icon-main-header-warning">
 				<span wicket:id="mini-sys-maintenance" class="sp-txt-warn" />
 			</a>
 		</wicket:enclosure>
 
 		<wicket:enclosure child="button-mini-about">
-			<a wicket:id="button-mini-about"
+			<a wicket:id="button-mini-about" tabindex="0"
 				class="sp-anchor sp-btn-about ui-btn ui-btn-icon-notext ui-icon-main-header-about" />
 		</wicket:enclosure>
 
@@ -215,43 +215,44 @@
 				class="sp-outbox-cost" />
 		</button>
 
-		<button
+		<button tabindex="-1"
 			class="ui-btn ui-btn-icon-text ui-icon-none sp-print-job-media-sources-info">
 			&nbsp;</button>
 
-		<button class="ui-btn ui-btn-icon-left ui-icon-mini-select"
+		<button tabindex="-1"
+			class="ui-btn ui-btn-icon-left ui-icon-mini-select"
 			id="button-mini-select">
 			<span id="main-page-range-select" />
 		</button>
 
-		<button class="ui-btn ui-btn-icon-left ui-icon-mini-cut"
+		<button tabindex="-1" class="ui-btn ui-btn-icon-left ui-icon-mini-cut"
 			id="button-mini-cut">
 			<span id="main-page-range-cut" />
 		</button>
 
 		<!-- mini buttons  -->
-		<a id="button-mini-lock"
+		<a id="button-mini-lock" tabindex="-1"
 			class="sp-main-status-ind ui-icon-mini-lock ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
 
-		<a id="button-mini-keys"
+		<a id="button-mini-keys" tabindex="-1"
 			class="sp-main-status-ind ui-icon-mini-keys ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
 
-		<a id="button-mini-letterhead"
+		<a id="button-mini-letterhead" tabindex="-1"
 			class="sp-main-status-ind ui-icon-mini-letterhead ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
 
-		<a
+		<a tabindex="-1"
 			class="sp-button-mini-print-color sp-main-status-ind ui-icon-mini-print-color ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
-		<a
+		<a tabindex="-1"
 			class="sp-button-mini-print-mono sp-main-status-ind ui-icon-mini-print-mono ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
 
-		<a id="button-mini-no-graphics"
+		<a id="button-mini-no-graphics" tabindex="-1"
 			class="sp-main-status-ind ui-icon-mini-no-graphics ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
 
-		<a id="button-mini-ecoprint"
+		<a id="button-mini-ecoprint" tabindex="-1"
 			class="sp-main-status-ind ui-icon-mini-ecoprint ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
-		<a
+		<a tabindex="-1"
 			class="sp-button-mini-print-duplex sp-main-status-ind ui-icon-mini-duplex ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
-		<a
+		<a tabindex="-1"
 			class="sp-button-mini-print-n-up sp-main-status-ind ui-icon-mini-n-up ui-btn sp-anchor ui-btn-icon-notext">&nbsp;</a>
 
 	</fieldset>

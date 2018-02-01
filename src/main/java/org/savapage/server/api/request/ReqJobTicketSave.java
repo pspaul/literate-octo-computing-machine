@@ -40,6 +40,7 @@ import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.pdf.PdfPrintCollector;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.JobTicketWrapperDto;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ProxyPrintCostDto;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
@@ -108,8 +109,10 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
 
         } else {
 
+            final JobTicketWrapperDto wrapper = new JobTicketWrapperDto(dto);
+
             try {
-                this.saveJobTicket(dtoReq, dto);
+                this.saveJobTicket(dtoReq, wrapper);
             } catch (IllegalStateException e) {
                 this.setApiResultText(ApiResultCodeEnum.WARN, e.getMessage());
                 return;
@@ -127,12 +130,15 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
      *
      * @param dtoReq
      *            The changes.
-     * @param dto
-     *            The current ticket.
+     * @param wrapper
+     *            The ticket wrapper.
      * @throws IllegalStateException
      *             When IPP option choice context is invalid.
      */
-    private void saveJobTicket(final DtoReq dtoReq, final OutboxJobDto dto) {
+    private void saveJobTicket(final DtoReq dtoReq,
+            final JobTicketWrapperDto wrapper) {
+
+        final OutboxJobDto dto = wrapper.getTicket();
 
         /*
          * In a Delegated Print, copies are fixed, because determined by number
@@ -191,7 +197,7 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
          * Update.
          */
         try {
-            JOBTICKET_SERVICE.updateTicket(dto);
+            JOBTICKET_SERVICE.updateTicket(wrapper);
         } catch (IOException e) {
             throw new SpException(e.getMessage());
         }

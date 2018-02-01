@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
@@ -88,6 +89,9 @@ public final class PageJobTickets extends AbstractAuthPage {
                 String.valueOf(cm
                         .getConfigInt(Key.WEBAPP_JOBTICKETS_LIST_SIZE_MAX, 0)));
 
+        //
+        helper.addLabel("prompt-ticket",
+                JobTicketNounEnum.TICKET.uiText(getLocale()));
         //
         helper.encloseLabel("mini-sys-maintenance",
                 NounEnum.MAINTENANCE.uiText(getLocale()),

@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -27,27 +27,27 @@
 		<li>
 			<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
 
-				<button
+				<button tabindex="-1"
 					class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-copy-job-info">
 					<span wicket:id="label-copy" /> &nbsp; <span
 						class="sp-txt-wrap sp-copy-job-media-sources-info sp-ipp-media-info-match" />
 				</button>
 
-				<button
+				<button tabindex="-1"
 					class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-info">
 					<span class="sp-txt-wrap sp-print-job-media-sources-info">&nbsp;</span>
 				</button>
 
-				<button
+				<button tabindex="-1"
 					class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info" />
 
-				<button
+				<button tabindex="-1"
 					class="sp-button-mini-print-color ui-icon-mini-print-color ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
-				<button
+				<button tabindex="-1"
 					class="sp-button-mini-print-mono ui-icon-mini-print-mono ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
-				<button
+				<button tabindex="-1"
 					class="sp-button-mini-print-duplex ui-icon-mini-duplex ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
-				<button
+				<button tabindex="-1"
 					class="sp-button-mini-print-n-up ui-icon-mini-n-up ui-shadow ui-btn ui-corner-all ui-btn-icon-notext">&nbsp;</button>
 
 			</div>
@@ -381,7 +381,7 @@
 		</li>
 	</ul>
 
-	<button id="button-printer-back" wicket:id="button-inbox"
+	<button id="button-printer-back" wicket:id="button-inbox" accesskey="q"
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home"></button>
 
 	<button id="button-print-and-close"

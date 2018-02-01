@@ -90,8 +90,6 @@ import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A page showing the HOLD or TICKET proxy print jobs for a user.
@@ -103,10 +101,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class OutboxAddin extends AbstractUserPage {
-
-    /** */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(OutboxAddin.class);
 
     /**
      * .
@@ -210,6 +204,11 @@ public class OutboxAddin extends AbstractUserPage {
      * Boolean.
      */
     private static final String PAGE_PARM_JOBTICKETS = "jobTickets";
+
+    /**
+     * String.
+     */
+    private static final String PAGE_PARM_JOBTICKET_ID = "jobTicketId";
 
     /**
      * String.
@@ -1155,16 +1154,19 @@ public class OutboxAddin extends AbstractUserPage {
             /*
              * Job Tickets mix-in.
              */
-            final Long userKey =
-                    parms.getParameterValue(PAGE_PARM_USERKEY).toOptionalLong();
+            final JobTicketService.JobTicketFilter filter =
+                    new JobTicketService.JobTicketFilter();
 
-            if (userKey == null) {
-                tickets = JOBTICKET_SERVICE.getTickets();
-            } else {
-                tickets = JOBTICKET_SERVICE.getTickets(userKey);
-            }
+            filter.setUserId(parms.getParameterValue(PAGE_PARM_USERKEY)
+                    .toOptionalLong());
+            filter.setSearchTicketId(
+                    parms.getParameterValue(PAGE_PARM_JOBTICKET_ID)
+                            .toOptionalString());
+
+            tickets = JOBTICKET_SERVICE.getTickets(filter);
 
         } else {
+
             maxItems = null;
 
             final DaoContext daoContext = ServiceContext.getDaoContext();
@@ -1235,5 +1237,4 @@ public class OutboxAddin extends AbstractUserPage {
         //
         add(new OutboxJobView("job-entry", entryList, isJobticketView));
     }
-
 }

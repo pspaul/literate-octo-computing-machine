@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -101,14 +101,24 @@ public class Main extends AbstractUserPage {
         private final String imgCssClass;
         private final String buttonHtmlId;
         private final String buttonText;
+        private final Character accessKey;
 
         public NavBarItem(final String itemCssClass, final String imgCssClass,
-                final String buttonHtmlId, final String buttonText) {
+                final String buttonHtmlId, final String buttonText,
+                final Character akey) {
             this.imgCssClass = imgCssClass;
             this.itemCssClass = itemCssClass;
             this.buttonHtmlId = buttonHtmlId;
             this.buttonText = buttonText;
+            this.accessKey = akey;
         }
+
+        public NavBarItem(final String itemCssClass, final String imgCssClass,
+                final String buttonHtmlId, final String buttonText) {
+            this(itemCssClass, imgCssClass, buttonHtmlId, buttonText, null);
+        }
+
+
     }
 
     /**
@@ -140,17 +150,27 @@ public class Main extends AbstractUserPage {
             final NavBarItem navBarItem = listItem.getModelObject();
 
             final WebMarkupContainer contItem = new WebMarkupContainer("item");
-            contItem.add(
-                    new AttributeModifier("class", navBarItem.itemCssClass));
 
+            contItem.add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
+                    navBarItem.itemCssClass));
+
+            //
             final WebMarkupContainer contButton =
                     new WebMarkupContainer("button");
             contButton
-                    .add(new AttributeAppender("class",
+                    .add(new AttributeAppender(MarkupHelper.ATTR_CLASS,
                             String.format(" %s", navBarItem.imgCssClass)))
-                    .add(new AttributeModifier("id", navBarItem.buttonHtmlId));
+                    .add(new AttributeModifier(MarkupHelper.ATTR_ID,
+                            navBarItem.buttonHtmlId));
+
+            if (navBarItem.accessKey != null) {
+                contButton.add(new AttributeModifier(
+                        MarkupHelper.ATTR_ACCESSKEY, navBarItem.accessKey));
+            }
 
             contButton.add(new Label("button-text", navBarItem.buttonText));
+
+            //
             contItem.add(contButton);
 
             listItem.add(contItem);
@@ -468,7 +488,7 @@ public class Main extends AbstractUserPage {
         if (buttonPrivileged.contains(NavButtonEnum.PDF)) {
             itemWlk = new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-pdf-properties", "button-main-pdf-properties",
-                    localized("button-pdf"));
+                    localized("button-pdf"), 'f');
         } else {
             itemWlk = useButtonCandidate(buttonCandidates);
         }
@@ -484,7 +504,7 @@ public class Main extends AbstractUserPage {
 
             items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-print", "button-main-print",
-                    localized(HtmlButtonEnum.PRINT)));
+                    localized(HtmlButtonEnum.PRINT), 'p'));
 
         } else if (buttonPrivileged.contains(NavButtonEnum.TICKET)) {
 
@@ -498,7 +518,7 @@ public class Main extends AbstractUserPage {
             }
 
             items.add(new NavBarItem(cssClass, "ui-icon-main-jobticket",
-                    "button-main-print", localized("button-ticket")));
+                    "button-main-print", localized("button-ticket"), 'p'));
         }
 
         // ------------
@@ -507,7 +527,7 @@ public class Main extends AbstractUserPage {
         if (buttonPrivileged.contains(NavButtonEnum.LETTERHEAD)) {
             itemWlk = new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                     "ui-icon-main-letterhead", "button-main-letterhead",
-                    localized("button-letterhead"));
+                    localized("button-letterhead"), 'l');
         } else {
             itemWlk = useButtonCandidate(buttonCandidates);
         }
@@ -532,20 +552,20 @@ public class Main extends AbstractUserPage {
 
         items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                 "ui-icon-main-logout", "button-logout",
-                localized(HtmlButtonEnum.LOGOUT)));
+                localized(HtmlButtonEnum.LOGOUT), 'q'));
 
         items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                 "ui-icon-main-refresh", "button-main-refresh",
-                localized(HtmlButtonEnum.REFRESH)));
+                localized(HtmlButtonEnum.REFRESH), 'r'));
 
         items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                 "ui-icon-main-doclog", "button-main-doclog",
-                localized("button-doclog")));
+                localized("button-doclog"), 'o'));
 
         if (buttonPrivileged.contains(NavButtonEnum.SORT)) {
             itemWlk = new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-arr-edit", "main-arr-edit",
-                    localized(HtmlButtonEnum.SORT));
+                    localized(HtmlButtonEnum.SORT), 's');
         } else {
             itemWlk = useButtonCandidate(buttonCandidates);
         }

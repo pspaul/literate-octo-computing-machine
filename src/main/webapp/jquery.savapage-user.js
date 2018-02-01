@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile User Web App | (c) 2011-2017 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile User Web App | (c) 2011-2018 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1570,7 +1570,7 @@
                 _refresh = function() {
                 var html = _view.getUserPageHtml('OutboxAddin', {
                     jobTickets : false,
-                    expiryAsc : false,
+                    expiryAsc : false
                 });
                 if (html) {
                     $('#outbox-job-list').html(html).enhanceWithin();
@@ -3615,6 +3615,7 @@
             var _this = this,
                 _quickPrinterCache = [],
                 _quickPrinterSelected,
+                _lastPrinterFilter,
                 _fastPrintAvailable,
                 _hasDelegatedPrint
             //
@@ -3669,6 +3670,12 @@
                 var res,
                     html = "";
 
+                // Prevent duplicate search on "focusout" of search field.
+                if (_lastPrinterFilter === filter) {
+                    return;
+                }
+                _lastPrinterFilter = filter;
+
                 if (!_quickPrinterSelected || (_quickPrinterSelected && filter !== _quickPrinterSelected.text)) {
                     _view.visible($('#content-print .printer-selected'), false);
                 } else {
@@ -3706,7 +3713,7 @@
 
                     $.each(_quickPrinterCache, function(key, item) {
                         html += "<li class=\"ui-mini ui-li-has-icon\" data-icon=\"false\" data-savapage=\"" + key + "\">";
-                        html += "<a tabindex=\"2\" href=\"#\">";
+                        html += "<a tabindex=\"0\" href=\"#\">";
                         html += _getQuickPrinterHtml(item);
                         html += "</a></li>";
                     });
@@ -3802,6 +3809,15 @@
                 , _isDelegatedPrint(), separateDocs
                 //
                 , isJobticket, _getJobTicketType(_model.myPrinter.jobTicket));
+            }
+            //
+            ,
+                _onPrintAsync = function() {
+                $.mobile.loading("show");
+                _ns.Utils.asyncFoo(function() {
+                    _onPrint(true);
+                    $.mobile.loading("hide");
+                });
             }
             //
             ,
@@ -4059,7 +4075,7 @@
                 });
 
                 $('#button-print-and-close').click(function(e) {
-                    _onPrint(true);
+                    _onPrintAsync();
                     return false;
                 });
 

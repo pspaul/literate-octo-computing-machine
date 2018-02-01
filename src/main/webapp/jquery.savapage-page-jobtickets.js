@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Job Tickets Page | (c) 2011-2017 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Job Tickets Page | (c) 2011-2018 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,6 +37,89 @@
         /**
          * Constructor
          */
+        _ns.QuickJobTicketSearch = function(_view, _api) {
+
+            var _this,
+                _quickCache = [],
+                _quickSelected,
+                _lastFilter
+            //
+            ,
+                _onQuickSearch = function(target, filter) {
+                /* QuickSearchFilterJobTicketDto */
+                var res,
+                    html = "";
+
+                // Prevent duplicate search on "focusout" of search field.
+                if (_lastFilter === filter) {
+                    return;
+                }
+                _lastFilter = filter;
+
+                _quickCache = [];
+                _quickSelected = undefined;
+
+                if (filter && filter.length > 0) {
+                    res = _api.call({
+                        request : "jobticket-quick-search",
+                        dto : JSON.stringify({
+                            filter : filter,
+                            userId : _this.userId,
+                            maxResults : 5
+                        })
+                    });
+                    if (res.result.code === '0') {
+                        _quickCache = res.dto.items;
+                        $.each(_quickCache, function(key, item) {
+                            html += "<li class=\"ui-mini\" data-icon=\"false\" data-savapage=\"" + key + "\"><a tabindex=\"0\" href=\"#\">" + item.text + "</a></li>";
+                        });
+                    } else {
+                        _view.showApiMsg(res);
+                    }
+                } else {
+                    if (_this.onClear) {
+                        _this.onClear();
+                    }
+                }
+                target.html(html).filterable("refresh");
+            }
+            //
+            ;
+
+            this.onCreate = function(parent, filterId, onSelect, onClear, onQuickSearchBefore) {
+                var filterableTicket = $("#" + filterId);
+
+                _this = this;
+
+                this.userId = null;
+                this.onSelect = onSelect;
+                this.onClear = onClear;
+                this.onQuickSearchBefore = onQuickSearchBefore;
+
+                filterableTicket.on("filterablebeforefilter", function(e, data) {
+                    e.preventDefault();
+                    if (_this.onQuickSearchBefore) {
+                        onQuickSearchBefore();
+                    }
+                    _onQuickSearch($(this), data.input.get(0).value);
+                });
+
+                parent.on('click', '#' + filterId + ' li', null, function() {
+                    var attr = "data-savapage";
+                    _quickSelected = _quickCache[$(this).attr(attr)];
+                    filterableTicket.empty().filterable("refresh");
+                    if (_this.onSelect) {
+                        _this.onSelect(_quickSelected);
+                    }
+                });
+
+            };
+        };
+
+        // =========================================================================
+        /**
+         * Constructor
+         */
         _ns.PageJobTickets = function(_i18n, _view, _model, _api) {
 
             var _page = new _ns.Page(_i18n, _view, "#page-jobtickets", "PageJobTickets")
@@ -59,11 +142,13 @@
             //
             ,
                 _userKey,
+                _ticketKey,
                 _expiryAsc = true
             //
             ,
                 _quickUserSearch = new _ns.QuickUserSearch(_view, _api),
-                _quickUserSearchDocLog = new _ns.QuickUserSearch(_view, _api)
+                _quickUserSearchDocLog = new _ns.QuickUserSearch(_view, _api),
+                _quickTicketSearch = new _ns.QuickJobTicketSearch(_view, _api)
             //
             ,
                 _maxItems = function() {
@@ -71,10 +156,26 @@
             }
             //
             ,
-                _refresh = function() {
+                _refreshStats = function() {
+                var html = _view.getPageHtml('JobTicketQueueInfoAddIn', {
+                });
 
-                var html = _view.getUserPageHtml('OutboxAddin', {
+                if (html) {
+                    $('#div-ticket-queue-info').html(html);
+                }
+            }
+            //
+            ,
+                _refresh = function() {
+                var html;
+
+                _refreshStats();
+
+                _quickTicketSearch.userId = _userKey;
+
+                html = _view.getUserPageHtml('OutboxAddin', {
                     jobTickets : true,
+                    jobTicketId : _ticketKey,
                     userKey : _userKey,
                     expiryAsc : _expiryAsc,
                     maxItems : _maxItems()
@@ -162,6 +263,20 @@
                 _onClearUser = function() {
                 $("#sp-jobticket-userid").val('');
                 _userKey = null;
+                _refresh();
+            }
+            //
+            ,
+                _onSelectTicket = function(quickSelected) {
+                $("#sp-jobticket-search-ticket").val(quickSelected.text);
+                _ticketKey = quickSelected.text;
+                _refresh();
+            }
+            //
+            ,
+                _onClearTicket = function() {
+                $("#sp-jobticket-search-ticket").val('');
+                _ticketKey = null;
                 _refresh();
             }
             //
@@ -603,6 +718,8 @@
 
                 _quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);
                 _quickUserSearchDocLog.onCreate($(this), 'sp-doclog-select-userid-filter', _onSelectUserDocLog, _onClearUserDocLog);
+
+                _quickTicketSearch.onCreate($(this), 'sp-jobticket-search-ticket-filter', _onSelectTicket, _onClearTicket);
 
                 //--------------------------------------------
                 // Common Panel parameters.
