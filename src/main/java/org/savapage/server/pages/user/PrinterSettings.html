@@ -22,6 +22,7 @@
 
 		<li>
 			<div style="width: 100%; float: left;">
+
 				<div class="sp-copy-job-info" style="float: left;">
 					<div data-role="controlgroup" data-type="horizontal"
 						class="ui-mini">
@@ -41,14 +42,16 @@
 							class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info" />
 					</div>
 				</div>
-				<div style="float: right; margin-right: 10px;">
+				<div class="ui-mini" style="float: right; margin-right: 10px;">
 					<button id="button-print-settings-default"
 						wicket:id="button-default"
-						class="ui-mini ui-btn ui-btn-icon-right ui-icon-recycle ui-shadow ui-corner-all sp-txt-info" />
+						class="ui-btn ui-btn-icon-right ui-icon-recycle ui-shadow ui-corner-all sp-txt-info" />
 				</div>
+
+				<wicket:panel wicket:id="number-up-preview" />
+
 			</div>
 		</li>
-
 		<li class="sp-print-job-scaling">
 
 			<wicket:message key="page-scaling" />

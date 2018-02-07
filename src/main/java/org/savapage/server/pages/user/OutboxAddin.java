@@ -538,11 +538,11 @@ public class OutboxAddin extends AbstractUserPage {
             for (final String attr : new String[] { "title", "papersize",
                     "letterhead", "duplex", "simplex", "color", "collate",
                     "grayscale", "accounts", "removeGraphics", "ecoPrint",
-                    "extSupplier", "owner-user-name", "drm", "punch", "staple",
-                    "fold", "booklet", "jobticket-media", "jobticket-copy",
-                    "jobticket-finishing-ext", "jobticket-custom-ext",
-                    "landscape", "portrait", "job-id", "job-completed-time",
-                    "job-printer", "msg-invalid" }) {
+                    "extSupplier", "owner-user-name", "drm", "pageRotate180",
+                    "punch", "staple", "fold", "booklet", "jobticket-media",
+                    "jobticket-copy", "jobticket-finishing-ext",
+                    "jobticket-custom-ext", "landscape", "portrait", "job-id",
+                    "job-completed-time", "job-printer", "msg-invalid" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -599,6 +599,12 @@ public class OutboxAddin extends AbstractUserPage {
             }
             if (job.isEcoPrint()) {
                 mapVisible.put("ecoPrint", "Eco Print");
+            }
+
+            if (optionMap.hasPageRotate180()) {
+                mapVisible.put("pageRotate180",
+                        PROXYPRINT_SERVICE.localizePrinterOpt(getLocale(),
+                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_INT_PAGE_ROTATE180));
             }
 
             if (optionMap.hasFinishingPunch()) {

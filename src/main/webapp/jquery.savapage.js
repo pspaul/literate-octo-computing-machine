@@ -3162,3 +3162,23 @@
 
     }(this, this.document, this.navigator, this.org.savapage));
 
+//--------------------------------------------------------------
+// Number-up preview
+//--------------------------------------------------------------
+( function($, window, document, _ns) {
+        "use strict";
+
+        _ns.NumberUpPreview = {};
+                            
+        _ns.NumberUpPreview.show = function(_view, numberUp, rotate180) {
+            _view.visible($('.sp-nup-preview'), true);
+            _view.visible($('.sp-nup-preview-portrait'), !rotate180);
+            _view.visible($('.sp-nup-preview-portrait-180'), rotate180);
+            _view.visible($('.sp-nup-preview-landscape'), !rotate180);
+            _view.visible($('.sp-nup-preview-landscape-180'), rotate180);
+            
+            _view.visible($('.sp-nup-preview-sheet'), false);
+            _view.visible($('.sp-nup-preview-sheet').filter('[data-savapage='+ numberUp + ']'), true);
+        }; 
+        
+    }(jQuery, this, this.document, this.org.savapage));

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -143,10 +143,10 @@ public class DocLogItemPanel extends Panel {
                 "media-source", "output-bin", "jog-offset", "cost-currency",
                 "cost", "job-id", "job-state", "job-completed-date",
                 "print-in-denied-reason-hyphen", "print-in-denied-reason",
-                "collate", "ecoPrint", "removeGraphics", "punch", "staple",
-                "fold", "booklet", "jobticket-media", "jobticket-copy",
-                "jobticket-finishing-ext", "jobticket-custom-ext",
-                "landscape" }) {
+                "collate", "ecoPrint", "removeGraphics", "pageRotate180",
+                "punch", "staple", "fold", "booklet", "jobticket-media",
+                "jobticket-copy", "jobticket-finishing-ext",
+                "jobticket-custom-ext", "landscape" }) {
             mapVisible.put(attr, null);
         }
 
@@ -447,6 +447,11 @@ public class DocLogItemPanel extends Panel {
                             helper.localized(PrintOutNounEnum.COLOR));
                 }
 
+                if (obj.isPageRotate180()) {
+                    mapVisible.put("pageRotate180",
+                            PROXYPRINT_SERVICE.localizePrinterOpt(locale,
+                                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_INT_PAGE_ROTATE180));
+                }
                 if (obj.isFinishingPunch()) {
                     mapVisible.put("punch",
                             uiIppKeywordValue(locale,

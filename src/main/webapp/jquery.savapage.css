@@ -1,8 +1,8 @@
-/*! SavaPage | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage | (c) 2011-2018 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -267,6 +267,60 @@ table.sp-doclog-accounttrx-info-table {
 }
 table.sp-doclog-accounttrx-info-table th, table.sp-doclog-accounttrx-info-table td {
     padding: 7px;
+}
+
+/* ------------------------------------- */
+.sp-nup-preview {
+    color: gray;
+}
+
+.sp-nup-preview-1 span {
+    font-size: 20px;
+}
+.sp-nup-preview-2 span {
+    font-size: 18px;
+}
+.sp-nup-preview-4 span {
+    font-size: 16px;
+}
+.sp-nup-preview-6 span {
+    font-size: 12px;
+}
+.sp-nup-preview-9 span {
+    font-size: 10px;
+}
+
+.sp-rotate-90 {
+    display: block;
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+.sp-rotate-180 {
+    display: block;
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+}
+
+.sp-rotate-270 {
+    display: block;
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+.sp-nup-preview table td {
+    border: 1px solid silver;
+    text-align: center;
+}
+
+.sp-nup-preview table {
+    border: 1px solid silver;
+    /* width: 595px; height: 842px; */
+    width: 58px;
+    height: 80px;
+    margin: 7px;
+    border-collapse: collapse;
 }
 
 /* end-of-file */

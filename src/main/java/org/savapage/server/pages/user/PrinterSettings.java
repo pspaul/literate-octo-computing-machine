@@ -30,6 +30,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PageScalingEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.pages.NumberUpPreviewPanel;
 import org.savapage.server.session.SpSession;
 
 /**
@@ -79,6 +80,9 @@ public class PrinterSettings extends AbstractUserPage {
 
         helper.addLabel("label-copy",
                 PrintOutNounEnum.COPY.uiText(getLocale()));
+
+        //
+        add(new NumberUpPreviewPanel("number-up-preview"));
     }
 
 }

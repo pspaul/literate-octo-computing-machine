@@ -3270,6 +3270,24 @@
                 _isMediaSourceAutoSelected = function() {
                 return $("select[data-savapage='media-source']").val() === 'auto';
             }
+            /**
+             *
+             */,
+                _isPageRotate180Selected = function() {
+                return $("select[data-savapage='org.savapage.int-page-rotate180']").val() === '1';
+            },
+                _onChangeNumberUp = function(target) {
+                if (target.attr(CUSTOM_HTML5_DATA_ATTR) !== 'number-up') {
+                    return;
+                }
+                _ns.NumberUpPreview.show(_view, target.val(), _isPageRotate180Selected());
+            },
+                _onChangePageRotate180 = function(target) {
+                if (target.attr(CUSTOM_HTML5_DATA_ATTR) !== 'org.savapage.int-page-rotate180') {
+                    return;
+                }
+                _ns.NumberUpPreview.show(_view, $("select[data-savapage='number-up']").val(), target.val() === '1');
+            }
             /*
              * @param target The target media-source select selector.
              */,
@@ -3352,18 +3370,16 @@
             //
             ,
                 _m2v = function() {
-                var i = 0
-                //
-                ,
-                    selMediaSource = $("select[data-savapage='media-source']")
-                //
-                ;
+                var i = 0;
+
                 $.each(_model.myPrinterOpt, function(key, value) {
                     $('#' + PRINT_OPT_PFX + i).val(value).selectmenu('refresh');
                     i += 1;
                 });
 
-                _onChangeMediaSource(selMediaSource);
+                _onChangeNumberUp($("select[data-savapage='number-up']"));
+
+                _onChangeMediaSource($("select[data-savapage='media-source']"));
 
                 // resolve visibility
                 _onChangeMediaSource($("select[data-savapage='media-type']"));
@@ -3565,6 +3581,8 @@
                  * When any printer option is changed.
                  */
                 $('#printer-options').change(function(event) {
+                    _onChangePageRotate180($(event.target));
+                    _onChangeNumberUp($(event.target));
                     _onChangeMediaSource($(event.target));
                     _model.showJobsMatchMediaSources(_view);
                 });
@@ -3583,6 +3601,7 @@
 
                 // Resolve visibility
                 _m2vPrintScaling();
+                _onChangeNumberUp($("select[data-savapage='number-up']"));
                 _onChangeMediaSource($("select[data-savapage='media-type']"));
 
                 selMediaSource = $("select[data-savapage='media-source']");

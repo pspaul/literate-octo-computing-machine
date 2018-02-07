@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -103,6 +103,7 @@ public final class DocLogItem {
     private Integer numberUp;
     private Boolean grayscale;
 
+    private boolean pageRotate180;
     private boolean finishingPunch;
     private boolean finishingStaple;
     private boolean finishingFold;
@@ -552,6 +553,7 @@ public final class DocLogItem {
                                     new IppOptionMap(ippOptions);
                             log.setIppOptionMap(optionMap);
 
+                            log.setPageRotate180(optionMap.hasPageRotate180());
                             log.setFinishingBooklet(
                                     optionMap.hasFinishingBooklet());
                             log.setFinishingFold(optionMap.hasFinishingFold());
@@ -1261,6 +1263,14 @@ public final class DocLogItem {
 
     public void setGrayscale(Boolean grayscale) {
         this.grayscale = grayscale;
+    }
+
+    public boolean isPageRotate180() {
+        return pageRotate180;
+    }
+
+    public void setPageRotate180(boolean pageRotate180) {
+        this.pageRotate180 = pageRotate180;
     }
 
     public boolean isFinishingPunch() {
