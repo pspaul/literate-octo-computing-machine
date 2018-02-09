@@ -3276,17 +3276,35 @@
                 _isPageRotate180Selected = function() {
                 return $("select[data-savapage='org.savapage.int-page-rotate180']").val() === '1';
             },
-                _onChangeNumberUp = function(target) {
-                if (target.attr(CUSTOM_HTML5_DATA_ATTR) !== 'number-up') {
-                    return;
+                _showNumberUpPreview = function() {
+                var selLandscape = $('#cb-nup-preview-landscape');
+                if (selLandscape.length > 0) {
+                    _ns.NumberUpPreview.show(_view, $("select[data-savapage='number-up']").val(), _isPageRotate180Selected(), $("select[data-savapage='org.savapage-finishings-punch']").val(), $("select[data-savapage='org.savapage-finishings-staple']").val(), _view.isCbChecked(selLandscape));
                 }
-                _ns.NumberUpPreview.show(_view, target.val(), _isPageRotate180Selected());
             },
-                _onChangePageRotate180 = function(target) {
+                _probeChangePageRotate180 = function(target) {
                 if (target.attr(CUSTOM_HTML5_DATA_ATTR) !== 'org.savapage.int-page-rotate180') {
                     return;
                 }
-                _ns.NumberUpPreview.show(_view, $("select[data-savapage='number-up']").val(), target.val() === '1');
+                _showNumberUpPreview();
+            },
+                _probeChangeNumberUp = function(target) {
+                if (target.attr(CUSTOM_HTML5_DATA_ATTR) !== 'number-up') {
+                    return;
+                }
+                _showNumberUpPreview();
+            },
+                _probeChangeStaple = function(target) {
+                if (target.attr(CUSTOM_HTML5_DATA_ATTR) !== 'org.savapage-finishings-staple') {
+                    return;
+                }
+                _showNumberUpPreview();
+            },
+                _probeChangePunch = function(target) {
+                if (target.attr(CUSTOM_HTML5_DATA_ATTR) !== 'org.savapage-finishings-punch') {
+                    return;
+                }
+                _showNumberUpPreview();
             }
             /*
              * @param target The target media-source select selector.
@@ -3377,7 +3395,7 @@
                     i += 1;
                 });
 
-                _onChangeNumberUp($("select[data-savapage='number-up']"));
+                _showNumberUpPreview();
 
                 _onChangeMediaSource($("select[data-savapage='media-source']"));
 
@@ -3568,6 +3586,10 @@
                     return false;
                 });
 
+                $(this).on('change', "input:checkbox[id='cb-nup-preview-landscape']", null, function() {
+                    _showNumberUpPreview();
+                });
+
                 /*
                  * When page-scaling is changed.
                  */
@@ -3581,9 +3603,12 @@
                  * When any printer option is changed.
                  */
                 $('#printer-options').change(function(event) {
-                    _onChangePageRotate180($(event.target));
-                    _onChangeNumberUp($(event.target));
-                    _onChangeMediaSource($(event.target));
+                    var sel = $(event.target);
+                    _probeChangePageRotate180(sel);
+                    _probeChangeNumberUp(sel);
+                    _probeChangeStaple(sel);
+                    _probeChangePunch(sel);
+                    _onChangeMediaSource(sel);
                     _model.showJobsMatchMediaSources(_view);
                 });
 
@@ -3601,7 +3626,8 @@
 
                 // Resolve visibility
                 _m2vPrintScaling();
-                _onChangeNumberUp($("select[data-savapage='number-up']"));
+                _showNumberUpPreview();
+
                 _onChangeMediaSource($("select[data-savapage='media-type']"));
 
                 selMediaSource = $("select[data-savapage='media-source']");

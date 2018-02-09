@@ -321,6 +321,113 @@ table.sp-doclog-accounttrx-info-table th, table.sp-doclog-accounttrx-info-table 
     height: 80px;
     margin: 7px;
     border-collapse: collapse;
+    background-repeat: no-repeat;
+}
+
+.sp-nup-punch-left {
+    border-left: 4px double gray !important;
+}
+
+.sp-nup-punch-right {
+    border-right: 4px double gray !important;
+}
+
+.sp-nup-punch-top {
+    border-top: 4px double gray !important;
+}
+
+.sp-nup-punch-bottom {
+    border-bottom: 4px double gray !important;
+}
+
+.sp-nup-staple-top-right {
+    background: url(/images/staple-horizontal-1.png);
+    background-size: 20px 13px;
+    background-position: top right;
+}
+
+.sp-nup-staple-top-left {
+    background: url(/images/staple-horizontal-1.png);
+    background-size: 20px 13px;
+    background-position: top left;
+}
+.sp-nup-staple-bottom-right {
+    background: url(/images/staple-horizontal-1.png);
+    background-size: 20px 13px;
+    background-position: bottom right;
+}
+.sp-nup-staple-bottom-left {
+    background: url(/images/staple-horizontal-1.png);
+    background-size: 20px 13px;
+    background-position: bottom left;
+}
+
+.sp-nup-staple-top-dual {
+    background: url(/images/staple-horizontal-2.png);
+    background-size: 40px 13px;
+    background-position: top center;
+}
+.sp-nup-staple-left-dual {
+    background: url(/images/staple-vertical-2.png);
+    background-size: 13px 40px;
+    background-position: left center;
+}
+.sp-nup-staple-right-dual {
+    background: url(/images/staple-vertical-2.png);
+    background-size: 13px 40px;
+    background-position: right center;
+}
+.sp-nup-staple-bottom-dual {
+    background: url(/images/staple-horizontal-2.png);
+    background-size: 40px 13px;
+    background-position: bottom center;
+}
+
+.sp-nup-staple-top-triple {
+    background: url(/images/staple-horizontal-3.png);
+    background-size: 60px 13px;
+    background-position: top center;
+}
+.sp-nup-staple-left-triple {
+    background: url(/images/staple-vertical-3.png);
+    background-size: 13px 60px;
+    background-position: left center;
+}
+.sp-nup-staple-right-triple {
+    background: url(/images/staple-vertical-3.png);
+    background-size: 13px 60px;
+    background-position: right center;
+}
+.sp-nup-staple-bottom-triple {
+    background: url(/images/staple-horizontal-3.png);
+    background-size: 60px 13px;
+    background-position: bottom center;
+}
+
+/* --- Adapted from http://demos.jquerymobile.com/1.4.5/flipswitch/ --- */
+
+/* Custom indentations are needed because the length of custom labels differs from
+    the length of the standard labels */
+.sp-custom-size-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
+    text-indent: -5.9em;
+}
+.sp-custom-size-flipswitch.ui-flipswitch .ui-flipswitch-off {
+    text-indent: 0.5em;
+}
+/* Custom widths are needed because the length of custom labels differs from
+    the length of the standard labels */
+.sp-custom-size-flipswitch.ui-flipswitch {
+    width: 8.875em;
+}
+.sp-custom-size-flipswitch.ui-flipswitch.ui-flipswitch-active {
+    padding-left: 7em;
+    width: 1.875em;
+}
+@media (min-width: 28em) {
+    /*Repeated from rule .ui-flipswitch above*/
+    .ui-field-contain > label + .sp-custom-size-flipswitch.ui-flipswitch {
+        width: 1.875em;
+    }
 }
 
 /* end-of-file */

@@ -1,5 +1,5 @@
 /*
- * This file is part of the SavaPage project <https://savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
@@ -68,6 +68,9 @@ public final class MarkupHelper {
     public static final String ATTR_VALUE = "value";
     public static final String ATTR_SLIDER_MIN = "min";
     public static final String ATTR_SLIDER_MAX = "max";
+
+    public static final String ATTR_DATA_JQM_DATA_ON_TEXT = "data-on-text";
+    public static final String ATTR_DATA_JQM_DATA_OFF_TEXT = "data-off-text";
 
     public static final String ATTR_DATA_SAVAPAGE = "data-savapage";
     public static final String ATTR_DATA_SAVAPAGE_TYPE = "data-savapage-type";
@@ -417,6 +420,24 @@ public final class MarkupHelper {
         final Label labelWrk = new Label(wicketId, text);
         add(labelWrk);
         return labelWrk;
+    }
+
+    /**
+     * Adds a Flipswitch.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param onText
+     *            The On text.
+     * @param offText
+     *            The Off text.
+     * @return The added {@link Label}.
+     */
+    public Label addFlipswitch(final String wicketId, final String onText,
+            final String offText) {
+        return modifyLabelAttr(addModifyLabelAttr(wicketId,
+                ATTR_DATA_JQM_DATA_ON_TEXT, onText),
+                ATTR_DATA_JQM_DATA_OFF_TEXT, offText);
     }
 
     /**

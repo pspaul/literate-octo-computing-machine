@@ -3170,15 +3170,72 @@
 
         _ns.NumberUpPreview = {};
                             
-        _ns.NumberUpPreview.show = function(_view, numberUp, rotate180) {
+         _ns.NumberUpPreview.classStaple = {
+             '3' : null,
+             '20' : 'sp-nup-staple-top-left',
+             '21' : 'sp-nup-staple-bottom-left',
+             '22' : 'sp-nup-staple-top-right',
+             '23' : 'sp-nup-staple-bottom-right',
+             '24' : '',
+             '25' : '',
+             '26' : '',
+             '27' : '',
+             '28' : 'sp-nup-staple-left-dual',
+             '29' : 'sp-nup-staple-top-dual',
+             '30' : 'sp-nup-staple-right-dual',
+             '31' : 'sp-nup-staple-bottom-dual',
+             '32' : 'sp-nup-staple-left-triple',
+             '33' : 'sp-nup-staple-top-triple',
+             '34' : 'sp-nup-staple-right-triple',
+             '35' : 'sp-nup-staple-bottom-triple',
+         }; 
+         _ns.NumberUpPreview.classPunch = {
+             '3' : null,
+             '70' : '',
+             '71' : '',
+             '72' : '',
+             '73' : '',
+             '74' : 'sp-nup-punch-left',
+             '75' : 'sp-nup-punch-top',
+             '76' : 'sp-nup-punch-right',
+             '77' : 'sp-nup-punch-bottom',
+             '78' : 'sp-nup-punch-left',
+             '79' : 'sp-nup-punch-top',
+             '80' : 'sp-nup-punch-right',
+             '81' : 'sp-nup-punch-bottom',
+             '82' : 'sp-nup-punch-left',
+             '83' : 'sp-nup-punch-top',
+             '84' : 'sp-nup-punch-right',
+             '85' : 'sp-nup-punch-bottom',
+         }; 
+                            
+        _ns.NumberUpPreview.show = function(_view, numberUp, rotate180, punch, staple, landscape) {
+            
+            var clazz
+                , sel = $('.sp-nup-preview-sheet').filter('[data-savapage='+ numberUp + '-' + (landscape ? 'l' : 'p') + ']')
+                , selTbl = sel.find('table');
+            
             _view.visible($('.sp-nup-preview'), true);
-            _view.visible($('.sp-nup-preview-portrait'), !rotate180);
-            _view.visible($('.sp-nup-preview-portrait-180'), rotate180);
-            _view.visible($('.sp-nup-preview-landscape'), !rotate180);
-            _view.visible($('.sp-nup-preview-landscape-180'), rotate180);
+            
+            _view.visible($('.sp-nup-preview-portrait'), !landscape && !rotate180);
+            _view.visible($('.sp-nup-preview-portrait-180'), !landscape && rotate180);
+            _view.visible($('.sp-nup-preview-landscape'), landscape && !rotate180);
+            _view.visible($('.sp-nup-preview-landscape-180'), landscape && rotate180);
             
             _view.visible($('.sp-nup-preview-sheet'), false);
-            _view.visible($('.sp-nup-preview-sheet').filter('[data-savapage='+ numberUp + ']'), true);
+            _view.visible(sel, true);
+            
+            selTbl.attr('class', '');
+            
+            clazz = this.classPunch[punch];
+            if (clazz && clazz.length) {
+                selTbl.addClass(clazz);
+            }
+            clazz = this.classStaple[staple];
+            if (clazz && clazz.length) {
+                selTbl.addClass(clazz);
+            }
+            
         }; 
         
     }(jQuery, this, this.document, this.org.savapage));

@@ -23,32 +23,54 @@
 		<li>
 			<div style="width: 100%; float: left;">
 
-				<div class="sp-copy-job-info" style="float: left;">
-					<div data-role="controlgroup" data-type="horizontal"
-						class="ui-mini">
+				<div class="ui-mini" style="float: left;">
+
+					<div class="sp-print-job-info" data-role="controlgroup"
+						data-type="horizontal">
+						<button tabindex="-1"
+							class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-sources-info" />
+						<button tabindex="-1"
+							class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info" />
+					</div>
+
+					<div class="sp-copy-job-info" data-role="controlgroup"
+						data-type="horizontal">
 						<button
 							class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-copy-job-info">
 							<span wicket:id="label-copy" /> &nbsp; <span
 								class="sp-txt-wrap sp-copy-job-media-sources-info sp-ipp-media-info-match" />
 						</button>
 					</div>
+
 				</div>
-				<div class="sp-print-job-info" style="float: left;">
-					<div data-role="controlgroup" data-type="horizontal"
-						class="ui-mini">
-						<button tabindex="-1"
-							class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-sources-info" />
-						<button tabindex="-1"
-							class="ui-shadow ui-btn ui-corner-all ui-btn-icon-notext sp-print-job-media-info" />
-					</div>
-				</div>
+
 				<div class="ui-mini" style="float: right; margin-right: 10px;">
+
 					<button id="button-print-settings-default"
 						wicket:id="button-default"
 						class="ui-btn ui-btn-icon-right ui-icon-recycle ui-shadow ui-corner-all sp-txt-info" />
+
+					<wicket:enclosure child="flipswitch-landscape">
+						<input type="checkbox" wicket:id="flipswitch-landscape"
+							id="cb-nup-preview-landscape" data-role="flipswitch"
+							data-on-text="Landscape" data-off-text="Portrait"
+							data-wrapper-class="sp-custom-size-flipswitch" />
+
+						<div class="sp-print-job-info"
+							style="float: right; margin-top: -5px;">
+							<wicket:panel wicket:id="tooltip-flipswitch-landscape-print" />
+						</div>
+						<div class="sp-copy-job-info"
+							style="float: right; margin-top: -5px;">
+							<wicket:panel wicket:id="tooltip-flipswitch-landscape-copy" />
+						</div>
+					</wicket:enclosure>
+
 				</div>
 
-				<wicket:panel wicket:id="number-up-preview" />
+				<wicket:enclosure child="number-up-preview">
+					<wicket:panel wicket:id="number-up-preview" />
+				</wicket:enclosure>
 
 			</div>
 		</li>
