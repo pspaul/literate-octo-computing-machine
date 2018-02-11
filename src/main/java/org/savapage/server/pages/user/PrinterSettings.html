@@ -51,18 +51,23 @@
 						class="ui-btn ui-btn-icon-right ui-icon-recycle ui-shadow ui-corner-all sp-txt-info" />
 
 					<wicket:enclosure child="flipswitch-landscape">
-						<input type="checkbox" wicket:id="flipswitch-landscape"
-							id="cb-nup-preview-landscape" data-role="flipswitch"
-							data-on-text="Landscape" data-off-text="Portrait"
-							data-wrapper-class="sp-custom-size-flipswitch" />
 
-						<div class="sp-print-job-info"
-							style="float: right; margin-top: -5px;">
-							<wicket:panel wicket:id="tooltip-flipswitch-landscape-print" />
+						<div style="float: left;">
+							<input type="checkbox" wicket:id="flipswitch-landscape"
+								id="cb-nup-preview-landscape" data-role="flipswitch"
+								data-on-text="Landscape" data-off-text="Portrait"
+								data-wrapper-class="sp-custom-size-flipswitch" />
 						</div>
-						<div class="sp-copy-job-info"
-							style="float: right; margin-top: -5px;">
-							<wicket:panel wicket:id="tooltip-flipswitch-landscape-copy" />
+
+						<div style="float: right;">
+							<div class="sp-print-job-info"
+								style="float: right; margin-top: -5px;">
+								<wicket:panel wicket:id="tooltip-flipswitch-landscape-print" />
+							</div>
+							<div class="sp-copy-job-info"
+								style="float: right; margin-top: -5px;">
+								<wicket:panel wicket:id="tooltip-flipswitch-landscape-copy" />
+							</div>
 						</div>
 					</wicket:enclosure>
 
