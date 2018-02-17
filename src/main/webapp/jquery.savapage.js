@@ -2753,6 +2753,13 @@
             };
 
             /**
+             * (Un)checks a flipswitch.
+             */
+            this.checkFlipswitchSel = function(sel, isOn) {
+                sel.prop("checked", isOn).flipswitch("refresh");
+            };
+
+            /**
              * Returns boolean.
              */
             this.isCbChecked = function(sel) {

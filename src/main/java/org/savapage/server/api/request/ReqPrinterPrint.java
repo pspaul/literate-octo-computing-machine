@@ -21,8 +21,10 @@
  */
 package org.savapage.server.api.request;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,8 +50,10 @@ import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.i18n.JobTicketNounEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.inbox.InboxInfoDto;
+import org.savapage.core.inbox.InboxInfoDto.InboxJob;
 import org.savapage.core.inbox.RangeAtom;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.attribute.syntax.IppKeyword;
@@ -59,11 +63,14 @@ import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
+import org.savapage.core.pdf.PdfPageRotateHelper;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.print.proxy.ProxyPrintException;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
+import org.savapage.core.print.proxy.ProxyPrintJobChunk;
 import org.savapage.core.print.proxy.ProxyPrintJobChunkInfo;
+import org.savapage.core.print.proxy.ProxyPrintJobChunkRange;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
@@ -121,6 +128,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private String readerName;
         private String jobName;
         private Integer jobIndex;
+        private Boolean landscapeView;
         private PageScalingEnum pageScaling;
         private Integer copies;
         private String ranges;
@@ -188,6 +196,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setJobIndex(Integer jobIndex) {
             this.jobIndex = jobIndex;
+        }
+
+        public Boolean getLandscapeView() {
+            return landscapeView;
+        }
+
+        public void setLandscapeView(Boolean landscapeView) {
+            this.landscapeView = landscapeView;
         }
 
         public PageScalingEnum getPageScaling() {
@@ -402,12 +418,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 && dtoReq.getJobTicketType() == JobTicketTypeEnum.COPY;
 
         // Validate
-        if (isCopyJobTicket && !validateJobTicketCopy(dtoReq)) {
-            return;
-        }
-
-        if (!isCopyJobTicket && !validateProxyPrintFiltering(dtoReq)) {
-            return;
+        if (isCopyJobTicket) {
+            if (!validateJobTicketCopy(dtoReq)) {
+                return;
+            }
+        } else {
+            if (!validateProxyPrintFiltering(dtoReq)) {
+                return;
+            }
         }
 
         /*
@@ -624,10 +642,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         if (isCopyJobTicket) {
+
             if (!validateAddCopyJobRequestOpts(printer, printReq)) {
                 return;
             }
+
         } else {
+
             try {
                 PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
                         dtoReq.getPageScaling(), doChunkVanillaJobs,
@@ -639,7 +660,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 setApiResultText(ApiResultCodeEnum.WARN, e.getMessage());
                 return;
             }
+
+            /*
+             * INVARIANT: User expected page orientation MUST match actual
+             * orientation.
+             */
+            if (!validatePdfOrientation(dtoReq, printReq.getJobChunkInfo())) {
+                return;
+            }
         }
+
         /*
          * Non-secure Proxy Print, integrated with PaperCut?
          */
@@ -1007,6 +1037,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         final int copies = dtoReq.getCopies().intValue();
 
+        //
         if (copies <= 0) {
             setApiResultText(ApiResultCodeEnum.ERROR,
                     "Invalid number of copies.");
@@ -1076,6 +1107,123 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     "msg-select-single-pdf-filter");
             return false;
         }
+        return true;
+    }
+
+    /**
+     * Validates expected PDF page orientation when punch or staple is
+     * requested.
+     *
+     * @param dtoReq
+     *            The user request.
+     * @param chunkInfo
+     *            The {@link ProxyPrintJobChunkInfo}.
+     * @return {@code true} when input is valid.
+     */
+    private boolean validatePdfOrientation(final DtoReq dtoReq,
+            final ProxyPrintJobChunkInfo chunkInfo) {
+
+        if (dtoReq.getLandscapeView() == null || !ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_NUMBER_UP_REVIEW_ENABLE)) {
+            return true;
+        }
+
+        final Map<String, String> options = dtoReq.getOptions();
+
+        if (options == null) {
+            return true;
+        }
+
+        final boolean isFinishing;
+
+        String optValWlk = null;
+
+        optValWlk = options.get(
+                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE);
+
+        if (StringUtils
+                .defaultString(optValWlk,
+                        IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE_NONE)
+                .equals(IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE_NONE)) {
+
+            optValWlk = options.get(
+                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH);
+
+            isFinishing = !StringUtils
+                    .defaultString(optValWlk,
+                            IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH_NONE)
+                    .equals(IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH_NONE);
+        } else {
+            isFinishing = true;
+        }
+
+        if (!isFinishing) {
+            return true;
+        }
+
+        // Traverse print chunks
+        for (final ProxyPrintJobChunk chunk : chunkInfo.getChunks()) {
+
+            // Get the first range.
+            final ProxyPrintJobChunkRange chunkRange = chunk.getRanges().get(0);
+
+            final InboxInfoDto filteredInbox = chunkInfo.getFilteredInboxInfo();
+
+            // Find job
+            for (int i = 0; i < filteredInbox.getJobs().size(); i++) {
+
+                if (i != chunkRange.getJob()) {
+                    continue;
+                }
+
+                final InboxJob job = filteredInbox.getJobs().get(i);
+
+                final File pdfFile = Paths
+                        .get(ConfigManager.getUserHomeDir(dtoReq.getUser()),
+                                job.getFile())
+                        .toFile();
+
+                final boolean expectedLandscape =
+                        dtoReq.getLandscapeView().booleanValue();
+
+                final int firstPage;
+                if (chunkRange.pageBegin == null) {
+                    firstPage = 1;
+                } else {
+                    firstPage = chunkRange.pageBegin.intValue();
+                }
+
+                final boolean seenLandscape;
+                try {
+                    seenLandscape = PdfPageRotateHelper.isSeenAsLandscape(
+                            pdfFile, firstPage,
+                            Integer.valueOf(job.getRotate()));
+                } catch (IOException | NumberFormatException e) {
+                    throw new IllegalStateException(e.getMessage(), e);
+                }
+
+                if (expectedLandscape == seenLandscape) {
+                    continue;
+                }
+
+                final PrintOutNounEnum orientationAct;
+                final PrintOutNounEnum orientationExp;
+                if (seenLandscape) {
+                    orientationAct = PrintOutNounEnum.LANDSCAPE;
+                    orientationExp = PrintOutNounEnum.PORTRAIT;
+                } else {
+                    orientationAct = PrintOutNounEnum.PORTRAIT;
+                    orientationExp = PrintOutNounEnum.LANDSCAPE;
+                }
+
+                setApiResult(ApiResultCodeEnum.WARN,
+                        "msg-print-orientation-mismatch",
+                        orientationExp.uiText(getLocale()),
+                        orientationAct.uiText(getLocale()));
+                return false;
+            }
+        }
+
         return true;
     }
 

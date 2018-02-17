@@ -3282,6 +3282,12 @@
                     _ns.NumberUpPreview.show(_view, $("select[data-savapage='number-up']").val(), _isPageRotate180Selected(), $("select[data-savapage='org.savapage-finishings-punch']").val(), $("select[data-savapage='org.savapage-finishings-staple']").val(), _view.isCbChecked(selLandscape));
                 }
             },
+                _applyLandscapeHint = function() {
+                var sel = $('#cb-nup-preview-landscape');
+                if (sel.length > 0) {
+                    _view.checkFlipswitchSel(sel, _model.printPreviewLandscapeHint);
+                }
+            },
                 _probeChangePageRotate180 = function(target) {
                 if (target.attr(CUSTOM_HTML5_DATA_ATTR) !== 'org.savapage.int-page-rotate180') {
                     return;
@@ -3580,6 +3586,7 @@
 
                 $('#button-print-settings-default').click(function() {
                     _model.setPrinterDefaults();
+                    _applyLandscapeHint();
                     _m2v();
                     _model.showJobsMatchMediaSources(_view);
                     _model.showCopyJobMedia(_view);
@@ -3626,6 +3633,8 @@
 
                 // Resolve visibility
                 _m2vPrintScaling();
+
+                _applyLandscapeHint();
                 _showNumberUpPreview();
 
                 _onChangeMediaSource($("select[data-savapage='media-type']"));
@@ -3853,7 +3862,10 @@
                 //
                 , _isDelegatedPrint(), separateDocs
                 //
-                , isJobticket, _getJobTicketType(_model.myPrinter.jobTicket));
+                , isJobticket, _getJobTicketType(_model.myPrinter.jobTicket)
+                //
+                , _view.isCbChecked($('#cb-nup-preview-landscape'))
+                );
             }
             //
             ,
@@ -3999,6 +4011,8 @@
                 _model.myPrintTitle = selTitle.val();
 
                 _setVisibilityPrintSeparately(!_model.isCopyJobTicket && isAllDocsSelected);
+
+                _model.printPreviewLandscapeHint = _model.myJobs[ isAllDocsSelected ? 0 : parseInt(sel.val(), 10)].landscapeView;
             }
             //
             ,
@@ -4355,6 +4369,7 @@
             this.myJobsVanilla = null;
             this.pdfJobIndex = -1;
             this.printJobIndex = -1;
+            this.printPreviewLandscapeHint = null;
             this.iPopUpJob = -1;
             this.myJobs = [];
             this.myJobPages = [];
@@ -6331,7 +6346,7 @@
              */
             _view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint
             //
-            , collate, isDelegation, separateDocs, isJobticket, jobTicketType) {
+            , collate, isDelegation, separateDocs, isJobticket, jobTicketType, landscapeView) {
 
                 var res,
                     sel,
@@ -6385,6 +6400,7 @@
                         readerName : _model.myPrinterReaderName,
                         jobName : _model.myPrintTitle,
                         jobIndex : _model.printJobIndex,
+                        landscapeView : landscapeView,
                         pageScaling : _model.printPageScaling,
                         copies : parseInt(copies, 10),
                         ranges : $('#print-page-ranges').val(),
