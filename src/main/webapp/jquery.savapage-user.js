@@ -4012,7 +4012,7 @@
 
                 _setVisibilityPrintSeparately(!_model.isCopyJobTicket && isAllDocsSelected);
 
-                _model.printPreviewLandscapeHint = _model.myJobs[ isAllDocsSelected ? 0 : parseInt(sel.val(), 10)].landscapeView;
+                _model.printPreviewLandscapeHint = !_model.isCopyJobTicket && _model.myJobs[ isAllDocsSelected ? 0 : parseInt(sel.val(), 10)].landscapeView;
             }
             //
             ,
