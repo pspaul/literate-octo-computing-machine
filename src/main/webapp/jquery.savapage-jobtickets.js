@@ -180,8 +180,7 @@
                 });
 
                 _api.onDisconnected(function() {
-                    _model.user.loggedIn = false;
-                    _view.changePage($('#page-login'));
+                    window.location.reload();
                 });
 
                 /*
@@ -230,9 +229,12 @@
             /*
              *
              */
-            _view.onDisconnected = function() {
-                _model.user.loggedIn = false;
-                _view.pages.login.loadShow(_ns.WEBAPP_TYPE);
+            _view.onDisconnected(function() {
+                window.location.reload();
+            });
+
+            _ns.PanelCommon.onDisconnected = function() {
+                window.location.reload();
             };
 
             /**

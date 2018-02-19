@@ -251,8 +251,7 @@
                 });
                 // Call-back: api
                 _api.onDisconnected(function() {
-                    _model.user.loggedIn = false;
-                    _view.changePage($('#page-login'));
+                    window.location.reload();
                 });
 
                 $(document).on('click', '.sp-collapse', null, function() {
@@ -294,10 +293,9 @@
             /*
              *
              */
-            _view.onDisconnected = function() {
-                _model.user.loggedIn = false;
-                _view.pages.login.loadShow(_ns.WEBAPP_TYPE);
-            };
+            _view.onDisconnected(function() {
+                window.location.reload();
+            });
 
             /**
              * Callbacks: page LANGUAGE
@@ -362,9 +360,7 @@
              * Callbacks: page ADMIN
              */
             _view.pages.admin.onDisconnected = function() {
-                _model.user.loggedIn = false;
-                _view.changePage($('#page-login'));
-                _view.showApiMsg(_api.simulateDisconnectError());
+                window.location.reload();
             };
 
             _ns.PanelCommon.onDisconnected = _view.pages.admin.onDisconnected;

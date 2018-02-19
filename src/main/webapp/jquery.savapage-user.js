@@ -3864,8 +3864,7 @@
                 //
                 , isJobticket, _getJobTicketType(_model.myPrinter.jobTicket)
                 //
-                , _view.isCbChecked($('#cb-nup-preview-landscape'))
-                );
+                , _view.isCbChecked($('#cb-nup-preview-landscape')));
             }
             //
             ,
@@ -5729,9 +5728,7 @@
             _ns.PanelCommon.userId = _model.user.id;
 
             _ns.PanelCommon.onDisconnected = function() {
-                _model.user.loggedIn = false;
-                _view.changePage($('#page-login'));
-                _view.showApiMsg(_api.simulateDisconnectError());
+                window.location.reload();
             };
 
             _ns.PanelCommon.refreshPanelCommon = function(wClass, skipBeforeLoad, thePanel) {
@@ -5786,8 +5783,7 @@
 
             // Call-back: api
             _api.onDisconnected(function() {
-                _model.user.loggedIn = false;
-                _view.changePage($('#page-login'));
+                window.location.reload();
             });
             // -----------------------------
             // Call-back: polling
@@ -5982,10 +5978,9 @@
             /*
              *
              */
-            _view.onDisconnected = function() {
-                _model.user.loggedIn = false;
-                _view.pages.login.loadShow(_ns.WEBAPP_TYPE);
-            };
+            _view.onDisconnected(function() {
+                window.location.reload();
+            });
 
             /**
              * Callbacks: page language

@@ -2234,7 +2234,7 @@
          */
         _ns.View = function(_i18n, _api) {
 
-            var _view = this;
+            var _view = this, _onDisconnected = null;
 
             /*
              * AUTH Modes used for login. These names are reserved and are
@@ -2261,9 +2261,11 @@
 
             this.userChartColors = [this.colorPrinter, this.colorQueue, this.colorPDF];
 
-            // this.onDisconnected
-
             this.imgBase64 = false;
+
+            this.onDisconnected = function(foo) {
+                _onDisconnected = foo;
+            };
 
             /**
              *
@@ -2484,12 +2486,9 @@
                     return html;
                 }
 
-                /*
-                 * Do NOT use this.showApiMsg(), since it will NOT show, since
-                 * the login window is showed as a response.
-                 */
-                this.message(_i18n.string('msg-disconnected'));
-                _api.onDisconnected();
+                if (_onDisconnected) {
+                    _onDisconnected();
+                }
                 return false;
             };
 
@@ -2568,12 +2567,9 @@
                             onDone();
                         }
                     }).fail(function() {
-                        /*
-                         * Do NOT use this.showApiMsg(), since it will NOT show,
-                         * since the login window is showed as a response.
-                         */
-                        _this.message(_i18n.string('msg-disconnected'));
-                        _api.onDisconnected();
+                        if (_onDisconnected) {
+                            _onDisconnected();
+                        }
                     }).always(function() {
                         $.mobile.loading("hide");
                     });
