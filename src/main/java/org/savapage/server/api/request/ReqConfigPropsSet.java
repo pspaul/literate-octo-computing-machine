@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -139,27 +139,6 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 case SYS_DEFAULT_LOCALE:
                     ConfigManager.setDefaultLocale(value);
                     break;
-
-                case SCHEDULE_HOURLY:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
-                case SCHEDULE_DAILY:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
-                case SCHEDULE_WEEKLY:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
-                case SCHEDULE_MONTHLY:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
-                case SCHEDULE_DAILY_MAINT:
-                    SpJobScheduler.instance().scheduleJobs(configKey);
-                    nJobsRescheduled++;
-                    break;
                 case PRINT_IMAP_ENABLE:
                     preValue = cm.isConfigValue(configKey);
                     isSOfficeTrigger = true;
@@ -176,10 +155,25 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
 
                 /*
                  * TODO: This updates the cache while database is not committed
-                 * yet! When database transaction is rollback back the cache is
-                 * dirty.
+                 * yet! When database transaction is rolled back back the cache
+                 * is dirty.
                  */
                 cm.updateConfigKey(configKey, value, requestingUser);
+
+                // Reschedule.
+                switch (configKey) {
+
+                case SCHEDULE_HOURLY:
+                case SCHEDULE_DAILY:
+                case SCHEDULE_WEEKLY:
+                case SCHEDULE_MONTHLY:
+                case SCHEDULE_DAILY_MAINT:
+                    SpJobScheduler.instance().scheduleJobs(configKey);
+                    nJobsRescheduled++;
+                    break;
+                default:
+                    break;
+                }
 
                 nValid++;
 
@@ -252,7 +246,6 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
 
             setApiResult(ApiResultCodeEnum.OK, msgKey);
         }
-
     }
 
     /**
