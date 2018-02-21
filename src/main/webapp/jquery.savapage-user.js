@@ -3462,6 +3462,7 @@
                 _showPrinterOptions = function(thisPage) {
 
                 var i = 0,
+                    isMediaSourceMatch = _model.isMediaSourceMatch(),
                     selExpr,
                     html = '<ul data-role="listview">';
 
@@ -3470,8 +3471,7 @@
                 $.each(_model.myPrinter.groups, function(key, group) {
 
                     var j = 0,
-                        skip,
-                        isMediaSourceMatch = _model.isMediaSourceMatch();
+                        skip;
 
                     $.each(group.options, function(key, option) {
 
@@ -3481,6 +3481,7 @@
                             firstChoice;
 
                         // Set skip = true, if keyword must be skipped ...
+                        skip = false;
 
                         // .. and if skipped ...
                         if (skip) {
@@ -3629,6 +3630,11 @@
                 $('#title-printer-settings').html(_model.myPrinter.alias);
                 _view.visible($('.sp-print-job-media-info'), false);
 
+                // Set visibility of widgets based on job media status.
+                _model.showJobsMatchMediaSources(_view);
+                _model.showCopyJobMedia(_view);
+
+                //
                 _showPrinterOptions($(this));
 
                 // Resolve visibility
@@ -3641,10 +3647,6 @@
 
                 selMediaSource = $("select[data-savapage='media-source']");
                 _onChangeMediaSource(selMediaSource);
-
-                // Set visibility of widgets based on job media status.
-                _model.showJobsMatchMediaSources(_view);
-                _model.showCopyJobMedia(_view);
 
                 i = 0;
 
