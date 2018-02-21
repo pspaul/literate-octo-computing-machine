@@ -728,7 +728,7 @@
                 var props = {},
                     key;
 
-                _fillConfigPropsYN(props, ['proxy-print.non-secure', 'proxy-print.delegate.enable', 'proxy-print.delegate.papercut.enable', 'webapp.user.proxy-print.clear-inbox.enable']);
+                _fillConfigPropsYN(props, ['proxy-print.non-secure', 'proxy-print.delegate.enable', 'proxy-print.delegate.papercut.enable', 'webapp.user.proxy-print.clear-inbox.enable', 'webapp.user.proxy-print.clear-inbox.prompt']);
 
                 if (props['proxy-print.non-secure'] === 'Y') {
                     _fillConfigPropsText(props, ['proxy-print.non-secure-printer-group']);

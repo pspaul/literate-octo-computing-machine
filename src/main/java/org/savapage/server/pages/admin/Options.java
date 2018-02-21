@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -813,6 +813,9 @@ public final class Options extends AbstractAdminPage {
         //
         labelledCheckbox("proxyprint-clear-inbox",
                 IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE);
+
+        labelledCheckbox("proxyprint-clear-inbox-scope-show-user",
+                IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_PROMPT);
 
         final EnumRadioPanel clearInboxScopePanel =
                 new EnumRadioPanel("proxyprint-clear-inbox-scope");

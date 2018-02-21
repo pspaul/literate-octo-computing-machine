@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -1189,15 +1189,24 @@
 					<input type="checkbox" id="proxyprint-clear-inbox" value="0"
 						wicket:id="proxyprint-clear-inbox" />
 
-					<div class="proxyprint-clear-inbox-scope-enabled"
+					<div class="proxyprint-clear-inbox-scope-enabled "
 						style="margin-left: 20px;">
+
 						<legend>
 							<wicket:message key="proxyprint-clear-inbox-scope" />
 						</legend>
+
 						<fieldset data-role="controlgroup" data-mini="true"
 							id="proxyprint-clear-inbox-scope">
 							<wicket:panel wicket:id="proxyprint-clear-inbox-scope" />
 						</fieldset>
+
+						<label for="proxyprint-clear-inbox-scope-show-user"
+							wicket:id="proxyprint-clear-inbox-scope-show-user-label" />
+						<input type="checkbox" data-mini="true"
+							id="proxyprint-clear-inbox-scope-show-user" value="0"
+							wicket:id="proxyprint-clear-inbox-scope-show-user" />
+
 					</div>
 				</li>
 				<li>
