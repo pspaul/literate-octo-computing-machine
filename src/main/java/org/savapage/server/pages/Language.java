@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ package org.savapage.server.pages;
 
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -58,8 +59,8 @@ public class Language extends AbstractPage {
 
                 final Locale locale = item.getModel().getObject();
 
-                final Label label = new Label("language",
-                        locale.getDisplayLanguage(locale));
+                final Label label = new Label("language", StringUtils
+                        .capitalize(locale.getDisplayLanguage(locale)));
 
                 label.add(new AttributeModifier("data-language",
                         locale.getLanguage()));
