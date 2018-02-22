@@ -1324,7 +1324,6 @@
                 this.onQuickSearchBefore = onQuickSearchBefore;
 
                 filterableUserId.on("filterablebeforefilter", function(e, data) {
-                    e.preventDefault();
                     if (_this.onQuickSearchBefore) {
                         onQuickSearchBefore();
                     }

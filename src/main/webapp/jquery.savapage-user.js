@@ -4060,7 +4060,6 @@
 
                 //
                 filterablePrinter.on("filterablebeforefilter", function(e, data) {
-                    e.preventDefault();
                     _onQuickPrinterSearch($(this), data.input.get(0).value);
                 });
 

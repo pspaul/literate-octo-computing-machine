@@ -97,7 +97,6 @@
                 this.onQuickSearchBefore = onQuickSearchBefore;
 
                 filterableTicket.on("filterablebeforefilter", function(e, data) {
-                    e.preventDefault();
                     if (_this.onQuickSearchBefore) {
                         onQuickSearchBefore();
                     }

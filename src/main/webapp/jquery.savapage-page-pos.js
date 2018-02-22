@@ -230,7 +230,6 @@
 
                 // Receipts tab
                 filterableDateTime.on("filterablebeforefilter", function(e, data) {
-                    e.preventDefault();
                     _onQuickPurchaseSearch($(this), data.input.get(0).value);
                 });
 
