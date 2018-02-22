@@ -949,7 +949,7 @@
 
                 if (_isAccountSharedSelected()) {
                     selWlk = $('#sp-print-delegation-select-shared-account-filter');
-                    _onQuickSearchAccount(selWlk, "", 0, true);
+                    _onQuickSearchAccount(selWlk, "", 0, false);
                     _view.visible(selWlk, selWlk.find('li').length !== 1);
                 }
 
@@ -1081,7 +1081,6 @@
                 // Group selection
                 //---------------------
                 filterableGroups.on("filterablebeforefilter", function(e, data) {
-                    e.preventDefault();
                     _onQuickSearchGroup($(this), data.input.get(0).value, 0);
                 });
 
@@ -1097,7 +1096,6 @@
                 //---------------------
                 filterableUsers.on("filterablebeforefilter", function(e, data) {
                     var dbkey = _util.getFirstProp(_quickUserGroupSelected);
-                    e.preventDefault();
                     _onQuickSearchUser($(this), dbkey, data.input.get(0).value, 0);
                 });
 
@@ -1109,8 +1107,7 @@
                 // Account selection
                 //---------------------
                 filterableAccounts.on("filterablebeforefilter", function(e, data) {
-                    e.preventDefault();
-                    _onQuickSearchAccount($(this), data.input.get(0).value, 0);
+                    _onQuickSearchAccount($(this), data.input.get(0).value, 0, false);
                 });
 
                 $(this).on('click', '#sp-print-delegation-select-shared-account-filter li', null, function() {
@@ -1148,7 +1145,7 @@
                 });
 
                 // Show available accounts on first open
-                _onQuickSearchAccount(filterableAccounts, "", 0);
+                _onQuickSearchAccount(filterableAccounts, "", 0, false);
 
             }).on("pagebeforeshow", function(event, ui) {
                 _previousPageId = ui.prevPage.attr('id');
