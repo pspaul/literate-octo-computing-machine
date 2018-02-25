@@ -176,7 +176,7 @@ public class Main extends AbstractUserPage {
         final ConfigManager cm = ConfigManager.instance();
         final String urlHelp = cm.getConfigValue(Key.WEBAPP_USER_HELP_URL);
         final boolean hasHelpURL = StringUtils.isNotBlank(urlHelp)
-                && cm.isConfigValue(Key.WEBAPP_USER_HELP_URL_FOOTER_BUTTON);
+                && cm.isConfigValue(Key.WEBAPP_USER_HELP_URL_ENABLE);
 
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
 
