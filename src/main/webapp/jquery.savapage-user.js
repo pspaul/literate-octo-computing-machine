@@ -4983,14 +4983,12 @@
              */,
                 _saveRemoveGraphics = function(sel) {
                 _model.removeGraphics = _view.isCbChecked($(sel));
-                _view.visible($('#button-mini-no-graphics'), _model.removeGraphics);
             }
             /**
              *
              */,
                 _saveEcoprint = function(sel) {
                 _model.ecoprint = _view.isCbChecked($(sel));
-                _view.visible($('#button-mini-ecoprint'), _model.ecoprint);
             }
             /**
              *
@@ -6711,17 +6709,12 @@
              * @return true if saved ok, false is an error occurred
              */
             _savePdfProps = function() {
-                var pdf = _model.propPdf
-                //
-                ,
+                var pdf = _model.propPdf,
                     res = _api.call({
                     request : 'pdf-set-properties',
                     props : JSON.stringify(_model.propPdf)
                 });
                 _view.showApiMsg(res);
-                _view.visible($('#button-mini-lock'), pdf.encryption !== '' && pdf.apply.encryption);
-                _view.visible($('#button-mini-keys'), (pdf.pw.owner !== '' || pdf.pw.user !== '') && pdf.apply.passwords);
-
                 return (res && res.result.code === '0');
             };
 
@@ -6739,20 +6732,9 @@
             _saveSelectedletterhead = function(sel, force) {
                 var pub,
                     res = null,
-                    ret = false
-                //
-                ,
-                    lh
-                //
-                ,
-                    letterheadIdx = $(sel + ' :selected').val() || 'none'
-                //
-                ,
-                    mini = $('#button-mini-letterhead')
-                //
-                ;
-
-                _view.visible(mini, letterheadIdx !== 'none');
+                    ret = false,
+                    lh,
+                    letterheadIdx = $(sel + ' :selected').val() || 'none';
 
                 if (!force && (letterheadIdx === _model.myLetterheadIdx)) {
                     return;
