@@ -47,6 +47,8 @@ import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jmx.JmxRemoteProperties;
+import org.savapage.core.job.SpJobScheduler;
+import org.savapage.core.job.SpJobType;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.services.ProxyPrintService;
@@ -60,6 +62,7 @@ import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
+import org.savapage.server.pages.TooltipPanel;
 
 /**
  *
@@ -889,11 +892,21 @@ public final class Options extends AbstractAdminPage {
         if (time > 0) {
             lastRun = localizedDateTime(new Date(time));
         }
+
         add(new Label("backup-last-run", lastRun));
+
+        add(new Label("backup-next-run", localizedDateTime(
+                SpJobScheduler.getNextScheduledTime(SpJobType.DB_BACKUP))));
 
         helper.addModifyLabelAttr("sp-database-stats",
                 NounEnum.DATABASE.uiText(getLocale()), MarkupHelper.ATTR_TITLE,
                 NounEnum.STATISTICS.uiText(getLocale()));
+
+        final TooltipPanel tooltip =
+                new TooltipPanel("tooltip-backup-automatic");
+        tooltip.populate(localized("backup-automatic-tooltip"));
+        add(tooltip);
+
         /*
          *
          */

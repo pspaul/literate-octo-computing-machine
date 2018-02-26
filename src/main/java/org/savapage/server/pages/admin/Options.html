@@ -1556,10 +1556,19 @@
 					<h3>
 						<wicket:message key="cat-backup-automatic" />
 					</h3>
+
+					<div>
+						<span class="sp-txt-wrap"> <wicket:message
+								key="backup-automatic-descript" />
+						</span>
+						<wicket:panel wicket:id="tooltip-backup-automatic" />
+					</div>
+					<h3>
+						<wicket:message key="backup-next-automatic-run" />
+					</h3>
+					<legend class="sp-txt-wrap" wicket:id="backup-next-run" />
+
 					<fieldset data-role="controlgroup" data-type="vertical">
-						<legend class="sp-txt-wrap">
-							<wicket:message key="backup-automatic-descript" />
-						</legend>
 						<label for="" wicket:id="enable-automatic-backup-label" />
 						<input type="checkbox" id="" value="0"
 							wicket:id="enable-automatic-backup" />
