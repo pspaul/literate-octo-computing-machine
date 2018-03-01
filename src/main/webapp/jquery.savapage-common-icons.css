@@ -29,7 +29,7 @@
     background-size: 21px 21px;
     -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
-    opacity: .7; 
+    opacity: .7;
 }
 
 .ui-icon-sp-file-type-csv:after {
@@ -38,6 +38,14 @@
     -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
     opacity: .7;
+}
+
+.ui-icon-sp-eu-flag:after {
+    background: url(/images/thirdparty/eu-flag-34x34-bw.png) 100% 100% no-repeat;
+    background-size: 21px 21px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
 }
 
 /* end-of-file */

@@ -21,9 +21,13 @@
  */
 package org.savapage.server.pages.user;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -31,22 +35,42 @@ import org.savapage.server.pages.MarkupHelper;
  * @author Rijk Ravestein
  *
  */
-public class AccountTrx extends AbstractUserPage {
+public class GdprExport extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final String WICKET_ID_EMAIL = "btn-mailto";
 
     /**
      *
      * @param parameters
      *            The page parameters.
      */
-    public AccountTrx(final PageParameters parameters) {
+    public GdprExport(final PageParameters parameters) {
 
         super(parameters);
 
         final MarkupHelper helper = new MarkupHelper(this);
-        helper.encloseLabel("btn-txt-gdpr", "GDPR", ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_USER_GDPR_ENABLE));
+
+        helper.addLabel("txt-header",
+                localized("txt-header", CommunityDictEnum.SAVAPAGE.getWord()));
+
+        helper.addButton("btn-download", HtmlButtonEnum.DOWNLOAD);
+        helper.addButton("btn-back", HtmlButtonEnum.BACK);
+
+        final String email = ConfigManager.instance()
+                .getConfigValue(Key.WEBAPP_USER_GDPR_CONTACT_EMAIL);
+
+        if (StringUtils.isBlank(email)) {
+            helper.discloseLabel(WICKET_ID_EMAIL);
+        } else {
+            final Label label = helper.encloseLabel(WICKET_ID_EMAIL,
+                    HtmlButtonEnum.ERASE.uiText(getLocale(), true), true);
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_HREF,
+                    String.format("mailto:%s", email));
+        }
+
     }
 
 }

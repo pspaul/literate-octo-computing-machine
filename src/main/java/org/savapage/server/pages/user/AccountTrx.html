@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
@@ -31,6 +32,12 @@
 			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
 			<wicket:message key="button-doclog" />
 		</button>
+		<wicket:enclosure child="btn-txt-gdpr">
+			<button
+				class="sp-btn-gdpr-show-dialog ui-btn ui-btn-inline ui-btn-icon-left ui-icon-sp-eu-flag">
+				<span class="sp-txt-info" wicket:id="btn-txt-gdpr" />
+			</button>
+		</wicket:enclosure>
 	</div>
 </div>
 

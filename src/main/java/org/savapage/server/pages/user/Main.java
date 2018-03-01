@@ -214,6 +214,9 @@ public class Main extends AbstractUserPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
+        addVisible(cm.isConfigValue(Key.WEBAPP_USER_GDPR_ENABLE),
+                "btn-txt-gdpr", "GDPR");
+
         // Mini-buttons in footer/header bar
         addVisible(
                 isUpload && buttonSubstCandidates

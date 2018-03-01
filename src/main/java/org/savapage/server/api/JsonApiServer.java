@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,7 +57,6 @@ import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
-import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.resource.StringBufferResourceStream;
 import org.apache.wicket.util.time.Duration;
@@ -154,8 +152,6 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.EmailService;
 import org.savapage.core.services.InboxService;
-import org.savapage.core.services.JobTicketService;
-import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
@@ -184,6 +180,8 @@ import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.api.request.ApiRequestMixin;
 import org.savapage.server.api.request.ApiResultCodeEnum;
+import org.savapage.server.api.request.export.ReqExportOutboxPdf;
+import org.savapage.server.api.request.export.ReqExportUserDataHistory;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.dto.MoneyTransferDto;
 import org.savapage.server.ext.ServerPluginManager;
@@ -249,18 +247,6 @@ public final class JsonApiServer extends AbstractPage {
      */
     private static final InboxService INBOX_SERVICE =
             ServiceContext.getServiceFactory().getInboxService();
-
-    /**
-    *
-    */
-    private static final JobTicketService JOBTICKET_SERVICE =
-            ServiceContext.getServiceFactory().getJobTicketService();
-
-    /**
-    *
-    */
-    private static final OutboxService OUTBOX_SERVICE =
-            ServiceContext.getServiceFactory().getOutboxService();
 
     /**
      * .
@@ -451,6 +437,8 @@ public final class JsonApiServer extends AbstractPage {
                 case JsonApiDict.REQ_PAPERCUT_DELEGATOR_COST_CSV:
                     // no break intended
                 case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
+                    // no break intended
+                case JsonApiDict.REQ_USER_EXPORT_DATA_HISTORY:
                     handleExportFile(requestId, parameters, requestingUser,
                             isGetAction);
                     break;
@@ -647,10 +635,10 @@ public final class JsonApiServer extends AbstractPage {
 
             case JsonApiDict.REQ_PDF_JOBTICKET:
             case JsonApiDict.REQ_PDF_OUTBOX:
-                requestHandler = this.exportOutboxPdf(requestingUser,
-                        getParmValue(parameters, isGetAction,
-                                JsonApiDict.PARM_REQ_SUB),
-                        request.equals(JsonApiDict.REQ_PDF_JOBTICKET));
+                requestHandler = new ReqExportOutboxPdf(
+                        request.equals(JsonApiDict.REQ_PDF_JOBTICKET)).export(
+                                getSessionWebAppType(), getRequestCycle(),
+                                parameters, isGetAction, requestingUser, null);
                 break;
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
@@ -692,6 +680,12 @@ public final class JsonApiServer extends AbstractPage {
                         "smartschool-papercut-student-cost.csv", tempExportFile,
                         parameters.get(JsonApiDict.PARM_REQ_SUB).toString(),
                         requestingUser);
+                break;
+
+            case JsonApiDict.REQ_USER_EXPORT_DATA_HISTORY:
+                requestHandler = new ReqExportUserDataHistory().export(
+                        getSessionWebAppType(), getRequestCycle(), parameters,
+                        isGetAction, requestingUser, null);
                 break;
 
             default:
@@ -1062,73 +1056,6 @@ public final class JsonApiServer extends AbstractPage {
 
         handler.setContentDisposition(ContentDisposition.ATTACHMENT);
         handler.setFileName(csvFileName);
-        handler.setCacheDuration(Duration.NONE);
-
-        return handler;
-    }
-
-    /**
-     * Exports user outbox or job ticket PDF.
-     *
-     * @param fileName
-     *            The base file name.
-     * @param requestingUser
-     *            The user requesting the export.
-     * @param isJobTicket
-     *            {@code true} when PDF is a job ticket.
-     * @return The {@link IRequestHandler}}
-     */
-    private IRequestHandler exportOutboxPdf(final String requestingUser,
-            final String fileName, final boolean isJobTicket) {
-
-        final File pdfFile;
-
-        if (isJobTicket) {
-
-            /*
-             * INVARIANT: A user can only see his own job ticket.
-             */
-            final WebAppTypeEnum webAppType = this.getSessionWebAppType();
-
-            if (webAppType != WebAppTypeEnum.JOBTICKETS
-                    && webAppType != WebAppTypeEnum.ADMIN
-                    && JOBTICKET_SERVICE.getTicket(
-                            SpSession.get().getUser().getId(),
-                            fileName) == null) {
-                pdfFile = null;
-            } else {
-                pdfFile =
-                        Paths.get(ConfigManager.getJobTicketsHome().toString(),
-                                fileName).toFile();
-            }
-
-        } else {
-            pdfFile = OUTBOX_SERVICE.getOutboxFile(requestingUser, fileName);
-        }
-
-        if (pdfFile == null || !pdfFile.exists()) {
-
-            final StringBuilder html = new StringBuilder();
-
-            html.append("<h2 style='color: red;'>");
-
-            if (isJobTicket) {
-                html.append("Job Ticket");
-            } else {
-                html.append("Hold Job");
-            }
-
-            html.append(" not found.</h2>");
-            return new TextRequestHandler("text/html", "UTF-8",
-                    html.toString());
-        }
-
-        final ResourceStreamRequestHandler handler =
-                new ResourceStreamRequestHandler(
-                        new FileResourceStream(pdfFile));
-
-        handler.setContentDisposition(ContentDisposition.ATTACHMENT);
-        handler.setFileName(fileName);
         handler.setCacheDuration(Duration.NONE);
 
         return handler;

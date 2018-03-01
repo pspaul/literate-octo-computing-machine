@@ -1643,6 +1643,20 @@
         /**
          *
          */
+        function PageGdprExport(_i18n, _view, _model, _api) {
+
+            $("#page-gdpr-export").on("pagecreate", function(event) {
+                $('#sp-btn-gdpr-download').click(function() {
+                    $('#sp-btn-gdpr-back').click();
+                    _api.download('user-export-data-history');
+                    return false;
+                });
+            });
+        }
+
+        /**
+         *
+         */
         function PageSend(_i18n, _view, _model) {
             var _this = this
             //
@@ -5391,6 +5405,11 @@
                     return false;
                 });
 
+                $('body').on('click', '.sp-btn-gdpr-show-dialog', null, function() {
+                    _view.showUserPageAsync('#page-gdpr-export', 'GdprExport');
+                    return false;
+                });
+
                 $(document).on('click', '.sp-collapse', null, function() {
                     $(this).closest('[data-role=collapsible]').collapsible('collapse');
                     return false;
@@ -7155,7 +7174,8 @@
                 fileUpload : new PageFileUpload(_i18n, _view, _model),
                 userPinReset : new PageUserPinReset(_i18n, _view, _model),
                 userInternetPrinter : new PageUserInternetPrinter(_i18n, _view, _model),
-                userPwReset : new _ns.PageUserPasswordReset(_i18n, _view, _model)
+                userPwReset : new _ns.PageUserPasswordReset(_i18n, _view, _model),
+                gdprExport : new PageGdprExport(_i18n, _view, _model, _api)
             };
 
             _cometd = new _ns.Cometd();

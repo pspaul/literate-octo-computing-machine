@@ -210,6 +210,9 @@ public class JsonApiDict {
 
     public static final String REQ_PING = "ping";
 
+    public static final String REQ_USER_EXPORT_DATA_HISTORY =
+            "user-export-data-history";
+
     public static final String REQ_USER_CREDIT_TRANSFER =
             "user-credit-transfer";
     public static final String REQ_USER_MONEY_TRANSFER_REQUEST =
@@ -695,6 +698,7 @@ public class JsonApiDict {
         case REQ_POS_RECEIPT_DOWNLOAD_USER:
         case REQ_PRINTER_OPT_DOWNLOAD:
         case REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
+        case REQ_USER_EXPORT_DATA_HISTORY:
             return true;
         default:
             return false;
@@ -999,6 +1003,7 @@ public class JsonApiDict {
 
         adm(REQ_REPORT, DbClaim.READ, DbAccess.YES);
         usr(REQ_REPORT_USER, DbClaim.READ, DbAccess.YES);
+        usr(REQ_USER_EXPORT_DATA_HISTORY, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_RESET_ADMIN_PASSWORD, DbClaim.NONE, DbAccess.NO);
         adm(REQ_RESET_JMX_PASSWORD, DbClaim.NONE, DbAccess.NO);

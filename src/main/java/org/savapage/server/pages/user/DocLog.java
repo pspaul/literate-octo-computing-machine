@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -22,6 +22,8 @@
 package org.savapage.server.pages.user;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
@@ -37,11 +39,14 @@ public class DocLog extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
 
+    /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      *
+     * @param parameters
+     *            The page parameters.
      */
     public DocLog(final PageParameters parameters) {
 
@@ -57,6 +62,8 @@ public class DocLog extends AbstractUserPage {
             helper.discloseLabel(wicketId);
         }
 
+        helper.encloseLabel("btn-txt-gdpr", "GDPR", ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_USER_GDPR_ENABLE));
     }
 
 }

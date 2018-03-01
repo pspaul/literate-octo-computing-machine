@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
+
+<div data-role="header" data-theme="b">
+	<h1>GDPR</h1>
+</div>
+
+<div class="ui-content" id="content-send">
+
+	<table cellpadding="10">
+		<tr>
+			<td valign="top">
+				<img src="/images/thirdparty/gdpr-banner-200x134.png" height="100"
+					style="border: 1px solid; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px;" />
+			</td>
+			<td valign="middle" wicket:id="txt-header" />
+		</tr>
+	</table>
+
+	<div style="font-size: smaller;">
+		<wicket:message key="txt-instruction" />
+	</div>
+	<br />
+	
+	<div>
+		<button id="sp-btn-gdpr-download"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d"
+			wicket:id="btn-download" />
+
+		<wicket:enclosure child="btn-mailto">
+			<a href="" wicket:id="btn-mailto"
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-mail" />
+		</wicket:enclosure>
+
+		<a href="#" data-rel="back" data-direction="reverse"
+			id="sp-btn-gdpr-back"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+			wicket:id="btn-back" />
+	</div>
+
+</div>
+
+<wicket:remove>
+	<!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />
