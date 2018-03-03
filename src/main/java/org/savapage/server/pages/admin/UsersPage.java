@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -373,9 +373,16 @@ public final class UsersPage extends AbstractAdminListPage {
                     labelWrk.add(new AttributeModifier(
                             MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
                     item.add(labelWrk);
+                    //
+                    labelWrk = new Label("button-gdpr", "GDPR");
+                    labelWrk.add(new AttributeModifier(
+                            MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
+                    item.add(labelWrk);
+                    //
                 } else {
                     helper.discloseLabel("button-log");
                     helper.discloseLabel("button-transaction");
+                    helper.discloseLabel("button-gdpr");
                 }
                 //
                 evaluateVisible(item, mapVisible);
@@ -387,5 +394,8 @@ public final class UsersPage extends AbstractAdminListPage {
          */
         createNavBarResponse(req, userCount, MAX_PAGES_IN_NAVBAR,
                 "sp-users-page", new String[] { "nav-bar-1", "nav-bar-2" });
+
+        final MarkupHelper helper = new MarkupHelper(this);
+        helper.addButton("btn-gdpr-download", HtmlButtonEnum.DOWNLOAD);
     }
 }

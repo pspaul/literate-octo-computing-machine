@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
@@ -22,8 +23,8 @@
 	<table cellpadding="10">
 		<tr>
 			<td valign="top">
-				<img src="/images/thirdparty/gdpr-banner-200x134.png" height="100"
-					style="border: 1px solid; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px;" />
+				<a class="sp-plain-link" href="" wicket:id="gdpr-url-img"
+					target="_blank" />
 			</td>
 			<td valign="middle" wicket:id="txt-header" />
 		</tr>
@@ -33,7 +34,7 @@
 		<wicket:message key="txt-instruction" />
 	</div>
 	<br />
-	
+
 	<div>
 		<button id="sp-btn-gdpr-download"
 			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d"
@@ -59,3 +60,5 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+</html>

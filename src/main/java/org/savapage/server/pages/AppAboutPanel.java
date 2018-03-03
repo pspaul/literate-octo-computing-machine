@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
+import org.savapage.server.WebApp;
 
 /**
  *
@@ -80,14 +81,32 @@ public final class AppAboutPanel extends Panel {
 
         super(id);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+        Label labelWrk;
+
         //
         add(new Label("current-year",
                 String.valueOf(Calendar.getInstance().get(Calendar.YEAR))));
 
-        add(new Label("app-name",
-                CommunityDictEnum.SAVAPAGE.getWord(getLocale())));
+        add(new Label("app-name-1", CommunityDictEnum.SAVAPAGE.getWord()));
+        add(new Label("app-name-2", CommunityDictEnum.SAVAPAGE.getWord()));
 
-        Label labelWrk;
+        helper.addModifyLabelAttr("gdpr-url-img",
+                String.format(
+                        "<img width=\"50\" class=\"sp-img-round-corners-3\""
+                                + " src=\"%s/eu-flag-125x83.png\" />",
+                        WebApp.PATH_IMAGES_THIRDPARTY),
+                MarkupHelper.ATTR_HREF, CommunityDictEnum.EU_GDPR_URL.getWord())
+                .setEscapeModelStrings(false);
+
+        helper.addModifyLabelAttr("gdpr-url",
+                CommunityDictEnum.EU_GDPR_FULL_TXT.getWord(),
+                MarkupHelper.ATTR_HREF,
+                CommunityDictEnum.EU_GDPR_URL.getWord());
+
+        helper.addModifyLabelAttr("eu-url",
+                CommunityDictEnum.EU_FULL_TXT.getWord(), MarkupHelper.ATTR_HREF,
+                CommunityDictEnum.EU_URL.getWord());
 
         //
         add(new Label("app-copyright-owner",
@@ -109,8 +128,6 @@ public final class AppAboutPanel extends Panel {
         add(labelWrk);
 
         //
-        final MarkupHelper helper = new MarkupHelper(this);
-
         final String downloadPanelId = "printerdriver-download-panel";
 
         if (ConfigManager.instance().isConfigValue(

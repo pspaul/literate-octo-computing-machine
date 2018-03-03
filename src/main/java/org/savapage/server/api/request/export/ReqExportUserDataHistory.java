@@ -47,6 +47,7 @@ import org.apache.wicket.util.time.Duration;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserAttrDao;
+import org.savapage.core.dao.UserNumberDao;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
@@ -66,6 +67,7 @@ import org.savapage.core.jpa.UserCard;
 import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.jpa.UserNumber;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.api.JsonApiDict;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -113,8 +115,21 @@ public class ReqExportUserDataHistory extends ApiRequestExportMixin {
             final PageParameters parameters, final boolean isGetAction,
             final File tempExportFile) throws Exception {
 
-        final User user = ServiceContext.getDaoContext().getUserDao()
-                .findActiveUserByUserId(requestingUser);
+        final String uid;
+        final User user;
+
+        if (webAppType == WebAppTypeEnum.USER) {
+            uid = requestingUser;
+            user = ServiceContext.getDaoContext().getUserDao()
+                    .findActiveUserByUserId(uid);
+        } else if (webAppType == WebAppTypeEnum.ADMIN) {
+            final Long dbKey = Long.valueOf(getParmValue(requestCycle,
+                    parameters, isGetAction, JsonApiDict.PARM_REQ_PARM));
+            user = ServiceContext.getDaoContext().getUserDao().findById(dbKey);
+            uid = user.getUserId();
+        } else {
+            throw new IllegalArgumentException();
+        }
 
         final SimpleDateFormat dateFormatFile =
                 new SimpleDateFormat(FILE_DATE_FORMAT_PATTERN);
@@ -122,7 +137,7 @@ public class ReqExportUserDataHistory extends ApiRequestExportMixin {
         final String fileNameDateTimePart = dateFormatFile.format(new Date());
 
         final String handlerFileName = String.format("%s-data-export-%s.zip",
-                requestingUser, fileNameDateTimePart);
+                uid, fileNameDateTimePart);
 
         final FileOutputStream fout = new FileOutputStream(tempExportFile);
         final ZipOutputStream zout = new ZipOutputStream(fout);
@@ -135,19 +150,18 @@ public class ReqExportUserDataHistory extends ApiRequestExportMixin {
 
         try {
             // #1
-            zout.putNextEntry(new ZipEntry(String.format("%s-%s-user.csv",
-                    requestingUser, fileNameDateTimePart)));
+            zout.putNextEntry(new ZipEntry(String.format("%s-%s-user.csv", uid,
+                    fileNameDateTimePart)));
             this.exportUserDetails(csvWriter, user);
 
             // #2
             zout.putNextEntry(new ZipEntry(String.format("%s-%s-documents.csv",
-                    requestingUser, fileNameDateTimePart)));
+                    uid, fileNameDateTimePart)));
             this.exportDocumentLog(csvWriter, user);
 
             // #3
-            zout.putNextEntry(
-                    new ZipEntry(String.format("%s-%s-transactions.csv",
-                            requestingUser, fileNameDateTimePart)));
+            zout.putNextEntry(new ZipEntry(String.format(
+                    "%s-%s-transactions.csv", uid, fileNameDateTimePart)));
             this.exportTransactionLog(csvWriter, user);
 
         } finally {
@@ -196,8 +210,10 @@ public class ReqExportUserDataHistory extends ApiRequestExportMixin {
 
         lines.add(new String[] { "Created",
                 this.dateFormat.format(user.getCreatedDate()) });
-        lines.add(new String[] { "Last activity",
-                this.dateFormat.format(user.getLastUserActivity()) });
+        if (user.getLastUserActivity() != null) {
+            lines.add(new String[] { "Last activity",
+                    this.dateFormat.format(user.getLastUserActivity()) });
+        }
 
         if (user.getEmails() != null) {
             int i = 1;
@@ -214,10 +230,23 @@ public class ReqExportUserDataHistory extends ApiRequestExportMixin {
             }
         }
         if (user.getIdNumbers() != null) {
+
+            final UserNumberDao daoNumber =
+                    ServiceContext.getDaoContext().getUserNumberDao();
+
             int i = 1;
+            int j = 1;
+
             for (final UserNumber number : user.getIdNumbers()) {
-                lines.add(new String[] { String.format("ID number #%d", i++),
-                        number.getNumber() });
+
+                if (daoNumber.isYubiKeyPubID(number)) {
+                    lines.add(new String[] { String.format("YubiKey #%d", j++),
+                            SECRET_VALUE });
+                } else {
+                    lines.add(
+                            new String[] { String.format("ID number #%d", i++),
+                                    number.getNumber() });
+                }
             }
         }
 

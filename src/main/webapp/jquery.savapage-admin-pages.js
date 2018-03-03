@@ -1885,6 +1885,12 @@
                     return false;
                 });
 
+                $(this).on('click', '#sp-btn-gdpr-download', null, function() {
+                    $('#sp-gdpr-popup').popup('close');
+                    _self.onGdprDownload($(this).attr('data-savapage'));
+                    return false;
+                });
+
                 /*
                  * One-time binding the click to a function. We don't want
                  * to bind each time the panel is loaded.
@@ -2143,6 +2149,11 @@
                  */
                 $(this).on('click', '.sp-edit-user', null, function() {
                     _self.onEditUser($(this).attr('data-savapage'));
+                    return false;
+                });
+
+                $(this).on('click', '.sp-user-gdpr', null, function() {
+                    _self.onGdprUser($(this).attr('data-savapage'), $(this));
                     return false;
                 });
 

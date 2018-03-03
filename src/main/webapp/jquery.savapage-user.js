@@ -6728,8 +6728,7 @@
              * @return true if saved ok, false is an error occurred
              */
             _savePdfProps = function() {
-                var pdf = _model.propPdf,
-                    res = _api.call({
+                var res = _api.call({
                     request : 'pdf-set-properties',
                     props : JSON.stringify(_model.propPdf)
                 });

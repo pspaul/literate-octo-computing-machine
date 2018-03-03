@@ -30,6 +30,11 @@ body {
 #page-admin {
 }
 
+#sp-gdpr-popup .ui-content {
+    max-width: 300px;
+}
+
+
 .ui-mobile .type-home .ui-content {
     margin: 0;
 }

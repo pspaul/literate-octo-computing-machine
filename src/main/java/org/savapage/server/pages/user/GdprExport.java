@@ -27,6 +27,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -55,6 +56,15 @@ public class GdprExport extends AbstractUserPage {
 
         helper.addLabel("txt-header",
                 localized("txt-header", CommunityDictEnum.SAVAPAGE.getWord()));
+
+        helper.addModifyLabelAttr("gdpr-url-img",
+                String.format(
+                        "<img height=\"100\" class=\"sp-img-round-corners-6\""
+                                + " src=\"%s/gdpr-banner-200x134.png\" />",
+                        WebApp.PATH_IMAGES_THIRDPARTY),
+                MarkupHelper.ATTR_HREF, CommunityDictEnum.EU_GDPR_URL.getWord())
+                .setEscapeModelStrings(false);
+
 
         helper.addButton("btn-download", HtmlButtonEnum.DOWNLOAD);
         helper.addButton("btn-back", HtmlButtonEnum.BACK);

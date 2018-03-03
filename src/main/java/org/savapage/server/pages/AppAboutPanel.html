@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ..|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein.......| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein.......| 
     |........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ......|
     | it under the terms of the GNU Affero General Public License as ........|
@@ -21,15 +22,15 @@
 				wicket:id="app-copyright-owner" />
 		</p>
 
-		<table cellpadding="10">
+		<table cellpadding="8">
 			<tr>
 				<td valign="top" width="64">
 					<a class="sp-plain-link" href="https://opensource.org/"
 						target="_blank"><img width="64"
 							src="/images/thirdparty/osi_logo_100X133_90ppi_0.png" /></a>
 				</td>
-				<td valign="top">
-					<span wicket:id="app-name" /> is <a class="sp-plain-link"
+				<td valign="middle">
+					<span wicket:id="app-name-1" /> is <a class="sp-plain-link"
 						href="https://opensource.org/" target="_blank">OSI Certified
 						Open Source Software</a>, licensed under the <a class="sp-plain-link"
 						href="https://www.gnu.org/licenses/agpl.html" target="_blank">GNU
@@ -37,6 +38,18 @@
 						class="sp-plain-link" href="https://www.fsf.org/" target="_blank">Free
 						Software Foundation</a>, either version&nbsp;3 of the License, or (at
 					your option) any later version.
+				</td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+					<a class="sp-plain-link" href="" wicket:id="gdpr-url-img"
+						target="_blank" />
+				</td>
+				<td valign="top">
+					<span wicket:id="app-name-2" /> complies to the <a
+						wicket:id="gdpr-url" class="sp-plain-link" href="" target="_blank">General
+						Data Protection Regulation</a> of the <a class="sp-plain-link"
+						wicket:id="eu-url" href="" target="_blank">European Union</a>.
 				</td>
 			</tr>
 		</table>
@@ -62,3 +75,4 @@
 	</wicket:enclosure>
 
 </wicket:panel>
+</html>

@@ -403,6 +403,18 @@ table.sp-doclog-accounttrx-info-table th, table.sp-doclog-accounttrx-info-table 
     background-size: 60px 13px;
     background-position: bottom center;
 }
+.sp-img-round-corners-6 {
+    border: 1px solid;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+.sp-img-round-corners-3 {
+    border: 1px solid;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
 
 /* --- Adapted from http://demos.jquerymobile.com/1.4.5/flipswitch/ --- */
 

@@ -929,6 +929,17 @@
                 }
             };
 
+            _view.pages.admin.onGdprUser = function(uid, positionTo) {
+                $('#sp-btn-gdpr-download').attr('data-savapage', uid);
+                $('#sp-gdpr-popup').popup('open', {
+                    positionTo : positionTo
+                });
+            };
+
+            _view.pages.admin.onGdprDownload = function(uid) {
+                _api.download('user-export-data-history', null, null, uid);
+            };
+
             _view.pages.admin.onEditUserGroup = function(id) {
                 var res = _api.call({
                     request : 'usergroup-get',

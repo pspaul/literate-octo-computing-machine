@@ -3189,7 +3189,7 @@
              '32' : 'sp-nup-staple-left-triple',
              '33' : 'sp-nup-staple-top-triple',
              '34' : 'sp-nup-staple-right-triple',
-             '35' : 'sp-nup-staple-bottom-triple',
+             '35' : 'sp-nup-staple-bottom-triple'
          }; 
          _ns.NumberUpPreview.classPunch = {
              '3' : null,
@@ -3208,7 +3208,7 @@
              '82' : 'sp-nup-punch-left',
              '83' : 'sp-nup-punch-top',
              '84' : 'sp-nup-punch-right',
-             '85' : 'sp-nup-punch-bottom',
+             '85' : 'sp-nup-punch-bottom'
          }; 
                             
         _ns.NumberUpPreview.show = function(_view, numberUp, rotate180, punch, staple, landscape) {
