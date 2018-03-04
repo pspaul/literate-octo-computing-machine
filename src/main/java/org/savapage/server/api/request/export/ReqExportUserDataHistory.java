@@ -46,11 +46,13 @@ import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.time.Duration;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.UserAccountDao;
 import org.savapage.core.dao.UserAttrDao;
 import org.savapage.core.dao.UserNumberDao;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
+import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.AccountVoucher;
 import org.savapage.core.jpa.CostChange;
@@ -62,6 +64,7 @@ import org.savapage.core.jpa.PosPurchase;
 import org.savapage.core.jpa.PrintIn;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.jpa.User;
+import org.savapage.core.jpa.UserAccount;
 import org.savapage.core.jpa.UserAttr;
 import org.savapage.core.jpa.UserCard;
 import org.savapage.core.jpa.UserEmail;
@@ -293,7 +296,22 @@ public class ReqExportUserDataHistory extends ApiRequestExportMixin {
             lines.add(new String[] { "Print OUT bytes",
                     user.getNumberOfPrintOutBytes().toString() });
         }
+        //
+        final UserAccountDao daoAcc =
+                ServiceContext.getDaoContext().getUserAccountDao();
 
+        final List<UserAccount> userAccList = daoAcc.findByUserId(user.getId());
+        if (!userAccList.isEmpty()) {
+            final String curr = ConfigManager.getAppCurrencySymbol(locale);
+            int i = 1;
+            for (final UserAccount userAcc : userAccList) {
+                final Account acc = userAcc.getAccount();
+                lines.add(new String[] { String.format("Account #%d", i++),
+                        String.format("%s %s", curr,
+                                acc.getBalance().toPlainString()) });
+            }
+        }
+        //
         writer.writeAll(lines);
         writer.flush();
     }

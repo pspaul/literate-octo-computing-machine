@@ -59,12 +59,11 @@ public class GdprExport extends AbstractUserPage {
 
         helper.addModifyLabelAttr("gdpr-url-img",
                 String.format(
-                        "<img height=\"100\" class=\"sp-img-round-corners-6\""
+                        "<img width=\"140\" class=\"sp-img-round-corners-6\""
                                 + " src=\"%s/gdpr-banner-200x134.png\" />",
                         WebApp.PATH_IMAGES_THIRDPARTY),
                 MarkupHelper.ATTR_HREF, CommunityDictEnum.EU_GDPR_URL.getWord())
                 .setEscapeModelStrings(false);
-
 
         helper.addButton("btn-download", HtmlButtonEnum.DOWNLOAD);
         helper.addButton("btn-back", HtmlButtonEnum.BACK);
