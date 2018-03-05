@@ -39,6 +39,7 @@ import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserPagerReq;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
@@ -204,46 +205,54 @@ public final class UsersPage extends AbstractAdminListPage {
                 final Map<String, String> mapVisible = new HashMap<>();
                 mapVisible.put("balance-currency", null);
 
-                /*
-                 *
-                 */
                 final User user = item.getModelObject();
+
+                final boolean isErased = USER_SERVICE.isErased(user);
 
                 Label labelWrk = null;
 
-                final String sparklineData =
-                        user.getNumberOfPrintOutPages().toString() + ","
-                                + user.getNumberOfPrintInPages() + ","
-                                + user.getNumberOfPdfOutPages();
+                final String sparklineData = String.format("%d,%d,%d",
+                        user.getNumberOfPrintOutPages().intValue(),
+                        user.getNumberOfPrintInPages().intValue(),
+                        user.getNumberOfPdfOutPages().intValue());
 
                 item.add(new Label("user-pie", sparklineData));
 
-                /*
-                 *
-                 */
-                labelWrk = new Label("userId");
-                if (user.getInternal()) {
+                //
+                if (isErased) {
+                    helper.discloseLabel("fullName");
+
+                    labelWrk = new Label("userId",
+                            USER_SERVICE.getUserIdUi(user, locale));
                     labelWrk.add(new AttributeModifier("class",
-                            MarkupHelper.CSS_TXT_INTERNAL_USER));
+                            MarkupHelper.CSS_TXT_ERROR));
+                } else {
+                    item.add(new Label("fullName"));
+                    item.add(new Label("email",
+                            userService.getPrimaryEmailAddress(user)));
+                    //
+                    labelWrk = new Label("userId");
+                    if (user.getInternal()) {
+                        labelWrk.add(new AttributeModifier("class",
+                                MarkupHelper.CSS_TXT_INTERNAL_USER));
+                    }
                 }
                 item.add(labelWrk);
 
                 /*
-                 *
-                 */
-                item.add(new Label("fullName"));
-                item.add(new Label("email",
-                        userService.getPrimaryEmailAddress(user)));
-
-                /*
                  * Signal
                  */
+                String signal = "";
                 String signalKey = null;
                 String color = null;
 
                 final Date onDate = new Date();
 
-                if (user.getDeleted()) {
+                if (isErased) {
+                    color = MarkupHelper.CSS_TXT_ERROR;
+                    signal = AdjectiveEnum.ERASED.uiText(getLocale())
+                            .toLowerCase();
+                } else if (user.getDeleted()) {
                     color = MarkupHelper.CSS_TXT_ERROR;
                     signalKey = "signal-user-deleted";
                 } else if (USER_SERVICE.isUserFullyDisabled(user, onDate)) {
@@ -257,7 +266,6 @@ public final class UsersPage extends AbstractAdminListPage {
                     signalKey = "signal-user-abstract";
                 }
 
-                String signal = "";
                 if (signalKey != null) {
                     signal = localized(signalKey);
                 }
@@ -374,11 +382,15 @@ public final class UsersPage extends AbstractAdminListPage {
                             MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
                     item.add(labelWrk);
                     //
-                    labelWrk = new Label("button-gdpr", "GDPR");
-                    labelWrk.add(new AttributeModifier(
-                            MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
-                    item.add(labelWrk);
-                    //
+                    if (isErased) {
+                        helper.discloseLabel("button-gdpr");
+                    } else {
+                        labelWrk = new Label("button-gdpr", "GDPR");
+                        labelWrk.add(new AttributeModifier(
+                                MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
+                        item.add(labelWrk);
+                    }
+
                 } else {
                     helper.discloseLabel("button-log");
                     helper.discloseLabel("button-transaction");

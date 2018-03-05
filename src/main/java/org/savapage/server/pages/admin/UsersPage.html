@@ -25,10 +25,12 @@
 				<span wicket:id="user-pie" class="sparkline-user-pie" />&nbsp;<span
 					wicket:id="userId" />
 			</h3>
-			<div class="sp-txt-wrap">
-				<span wicket:id="fullName" /> &bull; <span wicket:id="email"></span>
-			</div>
-			<br />
+			<wicket:enclosure child="fullName">
+				<div class="sp-txt-wrap">
+					<span wicket:id="fullName" /> &bull; <span wicket:id="email"></span>
+				</div>
+				<br />
+			</wicket:enclosure>
 			<div class="sp-txt-wrap" wicket:id="period" />
 			<div class="sp-txt-wrap">
 				<wicket:enclosure child="balance-currency">
