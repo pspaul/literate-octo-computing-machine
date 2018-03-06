@@ -588,8 +588,7 @@ public final class JsonRpcServlet extends HttpServlet
 
             case DELETE_USER:
                 rpcResponse = USER_SERVICE.deleteUserAutoCorrect(methodParser
-                        .getParams(ParamsUniqueName.class).getUniqueName(),
-                        false);
+                        .getParams(ParamsUniqueName.class).getUniqueName());
                 break;
 
             case DELETE_USER_GROUP:
@@ -598,9 +597,8 @@ public final class JsonRpcServlet extends HttpServlet
                 break;
 
             case ERASE_USER:
-                rpcResponse = USER_SERVICE.deleteUserAutoCorrect(methodParser
-                        .getParams(ParamsUniqueName.class).getUniqueName(),
-                        true);
+                rpcResponse = USER_SERVICE.eraseUser(methodParser
+                        .getParams(ParamsUniqueName.class).getUniqueName());
                 break;
 
             case GET_CONFIG_PROPERTY:

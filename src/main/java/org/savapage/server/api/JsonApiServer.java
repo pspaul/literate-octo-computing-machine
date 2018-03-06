@@ -3831,7 +3831,7 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqUserDelete(final String id,
             final String userid) throws IOException {
         return apiResultFromBasicRpcResponse(
-                USER_SERVICE.deleteUser(userid, false));
+                USER_SERVICE.deleteUser(userid));
     }
 
     /**
