@@ -6228,7 +6228,6 @@
              * @return true if PDF props saved ok, false is an error occurred.
              */
             _view.pages.pdfprop.onHide = function() {
-
                 if (_model.pdfJobIndex === '-1') {
                     _model.myInboxTitle = $('#pdf-title').val();
                 }
@@ -6268,7 +6267,7 @@
                 if (!_saveSelectedletterhead('#pdf-letterhead-list', true)) {
                     return false;
                 }
-                if (!_savePdfProps()) {
+                if (!_savePdfProps(_model.pdfJobIndex, pageRanges)) {
                     return false;
                 }
                 if (_model.ecoprint && !_userLazyEcoPrint(_model.pdfJobIndex, pageRanges)) {
@@ -6727,10 +6726,12 @@
              *
              * @return true if saved ok, false is an error occurred
              */
-            _savePdfProps = function() {
+            _savePdfProps = function(iJob, ranges) {
                 var res = _api.call({
                     request : 'pdf-set-properties',
-                    props : JSON.stringify(_model.propPdf)
+                    props : JSON.stringify(_model.propPdf),
+                    jobIndex : iJob,
+                    ranges : ranges
                 });
                 _view.showApiMsg(res);
                 return (res && res.result.code === '0');

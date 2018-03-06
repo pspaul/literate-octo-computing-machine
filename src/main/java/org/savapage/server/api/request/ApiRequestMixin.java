@@ -174,7 +174,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     public final Map<String, Object> process(final RequestCycle requestCycle,
             final PageParameters parameters, final boolean isGetAction,
             final String requestingUser, final User lockedUser)
-                    throws Exception {
+            throws Exception {
 
         this.requestCycle = requestCycle;
         this.pageParameters = parameters;
@@ -235,6 +235,15 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
             webAppType = session.getWebAppType();
         }
         return webAppType;
+    }
+
+    /**
+     * Gets the {@link User} from {@link SpSession}.
+     *
+     * @return The {@link User}.
+     */
+    protected final User getSessionUser() {
+        return SpSession.get().getUser();
     }
 
     /**
@@ -383,7 +392,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @return {@code true} when result is OK.
      */
     protected static boolean
-    isApiResultOk(final AbstractJsonRpcMethodResponse rpcResponse) {
+            isApiResultOk(final AbstractJsonRpcMethodResponse rpcResponse) {
         return rpcResponse.isResult();
     }
 
@@ -406,7 +415,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     protected boolean isApiResultCode(final EnumSet<ApiResultCodeEnum> set) {
         @SuppressWarnings("unchecked")
         final Map<String, Object> result =
-        (Map<String, Object>) responseMap.get("result");
+                (Map<String, Object>) responseMap.get("result");
 
         for (final ApiResultCodeEnum code : set) {
             if (result.get("code").equals(code.getValue())) {
@@ -430,7 +439,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      *            The {@link AbstractJsonRpcMethodResponse}.
      */
     protected final void
-    setApiResultText(final AbstractJsonRpcMethodResponse rpcResponse) {
+            setApiResultText(final AbstractJsonRpcMethodResponse rpcResponse) {
 
         if (rpcResponse.isResult()) {
 
@@ -533,7 +542,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     protected final UserAgentHelper createUserAgentHelper() {
         final HttpServletRequest request =
                 (HttpServletRequest) this.requestCycle.getRequest()
-                .getContainerRequest();
+                        .getContainerRequest();
         return new UserAgentHelper(request);
     }
 

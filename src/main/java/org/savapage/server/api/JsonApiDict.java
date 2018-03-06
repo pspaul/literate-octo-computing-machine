@@ -52,6 +52,7 @@ import org.savapage.server.api.request.ReqOAuthUrl;
 import org.savapage.server.api.request.ReqOutboxCancelAll;
 import org.savapage.server.api.request.ReqOutboxCancelJob;
 import org.savapage.server.api.request.ReqOutboxExtend;
+import org.savapage.server.api.request.ReqPdfPropsSetValidate;
 import org.savapage.server.api.request.ReqPosDepositQuickSearch;
 import org.savapage.server.api.request.ReqPrintDelegationSet;
 import org.savapage.server.api.request.ReqPrinterGet;
@@ -940,7 +941,9 @@ public class JsonApiDict {
                         ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         usr(REQ_PDF_GET_PROPERTIES, DbClaim.NONE, DbAccess.YES);
-        usr(REQ_PDF_SET_PROPERTIES, DbClaim.READ, DbAccess.YES);
+
+        usr(REQ_PDF_SET_PROPERTIES, ReqPdfPropsSetValidate.class, DbClaim.READ,
+                DbAccess.YES);
 
         non(REQ_PING);
         non(REQ_GENERATE_UUID, ReqGenerateUuid.class);

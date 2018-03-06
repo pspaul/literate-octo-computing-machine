@@ -156,6 +156,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.services.helpers.IppLogger;
+import org.savapage.core.services.helpers.PageRangeException;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.services.helpers.email.EmailMsgParms;
 import org.savapage.core.util.AppLogHelper;
@@ -1394,11 +1395,6 @@ public final class JsonApiServer extends AbstractPage {
 
             return reqPdfPropsGet(mySessionUser);
 
-        case JsonApiDict.REQ_PDF_SET_PROPERTIES:
-
-            return reqPdfPropsSet(mySessionUser,
-                    getParmValue(parameters, isGetAction, "props"));
-
         case JsonApiDict.REQ_PRINTER_DETAIL:
 
             return reqPrinterDetail(requestingUser,
@@ -2177,6 +2173,16 @@ public final class JsonApiServer extends AbstractPage {
                     "msg-select-single-pdf-filter");
         }
 
+        try {
+            INBOX_SERVICE.calcPagesInRanges(
+                    INBOX_SERVICE.getInboxInfo(lockedUser.getUserId()),
+                    Integer.valueOf(jobIndex),
+                    StringUtils.defaultString(getParmValue("ranges")), null);
+        } catch (PageRangeException e) {
+            return createApiResult(userData, ApiResultCodeEnum.ERROR, "",
+                    e.getMessage(getLocale()));
+        }
+
         final String user = lockedUser.getUserId();
 
         File fileAttach = null;
@@ -2340,33 +2346,6 @@ public final class JsonApiServer extends AbstractPage {
 
         userData.put("props", objProps);
         return setApiResultOK(userData);
-    }
-
-    /**
-     * Sets the PDF properties.
-     *
-     * @param user
-     * @param json
-     * @return
-     * @throws Exception
-     */
-    private Map<String, Object> reqPdfPropsSet(final User user,
-            final String json) throws Exception {
-
-        Map<String, Object> userData = new HashMap<String, Object>();
-        PdfProperties pdfProp = PdfProperties.create(json);
-
-        String pwOwner = pdfProp.getPw().getOwner();
-        String pwUser = pdfProp.getPw().getUser();
-
-        if (StringUtils.isNotBlank(pwOwner) && StringUtils.isNotBlank(pwUser)
-                && pwOwner.equals(pwUser)) {
-            return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-pdf-identical-owner-user-pw");
-        } else {
-            USER_SERVICE.setPdfProperties(user, pdfProp);
-            return setApiResultOK(userData);
-        }
     }
 
     /**
@@ -3830,8 +3809,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqUserDelete(final String id,
             final String userid) throws IOException {
-        return apiResultFromBasicRpcResponse(
-                USER_SERVICE.deleteUser(userid));
+        return apiResultFromBasicRpcResponse(USER_SERVICE.deleteUser(userid));
     }
 
     /**

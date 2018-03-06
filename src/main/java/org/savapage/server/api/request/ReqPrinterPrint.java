@@ -54,7 +54,6 @@ import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.inbox.InboxInfoDto;
 import org.savapage.core.inbox.InboxInfoDto.InboxJob;
-import org.savapage.core.inbox.RangeAtom;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.ipp.client.IppConnectException;
@@ -75,11 +74,11 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
+import org.savapage.core.services.helpers.PageRangeException;
 import org.savapage.core.services.helpers.PageScalingEnum;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ProxyPrintCostDto;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
-import org.savapage.core.services.impl.InboxServiceImpl;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
 import org.savapage.ext.papercut.PaperCutServerProxy;
@@ -475,7 +474,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         //
         final InboxInfoDto jobs;
-        final int nPagesTot;
+
+        final boolean isPrintAllDocuments = dtoReq.getJobIndex().intValue() < 0;
         final boolean isPrintAllPages;
 
         int nPagesPrinted;
@@ -484,59 +484,34 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         if (isCopyJobTicket) {
 
             jobs = null;
-            nPagesTot = dtoReq.getJobTicketCopyPages().intValue();
-            nPagesPrinted = nPagesTot;
+            nPagesPrinted = dtoReq.getJobTicketCopyPages().intValue();
             ranges = null;
             isPrintAllPages = true;
 
         } else {
 
-            jobs = INBOX_SERVICE.getInboxInfo(lockedUser.getUserId());
-
-            nPagesTot = INBOX_SERVICE.calcNumberOfPagesInJobs(jobs);
-            nPagesPrinted = nPagesTot;
-
-            /*
-             * Validate the ranges.
-             */
+            jobs = INBOX_SERVICE.getInboxInfo(requestingUser);
             ranges = dtoReq.getRanges().trim();
-
             isPrintAllPages = ranges.isEmpty();
 
-            if (!isPrintAllPages) {
-                /*
-                 * Remove inner spaces.
-                 */
-                ranges = ranges.replace(" ", "");
-                try {
-                    final List<RangeAtom> rangeAtoms =
-                            INBOX_SERVICE.createSortedRangeArray(ranges);
+            final StringBuilder sortedRangesOut = new StringBuilder();
 
-                    nPagesPrinted = InboxServiceImpl
-                            .calcSelectedDocPages(rangeAtoms, nPagesTot);
-                    /*
-                     * This gives the SORTED ranges as string: CUPS cannot
-                     * handle ranges like '7-8,5,2' but needs '2,5,7-8'
-                     */
-                    ranges = RangeAtom.asText(rangeAtoms);
+            try {
+                nPagesPrinted = INBOX_SERVICE.calcPagesInRanges(jobs,
+                        dtoReq.getJobIndex().intValue(), ranges,
+                        sortedRangesOut);
 
-                } catch (Exception e) {
-                    setApiResult(ApiResultCodeEnum.ERROR,
-                            "msg-clear-range-syntax-error", ranges);
-                    return;
-                }
+            } catch (PageRangeException e) {
+                setApiResultText(ApiResultCodeEnum.ERROR,
+                        e.getMessage(getLocale()));
+                return;
             }
-        }
 
-        /*
-         * INVARIANT: number of printed pages can NOT exceed total number of
-         * pages.
-         */
-        if (nPagesPrinted > nPagesTot) {
-            setApiResult(ApiResultCodeEnum.ERROR,
-                    "msg-print-out-of-range-error", ranges,
-                    String.valueOf(nPagesTot));
-            return;
+            /*
+             * This gives the SORTED ranges as string: CUPS cannot handle ranges
+             * like '7-8,5,2' but needs '2,5,7-8'
+             */
+            ranges = sortedRangesOut.toString();
         }
 
         /*
@@ -569,8 +544,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         /*
          * Vanilla jobs and job separation?
          */
-        final boolean isPrintAllDocuments = dtoReq.getJobIndex().intValue() < 0;
-
         final boolean isSeparateVanillaJobsCandidate =
                 isPrintAllDocuments && isPrintAllPages && jobs != null
                         && INBOX_SERVICE.isInboxVanilla(jobs);

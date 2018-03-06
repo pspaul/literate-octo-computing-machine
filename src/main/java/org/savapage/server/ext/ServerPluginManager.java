@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -60,9 +60,9 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserAccount;
 import org.savapage.core.jpa.UserAttr;
 import org.savapage.core.msg.UserMsgIndicator;
-import org.savapage.core.services.AccountingException;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.AccountingException;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
