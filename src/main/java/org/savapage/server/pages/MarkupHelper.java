@@ -33,6 +33,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Localizer;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.i18n.AdverbEnum;
@@ -58,6 +59,7 @@ import org.savapage.server.helpers.HtmlButtonEnum;
 public final class MarkupHelper {
 
     public static final String ATTR_CHECKED = "checked";
+    public static final String ATTR_DISABLED = "disabled";
     public static final String ATTR_ID = "id";
     public static final String ATTR_TITLE = "title";
     public static final String ATTR_SRC = "src";
@@ -92,6 +94,8 @@ public final class MarkupHelper {
     public static final String CSS_PRINT_OUT_PRINTER = "sp-print-out-printer";
     public static final String CSS_PRINT_OUT_PDF = "sp-print-out-pdf";
 
+    public static final String CSS_DISABLED = "sp-disabled";
+    public static final String CSS_INVISIBLE = "sp-invisible";
     /**
      * HTML entity for ⦦ : OBLIQUE ANGLE OPENING UP).
      */
@@ -666,6 +670,58 @@ public final class MarkupHelper {
                 return enclose;
             }
         };
+    }
+
+    /**
+     * Creates a transparent component.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @return The component.
+     */
+    private static Component createTransparent(final String wicketId) {
+        return new TransparentWebMarkupContainer(wicketId);
+    }
+
+    /**
+     * Adds a disabled transparent component.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param disabled
+     *            {@code true} when component should be disabled.
+     * @return The component.
+     */
+    public Component addTransparantDisabled(final String wicketId,
+            final boolean disabled) {
+
+        final Component component = createTransparent(wicketId);
+        if (disabled) {
+            component.add(new AttributeAppender(MarkupHelper.ATTR_CLASS,
+                    CSS_DISABLED));
+        }
+        add(component);
+        return component;
+    }
+
+    /**
+     * Adds a visible transparent component.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param invisible
+     *            {@code true} when component should be invisible.
+     * @return The component.
+     */
+    public Component addTransparantInvisible(final String wicketId,
+            final boolean invisible) {
+        final Component component = createTransparent(wicketId);
+        if (invisible) {
+            component.add(new AttributeAppender(MarkupHelper.ATTR_CLASS,
+                    CSS_INVISIBLE));
+        }
+        add(component);
+        return component;
     }
 
     /**

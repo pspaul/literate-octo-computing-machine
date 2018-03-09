@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
@@ -141,19 +142,22 @@
 		</div>
 	</li>
 
-	<li>
-		<div data-role="controlgroup" data-type="horizontal" class="ui-mini">
-			<button id="button-create-device-terminal"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
-				<wicket:message key="button-new-terminal" />
-			</button>
-			<button id="button-create-device-card-reader"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
-				<wicket:message key="button-new-card-reader" />
-			</button>
-		</div>
-	</li>
+	<wicket:enclosure child="button-new-terminal">
+		<li>
+			<div class="ui-mini">
+				<button id="button-create-device-terminal"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit"
+					wicket:id="button-new-terminal" />
+				<button id="button-create-device-card-reader"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
+					<wicket:message key="button-new-card-reader" />
+				</button>
+			</div>
+		</li>
+	</wicket:enclosure>
 
 	<li id="sp-device-list-page"></li>
 
 </ul>
+
+</html>

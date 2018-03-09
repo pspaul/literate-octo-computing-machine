@@ -66,19 +66,19 @@ public class PdfProperties extends AbstractUserPage {
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
 
         final List<ACLPermissionEnum> permissions = ACCESS_CONTROL_SERVICE
-                .getUserPermission(user, ACLOidEnum.U_INBOX);
+                .getPermission(user, ACLOidEnum.U_INBOX);
 
         helper.encloseLabel("button-pdf-download", localized("button-download"),
-                permissions == null || ACCESS_CONTROL_SERVICE.hasUserPermission(
+                permissions == null || ACCESS_CONTROL_SERVICE.hasPermission(
                         permissions, ACLPermissionEnum.DOWNLOAD));
 
         helper.encloseLabel("button-pdf-send", localized("button-send"),
-                permissions == null || ACCESS_CONTROL_SERVICE.hasUserPermission(
+                permissions == null || ACCESS_CONTROL_SERVICE.hasPermission(
                         permissions, ACLPermissionEnum.SEND));
 
         //
         final Integer privsLetterhead = ACCESS_CONTROL_SERVICE
-                .getUserPrivileges(user, ACLOidEnum.U_LETTERHEAD);
+                .getPrivileges(user, ACLOidEnum.U_LETTERHEAD);
 
         helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
                 privsLetterhead == null || ACLPermissionEnum.READER

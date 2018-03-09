@@ -56,6 +56,8 @@ import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
@@ -63,6 +65,7 @@ import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.AppLogService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.QueueService;
@@ -83,6 +86,7 @@ import org.savapage.server.pages.MessageContent;
 import org.savapage.server.pages.StatsEnvImpactPanel;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.pages.TooltipPanel;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -122,21 +126,19 @@ public final class SystemStatusPanel extends Panel {
      */
     private static String retrieveNewsHtml;
 
-    /**
-     * .
-     */
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
     private static final AppLogService APP_LOG_SERVICE =
             ServiceContext.getServiceFactory().getAppLogService();
 
-    /**
-     * .
-     */
+    /** */
     private static final QueueService QUEUE_SERVICE =
             ServiceContext.getServiceFactory().getQueueService();
 
-    /**
-     * .
-     */
+    /** */
     private static final JobTicketService TICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
 
@@ -825,6 +827,10 @@ public final class SystemStatusPanel extends Panel {
 
         add(labelNews);
 
+        //
+        helper.addTransparantDisabled("sect-services",
+                !ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
+                        ACLOidEnum.A_DASHBOARD, ACLPermissionEnum.EDITOR));
     }
 
     /**

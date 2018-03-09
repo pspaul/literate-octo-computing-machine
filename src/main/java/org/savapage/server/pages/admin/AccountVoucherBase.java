@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -30,10 +30,16 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.reports.JrVoucherPageLayoutEnum;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.MediaUtils;
+import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.VoucherDesignOptionsPanel;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -47,6 +53,10 @@ public final class AccountVoucherBase extends AbstractAdminPage {
      */
     private static final long serialVersionUID = 1L;
 
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
     /**
      *
      */
@@ -54,14 +64,18 @@ public final class AccountVoucherBase extends AbstractAdminPage {
 
         super(parameters);
 
-        // openServiceContext();
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.encloseLabel("button-new-batch",
+                HtmlButtonEnum.ADD.uiText(getLocale()),
+                ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
+                        ACLOidEnum.A_VOUCHERS, ACLPermissionEnum.EDITOR));
 
         /*
-         * Option list: Printers
+         * Option list: batches
          */
-        final List<String> batchList =
-                ServiceContext.getDaoContext().getAccountVoucherDao()
-                        .getBatches();
+        final List<String> batchList = ServiceContext.getDaoContext()
+                .getAccountVoucherDao().getBatches();
 
         add(new PropertyListView<String>("option-list-batch", batchList) {
 
@@ -78,7 +92,7 @@ public final class AccountVoucherBase extends AbstractAdminPage {
         });
 
         /*
-         * Option list: voucher card design
+         * Option list: voucher card design.
          */
         final VoucherDesignOptionsPanel voucherDesignOptions =
                 new VoucherDesignOptionsPanel("voucher-card-format-options");

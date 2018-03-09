@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -40,72 +41,88 @@
 		</wicket:remove>
 
 		<ul data-role="listview" data-inset="true" id="sp-a-menu">
-			<li data-icon="info">
-				<a class="savapage-detail" name="Dashboard">
-					<wicket:message key="cat-dashboard" />
-				</a>
-			</li>
-			<li data-icon="user">
-				<a class="savapage-detail-prev" name="UsersBase">
-					<wicket:message key="cat-users" />
-				</a>
-			</li>
-			<li data-icon="user">
-				<a class="savapage-detail-prev" name="UserGroupsBase">
-					<wicket:message key="cat-groups" />
-				</a>
-			</li>
-			<li data-icon="tag">
-				<a class="savapage-detail-prev" name="AccountsBase">
-					<wicket:message key="cat-accounts" />
-				</a>
-			</li>
-			<li data-icon="gear">
-				<a class="savapage-detail-prev" name="QueuesBase">
-					<wicket:message key="cat-queues" />
-				</a>
-			</li>
-			<li data-icon="gear">
-				<a class="savapage-detail-prev" name="PrintersBase">
-					<wicket:message key="cat-printers" />
-				</a>
-			</li>
-			<li data-icon="gear">
-				<a class="savapage-detail-prev" name="DevicesBase">
-					<wicket:message key="cat-devices" />
-				</a>
-			</li>
-			<wicket:remove>
-				<li data-icon="grid">
-					<a class="savapage-detail" name="Reports">Reports</a>
+
+			<wicket:enclosure child="cat-dashboard">
+				<li data-icon="info">
+					<a class="savapage-detail" name="Dashboard"
+						wicket:id="cat-dashboard" />
 				</li>
-			</wicket:remove>
-			<li data-icon="gear">
-				<a class="savapage-detail" name="Options">
-					<wicket:message key="cat-options" />
-				</a>
-			</li>
-			<li data-icon="info">
-				<a class="savapage-detail-prev" name="DocLogBase">
-					<wicket:message key="cat-doclog" />
-				</a>
-			</li>
-			<li data-icon="alert">
-				<a class="savapage-detail-prev" name="AppLogBase">
-					<wicket:message key="cat-applog" />
-				</a>
-			</li>
-			<li data-icon="info">
-				<a class="savapage-detail" name="About">
-					<wicket:message key="cat-about" />
-				</a>
-			</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-users">
+				<li data-icon="user">
+					<a class="savapage-detail-prev" name="UsersBase"
+						wicket:id="cat-users" />
+				</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-groups">
+				<li data-icon="user">
+					<a class="savapage-detail-prev" name="UserGroupsBase"
+						wicket:id="cat-groups" />
+				</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-accounts">
+				<li data-icon="tag">
+					<a class="savapage-detail-prev" name="AccountsBase"
+						wicket:id="cat-accounts" />
+				</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-queues">
+				<li data-icon="gear">
+					<a class="savapage-detail-prev" name="QueuesBase"
+						wicket:id="cat-queues" />
+				</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-printers">
+				<li data-icon="gear">
+					<a class="savapage-detail-prev" name="PrintersBase"
+						wicket:id="cat-printers" />
+				</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-devices">
+				<li data-icon="gear">
+					<a class="savapage-detail-prev" name="DevicesBase"
+						wicket:id="cat-devices" />
+				</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-options">
+				<li data-icon="gear">
+					<a class="savapage-detail" name="Options" wicket:id="cat-options" />
+				</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-doclog">
+				<li data-icon="info">
+					<a class="savapage-detail-prev" name="DocLogBase"
+						wicket:id="cat-doclog" />
+				</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-applog">
+				<li data-icon="alert">
+					<a class="savapage-detail-prev" name="AppLogBase"
+						wicket:id="cat-applog" />
+				</li>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="cat-about">
+				<li data-icon="info">
+					<a class="savapage-detail" name="About" wicket:id="cat-about" />
+				</li>
+			</wicket:enclosure>
+
 			<li data-icon="power">
-				<a href="#" id="button-logout">
-					<span style="color: brown;"><wicket:message
+				<a href="#" id="button-logout"> <span style="color: brown;"><wicket:message
 							key="button-logout" /></span>
 				</a>
 			</li>
+
 		</ul>
 	</div>
 	<div class="content-primary" id="sp-a-content" />
@@ -117,38 +134,35 @@
 
 	<div data-role="controlgroup" data-type="horizontal">
 		<a href="#sp-a-top"
-			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-home">
-			<wicket:message key="button-top" />
-		</a>
-		<a href="#sp-a-menu"
-			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-carat-u">
-			<wicket:message key="button-menu" />
-		</a>
-
-		<a href="#sp-a-content" id="sp-a-content-button"
+			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-home"> <wicket:message
+				key="button-top" />
+		</a> <a href="#sp-a-menu"
+			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-carat-u"> <wicket:message
+				key="button-menu" />
+		</a> <a href="#sp-a-content" id="sp-a-content-button"
 			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-arrow-u-r">
-			&nbsp;</a>
-
-		<a href="#sp-a-footer" id="sp-a-footer-button"
+			&nbsp;</a> <a href="#sp-a-footer" id="sp-a-footer-button"
 			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-carat-d">
-			&nbsp;</a>
-
-		<a href="#sp-popup-main-action" data-rel="popup"
+			&nbsp;</a> <a href="#sp-popup-main-action" data-rel="popup"
 			class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-action ui-btn-icon-notext">&nbsp;</a>
 
 		<div data-role="popup" id="sp-popup-main-action">
 			<ul data-role="listview" data-inset="true" style="min-width: 210px;">
-				<li data-icon="gear">
-					<a class="savapage-detail-prev" name="AccountVoucherBase">
-						<wicket:message key="vouchers" />
-					</a>
-				</li>
 
-				<li data-icon="gear">
-					<a class="savapage-detail-prev" name="ConfigPropBase">
-						<wicket:message key="config-editor" />
-					</a>
-				</li>
+				<wicket:enclosure child="cat-vouchers">
+					<li data-icon="gear">
+						<a class="savapage-detail-prev" name="AccountVoucherBase"
+							wicket:id="cat-vouchers" />
+					</li>
+				</wicket:enclosure>
+
+				<wicket:enclosure child="cat-config-editor">
+					<li data-icon="gear">
+						<a class="savapage-detail-prev" name="ConfigPropBase"
+							wicket:id="cat-config-editor" />
+					</li>
+				</wicket:enclosure>
+
 				<li data-icon="info">
 					<a href="/docs/manual/" target="_blank">User Manual</a>
 				</li>
@@ -167,3 +181,5 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+</html>

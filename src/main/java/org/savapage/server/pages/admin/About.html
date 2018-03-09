@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ..|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein.......| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein.......| 
     |........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ......|
     | it under the terms of the GNU Affero General Public License as ........|
@@ -129,9 +130,11 @@
 
 			</ul>
 
-			<a href="#page-membercard-upload"
-				wicket:id="button-import-membercard"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-u" />
+			<wicket:enclosure child="button-import-membercard">
+				<a href="#page-membercard-upload"
+					wicket:id="button-import-membercard"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-u" />
+			</wicket:enclosure>
 
 		</div>
 
@@ -392,34 +395,6 @@
 		</div>
 	</li>
 
-	<wicket:remove>
-		<!--
-
-    <li><div data-role="collapsible" data-collapsed="true">
-    
-        <h3>Database Size Statistics</h3>
-
-        <div>These statistics can be used to assist estimating database
-            size. The statistics are updated weekly.</div>
-
-        <ul data-role="listview" data-inset="true">
-
-            <li><h3>Statistics last updated</h3>
-                <p>May 1, 2011 1:15:04 AM</p>
-            </li>
-            
-            <li><h3>Print log count</h3>
-                <div class="ui-li-count">818</div>
-            </li>
-
-            <li><h3>Account transaction count</h3>
-                <div class="ui-li-count">868</div>
-            </li>
-        </ul>
-        
-    </div></li>
--->
-	</wicket:remove>
-
-
 </ul>
+
+</html>

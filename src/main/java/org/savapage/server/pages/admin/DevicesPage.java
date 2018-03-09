@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -36,6 +36,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.DeviceDao.Field;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
@@ -43,11 +45,13 @@ import org.savapage.core.dto.RfIdReaderStatusDto;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.PrinterGroupMember;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.RfIdReaderService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,16 +67,28 @@ public final class DevicesPage extends AbstractAdminListPage {
      */
     private static final long serialVersionUID = 1L;
 
+    /** */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(DevicesPage.class);
 
-    private static final int MAX_PAGES_IN_NAVBAR = 5; // must be odd number
-
     /**
-     * .
+     * Note: must be odd number.
      */
+    private static final int MAX_PAGES_IN_NAVBAR = 5;
+
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
     private static final DeviceService DEVICE_SERVICE =
             ServiceContext.getServiceFactory().getDeviceService();
+
+    private static final RfIdReaderService rfidReaderService =
+            ServiceContext.getServiceFactory().getRfIdReaderService();
+
+    private static final DeviceDao deviceDAO =
+            ServiceContext.getDaoContext().getDeviceDao();
 
     /**
      * Bean for mapping JSON page request.
@@ -165,16 +181,268 @@ public final class DevicesPage extends AbstractAdminListPage {
 
     /**
      *
+     * @author Rijk Ravestein
+     *
+     */
+    private final class DeviceListView extends PropertyListView<Device> {
+
+        /** */
+        private static final long serialVersionUID = 1L;
+
+        /** */
+        private static final String WID_BUTTON_EDIT = "button-edit";
+
+        /** */
+        private final DateFormat dateFormat;
+
+        /***/
+        private final boolean isEditor;
+
+        /**
+         *
+         * @param id
+         * @param list
+         */
+        public DeviceListView(final String id, final List<Device> list) {
+
+            super(id, list);
+
+            this.dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM,
+                    DateFormat.MEDIUM, getLocale());
+
+            this.isEditor = ACCESS_CONTROL_SERVICE.hasPermission(
+                    SpSession.get().getUser(), ACLOidEnum.A_DEVICES,
+                    ACLPermissionEnum.EDITOR);
+        }
+
+        @Override
+        protected void populateItem(final ListItem<Device> item) {
+
+            final Device device =
+                    deviceDAO.findById(item.getModelObject().getId());
+
+            Label labelWrk = null;
+
+            /*
+             *
+             */
+            item.add(new Label("deviceName"));
+            item.add(new Label("location"));
+
+            String signalKey = null;
+            String color = null;
+
+            /*
+             * Network Reader Connected?
+             */
+            String readerConnectStatus = null;
+
+            if (!device.getDisabled() && deviceDAO.isCardReader(device)) {
+
+                RfIdReaderStatusDto status = rfidReaderService.getReaderStatus(
+                        device.getHostname(), device.getPort());
+
+                if (status.isConnected()) {
+                    color = MarkupHelper.CSS_TXT_VALID;
+                    signalKey = "signal-connected";
+                } else {
+                    color = MarkupHelper.CSS_TXT_ERROR;
+                    signalKey = "signal-disconnected";
+                }
+
+                readerConnectStatus = localized(signalKey,
+                        dateFormat.format(status.getDate()));
+            } else {
+                readerConnectStatus = "";
+            }
+
+            item.add(createVisibleLabel(deviceDAO.isCardReader(device),
+                    "readerConnectStatus", readerConnectStatus,
+                    color + " " + MarkupHelper.CSS_TXT_WRAP));
+
+            /*
+             * Signal
+             */
+            String hostname = device.getHostname();
+
+            if (device.getPort() != null && device.getPort() > 0) {
+                hostname += ":" + device.getPort();
+            }
+            item.add(new Label("hostname", hostname));
+
+            if (device.getDisabled()) {
+                color = MarkupHelper.CSS_TXT_ERROR;
+                signalKey = "signal-disabled";
+            } else {
+                color = MarkupHelper.CSS_TXT_VALID;
+                signalKey = "signal-active";
+            }
+
+            String signal = "";
+
+            if (signalKey != null) {
+                signal = localized(signalKey);
+            }
+
+            labelWrk = new Label("signal", signal);
+
+            if (color != null) {
+                labelWrk.add(new AttributeModifier("class", color));
+            }
+            item.add(labelWrk);
+
+            /*
+             *
+             */
+            String assocTerminal = null;
+            String assocCardReader = null;
+
+            if (device.getCardReader() != null) {
+                assocCardReader = device.getCardReader().getDisplayName();
+            } else if (device.getCardReaderTerminal() != null) {
+                assocTerminal = device.getCardReaderTerminal().getDisplayName();
+            }
+
+            item.add(createVisibleLabel(assocTerminal != null, "assocTerminal",
+                    assocTerminal));
+            item.add(createVisibleLabel(assocCardReader != null,
+                    "assocCardReader", assocCardReader));
+
+            /*
+             * Authenticated printing.
+             */
+            String printerAuth = null;
+            String printerGroupAuth = null;
+
+            if (device.getPrinter() != null) {
+                printerAuth = device.getPrinter().getPrinterName();
+            } else {
+                PrinterGroup group = device.getPrinterGroup();
+                if (group != null) {
+                    printerGroupAuth = group.getDisplayName() + " (";
+                    String members = null;
+                    for (PrinterGroupMember member : group.getMembers()) {
+                        if (members == null) {
+                            members = "";
+                        } else {
+                            members += ", ";
+                        }
+                        members += member.getPrinter().getDisplayName();
+                    }
+                    if (StringUtils.isBlank(members)) {
+                        members = "-";
+                    }
+                    printerGroupAuth += members + ")";
+                }
+            }
+
+            /*
+             * Authenticated printing mode.
+             */
+            String proxyPrintAuthMode = null;
+
+            if (printerAuth != null || printerGroupAuth != null) {
+
+                final ProxyPrintAuthModeEnum authModeEnum =
+                        DEVICE_SERVICE.getProxyPrintAuthMode(device.getId());
+
+                if (authModeEnum == null) {
+
+                    proxyPrintAuthMode = "";
+
+                } else {
+                    proxyPrintAuthMode = "&bull;&nbsp;";
+
+                    switch (authModeEnum) {
+                    case DIRECT:
+                        proxyPrintAuthMode += "Direct";
+                        break;
+
+                    case FAST:
+                        proxyPrintAuthMode += "Fast";
+                        break;
+
+                    case FAST_DIRECT:
+                        proxyPrintAuthMode += "Fast &bull; Direct";
+                        break;
+
+                    case FAST_HOLD:
+                        proxyPrintAuthMode += "Fast &bull; Hold";
+                        break;
+
+                    case HOLD:
+                        proxyPrintAuthMode += "Hold";
+                        break;
+
+                    default:
+                        throw new SpException("Oops, missed auth mode ["
+                                + authModeEnum + "]");
+                    }
+
+                }
+
+            }
+            item.add(createVisibleLabel(printerAuth != null, "printerAuthMode",
+                    proxyPrintAuthMode).setEscapeModelStrings(false));
+            item.add(createVisibleLabel(printerGroupAuth != null,
+                    "printerGroupAuthMode", proxyPrintAuthMode)
+                            .setEscapeModelStrings(false));
+
+            item.add(createVisibleLabel(printerAuth != null, "printerAuth",
+                    printerAuth));
+            item.add(createVisibleLabel(printerGroupAuth != null,
+                    "printerGroupAuth", printerGroupAuth));
+
+            /*
+             * Device Image
+             */
+            final String imageSrc;
+
+            if (device.getCardReader() != null) {
+                imageSrc = "device-terminal-card-reader-16x16.png";
+            } else if (device.getCardReaderTerminal() != null) {
+                imageSrc = "device-card-reader-terminal-16x16.png";
+            } else if (device.getDeviceType()
+                    .equals(DeviceTypeEnum.CARD_READER.toString())) {
+                imageSrc = "device-card-reader-16x16.png";
+            } else {
+                imageSrc = "device-terminal-16x16.png";
+            }
+
+            labelWrk = new Label("deviceImage", "");
+            labelWrk.add(new AttributeModifier("src",
+                    String.format("%s/%s", WebApp.PATH_IMAGES, imageSrc)));
+            item.add(labelWrk);
+
+            /*
+             * Set the uid in 'data-savapage' attribute, so it can be picked up
+             * in JavaScript for editing.
+             */
+            final MarkupHelper helper = new MarkupHelper(item);
+
+            if (this.isEditor) {
+                MarkupHelper
+                        .modifyLabelAttr(
+                                helper.encloseLabel(WID_BUTTON_EDIT,
+                                        getLocalizer().getString("button-edit",
+                                                this),
+                                        true),
+                                MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                device.getId().toString());
+
+                item.add(labelWrk);
+            } else {
+                helper.discloseLabel(WID_BUTTON_EDIT);
+            }
+        }
+    }
+
+    /**
+     *
      */
     public DevicesPage(final PageParameters parameters) {
 
         super(parameters);
-
-        final RfIdReaderService rfidReaderService =
-                ServiceContext.getServiceFactory().getRfIdReaderService();
-
-        final DateFormat dateFormat = DateFormat.getDateTimeInstance(
-                DateFormat.MEDIUM, DateFormat.MEDIUM, getLocale());
 
         final Req req = readReq();
 
@@ -194,9 +462,6 @@ public final class DevicesPage extends AbstractAdminListPage {
         filter.setDisabled(req.getSelect().getDisabled());
 
         //
-        final DeviceDao deviceDAO =
-                ServiceContext.getDaoContext().getDeviceDao();
-
         final long devicesCount = deviceDAO.getListCount(filter);
 
         final List<Device> entryList = deviceDAO.getListChunk(filter,
@@ -206,224 +471,7 @@ public final class DevicesPage extends AbstractAdminListPage {
         /*
          * Display the requested page.
          */
-        add(new PropertyListView<Device>("devices-view", entryList) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void populateItem(final ListItem<Device> item) {
-
-                final Device device =
-                        deviceDAO.findById(item.getModelObject().getId());
-
-                Label labelWrk = null;
-
-                /*
-                 *
-                 */
-                item.add(new Label("deviceName"));
-                item.add(new Label("location"));
-
-                String signalKey = null;
-                String color = null;
-
-                /*
-                 * Network Reader Connected?
-                 */
-                String readerConnectStatus = null;
-
-                if (!device.getDisabled() && deviceDAO.isCardReader(device)) {
-
-                    RfIdReaderStatusDto status =
-                            rfidReaderService.getReaderStatus(
-                                    device.getHostname(), device.getPort());
-
-                    if (status.isConnected()) {
-                        color = MarkupHelper.CSS_TXT_VALID;
-                        signalKey = "signal-connected";
-                    } else {
-                        color = MarkupHelper.CSS_TXT_ERROR;
-                        signalKey = "signal-disconnected";
-                    }
-
-                    readerConnectStatus = localized(signalKey,
-                            dateFormat.format(status.getDate()));
-                } else {
-                    readerConnectStatus = "";
-                }
-
-                item.add(createVisibleLabel(deviceDAO.isCardReader(device),
-                        "readerConnectStatus", readerConnectStatus,
-                        color + " " + MarkupHelper.CSS_TXT_WRAP));
-
-                /*
-                 * Signal
-                 */
-                String hostname = device.getHostname();
-
-                if (device.getPort() != null && device.getPort() > 0) {
-                    hostname += ":" + device.getPort();
-                }
-                item.add(new Label("hostname", hostname));
-
-                if (device.getDisabled()) {
-                    color = MarkupHelper.CSS_TXT_ERROR;
-                    signalKey = "signal-disabled";
-                } else {
-                    color = MarkupHelper.CSS_TXT_VALID;
-                    signalKey = "signal-active";
-                }
-
-                String signal = "";
-
-                if (signalKey != null) {
-                    signal = localized(signalKey);
-                }
-
-                labelWrk = new Label("signal", signal);
-
-                if (color != null) {
-                    labelWrk.add(new AttributeModifier("class", color));
-                }
-                item.add(labelWrk);
-
-                /*
-                 *
-                 */
-                String assocTerminal = null;
-                String assocCardReader = null;
-
-                if (device.getCardReader() != null) {
-                    assocCardReader = device.getCardReader().getDisplayName();
-                } else if (device.getCardReaderTerminal() != null) {
-                    assocTerminal =
-                            device.getCardReaderTerminal().getDisplayName();
-                }
-
-                item.add(createVisibleLabel(assocTerminal != null,
-                        "assocTerminal", assocTerminal));
-                item.add(createVisibleLabel(assocCardReader != null,
-                        "assocCardReader", assocCardReader));
-
-                /*
-                 * Authenticated printing.
-                 */
-                String printerAuth = null;
-                String printerGroupAuth = null;
-
-                if (device.getPrinter() != null) {
-                    printerAuth = device.getPrinter().getPrinterName();
-                } else {
-                    PrinterGroup group = device.getPrinterGroup();
-                    if (group != null) {
-                        printerGroupAuth = group.getDisplayName() + " (";
-                        String members = null;
-                        for (PrinterGroupMember member : group.getMembers()) {
-                            if (members == null) {
-                                members = "";
-                            } else {
-                                members += ", ";
-                            }
-                            members += member.getPrinter().getDisplayName();
-                        }
-                        if (StringUtils.isBlank(members)) {
-                            members = "-";
-                        }
-                        printerGroupAuth += members + ")";
-                    }
-                }
-
-                /*
-                 * Authenticated printing mode.
-                 */
-                String proxyPrintAuthMode = null;
-
-                if (printerAuth != null || printerGroupAuth != null) {
-
-                    final ProxyPrintAuthModeEnum authModeEnum = DEVICE_SERVICE
-                            .getProxyPrintAuthMode(device.getId());
-
-                    if (authModeEnum == null) {
-
-                        proxyPrintAuthMode = "";
-
-                    } else {
-                        proxyPrintAuthMode = "&bull;&nbsp;";
-
-                        switch (authModeEnum) {
-                        case DIRECT:
-                            proxyPrintAuthMode += "Direct";
-                            break;
-
-                        case FAST:
-                            proxyPrintAuthMode += "Fast";
-                            break;
-
-                        case FAST_DIRECT:
-                            proxyPrintAuthMode += "Fast &bull; Direct";
-                            break;
-
-                        case FAST_HOLD:
-                            proxyPrintAuthMode += "Fast &bull; Hold";
-                            break;
-
-                        case HOLD:
-                            proxyPrintAuthMode += "Hold";
-                            break;
-
-                        default:
-                            throw new SpException("Oops, missed auth mode ["
-                                    + authModeEnum + "]");
-                        }
-
-                    }
-
-                }
-                item.add(createVisibleLabel(printerAuth != null,
-                        "printerAuthMode", proxyPrintAuthMode)
-                                .setEscapeModelStrings(false));
-                item.add(createVisibleLabel(printerGroupAuth != null,
-                        "printerGroupAuthMode", proxyPrintAuthMode)
-                                .setEscapeModelStrings(false));
-
-                item.add(createVisibleLabel(printerAuth != null, "printerAuth",
-                        printerAuth));
-                item.add(createVisibleLabel(printerGroupAuth != null,
-                        "printerGroupAuth", printerGroupAuth));
-
-                /*
-                 * Device Image
-                 */
-                final String imageSrc;
-
-                if (device.getCardReader() != null) {
-                    imageSrc = "device-terminal-card-reader-16x16.png";
-                } else if (device.getCardReaderTerminal() != null) {
-                    imageSrc = "device-card-reader-terminal-16x16.png";
-                } else if (device.getDeviceType()
-                        .equals(DeviceTypeEnum.CARD_READER.toString())) {
-                    imageSrc = "device-card-reader-16x16.png";
-                } else {
-                    imageSrc = "device-terminal-16x16.png";
-                }
-
-                labelWrk = new Label("deviceImage", "");
-                labelWrk.add(new AttributeModifier("src",
-                        String.format("%s/%s", WebApp.PATH_IMAGES, imageSrc)));
-                item.add(labelWrk);
-
-                /*
-                 * Set the uid in 'data-savapage' attribute, so it can be picked
-                 * up in JavaScript for editing.
-                 */
-                labelWrk = new Label("button-edit",
-                        getLocalizer().getString("button-edit", this));
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, device.getId()));
-                item.add(labelWrk);
-
-            }
-        });
+        add(new DeviceListView("devices-view", entryList));
 
         /*
          * Display the navigation bars and write the response.

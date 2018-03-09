@@ -219,16 +219,16 @@ public class DocLogBase extends AbstractAuthPage {
             final User user = SpSession.get().getUser();
 
             final List<ACLPermissionEnum> permissions = ACCESS_CONTROL_SERVICE
-                    .getUserPermission(user, ACLOidEnum.U_INBOX);
+                    .getPermission(user, ACLOidEnum.U_INBOX);
 
             visibleLetterhead = user != null
                     && (permissions == null || ACCESS_CONTROL_SERVICE
-                            .hasUserAccess(user, ACLOidEnum.U_LETTERHEAD));
+                            .hasAccess(user, ACLOidEnum.U_LETTERHEAD));
 
             btnVisiblePdf = user != null && (permissions == null
-                    || ACCESS_CONTROL_SERVICE.hasUserPermission(permissions,
+                    || ACCESS_CONTROL_SERVICE.hasPermission(permissions,
                             ACLPermissionEnum.DOWNLOAD)
-                    || ACCESS_CONTROL_SERVICE.hasUserPermission(permissions,
+                    || ACCESS_CONTROL_SERVICE.hasPermission(permissions,
                             ACLPermissionEnum.SEND));
 
             btnVisiblePrint = !printerList.isEmpty() && user != null

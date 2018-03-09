@@ -261,7 +261,7 @@ public class Main extends AbstractUserPage {
         }
 
         final boolean showUserBalance =
-                ACCESS_CONTROL_SERVICE.hasUserPermission(user,
+                ACCESS_CONTROL_SERVICE.hasPermission(user,
                         ACLOidEnum.U_FINANCIAL, ACLPermissionEnum.READER);
 
         helper.encloseLabel("mini-user-balance", "", showUserBalance);
@@ -271,7 +271,7 @@ public class Main extends AbstractUserPage {
                 userName, true);
 
         final boolean showUserDetails =
-                ACCESS_CONTROL_SERVICE.hasUserAccess(user, ACLOidEnum.U_USER);
+                ACCESS_CONTROL_SERVICE.hasAccess(user, ACLOidEnum.U_USER);
 
         if (showUserDetails) {
             MarkupHelper.appendLabelAttr(name, MarkupHelper.ATTR_CLASS,
@@ -321,7 +321,7 @@ public class Main extends AbstractUserPage {
         //
         navButtonWlk = NavButtonEnum.PDF;
 
-        final Integer inboxPriv = ACCESS_CONTROL_SERVICE.getUserPrivileges(user,
+        final Integer inboxPriv = ACCESS_CONTROL_SERVICE.getPrivileges(user,
                 ACLOidEnum.U_INBOX);
 
         if (inboxPriv == null
@@ -370,7 +370,7 @@ public class Main extends AbstractUserPage {
 
         //
         navButtonWlk = NavButtonEnum.LETTERHEAD;
-        if (ACCESS_CONTROL_SERVICE.hasUserAccess(user,
+        if (ACCESS_CONTROL_SERVICE.hasAccess(user,
                 ACLOidEnum.U_LETTERHEAD)) {
             set.add(navButtonWlk);
         }

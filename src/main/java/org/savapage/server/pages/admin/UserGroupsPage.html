@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
     | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -15,28 +16,41 @@
 
 <span style="display: none;" class="json-rsp" wicket:id="json-rsp"></span>
 
-<wicket:panel wicket:id="nav-bar-1"/>
+<wicket:panel wicket:id="nav-bar-1" />
 <br />
 <div>
 	<ul data-role="listview" data-filter="false">
 		<li wicket:id="user-groups-view">
 			<h3 wicket:id="groupName" />
+
 			<p class="ui-li-count">
 				<strong wicket:id="signal"></strong>
 			</p>
-			<div data-role="controlgroup" data-type="horizontal" data-mini="true">
-				<button data-savapage="the-id"
-					class="sp-edit-user-group ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-edit"
-					wicket:id="button-edit" />
-				<button data-savapage="the-id"
-					class="sp-user-group-users ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-user"
-					wicket:id="button-users" />
-				<button data-savapage="the-id"
-					class="sp-user-group-account ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-tag"
-					wicket:id="button-account" />
+
+			<div data-role="controlgroup" data-type="horizontal" data-mini="true"
+				wicket:id="sect-buttons">
+
+				<wicket:enclosure child="button-edit">
+					<button data-savapage="the-id"
+						class="sp-edit-user-group ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-edit"
+						wicket:id="button-edit" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="button-users">
+					<button data-savapage="the-id"
+						class="sp-user-group-users ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-user"
+						wicket:id="button-users" />
+				</wicket:enclosure>
+
+				<wicket:enclosure child="button-account">
+					<button data-savapage="the-id"
+						class="sp-user-group-account ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-tag"
+						wicket:id="button-account" />
+				</wicket:enclosure>
 			</div>
 		</li>
 	</ul>
 </div>
 <p>&nbsp;</p>
-<wicket:panel wicket:id="nav-bar-2"/>
+<wicket:panel wicket:id="nav-bar-2" />
+</html>

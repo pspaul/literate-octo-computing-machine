@@ -60,7 +60,7 @@ public class Letterhead extends AbstractUserPage {
             canCreate = true;
         } else {
             final Integer letterheadPriv =
-                    ACCESS_CONTROL_SERVICE.getUserPrivileges(
+                    ACCESS_CONTROL_SERVICE.getPrivileges(
                             SpSession.get().getUser(), ACLOidEnum.U_LETTERHEAD);
             canCreate = letterheadPriv == null || ACLPermissionEnum.EDITOR
                     .isPresent(letterheadPriv.intValue());

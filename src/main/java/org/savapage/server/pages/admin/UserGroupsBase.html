@@ -77,11 +77,13 @@
 							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
 							<wicket:message key="button-default" />
 						</button>
+
 						<wicket:remove>
 							<!-- 
                         <wicket:panel wicket:id="report-button-panel" />
 -->
 						</wicket:remove>
+
 						<button
 							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</button>
 					</div>
@@ -90,21 +92,25 @@
 		</div>
 	</li>
 
-	<li>
-		<div>
-			<wicket:enclosure child="button-add-remove">
+	<wicket:enclosure child="button-add-remove">
+		<li>
+			<div>
 				<button id="button-show-add-remove-user-groups"
 					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit"
 					wicket:id="button-add-remove" />
 				<wicket:panel wicket:id="tooltip-add-remove" />
-			</wicket:enclosure>
-			<wicket:enclosure child="warn-not-ready-to-use">
+			</div>
+		</li>
+	</wicket:enclosure>
+
+	<wicket:enclosure child="warn-not-ready-to-use">
+		<li>
+			<div>
 				<span class="sp-txt-warn sp-txt-wrap"
 					wicket:id="warn-not-ready-to-use" />
-			</wicket:enclosure>
-		</div>
-
-	</li>
+			</div>
+		</li>
+	</wicket:enclosure>
 
 	<li id="sp-user-group-list-page"></li>
 

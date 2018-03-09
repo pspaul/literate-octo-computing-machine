@@ -110,7 +110,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
 
         final String keyTitleFinancial = "title-financial";
 
-        final Integer financialPriv = ACCESS_CONTROL_SERVICE.getUserPrivileges(
+        final Integer financialPriv = ACCESS_CONTROL_SERVICE.getPrivileges(
                 SpSession.get().getUser(), ACLOidEnum.U_FINANCIAL);
 
         if (financialPriv == null

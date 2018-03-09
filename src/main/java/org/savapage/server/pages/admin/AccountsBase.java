@@ -23,9 +23,15 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.JrExportFileExtButtonPanel;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -39,16 +45,16 @@ public class AccountsBase extends AbstractAdminPage {
      */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * .
-     */
+    /** */
     private static final String WICKET_ID_BUTTON_NEW = "button-new";
 
-    /**
-     * .
-     */
+    /** */
     private static final String WICKET_ID_TXT_NOT_READY =
             "warn-not-ready-to-use";
+
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      *
@@ -66,9 +72,14 @@ public class AccountsBase extends AbstractAdminPage {
                 AccountTypeEnum.SHARED.toString());
 
         if (ConfigManager.instance().isAppReadyToUse()) {
-            addVisible(ConfigManager.isInternalUsersEnabled(),
-                    WICKET_ID_BUTTON_NEW, localized("button-new"));
+
+            helper.encloseLabel(WICKET_ID_BUTTON_NEW,
+                    HtmlButtonEnum.ADD.uiText(getLocale()),
+                    ACCESS_CONTROL_SERVICE.hasPermission(
+                            SpSession.get().getUser(), ACLOidEnum.A_ACCOUNTS,
+                            ACLPermissionEnum.EDITOR));
             helper.discloseLabel(WICKET_ID_TXT_NOT_READY);
+
         } else {
             helper.discloseLabel(WICKET_ID_BUTTON_NEW);
             helper.encloseLabel(WICKET_ID_TXT_NOT_READY,

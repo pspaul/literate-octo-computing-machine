@@ -150,19 +150,24 @@
 		</div>
 	</li>
 
-	<li>
-		<div>
-			<wicket:enclosure child="button-new">
+	<wicket:enclosure child="button-new">
+		<li>
+			<div>
 				<button id="button-create-account"
 					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit"
 					wicket:id="button-new" />
-			</wicket:enclosure>
-			<wicket:enclosure child="warn-not-ready-to-use">
+			</div>
+		</li>
+	</wicket:enclosure>
+
+	<wicket:enclosure child="warn-not-ready-to-use">
+		<li>
+			<div>
 				<span class="sp-txt-warn sp-txt-wrap"
 					wicket:id="warn-not-ready-to-use" />
-			</wicket:enclosure>
-		</div>
-	</li>
+			</div>
+		</li>
+	</wicket:enclosure>
 
 	<li id="sp-shared-account-list-page"></li>
 

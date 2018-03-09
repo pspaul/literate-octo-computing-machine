@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,19 +14,15 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
 package org.savapage.server.pages.admin;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
@@ -34,12 +30,17 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.UserGroupMemberDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserGroupPagerReq;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -54,9 +55,9 @@ public final class UserGroupsPage extends AbstractAdminListPage {
     private static final long serialVersionUID = 1L;
 
     /**
-     *
+     * Note: must be odd number.
      */
-    private static final int MAX_PAGES_IN_NAVBAR = 5; // must be odd number
+    private static final int MAX_PAGES_IN_NAVBAR = 5;
 
     /**
      * @return {@code false} to give Admin a chance to inspect the User Groups.
@@ -64,6 +65,147 @@ public final class UserGroupsPage extends AbstractAdminListPage {
     @Override
     protected boolean needMembership() {
         return false;
+    }
+
+    /**
+     *
+     * @author Rijk Ravestein
+     *
+     */
+    private final class UserGroupListView extends PropertyListView<UserGroup> {
+
+        private static final long serialVersionUID = 1L;
+
+        /** */
+        private static final String WID_BUTTON_EDIT = "button-edit";
+        /** */
+        private static final String WID_BUTTON_USERS = "button-users";
+        /** */
+        private static final String WID_BUTTON_ACCOUNT = "button-account";
+
+        /** */
+        private final AccessControlService accessControlService =
+                ServiceContext.getServiceFactory().getAccessControlService();
+
+        /** */
+        private final UserGroupMemberDao groupMemberDao =
+                ServiceContext.getDaoContext().getUserGroupMemberDao();
+
+        /** */
+        private final UserDao userDao =
+                ServiceContext.getDaoContext().getUserDao();
+
+        /** */
+        private final UserGroupMemberDao.GroupFilter groupFilter =
+                new UserGroupMemberDao.GroupFilter();
+
+        /***/
+        private final boolean isEditor;
+        /***/
+        private final boolean hasAccessAcc;
+        /***/
+        private final boolean hasAccessUsers;
+
+        /** */
+        public UserGroupListView(String id, List<UserGroup> list) {
+
+            super(id, list);
+
+            final User reqUser = SpSession.get().getUser();
+
+            this.isEditor = accessControlService.hasPermission(reqUser,
+                    ACLOidEnum.A_USER_GROUPS, ACLPermissionEnum.EDITOR);
+
+            this.hasAccessAcc = accessControlService.hasAccess(reqUser,
+                    ACLOidEnum.A_ACCOUNTS);
+
+            this.hasAccessUsers =
+                    accessControlService.hasAccess(reqUser, ACLOidEnum.A_USERS);
+        }
+
+        @Override
+        protected void populateItem(final ListItem<UserGroup> item) {
+
+            final MarkupHelper helper = new MarkupHelper(item);
+
+            final UserGroup userGroup = item.getModelObject();
+
+            Label labelWrk = null;
+
+            //
+            final ReservedUserGroupEnum reservedGroup =
+                    ReservedUserGroupEnum.fromDbName(userGroup.getGroupName());
+
+            final String groupName;
+            final long userCount;
+
+            if (reservedGroup == null) {
+                groupName = userGroup.getGroupName();
+                groupFilter.setGroupId(userGroup.getId());
+                userCount = groupMemberDao.getUserCount(groupFilter);
+            } else {
+                groupName = reservedGroup.getUiName();
+                userCount = userDao.countActiveUsers(reservedGroup);
+            }
+
+            labelWrk = helper.addLabel("groupName", groupName);
+
+            if (reservedGroup != null) {
+                MarkupHelper.appendLabelAttr(labelWrk, "class",
+                        MarkupHelper.CSS_TXT_WARN);
+            }
+
+            helper.addLabel("signal", String.valueOf(userCount));
+
+            /*
+             * Set the uid in 'data-savapage' attribute, so it can be picked up
+             * in JavaScript for editing.
+             */
+            if (this.isEditor) {
+                MarkupHelper
+                        .modifyLabelAttr(
+                                helper.encloseLabel(WID_BUTTON_EDIT,
+                                        getLocalizer().getString("button-edit",
+                                                this),
+                                        true),
+                                MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                userGroup.getId().toString());
+            } else {
+                helper.discloseLabel(WID_BUTTON_EDIT);
+            }
+
+            if (this.hasAccessUsers) {
+                MarkupHelper
+                        .modifyLabelAttr(
+                                helper.encloseLabel(WID_BUTTON_USERS,
+                                        getLocalizer().getString("button-users",
+                                                this),
+                                        true),
+                                MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                userGroup.getId().toString());
+            } else {
+                helper.discloseLabel(WID_BUTTON_USERS);
+            }
+
+            if (this.hasAccessAcc) {
+                labelWrk = helper.encloseLabel(WID_BUTTON_ACCOUNT,
+                        getLocalizer().getString("button-account", this), true);
+
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        userGroup.getGroupName());
+
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE_TYPE,
+                        AccountTypeEnum.GROUP.toString());
+
+            } else {
+                helper.discloseLabel(WID_BUTTON_ACCOUNT);
+            }
+
+            helper.addTransparantInvisible("sect-buttons", !(this.isEditor
+                    || this.hasAccessAcc || this.hasAccessUsers));
+        }
     }
 
     /**
@@ -80,16 +222,7 @@ public final class UserGroupsPage extends AbstractAdminListPage {
         final boolean sortAscending = req.getSort().getAscending();
 
         final UserGroupDao.ListFilter filter = new UserGroupDao.ListFilter();
-
-        final UserGroupMemberDao.GroupFilter groupFilter =
-                new UserGroupMemberDao.GroupFilter();
-
-        final UserGroupMemberDao groupMemberDao =
-                ServiceContext.getDaoContext().getUserGroupMemberDao();
-
         filter.setContainingText(req.getSelect().getNameContainingText());
-
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
         final UserGroupDao userGroupDao =
                 ServiceContext.getDaoContext().getUserGroupDao();
@@ -103,106 +236,7 @@ public final class UserGroupsPage extends AbstractAdminListPage {
                 userGroupDao.getListChunk(filter, req.calcStartPosition(),
                         req.getMaxResults(), sortField, sortAscending);
 
-        //
-        add(new PropertyListView<UserGroup>("user-groups-view", entryList) {
-
-            private static final long serialVersionUID = 1L;
-
-            /**
-             *
-             * @param item
-             * @param mapVisible
-             */
-            private void evaluateVisible(final ListItem<UserGroup> item,
-                    final Map<String, String> mapVisible) {
-
-                for (Map.Entry<String, String> entry : mapVisible.entrySet()) {
-
-                    if (entry.getValue() == null) {
-                        entry.setValue("");
-                    }
-
-                    final String cssClassWlk = null;
-
-                    item.add(createVisibleLabel(
-                            StringUtils.isNotBlank(entry.getValue()),
-                            entry.getKey(), entry.getValue(), cssClassWlk));
-                }
-
-            }
-
-            @Override
-            protected void populateItem(final ListItem<UserGroup> item) {
-
-                final Map<String, String> mapVisible = new HashMap<>();
-
-                final UserGroup userGroup = item.getModelObject();
-
-                Label labelWrk = null;
-
-                //
-                final ReservedUserGroupEnum reservedGroup =
-                        ReservedUserGroupEnum
-                                .fromDbName(userGroup.getGroupName());
-
-                final String groupName;
-                final long userCount;
-
-                if (reservedGroup == null) {
-                    groupName = userGroup.getGroupName();
-                    groupFilter.setGroupId(userGroup.getId());
-                    userCount = groupMemberDao.getUserCount(groupFilter);
-                } else {
-                    groupName = reservedGroup.getUiName();
-                    userCount = userDao.countActiveUsers(reservedGroup);
-                }
-                labelWrk = new Label("groupName", groupName);
-
-                if (reservedGroup != null) {
-                    MarkupHelper.appendLabelAttr(labelWrk, "class",
-                            MarkupHelper.CSS_TXT_WARN);
-                }
-
-                item.add(labelWrk);
-
-                labelWrk = new Label("signal", String.valueOf(userCount));
-                item.add(labelWrk);
-
-                /*
-                 * Set the uid in 'data-savapage' attribute, so it can be picked
-                 * up in JavaScript for editing.
-                 */
-                labelWrk = new Label("button-edit",
-                        getLocalizer().getString("button-edit", this));
-
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, userGroup.getId()));
-
-                item.add(labelWrk);
-
-                //
-                labelWrk = new Label("button-users",
-                        getLocalizer().getString("button-users", this));
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, userGroup.getId()));
-                item.add(labelWrk);
-
-                //
-                labelWrk = new Label("button-account",
-                        getLocalizer().getString("button-account", this));
-                labelWrk.add(
-                        new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
-                                userGroup.getGroupName()));
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE_TYPE,
-                        AccountTypeEnum.GROUP.toString()));
-                item.add(labelWrk);
-
-                //
-                evaluateVisible(item, mapVisible);
-
-            }
-        });
+        add(new UserGroupListView("user-groups-view", entryList));
 
         /*
          * Display the navigation bars and write the response.

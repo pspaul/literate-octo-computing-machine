@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -42,6 +42,8 @@ import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.PrinterAttrDao;
 import org.savapage.core.dao.PrinterDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AccessControlScopeEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.PrinterAttrEnum;
@@ -53,9 +55,11 @@ import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.PrinterGroupMember;
+import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
@@ -67,6 +71,7 @@ import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
+import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,40 +87,34 @@ public final class PrintersPage extends AbstractAdminListPage {
      */
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
+    /** */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(PrintersPage.class);
 
-    /**
-     *
-     */
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
     private static final DeviceService DEVICE_SERVICE =
             ServiceContext.getServiceFactory().getDeviceService();
 
-    /**
-     *
-     */
+    /** */
     private static final PrinterService PRINTER_SERVICE =
             ServiceContext.getServiceFactory().getPrinterService();
 
-    /**
-     *
-     */
+    /** */
     private static final PrinterAttrDao PRINTER_ATTR_DAO =
             ServiceContext.getDaoContext().getPrinterAttrDao();
 
-    /**
-    *
-    */
+    /** */
     private static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
 
     /**
-     *
+     * Note: must be odd number.
      */
-    private static final int MAX_PAGES_IN_NAVBAR = 5; // must be odd number
+    private static final int MAX_PAGES_IN_NAVBAR = 5;
 
     /**
      * Bean for mapping JSON page request.
@@ -213,9 +212,37 @@ public final class PrintersPage extends AbstractAdminListPage {
 
         private static final long serialVersionUID = 1L;
 
+        /** */
+        private static final String WID_BUTTON_EDIT = "button-edit";
+
+        /** */
+        private static final String WID_BUTTON_LOG = "button-log";
+
+        /** */
+        private static final String WID_BUTTON_CUPS = "button-cups";
+
+        /***/
+        private final boolean isEditor;
+        /***/
+        private final boolean hasAccessDoc;
+
+        /**
+         *
+         * @param id
+         * @param entryList
+         */
         public PrintersListView(final String id,
                 final List<Printer> entryList) {
+
             super(id, entryList);
+
+            final User reqUser = SpSession.get().getUser();
+
+            this.isEditor = ACCESS_CONTROL_SERVICE.hasPermission(reqUser,
+                    ACLOidEnum.A_PRINTERS, ACLPermissionEnum.EDITOR);
+
+            this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
+                    ACLOidEnum.A_DOCUMENTS);
         }
 
         private String getProxyPrintAuthMode(final Device device) {
@@ -612,38 +639,44 @@ public final class PrintersPage extends AbstractAdminListPage {
              * Set the uid in 'data-savapage' attribute, so it can be picked up
              * in JavaScript for editing.
              */
-            labelWrk = new Label("button-edit",
-                    getLocalizer().getString("button-edit", this));
-            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
-                    printer.getId()));
-            item.add(labelWrk);
+            if (this.isEditor) {
+                labelWrk = new Label(WID_BUTTON_EDIT,
+                        getLocalizer().getString("button-edit", this));
+                labelWrk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, printer.getId()));
+                item.add(labelWrk);
+            } else {
+                helper.discloseLabel(WID_BUTTON_EDIT);
+            }
 
-            /*
-             *
-             */
-            labelWrk = new Label("button-log",
-                    getLocalizer().getString("button-log", this));
-            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
-                    printer.getId()));
-            item.add(labelWrk);
+            if (this.hasAccessDoc) {
+                labelWrk = new Label(WID_BUTTON_LOG,
+                        getLocalizer().getString("button-log", this));
+                labelWrk.add(new AttributeModifier(
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, printer.getId()));
+                item.add(labelWrk);
+            } else {
+                helper.discloseLabel(WID_BUTTON_LOG);
+            }
 
-            /*
-             *
-             */
-            labelWrk = new Label("button-cups",
-                    getLocalizer().getString("button-cups", this)) {
-                private static final long serialVersionUID = 1L;
+            //
+            final boolean showButtonCups = this.isEditor && cupsPrinter != null;
 
-                @Override
-                public boolean isVisible() {
-                    return cupsPrinter != null;
-                }
-            };
+            if (showButtonCups) {
+                MarkupHelper
+                        .modifyLabelAttr(
+                                helper.encloseLabel(WID_BUTTON_CUPS,
+                                        getLocalizer().getString("button-cups",
+                                                this),
+                                        true),
+                                MarkupHelper.ATTR_HREF,
+                                getCupsPrinterUrl(printer.getPrinterName()));
+            } else {
+                helper.discloseLabel(WID_BUTTON_CUPS);
+            }
 
-            labelWrk.add(new AttributeModifier("href",
-                    getCupsPrinterUrl(printer.getPrinterName())));
-            item.add(labelWrk);
-
+            helper.addTransparantInvisible("sect-buttons",
+                    !this.isEditor && !this.hasAccessDoc);
         }
     }
 

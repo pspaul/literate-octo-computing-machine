@@ -23,9 +23,14 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.JrExportFileExtButtonPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.TooltipPanel;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -34,15 +39,14 @@ import org.savapage.server.pages.TooltipPanel;
  */
 public class UserGroupsBase extends AbstractAdminPage {
 
-    /**
-     * .
-     */
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+    /** */
     private static final String WICKET_ID_BUTTON_ADD_REMOVE =
             "button-add-remove";
 
-    /**
-     * .
-     */
+    /** */
     private static final String WICKET_ID_TXT_NOT_READY =
             "warn-not-ready-to-use";
 
@@ -53,6 +57,8 @@ public class UserGroupsBase extends AbstractAdminPage {
 
     /**
      *
+     * @param parameters
+     *            The page parameters.
      */
     public UserGroupsBase(final PageParameters parameters) {
 
@@ -62,13 +68,20 @@ public class UserGroupsBase extends AbstractAdminPage {
 
         if (ConfigManager.instance().isAppReadyToUse()) {
 
-            helper.encloseLabel(WICKET_ID_BUTTON_ADD_REMOVE,
-                    localized("button-add-remove"), true);
+            if (ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
+                    ACLOidEnum.A_USER_GROUPS, ACLPermissionEnum.EDITOR)) {
 
-            final TooltipPanel tooltip = new TooltipPanel("tooltip-add-remove");
-            tooltip.populate(localized("tooltip-add-remove"));
+                helper.encloseLabel(WICKET_ID_BUTTON_ADD_REMOVE,
+                        localized("button-add-remove"), true);
 
-            add(tooltip);
+                final TooltipPanel tooltip =
+                        new TooltipPanel("tooltip-add-remove");
+                tooltip.populate(localized("tooltip-add-remove"));
+
+                add(tooltip);
+            } else {
+                helper.discloseLabel(WICKET_ID_BUTTON_ADD_REMOVE);
+            }
 
             helper.discloseLabel(WICKET_ID_TXT_NOT_READY);
 

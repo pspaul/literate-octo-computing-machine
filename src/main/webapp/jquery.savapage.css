@@ -33,6 +33,15 @@
     top: -15px;
 }
 
+.sp-disabled {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.sp-invisible {
+    display: none;
+}
+
 .sp-plain-link {
     /* */
     color: #74b042 !important;

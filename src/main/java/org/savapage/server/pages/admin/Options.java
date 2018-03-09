@@ -26,11 +26,13 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
 
 import javax.print.attribute.standard.MediaSizeName;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
@@ -39,6 +41,8 @@ import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.doc.XpsToPdf;
@@ -51,6 +55,7 @@ import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.job.SpJobType;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
@@ -58,11 +63,12 @@ import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
-import org.savapage.server.pages.TooltipPanel;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -76,9 +82,14 @@ public final class Options extends AbstractAdminPage {
      */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * .
-     */
+    /** */
+    private static final String OBFUSCATED_PASSWORD = "* * * * *";
+
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
     private static final ProxyPrintService PROXYPRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
 
@@ -104,6 +115,8 @@ public final class Options extends AbstractAdminPage {
                     new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
             return;
         }
+
+        final boolean isReadOnlyAccess = isReadOnlyAccess();
 
         //
         final MarkupHelper helper = new MarkupHelper(this);
@@ -143,7 +156,8 @@ public final class Options extends AbstractAdminPage {
 
         labelledInput("ldap-basedn", Key.AUTH_LDAP_BASE_DN);
         labelledInput("ldap-admin-dn", Key.AUTH_LDAP_ADMIN_DN);
-        labelledInput("ldap-admin-pw", Key.AUTH_LDAP_ADMIN_PASSWORD);
+        labelledPassword("ldap-admin-pw", Key.AUTH_LDAP_ADMIN_PASSWORD,
+                isReadOnlyAccess);
 
         labelledInput("ldap-user-id-number-field",
                 Key.LDAP_SCHEMA_USER_ID_NUMBER_FIELD);
@@ -288,7 +302,8 @@ public final class Options extends AbstractAdminPage {
         labelledInput("smtp-host", IConfigProp.Key.MAIL_SMTP_HOST);
         labelledInput("smtp-port", IConfigProp.Key.MAIL_SMTP_PORT);
         labelledInput("smtp-username", IConfigProp.Key.MAIL_SMTP_USER_NAME);
-        labelledInput("smtp-password", IConfigProp.Key.MAIL_SMTP_PASSWORD);
+        labelledPassword("smtp-password", IConfigProp.Key.MAIL_SMTP_PASSWORD,
+                isReadOnlyAccess);
 
         labelledRadio("smtp-security", "-none",
                 IConfigProp.Key.MAIL_SMTP_SECURITY,
@@ -341,7 +356,8 @@ public final class Options extends AbstractAdminPage {
             keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_ENDPOINT_PASSWORD;
             tagLabel("smartschool-print-password-label-1",
                     "smartschool-print-password", keyWlk);
-            tagInput("smartschool-print-password-1", keyWlk);
+            tagPassword("smartschool-print-password-1", keyWlk,
+                    isReadOnlyAccess);
 
             keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER;
             tagLabel("smartschool-print-proxyprinter-label-1",
@@ -404,7 +420,8 @@ public final class Options extends AbstractAdminPage {
             keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_ENDPOINT_PASSWORD;
             tagLabel("smartschool-print-password-label-2",
                     "smartschool-print-password", keyWlk);
-            tagInput("smartschool-print-password-2", keyWlk);
+            tagPassword("smartschool-print-password-2", keyWlk,
+                    isReadOnlyAccess);
 
             keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER;
             tagLabel("smartschool-print-proxyprinter-label-2",
@@ -526,16 +543,16 @@ public final class Options extends AbstractAdminPage {
 
         labelledInput("papercut-host", IConfigProp.Key.PAPERCUT_SERVER_HOST);
         labelledInput("papercut-port", IConfigProp.Key.PAPERCUT_SERVER_PORT);
-        labelledInput("papercut-token",
-                IConfigProp.Key.PAPERCUT_SERVER_AUTH_TOKEN);
+        labelledPassword("papercut-token",
+                IConfigProp.Key.PAPERCUT_SERVER_AUTH_TOKEN, isReadOnlyAccess);
 
         //
         labelledInput("papercut-db-driver",
                 IConfigProp.Key.PAPERCUT_DB_JDBC_DRIVER);
         labelledInput("papercut-db-url", IConfigProp.Key.PAPERCUT_DB_JDBC_URL);
         labelledInput("papercut-db-user", IConfigProp.Key.PAPERCUT_DB_USER);
-        labelledInput("papercut-db-password",
-                IConfigProp.Key.PAPERCUT_DB_PASSWORD);
+        labelledPassword("papercut-db-password",
+                IConfigProp.Key.PAPERCUT_DB_PASSWORD, isReadOnlyAccess);
 
         /*
          * Mail Print.
@@ -545,7 +562,8 @@ public final class Options extends AbstractAdminPage {
         labelledInput("imap-host", IConfigProp.Key.PRINT_IMAP_HOST);
         labelledInput("imap-port", IConfigProp.Key.PRINT_IMAP_PORT);
         labelledInput("imap-username", IConfigProp.Key.PRINT_IMAP_USER_NAME);
-        labelledInput("imap-password", IConfigProp.Key.PRINT_IMAP_PASSWORD);
+        labelledPassword("imap-password", IConfigProp.Key.PRINT_IMAP_PASSWORD,
+                isReadOnlyAccess);
 
         labelledRadio("imap-security", "-none",
                 IConfigProp.Key.PRINT_IMAP_SECURITY,
@@ -674,7 +692,7 @@ public final class Options extends AbstractAdminPage {
 
         labelWrk = new Label("gcp-summary-printer-state-display",
                 GcpPrinter.localized(enabled, gcpStatus));
-        labelWrk.add(new AttributeModifier("class", cssColor));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, cssColor));
         add(labelWrk);
 
         /*
@@ -711,7 +729,8 @@ public final class Options extends AbstractAdminPage {
                 Key.FINANCIAL_GLOBAL_CURRENCY_CODE);
 
         if (disableCurrencyChange) {
-            labelCurrency.add(new AttributeModifier("disabled", "disabled"));
+            labelCurrency.add(new AttributeModifier(MarkupHelper.ATTR_DISABLED,
+                    "disabled"));
         }
 
         helper.encloseLabel("button-change-financial-currency-code",
@@ -770,8 +789,8 @@ public final class Options extends AbstractAdminPage {
         }
 
         labelWrk = new Label("jmx-remote-process", jmcRemoteProcess);
-        labelWrk.add(
-                new AttributeModifier("class", MarkupHelper.CSS_TXT_VALID));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
+                MarkupHelper.CSS_TXT_VALID));
         add(labelWrk);
 
         add(new Label("jmx-password-reset", localized("jmx-password-reset",
@@ -850,10 +869,11 @@ public final class Options extends AbstractAdminPage {
         String colorInstalled = installed ? MarkupHelper.CSS_TXT_VALID
                 : MarkupHelper.CSS_TXT_WARN;
 
-        labelWrk = new Label("version-xpstopdf",
-                XpsToPdf.name() + " (" + localized(keyInstalled) + ")");
+        labelWrk = new Label("version-xpstopdf", String.format("%s (%s)",
+                XpsToPdf.name(), localized(keyInstalled)));
 
-        labelWrk.add(new AttributeModifier("class", colorInstalled));
+        labelWrk.add(
+                new AttributeModifier(MarkupHelper.ATTR_CLASS, colorInstalled));
         add(labelWrk);
 
         /*
@@ -874,7 +894,8 @@ public final class Options extends AbstractAdminPage {
 
         labelWrk = new Label("version-libreoffice",
                 version + " (" + localized(keyInstalled) + ")");
-        labelWrk.add(new AttributeModifier("class", colorInstalled));
+        labelWrk.add(
+                new AttributeModifier(MarkupHelper.ATTR_CLASS, colorInstalled));
         add(labelWrk);
 
         //
@@ -901,11 +922,6 @@ public final class Options extends AbstractAdminPage {
         helper.addModifyLabelAttr("sp-database-stats",
                 NounEnum.DATABASE.uiText(getLocale()), MarkupHelper.ATTR_TITLE,
                 NounEnum.STATISTICS.uiText(getLocale()));
-
-        final TooltipPanel tooltip =
-                new TooltipPanel("tooltip-backup-automatic");
-        tooltip.populate(localized("backup-automatic-tooltip"));
-        add(tooltip);
 
         /*
          *
@@ -1008,14 +1024,75 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.SYS_DEFAULT_PAPER_SIZE,
                 IConfigProp.PAPERSIZE_V_A4);
 
+        //
+        this.setReadOnlyAccess(helper, isReadOnlyAccess);
     }
 
+    /**
+     * @return {@code true} if user access is read-only.
+     */
+    private boolean isReadOnlyAccess() {
+
+        final List<ACLPermissionEnum> perms = ACCESS_CONTROL_SERVICE
+                .getPermission(SpSession.get().getUser(), ACLOidEnum.A_OPTIONS);
+
+        if (perms == null) {
+            return false;
+        }
+
+        if (!ACCESS_CONTROL_SERVICE.hasPermission(perms,
+                ACLPermissionEnum.READER)) {
+
+            throw new RestartResponseException(
+                    new MessageContent(AppLogLevelEnum.WARN,
+                            String.format("Not authorized for \"%s\"",
+                                    ACLOidEnum.A_OPTIONS.uiText(getLocale()))));
+        }
+
+        return !ACCESS_CONTROL_SERVICE.hasPermission(perms,
+                ACLPermissionEnum.EDITOR);
+    }
+
+    /**
+     *
+     * @param id
+     *            The Wicket ID.
+     * @param configKey
+     *            The config key.
+     */
     private void labelledInput(final String id,
             final IConfigProp.Key configKey) {
         tagInput(id, configKey);
         tagLabel(id + "-label", id, configKey);
     }
 
+    /**
+     *
+     * @param id
+     *            The Wicket ID.
+     * @param configKey
+     *            The config key.
+     * @param obfuscate
+     *            {@code true} when HTML value must me obfuscated.
+     */
+    private void labelledPassword(final String id,
+            final IConfigProp.Key configKey, final boolean obfuscate) {
+        if (obfuscate) {
+            tagInput(id, configKey, OBFUSCATED_PASSWORD);
+        } else {
+            tagInput(id, configKey);
+        }
+        tagLabel(id + "-label", id, configKey);
+    }
+
+    /**
+     *
+     * @param id
+     *            The Wicket ID.
+     * @param configKey
+     *            The config key.
+     * @param value
+     */
     private void labelledInput(final String id, final IConfigProp.Key configKey,
             final String value) {
         tagInput(id, configKey, value);
@@ -1030,15 +1107,15 @@ public final class Options extends AbstractAdminPage {
      * @param key
      *            The {@link IConfigProp.Key}.
      * @param value
-     *            The value.
+     *            Value of the HTML value attribute.
      * @return The added {@link Label}.
      */
     private Label tagInput(final String id, final IConfigProp.Key key,
             final String value) {
         Label labelWrk = new Label(id);
-        labelWrk.add(new AttributeModifier("id",
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_ID,
                 ConfigManager.instance().getConfigKey(key)));
-        labelWrk.add(new AttributeModifier("value", value));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_VALUE, value));
         add(labelWrk);
         return labelWrk;
     }
@@ -1057,6 +1134,27 @@ public final class Options extends AbstractAdminPage {
     }
 
     /**
+     * Adds an input label for password {@link IConfigProp.Key}.
+     *
+     * @param id
+     *            The label id.
+     * @param key
+     *            The {@link IConfigProp.Key}.
+     * @param obfuscate
+     *            {@code true} when HTML value must me obfuscated.
+     * @return The added {@link Label}.
+     */
+    private Label tagPassword(final String id, final IConfigProp.Key key,
+            final boolean obfuscate) {
+        if (obfuscate) {
+            return tagInput(id, key, OBFUSCATED_PASSWORD);
+        } else {
+            return tagInput(id, key,
+                    ConfigManager.instance().getConfigValue(key));
+        }
+    }
+
+    /**
      * Adds an textarea label for {@link IConfigProp.Key}.
      *
      * @param id
@@ -1069,7 +1167,7 @@ public final class Options extends AbstractAdminPage {
     private void tagTextarea(final String id, final IConfigProp.Key key,
             final String value) {
         Label labelWrk = new Label(id, value);
-        labelWrk.add(new AttributeModifier("id",
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_ID,
                 ConfigManager.instance().getConfigKey(key)));
         add(labelWrk);
     }
@@ -1096,7 +1194,8 @@ public final class Options extends AbstractAdminPage {
     private void addCheckbox(final String wicketId, boolean checked) {
         Label labelWrk = new Label(wicketId);
         if (checked) {
-            labelWrk.add(new AttributeModifier("checked", "checked"));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CHECKED,
+                    "checked"));
         }
         add(labelWrk);
     }
@@ -1106,10 +1205,11 @@ public final class Options extends AbstractAdminPage {
      */
     private void tagCheckbox(final String wicketId, final IConfigProp.Key key) {
         Label labelWrk = new Label(wicketId);
-        labelWrk.add(new AttributeModifier("id",
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_ID,
                 ConfigManager.instance().getConfigKey(key)));
         if (ConfigManager.instance().isConfigValue(key)) {
-            labelWrk.add(new AttributeModifier("checked", "checked"));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CHECKED,
+                    "checked"));
         }
         add(labelWrk);
     }
@@ -1138,7 +1238,7 @@ public final class Options extends AbstractAdminPage {
      */
     private void tagSelect(final String id, final IConfigProp.Key key) {
         Label labelWrk = new Label(id);
-        labelWrk.add(new AttributeModifier("id",
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_ID,
                 ConfigManager.instance().getConfigKey(key)));
         add(labelWrk);
     }
@@ -1192,4 +1292,69 @@ public final class Options extends AbstractAdminPage {
         MarkupHelper.setFlipswitchOnOffText(label, getLocale());
     }
 
+    /**
+     *
+     * @param helper
+     * @param readonly
+     */
+    private void setReadOnlyAccess(final MarkupHelper helper,
+            final boolean readonly) {
+
+        // Disable
+        for (final String wicketId : new String[] { "sect-user-source",
+                "sect-user-creation", "sect-user-authentication", "sect-mail",
+                "sect-papercut", "sect-gcp", "sect-mail-print",
+                "sect-web-print", "sect-internet-print", "sect-proxy-print",
+                "sect-eco-print", "sect-financial", "sect-backups",
+                "sect-advanced" }) {
+            helper.addTransparantDisabled(wicketId, readonly);
+        }
+
+        // Apply
+        for (final String wicketId : new String[] { "btn-apply-auth",
+                "btn-apply-internal-users", "btn-apply-user-source-group-apply",
+                "btn-user-sync-apply", "btn-apply-user-create",
+                "btn-apply-user-auth-mode-local", "btn-apply-smtp",
+                "btn-apply-mail", "btn-apply-papercut", "btn-gcp-apply-enable",
+                "btn-gcp-apply-notification", "btn-apply-imap",
+                "btn-apply-webprint", "btn-apply-internetprint",
+                "btn-apply-proxyprint", "btn-apply-ecoprint",
+                "btn-apply-financial-general", "btn-apply-financial-pos",
+                "btn-apply-financial-vouchers",
+                "btn-apply-financial-user-transfers",
+                "btn-apply-backup-automatic", "btn-apply-cliapp-auth",
+                "btn-admin-pw-reset", "btn-jmx-pw-reset", "btn-apply-locale",
+                "btn-apply-papersize", "btn-apply-report-fontfamily",
+                "btn-apply-converters", "btn-apply-print-in",
+                "btn-pagometer-reset" }) {
+            if (readonly) {
+                helper.discloseLabel(wicketId);
+            } else {
+                helper.addButton(wicketId, HtmlButtonEnum.APPLY);
+            }
+        }
+
+        // Test
+        for (final String wicketId : new String[] { "btn-sync-test" }) {
+            if (readonly) {
+                helper.discloseLabel(wicketId);
+            } else {
+                helper.addButton(wicketId, HtmlButtonEnum.TEST);
+            }
+        }
+
+        // Refresh
+        for (final String wicketId : new String[] { "btn-gcp-refresh" }) {
+            if (readonly) {
+                helper.discloseLabel(wicketId);
+            } else {
+                helper.addButton(wicketId, HtmlButtonEnum.REFRESH);
+            }
+        }
+
+        // Misc ...
+        helper.encloseLabel("btn-backup-now", localized("button-backup-now"),
+                !readonly);
+
+    }
 }

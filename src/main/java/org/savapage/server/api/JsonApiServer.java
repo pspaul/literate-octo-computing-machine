@@ -162,6 +162,7 @@ import org.savapage.core.services.helpers.email.EmailMsgParms;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.EmailValidator;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.core.util.Messages;
@@ -2570,7 +2571,14 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqMailTest(final String requestingUser,
             final String mailto) {
 
-        Map<String, Object> userData = new HashMap<String, Object>();
+        final Map<String, Object> userData = new HashMap<String, Object>();
+
+        if (StringUtils.isBlank(mailto)
+                || !new EmailValidator().validate(mailto)) {
+            setApiResult(userData, ApiResultCodeEnum.ERROR, "msg-email-invalid",
+                    StringUtils.defaultString(mailto));
+            return userData;
+        }
 
         final String subject = localize("mail-test-subject");
         final String body = localize("mail-test-body", requestingUser,

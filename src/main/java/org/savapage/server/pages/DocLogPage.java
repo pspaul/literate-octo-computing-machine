@@ -106,7 +106,7 @@ public class DocLogPage extends AbstractListPage {
                  */
                 userId = SpSession.get().getUser().getId();
 
-                showFinancialData = ACCESS_CONTROL_SERVICE.hasUserAccess(
+                showFinancialData = ACCESS_CONTROL_SERVICE.hasAccess(
                         SpSession.get().getUser(), ACLOidEnum.U_FINANCIAL);
             }
         } else {

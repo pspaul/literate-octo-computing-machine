@@ -231,7 +231,7 @@ public class Print extends AbstractUserPage {
 
         //
         final Integer privsLetterhead = ACCESS_CONTROL_SERVICE
-                .getUserPrivileges(user, ACLOidEnum.U_LETTERHEAD);
+                .getPrivileges(user, ACLOidEnum.U_LETTERHEAD);
 
         helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
                 privsLetterhead == null || ACLPermissionEnum.READER

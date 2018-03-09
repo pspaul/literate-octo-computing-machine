@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
@@ -139,18 +140,21 @@
 		</div>
 	</li>
 
-	<li>
-		<div class="ui-mini">
-			<a target="_blank" title="CUPS"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home"
-				wicket:id="button-cups" />
-			<button id="button-printer-sync"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-				<wicket:message key="button-sync" />
-			</button>
-		</div>
-	</li>
+	<wicket:enclosure child="button-cups">
+		<li>
+			<div class="ui-mini">
+				<a target="_blank" title="CUPS"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home"
+					wicket:id="button-cups" />
+				<button id="button-printer-sync"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+					<wicket:message key="button-sync" />
+				</button>
+			</div>
+		</li>
+	</wicket:enclosure>
 
 	<li id="sp-printer-list-page"></li>
 
 </ul>
+</html>

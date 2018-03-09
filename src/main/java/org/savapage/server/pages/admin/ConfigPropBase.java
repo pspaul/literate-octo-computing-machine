@@ -22,6 +22,12 @@
 package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -35,11 +41,21 @@ public final class ConfigPropBase extends AbstractAdminPage {
      */
     private static final long serialVersionUID = 1L;
 
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
     /**
      *
      */
     public ConfigPropBase(final PageParameters parameters) {
 
         super(parameters);
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.encloseLabel("txt-warning", localized("txt-warning"),
+                ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
+                        ACLOidEnum.A_CONFIG_EDITOR, ACLPermissionEnum.EDITOR));
     }
 }

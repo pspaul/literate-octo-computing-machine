@@ -486,6 +486,7 @@
 
                 _ns.ACLRoleEnumPanel.m2v($('#sp-usergroup-edit-roles'), _model.editUserGroup.aclRoles);
                 _ns.ACLPermissionPanel.m2v(_view, $('#sp-usergroup-edit-privileges-user'), _model.editUserGroup.aclOidsUser, _model.editUserGroup.aclOidsUserReader, _model.editUserGroup.aclOidsUserEditor);
+                _ns.ACLPermissionPanel.m2v(_view, $('#sp-usergroup-edit-privileges-admin'), _model.editUserGroup.aclOidsAdmin, _model.editUserGroup.aclOidsAdminReader, _model.editUserGroup.aclOidsAdminEditor);
 
                 _view.visible($('#user-group-account-define-new-user').closest('ul'), !_model.editUserGroup.allUsersGroup);
 
@@ -520,6 +521,8 @@
                 _model.editUserGroup.aclOidsAdmin = {};
                 _model.editUserGroup.aclOidsAdminReader = {};
                 _model.editUserGroup.aclOidsAdminEditor = {};
+                _ns.ACLPermissionPanel.v2m(_view, $('#sp-usergroup-edit-privileges-admin'), _model.editUserGroup.aclOidsAdmin, _model.editUserGroup.aclOidsAdminReader, _model.editUserGroup.aclOidsAdminEditor);
+
             }
             //
             ;
@@ -1529,9 +1532,10 @@
             };
 
             _self.initView = function() {
-                _loadPanel('Dashboard');
-                // _loadPanel('ConfigPropBase');
-                // _loadPanel("AccountVoucherBase");
+                var name = 'Dashboard';
+                if ($('.content-secondary').find('[name=' + name + ']').length > 0) {
+                    _loadPanel(name);
+                }
             };
 
             /*

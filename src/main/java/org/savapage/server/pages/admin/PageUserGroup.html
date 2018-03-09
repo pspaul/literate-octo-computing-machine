@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
     | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -29,31 +30,48 @@
 			<span class="sp-txt-wrap" id="user-group-header" />
 		</li>
 	</ul>
-	<ul data-role="listview" data-inset="true">
 
-		<li data-role="list-divider">
+	<div data-role="collapsible" data-collapsed="true" data-mini="true">
+		<h3>
 			<wicket:message key="prompt-roles" />
-		</li>
+		</h3>
+		<ul data-role="listview" data-inset="true">
+			<li>
+				<fieldset data-role="controlgroup" data-mini="true"
+					id="sp-usergroup-edit-roles">
+					<wicket:panel wicket:id="ACLRoleEnumCheckboxes" />
+				</fieldset>
+			</li>
+		</ul>
+	</div>
 
-		<li>
-			<fieldset data-role="controlgroup" data-mini="true"
-				id="sp-usergroup-edit-roles">
-				<wicket:panel wicket:id="ACLRoleEnumCheckboxes" />
-			</fieldset>
-		</li>
-	</ul>
-
-	<ul data-role="listview" data-inset="true">
-		<li data-role="list-divider">
+	<div data-role="collapsible" data-collapsed="true" data-mini="true">
+		<h3>
 			<wicket:message key="prompt-privileges-user" />
-		</li>
-		<li>
-			<fieldset data-role="controlgroup" data-mini="true"
-				id="sp-usergroup-edit-privileges-user">
-				<wicket:panel wicket:id="ACLPermissionsUser" />
-			</fieldset>
-		</li>
-	</ul>
+		</h3>
+		<ul data-role="listview" data-inset="true">
+			<li>
+				<fieldset data-role="controlgroup" data-mini="true"
+					id="sp-usergroup-edit-privileges-user">
+					<wicket:panel wicket:id="ACLPermissionsUser" />
+				</fieldset>
+			</li>
+		</ul>
+	</div>
+
+	<div data-role="collapsible" data-collapsed="true" data-mini="true">
+		<h3>
+			<wicket:message key="prompt-privileges-admin" />
+		</h3>
+		<ul data-role="listview" data-inset="true">
+			<li>
+				<fieldset data-role="controlgroup" data-mini="true"
+					id="sp-usergroup-edit-privileges-admin">
+					<wicket:panel wicket:id="ACLPermissionsAdmin" />
+				</fieldset>
+			</li>
+		</ul>
+	</div>
 
 	<ul data-role="listview" data-inset="true">
 		<li data-role="list-divider">
@@ -131,3 +149,5 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+</html>

@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -23,13 +23,9 @@ package org.savapage.server.pages.admin;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -38,12 +34,17 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.AccountDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.helpers.AccountPagerReq;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.core.jpa.User;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -58,9 +59,13 @@ public final class AccountsPage extends AbstractAdminListPage {
     private static final long serialVersionUID = 1L;
 
     /**
-     *
+     * Note: must be odd number.
      */
-    private static final int MAX_PAGES_IN_NAVBAR = 5; // must be odd number
+    private static final int MAX_PAGES_IN_NAVBAR = 5;
+
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      * @return {@code false} to give Admin a chance to inspect the accounts.
@@ -68,6 +73,167 @@ public final class AccountsPage extends AbstractAdminListPage {
     @Override
     protected boolean needMembership() {
         return false;
+    }
+
+    /**
+     *
+     * @author Rijk Ravestein
+     *
+     */
+    private final class AccountListView extends PropertyListView<Account> {
+
+        private static final long serialVersionUID = 1L;
+
+        /** */
+        private static final String WID_BUTTON_EDIT = "button-edit";
+        /** */
+        private static final String WID_BUTTON_TRX = "button-transaction";
+
+        /***/
+        private final boolean isEditor;
+        /***/
+        private final boolean hasAccessTrx;
+
+        /**
+         * .
+         *
+         * @param id
+         * @param list
+         */
+        public AccountListView(final String id, final List<Account> list) {
+
+            super(id, list);
+
+            final User reqUser = SpSession.get().getUser();
+
+            this.isEditor = ACCESS_CONTROL_SERVICE.hasPermission(reqUser,
+                    ACLOidEnum.A_ACCOUNTS, ACLPermissionEnum.EDITOR);
+
+            this.hasAccessTrx = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
+                    ACLOidEnum.A_TRANSACTIONS);
+        }
+
+        @Override
+        protected void populateItem(final ListItem<Account> item) {
+
+            final Account account = item.getModelObject();
+
+            Label labelWrk = null;
+
+            if (account.getParent() == null) {
+                labelWrk = new Label("accountNameParent", account.getName());
+                item.add(labelWrk);
+                labelWrk = new Label("accountName", "");
+                item.add(labelWrk);
+            } else {
+                labelWrk = new Label("accountNameParent",
+                        account.getParent().getName());
+                item.add(labelWrk);
+
+                labelWrk = new Label("accountName",
+                        String.format("%s %s",
+                                MarkupHelper.HTML_ENT_OBL_ANGLE_OPENING_UP,
+                                account.getName()));
+                labelWrk.setEscapeModelStrings(false);
+                item.add(labelWrk);
+            }
+
+            /*
+             * Image
+             */
+            final AccountTypeEnum accountType = EnumUtils
+                    .getEnum(AccountTypeEnum.class, account.getAccountType());
+
+            labelWrk = new Label("accountImage", "");
+            labelWrk.add(new AttributeModifier("src",
+                    MarkupHelper.getImgUrlPath(accountType)));
+            item.add(labelWrk);
+
+            /*
+             * Signal
+             */
+            String signalKey = null;
+            String color = null;
+
+            if (account.getDeleted()) {
+                color = MarkupHelper.CSS_TXT_ERROR;
+                signalKey = "signal-deleted";
+            } else if (account.getDisabled()) {
+                color = MarkupHelper.CSS_TXT_ERROR;
+                signalKey = "signal-disabled";
+            }
+
+            String signal = "";
+            if (signalKey != null) {
+                signal = localized(signalKey);
+            }
+            labelWrk = new Label("signal", signal);
+            labelWrk.add(new AttributeModifier("class", color));
+            item.add(labelWrk);
+
+            /*
+             * Balance
+             */
+            try {
+                labelWrk = new Label("balance-amount",
+                        BigDecimalUtil.localize(account.getBalance(),
+                                ConfigManager.getUserBalanceDecimals(),
+                                getLocale(),
+                                ServiceContext.getAppCurrencySymbol(), true));
+
+                if (account.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+                    labelWrk.add(new AttributeModifier("class",
+                            MarkupHelper.CSS_AMOUNT_MIN));
+                }
+
+                item.add(labelWrk);
+
+            } catch (ParseException e) {
+                throw new SpException(e.getMessage());
+            }
+
+            /*
+             * Period + Totals
+             */
+            final StringBuilder period = new StringBuilder();
+
+            period.append(localizedMediumDate(account.getCreatedDate()));
+
+            if (account.getModifiedDate() != null) {
+                period.append(" ~ ")
+                        .append(localizedMediumDate(account.getModifiedDate()));
+            }
+
+            item.add(new Label("period", period));
+
+            /*
+             * Set the uid in 'data-savapage' attribute, so it can be picked up
+             * in JavaScript for editing.
+             */
+            final MarkupHelper helper = new MarkupHelper(item);
+
+            if (this.isEditor) {
+                helper.addModifyLabelAttr(WID_BUTTON_EDIT,
+                        getLocalizer().getString("button-edit", this),
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        account.getId().toString());
+            } else {
+                helper.discloseLabel(WID_BUTTON_EDIT);
+            }
+
+            if (this.hasAccessTrx) {
+                helper.addModifyLabelAttr(WID_BUTTON_TRX,
+                        getLocalizer().getString("button-transaction", this),
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        account.getId().toString());
+            } else {
+                helper.discloseLabel(WID_BUTTON_TRX);
+            }
+
+            helper.addTransparantInvisible("button-group",
+                    !this.isEditor && !this.hasAccessTrx);
+        }
+
     }
 
     /**
@@ -123,167 +289,8 @@ public final class AccountsPage extends AbstractAdminListPage {
                 accountDao.getListChunk(filter, req.calcStartPosition(),
                         req.getMaxResults(), sortField, sortAscending);
 
-        final Locale locale = getSession().getLocale();
-
         //
-        add(new PropertyListView<Account>("accounts-view", entryList) {
-
-            private static final long serialVersionUID = 1L;
-
-            /**
-             *
-             * @param item
-             * @param mapVisible
-             */
-            private void evaluateVisible(final ListItem<Account> item,
-                    final Map<String, String> mapVisible) {
-
-                for (Map.Entry<String, String> entry : mapVisible.entrySet()) {
-
-                    if (entry.getValue() == null) {
-                        entry.setValue("");
-                    }
-
-                    final String cssClassWlk = null;
-
-                    item.add(createVisibleLabel(
-                            StringUtils.isNotBlank(entry.getValue()),
-                            entry.getKey(), entry.getValue(), cssClassWlk));
-                }
-
-            }
-
-            @Override
-            protected void populateItem(final ListItem<Account> item) {
-
-                /*
-                 *
-                 */
-                final Map<String, String> mapVisible = new HashMap<>();
-
-                final Account account = item.getModelObject();
-
-                Label labelWrk = null;
-
-                /*
-                 *
-                 */
-                if (account.getParent() == null) {
-                    labelWrk =
-                            new Label("accountNameParent", account.getName());
-                    item.add(labelWrk);
-                    labelWrk = new Label("accountName", "");
-                    item.add(labelWrk);
-                } else {
-                    labelWrk = new Label("accountNameParent",
-                            account.getParent().getName());
-                    item.add(labelWrk);
-
-                    labelWrk = new Label("accountName",
-                            String.format("%s %s",
-                                    MarkupHelper.HTML_ENT_OBL_ANGLE_OPENING_UP,
-                                    account.getName()));
-                    labelWrk.setEscapeModelStrings(false);
-                    item.add(labelWrk);
-                }
-
-                /*
-                 * Image
-                 */
-                final AccountTypeEnum accountType = EnumUtils.getEnum(
-                        AccountTypeEnum.class, account.getAccountType());
-
-                labelWrk = new Label("accountImage", "");
-                labelWrk.add(new AttributeModifier("src",
-                        MarkupHelper.getImgUrlPath(accountType)));
-                item.add(labelWrk);
-
-                /*
-                 * Signal
-                 */
-                String signalKey = null;
-                String color = null;
-
-                if (account.getDeleted()) {
-                    color = MarkupHelper.CSS_TXT_ERROR;
-                    signalKey = "signal-deleted";
-                } else if (account.getDisabled()) {
-                    color = MarkupHelper.CSS_TXT_ERROR;
-                    signalKey = "signal-disabled";
-                }
-
-                String signal = "";
-                if (signalKey != null) {
-                    signal = localized(signalKey);
-                }
-                labelWrk = new Label("signal", signal);
-                labelWrk.add(new AttributeModifier("class", color));
-                item.add(labelWrk);
-
-                /*
-                 * Balance
-                 */
-                try {
-                    labelWrk = new Label("balance-amount",
-                            BigDecimalUtil.localize(account.getBalance(),
-                                    ConfigManager.getUserBalanceDecimals(),
-                                    locale,
-                                    ServiceContext.getAppCurrencySymbol(),
-                                    true));
-
-                    if (account.getBalance().compareTo(BigDecimal.ZERO) < 0) {
-                        labelWrk.add(new AttributeModifier("class",
-                                MarkupHelper.CSS_AMOUNT_MIN));
-                    }
-
-                    item.add(labelWrk);
-
-                } catch (ParseException e) {
-                    throw new SpException(e.getMessage());
-                }
-
-                /*
-                 * Period + Totals
-                 */
-                final StringBuilder period = new StringBuilder();
-
-                period.append(localizedMediumDate(account.getCreatedDate()));
-
-                if (account.getModifiedDate() != null) {
-                    period.append(" ~ ").append(
-                            localizedMediumDate(account.getModifiedDate()));
-                }
-
-                item.add(new Label("period", period));
-
-                /*
-                 * Set the uid in 'data-savapage' attribute, so it can be picked
-                 * up in JavaScript for editing.
-                 */
-                labelWrk = new Label("button-edit",
-                        getLocalizer().getString("button-edit", this));
-
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, account.getId()));
-
-                item.add(labelWrk);
-
-                /*
-                 *
-                 */
-                labelWrk = new Label("button-transaction",
-                        getLocalizer().getString("button-transaction", this));
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, account.getId()));
-                item.add(labelWrk);
-
-                /*
-                 *
-                 */
-                evaluateVisible(item, mapVisible);
-
-            }
-        });
+        add(new AccountListView("accounts-view", entryList));
 
         /*
          * Display the navigation bars and write the response.

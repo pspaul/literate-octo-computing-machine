@@ -23,129 +23,137 @@
 			<h3>
 				<wicket:message key="cat-user-source" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<div class="ui-field-contain">
-						<fieldset data-role="controlgroup" data-type="horizontal">
-							<label for="" wicket:id="auth-method-none-label" />
-							<input type="radio" name="" id="" wicket:id="auth-method-none" />
-							<label for="" wicket:id="auth-method-unix-label" />
-							<input type="radio" name="" id="" wicket:id="auth-method-unix" />
-							<label for="" wicket:id="auth-method-ldap-label" />
-							<input type="radio" name="" id="" wicket:id="auth-method-ldap" />
-						</fieldset>
-					</div>
-				</li>
-				<li class="ldap-parms">
-					<div class="ui-field-contain">
-						<fieldset data-role="controlgroup" data-type="horizontal"
-							class="ui-mini">
-							<label for="" wicket:id="ldap-schema-type-open-label" />
-							<input type="radio" name="" id=""
-								wicket:id="ldap-schema-type-open" />
-							<label for="" wicket:id="ldap-schema-type-edir-label" />
-							<input type="radio" name="" id=""
-								wicket:id="ldap-schema-type-edir" />
-							<label for="" wicket:id="ldap-schema-type-apple-label" />
-							<input type="radio" name="" id=""
-								wicket:id="ldap-schema-type-apple" />
-							<label for="" wicket:id="ldap-schema-type-activ-label" />
-							<input type="radio" name="" id=""
-								wicket:id="ldap-schema-type-activ" />
-						</fieldset>
-					</div>
-					<div class="ui-field-contain">
-						<label for="" wicket:id="ldap-host-label" />
-						<input type="text" id="" wicket:id="ldap-host" value=""
+			<div wicket:id="sect-user-source">
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<div class="ui-field-contain">
+							<fieldset data-role="controlgroup" data-type="horizontal">
+								<label for="" wicket:id="auth-method-none-label" />
+								<input type="radio" name="" id="" wicket:id="auth-method-none" />
+								<label for="" wicket:id="auth-method-unix-label" />
+								<input type="radio" name="" id="" wicket:id="auth-method-unix" />
+								<label for="" wicket:id="auth-method-ldap-label" />
+								<input type="radio" name="" id="" wicket:id="auth-method-ldap" />
+							</fieldset>
+						</div>
+					</li>
+					<li class="ldap-parms">
+						<div class="ui-field-contain">
+							<fieldset data-role="controlgroup" data-type="horizontal"
+								class="ui-mini">
+								<label for="" wicket:id="ldap-schema-type-open-label" />
+								<input type="radio" name="" id=""
+									wicket:id="ldap-schema-type-open" />
+								<label for="" wicket:id="ldap-schema-type-edir-label" />
+								<input type="radio" name="" id=""
+									wicket:id="ldap-schema-type-edir" />
+								<label for="" wicket:id="ldap-schema-type-apple-label" />
+								<input type="radio" name="" id=""
+									wicket:id="ldap-schema-type-apple" />
+								<label for="" wicket:id="ldap-schema-type-activ-label" />
+								<input type="radio" name="" id=""
+									wicket:id="ldap-schema-type-activ" />
+							</fieldset>
+						</div>
+						<div class="ui-field-contain">
+							<label for="" wicket:id="ldap-host-label" />
+							<input type="text" id="" wicket:id="ldap-host" value=""
+								autocomplete="off" autocorrect="off" autocapitalize="off"
+								spellcheck="false" />
+						</div>
+						<div class="ui-field-contain">
+							<label for="" wicket:id="ldap-port-label" />
+							<input type="text" id="" wicket:id="ldap-port" value=""
+								pattern="[0-9]*" autocomplete="off" autocorrect="off"
+								autocapitalize="off" spellcheck="false" />
+						</div>
+
+						<label for="" wicket:id="ldap-use-ssl-label" />
+						<input type="checkbox" id="" value="0" data-mini="true"
+							wicket:id="ldap-use-ssl" />
+
+						<div id="ldap-use-ssl-parms">
+							<label for="" wicket:id="ldap-use-ssl-trust-self-signed-label" />
+							<input type="checkbox" id="" value="0" data-mini="true"
+								wicket:id="ldap-use-ssl-trust-self-signed" />
+						</div>
+					</li>
+					<li class="ldap-parms">
+						<label for="" wicket:id="ldap-basedn-label" />
+						<input type="text" id="" wicket:id="ldap-basedn" value=""
 							autocomplete="off" autocorrect="off" autocapitalize="off"
 							spellcheck="false" />
-					</div>
-					<div class="ui-field-contain">
-						<label for="" wicket:id="ldap-port-label" />
-						<input type="text" id="" wicket:id="ldap-port" value=""
-							pattern="[0-9]*" autocomplete="off" autocorrect="off"
+						<label for="" wicket:id="ldap-admin-dn-label" />
+						<input type="text" id="" wicket:id="ldap-admin-dn" value=""
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+						<label for="" wicket:id="ldap-admin-pw-label" />
+						<input type="password" id="" wicket:id="ldap-admin-pw" value=""
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+					</li>
+					<li class="ldap-parms">
+						<h3>
+							<span class="sp-txt-wrap"><wicket:message
+									key="ldap-user-fields" /></span>
+						</h3>
+						<label for="" wicket:id="ldap-user-id-number-field-label" />
+						<input type="text" id="" wicket:id="ldap-user-id-number-field"
+							value="" autocomplete="off" autocorrect="off"
 							autocapitalize="off" spellcheck="false" />
-					</div>
-
-					<label for="" wicket:id="ldap-use-ssl-label" />
-					<input type="checkbox" id="" value="0" data-mini="true"
-						wicket:id="ldap-use-ssl" />
-
-					<div id="ldap-use-ssl-parms">
-						<label for="" wicket:id="ldap-use-ssl-trust-self-signed-label" />
-						<input type="checkbox" id="" value="0" data-mini="true"
-							wicket:id="ldap-use-ssl-trust-self-signed" />
-					</div>
-				</li>
-				<li class="ldap-parms">
-					<label for="" wicket:id="ldap-basedn-label" />
-					<input type="text" id="" wicket:id="ldap-basedn" value=""
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<label for="" wicket:id="ldap-admin-dn-label" />
-					<input type="text" id="" wicket:id="ldap-admin-dn" value=""
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<label for="" wicket:id="ldap-admin-pw-label" />
-					<input type="password" id="" wicket:id="ldap-admin-pw" value=""
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-				</li>
-				<li class="ldap-parms">
-					<h3>
-						<span class="sp-txt-wrap"><wicket:message
-								key="ldap-user-fields" /></span>
-					</h3>
-					<label for="" wicket:id="ldap-user-id-number-field-label" />
-					<input type="text" id="" wicket:id="ldap-user-id-number-field"
-						value="" autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<label for="" wicket:id="ldap-user-card-number-field-label" />
-					<input type="text" id="" wicket:id="ldap-user-card-number-field"
-						value="" autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<fieldset data-role="controlgroup" data-type="horizontal"
-						data-mini="true">
-						<legend>
-							<wicket:message key="ldap-card-format" />
-						</legend>
-						<label for="" wicket:id="ldap-card-format-hex-label" />
-						<input type="radio" name="" id="" wicket:id="ldap-card-format-hex" />
-						<label for="" wicket:id="ldap-card-format-dec-label" />
-						<input type="radio" name="" id="" wicket:id="ldap-card-format-dec" />
-						<label for="" wicket:id="ldap-card-format-lsb-label" />
-						<input type="radio" name="" id="" wicket:id="ldap-card-format-lsb" />
-						<label for="" wicket:id="ldap-card-format-msb-label" />
-						<input type="radio" name="" id="" wicket:id="ldap-card-format-msb" />
-					</fieldset>
-				</li>
-				<li>
-					<div>
-						<button id="apply-auth"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<label for="" wicket:id="internal-users-enable-label" />
-					<input type="checkbox" id="" value="0"
-						wicket:id="internal-users-enable" />
-					<div id="internal-users-parms">
-						<label for="" wicket:id="internal-users-change-pw-label" />
+						<label for="" wicket:id="ldap-user-card-number-field-label" />
+						<input type="text" id="" wicket:id="ldap-user-card-number-field"
+							value="" autocomplete="off" autocorrect="off"
+							autocapitalize="off" spellcheck="false" />
+						<fieldset data-role="controlgroup" data-type="horizontal"
+							data-mini="true">
+							<legend>
+								<wicket:message key="ldap-card-format" />
+							</legend>
+							<label for="" wicket:id="ldap-card-format-hex-label" />
+							<input type="radio" name="" id=""
+								wicket:id="ldap-card-format-hex" />
+							<label for="" wicket:id="ldap-card-format-dec-label" />
+							<input type="radio" name="" id=""
+								wicket:id="ldap-card-format-dec" />
+							<label for="" wicket:id="ldap-card-format-lsb-label" />
+							<input type="radio" name="" id=""
+								wicket:id="ldap-card-format-lsb" />
+							<label for="" wicket:id="ldap-card-format-msb-label" />
+							<input type="radio" name="" id=""
+								wicket:id="ldap-card-format-msb" />
+						</fieldset>
+					</li>
+					<wicket:enclosure child="btn-apply-auth">
+						<li>
+							<div>
+								<button id="apply-auth"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-auth" />
+							</div>
+						</li>
+					</wicket:enclosure>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<label for="" wicket:id="internal-users-enable-label" />
 						<input type="checkbox" id="" value="0"
-							wicket:id="internal-users-change-pw" />
-					</div>
-					<div>
-						<button id="apply-internal-users"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
+							wicket:id="internal-users-enable" />
+						<div id="internal-users-parms">
+							<label for="" wicket:id="internal-users-change-pw-label" />
+							<input type="checkbox" id="" value="0"
+								wicket:id="internal-users-change-pw" />
+						</div>
+						<wicket:enclosure child="btn-apply-internal-users">
+							<div>
+								<button id="apply-internal-users"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-internal-users" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</li>
 	<li>
@@ -153,108 +161,123 @@
 			<h3>
 				<wicket:message key="cat-user-creation" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
-				<li class="user-source-group-s">
-					<h3>
-						<wicket:message key="import-users-from" />
-					</h3>
-					<span class="user-source-group-display sp-txt-wrap"
-						wicket:id="user-source-group" id="user-source-group-txt"></span>
-					<div class="user-source-group-display">
-						<button id="user-source-change-group"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
-							<wicket:message key="button-change-group" />
-						</button>
-					</div>
-					<fieldset class="user-source-group-edit" data-role="controlgroup">
-						<label for="" wicket:id="user-source-group-select-label"></label>
-						<select wicket:id="user-source-group-select"
-							data-native-menu="true" />
-					</fieldset>
-					<div class="user-source-group-edit">
-						<button id="user-source-group-apply"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-						<button id="user-source-group-cancel"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-							<wicket:message key="button-cancel" />
-						</button>
-						<button id="user-source-group-all"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="all-users" />
-						</button>
-					</div>
-				</li>
-				<li class="user-source-group-s">
-					<h3>
-						<wicket:message key="sync-header" />
-					</h3>
-					<fieldset data-role="controlgroup" data-type="vertical">
-						<label for="" wicket:id="sync-user-update-label" />
-						<input type="checkbox" id="" value="0"
-							wicket:id="sync-user-update" />
-						<label for="" wicket:id="sync-schedule-label" />
-						<input type="checkbox" id="" value="0" wicket:id="sync-schedule" />
-					</fieldset>
-					<div>
-						<button id="user-sync-apply"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li class="user-source-group-s">
-					<h3>
-						<wicket:message key="on-demand-user-creation" />
-					</h3>
-					<fieldset data-role="controlgroup" data-type="vertical">
-						<label for="" wicket:id="on-demand-login-label" />
-						<input type="checkbox" id="" value="0" wicket:id="on-demand-login" />
-						<label for="" wicket:id="on-demand-print-label" />
-						<input type="checkbox" id="" value="0" wicket:id="on-demand-print" />
-					</fieldset>
-					<div>
-						<button id="apply-user-create"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<label for="sync-delete-users" wicket:id="sync-delete-users-label" />
-					<input type="checkbox" id="sync-delete-users" value="0"
-						wicket:id="sync-delete-users" />
+			<div wicket:id="sect-user-creation">
+				<ul data-role="listview" data-inset="true">
+					<li class="user-source-group-s">
+						<h3>
+							<wicket:message key="import-users-from" />
+						</h3>
+						<span class="user-source-group-display sp-txt-wrap"
+							wicket:id="user-source-group" id="user-source-group-txt"></span>
 
-					<div>
-						<button id="user-sync-test"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
-							<wicket:message key="button-sync-test" />
-						</button>
-						<button id="user-sync-now"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-							<wicket:message key="button-sync-now" />
-						</button>
-					</div>
-				</li>
-				<li>
-					<h3>
-						<wicket:message key="sync-messages" />
-					</h3>
-					<div id="user-sync-messages" class="sp-live-msg sp-txt-wrap"
-						style="font-size: small; font-weight: normal"></div>
-					<div>
-						<button id="sync-messages-clear"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
-							<wicket:message key="button-clear" />
-						</button>
-					</div>
-				</li>
-			</ul>
+						<wicket:enclosure child="btn-apply-user-source-group-apply">
+
+							<div class="user-source-group-display">
+								<button id="user-source-change-group"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
+									<wicket:message key="button-change-group" />
+								</button>
+							</div>
+							<fieldset class="user-source-group-edit" data-role="controlgroup">
+								<label for="" wicket:id="user-source-group-select-label"></label>
+								<select wicket:id="user-source-group-select"
+									data-native-menu="true" />
+							</fieldset>
+
+							<div class="user-source-group-edit">
+
+								<button id="user-source-group-apply"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-user-source-group-apply" />
+
+								<button id="user-source-group-cancel"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+									<wicket:message key="button-cancel" />
+								</button>
+
+								<button id="user-source-group-all"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+									<wicket:message key="all-users" />
+								</button>
+							</div>
+						</wicket:enclosure>
+					</li>
+					<li class="user-source-group-s">
+						<h3>
+							<wicket:message key="sync-header" />
+						</h3>
+						<fieldset data-role="controlgroup" data-type="vertical">
+							<label for="" wicket:id="sync-user-update-label" />
+							<input type="checkbox" id="" value="0"
+								wicket:id="sync-user-update" />
+							<label for="" wicket:id="sync-schedule-label" />
+							<input type="checkbox" id="" value="0" wicket:id="sync-schedule" />
+						</fieldset>
+						<wicket:enclosure child="btn-user-sync-apply">
+							<div>
+								<button id="user-sync-apply"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-user-sync-apply" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li class="user-source-group-s">
+						<h3>
+							<wicket:message key="on-demand-user-creation" />
+						</h3>
+						<fieldset data-role="controlgroup" data-type="vertical">
+							<label for="" wicket:id="on-demand-login-label" />
+							<input type="checkbox" id="" value="0"
+								wicket:id="on-demand-login" />
+							<label for="" wicket:id="on-demand-print-label" />
+							<input type="checkbox" id="" value="0"
+								wicket:id="on-demand-print" />
+						</fieldset>
+						<wicket:enclosure child="btn-apply-user-create">
+							<div>
+								<button id="apply-user-create"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-user-create" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+				<wicket:enclosure child="btn-sync-test">
+					<ul data-role="listview" data-inset="true">
+						<li>
+							<label for="sync-delete-users"
+								wicket:id="sync-delete-users-label" />
+							<input type="checkbox" id="sync-delete-users" value="0"
+								wicket:id="sync-delete-users" />
+
+							<div>
+								<button id="user-sync-test"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info"
+									wicket:id="btn-sync-test" />
+								<button id="user-sync-now"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+									<wicket:message key="button-sync-now" />
+								</button>
+							</div>
+						</li>
+						<li>
+							<h3>
+								<wicket:message key="sync-messages" />
+							</h3>
+							<div id="user-sync-messages" class="sp-live-msg sp-txt-wrap"
+								style="font-size: small; font-weight: normal"></div>
+							<div>
+								<button id="sync-messages-clear"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
+									<wicket:message key="button-clear" />
+								</button>
+							</div>
+						</li>
+					</ul>
+				</wicket:enclosure>
+			</div>
 		</div>
 	</li>
 	<li>
@@ -262,7 +285,8 @@
 			<h3>
 				<wicket:message key="cat-user-authentication" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
+			<ul data-role="listview" data-inset="true"
+				wicket:id="sect-user-authentication">
 				<li>
 					<h3>
 						<wicket:message key="authentication-persistence" />
@@ -421,14 +445,15 @@
 						</div>
 					</div>
 				</li>
-				<li>
-					<div>
-						<button id="apply-user-auth-mode-local"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
+				<wicket:enclosure child="btn-apply-user-auth-mode-local">
+					<li>
+						<div>
+							<button id="apply-user-auth-mode-local"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+								wicket:id="btn-apply-user-auth-mode-local" />
+						</div>
+					</li>
+				</wicket:enclosure>
 			</ul>
 		</div>
 	</li>
@@ -437,7 +462,7 @@
 			<h3>
 				<wicket:message key="cat-mail" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
+			<ul data-role="listview" data-inset="true" wicket:id="sect-mail">
 				<li>
 					<h3>SMTP</h3>
 					<div class="ui-field-contain">
@@ -471,12 +496,13 @@
 					<input type="password" id="" wicket:id="smtp-password" value=""
 						autocomplete="off" autocorrect="off" autocapitalize="off"
 						spellcheck="false" />
-					<div>
-						<button id="apply-smtp"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
+					<wicket:enclosure child="btn-apply-smtp">
+						<div>
+							<button id="apply-smtp"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+								wicket:id="btn-apply-smtp" />
+						</div>
+					</wicket:enclosure>
 				</li>
 				<li>
 					<h3>
@@ -499,13 +525,16 @@
 					<input type="text" id="" value="" wicket:id="mail-reply-name"
 						autocomplete="off" autocorrect="off" autocapitalize="off"
 						spellcheck="false" />
-					<div>
-						<button id="apply-mail"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
+					<wicket:enclosure child="btn-apply-mail">
+						<div>
+							<button id="apply-mail"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+								wicket:id="btn-apply-mail" />
+						</div>
+					</wicket:enclosure>
 				</li>
+			</ul>
+			<ul data-role="listview" data-inset="true">
 				<li>
 					<div class="sp-txt-wrap">
 						<wicket:message key="prompt-mail-test" />
@@ -801,13 +830,13 @@
 			<h3>
 				<wicket:message key="papercut-header-text" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
+			<ul data-role="listview" data-inset="true" wicket:id="sect-papercut">
 				<li>
 					<label for="papercut-enable" wicket:id="papercut-enable-label" />
 					<input type="checkbox" id="papercut-enable" value="0"
 						wicket:id="papercut-enable" />
 					<div class="papercut-enabled">
-						<div data-role="collapsible" data-collapsed="true">
+						<div data-role="collapsible" data-collapsed="false">
 							<h3>
 								<wicket:message key="papercut-server-text" />
 							</h3>
@@ -824,7 +853,7 @@
 								autocomplete="off" autocorrect="off" autocapitalize="off"
 								spellcheck="false" />
 						</div>
-						<div data-role="collapsible" data-collapsed="true">
+						<div data-role="collapsible" data-collapsed="false">
 							<h3>
 								<wicket:message key="papercut-db-text" />
 							</h3>
@@ -846,16 +875,17 @@
 								autocapitalize="off" spellcheck="false" />
 						</div>
 					</div>
-					<div>
-						<button id="apply-papercut"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-						<button id="test-papercut"
-							class="papercut-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
-							<wicket:message key="smartschool-button-test" />
-						</button>
-					</div>
+					<wicket:enclosure child="btn-apply-papercut">
+						<div>
+							<button id="apply-papercut"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+								wicket:id="btn-apply-papercut" />
+							<button id="test-papercut"
+								class="papercut-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
+								<wicket:message key="smartschool-button-test" />
+							</button>
+						</div>
+					</wicket:enclosure>
 				</li>
 			</ul>
 		</div>
@@ -863,156 +893,161 @@
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 			<h3>Google Cloud Print</h3>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<label for="gcp-enable" wicket:id="gcp-enable-label" />
-					<input type="checkbox" id="gcp-enable" value="0"
-						wicket:id="gcp-enable" />
-					<table id="gcp-summary" data-role="table" data-mode="reflow"
-						class="ui-responsive table-stroke">
-						<thead>
-							<tr>
-								<th data-priority="1" />
-								<th data-priority="2" />
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<th>
-									<wicket:message key="gcp-printer" />
-								</th>
-								<td>
-									<a href="https://www.google.com/cloudprint#printers"
-										data-rel="external" target="_blank"
-										title="Google Cloud Print Console ..."> <span
-										id="gcp-summary-printer-name"
-										wicket:id="gcp-summary-printer-name" />
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<wicket:message key="gcp-owner" />
-								</th>
-								<td>
-									<span id="gcp-printer-owner"
-										wicket:id="gcp-summary-printer-owner" />
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<wicket:message key="gcp-state" />
-								</th>
-								<td>
-									<span id="gcp-printer-state-display"
-										wicket:id="gcp-summary-printer-state-display" /> <span
-										id="gcp-printer-state" style="display: none"
-										wicket:id="gcp-summary-printer-state" />
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<div>
-						<button id="gcp-edit-show"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
-							<wicket:message key="button-details" />
-						</button>
-						<button id="gcp-button-refresh"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-							<wicket:message key="button-refresh" />
-						</button>
-						<button id="gcp-set-online"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-online" />
-						</button>
-						<button id="gcp-set-offline"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-offline" />
-						</button>
-					</div>
-				</li>
-				<li id="gcp-register-section">
-					<h3>Google OAuth 2.0</h3>
-					<span><a href="https://code.google.com/apis/console"
-						data-rel="external" target="_blank"
-						title="Google Developers Console ..."> Web Application
-							Credentials</a></span>
-					<p>&nbsp;</p>
-					<label for="gcp-client-id">
-						<wicket:message key="gcp-client-id" />
-					</label>
-					<input type="text" id="gcp-client-id" value=""
-						wicket:id="gcp-client-id" autocomplete="off" autocorrect="off"
-						autocapitalize="off" spellcheck="false" />
-					<label for="gcp-client-secret">
-						<wicket:message key="gcp-client-secret" />
-					</label>
-					<input type="text" id="gcp-client-secret" value=""
-						wicket:id="gcp-client-secret" autocomplete="off" autocorrect="off"
-						autocapitalize="off" spellcheck="false" />
-					<br />
-					<h3>
-						<wicket:message key="gcp-printer" />
-					</h3>
-					<input type="text" id="gcp-printer-name" value=""
-						wicket:id="gcp-printer-name" autocomplete="off" autocorrect="off"
-						autocapitalize="off" spellcheck="false" />
-					<div>
-						<button id="gcp-edit-hide"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-minus">
-							<wicket:message key="button-hide" />
-						</button>
-						<!--  -->
-						<button id="register-gcp"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-cloud">
-							<wicket:message key="button-register" />
-						</button>
-					</div>
-				</li>
-				<li>
-					<div>
-						<button id="gcp-apply-enable"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul id="gcp-notification-section" data-role="listview"
-				data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="gcp-notifications" />
-					</h3>
-					<div>
-						<span class="sp-txt-wrap"><wicket:message
-								key="gcp-mail-after-cancel-legend" /></span>
-						<label for="gcp-mail-after-cancel-enable">
-							<wicket:message key="gcp-mail-after-cancel" />
+			<div wicket:id="sect-gcp">
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<label for="gcp-enable" wicket:id="gcp-enable-label" />
+						<input type="checkbox" id="gcp-enable" value="0"
+							wicket:id="gcp-enable" />
+						<table id="gcp-summary" data-role="table" data-mode="reflow"
+							class="ui-responsive table-stroke">
+							<thead>
+								<tr>
+									<th data-priority="1" />
+									<th data-priority="2" />
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>
+										<wicket:message key="gcp-printer" />
+									</th>
+									<td>
+										<a href="https://www.google.com/cloudprint#printers"
+											data-rel="external" target="_blank"
+											title="Google Cloud Print Console ..."> <span
+											id="gcp-summary-printer-name"
+											wicket:id="gcp-summary-printer-name" />
+										</a>
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<wicket:message key="gcp-owner" />
+									</th>
+									<td>
+										<span id="gcp-printer-owner"
+											wicket:id="gcp-summary-printer-owner" />
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<wicket:message key="gcp-state" />
+									</th>
+									<td>
+										<span id="gcp-printer-state-display"
+											wicket:id="gcp-summary-printer-state-display" /> <span
+											id="gcp-printer-state" style="display: none"
+											wicket:id="gcp-summary-printer-state" />
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<wicket:enclosure child="btn-gcp-refresh">
+							<div>
+								<button id="gcp-edit-show"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit">
+									<wicket:message key="button-details" />
+								</button>
+								<button id="gcp-button-refresh"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+									wicket:id="btn-gcp-refresh" />
+								<button id="gcp-set-online"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+									<wicket:message key="button-online" />
+								</button>
+								<button id="gcp-set-offline"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+									<wicket:message key="button-offline" />
+								</button>
+							</div>
+						</wicket:enclosure>
+					</li>
+					<li id="gcp-register-section">
+						<h3>Google OAuth 2.0</h3>
+						<span><a href="https://code.google.com/apis/console"
+							data-rel="external" target="_blank"
+							title="Google Developers Console ..."> Web Application
+								Credentials</a></span>
+						<p>&nbsp;</p>
+						<label for="gcp-client-id">
+							<wicket:message key="gcp-client-id" />
 						</label>
-						<input type="checkbox" id="gcp-mail-after-cancel-enable" value="0"
-							wicket:id="gcp-mail-after-cancel-enable" />
-						<div id="gcp-mail-after-cancel-detail">
-							<label for="gcp-mail-after-cancel-subject">
-								<wicket:message key="gcp-mail-after-cancel-subject" />
-							</label>
-							<input type="text" id="gcp-mail-after-cancel-subject" value=""
-								wicket:id="gcp-mail-after-cancel-subject" />
-							<label for="gcp-mail-after-cancel-body">
-								<wicket:message key="gcp-mail-after-cancel-body" />
-							</label>
-							<textarea id="gcp-mail-after-cancel-body"
-								wicket:id="gcp-mail-after-cancel-body" />
+						<input type="text" id="gcp-client-id" value=""
+							wicket:id="gcp-client-id" autocomplete="off" autocorrect="off"
+							autocapitalize="off" spellcheck="false" />
+						<label for="gcp-client-secret">
+							<wicket:message key="gcp-client-secret" />
+						</label>
+						<input type="text" id="gcp-client-secret" value=""
+							wicket:id="gcp-client-secret" autocomplete="off"
+							autocorrect="off" autocapitalize="off" spellcheck="false" />
+						<br />
+						<h3>
+							<wicket:message key="gcp-printer" />
+						</h3>
+						<input type="text" id="gcp-printer-name" value=""
+							wicket:id="gcp-printer-name" autocomplete="off" autocorrect="off"
+							autocapitalize="off" spellcheck="false" />
+						<div>
+							<button id="gcp-edit-hide"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-minus">
+								<wicket:message key="button-hide" />
+							</button>
+							<!--  -->
+							<button id="register-gcp"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-cloud">
+								<wicket:message key="button-register" />
+							</button>
 						</div>
-					</div>
-					<div>
-						<button id="gcp-apply-notification"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
+					</li>
+					<wicket:enclosure child="btn-gcp-apply-enable">
+						<li>
+							<div>
+								<button id="gcp-apply-enable"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-gcp-apply-enable" />
+							</div>
+						</li>
+					</wicket:enclosure>
+				</ul>
+				<ul id="gcp-notification-section" data-role="listview"
+					data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="gcp-notifications" />
+						</h3>
+						<div>
+							<span class="sp-txt-wrap"><wicket:message
+									key="gcp-mail-after-cancel-legend" /></span>
+							<label for="gcp-mail-after-cancel-enable">
+								<wicket:message key="gcp-mail-after-cancel" />
+							</label>
+							<input type="checkbox" id="gcp-mail-after-cancel-enable"
+								value="0" wicket:id="gcp-mail-after-cancel-enable" />
+							<div id="gcp-mail-after-cancel-detail">
+								<label for="gcp-mail-after-cancel-subject">
+									<wicket:message key="gcp-mail-after-cancel-subject" />
+								</label>
+								<input type="text" id="gcp-mail-after-cancel-subject" value=""
+									wicket:id="gcp-mail-after-cancel-subject" />
+								<label for="gcp-mail-after-cancel-body">
+									<wicket:message key="gcp-mail-after-cancel-body" />
+								</label>
+								<textarea id="gcp-mail-after-cancel-body"
+									wicket:id="gcp-mail-after-cancel-body" />
+							</div>
+						</div>
+						<wicket:enclosure child="btn-gcp-apply-notification">
+							<div>
+								<button id="gcp-apply-notification"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-gcp-apply-notification" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</li>
 	<li>
@@ -1020,7 +1055,8 @@
 			<h3>
 				<wicket:message key="cat-mail-print" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
+			<ul data-role="listview" data-inset="true"
+				wicket:id="sect-mail-print">
 				<li>
 					<label for="imap-enable" wicket:id="imap-enable-label" />
 					<input type="checkbox" id="imap-enable" value="0"
@@ -1080,25 +1116,26 @@
 						autocomplete="off" autocorrect="off" autocapitalize="off"
 						pattern="[0-9]*" spellcheck="false" />
 				</li>
-				<li>
-					<div>
-						<button id="apply-imap"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-						<button id="test-imap"
-							class="imap-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
-							<wicket:message key="imap-button-test" />
-						</button>
-					</div>
-					<div class="imap-enabled">
-						<input type="checkbox" class="flipswitch-mailprint-online"
-							wicket:id="flipswitch-mailprint-online" data-role="flipswitch"
-							data-on-text="On" data-off-text="Off" />
-						<span style="margin-left: 20px; vertical-align: middle;"
-							wicket:id="mailprint-status" />
-					</div>
-				</li>
+				<wicket:enclosure child="btn-apply-imap">
+					<li>
+						<div>
+							<button id="apply-imap"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+								wicket:id="btn-apply-imap" />
+							<button id="test-imap"
+								class="imap-enabled ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info">
+								<wicket:message key="imap-button-test" />
+							</button>
+						</div>
+						<div class="imap-enabled">
+							<input type="checkbox" class="flipswitch-mailprint-online"
+								wicket:id="flipswitch-mailprint-online" data-role="flipswitch"
+								data-on-text="On" data-off-text="Off" />
+							<span style="margin-left: 20px; vertical-align: middle;"
+								wicket:id="mailprint-status" />
+						</div>
+					</li>
+				</wicket:enclosure>
 			</ul>
 		</div>
 	</li>
@@ -1107,7 +1144,7 @@
 			<h3>
 				<wicket:message key="cat-web-print" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
+			<ul data-role="listview" data-inset="true" wicket:id="sect-web-print">
 				<li>
 					<label for="webprint-enable" wicket:id="webprint-enable-label" />
 					<input type="checkbox" id="webprint-enable" value="0"
@@ -1131,14 +1168,15 @@
 						wicket:id="webprint-enable-dropzone" />
 
 				</li>
-				<li>
-					<div>
-						<button id="apply-webprint"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
+				<wicket:enclosure child="btn-apply-webprint">
+					<li>
+						<div>
+							<button id="apply-webprint"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+								wicket:id="btn-apply-webprint" />
+						</div>
+					</li>
+				</wicket:enclosure>
 			</ul>
 		</div>
 	</li>
@@ -1147,17 +1185,20 @@
 			<h3>
 				<wicket:message key="cat-internet-print" />
 			</h3>
-			<div class="sp-txt-wrap">
-				<wicket:message key="prompt-internetprint-base-uri" />
-			</div>
-			<input type="text" id="" value="" wicket:id="internetprint-base-uri"
-				autocomplete="off" autocorrect="off" autocapitalize="off"
-				spellcheck="false" />
-			<div>
-				<button id="apply-internetprint"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-					<wicket:message key="button-apply" />
-				</button>
+			<div wicket:id="sect-internet-print">
+				<div class="sp-txt-wrap">
+					<wicket:message key="prompt-internetprint-base-uri" />
+				</div>
+				<input type="text" id="" value="" wicket:id="internetprint-base-uri"
+					autocomplete="off" autocorrect="off" autocapitalize="off"
+					spellcheck="false" />
+				<wicket:enclosure child="btn-apply-internetprint">
+					<div>
+						<button id="apply-internetprint"
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+							wicket:id="btn-apply-internetprint" />
+					</div>
+				</wicket:enclosure>
 			</div>
 		</div>
 	</li>
@@ -1166,7 +1207,8 @@
 			<h3>
 				<wicket:message key="cat-proxy-print" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
+			<ul data-role="listview" data-inset="true"
+				wicket:id="sect-proxy-print">
 				<li>
 					<h3>
 						<wicket:message key="proxyprint-general-prompt" />
@@ -1322,14 +1364,15 @@
 					</div>
 				</li>
 
-				<li>
-					<div>
-						<button id="apply-proxyprint"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
+				<wicket:enclosure child="btn-apply-proxyprint">
+					<li>
+						<div>
+							<button id="apply-proxyprint"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+								wicket:id="btn-apply-proxyprint" />
+						</div>
+					</li>
+				</wicket:enclosure>
 			</ul>
 		</div>
 	</li>
@@ -1338,7 +1381,7 @@
 			<h3>
 				<wicket:message key="cat-eco-print" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
+			<ul data-role="listview" data-inset="true" wicket:id="sect-eco-print">
 				<li>
 					<label for="ecoprint-enable" wicket:id="ecoprint-enable-label" />
 					<input type="checkbox" id="ecoprint-enable" value="0"
@@ -1364,14 +1407,15 @@
 						autocorrect="off" autocapitalize="off" maxlength="3"
 						pattern="[0-9]*" spellcheck="false" />
 				</li>
-				<li>
-					<div>
-						<button id="apply-ecoprint"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
+				<wicket:enclosure child="btn-apply-ecoprint">
+					<li>
+						<div>
+							<button id="apply-ecoprint"
+								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+								wicket:id="btn-apply-ecoprint" />
+						</div>
+					</li>
+				</wicket:enclosure>
 			</ul>
 		</div>
 	</li>
@@ -1380,147 +1424,153 @@
 			<h3>
 				<wicket:message key="cat-financial" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="financial-currency-code" />
-					</h3>
-					<input type="text" id="" value=""
-						wicket:id="financial-currency-code" maxlength="3"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<div>
-						<wicket:enclosure child="button-change-financial-currency-code">
-							<button wicket:id="button-change-financial-currency-code"
-								id="change-financial-currency-code"
-								class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" />
+			<div wicket:id="sect-financial">
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="financial-currency-code" />
+						</h3>
+						<input type="text" id="" value=""
+							wicket:id="financial-currency-code" maxlength="3"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+						<div>
+							<wicket:enclosure child="button-change-financial-currency-code">
+								<button wicket:id="button-change-financial-currency-code"
+									id="change-financial-currency-code"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check" />
+							</wicket:enclosure>
+							<wicket:enclosure child="financial-currency-code-help">
+								<span wicket:id="financial-currency-code-help"
+									class="sp-txt-wrap" />
+							</wicket:enclosure>
+						</div>
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="cat-financial-general" />
+						</h3>
+						<br />
+						<label class="sp-txt-wrap" for=""
+							wicket:id="financial-global-credit-limit-label" />
+						<input type="text" id="" value=""
+							wicket:id="financial-global-credit-limit" maxlength="10"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							pattern="[0-9]*" spellcheck="false" />
+						<label class="sp-txt-wrap" for=""
+							wicket:id="financial-printer-cost-decimals-label" />
+						<input type="text" id="" value=""
+							wicket:id="financial-printer-cost-decimals" maxlength="1"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							pattern="[0-9]*" spellcheck="false" />
+						<label class="sp-txt-wrap" for=""
+							wicket:id="financial-decimals-other-label" />
+						<input type="text" id="" value=""
+							wicket:id="financial-decimals-other" maxlength="1"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							pattern="[0-9]*" spellcheck="false" />
+						<wicket:enclosure child="btn-apply-financial-general">
+							<div>
+								<button id="apply-financial-general"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-financial-general" />
+							</div>
 						</wicket:enclosure>
-						<wicket:enclosure child="financial-currency-code-help">
-							<span wicket:id="financial-currency-code-help"
-								class="sp-txt-wrap" />
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="cat-financial-pos" />
+						</h3>
+						<br />
+						<label class="sp-txt-wrap" for=""
+							wicket:id="financial-payment-methods-label" />
+						<input type="text" id="" value=""
+							wicket:id="financial-payment-methods" maxlength="128"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+						<br />
+						<div class="sp-txt-wrap">
+							<wicket:message key="financial-pos-receipt-header" />
+						</div>
+						<textarea id="financial.pos.receipt-header"
+							wicket:id="financial-pos-receipt-header" />
+						<wicket:enclosure child="btn-apply-financial-pos">
+							<div>
+								<button id="apply-financial-pos"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-financial-pos" />
+							</div>
 						</wicket:enclosure>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="cat-financial-general" />
-					</h3>
-					<br />
-					<label class="sp-txt-wrap" for=""
-						wicket:id="financial-global-credit-limit-label" />
-					<input type="text" id="" value=""
-						wicket:id="financial-global-credit-limit" maxlength="10"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						pattern="[0-9]*" spellcheck="false" />
-					<label class="sp-txt-wrap" for=""
-						wicket:id="financial-printer-cost-decimals-label" />
-					<input type="text" id="" value=""
-						wicket:id="financial-printer-cost-decimals" maxlength="1"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						pattern="[0-9]*" spellcheck="false" />
-					<label class="sp-txt-wrap" for=""
-						wicket:id="financial-decimals-other-label" />
-					<input type="text" id="" value=""
-						wicket:id="financial-decimals-other" maxlength="1"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						pattern="[0-9]*" spellcheck="false" />
-					<div>
-						<button id="apply-financial-general"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="cat-financial-pos" />
-					</h3>
-					<br />
-					<label class="sp-txt-wrap" for=""
-						wicket:id="financial-payment-methods-label" />
-					<input type="text" id="" value=""
-						wicket:id="financial-payment-methods" maxlength="128"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<br />
-					<div class="sp-txt-wrap">
-						<wicket:message key="financial-pos-receipt-header" />
-					</div>
-					<textarea id="financial.pos.receipt-header"
-						wicket:id="financial-pos-receipt-header" />
-					<div>
-						<button id="apply-financial-pos"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="cat-financial-vouchers" />
-					</h3>
-					<br />
-					<label class="sp-txt-wrap" for=""
-						wicket:id="financial-voucher-card-header-label" />
-					<input type="text" id="" value=""
-						wicket:id="financial-voucher-card-header" maxlength="128"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<label class="sp-txt-wrap" for=""
-						wicket:id="financial-voucher-card-footer-label" />
-					<input type="text" id="" value=""
-						wicket:id="financial-voucher-card-footer" maxlength="128"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<label for="sp-financial-voucher-card-fontfamily">
-						<wicket:message key="financial-voucher-card-fontfamily" />
-					</label>
-					<select tabindex="-1" id="sp-financial-voucher-card-fontfamily"
-						data-native-menu="false">
-						<wicket:panel wicket:id="voucher-fontfamily-options" />
-					</select>
-					<br />
-					<label for="the-config-key"
-						wicket:id="financial-user-vouchers-enable-label" />
-					<input type="checkbox" id="the-config-key" value="0"
-						wicket:id="financial-user-vouchers-enable" />
-					<div>
-						<button id="apply-financial-vouchers"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="cat-financial-user-transfers" />
-					</h3>
-					<label for="the-config-key"
-						wicket:id="financial-user-transfer-enable-label" />
-					<input type="checkbox" id="the-config-key" value="0"
-						wicket:id="financial-user-transfer-enable" />
-					<div class="financial-user-transfers-enabled">
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="cat-financial-vouchers" />
+						</h3>
+						<br />
+						<label class="sp-txt-wrap" for=""
+							wicket:id="financial-voucher-card-header-label" />
+						<input type="text" id="" value=""
+							wicket:id="financial-voucher-card-header" maxlength="128"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+						<label class="sp-txt-wrap" for=""
+							wicket:id="financial-voucher-card-footer-label" />
+						<input type="text" id="" value=""
+							wicket:id="financial-voucher-card-footer" maxlength="128"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+						<label for="sp-financial-voucher-card-fontfamily">
+							<wicket:message key="financial-voucher-card-fontfamily" />
+						</label>
+						<select tabindex="-1" id="sp-financial-voucher-card-fontfamily"
+							data-native-menu="false">
+							<wicket:panel wicket:id="voucher-fontfamily-options" />
+						</select>
+						<br />
 						<label for="the-config-key"
-							wicket:id="financial-user-transfer-enable-comments-label" />
+							wicket:id="financial-user-vouchers-enable-label" />
 						<input type="checkbox" id="the-config-key" value="0"
-							wicket:id="financial-user-transfer-enable-comments" />
-					</div>
-					<div>
-						<button id="apply-financial-user-transfers"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
+							wicket:id="financial-user-vouchers-enable" />
+						<wicket:enclosure child="btn-apply-financial-vouchers">
+							<div>
+								<button id="apply-financial-vouchers"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-financial-vouchers" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="cat-financial-user-transfers" />
+						</h3>
+						<label for="the-config-key"
+							wicket:id="financial-user-transfer-enable-label" />
+						<input type="checkbox" id="the-config-key" value="0"
+							wicket:id="financial-user-transfer-enable" />
+						<div class="financial-user-transfers-enabled">
+							<label for="the-config-key"
+								wicket:id="financial-user-transfer-enable-comments-label" />
+							<input type="checkbox" id="the-config-key" value="0"
+								wicket:id="financial-user-transfer-enable-comments" />
+						</div>
+						<wicket:enclosure child="btn-apply-financial-user-transfers">
+							<div>
+								<button id="apply-financial-user-transfers"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-financial-user-transfers" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</li>
 	<li>
@@ -1528,116 +1578,124 @@
 			<h3>
 				<wicket:message key="cat-backups" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="cat-backup-location" />
-					</h3>
-					<span class="sp-txt-wrap"> <legend
-							wicket:id="backup-location" />
-					</span>
-				</li>
-				<li>
-					<h3>
-						<wicket:message key="backup-last-run" />
-					</h3>
-					<span class="sp-txt-wrap" wicket:id="backup-last-run"></span>
-					<div>
-						<button id="backup-now"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-backup-now" />
-						</button>
-					</div>
-				</li>
-			</ul>
-
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="cat-backup-automatic" />
-					</h3>
-
-					<div>
-						<span class="sp-txt-wrap"> <wicket:message
-								key="backup-automatic-descript" />
+			<div wicket:id="sect-backups">
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="cat-backup-location" />
+						</h3>
+						<span class="sp-txt-wrap"> <legend
+								wicket:id="backup-location" />
 						</span>
-						<wicket:panel wicket:id="tooltip-backup-automatic" />
-					</div>
-					<h3>
-						<wicket:message key="backup-next-automatic-run" />
-					</h3>
-					<legend class="sp-txt-wrap" wicket:id="backup-next-run" />
+					</li>
+					<li>
+						<h3>
+							<wicket:message key="backup-last-run" />
+						</h3>
+						<span class="sp-txt-wrap" wicket:id="backup-last-run"></span>
+						<wicket:enclosure child="btn-backup-now">
+							<div>
+								<button id="backup-now"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-backup-now" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
 
-					<fieldset data-role="controlgroup" data-type="vertical">
-						<label for="" wicket:id="enable-automatic-backup-label" />
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="cat-backup-automatic" />
+						</h3>
+
+						<div>
+							<span class="sp-txt-wrap"> <wicket:message
+									key="backup-automatic-descript" />
+							</span>
+							<p>
+								<span class="sp-txt-wrap"> <wicket:message
+										key="backup-automatic-tooltip" />
+								</span>
+							</p>
+						</div>
+						<h3>
+							<wicket:message key="backup-next-automatic-run" />
+						</h3>
+						<legend class="sp-txt-wrap" wicket:id="backup-next-run" />
+
+						<fieldset data-role="controlgroup" data-type="vertical">
+							<label for="" wicket:id="enable-automatic-backup-label" />
+							<input type="checkbox" id="" value="0"
+								wicket:id="enable-automatic-backup" />
+						</fieldset>
+					</li>
+					<wicket:remove>
+						<!-- NOTE: Use style="float: right;" to position label to the right of input. -->
+						<!-- Using a CSS class in label like e.g. sp-label-right does NOT work (overruled by JQM?) -->
+					</wicket:remove>
+					<li>
+						<span class="sp-txt-wrap"><wicket:message
+								key="backups-keep-days-prompt" /></span>
+						<div class="ui-field-contain">
+							<label for="" style="float: right;"
+								wicket:id="backups-keep-days-label" />
+							<input type="text" id="" value="" wicket:id="backups-keep-days"
+								pattern="[0-9]*" autocapitalize="off" />
+						</div>
+					</li>
+					<li>
+						<span class="sp-txt-wrap"> <wicket:message
+								key="backup-automatic-old-data-descript" />
+						</span>
+						<label class="sp-txt-wrap" for=""
+							wicket:id="backup-delete-doc-logs-label" />
 						<input type="checkbox" id="" value="0"
-							wicket:id="enable-automatic-backup" />
-					</fieldset>
-				</li>
-				<wicket:remove>
-					<!-- NOTE: Use style="float: right;" to position label to the right of input. -->
-					<!-- Using a CSS class in label like e.g. sp-label-right does NOT work (overruled by JQM?) -->
-				</wicket:remove>
-				<li>
-					<span class="sp-txt-wrap"><wicket:message
-							key="backups-keep-days-prompt" /></span>
-					<div class="ui-field-contain">
-						<label for="" style="float: right;"
-							wicket:id="backups-keep-days-label" />
-						<input type="text" id="" value="" wicket:id="backups-keep-days"
-							pattern="[0-9]*" autocapitalize="off" />
-					</div>
-				</li>
-				<li>
-					<span class="sp-txt-wrap"> <wicket:message
-							key="backup-automatic-old-data-descript" />
-					</span>
-					<label class="sp-txt-wrap" for=""
-						wicket:id="backup-delete-doc-logs-label" />
-					<input type="checkbox" id="" value="0"
-						wicket:id="backup-delete-doc-logs" />
-					<div class="ui-field-contain">
-						<label for="" style="float: right;"
-							wicket:id="backup-delete-doc-log-days-label" />
-						<input type="text" id="" value=""
-							wicket:id="backup-delete-doc-log-days" pattern="[0-9]*"
-							autocapitalize="off" />
-					</div>
-					<label class="sp-txt-wrap" for=""
-						wicket:id="backup-delete-account-trxs-label" />
-					<input type="checkbox" id="" value="0"
-						wicket:id="backup-delete-account-trxs" />
-					<div class="ui-field-contain">
-						<label for="" style="float: right;"
-							wicket:id="backup-delete-account-trx-days-label" />
-						<input type="text" id="" value=""
-							wicket:id="backup-delete-account-trx-days" pattern="[0-9]*"
-							autocapitalize="off" />
-					</div>
-					<label class="sp-txt-wrap" for=""
-						wicket:id="backup-delete-app-logs-label" />
-					<input type="checkbox" id="" value="0"
-						wicket:id="backup-delete-app-logs" />
-					<div class="ui-field-contain">
-						<label for="" style="float: right;"
-							wicket:id="backup-delete-app-log-days-label" />
-						<input type="text" id="" value=""
-							wicket:id="backup-delete-app-log-days" pattern="[0-9]*"
-							autocapitalize="off" />
-					</div>
-				</li>
-				<li>
-					<div>
-						<button id="apply-backup-automatic"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-						<button id="sp-database-stats" title="the-title"
-							wicket:id="sp-database-stats"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info" />
-					</div>
-				</li>
-			</ul>
+							wicket:id="backup-delete-doc-logs" />
+						<div class="ui-field-contain">
+							<label for="" style="float: right;"
+								wicket:id="backup-delete-doc-log-days-label" />
+							<input type="text" id="" value=""
+								wicket:id="backup-delete-doc-log-days" pattern="[0-9]*"
+								autocapitalize="off" />
+						</div>
+						<label class="sp-txt-wrap" for=""
+							wicket:id="backup-delete-account-trxs-label" />
+						<input type="checkbox" id="" value="0"
+							wicket:id="backup-delete-account-trxs" />
+						<div class="ui-field-contain">
+							<label for="" style="float: right;"
+								wicket:id="backup-delete-account-trx-days-label" />
+							<input type="text" id="" value=""
+								wicket:id="backup-delete-account-trx-days" pattern="[0-9]*"
+								autocapitalize="off" />
+						</div>
+						<label class="sp-txt-wrap" for=""
+							wicket:id="backup-delete-app-logs-label" />
+						<input type="checkbox" id="" value="0"
+							wicket:id="backup-delete-app-logs" />
+						<div class="ui-field-contain">
+							<label for="" style="float: right;"
+								wicket:id="backup-delete-app-log-days-label" />
+							<input type="text" id="" value=""
+								wicket:id="backup-delete-app-log-days" pattern="[0-9]*"
+								autocapitalize="off" />
+						</div>
+					</li>
+					<wicket:enclosure child="btn-apply-backup-automatic">
+						<li>
+							<div>
+								<button id="apply-backup-automatic"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-backup-automatic" />
+								<button id="sp-database-stats" title="the-title"
+									wicket:id="sp-database-stats"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-info" />
+							</div>
+						</li>
+					</wicket:enclosure>
+				</ul>
+			</div>
 		</div>
 	</li>
 	<li>
@@ -1645,265 +1703,278 @@
 			<h3>
 				<wicket:message key="cat-advanced" />
 			</h3>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="cliapp-auth-header" />
-					</h3>
-					<label for="" wicket:id="cliapp-auth-trust-user-account-label" />
-					<input type="checkbox" id="" value="0"
-						wicket:id="cliapp-auth-trust-user-account" />
-					<label for="" wicket:id="cliapp-auth-trust-webapp-user-auth-label" />
-					<input type="checkbox" id="" value="0"
-						wicket:id="cliapp-auth-trust-webapp-user-auth" />
-					<label class="sp-txt-wrap" for=""
-						wicket:id="cliapp-auth-admin-passkey-label" />
-					<input style="" type="text" id="" value=""
-						wicket:id="cliapp-auth-admin-passkey" autocapitalize="off" />
-					<div>
-						<button id="apply-cliapp-auth"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="admin-password-reset" />
-					</h3>
-					<label for="admin-pw-new">
-						<wicket:message key="password-new" />
-					</label>
-					<input type="password" id="admin-pw-new" value="" />
-					<label for="admin-pw-confirm">
-						<wicket:message key="password-confirm" />
-					</label>
-					<input type="password" id="admin-pw-confirm" value="" />
-					<div>
-						<button id="admin-pw-reset"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>JMX Agent</h3>
-					<div class="sp-txt-wrap">
-						<wicket:message key="jmx-comment" />
-						<span wicket:id="jmx-remote-process" />
-					</div>
-				</li>
-				<li>
-					<h3 wicket:id="jmx-password-reset" />
-					<label for="jmx-pw-new">
-						<wicket:message key="password-new" />
-					</label>
-					<input type="password" id="jmx-pw-new" value="" />
-					<label for="jmx-pw-confirm">
-						<wicket:message key="password-confirm" />
-					</label>
-					<input type="password" id="jmx-pw-confirm" value="" />
-					<div>
-						<button id="jmx-pw-reset"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="locale-header" />
-					</h3>
-					<span class="sp-txt-wrap" wicket:id="locale-description-label" />
-					<input type="text" id="" value="" wicket:id="locale-description"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<div>
-						<button id="apply-locale"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="papersize-header" />
-					</h3>
-					<fieldset data-role="controlgroup" data-type="horizontal"
-						class="ui-mini">
-						<legend class="sp-txt-wrap" wicket:id="papersize-description" />
-						<label for="" wicket:id="default-papersize-system-label" />
-						<input type="radio" name="" id=""
-							wicket:id="default-papersize-system" />
-						<label for="" wicket:id="default-papersize-letter-label" />
-						<input type="radio" name="" id=""
-							wicket:id="default-papersize-letter" />
-						<label for="" wicket:id="default-papersize-a4-label" />
-						<input type="radio" name="" id="" wicket:id="default-papersize-a4" />
-					</fieldset>
-					<div>
-						<button id="apply-papersize"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="report-fontfamily-header" />
-					</h3>
-					<label for="sp-report-fontfamily">
-						<wicket:message key="report-fontfamily-legend" />
-					</label>
-					<select tabindex="-1" id="sp-report-fontfamily"
-						data-native-menu="false">
-						<wicket:panel wicket:id="report-fontfamily-options" />
-					</select>
-					<div>
-						<button id="apply-report-fontfamily"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="converters-header" />
-					</h3>
-				</li>
-				<li>
-					<h3 wicket:id="version-libreoffice" />
-					<label for="libreoffice-enable"
-						wicket:id="libreoffice-enable-label" />
-					<input type="checkbox" id="libreoffice-enable" value="0"
-						wicket:id="libreoffice-enable" />
-
-					<label for="libreoffice-soffice-enable"
-						wicket:id="libreoffice-soffice-enable-label" />
-					<input type="checkbox" id="libreoffice-soffice-enable" value="0"
-						wicket:id="libreoffice-soffice-enable" />
-
-				</li>
-				<li>
-					<h3 wicket:id="version-xpstopdf" />
-					<label for="xpstopdf-enable" wicket:id="xpstopdf-enable-label" />
-					<input type="checkbox" id="xpstopdf-enable" value="0"
-						wicket:id="xpstopdf-enable" />
-				</li>
-				<li>
-					<div>
-						<button id="apply-converters"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="print-in-header" />
-					</h3>
-				</li>
-				<li>
-					<div class="sp-txt-wrap" style="margin-bottom: 20px;">
-						<wicket:message key="print-in-encrypted-pdf-descript" />
-					</div>
-					<label for="print-in-allow-encrypted-pdf"
-						wicket:id="print-in-allow-encrypted-pdf-label" />
-					<input type="checkbox" id="print-in-allow-encrypted-pdf" value="0"
-						wicket:id="print-in-allow-encrypted-pdf" />
-				</li>
-				<li>
-					<div class="sp-txt-wrap" style="margin-bottom: 20px;">
-						<wicket:message key="print-in-clear-descript" />
-					</div>
-					<label for="[item-key]" wicket:id="print-in-clear-at-logout-label" />
-					<input type="checkbox" id="[item-key]" value="0"
-						wicket:id="print-in-clear-at-logout" />
-
-					<div class="sp-txt-wrap" style="margin-top: 20px;">
-						<wicket:message key="print-in-expiry-descript" />
-					</div>
-					<div class="ui-field-contain" style="max-width: 150px;">
-						<label for="" style="float: right;"
-							wicket:id="print-in-expiry-mins-label" />
+			<div wicket:id="sect-advanced">
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="cliapp-auth-header" />
+						</h3>
+						<label for="" wicket:id="cliapp-auth-trust-user-account-label" />
+						<input type="checkbox" id="" value="0"
+							wicket:id="cliapp-auth-trust-user-account" />
+						<label for="" wicket:id="cliapp-auth-trust-webapp-user-auth-label" />
+						<input type="checkbox" id="" value="0"
+							wicket:id="cliapp-auth-trust-webapp-user-auth" />
+						<label class="sp-txt-wrap" for=""
+							wicket:id="cliapp-auth-admin-passkey-label" />
 						<input style="" type="text" id="" value=""
-							wicket:id="print-in-expiry-mins" pattern="[0-9]*"
-							autocapitalize="off" />
-					</div>
+							wicket:id="cliapp-auth-admin-passkey" autocapitalize="off" />
 
-					<div class="sp-txt-wrap">
-						<wicket:message key="print-in-expiry-signal-descript" />
-					</div>
+						<wicket:enclosure child="btn-apply-cliapp-auth">
+							<div>
+								<button id="apply-cliapp-auth"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-cliapp-auth" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+				<wicket:enclosure child="btn-admin-pw-reset">
+					<ul data-role="listview" data-inset="true">
+						<li>
+							<h3>
+								<wicket:message key="admin-password-reset" />
+							</h3>
+							<label for="admin-pw-new">
+								<wicket:message key="password-new" />
+							</label>
+							<input type="password" id="admin-pw-new" value="" />
+							<label for="admin-pw-confirm">
+								<wicket:message key="password-confirm" />
+							</label>
+							<input type="password" id="admin-pw-confirm" value="" />
+							<div>
+								<button id="admin-pw-reset"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-admin-pw-reset" />
+							</div>
+						</li>
+					</ul>
+				</wicket:enclosure>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>JMX Agent</h3>
+						<div class="sp-txt-wrap">
+							<wicket:message key="jmx-comment" />
+							<span wicket:id="jmx-remote-process" />
+						</div>
+					</li>
+					<wicket:enclosure child="btn-jmx-pw-reset">
+						<li>
+							<h3 wicket:id="jmx-password-reset" />
+							<label for="jmx-pw-new">
+								<wicket:message key="password-new" />
+							</label>
+							<input type="password" id="jmx-pw-new" value="" />
+							<label for="jmx-pw-confirm">
+								<wicket:message key="password-confirm" />
+							</label>
+							<input type="password" id="jmx-pw-confirm" value="" />
+							<div>
+								<button id="jmx-pw-reset"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-jmx-pw-reset" />
+							</div>
+						</li>
+					</wicket:enclosure>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="locale-header" />
+						</h3>
+						<span class="sp-txt-wrap" wicket:id="locale-description-label" />
+						<input type="text" id="" value="" wicket:id="locale-description"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+						<wicket:enclosure child="btn-apply-locale">
+							<div>
+								<button id="apply-locale"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-locale" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="papersize-header" />
+						</h3>
+						<fieldset data-role="controlgroup" data-type="horizontal"
+							class="ui-mini">
+							<legend class="sp-txt-wrap" wicket:id="papersize-description" />
+							<label for="" wicket:id="default-papersize-system-label" />
+							<input type="radio" name="" id=""
+								wicket:id="default-papersize-system" />
+							<label for="" wicket:id="default-papersize-letter-label" />
+							<input type="radio" name="" id=""
+								wicket:id="default-papersize-letter" />
+							<label for="" wicket:id="default-papersize-a4-label" />
+							<input type="radio" name="" id=""
+								wicket:id="default-papersize-a4" />
+						</fieldset>
+						<wicket:enclosure child="btn-apply-papersize">
+							<div>
+								<button id="apply-papersize"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-papersize" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="report-fontfamily-header" />
+						</h3>
+						<label for="sp-report-fontfamily">
+							<wicket:message key="report-fontfamily-legend" />
+						</label>
+						<select tabindex="-1" id="sp-report-fontfamily"
+							data-native-menu="false">
+							<wicket:panel wicket:id="report-fontfamily-options" />
+						</select>
+						<wicket:enclosure child="btn-apply-report-fontfamily">
+							<div>
+								<button id="apply-report-fontfamily"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-report-fontfamily" />
+							</div>
+						</wicket:enclosure>
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="converters-header" />
+						</h3>
+					</li>
+					<li>
+						<h3 wicket:id="version-libreoffice" />
+						<label for="libreoffice-enable"
+							wicket:id="libreoffice-enable-label" />
+						<input type="checkbox" id="libreoffice-enable" value="0"
+							wicket:id="libreoffice-enable" />
 
-					<div class="ui-field-contain" style="max-width: 150px;">
-						<label for="" style="float: right;"
-							wicket:id="print-in-expiry-signal-mins-label" />
-						<input style="" type="text" id="" value=""
-							wicket:id="print-in-expiry-signal-mins" pattern="[0-9]*"
-							autocapitalize="off" />
-					</div>
+						<label for="libreoffice-soffice-enable"
+							wicket:id="libreoffice-soffice-enable-label" />
+						<input type="checkbox" id="libreoffice-soffice-enable" value="0"
+							wicket:id="libreoffice-soffice-enable" />
 
-				</li>
-				<li>
-					<div>
-						<button id="apply-print-in"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<h3>
-						<wicket:message key="pagometer-reset" />
-					</h3>
-					<fieldset data-role="controlgroup" data-type="vertical">
-						<legend class="sp-txt-wrap">
-							<wicket:message key="pagometer-reset-descript" />
-						</legend>
-						<label for="" wicket:id="pagometer-reset-dashboard-label" />
-						<input type="checkbox" id="" value="dashboard"
-							wicket:id="pagometer-reset-dashboard" />
-						<label for="" wicket:id="pagometer-reset-queues-label" />
-						<input type="checkbox" id="" value="queues"
-							wicket:id="pagometer-reset-queues" />
-						<label for="" wicket:id="pagometer-reset-printers-label" />
-						<input type="checkbox" id="" value="printers"
-							wicket:id="pagometer-reset-printers" />
-						<label for="" wicket:id="pagometer-reset-users-label" />
-						<input type="checkbox" id="" value="users"
-							wicket:id="pagometer-reset-users" />
-					</fieldset>
-					<div>
-						<button id="pagometer-reset"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
-					</div>
-				</li>
-			</ul>
-			<ul data-role="listview" data-inset="true">
-				<li data-icon="gear">
-					<a id="button-config-editor"> <wicket:message
-							key="button-config-editor" />
-					</a>
-				</li>
-			</ul>
+					</li>
+					<li>
+						<h3 wicket:id="version-xpstopdf" />
+						<label for="xpstopdf-enable" wicket:id="xpstopdf-enable-label" />
+						<input type="checkbox" id="xpstopdf-enable" value="0"
+							wicket:id="xpstopdf-enable" />
+					</li>
+					<wicket:enclosure child="btn-apply-converters">
+						<li>
+							<div>
+								<button id="apply-converters"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-converters" />
+							</div>
+						</li>
+					</wicket:enclosure>
+				</ul>
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>
+							<wicket:message key="print-in-header" />
+						</h3>
+					</li>
+					<li>
+						<div class="sp-txt-wrap" style="margin-bottom: 20px;">
+							<wicket:message key="print-in-encrypted-pdf-descript" />
+						</div>
+						<label for="print-in-allow-encrypted-pdf"
+							wicket:id="print-in-allow-encrypted-pdf-label" />
+						<input type="checkbox" id="print-in-allow-encrypted-pdf" value="0"
+							wicket:id="print-in-allow-encrypted-pdf" />
+					</li>
+					<li>
+						<div class="sp-txt-wrap" style="margin-bottom: 20px;">
+							<wicket:message key="print-in-clear-descript" />
+						</div>
+						<label for="[item-key]" wicket:id="print-in-clear-at-logout-label" />
+						<input type="checkbox" id="[item-key]" value="0"
+							wicket:id="print-in-clear-at-logout" />
+
+						<div class="sp-txt-wrap" style="margin-top: 20px;">
+							<wicket:message key="print-in-expiry-descript" />
+						</div>
+						<div class="ui-field-contain" style="max-width: 150px;">
+							<label for="" style="float: right;"
+								wicket:id="print-in-expiry-mins-label" />
+							<input style="" type="text" id="" value=""
+								wicket:id="print-in-expiry-mins" pattern="[0-9]*"
+								autocapitalize="off" />
+						</div>
+
+						<div class="sp-txt-wrap">
+							<wicket:message key="print-in-expiry-signal-descript" />
+						</div>
+
+						<div class="ui-field-contain" style="max-width: 150px;">
+							<label for="" style="float: right;"
+								wicket:id="print-in-expiry-signal-mins-label" />
+							<input style="" type="text" id="" value=""
+								wicket:id="print-in-expiry-signal-mins" pattern="[0-9]*"
+								autocapitalize="off" />
+						</div>
+
+					</li>
+					<wicket:enclosure child="btn-apply-print-in">
+						<li>
+							<div>
+								<button id="apply-print-in"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-print-in" />
+							</div>
+						</li>
+					</wicket:enclosure>
+				</ul>
+				<wicket:enclosure child="btn-pagometer-reset">
+					<ul data-role="listview" data-inset="true">
+						<li>
+							<h3>
+								<wicket:message key="pagometer-reset" />
+							</h3>
+							<fieldset data-role="controlgroup" data-type="vertical">
+								<legend class="sp-txt-wrap">
+									<wicket:message key="pagometer-reset-descript" />
+								</legend>
+								<label for="" wicket:id="pagometer-reset-dashboard-label" />
+								<input type="checkbox" id="" value="dashboard"
+									wicket:id="pagometer-reset-dashboard" />
+								<label for="" wicket:id="pagometer-reset-queues-label" />
+								<input type="checkbox" id="" value="queues"
+									wicket:id="pagometer-reset-queues" />
+								<label for="" wicket:id="pagometer-reset-printers-label" />
+								<input type="checkbox" id="" value="printers"
+									wicket:id="pagometer-reset-printers" />
+								<label for="" wicket:id="pagometer-reset-users-label" />
+								<input type="checkbox" id="" value="users"
+									wicket:id="pagometer-reset-users" />
+							</fieldset>
+							<div>
+								<button id="pagometer-reset"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-pagometer-reset" />
+							</div>
+						</li>
+					</ul>
+					<ul data-role="listview" data-inset="true">
+						<li data-icon="gear">
+							<a id="button-config-editor"> <wicket:message
+									key="button-config-editor" />
+							</a>
+						</li>
+					</ul>
+				</wicket:enclosure>
+			</div>
 		</div>
 	</li>
 </ul>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -171,15 +172,17 @@
 		</div>
 	</li>
 
-	<li>
-		<div>
-			<button id="button-create-queue"
-				class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit">
-				<wicket:message key="button-new" />
-			</button>
-		</div>
-	</li>
+	<wicket:enclosure child="button-new">
+		<li>
+			<div>
+				<button id="button-create-queue"
+					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit"
+					wicket:id="button-new" />
+			</div>
+		</li>
+	</wicket:enclosure>
 
 	<li id="sp-queue-list-page"></li>
 
 </ul>
+</html>
