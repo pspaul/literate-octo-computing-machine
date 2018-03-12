@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages;
 
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.MemberCard;
@@ -41,94 +42,51 @@ public abstract class AbstractAuthPage extends AbstractPage {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * .
-     */
+    /** */
     protected static final String POST_PARM_DATA = "data";
+
+    /** */
     protected static final String POST_PARM_USER = "user";
 
+    /** */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(AbstractAuthPage.class);
 
-    private boolean authErrorHandled = false;
+    /**
+     * {@code true} when current session holds a user with admin role.
+     */
     private boolean adminUser = false;
 
     /**
-     * Informs if an authorization error was already handled, by setting
-     * {@link NotAuthorized} as the response page.
-     *
-     * @return
+     * @return {@code true} when current session holds a user with admin role.
      */
-    protected boolean isAuthErrorHandled() {
-        return authErrorHandled;
-    }
-
-    protected void setAuthErrorHandled(boolean handled) {
-        authErrorHandled = handled;
-    }
-
     protected boolean isAdminUser() {
         return adminUser;
     }
 
     /**
-     * Do we need a viable membership status to show this page?
+     * Do we need a viable Community Membership status to show this page?
      *
-     * @return
+     * @return {@code true} when viable membership is needed.
      */
     protected abstract boolean needMembership();
 
     /**
-     * Checks the following contraints:
-     * <ul>
-     * <li>User must be an administrator.</li>
-     * <li>If this page needs a valid membership status (see
-     * {@link #needMembership()}), the Admin WebApp must not be blocked (see
-     * {@link MemberCard#isMembershipDesirable()}.</li>
-     * </ul>
-     */
-    protected void checkAdminAuthorization() {
-
-        boolean authErr = false;
-
-        if (isAdminUser()) {
-            /*
-             * Check membership status, and redirect to message page if needed.
-             */
-            if (needMembership()
-                    && MemberCard.instance().isMembershipDesirable()) {
-                setResponsePage(MembershipMsg.class);
-                authErr = true;
-            }
-        } else {
-
-            if (LOGGER.isErrorEnabled()) {
-                SpSession session = SpSession.get();
-
-                final String error = "user [" + session.getUser().getUserId()
-                        + "] is not authorized";
-                LOGGER.error(error);
-            }
-            this.setResponsePage(NotAuthorized.class);
-            authErr = true;
-        }
-
-        setAuthErrorHandled(authErr);
-    }
-
-    /**
      * Constructor.
      * <p>
-     * This method sets the {@link NotAuthorized} response page when no session
-     * or session user is present. The response page will not be in effect
-     * immediately, so this constructor will return.
+     * This method throws a {@link RestartResponseException} with
+     * {@link SessionExpired} response page when no session or session user is
+     * present.
      * </p>
-     * <p>
-     * IMPORTANT: Any subclass should check {@link #isAuthErrorHandled()} in its
-     * constructor before doing additional checking.
-     * </p>
+     *
+     * @param parameters
+     *            The page parameters.
+     * @throws RestartResponseException
+     *             When authorization or Community Membership issues.
      */
     public AbstractAuthPage(final PageParameters parameters) {
+
+        this.probePostMethod();
 
         final RequestCycle requestCycle = getRequestCycle();
 
@@ -149,22 +107,31 @@ public abstract class AbstractAuthPage extends AbstractPage {
             message = "Wrong Web App Type.";
         } else {
             message = null;
-            adminUser = session.getUser().getAdmin();
+            this.adminUser = session.getUser().getAdmin();
         }
 
-        authErrorHandled = (message != null);
+        if (message != null) {
+            LOGGER.debug(message);
+            throw new RestartResponseException(SessionExpired.class);
+        }
 
-        if (authErrorHandled) {
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(message);
-            }
-
-            this.setResponsePage(NotAuthorized.class);
+        if (webAppTypeAuth == WebAppTypeEnum.ADMIN) {
             /*
-             * Setting the response page will not be in effect immediately, so
-             * this constructor will return ...
+             * Check admin authentication (including the need for a valid
+             * Membership).
              */
+            if (this.adminUser) {
+                if (needMembership()
+                        && MemberCard.instance().isMembershipDesirable()) {
+
+                    throw new RestartResponseException(MembershipMsg.class);
+                }
+            } else {
+                LOGGER.error("User [{}] is not authorized.",
+                        SpSession.get().getUser().getUserId());
+
+                throw new RestartResponseException(SessionExpired.class);
+            }
         }
     }
 

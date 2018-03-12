@@ -39,12 +39,10 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.IppQueueAttrEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
 import org.savapage.core.jpa.IppQueue;
-import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
 import org.savapage.core.services.AccessControlService;
@@ -221,8 +219,11 @@ public final class QueuesPage extends AbstractAdminListPage {
          *
          * @param id
          * @param list
+         * @param isEditor
          */
-        public QueueListView(String id, List<IppQueue> list) {
+        public QueueListView(String id, List<IppQueue> list,
+                final boolean isEditor) {
+
             super(id, list);
 
             /*
@@ -249,14 +250,9 @@ public final class QueuesPage extends AbstractAdminListPage {
                             .append(":").append(WebApp.getServerSslPort())
                             .append(WebApp.MOUNT_PATH_PRINTERS).toString();
 
-            //
-            final User reqUser = SpSession.get().getUser();
-
-            this.isEditor = ACCESS_CONTROL_SERVICE.hasPermission(reqUser,
-                    ACLOidEnum.A_QUEUES, ACLPermissionEnum.EDITOR);
-
-            this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
-                    ACLOidEnum.A_DOCUMENTS);
+            this.isEditor = isEditor;
+            this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(
+                    SpSession.get().getUser(), ACLOidEnum.A_DOCUMENTS);
         }
 
         @Override
@@ -541,7 +537,8 @@ public final class QueuesPage extends AbstractAdminListPage {
                 req.calcStartPosition(), req.getMaxResults(),
                 IppQueueDao.Field.URL_PATH, req.getSort().getAscending());
 
-        add(new QueueListView("queues-view", entryList));
+        add(new QueueListView("queues-view", entryList,
+                this.probePermissionToEdit(ACLOidEnum.A_QUEUES)));
 
         /*
          * Display the navigation bars and write the response.

@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.AccountVoucherDao;
 import org.savapage.core.dao.AccountVoucherDao.ListFilter;
+import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.helpers.AccountVoucherPagerReq;
 import org.savapage.core.jpa.AccountVoucher;
 import org.savapage.core.services.ServiceContext;
@@ -52,12 +53,15 @@ public final class AccountVoucherPage extends AbstractAdminListPage {
     private static final int MAX_PAGES_IN_NAVBAR = 5;
 
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public AccountVoucherPage(final PageParameters parameters) {
 
         super(parameters);
+        this.probePermissionToRead(ACLOidEnum.A_VOUCHERS);
 
+        //
         final String data = getParmValue(POST_PARM_DATA);
         final AccountVoucherPagerReq req = AccountVoucherPagerReq.readReq(data);
 
@@ -72,8 +76,6 @@ public final class AccountVoucherPage extends AbstractAdminListPage {
         filter.setDateTo(req.getSelect().dateTo());
         filter.setDateNow(new Date());
 
-        // this.openServiceContext();
-
         //
         final AccountVoucherDao accountVoucherDao =
                 ServiceContext.getDaoContext().getAccountVoucherDao();
@@ -83,8 +85,6 @@ public final class AccountVoucherPage extends AbstractAdminListPage {
         /*
          * Display the requested page.
          */
-
-        // add(new Label("applog-count", Long.toString(logCount)));
 
         final List<AccountVoucher> entryList = accountVoucherDao.getListChunk(
                 filter, req.calcStartPosition(), req.getMaxResults(),

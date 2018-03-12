@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.UserAccountingDto;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -53,7 +54,7 @@ public final class PageUser extends AbstractAdminPage {
      */
     public PageUser(final PageParameters parameters) {
 
-        super(parameters);
+        super(parameters, ACLOidEnum.A_USERS, RequiredPermission.EDIT);
 
         final MarkupHelper helper = new MarkupHelper(this);
 
@@ -115,7 +116,6 @@ public final class PageUser extends AbstractAdminPage {
                 helper.addModifyLabelAttr("pgp-pubkey-preview-url-template",
                         MarkupHelper.ATTR_VALUE,
                         pgpPublicKeyPreviewUrlTemplate);
-
             }
 
         } catch (MalformedURLException e) {

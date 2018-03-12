@@ -38,7 +38,7 @@ import org.savapage.server.session.SpSession;
  * @author Rijk Ravestein
  *
  */
-public class AccountsBase extends AbstractAdminPage {
+public final class AccountsBase extends AbstractAdminPage {
 
     /**
      * Version for serialization.
@@ -58,10 +58,12 @@ public class AccountsBase extends AbstractAdminPage {
 
     /**
      *
+     * @param parameters
+     *            The page parameters.
      */
     public AccountsBase(final PageParameters parameters) {
 
-        super(parameters);
+        super(parameters, ACLOidEnum.A_ACCOUNTS, RequiredPermission.READ);
 
         final MarkupHelper helper = new MarkupHelper(this);
 

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
@@ -53,7 +54,7 @@ import org.savapage.server.webapp.WebAppTypeEnum;
  *
  * @author Rijk Ravestein
  */
-public class DocLogBase extends AbstractAuthPage {
+public final class DocLogBase extends AbstractAuthPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -79,7 +80,8 @@ public class DocLogBase extends AbstractAuthPage {
             "select-and-sort-account";
 
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public DocLogBase(final PageParameters parameters) {
 
@@ -87,23 +89,11 @@ public class DocLogBase extends AbstractAuthPage {
 
         final WebAppTypeEnum webAppType = this.getSessionWebAppType();
 
-        /**
-         * If this page is displayed in the Admin WebApp context, we check the
-         * admin authentication (including the need for a valid Membership).
-         */
-        if (webAppType == WebAppTypeEnum.ADMIN) {
-            checkAdminAuthorization();
-        }
-
         if (webAppType == WebAppTypeEnum.JOBTICKETS) {
 
-            final User user = SpSession.get().getUser();
-
-            if (user == null || !ACCESS_CONTROL_SERVICE.hasAccess(user,
+            if (!ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
                     ACLRoleEnum.JOB_TICKET_OPERATOR)) {
-
-                this.setResponsePage(NotAuthorized.class);
-                setAuthErrorHandled(true);
+                throw new RestartResponseException(NotAuthorized.class);
             }
         }
 
@@ -439,7 +429,6 @@ public class DocLogBase extends AbstractAuthPage {
 
     @Override
     protected boolean needMembership() {
-        // return isAdminRoleContext();
         return false;
     }
 }

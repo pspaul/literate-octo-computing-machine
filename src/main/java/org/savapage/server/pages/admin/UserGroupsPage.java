@@ -31,7 +31,6 @@ import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.UserGroupMemberDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserGroupPagerReq;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
@@ -59,6 +58,10 @@ public final class UserGroupsPage extends AbstractAdminListPage {
      */
     private static final int MAX_PAGES_IN_NAVBAR = 5;
 
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
     /**
      * @return {@code false} to give Admin a chance to inspect the User Groups.
      */
@@ -84,10 +87,6 @@ public final class UserGroupsPage extends AbstractAdminListPage {
         private static final String WID_BUTTON_ACCOUNT = "button-account";
 
         /** */
-        private final AccessControlService accessControlService =
-                ServiceContext.getServiceFactory().getAccessControlService();
-
-        /** */
         private final UserGroupMemberDao groupMemberDao =
                 ServiceContext.getDaoContext().getUserGroupMemberDao();
 
@@ -106,21 +105,26 @@ public final class UserGroupsPage extends AbstractAdminListPage {
         /***/
         private final boolean hasAccessUsers;
 
-        /** */
-        public UserGroupListView(String id, List<UserGroup> list) {
+        /**
+         *
+         * @param id
+         * @param list
+         * @param isEditor
+         */
+        public UserGroupListView(String id, List<UserGroup> list,
+                final boolean isEditor) {
 
             super(id, list);
 
+            this.isEditor = isEditor;
+
             final User reqUser = SpSession.get().getUser();
 
-            this.isEditor = accessControlService.hasPermission(reqUser,
-                    ACLOidEnum.A_USER_GROUPS, ACLPermissionEnum.EDITOR);
-
-            this.hasAccessAcc = accessControlService.hasAccess(reqUser,
+            this.hasAccessAcc = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
                     ACLOidEnum.A_ACCOUNTS);
 
-            this.hasAccessUsers =
-                    accessControlService.hasAccess(reqUser, ACLOidEnum.A_USERS);
+            this.hasAccessUsers = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
+                    ACLOidEnum.A_USERS);
         }
 
         @Override
@@ -209,7 +213,8 @@ public final class UserGroupsPage extends AbstractAdminListPage {
     }
 
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public UserGroupsPage(final PageParameters parameters) {
 
@@ -236,7 +241,8 @@ public final class UserGroupsPage extends AbstractAdminListPage {
                 userGroupDao.getListChunk(filter, req.calcStartPosition(),
                         req.getMaxResults(), sortField, sortAscending);
 
-        add(new UserGroupListView("user-groups-view", entryList));
+        add(new UserGroupListView("user-groups-view", entryList,
+                this.probePermissionToEdit(ACLOidEnum.A_USER_GROUPS)));
 
         /*
          * Display the navigation bars and write the response.

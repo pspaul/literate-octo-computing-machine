@@ -26,7 +26,6 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.List;
 
 import javax.print.attribute.standard.MediaSizeName;
 
@@ -42,7 +41,6 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.doc.XpsToPdf;
@@ -68,7 +66,6 @@ import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
-import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -105,18 +102,18 @@ public final class Options extends AbstractAdminPage {
 
         super(parameters);
 
+        final boolean isReadOnlyAccess =
+                !this.probePermissionToEdit(ACLOidEnum.A_OPTIONS);
+
         /*
          * We need the printer cache for user input validation.
          */
         try {
             PROXYPRINT_SERVICE.lazyInitPrinterCache();
         } catch (IppConnectException | IppSyntaxException e) {
-            setResponsePage(
+            throw new RestartResponseException(
                     new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
-            return;
         }
-
-        final boolean isReadOnlyAccess = isReadOnlyAccess();
 
         //
         final MarkupHelper helper = new MarkupHelper(this);
@@ -1026,31 +1023,6 @@ public final class Options extends AbstractAdminPage {
 
         //
         this.setReadOnlyAccess(helper, isReadOnlyAccess);
-    }
-
-    /**
-     * @return {@code true} if user access is read-only.
-     */
-    private boolean isReadOnlyAccess() {
-
-        final List<ACLPermissionEnum> perms = ACCESS_CONTROL_SERVICE
-                .getPermission(SpSession.get().getUser(), ACLOidEnum.A_OPTIONS);
-
-        if (perms == null) {
-            return false;
-        }
-
-        if (!ACCESS_CONTROL_SERVICE.hasPermission(perms,
-                ACLPermissionEnum.READER)) {
-
-            throw new RestartResponseException(
-                    new MessageContent(AppLogLevelEnum.WARN,
-                            String.format("Not authorized for \"%s\"",
-                                    ACLOidEnum.A_OPTIONS.uiText(getLocale()))));
-        }
-
-        return !ACCESS_CONTROL_SERVICE.hasPermission(perms,
-                ACLPermissionEnum.EDITOR);
     }
 
     /**

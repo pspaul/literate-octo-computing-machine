@@ -24,24 +24,17 @@ package org.savapage.server.pages.admin;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
-import org.savapage.core.services.AccessControlService;
-import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.JrExportFileExtButtonPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.TooltipPanel;
-import org.savapage.server.session.SpSession;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public class UserGroupsBase extends AbstractAdminPage {
+public final class UserGroupsBase extends AbstractAdminPage {
 
-    /** */
-    private static final AccessControlService ACCESS_CONTROL_SERVICE =
-            ServiceContext.getServiceFactory().getAccessControlService();
     /** */
     private static final String WICKET_ID_BUTTON_ADD_REMOVE =
             "button-add-remove";
@@ -64,12 +57,14 @@ public class UserGroupsBase extends AbstractAdminPage {
 
         super(parameters);
 
+        final boolean hasEditorAccess =
+                this.probePermissionToEdit(ACLOidEnum.A_USERS);
+
         final MarkupHelper helper = new MarkupHelper(this);
 
         if (ConfigManager.instance().isAppReadyToUse()) {
 
-            if (ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
-                    ACLOidEnum.A_USER_GROUPS, ACLPermissionEnum.EDITOR)) {
+            if (hasEditorAccess) {
 
                 helper.encloseLabel(WICKET_ID_BUTTON_ADD_REMOVE,
                         localized("button-add-remove"), true);

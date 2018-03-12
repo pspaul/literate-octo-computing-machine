@@ -23,11 +23,7 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
-import org.savapage.core.services.AccessControlService;
-import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
-import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -44,19 +40,15 @@ public final class QueuesBase extends AbstractAdminPage {
     /** */
     private static final String WICKET_ID_BUTTON_NEW = "button-new";
 
-    /** */
-    private static final AccessControlService ACCESS_CONTROL_SERVICE =
-            ServiceContext.getServiceFactory().getAccessControlService();
-
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public QueuesBase(final PageParameters parameters) {
+
         super(parameters);
 
-        addVisible(
-                ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
-                        ACLOidEnum.A_QUEUES, ACLPermissionEnum.EDITOR),
+        addVisible(this.probePermissionToEdit(ACLOidEnum.A_QUEUES),
                 WICKET_ID_BUTTON_NEW, HtmlButtonEnum.ADD.uiText(getLocale()));
     }
 }

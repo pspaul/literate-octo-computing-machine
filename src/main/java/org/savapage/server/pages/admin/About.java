@@ -32,17 +32,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.SpException;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.doc.XpsToPdf;
 import org.savapage.core.doc.soffice.SOfficeHelper;
 import org.savapage.core.jpa.tools.DbVersionInfo;
-import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.system.SystemInfo;
@@ -50,7 +47,6 @@ import org.savapage.core.system.SystemInfo.SysctlEnum;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.PrinterDriverDownloadPanel;
-import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -62,10 +58,6 @@ public final class About extends AbstractAdminPage {
     /** */
     private static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
-
-    /** */
-    private static final AccessControlService ACCESS_CONTROL_SERVICE =
-            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      * Version for serialization.
@@ -84,18 +76,8 @@ public final class About extends AbstractAdminPage {
 
         super(parameters);
 
-        try {
-            handlePage();
-        } catch (Exception e) {
-            throw new SpException(e);
-        }
-    }
-
-    /**
-     * @throws Exception
-     *
-     */
-    private void handlePage() throws Exception {
+        final boolean hasEditorAccess =
+                this.probePermissionToEdit(ACLOidEnum.A_ABOUT);
 
         final MemberCard memberCard = MemberCard.instance();
 
@@ -484,8 +466,7 @@ public final class About extends AbstractAdminPage {
         helper.encloseLabel("button-import-membercard",
                 localized("button-import-membercard",
                         CommunityDictEnum.MEMBER_CARD.getWord(getLocale())),
-                ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
-                        ACLOidEnum.A_ABOUT, ACLPermissionEnum.EDITOR));
+                hasEditorAccess);
         //
         final String urlHelpDesk =
                 CommunityDictEnum.SAVAPAGE_SUPPORT_URL.getWord();

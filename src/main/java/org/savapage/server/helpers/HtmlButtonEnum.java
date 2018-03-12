@@ -54,6 +54,8 @@ public enum HtmlButtonEnum {
     /** */
     CLOSE,
     /** */
+    CONTINUE,
+    /** */
     DEFAULT,
     /** */
     DELETE,

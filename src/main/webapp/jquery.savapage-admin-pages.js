@@ -281,7 +281,7 @@
          */
         _ns.PageUser = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-user', 'admin.PageUser')
+            var _page = new _ns.Page(_i18n, _view, '#page-user', 'admin/PageUser')
             //
             ,
                 _self = _ns.derive(_page)
@@ -464,7 +464,7 @@
          */
         _ns.PageUserGroup = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-user-group', 'admin.PageUserGroup')
+            var _page = new _ns.Page(_i18n, _view, '#page-user-group', 'admin/PageUserGroup')
             //
             ,
                 _self = _ns.derive(_page)
@@ -568,7 +568,7 @@
          */
         _ns.PageUserGroupsAddRemove = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-user-groups-add-remove', 'admin.PageUserGroupsAddRemove')
+            var _page = new _ns.Page(_i18n, _view, '#page-user-groups-add-remove', 'admin/PageUserGroupsAddRemove')
             //
             ,
                 _self = _ns.derive(_page)
@@ -608,7 +608,7 @@
          */
         _ns.PageSharedAccount = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-shared-account', 'admin.PageSharedAccount')
+            var _page = new _ns.Page(_i18n, _view, '#page-shared-account', 'admin/PageSharedAccount')
             //
             ,
                 _self = _ns.derive(_page)
@@ -706,7 +706,7 @@
          */
         _ns.PageAccountVoucherCreate = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-voucher-create', 'admin.PageAccountVoucherCreate')
+            var _page = new _ns.Page(_i18n, _view, '#page-voucher-create', 'admin/PageAccountVoucherCreate')
             //
             ,
                 _self = _ns.derive(_page);
@@ -757,7 +757,7 @@
          */
         _ns.PageConfigProp = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-config-prop', 'admin.PageConfigProp')
+            var _page = new _ns.Page(_i18n, _view, '#page-config-prop', 'admin/PageConfigProp')
             //
             ,
                 _self = _ns.derive(_page);
@@ -813,7 +813,7 @@
                 _v2mProxyPrintAuth
             //
             ,
-                _page = new _ns.Page(_i18n, _view, '#page-device', 'admin.PageDevice')
+                _page = new _ns.Page(_i18n, _view, '#page-device', 'admin/PageDevice')
             //
             ,
                 _self = _ns.derive(_page)
@@ -1241,7 +1241,7 @@
          */
         _ns.PageQueue = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-queue', 'admin.PageQueue')
+            var _page = new _ns.Page(_i18n, _view, '#page-queue', 'admin/PageQueue')
             //
             ,
                 _self = _ns.derive(_page)
@@ -1290,7 +1290,7 @@
          */
         _ns.PagePrinter = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-printer', 'admin.PagePrinter')
+            var _page = new _ns.Page(_i18n, _view, '#page-printer', 'admin/PagePrinter')
             //
             ,
                 _self = _ns.derive(_page)
@@ -1504,7 +1504,7 @@
          */
         _ns.PageAdmin = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-admin', 'admin.Main')
+            var _page = new _ns.Page(_i18n, _view, '#page-admin', 'admin/Main')
             //
             ,
                 _self = _ns.derive(_page)

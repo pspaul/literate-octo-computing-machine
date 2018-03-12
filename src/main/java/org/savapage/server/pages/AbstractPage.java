@@ -24,12 +24,14 @@ package org.savapage.server.pages;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -37,6 +39,10 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.PerformanceLogger;
 import org.savapage.core.dao.DaoContext;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.server.WebAppParmEnum;
@@ -61,9 +67,10 @@ public abstract class AbstractPage extends WebPage
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
+    /** */
+    protected static final String POST_METHOD = "POST";
+
+    /** */
     protected static final String POST_PARM_WEBAPPTYPE = "webAppType";
 
     /**
@@ -71,6 +78,10 @@ public abstract class AbstractPage extends WebPage
      */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(AbstractPage.class);
+
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /** */
     private final DateFormat dfLongDate = DateFormat
@@ -457,13 +468,94 @@ public abstract class AbstractPage extends WebPage
     }
 
     /**
+     *
+     * @return The {@link HttpServletRequest}.
+     */
+    private HttpServletRequest getHttpServletRequest() {
+        return (HttpServletRequest) getRequestCycle().getRequest()
+                .getContainerRequest();
+    }
+
+    /**
+     * Probes if servlet request method is {@link #POST_METHOD}. When
+     * <i>not</i>, sets response page with error message by throwing an
+     * exception.
+     *
+     * @throws RestartResponseException
+     *             When servlet request method is <i>not</i>
+     *             {@link #POST_METHOD}.
+     */
+    protected final void probePostMethod() {
+
+        if (!getHttpServletRequest().getMethod()
+                .equalsIgnoreCase(POST_METHOD)) {
+            throw new RestartResponseException(new MessageContent(
+                    AppLogLevelEnum.ERROR, "invalid access"));
+        }
+    }
+
+    /**
+     * Probes session user permission. When session user is <i>not</i>
+     * authorized, sets response page with error message by throwing an
+     * exception.
+     *
+     * @param oid
+     *            The OID.
+     * @param permission
+     *            The required permission.
+     * @return List with permissions, or {@code null} when undetermined.
+     * @throws RestartResponseException
+     *             When access is denied.
+     */
+    protected final List<ACLPermissionEnum> probePermission(
+            final ACLOidEnum oid, final ACLPermissionEnum permission) {
+
+        final List<ACLPermissionEnum> perms = ACCESS_CONTROL_SERVICE
+                .getPermission(SpSession.get().getUser(), oid);
+
+        if (perms == null) {
+            return null;
+        }
+
+        if (!ACCESS_CONTROL_SERVICE.hasPermission(perms, permission)) {
+            throw new RestartResponseException(NotAuthorized.class);
+        }
+
+        return perms;
+    }
+
+    /**
+     * @param oid
+     *            The OID.
+     * @throws RestartResponseException
+     *             When access is denied.
+     */
+    protected final void probePermissionToRead(final ACLOidEnum oid) {
+        this.probePermission(oid, ACLPermissionEnum.READER);
+    }
+
+    /**
+     * @param oid
+     *            The OID.
+     * @return {@code true} if session user has {@link ACLPermissionEnum#EDITOR}
+     *         permission.
+     * @throws RestartResponseException
+     *             When read access is denied.
+     */
+    protected final boolean probePermissionToEdit(final ACLOidEnum oid) {
+
+        final List<ACLPermissionEnum> perms =
+                this.probePermission(oid, ACLPermissionEnum.READER);
+
+        return perms == null || ACCESS_CONTROL_SERVICE.hasPermission(perms,
+                ACLPermissionEnum.EDITOR);
+    }
+
+    /**
      * @return The {@link UserAgentHelper}.
      */
     protected final UserAgentHelper createUserAgentHelper() {
-        final HttpServletRequest request =
-                (HttpServletRequest) getRequestCycle().getRequest()
-                        .getContainerRequest();
-        return new UserAgentHelper(request);
+        return new UserAgentHelper(getHttpServletRequest());
     }
 
     /**

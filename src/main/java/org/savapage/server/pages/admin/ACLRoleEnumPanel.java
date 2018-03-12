@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -86,16 +86,18 @@ public final class ACLRoleEnumPanel extends Panel {
                 label = new Label("label", uiText);
             }
 
-            MarkupHelper.modifyLabelAttr(label, "for", htmlId);
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_FOR, htmlId);
             item.add(label);
 
             //
             label = new Label("checkbox", "");
 
-            MarkupHelper.modifyLabelAttr(label, "id", htmlId);
-            MarkupHelper.modifyLabelAttr(label, "value", value.toString());
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_ID, htmlId);
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_VALUE,
+                    value.toString());
             if (selected.contains(value)) {
-                MarkupHelper.modifyLabelAttr(label, "checked", "checked");
+                MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_CHECKED,
+                        "checked");
             }
             item.add(label);
         }

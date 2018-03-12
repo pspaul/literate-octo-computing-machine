@@ -35,11 +35,9 @@ import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.helpers.AccountPagerReq;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
-import org.savapage.core.jpa.User;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
@@ -100,17 +98,14 @@ public final class AccountsPage extends AbstractAdminListPage {
          * @param id
          * @param list
          */
-        public AccountListView(final String id, final List<Account> list) {
+        public AccountListView(final String id, final List<Account> list,
+                final boolean isEditor) {
 
             super(id, list);
 
-            final User reqUser = SpSession.get().getUser();
-
-            this.isEditor = ACCESS_CONTROL_SERVICE.hasPermission(reqUser,
-                    ACLOidEnum.A_ACCOUNTS, ACLPermissionEnum.EDITOR);
-
-            this.hasAccessTrx = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
-                    ACLOidEnum.A_TRANSACTIONS);
+            this.isEditor = isEditor;
+            this.hasAccessTrx = ACCESS_CONTROL_SERVICE.hasAccess(
+                    SpSession.get().getUser(), ACLOidEnum.A_TRANSACTIONS);
         }
 
         @Override
@@ -243,18 +238,13 @@ public final class AccountsPage extends AbstractAdminListPage {
 
         super(parameters);
 
+        final boolean hasEditorAccess =
+                this.probePermissionToEdit(ACLOidEnum.A_ACCOUNTS);
         /*
          * We need a transaction because of the lazy creation of UserAccount
          * instances.
          */
         ServiceContext.getDaoContext().beginTransaction();
-        handlePage();
-    }
-
-    /**
-     *
-     */
-    private void handlePage() {
 
         final String data = getParmValue(POST_PARM_DATA);
         final AccountPagerReq req = AccountPagerReq.read(data);
@@ -290,7 +280,7 @@ public final class AccountsPage extends AbstractAdminListPage {
                         req.getMaxResults(), sortField, sortAscending);
 
         //
-        add(new AccountListView("accounts-view", entryList));
+        add(new AccountListView("accounts-view", entryList, hasEditorAccess));
 
         /*
          * Display the navigation bars and write the response.

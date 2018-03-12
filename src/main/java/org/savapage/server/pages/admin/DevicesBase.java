@@ -23,10 +23,6 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
-import org.savapage.core.services.AccessControlService;
-import org.savapage.core.services.ServiceContext;
-import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -40,10 +36,6 @@ public final class DevicesBase extends AbstractAdminPage {
      */
     private static final long serialVersionUID = 1L;
 
-    /** */
-    private static final AccessControlService ACCESS_CONTROL_SERVICE =
-            ServiceContext.getServiceFactory().getAccessControlService();
-
     /**
      *
      * @param parameters
@@ -53,9 +45,10 @@ public final class DevicesBase extends AbstractAdminPage {
 
         super(parameters);
 
-        addVisible(
-                ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
-                        ACLOidEnum.A_DEVICES, ACLPermissionEnum.EDITOR),
-                "button-new-terminal", localized("button-new-terminal"));
+        final boolean hasEditorAccess =
+                this.probePermissionToEdit(ACLOidEnum.A_DEVICES);
+
+        addVisible(hasEditorAccess, "button-new-terminal",
+                localized("button-new-terminal"));
     }
 }

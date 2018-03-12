@@ -48,7 +48,7 @@ public final class PageUserGroup extends AbstractAdminPage {
      */
     public PageUserGroup(final PageParameters parameters) {
 
-        super(parameters);
+        super(parameters, ACLOidEnum.A_USER_GROUPS, RequiredPermission.EDIT);
 
         //
         final ACLRoleEnumPanel aclRolePanel =

@@ -37,7 +37,6 @@ import org.savapage.server.ipp.IppPrintServerUrlParms;
 import org.savapage.server.pages.AbstractAuthPage;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *
@@ -63,18 +62,6 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
     public InternetPrinterAddIn(final PageParameters parameters) {
 
         super(parameters);
-
-        if (isAuthErrorHandled()) {
-            return;
-        }
-
-        /**
-         * If this page is displayed in the Admin WebApp context, we check the
-         * admin authentication (including the need for a valid Membership).
-         */
-        if (this.getSessionWebAppType() == WebAppTypeEnum.ADMIN) {
-            checkAdminAuthorization();
-        }
 
         final MarkupHelper helper = new MarkupHelper(this);
 

@@ -19,42 +19,25 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.pages.admin;
+package org.savapage.server.pages;
 
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.AppLogLevelEnum;
-import org.savapage.server.pages.MarkupHelper;
+import org.apache.wicket.markup.html.WebPage;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class AppLogBase extends AbstractAdminPage {
-
-    /**
-     * Version for serialization.
-     */
+public class SessionExpired extends WebPage {
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param parameters
-     *            The page parameters.
-     */
-    public AppLogBase(final PageParameters parameters) {
-
-        super(parameters, ACLOidEnum.A_LOG, RequiredPermission.READ);
-
-        MarkupHelper helper = new MarkupHelper(this);
-
-        helper.addModifyLabelAttr("level-all", "value", "");
-        helper.addModifyLabelAttr("level-info", "value",
-                AppLogLevelEnum.INFO.toString());
-        helper.addModifyLabelAttr("level-warn", "value",
-                AppLogLevelEnum.WARN.toString());
-        helper.addModifyLabelAttr("level-error", "value",
-                AppLogLevelEnum.ERROR.toString());
-
+    *
+    */
+    public SessionExpired() {
+        final MarkupHelper helper = new MarkupHelper(this);
+        helper.addButton("btn-continue", HtmlButtonEnum.CONTINUE);
     }
+
 }

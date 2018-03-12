@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Rijk Ravestein
  */
-public class DocLogPage extends AbstractListPage {
+public final class DocLogPage extends AbstractListPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -71,8 +71,8 @@ public class DocLogPage extends AbstractListPage {
 
         super(parameters);
 
-        if (isAuthErrorHandled()) {
-            return;
+        if (this.getSessionWebAppType() == WebAppTypeEnum.ADMIN) {
+            this.probePermissionToRead(ACLOidEnum.A_DOCUMENTS);
         }
 
         final String data = getParmValue(POST_PARM_DATA);

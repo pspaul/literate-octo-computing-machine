@@ -142,10 +142,10 @@
 
                     if (_view.pages.admin.isLoaded) {
                         _view.pages.admin.initView();
-                        _view.pages.admin.show();
                     } else {
-                        _view.pages.admin.load().show();
+                        _view.pages.admin.load();
                     }
+                    _view.pages.admin.show();
 
                     _cometd.start(_model.user.cometdToken);
 

@@ -37,7 +37,6 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserPagerReq;
 import org.savapage.core.i18n.AdjectiveEnum;
@@ -123,8 +122,10 @@ public final class UsersPage extends AbstractAdminListPage {
          *
          * @param id
          * @param list
+         * @param isEditor
          */
-        public UserListView(final String id, final List<User> list) {
+        public UserListView(final String id, final List<User> list,
+                final boolean isEditor) {
 
             super(id, list);
 
@@ -133,8 +134,7 @@ public final class UsersPage extends AbstractAdminListPage {
 
             final User reqUser = SpSession.get().getUser();
 
-            this.isEditor = ACCESS_CONTROL_SERVICE.hasPermission(reqUser,
-                    ACLOidEnum.A_USERS, ACLPermissionEnum.EDITOR);
+            this.isEditor = isEditor;
 
             this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
                     ACLOidEnum.A_DOCUMENTS);
@@ -443,7 +443,8 @@ public final class UsersPage extends AbstractAdminListPage {
                         req.getMaxResults(), sortField, sortAscending);
 
         //
-        add(new UserListView("users-view", entryList));
+        add(new UserListView("users-view", entryList,
+                this.probePermissionToEdit(ACLOidEnum.A_USERS)));
 
         /*
          * Display the navigation bars and write the response.

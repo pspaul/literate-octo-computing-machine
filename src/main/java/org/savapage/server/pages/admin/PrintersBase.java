@@ -24,12 +24,9 @@ package org.savapage.server.pages.admin;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
-import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.MarkupHelper;
-import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -44,10 +41,6 @@ public final class PrintersBase extends AbstractAdminPage {
     private static final long serialVersionUID = 1L;
 
     /** */
-    private static final AccessControlService ACCESS_CONTROL_SERVICE =
-            ServiceContext.getServiceFactory().getAccessControlService();
-
-    /** */
     private static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
 
@@ -55,7 +48,8 @@ public final class PrintersBase extends AbstractAdminPage {
     private static final String WICKET_ID_BUTTON_CUPS = "button-cups";
 
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public PrintersBase(final PageParameters parameters) {
 
@@ -63,8 +57,7 @@ public final class PrintersBase extends AbstractAdminPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        if (ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
-                ACLOidEnum.A_PRINTERS, ACLPermissionEnum.EDITOR)) {
+        if (this.probePermissionToEdit(ACLOidEnum.A_PRINTERS)) {
 
             add(MarkupHelper.modifyLabelAttr(
                     new Label(WICKET_ID_BUTTON_CUPS, "CUPS"),

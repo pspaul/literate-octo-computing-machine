@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -35,6 +35,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserGroupDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
@@ -94,9 +95,7 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
      */
     private class AddGroupsView extends PropertyListView<Object> {
 
-        /**
-        *
-        */
+        /** */
         private static final long serialVersionUID = 1L;
 
         private final String optionId;
@@ -123,11 +122,12 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
     }
 
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public UserGroupsAddRemoveAddIn(final PageParameters parameters) {
 
-        super(parameters);
+        super(parameters, ACLOidEnum.A_USER_GROUPS, RequiredPermission.EDIT);
 
         /*
          * User Source and Internal Groups are candidates to Add.

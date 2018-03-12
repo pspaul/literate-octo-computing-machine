@@ -31,15 +31,12 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.reports.JrVoucherPageLayoutEnum;
-import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.VoucherDesignOptionsPanel;
-import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -53,23 +50,21 @@ public final class AccountVoucherBase extends AbstractAdminPage {
      */
     private static final long serialVersionUID = 1L;
 
-    /** */
-    private static final AccessControlService ACCESS_CONTROL_SERVICE =
-            ServiceContext.getServiceFactory().getAccessControlService();
-
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public AccountVoucherBase(final PageParameters parameters) {
 
         super(parameters);
 
+        final boolean hasEditorAccess =
+                this.probePermissionToEdit(ACLOidEnum.A_VOUCHERS);
+
         final MarkupHelper helper = new MarkupHelper(this);
 
         helper.encloseLabel("button-new-batch",
-                HtmlButtonEnum.ADD.uiText(getLocale()),
-                ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
-                        ACLOidEnum.A_VOUCHERS, ACLPermissionEnum.EDITOR));
+                HtmlButtonEnum.ADD.uiText(getLocale()), hasEditorAccess);
 
         /*
          * Option list: batches

@@ -54,19 +54,7 @@ public final class AccountTrxBase extends AbstractAuthPage {
 
         super(parameters);
 
-        if (isAuthErrorHandled()) {
-            return;
-        }
-
         final WebAppTypeEnum webAppType = this.getSessionWebAppType();
-
-        /**
-         * If this page is displayed in the Admin WebApp context, we check the
-         * admin authentication (including the need for a valid Membership).
-         */
-        if (webAppType == WebAppTypeEnum.ADMIN) {
-            checkAdminAuthorization();
-        }
 
         handlePage(webAppType == WebAppTypeEnum.ADMIN);
     }

@@ -37,7 +37,6 @@ import org.savapage.core.SpException;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.DeviceDao.Field;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
@@ -45,13 +44,11 @@ import org.savapage.core.dto.RfIdReaderStatusDto;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.PrinterGroupMember;
-import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.RfIdReaderService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
-import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,17 +74,15 @@ public final class DevicesPage extends AbstractAdminListPage {
     private static final int MAX_PAGES_IN_NAVBAR = 5;
 
     /** */
-    private static final AccessControlService ACCESS_CONTROL_SERVICE =
-            ServiceContext.getServiceFactory().getAccessControlService();
-
-    /** */
     private static final DeviceService DEVICE_SERVICE =
             ServiceContext.getServiceFactory().getDeviceService();
 
-    private static final RfIdReaderService rfidReaderService =
+    /** */
+    private static final RfIdReaderService RFID_READER_SERVICE =
             ServiceContext.getServiceFactory().getRfIdReaderService();
 
-    private static final DeviceDao deviceDAO =
+    /** */
+    private static final DeviceDao DEVICE_DAO =
             ServiceContext.getDaoContext().getDeviceDao();
 
     /**
@@ -203,23 +198,22 @@ public final class DevicesPage extends AbstractAdminListPage {
          * @param id
          * @param list
          */
-        public DeviceListView(final String id, final List<Device> list) {
+        public DeviceListView(final String id, final List<Device> list,
+                final boolean isEditor) {
 
             super(id, list);
 
             this.dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM,
                     DateFormat.MEDIUM, getLocale());
 
-            this.isEditor = ACCESS_CONTROL_SERVICE.hasPermission(
-                    SpSession.get().getUser(), ACLOidEnum.A_DEVICES,
-                    ACLPermissionEnum.EDITOR);
+            this.isEditor = isEditor;
         }
 
         @Override
         protected void populateItem(final ListItem<Device> item) {
 
             final Device device =
-                    deviceDAO.findById(item.getModelObject().getId());
+                    DEVICE_DAO.findById(item.getModelObject().getId());
 
             Label labelWrk = null;
 
@@ -237,10 +231,11 @@ public final class DevicesPage extends AbstractAdminListPage {
              */
             String readerConnectStatus = null;
 
-            if (!device.getDisabled() && deviceDAO.isCardReader(device)) {
+            if (!device.getDisabled() && DEVICE_DAO.isCardReader(device)) {
 
-                RfIdReaderStatusDto status = rfidReaderService.getReaderStatus(
-                        device.getHostname(), device.getPort());
+                RfIdReaderStatusDto status =
+                        RFID_READER_SERVICE.getReaderStatus(
+                                device.getHostname(), device.getPort());
 
                 if (status.isConnected()) {
                     color = MarkupHelper.CSS_TXT_VALID;
@@ -256,7 +251,7 @@ public final class DevicesPage extends AbstractAdminListPage {
                 readerConnectStatus = "";
             }
 
-            item.add(createVisibleLabel(deviceDAO.isCardReader(device),
+            item.add(createVisibleLabel(DEVICE_DAO.isCardReader(device),
                     "readerConnectStatus", readerConnectStatus,
                     color + " " + MarkupHelper.CSS_TXT_WRAP));
 
@@ -438,7 +433,8 @@ public final class DevicesPage extends AbstractAdminListPage {
     }
 
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public DevicesPage(final PageParameters parameters) {
 
@@ -462,16 +458,17 @@ public final class DevicesPage extends AbstractAdminListPage {
         filter.setDisabled(req.getSelect().getDisabled());
 
         //
-        final long devicesCount = deviceDAO.getListCount(filter);
+        final long devicesCount = DEVICE_DAO.getListCount(filter);
 
-        final List<Device> entryList = deviceDAO.getListChunk(filter,
+        final List<Device> entryList = DEVICE_DAO.getListChunk(filter,
                 req.calcStartPosition(), req.getMaxResults(), Field.NAME,
                 req.getSort().getAscending());
 
         /*
          * Display the requested page.
          */
-        add(new DeviceListView("devices-view", entryList));
+        add(new DeviceListView("devices-view", entryList,
+                this.probePermissionToEdit(ACLOidEnum.A_DEVICES)));
 
         /*
          * Display the navigation bars and write the response.

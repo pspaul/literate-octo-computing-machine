@@ -37,14 +37,11 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.dao.ConfigPropertyDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
 import org.savapage.core.jpa.ConfigProperty;
-import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
-import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,6 +144,12 @@ public final class ConfigPropPage extends AbstractAdminListPage {
         private final ConfigManager cm = ConfigManager.instance();
         private final boolean isEditor;
 
+        /**
+         *
+         * @param id
+         * @param list
+         * @param editor
+         */
         public ConfigPropListView(final String id,
                 final List<ConfigProperty> list, final boolean editor) {
             super(id, list);
@@ -196,12 +199,15 @@ public final class ConfigPropPage extends AbstractAdminListPage {
     }
 
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public ConfigPropPage(final PageParameters parameters) {
 
         super(parameters);
-
+        final boolean hasEditorAccess =
+                this.probePermissionToEdit(ACLOidEnum.A_CONFIG_EDITOR);
+        //
         final Req req = readReq();
 
         final ConfigPropertyDao.ListFilter filter =
@@ -221,12 +227,8 @@ public final class ConfigPropPage extends AbstractAdminListPage {
                 req.calcStartPosition(), req.getMaxResults(),
                 ConfigPropertyDao.Field.NAME, req.getSort().getAscending());
 
-        final User user = SpSession.get().getUser();
-
         add(new ConfigPropListView("config-entry-view", entryList,
-                ServiceContext.getServiceFactory().getAccessControlService()
-                        .hasPermission(user, ACLOidEnum.A_CONFIG_EDITOR,
-                                ACLPermissionEnum.EDITOR)));
+                hasEditorAccess));
         /*
          * Display the navigation bars and write the response.
          */

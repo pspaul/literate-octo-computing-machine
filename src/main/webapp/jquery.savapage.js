@@ -1348,7 +1348,7 @@
          * @param _id :
          *            The jquery selector identifying the page, e.g.: '#mypage'
          * @param _class :
-         *            The Wicket java class
+         *            The Wicket java class (with URL path prefix)
          */
         _ns.Page = function(_i18n, _view, _id, _class) {
 
@@ -2500,6 +2500,15 @@
                 return this.loadPage(sel, 'user/' + page);
             };
 
+            /**
+             * Loads an Admin page.
+             * @param page
+             *            The Wicket class
+             */
+            this.loadAdminPage = function(sel, page) {
+                return this.loadPage(sel, 'admin/' + page);
+            };
+            
             /**
              * Gets HTML of a User page (synchronous).
              * @param page

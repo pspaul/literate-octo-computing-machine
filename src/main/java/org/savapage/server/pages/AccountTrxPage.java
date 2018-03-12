@@ -39,6 +39,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.AccountTrxDao;
 import org.savapage.core.dao.AccountTrxDao.ListFilter;
+import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.AccountTrxTypeEnum;
 import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
@@ -69,7 +70,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Rijk Ravestein
  */
-public class AccountTrxPage extends AbstractListPage {
+public final class AccountTrxPage extends AbstractListPage {
 
     /**
      *
@@ -88,6 +89,11 @@ public class AccountTrxPage extends AbstractListPage {
      */
     private static final int MAX_PAGES_IN_NAVBAR = 5;
 
+    /**
+     *
+     * @author Rijk Ravestein
+     *
+     */
     private final class AccountTrxListView
             extends PropertyListView<AccountTrx> {
 
@@ -610,20 +616,17 @@ public class AccountTrxPage extends AbstractListPage {
     }
 
     @Override
-    protected final boolean needMembership() {
+    protected boolean needMembership() {
         return this.getSessionWebAppType() == WebAppTypeEnum.ADMIN;
     }
 
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public AccountTrxPage(final PageParameters parameters) {
 
         super(parameters);
-
-        if (isAuthErrorHandled()) {
-            return;
-        }
 
         //
         final String data = getParmValue(POST_PARM_DATA);
@@ -649,6 +652,8 @@ public class AccountTrxPage extends AbstractListPage {
         Long accountId = null;
 
         if (this.getSessionWebAppType() == WebAppTypeEnum.ADMIN) {
+
+            this.probePermissionToRead(ACLOidEnum.A_TRANSACTIONS);
 
             userId = req.getSelect().getUserId();
             accountId = req.getSelect().getAccountId();

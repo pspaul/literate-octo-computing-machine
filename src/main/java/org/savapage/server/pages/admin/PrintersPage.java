@@ -43,7 +43,6 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.PrinterAttrDao;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AccessControlScopeEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.PrinterAttrEnum;
@@ -55,7 +54,6 @@ import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.PrinterGroupMember;
-import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
@@ -230,19 +228,16 @@ public final class PrintersPage extends AbstractAdminListPage {
          *
          * @param id
          * @param entryList
+         * @param isEditor
          */
-        public PrintersListView(final String id,
-                final List<Printer> entryList) {
+        public PrintersListView(final String id, final List<Printer> entryList,
+                final boolean isEditor) {
 
             super(id, entryList);
 
-            final User reqUser = SpSession.get().getUser();
-
-            this.isEditor = ACCESS_CONTROL_SERVICE.hasPermission(reqUser,
-                    ACLOidEnum.A_PRINTERS, ACLPermissionEnum.EDITOR);
-
-            this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
-                    ACLOidEnum.A_DOCUMENTS);
+            this.isEditor = isEditor;
+            this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(
+                    SpSession.get().getUser(), ACLOidEnum.A_DOCUMENTS);
         }
 
         private String getProxyPrintAuthMode(final Device device) {
@@ -681,7 +676,8 @@ public final class PrintersPage extends AbstractAdminListPage {
     }
 
     /**
-     *
+     * @param parameters
+     *            The page parameters.
      */
     public PrintersPage(final PageParameters parameters) {
 
@@ -725,7 +721,8 @@ public final class PrintersPage extends AbstractAdminListPage {
                 req.calcStartPosition(), req.getMaxResults(),
                 PrinterDao.Field.DISPLAY_NAME, req.getSort().getAscending());
 
-        add(new PrintersListView("printers-view", entryList));
+        add(new PrintersListView("printers-view", entryList,
+                this.probePermissionToEdit(ACLOidEnum.A_PRINTERS)));
 
         /*
          * Display the navigation bars and write the response.
