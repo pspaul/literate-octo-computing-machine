@@ -41,6 +41,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.doc.XpsToPdf;
@@ -66,6 +67,7 @@ import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -1023,6 +1025,16 @@ public final class Options extends AbstractAdminPage {
 
         //
         this.setReadOnlyAccess(helper, isReadOnlyAccess);
+
+        if (!isReadOnlyAccess) {
+            if (ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
+                    ACLOidEnum.A_CONFIG_EDITOR, ACLPermissionEnum.READER)) {
+                helper.encloseLabel("btn-config-editor",
+                        localized("button-config-editor"), true);
+            } else {
+                helper.discloseLabel("btn-config-editor");
+            }
+        }
     }
 
     /**

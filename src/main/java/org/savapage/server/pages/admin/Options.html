@@ -1966,13 +1966,13 @@
 							</div>
 						</li>
 					</ul>
-					<ul data-role="listview" data-inset="true">
-						<li data-icon="gear">
-							<a id="button-config-editor"> <wicket:message
-									key="button-config-editor" />
-							</a>
-						</li>
-					</ul>
+					<wicket:enclosure child="btn-config-editor">
+						<ul data-role="listview" data-inset="true">
+							<li data-icon="gear">
+								<a id="button-config-editor" wicket:id="btn-config-editor" />
+							</li>
+						</ul>
+					</wicket:enclosure>
 				</wicket:enclosure>
 			</div>
 		</div>
