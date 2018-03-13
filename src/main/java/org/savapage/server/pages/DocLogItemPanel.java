@@ -262,7 +262,7 @@ public class DocLogItemPanel extends Panel {
 
             helper.encloseLabel("account-trx-refund",
                     NounEnum.REFUND.uiText(locale),
-                    !obj.getCost().equals(obj.getCostOriginal()));
+                    obj.getCost().compareTo(obj.getCostOriginal()) != 0);
 
             final WebAppTypeEnum webAppType = SpSession.get().getWebAppType();
 
@@ -282,8 +282,9 @@ public class DocLogItemPanel extends Panel {
                         NounEnum.TRANSACTION.uiText(getLocale(), true));
 
                 if (webAppType == WebAppTypeEnum.JOBTICKETS
-                        && !obj.getCost().equals(BigDecimal.ZERO)
-                        && obj.getCost().equals(obj.getCostOriginal())) {
+                        && obj.getCost().compareTo(BigDecimal.ZERO) != 0
+                        && obj.getCost()
+                                .compareTo(obj.getCostOriginal()) == 0) {
 
                     labelBtn = helper.encloseLabel("btn-account-trx-refund",
                             "&nbsp;", true);
