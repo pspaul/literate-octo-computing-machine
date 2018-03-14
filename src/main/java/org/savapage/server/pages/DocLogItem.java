@@ -88,6 +88,7 @@ public final class DocLogItem {
     private String currencyCode;
     private BigDecimal cost;
     private BigDecimal costOriginal;
+    private boolean refunded;
 
     private String humanReadableByteCount;
     private int totalPages;
@@ -428,6 +429,7 @@ public final class DocLogItem {
                 log.setCreatedDate(docLog.getCreatedDate());
                 log.setCost(docLog.getCost());
                 log.setCostOriginal(docLog.getCostOriginal());
+                log.setRefunded(docLog.getRefunded());
 
                 if (docLog.getNumberOfPages() == null) {
                     log.setTotalPages(0);
@@ -1504,6 +1506,14 @@ public final class DocLogItem {
 
     public void setCostOriginal(BigDecimal costOriginal) {
         this.costOriginal = costOriginal;
+    }
+
+    public boolean isRefunded() {
+        return refunded;
+    }
+
+    public void setRefunded(boolean refunded) {
+        this.refunded = refunded;
     }
 
 }

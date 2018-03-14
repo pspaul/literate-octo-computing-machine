@@ -195,8 +195,13 @@ public class DocLogItemPanel extends Panel {
 
                 if (accountType != AccountTypeEnum.SHARED
                         && accountType != AccountTypeEnum.GROUP) {
-                    totWeightDelegators +=
-                            trx.getTransactionWeight().intValue();
+
+                    final boolean isRefund =
+                            trx.getAmount().compareTo(BigDecimal.ZERO) == 1;
+                    if (!isRefund) {
+                        totWeightDelegators +=
+                                trx.getTransactionWeight().intValue();
+                    }
                     continue;
                 }
 
@@ -261,8 +266,7 @@ public class DocLogItemPanel extends Panel {
                     .setEscapeModelStrings(false));
 
             helper.encloseLabel("account-trx-refund",
-                    NounEnum.REFUND.uiText(locale),
-                    obj.getCost().compareTo(obj.getCostOriginal()) != 0);
+                    NounEnum.REFUND.uiText(locale), obj.isRefunded());
 
             final WebAppTypeEnum webAppType = SpSession.get().getWebAppType();
 
@@ -282,9 +286,7 @@ public class DocLogItemPanel extends Panel {
                         NounEnum.TRANSACTION.uiText(getLocale(), true));
 
                 if (webAppType == WebAppTypeEnum.JOBTICKETS
-                        && obj.getCost().compareTo(BigDecimal.ZERO) != 0
-                        && obj.getCost()
-                                .compareTo(obj.getCostOriginal()) == 0) {
+                        && !obj.isRefunded()) {
 
                     labelBtn = helper.encloseLabel("btn-account-trx-refund",
                             "&nbsp;", true);
