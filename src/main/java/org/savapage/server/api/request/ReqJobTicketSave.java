@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
@@ -158,11 +159,32 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
             optionValuesTmp.put(entry.getKey(), entry.getValue());
         }
 
-        /*
-         * media from media-source
-         */
+        //
+        if (dto.getFillerPages() > 0) {
 
-        // TODO
+            final String kwSides = IppDictJobTemplateAttr.ATTR_SIDES;
+            final String kwNup = IppDictJobTemplateAttr.ATTR_NUMBER_UP;
+
+            for (final String kw : new String[] { kwSides, kwNup }) {
+
+                if (!StringUtils.defaultString(optionValuesTmp.get(kw))
+                        .equals(StringUtils.defaultString(
+                                dto.getOptionValues().get(kw)))) {
+
+                    throw new IllegalStateException(String.format(
+                            "Document is prepared for \"%s\" or \"%s\", "
+                                    + "so these options can not be changed.",
+                            PROXY_PRINT_SERVICE.localizePrinterOpt(getLocale(),
+                                    kwSides),
+                            PROXY_PRINT_SERVICE.localizePrinterOpt(getLocale(),
+                                    kwNup)));
+                }
+            }
+        }
+
+        /*
+         * TODO: media from media-source
+         */
 
         /*
          * Validate constraints.
