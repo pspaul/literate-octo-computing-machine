@@ -3895,13 +3895,13 @@
             ,
                 _onJobTicketType = function(ticketType) {
                 var isPrint = ticketType === _model.TICKETTYPE_PRINT,
-                    allDocs = isPrint && _model.canSelectAllDocuments() && _model.myJobs.length > 1;
+                    multipleJobs = isPrint && _model.hasMultipleVanillaJobs();
 
                 _view.visible($('.sp-jobticket-print'), isPrint);
                 _view.visible($('#sp-print-page-ranges-div'), isPrint);
                 _view.visible($('#sp-jobticket-copy-pages-div'), !isPrint);
 
-                _setVisibilityPrintSeparately(allDocs, true);
+                _setVisibilityPrintSeparately(multipleJobs, true);
 
                 _model.isCopyJobTicket = !isPrint;
                 _model.showCopyJobMedia(_view);
@@ -3916,9 +3916,9 @@
             }
             //
             ,
-                _setVisibilityPrintSeparately = function(allDocs, jobTicket) {
-                _view.visible($('#print-documents-separate-print-div'), allDocs && !jobTicket);
-                _view.visible($('#print-documents-separate-ticket-div'), allDocs && jobTicket);
+                _setVisibilityPrintSeparately = function(multipleJobs, jobTicket) {
+                _view.visible($('#print-documents-separate-print-div'), multipleJobs && !jobTicket);
+                _view.visible($('#print-documents-separate-ticket-div'), multipleJobs && jobTicket);
             }
             //
             ,
@@ -3929,12 +3929,7 @@
                     delegatedPrint = _isDelegatedPrint()
                 //
                 ,
-                    jobTicket = _model.myPrinter && _model.myPrinter.jobTicket
-                //
-                ,
-                    allDocs = _model.canSelectAllDocuments() && _model.myJobs.length > 1
-                //
-                ,
+                    jobTicket = _model.myPrinter && _model.myPrinter.jobTicket,
                     jobTicketType,
                     isPrintJob,
                     hasInboxDocs = _model.hasInboxDocs()
@@ -3983,7 +3978,7 @@
                     _view.visible($('.sp-jobticket'), jobTicket);
                 }
 
-                _setVisibilityPrintSeparately(allDocs, jobTicket);
+                _setVisibilityPrintSeparately(_model.hasMultipleVanillaJobs(), jobTicket);
 
                 if (jobTicket) {
                     // (1) first enable.
@@ -4025,7 +4020,7 @@
                 }
                 _model.myPrintTitle = selTitle.val();
 
-                _setVisibilityPrintSeparately(!_model.isCopyJobTicket && isAllDocsSelected);
+                _setVisibilityPrintSeparately(!_model.isCopyJobTicket && isAllDocsSelected && _model.hasMultipleVanillaJobs(), _model.myPrinter && _model.myPrinter.jobTicket);
 
                 _model.printPreviewLandscapeHint = !_model.isCopyJobTicket && _model.myJobs[ isAllDocsSelected ? 0 : parseInt(sel.val(), 10)].landscapeView;
             }
@@ -4746,6 +4741,10 @@
 
             this.canSelectAllDocuments = function() {
                 return this.myJobsVanilla && _ns.Utils.countProp(this.mySelectPages) === 0;
+            };
+
+            this.hasMultipleVanillaJobs = function() {
+                return this.canSelectAllDocuments() && this.myJobs.length > 1;
             };
 
             this.initAuth = function() {
