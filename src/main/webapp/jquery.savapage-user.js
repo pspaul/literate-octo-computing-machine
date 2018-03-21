@@ -3260,7 +3260,10 @@
             ,
                 PRINT_OPT_PFX = 'print-opt-',
                 PRINT_OPT_DIV_SFX = '-div',
-                CUSTOM_HTML5_DATA_ATTR = 'data-savapage'
+                CUSTOM_HTML5_DATA_ATTR = 'data-savapage',
+                CUSTOM_HTML5_DATA_ATTR_ICON = 'data-savapage-icon',
+                CSS_CLASS_SELECT_IPP_OPTION = '_sp_select_ipp_option',
+                CSS_CLASS_IPP_ICON = 'sp-ipp-icon'
             //
             ,
                 _getPrinterOptionId = function(ippKeyword) {
@@ -3470,6 +3473,37 @@
                     return true;
                 }
                 return false;
+            },
+
+            /**
+             * Injects HTML and CSS into IPP attr <option> elements.
+             *
+             * @param selSelect The $selector of the <select> element.
+             * @param isInit If true, this is the initializing action.
+             */
+                _injectPrinterOptionSelect = function(selSelect, isInit) {
+
+                var target_id = selSelect.attr('id');
+
+                $('#' + target_id + ' option').each(function() {
+                    var iconClass = $(this).attr(CUSTOM_HTML5_DATA_ATTR_ICON),
+                        selOption,
+                        ind;
+
+                    if (!iconClass) {
+                        return;
+                    }
+
+                    ind = $(this).index();
+                    $('#' + target_id + '-menu').find('[data-option-index=' + ind + '] a').prepend('<span class="' + CSS_CLASS_IPP_ICON + ' ' + iconClass + '">&nbsp;</span>');
+
+                    if (isInit && $(this).attr('selected')) {
+                        selOption = $(this).closest('.ui-select').find('.ui-btn');
+                        selOption.attr(CUSTOM_HTML5_DATA_ATTR_ICON, iconClass);
+                        selOption.addClass(CSS_CLASS_IPP_ICON);
+                        selOption.addClass(iconClass);
+                    }
+                });
             }
             //
             ,
@@ -3512,7 +3546,7 @@
 
                         html += '<div id="' + selExpr + PRINT_OPT_DIV_SFX + '">';
                         html += '<label class="sp-txt-wrap" for="' + selExpr + '">' + option.uiText + '</label>';
-                        html += '<select ' + CUSTOM_HTML5_DATA_ATTR + '="' + keyword + '" id="' + selExpr + '" data-mini="true" data-native-menu="false">';
+                        html += '<select ' + CUSTOM_HTML5_DATA_ATTR + '="' + keyword + '" id="' + selExpr + '" data-mini="true" data-native-menu="false" class="' + CSS_CLASS_SELECT_IPP_OPTION + '">';
 
                         $.each(option.choices, function(key, val) {
 
@@ -3543,6 +3577,11 @@
                                 if (selected === val.choice) {
                                     html += ' selected';
                                 }
+
+                                if (val.uiIconClass) {
+                                    html += ' ' + CUSTOM_HTML5_DATA_ATTR_ICON + '="' + val.uiIconClass + '"';
+                                }
+
                                 html += '>' + val.uiText + '</option>';
                             }
                         });
@@ -3568,6 +3607,33 @@
                 html += '</ul>';
                 $('#printer-options').html(html);
                 thisPage.enhanceWithin();
+
+                $('#printer-options').find('select').each(function() {
+                    _injectPrinterOptionSelect($(this), true);
+                });
+            },
+
+            /**
+             *
+             */
+                _onChangeIppOption = function(select) {
+                var iconNew = select.find(':selected').attr(CUSTOM_HTML5_DATA_ATTR_ICON),
+                    iconOld,
+                    selUi;
+
+                if (!iconNew) {
+                    return;
+                }
+                selUi = select.closest('.ui-select').find('.ui-btn');
+                iconOld = selUi.attr(CUSTOM_HTML5_DATA_ATTR_ICON);
+
+                if (iconOld) {
+                    selUi.removeClass(iconOld);
+                }
+                selUi.attr(CUSTOM_HTML5_DATA_ATTR_ICON, iconNew);
+                selUi.addClass(iconNew);
+                /* Re-inject, because prev. injection is gone.*/
+                _injectPrinterOptionSelect(select, false);
             }
             //
             ;
@@ -3605,6 +3671,11 @@
                     _m2v();
                     _model.showJobsMatchMediaSources(_view);
                     _model.showCopyJobMedia(_view);
+
+                    $('#printer-options').find('select').each(function() {
+                        _onChangeIppOption($(this));
+                    });
+
                     return false;
                 });
 
@@ -3632,6 +3703,11 @@
                     _probeChangePunch(sel);
                     _onChangeMediaSource(sel);
                     _model.showJobsMatchMediaSources(_view);
+                });
+
+                $(this).on('change', '.' + CSS_CLASS_SELECT_IPP_OPTION, null, function() {
+                    _onChangeIppOption($(this));
+                    return;
                 });
 
             }).on("pagebeforeshow", function(event, ui) {
