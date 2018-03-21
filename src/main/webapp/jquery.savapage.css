@@ -461,6 +461,9 @@ span.sp-ipp-icon {
     width: 30px;
 }
 
+.sp-ipp-icon-void {
+    background-image: URL('/images/void-16x16.png');
+}
 .sp-ipp-icon-warn {
     background-image: URL('/silkicons/error.png');
 }
