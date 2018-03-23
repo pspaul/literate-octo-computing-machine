@@ -75,18 +75,29 @@
 						</tr>
 					</wicket:enclosure>
 
-					<wicket:enclosure child="sys-maintenance">
-						<tr>
-							<th wicket:id="sys-maintenance-prompt" />
-							<td wicket:id="sys-maintenance" />
-						</tr>
-					</wicket:enclosure>
+					<tr>
+						<th wicket:id="sys-mode-prompt" style="vertical-align: middle;" />
+						<td>
+							<wicket:enclosure child="sys-mode-btn">
+								<button class="ui-btn ui-mini ui-btn-inline ui-btn-icon-text"
+								id="sp-btn-sys-mode"
+									style="margin-left: 0px;">
+									<span wicket:id="sys-mode-btn" />
+								</button>
+							</wicket:enclosure>
+							<wicket:enclosure child="sys-mode">
+								<span wicket:id="sys-mode" />
+							</wicket:enclosure>
+						</td>
+					</tr>
 
 					<tr>
 						<th>
 							<wicket:message key="sys-status" />
 						</th>
-						<td wicket:id="sys-status" />
+						<td>
+							<span wicket:id="sys-status" />
+						</td>
 					</tr>
 
 					<tr>

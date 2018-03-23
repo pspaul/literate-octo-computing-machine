@@ -669,6 +669,24 @@
                 _panel.Options.onGcpRefresh(_panel.Options);
             };
 
+            _view.pages.admin.onApplySysModeChange = function(modeEnum) {
+                var res = _api.call({
+                    request : 'system-mode-change',
+                    dto : JSON.stringify({
+                        mode : modeEnum
+                    })
+                });
+
+                if (res.result.code === '0') {
+                    _view.showApiMsg(res);
+                } else {
+                    _view.message(res.result.txt || res.result.msg);
+                }
+                this.refreshDashboard();
+
+                return false;
+            };
+
             _view.pages.admin.onApplyGcpOnline = function(_panel, online) {
                 var res = _api.call({
                     request : 'gcp-online',

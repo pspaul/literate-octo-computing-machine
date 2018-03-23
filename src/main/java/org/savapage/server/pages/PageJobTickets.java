@@ -27,7 +27,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.i18n.JobTicketNounEnum;
-import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -94,7 +94,7 @@ public final class PageJobTickets extends AbstractAuthPage {
                 JobTicketNounEnum.TICKET.uiText(getLocale()));
         //
         helper.encloseLabel("mini-sys-maintenance",
-                NounEnum.MAINTENANCE.uiText(getLocale()),
+                SystemModeEnum.MAINTENANCE.uiText(getLocale()),
                 ConfigManager.isSysMaintenance());
 
         add(new CommunityStatusFooterPanel("community-status-footer-panel",

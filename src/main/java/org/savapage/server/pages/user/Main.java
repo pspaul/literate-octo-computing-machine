@@ -40,6 +40,7 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Device;
@@ -260,9 +261,8 @@ public class Main extends AbstractUserPage {
             userId = user.getUserId();
         }
 
-        final boolean showUserBalance =
-                ACCESS_CONTROL_SERVICE.hasPermission(user,
-                        ACLOidEnum.U_FINANCIAL, ACLPermissionEnum.READER);
+        final boolean showUserBalance = ACCESS_CONTROL_SERVICE.hasPermission(
+                user, ACLOidEnum.U_FINANCIAL, ACLPermissionEnum.READER);
 
         helper.encloseLabel("mini-user-balance", "", showUserBalance);
 
@@ -283,7 +283,7 @@ public class Main extends AbstractUserPage {
 
         //
         helper.encloseLabel("mini-sys-maintenance",
-                NounEnum.MAINTENANCE.uiText(getLocale()),
+                SystemModeEnum.MAINTENANCE.uiText(getLocale()),
                 ConfigManager.isSysMaintenance());
 
         if (hasHelpURL) {
@@ -321,8 +321,8 @@ public class Main extends AbstractUserPage {
         //
         navButtonWlk = NavButtonEnum.PDF;
 
-        final Integer inboxPriv = ACCESS_CONTROL_SERVICE.getPrivileges(user,
-                ACLOidEnum.U_INBOX);
+        final Integer inboxPriv =
+                ACCESS_CONTROL_SERVICE.getPrivileges(user, ACLOidEnum.U_INBOX);
 
         if (inboxPriv == null
                 || ACLPermissionEnum.DOWNLOAD.isPresent(inboxPriv.intValue())
@@ -370,8 +370,7 @@ public class Main extends AbstractUserPage {
 
         //
         navButtonWlk = NavButtonEnum.LETTERHEAD;
-        if (ACCESS_CONTROL_SERVICE.hasAccess(user,
-                ACLOidEnum.U_LETTERHEAD)) {
+        if (ACCESS_CONTROL_SERVICE.hasAccess(user, ACLOidEnum.U_LETTERHEAD)) {
             set.add(navButtonWlk);
         }
 

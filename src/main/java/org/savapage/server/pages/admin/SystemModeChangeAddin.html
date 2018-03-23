@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
+
+<h4 wicket:id="txt-mode" />
+
+<table data-role="table" data-mode="reflow"
+	class="ui-responsive table-stroke">
+	<thead>
+		<tr>
+			<th data-priority="1" />
+			<th data-priority="2" />
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td wicket:id="txt-from" />
+			<td wicket:id="txt-current" />
+		</tr>
+		<tr>
+			<th wicket:id="txt-to" />
+			<th wicket:id="txt-change" />
+		</tr>
+		<tr>
+			<td colspan="2">
+				<button tabindex="0" data-savapage=""
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+					id="sp-btn-sys-mode-apply" wicket:id="btn-apply" />
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<a href="#" data-rel="back"
+	class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" />
+
+</html>

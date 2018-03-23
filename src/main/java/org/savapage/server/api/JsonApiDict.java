@@ -66,6 +66,7 @@ import org.savapage.server.api.request.ReqQueueSet;
 import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
+import org.savapage.server.api.request.ReqSystemModeChange;
 import org.savapage.server.api.request.ReqUserGet;
 import org.savapage.server.api.request.ReqUserGroupGet;
 import org.savapage.server.api.request.ReqUserGroupMemberQuickSearch;
@@ -168,6 +169,8 @@ public class JsonApiDict {
 
     public static final String REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV =
             "smartschool-papercut-student-cost-csv";
+
+    public static final String REQ_SYSTEM_MODE_CHANGE = "system-mode-change";
 
     public static final String REQ_PAPERCUT_DELEGATOR_COST_CSV =
             "papercut-delegator-cost-csv";
@@ -835,6 +838,9 @@ public class JsonApiDict {
         adm(REQ_CONFIG_GET_PROP, ReqConfigPropGet.class, DbClaim.READ,
                 DbAccess.YES);
         adm(REQ_CONFIG_SET_PROPS, ReqConfigPropsSet.class, DbClaim.READ,
+                DbAccess.YES);
+
+        adm(REQ_SYSTEM_MODE_CHANGE, ReqSystemModeChange.class, DbClaim.READ,
                 DbAccess.YES);
 
         put(REQ_CONSTANTS, AuthReq.NONE, DbClaim.NONE, DbAccess.YES);

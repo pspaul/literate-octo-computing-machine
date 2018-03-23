@@ -60,6 +60,7 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
@@ -145,6 +146,7 @@ public final class SystemStatusPanel extends Panel {
     /**
      *
      * @param hasEditorAccess
+     *            {@code true} If editor access.
      */
     public void populate(final boolean hasEditorAccess) {
 
@@ -182,16 +184,29 @@ public final class SystemStatusPanel extends Panel {
         add(labelWrk);
 
         //
-        if (ConfigManager.isSysMaintenance()) {
-            labelWrk = helper.encloseLabel("sys-maintenance",
-                    NounEnum.MAINTENANCE.uiText(getLocale()), true);
-            MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
-                    MarkupHelper.CSS_TXT_WARN);
+        add(new Label("sys-mode-prompt", NounEnum.MODE.uiText(getLocale())));
 
-            add(new Label("sys-maintenance-prompt",
-                    NounEnum.MODE.uiText(getLocale())));
+        final SystemModeEnum systemMode;
+
+        if (ConfigManager.isSysMaintenance()) {
+            cssColor = MarkupHelper.CSS_TXT_WARN;
+            systemMode = SystemModeEnum.MAINTENANCE;
         } else {
-            helper.discloseLabel("sys-maintenance");
+            cssColor = MarkupHelper.CSS_TXT_VALID;
+            systemMode = SystemModeEnum.PRODUCTION;
+        }
+
+        if (hasEditorAccess) {
+            MarkupHelper.modifyLabelAttr(
+                    helper.addLabel("sys-mode-btn",
+                            systemMode.uiText(getLocale())),
+                    MarkupHelper.ATTR_CLASS, cssColor);
+            helper.discloseLabel("sys-mode");
+        } else {
+            helper.discloseLabel("sys-mode-btn");
+            MarkupHelper.modifyLabelAttr(
+                    helper.addLabel("sys-mode", systemMode.uiText(getLocale())),
+                    MarkupHelper.ATTR_CLASS, cssColor);
         }
 
         //

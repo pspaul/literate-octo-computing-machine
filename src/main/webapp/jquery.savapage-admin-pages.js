@@ -1617,6 +1617,10 @@
 
             };
 
+            _self.refreshDashboard = function() {
+                var pnl = _panel.Dashboard;
+                pnl.refresh(pnl);
+            };
             _self.refreshUsers = function() {
                 var pnl = _panel.UsersBase;
                 pnl.refresh(pnl);
@@ -2553,6 +2557,20 @@
                 $(this).on('click', '#apply-papercut', null, function() {
                     _self.onApplyPaperCut(_view.isCbChecked($('#papercut\\.enable')));
                     return false;
+                });
+
+                $(this).on('click', '#sp-btn-sys-mode', null, function() {
+                    var sel = $('#sp-sys-mode-change-popup');
+                    sel.html(_view.getAdminPageHtml('SystemModeChangeAddin', {}) || 'error');
+                    sel.enhanceWithin().popup('open', {
+                        positionTo : $(this)
+                    });
+                    return false;
+                });
+
+                $(this).on('click', '#sp-btn-sys-mode-apply', null, function() {
+                    $('#sp-sys-mode-change-popup').enhanceWithin().popup('close');
+                    _self.onApplySysModeChange($(this).attr('data-savapage'));
                 });
 
                 $(this).on('change', "input:checkbox[id='flipswitch-gcp-online']", null, function(e) {

@@ -38,6 +38,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PrepositionEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
@@ -457,6 +458,22 @@ public final class MarkupHelper {
     public Label addLabel(final String wicketId, final NounEnum noun) {
         final Label label =
                 new Label(wicketId, noun.uiText(this.container.getLocale()));
+        add(label);
+        return label;
+    }
+
+    /**
+     * Adds a preposition label.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param prepos
+     *            The {@link PrepositionEnum}.
+     * @return The added {@link Label}.
+     */
+    public Label addLabel(final String wicketId, final PrepositionEnum prepos) {
+        final Label label =
+                new Label(wicketId, prepos.uiText(this.container.getLocale()));
         add(label);
         return label;
     }
