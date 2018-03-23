@@ -34,6 +34,13 @@ body {
     max-width: 300px;
 }
 
+.ui-icon-sp-more:after {
+    background: url(/glyphicons/glyphicons_157_show_lines.png) 50% 50% no-repeat;
+    background-size: 16px 14px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .4;
+}
 
 .ui-mobile .type-home .ui-content {
     margin: 0;
