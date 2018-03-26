@@ -1097,7 +1097,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             final ProxyPrintJobChunkInfo chunkInfo) {
 
         if (dtoReq.getLandscapeView() == null || !ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_NUMBER_UP_REVIEW_ENABLE)) {
+                .isConfigValue(Key.WEBAPP_NUMBER_UP_PREVIEW_ENABLE)) {
             return true;
         }
 
