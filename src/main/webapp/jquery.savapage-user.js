@@ -3302,7 +3302,7 @@
                 _applyLandscapeHint = function() {
                 var sel = $('#cb-nup-preview-landscape');
                 if (sel.length > 0) {
-                    _view.checkFlipswitchSel(sel, _model.printPreviewLandscapeHint);
+                    _view.checkCbSel(sel, _model.printPreviewLandscapeHint);
                 }
             },
                 _probeChangePageRotate180 = function(target) {

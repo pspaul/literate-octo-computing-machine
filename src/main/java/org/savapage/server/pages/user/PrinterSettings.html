@@ -50,13 +50,12 @@
 						wicket:id="button-default"
 						class="ui-btn ui-btn-icon-right ui-icon-recycle ui-shadow ui-corner-all sp-txt-info" />
 
-					<wicket:enclosure child="flipswitch-landscape">
+					<wicket:enclosure child="label-landscape">
 
 						<div style="float: left;">
-							<input type="checkbox" wicket:id="flipswitch-landscape"
-								id="cb-nup-preview-landscape" data-role="flipswitch"
-								data-on-text="Landscape" data-off-text="Portrait"
-								data-wrapper-class="sp-custom-size-flipswitch" />
+							<label type="checkbox" wicket:id="label-landscape"
+								for="cb-nup-preview-landscape" />
+							<input type="checkbox" id="cb-nup-preview-landscape" />
 						</div>
 
 						<div style="float: right;">

@@ -80,8 +80,7 @@
 						<td>
 							<wicket:enclosure child="sys-mode-btn">
 								<button class="ui-btn ui-mini ui-btn-inline ui-btn-icon-text"
-								id="sp-btn-sys-mode"
-									style="margin-left: 0px;">
+									id="sp-btn-sys-mode" style="margin-left: 0px;">
 									<span wicket:id="sys-mode-btn" />
 								</button>
 							</wicket:enclosure>
@@ -219,10 +218,10 @@
 
 					<tr>
 						<th style="vertical-align: middle;" wicket:id="prompt-proxy-print" />
-						<td>
+						<td><span class="sp-disabled">
 							<input type="checkbox" wicket:id="flipswitch-proxyprint-online"
 								data-mini="true" data-role="flipswitch" data-on-text="On"
-								data-off-text="Off" data-disabled="true" />
+								data-off-text="Off" data-disabled="true" /></span>
 							<wicket:enclosure child="cups-connection">
 								<span style="margin-left: 20px; vertical-align: middle;"
 									wicket:id="cups-connection" />

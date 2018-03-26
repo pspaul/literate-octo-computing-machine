@@ -55,8 +55,7 @@ public class PrinterSettings extends AbstractUserPage {
             "number-up-preview";
 
     /** */
-    private static final String WICKET_ID_FLIPSWITCH_LANDSCAPE =
-            "flipswitch-landscape";
+    private static final String WICKET_ID_LABEL_LANDSCAPE = "label-landscape";
 
     /** */
     private static final String WICKET_ID_TOOLTIP_LANDSCAPE_COPY =
@@ -87,13 +86,12 @@ public class PrinterSettings extends AbstractUserPage {
         helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
 
         if (ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_NUMBER_UP_REVIEW_ENABLE)) {
+                .isConfigValue(Key.WEBAPP_NUMBER_UP_PREVIEW_ENABLE)) {
 
             add(new NumberUpPreviewPanel(WICKET_ID_NUMBER_UP_PREVIEW));
 
-            helper.addFlipswitch(WICKET_ID_FLIPSWITCH_LANDSCAPE,
-                    PrintOutNounEnum.LANDSCAPE.uiText(getLocale()),
-                    PrintOutNounEnum.PORTRAIT.uiText(getLocale()));
+            helper.addLabel(WICKET_ID_LABEL_LANDSCAPE,
+                    PrintOutNounEnum.LANDSCAPE);
 
             TooltipPanel tooltip =
                     new TooltipPanel(WICKET_ID_TOOLTIP_LANDSCAPE_PRINT);
@@ -106,7 +104,7 @@ public class PrinterSettings extends AbstractUserPage {
 
         } else {
             helper.discloseLabel(WICKET_ID_NUMBER_UP_PREVIEW);
-            helper.discloseLabel(WICKET_ID_FLIPSWITCH_LANDSCAPE);
+            helper.discloseLabel(WICKET_ID_LABEL_LANDSCAPE);
         }
 
         helper.addButton("button-inbox", HtmlButtonEnum.BACK);
