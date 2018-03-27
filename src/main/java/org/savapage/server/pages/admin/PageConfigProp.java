@@ -23,6 +23,8 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -42,6 +44,12 @@ public final class PageConfigProp extends AbstractAdminPage {
      *            The page parameters.
      */
     public PageConfigProp(final PageParameters parameters) {
+
         super(parameters, ACLOidEnum.A_CONFIG_EDITOR, RequiredPermission.EDIT);
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addButton("btn-ok", HtmlButtonEnum.OK);
+        helper.addButton("btn-cancel", HtmlButtonEnum.CANCEL);
     }
 }
