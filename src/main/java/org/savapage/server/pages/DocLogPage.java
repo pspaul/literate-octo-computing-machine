@@ -61,7 +61,7 @@ public final class DocLogPage extends AbstractListPage {
 
     @Override
     protected boolean needMembership() {
-        return this.getSessionWebAppType() == WebAppTypeEnum.ADMIN;
+        return false;
     }
 
     /**
