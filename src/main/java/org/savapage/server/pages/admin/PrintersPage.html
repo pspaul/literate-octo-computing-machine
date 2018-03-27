@@ -28,6 +28,7 @@
 				</wicket:enclosure>
 				<span wicket:id="displayName" />
 			</h3>
+
 			<p>
 				<span wicket:id="printer-pie" class="sparkline-printer-pie" />&nbsp;<span
 					class="sp-printer-opt-download" wicket:id="printerName" />
@@ -36,9 +37,26 @@
 				</wicket:enclosure>
 				&bull; <span class="sp-txt-wrap" wicket:id="deviceUri" />
 			</p>
-			<p>
-				<span wicket:id="printer-sparkline" class="sparkline-printer-line" />
-			</p>
+
+			<wicket:enclosure child="ticketGroup">
+				<p class="sp-txt-wrap">
+					<span wicket:id="ticketGroupPrompt" /> : <span
+						wicket:id="ticketGroup" />
+				</p>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="printerGroups">
+				<p class="sp-txt-wrap">
+					<wicket:message key="printer-groups" />
+					: <span wicket:id="printerGroups" />
+				</p>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="printer-sparkline">
+				<p>
+					<span wicket:id="printer-sparkline" class="sparkline-printer-line" />
+				</p>
+			</wicket:enclosure>
 
 			<wicket:enclosure child="printer-needs-configuration">
 				<div class="sp-txt-error sp-txt-wrap">
@@ -52,13 +70,6 @@
 				<span wicket:id="period" />
 			</div>
 			<div class="sp-txt-wrap" wicket:id="totals" />
-			<wicket:enclosure child="printerGroups">
-				<br />
-				<div class="sp-txt-wrap">
-					<wicket:message key="printer-groups" />
-					: <span wicket:id="printerGroups" />
-				</div>
-			</wicket:enclosure>
 			<wicket:enclosure child="userGroups">
 				<br />
 				<div class="sp-txt-wrap">
@@ -79,7 +90,7 @@
 			<p class="ui-li-aside">
 				<strong wicket:id="signal"></strong>
 			</p>
-			<br />
+
 			<div data-role="controlgroup" data-type="horizontal"
 				wicket:id="sect-buttons">
 

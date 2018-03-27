@@ -49,6 +49,7 @@ import org.savapage.core.dao.enums.PrinterAttrEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
 import org.savapage.core.dao.helpers.JsonUserGroupAccess;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Device;
@@ -219,6 +220,12 @@ public final class PrintersPage extends AbstractAdminListPage {
         /** */
         private static final String WID_BUTTON_CUPS = "button-cups";
 
+        /** */
+        private static final String WID_TICKET_GROUP = "ticketGroup";
+
+        /** */
+        private static final String WID_PRINTER_SPARKLINE = "printer-sparkline";
+
         /***/
         private final boolean isEditor;
         /***/
@@ -291,10 +298,12 @@ public final class PrintersPage extends AbstractAdminListPage {
             /*
              * Sparklines: pie-chart.
              */
-            String sparklineData = printer.getTotalPages().toString() + ","
-                    + printer.getTotalSheets();
+            final StringBuilder sparklineData = new StringBuilder();
 
-            item.add(new Label("printer-pie", sparklineData));
+            sparklineData.append(printer.getTotalPages()).append(",")
+                    .append(printer.getTotalSheets());
+
+            item.add(new Label("printer-pie", sparklineData.toString()));
 
             /*
              * The sparkline.
@@ -312,17 +321,22 @@ public final class PrintersPage extends AbstractAdminListPage {
                 throw new SpException(e);
             }
 
-            sparklineData = "";
+            sparklineData.setLength(0);
 
             final List<Integer> data = series.getData();
-            for (int i = data.size(); i > 0; i--) {
-                if (i < data.size()) {
-                    sparklineData += ",";
-                }
-                sparklineData += data.get(i - 1).toString();
-            }
 
-            item.add(new Label("printer-sparkline", sparklineData));
+            if (data.size() > 1
+                    || data.size() == 1 && data.get(0).intValue() > 0) {
+
+                for (int i = data.size(); i > 0; i--) {
+                    if (i < data.size()) {
+                        sparklineData.append(",");
+                    }
+                    sparklineData.append(data.get(i - 1));
+                }
+            }
+            helper.encloseLabel(WID_PRINTER_SPARKLINE, sparklineData.toString(),
+                    sparklineData.length() > 0);
 
             /*
              *
@@ -344,8 +358,18 @@ public final class PrintersPage extends AbstractAdminListPage {
             final Map<String, Device> readerDevices = new HashMap<>();
 
             if (isJobTicketPrinter) {
+
                 imageSrc = "printer-jobticket-32x32.png";
+
+                helper.addLabel("ticketGroupPrompt",
+                        NounEnum.GROUP.uiText(getLocale()));
+
+                helper.addLabel(WID_TICKET_GROUP,
+                        PRINTER_SERVICE.getAttributeValue(printer,
+                                PrinterAttrEnum.JOBTICKET_PRINTER_GROUP));
+
             } else {
+
                 final MutableBoolean terminalSecured = new MutableBoolean();
                 final MutableBoolean readerSecured = new MutableBoolean();
 
@@ -369,7 +393,10 @@ public final class PrintersPage extends AbstractAdminListPage {
                 } else {
                     imageSrc = "printer-terminal-none-16x16.png";
                 }
+
+                helper.discloseLabel(WID_TICKET_GROUP);
             }
+
             labelWrk = new Label("printerImage", "");
 
             labelWrk.add(new AttributeModifier("src",
