@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -68,11 +68,23 @@ public final class ReqPrinterSet extends ApiRequestMixin {
         }
 
         /*
-         * INVARIANT: When Job Ticket Printer enabled an existing printer group
-         * MUST be specified.
+         * Job Ticket Printer.
          */
         if (BooleanUtils.isTrue(dto.getJobTicket())) {
 
+            /*
+             * INVARIANT: printer MUST NOT be PaperCut managed.
+             */
+            if (PAPERCUT_SERVICE
+                    .isExtPaperCutPrint(jpaPrinter.getPrinterName())) {
+                setApiResult(ApiResultCodeEnum.ERROR,
+                        "msg-jobticket-papercut-not-allowed");
+                return;
+            }
+
+            /*
+             * INVARIANT: An existing printer group MUST be specified.
+             */
             final String value = dto.getJobTicketGroup();
 
             if (StringUtils.isBlank(value)) {
@@ -89,6 +101,7 @@ public final class ReqPrinterSet extends ApiRequestMixin {
                         "msg-jobticket-group-not-found", value);
                 return;
             }
+
         }
 
         PROXY_PRINT_SERVICE.setProxyPrinterProps(jpaPrinter, dto);
