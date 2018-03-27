@@ -29,9 +29,18 @@
 				<div class="sp-txt-wrap">
 					<span wicket:id="fullName" /> &bull; <span wicket:id="email"></span>
 				</div>
-				<br />
 			</wicket:enclosure>
+
+			<wicket:enclosure child="userGroups">
+				<p class="sp-txt-wrap">
+					<span wicket:id="userGroupsPrompt" /> : <span
+						wicket:id="userGroups" />
+				</p>
+			</wicket:enclosure>
+
+			<p />
 			<div class="sp-txt-wrap" wicket:id="period" />
+
 			<div class="sp-txt-wrap">
 				<wicket:enclosure child="balance-currency">
 					<span wicket:id="balance-currency" />&nbsp;</wicket:enclosure>

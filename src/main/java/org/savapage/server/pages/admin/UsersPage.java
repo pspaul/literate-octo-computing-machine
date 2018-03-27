@@ -40,7 +40,9 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserPagerReq;
 import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.User;
+import org.savapage.core.jpa.UserGroupMember;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
@@ -239,6 +241,33 @@ public final class UsersPage extends AbstractAdminListPage {
             labelWrk = new Label("signal", signal);
             labelWrk.add(new AttributeModifier("class", color));
             item.add(labelWrk);
+
+            /*
+             *
+             */
+            final StringBuilder groups = new StringBuilder();
+
+            if (!user.getDeleted()) {
+
+                final List<UserGroupMember> memberships =
+                        user.getGroupMembership();
+
+                if (memberships != null) {
+                    int i = 0;
+                    for (final UserGroupMember member : memberships) {
+                        if (i++ > 0) {
+                            groups.append(", ");
+                        }
+                        groups.append(member.getGroup().getGroupName());
+                    }
+                }
+                if (groups.length() > 0) {
+                    helper.addLabel("userGroupsPrompt",
+                            NounEnum.GROUP.uiText(getLocale()));
+                }
+            }
+            helper.encloseLabel("userGroups", groups.toString(),
+                    groups.length() > 0);
 
             /*
              * Balance
