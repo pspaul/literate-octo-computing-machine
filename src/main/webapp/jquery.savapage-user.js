@@ -3000,6 +3000,7 @@
                         if (_model.isCopyJobTicket) {
                             _view.checkRadioValue('sp-print-jobticket-type', _model.TICKETTYPE_COPY);
                         }
+                        _model.setPrintPreviewLandscapeHint(0);
                         _view.showUserPageAsync('#page-printer-settings', 'PrinterSettings');
                     }
                     return false;
@@ -4098,7 +4099,7 @@
 
                 _setVisibilityPrintSeparately(!_model.isCopyJobTicket && isAllDocsSelected && _model.hasMultipleVanillaJobs(), _model.myPrinter && _model.myPrinter.jobTicket);
 
-                _model.printPreviewLandscapeHint = !_model.isCopyJobTicket && _model.myJobs[ isAllDocsSelected ? 0 : parseInt(sel.val(), 10)].landscapeView;
+                _model.setPrintPreviewLandscapeHint( isAllDocsSelected ? 0 : parseInt(sel.val(), 10));
             }
             //
             ,
@@ -4508,6 +4509,13 @@
 
             this.determineCopyJobTicket = function() {
                 this.isCopyJobTicket = this.JOBTICKET_COPIER_ENABLE && this.myPrinter && this.myPrinter.jobTicket && this.myJobs.length === 0;
+            };
+
+            /**
+             * @param iJob 0-based index of job to use for orientation hint.
+             */
+            this.setPrintPreviewLandscapeHint = function(iJob) {
+                this.printPreviewLandscapeHint = !this.isCopyJobTicket && this.myJobs[iJob].landscapeView;
             };
 
             /**
