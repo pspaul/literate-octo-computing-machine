@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -601,12 +601,13 @@ public abstract class AbstractWebAppPage extends AbstractPage
         final String specializedCssFile = getSpecializedCssFileName();
 
         if (specializedCssFile != null) {
-            response.render(CssHeaderItem.forUrl(specializedCssFile + nocache));
+            response.render(CssHeaderItem.forUrl(
+                    String.format("%s%s", specializedCssFile, nocache)));
         }
 
         if (jsToRender.contains(JavaScriptLibrary.MOBIPICK)) {
-            response.render(CssHeaderItem
-                    .forUrl(WebApp.getJqMobiPickLocation() + "mobipick.css"));
+            response.render(CssHeaderItem.forUrl(String.format("%s%s",
+                    WebApp.getJqMobiPickLocation(), "mobipick.css")));
         }
 
         // Custom CSS as last.
@@ -634,7 +635,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
             response.render(
                     WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_JQPLOT_JS));
 
-            for (String plugin : new String[] {"jqplot.highlighter.js",
+            for (String plugin : new String[] { "jqplot.highlighter.js",
                     "jqplot.pieRenderer.js", "jqplot.json2.js",
                     "jqplot.logAxisRenderer.js",
                     "jqplot.dateAxisRenderer.js" }) {
@@ -648,8 +649,12 @@ public abstract class AbstractWebAppPage extends AbstractPage
         renderJs(response, "jquery/json2.js");
 
         if (jsToRender.contains(JavaScriptLibrary.COMETD)) {
-            renderJs(response, "org/cometd.js");
-            renderJs(response, "jquery/jquery.cometd.js");
+            // Use nocache, to prevent loading of old browser cached .js files,
+            // when cometd is upgraded .
+            renderJs(response,
+                    String.format("%s%s", "org/cometd/cometd.js", nocache));
+            renderJs(response,
+                    String.format("%s%s", "jquery/jquery.cometd.js", nocache));
         }
 
         renderJs(response, String.format("%s%s", "savapage.js", nocache));

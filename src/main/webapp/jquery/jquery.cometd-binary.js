@@ -16,14 +16,14 @@
 
 (function(root, factory){
     if (typeof exports === 'object') {
-        module.exports = factory(require('./jquery.cometd'), require('cometd/ReloadExtension'));
+        module.exports = factory(require('./jquery.cometd'), require('cometd/BinaryExtension'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['jquery.cometd', 'cometd/ReloadExtension'], factory);
+        define(['jquery.cometd', 'cometd/BinaryExtension'], factory);
     } else {
-        factory(jQuery.cometd, root.org.cometd.ReloadExtension);
+        factory(jQuery.cometd, root.org.cometd.BinaryExtension);
     }
-}(this, function(cometd, ReloadExtension){
-    var result = new ReloadExtension();
-    cometd.registerExtension('reload', result);
+}(this, function(cometd, BinaryExtension) {
+    var result = new BinaryExtension();
+    cometd.registerExtension('binary', result);
     return result;
 }));
