@@ -14,7 +14,7 @@
         </license>
     </licenses>
     <properties>
-        <wicket.version>7.7.0</wicket.version>
+        <wicket.version>7.10.0</wicket.version>
         <jetty.version>9.2.14.v20151106</jetty.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jqplot</artifactId>
-            <version>1.0.8r1250</version>
+            <version>1.0.9.d96a669-1</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
@@ -117,12 +117,12 @@
         <dependency>
             <groupId>de.agilecoders.wicket.webjars</groupId>
             <artifactId>wicket-webjars</artifactId>
-            <version>0.5.3</version>
+            <version>0.5.6</version>
         </dependency>
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
-            <version>3.2.1</version>
+            <version>3.3.2</version>
         </dependency>
     </dependencies>
     <build>
