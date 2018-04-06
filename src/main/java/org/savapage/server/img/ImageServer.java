@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,11 +24,15 @@ package org.savapage.server.img;
 import java.io.File;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.http.handler.ErrorCodeRequestHandler;
 import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.imaging.ImageUrl;
+import org.savapage.core.inbox.InboxPageNotFoundException;
 import org.savapage.core.inbox.OutputProducer;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
@@ -43,14 +47,10 @@ import org.slf4j.LoggerFactory;
  */
 public final class ImageServer extends WebPage implements ServiceEntryPoint {
 
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The logegr.
-     */
+    /** */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ImageServer.class);
 
@@ -75,6 +75,8 @@ public final class ImageServer extends WebPage implements ServiceEntryPoint {
 
         final ImageUrl url = getImageUrl(parameters);
 
+        final SpSession session = SpSession.get();
+
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(url.composeImageUrl());
         }
@@ -83,50 +85,41 @@ public final class ImageServer extends WebPage implements ServiceEntryPoint {
 
         ServiceContext.open();
 
+        IRequestHandler handler;
+
         try {
-            if (SpSession.get().isAuthenticated() && url.getUser() != null
-                    && SpSession.get().getUser().getUserId()
-                            .equals(url.getUser())) {
+
+            if (session.isAuthenticated() && url.getUser() != null
+                    && session.getUser().getUserId().equals(url.getUser())) {
+
                 file = getImageFile(url);
+
+                if (url.isBase64()) {
+                    handler = new ImageReqHandlerBase64(file);
+                } else {
+                    handler = new ImageReqHandler(file);
+                }
+
             } else {
-                file = getErrorImageFile(url);
+                handler = new ErrorCodeRequestHandler(
+                        HttpServletResponse.SC_UNAUTHORIZED);
             }
 
+        } catch (InboxPageNotFoundException e) {
+            handler = new ErrorCodeRequestHandler(
+                    HttpServletResponse.SC_NOT_FOUND);
+            LOGGER.warn(e.getMessage());
         } finally {
             ServiceContext.close();
-        }
-
-        /*
-         *
-         */
-        final IRequestHandler handler;
-
-        if (url.isBase64()) {
-            handler = new ImageReqHandlerBase64(file);
-        } else {
-            handler = new ImageReqHandler(file);
         }
 
         getRequestCycle().scheduleRequestHandlerAfterCurrent(handler);
     }
 
     /**
-     * TODO: localize the error message.
-     *
-     * @param url
-     * @return
-     */
-    private static File getErrorImageFile(final ImageUrl url) {
-        File file = OutputProducer.instance().allocateWarningPageImage(
-                url.getUser(), url.getJob(), url.getPage(), "Session Expired",
-                null);
-        return file;
-    }
-
-    /**
-     *
      * @param parameters
-     * @return
+     *            The page parameters.
+     * @return The {@link ImageUrl}.
      */
     private static ImageUrl getImageUrl(final PageParameters parameters) {
 
@@ -143,9 +136,13 @@ public final class ImageServer extends WebPage implements ServiceEntryPoint {
     /**
      *
      * @param url
-     * @return
+     *            The {@link ImageUrl}.
+     * @return The image file.
+     * @throws InboxPageNotFoundException
+     *             When inbox page is not found.
      */
-    private File getImageFile(final ImageUrl url) {
+    private File getImageFile(final ImageUrl url)
+            throws InboxPageNotFoundException {
 
         return OutputProducer.instance().allocatePageImage(url.getUser(),
                 url.getJob(), url.getPage(), url.isThumbnail(),
