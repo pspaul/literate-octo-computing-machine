@@ -2330,8 +2330,13 @@
                     return false;
                 });
 
-                $(this).on('click', '#button-printer-sync', null, function() {
+                $(this).on('click', '#sp-btn-printer-sync', null, function() {
                     _self.onPrinterSynchr();
+                    return false;
+                });
+
+                $(this).on('click', '#sp-btn-printer-snmp-all', null, function() {
+                    _self.onPrinterSnmp();
                     return false;
                 });
 

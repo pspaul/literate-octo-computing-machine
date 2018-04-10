@@ -3,8 +3,8 @@
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -140,16 +140,21 @@
 		</div>
 	</li>
 
-	<wicket:enclosure child="button-cups">
+	<wicket:enclosure child="btn-cups">
 		<li>
 			<div class="ui-mini">
 				<a target="_blank" title="CUPS"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home"
-					wicket:id="button-cups" />
-				<button id="button-printer-sync"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-sp-cups"
+					wicket:id="btn-cups" />
+				<button id="sp-btn-printer-sync"
+					class="ui-btn ui-btn-inline ui-btn-no-icon">
 					<wicket:message key="button-sync" />
 				</button>
+				<wicket:enclosure child="btn-snmp-all">
+					<button id="sp-btn-printer-snmp-all"
+						wicket:id="btn-snmp-all"
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-sp-refresh" />
+				</wicket:enclosure>
 			</div>
 		</li>
 	</wicket:enclosure>

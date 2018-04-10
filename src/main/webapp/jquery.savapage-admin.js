@@ -1407,11 +1407,20 @@
             };
 
             //-------------------------------------------------------
-            _view.pages.admin.onPrinterSynchr = function(id) {
+            _view.pages.admin.onPrinterSynchr = function() {
                 _view.showApiMsg(_api.call({
                     request : 'printer-sync'
                 }));
                 $('#button-printers-apply').click();
+            };
+
+            _view.pages.admin.onPrinterSnmp = function(id) {
+                _view.showApiMsg(_api.call({
+                    request : 'printer-snmp',
+                    dto : JSON.stringify({
+                        id : id
+                    })
+                }));
             };
 
             _view.pages.admin.onEditPrinter = function(id) {

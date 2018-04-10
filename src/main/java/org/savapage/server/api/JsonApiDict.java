@@ -60,6 +60,7 @@ import org.savapage.server.api.request.ReqPrinterOptValidate;
 import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqPrinterQuickSearch;
 import org.savapage.server.api.request.ReqPrinterSet;
+import org.savapage.server.api.request.ReqPrinterSnmp;
 import org.savapage.server.api.request.ReqPrinterSync;
 import org.savapage.server.api.request.ReqQueueEnable;
 import org.savapage.server.api.request.ReqQueueGet;
@@ -267,6 +268,7 @@ public class JsonApiDict {
             "printer-set-media-sources";
 
     public static final String REQ_PRINTER_SYNC = "printer-sync";
+    public static final String REQ_PRINTER_SNMP = "printer-snmp";
 
     public static final String REQ_QUEUE_ENABLE = "queue-enable";
     public static final String REQ_QUEUE_GET = "queue-get";
@@ -999,6 +1001,7 @@ public class JsonApiDict {
         adm(REQ_PRINTER_RENAME, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_PRINTER_SYNC, ReqPrinterSync.class, DbClaim.READ, DbAccess.YES);
+        adm(REQ_PRINTER_SNMP, ReqPrinterSnmp.class, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_QUEUE_GET, ReqQueueGet.class, DbClaim.NONE, DbAccess.YES);
         adm(REQ_QUEUE_SET, ReqQueueSet.class, DbClaim.READ, DbAccess.YES);

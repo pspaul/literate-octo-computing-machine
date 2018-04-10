@@ -23,7 +23,10 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.MarkupHelper;
@@ -45,7 +48,10 @@ public final class PrintersBase extends AbstractAdminPage {
             ServiceContext.getServiceFactory().getProxyPrintService();
 
     /** */
-    private static final String WICKET_ID_BUTTON_CUPS = "button-cups";
+    private static final String WICKET_ID_BUTTON_CUPS = "btn-cups";
+
+    /** */
+    private static final String WICKET_ID_BUTTON_SMTP = "btn-snmp-all";
 
     /**
      * @param parameters
@@ -63,6 +69,11 @@ public final class PrintersBase extends AbstractAdminPage {
                     new Label(WICKET_ID_BUTTON_CUPS, "CUPS"),
                     MarkupHelper.ATTR_HREF,
                     PROXY_PRINT_SERVICE.getCupsAdminUrl().toString()));
+
+            helper.encloseLabel(WICKET_ID_BUTTON_SMTP,
+                    NounEnum.STATUS.uiText(getLocale()), ConfigManager
+                            .instance().isConfigValue(Key.PRINTER_SNMP_ENABLE));
+
         } else {
             helper.discloseLabel(WICKET_ID_BUTTON_CUPS);
         }
