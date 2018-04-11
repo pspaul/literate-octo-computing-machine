@@ -40,6 +40,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.PrinterAttrDao;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
@@ -49,6 +50,7 @@ import org.savapage.core.dao.enums.PrinterAttrEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
 import org.savapage.core.dao.helpers.JsonUserGroupAccess;
+import org.savapage.core.dao.helpers.ProxyPrinterSnmpInfoDto;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
@@ -226,10 +228,15 @@ public final class PrintersPage extends AbstractAdminListPage {
         /** */
         private static final String WID_PRINTER_SPARKLINE = "printer-sparkline";
 
-        /***/
+        /** */
+        private static final String WID_PRINTER_SNMP = "printer-snmp";
+
+        /** */
         private final boolean isEditor;
-        /***/
+        /** */
         private final boolean hasAccessDoc;
+        /** */
+        private final boolean showSnmp;
 
         /**
          *
@@ -245,6 +252,9 @@ public final class PrintersPage extends AbstractAdminListPage {
             this.isEditor = isEditor;
             this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(
                     SpSession.get().getUser(), ACLOidEnum.A_DOCUMENTS);
+
+            this.showSnmp = ConfigManager.instance()
+                    .isConfigValue(Key.PRINTER_SNMP_ENABLE);
         }
 
         private String getProxyPrintAuthMode(final Device device) {
@@ -543,6 +553,36 @@ public final class PrintersPage extends AbstractAdminListPage {
             //
             final PrinterAttrLookup attrLookup = new PrinterAttrLookup(printer);
 
+            /*
+             * SNMP
+             */
+            final ProxyPrinterSnmpInfoDto snmpDto;
+
+            if (this.showSnmp) {
+
+                final String json = PRINTER_ATTR_DAO.getSnmpJson(attrLookup);
+                if (json == null) {
+                    snmpDto = null;
+                } else {
+                    snmpDto = PRINTER_SERVICE.getSnmpInfo(json);
+                    if (snmpDto == null) {
+                        // TODO
+                        PRINTER_SERVICE.removeSnmpAttr(printer);
+                    }
+                }
+            } else {
+                snmpDto = null;
+            }
+
+            if (snmpDto == null) {
+                helper.discloseLabel(WID_PRINTER_SNMP);
+            } else {
+                item.add(new PrinterSnmpPanel("printer-snmp",
+                        PRINTER_ATTR_DAO.getSnmpDate(attrLookup), snmpDto,
+                        false));
+            }
+
+            //
             final boolean isInternal =
                     PRINTER_ATTR_DAO.isInternalPrinter(attrLookup);
 
