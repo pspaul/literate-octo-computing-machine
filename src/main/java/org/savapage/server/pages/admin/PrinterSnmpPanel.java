@@ -27,9 +27,11 @@ import java.util.Map.Entry;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.dao.helpers.ProxyPrinterSnmpInfoDto;
+import org.savapage.core.snmp.SnmpPrinterErrorStateEnum;
 import org.savapage.core.snmp.SnmpPrinterVendorEnum;
 import org.savapage.core.snmp.SnmpPrtMarkerColorantValueEnum;
 import org.savapage.core.util.LocaleHelper;
+import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -43,6 +45,15 @@ public final class PrinterSnmpPanel extends Panel {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final String WID_MARKERS = "markers";
+
+    /** */
+    private static final String WID_MARKER_BAR = "marker-bar";
+
+    /** */
+    private static final String WID_STATES = "states";
 
     /**
      * @param id
@@ -83,19 +94,59 @@ public final class PrinterSnmpPanel extends Panel {
         helper.encloseLabel("model", info.getModel(), extended);
         helper.encloseLabel("serial", info.getSerial(), extended);
 
-        helper.addLabel("supplies", info.getSupplies().uiText(getLocale()));
+        //
         final StringBuilder markers = new StringBuilder();
+        final String[] markerValues = new String[info.getMarkers().size()];
+        final String[] markerColors = new String[info.getMarkers().size()];
+
+        int i = 0;
 
         for (final Entry<SnmpPrtMarkerColorantValueEnum, Integer> entry : info
                 .getMarkers().entrySet()) {
 
-            markers.append(" &bull; ")
-                    .append(entry.getKey().uiText(getLocale())).append("&nbsp;")
-                    .append(entry.getValue()).append("%");
+            if (extended) {
+                markers.append(" &bull; ")
+                        .append(entry.getKey().uiText(getLocale()))
+                        .append("&nbsp;").append(entry.getValue()).append("%");
+            }
+
+            markerValues[i] = entry.getValue().toString();
+            markerColors[i] = entry.getKey().getHtmlColor();
+
+            i++;
         }
 
-        this.add(new Label("markers", markers.toString())
-                .setEscapeModelStrings(false));
+        if (markers.length() > 0) {
+            helper.addLabel("supplies", info.getSupplies().uiText(getLocale()));
+
+            this.add(new Label(WID_MARKERS, markers.toString())
+                    .setEscapeModelStrings(false));
+        } else {
+            helper.discloseLabel(WID_MARKERS);
+        }
+
+        MarkupHelper.modifyLabelAttr(
+                helper.addModifyLabelAttr(WID_MARKER_BAR,
+                        SparklineHtml.valueString(markerValues),
+                        SparklineHtml.ATTR_COLOR_MAP,
+                        SparklineHtml.arrayAttr(markerColors)),
+                MarkupHelper.ATTR_CLASS, SparklineHtml.CSS_CLASS_PRINTER);
+
+        //
+        final StringBuilder states = new StringBuilder();
+
+        if (info.getErrorStates() != null) {
+            for (final SnmpPrinterErrorStateEnum error : info
+                    .getErrorStates()) {
+                if (states.length() > 0) {
+                    states.append(", ");
+                }
+                states.append(error.uiText(getLocale()));
+            }
+        }
+
+        helper.encloseLabel(WID_STATES, states.toString(), states.length() > 0);
+
     }
 
 }

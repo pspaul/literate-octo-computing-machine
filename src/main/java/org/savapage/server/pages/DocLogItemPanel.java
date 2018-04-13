@@ -61,6 +61,7 @@ import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppTypeEnum;
 
@@ -136,17 +137,17 @@ public class DocLogItemPanel extends Panel {
         final Map<String, String> mapVisible = new HashMap<>();
 
         for (final String attr : new String[] { "user-name", "title",
-                "log-comment", "printin-pie", "pdfout-pie", "printout-pie",
-                "printoutMode", "signature", "destination", "letterhead",
-                "author", "subject", "keywords", "drm", "userpw", "ownerpw",
-                "duplex", "simplex", "color", "grayscale", "papersize",
-                "media-source", "output-bin", "jog-offset", "cost-currency",
-                "cost", "job-id", "job-state", "job-completed-date",
-                "print-in-denied-reason-hyphen", "print-in-denied-reason",
-                "collate", "ecoPrint", "removeGraphics", "pageRotate180",
-                "punch", "staple", "fold", "booklet", "jobticket-media",
-                "jobticket-copy", "jobticket-finishing-ext",
-                "jobticket-custom-ext", "landscape" }) {
+                "log-comment", "printoutMode", "signature", "destination",
+                "letterhead", "author", "subject", "keywords", "drm", "userpw",
+                "ownerpw", "duplex", "simplex", "color", "grayscale",
+                "papersize", "media-source", "output-bin", "jog-offset",
+                "cost-currency", "cost", "job-id", "job-state",
+                "job-completed-date", "print-in-denied-reason-hyphen",
+                "print-in-denied-reason", "collate", "ecoPrint",
+                "removeGraphics", "pageRotate180", "punch", "staple", "fold",
+                "booklet", "jobticket-media", "jobticket-copy",
+                "jobticket-finishing-ext", "jobticket-custom-ext",
+                "landscape" }) {
             mapVisible.put(attr, null);
         }
 
@@ -309,6 +310,9 @@ public class DocLogItemPanel extends Panel {
             }
         }
 
+        String pieData = null;
+        String pieSliceColors = null;
+
         //
         if (obj.getDocType() == DocLogDao.Type.IN) {
 
@@ -338,8 +342,9 @@ public class DocLogItemPanel extends Panel {
                 mapVisible.put("print-in-denied-reason", localized(key));
 
             } else {
-                mapVisible.put("printin-pie",
-                        String.valueOf(obj.getTotalPages()));
+                pieData = String.valueOf(obj.getTotalPages());
+                pieSliceColors =
+                        SparklineHtml.arrayAttr(SparklineHtml.COLOR_QUEUE);
             }
 
         } else {
@@ -373,8 +378,9 @@ public class DocLogItemPanel extends Panel {
                     mapVisible.put("ownerpw", "O");
                 }
 
-                mapVisible.put("pdfout-pie",
-                        String.valueOf(obj.getTotalPages()));
+                pieData = String.valueOf(obj.getTotalPages());
+                pieSliceColors =
+                        SparklineHtml.arrayAttr(SparklineHtml.COLOR_PDF);
 
             } else {
 
@@ -546,15 +552,25 @@ public class DocLogItemPanel extends Panel {
                     }
                 }
 
-                final String sparklineData =
-                        String.format("%d,%d", obj.getTotalSheets(),
-                                obj.getTotalPages() * obj.getCopies()
-                                        - obj.getTotalSheets());
-
-                mapVisible.put("printout-pie", sparklineData);
+                pieData = SparklineHtml.valueString(
+                        String.valueOf(obj.getTotalSheets()),
+                        String.valueOf(obj.getTotalPages() * obj.getCopies()
+                                - obj.getTotalSheets()));
+                pieSliceColors = SparklineHtml.arrayAttr(
+                        SparklineHtml.COLOR_PRINTER, SparklineHtml.COLOR_SHEET);
             }
+
         }
 
+        if (pieData == null) {
+            helper.discloseLabel("document-pie");
+        } else {
+            MarkupHelper.modifyLabelAttr(
+                    helper.addModifyLabelAttr("document-pie", pieData,
+                            SparklineHtml.ATTR_SLICE_COLORS, pieSliceColors),
+                    MarkupHelper.ATTR_CLASS, SparklineHtml.CSS_CLASS_DOCLOG);
+        }
+        //
         Label labelWlk = new Label("header");
         labelWlk.add(new AttributeModifier("class", cssClass));
 

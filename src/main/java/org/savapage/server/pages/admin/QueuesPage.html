@@ -22,7 +22,14 @@
 	<ul data-role="listview" data-filter="false">
 		<li wicket:id="queues-view">
 			<h3 wicket:id="urlPath"></h3>
-			<p wicket:id="queue-sparkline" class="sparkline-queue-line" />
+
+			<wicket:enclosure child="queue-sparkline">
+				<p wicket:id="queue-sparkline" class=""
+					sparkType='line' sparkLineColor="" sparkFillColor=""
+					sparkSpotColor="false" sparkMinSpotColor="false"
+					sparkMaxSpotColor="false" sparkDefaultPixelsPerValue="5" />
+			</wicket:enclosure>
+
 			<wicket:enclosure child="reserved-queue">
 				<p style="font-family: monospace;" wicket:id="reserved-queue" />
 			</wicket:enclosure>

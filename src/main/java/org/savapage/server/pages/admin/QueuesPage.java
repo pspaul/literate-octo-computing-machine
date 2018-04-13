@@ -51,6 +51,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
@@ -88,6 +89,9 @@ public final class QueuesPage extends AbstractAdminListPage {
     /** */
     private static final IppQueueDao QUEUE_DAO =
             ServiceContext.getDaoContext().getIppQueueDao();
+
+    /** */
+    private static final String WID_QUEUE_SPARKLINE = "queue-sparkline";
 
     /**
      * Bean for mapping JSON page request.
@@ -283,17 +287,37 @@ public final class QueuesPage extends AbstractAdminListPage {
 
             final List<Integer> data = series.getData();
 
-            for (int i = data.size(); i > 0; i--) {
-                if (i < data.size()) {
-                    sparklineData += ",";
+            if (data.size() > 1
+                    || data.size() == 1 && data.get(0).intValue() > 0) {
+                for (int i = data.size(); i > 0; i--) {
+                    if (i < data.size()) {
+                        sparklineData += ",";
+                    }
+                    sparklineData += data.get(i - 1).toString();
                 }
-                sparklineData += data.get(i - 1).toString();
             }
 
-            item.add(new Label("queue-sparkline", sparklineData));
-
-            String color = null;
+            //
+            final MarkupHelper helper = new MarkupHelper(item);
             Label labelWrk = null;
+
+            final boolean hasLine = sparklineData.length() > 0;
+            labelWrk = helper.encloseLabel(WID_QUEUE_SPARKLINE,
+                    sparklineData.toString(), hasLine);
+
+            if (hasLine) {
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        SparklineHtml.ATTR_LINE_COLOR,
+                        SparklineHtml.COLOR_QUEUE);
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        SparklineHtml.ATTR_FILL_COLOR,
+                        SparklineHtml.COLOR_QUEUE);
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
+                        SparklineHtml.CSS_CLASS_QUEUE);
+            }
+
+            //
+            String color = null;
             String signalKey = null;
 
             final ReservedIppQueueEnum reservedQueue =
@@ -336,8 +360,6 @@ public final class QueuesPage extends AbstractAdminListPage {
             item.add(labelWrk);
 
             //
-            final MarkupHelper helper = new MarkupHelper(item);
-
             if (reservedQueue == null || (reservedQueue.isDriverPrint()
                     && reservedQueue != ReservedIppQueueEnum.RAW_PRINT
                     && reservedQueue != ReservedIppQueueEnum.IPP_PRINT_INTERNET

@@ -15,22 +15,32 @@
 </wicket:remove>
 
 <wicket:panel>
-	<span wicket:id="date" />
 
+	<span class="" wicket:id="marker-bar"
+		style="padding: 0px 3px 0px 3px; background-color: white; border-right: 1px silver solid;"
+		sparkType="bar" sparkBarWidth="5" sparkChartRangeMin="0"
+		sparkChartRangeMax="100" sparkColorMap="[]" />
+
+	<span wicket:id="date" />
 	<wicket:enclosure child="vendor"> &bull; <span
 			wicket:id="vendor" />
 	</wicket:enclosure>
-
 	<wicket:enclosure child="model"> &bull; <span
 			wicket:id="model" />
 	</wicket:enclosure>
-	
 	<wicket:enclosure child="serial"> &bull; <span
 			wicket:id="serial" />
 	</wicket:enclosure>
-	 
-    &bull; <span wicket:id="supplies" />
-	<span wicket:id="markers" />
+
+	<wicket:enclosure child="markers">
+	&bull; <span wicket:id="supplies" />
+		<span wicket:id="markers" />
+	</wicket:enclosure>
+
+	<wicket:enclosure child="states">
+		&bull; <span class="sp-txt-warn" wicket:id="states" />
+	</wicket:enclosure>
+
 </wicket:panel>
 
 </html>

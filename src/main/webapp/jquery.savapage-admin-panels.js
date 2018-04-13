@@ -1223,6 +1223,7 @@
                      */
                     return false;
                 });
+
                 $(".sp-printers-page-prev").one('click', null, function() {
                     my.page(my, my.output.prevPage);
                     /*
@@ -1231,23 +1232,10 @@
                     return false;
                 });
 
-                /* Use 'html' instead of an array of values to pass
-                 * options
-                 to a sparkline with data in the tag */
-                $('.sparkline-printer-line').sparkline('html', {
-                    type : 'line',
-                    lineColor : _view.colorPrinter,
-                    fillColor : _view.colorPrinter,
-                    spotColor : false,
-                    minSpotColor : false,
-                    maxSpotColor : false,
-                    defaultPixelsPerValue : 5
+                $('.sp-sparkline-printer').sparkline('html', {
+                    enableTagOptions : true
                 });
 
-                $('.sparkline-printer-pie').sparkline('html', {
-                    type : 'pie',
-                    sliceColors : [_view.colorPrinter, _view.colorSheet]
-                });
             }
         };
 
@@ -1405,17 +1393,8 @@
                     return false;
                 });
 
-                /* Use 'html' instead of an array of values to pass
-                 * options
-                 to a sparkline with data in the tag */
-                $('.sparkline-queue-line').sparkline('html', {
-                    type : 'line',
-                    lineColor : _view.colorQueue,
-                    fillColor : _view.colorQueue,
-                    spotColor : false,
-                    minSpotColor : false,
-                    maxSpotColor : false,
-                    defaultPixelsPerValue : 5
+                $('.sp-sparkline-queue').sparkline('html', {
+                    enableTagOptions : true
                 });
 
             }
@@ -1609,12 +1588,8 @@
                     return false;
                 });
 
-                /* Use 'html' instead of an array of values to pass
-                 * options
-                 to a sparkline with data in the tag */
-                $('.sparkline-user-pie').sparkline('html', {
-                    type : 'pie',
-                    sliceColors : _view.userChartColors
+                $('.sp-sparkline-user').sparkline('html', {
+                    enableTagOptions : true
                 });
             }
         };

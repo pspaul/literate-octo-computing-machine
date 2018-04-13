@@ -1247,18 +1247,10 @@
                     return false;
                 });
 
-                $('.sparkline-printin-pie').sparkline('html', {
-                    type : 'pie',
-                    sliceColors : [_view.colorQueue]
+                $('.sp-sparkline-doclog').sparkline('html', {
+                    enableTagOptions : true
                 });
-                $('.sparkline-pdfout-pie').sparkline('html', {
-                    type : 'pie',
-                    sliceColors : [_view.colorPDF]
-                });
-                $('.sparkline-printout-pie').sparkline('html', {
-                    type : 'pie',
-                    sliceColors : [_view.colorPrinter, _view.colorSheet]
-                });
+
             }
         };
 

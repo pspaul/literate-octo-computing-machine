@@ -49,6 +49,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -181,12 +182,17 @@ public final class UsersPage extends AbstractAdminListPage {
 
             Label labelWrk = null;
 
-            final String sparklineData = String.format("%d,%d,%d",
-                    user.getNumberOfPrintOutPages().intValue(),
-                    user.getNumberOfPrintInPages().intValue(),
-                    user.getNumberOfPdfOutPages().intValue());
-
-            item.add(new Label("user-pie", sparklineData));
+            MarkupHelper.modifyLabelAttr(
+                    helper.addModifyLabelAttr("user-pie",
+                            SparklineHtml.valueString(
+                                    user.getNumberOfPrintOutPages().toString(),
+                                    user.getNumberOfPrintInPages().toString(),
+                                    user.getNumberOfPdfOutPages().toString()),
+                            SparklineHtml.ATTR_SLICE_COLORS,
+                            SparklineHtml.arrayAttr(SparklineHtml.COLOR_PRINTER,
+                                    SparklineHtml.COLOR_QUEUE,
+                                    SparklineHtml.COLOR_PDF)),
+                    MarkupHelper.ATTR_CLASS, SparklineHtml.CSS_CLASS_USER);
 
             //
             if (isErased) {

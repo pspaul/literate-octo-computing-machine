@@ -30,8 +30,9 @@
 			</h3>
 
 			<p>
-				<span wicket:id="printer-pie" class="sparkline-printer-pie" />&nbsp;<span
-					class="sp-printer-opt-download" wicket:id="printerName" />
+				<span wicket:id="printer-pie" sparkType="pie" sparkSliceColors="[]"
+					class="" />&nbsp;<span class="sp-printer-opt-download"
+					wicket:id="printerName" />
 				<wicket:enclosure child="cups-printer-class-members"> (<span
 						class="sp-txt-wrap" wicket:id="cups-printer-class-members" />)
 				</wicket:enclosure>
@@ -60,7 +61,10 @@
 
 			<wicket:enclosure child="printer-sparkline">
 				<p>
-					<span wicket:id="printer-sparkline" class="sparkline-printer-line" />
+					<span wicket:id="printer-sparkline" class="" sparkType='line'
+						sparkLineColor="" sparkFillColor="" sparkSpotColor="false"
+						sparkMinSpotColor="false" sparkMaxSpotColor="false"
+						sparkDefaultPixelsPerValue="5" />
 				</p>
 			</wicket:enclosure>
 

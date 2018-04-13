@@ -70,6 +70,7 @@ import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
@@ -308,15 +309,21 @@ public final class PrintersPage extends AbstractAdminListPage {
             /*
              * Sparklines: pie-chart.
              */
-            final StringBuilder sparklineData = new StringBuilder();
-
-            sparklineData.append(printer.getTotalPages()).append(",")
-                    .append(printer.getTotalSheets());
-
-            item.add(new Label("printer-pie", sparklineData.toString()));
-
+            MarkupHelper
+                    .modifyLabelAttr(
+                            helper.addModifyLabelAttr("printer-pie",
+                                    SparklineHtml.valueString(
+                                            printer.getTotalPages().toString(),
+                                            printer.getTotalSheets()
+                                                    .toString()),
+                                    SparklineHtml.ATTR_SLICE_COLORS,
+                                    SparklineHtml.arrayAttr(
+                                            SparklineHtml.COLOR_PRINTER,
+                                            SparklineHtml.COLOR_SHEET)),
+                            MarkupHelper.ATTR_CLASS,
+                            SparklineHtml.CSS_CLASS_PRINTER);
             /*
-             * The sparkline.
+             * Sparklines: line.
              */
             final Date observationTime = new Date();
             final JsonRollingTimeSeries<Integer> series =
@@ -331,7 +338,7 @@ public final class PrintersPage extends AbstractAdminListPage {
                 throw new SpException(e);
             }
 
-            sparklineData.setLength(0);
+            final StringBuilder sparklineData = new StringBuilder();
 
             final List<Integer> data = series.getData();
 
@@ -345,12 +352,21 @@ public final class PrintersPage extends AbstractAdminListPage {
                     sparklineData.append(data.get(i - 1));
                 }
             }
-            helper.encloseLabel(WID_PRINTER_SPARKLINE, sparklineData.toString(),
-                    sparklineData.length() > 0);
+            final boolean hasLine = sparklineData.length() > 0;
+            labelWrk = helper.encloseLabel(WID_PRINTER_SPARKLINE,
+                    sparklineData.toString(), hasLine);
 
-            /*
-             *
-             */
+            if (hasLine) {
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        SparklineHtml.ATTR_LINE_COLOR,
+                        SparklineHtml.COLOR_PRINTER);
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        SparklineHtml.ATTR_FILL_COLOR,
+                        SparklineHtml.COLOR_PRINTER);
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
+                        SparklineHtml.CSS_CLASS_PRINTER);
+            }
+            //
             item.add(new Label("displayName"));
 
             labelWrk = new Label("printerName");
