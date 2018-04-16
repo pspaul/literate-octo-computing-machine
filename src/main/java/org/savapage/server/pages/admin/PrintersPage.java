@@ -41,6 +41,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.PrinterAttrDao;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
@@ -573,8 +574,11 @@ public final class PrintersPage extends AbstractAdminListPage {
              * SNMP
              */
             final ProxyPrinterSnmpInfoDto snmpDto;
+            final Date snmpDate;
 
             if (this.showSnmp) {
+
+                snmpDate = PRINTER_ATTR_DAO.getSnmpDate(attrLookup);
 
                 final String json = PRINTER_ATTR_DAO.getSnmpJson(attrLookup);
                 if (json == null) {
@@ -582,19 +586,18 @@ public final class PrintersPage extends AbstractAdminListPage {
                 } else {
                     snmpDto = PRINTER_SERVICE.getSnmpInfo(json);
                     if (snmpDto == null) {
-                        // TODO
-                        PRINTER_SERVICE.removeSnmpAttr(printer);
+                        this.removeSnmpAttr(printer);
                     }
                 }
             } else {
                 snmpDto = null;
+                snmpDate = null;
             }
 
-            if (snmpDto == null) {
+            if (snmpDate == null && snmpDto == null) {
                 helper.discloseLabel(WID_PRINTER_SNMP);
             } else {
-                item.add(new PrinterSnmpPanel("printer-snmp",
-                        PRINTER_ATTR_DAO.getSnmpDate(attrLookup), snmpDto,
+                item.add(new PrinterSnmpPanel("printer-snmp", snmpDate, snmpDto,
                         false));
             }
 
@@ -755,6 +758,27 @@ public final class PrintersPage extends AbstractAdminListPage {
 
             helper.addTransparantInvisible("sect-buttons",
                     !this.isEditor && !this.hasAccessDoc);
+        }
+
+        /**
+         * Removes SNMP attributes from printer.
+         *
+         * @param printer
+         *            The printer.
+         */
+        private void removeSnmpAttr(final Printer printer) {
+            final DaoContext ctx = ServiceContext.getDaoContext();
+
+            ctx.beginTransaction();
+            try {
+                PRINTER_SERVICE.removeSnmpAttr(printer);
+                ctx.commit();
+                LOGGER.warn("Removed SNMP info from printer {} ({}).",
+                        printer.getPrinterName(), printer.getDisplayName());
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                ctx.rollback();
+            }
         }
     }
 
