@@ -29,6 +29,8 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.InetUtils;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -48,10 +50,15 @@ public final class PrintersBase extends AbstractAdminPage {
             ServiceContext.getServiceFactory().getProxyPrintService();
 
     /** */
+    private static final String WICKET_ID_BUTTON_BAR = "button-bar";
+    /** */
     private static final String WICKET_ID_BUTTON_CUPS = "btn-cups";
 
     /** */
-    private static final String WICKET_ID_BUTTON_SMTP = "btn-snmp-all";
+    private static final String WICKET_ID_BUTTON_SYNC = "btn-sync";
+
+    /** */
+    private static final String WICKET_ID_BUTTON_SNMP = "btn-snmp-all";
 
     /**
      * @param parameters
@@ -65,18 +72,28 @@ public final class PrintersBase extends AbstractAdminPage {
 
         if (this.probePermissionToEdit(ACLOidEnum.A_PRINTERS)) {
 
-            add(MarkupHelper.modifyLabelAttr(
-                    new Label(WICKET_ID_BUTTON_CUPS, "CUPS"),
-                    MarkupHelper.ATTR_HREF,
-                    PROXY_PRINT_SERVICE.getCupsAdminUrl().toString()));
+            helper.addTransparant(WICKET_ID_BUTTON_BAR);
+            helper.addButton(WICKET_ID_BUTTON_SYNC, HtmlButtonEnum.SYNCHRONIZE);
 
-            helper.encloseLabel(WICKET_ID_BUTTON_SMTP,
+            final boolean linkCUPS = InetUtils.isIntranetBrowserHost(
+                    this.getRequest().getClientUrl().getHost());
+
+            final Label label = helper.encloseLabel(WICKET_ID_BUTTON_CUPS,
+                    "CUPS", linkCUPS);
+
+            if (linkCUPS) {
+                MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_HREF,
+                        PROXY_PRINT_SERVICE.getCupsAdminUrl().toString());
+            }
+
+            helper.encloseLabel(WICKET_ID_BUTTON_SNMP,
                     NounEnum.STATUS.uiText(getLocale()), ConfigManager
                             .instance().isConfigValue(Key.PRINTER_SNMP_ENABLE));
 
         } else {
-            helper.discloseLabel(WICKET_ID_BUTTON_CUPS);
+            helper.discloseLabel(WICKET_ID_BUTTON_BAR);
         }
 
     }
+
 }

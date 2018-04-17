@@ -68,6 +68,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
+import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.WebApp;
@@ -239,6 +240,8 @@ public final class PrintersPage extends AbstractAdminListPage {
         private final boolean hasAccessDoc;
         /** */
         private final boolean showSnmp;
+        /** */
+        private final boolean showCups;
 
         /**
          *
@@ -257,6 +260,9 @@ public final class PrintersPage extends AbstractAdminListPage {
 
             this.showSnmp = ConfigManager.instance()
                     .isConfigValue(Key.PRINTER_SNMP_ENABLE);
+
+            this.showCups = InetUtils.isIntranetBrowserHost(
+                    this.getRequest().getClientUrl().getHost());
         }
 
         private String getProxyPrintAuthMode(final Device device) {
@@ -597,8 +603,14 @@ public final class PrintersPage extends AbstractAdminListPage {
             if (snmpDate == null && snmpDto == null) {
                 helper.discloseLabel(WID_PRINTER_SNMP);
             } else {
-                item.add(new PrinterSnmpPanel("printer-snmp", snmpDate, snmpDto,
-                        false));
+                final Long printerID;
+                if (this.isEditor) {
+                    printerID = printer.getId();
+                } else {
+                    printerID = null;
+                }
+                item.add(new PrinterSnmpPanel("printer-snmp", printerID,
+                        snmpDate, snmpDto, false));
             }
 
             //
@@ -741,7 +753,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             }
 
             //
-            final boolean showButtonCups = this.isEditor && cupsPrinter != null;
+            final boolean showButtonCups =
+                    this.showCups && this.isEditor && cupsPrinter != null;
 
             if (showButtonCups) {
                 MarkupHelper

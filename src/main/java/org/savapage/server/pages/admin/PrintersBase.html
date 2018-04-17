@@ -140,25 +140,26 @@
 		</div>
 	</li>
 
-	<wicket:enclosure child="btn-cups">
-		<li>
+	<wicket:enclosure child="button-bar">
+		<li wicket:id="button-bar">
 			<div class="ui-mini">
-				<a target="_blank" title="CUPS"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-sp-cups"
-					wicket:id="btn-cups" />
-				<button id="sp-btn-printer-sync"
-					class="ui-btn ui-btn-inline ui-btn-no-icon">
-					<wicket:message key="button-sync" />
-				</button>
+				<wicket:enclosure child="btn-cups">
+					<a target="_blank" title="CUPS"
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-sp-cups"
+						wicket:id="btn-cups" />
+				</wicket:enclosure>
+				<wicket:enclosure child="btn-sync">
+					<button id="sp-btn-printer-sync"
+						class="ui-btn ui-btn-inline ui-btn-no-icon" wicket:id="btn-sync" />
+				</wicket:enclosure>
 				<wicket:enclosure child="btn-snmp-all">
-					<button id="sp-btn-printer-snmp-all"
-						wicket:id="btn-snmp-all"
+					<button id="sp-btn-printer-snmp-all" wicket:id="btn-snmp-all"
 						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-sp-refresh" />
 				</wicket:enclosure>
 			</div>
 		</li>
 	</wicket:enclosure>
-
+	
 	<li id="sp-printer-list-page"></li>
 
 </ul>
