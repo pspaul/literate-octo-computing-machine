@@ -74,7 +74,7 @@ public final class PrinterSnmpPanel extends Panel {
     private static final String WID_BTN_REFRESH = "btn-refresh";
 
     /** */
-    private static final int BAR_WIDTH_5 = 5;
+    private static final int BAR_WIDTH[] = new int[] { 20, 10, 7, 5 };
 
     /**
      * @param id
@@ -177,10 +177,10 @@ public final class PrinterSnmpPanel extends Panel {
 
             final int barWidth;
 
-            if (markerColors.length < 3) {
-                barWidth = 2 * BAR_WIDTH_5;
+            if (markerColors.length < 5) {
+                barWidth = BAR_WIDTH[markerColors.length - 1];
             } else {
-                barWidth = BAR_WIDTH_5;
+                barWidth = BAR_WIDTH[BAR_WIDTH.length - 1];
             }
 
             final Label bar = helper.addModifyLabelAttr(WID_MARKER_BAR,

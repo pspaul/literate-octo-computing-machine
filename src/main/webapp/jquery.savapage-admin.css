@@ -35,7 +35,8 @@ body {
 }
 
 img.sp-snmp-refresh-mini {
-    content: url(/glyphicons/glyphicons_081_refresh.png);
+    /* content: only works in webkit/Chrome, but not in FF or IE. */
+    /* content: url(/glyphicons/glyphicons_081_refresh.png); */
     height: 10px;
     opacity: .6;
 }
