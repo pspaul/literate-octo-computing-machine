@@ -24,6 +24,7 @@ package org.savapage.server.pages.admin;
 import java.util.Date;
 import java.util.Map.Entry;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.dao.helpers.ProxyPrinterSnmpInfoDto;
@@ -32,6 +33,7 @@ import org.savapage.core.snmp.SnmpPrinterVendorEnum;
 import org.savapage.core.snmp.SnmpPrtMarkerColorantValueEnum;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.LocaleHelper;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -68,9 +70,18 @@ public final class PrinterSnmpPanel extends Panel {
     /** */
     private static final String WID_STATES = "states";
 
+    /** */
+    private static final String WID_BTN_REFRESH = "btn-refresh";
+
+    /** */
+    private static final int BAR_WIDTH_5 = 5;
+
     /**
      * @param id
      *            The wicket id.
+     * @param printerID
+     *            The primary database key of printer. If {@code null}, no
+     *            refresh link is shown.
      * @param date
      *            The date of SNMP data retrieval.
      * @param info
@@ -78,14 +89,28 @@ public final class PrinterSnmpPanel extends Panel {
      * @param extended
      *            If {@code true}, extended view.
      */
-    public PrinterSnmpPanel(final String id, final Date date,
-            final ProxyPrinterSnmpInfoDto info, final boolean extended) {
+    public PrinterSnmpPanel(final String id, final Long printerID,
+            final Date date, final ProxyPrinterSnmpInfoDto info,
+            final boolean extended) {
 
         super(id);
 
         final MarkupHelper helper = new MarkupHelper(this);
         final LocaleHelper localeHelper = new LocaleHelper(getLocale());
 
+        if (printerID == null) {
+            helper.discloseLabel(WID_BTN_REFRESH);
+        } else {
+            final Component btnRefresh = helper.addTransparant(WID_BTN_REFRESH);
+
+            MarkupHelper.modifyComponentAttr(btnRefresh,
+                    MarkupHelper.ATTR_TITLE,
+                    HtmlButtonEnum.REFRESH.uiText(getLocale(), true));
+
+            MarkupHelper.modifyComponentAttr(btnRefresh,
+                    MarkupHelper.ATTR_DATA_SAVAPAGE, printerID.toString());
+        }
+        //
         final boolean hasInfo = info != null;
 
         final String vendor;
@@ -150,13 +175,26 @@ public final class PrinterSnmpPanel extends Panel {
                 helper.discloseLabel(WID_MARKERS);
             }
 
-            MarkupHelper.modifyLabelAttr(
-                    helper.addModifyLabelAttr(WID_MARKER_BAR,
-                            SparklineHtml.valueString(markerValues),
-                            SparklineHtml.ATTR_COLOR_MAP,
-                            SparklineHtml.arrayAttr(markerColors)),
-                    MarkupHelper.ATTR_CLASS, SparklineHtml.CSS_CLASS_PRINTER);
+            final int barWidth;
 
+            if (markerColors.length < 3) {
+                barWidth = 2 * BAR_WIDTH_5;
+            } else {
+                barWidth = BAR_WIDTH_5;
+            }
+
+            final Label bar = helper.addModifyLabelAttr(WID_MARKER_BAR,
+                    SparklineHtml.valueString(markerValues),
+                    SparklineHtml.ATTR_COLOR_MAP,
+                    SparklineHtml.arrayAttr(markerColors));
+
+            MarkupHelper.modifyLabelAttr(bar, MarkupHelper.ATTR_CLASS,
+                    SparklineHtml.CSS_CLASS_PRINTER);
+
+            MarkupHelper.modifyLabelAttr(bar, SparklineHtml.ATTR_BAR_WIDTH,
+                    String.valueOf(barWidth));
+
+            //
             final long duration = date.getTime() - info.getDate().getTime();
 
             if (duration == 0) {

@@ -34,6 +34,12 @@ body {
     max-width: 300px;
 }
 
+img.sp-snmp-refresh-mini {
+    content: url(/glyphicons/glyphicons_081_refresh.png);
+    height: 10px;
+    opacity: .6;
+}
+
 .ui-icon-sp-cups:after {
     background: url(/images/ext-supplier/cups.png) 100% 100% no-repeat;
     background-size: 21px 21px;

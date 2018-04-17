@@ -2303,6 +2303,11 @@
                     return false;
                 });
 
+                $(this).on('click', '.sp-printer-snmp-refresh', null, function() {
+                    _self.onPrinterSnmp($(this).attr('data-savapage'));
+                    return false;
+                });
+
                 $(this).on('dblclick', '.sp-printer-opt-download', null, function() {
                     _self.onDownload("printer-opt-download", null, $(this).attr('data-savapage'));
                     return false;

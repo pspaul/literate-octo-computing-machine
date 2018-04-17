@@ -22,6 +22,14 @@
 		sparkChartRangeMax="100" sparkColorMap="[]" />
 
 	<span wicket:id="date" />
+
+	<wicket:enclosure child="btn-refresh">
+		<a wicket:id="btn-refresh" class="sp-printer-snmp-refresh"
+			data-savapage="printer-id" title="refresh">&nbsp;<img
+				class="sp-snmp-refresh-mini" />&nbsp;
+		</a>
+	</wicket:enclosure>
+
 	<wicket:enclosure child="vendor"> &bull; <span
 			wicket:id="vendor" />
 	</wicket:enclosure>

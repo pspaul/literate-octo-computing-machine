@@ -118,6 +118,8 @@ public enum HtmlButtonEnum {
     /** As opposite of {@link #START}. */
     STOP,
     /** */
+    SYNCHRONIZE,
+    /** */
     TEST,
     /** */
     UPLOAD,

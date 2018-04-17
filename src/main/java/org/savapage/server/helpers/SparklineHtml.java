@@ -81,6 +81,9 @@ public final class SparklineHtml {
     /** */
     public static final String ATTR_FILL_COLOR = ATTR_PFX + "FillColor";
 
+    /** */
+    public static final String ATTR_BAR_WIDTH = ATTR_PFX + "BarWidth";
+
     /**
      * Utility class.
      */

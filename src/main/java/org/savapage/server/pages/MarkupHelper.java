@@ -547,6 +547,24 @@ public final class MarkupHelper {
     }
 
     /**
+     * Modifies an attribute value of a {@link Component}.
+     *
+     * @param label
+     *            The {@link Component}.
+     * @param attribute
+     *            The name of the attribute
+     * @param value
+     *            The value of the attribute.
+     * @return The modified {@link Component}.
+     */
+    public static Component modifyComponentAttr(final Component label,
+            final String attribute, final String value) {
+        label.add(new AttributeModifier(attribute, value));
+        return label;
+    }
+
+
+    /**
      * Sets the on/off texts for a jQuery Mobile Flipswitch.
      *
      * @param label
@@ -614,6 +632,24 @@ public final class MarkupHelper {
         label.add(new AttributeAppender(attribute,
                 String.format(" %s", value.trim())));
         return label;
+    }
+
+    /**
+     * Appends a value to a component attribute.
+     *
+     * @param component
+     *            The {@link Component}.
+     * @param attribute
+     *            The name of the attribute
+     * @param value
+     *            The value of the attribute.
+     * @return The {@link Component}.
+     */
+    public static Component appendComponentAttr(final Component component,
+            final String attribute, final String value) {
+        component.add(new AttributeAppender(attribute,
+                String.format(" %s", value.trim())));
+        return component;
     }
 
     /**
@@ -699,6 +735,19 @@ public final class MarkupHelper {
      */
     private static Component createTransparent(final String wicketId) {
         return new TransparentWebMarkupContainer(wicketId);
+    }
+
+    /**
+     * Adds a transparent component.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @return The component.
+     */
+    public Component addTransparant(final String wicketId) {
+        final Component component = createTransparent(wicketId);
+        add(component);
+        return component;
     }
 
     /**

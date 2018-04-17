@@ -1418,7 +1418,7 @@
                 _view.showApiMsg(_api.call({
                     request : 'printer-snmp',
                     dto : JSON.stringify({
-                        id : id
+                        printerId : id
                     })
                 }));
             };
