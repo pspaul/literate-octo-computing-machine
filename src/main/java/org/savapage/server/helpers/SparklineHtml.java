@@ -34,6 +34,9 @@ public final class SparklineHtml {
     private static final String CSS_CLASS = "sp-sparkline-";
 
     /** */
+    public static final String CSS_CLASS_PRINTOUT = CSS_CLASS + "printout";
+
+    /** */
     public static final String CSS_CLASS_DOCLOG = CSS_CLASS + "doclog";
 
     /** */

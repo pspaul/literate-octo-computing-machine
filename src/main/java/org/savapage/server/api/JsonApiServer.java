@@ -185,6 +185,7 @@ import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.dto.MoneyTransferDto;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.session.SpSession;
@@ -4310,7 +4311,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqConstants(final String authModeReq) {
 
-        final Map<String, Object> userData = new HashMap<String, Object>();
+        final Map<String, Object> userData = new HashMap<>();
 
         /*
          * Straight values
@@ -4435,6 +4436,17 @@ public final class JsonApiServer extends AbstractPage {
             userData.put("webPrintFileExt",
                     WebPrintHelper.getSupportedFileExtensions(true));
         }
+
+
+        // Colors
+        final Map<String, String> colors = new HashMap<>();
+
+        colors.put("printOut", SparklineHtml.COLOR_PRINTER);
+        colors.put("printIn", SparklineHtml.COLOR_QUEUE);
+        colors.put("pdfOut", SparklineHtml.COLOR_PDF);
+
+        userData.put("colors", colors);
+
         //
         return userData;
     }

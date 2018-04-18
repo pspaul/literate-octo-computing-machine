@@ -1574,9 +1574,8 @@
                 });
                 if (html) {
                     $('#outbox-job-list').html(html).enhanceWithin();
-                    $('.sparkline-printout-pie').sparkline('html', {
-                        type : 'pie',
-                        sliceColors : [_view.colorPrinter, _view.colorSheet]
+                    $('.sp-sparkline-printout').sparkline('html', {
+                        enableTagOptions : true
                     });
                     _view.visible($('#button-outbox-extend'), $('#outbox-job-list .sp-outbox-item-type-hold').length > 0);
                 }
@@ -2175,9 +2174,8 @@
 
                 if (stats) {
 
-                    $('#sparkline-user-pie').sparkline([stats.pagesPrintOut, stats.pagesPrintIn, stats.pagesPdfOut], {
-                        type : 'pie',
-                        sliceColors : _view.userChartColors
+                    $('#sp-sparkline-user-pie').sparkline([stats.pagesPrintOut, stats.pagesPrintIn, stats.pagesPdfOut], {
+                        enableTagOptions : true
                     });
 
                     status = stats.accountInfo.status;
@@ -5438,6 +5436,7 @@
                 _model.DELEGATE_ACCOUNT_SHARED_GROUP = res.delegateAccountSharedGroup;
 
                 //
+                _view.userChartColors = [res.colors.printOut, res.colors.printIn, res.colors.pdfOut];
                 _view.imgBase64 = res.img_base64;
 
                 language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);

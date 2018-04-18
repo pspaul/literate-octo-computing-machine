@@ -182,9 +182,8 @@
 
                 if (html) {
                     $('#jobticket-list').html(html).enhanceWithin();
-                    $('.sparkline-printout-pie').sparkline('html', {
-                        type : 'pie',
-                        sliceColors : [_view.colorPrinter, _view.colorSheet]
+                    $('.sp-sparkline-printout').sparkline('html', {
+                        enableTagOptions : true
                     });
                 }
 

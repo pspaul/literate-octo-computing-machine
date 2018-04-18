@@ -49,6 +49,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.helpers.CssClassEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
@@ -277,7 +278,17 @@ public class Main extends AbstractUserPage {
             MarkupHelper.appendLabelAttr(name, MarkupHelper.ATTR_CLASS,
                     "sp-button-user-details");
         }
-        helper.encloseLabel("sparkline-user-pie", "", showUserDetails);
+
+        //
+        final Label pie =
+                helper.encloseLabel("sparkline-user-pie", "", showUserDetails);
+
+        if (showUserDetails) {
+            MarkupHelper.modifyLabelAttr(pie, SparklineHtml.ATTR_SLICE_COLORS,
+                    SparklineHtml.arrayAttr(SparklineHtml.COLOR_PRINTER,
+                            SparklineHtml.COLOR_QUEUE,
+                            SparklineHtml.COLOR_PDF));
+        }
 
         add(name.add(new AttributeModifier("title", userId)));
 

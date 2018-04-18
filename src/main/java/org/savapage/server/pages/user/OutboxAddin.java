@@ -85,6 +85,7 @@ import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.ExtSupplierStatusPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
@@ -418,10 +419,21 @@ public class OutboxAddin extends AbstractUserPage {
             item.add(new Label("totals", totals.toString()));
 
             //
-            final String sparklineData = String.format("%d,%d", job.getSheets(),
-                    job.getPages() * job.getCopies() - job.getSheets());
-            item.add(new Label("printout-pie", sparklineData));
-
+            MarkupHelper
+                    .modifyLabelAttr(
+                            helper.addModifyLabelAttr("printout-pie",
+                                    SparklineHtml.valueString(
+                                            String.valueOf(job.getSheets()),
+                                            String.valueOf(job.getPages()
+                                                    * job.getCopies()
+                                                    - job.getSheets())),
+                                    SparklineHtml.ATTR_SLICE_COLORS,
+                                    SparklineHtml.arrayAttr(
+                                            SparklineHtml.COLOR_PRINTER,
+                                            SparklineHtml.COLOR_SHEET)),
+                            MarkupHelper.ATTR_CLASS,
+                            SparklineHtml.CSS_CLASS_PRINTOUT);
+            //
             if (!getSessionWebAppType().equals(WebAppTypeEnum.JOBTICKETS)
                     || printOut != null) {
                 helper.discloseLabel(WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET);

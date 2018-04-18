@@ -209,6 +209,8 @@
                     return;
                 }
 
+                _view.userChartColors = [res.colors.printOut, res.colors.printIn, res.colors.pdfOut];
+
                 _model.locale = res.locale;
                 _model.maxIdleSeconds = res.maxIdleSeconds;
 

@@ -2241,16 +2241,8 @@
             // Dummy AUTH Modes to associate Card with user.
             this.AUTH_MODE_CARD_ASSOC = '_CA';
 
-            // orange
-            this.colorSheet = '#FF9900';
-            // red
-            this.colorPrinter = '#D14719';
-            // blue
-            this.colorQueue = '#597BDE';
-            // green
-            this.colorPDF = '#33AD33';
-
-            this.userChartColors = [this.colorPrinter, this.colorQueue, this.colorPDF];
+            // HTML color: to be set from 'constants' API.
+            this.userChartColors = ['printOut', 'printIn', 'pdfOut'];
 
             this.imgBase64 = false;
 
