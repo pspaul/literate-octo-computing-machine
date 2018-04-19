@@ -21,16 +21,17 @@
  */
 package org.savapage.server.api.request;
 
-import java.util.EnumSet;
-
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.job.SpJobScheduler;
-import org.savapage.core.job.SpJobType;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
+import org.savapage.core.services.ProxyPrintService;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.SnmpRetrieveService;
 
 /**
  * Retrieve SNMP data for printer(s).
@@ -39,6 +40,14 @@ import org.savapage.core.jpa.User;
  *
  */
 public final class ReqPrinterSnmp extends ApiRequestMixin {
+
+    /** */
+    private static final ProxyPrintService PROXY_PRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /** */
+    private static final SnmpRetrieveService SNMP_RETRIEVE_SERVICE =
+            ServiceContext.getServiceFactory().getSnmpRetrieveService();
 
     /**
      * The request.
@@ -71,17 +80,34 @@ public final class ReqPrinterSnmp extends ApiRequestMixin {
             return;
         }
 
-        if (SpJobScheduler
-                .isJobCurrentlyExecuting(EnumSet.of(SpJobType.PRINTER_SNMP))) {
-
+        if (SpJobScheduler.isAllPrinterSnmpJobExecuting()) {
             setApiResult(ApiResultCodeEnum.WARN, "msg-printer-snmp-busy");
             return;
         }
 
         final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValueDto());
+        final Long printerID = dtoReq.getPrinterId();
 
-        SpJobScheduler.instance()
-                .scheduleOneShotPrinterSnmp(dtoReq.getPrinterId(), 0L);
+        if (printerID == null) {
+
+            SNMP_RETRIEVE_SERVICE.retrieveAll();
+
+        } else {
+
+            final PrinterDao dao =
+                    ServiceContext.getDaoContext().getPrinterDao();
+
+            final Printer printer = dao.findById(printerID);
+            final String host = PROXY_PRINT_SERVICE
+                    .getCachedPrinterHost(printer.getPrinterName());
+
+            if (!SNMP_RETRIEVE_SERVICE.claimSnmpRetrieve(host)) {
+                setApiResult(ApiResultCodeEnum.WARN, "msg-printer-snmp-busy");
+                return;
+            }
+
+            SNMP_RETRIEVE_SERVICE.retrieve(printerID);
+        }
 
         setApiResult(ApiResultCodeEnum.OK, "msg-printer-snmp-ok");
     }
