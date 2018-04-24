@@ -63,6 +63,7 @@ import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.ipp.operation.IppMessageMixin;
 import org.savapage.core.util.InetUtils;
+import org.savapage.server.feed.AtomFeedLoginService;
 import org.savapage.server.xmlrpc.SpXmlRpcServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -743,8 +744,11 @@ public final class WebServer {
         server.setHandler(handlerList);
 
         /*
-         *
+         * BASIC Authentication for Atom Feed.
          */
+        server.addBean(new AtomFeedLoginService());
+
+        //
         final String serverStartedFile =
                 String.format("%s%clogs%cserver.started.txt", serverHome,
                         File.separatorChar, File.separatorChar);

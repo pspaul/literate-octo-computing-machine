@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	version="3.0" metadata-complete="false">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0" metadata-complete="false">
 
-	<display-name>savapage-server</display-name>
+    <display-name>savapage-server</display-name>
 
-	<servlet>
-		<servlet-name>cometd</servlet-name>
-		<servlet-class>org.cometd.server.CometDServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-		<async-supported>true</async-supported>
+    <servlet>
+        <servlet-name>cometd</servlet-name>
+        <servlet-class>org.cometd.server.CometDServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
         <init-param>
             <param-name>ws.cometdURLMapping</param-name>
             <param-value>/cometd/*</param-value>
         </init-param>
-	</servlet>
+    </servlet>
 
-	<servlet-mapping>
-		<servlet-name>cometd</servlet-name>
-		<url-pattern>/cometd/*</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>cometd</servlet-name>
+        <url-pattern>/cometd/*</url-pattern>
+    </servlet-mapping>
 
-	<filter>
-		<filter-name>cross-origin</filter-name>
-		<filter-class>org.eclipse.jetty.servlets.CrossOriginFilter</filter-class>
-		<async-supported>true</async-supported>
-	</filter>
+    <filter>
+        <filter-name>cross-origin</filter-name>
+        <filter-class>org.eclipse.jetty.servlets.CrossOriginFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
 
-	<filter-mapping>
-		<filter-name>cross-origin</filter-name>
-		<url-pattern>/cometd/*</url-pattern>
-	</filter-mapping>
+    <filter-mapping>
+        <filter-name>cross-origin</filter-name>
+        <url-pattern>/cometd/*</url-pattern>
+    </filter-mapping>
 
-	<servlet>
-		<servlet-name>initializer</servlet-name>
-		<servlet-class>org.savapage.server.cometd.BayeuxInitializer</servlet-class>
-		<load-on-startup>2</load-on-startup>
-		<async-supported>true</async-supported>
-	</servlet>
+    <servlet>
+        <servlet-name>initializer</servlet-name>
+        <servlet-class>org.savapage.server.cometd.BayeuxInitializer</servlet-class>
+        <load-on-startup>2</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
 
-	<!-- NOTE: async-supported is needed for CometD -->
-	<filter>
-		<filter-name>wicket.savapage</filter-name>
-		<filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
-		<async-supported>true</async-supported>
-		<init-param>
-			<param-name>applicationClassName</param-name>
-			<param-value>org.savapage.server.WebApp</param-value>
-		</init-param>
-	</filter>
+    <!-- NOTE: async-supported is needed for CometD -->
+    <filter>
+        <filter-name>wicket.savapage</filter-name>
+        <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>applicationClassName</param-name>
+            <param-value>org.savapage.server.WebApp</param-value>
+        </init-param>
+    </filter>
 
-	<filter-mapping>
-		<filter-name>wicket.savapage</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <filter-mapping>
+        <filter-name>wicket.savapage</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-	<session-config>
-		<session-timeout>20</session-timeout>
-	</session-config>
+    <session-config>
+        <session-timeout>20</session-timeout>
+    </session-config>
 
 </web-app>
