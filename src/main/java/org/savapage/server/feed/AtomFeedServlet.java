@@ -22,6 +22,8 @@
 package org.savapage.server.feed;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.Base64;
@@ -116,12 +118,15 @@ public final class AtomFeedServlet extends HttpServlet {
             final AtomFeedService svc =
                     ServiceContext.getServiceFactory().getAtomFeedService();
 
-            final AtomFeedWriter writer =
-                    svc.getAdminFeedWriter(response.getOutputStream());
+            // svc.refreshAdminFeed(); // TEST
+
+            final AtomFeedWriter writer = svc.getAdminFeedWriter(
+                    new URI(request.getRequestURL().toString()),
+                    response.getOutputStream());
 
             writer.process();
 
-        } catch (FeedException e) {
+        } catch (FeedException | URISyntaxException e) {
             throw new ServletException(e.getMessage());
         }
     }
