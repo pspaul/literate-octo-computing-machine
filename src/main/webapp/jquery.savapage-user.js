@@ -6418,19 +6418,17 @@
                 var res,
                     valid = true;
 
-                if (_model.myPrinter.jobTicket) {
-                    res = _api.call({
-                        request : 'printer-opt-validate',
-                        dto : JSON.stringify({
-                            printer : _model.myPrinter.name,
-                            options : printerOptions,
-                            jobTicketType : _view.getRadioValue('sp-print-jobticket-type')
-                        })
-                    });
-                    valid = res.result.code === '0';
-                    if (!valid) {
-                        _view.showApiMsg(res);
-                    }
+                res = _api.call({
+                    request : 'printer-opt-validate',
+                    dto : JSON.stringify({
+                        printer : _model.myPrinter.name,
+                        options : printerOptions,
+                        jobTicketType : _view.getRadioValue('sp-print-jobticket-type')
+                    })
+                });
+                valid = res.result.code === '0';
+                if (!valid) {
+                    _view.showApiMsg(res);
                 }
                 return valid;
             };

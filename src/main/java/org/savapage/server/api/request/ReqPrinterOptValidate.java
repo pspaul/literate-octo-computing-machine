@@ -135,11 +135,12 @@ public final class ReqPrinterOptValidate extends ApiRequestMixin {
         mediaFromMediaSource(requestedMediaSource, dtoReq.getOptions(),
                 dtoReq.getPrinter());
 
-        //
+        // Standard constraints
         String msg = PROXY_PRINT_SERVICE.validateContraintsMsg(proxyPrinter,
                 dtoReq.getOptions(), getLocale());
 
-        if (msg == null) {
+        // Job Ticket constraints only.
+        if (msg == null && proxyPrinter.getJobTicket()) {
             msg = PROXY_PRINT_SERVICE.validateCustomCostRules(proxyPrinter,
                     dtoReq.getOptions(), getLocale());
         }
