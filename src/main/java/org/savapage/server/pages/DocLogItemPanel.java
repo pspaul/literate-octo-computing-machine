@@ -286,8 +286,8 @@ public class DocLogItemPanel extends Panel {
                 MarkupHelper.modifyLabelAttr(labelBtn, MarkupHelper.ATTR_TITLE,
                         NounEnum.TRANSACTION.uiText(getLocale(), true));
 
-                if (webAppType == WebAppTypeEnum.JOBTICKETS
-                        && !obj.isRefunded()) {
+                if (webAppType == WebAppTypeEnum.JOBTICKETS && !obj.isRefunded()
+                        && obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
 
                     labelBtn = helper.encloseLabel("btn-account-trx-refund",
                             "&nbsp;", true);
