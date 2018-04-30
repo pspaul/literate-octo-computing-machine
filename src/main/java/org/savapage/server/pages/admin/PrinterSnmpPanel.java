@@ -74,7 +74,7 @@ public final class PrinterSnmpPanel extends Panel {
     private static final String WID_BTN_REFRESH = "btn-refresh";
 
     /** */
-    private static final int BAR_WIDTH[] = new int[] { 20, 10, 7, 5 };
+    private static final int BAR_WIDTH[] = new int[] { 10, 5, 5, 5 };
 
     /**
      * @param id
