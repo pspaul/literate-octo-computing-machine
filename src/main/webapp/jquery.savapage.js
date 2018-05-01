@@ -2242,7 +2242,7 @@
             this.AUTH_MODE_CARD_ASSOC = '_CA';
 
             // HTML color: to be set from 'constants' API.
-            this.userChartColors = ['printOut', 'printIn', 'pdfOut'];
+            this.userChartColors = ['printIn', 'printOut', 'pdfOut'];
 
             this.imgBase64 = false;
 

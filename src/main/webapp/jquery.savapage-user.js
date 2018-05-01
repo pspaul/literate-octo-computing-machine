@@ -5436,7 +5436,7 @@
                 _model.DELEGATE_ACCOUNT_SHARED_GROUP = res.delegateAccountSharedGroup;
 
                 //
-                _view.userChartColors = [res.colors.printOut, res.colors.printIn, res.colors.pdfOut];
+                _view.userChartColors = [res.colors.printIn, res.colors.printOut, res.colors.pdfOut];
                 _view.imgBase64 = res.img_base64;
 
                 language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);

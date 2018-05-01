@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -38,9 +38,11 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.UserAttrEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.UserAttr;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 
 /**
@@ -52,6 +54,7 @@ public class StatsPageTotalPanel extends Panel {
 
     private static final long serialVersionUID = 1L;
 
+    /** */
     public StatsPageTotalPanel(String id) {
         super(id);
     }
@@ -64,7 +67,7 @@ public class StatsPageTotalPanel extends Panel {
      *            The date.
      * @return The localized date string.
      */
-    protected final String localizedDate(Locale locale, final Date date) {
+    protected final String localizedDate(final Locale locale, final Date date) {
         return DateFormat.getDateInstance(DateFormat.LONG, locale).format(date);
     }
 
@@ -84,11 +87,10 @@ public class StatsPageTotalPanel extends Panel {
      */
     public void populate() {
 
-        add(new Label("page-totals-since", String.format(
-                "%s %s",
+        add(new Label("page-totals-since", String.format("%s %s",
                 localized("since"),
-                localizedDate(getSession().getLocale(), ConfigManager
-                        .instance().getConfigDate(Key.STATS_TOTAL_RESET_DATE)))));
+                localizedDate(getSession().getLocale(), ConfigManager.instance()
+                        .getConfigDate(Key.STATS_TOTAL_RESET_DATE)))));
     }
 
     /**
@@ -96,11 +98,11 @@ public class StatsPageTotalPanel extends Panel {
      *
      * @return
      */
-    public static Map<String, Object> jqplotPieChart(
-            org.savapage.core.jpa.User user) {
-        return jqplotPieChart(user.getNumberOfPrintOutPages().longValue(), user
-                .getNumberOfPrintInPages().longValue(), user
-                .getNumberOfPdfOutPages().longValue());
+    public static Map<String, Object>
+            jqplotPieChart(org.savapage.core.jpa.User user) {
+        return jqplotPieChart(user.getNumberOfPrintInPages().longValue(),
+                user.getNumberOfPrintOutPages().longValue(),
+                user.getNumberOfPdfOutPages().longValue());
     }
 
     /**
@@ -112,26 +114,28 @@ public class StatsPageTotalPanel extends Panel {
 
         ConfigManager cm = ConfigManager.instance();
 
-        return jqplotPieChart(
+        return jqplotPieChart(cm.getConfigLong(Key.STATS_TOTAL_PRINT_IN_PAGES),
                 cm.getConfigLong(Key.STATS_TOTAL_PRINT_OUT_PAGES),
-                cm.getConfigLong(Key.STATS_TOTAL_PRINT_IN_PAGES),
                 cm.getConfigLong(Key.STATS_TOTAL_PDF_OUT_PAGES));
     }
 
     /**
      * Returns the jqPlot chartData for a PieChart.
      *
+     * @param pagesPrintIn
+     * @param pagesPrintOut
+     * @param pagesPdfOut
      * @return
      */
-    private static Map<String, Object> jqplotPieChart(Long pagesPrintOut,
-            Long pagesPrintIn, Long pagesPdfOut) {
+    private static Map<String, Object> jqplotPieChart(Long pagesPrintIn,
+            Long pagesPrintOut, Long pagesPdfOut) {
 
         Map<String, Object> chartData = new HashMap<String, Object>();
 
         /*
          * dataSeries
          *
-         * Example: [ [['ProxyPrinters', 564], ['Queues', 1634], ['PDF', 862]]
+         * Example: [ [['Queues', 1634], ['ProxyPrinters', 564], ['PDF', 862]]
          * ];
          */
         final List<Object> dataSeries = new ArrayList<>();
@@ -145,17 +149,19 @@ public class StatsPageTotalPanel extends Panel {
 
         dataEntry = new ArrayList<>();
         dataSerie1.add(dataEntry);
-        dataEntry.add("ProxyPrinters");
-        dataEntry.add(pagesPrintOut);
-
-        dataEntry = new ArrayList<>();
-        dataSerie1.add(dataEntry);
-        dataEntry.add("Queues");
+        dataEntry.add(NounEnum.INPUT.uiText(ServiceContext.getLocale()));
         dataEntry.add(pagesPrintIn);
 
         dataEntry = new ArrayList<>();
         dataSerie1.add(dataEntry);
-        dataEntry.add("PDF");
+        dataEntry
+                .add(NounEnum.PRINTER.uiText(ServiceContext.getLocale(), true));
+        dataEntry.add(pagesPrintOut);
+
+        dataEntry = new ArrayList<>();
+        dataSerie1.add(dataEntry);
+        dataEntry.add(
+                NounEnum.DOWNLOAD.uiText(ServiceContext.getLocale(), true));
         dataEntry.add(pagesPdfOut);
 
         /*
@@ -167,7 +173,8 @@ public class StatsPageTotalPanel extends Panel {
         Map<String, Object> title = new HashMap<String, Object>();
         optionObj.put("title", title);
 
-        title.put("text", "Totals");
+        title.put("text",
+                NounEnum.TOTAL.uiText(ServiceContext.getLocale(), true));
 
         // ----
         return chartData;
@@ -207,9 +214,9 @@ public class StatsPageTotalPanel extends Panel {
         }
 
         return jqplotXYLineChart(
-                jqplotXYLineChartSerie(printOut, observationTime,
-                        TimeSeriesInterval.WEEK, data),
                 jqplotXYLineChartSerie(printIn, observationTime,
+                        TimeSeriesInterval.WEEK, data),
+                jqplotXYLineChartSerie(printOut, observationTime,
                         TimeSeriesInterval.WEEK, data),
                 jqplotXYLineChartSerie(pdfOut, observationTime,
                         TimeSeriesInterval.WEEK, data));
@@ -229,9 +236,9 @@ public class StatsPageTotalPanel extends Panel {
         final Date observationTime = new Date();
 
         return jqplotXYLineChart(
-                jqplotXYLineChartSerie(Key.STATS_PRINT_OUT_ROLLING_DAY_PAGES,
-                        observationTime, TimeSeriesInterval.DAY, data),
                 jqplotXYLineChartSerie(Key.STATS_PRINT_IN_ROLLING_DAY_PAGES,
+                        observationTime, TimeSeriesInterval.DAY, data),
+                jqplotXYLineChartSerie(Key.STATS_PRINT_OUT_ROLLING_DAY_PAGES,
                         observationTime, TimeSeriesInterval.DAY, data),
                 jqplotXYLineChartSerie(Key.STATS_PDF_OUT_ROLLING_DAY_PAGES,
                         observationTime, TimeSeriesInterval.DAY, data));
@@ -243,10 +250,10 @@ public class StatsPageTotalPanel extends Panel {
      * @return
      * @throws IOException
      */
-    public static Map<String, Object> jqplotXYLineChart(
-            List<Object> rollingDayPagesPrintOut,
-            List<Object> rollingDayPagesPrintIn,
-            List<Object> rollingDayPagesPdfOut) throws IOException {
+    private static Map<String, Object> jqplotXYLineChart(
+            final List<Object> rollingDayPagesPrintIn,
+            final List<Object> rollingDayPagesPrintOut,
+            final List<Object> rollingDayPagesPdfOut) throws IOException {
 
         final Map<String, Object> chartData = new HashMap<String, Object>();
 
@@ -259,8 +266,8 @@ public class StatsPageTotalPanel extends Panel {
         final List<Object> dataSeries = new ArrayList<>();
         chartData.put("dataSeries", dataSeries);
 
-        dataSeries.add(rollingDayPagesPrintOut);
         dataSeries.add(rollingDayPagesPrintIn);
+        dataSeries.add(rollingDayPagesPrintOut);
         dataSeries.add(rollingDayPagesPdfOut);
 
         /*
@@ -272,7 +279,8 @@ public class StatsPageTotalPanel extends Panel {
         Map<String, Object> title = new HashMap<String, Object>();
         optionObj.put("title", title);
 
-        title.put("text", "Totals");
+        title.put("text",
+                NounEnum.TOTAL.uiText(ServiceContext.getLocale(), true));
 
         // ----
         return chartData;
@@ -280,14 +288,16 @@ public class StatsPageTotalPanel extends Panel {
 
     /**
      *
+     * @param configKey
      * @param observationTime
+     * @param interval
      * @param data
      * @return
      * @throws IOException
      */
     private static List<Object> jqplotXYLineChartSerie(
-            IConfigProp.Key configKey, final Date observationTime,
-            TimeSeriesInterval interval,
+            final IConfigProp.Key configKey, final Date observationTime,
+            final TimeSeriesInterval interval,
             final JsonRollingTimeSeries<Integer> data) throws IOException {
 
         return jqplotXYLineChartSerie(
@@ -336,10 +346,9 @@ public class StatsPageTotalPanel extends Panel {
                     dateWlk = DateUtils.addHours(dateWlk, -1);
                     break;
                 default:
-                    throw new SpException("Oops missed interval [" + interval
-                            + "]");
+                    throw new SpException(
+                            "Oops missed interval [" + interval + "]");
                 }
-
             }
         }
 
