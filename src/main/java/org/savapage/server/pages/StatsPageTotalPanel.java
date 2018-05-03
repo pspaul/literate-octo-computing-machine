@@ -38,6 +38,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.UserAttrEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.UserAttr;
 import org.savapage.core.json.JsonRollingTimeSeries;
@@ -149,19 +150,19 @@ public class StatsPageTotalPanel extends Panel {
 
         dataEntry = new ArrayList<>();
         dataSerie1.add(dataEntry);
-        dataEntry.add(NounEnum.INPUT.uiText(ServiceContext.getLocale()));
+        dataEntry
+                .add(AdjectiveEnum.RECEIVED.uiText(ServiceContext.getLocale()));
         dataEntry.add(pagesPrintIn);
 
         dataEntry = new ArrayList<>();
         dataSerie1.add(dataEntry);
-        dataEntry
-                .add(NounEnum.PRINTER.uiText(ServiceContext.getLocale(), true));
+        dataEntry.add(AdjectiveEnum.PRINTED.uiText(ServiceContext.getLocale()));
         dataEntry.add(pagesPrintOut);
 
         dataEntry = new ArrayList<>();
         dataSerie1.add(dataEntry);
         dataEntry.add(
-                NounEnum.DOWNLOAD.uiText(ServiceContext.getLocale(), true));
+                AdjectiveEnum.DOWLOADED.uiText(ServiceContext.getLocale()));
         dataEntry.add(pagesPdfOut);
 
         /*
