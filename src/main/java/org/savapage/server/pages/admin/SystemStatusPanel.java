@@ -24,7 +24,6 @@ package org.savapage.server.pages.admin;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
@@ -186,14 +185,12 @@ public final class SystemStatusPanel extends Panel {
         //
         add(new Label("sys-mode-prompt", NounEnum.MODE.uiText(getLocale())));
 
-        final SystemModeEnum systemMode;
+        final SystemModeEnum systemMode = ConfigManager.getSystemMode();
 
-        if (ConfigManager.isSysMaintenance()) {
+        if (systemMode == SystemModeEnum.MAINTENANCE) {
             cssColor = MarkupHelper.CSS_TXT_WARN;
-            systemMode = SystemModeEnum.MAINTENANCE;
         } else {
             cssColor = MarkupHelper.CSS_TXT_VALID;
-            systemMode = SystemModeEnum.PRODUCTION;
         }
 
         if (hasEditorAccess) {
@@ -210,8 +207,8 @@ public final class SystemStatusPanel extends Panel {
         }
 
         //
-        add(new Label("sys-uptime", DateUtil.formatDuration(
-                ManagementFactory.getRuntimeMXBean().getUptime())));
+        add(new Label("sys-uptime",
+                DateUtil.formatDuration(ConfigManager.getUptime())));
 
         //
         final UserDao userDAO = ServiceContext.getDaoContext().getUserDao();
