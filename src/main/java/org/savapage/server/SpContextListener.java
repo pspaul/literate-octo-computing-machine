@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,13 +21,10 @@
  */
 package org.savapage.server;
 
-import java.io.IOException;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.savapage.core.SpException;
 import org.savapage.core.SpInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.config.ConfigManager;
@@ -52,34 +49,16 @@ public final class SpContextListener implements ServletContextListener {
      */
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-
-        try {
-
-            /*
-             * Pass server properties to the central WebApp.
-             */
-            WebApp.setServerProps(ConfigManager.loadServerProperties());
-
-            /*
-             * Load web customization properties.
-             */
-            WebApp.loadWebProperties();
-
-            /*
-             * Initialize the admin publisher. We use the SSL port for the
-             * CometD Admin Client.
-             */
-            AdminPublisher.instance()
-                    .init(Integer.parseInt(WebApp.getServerSslPort()), true);
-
-        } catch (IOException e) {
-            throw new SpException(e.getMessage());
-        }
+        /*
+         * Initialize the admin publisher. We use the SSL port for the CometD
+         * Admin Client.
+         */
+        AdminPublisher.instance()
+                .init(Integer.parseInt(WebApp.getServerSslPort()), true);
     }
 
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
-
         /*
          * Context is destroyed. As last action we issue a log message.
          */

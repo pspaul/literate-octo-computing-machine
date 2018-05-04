@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -468,6 +467,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     /**
+     * Sets the server properties in this class <i>and</i> in
+     * {@link ConfigManager}.
+     *
      * @param props
      *            The server properties.
      */
@@ -507,13 +509,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             return;
         }
 
-        FileInputStream fis = null;
-
-        try {
-            fis = new FileInputStream(file);
+        try (FileInputStream fis = new FileInputStream(file);) {
             theWebProps.load(fis);
-        } finally {
-            IOUtils.closeQuietly(fis);
         }
     }
 

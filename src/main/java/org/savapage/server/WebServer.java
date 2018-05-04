@@ -41,7 +41,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.Handler;
@@ -330,22 +329,17 @@ public final class WebServer {
      *            The keystore location.
      * @param ksPassword
      *            The keystore password.
-     * @param certAlias
-     *            The certificate alias.
      * @return The {@link SslCertInfo}, or {@code null}. when alias is not
      *         found.
      */
     private static SslCertInfo createSslCertInfo(final String ksLocation,
             final String ksPassword) {
 
-        FileInputStream is = null;
+        final File file = new File(ksLocation);
 
         SslCertInfo certInfo = null;
 
-        try {
-
-            final File file = new File(ksLocation);
-            is = new FileInputStream(file);
+        try (FileInputStream is = new FileInputStream(file);) {
 
             final KeyStore keystore =
                     KeyStore.getInstance(KeyStore.getDefaultType());
@@ -409,8 +403,6 @@ public final class WebServer {
                 | CertificateException | IOException | InvalidNameException e) {
             LOGGER.error(e.getMessage(), e);
             throw new SpException(e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(is);
         }
 
         return certInfo;
@@ -468,15 +460,13 @@ public final class WebServer {
         /*
          * Passed as -Dserver.home to JVM
          */
-        final String serverHome = System.getProperty("server.home");
+        final Properties propsServer = ConfigManager.loadServerProperties();
 
         /*
-         * Read the properties files for this server
+         * Notify central WebApp.
          */
-        final String pathServerProperties = serverHome + "/server.properties";
-
-        final Properties propsServer = new Properties();
-        propsServer.load(new java.io.FileInputStream(pathServerProperties));
+        WebApp.setServerProps(propsServer);
+        WebApp.loadWebProperties();
 
         /*
          * Server Ports.
@@ -601,6 +591,8 @@ public final class WebServer {
                 "TLS_DHE_RSA_WITH_AES_256_CBC_SHA256"
         //
         );
+
+        final String serverHome = ConfigManager.getServerHome();
 
         final String ksLocation;
         final String ksPassword;
@@ -755,14 +747,11 @@ public final class WebServer {
 
         int status = 0;
 
-        FileWriter writer = null;
-
-        try {
+        try (FileWriter writer = new FileWriter(serverStartedFile);) {
             /*
              * Writing the time we started in a file. This file is monitored by
              * the install script to see when the server has started.
              */
-            writer = new FileWriter(serverStartedFile);
 
             final Date now = new Date();
 
@@ -789,8 +778,6 @@ public final class WebServer {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             status = 1;
-        } finally {
-            IOUtils.closeQuietly(writer);
         }
 
         if (status == 0) {
