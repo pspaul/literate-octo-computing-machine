@@ -29,7 +29,6 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Date;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -68,6 +67,7 @@ import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.IOHelper;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.payment.PaymentGateway;
@@ -958,7 +958,7 @@ public final class SystemStatusPanel extends Panel {
                                 request.reset();
                             }
 
-                            IOUtils.closeQuietly(reader);
+                            IOHelper.closeQuietly(reader);
                         }
                         return html;
                     }

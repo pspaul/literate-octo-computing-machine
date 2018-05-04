@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.savapage.core.community.CommunityDictEnum;
@@ -145,9 +144,8 @@ public final class ClientFileDownloadServlet extends HttpServlet {
         resp.setContentLength((int) file.length());
 
         //
-        final InputStream istr = new FileInputStream(file);
+        try (InputStream istr = new FileInputStream(file);) {
 
-        try {
             final OutputStream ostr = resp.getOutputStream();
 
             final byte[] aByte = new byte[BUFFER_SIZE];
@@ -160,9 +158,6 @@ public final class ClientFileDownloadServlet extends HttpServlet {
             }
 
             resp.setStatus(HttpServletResponse.SC_OK);
-
-        } finally {
-            IOUtils.closeQuietly(istr);
         }
     }
 
@@ -186,18 +181,13 @@ public final class ClientFileDownloadServlet extends HttpServlet {
                 FileSystems.getDefault().getPath(ConfigManager.getAppTmpDir(),
                         UUID.randomUUID().toString()).toFile();
 
-        final ZipOutputStream zostr =
-                new ZipOutputStream(new FileOutputStream(zipFile));
-
         final File clientDir = new File(ConfigManager.getClientHome());
 
-        try {
+        try (ZipOutputStream zostr =
+                new ZipOutputStream(new FileOutputStream(zipFile));) {
             addDir(clientDir, dir, zostr);
-        } finally {
-            IOUtils.closeQuietly(zostr);
         }
 
-        //
         final StringBuilder attachmentFilename = new StringBuilder();
 
         attachmentFilename
@@ -245,9 +235,7 @@ public final class ClientFileDownloadServlet extends HttpServlet {
                 continue;
             }
 
-            final InputStream istr = new FileInputStream(files[i]);
-
-            try {
+            try (InputStream istr = new FileInputStream(files[i]);) {
 
                 final StringBuilder relativePath = new StringBuilder();
 
@@ -270,9 +258,6 @@ public final class ClientFileDownloadServlet extends HttpServlet {
                 }
 
                 zostr.closeEntry();
-
-            } finally {
-                IOUtils.closeQuietly(istr);
             }
         }
     }

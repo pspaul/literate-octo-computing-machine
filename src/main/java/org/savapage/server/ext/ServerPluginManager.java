@@ -40,7 +40,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.cometd.AdminPublisher;
@@ -499,16 +498,11 @@ public final class ServerPluginManager
                 continue;
             }
 
-            FileInputStream fstream = null;
-
-            try {
-                fstream = new FileInputStream(file);
+            try (FileInputStream fstream = new FileInputStream(file);) {
                 loadPlugin(fstream, file.getName());
             } catch (IOException e) {
                 LOGGER.error(e.getMessage());
                 continue;
-            } finally {
-                IOUtils.closeQuietly(fstream);
             }
         }
     }
@@ -608,19 +602,12 @@ public final class ServerPluginManager
         final ServerPluginManager manager = new ServerPluginManager();
 
         for (final URL url : urls) {
-
-            InputStream istr = null;
-
-            try {
-                istr = url.openStream();
+            try (InputStream istr = url.openStream();) {
                 manager.loadPlugin(istr, url.getFile());
             } catch (IOException e) {
                 LOGGER.error(e.getMessage());
                 continue;
-            } finally {
-                IOUtils.closeQuietly(istr);
             }
-
         }
         return manager;
     }
@@ -736,13 +723,12 @@ public final class ServerPluginManager
     public PaymentGatewayTrxEvent
             onPaymentExpired(final PaymentGatewayTrx trx) {
 
-        publishEvent(PubLevelEnum.WARN, localize("payment-expired",
-                trx.getGatewayId(),
-                String.format("%s %.2f",
-                        CurrencyUtil.getCurrencySymbol(trx.getCurrencyCode(),
-                                Locale.getDefault()),
-                        trx.getAmount()),
-                trx.getUserId()));
+        publishEvent(PubLevelEnum.WARN,
+                localize("payment-expired", trx.getGatewayId(),
+                        String.format("%s %.2f", CurrencyUtil.getCurrencySymbol(
+                                trx.getCurrencyCode(), Locale.getDefault()),
+                                trx.getAmount()),
+                        trx.getUserId()));
 
         logPaymentTrxReceived(trx, STAT_EXPIRED);
 

@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -33,15 +33,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.util.IOHelper;
 
 /**
  * Delivers static documentation, like the User Manual (DocBook) and the Third
  * Party License Information.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 @WebServlet(name = "DocumentationServlet", urlPatterns = { "/docs/*" })
@@ -60,13 +60,13 @@ public final class DocumentationServlet extends HttpServlet {
     /**
      *
      */
-    private static final String CONTENT_HOME = ConfigManager.getServerHome()
-            + "/data";
+    private static final String CONTENT_HOME =
+            ConfigManager.getServerHome() + "/data";
 
     @Override
     protected void doGet(final HttpServletRequest req,
-            final HttpServletResponse resp) throws ServletException,
-            IOException {
+            final HttpServletResponse resp)
+            throws ServletException, IOException {
 
         String reqURI = req.getRequestURI();
 
@@ -115,7 +115,7 @@ public final class DocumentationServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_OK);
 
         } finally {
-            IOUtils.closeQuietly(istr);
+            IOHelper.closeQuietly(istr);
         }
     }
 }

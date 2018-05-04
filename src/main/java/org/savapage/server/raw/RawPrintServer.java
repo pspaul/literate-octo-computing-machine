@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.PerformanceLogger;
 import org.savapage.core.SpException;
@@ -54,6 +53,7 @@ import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.users.AbstractUserSource;
+import org.savapage.core.util.IOHelper;
 import org.savapage.server.WebApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -249,7 +249,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
                 }
             } finally {
                 // All data exchanged: close socket
-                IOUtils.closeQuietly(mySocket);
+                IOHelper.closeQuietly(mySocket);
             }
 
             myServer.onRequestFinish();
@@ -785,7 +785,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             }
         }
 
-        IOUtils.closeQuietly(serverSocket);
+        IOHelper.closeQuietly(serverSocket);
     }
 
     /**
