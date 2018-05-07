@@ -724,8 +724,8 @@ public final class WebServer {
         /*
          * Set cookies to HttpOnly.
          */
-        webAppContext.getSessionHandler().getSessionManager()
-                .getSessionCookieConfig().setHttpOnly(true);
+        webAppContext.getSessionHandler().getSessionCookieConfig()
+                .setHttpOnly(true);
 
         /*
          * Set the handler(s).

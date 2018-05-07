@@ -24,6 +24,7 @@ package org.savapage.server.feed;
 import java.security.Principal;
 
 import javax.security.auth.Subject;
+import javax.servlet.ServletRequest;
 
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.DefaultUserIdentity;
@@ -68,7 +69,8 @@ public final class AtomFeedLoginService extends AbstractLifeCycle
     }
 
     @Override
-    public UserIdentity login(final String username, final Object credentials) {
+    public UserIdentity login(final String username, final Object credentials,
+            final ServletRequest req) {
 
         // Note: credentials.toString() contains password.
 
@@ -103,4 +105,5 @@ public final class AtomFeedLoginService extends AbstractLifeCycle
     @Override
     public void logout(final UserIdentity user) {
     }
+
 }
