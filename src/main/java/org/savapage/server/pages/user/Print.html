@@ -357,20 +357,30 @@
 			<wicket:enclosure child="prompt-jobticket-delivery-datetime">
 				<span class="sp-txt-wrap"
 					wicket:id="prompt-jobticket-delivery-datetime" />
+				<span style="font-size: small;">&bull;</span>
+				<span style="font-size: small;" class="sp-txt-wrap"
+					wicket:id="prompt-jobticket-delivery-datetime-weekdays" />
 				<table>
 					<tr>
-						<td>
-							<input id="sp-jobticket-date" data-clear-btn="true" />
+						<td style="padding-right: 10px;">
+							<div wicket:id="btn-jobticket-datetime-default"
+								id="sp-btn-jobticket-datetime-default"
+								class="ui-input-btn ui-btn ui-icon-recycle ui-btn-icon-notext ui-corner-all" />
 						</td>
 						<td>
-							<input type="number" data-clear-btn="true" id="sp-jobticket-hrs"
-								min="0" max="23" step="1" value="" />
+							<input id="sp-jobticket-date" />
 						</td>
-						<td>:</td>
-						<td>
-							<input type="number" data-clear-btn="true" id="sp-jobticket-min"
-								min="0" max="45" step="15" value="" />
-						</td>
+						<wicket:enclosure child="jobticket-delivery-time-hr">
+							<td>
+								<input wicket:id="jobticket-delivery-time-hr" type="number"
+									id="sp-jobticket-hrs" min="0" max="23" step="1" value="" />
+							</td>
+							<td>:</td>
+							<td>
+								<input type="number" id="sp-jobticket-min" min="0" max="45"
+									step="15" value="" />
+							</td>
+						</wicket:enclosure>
 					</tr>
 				</table>
 			</wicket:enclosure>

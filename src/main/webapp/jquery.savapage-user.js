@@ -4109,7 +4109,47 @@
                 _view.asyncFocus(sel);
             }
             //
+            ,
+                _getJobTicketFirstValidDateTime = function(refDate, offsetDays) {
+                var msecDay = 24 * 60 * 60 * 1000,
+                    firstDateTime = refDate.getTime() + offsetDays * msecDay;
+
+                for (var i = 0; i < 7; i++) {
+                    if (_model.JOBTICKET_DELIVERY_DAYS_OF_WEEK.find(function(entry) {
+                        return entry === new Date(firstDateTime).getDay();
+                    })) {
+                        break;
+                    }
+                    firstDateTime += msecDay;
+                };
+                return firstDateTime;
+            }
+            //
             ;
+
+            this.initJobTicketDateTime = function() {
+                var selJobticketDate = $('#sp-jobticket-date'),
+                    selJobticketHrs,
+                    today = new Date();
+
+                if (selJobticketDate.length > 0) {
+
+                    selJobticketDate.mobipick({
+                        minDate : new Date(_getJobTicketFirstValidDateTime(today, _model.JOBTICKET_DELIVERY_DAYS_MIN))
+                    });
+
+                    _view.mobipickSetDate(selJobticketDate, _getJobTicketFirstValidDateTime(today, _model.JOBTICKET_DELIVERY_DAYS));
+
+                    $('#sp-btn-jobticket-datetime-default').attr('title', selJobticketDate.val());
+
+                    selJobticketHrs = $('#sp-jobticket-hrs');
+
+                    if (selJobticketHrs.length > 0) {
+                        selJobticketHrs.val(_model.JOBTICKET_DELIVERY_HOUR);
+                        $('#sp-jobticket-min').val(_model.JOBTICKET_DELIVERY_MINUTE);
+                    }
+                }
+            };
 
             this.clearInput = function() {
 
@@ -4119,12 +4159,12 @@
                 $('#delegated-print-copies').val(1);
                 $('#number-print-copies').val(1);
                 $('#print-page-ranges').val('');
+                $('#print-title').val('');
+
                 $('#sp-jobticket-copy-pages').val(1);
                 $('#sp-jobticket-remark').val('');
-                $('#sp-jobticket-date').val('');
-                $('#sp-jobticket-hrs').val('');
-                $('#sp-jobticket-min').val('');
-                $('#print-title').val('');
+
+                this.initJobTicketDateTime();
 
                 if (selCbClear[0] && !$('#delete-pages-after-print')[0].disabled) {
                     _view.checkCb("#delete-pages-after-print", false);
@@ -4250,7 +4290,26 @@
                     return false;
                 });
 
-                _view.mobipick($("#sp-jobticket-date"));
+                _view.mobipick($("#sp-jobticket-date"), true);
+                _this.initJobTicketDateTime();
+
+                $('#sp-jobticket-date').change(function(event) {
+                    //Sunday is 0
+                    var day = _view.mobipickGetDate($('#sp-jobticket-date')).getDay();
+                    if (!_model.JOBTICKET_DELIVERY_DAYS_OF_WEEK.find(function(entry) {
+                        return entry === day;
+                    })) {
+                        _ns.Utils.asyncFoo(function(p1) {
+                            _view.msgDialogBox(_i18n.format('msg-jobticket-delivery-day-invalid', [p1]), 'sp-msg-popup-warn');
+                        }, $('#sp-jobticket-date').val());
+                        _this.initJobTicketDateTime();
+                    }
+                    return false;
+                });
+
+                $('#sp-btn-jobticket-datetime-default').click(function(e) {
+                    _this.initJobTicketDateTime();
+                });
 
             }).on("pagebeforeshow", function(event, ui) {
 
@@ -5427,6 +5486,12 @@
                 _model.PROXY_PRINT_CLEAR_DELEGATE = res.proxyPrintClearDelegate;
 
                 _model.JOBTICKET_COPIER_ENABLE = res.jobticketCopierEnable;
+
+                _model.JOBTICKET_DELIVERY_DAYS = res.jobticketDeliveryDays;
+                _model.JOBTICKET_DELIVERY_DAYS_MIN = res.jobticketDeliveryDaysMin;
+                _model.JOBTICKET_DELIVERY_DAYS_OF_WEEK = res.jobticketDeliveryDaysOfweek;
+                _model.JOBTICKET_DELIVERY_HOUR = res.jobticketDeliveryHour;
+                _model.JOBTICKET_DELIVERY_MINUTE = res.jobticketDeliveryMinute;
 
                 //
                 if (res.delegatorNameId) {

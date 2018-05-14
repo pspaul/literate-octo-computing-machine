@@ -47,6 +47,7 @@ import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
+import org.savapage.core.util.DateUtil;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.MarkupHelper;
@@ -203,10 +204,28 @@ public class Print extends AbstractUserPage {
         helper.addLabel("print-ecoprint-label", ecoPrintLabel);
 
         //
+        final boolean isJobTicketDatetime =
+                cm.isConfigValue(Key.JOBTICKET_DELIVERY_DATETIME_ENABLE);
+
         helper.encloseLabel("prompt-jobticket-delivery-datetime",
                 localized("prompt-jobticket-delivery-datetime"),
-                cm.isConfigValue(Key.JOBTICKET_DELIVERY_DATETIME_ENABLE));
+                isJobTicketDatetime);
 
+        if (isJobTicketDatetime) {
+
+            helper.addLabel("prompt-jobticket-delivery-datetime-weekdays",
+                    DateUtil.getWeekDayOrdinalsText(
+                            JOBTICKET_SERVICE.getDeliveryDaysOfWeek(),
+                            getLocale()));
+
+            MarkupHelper.modifyComponentAttr(
+                    helper.addTransparant("btn-jobticket-datetime-default"),
+                    MarkupHelper.ATTR_TITLE,
+                    HtmlButtonEnum.DEFAULT.uiText(getLocale()));
+
+            helper.encloseLabel("jobticket-delivery-time-hr", "",
+                    cm.isConfigValue(Key.JOBTICKET_DELIVERY_TIME_ENABLE));
+        }
         //
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
 

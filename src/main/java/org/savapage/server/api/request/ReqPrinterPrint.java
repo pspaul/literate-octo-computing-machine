@@ -1314,8 +1314,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      */
     private Date calcJobTicketDeliveryDate(final DtoReq dtoReq) {
 
-        final boolean isJobTicketDateTime = ConfigManager.instance()
-                .isConfigValue(Key.JOBTICKET_DELIVERY_DATETIME_ENABLE);
+        final ConfigManager cm = ConfigManager.instance();
+
+        final boolean isJobTicketDateTime =
+                cm.isConfigValue(Key.JOBTICKET_DELIVERY_DATETIME_ENABLE);
 
         Date deliveryDate;
 
@@ -1337,9 +1339,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 minutes += dtoReq.getJobTicketHrs().intValue()
                         * DateUtil.MINUTES_IN_HOUR;
             }
-
             if (dtoReq.getJobTicketMin() != null) {
                 minutes += dtoReq.getJobTicketMin().intValue();
+            }
+            if (minutes == 0) {
+                minutes =
+                        cm.getConfigInt(Key.JOBTICKET_DELIVERY_DAY_MINUTES, 0);
             }
 
             deliveryDate = DateUtils.addMinutes(

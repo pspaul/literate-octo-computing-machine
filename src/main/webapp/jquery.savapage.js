@@ -2850,9 +2850,10 @@
                 }
             };
 
-            this.mobipick = function(sel) {
+            this.mobipick = function(sel, localeDate) {
                 return sel.mobipick({
-                    locale : _view.language
+                    locale : _view.language,
+                    intlStdDate: !localeDate
                 });
             };
 

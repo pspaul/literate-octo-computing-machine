@@ -149,6 +149,7 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DocLogService;
 import org.savapage.core.services.EmailService;
 import org.savapage.core.services.InboxService;
+import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
@@ -218,21 +219,15 @@ public final class JsonApiServer extends AbstractPage {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(JsonApiServer.class);
 
-    /**
-     *
-     */
+    /** */
     private static final AccountingService ACCOUNTING_SERVICE =
             ServiceContext.getServiceFactory().getAccountingService();
 
-    /**
-     *
-     */
+    /** */
     private static final AccountVoucherService ACCOUNT_VOUCHER_SERVICE =
             ServiceContext.getServiceFactory().getAccountVoucherService();
 
-    /**
-     * .
-     */
+    /** */
     private static final EmailService EMAIL_SERVICE =
             ServiceContext.getServiceFactory().getEmailService();
 
@@ -242,32 +237,26 @@ public final class JsonApiServer extends AbstractPage {
     private static final DocLogService DOC_LOG_SERVICE =
             ServiceContext.getServiceFactory().getDocLogService();
 
-    /**
-     *
-     */
+    /** */
     private static final InboxService INBOX_SERVICE =
             ServiceContext.getServiceFactory().getInboxService();
 
-    /**
-     * .
-     */
+    /** */
+    private static final JobTicketService JOBTICKET_SERVICE =
+            ServiceContext.getServiceFactory().getJobTicketService();
+
+    /** */
     private static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
 
-    /**
-     *
-     */
+    /** */
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
 
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
+    /** */
     private static final JsonApiDict API_DICTIONARY = new JsonApiDict();
 
     /**
@@ -4400,6 +4389,23 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("jobticketCopierEnable",
                 cm.isConfigValue(Key.JOBTICKET_COPIER_ENABLE));
 
+        userData.put("jobticketDeliveryDays", Integer
+                .valueOf(cm.getConfigInt(Key.JOBTICKET_DELIVERY_DAYS, 0)));
+
+        userData.put("jobticketDeliveryDaysMin", Integer
+                .valueOf(cm.getConfigInt(Key.JOBTICKET_DELIVERY_DAYS_MIN, 0)));
+
+        final int minutes =
+                cm.getConfigInt(Key.JOBTICKET_DELIVERY_DAY_MINUTES, 0);
+
+        userData.put("jobticketDeliveryHour",
+                Integer.valueOf(minutes / DateUtil.MINUTES_IN_HOUR));
+        userData.put("jobticketDeliveryMinute",
+                Integer.valueOf(minutes % DateUtil.MINUTES_IN_HOUR));
+
+        userData.put("jobticketDeliveryDaysOfweek",
+                JOBTICKET_SERVICE.getDeliveryDaysOfWeek());
+
         //
         userData.put("proxyPrintClearPrinter",
                 cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_PRINTER));
@@ -4436,7 +4442,6 @@ public final class JsonApiServer extends AbstractPage {
             userData.put("webPrintFileExt",
                     WebPrintHelper.getSupportedFileExtensions(true));
         }
-
 
         // Colors
         final Map<String, String> colors = new HashMap<>();
