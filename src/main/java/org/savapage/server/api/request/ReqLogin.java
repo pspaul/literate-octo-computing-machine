@@ -1514,7 +1514,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
         if (StringUtils.isNotBlank(msgKeyAdminPublish)) {
 
-            final String msg = AppLogHelper.logWarning(getClass(),
+            final String msg = AppLogHelper.logInfo(getClass(),
                     msgKeyAdminPublish, args);
 
             AdminPublisher.instance().publish(PubTopicEnum.USER,
