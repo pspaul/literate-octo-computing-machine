@@ -53,6 +53,7 @@ import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.SslCertInfo;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
@@ -75,7 +76,6 @@ import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.WebApp;
-import org.savapage.server.WebServer;
 import org.savapage.server.cometd.UserEventService;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
@@ -95,16 +95,6 @@ public final class SystemStatusPanel extends Panel {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     *
-     */
-    private static final long DAYS_IN_MONTH = 30;
-
-    /**
-     *
-     */
-    private static final long DAYS_IN_YEAR = 365;
 
     /**
      * Duration after which news expires.
@@ -664,20 +654,16 @@ public final class SystemStatusPanel extends Panel {
         /*
          * SSL Certificate
          */
-        final WebServer.SslCertInfo sslCert = WebServer.getSslCertInfo();
+        final SslCertInfo sslCert = ConfigManager.getSslCertInfo();
         String certText = null;
         String certClass = null;
 
         if (sslCert != null) {
-
             final LocaleHelper localeHelper = new LocaleHelper(getLocale());
-
-            final long delta = sslCert.getNotAfter().getTime()
-                    - System.currentTimeMillis();
-
-            if (delta < DateUtil.DURATION_MSEC_DAY * DAYS_IN_YEAR) {
+            final Date dateRef = new Date();
+            if (sslCert.isNotAfterWithinYear(dateRef)) {
                 certText = localeHelper.getMediumDate(sslCert.getNotAfter());
-                if (delta < DateUtil.DURATION_MSEC_DAY * DAYS_IN_MONTH) {
+                if (sslCert.isNotAfterWithinMonth(dateRef)) {
                     certClass = "sp-txt-warn";
                 } else {
                     certClass = "sp-txt-info";

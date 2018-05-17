@@ -51,6 +51,7 @@ import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.RunMode;
+import org.savapage.core.config.SslCertInfo;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.jpa.tools.DatabaseTypeEnum;
@@ -673,7 +674,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             SpInfo.instance().log(logMsg.toString());
 
             //
-            final WebServer.SslCertInfo sslCert = WebServer.getSslCertInfo();
+            final SslCertInfo sslCert = ConfigManager.getSslCertInfo();
 
             if (sslCert == null) {
                 SpInfo.instance().log("SSL Certificate info NOT avaliable.");

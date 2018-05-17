@@ -60,6 +60,7 @@ import org.savapage.common.ConfigDefaults;
 import org.savapage.core.SpException;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.SslCertInfo;
 import org.savapage.core.ipp.operation.IppMessageMixin;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.feed.AtomFeedLoginService;
@@ -74,50 +75,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class WebServer {
-
-    /**
-     * .
-     */
-    public static class SslCertInfo {
-
-        private final String issuerCN;
-        private final Date creationDate;
-        private final Date notAfter;
-        private final boolean selfSigned;
-
-        @SuppressWarnings("unused")
-        private SslCertInfo() {
-            this.issuerCN = null;
-            this.creationDate = null;
-            this.notAfter = null;
-            this.selfSigned = false;
-        }
-
-        public SslCertInfo(final String issuerCN, final Date creationDate,
-                final Date notAfter, final boolean selfSigned) {
-            this.issuerCN = issuerCN;
-            this.creationDate = creationDate;
-            this.notAfter = notAfter;
-            this.selfSigned = selfSigned;
-        }
-
-        public String getIssuerCN() {
-            return issuerCN;
-        }
-
-        public Date getCreationDate() {
-            return creationDate;
-        }
-
-        public Date getNotAfter() {
-            return notAfter;
-        }
-
-        public boolean isSelfSigned() {
-            return selfSigned;
-        }
-
-    }
 
     /**
      * Redirect all traffic except IPP to SSL.
@@ -259,11 +216,6 @@ public final class WebServer {
      */
     private static boolean serverSslRedirect;
 
-    /**
-     * .
-     */
-    private static SslCertInfo sslCertInfo;
-
     /** */
     private static boolean webAppCustomI18n;
 
@@ -311,15 +263,6 @@ public final class WebServer {
      */
     public static boolean isSSLRedirect() {
         return serverSslRedirect;
-    }
-
-    /**
-     *
-     * @return The {@link SslCertInfo}, or {@code null}. when alias is not
-     *         found.
-     */
-    public static SslCertInfo getSslCertInfo() {
-        return sslCertInfo;
     }
 
     /**
@@ -646,7 +589,7 @@ public final class WebServer {
                     propsServer.getProperty(PROP_KEY_SSL_KEY_PW));
         }
 
-        sslCertInfo = createSslCertInfo(ksLocation, ksPassword);
+        ConfigManager.setSslCertInfo(createSslCertInfo(ksLocation, ksPassword));
 
         /*
          * HTTPS Configuration
