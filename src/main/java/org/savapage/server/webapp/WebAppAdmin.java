@@ -42,6 +42,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
+import org.savapage.core.config.IConfigProp;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
 import org.slf4j.Logger;
@@ -84,8 +86,10 @@ public final class WebAppAdmin extends AbstractWebAppPage {
 
         super(parameters);
 
+        checkInternetAccess(IConfigProp.Key.WEBAPP_INTERNET_ADMIN_ENABLE);
+
         if (isWebAppCountExceeded(parameters)) {
-            this.setWebAppCountExceededResponse();
+            setWebAppCountExceededResponse();
             return;
         }
 

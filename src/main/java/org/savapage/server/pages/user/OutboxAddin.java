@@ -44,6 +44,7 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.PrintOutDao;
@@ -90,7 +91,6 @@ import org.savapage.server.pages.ExtSupplierStatusPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  * A page showing the HOLD or TICKET proxy print jobs for a user.

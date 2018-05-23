@@ -34,6 +34,7 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
@@ -41,6 +42,7 @@ import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
+import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.ext.oauth.OAuthProviderEnum;
 import org.savapage.server.WebApp;
@@ -48,7 +50,6 @@ import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.ext.ServerPluginHelper;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  * Note that this Page is not extended from Page.
@@ -135,11 +136,13 @@ public final class Login extends AbstractPage {
         final DeviceDao deviceDao =
                 ServiceContext.getDaoContext().getDeviceDao();
 
-        final Device terminal = deviceDao.findByHostDeviceType(
-                this.getClientIpAddr(), DeviceTypeEnum.TERMINAL);
+        final String clientIpAddr = this.getClientIpAddr();
 
-        final UserAuth userAuth = new UserAuth(terminal, null,
-                this.getSessionWebAppType() == WebAppTypeEnum.ADMIN);
+        final Device terminal = deviceDao.findByHostDeviceType(clientIpAddr,
+                DeviceTypeEnum.TERMINAL);
+
+        final UserAuth userAuth = new UserAuth(terminal, null, webAppType,
+                InetUtils.isPublicAddress(clientIpAddr));
 
         //
         Label label = new Label("login-id-number");

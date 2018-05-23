@@ -30,6 +30,7 @@ import org.savapage.core.SpException;
 import org.savapage.core.concurrent.ReadLockObtainFailedException;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ReqConfigPropGet;
@@ -80,7 +81,6 @@ import org.savapage.server.api.request.ReqUserNotifyAccountChange;
 import org.savapage.server.api.request.ReqUserPasswordErase;
 import org.savapage.server.api.request.ReqUserQuickSearch;
 import org.savapage.server.api.request.ReqUserSet;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.

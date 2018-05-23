@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -40,12 +41,18 @@ import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.util.InetUtils;
 import org.savapage.server.CustomWebServlet;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.pages.AbstractPage;
+import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -55,10 +62,12 @@ import org.savapage.server.session.SpSession;
 public abstract class AbstractWebAppPage extends AbstractPage
         implements IHeaderContributor {
 
-    /**
-     * .
-     */
+    /** */
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(AbstractPage.class);
 
     /**
      * .
@@ -181,6 +190,34 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
         if (language != null) {
             getSession().setLocale(new Locale(language));
+        }
+    }
+
+    /**
+     * Checks if Web App access from Internet is allowed.
+     *
+     * @param keyAccessEnabled
+     *            Key to check if internet access is enabled.
+     * @throws RestartResponseException
+     *             When access from Internet is not allowed.
+     */
+    protected final void
+            checkInternetAccess(final IConfigProp.Key keyAccessEnabled) {
+
+        if (ConfigManager.instance().isConfigValue(keyAccessEnabled)) {
+            return;
+        }
+
+        final String remoteAddr = this.getClientIpAddr();
+
+        if (InetUtils.isPublicAddress(remoteAddr)) {
+
+            LOGGER.warn("Access to {} Web App denied for {}",
+                    this.getWebAppType(), remoteAddr);
+
+            throw new RestartResponseException(new MessageContent(
+                    AppLogLevelEnum.ERROR,
+                    "This application is not available on the Internet."));
         }
     }
 

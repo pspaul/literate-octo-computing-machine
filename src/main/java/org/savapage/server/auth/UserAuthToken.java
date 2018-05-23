@@ -23,7 +23,7 @@ package org.savapage.server.auth;
 
 import java.util.Date;
 
-import org.savapage.server.webapp.WebAppTypeEnum;
+import org.savapage.core.config.WebAppTypeEnum;
 
 /**
  * User Authentication token.

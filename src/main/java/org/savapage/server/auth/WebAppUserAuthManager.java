@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.savapage.server.webapp.WebAppTypeEnum;
+import org.savapage.core.config.WebAppTypeEnum;
 
 /**
  * Singleton manager of WebApp User Authentications Tokens.

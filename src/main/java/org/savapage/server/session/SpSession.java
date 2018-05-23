@@ -30,9 +30,9 @@ import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Request;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.OneTimeAuthToken;
 import org.savapage.core.jpa.User;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  * Customized {@link WebSession}.

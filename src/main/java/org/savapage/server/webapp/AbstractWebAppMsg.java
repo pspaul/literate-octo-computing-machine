@@ -29,6 +29,7 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;

@@ -24,8 +24,8 @@ package org.savapage.server.api.request.export;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.jpa.User;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *

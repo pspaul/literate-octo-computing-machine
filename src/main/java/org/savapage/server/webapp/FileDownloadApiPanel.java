@@ -22,6 +22,7 @@
 package org.savapage.server.webapp;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.server.api.JsonApiDict;
 import org.savapage.server.pages.MarkupHelper;
 

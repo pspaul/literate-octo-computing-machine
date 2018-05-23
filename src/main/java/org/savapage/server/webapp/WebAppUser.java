@@ -43,7 +43,9 @@ import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.OneTimeAuthToken;
 import org.savapage.core.doc.DocContentTypeEnum;
 import org.savapage.core.jpa.User;
@@ -444,6 +446,8 @@ public final class WebAppUser extends AbstractWebAppPage {
     public WebAppUser(final PageParameters parameters) {
 
         super(parameters);
+
+        checkInternetAccess(IConfigProp.Key.WEBAPP_INTERNET_USER_ENABLE);
 
         if (isWebAppCountExceeded(parameters)) {
             discloseAll();

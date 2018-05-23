@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,8 @@ import java.util.Set;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.IConfigProp;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
@@ -60,6 +62,8 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
     public WebAppJobTickets(final PageParameters parameters) {
 
         super(parameters);
+
+        checkInternetAccess(IConfigProp.Key.WEBAPP_INTERNET_JOBTICKETS_ENABLE);
 
         if (isWebAppCountExceeded(parameters)) {
             this.setWebAppCountExceededResponse();

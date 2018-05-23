@@ -24,6 +24,7 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dto.AbstractDto;
@@ -33,7 +34,6 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.WebAppUserAuthManager;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

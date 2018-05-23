@@ -195,6 +195,7 @@
 
                 res = _api.call({
                     request : 'constants',
+                    webAppType : _ns.WEBAPP_TYPE,
                     authMode : authModeRequest
                 });
 

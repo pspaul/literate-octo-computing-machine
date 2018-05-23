@@ -45,6 +45,7 @@ import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.time.Duration;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserAccountDao;
 import org.savapage.core.dao.UserAttrDao;
@@ -71,7 +72,6 @@ import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.jpa.UserNumber;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.api.JsonApiDict;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 import au.com.bytecode.opencsv.CSVWriter;
 

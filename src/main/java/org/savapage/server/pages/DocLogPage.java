@@ -28,6 +28,7 @@ import javax.persistence.EntityManager;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
@@ -35,7 +36,6 @@ import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

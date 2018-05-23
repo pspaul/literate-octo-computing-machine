@@ -38,6 +38,7 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.PerformanceLogger;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
@@ -49,7 +50,6 @@ import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

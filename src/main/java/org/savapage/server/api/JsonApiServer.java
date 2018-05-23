@@ -80,6 +80,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.OnOffEnum;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.AccountTrxDao;
 import org.savapage.core.dao.DaoContext;
@@ -161,6 +162,7 @@ import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.EmailValidator;
+import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.core.util.Messages;
@@ -190,7 +192,6 @@ import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 import org.savapage.server.webprint.DropZoneFileResource;
 import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
@@ -1196,6 +1197,9 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_CONSTANTS:
 
             return reqConstants(
+                    EnumUtils.getEnum(WebAppTypeEnum.class,
+                            getParmValue(parameters, isGetAction,
+                                    "webAppType")),
                     getParmValue(parameters, isGetAction, "authMode"));
 
         case JsonApiDict.REQ_DEVICE_NEW_CARD_READER:
@@ -4293,12 +4297,13 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     *
+     * @param webAppType
      * @param authModeReq
      *            The requested authentication mode.
      * @return
      */
-    private Map<String, Object> reqConstants(final String authModeReq) {
+    private Map<String, Object> reqConstants(final WebAppTypeEnum webAppType,
+            final String authModeReq) {
 
         final Map<String, Object> userData = new HashMap<>();
 
@@ -4333,11 +4338,10 @@ public final class JsonApiServer extends AbstractPage {
 
         //
         final ConfigManager cm = ConfigManager.instance();
-
+        final String remoteAddr = this.getRemoteAddr();
         final UserAuth userAuth = new UserAuth(
-                ApiRequestHelper.getHostTerminal(this.getRemoteAddr()),
-                authModeReq,
-                getSessionWebAppType().equals(WebAppTypeEnum.ADMIN));
+                ApiRequestHelper.getHostTerminal(remoteAddr), authModeReq,
+                webAppType, InetUtils.isPublicAddress(remoteAddr));
 
         userData.put("authName", userAuth.isVisibleAuthName());
         userData.put("authId", userAuth.isVisibleAuthId());

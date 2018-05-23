@@ -25,6 +25,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.ext.oauth.OAuthProviderEnum;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.pages.MarkupHelper;

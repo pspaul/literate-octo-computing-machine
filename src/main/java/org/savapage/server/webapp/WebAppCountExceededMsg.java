@@ -23,6 +23,7 @@ package org.savapage.server.webapp;
 
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**

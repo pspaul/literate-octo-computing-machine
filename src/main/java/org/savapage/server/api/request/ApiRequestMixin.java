@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
@@ -57,7 +58,6 @@ import org.savapage.core.util.Messages;
 import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *

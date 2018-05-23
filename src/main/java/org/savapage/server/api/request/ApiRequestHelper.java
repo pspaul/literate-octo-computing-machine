@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
@@ -41,7 +42,6 @@ import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.WebApp;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *

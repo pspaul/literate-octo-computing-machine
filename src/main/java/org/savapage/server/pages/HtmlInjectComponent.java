@@ -34,10 +34,10 @@ import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.request.Response;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.server.WebApp;
-import org.savapage.server.webapp.WebAppTypeEnum;
 
 /**
  *

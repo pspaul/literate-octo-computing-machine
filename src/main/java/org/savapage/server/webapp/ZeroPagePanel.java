@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.server.WebAppParmEnum;
 
 /**
