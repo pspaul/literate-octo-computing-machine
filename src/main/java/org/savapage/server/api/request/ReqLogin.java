@@ -45,6 +45,7 @@ import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserNumberDao;
@@ -67,6 +68,7 @@ import org.savapage.core.users.InternalUserAuthenticator;
 import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.Messages;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
@@ -75,7 +77,6 @@ import org.savapage.server.auth.UserAuthToken;
 import org.savapage.server.auth.WebAppUserAuthManager;
 import org.savapage.server.cometd.UserEventService;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webapp.WebAppTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -497,11 +498,12 @@ public final class ReqLogin extends ApiRequestMixin {
         /*
          *
          */
-        final Device terminal =
-                ApiRequestHelper.getHostTerminal(this.getRemoteAddr());
+        final String remoteAddr = this.getRemoteAddr();
 
-        final UserAuth theUserAuth = new UserAuth(terminal, null,
-                webAppType == WebAppTypeEnum.ADMIN);
+        final Device terminal = ApiRequestHelper.getHostTerminal(remoteAddr);
+
+        final UserAuth theUserAuth = new UserAuth(terminal, null, webAppType,
+                InetUtils.isPublicAddress(remoteAddr));
 
         if (authMode != UserAuth.Mode.OAUTH
                 && authMode != UserAuth.Mode.YUBIKEY) { // TEST TEST
@@ -575,7 +577,7 @@ public final class ReqLogin extends ApiRequestMixin {
              */
             if (webAppType != WebAppTypeEnum.ADMIN) {
                 onLoginFailed("msg-login-denied", webAppType.getUiText(),
-                        UserAuth.getUiText(authMode), authId);
+                        UserAuth.getUiText(authMode), authId, remoteAddr);
                 return;
             }
 
@@ -589,7 +591,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
             if (!isAuthenticated) {
                 onLoginFailed("msg-login-invalid-password",
-                        webAppType.getUiText(), authId);
+                        webAppType.getUiText(), authId, remoteAddr);
                 return;
             }
 
@@ -649,7 +651,7 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (userDb == null) {
                     onLoginFailed("msg-login-invalid-number",
-                            webAppType.getUiText(), authId);
+                            webAppType.getUiText(), authId, remoteAddr);
                     return;
                 }
                 uid = userDb.getUserId();
@@ -690,7 +692,7 @@ public final class ReqLogin extends ApiRequestMixin {
                             onLoginFailed("msg-login-card-unknown",
                                     webAppType.getUiText(),
                                     UserAuth.getUiText(authMode),
-                                    normalizedCardNumber);
+                                    normalizedCardNumber, remoteAddr);
                         }
                     }
                     return;
@@ -710,7 +712,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 if (webAppType != WebAppTypeEnum.USER) {
                     onLoginFailed("msg-login-user-not-present",
                             webAppType.getUiText(),
-                            UserAuth.getUiText(authMode), authId);
+                            UserAuth.getUiText(authMode), authId, remoteAddr);
                     return;
                 }
 
@@ -721,7 +723,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 if (allowInternalUsersOnly) {
                     onLoginFailed("msg-login-user-not-present",
                             webAppType.getUiText(),
-                            UserAuth.getUiText(authMode), authId);
+                            UserAuth.getUiText(authMode), authId, remoteAddr);
                     return;
                 }
 
@@ -732,7 +734,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 if (!isLazyUserInsert) {
                     onLoginFailed("msg-login-user-not-present",
                             webAppType.getUiText(),
-                            UserAuth.getUiText(authMode), authId);
+                            UserAuth.getUiText(authMode), authId, remoteAddr);
                     return;
                 }
 
@@ -745,7 +747,8 @@ public final class ReqLogin extends ApiRequestMixin {
                 if (webAppType == WebAppTypeEnum.ADMIN && !userDb.getAdmin()) {
                     onLoginFailed("msg-login-no-admin-rights",
                             webAppType.getUiText(),
-                            UserAuth.getUiText(authMode), userDb.getUserId());
+                            UserAuth.getUiText(authMode), userDb.getUserId(),
+                            remoteAddr);
                     return;
                 }
 
@@ -754,7 +757,8 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (!userDb.getPerson()) {
                     onLoginFailed("msg-login-no-person", webAppType.getUiText(),
-                            UserAuth.getUiText(authMode), userDb.getUserId());
+                            UserAuth.getUiText(authMode), userDb.getUserId(),
+                            remoteAddr);
                     return;
                 }
 
@@ -765,7 +769,8 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (USER_SERVICE.isUserFullyDisabled(userDb, onDate)) {
                     onLoginFailed("msg-login-disabled", webAppType.getUiText(),
-                            UserAuth.getUiText(authMode), userDb.getUserId());
+                            UserAuth.getUiText(authMode), userDb.getUserId(),
+                            remoteAddr);
                     return;
                 }
 
@@ -779,7 +784,8 @@ public final class ReqLogin extends ApiRequestMixin {
                                 webAppType.getUiText(),
                                 UserAuth.getUiText(authMode),
                                 userDb.getUserId(),
-                                ACLRoleEnum.WEB_CASHIER.uiText(getLocale()));
+                                ACLRoleEnum.WEB_CASHIER.uiText(getLocale()),
+                                remoteAddr);
                         return;
                     }
                 } else if (webAppType == WebAppTypeEnum.JOBTICKETS) {
@@ -790,7 +796,8 @@ public final class ReqLogin extends ApiRequestMixin {
                                 UserAuth.getUiText(authMode),
                                 userDb.getUserId(),
                                 ACLRoleEnum.JOB_TICKET_OPERATOR
-                                        .uiText(getLocale()));
+                                        .uiText(getLocale()),
+                                remoteAddr);
                         return;
                     }
                 }
@@ -820,7 +827,8 @@ public final class ReqLogin extends ApiRequestMixin {
                          * INVARIANT: Password of Internal User must be correct.
                          */
                         onLoginFailed("msg-login-invalid-password",
-                                webAppType.getUiText(), userDb.getUserId());
+                                webAppType.getUiText(), userDb.getUserId(),
+                                remoteAddr);
                         return;
                     }
 
@@ -843,7 +851,7 @@ public final class ReqLogin extends ApiRequestMixin {
                          * INVARIANT: Password of External User must be correct.
                          */
                         onLoginFailed("msg-login-invalid-password",
-                                webAppType.getUiText(), uid);
+                                webAppType.getUiText(), uid, remoteAddr);
                         return;
                     }
 
@@ -891,7 +899,7 @@ public final class ReqLogin extends ApiRequestMixin {
                          * INVARIANT: PIN can NOT be empty.
                          */
                         onLoginFailed("msg-login-no-pin-available",
-                                webAppType.getUiText(), authId);
+                                webAppType.getUiText(), authId, remoteAddr);
                         return;
                     }
 
@@ -910,7 +918,7 @@ public final class ReqLogin extends ApiRequestMixin {
                      * INVARIANT: PIN must be correct.
                      */
                     onLoginFailed("msg-login-invalid-pin",
-                            webAppType.getUiText(), authId);
+                            webAppType.getUiText(), authId, remoteAddr);
                     return;
                 }
             }
@@ -980,7 +988,8 @@ public final class ReqLogin extends ApiRequestMixin {
                 onLoginFailed(null);
             } else {
                 onLoginFailed("msg-login-user-not-present",
-                        webAppType.getUiText(), authMode.toString(), "?");
+                        webAppType.getUiText(), authMode.toString(), "?",
+                        remoteAddr);
             }
             return;
         }
@@ -1505,7 +1514,8 @@ public final class ReqLogin extends ApiRequestMixin {
      * Handle login failure.
      *
      * @param msgKeyAdminPublish
-     *            When {@code null} no admin message is published.
+     *            When {@code null} no log entry is written and no admin message
+     *            is published.
      * @param args
      *            The arguments of the message
      */
@@ -1514,7 +1524,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
         if (StringUtils.isNotBlank(msgKeyAdminPublish)) {
 
-            final String msg = AppLogHelper.logInfo(getClass(),
+            final String msg = AppLogHelper.logWarning(getClass(),
                     msgKeyAdminPublish, args);
 
             AdminPublisher.instance().publish(PubTopicEnum.USER,
