@@ -4350,7 +4350,7 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("authYubiKey", userAuth.isVisibleAuthYubikey());
 
         userData.put("authModeDefault",
-                UserAuth.mode(userAuth.getAuthModeDefault()));
+                userAuth.getAuthModeDefault().toDbValue());
 
         userData.put("authCardPinReq", userAuth.isAuthCardPinReq());
         userData.put("authCardSelfAssoc", userAuth.isAuthCardSelfAssoc());

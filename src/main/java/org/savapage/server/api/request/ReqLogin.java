@@ -61,7 +61,7 @@ import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
-import org.savapage.core.services.helpers.UserAuth.Mode;
+import org.savapage.core.services.helpers.UserAuthModeEnum;
 import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.users.IUserSource;
 import org.savapage.core.users.InternalUserAuthenticator;
@@ -189,8 +189,8 @@ public final class ReqLogin extends ApiRequestMixin {
 
         MemberCard.instance().recalcStatus(new Date());
 
-        reqLogin(UserAuth.mode(dtoReq.getAuthMode()), dtoReq.getAuthId(),
-                dtoReq.getAuthPw(), dtoReq.getAuthToken(),
+        reqLogin(UserAuthModeEnum.fromDbValue(dtoReq.getAuthMode()),
+                dtoReq.getAuthId(), dtoReq.getAuthPw(), dtoReq.getAuthToken(),
                 dtoReq.getAssocCardNumber(), dtoReq.getWebAppType());
     }
 
@@ -213,7 +213,7 @@ public final class ReqLogin extends ApiRequestMixin {
      * <li>If Application is NOT ready-to-use the only login possible is as
      * admin in the admin application.</li>
      * <li>See
-     * {@link #reqLoginNew(org.savapage.core.services.helpers.UserAuth.Mode, String, String, String, boolean)}
+     * {@link #reqLoginNew(org.savapage.core.services.helpers.UserAuthModeEnum, String, String, String, boolean)}
      * , {@link #reqLoginAuthTokenCliApp(Map, String, String, boolean)(} and
      * {@link #reqLoginAuthTokenWebApp(String, String, boolean)}.</li>
      * </ul>
@@ -236,7 +236,7 @@ public final class ReqLogin extends ApiRequestMixin {
      * @throws IOException
      *             When IO error.
      */
-    private void reqLogin(final UserAuth.Mode authMode, final String authId,
+    private void reqLogin(final UserAuthModeEnum authMode, final String authId,
             final String authPw, final String authToken,
             final String assocCardNumber, final WebAppTypeEnum webAppType)
             throws IOException {
@@ -289,7 +289,7 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         if (!cm.isSetupCompleted()) {
             if (webAppType != WebAppTypeEnum.ADMIN
-                    || authMode != UserAuth.Mode.NAME) {
+                    || authMode != UserAuthModeEnum.NAME) {
                 setApiResult(ApiResultCodeEnum.ERROR, "msg-login-install-mode");
                 return;
             }
@@ -321,7 +321,7 @@ public final class ReqLogin extends ApiRequestMixin {
          *
          * TODO: check if OAuth is enabled.
          */
-        if (authMode == Mode.OAUTH) {
+        if (authMode == UserAuthModeEnum.OAUTH) {
 
             /*
              * INVARIANT: User must exist in database.
@@ -394,7 +394,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
                 final boolean isCliAppAuthApplied;
 
-                if (isAuthTokenLoginEnabled && authMode == UserAuth.Mode.NAME
+                if (isAuthTokenLoginEnabled && authMode == UserAuthModeEnum.NAME
                         && StringUtils.isBlank(authPw)) {
                     isCliAppAuthApplied =
                             this.reqLoginAuthTokenCliApp(getUserData(), authId,
@@ -406,7 +406,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 if (!isCliAppAuthApplied) {
 
                     if (isAuthTokenLoginEnabled
-                            && authMode == UserAuth.Mode.NAME
+                            && authMode == UserAuthModeEnum.NAME
                             && StringUtils.isBlank(authPw)
                             && StringUtils.isNotBlank(authToken)) {
 
@@ -483,14 +483,15 @@ public final class ReqLogin extends ApiRequestMixin {
      * @throws IOException
      *             When IO error.
      */
-    private void reqLoginNew(final UserAuth.Mode authMode, final String authId,
-            final String authPw, final String assocCardNumber,
-            final WebAppTypeEnum webAppType) throws IOException {
+    private void reqLoginNew(final UserAuthModeEnum authMode,
+            final String authId, final String authPw,
+            final String assocCardNumber, final WebAppTypeEnum webAppType)
+            throws IOException {
 
         /*
          * INVARIANT: Password can NOT be empty in Name authentication.
          */
-        if (authMode == UserAuth.Mode.NAME && StringUtils.isBlank(authPw)) {
+        if (authMode == UserAuthModeEnum.NAME && StringUtils.isBlank(authPw)) {
             onLoginFailed(null);
             return;
         }
@@ -499,14 +500,15 @@ public final class ReqLogin extends ApiRequestMixin {
          *
          */
         final String remoteAddr = this.getRemoteAddr();
+        final boolean isPublicAddress = InetUtils.isPublicAddress(remoteAddr);
 
         final Device terminal = ApiRequestHelper.getHostTerminal(remoteAddr);
 
-        final UserAuth theUserAuth = new UserAuth(terminal, null, webAppType,
-                InetUtils.isPublicAddress(remoteAddr));
+        final UserAuth theUserAuth =
+                new UserAuth(terminal, null, webAppType, isPublicAddress);
 
-        if (authMode != UserAuth.Mode.OAUTH
-                && authMode != UserAuth.Mode.YUBIKEY) { // TEST TEST
+        if (authMode != UserAuthModeEnum.OAUTH
+                && authMode != UserAuthModeEnum.YUBIKEY) { // TEST TEST
             if (!theUserAuth.isAuthModeAllowed(authMode)) {
                 setApiResult(ApiResultCodeEnum.ERROR,
                         "msg-auth-mode-not-available", authMode.toString());
@@ -535,7 +537,7 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         final boolean allowInternalUsersOnly = (userAuthenticator == null);
 
-        final boolean isInternalAdmin = authMode == UserAuth.Mode.NAME
+        final boolean isInternalAdmin = authMode == UserAuthModeEnum.NAME
                 && ConfigManager.isInternalAdmin(authId);
 
         final boolean isLazyUserInsert = webAppType == WebAppTypeEnum.USER
@@ -554,7 +556,8 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         final RfidNumberFormat rfidNumberFormat;
 
-        if (authMode == UserAuth.Mode.CARD_LOCAL || assocCardNumber != null) {
+        if (authMode == UserAuthModeEnum.CARD_LOCAL
+                || assocCardNumber != null) {
             if (terminal == null) {
                 rfidNumberFormat = new RfidNumberFormat();
             } else {
@@ -574,8 +577,13 @@ public final class ReqLogin extends ApiRequestMixin {
             /*
              * INVARIANT: internal admin is allowed to login to the Admin WebApp
              * only.
+             *
+             * INVARIANT: when Internet auth mode is enabled, internal admin is
+             * allowed to login to intranet Admin WebApp only.
              */
-            if (webAppType != WebAppTypeEnum.ADMIN) {
+            if (webAppType != WebAppTypeEnum.ADMIN
+                    || (isPublicAddress && cm.isConfigValue(
+                            Key.WEBAPP_INTERNET_ADMIN_AUTH_MODE_ENABLE))) {
                 onLoginFailed("msg-login-denied", webAppType.getUiText(),
                         UserAuth.getUiText(authMode), authId, remoteAddr);
                 return;
@@ -600,7 +608,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
         } else {
 
-            if (authMode == UserAuth.Mode.YUBIKEY) {
+            if (authMode == UserAuthModeEnum.YUBIKEY) {
 
                 if (authId == null || !YubiKeyOTP.isValidOTPFormat(authId)) {
                     onLoginFailed(null);
@@ -625,7 +633,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 }
                 uid = userDb.getUserId();
 
-            } else if (authMode == UserAuth.Mode.NAME) {
+            } else if (authMode == UserAuthModeEnum.NAME) {
 
                 /*
                  * Get the "real" username from the alias.
@@ -642,7 +650,7 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 userDb = userDao.findActiveUserByUserId(uid);
 
-            } else if (authMode == UserAuth.Mode.ID) {
+            } else if (authMode == UserAuthModeEnum.ID) {
 
                 userDb = USER_SERVICE.findUserByNumber(authId);
 
@@ -656,12 +664,12 @@ public final class ReqLogin extends ApiRequestMixin {
                 }
                 uid = userDb.getUserId();
 
-            } else if (authMode == UserAuth.Mode.CARD_IP
-                    || authMode == UserAuth.Mode.CARD_LOCAL) {
+            } else if (authMode == UserAuthModeEnum.CARD_IP
+                    || authMode == UserAuthModeEnum.CARD_LOCAL) {
 
                 String normalizedCardNumber = authId;
 
-                if (authMode == UserAuth.Mode.CARD_LOCAL) {
+                if (authMode == UserAuthModeEnum.CARD_LOCAL) {
                     normalizedCardNumber =
                             rfidNumberFormat.getNormalizedNumber(authId);
                 }
@@ -812,10 +820,10 @@ public final class ReqLogin extends ApiRequestMixin {
             /*
              * Authenticate
              */
-            if (authMode == UserAuth.Mode.YUBIKEY
-                    || authMode == UserAuth.Mode.OAUTH) {
+            if (authMode == UserAuthModeEnum.YUBIKEY
+                    || authMode == UserAuthModeEnum.OAUTH) {
                 // no code intended
-            } else if (authMode == UserAuth.Mode.NAME) {
+            } else if (authMode == UserAuthModeEnum.NAME) {
 
                 if (isInternalUser) {
 
@@ -885,11 +893,11 @@ public final class ReqLogin extends ApiRequestMixin {
                 /*
                  * Check PIN for both ID Number, Local and Network Card.
                  */
-                isAuthenticated = (authMode == UserAuth.Mode.ID
+                isAuthenticated = (authMode == UserAuthModeEnum.ID
                         && !theUserAuth.isAuthIdPinReq())
-                        || (authMode == UserAuth.Mode.CARD_IP
+                        || (authMode == UserAuthModeEnum.CARD_IP
                                 && !theUserAuth.isAuthCardPinReq())
-                        || (authMode == UserAuth.Mode.CARD_LOCAL
+                        || (authMode == UserAuthModeEnum.CARD_LOCAL
                                 && !theUserAuth.isAuthCardPinReq());
 
                 if (!isAuthenticated) {
@@ -979,7 +987,7 @@ public final class ReqLogin extends ApiRequestMixin {
          * Deny access, when the user is still not found in the database.
          */
         if (userDb == null) {
-            if (authMode == UserAuth.Mode.OAUTH) {
+            if (authMode == UserAuthModeEnum.OAUTH) {
                 /*
                  * This happens when "sp-login-oauth" URL parameter is still
                  * there, as backlash of a previous OAuth, and the Login page is
@@ -1341,8 +1349,8 @@ public final class ReqLogin extends ApiRequestMixin {
      * @param webAppType
      *            The {@link WebAppTypeEnum}.
      * @param authMode
-     *            The {@link UserAuth.Mode}. {@code null} when authenticated by
-     *            (WebApp or Client) token.
+     *            The {@link UserAuthModeEnum}. {@code null} when authenticated
+     *            by (WebApp or Client) token.
      * @param uid
      *            The User ID.
      * @param userDb
@@ -1354,8 +1362,9 @@ public final class ReqLogin extends ApiRequestMixin {
      */
     private void onUserLoginGranted(final Map<String, Object> userData,
             final SpSession session, final WebAppTypeEnum webAppType,
-            final UserAuth.Mode authMode, final String uid, final User userDb,
-            final UserAuthToken authToken) throws IOException {
+            final UserAuthModeEnum authMode, final String uid,
+            final User userDb, final UserAuthToken authToken)
+            throws IOException {
 
         userData.put("id", uid);
         userData.put("key_id", userDb.getId());

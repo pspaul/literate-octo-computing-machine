@@ -60,6 +60,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.services.helpers.UserAuth;
+import org.savapage.core.services.helpers.UserAuthModeEnum;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.Messages;
@@ -351,8 +352,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * @param webAppType
      *            The {@link WebAppTypeEnum}.
      * @param authMode
-     *            The {@link UserAuth.Mode}. {@code null} when authenticated by
-     *            (WebApp or Client) token.
+     *            The {@link UserAuthModeEnum}. {@code null} when authenticated
+     *            by (WebApp or Client) token.
      * @param sessionId
      *            The session ID as key.
      * @param ipAddr
@@ -361,7 +362,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *            The authenticated user.
      */
     public synchronized void onAuthenticatedUser(
-            final WebAppTypeEnum webAppType, final UserAuth.Mode authMode,
+            final WebAppTypeEnum webAppType, final UserAuthModeEnum authMode,
             final String sessionId, final String ipAddr, final String user) {
 
         /*
