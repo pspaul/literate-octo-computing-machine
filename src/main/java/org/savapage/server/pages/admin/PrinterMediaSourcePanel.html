@@ -3,7 +3,7 @@
 	<!-- 
     +====================================================================+ 
     | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -26,12 +26,13 @@
 						</label>
 						<input type="checkbox" id="sp-printer-use-monochrome-as-default"
 							wicket:id="use-grayscale-as-default" />
-
-						<label for="sp-printer-client-side-monochrome">
-							<wicket:message key="client-side-monochrome-conversion" />
-						</label>
-						<input type="checkbox" id="sp-printer-client-side-monochrome"
-							wicket:id="client-side-monochrome-conversion" />
+						<div id="sp-printer-client-side-convert">
+							<label for="sp-printer-client-side-monochrome">
+								<wicket:message key="client-side-monochrome-conversion" />
+							</label>
+							<input type="checkbox" id="sp-printer-client-side-monochrome"
+								wicket:id="client-side-monochrome-conversion" />
+						</div>
 					</th>
 				</tr>
 			</wicket:enclosure>

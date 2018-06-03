@@ -1290,12 +1290,9 @@
          */
         _ns.PagePrinter = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-printer', 'admin/PagePrinter')
-            //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ,
+            var _page = new _ns.Page(_i18n, _view, '#page-printer', 'admin/PagePrinter'),
+                _self = _ns.derive(_page),
+                _onChangeJobTicket,
                 _onChangeChargeType,
                 _showAllMediaRows;
 
@@ -1306,6 +1303,10 @@
                 }
                 _view.visible($('.sp-printer-charge-simple'), isSimple);
                 _view.visible($('.sp-printer-charge-media'), !isSimple);
+            };
+
+            _onChangeJobTicket = function(isTicket) {
+                _view.visible($('#sp-printer-client-side-convert'), !isTicket);
             };
 
             /**
@@ -1340,6 +1341,10 @@
              *
              */
             $(_self.id()).on('pagecreate', function(event) {
+
+                $(this).on('change', '#printer-jobticket', null, function() {
+                    _onChangeJobTicket(_view.isCbChecked($(this)));
+                });
 
                 $(this).on('click', '#button-save-printer', null, function() {
                     _self.onSavePrinter();
@@ -1428,6 +1433,8 @@
 
                 //
                 _onChangeChargeType(_view.getRadioValue('sp-printer-charge-type'));
+                _onChangeJobTicket(_view.isCbChecked($('#printer-jobticket')));
+
             });
             return _self;
         };
