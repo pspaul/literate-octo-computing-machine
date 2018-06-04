@@ -605,6 +605,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 && PROXY_PRINT_SERVICE.isColorPrinter(dtoReq.getPrinter())
                 && PRINTER_SERVICE.isClientSideMonochrome(printer));
 
+        printReq.setLocalBooklet(!isJobTicket
+                && ProxyPrintInboxReq.isBooklet(dtoReq.getOptions())
+                && PRINTER_SERVICE.isClientSideBooklet(printer));
+
         final boolean isDelegatedPrint = applyPrintDelegation(dtoReq, printReq);
         final boolean isSharedAccountPrint;
 
