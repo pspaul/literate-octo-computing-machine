@@ -1485,25 +1485,13 @@
              */
             _view.pages.printer.onSavePrinterMediaSources = function() {
 
-                var res
-                //
-                ,
+                var res,
                     SOURCE_AUTO = 'auto',
-                    SOURCE_MANUAL = 'manual'
-                // org.savapage.dto.ProxyPrinterMediaSourcesDto
-                ,
-                    dto = {}
-                //
-                ,
-                    sourceAuto = _view.isCbChecked($('#media-source\\.' + SOURCE_AUTO))
-                //
-                ,
-                    sourceManual = _view.isCbChecked($('#media-source\\.' + SOURCE_MANUAL))
-                //
-                ,
-                    selDefaultMonochrome = $('#sp-printer-use-monochrome-as-default')
-                //
-                ,
+                    SOURCE_MANUAL = 'manual',
+                    dto = {}, // org.savapage.dto.ProxyPrinterMediaSourcesDto
+                    sourceAuto = _view.isCbChecked($('#media-source\\.' + SOURCE_AUTO)),
+                    sourceManual = _view.isCbChecked($('#media-source\\.' + SOURCE_MANUAL)),
+                    selDefaultMonochrome = $('#sp-printer-use-monochrome-as-default'),
                     selClientSideMonochrome = $('#sp-printer-client-side-monochrome')
                 //
                 ;
