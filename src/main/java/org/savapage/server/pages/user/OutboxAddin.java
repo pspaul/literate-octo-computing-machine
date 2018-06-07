@@ -253,6 +253,9 @@ public class OutboxAddin extends AbstractUserPage {
          */
         private final int currencyDecimals;
 
+        /** */
+        private final MediaSizeName defaultMediaSize;
+
         /**
          *
          * @param id
@@ -265,6 +268,7 @@ public class OutboxAddin extends AbstractUserPage {
             this.isJobticketView = jobticketView;
             this.scale = ConfigManager.getFinancialDecimalsInDatabase();
             this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
+            this.defaultMediaSize = MediaUtils.getDefaultMediaSize();
         }
 
         @Override
@@ -548,13 +552,14 @@ public class OutboxAddin extends AbstractUserPage {
             final Map<String, String> mapVisible = new HashMap<>();
 
             for (final String attr : new String[] { "title", "papersize",
-                    "letterhead", "duplex", "simplex", "color", "collate",
-                    "grayscale", "accounts", "removeGraphics", "ecoPrint",
-                    "extSupplier", "owner-user-name", "drm", "pageRotate180",
-                    "punch", "staple", "fold", "booklet", "jobticket-media",
-                    "jobticket-copy", "jobticket-finishing-ext",
-                    "jobticket-custom-ext", "landscape", "portrait", "job-id",
-                    "job-completed-time", "job-printer", "msg-invalid" }) {
+                    "papersize-ext", "letterhead", "duplex", "simplex", "color",
+                    "collate", "grayscale", "accounts", "removeGraphics",
+                    "ecoPrint", "extSupplier", "owner-user-name", "drm",
+                    "pageRotate180", "punch", "staple", "fold", "booklet",
+                    "jobticket-media", "jobticket-copy",
+                    "jobticket-finishing-ext", "jobticket-custom-ext",
+                    "landscape", "portrait", "job-id", "job-completed-time",
+                    "job-printer", "msg-invalid" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -570,9 +575,15 @@ public class OutboxAddin extends AbstractUserPage {
                         MediaUtils.getMediaSizeFromInboxMedia(mediaOption);
 
                 if (mediaSizeName == null) {
-                    mapVisible.put("papersize", mediaOption);
+                    mapVisible.put("papersize-ext", mediaOption);
                 } else {
-                    mapVisible.put("papersize",
+                    final String mediaKey;
+                    if (mediaSizeName.equals(this.defaultMediaSize)) {
+                        mediaKey = "papersize";
+                    } else {
+                        mediaKey = "papersize-ext";
+                    }
+                    mapVisible.put(mediaKey,
                             MediaUtils.getUserFriendlyMediaName(mediaSizeName));
                 }
             }

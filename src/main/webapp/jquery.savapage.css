@@ -109,6 +109,11 @@
     color: #C0392B;
 }
 
+/* non-standard papersize */
+.sp-txt-papersize-ext {
+    color: #C0392B;
+}
+
 .sp-txt-job-ticket-attr {
     color: purple;
 }
