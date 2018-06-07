@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -337,26 +338,52 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
             final PrinterAttrLookup printerAttrLookup =
                     new PrinterAttrLookup(dbPrinter);
 
+            final List<JsonProxyPrinterOptChoice> filteredMediaSourcesForUser =
+                    filterMediaSourcesForUser(printerAttrLookup,
+                            printer.getMediaSourceOpt().getChoices());
+
             if (this.jobSheetDto == null || !this.jobSheetDto.isEnabled()) {
                 helper.discloseLabel(WICKET_ID_MEDIA_SOURCE_JOB_SHEET);
             } else {
                 item.add(new PrinterOptListView(
                         WICKET_ID_MEDIA_SOURCE_JOB_SHEET,
-                        filterMediaSourcesForUser(printerAttrLookup,
-                                printer.getMediaSourceOpt().getChoices()),
+                        filteredMediaSourcesForUser,
                         this.getLastIppChoice(printer.getId(),
                                 JobTicketSession.PrinterOpt.MEDIA_SOURCE_SHEET,
                                 printer.getMediaSourceOpt().getChoices(),
                                 printer.getMediaSourceJobSheetOptChoice())));
-
             }
-            item.add(new PrinterOptListView(WICKET_ID_MEDIA_SOURCE,
-                    filterMediaSourcesForUser(printerAttrLookup,
-                            printer.getMediaSourceOpt().getChoices()),
+
+            final JsonProxyPrinterOptChoice lastMediaSourceChoice =
                     this.getLastIppChoice(printer.getId(),
                             JobTicketSession.PrinterOpt.MEDIA_SOURCE,
                             printer.getMediaSourceOpt().getChoices(),
-                            printer.getMediaSourceJobSheetOptChoice())));
+                            printer.getMediaSourceOptChoice());
+
+            /*
+             * Check if lastMediaSourceChoice contains requested media, if not,
+             * take printer.getMediaSourceOptChoice() as default media source.
+             */
+            JsonProxyPrinterOptChoice dfltMediaSourceChoice =
+                    printer.getMediaSourceOptChoice();
+
+            if (lastMediaSourceChoice != null
+                    && printer.getMediaSourceOptChoice() != null) {
+
+                for (final Entry<String, String> entry : printer
+                        .getMediaSourceMediaMap().entrySet()) {
+
+                    if (entry.getKey().equals(lastMediaSourceChoice.getChoice())
+                            && lastMediaSourceChoice.getChoice().equals(printer
+                                    .getMediaSourceOptChoice().getChoice())) {
+                        dfltMediaSourceChoice = lastMediaSourceChoice;
+                        break;
+                    }
+                }
+            }
+
+            item.add(new PrinterOptListView(WICKET_ID_MEDIA_SOURCE,
+                    filteredMediaSourcesForUser, dfltMediaSourceChoice));
 
             //
             final JsonProxyPrinterOpt outputBinOpt = printer.getOutputBinOpt();
