@@ -6742,7 +6742,7 @@
                 _model.showJobsMatchMedia(_view);
                 _model.showCopyJobMedia(_view);
 
-                _model.myPrinterOpt = [];
+                _model.myPrinterOpt = {};
                 _refreshPrinterInd();
             };
 
