@@ -22,6 +22,7 @@
 package org.savapage.server.pages;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.List;
@@ -36,8 +37,8 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.AccountTrxDao;
 import org.savapage.core.dao.AccountTrxDao.ListFilter;
 import org.savapage.core.dao.enums.ACLOidEnum;
@@ -55,11 +56,13 @@ import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserAccount;
+import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketSupplierData;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
+import org.savapage.core.util.LocaleHelper;
 import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.server.WebApp;
 import org.savapage.server.session.SpSession;
@@ -72,10 +75,12 @@ import org.slf4j.LoggerFactory;
  */
 public final class AccountTrxPage extends AbstractListPage {
 
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
 
     /**
      * The logger.
@@ -324,18 +329,31 @@ public final class AccountTrxPage extends AbstractListPage {
                         PrintOutNounEnum.PAGE.uiText(getLocale(),
                                 totalPagesOut > 1)));
 
-                final int nCopies =
-                        accountTrx.getTransactionWeight().intValue();
+                final BigDecimal costPerCopy = ACCOUNTING_SERVICE
+                        .calcCostPerPrintedCopy(docLog.getCostOriginal(),
+                                printOut.getNumberOfCopies());
+
+                final LocaleHelper localeHelper = new LocaleHelper(getLocale());
+
+                final BigDecimal printedCopies;
+                if (costPerCopy.compareTo(BigDecimal.ZERO) == 0) {
+                    printedCopies = BigDecimal.ZERO;
+                } else {
+                    printedCopies = ACCOUNTING_SERVICE.calcPrintedCopies(
+                            accountTrx.getAmount(), costPerCopy, 2).abs();
+                }
+
+                final int nCopies = printedCopies
+                        .setScale(0, RoundingMode.HALF_UP).intValue();
 
                 //
                 final int nSheets =
                         nCopies * printOut.getNumberOfSheets().intValue()
                                 / printOut.getNumberOfCopies().intValue();
 
-                helper.encloseLabel("printOutCopies",
-                        String.format("%d %s",
-                                nCopies, PrintOutNounEnum.COPY
-                                        .uiText(getLocale(), nCopies > 1)),
+                helper.encloseLabel("printOutCopies", String.format("%s %s",
+                        localeHelper.asExactIntegerOrScaled(printedCopies),
+                        PrintOutNounEnum.COPY.uiText(getLocale(), nCopies > 1)),
                         true);
 
                 helper.encloseLabel("printOutSheets",

@@ -133,13 +133,14 @@
             }
             //----------------------------------------------------------------
             ,
-                _createModelAccount = function(account, userCount, userCopies) {
+                _createModelAccount = function(account, userCount, userCopies, totalCopies) {
                 // Java: PrintDelegationDto.DelegatorAccount
                 return {
                     type : account.accountType,
                     id : account.id,
                     userCount : userCount,
-                    userCopies : userCopies
+                    userCopies : userCopies,
+                    totalCopies : totalCopies || (userCount * userCopies)
                 };
             }
             //----------------------------------------------------------------
@@ -258,6 +259,7 @@
                 _view.visible($('.sp-print-delegation-mode-add-users'), showAddUsers);
 
                 _view.visible($('#sp-print-delegation-button-add'), showButtonAdd);
+                _view.visible($('#sp-print-delegation-button-add-popup'), showButtonAdd && showAddGroups && !showAddUsers);
 
                 _view.visible($('.sp-print-delegation-select-shared-account'), _isAccountSharedSelected());
 
@@ -281,6 +283,16 @@
             ,
                 _resetMemberCopies = function() {
                 $('#sp-print-delegation-member-copies').val(1);
+            }
+            //----------------------------------------------------------------
+            ,
+                _getPopupGroupCopies = function() {
+                return parseInt($('#sp-print-delegation-popup-copies-to-add').val(), 10) || 1;
+            }
+            //----------------------------------------------------------------
+            ,
+                _resetPopupGroupCopies = function() {
+                $('#sp-print-delegation-popup-copies-to-add').val(1);
             }
             //----------------------------------------------------------------
             ,
@@ -500,7 +512,7 @@
                 if (cssClass !== _CLASS_COPIES) {
                     row.find(':nth-child(2)').html(item.userCount);
                 }
-                row.find(':nth-child(3)').html(item.userCopies);
+                row.find(':nth-child(3)').html(item.totalCopies);
             }
             //----------------------------------------------------------------
             ,
@@ -560,25 +572,28 @@
             }
             //----------------------------------------------------------------
             ,
-                _onAddGroups = function() {
+                _onAddGroups = function(groupCopies) {
                 var tbody = _getDelegatorRowBody(),
                     account = _getAccount(),
-                    memberCopies = _getMemberCopies();
+                    memberCopies = groupCopies ? 1 : _getMemberCopies();
 
                 $.each(_quickUserGroupSelected, function(key, item) {
-                    var copiesWlk;
+                    var modelAccount;
                     if (!_delegatorGroups[item.key]) {
-                        copiesWlk = item.userCount * memberCopies;
-                        _delegatorGroups[item.key] = _createModelAccount(account, item.userCount, memberCopies);
-                        _appendDelegatorRow(tbody, item, account, _CLASS_GROUP, copiesWlk);
+                        modelAccount = _createModelAccount(account, item.userCount, memberCopies, groupCopies);
+                        _delegatorGroups[item.key] = modelAccount;
+                        _appendDelegatorRow(tbody, item, account, _CLASS_GROUP, modelAccount.totalCopies);
                         _nDelegatorGroups++;
                         _nDelegatorGroupMembers += item.userCount;
-                        _nDelegatorGroupMembersCopies += copiesWlk;
+                        _nDelegatorGroupMembersCopies += modelAccount.totalCopies;
                     }
                 });
 
                 _revertQuickUserGroupsSelected();
                 _resetMemberCopies();
+                if (groupCopies) {
+                    _resetPopupGroupCopies();
+                }
                 _setVisibilityDelegatorsEdit();
                 _onButtonAddVisibility();
             }
@@ -628,11 +643,12 @@
                 }
 
                 if (_delegatorCopies[item.key]) {
-                    _delegatorCopies[item.key].userCopies += userCount;
                     _delegatorCopies[item.key].userCount += userCount;
+                    _delegatorCopies[item.key].userCopies += 1;
+                    _delegatorCopies[item.key].totalCopies += userCount;
                     _updateDelegatorRow(tbody, _delegatorCopies[item.key], _CLASS_COPIES);
                 } else {
-                    _delegatorCopies[item.key] = _createModelAccount(account, userCount, userCount);
+                    _delegatorCopies[item.key] = _createModelAccount(account, userCount, 1);
                     _appendDelegatorRow(tbody, item, account, _CLASS_COPIES, userCount);
                 }
 
@@ -662,14 +678,15 @@
                     }
                 }
 
-                // Remove the current handler ...
+                // Remove the current handlers ...
                 $('#sp-print-delegation-button-add').off('click');
+                $('#sp-print-delegation-button-add-popup').off('click');
 
                 // ... move the html ...
                 src.empty();
                 selTarget.html(html);
 
-                // .. and add new handler.
+                // .. and add new handlers.
                 $('#sp-print-delegation-button-add').on('click', function() {
                     if (_isModeAddGroups()) {
                         _onAddGroups();
@@ -678,6 +695,14 @@
                     } else {
                         _onAddUsers();
                     }
+                    return false;
+                });
+
+                $('#sp-print-delegation-button-add-popup').on('click', function() {
+                    var sel = $('#sp-print-delegation-popup-add-group-copies');
+                    sel.popup('open', {
+                        positionTo : $(this)
+                    });
                     return false;
                 });
             }
@@ -699,13 +724,20 @@
             //----------------------------------------------------------------
             ,
                 _onButtonAddVisibility = function() {
-                var sel = $('#sp-print-delegation-button-add');
-                if (_isModeAddGroups()) {
-                    _view.enable(sel, _nSelectedGroups > 0 && (_isAccountSharedSelected() ? _quickAccountSelected : true));
+                var enable,
+                    modeAddGroups = _isModeAddGroups();
+
+                if (modeAddGroups) {
+                    enable = _nSelectedGroups > 0 && (_isAccountSharedSelected() ? _quickAccountSelected : true);
                 } else if (_isModeAddUsers()) {
-                    _view.enable(sel, _nSelectedUsers > 0);
+                    enable = _nSelectedUsers > 0;
                 } else if (_isModeAddCopies()) {
-                    _view.enable(sel, _quickAccountSelected);
+                    enable = _quickAccountSelected;
+                }
+                _view.enable($('#sp-print-delegation-button-add'), enable);
+                _view.visible($('#sp-print-delegation-button-add-popup'), modeAddGroups);
+                if (modeAddGroups) {
+                    _view.enable($('#sp-print-delegation-button-add-popup'), enable);
                 }
             }
             //----------------------------------------------------------------
@@ -875,16 +907,16 @@
                     if (_delegatorGroupsSelected[dbkey]) {
                         _nDelegatorGroups--;
                         _nDelegatorGroupMembers -= _delegatorGroups[dbkey].userCount;
-                        _nDelegatorGroupMembersCopies -= _delegatorGroups[dbkey].userCount * _delegatorGroups[dbkey].userCopies;
+                        _nDelegatorGroupMembersCopies -= _delegatorGroups[dbkey].totalCopies;
                         delete _delegatorGroups[dbkey];
                         $(this).remove();
                     } else if (_delegatorCopiesSelected[dbkey]) {
-                        _nDelegatorCopies -= _delegatorCopies[dbkey].userCopies;
+                        _nDelegatorCopies -= _delegatorCopies[dbkey].totalCopies;
                         delete _delegatorCopies[dbkey];
                         $(this).remove();
                     } else if (_delegatorUsersSelected[dbkey]) {
                         _nDelegatorUsers--;
-                        _nDelegatorUsersCopies -= _delegatorUsers[dbkey].userCopies;
+                        _nDelegatorUsersCopies -= _delegatorUsers[dbkey].totalCopies;
                         delete _delegatorUsers[dbkey];
                         $(this).remove();
                     }
@@ -945,6 +977,7 @@
                     _onQuickSearchUser($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), 0);
 
                     _view.enable($('#sp-print-delegation-button-add'), false);
+
                 }
 
                 if (_isAccountSharedSelected()) {
@@ -1142,6 +1175,15 @@
                 //-----------------------
                 $("#sp-print-delegation-quicksearch-accounts .sp-quicksearch-buttons .ui-btn").click(function() {
                     _onQuickSearchAccount($("#sp-print-delegation-select-shared-account-filter"), $('#sp-print-delegation-select-shared-account').val(), $(this).attr('data-savapage'), true);
+                });
+
+                //-----------------------
+                // Group copies popup
+                //-----------------------
+                $('#sp-print-delegation-btn-add-group-copies').on('click', function() {
+                    _onAddGroups(_getPopupGroupCopies());
+                    $('#sp-print-delegation-popup-add-group-copies').popup('close');
+                    return false;
                 });
 
                 // Show available accounts on first open

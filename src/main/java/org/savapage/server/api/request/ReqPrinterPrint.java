@@ -916,7 +916,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             final AccountTrxInfoSet infoSet = PRINT_DELEGATION_SERVICE
                     .createAccountTrxInfoSet(jsonDelegation);
 
-            printReq.setNumberOfCopies(infoSet.getWeightTotal());
+            printReq.setNumberOfCopies(infoSet.getUnitTotal());
 
             if (printReq.getNumberOfCopies() > 1) {
                 printReq.setCollate(true);
@@ -962,6 +962,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         trxList.add(trx);
 
         trx.setWeight(dtoReq.getCopies());
+        trx.setWeightUnit(Integer.valueOf(1));
+
         trx.setAccount(account);
 
         return true;

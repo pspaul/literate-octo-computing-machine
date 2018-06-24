@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -89,6 +89,12 @@ public final class PagePrintDelegation extends AbstractPage {
             helper.discloseLabel("radio-add-extra");
             helper.discloseLabel("extra-to-add");
         }
+
+        //
+        helper.encloseLabel("button-add-popup", HtmlButtonEnum.DOTTED_SUFFIX,
+                cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_GROUP_COPIES_ENABLE));
+
+        helper.addButton("button-popup-cancel", HtmlButtonEnum.CANCEL);
 
         //
         final QuickSearchPanel panel =

@@ -986,24 +986,31 @@ public class OutboxAddin extends AbstractUserPage {
         /**
          *
          * @param costTotal
+         * @param costPerCopy
          * @param weight
+         * @param weightunit
          * @param copies
          * @param currencySymbol
          * @param sbAccTrx
          */
         private void appendAccountCost(final BigDecimal costTotal,
-                final int weight, final int copies, final String currencySymbol,
-                final StringBuilder sbAccTrx) {
+                final BigDecimal costPerCopy, final int weight,
+                final int weightunit, final int copies,
+                final String currencySymbol, final StringBuilder sbAccTrx) {
 
-            final BigDecimal weightedCost = ACCOUNTING_SERVICE
-                    .calcWeightedAmount(costTotal, copies, weight, this.scale);
+            final BigDecimal weightedCost =
+                    ACCOUNTING_SERVICE.calcWeightedAmount(costTotal, copies,
+                            weight, weightunit, this.scale);
 
             if (weightedCost.compareTo(BigDecimal.ZERO) != 0) {
                 sbAccTrx.append(" ").append(currencySymbol).append("&nbsp;")
                         .append(localizedDecimal(weightedCost.negate()));
             }
 
-            sbAccTrx.append("&nbsp;(").append(weight).append(')');
+            final BigDecimal weightCopies = ACCOUNTING_SERVICE
+                    .calcPrintedCopies(costTotal, costPerCopy, 0);
+
+            sbAccTrx.append("&nbsp;(").append(weightCopies).append(')');
         }
 
         /**
@@ -1046,7 +1053,11 @@ public class OutboxAddin extends AbstractUserPage {
                 return missingAccounts;
             }
 
-            final int copies = trxInfoSet.getWeightTotal();
+            final int copies = job.getCopies();
+
+            final BigDecimal costPerCopy = ACCOUNTING_SERVICE
+                    .calcCostPerPrintedCopy(job.getCostTotal(), copies);
+
             int copiesDelegatorsImplicit = 0;
             int missingCopies = 0;
 
@@ -1054,6 +1065,13 @@ public class OutboxAddin extends AbstractUserPage {
                     .getTransactions()) {
 
                 final int weight = trxInfo.getWeight();
+
+                final int weightUnit;
+                if (trxInfo.getWeightUnit() == null) {
+                    weightUnit = 1;
+                } else {
+                    weightUnit = trxInfo.getWeightUnit().intValue();
+                }
 
                 final Account account =
                         ACCOUNT_DAO.findById(trxInfo.getAccountId());
@@ -1067,8 +1085,8 @@ public class OutboxAddin extends AbstractUserPage {
                         sbAccTrx.append(trxInfo.getExtDetails());
                     }
 
-                    appendAccountCost(costTotal, weight, copies, currencySymbol,
-                            sbAccTrx);
+                    appendAccountCost(costTotal, costPerCopy, weight,
+                            weightUnit, copies, currencySymbol, sbAccTrx);
 
                     sbAccTrx.append("</span>");
 
@@ -1098,8 +1116,8 @@ public class OutboxAddin extends AbstractUserPage {
 
                 sbAccTrx.append(account.getName());
 
-                appendAccountCost(costTotal, weight, copies, currencySymbol,
-                        sbAccTrx);
+                appendAccountCost(costTotal, costPerCopy, weight, weightUnit,
+                        copies, currencySymbol, sbAccTrx);
             }
 
             final int copiesDelegatorsIndividual =
@@ -1109,7 +1127,7 @@ public class OutboxAddin extends AbstractUserPage {
                 sbAccTrx.append(" &bull; ");
                 sbAccTrx.append(" ").append(currencySymbol).append("&nbsp;")
                         .append(localizedDecimal(ACCOUNTING_SERVICE
-                                .calcWeightedAmount(costTotal, copies,
+                                .calcWeightedAmount(costTotal, copies, 1,
                                         copiesDelegatorsIndividual, this.scale)
                                 .negate()));
                 sbAccTrx.append("&nbsp;(").append(copiesDelegatorsIndividual)

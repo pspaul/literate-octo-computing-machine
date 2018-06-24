@@ -1208,7 +1208,8 @@
                     $('#sp-doclog-popup-addin').html(html);
                     $('#sp-doclog-popup-title').text($(this).attr('title'));
                     $('#sp-doclog-popup').enhanceWithin().popup('open', {
-                        positionTo : $(this)
+                        positionTo : $(this),
+                        arrow : 't'
                     });
                 });
 
@@ -1592,7 +1593,8 @@
                 // remove trailing poit suffix
                 $('#sp-outbox-popup-title').text(src.attr('title').replace('. . .', ''));
                 $('#sp-outbox-popup').enhanceWithin().popup('open', {
-                    positionTo : src
+                    positionTo : src,
+                    arrow : 't'
                 });
             }
             //

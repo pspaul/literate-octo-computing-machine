@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -103,8 +104,13 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
         final OutboxJobDto outboxJob = this.getOutboxJob();
         final List<AccountTrx> trxList;
 
+        final BigDecimal totalAmount;
+        final int totalCopies;
+
         if (outboxJob == null) {
             trxList = null;
+            totalCopies = 0;
+            totalAmount = BigDecimal.ZERO;
         } else {
             if (outboxJob.getAccountTransactions() == null
                     && outboxJob.getUserId() == null) {
@@ -112,8 +118,10 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
             }
             trxList = ServiceContext.getServiceFactory().getAccountingService()
                     .createAccountTrxsUI(outboxJob);
+            totalCopies = outboxJob.getCopies();
+            totalAmount = outboxJob.getCostTotal();
         }
-        populate(trxList);
+        populate(totalAmount, totalCopies, trxList);
     }
 
 }

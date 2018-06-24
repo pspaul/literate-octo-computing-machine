@@ -22,6 +22,7 @@
 package org.savapage.server.pages;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +42,11 @@ import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
+import org.savapage.core.services.AccountingService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
+import org.savapage.core.util.LocaleHelper;
 
 /**
  *
@@ -55,6 +59,10 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
 
     /**
      * Dummy name for a missing account.
@@ -75,8 +83,8 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
     private static final class DelegatorItem {
         private int sourceGroups;
         private int sourcePersonal;
-        private int copies;
-        private int copiesRefund;
+        private BigDecimal copiesDecimal;
+        private BigDecimal copiesRefundDecimal;
     }
 
     /** */
@@ -139,7 +147,8 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
      * @param trxList
      *            The account transactions (can be {@code null}).
      */
-    protected void populate(final List<AccountTrx> trxList) {
+    protected final void populate(BigDecimal totalAmount, int totalCopies,
+            final List<AccountTrx> trxList) {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
@@ -151,7 +160,7 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
         final List<TrxLine> displayOptions = new ArrayList<>();
 
         final SortedMap<String, DelegatorItem> delegators =
-                fillOptions(trxList, displayOptions);
+                fillOptions(totalAmount, totalCopies, trxList, displayOptions);
 
         add(new AccountTrxView("setting-row", displayOptions));
 
@@ -161,7 +170,7 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
     }
 
     /**
-     * Formats delegator information.
+     * Formats delegator copies information.
      *
      * @param delegators
      *            The delegators.
@@ -170,10 +179,12 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
     private String formatDelegatorDetails(
             final SortedMap<String, DelegatorItem> delegators) {
 
+        final LocaleHelper localeHelper = new LocaleHelper(getLocale());
+
         final StringBuilder details = new StringBuilder();
 
-        int totCopies = 0;
-        int totCopiesRefund = 0;
+        BigDecimal totCopiesDecimal = BigDecimal.ZERO;
+        BigDecimal totCopiesRefundDecimal = BigDecimal.ZERO;
 
         for (final Entry<String, DelegatorItem> entry : delegators.entrySet()) {
 
@@ -188,13 +199,18 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
 
             details.append(entry.getKey()).append(" (");
 
-            if (item.copies > 0) {
-                details.append(item.copies);
-                totCopies += item.copies;
+            if (item.copiesDecimal.compareTo(BigDecimal.ZERO) != 0) {
+                details.append(
+                        localeHelper
+                                .asExactIntegerOrScaled(item.copiesDecimal));
+                totCopiesDecimal = totCopiesDecimal.add(item.copiesDecimal);
             }
-            if (item.copiesRefund > 0) {
-                details.append("-").append(item.copiesRefund);
-                totCopiesRefund += item.copiesRefund;
+
+            if (item.copiesRefundDecimal.compareTo(BigDecimal.ZERO) != 0) {
+                details.append(localeHelper
+                        .asExactIntegerOrScaled(item.copiesRefundDecimal));
+                totCopiesRefundDecimal =
+                        totCopiesRefundDecimal.add(item.copiesRefundDecimal);
             }
             details.append(")");
         }
@@ -207,11 +223,14 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                     NounEnum.DELEGATOR.uiText(getLocale(), true).toLowerCase())
                     .append(" (");
 
-            if (totCopies > 0) {
-                pfx.append(totCopies);
+            if (totCopiesDecimal.compareTo(BigDecimal.ZERO) != 0) {
+                pfx.append(
+                        totCopiesDecimal.setScale(0, RoundingMode.HALF_DOWN));
             }
-            if (totCopiesRefund > 0) {
-                pfx.append("-").append(totCopiesRefund);
+
+            if (totCopiesRefundDecimal.compareTo(BigDecimal.ZERO) != 0) {
+                pfx.append(totCopiesRefundDecimal.setScale(0,
+                        RoundingMode.HALF_DOWN));
             }
 
             pfx.append(" ").append(PrintOutNounEnum.COPY
@@ -272,15 +291,23 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
     /**
      * Fills the display options from the account transactions.
      *
+     * @param totalCost
+     *            The total cost of all transactions. A negative value is a
+     *            refund.
+     * @param totalCopies
+     *            Total number of (printed) copies.
      * @param accountTrxList
-     *            The account transactions.
+     *            The account transactions (input).
      * @param options
-     *            The display values.
+     *            The display values (output).
      * @return The map of delegators that are charged.
      */
-    private SortedMap<String, DelegatorItem> fillOptions(
-            final List<AccountTrx> accountTrxList,
+    private SortedMap<String, DelegatorItem> fillOptions(BigDecimal totalCost,
+            int totalCopies, final List<AccountTrx> accountTrxList,
             final List<TrxLine> options) {
+
+        final BigDecimal costPerCopy = ACCOUNTING_SERVICE
+                .calcCostPerPrintedCopy(totalCost, totalCopies);
 
         final Map<String, Integer> accountNameDelegatorCount =
                 collectAccountNameDelegatorCount(accountTrxList);
@@ -291,11 +318,11 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
         final int currencyDecimals = ConfigManager.getUserBalanceDecimals();
 
         int totIndividualDelegators = 0;
-        int totIndividualDelegatorsWeight = 0;
+        BigDecimal totIndividualDelegatorsCopies = BigDecimal.ZERO;
         BigDecimal totIndividualCost = BigDecimal.ZERO;
 
         int totIndividualDelegatorsRefund = 0;
-        int totIndividualDelegatorsWeightRefund = 0;
+        BigDecimal totIndividualDelegatorsCopiesRefund = BigDecimal.ZERO;
         BigDecimal totIndividualCostRefund = BigDecimal.ZERO;
 
         String currencySymbolWlk = null;
@@ -321,6 +348,7 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             final boolean isRefund =
                     trx.getAmount().compareTo(BigDecimal.ZERO) == 1;
 
+            // Individual delegator.
             if (account != null && accountType != AccountTypeEnum.SHARED
                     && accountType != AccountTypeEnum.GROUP) {
 
@@ -330,31 +358,46 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                     item = delegatorItemMap.get(account.getName());
                 } else {
                     item = new DelegatorItem();
+
                     item.sourceGroups = 0;
                     item.sourcePersonal = 0;
-                    item.copies = 0;
-                    item.copiesRefund = 0;
+                    item.copiesDecimal = BigDecimal.ZERO;
+                    item.copiesRefundDecimal = BigDecimal.ZERO;
+
                     delegatorItemMap.put(account.getName(), item);
                 }
 
-                if (isRefund) {
-                    item.copiesRefund += trx.getTransactionWeight();
+                final BigDecimal printedCopies;
+
+                if (costPerCopy.compareTo(BigDecimal.ZERO) == 0) {
+                    printedCopies = BigDecimal.ZERO;
                 } else {
-                    item.copies += trx.getTransactionWeight();
+                    printedCopies = ACCOUNTING_SERVICE.calcPrintedCopies(
+                            trx.getAmount().negate(), costPerCopy, 2);
+
+                    if (isRefund) {
+                        item.copiesRefundDecimal =
+                                item.copiesRefundDecimal.add(printedCopies);
+                    } else {
+                        item.copiesDecimal =
+                                item.copiesDecimal.add(printedCopies);
+                    }
                 }
 
                 if (StringUtils.isBlank(trx.getExtDetails())) {
 
                     if (isRefund) {
                         totIndividualDelegatorsRefund++;
-                        totIndividualDelegatorsWeightRefund +=
-                                trx.getTransactionWeight().intValue();
+                        totIndividualDelegatorsCopiesRefund =
+                                totIndividualDelegatorsCopiesRefund
+                                        .add(printedCopies);
                         totIndividualCostRefund =
                                 totIndividualCostRefund.add(trx.getAmount());
                     } else {
                         totIndividualDelegators++;
-                        totIndividualDelegatorsWeight +=
-                                trx.getTransactionWeight().intValue();
+                        totIndividualDelegatorsCopies =
+                                totIndividualDelegatorsCopies
+                                        .add(printedCopies);
                         totIndividualCost =
                                 totIndividualCost.add(trx.getAmount());
                         item.sourceGroups++;
@@ -368,6 +411,7 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                 continue;
             }
 
+            // Account summary line.
             final TrxLine trxLine = new TrxLine();
 
             if (accountType == AccountTypeEnum.GROUP) {
@@ -398,13 +442,18 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                         accountParent.getName(), account.getName());
             }
 
+            if (costPerCopy.compareTo(BigDecimal.ZERO) == 0) {
+                trxLine.copies = "-";
+            } else {
+                trxLine.copies = ACCOUNTING_SERVICE
+                        .calcPrintedCopies(trx.getAmount().negate(),
+                                costPerCopy, 0)
+                        .toPlainString();
+            }
+
             if (isRefund) {
-                trxLine.copies =
-                        String.valueOf(-trx.getTransactionWeight().intValue());
                 trxLine.remark =
                         NounEnum.REFUND.uiText(getLocale()).toLowerCase();
-            } else {
-                trxLine.copies = trx.getTransactionWeight().toString();
             }
 
             final StringBuilder sbAccTrx = new StringBuilder();
@@ -417,23 +466,25 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             options.add(trxLine);
         }
 
+        // Summary line for personally charged delegators.
         if (totIndividualDelegators > 0) {
 
             final TrxLine values = getPersonCatOptions(
                     PrintOutAdjectiveEnum.PERSONAL.uiText(getLocale()),
-                    totIndividualDelegators, totIndividualDelegatorsWeight,
+                    totIndividualDelegators, totIndividualDelegatorsCopies,
                     totIndividualCost, currencySymbolWlk, currencyDecimals,
                     options.size() > 1 || totIndividualDelegators > 1);
 
             options.add(values);
         }
 
+        // Summary line for personally refunded delegators.
         if (totIndividualDelegatorsRefund > 0) {
 
             final TrxLine values = getPersonCatOptions(
                     PrintOutAdjectiveEnum.PERSONAL.uiText(getLocale()),
                     totIndividualDelegatorsRefund,
-                    totIndividualDelegatorsWeightRefund,
+                    totIndividualDelegatorsCopiesRefund,
                     totIndividualCostRefund, currencySymbolWlk,
                     currencyDecimals,
                     options.size() > 1 || totIndividualDelegatorsRefund > 1);
@@ -451,7 +502,7 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
      *            The name.
      * @param totDelegators
      *            Number of delegators.
-     * @param totDelegatorsWeight
+     * @param totDelegatorsCopies
      *            Number of copies.
      * @param totCost
      *            Cost.
@@ -464,7 +515,7 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
      * @return The line.
      */
     private TrxLine getPersonCatOptions(final String uiName,
-            final int totDelegators, final int totDelegatorsWeight,
+            final int totDelegators, final BigDecimal totDelegatorsCopies,
             final BigDecimal totCost, final String currencySymbolWlk,
             final int currencyDecimals, final boolean showTotDelegators) {
 
@@ -483,11 +534,11 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                 BigDecimalUtil.localizeUc(totCost, currencyDecimals,
                         getSession().getLocale(), true));
 
+        trxLine.copies = totDelegatorsCopies.setScale(0, RoundingMode.HALF_EVEN)
+                .toPlainString();
+
         if (totCost.compareTo(BigDecimal.ZERO) == 1) {
-            trxLine.copies = String.valueOf(-totDelegatorsWeight);
             trxLine.remark = NounEnum.REFUND.uiText(getLocale()).toLowerCase();
-        } else {
-            trxLine.copies = String.valueOf(totDelegatorsWeight);
         }
 
         return trxLine;

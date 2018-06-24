@@ -22,6 +22,7 @@
 package org.savapage.server.pages;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
@@ -36,8 +37,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
@@ -184,12 +185,28 @@ public class DocLogItemPanel extends Panel {
             final String currencySymbol = CurrencyUtil
                     .getCurrencySymbol(obj.getCurrencyCode(), getLocale());
 
-            int totWeightDelegators = 0;
+            BigDecimal totCopiesDelegators = BigDecimal.ZERO;
             int copiesDelegatorsImplicit = 0;
+
+            final BigDecimal costPerCopy =
+                    ACCOUNTING_SERVICE.calcCostPerPrintedCopy(
+                            obj.getCostOriginal().negate(), obj.getCopies());
 
             for (final AccountTrx trx : obj.getTransactions()) {
 
                 final Account account = trx.getAccount();
+
+                final boolean isRefund =
+                        trx.getAmount().compareTo(BigDecimal.ZERO) == 1;
+
+                final BigDecimal trxCopies;
+
+                if (costPerCopy.compareTo(BigDecimal.ZERO) != 0) {
+                    trxCopies = ACCOUNTING_SERVICE
+                            .calcPrintedCopies(trx.getAmount(), costPerCopy, 2);
+                } else {
+                    trxCopies = BigDecimal.valueOf(trx.getTransactionWeight());
+                }
 
                 final AccountTypeEnum accountType =
                         AccountTypeEnum.valueOf(account.getAccountType());
@@ -197,17 +214,12 @@ public class DocLogItemPanel extends Panel {
                 if (accountType != AccountTypeEnum.SHARED
                         && accountType != AccountTypeEnum.GROUP) {
 
-                    final boolean isRefund =
-                            trx.getAmount().compareTo(BigDecimal.ZERO) == 1;
                     if (!isRefund) {
-                        totWeightDelegators +=
-                                trx.getTransactionWeight().intValue();
+                        totCopiesDelegators =
+                                totCopiesDelegators.add(trxCopies);
                     }
                     continue;
                 }
-
-                copiesDelegatorsImplicit +=
-                        trx.getTransactionWeight().intValue();
 
                 final Account accountParent = account.getParent();
 
@@ -220,12 +232,16 @@ public class DocLogItemPanel extends Panel {
                 sbAccTrx.append(account.getName());
 
                 if (trx.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+
                     sbAccTrx.append(" ").append(currencySymbol).append("&nbsp;")
                             .append(localizedDecimal(trx.getAmount()));
+
+                    sbAccTrx.append("&nbsp;(").append(
+                            trxCopies.setScale(0, RoundingMode.HALF_EVEN))
+                            .append(')');
                 }
 
-                sbAccTrx.append("&nbsp;(").append(trx.getTransactionWeight())
-                        .append(')');
+                copiesDelegatorsImplicit += trxCopies.intValue();
             }
 
             final int copiesDelegatorsIndividual =
@@ -235,7 +251,7 @@ public class DocLogItemPanel extends Panel {
 
                 final BigDecimal amount = ACCOUNTING_SERVICE.calcWeightedAmount(
                         obj.getCost(), obj.getCopies(),
-                        copiesDelegatorsIndividual, this.scale);
+                        copiesDelegatorsIndividual, 1, this.scale);
 
                 if (amount.compareTo(BigDecimal.ZERO) != 0) {
                     sbAccTrx.append(" &bull; ").append(currencySymbol)
@@ -246,10 +262,12 @@ public class DocLogItemPanel extends Panel {
                 }
             }
 
-            if (isExtSupplier && totWeightDelegators > 0) {
+            if (isExtSupplier
+                    && totCopiesDelegators.compareTo(BigDecimal.ZERO) != 0) {
                 sbAccTrx.append(" &bull; ");
-                sbAccTrx.append(localized("delegators")).append(" (")
-                        .append(totWeightDelegators).append(")");
+                sbAccTrx.append(localized("delegators")).append(" (").append(
+                        totCopiesDelegators.setScale(0, RoundingMode.HALF_EVEN))
+                        .append(")");
             }
 
             // When no text accumulated, this must be a charge to personal

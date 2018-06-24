@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -65,12 +66,26 @@ public final class DocLogAccountTrxAddin extends AbstractAccountTrxAddin {
         final DocLog docLog = this.getDocLog();
         final List<AccountTrx> trxList;
 
+        final BigDecimal totalAmount;
+        final int totalCopies;
+
         if (docLog == null) {
             trxList = null;
+            totalCopies = 0;
+            totalAmount = BigDecimal.ZERO;
         } else {
             trxList = docLog.getTransactions();
+            totalAmount = docLog.getCostOriginal();
+            if (docLog.getDocOut() != null
+                    && docLog.getDocOut().getPrintOut() != null) {
+                totalCopies =
+                        docLog.getDocOut().getPrintOut().getNumberOfCopies();
+            } else {
+                totalCopies = 1;
+            }
         }
-        populate(trxList);
+
+        populate(totalAmount, totalCopies, trxList);
     }
 
 }

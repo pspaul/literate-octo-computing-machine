@@ -4,7 +4,7 @@
 	<!-- 
     +====================================================================+ 
     | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -241,14 +241,53 @@
 		</div>
 	</wicket:enclosure>
 
-	<div style="float: left;">
+	<div style="float: left; padding-left: 5px;">
+
 		<button id="sp-print-delegation-button-add"
 			class="sp-print-delegation-mode-add ui-btn ui-btn-inline ui-icon-mini-selected-green ui-btn-icon-left">
 			<wicket:message key="button-add" />
 		</button>
+
+		<wicket:enclosure child="button-add-popup">
+
+			<button id="sp-print-delegation-button-add-popup"
+				wicket:id="button-add-popup" data-rel="popup"
+				class="sp-print-delegation-mode-add ui-btn ui-btn-inline ui-no-icon" />
+
+			<div data-role="popup" data-position-to="window"
+				id="sp-print-delegation-popup-add-group-copies" data-overlay-theme="a"
+				data-theme="a" data-dismissible="true" data-arrow="t">
+				    
+				<div class="ui-content" style="max-width: 300px;">
+
+					<fieldset data-role="controlgroup" data-type="horizontal">
+						<wicket:message key="sp-prompt-group-copies" />
+						<p>
+							<small><wicket:message key="sp-prompt-group-copies-extra" /></small>
+						</p>
+						<div style="display: inline-block; max-width: 70px;">
+							<input type="number" id="sp-print-delegation-popup-copies-to-add"
+								value="1" min="1" />
+						</div>
+					</fieldset>
+
+					<button id="sp-print-delegation-btn-add-group-copies"
+						class="ui-mini ui-btn ui-btn-inline ui-icon-mini-selected-green ui-btn-icon-left">
+						<wicket:message key="button-add" />
+					</button>
+
+					<a href="#" class="ui-mini ui-btn ui-btn-inline" data-rel="back"
+						wicket:id="button-popup-cancel" />
+
+				</div>
+			</div>
+
+		</wicket:enclosure>
+
 	</div>
 
 </div>
+
 
 <wicket:remove>
 	<!-- 
