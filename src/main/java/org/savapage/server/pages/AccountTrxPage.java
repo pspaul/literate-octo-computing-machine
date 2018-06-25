@@ -347,9 +347,8 @@ public final class AccountTrxPage extends AbstractListPage {
                         .setScale(0, RoundingMode.HALF_UP).intValue();
 
                 //
-                final int nSheets =
-                        nCopies * printOut.getNumberOfSheets().intValue()
-                                / printOut.getNumberOfCopies().intValue();
+                final int nSheets = printOut.getNumberOfSheets().intValue()
+                        / printOut.getNumberOfCopies().intValue();
 
                 helper.encloseLabel("printOutCopies", String.format("%s %s",
                         localeHelper.asExactIntegerOrScaled(printedCopies),

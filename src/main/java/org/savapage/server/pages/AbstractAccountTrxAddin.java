@@ -200,9 +200,8 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             details.append(entry.getKey()).append(" (");
 
             if (item.copiesDecimal.compareTo(BigDecimal.ZERO) != 0) {
-                details.append(
-                        localeHelper
-                                .asExactIntegerOrScaled(item.copiesDecimal));
+                details.append(localeHelper
+                        .asExactIntegerOrScaled(item.copiesDecimal));
                 totCopiesDecimal = totCopiesDecimal.add(item.copiesDecimal);
             }
 
@@ -223,18 +222,28 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                     NounEnum.DELEGATOR.uiText(getLocale(), true).toLowerCase())
                     .append(" (");
 
+            boolean copiesPlural = false;
+
             if (totCopiesDecimal.compareTo(BigDecimal.ZERO) != 0) {
-                pfx.append(
-                        totCopiesDecimal.setScale(0, RoundingMode.HALF_DOWN));
+                final BigDecimal bd =
+                        totCopiesDecimal.setScale(0, RoundingMode.HALF_DOWN);
+                pfx.append(bd);
+                if (bd.compareTo(BigDecimal.ONE) == 1) {
+                    copiesPlural = true;
+                }
             }
 
             if (totCopiesRefundDecimal.compareTo(BigDecimal.ZERO) != 0) {
-                pfx.append(totCopiesRefundDecimal.setScale(0,
-                        RoundingMode.HALF_DOWN));
+                final BigDecimal bd = totCopiesRefundDecimal.setScale(0,
+                        RoundingMode.HALF_DOWN);
+                pfx.append(bd);
+                if (bd.abs().compareTo(BigDecimal.ONE) == 1) {
+                    copiesPlural = true;
+                }
             }
 
             pfx.append(" ").append(PrintOutNounEnum.COPY
-                    .uiText(getLocale(), true).toLowerCase());
+                    .uiText(getLocale(), copiesPlural).toLowerCase());
             pfx.append(") : ");
         }
 
