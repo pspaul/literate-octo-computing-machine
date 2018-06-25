@@ -1008,7 +1008,7 @@ public class OutboxAddin extends AbstractUserPage {
             }
 
             final BigDecimal weightCopies = ACCOUNTING_SERVICE
-                    .calcPrintedCopies(costTotal, costPerCopy, 0);
+                    .calcPrintedCopies(weightedCost, costPerCopy, 0);
 
             sbAccTrx.append("&nbsp;(").append(weightCopies).append(')');
         }
