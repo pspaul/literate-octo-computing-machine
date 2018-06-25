@@ -570,6 +570,20 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     private static boolean theIsInitialized = false;
 
     /**
+     * {@code true} if {@link WebApp} encountered a fatal error at
+     * initialization.
+     */
+    private static boolean initializeError = false;
+
+    /**
+     * @return {@code true} if {@link WebApp} encountered a fatal error at
+     *         initialization.
+     */
+    public static boolean hasInitializeError() {
+        return initializeError;
+    }
+
+    /**
      * Initializes the WepApp.
      * <p>
      * Mounts (bookmarkable) page classes to a given path.
@@ -876,7 +890,13 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
         synchronized (this) {
             if (!theIsInitialized) {
                 theIsInitialized = true;
-                myInitialize();
+                try {
+                    myInitialize();
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                    LOGGER.error(e.getMessage());
+                    initializeError = true;
+                }
             }
         }
     }

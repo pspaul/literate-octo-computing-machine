@@ -710,9 +710,14 @@ public final class WebServer {
                     .addShutdownHook(new WebServerShutdownHook(server));
 
             /*
-             * Start the server
+             * Start the server: WebApp is initialized.
              */
             server.start();
+
+            if (WebApp.hasInitializeError()) {
+                System.exit(1);
+                return;
+            }
 
             if (!fDevelopment) {
                 server.join();
