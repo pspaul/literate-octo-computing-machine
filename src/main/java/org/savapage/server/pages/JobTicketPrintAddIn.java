@@ -487,6 +487,8 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
         final TicketJobSheetDto jobSheetDto;
         final List<RedirectPrinterDto> printerList;
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
         if (StringUtils.isBlank(jobFileName)) {
 
             setResponsePage(new MessageContent(AppLogLevelEnum.ERROR, String
@@ -498,14 +500,18 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
 
             final OutboxJobDto job = JOBTICKET_SERVICE.getTicket(jobFileName);
 
+            if (job == null) {
+                setResponsePage(JobTicketNotFound.class);
+                helper.discloseLabel("printer-radio");
+                return;
+            }
+
             jobSheetDto = JOBTICKET_SERVICE
                     .getTicketJobSheet(job.createIppOptionMap());
 
             printerList = JOBTICKET_SERVICE.getRedirectPrinters(job,
                     IppOptionMap.createVoid(), getLocale());
         }
-
-        final MarkupHelper helper = new MarkupHelper(this);
 
         if (printerList == null) {
             setResponsePage(JobTicketNotFound.class);
