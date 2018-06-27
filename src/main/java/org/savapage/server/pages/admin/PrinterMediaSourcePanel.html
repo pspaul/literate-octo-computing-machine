@@ -41,14 +41,19 @@
 			</wicket:enclosure>
 
 			<tr>
-				<th>Source</th>
+				<th>
+					<wicket:message key="media-source-short" />
+				</th>
 				<th colspan="2">
 					<span wicket:id="th-one-sided" />
 					<wicket:message key="one-sided" />
 				</th>
 				<th colspan="2">
 					<span wicket:id="th-two-sided" />
-					<wicket:message key="two-sided" />
+					<!--  -->
+					<span wicket:id="th-two-sided-txt"> <wicket:message
+							key="two-sided" />
+					</span>
 				</th>
 			</tr>
 			<tr>
@@ -59,15 +64,23 @@
 				</th>
 				<th data-priority="1">
 					<span wicket:id="th-color-1" />
-					<wicket:message key="color" />
+					<!--  -->
+					<span wicket:id="th-color-1-txt"> <wicket:message
+							key="color" />
+					</span>
 				</th>
 				<th data-priority="2">
 					<span wicket:id="th-grayscale-2" />
-					<wicket:message key="grayscale" />
+					<!--  -->
+					<span wicket:id="th-grayscale-2-txt"> <wicket:message
+							key="grayscale" /></span>
 				</th>
 				<th data-priority="2">
 					<span wicket:id="th-color-2" />
-					<wicket:message key="color" />
+					<!--  -->
+					<span wicket:id="th-color-2-txt"> <wicket:message
+							key="color" />
+					</span>
 				</th>
 			</tr>
 		</thead>

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -102,10 +102,12 @@ public final class PrinterMediaSourcePanel extends Panel {
             final Label label =
                     new Label("media-source-media", dto.getUiText());
 
-            label.add(new AttributeModifier("value", dto.getChoice()));
+            label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                    dto.getChoice()));
 
             if (dto.getChoice().equals(this.media)) {
-                label.add(new AttributeModifier("selected", "selected"));
+                label.add(new AttributeModifier(MarkupHelper.ATTR_SELECTED,
+                        MarkupHelper.ATTR_SELECTED));
             }
 
             item.add(label);
@@ -181,13 +183,13 @@ public final class PrinterMediaSourcePanel extends Panel {
 
             Label labelWrk = new Label(wicketId, "");
 
-            labelWrk.add(new AttributeModifier("value", cost));
-            labelWrk.add(new AttributeModifier("maxlength", "10"));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_VALUE, cost));
+            labelWrk.add(
+                    new AttributeModifier(MarkupHelper.ATTR_MAXLENGTH, "10"));
 
             if (!isActive) {
-                // /labelWrk.add(new AttributeModifier("style",
-                // "display:none"));
-                labelWrk.add(new AttributeModifier("disabled", "disabled"));
+                labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DISABLED,
+                        MarkupHelper.ATTR_DISABLED));
             }
 
             item.add(labelWrk);
@@ -219,7 +221,7 @@ public final class PrinterMediaSourcePanel extends Panel {
             String mediaMnemonic = dto.getSource();
 
             labelWrk = new Label("media-source-checkbox-label", mediaMnemonic);
-            labelWrk.add(new AttributeModifier("for", htmlId));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_FOR, htmlId));
             item.add(labelWrk);
 
             /*
@@ -252,7 +254,8 @@ public final class PrinterMediaSourcePanel extends Panel {
              */
             labelWrk = new Label("media-source-display-name", "");
 
-            labelWrk.add(new AttributeModifier("value", dto.getDisplay()));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                    dto.getDisplay()));
 
             item.add(labelWrk);
         }
@@ -351,14 +354,14 @@ public final class PrinterMediaSourcePanel extends Panel {
 
             labelWrk = new Label("media-source-checkbox-manual-label",
                     mediaMnemonic);
-            labelWrk.add(new AttributeModifier("for", htmlId));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_FOR, htmlId));
             add(labelWrk);
 
             // display
             labelWrk = helper.encloseLabel("media-source-manual-display-name",
                     "", true);
-            labelWrk.add(
-                    new AttributeModifier("value", dtoManual.getDisplay()));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                    dtoManual.getDisplay()));
 
         } else {
             helper.discloseLabel("media-source-manual-display-name");
@@ -423,6 +426,11 @@ public final class PrinterMediaSourcePanel extends Panel {
         add(new Label("th-one-sided", oneSidedMark));
         add(new Label("th-two-sided", twoSidedMark));
 
+        helper.addTransparantDisabled("th-two-sided-txt", !isDuplexPrinter);
+        helper.addTransparantDisabled("th-color-1-txt", !isColorPrinter);
+        helper.addTransparantDisabled("th-color-2-txt", !isColorPrinter);
+        helper.addTransparantDisabled("th-grayscale-2-txt", !isDuplexPrinter);
+
         final String[] markerLabels = { "th-grayscale-1", "th-color-1",
                 "th-grayscale-2", "th-color-2" };
 
@@ -455,7 +463,8 @@ public final class PrinterMediaSourcePanel extends Panel {
 
             if (colorModeDefault != null && colorModeDefault
                     .equalsIgnoreCase(IppKeyword.PRINT_COLOR_MODE_MONOCHROME)) {
-                labelWrk.add(new AttributeModifier("checked", "checked"));
+                labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CHECKED,
+                        MarkupHelper.ATTR_CHECKED));
             }
         }
 
@@ -473,7 +482,8 @@ public final class PrinterMediaSourcePanel extends Panel {
         // Checked?
         if (isColorPrinter && printer.getAttributes() != null) {
             if (PRINTER_SERVICE.isClientSideMonochrome(printer)) {
-                labelWrk.add(new AttributeModifier("checked", "checked"));
+                labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CHECKED,
+                        MarkupHelper.ATTR_CHECKED));
             }
         }
 

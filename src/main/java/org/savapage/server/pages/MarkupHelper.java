@@ -60,6 +60,7 @@ import org.savapage.server.helpers.HtmlButtonEnum;
 public final class MarkupHelper {
 
     public static final String ATTR_CHECKED = "checked";
+    public static final String ATTR_SELECTED = "selected";
     public static final String ATTR_DISABLED = "disabled";
     public static final String ATTR_ID = "id";
     public static final String ATTR_FOR = "for";
@@ -72,6 +73,7 @@ public final class MarkupHelper {
     public static final String ATTR_VALUE = "value";
     public static final String ATTR_SLIDER_MIN = "min";
     public static final String ATTR_SLIDER_MAX = "max";
+    public static final String ATTR_MAXLENGTH = "maxlength";
 
     public static final String ATTR_DATA_JQM_DATA_ON_TEXT = "data-on-text";
     public static final String ATTR_DATA_JQM_DATA_OFF_TEXT = "data-off-text";
