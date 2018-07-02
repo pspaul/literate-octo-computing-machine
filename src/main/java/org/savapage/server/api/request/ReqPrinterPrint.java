@@ -653,17 +653,18 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final boolean isNonSecureProxyPrint = dtoReq.getReaderName() == null;
         final boolean isExtPaperCutPrint;
 
-        if (isNonSecureProxyPrint
-                && (isDelegatedPrint || isSharedAccountPrint)) {
-            /*
-             * PaperCut integration enable + PaperCut Managed Printer AND
-             * Delegated Print integration with PaperCut?
-             */
-            isExtPaperCutPrint = PAPERCUT_SERVICE
-                    .isExtPaperCutPrint(printer.getPrinterName())
-                    && cm.isConfigValue(
+        if (isNonSecureProxyPrint) {
+            if (PAPERCUT_SERVICE.isExtPaperCutPrint(printer.getPrinterName())) {
+                if (isDelegatedPrint || isSharedAccountPrint) {
+                    isExtPaperCutPrint = cm.isConfigValue(
                             Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
-
+                } else {
+                    isExtPaperCutPrint = cm.isConfigValue(
+                            Key.PROXY_PRINT_PERSONAL_PAPERCUT_ENABLE);
+                }
+            } else {
+                isExtPaperCutPrint = false;
+            }
         } else {
             isExtPaperCutPrint = false;
         }
@@ -1609,22 +1610,24 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             usersNotFound.add(requestingUser);
         }
 
-        for (final AccountTrxInfo info : infoSet.getAccountTrxInfoList()) {
-            final AccountTypeEnum accountType = EnumUtils.getEnum(
-                    AccountTypeEnum.class, info.getAccount().getAccountType());
+        if (infoSet != null) {
+            for (final AccountTrxInfo info : infoSet.getAccountTrxInfoList()) {
+                final AccountTypeEnum accountType =
+                        EnumUtils.getEnum(AccountTypeEnum.class,
+                                info.getAccount().getAccountType());
 
-            if (accountType == AccountTypeEnum.GROUP
-                    || accountType == AccountTypeEnum.SHARED) {
-                continue;
-            }
+                if (accountType == AccountTypeEnum.GROUP
+                        || accountType == AccountTypeEnum.SHARED) {
+                    continue;
+                }
 
-            final String userId = info.getAccount().getNameLower();
+                final String userId = info.getAccount().getNameLower();
 
-            if (PAPERCUT_SERVICE.findUser(serverProxy, userId) == null) {
-                usersNotFound.add(userId);
+                if (PAPERCUT_SERVICE.findUser(serverProxy, userId) == null) {
+                    usersNotFound.add(userId);
+                }
             }
         }
-
         return usersNotFound;
     }
 
