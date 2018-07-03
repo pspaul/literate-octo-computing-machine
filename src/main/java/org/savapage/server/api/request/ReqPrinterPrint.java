@@ -655,11 +655,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         if (isNonSecureProxyPrint) {
             if (PAPERCUT_SERVICE.isExtPaperCutPrint(printer.getPrinterName())) {
+                final boolean monitorPaperCut = cm.isConfigValue(
+                        Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
                 if (isDelegatedPrint || isSharedAccountPrint) {
-                    isExtPaperCutPrint = cm.isConfigValue(
-                            Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
+                    isExtPaperCutPrint = monitorPaperCut;
                 } else {
-                    isExtPaperCutPrint = cm.isConfigValue(
+                    isExtPaperCutPrint = monitorPaperCut || cm.isConfigValue(
                             Key.PROXY_PRINT_PERSONAL_PAPERCUT_ENABLE);
                 }
             } else {

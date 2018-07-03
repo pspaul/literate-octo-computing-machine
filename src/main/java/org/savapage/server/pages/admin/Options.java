@@ -854,8 +854,12 @@ public final class Options extends AbstractAdminPage {
         labelledCheckbox("proxyprint-delegate-enable",
                 IConfigProp.Key.PROXY_PRINT_DELEGATE_ENABLE);
 
+        // PaperCut Integration
         labelledCheckbox("proxyprint-delegate-papercut-enable",
                 IConfigProp.Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
+
+        labelledCheckbox("proxyprint-personal-papercut-enable",
+                IConfigProp.Key.PROXY_PRINT_PERSONAL_PAPERCUT_ENABLE);
 
         /*
          * xpstopdf
