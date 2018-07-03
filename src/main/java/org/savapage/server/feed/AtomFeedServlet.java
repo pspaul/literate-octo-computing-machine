@@ -24,16 +24,12 @@ package org.savapage.server.feed;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.security.Principal;
-import java.util.Base64;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.HttpConstraint;
 import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.ServletSecurity.TransportGuarantee;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,8 +40,7 @@ import org.savapage.core.services.AtomFeedService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.lib.feed.AtomFeedWriter;
 import org.savapage.lib.feed.FeedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.savapage.server.BasicAuthServlet;
 
 /**
  * Atom Feed.
@@ -58,14 +53,10 @@ import org.slf4j.LoggerFactory;
 @ServletSecurity(@HttpConstraint(
         transportGuarantee = TransportGuarantee.CONFIDENTIAL,
         rolesAllowed = { AtomFeedServlet.ROLE_ALLOWED }))
-public final class AtomFeedServlet extends HttpServlet {
+public final class AtomFeedServlet extends BasicAuthServlet {
 
     /** */
     private static final long serialVersionUID = 1L;
-
-    /** */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(AtomFeedServlet.class);
 
     /**
      * Role for Basic Authentication.
@@ -107,7 +98,7 @@ public final class AtomFeedServlet extends HttpServlet {
             return;
         }
 
-        if (!checkCredentials(request)) {
+        if (!checkBasicAuthAccess(request)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -131,59 +122,20 @@ public final class AtomFeedServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Checks credentials acquired from Basic Authentication.
-     *
-     * @param request
-     *            The HTTP request.
-     * @return {@code true} when credentials are valid.
-     */
-    public boolean checkCredentials(final HttpServletRequest request) {
+    @Override
+    protected boolean isBasicAuthValid(final String username, final String pw) {
 
-        if (LOGGER.isDebugEnabled()) {
+        final ConfigManager cm = ConfigManager.instance();
 
-            final Principal principal = request.getUserPrincipal();
-            if (principal == null) {
-                return false;
-            }
-            LOGGER.debug("User [{}]", principal.getName());
-        }
+        return StringUtils.isNotBlank(username) && StringUtils.isNotBlank(pw)
+                && cm.getConfigValue(Key.FEED_ATOM_ADMIN_USERNAME)
+                        .equals(username)
+                && cm.getConfigValue(Key.FEED_ATOM_ADMIN_PASSWORD).equals(pw);
+    }
 
-        final String authorization = request.getHeader("Authorization");
-
-        if (authorization != null
-                && request.getAuthType().equalsIgnoreCase("Basic")) {
-
-            /*
-             * Authorization: Basic base64credentials
-             */
-            final String base64Credentials =
-                    authorization.substring("Basic".length()).trim();
-            final String credentials =
-                    new String(Base64.getDecoder().decode(base64Credentials),
-                            Charset.forName("UTF-8"));
-
-            /*
-             * credentials = username:password
-             */
-            final String[] values = credentials.split(":", 2);
-
-            if (values.length != 2) {
-                return false;
-            }
-
-            final ConfigManager cm = ConfigManager.instance();
-
-            final String uid = values[0];
-            final String pw = values[1];
-
-            return StringUtils.isNotBlank(uid) && StringUtils.isNotBlank(pw)
-                    && cm.getConfigValue(Key.FEED_ATOM_ADMIN_USERNAME)
-                            .equals(uid)
-                    && cm.getConfigValue(Key.FEED_ATOM_ADMIN_PASSWORD)
-                            .equals(pw);
-        }
-        return false;
+    @Override
+    protected boolean isRemoteAddrAllowed(final String remoteAddr) {
+        return true;
     }
 
 }

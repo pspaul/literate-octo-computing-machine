@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.feed;
+package org.savapage.server;
 
 import java.security.Principal;
 
@@ -34,19 +34,17 @@ import org.eclipse.jetty.server.UserIdentity;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
 /**
- * LoginService that assigns {@link AtomFeedServlet#ROLE_ALLOWED} and validates
- * true for <b>all</b> users. User authentication is done in
- * {@link AtomFeedServlet}.
+ * LoginService that assigns allowed user roles and validates true for
+ * <b>all</b> users. User authentication is done in {@link BasicAuthServlet}.
  *
  * @author Rijk Ravestein
  *
  */
-public final class AtomFeedLoginService extends AbstractLifeCycle
+public final class BasicAuthLoginService extends AbstractLifeCycle
         implements LoginService {
 
     /** */
-    private static final String[] ROLES_ALLOWED =
-            new String[] { AtomFeedServlet.ROLE_ALLOWED };
+    private final String[] rolesAllowed;
 
     /**
      * Name of the login service (aka Realm name).
@@ -59,8 +57,9 @@ public final class AtomFeedLoginService extends AbstractLifeCycle
     /**
      *
      */
-    public AtomFeedLoginService() {
+    public BasicAuthLoginService(final String[] allowedRoles) {
         this.realmName = this.getClass().getSimpleName();
+        this.rolesAllowed = allowedRoles;
     }
 
     @Override
@@ -84,7 +83,7 @@ public final class AtomFeedLoginService extends AbstractLifeCycle
         final Subject subject = new Subject();
         subject.getPrincipals().add(principal);
 
-        return new DefaultUserIdentity(subject, principal, ROLES_ALLOWED);
+        return new DefaultUserIdentity(subject, principal, this.rolesAllowed);
     }
 
     @Override
