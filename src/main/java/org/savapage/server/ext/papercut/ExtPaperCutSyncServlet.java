@@ -195,17 +195,17 @@ public final class ExtPaperCutSyncServlet extends BasicAuthServlet {
 
             if (!onUserSyncGetUserDetails(request.getParameter(PARM_USERNAME),
                     response.getOutputStream())) {
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
 
         } else if (pathInfo.equals(PATH_INFO_USER_SYNC_GROUP_MEMBER_NAMES)
                 || pathInfo.equals(PATH_INFO_USER_SYNC_GROUP_MEMBERS)) {
 
-            if (!onUserSyncGroupMemberNames(
-                    request.getParameter(PARM_GROUPNAME),
-                    response.getOutputStream())) {
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-            }
+            /*
+             * Accept when group is not found (do not set SC_NOT_FOUND).
+             */
+            onUserSyncGroupMemberNames(request.getParameter(PARM_GROUPNAME),
+                    response.getOutputStream());
 
         } else if (pathInfo.equals(PATH_INFO_USER_SYNC_IS_USER_IN_GROUP)) {
 
@@ -301,7 +301,7 @@ public final class ExtPaperCutSyncServlet extends BasicAuthServlet {
             final OutputStream ostr) throws IOException {
 
         ostr.write(String
-                .format("%s\t%s\t%s\t%s\t%s\t%s\n ", user.getUserId(),
+                .format("%s\t%s\t%s\t%s\t%s\t%s\n", user.getUserId(),
                         StringUtils.defaultString(user.getFullName()),
                         StringUtils.defaultString(
                                 USER_SERVICE.getPrimaryEmailAddress(user)),
@@ -310,7 +310,6 @@ public final class ExtPaperCutSyncServlet extends BasicAuthServlet {
                         StringUtils.defaultString(
                                 USER_SERVICE.getPrimaryCardNumber(user)))
                 .getBytes());
-
     }
 
     /**
