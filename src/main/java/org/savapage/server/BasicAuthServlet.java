@@ -75,7 +75,7 @@ public abstract class BasicAuthServlet extends HttpServlet {
             checkBasicAuthAccess(final HttpServletRequest request) {
 
         if (!isRemoteAddrAllowed(request.getRemoteAddr())) {
-            LOGGER.warn("{}: {} is denied.", this.getClass().getSimpleName(),
+            LOGGER.warn("{}: {} denied.", this.getClass().getSimpleName(),
                     request.getRemoteAddr());
             return false;
         }
@@ -115,7 +115,14 @@ public abstract class BasicAuthServlet extends HttpServlet {
             final String uid = values[0];
             final String pw = values[1];
 
-            return isBasicAuthValid(uid, pw);
+            boolean isValid = isBasicAuthValid(uid, pw);
+
+            if (!isValid) {
+                LOGGER.warn("{}: {} denied (userid/password).",
+                        this.getClass().getSimpleName(),
+                        request.getRemoteAddr());
+            }
+            return isValid;
         }
         return false;
     }
