@@ -68,7 +68,6 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
-import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.WebApp;
@@ -250,7 +249,7 @@ public final class PrintersPage extends AbstractAdminListPage {
          * @param isEditor
          */
         public PrintersListView(final String id, final List<Printer> entryList,
-                final boolean isEditor) {
+                final boolean isEditor, final boolean showCupsBtn) {
 
             super(id, entryList);
 
@@ -261,8 +260,7 @@ public final class PrintersPage extends AbstractAdminListPage {
             this.showSnmp = ConfigManager.instance()
                     .isConfigValue(Key.PRINTER_SNMP_ENABLE);
 
-            this.showCups = InetUtils.isIntranetBrowserHost(
-                    this.getRequest().getClientUrl().getHost());
+            this.showCups = showCupsBtn;
         }
 
         private String getProxyPrintAuthMode(final Device device) {
@@ -842,7 +840,8 @@ public final class PrintersPage extends AbstractAdminListPage {
                 PrinterDao.Field.DISPLAY_NAME, req.getSort().getAscending());
 
         add(new PrintersListView("printers-view", entryList,
-                this.probePermissionToEdit(ACLOidEnum.A_PRINTERS)));
+                this.probePermissionToEdit(ACLOidEnum.A_PRINTERS),
+                this.isIntranetRequest()));
 
         /*
          * Display the navigation bars and write the response.

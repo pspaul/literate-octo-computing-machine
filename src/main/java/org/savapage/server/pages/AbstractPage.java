@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,9 +35,11 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.PerformanceLogger;
+import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.enums.ACLOidEnum;
@@ -46,6 +48,7 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
+import org.savapage.core.util.InetUtils;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -655,6 +658,20 @@ public abstract class AbstractPage extends WebPage
             labelWrk.add(new AttributeModifier("checked", "checked"));
         }
         add(labelWrk);
+    }
+
+    /**
+     * @return {@code true} when this request is from an intranet host and not
+     *         SSL-tunneled.
+     */
+    protected final boolean isIntranetRequest() {
+
+        final Url url = getRequestCycle().getRequest().getClientUrl();
+        final String port = url.getPort().toString();
+
+        return InetUtils.isIntranetBrowserHost(url.getHost())
+                && (port.equals(ConfigManager.getServerSslPort())
+                        || port.equals(ConfigManager.getServerPort()));
     }
 
 }

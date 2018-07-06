@@ -29,7 +29,6 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.util.InetUtils;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -75,8 +74,7 @@ public final class PrintersBase extends AbstractAdminPage {
             helper.addTransparant(WICKET_ID_BUTTON_BAR);
             helper.addButton(WICKET_ID_BUTTON_SYNC, HtmlButtonEnum.SYNCHRONIZE);
 
-            final boolean linkCUPS = InetUtils.isIntranetBrowserHost(
-                    this.getRequest().getClientUrl().getHost());
+            final boolean linkCUPS = this.isIntranetRequest();
 
             final Label label = helper.encloseLabel(WICKET_ID_BUTTON_CUPS,
                     "CUPS", linkCUPS);
