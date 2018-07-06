@@ -613,11 +613,11 @@ public final class SystemStatusPanel extends Panel {
 
         //
         if (memberCard.getDaysTillExpiry() != null) {
-            final long daysLeft = memberCard.getDaysTillExpiry().longValue();
-            if (daysLeft <= MemberCard.DAYS_WARN_BEFORE_EXPIRE) {
+            enclosedValue = helper.localizedNumber(
+                    memberCard.getDaysTillExpiry().longValue());
+            if (memberCard.isDaysTillExpiryWarning()) {
                 cssColor = MarkupHelper.CSS_TXT_WARN;
             }
-            enclosedValue = helper.localizedNumber(daysLeft);
         }
         labelWrk = MarkupHelper.createEncloseLabel(
                 "membership-valid-days-remaining", enclosedValue,
