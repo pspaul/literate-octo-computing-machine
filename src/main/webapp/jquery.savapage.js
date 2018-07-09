@@ -2827,6 +2827,13 @@
             };
 
             /**
+             * Select first option.
+             */
+            this.setSelectedFirst = function(sel) {
+                this.setSelectedValue(sel, sel.find("option:first").val());
+            };
+
+            /**
              * Get array with JQM selected values from (multiple) "select"
              * element.
              */

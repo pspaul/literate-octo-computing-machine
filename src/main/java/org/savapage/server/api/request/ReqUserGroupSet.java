@@ -246,7 +246,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
                 dtoReq.getAclOidsAdminReader(), dtoReq.getAclOidsAdminEditor(),
                 userGroup, UserGroupAttrEnum.ACL_OIDS_ADMIN);
 
-        ReservedUserGroupEnum reservedGroup =
+        final ReservedUserGroupEnum reservedGroup =
                 ReservedUserGroupEnum.fromDbName(userGroup.getGroupName());
 
         if (reservedGroup == ReservedUserGroupEnum.ALL) {
@@ -346,9 +346,12 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
      * Creates, updates or deletes the ACL Privileges.
      *
      * @param aclOids
-     *            The ACL list.
+     *            The map of {@link ACLOidEnum} keys with their
+     *            {@link ACLPermissionEnum}.
+     * @param aclOidsReader
+     * @param aclOidsEditor
      * @param userGroup
-     *            The user group.
+     *            The user group to update.
      * @param attrEnum
      *            The attribute type.
      * @throws IOException

@@ -155,9 +155,11 @@
 
 					<select data-mini="true" id="sp-jobticket-tag-list">
 						<option value="" wicket:id="jobticket-tag-option-select" />
-						<wicket:panel wicket:id="jobticket-tag-option">
-							<option value="the-key" wicket:id="option"></option>
-						</wicket:panel>
+						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+							<wicket:panel wicket:id="jobticket-tag-option">
+								<option value="the-key" wicket:id="option"></option>
+							</wicket:panel>
+						</optgroup>
 					</select>
 				</div>
 			</wicket:enclosure>
@@ -171,13 +173,26 @@
 
 					<select data-mini="true" id="sp-print-shared-account-list"
 						data-native-menu=true>
-						<option value="0" selected><wicket:message
-								key="account-type-personal" /></option>
-						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
-							<wicket:panel wicket:id="print-shared-account-option">
-								<option value="the-key" wicket:id="option"></option>
-							</wicket:panel>
-						</optgroup>
+
+						<wicket:enclosure child="print-account-type-personal">
+							<option value="0" selected
+								wicket:id="print-account-type-personal" />
+							<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+								<wicket:panel wicket:id="print-shared-account-option-extra">
+									<option value="the-key" wicket:id="option-extra" />
+								</wicket:panel>
+							</optgroup>
+						</wicket:enclosure>
+
+						<wicket:enclosure child="print-shared-account-option-only">
+							<option value="-1" wicket:id="btn-select-shared-account" />
+							<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+								<wicket:panel wicket:id="print-shared-account-option-only">
+									<option value="the-key" wicket:id="option-only" />
+								</wicket:panel>
+							</optgroup>
+						</wicket:enclosure>
+
 					</select>
 
 				</div>

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
@@ -38,10 +39,12 @@ import org.savapage.core.dao.UserGroupAccountDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dto.JobTicketTagDto;
 import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.JobTicketService;
@@ -51,8 +54,11 @@ import org.savapage.core.util.DateUtil;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.pages.PageIllegalState;
 import org.savapage.server.pages.QuickSearchPanel;
 import org.savapage.server.session.SpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -65,6 +71,9 @@ public class Print extends AbstractUserPage {
      *
      */
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Print.class);
 
     /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
@@ -89,6 +98,11 @@ public class Print extends AbstractUserPage {
     /** */
     private static final String HTML_NAME_DELETE_PAGES_SCOPE =
             ID_DELETE_PAGES_SCOPE;
+
+    /** */
+    public static final Long OPTION_VALUE_SELECT_PROMPT = -1L;
+    /** */
+    public static final Long OPTION_VALUE_SELECT_PERSONAL_ACCOUNT = 0L;
 
     /**
      *
@@ -270,13 +284,18 @@ public class Print extends AbstractUserPage {
         if (cm.isConfigValue(Key.JOBTICKET_COPIER_ENABLE)) {
             helper.encloseLabel("jobticket-type",
                     localized("jobticket-type-prompt"), true);
-            helper.addModifyLabelAttr("jobticket-type-print", "value", "PRINT");
-            helper.addModifyLabelAttr("jobticket-type-copy", "value", "COPY");
+            helper.addModifyLabelAttr("jobticket-type-print",
+                    MarkupHelper.ATTR_VALUE, "PRINT");
+            helper.addModifyLabelAttr("jobticket-type-copy",
+                    MarkupHelper.ATTR_VALUE, "COPY");
         } else {
             helper.discloseLabel("jobticket-type");
         }
 
         //
+        final boolean allowPersonalPrint = ACCESS_CONTROL_SERVICE.hasPermission(
+                user, ACLOidEnum.U_PERSONAL_PRINT, ACLPermissionEnum.SELECTOR);
+
         final UserGroupAccountDao.ListFilter filter =
                 new UserGroupAccountDao.ListFilter();
 
@@ -287,11 +306,41 @@ public class Print extends AbstractUserPage {
                 USER_GROUP_ACCOUNT_DAO.getListChunk(filter, null, null);
 
         if (sharedAccounts == null || sharedAccounts.isEmpty()) {
+
+            if (!allowPersonalPrint) {
+                LOGGER.warn(
+                        "User [{}] is not authorized for Personal "
+                                + "and Shared Account Print.",
+                        user.getUserId());
+                throw new RestartResponseException(
+                        new PageIllegalState(AppLogLevelEnum.ERROR,
+                                "Not authorized for Personal Print."));
+            }
+
             helper.discloseLabel("print-account-type");
+
         } else {
+
             helper.encloseLabel("print-account-type",
-                    localized("account-type-prompt"), true);
-            addSharedAccounts(sharedAccounts);
+                    PrintOutNounEnum.ACCOUNT.uiText(getLocale()), true);
+
+            if (allowPersonalPrint) {
+                helper.discloseLabel("print-shared-account-option-only");
+                helper.addModifyLabelAttr("print-account-type-personal",
+                        PrintOutAdjectiveEnum.PERSONAL.uiText(getLocale()),
+                        MarkupHelper.ATTR_VALUE,
+                        OPTION_VALUE_SELECT_PERSONAL_ACCOUNT.toString());
+
+            } else {
+                helper.discloseLabel("print-account-type-personal");
+                helper.addModifyLabelAttr("btn-select-shared-account",
+                        HtmlButtonEnum.SELECT.uiTextDottedSfx(getLocale())
+                                .toLowerCase(),
+                        MarkupHelper.ATTR_VALUE,
+                        OPTION_VALUE_SELECT_PROMPT.toString());
+            }
+
+            addSharedAccounts(sharedAccounts, allowPersonalPrint);
         }
 
         //
@@ -332,21 +381,33 @@ public class Print extends AbstractUserPage {
      *
      * @param sharedAccounts
      *            The shared accounts.
+     * @param allowPersonalPrint
+     *            If {@code true} printing on personal account is allowed.
      */
-    private void
-            addSharedAccounts(final List<SharedAccountDto> sharedAccounts) {
+    private void addSharedAccounts(final List<SharedAccountDto> sharedAccounts,
+            final boolean allowPersonalPrint) {
 
-        add(new PropertyListView<SharedAccountDto>(
-                "print-shared-account-option", sharedAccounts) {
+        final String listId;
+        final String optionId;
+        if (allowPersonalPrint) {
+            listId = "print-shared-account-option-extra";
+            optionId = "option-extra";
+        } else {
+            listId = "print-shared-account-option-only";
+            optionId = "option-only";
+        }
+
+        add(new PropertyListView<SharedAccountDto>(listId, sharedAccounts) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(final ListItem<SharedAccountDto> item) {
                 final SharedAccountDto dto = item.getModel().getObject();
-                final Label label = new Label("option", dto.nameAsHtml());
+                final Label label = new Label(optionId, dto.nameAsHtml());
                 label.setEscapeModelStrings(false);
-                label.add(new AttributeModifier("value", dto.getId()));
+                label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                        dto.getId()));
                 item.add(label);
             }
         });
@@ -376,7 +437,8 @@ public class Print extends AbstractUserPage {
             protected void populateItem(final ListItem<JobTicketTagDto> item) {
                 final JobTicketTagDto dto = item.getModel().getObject();
                 final Label label = new Label("option", dto.getWord());
-                label.add(new AttributeModifier("value", dto.getId()));
+                label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                        dto.getId()));
                 item.add(label);
             }
         });

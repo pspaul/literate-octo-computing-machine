@@ -24,12 +24,12 @@ package org.savapage.server.pages;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 
 /**
- * A message in simple HTML.
+ * Page with illegal state message .
  *
  * @author Rijk Ravestein
  *
  */
-public class MessageContent extends AbstractPage {
+public class PageIllegalState extends AbstractPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,7 +40,7 @@ public class MessageContent extends AbstractPage {
      * @param msg
      *            The message to display.
      */
-    public MessageContent(final AppLogLevelEnum level, final String msg) {
+    public PageIllegalState(final AppLogLevelEnum level, final String msg) {
 
         final MarkupHelper helper = new MarkupHelper(this);
 

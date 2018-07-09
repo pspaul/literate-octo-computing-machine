@@ -84,6 +84,7 @@ import org.savapage.core.util.DateUtil;
 import org.savapage.ext.papercut.PaperCutServerProxy;
 import org.savapage.ext.papercut.job.PaperCutPrintMonitorJob;
 import org.savapage.server.api.JsonApiDict;
+import org.savapage.server.pages.user.Print;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +111,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ReqPrinterPrint.class);
 
+    /** */
     public enum JobTicketTypeEnum {
+        /** */
         PRINT, COPY
     }
 
@@ -408,8 +411,19 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 && cm.isConfigValue(Key.JOBTICKET_TAGS_REQUIRED)
                 && StringUtils.isBlank(dtoReq.getJobTicketTag())) {
 
-            setApiResult(ApiResultCodeEnum.WARN, "msg-jobticket-tag-required",
+            setApiResult(ApiResultCodeEnum.INFO,
+                    "msg-print-select-option-required",
                     JobTicketNounEnum.TAG.uiText(getLocale()));
+            return;
+        }
+
+        // INVARIANT
+        if (dtoReq.getAccountId() != null && dtoReq.getAccountId()
+                .equals(Print.OPTION_VALUE_SELECT_PROMPT)) {
+
+            setApiResult(ApiResultCodeEnum.INFO,
+                    "msg-print-select-option-required",
+                    PrintOutNounEnum.ACCOUNT.uiText(getLocale()));
             return;
         }
 
@@ -941,8 +955,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     private static boolean applySharedAccount(final DtoReq dtoReq,
             final ProxyPrintInboxReq printReq) {
 
-        if (dtoReq.getAccountId() == null
-                || dtoReq.getAccountId().equals(Long.valueOf(0))) {
+        if (dtoReq.getAccountId() == null || dtoReq.getAccountId()
+                .equals(Print.OPTION_VALUE_SELECT_PERSONAL_ACCOUNT)) {
             return false;
         }
 

@@ -35,6 +35,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.NounEnum;
@@ -565,7 +566,6 @@ public final class MarkupHelper {
         return label;
     }
 
-
     /**
      * Sets the on/off texts for a jQuery Mobile Flipswitch.
      *
@@ -878,4 +878,21 @@ public final class MarkupHelper {
         }
         return String.format("/%s/%s", "famfamfam-silk", imageSrc);
     }
+
+    /**
+     * @param level
+     *            The log level.
+     * @return The CSS_TXT-* class.
+     */
+    public static String getCssTxtClass(final AppLogLevelEnum level) {
+        switch (level) {
+        case ERROR:
+            return MarkupHelper.CSS_TXT_ERROR;
+        case WARN:
+            return MarkupHelper.CSS_TXT_WARN;
+        default:
+            return MarkupHelper.CSS_TXT_INFO;
+        }
+    }
+
 }

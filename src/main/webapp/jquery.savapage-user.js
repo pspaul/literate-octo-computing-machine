@@ -4173,7 +4173,7 @@
                 }
 
                 _view.checkRadioValue('sp-print-jobticket-type', _model.TICKETTYPE_PRINT);
-                _view.setSelectedValue($('#sp-print-shared-account-list'), "0");
+                _view.setSelectedFirst($('#sp-print-shared-account-list'));
             };
 
             $('#page-print').on('pagecreate', function(event) {
@@ -4314,6 +4314,11 @@
                 });
 
             }).on("pagebeforeshow", function(event, ui) {
+
+                // Illegal state, because not authorized?
+                if ($('#sp-illegalstate-page').length > 0) {
+                    return;
+                }
 
                 _lastPrinterFilter = undefined;
 
