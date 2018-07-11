@@ -400,12 +400,9 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         if (words.length >= 5 && words[0].equalsIgnoreCase(PJL_COMMAND_PFX)
                 && words[1].equalsIgnoreCase(PJL_TOKEN_SET)
                 && words[2].equalsIgnoreCase(PJL_TOKEN_USERNAME)) {
-            return StringUtils
-                    .strip(StringUtils
-                            .substring(pjlLine,
-                                    StringUtils.indexOf(pjlLine, "=") + 1)
-                            .trim(), "\"\"")
-                    .trim();
+            return StringUtils.strip(StringUtils
+                    .substring(pjlLine, StringUtils.indexOf(pjlLine, "=") + 1)
+                    .trim(), "\"\"").trim();
         }
         return null;
     }
@@ -654,10 +651,12 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             /*
              * Allowed to print?
              */
-            final String uri = "RAW:" + this.port;
+            final String uri = String.format("RAW: %d", this.port);
 
             final boolean clientIpAllowed = QUEUE_SERVICE
                     .hasClientIpAccessToQueue(queue, uri, originatorIp);
+
+            String warn = null;
 
             if (clientIpAllowed) {
 
@@ -668,12 +667,29 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
                 processor.processRequestingUser(userid);
 
-                isAuthorized = clientIpAllowed && processor.isAuthorized();
+                isAuthorized = processor.isAuthorized();
 
                 if (isAuthorized) {
                     processor.process(istr, DocLogProtocolEnum.RAW, null,
                             DocContentTypeEnum.PS, null);
+                } else {
+                    warn = String.format(
+                            "IP Print on queue /%s denied for "
+                                    + "user \"%s\" from %s",
+                            ReservedIppQueueEnum.RAW_PRINT.getUrlPath(), userid,
+                            originatorIp);
                 }
+
+            } else {
+                warn = String.format("IP Print on queue /%s denied for host %s",
+                        ReservedIppQueueEnum.RAW_PRINT.getUrlPath(),
+                        originatorIp);
+            }
+
+            if (warn != null) {
+                LOGGER.warn(warn);
+                AdminPublisher.instance().publish(PubTopicEnum.USER,
+                        PubLevelEnum.WARN, warn);
             }
 
         } catch (Exception e) {
@@ -690,7 +706,9 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             ServiceContext.close();
         }
 
-        processor.evaluateErrorState(isAuthorized);
+        if (processor != null) {
+            processor.evaluateErrorState(isAuthorized);
+        }
 
         PerformanceLogger.log(this.getClass(), "readAndPrint", perfStartTime,
                 userid);
