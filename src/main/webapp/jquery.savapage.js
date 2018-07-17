@@ -539,7 +539,7 @@
 
                 apiData.webAppType = _ns.WEBAPP_TYPE;
 
-                if (_user.loggedIn) {
+                if (_user && _user.loggedIn) {
                     apiData.user = _user.id;
                 }
 
