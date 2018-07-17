@@ -514,6 +514,22 @@ public final class MarkupHelper {
     }
 
     /**
+     * Adds input of type text.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param value
+     *            The {@link HtmlButtonEnum}. Its text is used as HTML 'value'
+     *            attribute.
+     * @return The added {@link Label}.
+     */
+    public Label addTextInput(final String wicketId,
+            final HtmlButtonEnum value) {
+        return this.addTextInput(wicketId,
+                value.uiText(this.container.getLocale()));
+    }
+
+    /**
      * Adds a label with a modified attribute value.
      *
      * @param wicketId
