@@ -103,7 +103,6 @@ import org.savapage.core.dto.PosDepositDto;
 import org.savapage.core.dto.PosDepositReceiptDto;
 import org.savapage.core.dto.PrimaryKeyDto;
 import org.savapage.core.dto.ProxyPrinterCostDto;
-import org.savapage.core.dto.ProxyPrinterMediaSourcesDto;
 import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
@@ -1410,11 +1409,6 @@ public final class JsonApiServer extends AbstractPage {
 
             return reqPrinterSetMediaCost(
                     getParmValue(parameters, isGetAction, "j_cost"));
-
-        case JsonApiDict.REQ_PRINTER_SET_MEDIA_SOURCES:
-
-            return reqPrinterSetMediaSources(
-                    getParmValue(parameters, isGetAction, "j_media_sources"));
 
         case JsonApiDict.REQ_LETTERHEAD_LIST:
 
@@ -3248,54 +3242,6 @@ public final class JsonApiServer extends AbstractPage {
          */
         final AbstractJsonRpcMethodResponse rpcResponse =
                 PROXY_PRINT_SERVICE.setProxyPrinterCostMedia(jpaPrinter, dto);
-
-        if (rpcResponse.isResult()) {
-            setApiResult(userData, ApiResultCodeEnum.OK,
-                    "msg-printer-saved-ok");
-        } else {
-            setApiResultMsgError(userData, "", rpcResponse.asError().getError()
-                    .data(ErrorDataBasic.class).getReason());
-        }
-
-        return userData;
-    }
-
-    /**
-     * Sets the Proxy Printer media cost properties.
-     * <p>
-     * Also, a logical delete can be applied or reversed.
-     * </p>
-     *
-     * @param json
-     * @return
-     */
-    private Map<String, Object> reqPrinterSetMediaSources(final String json) {
-
-        final PrinterDao printerDao =
-                ServiceContext.getDaoContext().getPrinterDao();
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final ProxyPrinterMediaSourcesDto dto = JsonAbstractBase
-                .create(ProxyPrinterMediaSourcesDto.class, json);
-
-        final long id = dto.getId();
-
-        final Printer jpaPrinter = printerDao.findById(id);
-
-        /*
-         * INVARIANT: printer MUST exist.
-         */
-        if (jpaPrinter == null) {
-            return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-printer-not-found", String.valueOf(id));
-        }
-
-        /*
-         *
-         */
-        final AbstractJsonRpcMethodResponse rpcResponse = PROXY_PRINT_SERVICE
-                .setProxyPrinterCostMediaSources(jpaPrinter, dto);
 
         if (rpcResponse.isResult()) {
             setApiResult(userData, ApiResultCodeEnum.OK,

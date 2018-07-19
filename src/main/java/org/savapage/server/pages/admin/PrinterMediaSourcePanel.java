@@ -23,9 +23,11 @@ package org.savapage.server.pages.admin;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -34,9 +36,11 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dto.IppMediaCostDto;
 import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.MediaPageCostDto;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.jpa.Printer;
@@ -48,6 +52,8 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.server.pages.MarkupHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -61,6 +67,10 @@ public final class PrinterMediaSourcePanel extends Panel {
      */
     private static final long serialVersionUID = 1L;
 
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(PrinterMediaSourcePanel.class);
+
     private static final AccountingService ACCOUNTING_SERVICE =
             ServiceContext.getServiceFactory().getAccountingService();
 
@@ -69,6 +79,9 @@ public final class PrinterMediaSourcePanel extends Panel {
 
     private static final ProxyPrintService PROXYPRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
+
+    private static final PrinterDao PRINTER_DAO =
+            ServiceContext.getDaoContext().getPrinterDao();
 
     private static final String DEFAULT_MARKER = "*";
 
@@ -280,6 +293,7 @@ public final class PrinterMediaSourcePanel extends Panel {
     /**
      *
      * @param printer
+     *            The printer.
      */
     public void populate(final Printer printer) {
 
@@ -488,5 +502,77 @@ public final class PrinterMediaSourcePanel extends Panel {
         }
 
         add(labelWrk);
+
+        //
+        handleJobSheets(helper, printer, mediaSourceList);
+    }
+
+    /**
+     * @param printer
+     *            The printer.
+     * @return The media-sources for job sheets.
+     */
+    private static Set<String> getJobSheetSources(final Printer printer) {
+        final Set<String> sources =
+                PRINTER_SERVICE.getJobSheetsMediaSources(printer);
+        if (sources == null) {
+            return new HashSet<>();
+        }
+        return sources;
+    }
+
+    /**
+     * Encloses selection of preferred media-source for
+     * {@link IppDictJobTemplateAttr#ORG_SAVAPAGE_ATTR_JOB_SHEETS}.
+     *
+     * @param helper
+     *            The helper.
+     * @param printer
+     *            The printer.
+     * @param mediaSourceList
+     *            The list of media sources.
+     */
+    private void handleJobSheets(final MarkupHelper helper,
+            final Printer printer,
+            final List<IppMediaSourceCostDto> mediaSourceList) {
+
+        final boolean enclose = !PRINTER_SERVICE.isJobTicketPrinter(printer)
+                && PRINTER_DAO.isJobTicketRedirectPrinter(printer.getId());
+
+        helper.encloseLabel("job-sheets-label",
+                PrintOutNounEnum.JOB_SHEET.uiText(getLocale(), true), enclose);
+
+        if (!enclose) {
+            return;
+        }
+
+        final Set<String> jobSheetSources = getJobSheetSources(printer);
+
+        add(new PropertyListView<IppMediaSourceCostDto>(
+                "job-sheets-media-source-select", mediaSourceList) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void
+                    populateItem(final ListItem<IppMediaSourceCostDto> item) {
+
+                final IppMediaSourceCostDto dto = item.getModelObject();
+
+                final Label label =
+                        new Label("job-sheets-media-source", dto.getSource());
+
+                label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                        dto.getSource()));
+
+                if (jobSheetSources.contains(dto.getSource())) {
+                    label.add(new AttributeModifier(MarkupHelper.ATTR_SELECTED,
+                            MarkupHelper.ATTR_SELECTED));
+                }
+
+                item.add(label);
+            }
+        });
+
     }
 }

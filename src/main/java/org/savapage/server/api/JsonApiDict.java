@@ -61,6 +61,7 @@ import org.savapage.server.api.request.ReqPrinterOptValidate;
 import org.savapage.server.api.request.ReqPrinterPrint;
 import org.savapage.server.api.request.ReqPrinterQuickSearch;
 import org.savapage.server.api.request.ReqPrinterSet;
+import org.savapage.server.api.request.ReqPrinterSetMediaSources;
 import org.savapage.server.api.request.ReqPrinterSnmp;
 import org.savapage.server.api.request.ReqPrinterSync;
 import org.savapage.server.api.request.ReqQueueEnable;
@@ -997,7 +998,8 @@ public class JsonApiDict {
 
         adm(REQ_PRINTER_SET, ReqPrinterSet.class, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET_MEDIA_COST, DbClaim.READ, DbAccess.YES);
-        adm(REQ_PRINTER_SET_MEDIA_SOURCES, DbClaim.READ, DbAccess.YES);
+        adm(REQ_PRINTER_SET_MEDIA_SOURCES, ReqPrinterSetMediaSources.class,
+                DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_RENAME, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_PRINTER_SYNC, ReqPrinterSync.class, DbClaim.READ, DbAccess.YES);

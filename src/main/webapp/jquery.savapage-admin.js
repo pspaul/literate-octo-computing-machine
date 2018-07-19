@@ -749,7 +749,7 @@
                 var props = {},
                     key;
 
-                _fillConfigPropsYN(props, ['proxy-print.non-secure', 'proxy-print.delegate.enable', 'proxy-print.delegate.papercut.enable', 'proxy-print.personal.papercut.enable','webapp.user.proxy-print.clear-inbox.enable', 'webapp.user.proxy-print.clear-inbox.prompt']);
+                _fillConfigPropsYN(props, ['proxy-print.non-secure', 'proxy-print.delegate.enable', 'proxy-print.delegate.papercut.enable', 'proxy-print.personal.papercut.enable', 'webapp.user.proxy-print.clear-inbox.enable', 'webapp.user.proxy-print.clear-inbox.prompt']);
 
                 if (props['proxy-print.non-secure'] === 'Y') {
                     _fillConfigPropsText(props, ['proxy-print.non-secure-printer-group']);
@@ -1492,9 +1492,8 @@
                     sourceAuto = _view.isCbChecked($('#media-source\\.' + SOURCE_AUTO)),
                     sourceManual = _view.isCbChecked($('#media-source\\.' + SOURCE_MANUAL)),
                     selDefaultMonochrome = $('#sp-printer-use-monochrome-as-default'),
-                    selClientSideMonochrome = $('#sp-printer-client-side-monochrome')
-                //
-                ;
+                    selClientSideMonochrome = $('#sp-printer-client-side-monochrome'),
+                    ID_JOB_SHEETS_MEDIA_SOURCE = 'sp-printer-job-sheets-media-source';
 
                 dto.id = _model.editPrinter.id;
                 dto.language = _model.language;
@@ -1506,6 +1505,10 @@
 
                 if (selClientSideMonochrome) {
                     dto.clientSideMonochrome = _view.isCbChecked(selClientSideMonochrome);
+                }
+
+                if ($('#' + ID_JOB_SHEETS_MEDIA_SOURCE)) {
+                    dto.jobSheetsMediaSources = _view.selectedValues(ID_JOB_SHEETS_MEDIA_SOURCE);
                 }
 
                 if (sourceAuto) {
@@ -1527,24 +1530,12 @@
 
                 $(".sp-printer-media-source-row").each(function() {
 
-                    var cb = $(this).find('.sp-printer-media-source')
-                    //
-                    ,
-                        active = _view.isCbChecked(cb)
-                    //
-                    ,
-                        source = cb.attr('id').substr("media-source.".length)
-                    //
-                    ,
-                        nextRow = $(this).next()
-                    //
-                    ,
-                        display = nextRow.find('input:text').val()
-                    //
-                    ,
-                        media = nextRow.find('select').val()
-                    //
-                    ;
+                    var cb = $(this).find('.sp-printer-media-source'),
+                        active = _view.isCbChecked(cb),
+                        source = cb.attr('id').substr("media-source.".length),
+                        nextRow = $(this).next(),
+                        display = nextRow.find('input:text').val(),
+                        media = nextRow.find('select').val();
 
                     // push: org.savapage.core.dto.IppMediaSourceDto
                     dto.sources.push({
@@ -1574,7 +1565,7 @@
                  */
                 res = _api.call({
                     request : 'printer-set-media-sources',
-                    j_media_sources : JSON.stringify(dto)
+                    dto : JSON.stringify(dto)
                 });
 
                 _view.showApiMsg(res);

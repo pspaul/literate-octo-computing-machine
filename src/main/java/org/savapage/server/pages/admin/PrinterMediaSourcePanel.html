@@ -151,6 +151,28 @@
 				</tr>
 			</wicket:panel>
 
+			<wicket:enclosure child="job-sheets-label">
+				<tr>
+					<td colspan="5">
+						<hr />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" style="vertical-align: middle; text-align: center;">
+						<label wicket:id="job-sheets-label" />
+					</td>
+					<td colspan="3">
+						<select id="sp-printer-job-sheets-media-source"
+							multiple="multiple" data-native-menu="false" class="ui-mini">
+							<option value="">&mdash;</option>
+							<wicket:panel wicket:id="job-sheets-media-source-select">
+								<option wicket:id="job-sheets-media-source" />
+							</wicket:panel>
+						</select>
+					</td>
+				</tr>
+			</wicket:enclosure>
+
 			<wicket:enclosure child="media-source-manual-display-name">
 				<tr>
 					<td colspan="5">
