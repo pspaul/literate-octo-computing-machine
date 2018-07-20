@@ -143,19 +143,6 @@
                     totalCopies : totalCopies || (userCount * userCopies)
                 };
             }
-            //----------------------------------------------------------------
-            ,
-                _onSaveModel = function(selection) {
-                // Java: PrintDelegationDto
-                var res = _api.call({
-                    request : "print-delegation-set",
-                    dto : JSON.stringify(_delegationModel())
-                });
-
-                if (res.result.code !== '0') {
-                    _view.showApiMsg(res);
-                }
-            }
             //
             ,
                 _revertQuickUserGroupsSelected = function() {
@@ -1084,10 +1071,6 @@
 
                 $('#sp-print-delegation-button-remove-selected').click(function() {
                     _onDelegatorRemoveSelected();
-                });
-
-                $('#sp-print-delegation-button-save').click(function() {
-                    _onSaveModel();
                 });
 
                 $('input[name="' + _RADIO_EDIT_NAME + '"]').click(function() {
