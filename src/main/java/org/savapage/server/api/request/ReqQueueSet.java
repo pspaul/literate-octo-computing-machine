@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ public final class ReqQueueSet extends ApiRequestMixin {
             throws IOException {
 
         final ReqQueueGet.DtoRsp dtoReq = ReqQueueGet.DtoRsp
-                .create(ReqQueueGet.DtoRsp.class, getParmValue("dto"));
+                .create(ReqQueueGet.DtoRsp.class, this.getParmValueDto());
 
         final IppQueueDao ippQueueDao =
                 ServiceContext.getDaoContext().getIppQueueDao();

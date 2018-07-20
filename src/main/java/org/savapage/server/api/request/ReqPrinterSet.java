@@ -52,7 +52,7 @@ public final class ReqPrinterSet extends ApiRequestMixin {
                 ServiceContext.getDaoContext().getPrinterDao();
 
         final ProxyPrinterDto dto = JsonAbstractBase
-                .create(ProxyPrinterDto.class, getParmValue("dto"));
+                .create(ProxyPrinterDto.class, this.getParmValueDto());
 
         final long id = dto.getId();
 

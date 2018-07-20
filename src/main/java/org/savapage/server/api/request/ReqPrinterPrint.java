@@ -391,10 +391,11 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws JsonProcessingException, IOException, ParseException {
 
-        final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
+        final DtoReq dtoReq =
+                DtoReq.create(DtoReq.class, this.getParmValueDto());
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace(DtoReq.prettyPrint(getParmValue("dto")));
+            LOGGER.trace(DtoReq.prettyPrint(this.getParmValueDto()));
         }
 
         // Validate

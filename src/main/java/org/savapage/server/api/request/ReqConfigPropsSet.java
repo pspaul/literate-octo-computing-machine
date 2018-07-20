@@ -74,7 +74,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
         final JsonNode list;
 
         try {
-            list = new ObjectMapper().readTree(getParmValue("dto"));
+            list = new ObjectMapper().readTree(this.getParmValueDto());
         } catch (IOException e) {
             throw new SpException(e.getMessage(), e);
         }

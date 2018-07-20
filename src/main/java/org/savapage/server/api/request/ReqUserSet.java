@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ public final class ReqUserSet extends ApiRequestMixin {
             throws IOException {
 
         final UserDto userDto =
-                UserDto.create(UserDto.class, getParmValue("dto"));
+                UserDto.create(UserDto.class, this.getParmValueDto());
 
         final boolean isNew = userDto.getDatabaseId() == null;
 

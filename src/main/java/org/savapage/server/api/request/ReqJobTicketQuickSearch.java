@@ -65,7 +65,7 @@ public final class ReqJobTicketQuickSearch extends ApiRequestMixin {
             throws IOException {
 
         final QuickSearchFilterJobTicketDto dto = AbstractDto.create(
-                QuickSearchFilterJobTicketDto.class, this.getParmValue("dto"));
+                QuickSearchFilterJobTicketDto.class, this.getParmValueDto());
 
         final List<QuickSearchItemDto> list = new ArrayList<>();
 

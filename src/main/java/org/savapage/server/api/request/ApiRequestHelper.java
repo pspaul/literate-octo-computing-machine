@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,8 +28,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dto.AccountDisplayInfoDto;

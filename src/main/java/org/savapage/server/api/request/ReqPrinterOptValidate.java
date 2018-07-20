@@ -106,10 +106,11 @@ public final class ReqPrinterOptValidate extends ApiRequestMixin {
             throws JsonProcessingException, IOException, ProxyPrintException,
             ParseException {
 
-        final DtoReq dtoReq = DtoReq.create(DtoReq.class, getParmValue("dto"));
+        final DtoReq dtoReq =
+                DtoReq.create(DtoReq.class, this.getParmValueDto());
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace(DtoReq.prettyPrint(getParmValue("dto")));
+            LOGGER.trace(DtoReq.prettyPrint(this.getParmValueDto()));
         }
 
         final JsonProxyPrinter proxyPrinter =
