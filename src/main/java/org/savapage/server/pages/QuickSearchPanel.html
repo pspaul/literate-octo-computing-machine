@@ -30,13 +30,20 @@
 					<span wicket:id="search-label-compact" />
 				</td>
 				<td>
-					<div>
+					<div style="margin-right: 0px; padding: 0px;">
 						<input wicket:id="search-input-compact" id="[sp-unique-id]"
 							data-type="search" type="text" value="" maxlength="128"
 							tabindex="0" autofocus autocomplete="off" autocorrect="off"
 							autocapitalize="off" spellcheck="false" />
 					</div>
 				</td>
+				<wicket:enclosure child="btn-search-scope-compact">
+					<td>
+						<button style="margin-left: 0px;"
+							wicket:id="btn-search-scope-compact"
+							class="ui-btn ui-btn-inline ui-mini">&nbsp;</button>
+					</td>
+				</wicket:enclosure>
 			</tr>
 		</table>
 	</wicket:enclosure>

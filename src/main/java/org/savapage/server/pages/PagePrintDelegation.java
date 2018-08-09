@@ -100,8 +100,19 @@ public final class PagePrintDelegation extends AbstractPage {
         final QuickSearchPanel panel =
                 new QuickSearchPanel("quicksearch-user-groups");
         add(panel);
+
+        final String htmlIdScope;
+
+        if (cm.isConfigValue(
+                Key.PROXY_PRINT_DELEGATE_GROUPS_PREFERRED_ENABLE)) {
+            htmlIdScope = "sp-print-delegation-groups-select-to-add-scope";
+        } else {
+            htmlIdScope = null;
+        }
+
         panel.populate("sp-print-delegation-groups-select-to-add",
-                getLocalizer().getString("label-groups", this), "", true);
+                getLocalizer().getString("label-groups", this), "", true,
+                htmlIdScope);
 
         //
         final QuickSearchPanel panelUsers =
@@ -109,7 +120,7 @@ public final class PagePrintDelegation extends AbstractPage {
         add(panelUsers);
 
         panelUsers.populate("sp-print-delegation-users-select-to-add",
-                getLocalizer().getString("label-users", this), "", true);
+                getLocalizer().getString("label-users", this), "", true, null);
 
         //
         final QuickSearchPanel panelAccounts =
@@ -117,7 +128,7 @@ public final class PagePrintDelegation extends AbstractPage {
         add(panelAccounts);
 
         panelAccounts.populate("sp-print-delegation-select-shared-account",
-                PrintOutNounEnum.ACCOUNT.uiText(getLocale()), "", true);
+                PrintOutNounEnum.ACCOUNT.uiText(getLocale()), "", true, null);
     }
 
 }

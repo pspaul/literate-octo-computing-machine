@@ -24,6 +24,7 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.UserGroupMemberDao;
@@ -43,6 +44,14 @@ import org.savapage.core.services.ServiceContext;
  *
  */
 public final class ReqUserGroupQuickSearch extends ReqQuickSearchMixin {
+
+    /** */
+    private static final UserGroupDao USER_GROUP_DAO =
+            ServiceContext.getDaoContext().getUserGroupDao();
+
+    /** */
+    private static final UserGroupMemberDao USER_GROUP_MEMBER_DAO =
+            ServiceContext.getDaoContext().getUserGroupMemberDao();
 
     /**
      *
@@ -74,9 +83,11 @@ public final class ReqUserGroupQuickSearch extends ReqQuickSearchMixin {
         final int maxResult = dto.getMaxResults().intValue();
         final int currPosition = dto.getStartPosition();
 
-        //
-        final UserGroupDao userGroupDao =
-                ServiceContext.getDaoContext().getUserGroupDao();
+        final User dbUser = ServiceContext.getDaoContext().getUserDao()
+                .findById(this.getSessionUser().getId());
+
+        final Set<Long> preferredGroups =
+                USER_SERVICE.getPreferredDelegateGroups(dbUser);
 
         final UserGroupDao.ListFilter groupFilter =
                 new UserGroupDao.ListFilter();
@@ -84,51 +95,63 @@ public final class ReqUserGroupQuickSearch extends ReqQuickSearchMixin {
         groupFilter.setContainingText(dto.getFilter());
         groupFilter.setAclRole(dto.getAclRole());
 
+        if (dto.isPreferred()) {
+            groupFilter.setGroupIds(preferredGroups);
+        }
+
         final int totalResults;
+        final List<UserGroup> userGroupList;
 
-        if (dto.getTotalResults() == null) {
-            totalResults = (int) userGroupDao.getListCount(groupFilter);
+        if (dto.isPreferred() && preferredGroups == null) {
+
+            userGroupList = new ArrayList<>();
+            totalResults = 0;
+
         } else {
-            totalResults = dto.getTotalResults().intValue();
+
+            if (dto.getTotalResults() == null) {
+                totalResults = (int) USER_GROUP_DAO.getListCount(groupFilter);
+            } else {
+                totalResults = dto.getTotalResults().intValue();
+            }
+
+            userGroupList = USER_GROUP_DAO.getListChunk(groupFilter,
+                    Integer.valueOf(currPosition), dto.getMaxResults(),
+                    UserGroupDao.Field.NAME, true);
         }
 
-        final List<UserGroup> userGroupList = userGroupDao.getListChunk(
-                groupFilter, Integer.valueOf(currPosition), dto.getMaxResults(),
-                UserGroupDao.Field.NAME, true);
-
-        //
-        final UserGroupMemberDao groupMemberDao =
-                ServiceContext.getDaoContext().getUserGroupMemberDao();
-
-        final UserGroupMemberDao.GroupFilter groupMemberFilter =
-                new UserGroupMemberDao.GroupFilter();
-
-        groupMemberFilter.setAclRoleNotFalse(dto.getAclRole());
-
-        if (dto.getAclRole() == ACLRoleEnum.PRINT_DELEGATOR) {
-            groupMemberFilter.setDisabledPrintOut(Boolean.FALSE);
-        }
-
-        //
         final List<QuickSearchItemDto> items = new ArrayList<>();
 
-        for (final UserGroup group : userGroupList) {
+        if (!userGroupList.isEmpty()) {
 
-            groupMemberFilter.setGroupId(group.getId());
-            final long userCount =
-                    groupMemberDao.getUserCount(groupMemberFilter);
+            final UserGroupMemberDao.GroupFilter groupMemberFilter =
+                    new UserGroupMemberDao.GroupFilter();
 
-            final QuickSearchUserGroupItemDto itemWlk =
-                    new QuickSearchUserGroupItemDto();
+            groupMemberFilter.setAclRoleNotFalse(dto.getAclRole());
 
-            itemWlk.setKey(group.getId());
-            itemWlk.setText(group.getGroupName());
+            if (dto.getAclRole() == ACLRoleEnum.PRINT_DELEGATOR) {
+                groupMemberFilter.setDisabledPrintOut(Boolean.FALSE);
+            }
 
-            itemWlk.setUserCount(userCount);
-            items.add(itemWlk);
+            for (final UserGroup group : userGroupList) {
+
+                groupMemberFilter.setGroupId(group.getId());
+                final long userCount =
+                        USER_GROUP_MEMBER_DAO.getUserCount(groupMemberFilter);
+
+                final QuickSearchUserGroupItemDto itemWlk =
+                        new QuickSearchUserGroupItemDto();
+
+                itemWlk.setKey(group.getId());
+                itemWlk.setText(group.getGroupName());
+                itemWlk.setPreferred(preferredGroups != null
+                        && preferredGroups.contains(group.getId()));
+
+                itemWlk.setUserCount(userCount);
+                items.add(itemWlk);
+            }
         }
 
-        //
         final DtoRsp rsp = new DtoRsp();
         rsp.setItems(items);
         rsp.calcNavPositions(maxResult, currPosition, totalResults);

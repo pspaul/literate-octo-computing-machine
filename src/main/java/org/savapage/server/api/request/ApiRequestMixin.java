@@ -190,7 +190,7 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @param requestingUser
      *            The user if of the requesting user.
      * @param lockedUser
-     *            The locked {@link User} instance: is {@code null} when use is
+     *            The locked {@link User} instance: is {@code null} when user is
      *            <i>not</i> locked.
      * @throws Exception
      *             When an unexpected error is encountered.

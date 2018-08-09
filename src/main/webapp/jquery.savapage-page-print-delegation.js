@@ -60,8 +60,18 @@
 
             //
             ,
-                _IND_SELECTED = '<img height="12" src="/images/selected-green-16x16.png">&nbsp;',
-                _IND_DESELECTED = '<img height="12" src="/images/unselected-16x16.png">&nbsp;',
+                _IND_SELECTED_ON = '<img height="12" src="/images/selected-green-16x16.png">&nbsp;',
+                _IND_SELECTED_OFF = '<img height="12" src="/images/unselected-16x16.png">&nbsp;',
+
+                _IND_PREFERRED_ON = '<img height="10" src="/famfamfam-silk/star.png">&nbsp;',
+                _IND_PREFERRED_OFF = '<img height="10" src="/famfamfam-silk/star_gray.png">&nbsp;',
+
+                _CLASS_ICON_PREFERRED_ON = 'ui-icon-mini-preferred-on',
+                _CLASS_ICON_PREFERRED_OFF = 'ui-icon-mini-preferred-off',
+
+                _DATA_PREFERRED_ON = 'on',
+                _DATA_PREFERRED_OFF = 'off',
+
                 _QS_MAX_RESULTS = 5
             //
             ,
@@ -71,7 +81,8 @@
             //
             ,
                 _CLASS_SELECTED_IND = '_sp_selected',
-                _CLASS_SELECTED_TXT = '_sp_selected_txt'
+                _CLASS_SELECTED_TXT = '_sp_selected_txt',
+                _CLASS_PREFERRED_IMG = '_sp_preferred_img'
             //
             ,
                 _quickUserGroupFilter,
@@ -150,7 +161,7 @@
                 _nSelectedGroups = 0;
 
                 $.each($('#sp-print-delegation-groups-select-to-add-filter .' + _CLASS_SELECTED_TXT), function() {
-                    $(this).html(_IND_DESELECTED);
+                    $(this).html(_IND_SELECTED_OFF);
                 });
             }
             //
@@ -165,7 +176,7 @@
                 _nSelectedUsers = 0;
 
                 $.each($('#sp-print-delegation-users-select-to-add-filter .' + _CLASS_SELECTED_TXT), function() {
-                    $(this).html(_IND_DESELECTED);
+                    $(this).html(_IND_SELECTED_OFF);
                 });
             }
             //
@@ -332,16 +343,17 @@
             }
             //----------------------------------------------------------------
             ,
-                _onQuickSearchGroup = function(target, filter, startPosition, paging) {
+                _onQuickSearchGroup = function(target, filter, startPosition, paging, rescope) {
                 /* QuickSearchFilterUserGroupDto */
                 var res,
                     html = "",
-                    qsButtons = $("#sp-print-delegation-quicksearch-groups .sp-quicksearch-buttons");
+                    qsButtons = $("#sp-print-delegation-quicksearch-groups .sp-quicksearch-buttons"),
+                    preferredEnabled = _isGroupPreferredEnabled();
 
-                if (!paging && _quickUserGroupFilter === filter) {
+                if (!rescope && !paging && _quickUserGroupFilter === filter) {
                     return;
                 }
-                if (!paging) {
+                if (!paging || rescope) {
                     _quickUserGroupTotalResults = null;
                 }
 
@@ -357,19 +369,29 @@
                         totalResults : _quickUserGroupTotalResults,
                         maxResults : _QS_MAX_RESULTS,
                         startPosition : startPosition,
-                        aclRole : 'PRINT_DELEGATOR'
+                        aclRole : 'PRINT_DELEGATOR',
+                        preferred : _isGroupSelectScopePreferred()
                     })
                 });
 
                 if (res.result.code === '0') {
 
                     $.each(res.dto.items, function(key, item) {
+
                         _quickUserGroupCache[item.key] = item;
 
                         html += "<li class=\"ui-mini ui-li-has-icon\" data-icon=\"false\" data-savapage=\"" + item.key + "\">";
                         html += "<a href=\"#\">";
-                        html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_DESELECTED + "</span>&nbsp;";
-                        html += item.text + "<span class=\"ui-li-count\">" + item.userCount + "</span></a></li>";
+                        html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_SELECTED_OFF + "</span>&nbsp;";
+                        html += item.text + "<span class=\"ui-li-count\">";
+                        if (preferredEnabled) {
+                            html += "<span class=\"" + _CLASS_PREFERRED_IMG + "\" data-savapage=\"";
+                            html += item.preferred ? _DATA_PREFERRED_ON : _DATA_PREFERRED_OFF;
+                            html += "\">";
+                            html += item.preferred ? _IND_PREFERRED_ON : _IND_PREFERRED_OFF;
+                            html += "</span>&nbsp;";
+                        }
+                        html += item.userCount + "</span></a></li>";
                     });
 
                     _setQuickSearchNavigation(qsButtons, res);
@@ -422,7 +444,7 @@
 
                         html += "<li class=\"ui-mini ui-li-has-icon\" data-icon=\"false\" data-savapage=\"" + item.key + "\">";
                         html += "<a href=\"#\">";
-                        html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_DESELECTED + "</span>&nbsp;";
+                        html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_SELECTED_OFF + "</span>&nbsp;";
                         html += _htmlDelegatorName(item);
                         html += "</a></li>";
                     });
@@ -476,7 +498,7 @@
 
                         html += "<li class=\"ui-mini ui-li-has-icon\" data-icon=\"false\" data-savapage=\"" + item.key + "\">";
                         html += "<a href=\"#\">";
-                        html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_DESELECTED + "</span>&nbsp;";
+                        html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_SELECTED_OFF + "</span>&nbsp;";
                         html += item.text + "</a></li>";
                     });
 
@@ -513,7 +535,7 @@
                 html += cssClass;
                 html += '" data-savapage="' + item.key + '">';
                 html += '<th>';
-                html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_DESELECTED + "</span>&nbsp;";
+                html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_SELECTED_OFF + "</span>&nbsp;";
                 html += '<img src="/famfamfam-silk/';
                 html += isGroup ? 'group.png' : isCopies ? 'tag_green.png' : 'user_gray.png';
                 html += '"/>&nbsp;&nbsp;&nbsp;';
@@ -729,10 +751,62 @@
             }
             //----------------------------------------------------------------
             ,
+                _onGroupPreferred = function(selection) {
+                var span = selection.find('.' + _CLASS_PREFERRED_IMG),
+                    groupID = span.closest('li').attr('data-savapage'),
+                    preferredNew = span.attr('data-savapage') !== _DATA_PREFERRED_ON;
+
+                span.html( preferredNew ? _IND_PREFERRED_ON : _IND_PREFERRED_OFF);
+                span.attr('data-savapage', preferredNew ? _DATA_PREFERRED_ON : _DATA_PREFERRED_OFF);
+
+                _api.call({
+                    request : "user-delegate-groups-preferred",
+                    dto : JSON.stringify({
+                        groupIds : [groupID],
+                        add : preferredNew
+                    })
+                });
+            }
+            //----------------------------------------------------------------
+            ,
+                _isGroupSelectScopePreferred = function() {
+                return $('#sp-print-delegation-groups-select-to-add-scope').hasClass(_CLASS_ICON_PREFERRED_ON);
+            }
+            //----------------------------------------------------------------
+            ,
+                _isGroupPreferredEnabled = function() {
+                return $('#sp-print-delegation-groups-select-to-add-scope').length > 0;
+            }
+            //----------------------------------------------------------------
+            ,
+                _onGroupSelectScope = function(selection) {
+                var classRem,
+                    classAdd;
+
+                if (selection.hasClass(_CLASS_ICON_PREFERRED_ON)) {
+                    classRem = _CLASS_ICON_PREFERRED_ON;
+                    classAdd = _CLASS_ICON_PREFERRED_OFF;
+                } else {
+                    classRem = _CLASS_ICON_PREFERRED_OFF;
+                    classAdd = _CLASS_ICON_PREFERRED_ON;
+                }
+
+                selection.removeClass(classRem);
+                selection.addClass(classAdd);
+
+                _api.call({
+                    request : 'user-set-delegate-groups-preferred-select',
+                    dto : JSON.stringify({
+                        select : classAdd === _CLASS_ICON_PREFERRED_ON
+                    })
+                });
+
+                _onQuickSearchGroup($("#sp-print-delegation-groups-select-to-add-filter"), $('#sp-print-delegation-groups-select-to-add').val(), 0, true, true);
+            }
+            //----------------------------------------------------------------
+            ,
                 _onGroupSelected = function(selection) {
-                var span = selection.find('.' + _CLASS_SELECTED_TXT)
-                //
-                ,
+                var span = selection.find('.' + _CLASS_SELECTED_TXT),
                     dbkey = selection.attr('data-savapage'),
                     dbKeySelected
                 //
@@ -743,11 +817,11 @@
                     if (_quickUserGroupSelected[dbkey]) {
                         _nSelectedGroups--;
                         delete _quickUserGroupSelected[dbkey];
-                        span.html(_IND_DESELECTED);
+                        span.html(_IND_SELECTED_OFF);
                     } else {
                         _nSelectedGroups++;
                         _quickUserGroupSelected[dbkey] = _quickUserGroupCache[dbkey];
-                        span.html(_IND_SELECTED);
+                        span.html(_IND_SELECTED_ON);
                     }
 
                 } else {
@@ -757,7 +831,7 @@
                     if (dbKeySelected) {
                         _nSelectedGroups--;
                         delete _quickUserGroupSelected[dbKeySelected];
-                        selection.closest('ul').find('.' + _CLASS_SELECTED_IND).html(_IND_DESELECTED).removeClass(_CLASS_SELECTED_IND);
+                        selection.closest('ul').find('.' + _CLASS_SELECTED_IND).html(_IND_SELECTED_OFF).removeClass(_CLASS_SELECTED_IND);
                     }
 
                     if (dbKeySelected === dbkey) {
@@ -765,7 +839,7 @@
                     } else {
                         _nSelectedGroups++;
                         _quickUserGroupSelected[dbkey] = _quickUserGroupCache[dbkey];
-                        span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
+                        span.html(_IND_SELECTED_ON).addClass(_CLASS_SELECTED_IND);
                     }
                     _quickUserFilter = undefined;
 
@@ -787,11 +861,11 @@
                 if (_quickUserSelected[dbkey]) {
                     _nSelectedUsers--;
                     delete _quickUserSelected[dbkey];
-                    span.html(_IND_DESELECTED);
+                    span.html(_IND_SELECTED_OFF);
                 } else {
                     _nSelectedUsers++;
                     _quickUserSelected[dbkey] = _quickUserCache[dbkey];
-                    span.html(_IND_SELECTED);
+                    span.html(_IND_SELECTED_ON);
                 }
                 _onButtonAddVisibility();
             }
@@ -812,10 +886,10 @@
                     if (dbKeySelected === dbkey) {
                         return;
                     }
-                    selection.closest('ul').find('.' + _CLASS_SELECTED_IND).html(_IND_DESELECTED).removeClass(_CLASS_SELECTED_IND);
+                    selection.closest('ul').find('.' + _CLASS_SELECTED_IND).html(_IND_SELECTED_OFF).removeClass(_CLASS_SELECTED_IND);
                 }
                 _quickAccountSelected = _quickAccountCache[dbkey];
-                span.html(_IND_SELECTED).addClass(_CLASS_SELECTED_IND);
+                span.html(_IND_SELECTED_ON).addClass(_CLASS_SELECTED_IND);
 
                 _onButtonAddVisibility();
 
@@ -839,31 +913,31 @@
                     if (_delegatorGroupsSelected[dbkey]) {
                         _nSelectedDelegatorGroups--;
                         delete _delegatorGroupsSelected[dbkey];
-                        span.html(_IND_DESELECTED);
+                        span.html(_IND_SELECTED_OFF);
                     } else {
                         _nSelectedDelegatorGroups++;
                         _delegatorGroupsSelected[dbkey] = _delegatorGroups[dbkey];
-                        span.html(_IND_SELECTED);
+                        span.html(_IND_SELECTED_ON);
                     }
                 } else if (isCopies) {
                     if (_delegatorCopiesSelected[dbkey]) {
                         _nSelectedDelegatorCopies--;
                         delete _delegatorCopiesSelected[dbkey];
-                        span.html(_IND_DESELECTED);
+                        span.html(_IND_SELECTED_OFF);
                     } else {
                         _nSelectedDelegatorCopies++;
                         _delegatorCopiesSelected[dbkey] = _delegatorCopies[dbkey];
-                        span.html(_IND_SELECTED);
+                        span.html(_IND_SELECTED_ON);
                     }
                 } else {
                     if (_delegatorUsersSelected[dbkey]) {
                         _nSelectedDelegatorUsers--;
                         delete _delegatorUsersSelected[dbkey];
-                        span.html(_IND_DESELECTED);
+                        span.html(_IND_SELECTED_OFF);
                     } else {
                         _nSelectedDelegatorUsers++;
                         _delegatorUsersSelected[dbkey] = _delegatorUsers[dbkey];
-                        span.html(_IND_SELECTED);
+                        span.html(_IND_SELECTED_ON);
                     }
                 }
                 _setVisibilityDelegatorsEdit();
@@ -881,7 +955,7 @@
                 _onDelegatorDeselectAll = function() {
                 _initDelegatorSelection();
                 $.each($('#sp-selected-print-delegation-rows .' + _CLASS_SELECTED_TXT), function() {
-                    $(this).html(_IND_DESELECTED);
+                    $(this).html(_IND_SELECTED_OFF);
                 });
             }
             //----------------------------------------------------------------
@@ -1042,15 +1116,12 @@
             //----------------------------------------------------------------
             $('#page-print-delegation').on('pagecreate', function(event) {
 
-                var filterableGroups = $("#sp-print-delegation-groups-select-to-add-filter")
-                //
-                ,
-                    filterableUsers = $("#sp-print-delegation-users-select-to-add-filter")
-                //
-                ,
-                    filterableAccounts = $("#sp-print-delegation-select-shared-account-filter")
-                //
-                ;
+                var filterableGroups = $("#sp-print-delegation-groups-select-to-add-filter"),
+                    filterableUsers = $("#sp-print-delegation-users-select-to-add-filter"),
+                    filterableAccounts = $("#sp-print-delegation-select-shared-account-filter"),
+                    selBtnGroupsSelectScope = $('#sp-print-delegation-groups-select-to-add-scope'),
+                    res;
+
                 _initDelegatorSelection();
 
                 $('#sp-print-delegation-button-back').click(function() {
@@ -1103,6 +1174,23 @@
                 $(this).on('click', '#sp-print-delegation-groups-select-to-add-filter li', null, function() {
                     _onGroupSelected($(this));
                 });
+
+                if (_isGroupPreferredEnabled()) {
+                    $(this).on('click', '#sp-print-delegation-groups-select-to-add-filter li .ui-li-count', null, function() {
+                        _onGroupPreferred($(this));
+                        return false;
+                    });
+                }
+
+                //
+                selBtnGroupsSelectScope.click(function() {
+                    _onGroupSelectScope($(this));
+                });
+                res = _api.call({
+                    request : 'user-get-delegate-groups-preferred-select',
+                });
+                selBtnGroupsSelectScope.addClass(res.dto.select ? _CLASS_ICON_PREFERRED_ON : _CLASS_ICON_PREFERRED_OFF);
+                selBtnGroupsSelectScope.addClass('ui-btn-icon-notext');
 
                 // Show available groups on first open
                 _onQuickSearchGroup(filterableGroups, "", 0);

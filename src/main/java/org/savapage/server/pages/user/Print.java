@@ -182,7 +182,7 @@ public class Print extends AbstractUserPage {
 
         panel.populate("sp-print-qs-printer", "",
                 getLocalizer().getString("search-printer-placeholder", this),
-                false);
+                false, null);
 
         //
         if (cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_SEPARATE_ENABLE)) {

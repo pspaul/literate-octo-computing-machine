@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,9 +33,7 @@ import org.apache.wicket.markup.html.panel.Panel;
  */
 public class QuickSearchPanel extends Panel {
 
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -49,9 +47,22 @@ public class QuickSearchPanel extends Panel {
 
     /**
      *
+     * @param htmlBaseId
+     *            The HTML "id" attribute of the search input field.
+     * @param searchPrompt
+     *            The search prompt.
+     * @param searchPlaceholder
+     *            The placeholder string.
+     * @param compact
+     *            If {@code true}, panel is rendered in compact mode.
+     * @param htmlIdCompactScopeButton
+     *            When not {@code null} <i>and</i> panel is rendered in compact
+     *            mode, a button is added that can be used in JavaScript context
+     *            to set search scope.
      */
     public void populate(final String htmlBaseId, final String searchPrompt,
-            final String searchPlaceholder, final boolean compact) {
+            final String searchPlaceholder, final boolean compact,
+            final String htmlIdCompactScopeButton) {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
@@ -64,10 +75,17 @@ public class QuickSearchPanel extends Panel {
             labelInput = new Label("search-input-compact", "");
             helper.discloseLabel("search-label");
 
+            helper.encloseLabel("btn-search-scope-compact",
+                    htmlIdCompactScopeButton,
+                    StringUtils.isNotBlank(htmlIdCompactScopeButton))
+                    .add(new AttributeModifier(MarkupHelper.ATTR_ID,
+                            htmlIdCompactScopeButton));
+
         } else {
 
             labelWrk = new Label("search-label", searchPrompt);
-            labelWrk.add(new AttributeModifier("for", htmlBaseId));
+            labelWrk.add(
+                    new AttributeModifier(MarkupHelper.ATTR_FOR, htmlBaseId));
             add(labelWrk);
 
             labelInput = new Label("search-input", "");
@@ -76,18 +94,19 @@ public class QuickSearchPanel extends Panel {
         }
 
         //
-        labelInput.add(new AttributeModifier("id", htmlBaseId));
+        labelInput.add(new AttributeModifier(MarkupHelper.ATTR_ID, htmlBaseId));
         if (StringUtils.isNotBlank(searchPlaceholder)) {
-            labelInput.add(
-                    new AttributeModifier("placeholder", searchPlaceholder));
+            labelInput.add(new AttributeModifier(MarkupHelper.ATTR_PLACEHOLDER,
+                    searchPlaceholder));
         }
         add(labelInput);
 
         //
         labelWrk = new Label("search-filter", "");
-        labelWrk.add(new AttributeModifier("id",
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_ID,
                 String.format("%s-filter", htmlBaseId)));
-        labelWrk.add(new AttributeModifier("data-input", "#" + htmlBaseId));
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DATA_INPUT,
+                String.format("#%s", htmlBaseId)));
 
         add(labelWrk);
     }

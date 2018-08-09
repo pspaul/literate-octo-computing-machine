@@ -72,12 +72,15 @@ public final class MarkupHelper {
     public static final String ATTR_HREF = "href";
     public static final String ATTR_NAME = "name";
     public static final String ATTR_VALUE = "value";
+    public static final String ATTR_PLACEHOLDER = "placeholder";
     public static final String ATTR_SLIDER_MIN = "min";
     public static final String ATTR_SLIDER_MAX = "max";
     public static final String ATTR_MAXLENGTH = "maxlength";
 
     public static final String ATTR_DATA_JQM_DATA_ON_TEXT = "data-on-text";
     public static final String ATTR_DATA_JQM_DATA_OFF_TEXT = "data-off-text";
+
+    public static final String ATTR_DATA_INPUT = "data-input";
 
     public static final String ATTR_DATA_SAVAPAGE = "data-savapage";
     public static final String ATTR_DATA_SAVAPAGE_TYPE = "data-savapage-type";

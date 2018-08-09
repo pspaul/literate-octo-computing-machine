@@ -70,7 +70,9 @@ import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
 import org.savapage.server.api.request.ReqSystemModeChange;
+import org.savapage.server.api.request.ReqUserDelegateGroupsPreferred;
 import org.savapage.server.api.request.ReqUserGet;
+import org.savapage.server.api.request.ReqUserGetDelegateGroupsPreferredSelect;
 import org.savapage.server.api.request.ReqUserGroupGet;
 import org.savapage.server.api.request.ReqUserGroupMemberQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupQuickSearch;
@@ -81,6 +83,7 @@ import org.savapage.server.api.request.ReqUserNotifyAccountChange;
 import org.savapage.server.api.request.ReqUserPasswordErase;
 import org.savapage.server.api.request.ReqUserQuickSearch;
 import org.savapage.server.api.request.ReqUserSet;
+import org.savapage.server.api.request.ReqUserSetDelegateGroupsPreferredSelect;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.
@@ -295,7 +298,17 @@ public class JsonApiDict {
     public static final String REQ_USER_QUICK_SEARCH = "user-quick-search";
     public static final String REQ_USER_SET = "user-set";
     public static final String REQ_USER_SOURCE_GROUPS = "user-source-groups";
+
     public static final String REQ_USER_SYNC = "user-sync";
+
+    public static final String REQ_USER_DELEGATE_GROUPS_PREFERRED =
+            "user-delegate-groups-preferred";
+
+    public static final String REQ_USER_SET_DELEGATE_GROUPS_PREFERRED_SELECT =
+            "user-set-delegate-groups-preferred-select";
+
+    public static final String REQ_USER_GET_DELEGATE_GROUPS_PREFERRED_SELECT =
+            "user-get-delegate-groups-preferred-select";
 
     public static final String REQ_USERGROUPS_ADD_REMOVE =
             "usergroups-add-remove";
@@ -1049,6 +1062,18 @@ public class JsonApiDict {
         adm(REQ_USER_SET, ReqUserSet.class, DbClaim.READ, DbAccess.YES);
         adm(REQ_USER_SOURCE_GROUPS, DbClaim.NONE, DbAccess.NO);
         adm(REQ_USER_SYNC, DbClaim.NONE, DbAccess.NO);
+
+        usr(REQ_USER_DELEGATE_GROUPS_PREFERRED,
+                ReqUserDelegateGroupsPreferred.class, DbClaim.READ,
+                DbAccess.YES);
+
+        usr(REQ_USER_GET_DELEGATE_GROUPS_PREFERRED_SELECT,
+                ReqUserGetDelegateGroupsPreferredSelect.class, DbClaim.NONE,
+                DbAccess.YES);
+
+        usr(REQ_USER_SET_DELEGATE_GROUPS_PREFERRED_SELECT,
+                ReqUserSetDelegateGroupsPreferredSelect.class, DbClaim.READ,
+                DbAccess.YES);
 
         adm(REQ_USERGROUPS_ADD_REMOVE, ReqUserGroupsAddRemove.class,
                 DbClaim.READ, DbAccess.YES);
