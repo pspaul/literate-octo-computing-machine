@@ -59,10 +59,13 @@ public class QuickSearchPanel extends Panel {
      *            When not {@code null} <i>and</i> panel is rendered in compact
      *            mode, a button is added that can be used in JavaScript context
      *            to set search scope.
+     * @param htmlIdCompactScopeTitle
+     *            The HTML title of the compact scope button.
      */
     public void populate(final String htmlBaseId, final String searchPrompt,
             final String searchPlaceholder, final boolean compact,
-            final String htmlIdCompactScopeButton) {
+            final String htmlIdCompactScopeButton,
+            final String htmlIdCompactScopeTitle) {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
@@ -79,7 +82,10 @@ public class QuickSearchPanel extends Panel {
                     htmlIdCompactScopeButton,
                     StringUtils.isNotBlank(htmlIdCompactScopeButton))
                     .add(new AttributeModifier(MarkupHelper.ATTR_ID,
-                            htmlIdCompactScopeButton));
+                            htmlIdCompactScopeButton))
+                    .add(new AttributeModifier(MarkupHelper.ATTR_TITLE,
+                            StringUtils
+                                    .defaultString(htmlIdCompactScopeTitle)));
 
         } else {
 

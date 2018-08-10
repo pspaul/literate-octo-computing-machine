@@ -23,37 +23,60 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
-import org.savapage.core.OutOfBoundsException;
+import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.enums.UserAttrEnum;
+import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
+import org.savapage.core.services.ServiceContext;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqUserDelegateGroupsPreferred
-        extends ReqUserDelegateObjectsPreferred {
+public final class ReqUserSetDelegateAccountsPreferredSelect
+        extends ApiRequestMixin {
+
+    /** */
+    private static final UserDao USER_DAO =
+            ServiceContext.getDaoContext().getUserDao();
+
+    /**
+     * The request.
+     */
+    private static class DtoReq extends AbstractDto {
+
+        /**
+         * If {@code true}, user selected to search for preferred User Groups.
+         */
+        private boolean select;
+
+        public boolean isSelect() {
+            return select;
+        }
+
+        public void setSelect(boolean select) {
+            this.select = select;
+        }
+
+    }
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final DtoReq dto = this.getDtoReq();
-        final User dbUser = this.getDbUser();
+        final DtoReq dto = DtoReq.create(DtoReq.class, this.getParmValueDto());
 
-        if (dto.isAdd()) {
+        final User dbUser = USER_DAO.findById(this.getSessionUser().getId());
 
-            try {
-                USER_SERVICE.addPreferredDelegateGroups(dbUser,
-                        dto.getDbKeys());
-            } catch (OutOfBoundsException e) {
-                setApiResult(ApiResultCodeEnum.WARN,
-                        "msg-delegate-groups-preferred-max");
-                return;
-            }
+        final UserAttrEnum attrName =
+                UserAttrEnum.PROXY_PRINT_DELEGATE_ACCOUNTS_PREFERRED_SELECT;
 
+        if (dto.isSelect()) {
+            USER_SERVICE.setUserAttrValue(dbUser, attrName,
+                    Boolean.TRUE.toString());
         } else {
-            USER_SERVICE.removePreferredDelegateGroups(dbUser, dto.getDbKeys());
+            USER_SERVICE.removeUserAttr(dbUser, attrName);
         }
 
         setApiResultOk();

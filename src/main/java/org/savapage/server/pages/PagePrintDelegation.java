@@ -24,9 +24,15 @@ package org.savapage.server.pages;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dto.PrintDelegationDto;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
+import org.savapage.core.jpa.User;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserService;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -39,6 +45,12 @@ public final class PagePrintDelegation extends AbstractPage {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * .
+     */
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      *
@@ -97,22 +109,33 @@ public final class PagePrintDelegation extends AbstractPage {
         helper.addButton("button-popup-cancel", HtmlButtonEnum.CANCEL);
 
         //
+        final DaoContext ctx = ServiceContext.getDaoContext();
+        User dbUser = null;
+        String scopeHtmlId, scopeHtmlTitle;
+
         final QuickSearchPanel panel =
                 new QuickSearchPanel("quicksearch-user-groups");
         add(panel);
 
-        final String htmlIdScope;
-
         if (cm.isConfigValue(
                 Key.PROXY_PRINT_DELEGATE_GROUPS_PREFERRED_ENABLE)) {
-            htmlIdScope = "sp-print-delegation-groups-select-to-add-scope";
+
+            scopeHtmlId = "sp-print-delegation-groups-select-to-add-scope";
+            scopeHtmlTitle = NounEnum.PREFERRED_LIST.uiText(getLocale());
+
+            if (dbUser == null) {
+                dbUser = startUserTrx(ctx);
+            }
+            USER_SERVICE.prunePreferredDelegateGroups(dbUser);
+
         } else {
-            htmlIdScope = null;
+            scopeHtmlId = null;
+            scopeHtmlTitle = null;
         }
 
         panel.populate("sp-print-delegation-groups-select-to-add",
                 getLocalizer().getString("label-groups", this), "", true,
-                htmlIdScope);
+                scopeHtmlId, scopeHtmlTitle);
 
         //
         final QuickSearchPanel panelUsers =
@@ -120,15 +143,50 @@ public final class PagePrintDelegation extends AbstractPage {
         add(panelUsers);
 
         panelUsers.populate("sp-print-delegation-users-select-to-add",
-                getLocalizer().getString("label-users", this), "", true, null);
+                getLocalizer().getString("label-users", this), "", true, null,
+                null);
 
         //
         final QuickSearchPanel panelAccounts =
                 new QuickSearchPanel("quicksearch-shared-account");
         add(panelAccounts);
 
+        if (cm.isConfigValue(
+                Key.PROXY_PRINT_DELEGATE_ACCOUNTS_PREFERRED_ENABLE)) {
+
+            scopeHtmlId = "sp-print-delegation-select-shared-account-scope";
+            scopeHtmlTitle = NounEnum.PREFERRED_LIST.uiText(getLocale());
+
+            if (dbUser == null) {
+                dbUser = startUserTrx(ctx);
+            }
+            USER_SERVICE.prunePreferredDelegateAccounts(dbUser);
+
+        } else {
+            scopeHtmlId = null;
+            scopeHtmlTitle = null;
+        }
+
+        if (ctx.isTransactionActive()) {
+            ctx.commit();
+        }
+
         panelAccounts.populate("sp-print-delegation-select-shared-account",
-                PrintOutNounEnum.ACCOUNT.uiText(getLocale()), "", true, null);
+                PrintOutNounEnum.ACCOUNT.uiText(getLocale()), "", true,
+                scopeHtmlId, scopeHtmlTitle);
     }
 
+    /**
+     * Starts a transaction and find the user.
+     *
+     * @param ctx
+     *            The trx context.
+     * @return The user
+     */
+    private User startUserTrx(final DaoContext ctx) {
+        final User dbUser = ServiceContext.getDaoContext().getUserDao()
+                .findById(SpSession.get().getUser().getId());
+        ctx.beginTransaction();
+        return dbUser;
+    }
 }

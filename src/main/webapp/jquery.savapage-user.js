@@ -4113,17 +4113,19 @@
             //
             ,
                 _getJobTicketFirstValidDateTime = function(refDate, offsetDays) {
-                var msecDay = 24 * 60 * 60 * 1000,
-                    firstDateTime = refDate.getTime() + offsetDays * msecDay;
+                var i,
+                    msecDay = 24 * 60 * 60 * 1000,
+                    firstDateTime = refDate.getTime() + offsetDays * msecDay,
+                    fooFind = function(entry) {
+                    return entry === new Date(firstDateTime).getDay();
+                };
 
-                for (var i = 0; i < 7; i++) {
-                    if (_model.JOBTICKET_DELIVERY_DAYS_OF_WEEK.find(function(entry) {
-                        return entry === new Date(firstDateTime).getDay();
-                    })) {
+                for ( i = 0; i < 7; i++) {
+                    if (_model.JOBTICKET_DELIVERY_DAYS_OF_WEEK.find(fooFind)) {
                         break;
                     }
                     firstDateTime += msecDay;
-                };
+                }
                 return firstDateTime;
             }
             //
@@ -5249,6 +5251,7 @@
 
             _tbIndUser = function() {
                 //$('#mini-user-name').html(_model.user.id);
+                $.noop();
             };
 
             _initUser = function(loginRes) {
@@ -6482,6 +6485,7 @@
              *
              */
             _view.pages.print.onChangeJobTicketType = function(isCopyJob) {
+                $.noop();
             };
 
             /**

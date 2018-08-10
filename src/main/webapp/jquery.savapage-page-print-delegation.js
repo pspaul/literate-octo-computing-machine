@@ -36,30 +36,23 @@
         _ns.PagePrintDelegation = function(_i18n, _view, _model, _api) {
 
             var _util = _ns.Utils,
-                _this = this
-            //
-            ,
-                _previousPageId
-            //
-            ,
+                _this = this,
+                _previousPageId,
+
                 _ACCOUNT_ENUM_GROUP = 'GROUP',
                 _ACCOUNT_ENUM_USER = 'USER',
-                _ACCOUNT_ENUM_SHARED = 'SHARED'
-            //
-            ,
+                _ACCOUNT_ENUM_SHARED = 'SHARED',
+
                 _RADIO_ACCOUNT_NAME = 'sp-print-delegation-select-account-radio',
                 _RADIO_ACCOUNT_ID_GROUP = 'sp-print-delegation-select-account-group',
                 _RADIO_ACCOUNT_ID_USER = 'sp-print-delegation-select-account-user',
-                _RADIO_ACCOUNT_ID_SHARED = 'sp-print-delegation-select-account-shared'
-            //
-            ,
+                _RADIO_ACCOUNT_ID_SHARED = 'sp-print-delegation-select-account-shared',
+
                 _RADIO_EDIT_NAME = 'sp-print-delegation-edit-radio',
                 _RADIO_EDIT_ID_GROUPS = _RADIO_EDIT_NAME + '-add-groups',
                 _RADIO_EDIT_ID_USERS = _RADIO_EDIT_NAME + '-add-users',
-                _RADIO_EDIT_ID_COPIES = _RADIO_EDIT_NAME + '-add-copies'
+                _RADIO_EDIT_ID_COPIES = _RADIO_EDIT_NAME + '-add-copies',
 
-            //
-            ,
                 _IND_SELECTED_ON = '<img height="12" src="/images/selected-green-16x16.png">&nbsp;',
                 _IND_SELECTED_OFF = '<img height="12" src="/images/unselected-16x16.png">&nbsp;',
 
@@ -72,68 +65,55 @@
                 _DATA_PREFERRED_ON = 'on',
                 _DATA_PREFERRED_OFF = 'off',
 
-                _QS_MAX_RESULTS = 5
-            //
-            ,
+                _QS_MAX_RESULTS = 5,
+
                 _CLASS_GROUP = '_sp_group',
                 _CLASS_USER = '_sp_user',
-                _CLASS_COPIES = '_sp_copies'
-            //
-            ,
+                _CLASS_COPIES = '_sp_copies',
+
                 _CLASS_SELECTED_IND = '_sp_selected',
                 _CLASS_SELECTED_TXT = '_sp_selected_txt',
-                _CLASS_PREFERRED_IMG = '_sp_preferred_img'
-            //
-            ,
+                _CLASS_PREFERRED_IMG = '_sp_preferred_img',
+
                 _quickUserGroupFilter,
                 _quickUserFilter,
-                _quickAccountFilter
-            //
-            ,
+                _quickAccountFilter,
+
                 _quickUserGroupCache,
                 _quickUserCache,
-                _quickAccountCache
-            //
-            ,
+                _quickAccountCache,
+
                 _quickUserGroupTotalResults = null,
                 _quickUserTotalResults = null,
-                _quickAccountTotalResults = null
-            //
-            ,
+                _quickAccountTotalResults = null,
+
                 _quickUserGroupSelected,
                 _quickUserSelected,
-                _quickAccountSelected
-            //
-            ,
+                _quickAccountSelected,
+
                 _nSelectedGroups,
-                _nSelectedUsers
-            //
-            ,
+                _nSelectedUsers,
+
                 _delegatorGroups = {},
                 _delegatorUsers = {},
-                _delegatorCopies = {}
-            //
-            ,
+                _delegatorCopies = {},
+
                 _nDelegatorGroups = 0,
                 _nDelegatorUsers = 0,
                 _nDelegatorGroupMembers = 0,
                 _nDelegatorCopies = 0,
 
                 _nDelegatorUsersCopies = 0,
-                _nDelegatorGroupMembersCopies = 0
-            //
-            ,
+                _nDelegatorGroupMembersCopies = 0,
+
                 _delegatorGroupsSelected,
                 _delegatorUsersSelected,
-                _delegatorCopiesSelected
-            //
-            ,
+                _delegatorCopiesSelected,
+
                 _nSelectedDelegatorGroups,
                 _nSelectedDelegatorUsers,
-                _nSelectedDelegatorCopies
+                _nSelectedDelegatorCopies,
 
-            //----------------------------------------------------------------
-            ,
                 _delegationModel = function() {
                 return {
                     name : 'a name',
@@ -141,9 +121,8 @@
                     users : _delegatorUsers,
                     copies : _delegatorCopies
                 };
-            }
-            //----------------------------------------------------------------
-            ,
+            },
+
                 _createModelAccount = function(account, userCount, userCopies, totalCopies) {
                 // Java: PrintDelegationDto.DelegatorAccount
                 return {
@@ -153,9 +132,8 @@
                     userCopies : userCopies,
                     totalCopies : totalCopies || (userCount * userCopies)
                 };
-            }
-            //
-            ,
+            },
+
                 _revertQuickUserGroupsSelected = function() {
                 _quickUserGroupSelected = {};
                 _nSelectedGroups = 0;
@@ -163,14 +141,12 @@
                 $.each($('#sp-print-delegation-groups-select-to-add-filter .' + _CLASS_SELECTED_TXT), function() {
                     $(this).html(_IND_SELECTED_OFF);
                 });
-            }
-            //
-            ,
+            },
+
                 _switchQuickUserGroupToSingleSelect = function() {
                 $('#sp-print-delegation-groups-select-to-add-filter .' + _CLASS_SELECTED_TXT).addClass(_CLASS_SELECTED_IND);
-            }
-            //
-            ,
+            },
+
                 _revertQuickUserSelected = function() {
                 _quickUserSelected = {};
                 _nSelectedUsers = 0;
@@ -178,6 +154,15 @@
                 $.each($('#sp-print-delegation-users-select-to-add-filter .' + _CLASS_SELECTED_TXT), function() {
                     $(this).html(_IND_SELECTED_OFF);
                 });
+            },
+                _onGroupPreferred = function(selection) {
+                _onObjectPreferred(selection, 'user-delegate-groups-preferred');
+            },
+                _isGroupSelectScopePreferred = function() {
+                return $('#sp-print-delegation-groups-select-to-add-scope').hasClass(_CLASS_ICON_PREFERRED_ON);
+            },
+                _isGroupPreferredEnabled = function() {
+                return $('#sp-print-delegation-groups-select-to-add-scope').length > 0;
             }
             //
             ,
@@ -338,8 +323,8 @@
             }
             //----------------------------------------------------------------
             ,
-                _onQuickSearchInputVisibility = function(refId, filter, totResults) {
-                _view.visible($('#' + refId + ' .sp-quicksearch-input'), filter.length !== 0 || totResults > 1);
+                _onQuickSearchInputVisibility = function(refId, filter, totResults, preferredScope) {
+                _view.visible($('#' + refId + ' .sp-quicksearch-input'), preferredScope || filter.length !== 0 || totResults > 1);
             }
             //----------------------------------------------------------------
             ,
@@ -462,17 +447,19 @@
             }
             //----------------------------------------------------------------
             ,
-                _onQuickSearchAccount = function(target, filter, startPosition, paging) {
+                _onQuickSearchAccount = function(target, filter, startPosition, paging, rescope) {
                 /* QuickSearchFilterDto */
                 var res,
                     html = "",
                     refId = 'sp-print-delegation-quicksearch-accounts',
-                    qsButtons = $('#' + refId + ' .sp-quicksearch-buttons');
+                    qsButtons = $('#' + refId + ' .sp-quicksearch-buttons'),
+                    preferredEnabled = _isAccountPreferredEnabled(),
+                    preferredScope = _isAccountSelectScopePreferred();
 
-                if (!paging && _quickAccountFilter === filter) {
+                if (!rescope && !paging && _quickAccountFilter === filter) {
                     return;
                 }
-                if (!paging) {
+                if (!paging || rescope) {
                     _quickAccountTotalResults = null;
                 }
 
@@ -486,7 +473,8 @@
                         filter : filter,
                         startPosition : startPosition,
                         totalResults : _quickAccountTotalResults,
-                        maxResults : _QS_MAX_RESULTS
+                        maxResults : _QS_MAX_RESULTS,
+                        preferred : preferredScope
                     })
                 });
 
@@ -499,7 +487,16 @@
                         html += "<li class=\"ui-mini ui-li-has-icon\" data-icon=\"false\" data-savapage=\"" + item.key + "\">";
                         html += "<a href=\"#\">";
                         html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_SELECTED_OFF + "</span>&nbsp;";
-                        html += item.text + "</a></li>";
+                        html += item.text;
+                        if (preferredEnabled) {
+                            html += "<span class=\"ui-li-count\">";
+                            html += "<span class=\"" + _CLASS_PREFERRED_IMG + "\" data-savapage=\"";
+                            html += item.preferred ? _DATA_PREFERRED_ON : _DATA_PREFERRED_OFF;
+                            html += "\">&nbsp;";
+                            html += item.preferred ? _IND_PREFERRED_ON : _IND_PREFERRED_OFF;
+                            html += "</span></span>";
+                        }
+                        html += "</a></li>";
                     });
 
                     _setQuickSearchNavigation(qsButtons, res);
@@ -512,7 +509,7 @@
                 target.html(html).filterable("refresh");
                 _selectQuickSearchSingleResult(target);
                 _onButtonAddVisibility();
-                _onQuickSearchInputVisibility(refId, filter, _quickAccountTotalResults);
+                _onQuickSearchInputVisibility(refId, filter, _quickAccountTotalResults, preferredScope);
             }
             //----------------------------------------------------------------
             ,
@@ -751,31 +748,29 @@
             }
             //----------------------------------------------------------------
             ,
-                _onGroupPreferred = function(selection) {
+                _onObjectPreferred = function(selection, request) {
                 var span = selection.find('.' + _CLASS_PREFERRED_IMG),
-                    groupID = span.closest('li').attr('data-savapage'),
-                    preferredNew = span.attr('data-savapage') !== _DATA_PREFERRED_ON;
+                    dbKey = span.closest('li').attr('data-savapage'),
+                    preferredNew = span.attr('data-savapage') !== _DATA_PREFERRED_ON,
+                    res;
 
                 span.html( preferredNew ? _IND_PREFERRED_ON : _IND_PREFERRED_OFF);
                 span.attr('data-savapage', preferredNew ? _DATA_PREFERRED_ON : _DATA_PREFERRED_OFF);
 
-                _api.call({
-                    request : "user-delegate-groups-preferred",
+                res = _api.call({
+                    request : request,
                     dto : JSON.stringify({
-                        groupIds : [groupID],
+                        dbKeys : [dbKey],
                         add : preferredNew
                     })
                 });
-            }
-            //----------------------------------------------------------------
-            ,
-                _isGroupSelectScopePreferred = function() {
-                return $('#sp-print-delegation-groups-select-to-add-scope').hasClass(_CLASS_ICON_PREFERRED_ON);
-            }
-            //----------------------------------------------------------------
-            ,
-                _isGroupPreferredEnabled = function() {
-                return $('#sp-print-delegation-groups-select-to-add-scope').length > 0;
+
+                if (res.result.code !== '0') {
+                    _view.showApiMsg(res);
+                    // reverse
+                    span.html( preferredNew ? _IND_PREFERRED_OFF : _IND_PREFERRED_ON);
+                    span.attr('data-savapage', preferredNew ? _DATA_PREFERRED_OFF : _DATA_PREFERRED_ON);
+                }
             }
             //----------------------------------------------------------------
             ,
@@ -871,16 +866,51 @@
             }
             //----------------------------------------------------------------
             ,
+                _isAccountSelectScopePreferred = function() {
+                return $('#sp-print-delegation-select-shared-account-scope').hasClass(_CLASS_ICON_PREFERRED_ON);
+            }
+            //----------------------------------------------------------------
+            ,
+                _isAccountPreferredEnabled = function() {
+                return $('#sp-print-delegation-select-shared-account-scope').length > 0;
+            }
+            //----------------------------------------------------------------
+            ,
+                _onAccountPreferred = function(selection) {
+                _onObjectPreferred(selection, 'user-delegate-accounts-preferred');
+            }
+            //----------------------------------------------------------------
+            ,
+                _onAccountSelectScope = function(selection) {
+                var classRem,
+                    classAdd;
+
+                if (selection.hasClass(_CLASS_ICON_PREFERRED_ON)) {
+                    classRem = _CLASS_ICON_PREFERRED_ON;
+                    classAdd = _CLASS_ICON_PREFERRED_OFF;
+                } else {
+                    classRem = _CLASS_ICON_PREFERRED_OFF;
+                    classAdd = _CLASS_ICON_PREFERRED_ON;
+                }
+
+                selection.removeClass(classRem);
+                selection.addClass(classAdd);
+
+                _api.call({
+                    request : 'user-set-delegate-accounts-preferred-select',
+                    dto : JSON.stringify({
+                        select : classAdd === _CLASS_ICON_PREFERRED_ON
+                    })
+                });
+
+                _onQuickSearchAccount($("#sp-print-delegation-select-shared-account-filter"), $('#sp-print-delegation-select-shared-account').val(), 0, true, true);
+            }
+            //----------------------------------------------------------------
+            ,
                 _onAccountSelected = function(selection) {
-                var span = selection.find('.' + _CLASS_SELECTED_TXT)
-                //
-                ,
-                    dbkey = selection.attr('data-savapage')
-                //
-                ,
-                    dbKeySelected = _quickAccountSelected ? _quickAccountSelected.key : null
-                //
-                ;
+                var span = selection.find('.' + _CLASS_SELECTED_TXT),
+                    dbkey = selection.attr('data-savapage'),
+                    dbKeySelected = _quickAccountSelected ? _quickAccountSelected.key : null;
 
                 if (dbKeySelected) {
                     if (dbKeySelected === dbkey) {
@@ -892,23 +922,15 @@
                 span.html(_IND_SELECTED_ON).addClass(_CLASS_SELECTED_IND);
 
                 _onButtonAddVisibility();
-
             }
             //----------------------------------------------------------------
             ,
                 _onDelegatorSelectRow = function(selection) {
-                var span = selection.find('.' + _CLASS_SELECTED_TXT)
-                //
-                ,
-                    isGroup = selection.hasClass(_CLASS_GROUP)
-                //
-                ,
-                    isCopies = selection.hasClass(_CLASS_COPIES)
-                //
-                ,
-                    dbkey = selection.attr('data-savapage')
-                //
-                ;
+                var span = selection.find('.' + _CLASS_SELECTED_TXT),
+                    isGroup = selection.hasClass(_CLASS_GROUP),
+                    isCopies = selection.hasClass(_CLASS_COPIES),
+                    dbkey = selection.attr('data-savapage');
+
                 if (isGroup) {
                     if (_delegatorGroupsSelected[dbkey]) {
                         _nSelectedDelegatorGroups--;
@@ -1005,6 +1027,7 @@
             ,
                 _onChangeEditMode = function(id) {
                 var dbkey,
+                    filterWrk,
                     selWlk,
                     isCopies = id === _RADIO_EDIT_ID_COPIES;
 
@@ -1043,8 +1066,9 @@
 
                 if (_isAccountSharedSelected()) {
                     selWlk = $('#sp-print-delegation-select-shared-account-filter');
-                    _onQuickSearchAccount(selWlk, "", 0, false);
-                    _view.visible(selWlk, selWlk.find('li').length !== 1);
+                    filterWrk = $('#sp-print-delegation-select-shared-account').val();
+                    _onQuickSearchAccount(selWlk, filterWrk, 0, false);
+                    _onQuickSearchInputVisibility('sp-print-delegation-quicksearch-accounts', filterWrk, _quickAccountTotalResults, _isAccountSelectScopePreferred());
                 }
 
                 selWlk = $('#sp-print-delegation-member-copies');
@@ -1062,6 +1086,7 @@
                     enableUsers,
                     enableCopies,
                     editMode;
+
                 // Note: AccountGroup and/or AccountShared might not be present,
                 // due to customization (config items).
                 if (_isAccountGroupSelected()) {
@@ -1120,6 +1145,7 @@
                     filterableUsers = $("#sp-print-delegation-users-select-to-add-filter"),
                     filterableAccounts = $("#sp-print-delegation-select-shared-account-filter"),
                     selBtnGroupsSelectScope = $('#sp-print-delegation-groups-select-to-add-scope'),
+                    selBtnAccountSelectScope = $('#sp-print-delegation-select-shared-account-scope'),
                     res;
 
                 _initDelegatorSelection();
@@ -1187,7 +1213,7 @@
                     _onGroupSelectScope($(this));
                 });
                 res = _api.call({
-                    request : 'user-get-delegate-groups-preferred-select',
+                    request : 'user-get-delegate-groups-preferred-select'
                 });
                 selBtnGroupsSelectScope.addClass(res.dto.select ? _CLASS_ICON_PREFERRED_ON : _CLASS_ICON_PREFERRED_OFF);
                 selBtnGroupsSelectScope.addClass('ui-btn-icon-notext');
@@ -1217,6 +1243,23 @@
                 $(this).on('click', '#sp-print-delegation-select-shared-account-filter li', null, function() {
                     _onAccountSelected($(this));
                 });
+
+                if (_isAccountPreferredEnabled()) {
+                    $(this).on('click', '#sp-print-delegation-select-shared-account-filter li .ui-li-count', null, function() {
+                        _onAccountPreferred($(this));
+                        return false;
+                    });
+                }
+
+                //
+                selBtnAccountSelectScope.click(function() {
+                    _onAccountSelectScope($(this));
+                });
+                res = _api.call({
+                    request : 'user-get-delegate-accounts-preferred-select'
+                });
+                selBtnAccountSelectScope.addClass(res.dto.select ? _CLASS_ICON_PREFERRED_ON : _CLASS_ICON_PREFERRED_OFF);
+                selBtnAccountSelectScope.addClass('ui-btn-icon-notext');
 
                 //-----------------------------------
                 // User | Group | Account selection

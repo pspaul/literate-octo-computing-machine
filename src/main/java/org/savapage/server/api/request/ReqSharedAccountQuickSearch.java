@@ -24,15 +24,16 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.savapage.core.dao.UserGroupAccountDao;
 import org.savapage.core.dto.AbstractDto;
-import org.savapage.core.dto.QuickSearchFilterDto;
+import org.savapage.core.dto.QuickSearchFilterPreferredDto;
 import org.savapage.core.dto.QuickSearchItemDto;
+import org.savapage.core.dto.QuickSearchItemPreferredDto;
 import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.server.session.SpSession;
 
 /**
  * Shared Account Quicksearch.
@@ -41,6 +42,10 @@ import org.savapage.server.session.SpSession;
  *
  */
 public final class ReqSharedAccountQuickSearch extends ReqQuickSearchMixin {
+
+    /** */
+    private static final UserGroupAccountDao USER_GROUP_ACCOUNT_DAO =
+            ServiceContext.getDaoContext().getUserGroupAccountDao();
 
     /**
      *
@@ -66,50 +71,70 @@ public final class ReqSharedAccountQuickSearch extends ReqQuickSearchMixin {
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final QuickSearchFilterDto dto = AbstractDto
-                .create(QuickSearchFilterDto.class, this.getParmValueDto());
+        final QuickSearchFilterPreferredDto dto = AbstractDto.create(
+                QuickSearchFilterPreferredDto.class, this.getParmValueDto());
 
         final int maxResult = dto.getMaxResults().intValue();
         final int currPosition = dto.getStartPosition();
 
-        final List<QuickSearchItemDto> items = new ArrayList<>();
+        final User dbUser = ServiceContext.getDaoContext().getUserDao()
+                .findById(this.getSessionUser().getId());
+
+        final Set<Long> preferredAccounts =
+                USER_SERVICE.getPreferredDelegateAccounts(dbUser);
 
         //
         final UserGroupAccountDao.ListFilter filter =
                 new UserGroupAccountDao.ListFilter();
 
-        // shortcut user
-        filter.setUserId(SpSession.get().getUser().getId());
-
-        //
+        filter.setUserId(dbUser.getId());
         filter.setContainingNameText(dto.getFilter());
         filter.setDisabled(Boolean.FALSE);
 
-        final UserGroupAccountDao dao =
-                ServiceContext.getDaoContext().getUserGroupAccountDao();
+        if (dto.isPreferred()) {
+            filter.setAccountIds(preferredAccounts);
+        }
 
         final int totalResults;
+        final List<SharedAccountDto> accountList;
 
-        if (dto.getTotalResults() == null) {
-            totalResults = (int) dao.getListCount(filter);
+        if (dto.isPreferred() && preferredAccounts == null) {
+
+            accountList = new ArrayList<>();
+            totalResults = 0;
+
         } else {
-            totalResults = dto.getTotalResults().intValue();
+
+            if (dto.getTotalResults() == null) {
+                totalResults =
+                        (int) USER_GROUP_ACCOUNT_DAO.getListCount(filter);
+            } else {
+                totalResults = dto.getTotalResults().intValue();
+            }
+
+            accountList = USER_GROUP_ACCOUNT_DAO.getListChunk(filter,
+                    Integer.valueOf(currPosition), dto.getMaxResults());
         }
 
-        final List<SharedAccountDto> accountList = dao.getListChunk(filter,
-                Integer.valueOf(currPosition), dto.getMaxResults());
+        final List<QuickSearchItemDto> items = new ArrayList<>();
 
-        for (final SharedAccountDto account : accountList) {
+        if (!accountList.isEmpty()) {
 
-            final QuickSearchItemDto itemWlk = new QuickSearchItemDto();
+            for (final SharedAccountDto account : accountList) {
 
-            itemWlk.setKey(account.getId());
-            itemWlk.setText(account.nameAsQuickSearch());
+                final QuickSearchItemPreferredDto itemWlk =
+                        new QuickSearchItemPreferredDto();
 
-            items.add(itemWlk);
+                itemWlk.setKey(account.getId());
+                itemWlk.setText(account.nameAsQuickSearch());
+
+                itemWlk.setPreferred(preferredAccounts != null
+                        && preferredAccounts.contains(account.getId()));
+
+                items.add(itemWlk);
+            }
         }
 
-        //
         final DtoRsp rsp = new DtoRsp();
         rsp.setItems(items);
         rsp.calcNavPositions(maxResult, currPosition, totalResults);

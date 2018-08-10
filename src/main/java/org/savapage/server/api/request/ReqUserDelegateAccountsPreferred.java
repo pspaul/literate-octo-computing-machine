@@ -31,7 +31,7 @@ import org.savapage.core.jpa.User;
  * @author Rijk Ravestein
  *
  */
-public final class ReqUserDelegateGroupsPreferred
+public final class ReqUserDelegateAccountsPreferred
         extends ReqUserDelegateObjectsPreferred {
 
     @Override
@@ -44,7 +44,7 @@ public final class ReqUserDelegateGroupsPreferred
         if (dto.isAdd()) {
 
             try {
-                USER_SERVICE.addPreferredDelegateGroups(dbUser,
+                USER_SERVICE.addPreferredDelegateAccounts(dbUser,
                         dto.getDbKeys());
             } catch (OutOfBoundsException e) {
                 setApiResult(ApiResultCodeEnum.WARN,
@@ -53,7 +53,8 @@ public final class ReqUserDelegateGroupsPreferred
             }
 
         } else {
-            USER_SERVICE.removePreferredDelegateGroups(dbUser, dto.getDbKeys());
+            USER_SERVICE.removePreferredDelegateAccounts(dbUser,
+                    dto.getDbKeys());
         }
 
         setApiResultOk();

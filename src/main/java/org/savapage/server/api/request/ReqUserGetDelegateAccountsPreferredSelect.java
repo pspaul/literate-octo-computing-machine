@@ -23,38 +23,54 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
-import org.savapage.core.OutOfBoundsException;
+import org.apache.commons.lang3.BooleanUtils;
+import org.savapage.core.dao.enums.UserAttrEnum;
+import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
+import org.savapage.core.services.ServiceContext;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqUserDelegateGroupsPreferred
-        extends ReqUserDelegateObjectsPreferred {
+public final class ReqUserGetDelegateAccountsPreferredSelect
+        extends ApiRequestMixin {
+
+    /**
+     * The request.
+     */
+    private static class DtoRsp extends AbstractDto {
+
+        /**
+         * If {@code true}, user selected to search for preferred User Groups.
+         */
+        private boolean select;
+
+        @SuppressWarnings("unused")
+        public boolean isSelect() {
+            return select;
+        }
+
+        public void setSelect(final boolean select) {
+            this.select = select;
+        }
+
+    }
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final DtoReq dto = this.getDtoReq();
-        final User dbUser = this.getDbUser();
+        final User dbUser = ServiceContext.getDaoContext().getUserDao()
+                .findById(this.getSessionUser().getId());
 
-        if (dto.isAdd()) {
+        final String value = USER_SERVICE.getUserAttrValue(dbUser,
+                UserAttrEnum.PROXY_PRINT_DELEGATE_ACCOUNTS_PREFERRED_SELECT);
 
-            try {
-                USER_SERVICE.addPreferredDelegateGroups(dbUser,
-                        dto.getDbKeys());
-            } catch (OutOfBoundsException e) {
-                setApiResult(ApiResultCodeEnum.WARN,
-                        "msg-delegate-groups-preferred-max");
-                return;
-            }
-
-        } else {
-            USER_SERVICE.removePreferredDelegateGroups(dbUser, dto.getDbKeys());
-        }
+        final DtoRsp rsp = new DtoRsp();
+        rsp.setSelect(BooleanUtils.toBoolean(value));
+        this.setResponse(rsp);
 
         setApiResultOk();
     }

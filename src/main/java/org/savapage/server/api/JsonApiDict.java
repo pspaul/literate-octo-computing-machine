@@ -70,8 +70,10 @@ import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
 import org.savapage.server.api.request.ReqSystemModeChange;
+import org.savapage.server.api.request.ReqUserDelegateAccountsPreferred;
 import org.savapage.server.api.request.ReqUserDelegateGroupsPreferred;
 import org.savapage.server.api.request.ReqUserGet;
+import org.savapage.server.api.request.ReqUserGetDelegateAccountsPreferredSelect;
 import org.savapage.server.api.request.ReqUserGetDelegateGroupsPreferredSelect;
 import org.savapage.server.api.request.ReqUserGroupGet;
 import org.savapage.server.api.request.ReqUserGroupMemberQuickSearch;
@@ -83,6 +85,7 @@ import org.savapage.server.api.request.ReqUserNotifyAccountChange;
 import org.savapage.server.api.request.ReqUserPasswordErase;
 import org.savapage.server.api.request.ReqUserQuickSearch;
 import org.savapage.server.api.request.ReqUserSet;
+import org.savapage.server.api.request.ReqUserSetDelegateAccountsPreferredSelect;
 import org.savapage.server.api.request.ReqUserSetDelegateGroupsPreferredSelect;
 
 /**
@@ -303,12 +306,17 @@ public class JsonApiDict {
 
     public static final String REQ_USER_DELEGATE_GROUPS_PREFERRED =
             "user-delegate-groups-preferred";
-
     public static final String REQ_USER_SET_DELEGATE_GROUPS_PREFERRED_SELECT =
             "user-set-delegate-groups-preferred-select";
-
     public static final String REQ_USER_GET_DELEGATE_GROUPS_PREFERRED_SELECT =
             "user-get-delegate-groups-preferred-select";
+
+    public static final String REQ_USER_DELEGATE_ACCOUNTS_PREFERRED =
+            "user-delegate-accounts-preferred";
+    public static final String REQ_USER_SET_DELEGATE_ACCOUNTS_PREFERRED_SELECT =
+            "user-set-delegate-accounts-preferred-select";
+    public static final String REQ_USER_GET_DELEGATE_ACCOUNTS_PREFERRED_SELECT =
+            "user-get-delegate-accounts-preferred-select";
 
     public static final String REQ_USERGROUPS_ADD_REMOVE =
             "usergroups-add-remove";
@@ -1066,13 +1074,21 @@ public class JsonApiDict {
         usr(REQ_USER_DELEGATE_GROUPS_PREFERRED,
                 ReqUserDelegateGroupsPreferred.class, DbClaim.READ,
                 DbAccess.YES);
-
         usr(REQ_USER_GET_DELEGATE_GROUPS_PREFERRED_SELECT,
                 ReqUserGetDelegateGroupsPreferredSelect.class, DbClaim.NONE,
                 DbAccess.YES);
-
         usr(REQ_USER_SET_DELEGATE_GROUPS_PREFERRED_SELECT,
                 ReqUserSetDelegateGroupsPreferredSelect.class, DbClaim.READ,
+                DbAccess.YES);
+
+        usr(REQ_USER_DELEGATE_ACCOUNTS_PREFERRED,
+                ReqUserDelegateAccountsPreferred.class, DbClaim.READ,
+                DbAccess.YES);
+        usr(REQ_USER_GET_DELEGATE_ACCOUNTS_PREFERRED_SELECT,
+                ReqUserGetDelegateAccountsPreferredSelect.class, DbClaim.NONE,
+                DbAccess.YES);
+        usr(REQ_USER_SET_DELEGATE_ACCOUNTS_PREFERRED_SELECT,
+                ReqUserSetDelegateAccountsPreferredSelect.class, DbClaim.READ,
                 DbAccess.YES);
 
         adm(REQ_USERGROUPS_ADD_REMOVE, ReqUserGroupsAddRemove.class,
