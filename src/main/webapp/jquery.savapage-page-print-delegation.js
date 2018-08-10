@@ -56,8 +56,8 @@
                 _IND_SELECTED_ON = '<img height="12" src="/images/selected-green-16x16.png">&nbsp;',
                 _IND_SELECTED_OFF = '<img height="12" src="/images/unselected-16x16.png">&nbsp;',
 
-                _IND_PREFERRED_ON = '<img height="10" src="/famfamfam-silk/star.png">&nbsp;',
-                _IND_PREFERRED_OFF = '<img height="10" src="/famfamfam-silk/star_gray.png">&nbsp;',
+                _IND_PREFERRED_ON = '&nbsp;<img height="10" src="/famfamfam-silk/star.png">&nbsp;',
+                _IND_PREFERRED_OFF = '&nbsp;<img height="10" src="/famfamfam-silk/star_gray.png">&nbsp;',
 
                 _CLASS_ICON_PREFERRED_ON = 'ui-icon-mini-preferred-on',
                 _CLASS_ICON_PREFERRED_OFF = 'ui-icon-mini-preferred-off',
@@ -492,7 +492,7 @@
                             html += "<span class=\"ui-li-count\">";
                             html += "<span class=\"" + _CLASS_PREFERRED_IMG + "\" data-savapage=\"";
                             html += item.preferred ? _DATA_PREFERRED_ON : _DATA_PREFERRED_OFF;
-                            html += "\">&nbsp;";
+                            html += "\">";
                             html += item.preferred ? _IND_PREFERRED_ON : _IND_PREFERRED_OFF;
                             html += "</span></span>";
                         }
