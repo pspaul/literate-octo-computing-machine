@@ -33,28 +33,18 @@
         /*jslint browser: true*/
         /*global $, jQuery, alert*/
 
-        var
-        //-----------------------------------------------
-        _watchdogHeartbeatSecs,
-            _watchdogTimeoutSecs
-        //
-        ,
+        var _watchdogHeartbeatSecs,
+            _watchdogTimeoutSecs,
             _watchdogTimer,
             _onWatchdogHeartbeat,
-            _lastAppHeartbeat
-        //
-        ,
+            _lastAppHeartbeat,
             _deferAppWakeUp,
             _onAppWakeUp,
-            _onAppWakeUpAutoRestore
-
+            _onAppWakeUpAutoRestore,
         //
-        ,
             _doAppHeartbeat = function() {
             _lastAppHeartbeat = new Date().getTime();
-        }
-        //
-        ;
+        };
 
         /**
          * Common initializing actions for all Web App types.
@@ -204,16 +194,10 @@
          * the after successful login. Use stop() to stop after logout.
          */
         _ns.Cometd = function() {
-
-            var _super = new _ns.Base()
-            //
-            ,
-                _self = _ns.derive(_super)
-            //
-            ,
-                _connected = false
+            var _super = new _ns.Base(),
+                _self = _ns.derive(_super),
+                _connected = false,
             // TODO: _isOn is ambiguous and needs rework
-            ,
                 _isOn = false;
 
             /**
@@ -463,7 +447,6 @@
          * Constructor
          */
         _ns.Api = function(_i18n, _user) {
-
             var _onExpired = null,
                 _onDisconnected = null;
 
@@ -529,7 +512,6 @@
              *
              */
             this.call = function(apiData) {
-
                 var res,
                     json;
 
@@ -654,9 +636,7 @@
             loadListPage : function(panel, wClassPage, jqId) {
 
                 var data = null,
-                    jsonData = null
-                //
-                ,
+                    jsonData = null,
                     url = '/pages/' + wClassPage + _ns.WebAppTypeUrlParm();
 
                 _ns.logger.debug(url);
@@ -762,18 +742,10 @@
             },
 
             v2m : function(my) {
-                var _view = _ns.PanelCommon.view
-                //
-                ,
-                    sel = $('#sp-accounttrx-date-from')
-                //
-                ,
-                    date = _view.mobipickGetDate(sel)
-                //
-                ,
-                    val
-                //
-                ,
+                var _view = _ns.PanelCommon.view,
+                    sel = $('#sp-accounttrx-date-from'),
+                    date = _view.mobipickGetDate(sel),
+                    val,
                     present = (sel.val().length > 0);
 
                 //
@@ -891,8 +863,8 @@
             // The HTML id attribute of the Panel.
             jqId : null,
 
-            doc_type_default: undefined,
-            
+            doc_type_default : undefined,
+
             clearHiddenUserid : function() {
                 $('#sp-doclog-hidden-user-id').val("");
                 $("#sp-doclog-user-title").html("");
@@ -1007,9 +979,7 @@
 
             m2v : function(my) {
                 var val,
-                    id
-                //
-                ,
+                    id,
                     _view = _ns.PanelCommon.view;
 
                 $('#sp-doclog-document-name').val(my.input.select.doc_name);
@@ -1042,11 +1012,11 @@
 
                 //--
                 if (!my.doc_type_default) {
-                    // Initialize default from first-time setting. 
+                    // Initialize default from first-time setting.
                     my.doc_type_default = _view.getRadioValue('sp-doclog-select-type');
                     my.input.select.doc_type = my.doc_type_default;
                 }
-                
+
                 _view.checkRadioValue('sp-doclog-select-type', my.input.select.doc_type);
 
                 val = my.input.select.letterhead;
@@ -1063,9 +1033,7 @@
             },
 
             v2m : function(my) {
-                var _view = _ns.PanelCommon.view
-                //
-                ,
+                var _view = _ns.PanelCommon.view,
                     val,
                     sel,
                     date,
@@ -1133,7 +1101,7 @@
                 my.input.select.destination = ( present ? sel.val() : null);
 
                 // val is undefined when radiobutton 'sp-doc-out-lh' is missing,
-                // due to user privileges. 
+                // due to user privileges.
                 val = _view.getRadioValue('sp-doc-out-lh');
                 my.input.select.letterhead = (!val || val === "" ? undefined : (val === "1"));
 
@@ -1218,7 +1186,6 @@
             },
 
             onOutput : function(my, output) {
-                var _view = _ns.PanelCommon.view;
 
                 my.output = output;
                 /*
@@ -1259,13 +1226,11 @@
          * Constructor
          */
         _ns.QuickUserSearch = function(_view, _api) {
-
             var _this,
                 _quickUserCache = [],
                 _quickUserSelected,
-                _lastFilter
+                _lastFilter,
             //
-            ,
                 _onQuickUserSearch = function(target, filter) {
                 /* QuickSearchFilterDto */
                 var res,
@@ -1302,9 +1267,7 @@
                     }
                 }
                 target.html(html).filterable("refresh");
-            }
-            //
-            ;
+            };
 
             this.onCreate = function(parent, filterId, onSelectUser, onClearUser, onQuickSearchBefore) {
                 var filterableUserId = $("#" + filterId);
@@ -1383,7 +1346,6 @@
          * Constructor
          */
         _ns.PageLanguage = function(_i18n, _view) {
-
             var _page,
                 _self,
                 _onSelectLocale;
@@ -1419,7 +1381,6 @@
          * Constructor
          */
         _ns.PageUserPasswordReset = function(_i18n, _view) {
-
             var _page,
                 _self,
                 _onSelectReset;
@@ -1459,12 +1420,8 @@
          * NOTE: this 'class' is only used locally in this file by 'page-login'.
          */
         _ns.PageAbout = function(_i18n, _view) {
-            var _page = new _ns.Page(_i18n, _view, '#page-info', 'AppAbout')
-            //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ;
+            var _page = new _ns.Page(_i18n, _view, '#page-info', 'AppAbout'),
+                _self = _ns.derive(_page);
 
             $(_self.id()).on('pagebeforehide', function(event, ui) {
                 if (_self.onHide) {
@@ -1485,110 +1442,58 @@
             var _page,
                 _self,
                 _pageAbout,
-                _util = _ns.Utils
-            //
-            ,
+                _util = _ns.Utils,
                 _onLanguage,
                 _onLogin,
-                _onShow
-            //
-            ,
+                _onShow,
                 _authName,
                 _authId,
                 _authCardLocal,
                 _authCardIp,
-                _authYubiKey
-            //
-            ,
+                _authYubiKey,
                 _authCardPinReq,
-                _authCardSelfAssoc
-            //
-            ,
-                _ID_MODE_NAME = '#sp-div-login-name'
-            //
-            ,
-                _ID_MODE_ID = '#sp-div-login-number'
-            //
-            ,
-                _ID_MODE_YUBIKEY = '#sp-div-login-yubikey'
-            //
-            ,
-                _ID_MODE_CARD_LOCAL = '#sp-div-login-card-local'
-            //
-            ,
-                _ID_MODE_CARD_IP = '#sp-div-login-card-ip'
-            //
-            ,
-                _ID_MODE_CARD_ASSOC = '#sp-div-login-card-assoc'
-            //
-            ,
-                _ID_BTN_MODE_NAME = '#sp-btn-login-mode-name'
-            //
-            ,
-                _ID_BTN_MODE_ID = '#sp-btn-login-mode-id'
-            //
-            ,
-                _ID_BTN_MODE_YUBIKEY = '#sp-btn-login-mode-yubikey'
-            //
-            ,
-                _ID_BTN_MODE_CARD_LOCAL = '#sp-btn-login-mode-card-local'
-            //
-            ,
-                _ID_BTN_MODE_CARD_IP = '#sp-btn-login-mode-card-ip'
-            //
-            ,
-                _ID_BTN_LOGIN_NAME = '#sp-btn-login-name'
-            //
-            ,
-                _ID_BTN_LOGIN_ID = '#sp-btn-login-number'
-            //
-            ,
-                _ID_BTN_LOGIN_YUBIKEY = '#sp-btn-login-yubikey'
-            //
-            ,
-                _ID_BTN_LOGIN_CARD_LOCAL = '#sp-btn-login-card-local'
-            //
-            ,
-                _ID_BTN_LOGIN_CARD_IP = '#sp-btn-login-card-ip'
-            //
-            ,
-                _ID_BTN_LOGIN_CARD_ASSOC = '#sp-btn-login-card-assoc'
-            //
-            ,
+                _authCardSelfAssoc,
+
+                _ID_MODE_NAME = '#sp-div-login-name',
+                _ID_MODE_ID = '#sp-div-login-number',
+                _ID_MODE_YUBIKEY = '#sp-div-login-yubikey',
+                _ID_MODE_CARD_LOCAL = '#sp-div-login-card-local',
+                _ID_MODE_CARD_IP = '#sp-div-login-card-ip',
+                _ID_MODE_CARD_ASSOC = '#sp-div-login-card-assoc',
+                _ID_BTN_MODE_NAME = '#sp-btn-login-mode-name',
+                _ID_BTN_MODE_ID = '#sp-btn-login-mode-id',
+                _ID_BTN_MODE_YUBIKEY = '#sp-btn-login-mode-yubikey',
+                _ID_BTN_MODE_CARD_LOCAL = '#sp-btn-login-mode-card-local',
+                _ID_BTN_MODE_CARD_IP = '#sp-btn-login-mode-card-ip',
+                _ID_BTN_LOGIN_NAME = '#sp-btn-login-name',
+                _ID_BTN_LOGIN_ID = '#sp-btn-login-number',
+                _ID_BTN_LOGIN_YUBIKEY = '#sp-btn-login-yubikey',
+                _ID_BTN_LOGIN_CARD_LOCAL = '#sp-btn-login-card-local',
+                _ID_BTN_LOGIN_CARD_IP = '#sp-btn-login-card-ip',
+                _ID_BTN_LOGIN_CARD_ASSOC = '#sp-btn-login-card-assoc',
                 _authModeDefault,
                 _onAuthModeSelect,
-                _modeSelected
-            //
-            ,
-                _authKeyLoggerStartTime = null
+                _modeSelected,
+                _authKeyLoggerStartTime = null,
             //
             // The max number of milliseconds allowed for entering the
             // local card number.
-            ,
-                _MAX_CARD_NUMBER_MSECS = 500
+                _MAX_CARD_NUMBER_MSECS = 500,
             //
             // The max number of milliseconds allowed for entering the
             // YubiKey OTP.
-            ,
-                _MAX_YUBIKEY_MSECS = 1500
+                _MAX_YUBIKEY_MSECS = 1500,
             //
             // The YubiKey OTP,    or collected local card number from individual
             // keystrokes,  or the cached Card Number to associate with a user.
-            ,
-                _authKeyLoggerCollected
-            //
-            ,
+                _authKeyLoggerCollected,
                 _timeoutCardAssoc,
-                _countdownCardAssoc
+                _countdownCardAssoc,
             //
             // Max number of seconds the assoc card dialog is visible.
-            ,
-                _MAX_CARD_ASSOC_SECS = 30
-            //
-            ,
-                _isCardRegistered
-            //
-            ;
+                _MAX_CARD_ASSOC_SECS = 30,
+
+                _isCardRegistered;
 
             _page = new _ns.Page(_i18n, _view, '#page-login', 'Login');
             _self = _ns.derive(_page);
@@ -1629,6 +1534,7 @@
             };
 
             _self.notifyLogout = function() {
+                $.noop();
             };
 
             /**
@@ -1698,7 +1604,6 @@
              *
              */
             _onAuthModeSelect = function(modeSelected) {
-
                 var nMethods = 0;
 
                 // clean all input
@@ -2028,11 +1933,10 @@
 
                     $(_ID_BTN_LOGIN_ID).click(function() {
                         var selNum = $('#sp-login-id-number'),
-                            num = selNum.val()
-                        //
-                        ,
+                            num = selNum.val(),
                             selPin = $('#sp-login-id-pin'),
                             pin = selPin.val();
+
                         selNum.val('');
                         selPin.val('');
 
@@ -2089,16 +1993,11 @@
 
                     $(_ID_BTN_LOGIN_CARD_LOCAL).click(function() {
                         var selCard = $('#sp-login-card-local-number'),
-                            card = selCard.val()
-                        //
-                        ,
+                            card = selCard.val(),
                             selPin = $('#sp-login-card-local-pin'),
-                            pin = selPin.val()
+                            pin = selPin.val(),
                         // Elapsed time since the first keyup in the key logger.
-                        ,
-                            authKeyLoggerElapsed
-                        //
-                        ;
+                            authKeyLoggerElapsed;
 
                         if (card.length === 0) {
                             $('#sp-login-card-local-number-group').focus();
@@ -2145,20 +2044,15 @@
                     });
 
                     $(_ID_BTN_LOGIN_CARD_IP).click(function() {
+                        var
                         // hidden field
-                        var selCard = $('#sp-login-card-ip-number')
+                        selCard = $('#sp-login-card-ip-number'),
                         //
-                        ,
-                            card = selCard.val()
-                        //
-                        ,
+                            card = selCard.val(),
                             selPin = $('#sp-login-card-ip-pin'),
-                            pin = selPin.val()
-                        //
-                        ;
+                            pin = selPin.val();
 
                         if (_authCardPinReq && pin.length === 0) {
-
                             /*
                              * Check if card is registered (if card sef assoc is
                              * active).
@@ -2224,8 +2118,8 @@
          * Note: _api is used for 'jqplot' requests.
          */
         _ns.View = function(_i18n, _api) {
-
-            var _view = this, _onDisconnected = null;
+            var _view = this,
+                _onDisconnected = null;
 
             /*
              * AUTH Modes used for login. These names are reserved and are
@@ -2445,7 +2339,6 @@
              * @param data Object with data.
              */
             this.getPageHtml = function(page, data) {
-
                 var html,
                     url = '/pages/' + page + _ns.WebAppTypeUrlParm();
 
@@ -2492,7 +2385,7 @@
             this.loadAdminPage = function(sel, page) {
                 return this.loadPage(sel, 'admin/' + page);
             };
-            
+
             /**
              * Gets HTML of a User page (synchronous).
              * @param page
@@ -2535,8 +2428,7 @@
             };
 
             this.showPageAsync = function(sel, page, onDone, jsonData) {
-                var _this = this,
-                    url;
+                var url;
 
                 if ($(sel).children().length === 0) {
 
@@ -2620,7 +2512,6 @@
             };
 
             this.apiResMsg = function(result) {
-
                 var title,
                     cssClass,
                     txt,
@@ -2796,12 +2687,8 @@
              * Checks a radiobutton value.
              */
             this.checkRadioValue = function(name, value) {
-                var radio = 'input[name="' + name + '"]'
-                //
-                ,
-                    sel = $(radio + '[value="' + value + '"]')
-                //
-                ;
+                var radio = 'input[name="' + name + '"]',
+                    sel = $(radio + '[value="' + value + '"]');
                 $(radio).prop('checked', false);
                 sel.prop('checked', true);
                 $(radio).checkboxradio("refresh");
@@ -2860,7 +2747,7 @@
             this.mobipick = function(sel, localeDate) {
                 return sel.mobipick({
                     locale : _view.language,
-                    intlStdDate: !localeDate
+                    intlStdDate : !localeDate
                 });
             };
 
@@ -2917,7 +2804,6 @@
              *
              */
             this.checkPwMatch = function(jqPassw, jqConfirm, canBeVoid) {
-
                 var pw_valid = false,
                     pw1 = jqPassw.val(),
                     pw2 = jqConfirm.val(),
@@ -3172,64 +3058,63 @@
         "use strict";
 
         _ns.NumberUpPreview = {};
-                            
-         _ns.NumberUpPreview.classStaple = {
-             '3' : null,
-             '20' : 'sp-nup-staple-top-left',
-             '21' : 'sp-nup-staple-bottom-left',
-             '22' : 'sp-nup-staple-top-right',
-             '23' : 'sp-nup-staple-bottom-right',
-             '24' : '',
-             '25' : '',
-             '26' : '',
-             '27' : '',
-             '28' : 'sp-nup-staple-left-dual',
-             '29' : 'sp-nup-staple-top-dual',
-             '30' : 'sp-nup-staple-right-dual',
-             '31' : 'sp-nup-staple-bottom-dual',
-             '32' : 'sp-nup-staple-left-triple',
-             '33' : 'sp-nup-staple-top-triple',
-             '34' : 'sp-nup-staple-right-triple',
-             '35' : 'sp-nup-staple-bottom-triple'
-         }; 
-         _ns.NumberUpPreview.classPunch = {
-             '3' : null,
-             '70' : '',
-             '71' : '',
-             '72' : '',
-             '73' : '',
-             '74' : 'sp-nup-punch-left',
-             '75' : 'sp-nup-punch-top',
-             '76' : 'sp-nup-punch-right',
-             '77' : 'sp-nup-punch-bottom',
-             '78' : 'sp-nup-punch-left',
-             '79' : 'sp-nup-punch-top',
-             '80' : 'sp-nup-punch-right',
-             '81' : 'sp-nup-punch-bottom',
-             '82' : 'sp-nup-punch-left',
-             '83' : 'sp-nup-punch-top',
-             '84' : 'sp-nup-punch-right',
-             '85' : 'sp-nup-punch-bottom'
-         }; 
-                            
+
+        _ns.NumberUpPreview.classStaple = {
+            '3' : null,
+            '20' : 'sp-nup-staple-top-left',
+            '21' : 'sp-nup-staple-bottom-left',
+            '22' : 'sp-nup-staple-top-right',
+            '23' : 'sp-nup-staple-bottom-right',
+            '24' : '',
+            '25' : '',
+            '26' : '',
+            '27' : '',
+            '28' : 'sp-nup-staple-left-dual',
+            '29' : 'sp-nup-staple-top-dual',
+            '30' : 'sp-nup-staple-right-dual',
+            '31' : 'sp-nup-staple-bottom-dual',
+            '32' : 'sp-nup-staple-left-triple',
+            '33' : 'sp-nup-staple-top-triple',
+            '34' : 'sp-nup-staple-right-triple',
+            '35' : 'sp-nup-staple-bottom-triple'
+        };
+        _ns.NumberUpPreview.classPunch = {
+            '3' : null,
+            '70' : '',
+            '71' : '',
+            '72' : '',
+            '73' : '',
+            '74' : 'sp-nup-punch-left',
+            '75' : 'sp-nup-punch-top',
+            '76' : 'sp-nup-punch-right',
+            '77' : 'sp-nup-punch-bottom',
+            '78' : 'sp-nup-punch-left',
+            '79' : 'sp-nup-punch-top',
+            '80' : 'sp-nup-punch-right',
+            '81' : 'sp-nup-punch-bottom',
+            '82' : 'sp-nup-punch-left',
+            '83' : 'sp-nup-punch-top',
+            '84' : 'sp-nup-punch-right',
+            '85' : 'sp-nup-punch-bottom'
+        };
+
         _ns.NumberUpPreview.show = function(_view, numberUp, rotate180, punch, staple, landscape) {
-            
-            var clazz
-                , sel = $('.sp-nup-preview-sheet').filter('[data-savapage='+ numberUp + '-' + (landscape ? 'l' : 'p') + ']')
-                , selTbl = sel.find('table');
-            
+            var clazz,
+                sel = $('.sp-nup-preview-sheet').filter('[data-savapage=' + numberUp + '-' + ( landscape ? 'l' : 'p') + ']'),
+                selTbl = sel.find('table');
+
             _view.visible($('.sp-nup-preview'), true);
-            
+
             _view.visible($('.sp-nup-preview-portrait'), !landscape && !rotate180);
             _view.visible($('.sp-nup-preview-portrait-180'), !landscape && rotate180);
             _view.visible($('.sp-nup-preview-landscape'), landscape && !rotate180);
             _view.visible($('.sp-nup-preview-landscape-180'), landscape && rotate180);
-            
+
             _view.visible($('.sp-nup-preview-sheet'), false);
             _view.visible(sel, true);
-            
+
             selTbl.attr('class', '');
-            
+
             clazz = this.classPunch[punch];
             if (clazz && clazz.length) {
                 selTbl.addClass(clazz);
@@ -3238,7 +3123,7 @@
             if (clazz && clazz.length) {
                 selTbl.addClass(clazz);
             }
-            
-        }; 
-        
+
+        };
+
     }(jQuery, this, this.document, this.org.savapage));

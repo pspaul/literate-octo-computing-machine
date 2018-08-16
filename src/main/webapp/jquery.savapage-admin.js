@@ -41,26 +41,16 @@
          */
         _ns.Controller = function(_i18n, _model, _view, _api, _cometd) {
 
-            var _this = this
-            //
-            ,
+            var _this = this,
                 _util = _ns.Utils,
-                i18nRefresh
-            //
-            ,
+                i18nRefresh,
                 _handleLoginResult,
-                _saveConfigProps
-            //
-            ,
+                _saveConfigProps,
                 _fillConfigPropsYN,
                 _fillConfigPropsText,
-                _fillConfigPropsRadio
-            //
-            ,
+                _fillConfigPropsRadio,
                 _userSync,
-                _updateGcpState
-            //
-            ;
+                _updateGcpState;
 
             /**
              *
@@ -180,17 +170,11 @@
              *
              */
             this.init = function() {
-
                 var res,
                     language,
-                    country
-                //
-                ,
+                    country,
                     authModeRequest = _util.getUrlParam(_ns.URL_PARM.LOGIN);
 
-                /*
-                 *
-                 */
                 _model.initAuth();
 
                 res = _api.call({
@@ -438,7 +422,6 @@
             };
 
             _view.pages.admin.onUserSourceGroupEdit = function() {
-
                 var res,
                     html;
 
@@ -601,9 +584,7 @@
 
             _view.pages.admin.onApplySmartSchoolPaperCut = function(enable) {
                 var props = {};
-
                 props['smartschool.papercut.enable'] = enable ? 'Y' : 'N';
-
                 _saveConfigProps(props);
             };
 
@@ -637,7 +618,6 @@
             };
 
             _view.pages.admin.onApplyGcpEnable = function(_panel, enabled) {
-
                 var res = _api.call({
                     request : 'gcp-set-details',
                     enabled : enabled,
@@ -706,7 +686,6 @@
             };
 
             _view.pages.admin.onRefreshGcp = function(_panel) {
-
                 var res = _api.call({
                     request : 'gcp-get-details'
                 });
@@ -729,7 +708,6 @@
             };
 
             _view.pages.admin.onRegisterGcp = function() {
-
                 var res = _api.call({
                     request : 'gcp-register',
                     clientId : $('#gcp-client-id').val(),
@@ -745,7 +723,6 @@
             };
 
             _view.pages.admin.onApplyProxyPrint = function() {
-
                 var props = {},
                     key;
 
@@ -776,9 +753,7 @@
             };
 
             _view.pages.admin.onApplyFinancialPos = function() {
-                var props = {}
-                //
-                ;
+                var props = {};
                 _fillConfigPropsText(props, ["financial.pos.payment-methods", "financial.pos.receipt-header"]);
                 _saveConfigProps(props);
             };
@@ -862,12 +837,8 @@
             };
 
             _view.pages.admin.onPagometerReset = function() {
-                var scope = []
-                //
-                ,
-                    sfxs = ['dashboard', 'queues', 'printers', 'users']
-                //
-                ,
+                var scope = [],
+                    sfxs = ['dashboard', 'queues', 'printers', 'users'],
                     i = 0;
 
                 $.each(sfxs, function(key, sfx) {
@@ -998,7 +969,6 @@
             };
 
             _view.pages.userGroupsAddRemove.onUserGroupsAddRemove = function(added, removed) {
-
                 var res = _api.call({
                     request : 'usergroups-add-remove',
                     dto : JSON.stringify({
@@ -1043,7 +1013,6 @@
              *
              */
             _view.pages.user.onSaveUser = function() {
-
                 var res = _api.call({
                     request : 'user-set',
                     dto : JSON.stringify(_model.editUser)
@@ -1076,7 +1045,6 @@
             };
 
             _view.pages.user.onDeleteUser = function() {
-
                 var res = _api.call({
                     request : 'user-delete',
                     id : _model.editUser.dbId,
@@ -1101,7 +1069,6 @@
              *
              */
             _view.pages.user.onEraseUserPw = function() {
-
                 var res = _api.call({
                     request : 'erase-user-pw',
                     dto : JSON.stringify({
@@ -1127,7 +1094,6 @@
              *
              */
             _view.pages.admin.onEditConfigProp = function(name) {
-
                 var res = _api.call({
                     request : 'config-get-prop',
                     dto : JSON.stringify({
@@ -1149,7 +1115,6 @@
             };
 
             _view.pages.voucherCreate.onCreateBatch = function(dto, design) {
-
                 var res = _api.call({
                     request : "account-voucher-batch-create",
                     dto : JSON.stringify(dto)
@@ -1167,14 +1132,9 @@
             };
 
             _view.pages.configProp.onSave = function() {
-
                 var prop = {},
-                    ok
-                //
-                ,
-                    sel = (_model.editConfigProp.multiline ? '#config-prop-value-multiline' : '#config-prop-value')
-                //
-                ;
+                    ok,
+                    sel = (_model.editConfigProp.multiline ? '#config-prop-value-multiline' : '#config-prop-value');
 
                 _model.editConfigProp.value = $(sel).val();
 
@@ -1209,7 +1169,6 @@
             };
 
             _view.pages.admin.onEditSharedAccount = function(id) {
-
                 var res = _api.call({
                     request : 'shared-account-get',
                     dto : JSON.stringify({
@@ -1228,7 +1187,6 @@
             };
 
             _view.pages.sharedAccount.onSaveSharedAccount = function() {
-
                 var res = _api.call({
                     request : 'shared-account-set',
                     dto : JSON.stringify(_model.editAccount)
@@ -1281,6 +1239,7 @@
             };
 
             _view.pages.queue.onSaveQueue = function() {
+                var res;
 
                 _model.editQueue.urlpath = $('#queue-url-path').val();
                 _model.editQueue.ipallowed = $('#queue-ip-allowed').val();
@@ -1288,7 +1247,7 @@
                 _model.editQueue.deleted = $('#queue-deleted').is(':checked');
                 _model.editQueue.trusted = $('#queue-trusted').is(':checked');
 
-                var res = _api.call({
+                res = _api.call({
                     request : 'queue-set',
                     dto : JSON.stringify(_model.editQueue)
                 });
@@ -1372,7 +1331,6 @@
             };
 
             _view.pages.admin.onCreateDeviceTerminal = function() {
-
                 var res = _api.call({
                     request : 'device-new-terminal'
                 });
@@ -1484,7 +1442,6 @@
              *
              */
             _view.pages.printer.onSavePrinterMediaSources = function() {
-
                 var res,
                     SOURCE_AUTO = 'auto',
                     SOURCE_MANUAL = 'manual',
@@ -1529,7 +1486,6 @@
                 dto.sources = [];
 
                 $(".sp-printer-media-source-row").each(function() {
-
                     var cb = $(this).find('.sp-printer-media-source'),
                         active = _view.isCbChecked(cb),
                         source = cb.attr('id').substr("media-source.".length),
@@ -1580,12 +1536,9 @@
              *
              */
             _view.pages.printer.onSavePrinterCost = function() {
-                var res
+                var res,
                 // org.savapage.dto.ProxyPrinterCostDto
-                ,
-                    dto = {}
-                //
-                ;
+                    dto = {};
 
                 dto.id = _model.editPrinter.id;
 
@@ -1597,13 +1550,8 @@
                 dto.mediaCost = [];
 
                 $(".sp-printer-cost-media-row").each(function() {
-
-                    var cb = $(this).find('.sp-printer-cost-media')
-                    //
-                    ,
-                        media = cb.attr('id').substr("cost.media.".length)
-                    //
-                    ;
+                    var cb = $(this).find('.sp-printer-cost-media'),
+                        media = cb.attr('id').substr("cost.media.".length);
 
                     dto.mediaCost.push({
                         media : media,
@@ -1638,7 +1586,6 @@
             };
 
             _view.pages.printer.onRenamePrinter = function(id, name, replace) {
-
                 var res = _api.call({
                     request : 'printer-rename',
                     j_printer : JSON.stringify({
@@ -1723,10 +1670,7 @@
             _cometd.onHandshakeSuccess = function() {
 
                 _cometd.subscribe('/admin/**', function(message) {
-                    //
-                    var nItems = _model.pubMsgStack.length
-                    //
-                    ,
+                    var nItems = _model.pubMsgStack.length,
                         data = $.parseJSON(message.data);
 
                     if ($('#user-sync-messages') && data.topic === 'user-sync') {
@@ -1773,19 +1717,10 @@
          *
          */
         _ns.Model = function(_i18n) {
-
-            var _LOC_AUTH_NAME = 'sp.auth.admin.name'
-            //
-            ,
-                _LOC_AUTH_TOKEN = 'sp.auth.admin.token'
-            //
-            ,
-                _LOC_LANG = 'sp.admin.language'
-            //
-            ,
-                _LOC_COUNTRY = 'sp.admin.country'
-            //
-            ;
+            var _LOC_AUTH_NAME = 'sp.auth.admin.name',
+                _LOC_AUTH_TOKEN = 'sp.auth.admin.token',
+                _LOC_LANG = 'sp.admin.language',
+                _LOC_COUNTRY = 'sp.admin.country';
 
             this.MAX_PUB_MSG = 20;
 
@@ -1875,22 +1810,11 @@
          *
          */
         $.SavaPageAdm = function(name) {
-
-            var _i18n = new _ns.I18n()
-            //
-            ,
-                _model = new _ns.Model(_i18n)
-            //
-            ,
-                _api = new _ns.Api(_i18n, _model.user)
-            //
-            ,
-                _view = new _ns.View(_i18n, _api)
-            //
-            ,
-                _nativeLogin
-            //
-            ,
+            var _i18n = new _ns.I18n(),
+                _model = new _ns.Model(_i18n),
+                _api = new _ns.Api(_i18n, _model.user),
+                _view = new _ns.View(_i18n, _api),
+                _nativeLogin,
                 _cometd,
                 _ctrl;
 
@@ -1931,7 +1855,6 @@
              *
              */
             this.init = function() {
-
                 var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER),
                     authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN);
 

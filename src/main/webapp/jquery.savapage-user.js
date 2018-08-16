@@ -91,19 +91,11 @@
          *
          */
         function DeviceEvent(_cometd) {
-            var _this = this
-            //
-            ,
+            var _this = this,
                 _longPollPending = false,
-                _paused = false
-            //
-            ,
-                _onEvent
-            //
-            ,
-                _subscription
-            //
-            ;
+                _paused = false,
+                _onEvent,
+                _subscription;
 
             /**
              * NOTE: use _this instead of this.
@@ -204,24 +196,15 @@
          *
          */
         function ProxyPrintEvent(_cometd) {
-            var _this = this
-            //
-            ,
-                _onEvent
-            //
-            ,
-                _longPollPending = false
-            //
-            ,
-                _subscription
-            //
-            ;
+            var _this = this,
+                _onEvent,
+                _longPollPending = false,
+                _subscription;
 
             /**
              * NOTE: use _this instead of this.
              */
             _onEvent = function(message) {
-
                 var res = $.parseJSON(message.data);
 
                 _longPollPending = false;
@@ -311,27 +294,16 @@
             var
             // _super = new Base()
             //, _self = derive(_super)
-            _this = this
-            //
-            ,
-                _longPollStartTime = null
-            //
-            ,
-                _paused = false
-            //
-            ,
-                _onEvent
-            //
-            ,
-                _subscription
-            //
-            ;
+            _this = this,
+                _longPollStartTime = null,
+                _paused = false,
+                _onEvent,
+                _subscription;
 
             /**
              * NOTE: use _this instead of this.
              */
             _onEvent = function(message) {
-
                 var res = $.parseJSON(message.data);
 
                 if (_ns.logger.isDebugEnabled()) {
@@ -506,13 +478,8 @@
          *
          */
         function PageLetterhead(_i18n, _view, _model) {
-            var _this = this
-            //
-            ;
+            var _this = this;
 
-            /**
-             *
-             */
             this.getSelected = function() {
                 return _model.getSelLetterheadObj('#letterhead-list');
             };
@@ -543,7 +510,6 @@
                 });
 
                 $('#button-letterhead-apply').click(function() {
-
                     var pub = $("#sp-letterhead-public");
 
                     /*
@@ -574,7 +540,6 @@
                 });
 
                 $('#letterhead-thumbnails').on('tap', null, null, function(event) {
-
                     var src = $(event.target).attr('src'),
                         html;
 
@@ -655,7 +620,6 @@
              * Adds (replace) page images to the browser.
              */
             this.addImages = function(nPageInView) {
-
                 var width100Percent;
 
                 //
@@ -684,7 +648,6 @@
              * as portrait and adjusted to the viewport height.
              */
             this.adjustImages = function() {
-
                 var yContentPadding,
                     yImagePadding,
                     yFooter,
@@ -746,7 +709,6 @@
              * @param nPageInView The page in the viewport.
              */
             this.setImgUrls = function(nPageInView) {
-
                 var iPageLast,
                     i1,
                     i2,
@@ -948,7 +910,6 @@
                 $(".image_reel img:first").addClass("active");
 
                 $("#browser-slider").change(function() {
-
                     var val,
                         image;
 
@@ -1165,7 +1126,6 @@
          *
          */
         function PageDocLog(_i18n, _view, _model, _api) {
-
             var
             // DocLog (common for Admin and User WebApp)
             _panel = _ns.PanelDocLogBase;
@@ -1233,9 +1193,7 @@
          *
          */
         function PagePdfProp(_i18n, _view, _model) {
-            var _this = this
-            //
-            ,
+            var _this = this,
                 _setVisibility,
                 _m2V,
                 _v2M,
@@ -1308,7 +1266,6 @@
              * View to Model
              */
             _v2M = function() {
-
                 var wlk;
 
                 _model.myPdfTitle = $('#pdf-title').val();
@@ -1358,12 +1315,8 @@
              * Validate user input
              */
             _validate = function() {
-                var msg = null
-                //
-                ,
-                    pwO = $('#pdf-pw-owner').val()
-                //
-                ,
+                var msg = null,
+                    pwO = $('#pdf-pw-owner').val(),
                     pwU = $('#pdf-pw-user').val();
 
                 if (pwO !== $('#pdf-pw-owner-c').val()) {
@@ -1474,9 +1427,7 @@
          *
          */
         function PageVoucherRedeem(_i18n, _view, _model) {
-            var _this = this
-            //
-            ;
+            var _this = this;
 
             $("#page-voucher-redeem").on("pagecreate", function(event) {
 
@@ -1496,15 +1447,9 @@
          *
          */
         function PageCreditTransfer(_i18n, _view, _model) {
-            var _this = this
-            //
-            ,
-                _selMain = '#money-credit-transfer-main'
-            //
-            ,
-                _selCents = '#money-credit-transfer-cents'
-            //
-            ;
+            var _this = this,
+                _selMain = '#money-credit-transfer-main',
+                _selCents = '#money-credit-transfer-cents';
 
             $("#page-credit-transfer").on("pagecreate", function(event) {
 
@@ -1532,15 +1477,9 @@
          *
          */
         function PageMoneyTransfer(_i18n, _view, _model) {
-            var _this = this
-            //
-            ,
-                _selMain = '#money-transfer-main'
-            //
-            ,
-                _selCents = '#money-transfer-cents'
-            //
-            ;
+            var _this = this,
+                _selMain = '#money-transfer-main',
+                _selCents = '#money-transfer-cents';
 
             this.onRefreshContent = function(html) {
                 var button = '#button-money-transfer';
@@ -1559,15 +1498,12 @@
          *
          */
         function PageOutbox(_i18n, _view, _model, _api) {
-            var _this = this
-            //
-            ,
+            var _this = this,
+
                 _close = function() {
                 $('#button-outbox-back').click();
                 return false;
-            }
-            //
-            ,
+            },
                 _refresh = function() {
                 var html = _view.getUserPageHtml('OutboxAddin', {
                     jobTickets : false,
@@ -1581,9 +1517,7 @@
                     _view.visible($('#button-outbox-extend'), $('#outbox-job-list .sp-outbox-item-type-hold').length > 0);
                 }
                 return false;
-            }
-            //
-            ,
+            },
                 _onAccountTrxInfo = function(src, jobticket) {
                 var html = _view.getPageHtml('OutboxAccountTrxAddin', {
                     jobFileName : src.attr('data-savapage'),
@@ -1596,9 +1530,7 @@
                     positionTo : src,
                     arrow : 't'
                 });
-            }
-            //
-            ;
+            };
 
             $('#page-outbox').on("pagecreate", function(event) {
 
@@ -1659,9 +1591,7 @@
          *
          */
         function PageSend(_i18n, _view, _model) {
-            var _this = this
-            //
-            ;
+            var _this = this;
 
             $("#page-send").on("pagecreate", function(event) {
 
@@ -1685,7 +1615,6 @@
          * Constructor
          */
         function PageUserPinReset(_i18n, _view) {
-
             var _page,
                 _self,
                 _onSelectReset;
@@ -1757,12 +1686,8 @@
 
                 if ($('#button-user-internet-printer-dialog')) {
                     $(this).on('click', '#button-user-internet-printer-dialog', null, function() {
-                        var pageId = '#page-user-internet-printer'
-                        //
-                        ,
-                            html = _view.getUserPageHtml('InternetPrinterAddIn')
-                        //
-                        ;
+                        var pageId = '#page-user-internet-printer',
+                            html = _view.getUserPageHtml('InternetPrinterAddIn');
                         _view.showUserPage(pageId, 'InternetPrinter');
                         if (html) {
                             $('#page-user-internet-printer-content').html(html);
@@ -1792,18 +1717,12 @@
                         // The transfer page is a fixed part of
                         // WebAppUserPage.html
                         // (we only refresh the content)
-                        var pageId = '#page-money-transfer'
-                        //
-                        ,
+                        var pageId = '#page-money-transfer',
                             data = {
                             gateway : $(this).attr('data-payment-gateway'),
                             method : $(this).attr('data-payment-method')
-                        }
-                        //
-                        ,
-                            html = _view.getUserPageHtml('AccountMoneyTransfer', data)
-                        //
-                        ;
+                        },
+                            html = _view.getUserPageHtml('AccountMoneyTransfer', data);
                         _view.changePage(pageId);
                         if (html) {
                             _view.pages.moneyTransfer.onRefreshContent(html);
@@ -1829,9 +1748,7 @@
                 }
 
                 $(window).resize(function() {
-                    var sel = $('#dashboard-piechart')
-                    //
-                    ,
+                    var sel = $('#dashboard-piechart'),
                         width = sel.parent().width();
                     sel.width(width);
                     try {
@@ -1857,36 +1774,23 @@
             /*
              * Page is pre-loaded, so no _class needed
              */
-            var _page = new _ns.Page(_i18n, _view, '#page-file-upload')
-            //
-            ,
+            var _page = new _ns.Page(_i18n, _view, '#page-file-upload'),
                 _DROPZONE,
-                _DROPZONE_HTML
+                _DROPZONE_HTML,
+                _self = _ns.derive(_page),
             //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ,
                 _isPdfVisible = function() {
                 return $('#button-main-pdf-properties').length > 0;
-            }
-            //
-            ,
+            },
                 _isPrintVisible = function() {
                 return $('#button-main-print').length > 0;
-            }
-            //
-            ,
+            },
                 _showUploadButton = function(enable) {
                 _view.visible($('#sp-button-file-upload-submit').parent(), enable);
-            }
-            //
-            ,
+            },
                 _showResetButton = function(enable) {
                 _view.visible($('#sp-button-file-upload-reset').parent(), enable);
-            }
-            //
-            ,
+            },
                 _setUploadFeedbackDefault = function(dropzone) {
                 var feedback = $('#sp-webprint-upload-feedback');
                 feedback.removeClass('sp-txt-warn').removeClass('sp-txt-valid').addClass('sp-txt-info');
@@ -1895,46 +1799,34 @@
                 } else {
                     feedback.html('').hide();
                 }
-            }
-            //
-            ,
+            },
                 _setButtonVisibility = function(sel, visible, hasInboxDocs) {
                 _view.visible(sel, visible);
                 if (visible) {
                     _view.enable(sel, hasInboxDocs);
                 }
-            }
-            //
-            ,
+            },
                 _setVisibility = function() {
                 var hasInboxDocs = _model.hasInboxDocs();
                 _setButtonVisibility($('#sp-file-upload-print-button'), _isPrintVisible(), hasInboxDocs);
                 _setButtonVisibility($('#sp-file-upload-pdf-button'), _isPdfVisible(), hasInboxDocs);
-            }
-            //
-            ,
+            },
                 _onUploadStart = function() {
                 $('#sp-button-file-upload-reset').click();
                 $('#sp-webprint-upload-feedback').html('&nbsp;').show();
-            }
-            //
-            ,
+            },
                 _onUploadDone = function() {
                 _view.pages.main.onRefreshPages();
                 _setVisibility();
                 _showUploadButton(false);
                 _showResetButton(true);
-            }
-            //
-            ,
+            },
                 _onUploadMsgWarn = function(warn, files, filesStatus) {
                 $('#sp-webprint-upload-feedback').html(_ns.DropZone.getHtmlWarning(_i18n, warn, files, filesStatus)).show();
                 _showUploadButton(false);
                 _showResetButton(true);
                 $('#sp-webprint-upload-file').val('');
-            }
-            //
-            ,
+            },
                 _onUploadMsgInfo = function(files) {
                 var i,
                     html = '';
@@ -1944,12 +1836,9 @@
                 html += '&bull; ' + _i18n.format('msg-file-upload-completed', null);
                 $('#sp-webprint-upload-feedback').addClass('sp-txt-valid').html(html);
                 _showResetButton(true);
-            }
-            //
-            ;
+            };
 
             $(_self.id()).on('pagecreate', function(event) {
-
                 var zone,
                     html,
                     selAddIn = $('#file-upload-addin');
@@ -2081,61 +1970,35 @@
          * Constructor
          */
         function PageMain(_i18n, _view, _model) {
-
-            var _this = this
-            //
-            ,
-                _util = _ns.Utils
-            //
-            ,
-                _IMG_PADDING = 3
-            //
-            ,
-                _IMG_BORDER = 0
-            //
-            ,
-                _isEditMode = false
-            //
-            ,
-                _totImages = 0
-            //
-            ,
+            var _this = this,
+                _util = _ns.Utils,
+                _IMG_PADDING = 3,
+                _IMG_BORDER = 0,
+                _isEditMode = false,
+                _totImages = 0,
                 _mousedownPosLeft,
                 _mousedownPageX,
-                _mousedownTarget
-            //
-            ,
-                _isThumbnailDragged = false
-            //
-            ,
+                _mousedownTarget,
+                _isThumbnailDragged = false,
                 _moveLeft,
                 _moveRight,
                 _moveToBegin,
                 _moveToEnd,
-                _moveJobs
-            //
-            ,
+                _moveJobs,
                 _showArrange,
                 _showCutPageRanges,
-                _showSelectPageRanges
-            //
-            ,
+                _showSelectPageRanges,
                 _getFirstJob,
-                _showArrButtons
-            //
-            ,
+                _showArrButtons,
                 _onThumbnailTap,
                 _onThumbnailTapHold,
-                _onPageInfoTap
+                _onPageInfoTap,
             // mapping page URLs to jQuery <img> selectors
-            ,
-                _tnUrl2Img
-            //
-            ,
+                _tnUrl2Img,
                 _IMG_WIDTH = function() {
                 return _model.MY_THUMBNAIL_WIDTH;
             },
-            //
+
             /**
              * Set job expiration marker in thumbnail subscript.
              */
@@ -2148,9 +2011,7 @@
                     }
                     i = i + 1;
                 });
-            }
-            //
-            ;
+            };
 
             // for now ...
             this.id = '#page-main';
@@ -2211,7 +2072,6 @@
              * Initializes the nUrl2Img map with the pages from the _model.
              */
             _tnUrl2Img = function() {
-
                 var i = 0;
 
                 $('#page-main-thumbnail-images img').each(function() {
@@ -2267,13 +2127,8 @@
              *
              */
             this.setThumbnails = function() {
-
-                var wlkPageNr = 1
-                //
-                ,
-                    divPrv
-                //
-                ,
+                var wlkPageNr = 1,
+                    divPrv,
                     imgContainer = $('#page-main-thumbnail-images');
 
                 if (!_this.tnUrl2Img) {
@@ -2285,20 +2140,13 @@
                  * <img> for url is already there.
                  */
                 $.each(_model.myJobPages, function(key, page) {
-
                     var divCur,
                         item,
                         tnUrl,
                         span,
-                        title
-                    //
-                    ,
-                        imgWidth = _IMG_WIDTH()
-                    //
-                    ,
-                        imgHeightA4 = imgWidth * 1.4
-                    //
-                    ;
+                        title,
+                        imgWidth = _IMG_WIDTH(),
+                        imgHeightA4 = imgWidth * 1.4;
 
                     tnUrl = _this.tnUrl2Img[page.url];
 
@@ -2442,7 +2290,6 @@
                 }
             };
             _moveToBegin = function() {
-
                 /*
                  * We check the INNER width and calculate with the OUT width
                  * NOTE: it seems that INNER width is zero when a popup dialog is
@@ -2460,7 +2307,6 @@
                 }
             };
             _moveToEnd = function() {
-
                 var widthViewport;
 
                 /*
@@ -2485,18 +2331,10 @@
              *
              */
             _showArrButtons = function() {
-                var selEdit = $('.main_arr_edit')
-                //
-                ,
-                    selPaste = $('.main_arr_paste')
-                //
-                ,
-                    selUndo = $('#main-arr-undo')
-                //
-                ,
-                    bCut = _util.countProp(_model.myCutPages) > 0
-                //
-                ;
+                var selEdit = $('.main_arr_edit'),
+                    selPaste = $('.main_arr_paste'),
+                    selUndo = $('#main-arr-undo'),
+                    bCut = _util.countProp(_model.myCutPages) > 0;
 
                 // Show Paste buttons?
                 if (_util.countProp(_model.mySelectPages) > 0) {
@@ -2540,7 +2378,6 @@
              */
             _getFirstJob = function(selClass) {
                 var tn = $('#page-main-thumbnail-images div'),
-                //
                     first = $('.' + selClass).first();
 
                 if (first !== null) {
@@ -2553,9 +2390,7 @@
              *
              */
             _moveJobs = function(bBefore) {
-                var ranges = _model.getCutPageRanges()
-                //
-                ,
+                var ranges = _model.getCutPageRanges(),
                     position = _model.getPageNumber(_getFirstJob('sp-thumbnail-selected')) - 1;
 
                 if (ranges !== null && position !== null) {
@@ -2601,7 +2436,6 @@
              * (moveToEnd)
              */
             this.adjustThumbnailVisibility = function() {
-
                 var widthTot = 0,
                     tn,
                     selMainAct = $('.main_actions'),
@@ -2670,7 +2504,6 @@
              *
              */
             _onPageInfoTap = function(sel) {
-
                 var iImg = -1,
                     page,
                     job,
@@ -2769,11 +2602,8 @@
              *
              */
             _onThumbnailTap = function(thumbnail) {
-
                 var tn,
-                    nPage
-                //
-                ,
+                    nPage,
                     iImage = $('#page-main-thumbnail-images img').index(thumbnail);
 
                 if (iImage < 0) {
@@ -2823,16 +2653,11 @@
              *
              */
             $('#page-main').on('pagecreate', function(event) {
-
-                var taphold = false
-                //
-                ,
-                    widthImg = (_IMG_WIDTH() + 2 * _IMG_PADDING + 2 * _IMG_BORDER)
+                var taphold = false,
+                    widthImg = (_IMG_WIDTH() + 2 * _IMG_PADDING + 2 * _IMG_BORDER),
                 // Use the ratio of ISO A4 + extra padding
-                ,
                     maxHeight = widthImg * (297 / 210) + 8 * _IMG_PADDING + 2 * _IMG_BORDER;
 
-                //
                 if (_model.webPrintEnabled && _model.webPrintDropZoneEnabled && _ns.DropZone.isSupported()) {
                     _ns.DropZone.setCallbacks($('#page-main-thumbnail-viewport'), 'sp-dropzone-hover'
                     //
@@ -2919,7 +2744,6 @@
                 });
 
                 $('.sp-button-user-details').click(function() {
-
                     var html,
                         xydata,
                         piedata,
@@ -3255,18 +3079,14 @@
          *
          */
         function PagePrintSettings(_i18n, _view, _model) {
-
-            var _this = this
-            //
-            ,
+            var _this = this,
                 PRINT_OPT_PFX = 'print-opt-',
                 PRINT_OPT_DIV_SFX = '-div',
                 CUSTOM_HTML5_DATA_ATTR = 'data-savapage',
                 CUSTOM_HTML5_DATA_ATTR_ICON = 'data-savapage-icon',
                 CSS_CLASS_SELECT_IPP_OPTION = '_sp_select_ipp_option',
-                CSS_CLASS_IPP_ICON = 'sp-ipp-icon'
+                CSS_CLASS_IPP_ICON = 'sp-ipp-icon',
             //
-            ,
                 _getPrinterOptionId = function(ippKeyword) {
 
                 var sel,
@@ -3281,16 +3101,10 @@
                 });
 
                 return sel;
-            }
-            /**
-             *
-             */,
+            },
                 _isMediaSourceAutoSelected = function() {
                 return $("select[data-savapage='media-source']").val() === 'auto';
-            }
-            /**
-             *
-             */,
+            },
                 _isPageRotate180Selected = function() {
                 return $("select[data-savapage='org.savapage.int-page-rotate180']").val() === '1';
             },
@@ -3329,30 +3143,20 @@
                     return;
                 }
                 _showNumberUpPreview();
-            }
+            },
             /*
              * @param target The target media-source select selector.
-             */,
+             */
                 _onChangeMediaSource = function(target) {
                 var isAuto,
                     isManual,
-                    mediaOptId
-                //
-                ,
-                    ippOption = target.attr(CUSTOM_HTML5_DATA_ATTR)
-                //
-                ,
+                    mediaOptId,
+                    ippOption = target.attr(CUSTOM_HTML5_DATA_ATTR),
                     singleMediaSourceMedia,
-                    singleJobMedia
-                //
-                ,
+                    singleJobMedia,
                     isScaling,
-                    isSingleMediaMatch
-                //
-                ,
-                    isInboxDocs2Print = _model.hasInboxDocs() && !_model.isCopyJobTicket
-                //
-                ;
+                    isSingleMediaMatch,
+                    isInboxDocs2Print = _model.hasInboxDocs() && !_model.isCopyJobTicket;
 
                 if (ippOption === 'media-source') {
 
@@ -3406,11 +3210,10 @@
                     _model.showJobsMatchMedia(_view);
                 }
 
-            }
+            },
             //
             // Choices from model to view.
             //
-            ,
                 _m2v = function() {
                 var i = 0;
 
@@ -3425,11 +3228,10 @@
 
                 // resolve visibility
                 _onChangeMediaSource($("select[data-savapage='media-type']"));
-            }
+            },
             //
             // Choices from view to model.
             //
-            ,
                 _v2Options = function(printerOptions) {
 
                 var i = 0;
@@ -3438,34 +3240,27 @@
                     printerOptions[key] = $('#' + PRINT_OPT_PFX + i).val();
                     i += 1;
                 });
-            }
+            },
             //
             // Choices from view to model.
             //
-            ,
                 _v2m = function() {
                 _v2Options(_model.myPrinterOpt);
                 _model.printPageScaling = _view.getRadioValue('print-page-scaling-enum');
-            }
+            },
             //
-            ,
                 _m2vPrintScaling = function() {
                 var name = 'print-page-scaling-enum',
-                    radio = 'input[name="' + name + '"]'
-                //
-                ,
-                    sel = $(radio + '[value="' + _model.PRINT_SCALING_ENUM.NONE + '"]')
-                //
-                ;
+                    radio = 'input[name="' + name + '"]',
+                    sel = $(radio + '[value="' + _model.PRINT_SCALING_ENUM.NONE + '"]');
                 _view.enableCheckboxRadio(sel, _model.myPrinter.printScalingExt);
 
                 if (!_model.myPrinter.printScalingExt) {
                     _view.checkRadioValue(name, _model.PRINT_SCALING_ENUM.FIT);
                 }
                 _model.printPageScaling = _view.getRadioValue(name);
-            }
+            },
             //
-            ,
                 _onNext = function() {
                 var printerOptions = {};
                 _v2Options(printerOptions);
@@ -3483,7 +3278,6 @@
              * @param isInit If true, this is the initializing action.
              */
                 _injectPrinterOptionSelect = function(selSelect, isInit) {
-
                 var target_id = selSelect.attr('id');
 
                 $('#' + target_id + ' option').each(function() {
@@ -3505,11 +3299,9 @@
                         selOption.addClass(iconClass);
                     }
                 });
-            }
-            //
-            ,
-                _showPrinterOptions = function(thisPage) {
+            },
 
+                _showPrinterOptions = function(thisPage) {
                 var i = 0,
                     isMediaSourceMatch = _model.isMediaSourceMatch(),
                     selExpr,
@@ -3518,7 +3310,6 @@
                 _model.hasPrinterManualMedia = false;
 
                 $.each(_model.myPrinter.groups, function(key, group) {
-
                     var j = 0,
                         skip;
 
@@ -3635,9 +3426,7 @@
                 selUi.addClass(iconNew);
                 /* Re-inject, because prev. injection is gone.*/
                 _injectPrinterOptionSelect(select, false);
-            }
-            //
-            ;
+            };
 
             // A way to set visibility of media and scaling, also in other parts
             // of the application.
@@ -3712,7 +3501,6 @@
                 });
 
             }).on("pagebeforeshow", function(event, ui) {
-
                 var i = 0,
                     selMediaSource;
 
@@ -3764,9 +3552,8 @@
                 _quickPrinterSelected,
                 _lastPrinterFilter,
                 _fastPrintAvailable,
-                _hasDelegatedPrint
+                _hasDelegatedPrint,
             //
-            ,
                 _getPrinterImg = function(item, isDirect) {
                 if (item.printer.jobTicket) {
                     return 'printer-jobticket-32x32.png';
@@ -3781,22 +3568,14 @@
                     return 'printer-terminal-custom-16x16.png';
                 }
                 return 'printer-terminal-any-16x16.png';
-            }
-            //
-            ,
+            },
+
                 _getQuickPrinterHtml = function(item) {
-                var html
-                //
-                ,
-                    authMode = item.printer.authMode
-                //
-                ,
-                    isDirect = (authMode === 'DIRECT' || authMode === 'FAST_DIRECT')
-                //
-                ,
-                    isFast = (authMode === 'FAST' || authMode === 'FAST_DIRECT' || authMode === 'FAST_HOLD')
-                //
-                ;
+                var html,
+                    authMode = item.printer.authMode,
+                    isDirect = (authMode === 'DIRECT' || authMode === 'FAST_DIRECT'),
+                    isFast = (authMode === 'FAST' || authMode === 'FAST_DIRECT' || authMode === 'FAST_HOLD');
+
                 html = "<img width=\"16\" height=\"16\" src=\"/images/" + _getPrinterImg(item, isDirect) + "\"/>";
                 html += "<span class=\"ui-mini sp-txt-wrap\">" + item.text;
                 if (item.printer.location) {
@@ -3809,9 +3588,8 @@
                     html += "<span class=\"ui-li-count\">Fast</span>";
                 }
                 return html;
-            }
-            //
-            ,
+            },
+
                 _onQuickPrinterSearch = function(target, filter) {
                 /* QuickSearchFilterDto */
                 var res,
@@ -3869,16 +3647,11 @@
                 }
 
                 target.html(html).filterable("refresh");
-            }
-            //
-            ,
+            },
+
                 _onSelectPrinter = function(selection, filterable) {
-                var attr = "data-savapage"
-                //
-                ,
-                    sel = $("#sp-print-qs-printer")
-                //
-                ,
+                var attr = "data-savapage",
+                    sel = $("#sp-print-qs-printer"),
                     printer;
 
                 _quickPrinterSelected = _quickPrinterCache[selection.attr(attr)];
@@ -3912,29 +3685,23 @@
 
                 _view.visible($('.sp-jobticket'), _model.myPrinter.jobTicket);
                 _view.visible($('.sp-proxyprint'), !_model.myPrinter.jobTicket);
-            }
-            //
-            ,
+            },
+
                 _isDelegatedPrint = function() {
                 var sel = $('#print-as-delegate');
                 if (_hasDelegatedPrint && sel.length === 0 && _model.printDelegationCopies > 0) {
                     return true;
                 }
                 return sel && !_view.isFlipswitchDisabled(sel) && _view.isCbChecked(sel);
-            }
-            //
-            ,
+            },
+
                 _getJobTicketType = function(isJobTicket) {
                 return isJobTicket ? _view.getRadioValue('sp-print-jobticket-type') || _model.TICKETTYPE_PRINT : _model.TICKETTYPE_PRINT;
-            }
-            //
-            ,
-                _onPrint = function(isClose) {
+            },
 
+                _onPrint = function(isClose) {
                 var clearScope = null,
-                    isJobticket = _model.myPrinter.jobTicket
-                //
-                ,
+                    isJobticket = _model.myPrinter.jobTicket,
                     separateDocs = null,
                     selWlk;
 
@@ -3958,18 +3725,16 @@
                 , isJobticket, _getJobTicketType(_model.myPrinter.jobTicket)
                 //
                 , _view.isCbChecked($('#cb-nup-preview-landscape')));
-            }
-            //
-            ,
+            },
+
                 _onPrintAsync = function() {
                 $.mobile.loading("show");
                 _ns.Utils.asyncFoo(function() {
                     _onPrint(true);
                     $.mobile.loading("hide");
                 });
-            }
-            //
-            ,
+            },
+
                 _onJobTicketType = function(ticketType) {
                 var isPrint = ticketType === _model.TICKETTYPE_PRINT,
                     multipleJobs = isPrint && _model.hasMultipleVanillaJobs();
@@ -3990,28 +3755,21 @@
                 _model.showPrintJobMedia(_view);
 
                 _this.onChangeJobTicketType(_model.isCopyJobTicket);
-            }
-            //
-            ,
+            },
+
                 _setVisibilityPrintSeparately = function(multipleJobs, jobTicket) {
                 _view.visible($('#print-documents-separate-print-div'), multipleJobs && !jobTicket);
                 _view.visible($('#print-documents-separate-ticket-div'), multipleJobs && jobTicket);
-            }
-            //
-            ,
-                _setVisibility = function() {
+            },
 
+                _setVisibility = function() {
                 var selCollate = $(".print-collate"),
                     copies,
-                    delegatedPrint = _isDelegatedPrint()
-                //
-                ,
+                    delegatedPrint = _isDelegatedPrint(),
                     jobTicket = _model.myPrinter && _model.myPrinter.jobTicket,
                     jobTicketType,
                     isPrintJob,
-                    hasInboxDocs = _model.hasInboxDocs()
-                //
-                ;
+                    hasInboxDocs = _model.hasInboxDocs();
 
                 if (delegatedPrint) {
                     copies = _model.printDelegationCopies;
@@ -4076,9 +3834,8 @@
                 _view.visible($('.sp-print-job-info'), isPrintJob && hasInboxDocs);
                 _view.visible($('#sp-jobticket-copy-pages-div'), jobTicket && !isPrintJob);
                 _view.visible($('#sp-print-page-ranges-div'), isPrintJob);
-            }
-            //
-            ,
+            },
+
                 _onJobListChange = function() {
                 var sel = $('#print-job-list :selected'),
                     selTitle = $('#print-title'),
@@ -4100,18 +3857,16 @@
                 _setVisibilityPrintSeparately(!_model.isCopyJobTicket && isAllDocsSelected && _model.hasMultipleVanillaJobs(), _model.myPrinter && _model.myPrinter.jobTicket);
 
                 _model.setPrintPreviewLandscapeHint( isAllDocsSelected ? 0 : parseInt(sel.val(), 10));
-            }
-            //
-            ,
+            },
+
                 _resetPrinterSearch = function() {
                 var val = '',
                     sel = $("#sp-print-qs-printer");
                 sel.val('');
                 _onQuickPrinterSearch($("#sp-print-qs-printer-filter"), val);
                 _view.asyncFocus(sel);
-            }
-            //
-            ,
+            },
+
                 _getJobTicketFirstValidDateTime = function(refDate, offsetDays) {
                 var i,
                     msecDay = 24 * 60 * 60 * 1000,
@@ -4127,9 +3882,7 @@
                     firstDateTime += msecDay;
                 }
                 return firstDateTime;
-            }
-            //
-            ;
+            };
 
             this.initJobTicketDateTime = function() {
                 var selJobticketDate = $('#sp-jobticket-date'),
@@ -4156,7 +3909,6 @@
             };
 
             this.clearInput = function() {
-
                 var selCbClear = $('#delete-pages-after-print');
 
                 $('#slider-print-copies').val(1).slider("refresh");
@@ -4179,7 +3931,6 @@
             };
 
             $('#page-print').on('pagecreate', function(event) {
-
                 var filterablePrinter = $("#sp-print-qs-printer-filter");
 
                 filterablePrinter.focus();
@@ -4350,29 +4101,13 @@
          *
          */
         function Model(_i18n) {
-
-            var
-            //_super = new Base()
-            //, _self = derive(_super)
-            _this = this,
-                _model = this
-            //
-            ,
-                _LOC_AUTH_NAME = 'sp.auth.user.name'
-            //
-            ,
-                _LOC_AUTH_TOKEN = 'sp.auth.user.token'
-            //
-            ,
-                _LOC_LANG = 'sp.user.language'
-            //
-            ,
-                _LOC_COUNTRY = 'sp.user.country'
-            //
-            ,
-                _getPageRangesFormatted
-            //
-            ;
+            var _this = this,
+                _model = this,
+                _LOC_AUTH_NAME = 'sp.auth.user.name',
+                _LOC_AUTH_TOKEN = 'sp.auth.user.token',
+                _LOC_LANG = 'sp.user.language',
+                _LOC_COUNTRY = 'sp.user.country',
+                _getPageRangesFormatted;
 
             this.TICKETTYPE_PRINT = 'PRINT';
             this.TICKETTYPE_COPY = 'COPY';
@@ -4386,12 +4121,9 @@
                 var ranges = '',
                     pageStart,
                     pageEnd,
-                    pagePrv
+                    pagePrv,
+                    page,
                 //
-                ,
-                    page
-                //
-                ,
                     addRange = function() {
                     if (ranges !== '') {
                         ranges += ',';
@@ -4426,7 +4158,6 @@
                 return ranges;
             };
 
-            //
             this.webPrintEnabled = false;
             this.webPrintDropZoneEnabled = false;
             this.webPrintMaxBytes = 0;
@@ -4595,7 +4326,6 @@
              * Creates job media map: ippMedia -> count, mediaUi
              */
             this.createMediaJobMap = function() {
-
                 var mapMediaJobs = [];
 
                 $.each(_this.myJobs, function(key, value) {
@@ -4638,7 +4368,6 @@
              * have different media.
              */
             this.getSingleMediaSourceMedia = function() {
-
                 var singleMedia;
 
                 if (_this.myPrinter) {
@@ -4662,7 +4391,6 @@
              * have different media.
              */
             this.getSingleJobMedia = function() {
-
                 var singleMedia;
 
                 $.each(_this.myJobs, function(key, value) {
@@ -4682,7 +4410,6 @@
              * Creates media-source map: ippMedia -> count, source
              */
             this.createPrinterMediaSourcesMap = function() {
-
                 var mapMediaSources = [];
 
                 if (_this.myPrinter) {
@@ -4730,20 +4457,11 @@
              * this.jobsMatchMedia.
              */
             this.showJobsMatchMedia = function(_view) {
-
                 var html = '',
-                    mediaWlk
-                //
-                ,
-                    mapMediaJobs = this.createMediaJobMap()
-                //
-                ,
-                    media = this.printSelectedMedia
-                //
-                ,
-                    selJobMediaInfo = $('.sp-print-job-media-info')
-                //
-                ;
+                    mediaWlk,
+                    mapMediaJobs = this.createMediaJobMap(),
+                    media = this.printSelectedMedia,
+                    selJobMediaInfo = $('.sp-print-job-media-info');
 
                 // Do we have a job/media match/clash?
                 this.jobsMatchMedia = this.MediaMatchEnum.MATCH;
@@ -4786,23 +4504,12 @@
              * the selected printer ands sets this.jobsMatchMediaSources.
              */
             this.showJobsMatchMediaSources = function(_view) {
-
                 var html = '',
-                    selHtml
-                //
-                ,
-                    mapMediaJobs = this.createMediaJobMap()
-                //
-                ,
-                    mapMediaSources = this.createPrinterMediaSourcesMap()
-                //
-                ,
-                    mediaWlk
-                //
-                ,
-                    IS_UNIQUE_MEDIASOURCE_REQUIRED = false
-                //
-                ;
+                    selHtml,
+                    mapMediaJobs = this.createMediaJobMap(),
+                    mapMediaSources = this.createPrinterMediaSourcesMap(),
+                    mediaWlk,
+                    IS_UNIQUE_MEDIASOURCE_REQUIRED = false;
 
                 if (this.isPrintManualFeed) {
                     html += '<span class="sp-ipp-media-info-match">M</span>';
@@ -5028,7 +4735,6 @@
              * @return null when no rotation
              */
             this.getPageRotate = function(iPage) {
-
                 var i = 0,
                     nPageTot = 0,
                     rotate,
@@ -5095,73 +4801,42 @@
          *
          */
         function Controller(_i18n, _model, _view, _api, _cometd, _userEvent, _deviceEvent, _proxyprintEvent) {
-
-            var
-            //
-            _util = _ns.Utils
-            //
-            ,
-                _this = this
-            //
-            ,
+            var _util = _ns.Utils,
+                _this = this,
                 i18nRefresh,
                 _getLetterheads,
                 _tbIndUser,
-                _initUser
-            //
-            ,
-                _adaptLetterheadPage
-            //
-            ,
+                _initUser,
+                _adaptLetterheadPage,
                 _refreshLetterheadList,
                 _saveSelectedletterhead,
                 _savePdfProps,
-                _userLazyEcoPrint
-            //
-            ,
-                _handleSafePageEvent
+                _userLazyEcoPrint,
+                _handleSafePageEvent,
             /*
              * The current icon (name of the icon from the standard JQuery Mobile
              * icon set). This should match the initial value in html.
-             */,
-                _iconCur = 'info'
-            //
-            ,
-                _changeIcon
-            //
-            ,
-                _prepareReaderForPrinter
-            //
-            ,
-                _cometdMaxNetworkDelay
-            //
-            ,
+             */
+                _iconCur = 'info',
+                _changeIcon,
+                _prepareReaderForPrinter,
+                _cometdMaxNetworkDelay,
                 _timeoutAuthPrint,
                 _countdownAuthPrint,
-                _clearTimeoutAuthPrint
-            //
+                _clearTimeoutAuthPrint,
 
-            /**
-             *
-             */,
                 _saveRemoveGraphics = function(sel) {
                 _model.removeGraphics = _view.isCbChecked($(sel));
-            }
-            /**
-             *
-             */,
+            },
+
                 _saveEcoprint = function(sel) {
                 _model.ecoprint = _view.isCbChecked($(sel));
-            }
-            /**
-             *
-             */,
+            },
+
                 _savePdfGrayscale = function(sel) {
                 _model.pdfGrayscale = _view.isCbChecked($(sel));
-            }
-            /**
-             *
-             */,
+            },
+
                 _checkVanillaJobs = function() {
 
                 var res = _api.call({
@@ -5175,32 +4850,16 @@
                     _view.showApiMsg(res);
                 }
                 return isOk;
-            }
-            //
-            ,
-                _refreshPrinterInd = function() {
+            },
 
-                var trgColor = $('.sp-button-mini-print-color')
-                //
-                ,
-                    trgMono = $('.sp-button-mini-print-mono')
-                //
-                ,
-                    trgDuplex = $('.sp-button-mini-print-duplex')
-                //
-                ,
-                    trgNup = $('.sp-button-mini-print-n-up')
-                //
-                ,
-                    trgDelegated = $('.sp-button-mini-print-delegation')
-                //
-                ,
-                    ippAttrVal
-                //
-                ,
-                    isColor
-                //
-                ;
+                _refreshPrinterInd = function() {
+                var trgColor = $('.sp-button-mini-print-color'),
+                    trgMono = $('.sp-button-mini-print-mono'),
+                    trgDuplex = $('.sp-button-mini-print-duplex'),
+                    trgNup = $('.sp-button-mini-print-n-up'),
+                    trgDelegated = $('.sp-button-mini-print-delegation'),
+                    ippAttrVal,
+                    isColor;
 
                 if (trgDelegated) {
                     _view.enableFlipswitch($('#print-as-delegate'), _model.printDelegationCopies > 0);
@@ -5233,13 +4892,9 @@
                 // Check IPP attributes value
                 ippAttrVal = _model.myPrinterOpt.sides;
                 _view.visible(trgDuplex, ippAttrVal && ippAttrVal !== 'one-sided');
-            }
-            //
-            ;
+            };
 
-            /*
-             *
-             */
+            //
             i18nRefresh = function(i18nNew) {
                 if (i18nNew && i18nNew.i18n) {
                     _i18n.refresh(i18nNew.i18n);
@@ -5255,7 +4910,6 @@
             };
 
             _initUser = function(loginRes) {
-
                 var res;
 
                 _model.startSession();
@@ -5290,7 +4944,6 @@
                 _model.letterheads = null;
                 _model.propPdfDefault.desc.author = _model.user.fullname;
 
-                //
                 res = _api.call({
                     'request' : 'pdf-get-properties'
                 });
@@ -5302,7 +4955,6 @@
                 }
 
                 _getLetterheads();
-
             };
 
             /**
@@ -5440,9 +5092,7 @@
             this.init = function() {
                 var res,
                     language,
-                    country
-                //
-                ,
+                    country,
                     authModeRequest = _util.getUrlParam(_ns.URL_PARM.LOGIN);
 
                 _model.initAuth();
@@ -5809,7 +5459,6 @@
              *            The selector, e.g. '#letterhead-list'
              */
             this.setLetterheadMenu = function(sel) {
-
                 var options,
                     jSel = $(sel);
 
@@ -5908,16 +5557,9 @@
             };
 
             _ns.PanelCommon.refreshPanelCommon = function(wClass, skipBeforeLoad, thePanel) {
-
-                var jqId = thePanel.jqId
-                //
-                ,
-                    data = thePanel.getInput(thePanel)
-                //
-                ,
-                    jsonData = JSON.stringify(data)
-                //
-                ;
+                var jqId = thePanel.jqId,
+                    data = thePanel.getInput(thePanel),
+                    jsonData = JSON.stringify(data);
 
                 $.mobile.loading("show");
                 $.ajax({
@@ -6253,7 +5895,6 @@
              * Callbacks: page credit transfer
              */
             _view.pages.creditTransfer.onTransferCredit = function(userTo, amountMain, amountCents, comment) {
-
                 // UserCreditTransferDto.java
                 var res = _api.call({
                     request : "user-credit-transfer",
@@ -6265,10 +5906,8 @@
                         comment : comment
                     })
                 }),
-                //
-                    isOk = res.result.code === "0"
-                //
-                ;
+                    isOk = res.result.code === "0";
+
                 _view.showApiMsg(res);
                 return isOk;
             };
@@ -6342,7 +5981,6 @@
              * Callbacks: page send
              */
             _view.pages.send.onSend = function(mailto, ranges, removeGraphics, ecoprint, grayscale) {
-
                 var res;
 
                 if (_util.isEmailValid(mailto)) {
@@ -6407,7 +6045,6 @@
              * @return true if pre-conditions are OK, false is an error occurred.
              */
             _view.pages.pdfprop.onDownload = function() {
-
                 var pageRanges = $('#pdf-page-ranges').val(),
                     filters;
 
@@ -6447,12 +6084,8 @@
             _view.pages.print.onFastProxyPrintRenew = function(showMsg) {
                 var res = _api.call({
                     request : 'print-fast-renew'
-                })
-                //
-                ,
-                    resOk = (res.result.code === '0')
-                //
-                ;
+                }),
+                    resOk = (res.result.code === '0');
 
                 if (resOk) {
                     $('#printer-fast-print-expiry').text(res.expiry);
@@ -6461,7 +6094,6 @@
                 if (showMsg || !resOk) {
                     _view.message(res.result.txt);
                 }
-
             };
 
             /**
@@ -6513,9 +6145,7 @@
             /**
              * Callbacks: page print
              */
-            _view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint
-            //
-            , collate, isDelegation, separateDocs, isJobticket, jobTicketType, landscapeView) {
+            _view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint, collate, isDelegation, separateDocs, isJobticket, jobTicketType, landscapeView) {
 
                 var res,
                     sel,
@@ -6524,12 +6154,8 @@
                     date,
                     jobTicketDate,
                     jobTicketTag,
-                    accountId
-                //
-                ,
-                    isJobTicketDateTime = $('#sp-jobticket-date').length > 0
-                //
-                ,
+                    accountId,
+                    isJobTicketDateTime = $('#sp-jobticket-date').length > 0,
                     copies = isDelegation ? "1" : ( isJobticket ? $('#number-print-copies').val() : $('#slider-print-copies').val());
 
                 if (_saveSelectedletterhead('#print-letterhead-list')) {
@@ -6818,7 +6444,6 @@
              */
 
             _view.pages.letterhead.onApply = function(id, name, fg, pub, pubNew) {
-
                 var res = _api.call({
                     request : 'letterhead-set',
                     id : id,
@@ -6967,9 +6592,7 @@
 
             // ----------------
             _view.pages.letterhead.onDelete = function(id) {
-                var pub = _view.pages.letterhead.getSelected().pub
-                //
-                ,
+                var pub = _view.pages.letterhead.getSelected().pub,
                     res = _api.call({
                     request : 'letterhead-delete',
                     id : id,
@@ -7027,9 +6650,6 @@
             };
 
             _view.pages.main.onLogout = function() {
-                /*
-                 *
-                 */
                 var res = _api.call({
                     request : 'logout',
                     dto : JSON.stringify({
@@ -7098,7 +6718,6 @@
             };
 
             _view.pages.main.onShow = function() {
-
                 var res;
 
                 // first statement
@@ -7131,7 +6750,6 @@
             };
 
             _view.pages.main.onPageMove = function(ranges, position) {
-
                 var data = _api.call({
                     'request' : 'page-move',
                     'ranges' : ranges,
@@ -7159,7 +6777,6 @@
              * Expands a page image representing multiple pages.
              */
             _view.pages.main.onExpandPage = function(nPage) {
-
                 var data = _api.call({
                     request : 'inbox-job-pages',
                     'first-detail-page' : nPage,
@@ -7199,7 +6816,6 @@
             };
 
             _view.pages.main.onPopupJobApply = function() {
-
                 var data = _api.call({
                     'request' : 'inbox-job-edit',
                     ijob : _model.iPopUpJob,
@@ -7285,27 +6901,16 @@
          *
          */
         $.SavaPage = function() {
-
             var _i18n = new _ns.I18n(),
-                _model = new Model()
-            //
-            ,
-                _api = new _ns.Api(_i18n, _model.user)
-            //
-            ,
-                _view = new _ns.View(_i18n, _api)
-            //
-            ,
+                _model = new Model(),
+                _api = new _ns.Api(_i18n, _model.user),
+                _view = new _ns.View(_i18n, _api),
                 _cometd,
                 _userEvent,
                 _deviceEvent,
                 _proxyprintEvent,
-                _ctrl
-            //
-            ,
-                _nativeLogin
-            //
-            ;
+                _ctrl,
+                _nativeLogin;
 
             _ns.commonWebAppInit();
 
@@ -7364,11 +6969,9 @@
             };
 
             this.init = function() {
-
                 var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER),
-                    authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN)
+                    authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN),
                 // Note: getUrlParam() does not work properly for LOGIN_OAUTH
-                ,
                     isLoginOAuth = _ns.Utils.hasUrlParam(_ns.URL_PARM.LOGIN_OAUTH);
 
                 _ns.initWebApp('USER');

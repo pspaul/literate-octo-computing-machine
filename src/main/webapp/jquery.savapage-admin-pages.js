@@ -84,17 +84,11 @@
 
             setOidView : function(_view, selCheckboxLabel) {
                 var selOid = selCheckboxLabel.closest('.sp-acl-oid'),
-                    selPerms = selOid.find('.sp-acl-oid-perms')
-                //
-                ,
+                    selPerms = selOid.find('.sp-acl-oid-perms'),
                     selRoles = selOid.find('.sp-acl-oid-perms-roles'),
-                    isOn = _ns.TriStateCheckbox.isOn(selCheckboxLabel)
-                //
-                ,
+                    isOn = _ns.TriStateCheckbox.isOn(selCheckboxLabel),
                     selRadio = selRoles.find(':radio'),
-                    oidRole = _view.getRadioValue(selRadio.attr("name"))
-                //
-                ,
+                    oidRole = _view.getRadioValue(selRadio.attr("name")),
                     isReader = false,
                     isEditor = false;
 
@@ -129,16 +123,12 @@
                     $.each(cbOids, function() {
 
                         var id = $(this).attr('id'),
-                            lbWlk = selParent.find('[for=' + id + ']')
-                        //
-                        ,
+                            lbWlk = selParent.find('[for=' + id + ']'),
                             key = $(this).val(),
                             oidRole = aclOids[key],
                             checked = false,
                             selRadio,
-                            radioName
-                        //
-                        ,
+                            radioName,
                             isReader = false,
                             isEditor = false;
 
@@ -281,17 +271,13 @@
          */
         _ns.PageUser = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-user', 'admin/PageUser')
+            var _page = new _ns.Page(_i18n, _view, '#page-user', 'admin/PageUser'),
+                _self = _ns.derive(_page),
             //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ,
                 _onChangeCreditLimit = function(creditLimit) {
                 _view.visible($('#user-account-credit-limit-amount'), creditLimit === "INDIVIDUAL");
-            }
-            //--------------------
-            ,
+            },
+            //
                 _m2v = function() {
                 // See Java org.savapage.dto.UserDto
                 var emailOther,
@@ -347,9 +333,8 @@
                 }
 
                 _view.visible($('#button-user-pw-erase'), _model.editUser.internal && _model.editUser.dbId && _model.editUser.internalPw);
-            }
-            //--------------------
-            ,
+            },
+            //
                 _v2m = function() {
 
                 var emailOther = [],
@@ -395,9 +380,7 @@
                 _model.editUser.uuid = $('#user-uuid').val();
 
                 return true;
-            }
-            //
-            ;
+            };
 
             $(_self.id()).on('pagecreate', function(event) {
 
@@ -464,22 +447,17 @@
          */
         _ns.PageUserGroup = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-user-group', 'admin/PageUserGroup')
+            var _page = new _ns.Page(_i18n, _view, '#page-user-group', 'admin/PageUserGroup'),
+                _self = _ns.derive(_page),
             //
-            ,
-                _self = _ns.derive(_page)
-            //--------------------
-            ,
                 _onChangeAccountingEnabled = function(selected) {
                 _view.visible($('#user-group-account-new-user'), selected);
-            }
-            //--------------------
-            ,
+            },
+            //
                 _onChangeCreditLimit = function(creditLimit) {
                 _view.visible($('#user-group-account-credit-limit-amount'), creditLimit === "INDIVIDUAL");
-            }
-            //--------------------
-            ,
+            },
+            //
                 _m2v = function() {
                 var accounting = _model.editUserGroup.accounting,
                     accountingEnabled = _model.editUserGroup.accountingEnabled;
@@ -498,9 +476,8 @@
 
                 _onChangeCreditLimit(accounting.creditLimit);
                 _onChangeAccountingEnabled(accountingEnabled);
-            }
-            //--------------------
-            ,
+            },
+            //
                 _v2m = function() {
                 var accounting = _model.editUserGroup.accounting;
 
@@ -523,9 +500,7 @@
                 _model.editUserGroup.aclOidsAdminEditor = {};
                 _ns.ACLPermissionPanel.v2m(_view, $('#sp-usergroup-edit-privileges-admin'), _model.editUserGroup.aclOidsAdmin, _model.editUserGroup.aclOidsAdminReader, _model.editUserGroup.aclOidsAdminEditor);
 
-            }
-            //
-            ;
+            };
 
             $(_self.id()).on('pagecreate', function(event) {
 
@@ -568,18 +543,13 @@
          */
         _ns.PageUserGroupsAddRemove = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-user-groups-add-remove', 'admin/PageUserGroupsAddRemove')
+            var _page = new _ns.Page(_i18n, _view, '#page-user-groups-add-remove', 'admin/PageUserGroupsAddRemove'),
+                _self = _ns.derive(_page),
             //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ,
                 _resize = function() {
                 var width = $('#sp-user-groups-add-remove-addin').width();
                 $('.sp-select-user-groups').width(width);
-            }
-            //
-            ;
+            };
 
             $(_self.id()).on('pagecreate', function(event) {
 
@@ -608,17 +578,13 @@
          */
         _ns.PageSharedAccount = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-shared-account', 'admin/PageSharedAccount')
+            var _page = new _ns.Page(_i18n, _view, '#page-shared-account', 'admin/PageSharedAccount'),
+                _self = _ns.derive(_page),
             //
-            ,
-                _self = _ns.derive(_page)
-            //--------------------
-            ,
                 _isSharedAccount = function() {
                 return _model.editAccount.accountType === 'SHARED';
-            }
-            //--------------------
-            ,
+            },
+            //
                 _m2v = function() {
                 var userGroupAccess,
                     isShared = _isSharedAccount();
@@ -651,9 +617,8 @@
                     });
                 }
                 $('#sp-shared-account-group-access').val(userGroupAccess);
-            }
-            //--------------------
-            ,
+            },
+            //
                 _v2m = function() {
 
                 var userGroupAccess = [],
@@ -681,9 +646,7 @@
                 }
 
                 return true;
-            }
-            //
-            ;
+            };
 
             $(_self.id()).on('pagecreate', function(event) {
 
@@ -706,9 +669,7 @@
          */
         _ns.PageAccountVoucherCreate = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-voucher-create', 'admin/PageAccountVoucherCreate')
-            //
-            ,
+            var _page = new _ns.Page(_i18n, _view, '#page-voucher-create', 'admin/PageAccountVoucherCreate'),
                 _self = _ns.derive(_page);
 
             /**
@@ -720,15 +681,10 @@
 
                 $(this).on('click', '#button-voucher-batch-create-print', null, function() {
 
-                    var sel = $("#sp-voucher-create-expiration")
-                    //
-                    ,
-                        date = _view.mobipickGetDate(sel)
-                    //
-                    ,
-                        present = (sel.val().length > 0)
-                    //
-                    ;
+                    var sel = $("#sp-voucher-create-expiration"),
+                        date = _view.mobipickGetDate(sel),
+                        present = (sel.val().length > 0);
+
                     date = ( present ? date.getTime() : null);
 
                     _self.onCreateBatch({
@@ -757,9 +713,7 @@
          */
         _ns.PageConfigProp = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-config-prop', 'admin/PageConfigProp')
-            //
-            ,
+            var _page = new _ns.Page(_i18n, _view, '#page-config-prop', 'admin/PageConfigProp'),
                 _self = _ns.derive(_page);
 
             /**
@@ -773,17 +727,9 @@
                 });
 
             }).on("pagebeforeshow", function(event, ui) {
-                var
-                //
-                val = _model.editConfigProp.value
-                //
-                ,
-                    single = $('#config-prop-value')
-                //
-                ,
-                    multi = $('#config-prop-value-multiline')
-                //
-                ;
+                var val = _model.editConfigProp.value,
+                    single = $('#config-prop-value'),
+                    multi = $('#config-prop-value-multiline');
 
                 if (_model.editConfigProp.multiline) {
                     multi.val(val).show();
@@ -806,77 +752,35 @@
             var _m2v,
                 _v2m,
                 _m2vAuthDefault,
-                _m2vCardFormat
-            //
-            ,
+                _m2vCardFormat,
                 _m2vProxyPrintAuth,
-                _v2mProxyPrintAuth
-            //
-            ,
-                _page = new _ns.Page(_i18n, _view, '#page-device', 'admin/PageDevice')
-            //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ,
+                _v2mProxyPrintAuth,
+                _page = new _ns.Page(_i18n, _view, '#page-device', 'admin/PageDevice'),
+                _self = _ns.derive(_page),
                 _onAuthModeEnabled,
                 _onProxyPrintEnabled,
-                _onCustomAuthEnabled
-            //
-            ,
-                _enableCardFormat
-            //
-            ,
-                _ATTR_PFX = 'auth-mode'
-            //
-            ,
-                _AUTH_MODE_DEFAULT = _ATTR_PFX + '-default'
-            //
-            ,
-                _AUTH_MODE_CUSTOM = _ATTR_PFX + '-is-custom'
-            //
-            ,
-                _AUTH_MODE_CARD_LOCAL = _ATTR_PFX + '.card-local'
-            //
-            ,
-                _PROXY_PRINT_AUTH_MODE = 'proxy-print.auth-mode'
-            //
-            ,
-                _WEBAPP_USER_IDLE_SECS = 'webapp.user.max-idle-secs'
+                _onCustomAuthEnabled,
+                _enableCardFormat,
+                _ATTR_PFX = 'auth-mode',
+                _AUTH_MODE_DEFAULT = _ATTR_PFX + '-default',
+                _AUTH_MODE_CUSTOM = _ATTR_PFX + '-is-custom',
+                _AUTH_MODE_CARD_LOCAL = _ATTR_PFX + '.card-local',
+                _PROXY_PRINT_AUTH_MODE = 'proxy-print.auth-mode',
+                _WEBAPP_USER_IDLE_SECS = 'webapp.user.max-idle-secs',
             // boolean authentication attributes
-            ,
-                _AUTH_ATTR_BOOLS = ['.name', '.yubikey', '.id', '.id.pin-required', '.id.is-masked', '.card-local', '.card-ip', '.card.pin-required', '.card.self-association']
+                _AUTH_ATTR_BOOLS = ['.name', '.yubikey', '.id', '.id.pin-required', '.id.is-masked', '.card-local', '.card-ip', '.card.pin-required', '.card.self-association'],
             // string authentication attributes
-            ,
-                _AUTH_ATTR_STRINGS = []
-            //
-            ,
-                _CARD_FORMAT_ATTR = ['.format', '.first-byte']
-            //
-            ;
+                _AUTH_ATTR_STRINGS = [],
+                _CARD_FORMAT_ATTR = ['.format', '.first-byte'];
 
             _onAuthModeEnabled = function() {
-                var authUser = _view.isCbChecked($("#auth-mode\\.name"))
-                //
-                ,
-                    authId = _view.isCbChecked($("#auth-mode\\.id"))
-                //
-                ,
-                    authCardLocal = _view.isCbChecked($("#auth-mode\\.card-local"))
-                //
-                ,
-                    authCardIp = _view.isCbChecked($("#auth-mode\\.card-ip"))
-                //
-                ,
-                    authYubikey = _view.isCbChecked($("#auth-mode\\.yubikey"))
-                //
-                ,
-                    sel
-                //
-                ,
-                    nMode = 0
-                //
-                ;
+                var authUser = _view.isCbChecked($("#auth-mode\\.name")),
+                    authId = _view.isCbChecked($("#auth-mode\\.id")),
+                    authCardLocal = _view.isCbChecked($("#auth-mode\\.card-local")),
+                    authCardIp = _view.isCbChecked($("#auth-mode\\.card-ip")),
+                    authYubikey = _view.isCbChecked($("#auth-mode\\.yubikey")),
+                    sel,
+                    nMode = 0;
 
                 $('#auth-mode-default-user').checkboxradio( authUser ? 'enable' : 'disable');
                 $('#auth-mode-default-id').checkboxradio( authId ? 'enable' : 'disable');
@@ -925,12 +829,8 @@
             };
 
             _onCustomAuthEnabled = function(cb) {
-                var customAuth = _view.isCbChecked(cb)
-                //
-                ,
-                    authCardLocal = _view.isCbChecked($("#auth-mode\\.card-local"))
-                //
-                ;
+                var customAuth = _view.isCbChecked(cb),
+                    authCardLocal = _view.isCbChecked($("#auth-mode\\.card-local"));
                 _view.visible($('.sp-device-auth-mode-custom-group'), customAuth);
 
                 if (customAuth) {
@@ -944,25 +844,15 @@
             };
 
             _v2mProxyPrintAuth = function(attr) {
-                var name = _PROXY_PRINT_AUTH_MODE
-                //
-                ,
-                    id = name.replace(/\./g, '\\.')
-                //
-                ;
+                var name = _PROXY_PRINT_AUTH_MODE,
+                    id = name.replace(/\./g, '\\.');
                 attr[name] = _view.getRadioValue(id);
             };
 
             _m2vProxyPrintAuth = function() {
-                var attr = _PROXY_PRINT_AUTH_MODE
-                //
-                ,
-                    id = attr.replace(/\./g, '\\.')
-                //
-                ,
-                    val = _model.editDevice.attr[attr]
-                //
-                ;
+                var attr = _PROXY_PRINT_AUTH_MODE,
+                    id = attr.replace(/\./g, '\\.'),
+                    val = _model.editDevice.attr[attr];
                 if (val) {
                     _view.checkRadio(attr, id + '-' + val.toLowerCase());
                 }
@@ -973,13 +863,9 @@
             };
 
             _m2vCardFormat = function(attr) {
-                var val = _model.editDevice.attr[attr]
-                //
-                ,
+                var val = _model.editDevice.attr[attr],
                     radio,
-                    id
-                //
-                ;
+                    id;
                 if (val === 'HEX') {
                     radio = 'hex';
                 } else if (val === 'DEC') {
@@ -997,21 +883,14 @@
              * Model to View.
              */
             _m2v = function() {
-                var device = _model.editDevice
-                //
-                ,
+                var device = _model.editDevice,
                     customAuth,
-                    showCardFormat
-                //
-                ,
+                    showCardFormat,
                     attrBool = [],
                     attrString = [],
-                    attrFullString = []
+                    attrFullString = [],
                 // force evaluation to boolean
-                ,
-                    isProxyPrint = (undefined !== (device.printerName || device.printerGroup))
-                //
-                ;
+                    isProxyPrint = (undefined !== (device.printerName || device.printerGroup));
 
                 $('#sp-device-name').val(device.deviceName);
                 $('#sp-device-hostname').val(device.hostname);
@@ -1054,14 +933,10 @@
                 }
 
                 attrBool.forEach(function(sfx) {
-                    var name = _ATTR_PFX + sfx
+                    var name = _ATTR_PFX + sfx,
                     // escape ALL the points '.'
-                    ,
-                        id = name.replace(/\./g, '\\.')
-                    //
-                    ;
+                        id = name.replace(/\./g, '\\.');
                     _view.checkCb('#' + id, device.attr[name]);
-                    //console.log(name + ' : ' + attr[name]);
                 });
                 attrString.forEach(function(sfx) {
                     var name = _ATTR_PFX + sfx
@@ -1080,7 +955,6 @@
                     $('#' + id).val(device.attr[name]);
                 });
 
-                //
                 _view.visible($('.sp-device-edit'), device.id);
                 _view.visible($('.sp-device-terminal'), device.deviceType === 'TERMINAL');
                 _view.visible($('.sp-device-card-reader'), device.deviceType === 'CARD_READER');
@@ -1100,22 +974,14 @@
              * View to Model.
              */
             _v2m = function() {
-                var device = _model.editDevice
-                //
-                ,
+                var device = _model.editDevice,
                     attr = {},
                     attrBool = [],
-                    attrString = []
-                //
-                ,
+                    attrString = [],
                     attrCardNumberFormat = [],
-                    attrFullString = []
-                //
-                ,
+                    attrFullString = [],
                     customAuth,
-                    proxyPrint
-                //
-                ;
+                    proxyPrint;
 
                 device.deviceName = $('#sp-device-name').val();
                 device.displayName = $('#sp-device-name').val();
@@ -1155,31 +1021,21 @@
                 }
 
                 attrBool.forEach(function(sfx) {
-                    var name = _ATTR_PFX + sfx
+                    var name = _ATTR_PFX + sfx,
                     // escape ALL the points '.'
-                    ,
-                        id = name.replace(/\./g, '\\.')
-                    //
-                    ;
+                        id = name.replace(/\./g, '\\.');
                     attr[name] = _view.isCbChecked($('#' + id));
-                    //console.log(name + ' : ' + attr[name]);
                 });
 
                 attrString.forEach(function(sfx) {
-                    var name = _ATTR_PFX + sfx
+                    var name = _ATTR_PFX + sfx,
                     // escape ALL the points '.'
-                    ,
-                        id = name.replace(/\./g, '\\.')
-                    //
-                    ;
+                        id = name.replace(/\./g, '\\.');
                     attr[name] = $('#' + id).val();
-                    //console.log(name + ' : ' + attr[name]);
                 });
                 attrFullString.forEach(function(name) {
                     // escape ALL the points '.'
-                    var id = name.replace(/\./g, '\\.')
-                    //
-                    ;
+                    var id = name.replace(/\./g, '\\.');
                     attr[name] = $('#' + id).val();
                 });
 
@@ -1188,14 +1044,10 @@
                 }
 
                 attrCardNumberFormat.forEach(function(sfx) {
-                    var name = 'card.number' + sfx
+                    var name = 'card.number' + sfx,
                     // escape ALL the points '.'
-                    ,
-                        id = name.replace(/\./g, '\\.')
-                    //
-                    ;
+                        id = name.replace(/\./g, '\\.');
                     attr[name] = _view.getRadioValue(id);
-                    //console.log(name + ' : ' + attr[name]);
                 });
 
                 device.attr = attr;
@@ -1241,12 +1093,8 @@
          */
         _ns.PageQueue = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-queue', 'admin/PageQueue')
-            //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ;
+            var _page = new _ns.Page(_i18n, _view, '#page-queue', 'admin/PageQueue'),
+                _self = _ns.derive(_page);
 
             $(_self.id()).on('pagecreate', function(event) {
 
@@ -1256,12 +1104,8 @@
                 });
 
             }).on("pagebeforeshow", function(event, ui) {
-                var reserved = _model.editQueue.reserved
-                //
-                ,
-                    sect = $('#queue_reserved_section')
-                //
-                ;
+                var reserved = _model.editQueue.reserved,
+                    sect = $('#queue_reserved_section');
                 $('#queue-url-path').val(_model.editQueue.urlpath);
                 $('#queue-ip-allowed').val(_model.editQueue.ipallowed);
                 _view.checkCb('#queue-trusted', _model.editQueue.trusted);
@@ -1313,12 +1157,8 @@
              *
              */
             _showAllMediaRows = function(showAll) {
-                var buttonLess = $('#sp-printer-cost-media-less')
-                //
-                ,
-                    buttonMore = $('#sp-printer-cost-media-more')
-                //
-                ;
+                var buttonLess = $('#sp-printer-cost-media-less'),
+                    buttonMore = $('#sp-printer-cost-media-more');
 
                 $(".sp-printer-cost-media-row").each(function() {
                     if (showAll) {
@@ -1391,15 +1231,9 @@
 
             }).on("pagebeforeshow", function(event, ui) {
 
-                var accounting = $('#sp-printer-accounting-addin')
-                //
-                ,
-                    mediaSource = $('#sp-printer-media-source-addin')
-                //
-                ,
-                    data = {}
-                //
-                ;
+                var accounting = $('#sp-printer-accounting-addin'),
+                    mediaSource = $('#sp-printer-media-source-addin'),
+                    data = {};
 
                 $('#printer-displayname').val(_model.editPrinter.displayName);
                 $('#printer-location').val(_model.editPrinter.location);
@@ -1511,28 +1345,15 @@
          */
         _ns.PageAdmin = function(_i18n, _view, _model) {
 
-            var _page = new _ns.Page(_i18n, _view, '#page-admin', 'admin/Main')
-            //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ,
-                _panel
-            //
-            ,
+            var _page = new _ns.Page(_i18n, _view, '#page-admin', 'admin/Main'),
+                _self = _ns.derive(_page),
+                _panel,
                 _refreshPanel,
                 _refreshPanelByUrl,
-                _refreshPanelCommon
-            //
-            ,
+                _refreshPanelCommon,
                 _panelCur = null,
                 _panelCurClass = null,
-                _loadPanel
-            //
-            ;
-
-            //_self.onDisconnected()
-            //_self.onClose()
+                _loadPanel;
 
             _self.reloadPanel = function() {
                 _loadPanel(_panelCurClass);
@@ -1864,9 +1685,7 @@
                 });
 
                 $(this).on('click', '.savapage-detail-prev', null, function(ev) {
-                    var clazz = $(this).attr('name')
-                    //
-                    ,
+                    var clazz = $(this).attr('name'),
                         pnl = _panel[clazz];
 
                     $(this).closest('[data-role="popup"]').popup("close");
@@ -2037,12 +1856,8 @@
                 });
 
                 $(this).on('click', '#button-voucher-delete-batch', null, function() {
-                    var pnl = _panel.AccountVoucherBase
-                    //
-                    ,
-                        batch = pnl.getBatch()
-                    //
-                    ;
+                    var pnl = _panel.AccountVoucherBase,
+                        batch = pnl.getBatch();
                     pnl.applyDefaults(pnl);
                     _self.onVoucherDeleteBatch(batch);
                     return false;

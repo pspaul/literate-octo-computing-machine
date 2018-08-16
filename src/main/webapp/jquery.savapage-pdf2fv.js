@@ -45,9 +45,6 @@
                 _util = _ns.Utils,
                 i18nRefresh;
 
-            /**
-             *
-             */
             i18nRefresh = function(i18nNew) {
                 if (i18nNew && i18nNew.i18n) {
                     _i18n.refresh(i18nNew.i18n);
@@ -222,7 +219,6 @@
              *
              */
             this.init = function() {
-
                 var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER);
 
                 //_ns.initWebApp('POS');
@@ -244,7 +240,7 @@
                  */
                 $("#page-main").on('pagecreate', function(event) {
                     $.noop();
-                    
+
                     //_view.pages.main.onLanguage = function() {
                     //    _view.pages.language.loadShowAsync();
                     //};

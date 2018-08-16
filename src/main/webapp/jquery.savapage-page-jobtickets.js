@@ -42,9 +42,8 @@
             var _this,
                 _quickCache = [],
                 _quickSelected,
-                _lastFilter
+                _lastFilter,
             //
-            ,
                 _onQuickSearch = function(target, filter) {
                 /* QuickSearchFilterJobTicketDto */
                 var res,
@@ -82,9 +81,7 @@
                     }
                 }
                 target.html(html).filterable("refresh");
-            }
-            //
-            ;
+            };
 
             this.onCreate = function(parent, filterId, onSelect, onClear, onQuickSearchBefore) {
                 var filterableTicket = $("#" + filterId);
@@ -121,40 +118,25 @@
          */
         _ns.PageJobTickets = function(_i18n, _view, _model, _api) {
 
-            var _page = new _ns.Page(_i18n, _view, "#page-jobtickets", "PageJobTickets")
-            //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ,
+            var _page = new _ns.Page(_i18n, _view, "#page-jobtickets", "PageJobTickets"),
+                _self = _ns.derive(_page),
                 _pnlDocLog = _ns.PanelDocLogBase,
-                _pnlDocLogRefresh = true
-            //
-            ,
+                _pnlDocLogRefresh = true,
                 _countdownTimer,
                 _countdownCounter = 1,
-                _countdownPaused
-            //
-            ,
+                _countdownPaused,
                 _MODE_PRINT = '0',
-                _MODE_CANCEL = '1'
-            //
-            ,
+                _MODE_CANCEL = '1',
                 _userKey,
                 _ticketKey,
-                _expiryAsc = true
-            //
-            ,
+                _expiryAsc = true,
                 _quickUserSearch = new _ns.QuickUserSearch(_view, _api),
                 _quickUserSearchDocLog = new _ns.QuickUserSearch(_view, _api),
-                _quickTicketSearch = new _ns.QuickJobTicketSearch(_view, _api)
+                _quickTicketSearch = new _ns.QuickJobTicketSearch(_view, _api),
             //
-            ,
                 _maxItems = function() {
                 return $('#jobtickets-max-items').val();
-            }
-            //
-            ,
+            },
                 _refreshStats = function() {
                 var html = _view.getPageHtml('JobTicketQueueInfoAddIn', {
                 });
@@ -162,9 +144,13 @@
                 if (html) {
                     $('#div-ticket-queue-info').html(html);
                 }
-            }
-            //
-            ,
+            },
+                _stopCountdownTimer = function() {
+                if (_countdownTimer) {
+                    window.clearTimeout(_countdownTimer);
+                    _countdownTimer = null;
+                }
+            },
                 _refresh = function() {
                 var html;
 
@@ -195,17 +181,7 @@
                 }
 
                 return false;
-            }
-            //
-            ,
-                _stopCountdownTimer = function() {
-                if (_countdownTimer) {
-                    window.clearTimeout(_countdownTimer);
-                    _countdownTimer = null;
-                }
-            }
-            //
-            ,
+            },
                 _startCountdownTimer = function() {
                 var msecDelay = 3000,
                     refreshMsec = 60 * 1000;
@@ -218,81 +194,58 @@
                         _refresh();
                     }
                 }, msecDelay);
-            }
-            //
-            ,
+            },
                 _getRedirectPrinterItem = function(inputRadio) {
                 return inputRadio.closest('.sp-jobticket-redirect-printer-item');
-            }
-            //
-            ,
+            },
                 _getRedirectPrinterMediaType = function(redirectPrinterItem) {
                 return redirectPrinterItem.find('.sp-redirect-printer-media-type');
-            }
-            //
-            ,
+            },
                 _getRedirectPrinterMediaSourceJobSheet = function(redirectPrinterItem) {
                 return redirectPrinterItem.find('.sp-redirect-printer-media-source-job-sheet');
-            }
-            //
-            ,
+            },
                 _getRedirectPrinterMediaSource = function(redirectPrinterItem) {
                 return redirectPrinterItem.find('.sp-redirect-printer-media-source');
-            }
-            //
-            ,
+            },
                 _getRedirectPrinterOutputBin = function(redirectPrinterItem) {
                 return redirectPrinterItem.find('.sp-redirect-printer-output-bin');
-            }
-            //
-            ,
+            },
                 _getRedirectPrinterJogOffset = function(redirectPrinterItem) {
                 return redirectPrinterItem.find('.sp-redirect-printer-jog-offset');
-            }
-            //
-            ,
+            },
                 _onSelectUser = function(quickUserSelected) {
                 $("#sp-jobticket-userid").val(quickUserSelected.text);
                 _userKey = quickUserSelected.key;
                 _refresh();
-            }
-            //
-            ,
+            },
                 _onClearUser = function() {
                 $("#sp-jobticket-userid").val('');
                 _userKey = null;
                 _refresh();
-            }
-            //
-            ,
+            },
                 _onSelectTicket = function(quickSelected) {
                 $("#sp-jobticket-search-ticket").val(quickSelected.text);
                 _ticketKey = quickSelected.text;
                 _refresh();
-            }
-            //
-            ,
+            },
                 _onClearTicket = function() {
                 $("#sp-jobticket-search-ticket").val('');
                 _ticketKey = null;
                 _refresh();
-            }
-            //
-            ,
+            },
+
                 _onSelectUserDocLog = function(quickUserSelected) {
                 $("#sp-doclog-select-userid").val(quickUserSelected.text);
                 $('#sp-doclog-hidden-user-id').val(quickUserSelected.key);
                 _pnlDocLog.page(_pnlDocLog, 1);
-            }
-            //
-            ,
+            },
+
                 _onClearUserDocLog = function() {
                 $("#sp-doclog-select-userid").val('');
                 $('#sp-doclog-hidden-user-id').val('');
                 _pnlDocLog.page(_pnlDocLog, 1);
-            }
-            //
-            ,
+            },
+
                 _onPrintPopup = function(jobFileName, positionTo, settle, retry) {
                 var html = _view.getPageHtml('JobTicketPrintAddIn', {
                     jobFileName : jobFileName,
@@ -308,23 +261,18 @@
                 if (!settle) {
                     _onRedirectPrinterRadio(_view.getRadioSelected('sp-jobticket-redirect-printer'));
                 }
-            }
-            //
-            ,
+            },
                 _onPrintRetry = function(jobFileName, positionTo) {
                 _onPrintPopup(jobFileName, positionTo, false, true);
-            }
+            },
             // For now ..
-            ,
                 _loadingIconFoo = function(foo, p1, p2, p3, p4, p5) {
                 $.mobile.loading("show");
                 window.setTimeout(function() {
                     foo(p1, p2, p3, p4, p5);
                     $.mobile.loading("hide");
                 }, 500);
-            }
-            //
-            ,
+            },
                 _onPrintCancel = function(jobFileName) {
 
                 _loadingIconFoo(function(jobfileName) {
@@ -430,9 +378,7 @@
                         jogOffset : jogOffset
                     })
                 });
-            }
-            //
-            ,
+            },
                 _onSaveJob = function(jobFileName) {
                 var res,
                     ippOptions = {};
@@ -456,9 +402,7 @@
                 }
                 //_view.showApiMsg(res);
                 _view.message(res.result.txt);
-            }
-            //
-            ,
+            },
                 _onExecJob = function(jobFileName, print, retry) {
                 _loadingIconFoo(function(jobFileName, print, retry) {
                     var res,
@@ -488,18 +432,13 @@
                     //_view.showApiMsg(res);
                     _view.message(res.result.txt);
                 }, jobFileName, print, retry);
-            }
-            //
-            ,
-                _onProcessAll = function(mode) {
+            },
 
-                var logPfx = (mode === _MODE_PRINT ? 'Print' : 'Cancel')
-                //
-                ,
-                    popup = (mode === _MODE_PRINT ? $('#sp-jobticket-popup-print-all') : $('#sp-jobticket-popup-cancel-all'))
+                _onProcessAll = function(mode) {
+                var logPfx = (mode === _MODE_PRINT ? 'Print' : 'Cancel'),
+                    popup = (mode === _MODE_PRINT ? $('#sp-jobticket-popup-print-all') : $('#sp-jobticket-popup-cancel-all')),
                 // NOTE: Tickets with cancel button are candidates for batch
                 // processing.
-                ,
                     tickets = $('.sp-outbox-cancel-jobticket');
 
                 popup.find('.ui-content:eq(0)').hide();
@@ -528,9 +467,8 @@
                     _refresh();
                     popup.popup('close');
                 }, 1500);
-            }
-            //
-            ,
+            },
+
                 _onRedirectPrinterRadio = function(inputRadio) {
                 var item = _getRedirectPrinterItem(inputRadio),
                     mediaSourceJobSheet = _getRedirectPrinterMediaSourceJobSheet(item),
@@ -558,9 +496,12 @@
                     $('.sp-jobticket-redirect-printer-item').attr('style', '');
                     item.attr('style', 'border: 4px solid silver;');
                 }
-            }
-            //
-            ;
+            };
+
+
+
+
+
 
             $(_self.id()).on('pagecreate', function(event) {
 
@@ -723,19 +664,12 @@
                 //--------------------------------------------
                 // Common Panel parameters.
                 //--------------------------------------------
-
                 _ns.PanelCommon.view = _view;
 
                 _ns.PanelCommon.refreshPanelCommon = function(wClass, skipBeforeLoad, thePanel) {
-                    var jqId = thePanel.jqId
-                    //
-                    ,
-                        data = thePanel.getInput(thePanel)
-                    //
-                    ,
-                        jsonData = JSON.stringify(data)
-                    //
-                    ;
+                    var jqId = thePanel.jqId,
+                        data = thePanel.getInput(thePanel),
+                        jsonData = JSON.stringify(data);
 
                     $.mobile.loading("show");
                     $.ajax({
@@ -800,8 +734,9 @@
                     _pnlDocLog.setVisibility(_pnlDocLog);
                     return false;
                 }).on('click', '.sp-btn-about-org', function() {
-                    // About Dialog closess immediately, why?
+                    // About Dialog closes immediately, why?
                     //_view.showPageAsync('#page-info', 'AppAbout');
+                    $.noop();
                 });
 
                 $("#sp-a-content-button").click();

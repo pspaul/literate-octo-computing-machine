@@ -41,24 +41,13 @@
          * Constructor
          */
         _ns.PagePointOfSale = function(_i18n, _view, _model, _api) {
-
-            var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale", "PagePointOfSale")
-            //
-            ,
-                _self = _ns.derive(_page)
-            //
-            ,
-                _quickUserSelected
-            //
-            ,
-                _quickUserSearch = new _ns.QuickUserSearch(_view, _api)
-            //
-            ,
+            var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale", "PagePointOfSale"),
+                _self = _ns.derive(_page),
+                _quickUserSelected,
+                _quickUserSearch = new _ns.QuickUserSearch(_view, _api),
                 onQuickSearchUserBefore = function() {
                 $(".sp-pos-user-selected").hide();
-            }
-            //
-            ,
+            },
                 _onSelectUser = function(quickUserSelected) {
 
                 var attr = "data-savapage",
@@ -74,25 +63,18 @@
                 $(".sp-pos-user-selected").show();
 
                 $("#sp-pos-amount-main").focus();
-            }
-            //
-            ,
+            },
                 _onClearUser = function() {
                 $.noop();
-            }
-            //
-            ,
+            },
                 _clear = function() {
                 $("#sp-pos-userid").val("").focus();
                 $("#sp-pos-amount-main").val("");
                 $("#sp-pos-comment").val("");
                 $("#sp-pos-amount-cents").val("00");
                 $(".sp-pos-user-selected").hide();
-            }
-            //
-            ,
+            },
                 _onDeposit = function() {
-
                 var sel = $('#sp-pos-payment-type')
                 // PosDepositDto
                 ,
@@ -107,9 +89,8 @@
                         receiptDelivery : _view.getRadioValue('sp-pos-receipt-delivery'),
                         userEmail : _quickUserSelected.email
                     })
-                })
-                //
-                ;
+                });
+
                 _view.showApiMsg(res);
 
                 if (res.result.code === '0') {
@@ -125,35 +106,21 @@
 
                     _clear();
                 }
-            }
+            },
             // Get Date as yyyymmdd. Usage: _getQuickDate(new Date())
-            ,
                 _getQuickDate = function(date) {
-                var yyyy = date.getFullYear().toString()
-                //
-                ,
-                    mm = (date.getMonth() + 1).toString()
+                var yyyy = date.getFullYear().toString(),
+                    mm = (date.getMonth() + 1).toString(),
                 // getMonth() is zero-based
-                ,
-                    dd = date.getDate().toString()
-                //
-                ;
+                    dd = date.getDate().toString();
                 // padding
                 return yyyy + (mm[1] ? mm : "0" + mm[0]) + (dd[1] ? dd : "0" + dd[0]);
-            }
-            //
-            ,
+            },
                 _onQuickPurchaseSearch = function(target, filter) {
                 /* QuickSearchFilterDto */
-                var res
-                //
-                ,
-                    btnCls = "ui-btn ui-btn-inline ui-btn-icon-left ui-mini"
-                //
-                ,
-                    html = ""
-                //
-                ;
+                var res,
+                    btnCls = "ui-btn ui-btn-inline ui-btn-icon-left ui-mini",
+                    html = "";
 
                 if (filter && filter.length > 0) {
                     res = _api.call({

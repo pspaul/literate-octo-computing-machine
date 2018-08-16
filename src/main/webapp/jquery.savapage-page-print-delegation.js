@@ -100,7 +100,6 @@
 
                 _nDelegatorGroups = 0,
                 _nDelegatorUsers = 0,
-                _nDelegatorGroupMembers = 0,
                 _nDelegatorCopies = 0,
 
                 _nDelegatorUsersCopies = 0,
@@ -590,7 +589,6 @@
                         _delegatorGroups[item.key] = modelAccount;
                         _appendDelegatorRow(tbody, item, account, _CLASS_GROUP, modelAccount.totalCopies);
                         _nDelegatorGroups++;
-                        _nDelegatorGroupMembers += item.userCount;
                         _nDelegatorGroupMembersCopies += modelAccount.totalCopies;
                     }
                 });
@@ -989,7 +987,6 @@
 
                     if (_delegatorGroupsSelected[dbkey]) {
                         _nDelegatorGroups--;
-                        _nDelegatorGroupMembers -= _delegatorGroups[dbkey].userCount;
                         _nDelegatorGroupMembersCopies -= _delegatorGroups[dbkey].totalCopies;
                         delete _delegatorGroups[dbkey];
                         $(this).remove();
@@ -1006,14 +1003,6 @@
 
                 });
                 _initDelegatorSelection();
-            }
-            //----------------------------------------------------------------
-            ,
-                _enableClickCheckboxRadio = function(name, id, enable) {
-                _view.enableCheckboxRadio($('#' + id), enable);
-                if (enable) {
-                    _view.checkRadio(name, id);
-                }
             }
             //----------------------------------------------------------------
             ,

@@ -41,16 +41,10 @@
          */
         _ns.Controller = function(_i18n, _model, _view, _api) {
 
-            var _this = this
-            //
-            ,
+            var _this = this,
                 _util = _ns.Utils,
-                i18nRefresh
-            //
-            ,
-                _handleLoginResult
-            //
-            ;
+                i18nRefresh,
+                _handleLoginResult;
 
             /**
              *
@@ -122,17 +116,11 @@
              *
              */
             this.init = function() {
-
                 var res,
                     language,
-                    country
-                //
-                ,
+                    country,
                     authModeRequest = _util.getUrlParam(_ns.URL_PARM.LOGIN);
 
-                /*
-                 *
-                 */
                 _model.initAuth();
 
                 res = _api.call({
@@ -277,7 +265,7 @@
              * Callbacks: page PointOfSale
              */
             _view.pages.pointOfSale.onBack = function() {
-
+                var res;
                 /*
                  * Since this method is also called by the generic onPageHide
                  * call-back,
@@ -298,7 +286,7 @@
                  */
                 _model.startSession();
 
-                var res = _api.call({
+                res = _api.call({
                     request : 'logout',
                     dto : JSON.stringify({
                         authToken : _model.authToken.token
@@ -326,21 +314,10 @@
          *
          */
         _ns.Model = function(_i18n) {
-
-            var
-            //
-            _LOC_AUTH_NAME = 'sp.auth.pos.name'
-            //
-            ,
-                _LOC_AUTH_TOKEN = 'sp.auth.pos.token'
-            //
-            ,
-                _LOC_LANG = 'sp.pos.language'
-            //
-            ,
-                _LOC_COUNTRY = 'sp.pos.country'
-            //
-            ;
+            var _LOC_AUTH_NAME = 'sp.auth.pos.name',
+                _LOC_AUTH_TOKEN = 'sp.auth.pos.token',
+                _LOC_LANG = 'sp.pos.language',
+                _LOC_COUNTRY = 'sp.pos.country';
 
             this.user = new _ns.User();
 
@@ -414,28 +391,13 @@
          *
          */
         $.SavaPageApp = function(name) {
-
-            var _i18n = new _ns.I18n()
-            //
-            ,
-                _model = new _ns.Model(_i18n)
-            //
-            ,
-                _api = new _ns.Api(_i18n, _model.user)
-            //
-            ,
-                _view = new _ns.View(_i18n, _api)
-            //
-            ,
-                _viewById = {}
-            //
-            ,
-                _ctrl
-            //
-            ,
-                _nativeLogin
-            //
-            ;
+            var _i18n = new _ns.I18n(),
+                _model = new _ns.Model(_i18n),
+                _api = new _ns.Api(_i18n, _model.user),
+                _view = new _ns.View(_i18n, _api),
+                _viewById = {},
+                _ctrl,
+                _nativeLogin;
 
             _ns.commonWebAppInit();
 
@@ -476,7 +438,6 @@
              *
              */
             this.init = function() {
-
                 var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER),
                     authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN);
 
