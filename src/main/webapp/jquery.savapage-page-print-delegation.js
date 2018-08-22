@@ -322,8 +322,10 @@
             }
             //----------------------------------------------------------------
             ,
-                _onQuickSearchInputVisibility = function(refId, filter, totResults, preferredScope) {
-                _view.visible($('#' + refId + ' .sp-quicksearch-input'), preferredScope || filter.length !== 0 || totResults > 1);
+                _onQuickSearchAccountVisibility = function(refId, filter, totResults, preferredScope) {
+                var visible = preferredScope || filter.length !== 0 || totResults > 1;
+                _view.visible($('#' + refId + ' .sp-quicksearch-input'), visible);
+                _view.visible($('#' + refId + ' ul'), visible);
             }
             //----------------------------------------------------------------
             ,
@@ -508,7 +510,7 @@
                 target.html(html).filterable("refresh");
                 _selectQuickSearchSingleResult(target);
                 _onButtonAddVisibility();
-                _onQuickSearchInputVisibility(refId, filter, _quickAccountTotalResults, preferredScope);
+                _onQuickSearchAccountVisibility(refId, filter, _quickAccountTotalResults, preferredScope);
             }
             //----------------------------------------------------------------
             ,
@@ -1057,7 +1059,7 @@
                     selWlk = $('#sp-print-delegation-select-shared-account-filter');
                     filterWrk = $('#sp-print-delegation-select-shared-account').val();
                     _onQuickSearchAccount(selWlk, filterWrk, 0, false);
-                    _onQuickSearchInputVisibility('sp-print-delegation-quicksearch-accounts', filterWrk, _quickAccountTotalResults, _isAccountSelectScopePreferred());
+                    _onQuickSearchAccountVisibility('sp-print-delegation-quicksearch-accounts', filterWrk, _quickAccountTotalResults, _isAccountSelectScopePreferred());
                 }
 
                 selWlk = $('#sp-print-delegation-member-copies');
