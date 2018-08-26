@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -149,8 +149,8 @@ public final class PrinterSnmpPanel extends Panel {
 
             int i = 0;
 
-            for (final Entry<SnmpPrtMarkerColorantValueEnum, Integer> entry : info
-                    .getMarkers().entrySet()) {
+            for (final Entry<SnmpPrtMarkerColorantValueEnum, Integer> entry : //
+            info.getMarkers().entrySet()) {
 
                 if (extended) {
                     markers.append(" &bull; ")
@@ -177,7 +177,7 @@ public final class PrinterSnmpPanel extends Panel {
 
             final int barWidth;
 
-            if (markerColors.length < 5) {
+            if (markerColors.length > 0 && markerColors.length < 5) {
                 barWidth = BAR_WIDTH[markerColors.length - 1];
             } else {
                 barWidth = BAR_WIDTH[BAR_WIDTH.length - 1];
