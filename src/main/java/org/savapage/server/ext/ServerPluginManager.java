@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
+import org.savapage.core.SpInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
@@ -68,7 +70,12 @@ import org.savapage.core.util.CurrencyUtil;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.ServerPlugin;
+import org.savapage.ext.ServerPluginContext;
 import org.savapage.ext.ServerPluginException;
+import org.savapage.ext.notification.JobTicketCancelEvent;
+import org.savapage.ext.notification.JobTicketCloseEvent;
+import org.savapage.ext.notification.NotificationListener;
+import org.savapage.ext.notification.NotificationPlugin;
 import org.savapage.ext.oauth.OAuthClientPlugin;
 import org.savapage.ext.oauth.OAuthProviderEnum;
 import org.savapage.ext.payment.PaymentGateway;
@@ -94,8 +101,8 @@ import org.slf4j.LoggerFactory;
  * @author Rijk Ravestein
  *
  */
-public final class ServerPluginManager
-        implements PaymentGatewayListener, BitcoinGatewayListener {
+public final class ServerPluginManager implements PaymentGatewayListener,
+        BitcoinGatewayListener, NotificationListener, ServerPluginContext {
 
     /**
      * The logger.
@@ -181,12 +188,6 @@ public final class ServerPluginManager
             new HashMap<>();
 
     /**
-     * All {@link OAuthClientPlugin} instances.
-     */
-    private final Map<OAuthProviderEnum, OAuthClientPlugin> oauthClientPlugins =
-            new HashMap<>();
-
-    /**
      * Subset of {@link #paymentPlugins}.
      */
     private final Map<String, PaymentGateway> paymentGateways = new HashMap<>();
@@ -195,6 +196,23 @@ public final class ServerPluginManager
      * Subset of {@link #paymentPlugins}.
      */
     private final Map<String, BitcoinGateway> bitcoinGateways = new HashMap<>();
+
+    /**
+     * All {@link OAuthClientPlugin} instances.
+     */
+    private final Map<OAuthProviderEnum, OAuthClientPlugin> oauthClientPlugins =
+            new HashMap<>();
+
+    /**
+     * All {@link NotificationPlugin} instances.
+     */
+    private final Map<String, NotificationPlugin> notificationPlugins =
+            new HashMap<>();
+
+    /**
+     * All plug-in instances.
+     */
+    private final List<ServerPlugin> allPlugins = new ArrayList<>();
 
     /**
      *
@@ -383,7 +401,7 @@ public final class ServerPluginManager
                 final PaymentGateway paymentPlugin = (PaymentGateway) plugin;
 
                 paymentPlugin.onInit(pluginId, pluginName, pluginLive,
-                        pluginOnline, props);
+                        pluginOnline, props, this);
                 paymentPlugin.onInit(this);
 
                 paymentPlugins.put(pluginId, paymentPlugin);
@@ -396,7 +414,7 @@ public final class ServerPluginManager
                 final BitcoinGateway paymentPlugin = (BitcoinGateway) plugin;
 
                 paymentPlugin.onInit(pluginId, pluginName, pluginLive,
-                        pluginOnline, props);
+                        pluginOnline, props, this);
                 paymentPlugin.onInit(this);
 
                 paymentPlugins.put(pluginId, paymentPlugin);
@@ -410,11 +428,23 @@ public final class ServerPluginManager
                         (OAuthClientPlugin) plugin;
 
                 oauthPlugin.onInit(pluginId, pluginName, pluginLive,
-                        pluginOnline, props);
+                        pluginOnline, props, this);
 
                 oauthClientPlugins.put(oauthPlugin.getProvider(), oauthPlugin);
 
                 validateOAuthCallbackUrl(oauthPlugin);
+
+            } else if (plugin instanceof NotificationPlugin) {
+
+                pluginType = NotificationPlugin.class.getSimpleName();
+
+                final NotificationPlugin notificationPlugin =
+                        (NotificationPlugin) plugin;
+
+                notificationPlugin.onInit(pluginId, pluginName, pluginLive,
+                        pluginOnline, props, this);
+
+                notificationPlugins.put(pluginId, notificationPlugin);
 
             } else {
 
@@ -427,6 +457,8 @@ public final class ServerPluginManager
                 LOGGER.debug(
                         String.format("%s [%s] loaded.", pluginType, istrName));
             }
+
+            allPlugins.add((ServerPlugin) plugin);
 
         } catch (NoSuchMethodException | SecurityException
                 | InstantiationException | IllegalAccessException
@@ -1164,28 +1196,36 @@ public final class ServerPluginManager
         final String delim = "+----------------------------"
                 + "--------------------------------------------+";
 
-        builder.append("Loaded plugins [").append(
-                this.paymentPlugins.size() + this.oauthClientPlugins.size())
+        int pluginsWlk = 0;
+
+        builder.append("Loaded plugins [").append(this.allPlugins.size())
                 .append("]");
 
         if (!this.oauthClientPlugins.isEmpty()) {
-            builder.append('\n').append(delim);
-            for (final Entry<OAuthProviderEnum, OAuthClientPlugin> entry : this.oauthClientPlugins
-                    .entrySet()) {
+
+            if (pluginsWlk == 0) {
+                builder.append('\n').append(delim);
+            }
+
+            for (final Entry<OAuthProviderEnum, OAuthClientPlugin> entry : //
+            this.oauthClientPlugins.entrySet()) {
                 builder.append("\n| ").append(String.format("[%s]",
                         entry.getValue().getClass().getName()));
                 builder.append("\n| ")
                         .append(entry.getValue().getAuthorizationUrl());
                 builder.append('\n').append(delim);
             }
+            pluginsWlk++;
         }
 
         if (!this.paymentPlugins.isEmpty()) {
 
-            builder.append('\n').append(delim);
+            if (pluginsWlk == 0) {
+                builder.append('\n').append(delim);
+            }
 
-            for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
-                    .entrySet()) {
+            for (final Entry<String, PaymentGatewayPlugin> entry : //
+            this.paymentPlugins.entrySet()) {
 
                 builder.append("\n| ").append(String.format("[%s]",
                         entry.getValue().getClass().getName()));
@@ -1207,6 +1247,22 @@ public final class ServerPluginManager
             }
 
             builder.append('\n').append(delim);
+            pluginsWlk++;
+        }
+
+        if (!this.notificationPlugins.isEmpty()) {
+            if (pluginsWlk == 0) {
+                builder.append('\n').append(delim);
+            }
+
+            for (final Entry<String, NotificationPlugin> entry : //
+            this.notificationPlugins.entrySet()) {
+                builder.append("\n| ").append(String.format("[%s]",
+                        entry.getValue().getClass().getName()));
+                builder.append("\n| ").append(entry.getValue().getName());
+                builder.append('\n').append(delim);
+            }
+            pluginsWlk++;
         }
 
         return builder.toString();
@@ -1225,10 +1281,9 @@ public final class ServerPluginManager
      * Starts all plug-ins.
      */
     public void start() {
-        for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
-                .entrySet()) {
+        for (final ServerPlugin plugin : this.allPlugins) {
             try {
-                entry.getValue().onStart();
+                plugin.onStart();
             } catch (ServerPluginException e) {
                 publishAndLogEvent(PubLevelEnum.ERROR, e.getMessage());
             }
@@ -1239,10 +1294,15 @@ public final class ServerPluginManager
      * Stops all plug-ins.
      */
     public void stop() {
-        for (final Entry<String, PaymentGatewayPlugin> entry : this.paymentPlugins
-                .entrySet()) {
+        for (final ServerPlugin plugin : this.allPlugins) {
             try {
-                entry.getValue().onStop();
+                SpInfo.instance().log(String.format(
+                        "Shutting down [%s] plug-in ...", plugin.getName()));
+                plugin.onStop();
+                SpInfo.instance()
+                        .log(String.format(
+                                "... [%s] plug-in shutdown completed.",
+                                plugin.getName()));
             } catch (ServerPluginException e) {
                 publishAndLogEvent(PubLevelEnum.ERROR, e.getMessage());
             }
@@ -1300,6 +1360,25 @@ public final class ServerPluginManager
     private String localize(final String key, final String... args) {
         return Messages.getMessage(getClass(), ConfigManager.getDefaultLocale(),
                 key, args);
+    }
+
+    @Override
+    public void onJobTicketEvent(final JobTicketCancelEvent event) {
+        this.notificationPlugins.forEach((k, v) -> {
+            v.onJobTicketEvent(event);
+        });
+    }
+
+    @Override
+    public void onJobTicketEvent(final JobTicketCloseEvent event) {
+        this.notificationPlugins.forEach((k, v) -> {
+            v.onJobTicketEvent(event);
+        });
+    }
+
+    @Override
+    public File getPluginHome() {
+        return ConfigManager.getServerExtHome();
     }
 
 }

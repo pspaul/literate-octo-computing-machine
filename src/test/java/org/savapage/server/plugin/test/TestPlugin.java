@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.savapage.ext.ServerPluginContext;
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayListener;
 import org.savapage.ext.payment.PaymentGatewayTrx;
@@ -78,10 +79,9 @@ public final class TestPlugin implements PaymentGateway {
     }
 
     @Override
-    public CallbackResponse onCallBack(
-            final Map<String, String[]> parameterMap, final boolean live,
-            final Currency currency, final BufferedReader request,
-            final PrintWriter response) {
+    public CallbackResponse onCallBack(final Map<String, String[]> parameterMap,
+            final boolean live, final Currency currency,
+            final BufferedReader request, final PrintWriter response) {
         return new CallbackResponse(0);
     }
 
@@ -91,7 +91,8 @@ public final class TestPlugin implements PaymentGateway {
 
     @Override
     public void onInit(final String id, final String name, final boolean live,
-            boolean online, final Properties props) {
+            final boolean online, final Properties props,
+            final ServerPluginContext context) {
         // noop
     }
 

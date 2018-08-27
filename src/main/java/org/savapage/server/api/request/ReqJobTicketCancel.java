@@ -32,6 +32,7 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.ext.notification.JobTicketCancelEvent;
 
 /**
  *
@@ -63,6 +64,7 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
             return reason;
         }
 
+        @SuppressWarnings("unused")
         public void setReason(String reason) {
             this.reason = reason;
         }
@@ -86,55 +88,71 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
         } else {
             msgKey = "msg-outbox-cancelled-jobticket";
 
-            final User user = notifyUser(dto.getUserId());
+            final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
+            final User user = userDao.findById(dto.getUserId());
 
             if (user != null) {
+
+                notifyUser(user);
+
                 sendEmailNotification(requestingUser, dto,
                         StringUtils.defaultString(
                                 StringUtils.trimToNull(dtoReq.getReason()),
                                 "-"),
                         user);
+
+                final User userOperator =
+                        userDao.findActiveUserByUserId(requestingUser);
+
+                final JobTicketCancelEvent event = new JobTicketCancelEvent();
+
+                event.setDocumentName(dto.getJobName());
+                event.setOperator(requestingUser);
+
+                if (userOperator == null
+                        || StringUtils.isBlank(userOperator.getFullName())) {
+                    event.setOperatorName(requestingUser);
+                } else {
+                    event.setOperatorName(userOperator.getFullName());
+                }
+
+                event.setTicketNumber(dto.getTicketNumber());
+                event.setCreator(user.getUserId());
+                event.setCreatorName(user.getFullName());
+                event.setReason(dtoReq.getReason());
+                event.setLocale(getLocale());
+
+                getNotificationListener().onJobTicketEvent(event);
             }
         }
-
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);
     }
 
     /**
-     * Notifies a user.
-     * <p>
-     * In case the Ticket was canceled because a user is not found, {@code null}
-     * is returned.
-     * </p>
+     * Notifies a user in Web App.
      *
-     * @param userKey
-     *            The user database key
+     * @param user
+     *            The user.
      * @throws IOException
      *             When IO error.
-     * @return The User, or {@code null} when user is not found.
      */
-    private User notifyUser(final Long userKey) throws IOException {
-
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
-        final User user = userDao.findById(userKey);
-
-        if (user != null
-                && UserMsgIndicator.isSafePagesDirPresent(user.getUserId())) {
-
+    private void notifyUser(final User user) throws IOException {
+        if (UserMsgIndicator.isSafePagesDirPresent(user.getUserId())) {
             UserMsgIndicator.write(user.getUserId(),
                     ServiceContext.getTransactionDate(),
                     UserMsgIndicator.Msg.JOBTICKET_DENIED, null);
         }
-        return user;
     }
 
     /**
+     * Notifies a user by email.
      *
      * @param operator
      *            The Ticket Operator.
      * @param dto
      *            The Ticket.
+     * @param reason
+     *            The reason for cancellation (can be {@code null}).
      * @param user
      *            The User
      * @return The email address or {@code null} when not send.

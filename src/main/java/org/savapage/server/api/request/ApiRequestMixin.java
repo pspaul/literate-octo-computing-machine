@@ -55,7 +55,9 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.Messages;
+import org.savapage.ext.notification.NotificationListener;
 import org.savapage.ext.papercut.services.PaperCutService;
+import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.session.SpSession;
 
@@ -195,8 +197,16 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @throws Exception
      *             When an unexpected error is encountered.
      */
-    protected abstract void onRequest(final String requestingUser,
-            final User lockedUser) throws Exception;
+    protected abstract void onRequest(String requestingUser, User lockedUser)
+            throws Exception;
+
+    /**
+     *
+     * @return The notification listener.
+     */
+    protected static NotificationListener getNotificationListener() {
+        return WebApp.get().getPluginManager();
+    }
 
     /**
      *
