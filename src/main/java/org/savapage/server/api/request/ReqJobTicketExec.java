@@ -39,6 +39,7 @@ import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketExecParms;
+import org.savapage.ext.notification.JobTicketCloseEvent;
 import org.savapage.server.session.JobTicketSession;
 import org.savapage.server.session.SpSession;
 
@@ -310,7 +311,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
                         dtoReq.getJobFileName());
 
                 if (dto != null) {
-                    notifySettlement(dto);
+                    notifySettlement(requestingUser, dto);
                 }
             }
 
@@ -374,12 +375,15 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
     /**
      * Notifies the settlement to the requesting user.
      *
+     * @param requestingUser
+     *            The userid of the ticket operator.
      * @param dto
      *            The {@link OutboxJobDto} of the settlement.
      * @throws IOException
      *             When error sending the notification.
      */
-    private void notifySettlement(final OutboxJobDto dto) throws IOException {
+    private void notifySettlement(final String requestingUser,
+            final OutboxJobDto dto) throws IOException {
 
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
@@ -397,6 +401,11 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
             UserMsgIndicator.write(user.getUserId(),
                     ServiceContext.getTransactionDate(), msg, null);
+        }
+
+        if (hasNotificationListener()) {
+            getNotificationListener().onJobTicketEvent(fillEvent(
+                    new JobTicketCloseEvent(), requestingUser, user, dto));
         }
     }
 

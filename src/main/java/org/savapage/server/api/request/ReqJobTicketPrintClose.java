@@ -23,10 +23,8 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
-import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.User;
@@ -36,7 +34,6 @@ import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.ext.notification.JobTicketCancelEvent;
 import org.savapage.ext.notification.JobTicketCloseEvent;
-import org.savapage.ext.notification.JobTicketEvent;
 
 /**
  *
@@ -106,8 +103,7 @@ public final class ReqJobTicketPrintClose extends ApiRequestMixin {
         final Long userKey = dto.getUserId();
         final IppJobStateEnum jobState = dto.getIppJobState();
 
-        final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-        final User user = userDao.findById(userKey);
+        final User user = USER_DAO.findById(userKey);
 
         if (UserMsgIndicator.isSafePagesDirPresent(user.getUserId())) {
 
@@ -127,40 +123,16 @@ public final class ReqJobTicketPrintClose extends ApiRequestMixin {
         //
         sendEmailNotification(requestingUser, user, dto, jobState);
 
-        //
-        final JobTicketEvent event;
+        if (hasNotificationListener()) {
 
-        if (jobState == IppJobStateEnum.IPP_JOB_COMPLETED) {
-            event = new JobTicketCloseEvent();
-        } else {
-            event = new JobTicketCancelEvent();
-        }
-
-        final User userOperator =
-                userDao.findActiveUserByUserId(requestingUser);
-
-        event.setDocumentName(dto.getJobName());
-        event.setOperator(requestingUser);
-
-        if (userOperator == null
-                || StringUtils.isBlank(userOperator.getFullName())) {
-            event.setOperatorName(requestingUser);
-        } else {
-            event.setOperatorName(userOperator.getFullName());
-        }
-
-        event.setCreator(user.getUserId());
-        event.setCreatorName(user.getFullName());
-
-        event.setTicketNumber(dto.getTicketNumber());
-        event.setLocale(getLocale());
-
-        if (jobState == IppJobStateEnum.IPP_JOB_COMPLETED) {
-            getNotificationListener()
-                    .onJobTicketEvent((JobTicketCloseEvent) event);
-        } else {
-            getNotificationListener()
-                    .onJobTicketEvent((JobTicketCancelEvent) event);
+            if (jobState == IppJobStateEnum.IPP_JOB_COMPLETED) {
+                getNotificationListener().onJobTicketEvent(fillEvent(
+                        new JobTicketCloseEvent(), requestingUser, user, dto));
+            } else {
+                getNotificationListener()
+                        .onJobTicketEvent(fillEvent(new JobTicketCancelEvent(),
+                                requestingUser, user, dto, "-"));
+            }
         }
     }
 

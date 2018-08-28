@@ -101,28 +101,12 @@ public final class ReqJobTicketCancel extends ApiRequestMixin {
                                 "-"),
                         user);
 
-                final User userOperator =
-                        userDao.findActiveUserByUserId(requestingUser);
+                if (hasNotificationListener()) {
 
-                final JobTicketCancelEvent event = new JobTicketCancelEvent();
-
-                event.setDocumentName(dto.getJobName());
-                event.setOperator(requestingUser);
-
-                if (userOperator == null
-                        || StringUtils.isBlank(userOperator.getFullName())) {
-                    event.setOperatorName(requestingUser);
-                } else {
-                    event.setOperatorName(userOperator.getFullName());
+                    getNotificationListener().onJobTicketEvent(fillEvent(
+                            new JobTicketCancelEvent(), requestingUser, user,
+                            dto, dtoReq.getReason()));
                 }
-
-                event.setTicketNumber(dto.getTicketNumber());
-                event.setCreator(user.getUserId());
-                event.setCreatorName(user.getFullName());
-                event.setReason(dtoReq.getReason());
-                event.setLocale(getLocale());
-
-                getNotificationListener().onJobTicketEvent(event);
             }
         }
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);

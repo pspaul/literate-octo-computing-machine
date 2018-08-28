@@ -1362,6 +1362,14 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 key, args);
     }
 
+    /**
+     * @return {@code true} when one or more {@link NotificationPlugin}
+     *         listeners are present.
+     */
+    public boolean hasNotificationListener() {
+        return !this.notificationPlugins.isEmpty();
+    }
+
     @Override
     public void onJobTicketEvent(final JobTicketCancelEvent event) {
         this.notificationPlugins.forEach((k, v) -> {

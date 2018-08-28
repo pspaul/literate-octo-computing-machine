@@ -35,12 +35,14 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.AccountDao;
+import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.json.rpc.ErrorDataBasic;
 import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.ResultDataBasic;
+import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DeviceService;
@@ -55,6 +57,9 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.Messages;
+import org.savapage.ext.notification.JobTicketCancelEvent;
+import org.savapage.ext.notification.JobTicketCloseEvent;
+import org.savapage.ext.notification.JobTicketEvent;
 import org.savapage.ext.notification.NotificationListener;
 import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.server.WebApp;
@@ -170,6 +175,11 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     protected static final AccountDao ACCOUNT_DAO =
             ServiceContext.getDaoContext().getAccountDao();
 
+    /**
+     * .
+     */
+    protected static final UserDao USER_DAO =
+            ServiceContext.getDaoContext().getUserDao();
     //
 
     @Override
@@ -201,7 +211,13 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
             throws Exception;
 
     /**
-     *
+     * @return {@code true} when notification listener is active.
+     */
+    protected static boolean hasNotificationListener() {
+        return WebApp.get().getPluginManager().hasNotificationListener();
+    }
+
+    /**
      * @return The notification listener.
      */
     protected static NotificationListener getNotificationListener() {
@@ -555,5 +571,94 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
                         .getContainerRequest();
         return new UserAgentHelper(request);
     }
+
+    /**
+     * Fills {@link JobTicketEvent} object.
+     *
+     * @param event
+     *            The event to fill.
+     * @param requestingUser
+     *            Userid of job ticket operator.
+     * @param user
+     *            The job ticket creator.
+     * @param dto
+     *            The job ticket.
+     */
+    private void fillEventCommon(final JobTicketEvent event,
+            final String requestingUser, final User user,
+            final OutboxJobDto dto) {
+
+        final User userOperator =
+                USER_DAO.findActiveUserByUserId(requestingUser);
+
+        event.setDocumentName(dto.getJobName());
+        event.setOperator(requestingUser);
+
+        if (userOperator == null
+                || StringUtils.isBlank(userOperator.getFullName())) {
+            event.setOperatorName(requestingUser);
+        } else {
+            event.setOperatorName(userOperator.getFullName());
+        }
+
+        event.setTicketNumber(dto.getTicketNumber());
+        event.setCreator(user.getUserId());
+
+        if (StringUtils.isBlank(user.getFullName())) {
+            event.setCreatorName(user.getUserId());
+        } else {
+            event.setCreatorName(user.getFullName());
+        }
+
+        event.setLocale(getLocale());
+    }
+
+    /**
+     * Fills {@link JobTicketCancelEvent} object.
+     *
+     * @param event
+     *            The event to fill.
+     * @param requestingUser
+     *            Userid of job ticket operator.
+     * @param user
+     *            The job ticket creator.
+     * @param dto
+     *            The job ticket.
+     * @param reason
+     *            A reason text.
+     *
+     * @return The event (same as input parameter).
+     */
+    protected final JobTicketCancelEvent fillEvent(
+            final JobTicketCancelEvent event, final String requestingUser,
+            final User user, final OutboxJobDto dto, final String reason) {
+
+        fillEventCommon(event, requestingUser, user, dto);
+        event.setReason(reason);
+        return event;
+    }
+
+    /**
+     * Fills {@link JobTicketCloseEvent} object.
+     *
+     * @param event
+     *            The event to fill.
+     * @param requestingUser
+     *            Userid of job ticket operator.
+     * @param user
+     *            The job ticket creator.
+     * @param dto
+     *            The job ticket.
+     *
+     * @return The event (same as input parameter).
+     */
+    protected final JobTicketCloseEvent fillEvent(
+            final JobTicketCloseEvent event, final String requestingUser,
+            final User user, final OutboxJobDto dto) {
+
+        fillEventCommon(event, requestingUser, user, dto);
+        return event;
+    }
+
 
 }

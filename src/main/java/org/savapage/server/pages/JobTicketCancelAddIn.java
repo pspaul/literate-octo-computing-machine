@@ -26,6 +26,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
+import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -74,7 +75,8 @@ public final class JobTicketCancelAddIn extends JobTicketAddInBase {
         add(labelButton);
 
         if (ConfigManager.instance().isConfigValue(
-                IConfigProp.Key.JOBTICKET_NOTIFY_EMAIL_CANCELED_ENABLE)) {
+                IConfigProp.Key.JOBTICKET_NOTIFY_EMAIL_CANCELED_ENABLE)
+                || WebApp.get().getPluginManager().hasNotificationListener()) {
             helper.addLabel(WICKET_ID_LABEL_REASON,
                     localized("sp-label-reason"));
         } else {
