@@ -2816,11 +2816,11 @@
                 });
 
                 $('#button-main-print').click(function() {
+                    _model.determineCopyJobTicket();
                     _model.myShowPrinterInd = true;
                     if (_model.hasMultiplePrinters) {
                         _this.onShowPrintDialog();
                     } else {
-                        _model.determineCopyJobTicket();
                         if (_model.isCopyJobTicket) {
                             _view.checkRadioValue('sp-print-jobticket-type', _model.TICKETTYPE_COPY);
                         }
@@ -4257,7 +4257,7 @@
             this.myJobs = [];
             this.myJobPages = [];
             this.myTotPages = 0;
-            this.myPrinter = null;
+            this.myPrinter = undefined;
 
             this.myShowPrinterInd = true;
 
@@ -4305,7 +4305,7 @@
             this.propPdf = this.propPdfDefault;
 
             this.determineCopyJobTicket = function() {
-                this.isCopyJobTicket = this.JOBTICKET_COPIER_ENABLE && this.myPrinter && this.myPrinter.jobTicket && this.myJobs.length === 0;
+                this.isCopyJobTicket = this.JOBTICKET_COPIER_ENABLE && (this.myPrinter === undefined || (this.myPrinter && this.myPrinter.jobTicket)) && this.myJobs.length === 0;
             };
 
             /**
@@ -4695,7 +4695,7 @@
                 this.myJobPages = [];
                 this.myCutPages = {};
                 this.mySelectPages = {};
-                this.myPrinter = null;
+                this.myPrinter = undefined;
                 this.propPdf = this.propPdfDefault;
                 this.refreshUniqueImgUrlValue();
                 this.prevMsgTime = null;
