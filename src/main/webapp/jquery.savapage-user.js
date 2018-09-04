@@ -3551,6 +3551,7 @@
                 _quickPrinterCache = [],
                 _quickPrinterSelected,
                 _lastPrinterFilter,
+                _lastPrinterFilterJobTicket,
                 _fastPrintAvailable,
                 _hasDelegatedPrint,
             //
@@ -3590,16 +3591,36 @@
                 return html;
             },
 
+                _areMultiplePrinterAvailable = function() {
+                var res = _api.call({
+                    request : 'printer-quick-search',
+                    dto : JSON.stringify({
+                        filter : '',
+                        jobTicket : null,
+                        maxResults : 2
+                    })
+                });
+
+                if (res.result.code === '0') {
+                    return res.dto.items.length > 1;
+                } else {
+                    _view.showApiMsg(res);
+                }
+                return true;
+            },
+
                 _onQuickPrinterSearch = function(target, filter) {
-                /* QuickSearchFilterDto */
+                /* QuickSearchFilterPrinterDto */
                 var res,
+                    filterJobTicket = _model.hasInboxDocs() ? null : true,
                     html = "";
 
                 // Prevent duplicate search on "focusout" of search field.
-                if (_lastPrinterFilter === filter) {
+                if (_lastPrinterFilter === filter && _lastPrinterFilterJobTicket === filterJobTicket) {
                     return;
                 }
                 _lastPrinterFilter = filter;
+                _lastPrinterFilterJobTicket = filterJobTicket;
 
                 if (!_quickPrinterSelected || (_quickPrinterSelected && filter !== _quickPrinterSelected.text)) {
                     _view.visible($('#content-print .printer-selected'), false);
@@ -3618,9 +3639,10 @@
                 _quickPrinterSelected = undefined;
 
                 res = _api.call({
-                    request : "printer-quick-search",
+                    request : 'printer-quick-search',
                     dto : JSON.stringify({
                         filter : filter,
+                        jobTicket : filterJobTicket,
                         maxResults : 5
                     })
                 });
@@ -3946,17 +3968,19 @@
                     _onSelectPrinter($(this), filterablePrinter);
                 });
 
+                _model.hasMultiplePrinters = _areMultiplePrinterAvailable();
+
                 // Show available printers on first open
                 _onQuickPrinterSearch(filterablePrinter, "");
 
-                if ($('#sp-print-qs-printer-filter li').length === 1) {
-                    // Just one printer found: select.
-                    $('#sp-print-qs-printer-filter li').click();
-                    _view.visible($('#sp-print-quicksearch-printer-div'), false);
-                    _model.hasMultiplePrinters = false;
+                if (!_model.hasMultiplePrinters) {
+                    if ($('#sp-print-qs-printer-filter li').length === 1) {
+                        // Just one printer found: select.
+                        $('#sp-print-qs-printer-filter li').click();
+                        _view.visible($('#sp-print-quicksearch-printer-div'), false);
+                    }
                 }
 
-                //
                 $("#print-collate").on("change", null, null, function(event, ui) {
                     _setVisibility();
                 });
@@ -4074,6 +4098,7 @@
                 }
 
                 _lastPrinterFilter = undefined;
+                _lastPrinterFilterJobTicket = undefined;
 
                 if (_model.isPrintDialogFromMain) {
                     _model.isPrintDialogFromMain = false;
@@ -4434,9 +4459,12 @@
             };
 
             this.showCopyJobMedia = function(_view) {
+                var sel;
                 _view.visible($('.sp-copy-job-info'), this.isCopyJobTicket);
                 if (this.isCopyJobTicket) {
-                    $('.sp-copy-job-media-sources-info').html(this.selectedMediaSourceUI);
+                    sel = $('.sp-copy-job-media-sources-info');
+                    sel.html(this.selectedMediaSourceUI || '&nbsp;-&nbsp;');
+                    _view.visible(sel, this.selectedMediaSourceUI);
                 }
             };
 

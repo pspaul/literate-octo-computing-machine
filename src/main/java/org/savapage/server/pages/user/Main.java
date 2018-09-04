@@ -47,7 +47,9 @@ import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.PrinterAccessInfo;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.helpers.CssClassEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -91,17 +93,39 @@ public class Main extends AbstractUserPage {
             ServiceContext.getServiceFactory().getAccessControlService();
 
     /** */
+    private static final ProxyPrintService PROXY_PRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /** */
     private static final UserGroupAccountDao USER_GROUP_ACCOUNT_DAO =
             ServiceContext.getDaoContext().getUserGroupAccountDao();
 
     /**
      *
-     * @author Rijk Ravestein
-     *
      */
     private static enum NavButtonEnum {
-        ABOUT, BROWSE, UPLOAD, PDF, LETTERHEAD, SORT, PRINT, TICKET,
-        TICKET_QUEUE, HELP
+        /** */
+        ABOUT,
+        /** */
+        BROWSE,
+        /** */
+        UPLOAD,
+        /** */
+        PDF,
+        /** */
+        LETTERHEAD,
+        /** */
+        SORT,
+        /** Regular printers only. */
+        PRINT,
+        /** Job Ticket printers only. */
+        TICKET,
+        /** Regular printers and Job Ticket printers. */
+        PRINT_AND_TICKET,
+        /** */
+        TICKET_QUEUE,
+        /** */
+        HELP
     }
 
     /**
@@ -212,7 +236,8 @@ public class Main extends AbstractUserPage {
             buttonSubstCandidates.add(NavButtonEnum.UPLOAD);
         }
 
-        if (buttonPrivileged.contains(NavButtonEnum.TICKET)) {
+        if (buttonPrivileged.contains(NavButtonEnum.TICKET)
+                || buttonPrivileged.contains(NavButtonEnum.PRINT_AND_TICKET)) {
             buttonSubstCandidates.add(NavButtonEnum.TICKET_QUEUE);
         }
 
@@ -251,11 +276,15 @@ public class Main extends AbstractUserPage {
 
         this.add(MarkupHelper.createEncloseLabel("main-arr-action-print",
                 localized(HtmlButtonEnum.PRINT),
-                buttonPrivileged.contains(NavButtonEnum.PRINT)));
+                buttonPrivileged.contains(NavButtonEnum.PRINT)
+                        || buttonPrivileged
+                                .contains(NavButtonEnum.PRINT_AND_TICKET)));
 
         this.add(MarkupHelper.createEncloseLabel("main-arr-action-ticket",
                 localized("button-ticket"),
                 !buttonPrivileged.contains(NavButtonEnum.PRINT)
+                        && !buttonPrivileged
+                                .contains(NavButtonEnum.PRINT_AND_TICKET)
                         && buttonPrivileged.contains(NavButtonEnum.TICKET)));
 
         // Fixed buttons in sort view.
@@ -383,15 +412,20 @@ public class Main extends AbstractUserPage {
                         .getHostTerminal(this.getClientIpAddr());
 
                 try {
+                    final PrinterAccessInfo accessInfo =
+                            PROXY_PRINT_SERVICE.getUserPrinterAccessInfo(
+                                    terminal, user.getUserId());
 
                     final NavButtonEnum navButtonPrint;
 
-                    if (ServiceContext.getServiceFactory()
-                            .getProxyPrintService().areJobTicketPrintersOnly(
-                                    terminal, user.getUserId())) {
+                    if (accessInfo.isJobTicketsOnly()) {
                         navButtonPrint = NavButtonEnum.TICKET;
                     } else {
-                        navButtonPrint = NavButtonEnum.PRINT;
+                        if (accessInfo.isJobTicketsPresent()) {
+                            navButtonPrint = NavButtonEnum.PRINT_AND_TICKET;
+                        } else {
+                            navButtonPrint = NavButtonEnum.PRINT;
+                        }
                     }
 
                     set.add(navButtonPrint);
@@ -532,18 +566,33 @@ public class Main extends AbstractUserPage {
         // --------------------------
         // Print or Ticket (or none)
         // --------------------------
+        final boolean isJobTicketCopier = ConfigManager.instance()
+                .isConfigValue(Key.JOBTICKET_COPIER_ENABLE);
+
         if (buttonPrivileged.contains(NavButtonEnum.PRINT)) {
 
             items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-print", "button-main-print",
                     localized(HtmlButtonEnum.PRINT)));
 
+        } else if (buttonPrivileged.contains(NavButtonEnum.PRINT_AND_TICKET)) {
+
+            final String cssClass;
+
+            if (isJobTicketCopier) {
+                cssClass = CSS_CLASS_MAIN_ACTIONS_BASE;
+            } else {
+                cssClass = CSS_CLASS_MAIN_ACTIONS;
+            }
+
+            items.add(new NavBarItem(cssClass, "ui-icon-main-print",
+                    "button-main-print", localized(HtmlButtonEnum.PRINT)));
+
         } else if (buttonPrivileged.contains(NavButtonEnum.TICKET)) {
 
             final String cssClass;
 
-            if (ConfigManager.instance()
-                    .isConfigValue(Key.JOBTICKET_COPIER_ENABLE)) {
+            if (isJobTicketCopier) {
                 cssClass = CSS_CLASS_MAIN_ACTIONS_BASE;
             } else {
                 cssClass = CSS_CLASS_MAIN_ACTIONS;
