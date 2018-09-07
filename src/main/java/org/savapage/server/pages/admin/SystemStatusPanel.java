@@ -124,6 +124,9 @@ public final class SystemStatusPanel extends Panel {
     private static final JobTicketService TICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
 
+    /** */
+    private static final String WID_ENV_IMPACT = "environmental-impact";
+
     /**
      * @param panelId
      *            The panel id.
@@ -787,12 +790,17 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Environmental Impact.
          */
-        Double esu = (double) (cm.getConfigLong(Key.STATS_TOTAL_PRINT_OUT_ESU)
-                / 100);
-        StatsEnvImpactPanel envImpactPanel =
-                new StatsEnvImpactPanel("environmental-impact");
-        add(envImpactPanel);
-        envImpactPanel.populate(esu);
+        if (cm.isConfigValue(Key.WEBAPP_ADMIN_DASHBOARD_SHOW_ENV_INFO)) {
+            final Double esu =
+                    (double) (cm.getConfigLong(Key.STATS_TOTAL_PRINT_OUT_ESU)
+                            / 100);
+            StatsEnvImpactPanel envImpactPanel =
+                    new StatsEnvImpactPanel(WID_ENV_IMPACT);
+            add(envImpactPanel);
+            envImpactPanel.populate(esu);
+        } else {
+            helper.discloseLabel(WID_ENV_IMPACT);
+        }
 
         /*
          * News from outside?

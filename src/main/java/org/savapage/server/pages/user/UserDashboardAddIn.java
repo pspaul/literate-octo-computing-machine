@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -60,10 +60,15 @@ import org.savapage.server.session.SpSession;
  */
 public final class UserDashboardAddIn extends AbstractUserPage {
 
+    /** */
     private static final long serialVersionUID = 1L;
 
+    /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
+    private static final String WID_ENV_IMPACT = "environmental-impact";
 
     /**
      *
@@ -86,6 +91,8 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         final org.savapage.core.jpa.User user = ServiceContext.getDaoContext()
                 .getUserDao().findById(session.getUser().getId());
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
         /*
          * Page Totals.
          */
@@ -97,16 +104,22 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         /*
          * Environmental Impact.
          */
-        final Double esu = (double) (user.getNumberOfPrintOutEsu() / 100);
-        final StatsEnvImpactPanel envImpactPanel =
-                new StatsEnvImpactPanel("environmental-impact");
-        add(envImpactPanel);
-        envImpactPanel.populate(esu);
+        if (ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_USER_SHOW_ENV_INFO)) {
+
+            final Double esu = (double) (user.getNumberOfPrintOutEsu() / 100);
+            final StatsEnvImpactPanel envImpactPanel =
+                    new StatsEnvImpactPanel(WID_ENV_IMPACT);
+            add(envImpactPanel);
+            envImpactPanel.populate(esu);
+
+        } else {
+            helper.discloseLabel(WID_ENV_IMPACT);
+        }
 
         /*
          * Financial.
          */
-        final MarkupHelper helper = new MarkupHelper(this);
 
         final String keyTitleFinancial = "title-financial";
 

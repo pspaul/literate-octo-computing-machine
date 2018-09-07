@@ -218,10 +218,11 @@
 
 					<tr>
 						<th style="vertical-align: middle;" wicket:id="prompt-proxy-print" />
-						<td><span class="sp-disabled">
-							<input type="checkbox" wicket:id="flipswitch-proxyprint-online"
-								data-mini="true" data-role="flipswitch" data-on-text="On"
-								data-off-text="Off" data-disabled="true" /></span>
+						<td>
+							<span class="sp-disabled"> <input type="checkbox"
+									wicket:id="flipswitch-proxyprint-online" data-mini="true"
+									data-role="flipswitch" data-on-text="On" data-off-text="Off"
+									data-disabled="true" /></span>
 							<wicket:enclosure child="cups-connection">
 								<span style="margin-left: 20px; vertical-align: middle;"
 									wicket:id="cups-connection" />
@@ -325,8 +326,10 @@
 
 		<wicket:panel wicket:id="stats-pages-total" />
 
-		<wicket:panel wicket:id="environmental-impact" />
-
+		<wicket:enclosure child="environmental-impact">
+			<wicket:panel wicket:id="environmental-impact" />
+		</wicket:enclosure>
+		
 		<wicket:panel wicket:id="stats-financial-totals" />
 
 	</ul>
