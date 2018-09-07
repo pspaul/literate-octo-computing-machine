@@ -241,6 +241,8 @@ public class Print extends AbstractUserPage {
                     cm.isConfigValue(Key.JOBTICKET_DELIVERY_TIME_ENABLE));
         }
         //
+        boolean hasInvoicingOptions = false;
+
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
 
         final boolean isPrintDelegate = ACCESS_CONTROL_SERVICE.hasAccess(user,
@@ -250,6 +252,8 @@ public class Print extends AbstractUserPage {
                 PrintOutNounEnum.COPY.uiText(getLocale(), true));
 
         if (isPrintDelegate) {
+
+            hasInvoicingOptions = true;
 
             if (cm.isConfigValue(
                     Key.WEBAPP_USER_PROXY_PRINT_DELEGATE_COPIES_APPLY_SWITCH)) {
@@ -321,6 +325,8 @@ public class Print extends AbstractUserPage {
 
         } else {
 
+            hasInvoicingOptions = true;
+
             helper.encloseLabel("print-account-type",
                     PrintOutNounEnum.ACCOUNT.uiText(getLocale()), true);
 
@@ -357,6 +363,8 @@ public class Print extends AbstractUserPage {
                         HtmlButtonEnum.SELECT.uiText(getLocale(), true)
                                 .toLowerCase());
                 addJobTicketTags(jobTicketTags);
+
+                hasInvoicingOptions = true;
             }
         } else {
             jobTicketTags = null;
@@ -374,6 +382,9 @@ public class Print extends AbstractUserPage {
         helper.addModifyLabelAttr("jobticket-copy-pages",
                 MarkupHelper.ATTR_TITLE,
                 localized("sp-jobticket-copy-pages-tooltip"));
+
+        //
+        helper.encloseLabel("print-account-separator", "", hasInvoicingOptions);
     }
 
     /**
