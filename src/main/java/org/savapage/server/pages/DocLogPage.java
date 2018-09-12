@@ -89,7 +89,10 @@ public final class DocLogPage extends AbstractListPage {
 
         final Long userId;
 
-        if (this.getSessionWebAppType() == WebAppTypeEnum.JOBTICKETS) {
+        final WebAppTypeEnum webAppType = this.getSessionWebAppType();
+
+        if (webAppType == WebAppTypeEnum.JOBTICKETS
+                || webAppType == WebAppTypeEnum.PRINTSITE) {
 
             showFinancialData = true;
             userId = req.getSelect().getUserId();

@@ -34,8 +34,8 @@ import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.request.Response;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
-import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.server.WebApp;
 
@@ -81,6 +81,19 @@ public final class HtmlInjectComponent extends WebComponent {
                 break;
             case LOGIN:
                 configKey = Key.WEBAPP_HTML_ADMIN_LOGIN;
+                break;
+            default:
+                configKey = null;
+                break;
+            }
+            break;
+        case PRINTSITE:
+            switch (this.htmlInject) {
+            case ABOUT:
+                configKey = Key.WEBAPP_HTML_PRINTSITE_ABOUT;
+                break;
+            case LOGIN:
+                configKey = Key.WEBAPP_HTML_PRINTSITE_LOGIN;
                 break;
             default:
                 configKey = null;

@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -30,8 +30,8 @@ import org.savapage.core.config.WebAppTypeEnum;
 /**
  * Singleton manager of WebApp User Authentications Tokens.
  * <p>
- * A separate cache dictionarie for each Web App context is maintained (User,
- * Admin, POS, Jobticket).
+ * A separate cache dictionary for each Web App context is maintained (User,
+ * Admin, POS, JobTicket).
  * </p>
  *
  * @author Rijk Ravestein
@@ -42,12 +42,13 @@ public final class WebAppUserAuthManager {
     /**
      * Number of indexes
      */
-    private static final int IDX_CONTEXT_COUNT = 4;
+    private static final int IDX_CONTEXT_COUNT = 5;
 
-    private static final int IDX_CONTEXT_USER = IDX_CONTEXT_COUNT - 4;
-    private static final int IDX_CONTEXT_ADMIN = IDX_CONTEXT_COUNT - 3;
-    private static final int IDX_CONTEXT_POS = IDX_CONTEXT_COUNT - 2;
-    private static final int IDX_CONTEXT_JOBTICKET = IDX_CONTEXT_COUNT - 1;
+    private static final int IDX_CONTEXT_USER = IDX_CONTEXT_COUNT - 5;
+    private static final int IDX_CONTEXT_ADMIN = IDX_CONTEXT_COUNT - 4;
+    private static final int IDX_CONTEXT_POS = IDX_CONTEXT_COUNT - 3;
+    private static final int IDX_CONTEXT_JOBTICKET = IDX_CONTEXT_COUNT - 2;
+    private static final int IDX_CONTEXT_PRINTSITE = IDX_CONTEXT_COUNT - 1;
 
     /**
      * WebApp User/Admin Context Dictionary of {@link UserAuthToken} objects
@@ -108,6 +109,8 @@ public final class WebAppUserAuthManager {
         switch (webAppType) {
         case ADMIN:
             return IDX_CONTEXT_ADMIN;
+        case PRINTSITE:
+            return IDX_CONTEXT_PRINTSITE;
         case JOBTICKETS:
             return IDX_CONTEXT_JOBTICKET;
         case POS:

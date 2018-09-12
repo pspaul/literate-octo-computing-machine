@@ -76,6 +76,7 @@ import org.savapage.server.ipp.IppPrintServer;
 import org.savapage.server.ipp.IppPrintServerHomePage;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.admin.AbstractAdminPage;
+import org.savapage.server.pages.printsite.AbstractPrintSitePage;
 import org.savapage.server.pages.user.AbstractUserPage;
 import org.savapage.server.raw.RawPrintServer;
 import org.savapage.server.session.SpSession;
@@ -85,6 +86,7 @@ import org.savapage.server.webapp.WebAppAdmin;
 import org.savapage.server.webapp.WebAppJobTickets;
 import org.savapage.server.webapp.WebAppPdf2FV;
 import org.savapage.server.webapp.WebAppPos;
+import org.savapage.server.webapp.WebAppPrintSite;
 import org.savapage.server.webapp.WebAppUser;
 import org.savapage.server.webprint.DropZoneResourceReference;
 import org.slf4j.Logger;
@@ -165,6 +167,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * The Job Tickets mount path.
      */
     public static final String MOUNT_PATH_WEBAPP_JOBTICKETS = "/jobtickets";
+
+    /**
+     * The Print Site mount path.
+     */
+    public static final String MOUNT_PATH_WEBAPP_PRINTSITE = "/printsite";
 
     /**
      * Used in this class to set mountPage().
@@ -629,6 +636,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              */
             mountPage(MOUNT_PATH_WEBAPP_ADMIN, WebAppAdmin.class);
             mountPage(MOUNT_PATH_WEBAPP_JOBTICKETS, WebAppJobTickets.class);
+            mountPage(MOUNT_PATH_WEBAPP_PRINTSITE, WebAppPrintSite.class);
             mountPage(MOUNT_PATH_WEBAPP_POS, WebAppPos.class);
 
             mountPage(MOUNT_PATH_WEBAPP_PDF2FV, WebAppPdf2FV.class);
@@ -667,6 +675,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             mountPackage("/pages", AbstractPage.class);
             mountPackage("/pages/admin", AbstractAdminPage.class);
             mountPackage("/pages/user", AbstractUserPage.class);
+            mountPackage("/pages/printsite", AbstractPrintSitePage.class);
 
             //
             replaceJQueryCore();

@@ -236,12 +236,14 @@
 
                 _onSelectUserDocLog = function(quickUserSelected) {
                 $("#sp-doclog-select-userid").val(quickUserSelected.text);
+                // HACK: hidden field is present/set in THIS container.
                 $('#sp-doclog-hidden-user-id').val(quickUserSelected.key);
                 _pnlDocLog.page(_pnlDocLog, 1);
             },
 
                 _onClearUserDocLog = function() {
                 $("#sp-doclog-select-userid").val('');
+                // HACK: hidden field is present/set in THIS container.
                 $('#sp-doclog-hidden-user-id').val('');
                 _pnlDocLog.page(_pnlDocLog, 1);
             },
@@ -497,11 +499,6 @@
                     item.attr('style', 'border: 4px solid silver;');
                 }
             };
-
-
-
-
-
 
             $(_self.id()).on('pagecreate', function(event) {
 

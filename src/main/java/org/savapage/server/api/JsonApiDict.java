@@ -94,7 +94,7 @@ import org.savapage.server.api.request.ReqUserSetDelegateGroupsPreferredSelect;
  * @author Rijk Ravestein
  *
  */
-public class JsonApiDict {
+public final class JsonApiDict {
 
     public static final String PARM_WEBAPP_TYPE = "webAppType";
     public static final String PARM_REQ = "request";
@@ -812,6 +812,9 @@ public class JsonApiDict {
             final ACLRoleEnum role = iter.next();
 
             switch (role) {
+            case PRINT_SITE_OPERATOR:
+                allowed = webAppType == WebAppTypeEnum.PRINTSITE;
+                break;
             case JOB_TICKET_CREATOR:
                 allowed = webAppType == WebAppTypeEnum.USER;
                 break;
@@ -1064,7 +1067,9 @@ public class JsonApiDict {
                 EnumSet.of(ACLRoleEnum.WEB_CASHIER));
 
         acl(REQ_USER_QUICK_SEARCH, ReqUserQuickSearch.class, DbClaim.READ,
-                DbAccess.YES, EnumSet.of(ACLRoleEnum.WEB_CASHIER,
+                DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.WEB_CASHIER,
+                        ACLRoleEnum.PRINT_SITE_OPERATOR,
                         ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         adm(REQ_USER_SET, ReqUserSet.class, DbClaim.READ, DbAccess.YES);

@@ -1217,13 +1217,24 @@ public class OutboxAddin extends AbstractUserPage {
             maxItems = null;
 
             final DaoContext daoContext = ServiceContext.getDaoContext();
+
             /*
              * Lock user while getting the OutboxInfo.
              */
+            final Long userKey;
+
+            if (this.getWebAppTypeEnum(
+                    parameters) == WebAppTypeEnum.PRINTSITE) {
+                userKey = parms.getParameterValue(PAGE_PARM_USERKEY)
+                        .toOptionalLong();
+            } else {
+                userKey = session.getUser().getId();
+            }
+
             daoContext.beginTransaction();
 
             final org.savapage.core.jpa.User lockedUser =
-                    daoContext.getUserDao().lock(session.getUser().getId());
+                    daoContext.getUserDao().lock(userKey);
 
             final OutboxInfoDto outboxInfoTmp =
                     OUTBOX_SERVICE.getOutboxJobTicketInfo(lockedUser,

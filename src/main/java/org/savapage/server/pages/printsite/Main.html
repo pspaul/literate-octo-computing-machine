@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
+
+<div class="ui-content">
+
+	<div class="content-secondary">
+		<!-- -->
+		<div id="jqm-homeheader">
+			<h1 id="jqm-logo">
+				<img src="images/savapage-logo.png" alt="SavaPage" />
+			</h1>
+			<p>
+				<wicket:message key="txt-logo-subtext" />
+			</p>
+		</div>
+		<p class="intro">
+			<wicket:message key="txt-intro" />
+		</p>
+
+		<ul data-role="listview" data-inset="true" id="sp-a-menu">
+			<li>
+				<div tabindex="0" id="sp-user-card-local-group">
+					<h4 class="sp-txt-info" style="padding: 5px;">
+						<span class="sp-txt-wrap" id="sp-user-card-local-focusout"
+							wicket:id="txt-activate-reader" />
+						<!--  -->
+						<span class="sp-txt-wrap" id="sp-user-card-local-focusin"
+							wicket:id="txt-swipe card" style="display: none;" />
+					</h4>
+					<input type="hidden" id="sp-login-card-local-number" value="" />
+				</div>
+			</li>
+		</ul>
+
+		<input type="hidden" id="sp-doclog-hidden-user-id" />
+
+		<div class="ui-field-contain">
+
+			<input placeholder=". . ." type="text" id="sp-main-userid" value=""
+				maxlength="128" autofocus data-type="search" autocomplete="off"
+				autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+			<ul id="sp-main-userid-filter" data-role="listview"
+				data-filter="true" data-input="#sp-main-userid"
+				data-filter-theme="a" data-inset="true" style="float: right;" />
+		</div>
+
+		<ul data-role="listview" data-inset="true">
+			<li data-icon="user">
+				<a tabindex="0" href="#" id="sp-btn-user-details"
+					wicket:id="btn-details" />
+			</li>
+			<li data-icon="clock">
+				<a tabindex="0" href="#" id="sp-btn-user-pending-jobs"
+					wicket:id="btn-pending-jobs" />
+			</li>
+			<li data-icon="info">
+				<a tabindex="0" href="#" id="sp-btn-user-doc-log"
+					wicket:id="btn-hold-jobs" />
+			</li>
+			<li data-icon="shop">
+				<a tabindex="0" href="#" id="sp-btn-user-trx"
+					wicket:id="btn-transactions" />
+			</li>
+			<li data-icon="power">
+				<a tabindex="0" href="#" id="button-logout"> <span
+					style="color: brown;" wicket:id="btn-logout" />
+				</a>
+			</li>
+		</ul>
+
+	</div>
+	<div class="content-primary" id="sp-a-content" />
+</div>
+
+<a id="sp-a-footer" />
+
+<div data-role="footer" class="footer-docs" data-position="fixed">
+
+	<div data-role="controlgroup" data-type="horizontal">
+		<a tabindex="0" href="#sp-a-top"
+			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-home">&nbsp; </a>
+		<!--  -->
+		<a tabindex="0" href="#sp-a-menu"
+			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-carat-u">&nbsp;
+		</a>
+		<!--  -->
+		<a tabindex="0" href="#sp-a-content" id="sp-a-content-button"
+			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-arrow-u-r">
+			&nbsp;</a>
+		<!--  -->
+		<a tabindex="0" href="#sp-a-footer" id="sp-a-footer-button"
+			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-carat-d">
+			&nbsp;</a>
+		<!--  -->
+		<a tabindex="0" href="#"
+			class="sp-anchor sp-btn-about-org ui-btn ui-btn-icon-notext ui-icon-info">
+			&nbsp;</a>
+
+		<wicket:panel wicket:id="community-status-footer-panel" />
+	</div>
+</div>
+
+<wicket:remove>
+	<!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />
+
+</html>

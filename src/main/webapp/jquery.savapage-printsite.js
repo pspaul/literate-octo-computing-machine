@@ -1,5 +1,5 @@
-/*! SavaPage jQuery Mobile Job Tickets Web App | (c) 2011-2018 Datraverse
- * B.V. | GNU Affero General Public License */
+/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2018 Datraverse B.V. 
+ * | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
@@ -92,11 +92,12 @@
                      */
                     _model.user.logonApiResult = (data.result.code > '0') ? data.result : null;
 
-                    if (_view.pages.jobTickets.isLoaded) {
-                        _view.pages.jobTickets.show();
+                    if (_view.pages.main.isLoaded) {
+                        _view.pages.main.initView();
                     } else {
-                        _view.pages.jobTickets.load().show();
+                        _view.pages.main.load();
                     }
+                    _view.pages.main.show();
 
                 } else {
                     _view.pages.login.notifyLogout();
@@ -271,63 +272,43 @@
                 _this.login(mode, id, pw);
             });
 
-            /**
-             * Callbacks
-             */
-            _view.pages.jobTickets.onClose = function() {
-                var res;
-                /*
-                 * Since this method is also called by the generic onPageHide
-                 * call-back,
-                 * as set in on('pagecontainershow'), when Back button is
-                 * pressed.
-                 */
-                if (!_model.user.loggedIn) {
-                    return true;
-                }
-
+            _view.pages.main.onLogout = function() {
                 /*
                  * NOTE: This is the same solution as in the User WebApp.
                  * See remarks over there.
                  */
+
                 /*
                  * Prevent that BACK button shows private data when disconnected.
                  * Mantis #108
                  */
                 _model.startSession();
 
-                res = _api.call({
+                $('#page-main').empty();
+
+                var res = _api.call({
                     request : 'logout',
                     dto : JSON.stringify({
                         authToken : _model.authToken.token
                     })
                 });
-
-                _model.user.loggedIn = false;
-
                 if (res.result.code !== '0') {
-                    _ns.logger.warn(res.result.txt);
+                    _view.message(res.result.txt);
                     _model.setAuthToken(null, null);
                 }
-
                 _ns.restartWebApp();
-
-                return true;
-            };
-
-            _view.pages.jobTickets.onPageHide = function() {
-                _view.pages.jobTickets.onClose();
             };
 
         };
+
         /**
          *
          */
         _ns.Model = function(_i18n) {
-            var _LOC_AUTH_NAME = 'sp.auth.jobtickets.name',
-                _LOC_AUTH_TOKEN = 'sp.auth.jobtickets.token',
-                _LOC_LANG = 'sp.jobtickets.language',
-                _LOC_COUNTRY = 'sp.jobtickets.country';
+            var _LOC_AUTH_NAME = 'sp.auth.printsite.name',
+                _LOC_AUTH_TOKEN = 'sp.auth.printsite.token',
+                _LOC_LANG = 'sp.printsite.language',
+                _LOC_COUNTRY = 'sp.printsite.country';
 
             this.user = new _ns.User();
 
@@ -414,7 +395,7 @@
             _view.pages = {
                 language : new _ns.PageLanguage(_i18n, _view, _model),
                 login : new _ns.PageLogin(_i18n, _view, _api),
-                jobTickets : new _ns.PageJobTickets(_i18n, _view, _model, _api)
+                main : new _ns.PageMain(_i18n, _view, _model, _api)
             };
 
             $.each(_view.pages, function(key, page) {
@@ -450,7 +431,7 @@
                 var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER),
                     authMode = _ns.Utils.getUrlParam(_ns.URL_PARM.LOGIN);
 
-                _ns.initWebApp('JOBTICKETS');
+                _ns.initWebApp('PRINTSITE');
 
                 _ctrl.init();
 

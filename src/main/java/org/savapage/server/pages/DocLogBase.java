@@ -31,8 +31,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.PrinterDao;
@@ -95,6 +95,13 @@ public final class DocLogBase extends AbstractAuthPage {
                     ACLRoleEnum.JOB_TICKET_OPERATOR)) {
                 throw new RestartResponseException(NotAuthorized.class);
             }
+
+        } else if (webAppType == WebAppTypeEnum.PRINTSITE) {
+
+            if (!ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
+                    ACLRoleEnum.PRINT_SITE_OPERATOR)) {
+                throw new RestartResponseException(NotAuthorized.class);
+            }
         }
 
         handlePage(webAppType);
@@ -117,7 +124,8 @@ public final class DocLogBase extends AbstractAuthPage {
         final boolean userNameVisible;
         final boolean accountNameVisible;
 
-        if (webAppType == WebAppTypeEnum.ADMIN) {
+        if (webAppType == WebAppTypeEnum.ADMIN
+                || webAppType == WebAppTypeEnum.PRINTSITE) {
 
             userId = req.getSelect().getUserId();
             userNameVisible = (userId != null);
@@ -130,7 +138,6 @@ public final class DocLogBase extends AbstractAuthPage {
             userId = null;
             userNameVisible = false;
             accountNameVisible = false;
-
         } else {
             /*
              * If we are called in a User WebApp context we ALWAYS use the user
@@ -202,6 +209,15 @@ public final class DocLogBase extends AbstractAuthPage {
             btnVisiblePdf = false;
             btnVisiblePrint = false;
             btnVisibleTicket = true;
+            visibleLetterhead = false;
+
+        } else if (webAppType == WebAppTypeEnum.PRINTSITE) {
+
+            defaultScope = DocLogScopeEnum.PRINT;
+
+            btnVisiblePdf = false;
+            btnVisiblePrint = true;
+            btnVisibleTicket = false;
             visibleLetterhead = false;
 
         } else {
@@ -382,7 +398,8 @@ public final class DocLogBase extends AbstractAuthPage {
 
         final IppQueueDao.ListFilter filter = new IppQueueDao.ListFilter();
 
-        if (webAppType == WebAppTypeEnum.USER) {
+        if (webAppType == WebAppTypeEnum.USER
+                || webAppType == WebAppTypeEnum.PRINTSITE) {
             filter.setDeleted(Boolean.FALSE);
             filter.setDisabled(Boolean.FALSE);
         }
@@ -390,7 +407,8 @@ public final class DocLogBase extends AbstractAuthPage {
         final List<IppQueue> list = dao.getListChunk(filter, null, null,
                 IppQueueDao.Field.URL_PATH, true);
 
-        if (webAppType == WebAppTypeEnum.USER) {
+        if (webAppType == WebAppTypeEnum.USER
+                || webAppType == WebAppTypeEnum.PRINTSITE) {
             final Iterator<IppQueue> iter = list.iterator();
             while (iter.hasNext()) {
                 if (!QUEUE_SERVICE.isActiveQueue(iter.next())) {
@@ -417,7 +435,8 @@ public final class DocLogBase extends AbstractAuthPage {
 
         filter.setJobTicket(Boolean.FALSE);
 
-        if (webAppType == WebAppTypeEnum.USER) {
+        if (webAppType == WebAppTypeEnum.USER
+                || webAppType == WebAppTypeEnum.PRINTSITE) {
             filter.setDeleted(Boolean.FALSE);
             filter.setDisabled(Boolean.FALSE);
             filter.setInternal(Boolean.FALSE);

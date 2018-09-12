@@ -132,6 +132,8 @@ public abstract class AbstractWebAppMsg extends AbstractWebAppPage {
         switch (webAppTypeRequested) {
         case ADMIN:
             return WebApp.MOUNT_PATH_WEBAPP_ADMIN;
+        case PRINTSITE:
+            return WebApp.MOUNT_PATH_WEBAPP_PRINTSITE;
         case JOBTICKETS:
             return WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
         case POS:

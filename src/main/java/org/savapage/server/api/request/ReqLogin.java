@@ -809,13 +809,24 @@ public final class ReqLogin extends ApiRequestMixin {
                                 remoteAddr);
                         return;
                     }
+                } else if (webAppType == WebAppTypeEnum.PRINTSITE) {
+                    if (!ACCESSCONTROL_SERVICE.hasAccess(userDb,
+                            ACLRoleEnum.PRINT_SITE_OPERATOR)) {
+                        onLoginFailed("msg-login-no-access-to-role",
+                                webAppType.getUiText(),
+                                UserAuth.getUiText(authMode),
+                                userDb.getUserId(),
+                                ACLRoleEnum.PRINT_SITE_OPERATOR
+                                        .uiText(getLocale()),
+                                remoteAddr);
+                        return;
+                    }
                 }
 
                 /*
                  * Identify internal user.
                  */
                 isInternalUser = userDb.getInternal();
-
             }
 
             /*

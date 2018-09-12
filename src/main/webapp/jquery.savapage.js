@@ -865,6 +865,8 @@
 
             doc_type_default : undefined,
 
+            // HACK: hidden fields must be present/set in the container of
+            // this panel.
             clearHiddenUserid : function() {
                 $('#sp-doclog-hidden-user-id').val("");
                 $("#sp-doclog-user-title").html("");
@@ -876,6 +878,11 @@
             applyDefaultForTicket : function(my) {
                 my.applyDefaults(my);
                 my.input.select.doc_type = 'TICKET';
+            },
+
+            applyDefaultForPrintSite : function(my) {
+                my.applyDefaults(my);
+                my.input.select.doc_type = 'PRINT';
             },
 
             /*
@@ -1048,12 +1055,14 @@
                     return;
                 }
 
-                //
+                // HACK: hidden field must be present/set in the container of
+                // this panel.
                 val = $('#sp-doclog-hidden-user-id').val();
                 present = (val.length > 0);
                 my.input.select.user_id = ( present ? val : null);
 
-                //
+                // HACK: hidden field must be present/set in the container of
+                // this panel.
                 val = $('#sp-doclog-hidden-account-id').val();
                 present = (val.length > 0);
                 my.input.select.account_id = ( present ? val : null);

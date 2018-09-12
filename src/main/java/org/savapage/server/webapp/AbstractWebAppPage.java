@@ -495,6 +495,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
         case ADMIN:
             configKey = Key.WEBAPP_THEME_ADMIN;
             break;
+        case PRINTSITE:
+            configKey = Key.WEBAPP_THEME_PRINTSITE;
+            break;
         case JOBTICKETS:
             configKey = Key.WEBAPP_THEME_JOBTICKETS;
             break;
@@ -533,6 +536,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
         switch (webAppType) {
         case ADMIN:
             configKey = Key.WEBAPP_CUSTOM_ADMIN;
+            break;
+        case PRINTSITE:
+            configKey = Key.WEBAPP_CUSTOM_PRINTSITE;
             break;
         case JOBTICKETS:
             configKey = Key.WEBAPP_CUSTOM_JOBTICKETS;

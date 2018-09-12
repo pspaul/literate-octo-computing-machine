@@ -469,6 +469,9 @@ public final class JsonApiServer extends AbstractPage {
                     case ADMIN:
                         urlPath = WebApp.MOUNT_PATH_WEBAPP_ADMIN;
                         break;
+                    case PRINTSITE:
+                        urlPath = WebApp.MOUNT_PATH_WEBAPP_PRINTSITE;
+                        break;
                     case JOBTICKETS:
                         urlPath = WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
                         break;
@@ -2076,6 +2079,14 @@ public final class JsonApiServer extends AbstractPage {
                 } else {
                     authorized = API_DICTIONARY.isWebAppAuthorized(request,
                             webAppType);
+                }
+
+                if (!authorized) {
+                    LOGGER.warn(
+                            "WebApp [{}] request [{}]: "
+                                    + "user [{}] not authorized.",
+                            webAppType.toString(), request,
+                            session.getUser().getUserId());
                 }
 
             } else {
