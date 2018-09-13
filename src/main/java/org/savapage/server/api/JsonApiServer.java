@@ -1039,9 +1039,7 @@ public final class JsonApiServer extends AbstractPage {
         dto.setPersonalAccountType(personalAccountType);
 
         ServiceContext.getServiceFactory().getPaperCutService()
-                .createDelegatorPrintCostCsv(
-                        PaperCutDbProxy.create(ConfigManager.instance(), true),
-                        tempCsvFile, dto);
+                .createDelegatorPrintCostCsv(tempCsvFile, dto);
 
         final DownloadRequestHandler handler =
                 new DownloadRequestHandler(tempCsvFile);

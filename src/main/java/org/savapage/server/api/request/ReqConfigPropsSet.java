@@ -42,6 +42,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketTagCache;
 import org.savapage.core.services.helpers.SOfficeConfigProps;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
@@ -64,6 +65,10 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
     /** */
     private static final SOfficeService SOFFICE_SERVICE =
             ServiceContext.getServiceFactory().getSOfficeService();
+
+    /** */
+    private static final PaperCutService PAPERCUT_SERVICE =
+            ServiceContext.getServiceFactory().getPaperCutService();
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
@@ -183,11 +188,13 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                         SpJobScheduler.interruptPaperCutPrintMonitor();
                         msgKey = "msg-config-props-applied-"
                                 + "papercut-print-monitor-stopped";
+                        PAPERCUT_SERVICE.resetDbConnectionPool();
                     } else if (!preValue && cm.isConfigValue(configKey)) {
                         SpJobScheduler.instance()
                                 .scheduleOneShotPaperCutPrintMonitor(0);
                         msgKey = "msg-config-props-applied-"
                                 + "papercut-print-monitor-started";
+                        PAPERCUT_SERVICE.resetDbConnectionPool();
                     }
 
                 } else if (configKey == Key.PRINT_IMAP_ENABLE && preValue
