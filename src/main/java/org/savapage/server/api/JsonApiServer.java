@@ -2714,7 +2714,7 @@ public final class JsonApiServer extends AbstractPage {
         String error = PaperCutServerProxy.create(cm, false).testConnection();
 
         if (error == null) {
-            error = PaperCutDbProxy.create(cm, false).testConnection();
+            error = new PaperCutDbProxy(cm, false).testConnection();
         }
 
         if (error == null) {
