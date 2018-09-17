@@ -62,6 +62,8 @@ public final class WebAppPrintSite extends AbstractWebAppPage {
         addZeroPagePanel(this.getWebAppType());
 
         add(new Label("app-title", appTitle));
+
+        addFileDownloadApiPanel();
     }
 
     @Override

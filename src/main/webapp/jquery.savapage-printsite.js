@@ -299,6 +299,9 @@
                 _ns.restartWebApp();
             };
 
+            _view.pages.main.onDownload = function(request, data, requestSub, requestParm) {
+                _api.download(request, data, requestSub, requestParm);
+            };
         };
 
         /**

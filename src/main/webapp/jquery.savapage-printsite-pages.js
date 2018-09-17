@@ -1,4 +1,4 @@
-/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2018 Datraverse B.V. 
+/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2018 Datraverse B.V.
  * | GNU Affero General Public License */
 
 /*
@@ -66,8 +66,9 @@
              * onOutput : function(my, output) {}
              */
             _panel = {
+                UserOutbox : _ns.PanelUserOutbox,
                 DocLogBase : _ns.PanelDocLogBase,
-                UserOutbox : _ns.PanelUserOutbox
+                AccountTrxBase : _ns.PanelAccountTrxBase
             };
 
             _refreshPanel = function(wClass, skipBeforeLoad) {
@@ -171,6 +172,7 @@
                 _userKey = quickUserSelected.key;
                 _userText = quickUserSelected.text;
                 _refresh();
+                $(".sp-printsite-main-li-user").removeClass("ui-state-disabled");
             };
 
             /** */
@@ -178,6 +180,7 @@
                 $("#sp-main-userid").val('');
                 _userKey = null;
                 _refresh();
+                $(".sp-printsite-main-li-user").addClass("ui-state-disabled");
             };
 
             /** */
@@ -221,6 +224,8 @@
 
                 _quickUserSearch.onCreate($(this), 'sp-main-userid-filter', _onSelectUser, _onClearUser);
 
+                _onClearUser();
+
                 /*
                  * Smooth scrolling to primary content
                  *
@@ -261,6 +266,16 @@
                 });
 
                 /*
+                 * UserOutbox Panel
+                 */
+                $(this).on('click', '#sp-btn-user-pending-jobs', null, function() {
+                    var pnl = _panel.UserOutbox;
+                    pnl.userKey = _userKey;
+                    pnl.refresh(pnl, true);
+                    return false;
+                });
+
+                /*
                  * DocLog Panel
                  */
                 $(this).on('click', '#sp-btn-user-doc-log', null, function() {
@@ -294,12 +309,41 @@
                 });
 
                 /*
-                 * UserOutbox Panel
+                 * AccountTrx Panel
                  */
-                $(this).on('click', '#sp-btn-user-pending-jobs', null, function() {
-                    var pnl = _panel.UserOutbox;
-                    pnl.userKey = _userKey;
+                $(this).on('click', '#sp-btn-user-trx', null, function() {
+                    var pnl = _panel.AccountTrxBase;
+                    //pnl.applyDefaultForPrintSite(pnl);
+                    pnl.input.select.user_id = _userKey;
+
+                    // HACK: hidden field is present/set in THIS container.
+                    $('#sp-accounttrx-hidden-user-id').val(_userKey);
                     pnl.refresh(pnl, true);
+                    return false;
+                });
+
+                $(this).on('click', '#button-accounttrx-apply', null, function() {
+                    var pnl = _panel.AccountTrxBase;
+                    pnl.page(pnl, 1);
+                    return false;
+                });
+
+                $(this).on('click', '#button-accounttrx-default', null, function() {
+                    var pnl = _panel.AccountTrxBase;
+                    pnl.applyDefaults(pnl);
+                    pnl.m2v(pnl);
+                    return false;
+                });
+
+                $(this).on('click', '.sp-btn-accounttrx-report', null, function() {
+                    var pnl = _panel.AccountTrxBase;
+                    pnl.v2m(pnl);
+                    _self.onDownload("report", pnl.input, "AccountTrxList", $(this).attr('data-savapage'));
+                    return true;
+                });
+
+                $(this).on('click', ".sp-download-receipt", null, function() {
+                    _self.onDownload("pos-receipt-download", null, $(this).attr('data-savapage'));
                     return false;
                 });
 

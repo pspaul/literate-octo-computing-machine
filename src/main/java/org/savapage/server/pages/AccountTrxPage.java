@@ -675,6 +675,10 @@ public final class AccountTrxPage extends AbstractListPage {
             userId = req.getSelect().getUserId();
             accountId = req.getSelect().getAccountId();
 
+        } else if (this.getSessionWebAppType() == WebAppTypeEnum.PRINTSITE) {
+
+            userId = req.getSelect().getUserId();
+
         } else {
             /*
              * If we are called in a User WebApp context we ALWAYS use the user

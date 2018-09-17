@@ -56,7 +56,7 @@ public final class AccountTrxBase extends AbstractAuthPage {
 
         final WebAppTypeEnum webAppType = this.getSessionWebAppType();
 
-        handlePage(webAppType == WebAppTypeEnum.ADMIN);
+        handlePage(webAppType);
     }
 
     @Override
@@ -65,9 +65,10 @@ public final class AccountTrxBase extends AbstractAuthPage {
     }
 
     /**
-     * @param adminWebApp
+     * @param webAppType
+     *            The type of Web App.
      */
-    private void handlePage(final boolean adminWebApp) {
+    private void handlePage(final WebAppTypeEnum webAppType) {
 
         final String data = getParmValue(POST_PARM_DATA);
 
@@ -79,7 +80,8 @@ public final class AccountTrxBase extends AbstractAuthPage {
         boolean userNameVisible = false;
         boolean accountNameVisible = false;
 
-        if (adminWebApp) {
+        if (webAppType == WebAppTypeEnum.ADMIN
+                || webAppType == WebAppTypeEnum.PRINTSITE) {
 
             userId = req.getSelect().getUserId();
             userNameVisible = (userId != null);
