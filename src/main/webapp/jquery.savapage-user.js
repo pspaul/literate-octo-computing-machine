@@ -4954,7 +4954,6 @@
 
                 _model.user.admin = loginRes.admin;
                 _model.user.internal = loginRes.internal;
-                _model.user.role = loginRes.role;
                 _model.user.mail = loginRes.mail;
                 _model.user.mailDefault = loginRes.mail;
                 _model.letterheads = null;

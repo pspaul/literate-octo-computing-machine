@@ -1402,12 +1402,11 @@ public final class ReqLogin extends ApiRequestMixin {
 
         final String cometdToken;
 
-        if (userDb.getAdmin()) {
+        if (webAppType == WebAppTypeEnum.ADMIN
+                || webAppType == WebAppTypeEnum.PRINTSITE) {
             cometdToken = CometdClientMixin.SHARED_USER_ADMIN_TOKEN;
-            userData.put("role", "admin"); // TODO
         } else {
             cometdToken = CometdClientMixin.SHARED_USER_TOKEN;
-            userData.put("role", "editor"); // TODO
         }
         userData.put("cometdToken", cometdToken);
 
@@ -1444,7 +1443,6 @@ public final class ReqLogin extends ApiRequestMixin {
                         System.currentTimeMillis(), msecJobExpiry);
             }
 
-            //
             INBOX_SERVICE.pruneOrphanJobs(ConfigManager.getUserHomeDir(uid),
                     userDb);
         }

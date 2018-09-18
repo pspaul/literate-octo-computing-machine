@@ -253,7 +253,6 @@ String.prototype.endsWith = function(suffix) {
             this.alias = null;
             this.id = null;
             this.admin = null;
-            this.role = null;
             this.mail = null;
             this.mailDefault = null;
             this.loggedOn = false;

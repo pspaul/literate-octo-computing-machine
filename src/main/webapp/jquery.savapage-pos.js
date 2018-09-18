@@ -85,7 +85,6 @@
                     _model.user.cometdToken = data.cometdToken;
 
                     _model.user.admin = data.admin;
-                    _model.user.role = data.role;
                     _model.user.mail = data.mail;
                     _model.user.mailDefault = data.mail;
 
