@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.pages.admin;
+package org.savapage.server.pages.printsite;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
@@ -32,7 +32,7 @@ import org.savapage.server.pages.MarkupHelper;
  * @author Rijk Ravestein
  *
  */
-public class Dashboard extends AbstractAdminPage {
+public class Dashboard extends AbstractPrintSitePage {
 
     /**
      * Version for serialization.
@@ -49,19 +49,12 @@ public class Dashboard extends AbstractAdminPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        final boolean hasEditorAccess =
-                this.probePermissionToEdit(ACLOidEnum.A_DASHBOARD);
-
-        final SystemStatusPanel systemStatusPanel =
-                new SystemStatusPanel("system-status-panel");
-        add(systemStatusPanel);
-
-        systemStatusPanel.populate(hasEditorAccess);
-
+        helper.addLabel("title", ACLOidEnum.A_DASHBOARD.uiText(getLocale()));
         helper.addButton("button-clear", HtmlButtonEnum.CLEAR);
 
         helper.addLabel("realtime-activity",
                 PhraseEnum.REALTIME_ACTIVITY.uiText(getLocale()));
+
     }
 
 }

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <https://savapage.org> ...|
+    | This file is part of the SavaPage project <https://savapage.org> ..|
     | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
@@ -13,11 +14,28 @@
     -->
 </wicket:remove>
 
-<div id="dashboard-system-status-addin">
-	<wicket:panel wicket:id="system-status-panel" />
-</div>
+<ul data-role="listview" data-inset="true" id="dashboard-system-status">
 
-<ul data-role="listview" data-inset="true">
+	<li data-role="list-divider" wicket:id="title" />
+
+	<li>
+		<table data-role="table" data-mode="reflow"
+			class="ui-responsive table-stroke">
+			<thead>
+				<tr>
+					<th data-priority="1" />
+					<th data-priority="2" />
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th></th>
+					<td class="sp-txt-info" />
+				</tr>
+			</tbody>
+		</table>
+	</li>
+
 	<li data-role="list-divider" wicket:id="realtime-activity" />
 	<li>
 		<div id="live-messages" class="sp-live-msg"
@@ -25,12 +43,9 @@
 		<div>
 			<button id="live-messages-clear" class="ui-btn ui-btn-inline"
 				wicket:id="button-clear" />
-			<wicket:remove>
-				<button id="live-messages-pause" class="ui-btn ui-btn-inline">Pause</button>
-				<button id="live-messages-resume" class="ui-btn ui-btn-inline"
-					style="display: none;">Resume</button>
-			</wicket:remove>
 		</div>
 	</li>
 
 </ul>
+
+</html>

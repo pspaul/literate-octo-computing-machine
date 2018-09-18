@@ -1,4 +1,4 @@
-/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2018 Datraverse B.V. 
+/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2018 Datraverse B.V.
  * | GNU Affero General Public License */
 
 /*
@@ -68,6 +68,54 @@
 
             /** */
             afterload : function(my) {
+                $.noop();
+            }
+        };
+
+        /** */
+        _ns.PanelDashboard = {
+
+            // Parameter to be filled
+            model : null,
+
+            // Refresh every minute.
+            REFRESH_MSEC : 60000,
+
+            // The saved scroll position.
+            scrollTop : null,
+
+            timeout : null,
+
+            /*
+             * A refresh of the WHOLE panel.
+             */
+            refresh : function(my, skipBeforeLoad) {
+                my.scrollTop = $(window).scrollTop();
+                _ns.PanelCommon.refreshPanelPrintSite('Dashboard', skipBeforeLoad);
+            },
+
+            beforeload : function(my) {
+                $.noop();
+            },
+
+            afterload : function(my) {
+                var i,
+                    j,
+                    _model = my.model;
+
+                $.mobile.loading("hide");
+
+                for ( i = 0; i < _model.pubMsgStack.length; i++) {
+                    $('#live-messages').append(_model.pubMsgAsHtml(_model.pubMsgStack[i]));
+                }
+                // Fill it up...
+                for ( j = i; j < _model.MAX_PUB_MSG; j++) {
+                    $('#live-messages').append('<div>&nbsp;</div>');
+                }
+
+            },
+
+            onUnload : function(my) {
                 $.noop();
             }
         };

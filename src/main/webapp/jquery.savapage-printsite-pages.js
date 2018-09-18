@@ -50,6 +50,7 @@
                 _userText,
                 _refresh,
                 _refreshPanel,
+                _refreshPanelAdmin,
                 _refreshPanelCommon,
                 _refreshPanelByUrl,
                 _panelCur,
@@ -68,10 +69,19 @@
             _panel = {
                 UserOutbox : _ns.PanelUserOutbox,
                 DocLogBase : _ns.PanelDocLogBase,
-                AccountTrxBase : _ns.PanelAccountTrxBase
+                AccountTrxBase : _ns.PanelAccountTrxBase,
+                Dashboard : _ns.PanelDashboard
+            };
+
+            _self.onDisconnected = function() {
+                window.location.reload();
             };
 
             _refreshPanel = function(wClass, skipBeforeLoad) {
+                _refreshPanelByUrl('printsite/', wClass, skipBeforeLoad);
+            };
+
+            _refreshPanelAdmin = function(wClass, skipBeforeLoad) {
                 _refreshPanelByUrl('admin/', wClass, skipBeforeLoad);
             };
 
@@ -159,7 +169,8 @@
             _ns.PanelCommon.view = _view;
             _ns.PanelCommon.userId = _model.user.id;
             _ns.PanelCommon.refreshPanelCommon = _refreshPanelCommon;
-            _ns.PanelCommon.refreshPanelAdmin = _refreshPanel;
+            _ns.PanelCommon.refreshPanelAdmin = _refreshPanelAdmin;
+            _ns.PanelCommon.refreshPanelPrintSite = _refreshPanel;
 
             /** */
             _refresh = function() {
@@ -181,11 +192,19 @@
                 _userKey = null;
                 _refresh();
                 _view.enableUI($('.sp-printsite-main-li-user'), false);
+                if ($('#live-messages').length === 0) {
+                    _ns.Utils.asyncFoo(function() {
+                        $('#sp-btn-dashboard').click();
+                    });
+                }
             };
 
             /** */
             _self.initView = function() {
-                $.noop();
+                var name = 'Dashboard';
+                if ($('.content-secondary').find('[name=' + name + ']').length > 0) {
+                    _loadPanel(name);
+                }
             };
 
             /** */
@@ -344,6 +363,21 @@
 
                 $(this).on('click', ".sp-download-receipt", null, function() {
                     _self.onDownload("pos-receipt-download", null, $(this).attr('data-savapage'));
+                    return false;
+                });
+
+                /*
+                 * Dashboard Panel
+                 */
+                $(this).on('click', '#sp-btn-dashboard', null, function() {
+                    var pnl = _panel.Dashboard;
+                    pnl.refresh(pnl, true);
+                    return false;
+                });
+
+                $(this).on('click', "#live-messages-clear", null, function() {
+                    _model.pubMsgStack = [];
+                    $('#live-messages').html('');
                     return false;
                 });
 

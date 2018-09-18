@@ -1,4 +1,4 @@
-/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2018 Datraverse B.V. 
+/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2018 Datraverse B.V.
  * | GNU Affero General Public License */
 
 /*
@@ -36,7 +36,7 @@
         /**
          * Constructor
          */
-        _ns.Controller = function(_i18n, _model, _view, _api) {
+        _ns.Controller = function(_i18n, _model, _view, _api, _cometd) {
             var _this = this,
                 _util = _ns.Utils,
                 i18nRefresh,
@@ -82,7 +82,6 @@
                     _model.user.cometdToken = data.cometdToken;
 
                     _model.user.admin = data.admin;
-                    _model.user.role = data.role;
                     _model.user.mail = data.mail;
                     _model.user.mailDefault = data.mail;
 
@@ -98,6 +97,12 @@
                         _view.pages.main.load();
                     }
                     _view.pages.main.show();
+
+                    _cometd.start(_model.user.cometdToken);
+
+                    if (_model.maxIdleSeconds) {
+                        _ns.monitorUserIdle(_model.maxIdleSeconds, _view.pages.admin.onLogout);
+                    }
 
                 } else {
                     _view.pages.login.notifyLogout();
@@ -146,6 +151,9 @@
                 // NOTE: authCardSelfAssoc is DISABLED
                 _view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, null, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
+                // Configures CometD (without starting it)
+                _cometd.configure(res.cometdMaxNetworkDelay);
+
                 language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);
                 if (!language) {
                     language = _model.authToken.language || '';
@@ -186,7 +194,68 @@
                     _ns.restartWebApp();
                     return false;
                 });
+            };
 
+            /**
+             *
+             */
+            _cometd.onConnecting = function() {
+                $.noop();
+            };
+            /**
+             *
+             */
+            _cometd.onDisconnecting = function() {
+                $.noop();
+            };
+
+            /**
+             *
+             */
+            _cometd.onHandshakeSuccess = function() {
+
+                _cometd.subscribe('/admin/**', function(message) {
+                    var nItems = _model.pubMsgStack.length,
+                        data = $.parseJSON(message.data);
+
+                    // org.savapage.core.cometd.PubTopicEnum
+                    if (data.topic !== 'proxyprint' && data.topic !== 'cups' && data.topic !== 'papercut') {
+                        return;
+                    }
+
+                    _model.pubMsgStack.unshift(data);
+                    nItems += 1;
+
+                    if (nItems > _model.MAX_PUB_MSG) {
+                        _model.pubMsgStack.pop();
+                    }
+
+                    if ($('#live-messages')) {
+
+                        $('#live-messages').prepend(_model.pubMsgAsHtml(data));
+
+                        if (nItems > _model.MAX_PUB_MSG) {
+                            $('#live-messages :last-child').remove();
+                        }
+                    }
+                });
+
+            };
+
+            _cometd.onHandshakeFailure = function() {
+                $.noop();
+            };
+            _cometd.onConnectionClosed = function() {
+                $.noop();
+            };
+            _cometd.onReconnect = function() {
+                $.noop();
+            };
+            _cometd.onConnectionBroken = function() {
+                $.noop();
+            };
+            _cometd.onUnsuccessful = function() {
+                $.noop();
             };
 
             /**
@@ -261,7 +330,8 @@
              * Callbacks: page LOGIN
              */
             _view.pages.login.onShow(function() {
-                $.noop();
+                _model.user.loggedIn = false;
+                _cometd.stop();
             });
 
             _view.pages.login.onLanguage(function() {
@@ -313,11 +383,25 @@
                 _LOC_LANG = 'sp.printsite.language',
                 _LOC_COUNTRY = 'sp.printsite.country';
 
+            this.MAX_PUB_MSG = 20;
+
+            this.pubMsgStack = [];
+
+            /**
+             * Escape special characters to HTML entities.
+             */
+            this.textAsHtml = function(text) {
+                return $("<dummy/>").text(text).html();
+            };
+
+            this.pubMsgAsHtml = function(data) {
+                var sfx = (data.level === "ERROR") ? "error" : (data.level === "WARN") ? "warn" : (data.level === "INFO") ? "info" : "valid";
+                return "<div class='sp-txt-wrap sp-txt-" + sfx + "'>" + this.textAsHtml(data.time + ' | ' + data.msg) + '<div>';
+            };
+
             this.user = new _ns.User();
 
             this.authToken = {};
-
-            this.gcp = {};
 
             this.sessionExpired = false;
 
@@ -391,6 +475,7 @@
                 _view = new _ns.View(_i18n, _api),
                 _viewById = {},
                 _ctrl,
+                _cometd,
                 _nativeLogin;
 
             _ns.commonWebAppInit();
@@ -417,7 +502,10 @@
                 }
             });
 
-            _ctrl = new _ns.Controller(_i18n, _model, _view, _api);
+            _ns.PanelDashboard.model = _model;
+
+            _cometd = new _ns.Cometd();
+            _ctrl = new _ns.Controller(_i18n, _model, _view, _api, _cometd);
 
             _nativeLogin = function(user, authMode) {
                 if (_model.authToken.user && _model.authToken.token) {

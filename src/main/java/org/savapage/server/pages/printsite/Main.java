@@ -22,6 +22,7 @@
 package org.savapage.server.pages.printsite;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
@@ -61,6 +62,9 @@ public final class Main extends AbstractPrintSitePage {
 
         helper.addLabel("txt-swipe card",
                 PhraseEnum.SWIPE_CARD.uiText(getLocale()));
+
+        helper.addLabel("btn-dashboard",
+                ACLOidEnum.A_DASHBOARD.uiText(getLocale()));
 
         helper.addLabel("btn-details", NounEnum.USER);
 
