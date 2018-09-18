@@ -2789,7 +2789,7 @@
             };
 
             /**
-             * Enables/Disables jQuery selector (this does not work for radio
+             * Enables/Disables jQuery selector (does not work for radio
              * buttons).
              */
             this.enable = function(jqsel, enable) {
@@ -2798,6 +2798,19 @@
                     jqsel.removeAttr(attr);
                 } else {
                     jqsel.attr(attr, "");
+                }
+            };
+
+            /**
+             * Enables/Disables jQuery selector with ui-disabled (does not
+             * work for radio buttons).
+             */
+            this.enableUI = function(jqsel, enable) {
+                var clazz = "ui-disabled";
+                if (enable) {
+                    jqsel.removeClass(clazz).attr('tabindex', '0');
+                } else {
+                    jqsel.addClass(clazz).attr('tabindex', '-1');
                 }
             };
 

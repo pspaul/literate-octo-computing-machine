@@ -172,7 +172,7 @@
                 _userKey = quickUserSelected.key;
                 _userText = quickUserSelected.text;
                 _refresh();
-                $(".sp-printsite-main-li-user").removeClass("ui-state-disabled");
+                _view.enableUI($('.sp-printsite-main-li-user'), true);
             };
 
             /** */
@@ -180,7 +180,7 @@
                 $("#sp-main-userid").val('');
                 _userKey = null;
                 _refresh();
-                $(".sp-printsite-main-li-user").addClass("ui-state-disabled");
+                _view.enableUI($('.sp-printsite-main-li-user'), false);
             };
 
             /** */

@@ -2168,8 +2168,8 @@
                          * fixed width and the proper height (ratio).
                          */
                         item = "";
-                        item += '<div><img onload="org.savapage.removeImgHeight(this)" width="' + imgWidth + '" height="' + imgHeightA4 + '" border="0" src="' + _view.getImgSrc(page.url) + '" style="padding: ' + _IMG_PADDING + 'px;"/>';
-                        item += '<a title="' + title + '" href="#" class="sp-thumbnail-subscript ui-btn ui-mini" style="margin-top:-' + (2 * _IMG_PADDING + 1) + 'px; margin-right: ' + _IMG_PADDING + 'px; margin-left: ' + _IMG_PADDING + 'px; border: none; box-shadow: none;">';
+                        item += '<div><img onload="org.savapage.removeImgHeight(this)" width="' + imgWidth + '" height="' + imgHeightA4 + '" border="0" src="' + _view.getImgSrc(page.url) + '" style="padding: ' + _IMG_PADDING + 'px;" />';
+                        item += '<a tabindex="-1" title="' + title + '" href="#" class="sp-thumbnail-subscript ui-btn ui-mini" style="margin-top:-' + (2 * _IMG_PADDING + 1) + 'px; margin-right: ' + _IMG_PADDING + 'px; margin-left: ' + _IMG_PADDING + 'px; border: none; box-shadow: none;">';
                         item += '<span class="sp-thumbnail-page"/>';
                         item += '<span class="sp-thumbnail-tot-pages"/>';
                         item += '<span class="sp-thumbnail-tot-chunk"/>';
@@ -2331,29 +2331,23 @@
              *
              */
             _showArrButtons = function() {
-                var selEdit = $('.main_arr_edit'),
-                    selPaste = $('.main_arr_paste'),
+                var selEdit = $('.main_arr_edit li :first-child'),
+                    selEditRow2 = $('#main-navbar-arrange-row-2 li').filter('.main_arr_edit').find(':first-child'),
+                    selPaste = $('.main_arr_paste :first-child'),
                     selUndo = $('#main-arr-undo'),
                     bCut = _util.countProp(_model.myCutPages) > 0;
 
                 // Show Paste buttons?
                 if (_util.countProp(_model.mySelectPages) > 0) {
-                    selEdit.removeClass('ui-disabled');
-                    if (bCut) {
-                        selPaste.removeClass('ui-disabled');
-                    } else {
-                        selPaste.addClass('ui-disabled');
-                    }
+                    _view.enableUI(selEdit, true);
+                    _view.enableUI(selEditRow2, true);
+                    _view.enableUI(selPaste, bCut);
                 } else {
-                    selEdit.addClass('ui-disabled');
+                    _view.enableUI(selEdit, false);
+                    _view.enableUI(selEditRow2, false);
                 }
-
                 // Show Undo button?
-                if (bCut) {
-                    selUndo.removeClass('ui-disabled');
-                } else {
-                    selUndo.addClass('ui-disabled');
-                }
+                _view.enableUI(selUndo, bCut);
             };
 
             /**
@@ -2438,7 +2432,7 @@
             this.adjustThumbnailVisibility = function() {
                 var widthTot = 0,
                     tn,
-                    selMainAct = $('.main_actions'),
+                    selMainAct = $('.main_actions button'),
                     selPdfButton,
                     widthImg;
 
@@ -2461,16 +2455,10 @@
 
                 _moveToEnd();
 
-                if (_totImages === 0) {
-                    selMainAct.addClass('ui-disabled');
-                } else {
-                    selMainAct.removeClass('ui-disabled');
-                    selPdfButton = $('#button-main-pdf-properties');
-                    if (_model.myJobsDrm) {
-                        selPdfButton.addClass('ui-disabled');
-                    } else {
-                        selPdfButton.removeClass('ui-disabled');
-                    }
+                _view.enableUI(selMainAct, _totImages !== 0);
+
+                if (_totImages !== 0) {
+                    _view.enableUI($('#button-main-pdf-properties'), !_model.myJobsDrm);
                 }
 
                 /*
