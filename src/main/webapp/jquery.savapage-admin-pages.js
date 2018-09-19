@@ -438,6 +438,7 @@
                 _m2v();
             }).on('pageshow', function(event, ui) {
                 $('#user-uuid-collapsible').collapsible('collapse');
+                $('#user-pgp-collapsible').collapsible('collapse');
             });
             return _self;
         };
