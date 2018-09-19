@@ -327,17 +327,24 @@ public final class WebServer {
                 final Date creationDate = keystore.getCreationDate(minAlias);
                 final Date notAfter = minCertX509.getNotAfter();
 
+                String subjectCN = null;
+
+                final LdapName lnSubject =
+                        new LdapName(minCertX509.getSubjectDN().getName());
+                for (final Rdn rdn : lnSubject.getRdns()) {
+                    if (rdn.getType().equalsIgnoreCase("CN")) {
+                        subjectCN = rdn.getValue().toString();
+                        break;
+                    }
+                }
+
                 final LdapName ln =
                         new LdapName(minCertX509.getIssuerDN().getName());
-
                 for (final Rdn rdn : ln.getRdns()) {
-
                     if (rdn.getType().equalsIgnoreCase("CN")) {
-
                         final String issuerCN = rdn.getValue().toString();
-
-                        certInfo = new SslCertInfo(issuerCN, creationDate,
-                                notAfter, nAliases == 1);
+                        certInfo = new SslCertInfo(issuerCN, subjectCN,
+                                creationDate, notAfter, nAliases == 1);
                         break;
                     }
                 }

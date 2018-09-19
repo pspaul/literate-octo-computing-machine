@@ -715,21 +715,26 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             } else {
                 final LocaleHelper helper = new LocaleHelper(Locale.ENGLISH);
 
+                //
                 logMsg.setLength(0);
                 logMsg.append("SSL Cert Issuer  [")
                         .append(sslCert.getIssuerCN()).append("]");
-
                 if (sslCert.isSelfSigned()) {
                     logMsg.append(" self-signed.");
                 }
                 SpInfo.instance().log(logMsg.toString());
-
+                //
+                logMsg.setLength(0);
+                logMsg.append("SSL Cert Subject [")
+                        .append(sslCert.getSubjectCN()).append("]");
+                SpInfo.instance().log(logMsg.toString());
+                //
                 logMsg.setLength(0);
                 logMsg.append("SSL Cert Created [").append(
                         helper.getLongMediumDateTime(sslCert.getCreationDate()))
                         .append("]");
                 SpInfo.instance().log(logMsg.toString());
-
+                //
                 logMsg.setLength(0);
                 logMsg.append("SSL Cert Expires [")
                         .append(helper
