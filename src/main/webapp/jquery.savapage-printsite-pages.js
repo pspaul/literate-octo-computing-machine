@@ -70,7 +70,8 @@
                 UserOutbox : _ns.PanelUserOutbox,
                 DocLogBase : _ns.PanelDocLogBase,
                 AccountTrxBase : _ns.PanelAccountTrxBase,
-                Dashboard : _ns.PanelDashboard
+                Dashboard : _ns.PanelDashboard,
+                UserEdit : _ns.PanelUserEdit
             };
 
             _self.onDisconnected = function() {
@@ -184,6 +185,9 @@
                 _userText = quickUserSelected.text;
                 _refresh();
                 _view.enableUI($('.sp-printsite-main-li-user'), true);
+                _ns.Utils.asyncFoo(function() {
+                    $('#sp-btn-user-details').click();
+                });
             };
 
             /** */
@@ -378,6 +382,15 @@
                 $(this).on('click', "#live-messages-clear", null, function() {
                     _model.pubMsgStack = [];
                     $('#live-messages').html('');
+                    return false;
+                });
+
+                /*
+                 * UserEdit Panel
+                 */
+                $(this).on('click', '#sp-btn-user-details', null, function() {
+                    var pnl = _panel.UserEdit;
+                    pnl.refresh(pnl, true);
                     return false;
                 });
 

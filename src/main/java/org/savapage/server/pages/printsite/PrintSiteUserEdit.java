@@ -19,14 +19,16 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.pages.admin;
-
-import java.util.EnumSet;
+package org.savapage.server.pages.printsite;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.CreditLimitDtoEnum;
+import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.LabelEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -34,46 +36,53 @@ import org.savapage.server.pages.MarkupHelper;
  * @author Rijk Ravestein
  *
  */
-public final class PageUserGroup extends AbstractAdminPage {
+public final class PrintSiteUserEdit extends AbstractPrintSitePage {
 
     /**
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
 
+    @Override
+    protected boolean needMembership() {
+        return false;
+    }
+
     /**
-     *
      * @param parameters
-     *            The page parameters.
+     *            The {@link PageParameters}.
      */
-    public PageUserGroup(final PageParameters parameters) {
+    public PrintSiteUserEdit(final PageParameters parameters) {
 
-        super(parameters, ACLOidEnum.A_USER_GROUPS, RequiredPermission.EDIT);
+        super(parameters);
 
-        //
-        final ACLRoleEnumPanel aclRolePanel =
-                new ACLRoleEnumPanel("ACLRoleEnumCheckboxes");
-
-        final EnumSet<ACLRoleEnum> selected = EnumSet
-                .of(ACLRoleEnum.JOB_TICKET_OPERATOR, ACLRoleEnum.WEB_CASHIER);
-
-        aclRolePanel.populate(selected);
-
-        add(aclRolePanel);
-
-        //
-        ACLPermissionPanel aclPermPanel =
-                new ACLPermissionPanel("ACLPermissionsUser");
-        aclPermPanel.populate(ACLOidEnum.getUserOidList());
-        add(aclPermPanel);
-
-        //
-        aclPermPanel = new ACLPermissionPanel("ACLPermissionsAdmin");
-        aclPermPanel.populate(ACLOidEnum.getAdminOidList());
-        add(aclPermPanel);
-
-        //
         final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addLabel("internal-user-ind", "Interne gebruiker");
+        helper.addLabel("label-password", NounEnum.PASSWORD);
+
+        helper.addLabel("label-user-fullname", NounEnum.NAME);
+        helper.addLabel("label-balance", NounEnum.BALANCE);
+        helper.addLabel("label-credit-limit", NounEnum.CREDIT_LIMIT);
+        helper.addLabel("label-user-disabled", AdverbEnum.DISABLED);
+
+        helper.addLabel("label-user-email-main", LabelEnum.PRIMARY_EMAIL);
+        helper.addLabel("label-user-email-other", LabelEnum.OTHER_EMAILS);
+
+        helper.addLabel("label-user-card-number", NounEnum.CARD_NUMBER);
+        helper.addLabel("user-delete-warning", PhraseEnum.USER_DELETE_WARNING);
+
+        helper.addLabel("label-financial",
+                ACLOidEnum.U_FINANCIAL.uiText(getLocale()));
+
+        helper.addButton("button-ok", HtmlButtonEnum.OK);
+        helper.addButton("button-cancel-1", HtmlButtonEnum.CANCEL);
+        helper.addButton("button-cancel-2", HtmlButtonEnum.CANCEL);
+        helper.addButton("button-delete", HtmlButtonEnum.DELETE);
+        helper.addButton("header-delete", HtmlButtonEnum.DELETE);
+
+        helper.addButton("button-user-pw-reset", HtmlButtonEnum.RESET);
+        helper.addButton("button-user-pw-erase", HtmlButtonEnum.ERASE);
 
         helper.addModifyLabelAttr("credit-limit-none", MarkupHelper.ATTR_VALUE,
                 CreditLimitDtoEnum.NONE.toString());

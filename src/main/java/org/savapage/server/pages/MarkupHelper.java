@@ -38,7 +38,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.i18n.PrepositionEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
@@ -462,6 +464,53 @@ public final class MarkupHelper {
      * @return The added {@link Label}.
      */
     public Label addLabel(final String wicketId, final NounEnum noun) {
+        final Label label =
+                new Label(wicketId, noun.uiText(this.container.getLocale()));
+        add(label);
+        return label;
+    }
+    /**
+     * Adds a phrase label.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param phrase
+     *            The {@link PhraseEnum}.
+     * @return The added {@link Label}.
+     */
+    public Label addLabel(final String wicketId, final PhraseEnum phrase) {
+        final Label label =
+                new Label(wicketId, phrase.uiText(this.container.getLocale()));
+        add(label);
+        return label;
+    }
+
+    /**
+     * Adds a adverb label.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param adverb
+     *            The {@link AdverbEnum}.
+     * @return The added {@link Label}.
+     */
+    public Label addLabel(final String wicketId, final AdverbEnum adverb) {
+        final Label label =
+                new Label(wicketId, adverb.uiText(this.container.getLocale()));
+        add(label);
+        return label;
+    }
+
+    /**
+     * Adds a label.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param noun
+     *            The {@link NounEnum}.
+     * @return The added {@link Label}.
+     */
+    public Label addLabel(final String wicketId, final LabelEnum noun) {
         final Label label =
                 new Label(wicketId, noun.uiText(this.container.getLocale()));
         add(label);

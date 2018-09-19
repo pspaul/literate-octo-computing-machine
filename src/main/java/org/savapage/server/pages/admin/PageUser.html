@@ -82,28 +82,20 @@
 		</li>
 
 		<li>
-			<label for="user-email">
-				<wicket:message key="user-email" />
-			</label>
+			<label for="user-email" wicket:id="user-email" />
 			<input type="text" id="user-email" value="" maxlength="128"
 				autocomplete="off" autocorrect="off" autocapitalize="off"
 				spellcheck="false" />
-			<label for="user-email-other">
-				<wicket:message key="user-email-other" />
-			</label>
+			<label for="user-email-other" wicket:id="user-email-other" />
 			<textarea id="user-email-other" autocomplete="off" autocorrect="off"
 				autocapitalize="off" spellcheck="false" />
 		</li>
 
 		<li>
-			<label for="user-card-number">
-				<wicket:message key="user-card-number" />
-			</label>
+			<label for="user-card-number" wicket:id="user-card-number" />
 			<input type="text" id="user-card-number" maxlength="32" value=""
 				data-clear-btn="true" />
-			<label for="user-id-number">
-				<wicket:message key="user-id-number" />
-			</label>
+			<label for="user-id-number" wicket:id="user-id-number" />
 			<input type="text" id="user-id-number" maxlength="32" value=""
 				data-clear-btn="true" />
 			<label for="user-pin">
@@ -150,9 +142,8 @@
 					data-clear-btn="true" autocomplete="off" autocorrect="off"
 					autocapitalize="off" spellcheck="false" />
 				<button id="button-user-generate-uuid"
-					class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-					<wicket:message key="button-generate" />
-				</button>
+					class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+					wicket:id="button-generate" />
 			</div>
 		</li>
 
@@ -186,21 +177,19 @@
 					<wicket:message key="label-credit-limit" />
 				</legend>
 
-				<label for="user-account-credit-limit-none">
-					<wicket:message key="label-credit-limit-none" />
-				</label>
+				<label for="user-account-credit-limit-none"
+					wicket:id="label-credit-limit-none" />
 				<input type="radio" name="user-account-credit-limit-type"
 					id="user-account-credit-limit-none" wicket:id="credit-limit-none" />
 
-				<label for="user-account-credit-limit-default">
-					<wicket:message key="label-credit-limit-default" />
-				</label>
+				<label for="user-account-credit-limit-default"
+					wicket:id="label-credit-limit-default" />
 				<input type="radio" name="user-account-credit-limit-type"
 					id="user-account-credit-limit-default"
 					wicket:id="credit-limit-default" />
-				<label for="user-account-credit-limit-individual">
-					<wicket:message key="label-credit-limit-individual" />
-				</label>
+
+				<label for="user-account-credit-limit-individual"
+					wicket:id="label-credit-limit-individual" />
 				<input type="radio" name="user-account-credit-limit-type"
 					id="user-account-credit-limit-individual"
 					wicket:id="credit-limit-individual" />
@@ -213,22 +202,18 @@
 		<li>
 			<div>
 				<button id="button-save-user"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-					<wicket:message key="button-ok" />
-				</button>
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+					wicket:id="button-ok" />
 				<a href="#"
 					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-					data-rel="back" data-direction="reverse"> <wicket:message
-						key="button-cancel" />
-				</a>
+					data-rel="back" data-direction="reverse"
+					wicket:id="button-cancel-1" />
 			</div>
 		</li>
 	</ul>
 	<ul class="sp-internal-user-edit" data-role="listview"
 		data-inset="true">
-		<li data-role="list-divider">
-			<wicket:message key="button-password" />
-		</li>
+		<li data-role="list-divider" wicket:id="button-password" />
 		<li>
 			<div>
 				<button id="button-user-pw-dialog" wicket:id="button-user-pw-reset"
@@ -248,18 +233,14 @@
 		</li>
 
 		<li>
-			<div class="sp-txt-wrap">
-				<wicket:message key="user-delete-warning" />
-			</div>
+			<div class="sp-txt-wrap" wicket:id="user-delete-warning" />
 			<div>
 				<button id="button-delete-user"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
-					<wicket:message key="button-delete" />
-				</button>
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
+					wicket:id="button-delete" />
 				<a href="#" data-rel="back" data-direction="reverse"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-						key="button-cancel" />
-				</a>
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+					wicket:id="button-cancel-2" />
 			</div>
 		</li>
 	</ul>

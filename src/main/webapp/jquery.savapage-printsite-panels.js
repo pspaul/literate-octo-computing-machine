@@ -37,6 +37,30 @@
         /*global $, jQuery, alert*/
 
         /** */
+        _ns.PanelUserEdit = {
+            // Parameter to be filled
+            userKey : null,
+
+            /** */
+            refresh : function(my, skipBeforeLoad) {
+                var html = _ns.PanelCommon.view.getPageHtml('printsite/PrintSiteUserEdit', {
+                    userKey : my.userKey
+                });
+                $('#sp-a-content').html(html).enhanceWithin();
+            },
+
+            /** */
+            beforeload : function(my) {
+                $.noop();
+            },
+
+            /** */
+            afterload : function(my) {
+                $.noop();
+            }
+        };
+
+        /** */
         _ns.PanelUserOutbox = {
 
             // Parameter to be filled

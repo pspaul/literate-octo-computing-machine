@@ -66,6 +66,8 @@ public final class Main extends AbstractPrintSitePage {
         helper.addLabel("btn-dashboard",
                 ACLOidEnum.A_DASHBOARD.uiText(getLocale()));
 
+        helper.addButton("btn-register", HtmlButtonEnum.REGISTER);
+
         helper.addLabel("btn-details", NounEnum.USER);
 
         helper.addLabel("btn-pending-jobs",

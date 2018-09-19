@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!-- 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
+    -->
+</wicket:remove>
+
+<div class="ui-dialog-contain">
+
+	<ul data-role="listview" data-inset="true">
+
+		<li data-role="list-divider">
+			<h3 id="user-userid-txt" />
+		</li>
+
+		<wicket:enclosure child="internal-user-ind">
+			<li wicket:id="internal-user-ind" />
+		</wicket:enclosure>
+
+		<li>
+			<div class="ui-field-contain">
+				<label for="user-fullname" wicket:id="label-user-fullname" />
+				<input type="text" id="user-fullname" value="" maxlength="128"
+					autofocus autocomplete="off" autocorrect="off" autocapitalize="off"
+					spellcheck="false" />
+			</div>
+		</li>
+
+		<li>
+			<fieldset data-role="controlgroup" data-type="vertical">
+				<label for="user-disabled" wicket:id="label-user-disabled" />
+				<input type="checkbox" id="user-disabled" value="0" />
+			</fieldset>
+		</li>
+
+		<li>
+			<label for="user-email" wicket:id="label-user-email-main" />
+			<input type="text" id="user-email" value="" maxlength="128"
+				autocomplete="off" autocorrect="off" autocapitalize="off"
+				spellcheck="false" />
+
+			<label for="user-email-other" wicket:id="label-user-email-other" />
+			<textarea id="user-email-other" autocomplete="off" autocorrect="off"
+				autocapitalize="off" spellcheck="false" />
+		</li>
+
+		<li>
+			<label for="user-card-number" wicket:id="label-user-card-number" />
+			<input type="text" id="user-card-number" maxlength="32" value=""
+				data-clear-btn="true" />
+		</li>
+
+		<li data-role="list-divider" wicket:id="label-financial" />
+		<li>
+			<label for="user-account-balance" wicket:id="label-balance" />
+			<input type="text" id="user-account-balance" value="" maxlength="10"
+				pattern="[0-9]*" />
+
+			<fieldset class="ui-mini" data-role="controlgroup"
+				data-type="horizontal">
+
+				<legend wicket:id="label-credit-limit" />
+
+				<label for="user-account-credit-limit-none"
+					wicket:id="label-credit-limit-none" />
+				<input type="radio" name="user-account-credit-limit-type"
+					id="user-account-credit-limit-none" wicket:id="credit-limit-none" />
+
+				<label for="user-account-credit-limit-default"
+					wicket:id="label-credit-limit-default" />
+				<input type="radio" name="user-account-credit-limit-type"
+					id="user-account-credit-limit-default"
+					wicket:id="credit-limit-default" />
+
+				<label for="user-account-credit-limit-individual"
+					wicket:id="label-credit-limit-individual" />
+				<input type="radio" name="user-account-credit-limit-type"
+					id="user-account-credit-limit-individual"
+					wicket:id="credit-limit-individual" />
+
+			</fieldset>
+			<input type="text" id="user-account-credit-limit-amount" value=""
+				maxlength="10" pattern="[0-9]*" />
+		</li>
+
+		<li>
+			<div>
+				<button id="button-save-user"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+					wicket:id="button-ok" />
+				<a href="#" tabindex="0"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+					data-rel="back" data-direction="reverse"
+					wicket:id="button-cancel-1" />
+			</div>
+		</li>
+	</ul>
+
+	<ul class="sp-internal-user-edit" data-role="listview"
+		data-inset="true">
+		<li data-role="list-divider" wicket:id="label-password" />
+		<li>
+			<div>
+				<button id="button-user-pw-dialog" wicket:id="button-user-pw-reset"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit" />
+				<button id="button-user-pw-erase" wicket:id="button-user-pw-erase"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete" />
+			</div>
+		</li>
+	</ul>
+
+	<ul data-role="listview" data-inset="true">
+
+		<li data-role="list-divider" data-theme="b" wicket:id="header-delete" />
+
+		<li>
+			<div class="sp-txt-wrap" wicket:id="user-delete-warning" />
+			<div>
+				<button id="button-delete-user"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
+					wicket:id="button-delete" />
+				<a href="#" tabindex="0" data-rel="back" data-direction="reverse"
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+					wicket:id="button-cancel-2" />
+			</div>
+		</li>
+	</ul>
+</div>
+
+<wicket:remove>
+	<!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+-->
+</wicket:remove>
+<div data-role="popup" data-dismissible="true" data-position-to="window"
+	class="sp-msg-popup ui-content" />
+
+</html>

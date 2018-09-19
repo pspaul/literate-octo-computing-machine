@@ -32,7 +32,10 @@ import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
-import org.savapage.core.dto.UserAccountingDto;
+import org.savapage.core.dto.CreditLimitDtoEnum;
+import org.savapage.core.i18n.LabelEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -76,20 +79,37 @@ public final class PageUser extends AbstractAdminPage {
 
         //
         helper.addModifyLabelAttr("credit-limit-none", "value",
-                UserAccountingDto.CreditLimitEnum.NONE.toString());
-
+                CreditLimitDtoEnum.NONE.toString());
         helper.addModifyLabelAttr("credit-limit-default", "value",
-                UserAccountingDto.CreditLimitEnum.DEFAULT.toString());
-
+                CreditLimitDtoEnum.DEFAULT.toString());
         helper.addModifyLabelAttr("credit-limit-individual", "value",
-                UserAccountingDto.CreditLimitEnum.INDIVIDUAL.toString());
+                CreditLimitDtoEnum.INDIVIDUAL.toString());
+
+        helper.addLabel("label-credit-limit-none",
+                CreditLimitDtoEnum.NONE.uiText(getLocale()));
+        helper.addLabel("label-credit-limit-default",
+                CreditLimitDtoEnum.DEFAULT.uiText(getLocale()));
+        helper.addLabel("label-credit-limit-individual",
+                CreditLimitDtoEnum.INDIVIDUAL.uiText(getLocale()));
 
         //
-        add(new Label("button-user-pw-reset",
-                HtmlButtonEnum.RESET.uiText(getLocale())));
+        helper.addButton("button-user-pw-reset", HtmlButtonEnum.RESET);
+        helper.addButton("button-user-pw-erase", HtmlButtonEnum.ERASE);
+        helper.addButton("button-ok", HtmlButtonEnum.OK);
+        helper.addButton("button-cancel-1", HtmlButtonEnum.CANCEL);
+        helper.addButton("button-cancel-2", HtmlButtonEnum.CANCEL);
+        helper.addButton("button-delete", HtmlButtonEnum.DELETE);
+        helper.addButton("button-generate", HtmlButtonEnum.GENERATE);
 
-        add(new Label("button-user-pw-erase",
-                HtmlButtonEnum.ERASE.uiText(getLocale())));
+        helper.addLabel("button-password", NounEnum.PASSWORD);
+
+        helper.addLabel("user-email", LabelEnum.PRIMARY_EMAIL);
+        helper.addLabel("user-email-other", LabelEnum.OTHER_EMAILS);
+
+        helper.addLabel("user-delete-warning", PhraseEnum.USER_DELETE_WARNING);
+
+        helper.addLabel("user-card-number", NounEnum.CARD_NUMBER);
+        helper.addLabel("user-id-number", NounEnum.ID_NUMBER);
 
         try {
             final URL pgpPublicKeySearchUrl =
