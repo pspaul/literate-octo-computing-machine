@@ -42,17 +42,15 @@
 									id="sp-print-delegation-select-account-group" checked />
 							</wicket:enclosure>
 
-							<label for="sp-print-delegation-select-account-user">
-								<!-- 
-                    <span
-                        class="ui-icon-mini-delegated-print ui-btn-icon-notext sp-inline-icon" />
-                         -->
-								<wicket:message key="sp-label-invoicing-user" />
-							</label>
-							<input type="radio"
-								name="sp-print-delegation-select-account-radio"
-								value="[enum value]" wicket:id="radio-account-user"
-								id="sp-print-delegation-select-account-user" />
+							<wicket:enclosure child="radio-account-user">
+    							<label for="sp-print-delegation-select-account-user">
+	    							<wicket:message key="sp-label-invoicing-user" />
+		    					</label>
+			    				<input type="radio"
+				    				name="sp-print-delegation-select-account-radio"
+					    			value="[enum value]" wicket:id="radio-account-user"
+						    		id="sp-print-delegation-select-account-user" />
+							</wicket:enclosure>
 
 							<wicket:enclosure child="radio-account-shared">
 								<label for="sp-print-delegation-select-account-shared">

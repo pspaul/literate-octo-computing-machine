@@ -78,9 +78,13 @@ public final class PagePrintDelegation extends AbstractPage {
         } else {
             helper.discloseLabel("radio-account-group");
         }
-
-        helper.addModifyLabelAttr("radio-account-user", "value",
-                PrintDelegationDto.DelegatorAccountEnum.USER.toString());
+        
+        if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_USER_ENABLE)) {
+            helper.addModifyLabelAttr("radio-account-user", "value",
+                    PrintDelegationDto.DelegatorAccountEnum.USER.toString());
+        } else {
+            helper.discloseLabel("radio-account-user");
+        }
 
         helper.encloseLabel("member-copies", txtCopies, cm.isConfigValue(
                 Key.PROXY_PRINT_DELEGATE_MULTIPLE_MEMBER_COPIES_ENABLE));
