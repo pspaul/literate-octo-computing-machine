@@ -185,6 +185,7 @@
                 _userText = quickUserSelected.text;
                 _refresh();
                 _view.enableUI($('.sp-printsite-main-li-user'), true);
+                _panel.UserEdit.userKey = _userKey;
                 _ns.Utils.asyncFoo(function() {
                     $('#sp-btn-user-details').click();
                 });

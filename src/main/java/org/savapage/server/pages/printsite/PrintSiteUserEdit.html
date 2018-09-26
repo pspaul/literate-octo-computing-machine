@@ -19,7 +19,7 @@
 	<ul data-role="listview" data-inset="true">
 
 		<li data-role="list-divider">
-			<h3 id="user-userid-txt" />
+			<h3 wicket:id="user-userid" />
 		</li>
 
 		<wicket:enclosure child="internal-user-ind">
@@ -31,7 +31,7 @@
 				<label for="user-fullname" wicket:id="label-user-fullname" />
 				<input type="text" id="user-fullname" value="" maxlength="128"
 					autofocus autocomplete="off" autocorrect="off" autocapitalize="off"
-					spellcheck="false" />
+					spellcheck="false" wicket:id="input-user-fullname" />
 			</div>
 		</li>
 

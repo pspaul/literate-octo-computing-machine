@@ -21,13 +21,16 @@
  */
 package org.savapage.server.pages.printsite;
 
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dto.CreditLimitDtoEnum;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -43,6 +46,17 @@ public final class PrintSiteUserEdit extends AbstractPrintSitePage {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Database ID as String.
+     */
+    private static final String PAGE_PARM_USERKEY = "userKey";
+
+    /**
+     * .
+     */
+    private static final UserDao USER_DAO =
+            ServiceContext.getDaoContext().getUserDao();
+
     @Override
     protected boolean needMembership() {
         return false;
@@ -56,8 +70,22 @@ public final class PrintSiteUserEdit extends AbstractPrintSitePage {
 
         super(parameters);
 
+        final IRequestParameters parms =
+                getRequestCycle().getRequest().getPostParameters();
+
+        final Long userKey =
+                parms.getParameterValue(PAGE_PARM_USERKEY).toOptionalLong();
+
+        final org.savapage.core.jpa.User dbUser = USER_DAO.findById(userKey);
+
         final MarkupHelper helper = new MarkupHelper(this);
 
+        //
+        helper.addLabel("user-userid", dbUser.getUserId());
+        helper.addModifyLabelAttr("input-user-fullname",
+                MarkupHelper.ATTR_VALUE, dbUser.getFullName());
+
+        //
         helper.addLabel("internal-user-ind", "Interne gebruiker");
         helper.addLabel("label-password", NounEnum.PASSWORD);
 
