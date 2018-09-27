@@ -943,11 +943,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     .createAccountTrxInfoSet(jsonDelegation);
 
             printReq.setNumberOfCopies(infoSet.getUnitTotal());
-
-            if (printReq.getNumberOfCopies() > 1) {
-                printReq.setCollate(true);
-            }
-
             printReq.setAccountTrxInfoSet(infoSet);
         }
         return isDelegatedPrint;

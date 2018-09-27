@@ -6214,7 +6214,7 @@
                         pageScaling : _model.printPageScaling,
                         copies : parseInt(copies, 10),
                         ranges : $('#print-page-ranges').val(),
-                        collate : isDelegation ? true : collate,
+                        collate : collate,
                         removeGraphics : removeGraphics,
                         ecoprint : ecoprint,
                         clearScope : clearScope,
