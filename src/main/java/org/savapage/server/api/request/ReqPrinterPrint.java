@@ -374,6 +374,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return accountId;
         }
 
+        @SuppressWarnings("unused")
         public void setAccountId(Long accountId) {
             this.accountId = accountId;
         }
@@ -385,6 +386,24 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                             || !this.delegation.getUsers().isEmpty()
                             || !this.delegation.getCopies().isEmpty());
         }
+    }
+
+    /**
+     * Trims and optionally sanitizes the print job name.
+     *
+     * @param cm
+     *            The config manager.
+     * @param jobName
+     *            The print job name.
+     * @return Trimmed and sanitized job name.
+     */
+    private static String sanitizeIppJobName(final ConfigManager cm,
+            final String jobName) {
+
+        if (cm.isConfigValue(Key.IPP_JOB_NAME_SPACE_TO_UNDERSCORE_ENABLE)) {
+            return jobName.trim().replaceAll("\\s+", "_");
+        }
+        return jobName.trim();
     }
 
     @Override
@@ -406,6 +425,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         final boolean isJobTicket = BooleanUtils.isTrue(dtoReq.getJobTicket());
 
         final ConfigManager cm = ConfigManager.instance();
+
+        // First action.
+        dtoReq.setJobName(sanitizeIppJobName(cm, dtoReq.getJobName()));
 
         // INVARIANT
         if (isJobTicket && cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE)
