@@ -23,6 +23,7 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,7 @@ import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.attribute.syntax.IppKeyword;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.ipp.helpers.IppOptionMap;
+import org.savapage.core.ipp.rules.IppRuleValidationException;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
 import org.savapage.core.msg.UserMsgIndicator;
@@ -178,11 +180,13 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
          *            The operator.
          * @param printer
          *            The printer.
+         * @param locale
+         *            The {@link Locale}.
          * @return The parameter object.
          */
         @JsonIgnore
         public JobTicketExecParms createExecParms(final String operator,
-                final Printer printer) {
+                final Printer printer, final Locale locale) {
 
             final JobTicketExecParms parms = new JobTicketExecParms();
 
@@ -193,6 +197,7 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
             parms.setIppOutputBin(this.getOutputBin());
             parms.setIppJogOffset(this.getJogOffset());
             parms.setFileName(this.getJobFileName());
+            parms.setLocale(locale);
 
             return parms;
         }
@@ -269,8 +274,8 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
                     return;
                 }
 
-                final JobTicketExecParms parms =
-                        dtoReq.createExecParms(requestingUser, printer);
+                final JobTicketExecParms parms = dtoReq
+                        .createExecParms(requestingUser, printer, getLocale());
 
                 /*
                  * INVARIANT: When org.savapage-job-sheet is specified,
@@ -331,6 +336,8 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
 
         } catch (IppConnectException e) {
             this.setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
+        } catch (IppRuleValidationException e) {
+            this.setApiResultText(ApiResultCodeEnum.WARN, e.getMessage());
         }
     }
 
