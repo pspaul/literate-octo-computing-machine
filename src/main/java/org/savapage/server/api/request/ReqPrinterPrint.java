@@ -1236,10 +1236,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *            The proxy printer.
      * @param ippOptions
      *            The IPP attribute key/choices.
-     * @param costResult
-     *            The calculated cost result.
-     * @param isJobTicket
-     *            {@code true} when these are Job Ticket options.
      * @return {@code true} when choices are valid.
      */
     private boolean validateOptions(final JsonProxyPrinter proxyPrinter,
