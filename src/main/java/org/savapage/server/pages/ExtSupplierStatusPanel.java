@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@
  * address: info@datraverse.com
  */
 package org.savapage.server.pages;
+
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -58,13 +60,18 @@ public final class ExtSupplierStatusPanel extends Panel {
      *            The supplier.
      * @param extSupplierStatus
      *            The status.
+     * @param extSupplierStatusText
+     *            Extra status text.
      * @param extPrintManager
      *            The external print manager, e.g.
-     *            {@link ThirdPartyEnum#PAPERCUT}.
+     *            {@link ThirdPartyEnum#PAPERCUT}. Can be {@code null}.
+     * @param locale
+     *            The Locale.
      */
     public void populate(final ExternalSupplierEnum supplier,
             final ExternalSupplierStatusEnum extSupplierStatus,
-            final ThirdPartyEnum extPrintManager) {
+            final String extSupplierStatusText,
+            final ThirdPartyEnum extPrintManager, final Locale locale) {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
@@ -100,10 +107,23 @@ public final class ExtSupplierStatusPanel extends Panel {
         if (extSupplierStatus == null) {
             helper.discloseLabel("extStatus");
         } else {
-            helper.encloseLabel("extStatus",
-                    extSupplierStatus.uiText(getLocale()), true)
-                    .add(new AttributeModifier("class",
-                            MarkupHelper.getCssTxtClass(extSupplierStatus)));
+            final String cssClass =
+                    MarkupHelper.getCssTxtClass(extSupplierStatus);
+
+            helper.encloseLabel("extStatus", extSupplierStatus.uiText(locale),
+                    true)
+                    .add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
+                            cssClass));
+
+            if (StringUtils.isBlank(extSupplierStatusText)) {
+                helper.discloseLabel("extStatusText");
+            } else {
+                helper.encloseLabel("extStatusText", extSupplierStatusText,
+                        true)
+                        .add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
+                                cssClass));
+            }
+
         }
 
     }

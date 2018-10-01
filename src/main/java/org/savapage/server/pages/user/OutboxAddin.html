@@ -34,6 +34,16 @@
 				wicket:id="jobticket-type-copy" />
 		</wicket:enclosure>
 		<wicket:enclosure child="job-state-ind">
+			<wicket:enclosure child="job-state-duration-ext">
+				<div class="sp-jobticket-state-ind">
+					<span style="font-size: 90%;" wicket:id="job-state-duration-ext" />
+				</div>
+			</wicket:enclosure>
+			<wicket:enclosure child="job-state-duration">
+				<div class="sp-jobticket-state-ind">
+					<span style="font-size: 90%;" wicket:id="job-state-duration" />
+				</div>
+			</wicket:enclosure>
 			<div class="sp-jobticket-state-ind">
 				<span wicket:id="job-state-ind" />
 			</div>
@@ -98,6 +108,11 @@
 		<wicket:enclosure child="job-id"> &bull; <span
 				wicket:id="job-printer" />  &bull; <wicket:message key="job-id" />
 			<span wicket:id="job-id" /> &bull; <span wicket:id="job-state" />
+		</wicket:enclosure>
+
+		<wicket:enclosure child="job-creation-time">  &bull;
+			<span wicket:id="job-creation-since" />
+			<span wicket:id="job-creation-time" />
 		</wicket:enclosure>
 
 		<wicket:enclosure child="job-completed-time"> &bull; <span
@@ -207,7 +222,7 @@
 
 		<wicket:enclosure child="button-account-trx-info-job">
 			<button data-savapage="the-unique-filename" data-rel="popup"
-				data-position-to="origin" data-transition="pop" data-arrow="t" 
+				data-position-to="origin" data-transition="pop" data-arrow="t"
 				class="sp-outbox-account-trx-info-job ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-user"
 				wicket:id="button-account-trx-info-job" />
 		</wicket:enclosure>

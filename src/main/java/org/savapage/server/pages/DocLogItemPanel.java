@@ -161,7 +161,7 @@ public class DocLogItemPanel extends Panel {
             final ExtSupplierStatusPanel panel =
                     new ExtSupplierStatusPanel("extSupplierPanel");
             panel.populate(obj.getExtSupplier(), obj.getExtSupplierStatus(),
-                    null);
+                    null, null, locale);
             add(panel);
         } else {
             helper.discloseLabel("extSupplierPanel");
@@ -446,8 +446,8 @@ public class DocLogItemPanel extends Panel {
                     helper.discloseLabel("img-job-sheet");
                 }
 
-                mapVisible.put(
-                        "printoutMode", String
+                mapVisible
+                        .put("printoutMode", String
                                 .format("%s %s %s %s",
                                         obj.getPrintMode().uiText(getLocale()),
                                         StringUtils.defaultString(ticketNumber),
@@ -480,24 +480,21 @@ public class DocLogItemPanel extends Panel {
                                     IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_INT_PAGE_ROTATE180));
                 }
                 if (obj.isFinishingPunch()) {
-                    mapVisible.put("punch",
-                            uiIppKeywordValue(locale,
-                                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH,
-                                    obj));
+                    mapVisible.put("punch", uiIppKeywordValue(locale,
+                            IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH,
+                            obj));
                 }
                 if (obj.isFinishingStaple()) {
-                    mapVisible.put("staple",
-                            uiIppKeywordValue(locale,
-                                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE,
-                                    obj));
+                    mapVisible.put("staple", uiIppKeywordValue(locale,
+                            IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE,
+                            obj));
                 }
                 if (obj.isFinishingFold()) {
-                    mapVisible.put("fold",
-                            String.format("%s %s",
-                                    helper.localized(PrintOutVerbEnum.FOLD),
-                                    uiIppKeywordValue(locale,
-                                            IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_FOLD,
-                                            obj)));
+                    mapVisible.put("fold", String.format("%s %s",
+                            helper.localized(PrintOutVerbEnum.FOLD),
+                            uiIppKeywordValue(locale,
+                                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_FOLD,
+                                    obj)));
                 }
                 if (obj.isFinishingBooklet()) {
                     mapVisible.put("booklet",
