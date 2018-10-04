@@ -29,6 +29,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -722,7 +723,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         /*
          * INVARIANT:
          */
-        if (!validateOptions(proxyPrinter, printReq.getOptionValues())) {
+        if (!validateOptions(dtoReq, proxyPrinter)) {
             return;
         }
 
@@ -1232,17 +1233,38 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      * {@link #setApiResultText(ApiResultCodeEnum, String)} is called with
      * {@link ApiResultCodeEnum#WARN}.
      *
+     * @param dtoReq
+     *            The user request.
      * @param proxyPrinter
      *            The proxy printer.
-     * @param ippOptions
-     *            The IPP attribute key/choices.
      * @return {@code true} when choices are valid.
      */
-    private boolean validateOptions(final JsonProxyPrinter proxyPrinter,
-            final Map<String, String> ippOptions) {
+    private boolean validateOptions(final DtoReq dtoReq,
+            final JsonProxyPrinter proxyPrinter) {
 
+        final Map<String, String> optionsWrk = new HashMap<>();
+
+        if (dtoReq.getOptions() != null) {
+            optionsWrk.putAll(dtoReq.getOptions());
+        }
+
+        // Add "external" options.
+        optionsWrk.put(IppDictJobTemplateAttr.ATTR_COPIES,
+                String.valueOf(dtoReq.getCopies().toString()));
+
+        if (dtoReq.getCollate() != null) {
+            if (dtoReq.getCollate().booleanValue()) {
+                optionsWrk.put(IppDictJobTemplateAttr.ATTR_SHEET_COLLATE,
+                        IppKeyword.SHEET_COLLATE_COLLATED);
+            } else {
+                optionsWrk.put(IppDictJobTemplateAttr.ATTR_SHEET_COLLATE,
+                        IppKeyword.SHEET_COLLATE_UNCOLLATED);
+            }
+        }
+
+        // Validate.
         final String msg = PROXY_PRINT_SERVICE
-                .validateContraintsMsg(proxyPrinter, ippOptions, getLocale());
+                .validateContraintsMsg(proxyPrinter, optionsWrk, getLocale());
         if (msg != null) {
             setApiResultText(ApiResultCodeEnum.WARN, msg);
             return false;
