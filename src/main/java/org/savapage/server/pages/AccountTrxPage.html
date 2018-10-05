@@ -3,7 +3,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -36,6 +36,10 @@
 
 			<div class="sp-txt-wrap">
 
+				<wicket:enclosure child="balance-savapage-icon">
+					<img wicket:id="balance-savapage-icon" height="12" />
+				</wicket:enclosure>
+
 				<span wicket:id="balance" />
 
 				<wicket:enclosure child="amount">
@@ -45,7 +49,6 @@
 				<wicket:enclosure child="amount-refund">
             &bull; <span class="sp-txt-warn" wicket:id="amount-refund" />
 				</wicket:enclosure>
-
 
 				<wicket:enclosure child="paymentMethod">
                     &bull; <span wicket:id="paymentMethod" />

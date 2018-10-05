@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!-- 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
+    -->
+</wicket:remove>
+
+<span style="display: none;" class="json-rsp" wicket:id="json-rsp"></span>
+
+<wicket:panel wicket:id="nav-bar-1" />
+<br />
+<div>
+	<ul data-role="listview" data-filter="false">
+		<li wicket:id="log-entry-view">
+
+			<h3 wicket:id="trx-type" />
+
+			<div class="sp-txt-wrap">
+				<img wicket:id="papercut-icon" height="12" />
+				<span wicket:id="balance" /> &bull; <span wicket:id="amount" />
+				<wicket:enclosure child="document">	&bull; <span
+						wicket:id="document" />
+				</wicket:enclosure>
+				<wicket:enclosure child="comment"> <br/> <span
+						wicket:id="comment" />
+				</wicket:enclosure>
+			</div>
+
+			<p class="ui-li-aside">
+				<span wicket:id="trxDate" />
+				<br>
+				<span wicket:id="trxActor" />
+			</p>
+		</li>
+	</ul>
+</div>
+<p>&nbsp;</p>
+<wicket:panel wicket:id="nav-bar-2" />
+</html>

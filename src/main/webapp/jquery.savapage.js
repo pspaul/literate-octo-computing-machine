@@ -787,7 +787,7 @@
                 select : {
                     user_id : null,
                     account_id : null,
-                    // See Java: org.savapage.core.jpa.AccountTrx.TrxType
+                    // See Java: org.savapage.core.dao.enums.AccountTrxTypeEnum
                     trxType : null,
                     date_from : null,
                     date_to : null,
@@ -852,6 +852,154 @@
                     return false;
                 });
 
+            }
+        };
+
+        /**
+         *
+         */
+        _ns.PanelPaperCutAccountTrxBase = {
+
+            // The HTML id attribute of the Panel.
+            jqId : null,
+
+            applyDefaults : function(my) {
+
+                my.input.page = 1;
+                my.input.maxResults = 10;
+
+                my.input.select.user_id = null;
+
+                my.input.select.text = null;
+
+                my.input.select.trxType = null;
+                my.input.select.date_from = null;
+                my.input.select.date_to = null;
+
+                my.input.sort.field = 'TRX_DATE';
+                my.input.sort.ascending = false;
+
+            },
+
+            beforeload : function(my) {
+                my.applyDefaults(my);
+            },
+
+            afterload : function(my) {
+                var _view = _ns.PanelCommon.view;
+
+                _view.mobipick($("#sp-accounttrx-date-from-pc"));
+                _view.mobipick($("#sp-accounttrx-date-to-pc"));
+
+                my.m2v(my);
+                my.page(my, my.input.page);
+            },
+
+            m2v : function(my) {
+                var _view = _ns.PanelCommon.view;
+
+                $('#sp-accounttrx-containing-text-pc').val('');
+
+                _view.checkRadio('sp-accounttrx-select-type-pc', 'sp-accounttrx-select-type-all-pc');
+
+                _view.mobipickSetDate($('#sp-accounttrx-date-from-pc'), my.input.select.date_from);
+                _view.mobipickSetDate($('#sp-accounttrx-date-to-pc'), my.input.select.date_to);
+
+                _view.checkRadio('sp-accounttrx-sort-by-pc', 'sp-accounttrx-sort-by-date-pc');
+                _view.checkRadio('sp-accounttrx-sort-dir-pc', 'sp-accounttrx-sort-dir-desc-pc');
+            },
+
+            v2m : function(my) {
+                var _view = _ns.PanelCommon.view,
+                    sel = $('#sp-accounttrx-date-from-pc'),
+                    date = _view.mobipickGetDate(sel),
+                    val,
+                    present = (sel.val().length > 0);
+
+                my.input.select.date_from = ( present ? date.getTime() : null);
+
+                my.input.select.user_id = $('#sp-accounttrx-hidden-user-id-pc').val();
+
+                val = _view.getRadioValue('sp-accounttrx-select-type-pc');
+                present = (val.length > 0);
+                my.input.select.trxType = ( present ? val : null);
+
+                sel = $('#sp-accounttrx-date-to-pc');
+                date = _view.mobipickGetDate(sel);
+                present = (sel.val().length > 0);
+                my.input.select.date_to = ( present ? date.getTime() : null);
+
+                sel = $('#sp-accounttrx-containing-text-pc');
+                present = (sel.val().length > 0);
+                my.input.select.text = ( present ? sel.val() : null);
+
+                my.input.sort.field = _view.getRadioValue('sp-accounttrx-sort-by-pc');
+                my.input.sort.ascending = _view.isRadioIdSelected('sp-accounttrx-sort-dir-pc', 'sp-accounttrx-sort-dir-asc-pc');
+
+            },
+
+            // JSON input
+            input : {
+                page : 1,
+                maxResults : 10,
+                select : {
+                    user_id : null,
+                    // org.savapage.ext.papercut.PapercutAccountTrx.TrxType
+                    trxType : null,
+                    date_from : null,
+                    date_to : null,
+                    text : null
+                },
+                sort : {
+                    // org.savapage.ext.papercut.PaperCutDb.Field
+                    field : 'TRX_DATE',
+                    ascending : false
+                }
+            },
+
+            // JSON output
+            output : {
+                lastPage : null,
+                nextPage : null,
+                prevPage : null
+            },
+
+            refresh : function(my, skipBeforeLoad) {
+                _ns.PanelCommon.refreshPanelCommon('PaperCutAccountTrxBase', skipBeforeLoad, my);
+            },
+
+            // show page
+            page : function(my, nPage) {
+                _ns.PanelCommon.onValidPage(function() {
+                    my.input.page = nPage;
+                    my.v2m(my);
+                    _ns.PanelCommon.loadListPageCommon(my, 'PaperCutAccountTrxPage', '#sp-accounttrx-list-page-pc');
+                });
+            },
+
+            getInput : function(my) {
+                return my.input;
+            },
+
+            onOutput : function(my, output) {
+
+                my.output = output;
+                /*
+                 * NOTICE the $().one() construct. Since the page get
+                 * reloaded all the time, we want a single-shot binding.
+                 */
+                $(".sp-accounttrx-page-pc").one('click', null, function() {
+                    my.page(my, parseInt($(this).text(), 10));
+                    return false;
+                });
+                $(".sp-accounttrx-page-pc-next").one('click', null, function() {
+                    my.page(my, my.output.nextPage);
+                    return false;
+                });
+                $(".sp-accounttrx-page-pc-prev").one('click', null, function() {
+                    my.page(my, my.output.prevPage);
+                    return false;
+                });
             }
         };
 

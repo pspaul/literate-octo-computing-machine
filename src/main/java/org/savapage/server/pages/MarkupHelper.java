@@ -37,6 +37,7 @@ import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
@@ -469,6 +470,24 @@ public final class MarkupHelper {
         add(label);
         return label;
     }
+
+    /**
+     * Adds a Adjective label.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param adjective
+     *            The {@link AdjectiveEnum}.
+     * @return The added {@link Label}.
+     */
+    public Label addLabel(final String wicketId,
+            final AdjectiveEnum adjective) {
+        final Label label = new Label(wicketId,
+                adjective.uiText(this.container.getLocale()));
+        add(label);
+        return label;
+    }
+
     /**
      * Adds a phrase label.
      *

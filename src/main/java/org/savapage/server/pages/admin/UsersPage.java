@@ -37,6 +37,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserPagerReq;
 import org.savapage.core.i18n.AdjectiveEnum;
@@ -44,10 +45,13 @@ import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroupMember;
 import org.savapage.core.services.AccessControlService;
-import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserAccountContext;
+import org.savapage.core.services.UserAccountContextFactory;
 import org.savapage.core.services.UserService;
+import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.util.NumberUtil;
+import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
@@ -70,11 +74,6 @@ public final class UsersPage extends AbstractAdminListPage {
             ServiceContext.getServiceFactory().getAccessControlService();
 
     /** */
-    private static final AccountingService ACCOUNTING_SERVICE =
-            ServiceContext.getServiceFactory().getAccountingService();
-    /**
-     *
-     */
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
 
@@ -115,6 +114,12 @@ public final class UsersPage extends AbstractAdminListPage {
         private final String currencySymbol;
 
         /** */
+        private final UserAccountContext accountCtxSavaPage;
+
+        /** */
+        private final UserAccountContext accountCtxPaperCut;
+
+        /** */
         private static final String WID_BUTTON_LOG = "button-log";
         /** */
         private static final String WID_BUTTON_TRX = "button-transaction";
@@ -144,6 +149,12 @@ public final class UsersPage extends AbstractAdminListPage {
 
             this.hasAccessTrx = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
                     ACLOidEnum.A_TRANSACTIONS);
+
+            this.accountCtxSavaPage =
+                    UserAccountContextFactory.getContextSavaPage();
+
+            this.accountCtxPaperCut =
+                    UserAccountContextFactory.getContextPaperCut();
         }
 
         /**
@@ -174,7 +185,6 @@ public final class UsersPage extends AbstractAdminListPage {
             final MarkupHelper helper = new MarkupHelper(item);
 
             final Map<String, String> mapVisible = new HashMap<>();
-            mapVisible.put("balance-currency", null);
 
             final User user = item.getModelObject();
 
@@ -278,10 +288,26 @@ public final class UsersPage extends AbstractAdminListPage {
             /*
              * Balance
              */
-            mapVisible.put("balance-currency", this.currencySymbol);
+            item.add(new Label("balance-amount",
+                    this.accountCtxSavaPage.getFormattedUserBalance(user,
+                            getLocale(), this.currencySymbol)));
 
-            item.add(new Label("balance-amount", ACCOUNTING_SERVICE
-                    .getFormattedUserBalance(user, getLocale(), null)));
+            if (this.accountCtxPaperCut == null) {
+                mapVisible.put("balance-amount-papercut", null);
+            } else {
+                helper.addTransparant("balance-papercut-icon")
+                        .add(new AttributeModifier(MarkupHelper.ATTR_SRC,
+                                WebApp.getThirdPartyEnumImgUrl(
+                                        ThirdPartyEnum.PAPERCUT)));
+                mapVisible.put("balance-amount-papercut",
+                        this.accountCtxPaperCut.getFormattedUserBalance(user,
+                                getLocale(), this.currencySymbol));
+
+                helper.addTransparant("balance-savapage-icon")
+                        .add(new AttributeModifier(MarkupHelper.ATTR_SRC,
+                                WebApp.getExtSupplierEnumImgUrl(
+                                        ExternalSupplierEnum.SAVAPAGE)));
+            }
 
             /*
              * Period + Totals

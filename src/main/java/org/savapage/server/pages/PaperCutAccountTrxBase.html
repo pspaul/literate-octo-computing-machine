@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
+
+<input type="hidden" value="the-user-id"
+	id="sp-accounttrx-hidden-user-id-pc" wicket:id="hidden-user-id" />
+
+<ul data-role="listview" data-inset="true">
+
+	<li data-role="list-divider">
+		<wicket:enclosure child="select-and-sort-user">
+			<span wicket:id="prompt-user" />:&nbsp;<span
+				wicket:id="select-and-sort-user" />
+		</wicket:enclosure>
+		&bull;&nbsp; <span wicket:id="prompt-transactions" />
+	</li>
+
+	<li>
+		<div data-role="collapsible" data-collapsed="true">
+
+			<h3 wicket:id="select-and-sort" />
+
+			<ul data-role="listview" data-inset="true">
+
+				<li>
+					<label for="sp-accounttrx-containing-text-pc"
+						wicket:id="prompt-comment-containing-text" />
+					<input type="text" id="sp-accounttrx-containing-text-pc" value=""
+						maxlength="128" data-clear-btn="true" autocomplete="off"
+						autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+					<fieldset data-role="controlgroup" data-type="horizontal"
+						class="ui-mini">
+
+						<legend wicket:id="prompt-type-select" />
+
+						<label for="sp-accounttrx-select-type-all-pc"> - </label>
+						<input type="radio" name="sp-accounttrx-select-type-pc"
+							id="sp-accounttrx-select-type-all-pc" value="" checked="checked" />
+
+						<label for="sp-accounttrx-select-type-initial-pc"
+							wicket:id="type-initial" />
+						<input type="radio" name="sp-accounttrx-select-type-pc"
+							id="sp-accounttrx-select-type-initial-pc"
+							wicket:id="accounttrx-select-type-initial" value="enum" />
+
+						<label for="sp-accounttrx-select-type-adjust"
+							wicket:id="type-adjust" />
+						<input type="radio" name="sp-accounttrx-select-type-pc"
+							id="sp-accounttrx-select-type-adjust"
+							wicket:id="accounttrx-select-type-adjust" value="enum" />
+
+						<label for="sp-accounttrx-select-type-print-pc"
+							wicket:id="type-print" />
+						<input type="radio" name="sp-accounttrx-select-type-pc"
+							id="sp-accounttrx-select-type-print-pc"
+							wicket:id="accounttrx-select-type-print" value="enum" />
+
+						<label for="sp-accounttrx-select-type-print-refund-pc"
+							wicket:id="type-print-refund" />
+						<input type="radio" name="sp-accounttrx-select-type-pc"
+							id="sp-accounttrx-select-type-print-refund-pc"
+							wicket:id="accounttrx-select-type-print-refund" value="enum" />
+
+						<label for="sp-accounttrx-select-type-web-cashier-pc"
+							wicket:id="type-web-cashier" />
+						<input type="radio" name="sp-accounttrx-select-type-pc"
+							id="sp-accounttrx-select-type-web-cashier-pc"
+							wicket:id="accounttrx-select-type-web-cashier" value="enum" />
+
+					</fieldset>
+				</li>
+
+				<li>
+					<span wicket:id="prompt-period" />
+
+					<div class="ui-field-contain">
+						<label for="sp-accounttrx-date-from-pc"
+							wicket:id="prompt-period-from" />
+						<input id="sp-accounttrx-date-from-pc" data-clear-btn="true" />
+					</div>
+
+					<div class="ui-field-contain">
+						<label for="sp-accounttrx-date-to-pc" wicket:id="prompt-period-to" />
+						<input id="sp-accounttrx-date-to-pc" data-clear-btn="true" />
+					</div>
+				</li>
+
+				<li>
+					<fieldset data-role="controlgroup" data-type="horizontal"
+						class="ui-mini">
+						<legend wicket:id="prompt-sort-by" />
+
+						<label for="sp-accounttrx-sort-by-date-pc"
+							wicket:id="sort-by-date" />
+						<input type="radio" name="sp-accounttrx-sort-by-pc"
+							wicket:id="sort-by-date-input" id="sp-accounttrx-sort-by-date-pc"
+							checked="checked" value="TRX_DATE" />
+
+						<label for="sp-accounttrx-sort-by-type-pc"
+							wicket:id="sort-by-type" />
+						<input type="radio" name="sp-accounttrx-sort-by-pc"
+							wicket:id="sort-by-type-input" id="sp-accounttrx-sort-by-type-pc"
+							value="TRX_TYPE" />
+
+						<label for="sp-accounttrx-sort-dir-asc-pc" wicket:id="sort-asc" />
+						<input type="radio" name="sp-accounttrx-sort-dir-pc"
+							id="sp-accounttrx-sort-dir-asc-pc" checked="checked" />
+
+						<label for="sp-accounttrx-sort-dir-desc-pc" wicket:id="sort-desc" />
+						<input type="radio" name="sp-accounttrx-sort-dir-pc"
+							id="sp-accounttrx-sort-dir-desc-pc" />
+
+					</fieldset>
+				</li>
+
+				<li>
+					<div data-role="controlgroup" data-type="horizontal">
+
+						<button id="sp-btn-accounttrx-apply-pc"
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+							wicket:id="button-apply" />
+
+						<button id="sp-btn-accounttrx-default-pc"
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+							wicket:id="button-default" />
+
+						<button
+							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</button>
+
+					</div>
+				</li>
+			</ul>
+		</div>
+	</li>
+
+	<li id="sp-accounttrx-list-page-pc"></li>
+
+</ul>
+</html>

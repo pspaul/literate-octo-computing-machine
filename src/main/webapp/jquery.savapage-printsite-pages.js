@@ -70,6 +70,7 @@
                 UserOutbox : _ns.PanelUserOutbox,
                 DocLogBase : _ns.PanelDocLogBase,
                 AccountTrxBase : _ns.PanelAccountTrxBase,
+                PaperCutAccountTrxBase : _ns.PanelPaperCutAccountTrxBase,
                 Dashboard : _ns.PanelDashboard,
                 UserEdit : _ns.PanelUserEdit
             };
@@ -368,6 +369,33 @@
 
                 $(this).on('click', ".sp-download-receipt", null, function() {
                     _self.onDownload("pos-receipt-download", null, $(this).attr('data-savapage'));
+                    return false;
+                });
+
+                /*
+                 * PaperCutAccountTrx Panel
+                 */
+                $(this).on('click', '#sp-btn-user-trx-pc', null, function() {
+                    var pnl = _panel.PaperCutAccountTrxBase;
+                    //pnl.applyDefaultForPrintSite(pnl);
+                    pnl.input.select.user_id = _userKey;
+
+                    // HACK: hidden field is present/set in THIS container.
+                    $('#sp-accounttrx-hidden-user-id-pc').val(_userKey);
+                    pnl.refresh(pnl, true);
+                    return false;
+                });
+
+                $(this).on('click', '#sp-btn-accounttrx-apply-pc', null, function() {
+                    var pnl = _panel.PaperCutAccountTrxBase;
+                    pnl.page(pnl, 1);
+                    return false;
+                });
+
+                $(this).on('click', '#sp-btn-accounttrx-default-pc', null, function() {
+                    var pnl = _panel.PaperCutAccountTrxBase;
+                    pnl.applyDefaults(pnl);
+                    pnl.m2v(pnl);
                     return false;
                 });
 

@@ -35,12 +35,15 @@ import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.helpers.AccountPagerReq;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserAccountContextFactory;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -87,10 +90,24 @@ public final class AccountsPage extends AbstractAdminListPage {
         /** */
         private static final String WID_BUTTON_TRX = "button-transaction";
 
+        /** */
+        private static final String WID_ACCOUNT_NAME = "accountName";
+
+        /** */
+        private static final String WID_ACCOUNT_NAME_PARENT =
+                "accountNameParent";
+
+        /** */
+        private static final String WID_BALANCE_SAVAPAGE_ICON =
+                "balance-savapage-icon";
+
         /***/
         private final boolean isEditor;
         /***/
         private final boolean hasAccessTrx;
+
+        /** */
+        private final boolean hasPaperCutUserAccountView;
 
         /**
          * .
@@ -106,6 +123,8 @@ public final class AccountsPage extends AbstractAdminListPage {
             this.isEditor = isEditor;
             this.hasAccessTrx = ACCESS_CONTROL_SERVICE.hasAccess(
                     SpSession.get().getUser(), ACLOidEnum.A_TRANSACTIONS);
+            this.hasPaperCutUserAccountView =
+                    UserAccountContextFactory.hasContextPaperCut();
         }
 
         @Override
@@ -116,16 +135,17 @@ public final class AccountsPage extends AbstractAdminListPage {
             Label labelWrk = null;
 
             if (account.getParent() == null) {
-                labelWrk = new Label("accountNameParent", account.getName());
+                labelWrk =
+                        new Label(WID_ACCOUNT_NAME_PARENT, account.getName());
                 item.add(labelWrk);
-                labelWrk = new Label("accountName", "");
+                labelWrk = new Label(WID_ACCOUNT_NAME, "");
                 item.add(labelWrk);
             } else {
-                labelWrk = new Label("accountNameParent",
+                labelWrk = new Label(WID_ACCOUNT_NAME_PARENT,
                         account.getParent().getName());
                 item.add(labelWrk);
 
-                labelWrk = new Label("accountName",
+                labelWrk = new Label(WID_ACCOUNT_NAME,
                         String.format("%s %s",
                                 MarkupHelper.HTML_ENT_OBL_ANGLE_OPENING_UP,
                                 account.getName()));
@@ -140,7 +160,7 @@ public final class AccountsPage extends AbstractAdminListPage {
                     .getEnum(AccountTypeEnum.class, account.getAccountType());
 
             labelWrk = new Label("accountImage", "");
-            labelWrk.add(new AttributeModifier("src",
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_SRC,
                     MarkupHelper.getImgUrlPath(accountType)));
             item.add(labelWrk);
 
@@ -163,8 +183,10 @@ public final class AccountsPage extends AbstractAdminListPage {
                 signal = localized(signalKey);
             }
             labelWrk = new Label("signal", signal);
-            labelWrk.add(new AttributeModifier("class", color));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, color));
             item.add(labelWrk);
+
+            final MarkupHelper helper = new MarkupHelper(item);
 
             /*
              * Balance
@@ -177,11 +199,20 @@ public final class AccountsPage extends AbstractAdminListPage {
                                 ServiceContext.getAppCurrencySymbol(), true));
 
                 if (account.getBalance().compareTo(BigDecimal.ZERO) < 0) {
-                    labelWrk.add(new AttributeModifier("class",
+                    labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
                             MarkupHelper.CSS_AMOUNT_MIN));
                 }
 
                 item.add(labelWrk);
+
+                if (this.hasPaperCutUserAccountView) {
+                    helper.addTransparant(WID_BALANCE_SAVAPAGE_ICON)
+                            .add(new AttributeModifier(MarkupHelper.ATTR_SRC,
+                                    WebApp.getExtSupplierEnumImgUrl(
+                                            ExternalSupplierEnum.SAVAPAGE)));
+                } else {
+                    helper.discloseLabel(WID_BALANCE_SAVAPAGE_ICON);
+                }
 
             } catch (ParseException e) {
                 throw new SpException(e.getMessage());
@@ -205,8 +236,6 @@ public final class AccountsPage extends AbstractAdminListPage {
              * Set the uid in 'data-savapage' attribute, so it can be picked up
              * in JavaScript for editing.
              */
-            final MarkupHelper helper = new MarkupHelper(item);
-
             if (this.isEditor) {
                 helper.addModifyLabelAttr(WID_BUTTON_EDIT,
                         getLocalizer().getString("button-edit", this),

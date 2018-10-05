@@ -28,12 +28,16 @@
 			</h3>
 			<div class="sp-txt-wrap" wicket:id="period" />
 			<div class="sp-txt-wrap">
+				<wicket:enclosure child="balance-savapage-icon">
+					<img wicket:id="balance-savapage-icon" height="12" />
+				</wicket:enclosure>
 				<span wicket:id="balance-amount" />
 			</div>
 			<p class="ui-li-aside">
 				<strong wicket:id="signal"></strong>
 			</p>
-			<div data-role="controlgroup" data-type="horizontal" wicket:id="button-group">
+			<div data-role="controlgroup" data-type="horizontal"
+				wicket:id="button-group">
 				<wicket:enclosure child="button-edit">
 					<button data-savapage="the-id"
 						class="sp-edit-shared-account ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-edit"
