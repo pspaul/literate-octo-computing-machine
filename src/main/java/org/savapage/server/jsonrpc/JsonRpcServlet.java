@@ -396,7 +396,10 @@ public final class JsonRpcServlet extends HttpServlet
 
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INVALID_REQUEST, "Access denied.",
-                    "Client must be localhost.");
+                    String.format(
+                            "Client [%s] must be on same platform "
+                                    + "as server [%s].",
+                            clientAddress, serverAdress));
         }
 
         /*
