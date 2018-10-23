@@ -870,11 +870,14 @@ public class OutboxAddin extends AbstractUserPage {
                     extSupplierStatusText = null;
                 }
 
-                panelExtPrintStatus.populate(supplier, extPrintStatus,
-                        extSupplierStatusText,
-                        PROXYPRINT_SERVICE.getExtPrinterManager(
-                                printOut.getPrinter().getPrinterName()),
-                        locale);
+                // Check if external print status monitoring is applicable.
+                if (panelExtPrintStatus != null) {
+                    panelExtPrintStatus.populate(supplier, extPrintStatus,
+                            extSupplierStatusText,
+                            PROXYPRINT_SERVICE.getExtPrinterManager(
+                                    printOut.getPrinter().getPrinterName()),
+                            locale);
+                }
             }
 
             if (panelExtPrintStatus == null) {
