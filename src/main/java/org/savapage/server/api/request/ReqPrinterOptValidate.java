@@ -167,7 +167,9 @@ public final class ReqPrinterOptValidate extends ApiRequestMixin {
             final Map<String, String> options, final String printerName) {
 
         if (requestedMediaSource == null
-                || requestedMediaSource.equals(IppKeyword.MEDIA_SOURCE_AUTO)) {
+                || requestedMediaSource.equals(IppKeyword.MEDIA_SOURCE_AUTO)
+                || requestedMediaSource
+                        .equals(IppKeyword.MEDIA_SOURCE_MANUAL)) {
             return;
         }
 
