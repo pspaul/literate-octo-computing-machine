@@ -856,6 +856,12 @@
                 }
             };
 
+            _view.pages.admin.onI18nCacheClear = function() {
+                _view.showApiMsg(_api.call({
+                    request : 'i18n-cache-clear'
+                }));
+            };
+
             _view.pages.admin.onApplyLocale = function() {
                 var props = {};
                 _fillConfigPropsText(props, ['system.default-locale']);

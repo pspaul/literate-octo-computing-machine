@@ -45,6 +45,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.system.SystemInfo;
 import org.savapage.core.system.SystemInfo.SysctlEnum;
 import org.savapage.core.util.NumberUtil;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.PrinterDriverDownloadPanel;
 
@@ -161,6 +162,9 @@ public final class About extends AbstractAdminPage {
         add(new Label("app.dir.letterheads-key",
                 ConfigManager.SERVER_PROP_APP_DIR_LETTERHEADS));
         add(new Label("app.dir.letterheads", ConfigManager.getLetterheadDir()));
+
+        helper.encloseLabel("btn-i18n-cache-clear",
+                HtmlButtonEnum.CLEAR.uiText(getLocale()), hasEditorAccess);
 
         // ---------- CUPS
         version = PROXY_PRINT_SERVICE.getCupsVersion();

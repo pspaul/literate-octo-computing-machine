@@ -41,6 +41,7 @@ import org.savapage.server.api.request.ReqDeviceGet;
 import org.savapage.server.api.request.ReqDeviceSet;
 import org.savapage.server.api.request.ReqDocLogRefund;
 import org.savapage.server.api.request.ReqGenerateUuid;
+import org.savapage.server.api.request.ReqI18nCacheClear;
 import org.savapage.server.api.request.ReqJobTicketCancel;
 import org.savapage.server.api.request.ReqJobTicketExec;
 import org.savapage.server.api.request.ReqJobTicketPrintCancel;
@@ -140,6 +141,8 @@ public final class JsonApiDict {
     public static final String REQ_GCP_SET_NOTIFICATIONS =
             "gcp-set-notifications";
     public static final String REQ_GET_EVENT = "get-event";
+
+    public static final String REQ_I18N_CACHE_CLEAR = "i18n-cache-clear";
 
     public static final String REQ_IMAP_TEST = "imap-test";
     public static final String REQ_IMAP_START = "imap-start";
@@ -1015,6 +1018,9 @@ public final class JsonApiDict {
 
         usr(REQ_PRINTER_QUICK_SEARCH, ReqPrinterQuickSearch.class, DbClaim.READ,
                 DbAccess.YES);
+
+        adm(REQ_I18N_CACHE_CLEAR, ReqI18nCacheClear.class, DbClaim.NONE,
+                DbAccess.NO);
 
         adm(REQ_PRINTER_SET, ReqPrinterSet.class, DbClaim.READ, DbAccess.YES);
         adm(REQ_PRINTER_SET_MEDIA_COST, DbClaim.READ, DbAccess.YES);

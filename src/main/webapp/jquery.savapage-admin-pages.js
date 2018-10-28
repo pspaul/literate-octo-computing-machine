@@ -2621,6 +2621,14 @@
                     return false;
                 });
 
+                /*
+                 * Info Panel
+                 */
+                $(this).on('click', '#sp-btn-i18n-cache-clear', null, function() {
+                    _self.onI18nCacheClear();
+                    return false;
+                });
+
             });
             return _self;
         };
