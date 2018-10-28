@@ -73,15 +73,30 @@ public final class PagePrintDelegation extends AbstractPage {
         final ConfigManager cm = ConfigManager.instance();
 
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_GROUP_ENABLE)) {
-            helper.addModifyLabelAttr("radio-account-group", "value",
+
+            helper.addModifyLabelAttr("radio-account-group",
+                    MarkupHelper.ATTR_VALUE,
                     PrintDelegationDto.DelegatorAccountEnum.GROUP.toString());
+
+            helper.addModifyLabelAttr("sp-label-invoicing-group",
+                    localized("sp-label-invoicing-group"),
+                    MarkupHelper.ATTR_TITLE,
+                    localized("sp-label-invoicing-group-tooltip"));
+
         } else {
             helper.discloseLabel("radio-account-group");
         }
-        
+
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_USER_ENABLE)) {
-            helper.addModifyLabelAttr("radio-account-user", "value",
+
+            helper.addModifyLabelAttr("radio-account-user",
+                    MarkupHelper.ATTR_VALUE,
                     PrintDelegationDto.DelegatorAccountEnum.USER.toString());
+
+            helper.addModifyLabelAttr("sp-label-invoicing-user",
+                    localized("sp-label-invoicing-user"),
+                    MarkupHelper.ATTR_TITLE,
+                    localized("sp-label-invoicing-user-tooltip"));
         } else {
             helper.discloseLabel("radio-account-user");
         }
@@ -91,8 +106,14 @@ public final class PagePrintDelegation extends AbstractPage {
 
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_ENABLE)) {
 
-            helper.addModifyLabelAttr("radio-account-shared", "value",
+            helper.addModifyLabelAttr("radio-account-shared",
+                    MarkupHelper.ATTR_VALUE,
                     PrintDelegationDto.DelegatorAccountEnum.SHARED.toString());
+
+            helper.addModifyLabelAttr("sp-label-invoicing-shared",
+                    localized("sp-label-invoicing-shared"),
+                    MarkupHelper.ATTR_TITLE,
+                    localized("sp-label-invoicing-shared-tooltip"));
 
             helper.encloseLabel("radio-add-extra", localized("label-add-extra"),
                     true);

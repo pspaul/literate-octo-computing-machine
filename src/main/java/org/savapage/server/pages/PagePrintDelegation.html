@@ -33,9 +33,8 @@
 					<td style="padding-right: 10px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
 							<wicket:enclosure child="radio-account-group">
-								<label for="sp-print-delegation-select-account-group">
-									<wicket:message key="sp-label-invoicing-group" />
-								</label>
+								<label for="sp-print-delegation-select-account-group"
+									wicket:id="sp-label-invoicing-group" />
 								<input type="radio"
 									name="sp-print-delegation-select-account-radio"
 									value="[enum value]" wicket:id="radio-account-group"
@@ -43,19 +42,17 @@
 							</wicket:enclosure>
 
 							<wicket:enclosure child="radio-account-user">
-    							<label for="sp-print-delegation-select-account-user">
-	    							<wicket:message key="sp-label-invoicing-user" />
-		    					</label>
-			    				<input type="radio"
-				    				name="sp-print-delegation-select-account-radio"
-					    			value="[enum value]" wicket:id="radio-account-user"
-						    		id="sp-print-delegation-select-account-user" />
+								<label for="sp-print-delegation-select-account-user"
+									wicket:id="sp-label-invoicing-user" />
+								<input type="radio"
+									name="sp-print-delegation-select-account-radio"
+									value="[enum value]" wicket:id="radio-account-user"
+									id="sp-print-delegation-select-account-user" />
 							</wicket:enclosure>
 
 							<wicket:enclosure child="radio-account-shared">
-								<label for="sp-print-delegation-select-account-shared">
-									<wicket:message key="sp-label-invoicing-shared" />
-								</label>
+								<label for="sp-print-delegation-select-account-shared"
+									wicket:id="sp-label-invoicing-shared" />
 								<input type="radio"
 									name="sp-print-delegation-select-account-radio"
 									value="[enum value]" wicket:id="radio-account-shared"
@@ -253,8 +250,9 @@
 				class="sp-print-delegation-mode-add ui-btn ui-btn-inline ui-no-icon" />
 
 			<div data-role="popup" data-position-to="window"
-				id="sp-print-delegation-popup-add-group-copies" data-overlay-theme="a"
-				data-theme="a" data-dismissible="true" data-arrow="t">
+				id="sp-print-delegation-popup-add-group-copies"
+				data-overlay-theme="a" data-theme="a" data-dismissible="true"
+				data-arrow="t">
 				    
 				<div class="ui-content" style="max-width: 300px;">
 
