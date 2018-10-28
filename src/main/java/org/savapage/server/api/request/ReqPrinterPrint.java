@@ -392,16 +392,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     /**
      * Trims and optionally sanitizes the print job name.
      *
-     * @param cm
-     *            The config manager.
+     * @param sanitize
+     *            If {@code true}, sanitize the job name.
      * @param jobName
      *            The print job name.
      * @return Trimmed and sanitized job name.
      */
-    private static String sanitizeIppJobName(final ConfigManager cm,
+    private static String sanitizeIppJobName(final boolean sanitize,
             final String jobName) {
 
-        if (cm.isConfigValue(Key.IPP_JOB_NAME_SPACE_TO_UNDERSCORE_ENABLE)) {
+        if (sanitize) {
             return jobName.trim().replaceAll("\\s+", "_");
         }
         return jobName.trim();
@@ -427,8 +427,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         final ConfigManager cm = ConfigManager.instance();
 
+        final boolean sanitizeJobName =
+                cm.isConfigValue(Key.IPP_JOB_NAME_SPACE_TO_UNDERSCORE_ENABLE);
+
         // First action.
-        dtoReq.setJobName(sanitizeIppJobName(cm, dtoReq.getJobName()));
+        dtoReq.setJobName(
+                sanitizeIppJobName(sanitizeJobName, dtoReq.getJobName()));
 
         // INVARIANT
         if (isJobTicket && cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE)
@@ -668,6 +672,13 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
                         dtoReq.getPageScaling(), doChunkVanillaJobs,
                         iVanillaJob);
+
+                for (final ProxyPrintJobChunk chk : printReq.getJobChunkInfo()
+                        .getChunks()) {
+                    chk.setJobName(sanitizeIppJobName(sanitizeJobName,
+                            chk.getJobName()));
+                }
+
             } catch (ProxyPrintException e) {
                 if (e.hasLogFileMessage()) {
                     LOGGER.warn(e.getLogFileMessage());
