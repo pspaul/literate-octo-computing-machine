@@ -28,7 +28,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
@@ -39,6 +38,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -157,6 +157,7 @@ import org.savapage.core.services.helpers.IppLogger;
 import org.savapage.core.services.helpers.PageRangeException;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.services.helpers.email.EmailMsgParms;
+import org.savapage.core.users.CommonUserGroup;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
@@ -1296,8 +1297,8 @@ public final class JsonApiServer extends AbstractPage {
 
             return apiResultFromBasicRpcResponse(ACCOUNTING_SERVICE
                     .transferUserCredit(JsonAbstractBase.create(
-                            UserCreditTransferDto.class, getParmValue(
-                                    parameters, isGetAction, "dto"))));
+                            UserCreditTransferDto.class,
+                            getParmValue(parameters, isGetAction, "dto"))));
 
         case JsonApiDict.REQ_USER_MONEY_TRANSFER_REQUEST:
 
@@ -3741,10 +3742,19 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqUserSourceGroups(final String user) {
 
-        Map<String, Object> userData = new HashMap<String, Object>();
+        final Map<String, Object> userData = new HashMap<String, Object>();
 
-        userData.put("groups", Arrays.asList(ConfigManager.instance()
-                .getUserSource().getGroups().toArray()));
+        final SortedSet<CommonUserGroup> sset =
+                ConfigManager.instance().getUserSource().getGroups();
+
+        final String[] groupNames = new String[sset.size()];
+        int i = 0;
+        for (final CommonUserGroup grp : sset) {
+            groupNames[i++] = grp.getGroupName();
+        }
+
+        userData.put("groups", groupNames);
+
         return setApiResultOK(userData);
     }
 

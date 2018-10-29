@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -39,7 +40,9 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.users.CommonUserGroup;
 import org.savapage.core.users.conf.InternalGroupList;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -60,19 +63,21 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
      */
     private class RemoveGroupsView extends PropertyListView<UserGroup> {
 
-        /**
-        *
-        */
+        /** */
         private static final long serialVersionUID = 1L;
 
+        /** */
         private final String optionId;
 
         /**
-         *
          * @param id
+         *            Wicket id of the view.
          * @param list
+         *            The user group list.
+         * @param optionId
+         *            Wicket id op the HTML option.
          */
-        public RemoveGroupsView(String id, List<UserGroup> list,
+        RemoveGroupsView(final String id, final List<UserGroup> list,
                 final String optionId) {
             super(id, list);
             this.optionId = optionId;
@@ -80,9 +85,20 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
 
         @Override
         protected void populateItem(final ListItem<UserGroup> item) {
+
             final UserGroup group = item.getModelObject();
-            final Label label = new Label(this.optionId, group.getGroupName());
-            label.add(new AttributeModifier("value", group.getId()));
+
+            final StringBuilder disp = new StringBuilder();
+            disp.append(group.getGroupName());
+
+            if (StringUtils.isNotBlank(group.getFullName())) {
+                disp.append(" • ").append(group.getFullName());
+            }
+
+            final Label label = new Label(this.optionId, disp.toString());
+
+            label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                    group.getId()));
             item.add(label);
         }
 
@@ -98,14 +114,18 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
         /** */
         private static final long serialVersionUID = 1L;
 
+        /** */
         private final String optionId;
 
         /**
-         *
          * @param id
+         *            Wicket id of the view.
          * @param list
+         *            The user group list.
+         * @param optionId
+         *            Wicket id op the HTML option.
          */
-        public AddGroupsView(String id, List<Object> list,
+        AddGroupsView(final String id, final List<Object> list,
                 final String optionId) {
             super(id, list);
             this.optionId = optionId;
@@ -113,9 +133,22 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
 
         @Override
         protected void populateItem(final ListItem<Object> item) {
-            final Object group = item.getModelObject();
-            final Label label = new Label(this.optionId, group.toString());
-            label.add(new AttributeModifier("value", group.toString()));
+
+            final CommonUserGroup commonGroup =
+                    (CommonUserGroup) item.getModelObject();
+
+            final StringBuilder disp = new StringBuilder();
+            disp.append(commonGroup.getGroupName());
+
+            if (StringUtils.isNotBlank(commonGroup.getFullName())) {
+                disp.append(" • ").append(commonGroup.getFullName());
+            }
+
+            final Label label = new Label(this.optionId, disp.toString());
+
+            label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                    commonGroup.getGroupName()));
+
             item.add(label);
         }
 
@@ -132,15 +165,16 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
         /*
          * User Source and Internal Groups are candidates to Add.
          */
-        final SortedSet<String> setAdd =
+        final SortedSet<CommonUserGroup> setAdd =
                 ConfigManager.instance().getUserSource().getGroups();
 
         try {
-            setAdd.addAll(InternalGroupList.getGroups());
+            for (final String grp : InternalGroupList.getGroups()) {
+                setAdd.add(new CommonUserGroup(grp));
+            }
         } catch (IOException e) {
-            throw new SpException(
-                    String.format("Error reading internal " + "groups file: %s",
-                            e.getMessage()));
+            throw new SpException(String.format(
+                    "Error reading internal groups file: %s", e.getMessage()));
         }
 
         /*
@@ -171,7 +205,7 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
             if (ReservedUserGroupEnum.fromDbName(name) != null) {
                 iter.remove();
             } else {
-                setAdd.remove(name);
+                setAdd.remove(new CommonUserGroup(name));
             }
         }
 
