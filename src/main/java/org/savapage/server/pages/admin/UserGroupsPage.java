@@ -238,7 +238,7 @@ public final class UserGroupsPage extends AbstractAdminListPage {
         final boolean sortAscending = req.getSort().getAscending();
 
         final UserGroupDao.ListFilter filter = new UserGroupDao.ListFilter();
-        filter.setContainingText(req.getSelect().getNameContainingText());
+        filter.setContainingIdText(req.getSelect().getNameContainingText());
 
         final UserGroupDao userGroupDao =
                 ServiceContext.getDaoContext().getUserGroupDao();

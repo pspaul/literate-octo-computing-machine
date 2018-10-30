@@ -5169,11 +5169,6 @@
                 _model.JOBTICKET_DELIVERY_HOUR = res.jobticketDeliveryHour;
                 _model.JOBTICKET_DELIVERY_MINUTE = res.jobticketDeliveryMinute;
 
-                //
-                if (res.delegatorNameId) {
-                    _model.DELEGATOR_NAME_ID = res.delegatorNameId;
-                }
-
                 _model.DELEGATE_ACCOUNT_SHARED_GROUP = res.delegateAccountSharedGroup;
 
                 //

@@ -92,7 +92,7 @@ public final class ReqUserGroupQuickSearch extends ReqQuickSearchMixin {
         final UserGroupDao.ListFilter groupFilter =
                 new UserGroupDao.ListFilter();
 
-        groupFilter.setContainingText(dto.getFilter());
+        groupFilter.setContainingNameOrIdText(dto.getFilter());
         groupFilter.setAclRole(dto.getAclRole());
 
         if (dto.isPreferred()) {
@@ -144,6 +144,7 @@ public final class ReqUserGroupQuickSearch extends ReqQuickSearchMixin {
 
                 itemWlk.setKey(group.getId());
                 itemWlk.setText(group.getGroupName());
+                itemWlk.setFullName(group.getFullName());
                 itemWlk.setPreferred(preferredGroups != null
                         && preferredGroups.contains(group.getId()));
 

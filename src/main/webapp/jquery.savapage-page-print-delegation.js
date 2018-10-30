@@ -251,8 +251,18 @@
             ,
                 _htmlDelegatorName = function(item) {
                 var html = item.fullName;
-                if (item.fullName.length === 0 || (item.userId && _model.DELEGATOR_NAME_ID)) {
-                    html += ' &bull; ' + item.userId;
+                if (item.fullName.indexOf(item.userId) < 0) {
+                    html += ' &bull; ';
+                    html += item.userId;
+                }
+                return html;
+            }
+            //----------------------------------------------------------------
+            ,
+                _htmlGroupName = function(item) {
+                var html = item.text;
+                if (item.fullName && item.fullName !== item.text) {
+                    html += ' &bull; ' + item.fullName;
                 }
                 return html;
             }
@@ -369,7 +379,7 @@
                         html += "<li class=\"ui-mini ui-li-has-icon\" data-icon=\"false\" data-savapage=\"" + item.key + "\">";
                         html += "<a href=\"#\">";
                         html += "<span class=\"" + _CLASS_SELECTED_TXT + "\">" + _IND_SELECTED_OFF + "</span>&nbsp;";
-                        html += item.text + "<span class=\"ui-li-count\">";
+                        html += _htmlGroupName(item) + "<span class=\"ui-li-count\">";
                         if (preferredEnabled) {
                             html += "<span class=\"" + _CLASS_PREFERRED_IMG + "\" data-savapage=\"";
                             html += item.preferred ? _DATA_PREFERRED_ON : _DATA_PREFERRED_OFF;
@@ -541,7 +551,7 @@
                 if (isCopies) {
                     html += '';
                 } else if (isGroup) {
-                    html += item.text;
+                    html += _htmlGroupName(item);
                 } else {
                     html += _htmlDelegatorName(item);
                 }

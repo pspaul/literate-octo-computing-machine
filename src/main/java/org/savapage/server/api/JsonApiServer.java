@@ -4381,9 +4381,6 @@ public final class JsonApiServer extends AbstractPage {
 
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ENABLE)) {
 
-            userData.put("delegatorNameId", cm.isConfigValue(
-                    Key.WEBAPP_USER_PROXY_PRINT_DELEGATOR_NAME_ID));
-
             userData.put("proxyPrintClearDelegate", cm
                     .isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_DELEGATE));
 
