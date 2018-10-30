@@ -996,6 +996,7 @@
                     request : 'usergroup-set',
                     dto : JSON.stringify({
                         id : group.id,
+                        fullName : group.fullName,
                         aclRoles : group.aclRoles,
                         aclOidsUser : group.aclOidsUser,
                         aclOidsUserReader : group.aclOidsUserReader,

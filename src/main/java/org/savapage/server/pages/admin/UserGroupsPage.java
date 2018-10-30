@@ -23,6 +23,7 @@ package org.savapage.server.pages.admin;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
@@ -141,6 +142,8 @@ public final class UserGroupsPage extends AbstractAdminListPage {
 
             Label labelWrk = null;
 
+            helper.encloseLabel("fullName", userGroup.getFullName(),
+                    StringUtils.isNotBlank(userGroup.getFullName()));
             //
             final ReservedUserGroupEnum reservedGroup =
                     ReservedUserGroupEnum.fromDbName(userGroup.getGroupName());

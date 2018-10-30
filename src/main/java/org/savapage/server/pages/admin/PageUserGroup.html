@@ -24,10 +24,17 @@
 
 	<ul data-role="listview" data-inset="true">
 		<li data-role="list-divider">
-			<wicket:message key="prompt-name" />
+			<span class="sp-txt-wrap" id="user-group-header" />
 		</li>
 		<li>
-			<span class="sp-txt-wrap" id="user-group-header" />
+			<div class="ui-field-contain">
+				<label for="sp-edit-usergroup-fullname">
+					<wicket:message key="prompt-name" />
+				</label>
+				<input type="text" id="sp-edit-usergroup-fullname" value=""
+					maxlength="255" autocomplete="off" autocorrect="off"
+					autocapitalize="off" spellcheck="false" />
+			</div>
 		</li>
 	</ul>
 

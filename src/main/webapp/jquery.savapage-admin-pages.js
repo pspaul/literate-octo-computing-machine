@@ -471,6 +471,8 @@
 
                 _view.checkCb('#user-group-account-define-new-user', accountingEnabled);
 
+                $('#sp-edit-usergroup-fullname').val(_model.editUserGroup.fullName);
+
                 $('#user-group-account-balance').val(accounting.balance);
                 $('#user-group-account-credit-limit-amount').val(accounting.creditLimitAmount);
                 _view.checkRadioValue("user-group-account-credit-limit-type", accounting.creditLimit);
@@ -485,6 +487,8 @@
                 accounting.balance = $('#user-group-account-balance').val();
                 accounting.creditLimit = _view.getRadioValue("user-group-account-credit-limit-type");
                 accounting.creditLimitAmount = $('#user-group-account-credit-limit-amount').val();
+
+                _model.editUserGroup.fullName = $('#sp-edit-usergroup-fullname').val();
 
                 _model.editUserGroup.accountingEnabled = _view.isCbChecked($('#user-group-account-define-new-user'));
 

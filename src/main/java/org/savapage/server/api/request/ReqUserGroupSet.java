@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
@@ -64,6 +65,8 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
     private static class DtoReq extends AbstractDto {
 
         private Long id;
+
+        private String fullName;
 
         private Map<ACLRoleEnum, Boolean> aclRoles;
 
@@ -132,6 +135,15 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             this.id = id;
         }
 
+        public String getFullName() {
+            return fullName;
+        }
+
+        @SuppressWarnings("unused")
+        public void setFullName(String fullName) {
+            this.fullName = fullName;
+        }
+
         public Map<ACLRoleEnum, Boolean> getAclRoles() {
             return aclRoles;
         }
@@ -145,6 +157,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return aclOidsUser;
         }
 
+        @SuppressWarnings("unused")
         public void
                 setAclOidsUser(Map<ACLOidEnum, ACLPermissionEnum> aclOidsUser) {
             this.aclOidsUser = aclOidsUser;
@@ -154,6 +167,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return aclOidsUserReader;
         }
 
+        @SuppressWarnings("unused")
         public void setAclOidsUserReader(
                 Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsUserReader) {
             this.aclOidsUserReader = aclOidsUserReader;
@@ -163,6 +177,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return aclOidsUserEditor;
         }
 
+        @SuppressWarnings("unused")
         public void setAclOidsUserEditor(
                 Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsUserEditor) {
             this.aclOidsUserEditor = aclOidsUserEditor;
@@ -172,6 +187,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return aclOidsAdmin;
         }
 
+        @SuppressWarnings("unused")
         public void setAclOidsAdmin(
                 Map<ACLOidEnum, ACLPermissionEnum> aclOidsAdmin) {
             this.aclOidsAdmin = aclOidsAdmin;
@@ -182,6 +198,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return aclOidsAdminReader;
         }
 
+        @SuppressWarnings("unused")
         public void setAclOidsAdminReader(
                 Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsAdminReader) {
             this.aclOidsAdminReader = aclOidsAdminReader;
@@ -192,6 +209,7 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
             return aclOidsAdminEditor;
         }
 
+        @SuppressWarnings("unused")
         public void setAclOidsAdminEditor(
                 Map<ACLOidEnum, List<ACLPermissionEnum>> aclOidsAdminEditor) {
             this.aclOidsAdminEditor = aclOidsAdminEditor;
@@ -224,7 +242,6 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
         final DtoReq dtoReq =
                 DtoReq.create(DtoReq.class, this.getParmValueDto());
 
-        //
         final UserGroupDao dao =
                 ServiceContext.getDaoContext().getUserGroupDao();
 
@@ -261,6 +278,12 @@ public final class ReqUserGroupSet extends ApiRequestMixin {
                 return;
             }
             userGroup.setInitialSettingsEnabled(dtoReq.getAccountingEnabled());
+        }
+
+        if (StringUtils.isBlank(dtoReq.getFullName())) {
+            userGroup.setFullName(null);
+        } else {
+            userGroup.setFullName(dtoReq.getFullName().trim());
         }
 
         userGroup.setModifiedBy(ServiceContext.getActor());

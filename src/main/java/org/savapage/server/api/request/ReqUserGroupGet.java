@@ -77,6 +77,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
 
         private Long id;
         private String name;
+        private String fullName;
 
         /**
          * The user roles.
@@ -157,6 +158,14 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public void setFullName(String fullName) {
+            this.fullName = fullName;
         }
 
         @SuppressWarnings("unused")
@@ -294,6 +303,8 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         } else {
             dtoRsp.setName(reservedUserGroup.getUiName());
         }
+
+        dtoRsp.setFullName(userGroup.getFullName());
 
         dtoRsp.setBuiltInGroup(reservedUserGroup != null);
         dtoRsp.setAllUsersGroup(reservedUserGroup == ReservedUserGroupEnum.ALL);
