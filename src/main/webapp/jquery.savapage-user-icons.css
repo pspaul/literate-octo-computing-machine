@@ -347,13 +347,4 @@
     opacity: 0.5;
 }
 
-.ui-icon-mini-preferred-on:after {
-    background: url(/famfamfam-silk/star.png) 50% 50% no-repeat;
-    background-size: 12px 12px;
-}
-.ui-icon-mini-preferred-off:after {
-    background: url(/famfamfam-silk/star_gray.png) 50% 50% no-repeat;
-    background-size: 12px 12px;
-}
-
 /* end-of-file */

@@ -1234,6 +1234,11 @@
                     }
                 });
 
+                $(this).on('click', '.sp-btn-preferred-switch', null, function() {
+                    _ns.PreferredButtonSwitch.toggle($(this));
+                    return false;
+                });
+
             }).on("pagebeforeshow", function(event, ui) {
 
                 var accounting = $('#sp-printer-accounting-addin'),

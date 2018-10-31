@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +53,8 @@ import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.session.JobTicketSession;
 import org.savapage.server.session.SpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -67,14 +68,14 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
      */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * .
-     */
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(JobTicketPrintAddIn.class);
+
+    /** */
     private static final String PARM_SETTLE = "settle";
 
-    /**
-     * .
-     */
+    /** */
     private static final String PARM_RETRY = "retry";
 
     private static final String WICKET_ID_CHOICE = "choice";
@@ -370,15 +371,21 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
             if (lastMediaSourceChoice != null
                     && printer.getMediaSourceOptChoice() != null) {
 
-                for (final Entry<String, String> entry : printer
-                        .getMediaSourceMediaMap().entrySet()) {
+                final String mediaChoiceLast = printer.getMediaSourceMediaMap()
+                        .get(lastMediaSourceChoice.getChoice());
 
-                    if (entry.getKey().equals(lastMediaSourceChoice.getChoice())
-                            && lastMediaSourceChoice.getChoice().equals(printer
-                                    .getMediaSourceOptChoice().getChoice())) {
-                        dfltMediaSourceChoice = lastMediaSourceChoice;
-                        break;
-                    }
+                final String mediaChoiceCurr = printer.getMediaSourceMediaMap()
+                        .get(dfltMediaSourceChoice.getChoice());
+
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace(
+                            "Last choice [{}] [{}] Default choice [{}] [{}]",
+                            lastMediaSourceChoice.getChoice(), mediaChoiceLast,
+                            dfltMediaSourceChoice.getChoice(), mediaChoiceCurr);
+                }
+
+                if (mediaChoiceLast.equals(mediaChoiceCurr)) {
+                    dfltMediaSourceChoice = lastMediaSourceChoice;
                 }
             }
 

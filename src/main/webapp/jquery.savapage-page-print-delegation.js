@@ -59,9 +59,6 @@
                 _IND_PREFERRED_ON = '&nbsp;<img height="10" src="/famfamfam-silk/star.png">&nbsp;',
                 _IND_PREFERRED_OFF = '&nbsp;<img height="10" src="/famfamfam-silk/star_gray.png">&nbsp;',
 
-                _CLASS_ICON_PREFERRED_ON = 'ui-icon-mini-preferred-on',
-                _CLASS_ICON_PREFERRED_OFF = 'ui-icon-mini-preferred-off',
-
                 _DATA_PREFERRED_ON = 'on',
                 _DATA_PREFERRED_OFF = 'off',
 
@@ -158,7 +155,7 @@
                 _onObjectPreferred(selection, 'user-delegate-groups-preferred');
             },
                 _isGroupSelectScopePreferred = function() {
-                return $('#sp-print-delegation-groups-select-to-add-scope').hasClass(_CLASS_ICON_PREFERRED_ON);
+                return _ns.PreferredButtonSwitch.isOn($('#sp-print-delegation-groups-select-to-add-scope'));
             },
                 _isGroupPreferredEnabled = function() {
                 return $('#sp-print-delegation-groups-select-to-add-scope').length > 0;
@@ -785,24 +782,11 @@
             //----------------------------------------------------------------
             ,
                 _onGroupSelectScope = function(selection) {
-                var classRem,
-                    classAdd;
-
-                if (selection.hasClass(_CLASS_ICON_PREFERRED_ON)) {
-                    classRem = _CLASS_ICON_PREFERRED_ON;
-                    classAdd = _CLASS_ICON_PREFERRED_OFF;
-                } else {
-                    classRem = _CLASS_ICON_PREFERRED_OFF;
-                    classAdd = _CLASS_ICON_PREFERRED_ON;
-                }
-
-                selection.removeClass(classRem);
-                selection.addClass(classAdd);
-
+                var selected = _ns.PreferredButtonSwitch.toggle(selection);
                 _api.call({
                     request : 'user-set-delegate-groups-preferred-select',
                     dto : JSON.stringify({
-                        select : classAdd === _CLASS_ICON_PREFERRED_ON
+                        select : selected
                     })
                 });
 
@@ -877,7 +861,7 @@
             //----------------------------------------------------------------
             ,
                 _isAccountSelectScopePreferred = function() {
-                return $('#sp-print-delegation-select-shared-account-scope').hasClass(_CLASS_ICON_PREFERRED_ON);
+                return _ns.PreferredButtonSwitch.isOn($('#sp-print-delegation-select-shared-account-scope'));
             }
             //----------------------------------------------------------------
             ,
@@ -892,24 +876,11 @@
             //----------------------------------------------------------------
             ,
                 _onAccountSelectScope = function(selection) {
-                var classRem,
-                    classAdd;
-
-                if (selection.hasClass(_CLASS_ICON_PREFERRED_ON)) {
-                    classRem = _CLASS_ICON_PREFERRED_ON;
-                    classAdd = _CLASS_ICON_PREFERRED_OFF;
-                } else {
-                    classRem = _CLASS_ICON_PREFERRED_OFF;
-                    classAdd = _CLASS_ICON_PREFERRED_ON;
-                }
-
-                selection.removeClass(classRem);
-                selection.addClass(classAdd);
-
+                var selected = _ns.PreferredButtonSwitch.toggle(selection);
                 _api.call({
                     request : 'user-set-delegate-accounts-preferred-select',
                     dto : JSON.stringify({
-                        select : classAdd === _CLASS_ICON_PREFERRED_ON
+                        select : selected
                     })
                 });
 
@@ -1213,10 +1184,12 @@
                 selBtnGroupsSelectScope.click(function() {
                     _onGroupSelectScope($(this));
                 });
+
                 res = _api.call({
                     request : 'user-get-delegate-groups-preferred-select'
                 });
-                selBtnGroupsSelectScope.addClass(res.dto.select ? _CLASS_ICON_PREFERRED_ON : _CLASS_ICON_PREFERRED_OFF);
+
+                _ns.PreferredButtonSwitch.setState(selBtnGroupsSelectScope, res.dto.select);
                 selBtnGroupsSelectScope.addClass('ui-btn-icon-notext');
 
                 // Show available groups on first open
@@ -1256,10 +1229,12 @@
                 selBtnAccountSelectScope.click(function() {
                     _onAccountSelectScope($(this));
                 });
+
                 res = _api.call({
                     request : 'user-get-delegate-accounts-preferred-select'
                 });
-                selBtnAccountSelectScope.addClass(res.dto.select ? _CLASS_ICON_PREFERRED_ON : _CLASS_ICON_PREFERRED_OFF);
+
+                _ns.PreferredButtonSwitch.setState(selBtnAccountSelectScope, res.dto.select);
                 selBtnAccountSelectScope.addClass('ui-btn-icon-notext');
 
                 //-----------------------------------

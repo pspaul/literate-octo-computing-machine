@@ -107,6 +107,12 @@ public final class MarkupHelper {
 
     public static final String CSS_DISABLED = "sp-disabled";
     public static final String CSS_INVISIBLE = "sp-invisible";
+
+    public static final String CSS_PREFERRED_ICON_ON =
+            "ui-icon-mini-preferred-on";
+    public static final String CSS_PREFERRED_ICON_OFF =
+            "ui-icon-mini-preferred-off";
+
     /**
      * HTML entity for ⦦ : OBLIQUE ANGLE OPENING UP).
      */

@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -52,8 +53,6 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.server.pages.MarkupHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -68,23 +67,25 @@ public final class PrinterMediaSourcePanel extends Panel {
     private static final long serialVersionUID = 1L;
 
     /** */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(PrinterMediaSourcePanel.class);
-
     private static final AccountingService ACCOUNTING_SERVICE =
             ServiceContext.getServiceFactory().getAccountingService();
 
+    /** */
     private static final PrinterService PRINTER_SERVICE =
             ServiceContext.getServiceFactory().getPrinterService();
 
+    /** */
     private static final ProxyPrintService PROXYPRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
 
+    /** */
     private static final PrinterDao PRINTER_DAO =
             ServiceContext.getDaoContext().getPrinterDao();
 
+    /** */
     private static final String DEFAULT_MARKER = "*";
 
+    /** */
     private final boolean isVisible;
 
     /**
@@ -93,6 +94,7 @@ public final class PrinterMediaSourcePanel extends Panel {
     private class MediaListView
             extends PropertyListView<JsonProxyPrinterOptChoice> {
 
+        /** */
         private final String media;
 
         /**
@@ -100,7 +102,8 @@ public final class PrinterMediaSourcePanel extends Panel {
          */
         private static final long serialVersionUID = 1L;
 
-        public MediaListView(String id, List<JsonProxyPrinterOptChoice> list,
+        public MediaListView(final String id,
+                final List<JsonProxyPrinterOptChoice> list,
                 final String media) {
 
             super(id, list);
@@ -108,7 +111,8 @@ public final class PrinterMediaSourcePanel extends Panel {
         }
 
         @Override
-        protected void populateItem(ListItem<JsonProxyPrinterOptChoice> item) {
+        protected void
+                populateItem(final ListItem<JsonProxyPrinterOptChoice> item) {
 
             final JsonProxyPrinterOptChoice dto = item.getModelObject();
 
@@ -218,7 +222,7 @@ public final class PrinterMediaSourcePanel extends Panel {
             Label labelWrk;
 
             /*
-             * media-source (checkbox + label)
+             * media-source (checkbox + label + preferred)
              */
             String htmlId = ACCOUNTING_SERVICE
                     .getMediaSourceAttr(dto.getSource()).getKey();
@@ -228,14 +232,25 @@ public final class PrinterMediaSourcePanel extends Panel {
 
             item.add(labelWrk);
 
-            /*
-             * label
-             */
+            //
             String mediaMnemonic = dto.getSource();
 
             labelWrk = new Label("media-source-checkbox-label", mediaMnemonic);
             labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_FOR, htmlId));
             item.add(labelWrk);
+
+            //
+            final String preferredIcon;
+
+            if (BooleanUtils.isTrue(dto.getPreferred())) {
+                preferredIcon = MarkupHelper.CSS_PREFERRED_ICON_ON;
+            } else {
+                preferredIcon = MarkupHelper.CSS_PREFERRED_ICON_OFF;
+            }
+
+            item.add(MarkupHelper.appendLabelAttr(
+                    new Label("btn-preferred-switch", ""),
+                    MarkupHelper.ATTR_CLASS, preferredIcon));
 
             /*
              * Media cost.

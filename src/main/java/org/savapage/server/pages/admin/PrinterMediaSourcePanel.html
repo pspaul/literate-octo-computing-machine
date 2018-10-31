@@ -136,11 +136,22 @@
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2">
-						<input type="text" wicket:id="media-source-display-name" />
+					<td colspan="3" style="padding-top: 0px; padding-left: 0px;">
+						<table style="margin: 0px; padding: 0px;" cellspacing="0"
+							padding="0" width="100%">
+							<tr>
+								<td style="padding: 0px;">
+									<button wicket:id="btn-preferred-switch"
+										class="sp-btn-preferred-switch ui-btn ui-btn-inline ui-mini ui-btn-icon-notext" />
+								</td>
+								<td width="100%" style="padding: 0px;">
+									<input type="text" wicket:id="media-source-display-name" />
+								</td>
+							</tr>
+						</table>
 					</td>
-					<td colspan="3"
-						style="vertical-align: middle; horizontal-align: right;">
+					<td colspan="2"
+						style="vertical-align: middle; horizontal-align: right; padding: 0px;">
 						<select id="" data-native-menu="false" class="ui-mini">
 							<option value=""><wicket:message key="media-size" /></option>
 							<wicket:panel wicket:id="media-source-media-select">

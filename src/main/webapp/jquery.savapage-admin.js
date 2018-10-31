@@ -1496,12 +1496,14 @@
                         active = _view.isCbChecked(cb),
                         source = cb.attr('id').substr("media-source.".length),
                         nextRow = $(this).next(),
+                        preferred = _ns.PreferredButtonSwitch.isOn(nextRow.find('.sp-btn-preferred-switch')),
                         display = nextRow.find('input:text').val(),
                         media = nextRow.find('select').val();
 
                     // push: org.savapage.core.dto.IppMediaSourceDto
                     dto.sources.push({
                         active : active,
+                        preferred : preferred ? preferred : null,
                         source : source,
                         display : display,
                         media : {
