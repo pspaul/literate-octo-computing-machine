@@ -248,7 +248,7 @@
             ,
                 _htmlDelegatorName = function(item) {
                 var html = item.fullName;
-                if (item.fullName.indexOf(item.userId) < 0) {
+                if (!_model.DELEGATOR_USER_HIDE_ID && item.fullName.indexOf(item.userId) < 0) {
                     html += ' &bull; ';
                     html += item.userId;
                 }
@@ -257,9 +257,12 @@
             //----------------------------------------------------------------
             ,
                 _htmlGroupName = function(item) {
-                var html = item.text;
-                if (item.fullName && item.fullName !== item.text) {
-                    html += ' &bull; ' + item.fullName;
+                var fullName,
+                    html;
+                fullName = item.fullName || '';
+                html = fullName;
+                if (!_model.DELEGATOR_GROUP_HIDE_ID && fullName.toLowerCase() !== item.text.toLowerCase()) {
+                    html += ' &bull; ' + item.text;
                 }
                 return html;
             }
@@ -363,7 +366,8 @@
                         maxResults : _QS_MAX_RESULTS,
                         startPosition : startPosition,
                         aclRole : 'PRINT_DELEGATOR',
-                        preferred : _isGroupSelectScopePreferred()
+                        preferred : _isGroupSelectScopePreferred(),
+                        hideId : _model.DELEGATOR_GROUP_HIDE_ID
                     })
                 });
 
@@ -425,7 +429,8 @@
                         startPosition : startPosition,
                         totalResults : _quickUserTotalResults,
                         maxResults : _QS_MAX_RESULTS,
-                        aclRole : 'PRINT_DELEGATOR'
+                        aclRole : 'PRINT_DELEGATOR',
+                        hideId : _model.DELEGATOR_USER_HIDE_ID
                     })
                 });
 

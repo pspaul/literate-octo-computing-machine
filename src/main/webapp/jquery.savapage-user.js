@@ -5171,6 +5171,13 @@
 
                 _model.DELEGATE_ACCOUNT_SHARED_GROUP = res.delegateAccountSharedGroup;
 
+                if (res.delegatorGroupHideId) {
+                    _model.DELEGATOR_GROUP_HIDE_ID = res.delegatorGroupHideId;
+                }
+                if (res.delegatorUserHideId) {
+                    _model.DELEGATOR_USER_HIDE_ID = res.delegatorUserHideId;
+                }
+
                 //
                 _view.userChartColors = [res.colors.printIn, res.colors.printOut, res.colors.pdfOut];
                 _view.imgBase64 = res.img_base64;

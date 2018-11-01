@@ -333,7 +333,7 @@ public final class ExtPaperCutSyncServlet extends BasicAuthServlet {
 
             final List<UserGroup> list =
                     USER_GROUP_DAO.getListChunk(filter, startPosition,
-                            DB_CHUNK_SIZE, UserGroupDao.Field.NAME, true);
+                            DB_CHUNK_SIZE, UserGroupDao.Field.ID, true);
 
             for (final UserGroup group : list) {
                 if (!svc.isReservedGroupName(group.getGroupName())) {

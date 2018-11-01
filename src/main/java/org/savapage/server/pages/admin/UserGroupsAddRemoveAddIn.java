@@ -91,7 +91,9 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
             final StringBuilder disp = new StringBuilder();
             disp.append(group.getGroupName());
 
-            if (StringUtils.isNotBlank(group.getFullName())) {
+            if (group.getFullName() != null
+                    && !StringUtils.defaultString(group.getFullName())
+                            .equals(group.getGroupName())) {
                 disp.append(" • ").append(group.getFullName());
             }
 
@@ -140,7 +142,9 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
             final StringBuilder disp = new StringBuilder();
             disp.append(commonGroup.getGroupName());
 
-            if (StringUtils.isNotBlank(commonGroup.getFullName())) {
+            if (StringUtils.isNotBlank(commonGroup.getFullName())
+                    && !commonGroup.getFullName()
+                            .equals(commonGroup.getGroupName())) {
                 disp.append(" • ").append(commonGroup.getFullName());
             }
 
@@ -186,7 +190,7 @@ public final class UserGroupsAddRemoveAddIn extends AbstractAdminPage {
                 ServiceContext.getDaoContext().getUserGroupDao();
 
         final List<UserGroup> listRemove = userGroupDao.getListChunk(filter,
-                null, null, UserGroupDao.Field.NAME, true);
+                null, null, UserGroupDao.Field.ID, true);
 
         /*
          * Update Add and Remove List.

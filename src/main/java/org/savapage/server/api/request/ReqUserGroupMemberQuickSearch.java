@@ -76,7 +76,11 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
         final UserDao.ListFilter userFilter = new UserDao.ListFilter();
 
         userFilter.setUserGroupId(dto.getGroupId());
-        userFilter.setContainingNameOrIdText(dto.getFilter());
+        if (BooleanUtils.isTrue(dto.getHideId())) {
+            userFilter.setContainingNameText(dto.getFilter());
+        } else {
+            userFilter.setContainingNameOrIdText(dto.getFilter());
+        }
         userFilter.setDeleted(Boolean.FALSE);
         userFilter.setDisabled(Boolean.FALSE);
 

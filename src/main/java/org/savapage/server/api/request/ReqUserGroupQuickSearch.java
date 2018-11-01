@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.UserGroupMemberDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
@@ -92,7 +93,11 @@ public final class ReqUserGroupQuickSearch extends ReqQuickSearchMixin {
         final UserGroupDao.ListFilter groupFilter =
                 new UserGroupDao.ListFilter();
 
-        groupFilter.setContainingNameOrIdText(dto.getFilter());
+        if (BooleanUtils.isTrue(dto.getHideId())) {
+            groupFilter.setContainingNameText(dto.getFilter());
+        } else {
+            groupFilter.setContainingNameOrIdText(dto.getFilter());
+        }
         groupFilter.setAclRole(dto.getAclRole());
 
         if (dto.isPreferred()) {

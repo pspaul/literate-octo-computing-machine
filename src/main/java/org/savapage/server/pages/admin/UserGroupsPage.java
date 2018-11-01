@@ -143,7 +143,8 @@ public final class UserGroupsPage extends AbstractAdminListPage {
             Label labelWrk = null;
 
             helper.encloseLabel("fullName", userGroup.getFullName(),
-                    StringUtils.isNotBlank(userGroup.getFullName()));
+                    !StringUtils.defaultString(userGroup.getFullName())
+                            .equals(userGroup.getGroupName()));
             //
             final ReservedUserGroupEnum reservedGroup =
                     ReservedUserGroupEnum.fromDbName(userGroup.getGroupName());
@@ -238,7 +239,8 @@ public final class UserGroupsPage extends AbstractAdminListPage {
         final boolean sortAscending = req.getSort().getAscending();
 
         final UserGroupDao.ListFilter filter = new UserGroupDao.ListFilter();
-        filter.setContainingIdText(req.getSelect().getNameContainingText());
+        filter.setContainingNameOrIdText(
+                req.getSelect().getNameContainingText());
 
         final UserGroupDao userGroupDao =
                 ServiceContext.getDaoContext().getUserGroupDao();

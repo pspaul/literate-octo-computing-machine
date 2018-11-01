@@ -85,7 +85,7 @@ public final class UsersBase extends AbstractAdminPage {
 
         final List<UserGroup> groupList =
                 userGroupDao.getListChunk(new UserGroupDao.ListFilter(), null,
-                        null, UserGroupDao.Field.NAME, true);
+                        null, UserGroupDao.Field.ID, true);
 
         add(new PropertyListView<UserGroup>("option-list-groups", groupList) {
 
