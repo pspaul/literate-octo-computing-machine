@@ -262,7 +262,10 @@
                 fullName = item.fullName || '';
                 html = fullName;
                 if (!_model.DELEGATOR_GROUP_HIDE_ID && fullName.toLowerCase() !== item.text.toLowerCase()) {
-                    html += ' &bull; ' + item.text;
+                    if (html.length > 0) {
+                        html += ' &bull; ';
+                    }
+                    html += item.text;
                 }
                 return html;
             }

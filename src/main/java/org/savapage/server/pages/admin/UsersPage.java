@@ -485,7 +485,8 @@ public final class UsersPage extends AbstractAdminListPage {
         }
 
         //
-        filter.setContainingIdText(req.getSelect().getIdContainingText());
+        filter.setContainingNameOrIdText(
+                req.getSelect().getNameIdContainingText());
         filter.setContainingEmailText(req.getSelect().getEmailContainingText());
         filter.setAdmin(req.getSelect().getAdmin());
         filter.setPerson(req.getSelect().getPerson());

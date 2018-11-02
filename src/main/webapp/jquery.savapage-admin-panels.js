@@ -1322,7 +1322,7 @@
                 my.input.page = 1;
                 my.input.maxResults = 10;
 
-                my.input.select.id_text = null;
+                my.input.select.name_id_text = null;
                 my.input.select.email_text = null;
 
                 my.input.select.usergroup_id = null;
@@ -1355,7 +1355,7 @@
                     id,
                     _view = _ns.PanelCommon.view;
 
-                $('#sp-user-id-containing-text').val(my.input.select.id_text);
+                $('#sp-user-id-containing-text').val(my.input.select.name_id_text);
                 $('#sp-user-email-containing-text').val(my.input.select.email_text);
 
                 $('#sp-user-select-group').val(my.input.select.usergroup_id).selectmenu('refresh');
@@ -1402,7 +1402,7 @@
 
                 sel = $('#sp-user-id-containing-text');
                 present = (sel.val().length > 0);
-                my.input.select.id_text = ( present ? sel.val() : null);
+                my.input.select.name_id_text = ( present ? sel.val() : null);
 
                 sel = $('#sp-user-email-containing-text');
                 present = (sel.val().length > 0);
@@ -1423,7 +1423,7 @@
                 maxResults : 10,
 
                 select : {
-                    id_text : null,
+                    name_id_text : null,
                     email_text : null,
                     admin : null,
                     person : null,
