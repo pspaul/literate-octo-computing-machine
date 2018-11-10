@@ -43,7 +43,7 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.lib.pgp.PGPBaseException;
 import org.savapage.lib.pgp.PGPHelper;
 import org.savapage.lib.pgp.PGPSecretKeyInfo;
-import org.savapage.lib.pgp.pdf.PGPPdfVerifyUrl;
+import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
@@ -55,21 +55,21 @@ import org.slf4j.LoggerFactory;
  * @author Rijk Ravestein
  *
  */
-public final class WebAppPdf2FV extends AbstractWebAppPage {
+public final class WebAppPdfPgp extends AbstractWebAppPage {
 
     /** */
     private static final long serialVersionUID = 1L;
 
     /** */
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(WebAppPdf2FV.class);
+            LoggerFactory.getLogger(WebAppPdfPgp.class);
 
     /**
      *
      * @param parameters
      *            The {@link PageParameters}.
      */
-    public WebAppPdf2FV(final PageParameters parameters) {
+    public WebAppPdfPgp(final PageParameters parameters) {
 
         super(parameters);
 
@@ -77,10 +77,10 @@ public final class WebAppPdf2FV extends AbstractWebAppPage {
 
         // Retrieve positional parameters.
         final String pgpMsgBody = parameters
-                .get(PGPPdfVerifyUrl.URL_POSITION_PGP_MESSAGE).toString();
+                .get(PdfPgpVerifyUrl.URL_POSITION_PGP_MESSAGE).toString();
 
         if (ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_ADMIN_PDF2FV_ENABLE)) {
+                .isConfigValue(Key.WEBAPP_PDFPGP_ENABLE)) {
             if (pgpMsgBody == null) {
                 err = "no verification data";
             } else {
@@ -102,7 +102,7 @@ public final class WebAppPdf2FV extends AbstractWebAppPage {
         helper.addTextInput("btn-upload", HtmlButtonEnum.UPLOAD);
         helper.addTextInput("btn-reset", HtmlButtonEnum.RESET);
 
-        handlePgpMessage(helper, PGPPdfVerifyUrl.assemblePgpMsg(pgpMsgBody));
+        handlePgpMessage(helper, PdfPgpVerifyUrl.assemblePgpMsg(pgpMsgBody));
     }
 
     /**
@@ -168,12 +168,12 @@ public final class WebAppPdf2FV extends AbstractWebAppPage {
 
     @Override
     protected String getSpecializedCssFileName() {
-        return "jquery.savapage-pdf2fv.css";
+        return "jquery.savapage-pdfpgp.css";
     }
 
     @Override
     protected String getSpecializedJsFileName() {
-        return "jquery.savapage-pdf2fv.js";
+        return "jquery.savapage-pdfpgp.js";
     }
 
     @Override

@@ -132,6 +132,7 @@ import org.savapage.core.json.rpc.JsonRpcConfig;
 import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.ResultDataBasic;
 import org.savapage.core.json.rpc.impl.ResultPosDeposit;
+import org.savapage.core.pdf.PdfCreateRequest;
 import org.savapage.core.print.gcp.GcpClient;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.gcp.GcpRegisterPrinterRsp;
@@ -177,6 +178,7 @@ import org.savapage.ext.smartschool.SmartschoolPrintMonitor;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.lib.pgp.PGPBaseException;
 import org.savapage.lib.pgp.PGPPublicKeyInfo;
+import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ApiRequestHelper;
@@ -1611,8 +1613,48 @@ public final class JsonApiServer extends AbstractPage {
         final String documentPageRangeFilter = calcDocumentPageRangeFilter(user,
                 vanillaJobIndex, pageRangeFilter);
 
-        return OutputProducer.instance().generatePdfForExport(user, pdfFile,
-                documentPageRangeFilter, removeGraphics, ecoPdf, grayscalePdf,
+        /*
+         * Get the (filtered) jobs.
+         */
+        InboxInfoDto inboxInfo = INBOX_SERVICE.getInboxInfo(user.getUserId());
+
+        if (StringUtils.isNotBlank(documentPageRangeFilter)) {
+            inboxInfo = INBOX_SERVICE.filterInboxInfoPages(inboxInfo,
+                    documentPageRangeFilter);
+        }
+
+        final PdfCreateRequest pdfRequest = new PdfCreateRequest();
+
+        pdfRequest.setUserObj(user);
+        pdfRequest.setPdfFile(pdfFile);
+        pdfRequest.setInboxInfo(inboxInfo);
+        pdfRequest.setRemoveGraphics(removeGraphics);
+        pdfRequest.setApplyPdfProps(true);
+        pdfRequest.setApplyLetterhead(true);
+        pdfRequest.setForPrinting(false);
+        pdfRequest.setEcoPdfShadow(ecoPdf);
+        pdfRequest.setGrayscale(grayscalePdf);
+
+        final ConfigManager cm = ConfigManager.instance();
+
+        final PdfPgpVerifyUrl verifyUrl;
+
+        if (cm.isConfigValue(Key.PDFPGP_VERIFICATION_ENABLE)) {
+
+            String host = cm.getConfigValue(Key.PDFPGP_VERIFICATION_HOST);
+            if (StringUtils.isBlank(host)) {
+                host = InetUtils.getServerHostAddress();
+            }
+            verifyUrl = new PdfPgpVerifyUrl(host, cm.getConfigInt(
+                    Key.PDFPGP_VERIFICATION_PORT,
+                    Integer.parseInt(ConfigManager.getServerSslPort())));
+        } else {
+            verifyUrl = null;
+        }
+
+        pdfRequest.setVerifyUrl(verifyUrl);
+
+        return OutputProducer.instance().generatePdfForExport(pdfRequest,
                 docLog);
     }
 

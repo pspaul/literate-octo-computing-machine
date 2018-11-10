@@ -66,7 +66,7 @@ import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.oauth.OAuthProviderEnum;
 import org.savapage.ext.payment.PaymentMethodEnum;
-import org.savapage.lib.pgp.pdf.PGPPdfVerifyUrl;
+import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.api.JsonApiServer;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.ext.ServerPluginManager;
@@ -84,7 +84,7 @@ import org.savapage.server.webapp.CustomStringResourceLoader;
 import org.savapage.server.webapp.OAuthRedirectPage;
 import org.savapage.server.webapp.WebAppAdmin;
 import org.savapage.server.webapp.WebAppJobTickets;
-import org.savapage.server.webapp.WebAppPdf2FV;
+import org.savapage.server.webapp.WebAppPdfPgp;
 import org.savapage.server.webapp.WebAppPos;
 import org.savapage.server.webapp.WebAppPrintSite;
 import org.savapage.server.webapp.WebAppUser;
@@ -125,7 +125,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * Used in this class to set mountPage().
      */
     public static final String MOUNT_PATH_WEBAPP_PDF2FV =
-            PGPPdfVerifyUrl.MOUNT_PATH_WEBAPP;
+            PdfPgpVerifyUrl.MOUNT_PATH_WEBAPP;
 
     /**
      * Used in this class to set mountPage().
@@ -639,7 +639,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             mountPage(MOUNT_PATH_WEBAPP_PRINTSITE, WebAppPrintSite.class);
             mountPage(MOUNT_PATH_WEBAPP_POS, WebAppPos.class);
 
-            mountPage(MOUNT_PATH_WEBAPP_PDF2FV, WebAppPdf2FV.class);
+            mountPage(MOUNT_PATH_WEBAPP_PDF2FV, WebAppPdfPgp.class);
 
             mountPage(MOUNT_PATH_WEBAPP_USER, WebAppUser.class);
 

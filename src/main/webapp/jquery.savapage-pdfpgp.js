@@ -41,8 +41,7 @@
          */
         _ns.Controller = function(_i18n, _model, _view, _api) {
 
-            var _this = this,
-                _util = _ns.Utils,
+            var _util = _ns.Utils,
                 i18nRefresh;
 
             i18nRefresh = function(i18nNew) {
@@ -156,8 +155,8 @@
          */
         _ns.Model = function(_i18n) {
 
-            var _LOC_LANG = 'sp.pdf2fv.language',
-                _LOC_COUNTRY = 'sp.pdf2fv.country';
+            var _LOC_LANG = 'sp.pdfpgp.language',
+                _LOC_COUNTRY = 'sp.pdfpgp.country';
 
             this.authToken = {};
 
@@ -194,7 +193,7 @@
             _ns.commonWebAppInit();
 
             _view.pages = {
-                language : new _ns.PageLanguage(_i18n, _view, _model),
+                language : new _ns.PageLanguage(_i18n, _view, _model)
             };
 
             $.each(_view.pages, function(key, page) {
@@ -219,7 +218,6 @@
              *
              */
             this.init = function() {
-                var user = _ns.Utils.getUrlParam(_ns.URL_PARM.USER);
 
                 //_ns.initWebApp('POS');
 
