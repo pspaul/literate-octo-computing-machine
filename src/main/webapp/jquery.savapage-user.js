@@ -1205,10 +1205,13 @@
              *
              */
             _setVisibility = function() {
-
-                if ($("#pdf-encryption").is(':checked')) {
-                    $('#pdf-allow-block').show();
+                var encrypt = _view.isCbChecked($('#pdf-encryption')),
+                    sign = _view.isCbChecked($('#pdf-pgp-signature'));
+                if (encrypt || sign) {
                     $('#pdf-apply-security').checkboxradio('enable');
+                    if (encrypt) {
+                        $('#pdf-allow-block').show();
+                    }
                 } else {
                     $('#pdf-allow-block').hide();
                     $('#pdf-apply-security').checkboxradio('disable');
@@ -1235,6 +1238,7 @@
                 $('#pdf-subject').val(wlk.subject);
                 $('#pdf-keywords').val(wlk.keywords);
                 _view.checkCb("#pdf-encryption", (_model.propPdf.encryption.length > 0));
+                _view.checkCb("#pdf-pgp-signature", _model.propPdf.pgpSignature);
 
                 wlk = _model.propPdf.allow;
                 _view.checkCb("#pdf-allow-printing", wlk.printing);
@@ -1276,11 +1280,13 @@
                 wlk.subject = $('#pdf-subject').val();
                 wlk.keywords = $('#pdf-keywords').val();
 
-                if ($('#pdf-encryption').is(':checked')) {
+                if (_view.isCbChecked($('#pdf-encryption'))) {
                     _model.propPdf.encryption = $('#pdf-encryption').val();
                 } else {
                     _model.propPdf.encryption = "";
                 }
+
+                _model.propPdf.pgpSignature = _view.isCbChecked($('#pdf-pgp-signature'));
 
                 wlk = _model.propPdf.allow;
                 wlk.printing = $("#pdf-allow-printing").is(':checked');
@@ -1362,7 +1368,11 @@
              */
             $('#page-pdf-properties').on('pagecreate', function(event) {
 
-                $("#pdf-encryption").on("change", null, null, function(event, ui) {
+                $('#pdf-encryption').on("change", null, null, function(event, ui) {
+                    _setVisibility();
+                });
+
+                $('#pdf-pgp-signature').on("change", null, null, function(event, ui) {
                     _setVisibility();
                 });
 

@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -157,6 +157,13 @@
 						<wicket:message key="pdf-cat-security" />
 					</h3>
 
+					<wicket:enclosure child="pdf-pgp-signature">
+						<input type="checkbox" id="pdf-pgp-signature" value="0" />
+						<label for="pdf-pgp-signature">
+							<wicket:message key="pdf-pgp-signature" />
+						</label>
+					</wicket:enclosure>
+
 					<input type="checkbox" id="pdf-encryption" value="128" />
 					<label for="pdf-encryption">
 						<wicket:message key="pdf-encryption" />
@@ -274,14 +281,12 @@
 		</wicket:enclosure>
 
 		<button id="button-pdf-properties-default"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-			<wicket:message key="button-default" />
-		</button>
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+			wicket:id="btn-default" />
 
 		<a href="#" data-rel="back"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-				key="button-back" />
-		</a>
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+			wicket:id="btn-back" />
 	</div>
 </div>
 

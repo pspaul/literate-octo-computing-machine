@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -29,6 +29,7 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -62,19 +63,27 @@ public class PdfProperties extends AbstractUserPage {
         helper.encloseLabel("pdf-ecoprint", "",
                 ConfigManager.isEcoPrintEnabled());
 
+        helper.encloseLabel("pdf-pgp-signature", "",
+                ConfigManager.isPdfPgpEnabled());
+
         //
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
 
-        final List<ACLPermissionEnum> permissions = ACCESS_CONTROL_SERVICE
-                .getPermission(user, ACLOidEnum.U_INBOX);
+        final List<ACLPermissionEnum> permissions =
+                ACCESS_CONTROL_SERVICE.getPermission(user, ACLOidEnum.U_INBOX);
 
-        helper.encloseLabel("button-pdf-download", localized("button-download"),
+        helper.encloseLabel("button-pdf-download",
+                HtmlButtonEnum.DOWNLOAD.uiText(getLocale()),
                 permissions == null || ACCESS_CONTROL_SERVICE.hasPermission(
                         permissions, ACLPermissionEnum.DOWNLOAD));
 
-        helper.encloseLabel("button-pdf-send", localized("button-send"),
-                permissions == null || ACCESS_CONTROL_SERVICE.hasPermission(
-                        permissions, ACLPermissionEnum.SEND));
+        helper.encloseLabel("button-pdf-send",
+                HtmlButtonEnum.SEND.uiText(getLocale()),
+                permissions == null || ACCESS_CONTROL_SERVICE
+                        .hasPermission(permissions, ACLPermissionEnum.SEND));
+
+        helper.addButton("btn-back", HtmlButtonEnum.BACK);
+        helper.addButton("btn-default", HtmlButtonEnum.DEFAULT);
 
         //
         final Integer privsLetterhead = ACCESS_CONTROL_SERVICE
