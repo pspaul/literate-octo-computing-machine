@@ -112,6 +112,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ReqPrinterPrint.class);
 
+    /**
+     * See Mantis #987.
+     */
+    private static final String SUBST_TO_UNDERSCORE_CHARS =
+            " `~!@#$%^&*()+{}[]|\\:;\"\'<>?,/";
+
     /** */
     public enum JobTicketTypeEnum {
         /** */
@@ -390,21 +396,46 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     }
 
     /**
-     * Trims and optionally sanitizes the print job name.
+     * Trims and optionally sanitizes the print job name with extra characters
+     * to substitute. See Mantis #987.
      *
      * @param sanitize
      *            If {@code true}, sanitize the job name.
      * @param jobName
      *            The print job name.
+     * @param substChars
+     *            The extra characters to substitute.
      * @return Trimmed and sanitized job name.
      */
-    private static String sanitizeIppJobName(final boolean sanitize,
-            final String jobName) {
+    private static String sanitizeIppJobNameEx(final boolean sanitize,
+            final String jobName, final String substChars) {
 
-        if (sanitize) {
-            return jobName.trim().replaceAll("\\s+", "_");
+        final String nameWrk = jobName.trim();
+
+        if (!sanitize) {
+            return nameWrk;
         }
-        return jobName.trim();
+
+        final StringBuilder str = new StringBuilder();
+
+        for (int i = 0; i < nameWrk.length(); i++) {
+
+            final char ch = nameWrk.charAt(i);
+            boolean subst = false;
+
+            for (int j = 0; j < substChars.length() && !subst; j++) {
+                if (substChars.charAt(j) == ch) {
+                    subst = true;
+                }
+            }
+
+            if (subst) {
+                str.append('_');
+            } else {
+                str.append(ch);
+            }
+        }
+        return str.toString();
     }
 
     @Override
@@ -427,12 +458,21 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         final ConfigManager cm = ConfigManager.instance();
 
+        //
         final boolean sanitizeJobName =
                 cm.isConfigValue(Key.IPP_JOB_NAME_SPACE_TO_UNDERSCORE_ENABLE);
 
+        final String substChars;
+
+        if (sanitizeJobName) {
+            substChars = SUBST_TO_UNDERSCORE_CHARS;
+        } else {
+            substChars = "";
+        }
+
         // First action.
-        dtoReq.setJobName(
-                sanitizeIppJobName(sanitizeJobName, dtoReq.getJobName()));
+        dtoReq.setJobName(sanitizeIppJobNameEx(sanitizeJobName,
+                dtoReq.getJobName(), substChars));
 
         // INVARIANT
         if (isJobTicket && cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE)
@@ -675,8 +715,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
                 for (final ProxyPrintJobChunk chk : printReq.getJobChunkInfo()
                         .getChunks()) {
-                    chk.setJobName(sanitizeIppJobName(sanitizeJobName,
-                            chk.getJobName()));
+                    chk.setJobName(sanitizeIppJobNameEx(sanitizeJobName,
+                            chk.getJobName(), substChars));
                 }
 
             } catch (ProxyPrintException e) {
