@@ -63,9 +63,6 @@ public class PdfProperties extends AbstractUserPage {
         helper.encloseLabel("pdf-ecoprint", "",
                 ConfigManager.isEcoPrintEnabled());
 
-        helper.encloseLabel("pdf-pgp-signature", "",
-                ConfigManager.isPdfPgpEnabled());
-
         //
         final org.savapage.core.jpa.User user = SpSession.get().getUser();
 
@@ -84,6 +81,11 @@ public class PdfProperties extends AbstractUserPage {
 
         helper.addButton("btn-back", HtmlButtonEnum.BACK);
         helper.addButton("btn-default", HtmlButtonEnum.DEFAULT);
+
+        //
+        helper.encloseLabel("pdf-pgp-signature", "",
+                ConfigManager.isPdfPgpEnabled() && ACCESS_CONTROL_SERVICE
+                        .hasPermission(permissions, ACLPermissionEnum.SIGN));
 
         //
         final Integer privsLetterhead = ACCESS_CONTROL_SERVICE

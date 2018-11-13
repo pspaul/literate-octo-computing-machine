@@ -42,6 +42,7 @@ import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
+import org.savapage.core.doc.DocContent;
 import org.savapage.core.dto.JobTicketTagDto;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
@@ -139,8 +140,8 @@ public class DocLogItemPanel extends Panel {
 
         for (final String attr : new String[] { "user-name", "title",
                 "log-comment", "printoutMode", "signature", "destination",
-                "letterhead", "author", "subject", "keywords", "drm", "userpw",
-                "ownerpw", "duplex", "simplex", "color", "grayscale",
+                "letterhead", "author", "subject", "keywords", "drm", "pdfpgp",
+                "userpw", "ownerpw", "duplex", "simplex", "color", "grayscale",
                 "papersize", "media-source", "output-bin", "jog-offset",
                 "cost-currency", "cost", "job-id", "job-state",
                 "job-completed-date", "print-in-denied-reason-hyphen",
@@ -399,6 +400,10 @@ public class DocLogItemPanel extends Panel {
                 pieData = String.valueOf(obj.getTotalPages());
                 pieSliceColors =
                         SparklineHtml.arrayAttr(SparklineHtml.COLOR_PDF);
+
+                if (obj.getMimeType().equals(DocContent.MIMETYPE_PDF_PGP)) {
+                    mapVisible.put("pdfpgp", "PGP");
+                }
 
             } else {
 
