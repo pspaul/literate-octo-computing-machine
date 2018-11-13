@@ -383,6 +383,13 @@ public class Print extends AbstractUserPage {
                 MarkupHelper.ATTR_TITLE,
                 localized("sp-jobticket-copy-pages-tooltip"));
 
+        MarkupHelper.modifyLabelAttr(
+                helper.addModifyLabelAttr("print-page-ranges",
+                        MarkupHelper.ATTR_PLACEHOLDER,
+                        localized("sp-print-page-ranges-placeholder")),
+                MarkupHelper.ATTR_TITLE,
+                localized("sp-print-page-ranges-tooltip"));
+
         //
         helper.encloseLabel("print-account-separator", "", hasInvoicingOptions);
     }
