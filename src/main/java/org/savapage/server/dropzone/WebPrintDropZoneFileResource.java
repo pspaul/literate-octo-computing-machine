@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.webprint;
+package org.savapage.server.dropzone;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  * @author Rijk Ravestein
  *
  */
-public final class DropZoneFileResource extends AbstractResource {
+public final class WebPrintDropZoneFileResource extends AbstractResource {
 
     /**
      * As in: {@code <input type="file">} .
@@ -88,12 +88,12 @@ public final class DropZoneFileResource extends AbstractResource {
      * The logger.
      */
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(DropZoneFileResource.class);
+            LoggerFactory.getLogger(WebPrintDropZoneFileResource.class);
 
     /**
      * .
      */
-    public DropZoneFileResource() {
+    public WebPrintDropZoneFileResource() {
     }
 
     @Override

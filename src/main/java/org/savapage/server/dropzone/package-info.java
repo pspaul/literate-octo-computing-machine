@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,35 +19,8 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.webprint;
-
-import org.apache.wicket.request.resource.IResource;
-import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  *
- * @author Rijk Ravestein
- *
  */
-public final class DropZoneResourceReference extends ResourceReference {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     *
-     * @param name
-     *            Reference name.
-     */
-    public DropZoneResourceReference(final String name) {
-        super(name);
-    }
-
-    @Override
-    public IResource getResource() {
-        return new DropZoneFileResource();
-    }
-
-}
+package org.savapage.server.dropzone;

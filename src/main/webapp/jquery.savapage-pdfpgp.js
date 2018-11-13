@@ -1,5 +1,5 @@
-/*! SavaPage jQuery Mobile PDF2FV Web App | (c) 2011-2018 Datraverse B.V. |
- * GNU Affero General Public License */
+/*! SavaPage jQuery Mobile PDF Verification Web App | (c) 2011-2018 Datraverse
+ * B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
@@ -31,7 +31,7 @@
 /*global $, jQuery, alert*/
 
 /*
- * SavaPage jQuery Mobile Pos Web App
+ * SavaPage jQuery Mobile PDF Verification Web App
  */
 ( function($, window, document, JSON, _ns) {
         "use strict";
@@ -80,6 +80,13 @@
 
                 _model.locale = res.locale;
 
+                // WebPrint
+                _model.pdfpgpUploadUrl = res.pdfpgpUploadUrl;
+                _model.pdfpgpUploadFileParm = res.pdfpgpUploadFileParm;
+                _model.pdfpgpMaxBytes = res.pdfpgpMaxBytes;
+                _model.pdfpgpFileExt = res.pdfpgpFileExt;
+
+                //
                 language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);
                 if (!language) {
                     language = _model.authToken.language || '';
@@ -188,7 +195,64 @@
                 _api = new _ns.Api(_i18n, _model.user),
                 _view = new _ns.View(_i18n, _api),
                 _viewById = {},
-                _ctrl;
+                _ctrl,
+                _DROPZONE,
+                _DROPZONE_HTML
+            //
+            ,
+                _showUploadButton = function(enable) {
+                _view.visible($('#sp-btn-pdfpgp-upload-submit').parent(), enable);
+            }
+            //
+            ,
+                _showResetButton = function(enable) {
+                _view.visible($('#sp-btn-pdfpgp-upload-reset').parent(), enable);
+            }
+            //
+            ,
+                _onUploadStart = function() {
+                $('#sp-btn-pdfpgp-upload-reset').click();
+                $('#sp-pdfpgp-upload-feedback').html('&nbsp;').show();
+            }
+            //
+            ,
+                _onUploadDone = function() {
+                _showUploadButton(false);
+                _showResetButton(true);
+            }
+            //
+            ,
+                _onUploadMsgWarn = function(warn, files, filesStatus) {
+                $('#sp-pdfpgp-upload-feedback').html(_ns.DropZone.getHtmlWarning(_i18n, warn, files, filesStatus)).show();
+                _showUploadButton(false);
+                _showResetButton(true);
+                $('#sp-pdfpgp-upload-file').val('');
+            }
+            //
+            ,
+                _onUploadMsgInfo = function(files, info) {
+                var i,
+                    html = '';
+                for ( i = 0; i < files.length; i++) {
+                    html += files[i].name + ' (' + _ns.DropZone.humanFileSize(files[i].size) + ')<br>';
+                }
+
+                html += '<br>' + info;
+
+                $('#sp-pdfpgp-upload-feedback').addClass('sp-txt-valid').html(html);
+                _showResetButton(true);
+            }
+            //
+            ,
+                _setUploadFeedbackDefault = function(dropzone) {
+                var feedback = $('#sp-pdfpgp-upload-feedback');
+                feedback.removeClass('sp-txt-warn').removeClass('sp-txt-valid').addClass('sp-txt-info');
+                if (dropzone) {
+                    feedback.html(_DROPZONE_HTML);
+                } else {
+                    feedback.html('').hide();
+                }
+            };
 
             _ns.commonWebAppInit();
 
@@ -218,8 +282,7 @@
              *
              */
             this.init = function() {
-
-                //_ns.initWebApp('POS');
+                var zone;
 
                 _ctrl.init();
 
@@ -228,23 +291,80 @@
                     $.noop();
                 }).on('unload', function() {
                     _api.removeCallbacks();
-                    //_api.call({
-                    //    request : 'webapp-unload'
-                    //});
                 });
 
-                /**
-                 *
-                 */
-                $("#page-main").on('pagecreate', function(event) {
-                    $.noop();
+                _DROPZONE = _ns.DropZone.isSupported();
+                _DROPZONE_HTML = _i18n.format('pdfpgp-upload-dropzone-prompt-dialog');
 
-                    //_view.pages.main.onLanguage = function() {
-                    //    _view.pages.language.loadShowAsync();
-                    //};
+                _showUploadButton(false);
+                _showResetButton(false);
 
-                }).on("pageshow", function(event, ui) {
-                    $.noop();
+                _setUploadFeedbackDefault(_DROPZONE);
+
+                if (_DROPZONE) {
+
+                    zone = $('#sp-pdfpgp-upload-feedback');
+                    zone.addClass('sp-dropzone-small');
+
+                    _ns.DropZone.setCallbacks(zone, 'sp-dropzone-hover-small', _model.pdfpgpUploadUrl, _model.pdfpgpUploadFileParm, null
+                    //
+                    , function() {
+                        return null;
+                    }
+                    //
+                    , _model.pdfpgpMaxBytes, _model.pdfpgpFileExt, _i18n
+                    //
+                    , function() {// before send
+                        _onUploadStart();
+                    }, function() {// after send
+                        _onUploadDone();
+                    }, function(warn, infoArray, filesStatus) {
+                        _onUploadMsgWarn(warn, infoArray, filesStatus);
+                    }, function(files, info) {
+                        _onUploadMsgInfo(files, info);
+                    });
+                }
+
+                $('#sp-pdfpgp-upload-form').submit(function(e) {
+                    var files = document.getElementById('sp-pdfpgp-upload-file').files;
+
+                    _ns.logger.warn(files);
+
+                    e.preventDefault();
+
+                    _ns.DropZone.sendFiles(files, _model.pdfpgpUploadUrl, _model.pdfpgpUploadFileParm, null
+                    //
+                    , function() {
+                        return null;
+                    }
+                    //
+                    , _model.pdfpgpMaxBytes, _model.pdfpgpFileExt, _i18n
+                    //
+                    , function() {// before send
+                        _onUploadStart();
+                    }, function() {// after send
+                        _onUploadDone();
+                    }, function(warn, infoArray, filesStatus) {
+                        _onUploadMsgWarn(warn, infoArray, filesStatus);
+                    }, function(files, info) {
+                        _onUploadMsgInfo(files, info);
+                    });
+
+                    return false;
+                });
+
+                $('#sp-pdfpgp-upload-form').on('change', '#sp-pdfpgp-upload-file', function() {
+                    var show = $(this).val();
+                    _showUploadButton(show);
+                    _showResetButton(show);
+                    _setUploadFeedbackDefault(_DROPZONE);
+                });
+
+                $('#sp-btn-pdfpgp-upload-reset').click(function() {
+                    _setUploadFeedbackDefault(_DROPZONE);
+                    _showUploadButton(false);
+                    _showResetButton(false);
+                    return true;
                 });
 
             };

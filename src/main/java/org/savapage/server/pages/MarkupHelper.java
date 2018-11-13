@@ -63,6 +63,7 @@ import org.savapage.server.helpers.HtmlButtonEnum;
  */
 public final class MarkupHelper {
 
+    public static final String ATTR_ACCEPT = "accept";
     public static final String ATTR_CHECKED = "checked";
     public static final String ATTR_SELECTED = "selected";
     public static final String ATTR_DISABLED = "disabled";

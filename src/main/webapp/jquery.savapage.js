@@ -3177,7 +3177,7 @@
                     if (res.result.code !== '0') {
                         fooWarn(res.result.txt, infoArray, res.filesStatus);
                     } else if (fooInfo) {
-                        fooInfo(infoArray);
+                        fooInfo(infoArray, res.result.txt);
                     }
                 }).fail(function() {
                     _ns.PanelCommon.onDisconnected();

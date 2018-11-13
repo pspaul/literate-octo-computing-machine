@@ -81,48 +81,42 @@ If no sizes attribute is set, the element’s size defaults to 57 x 57.
 
 	<div id="page-main" data-role="dialog" data-theme="a"
 		data-close-btn="none">
+
 		<div data-role="header" data-theme="b">
 			<h1>PDF Verification</h1>
 		</div>
 
 		<div class="ui-content">
 
-			<ul data-role="listview" data-inset="true">
-				<li>
-					<pre wicket:id="payload-info" />
-				</li>
-				<li>
-					<form id="sp-pdf-2fv-upload-form" enctype="multipart/form-data">
+			<form id="sp-pdfpgp-upload-form" enctype="multipart/form-data">
 
-						<label for="sp-pdf-2fv-upload-file" />
-						<input id="sp-pdf-2fv-upload-file" type="file" accept=".pdf"
-							size="50" style="font-size: 110%;" multiple />
+				<label for="sp-pdfpgp-upload-file" id="sp-pdfpgp-upload-file-label" />
 
-						<div class="sp-txt-wrap" id="sp-pdf-2fv-upload-feedback"
-							style="padding: 10px; margin-bottom: 5px;" />
+				<input id="sp-pdfpgp-upload-file" wicket:id="fileUpload"
+					style="font-size: 110%;" type="file" size="50" accept=".pdf" />
 
-						<input type="submit" data-corners="false" data-inline="true"
-							data-icon="arrow-u" value="" wicket:id="btn-upload"
-							id="sp-pdf-2fv-upload-submit" />
+				<div class="sp-txt-wrap" id="sp-pdfpgp-upload-feedback"
+					style="padding: 10px; margin-bottom: 5px;" />
 
-						<input type="reset" data-inline="true" data-icon="delete"
-							data-corners="false" id="sp-pdf-2fv-upload-reset" value=""
-							wicket:id="btn-reset" />
+				<p>
+					<input wicket:id="btn-verify" type="submit" data-inline="true"
+						data-icon="check" value="" data-corners="false"
+						id="sp-btn-pdfpgp-upload-submit" />
 
-					</form>
-				</li>
-			</ul>
+					<input type="reset" data-inline="true" data-icon="delete"
+						data-corners="false" id="sp-btn-pdfpgp-upload-reset" value=""
+						wicket:id="btn-reset" />
+
+				</p>
+			</form>
 
 		</div>
-
 	</div>
-
 
 	<wicket:remove>
 		<!--  Placeholder for pages to load -->
 	</wicket:remove>
 	<div data-role="dialog" data-theme="a" id="page-language" />
 	<div data-role="dialog" data-theme="a" id="page-info" />
-
 </body>
 </html>

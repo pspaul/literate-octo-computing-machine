@@ -44,7 +44,7 @@ import org.savapage.core.services.helpers.SOfficeConfigProps;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
-import org.savapage.server.webprint.WebPrintHelper;
+import org.savapage.server.dropzone.WebPrintHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

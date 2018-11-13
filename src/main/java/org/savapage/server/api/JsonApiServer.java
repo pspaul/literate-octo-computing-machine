@@ -187,6 +187,10 @@ import org.savapage.server.api.request.ApiResultCodeEnum;
 import org.savapage.server.api.request.export.ReqExportOutboxPdf;
 import org.savapage.server.api.request.export.ReqExportUserDataHistory;
 import org.savapage.server.cometd.AbstractEventService;
+import org.savapage.server.dropzone.PdfPgpDropZoneFileResource;
+import org.savapage.server.dropzone.PdfPgpUploadHelper;
+import org.savapage.server.dropzone.WebPrintDropZoneFileResource;
+import org.savapage.server.dropzone.WebPrintHelper;
 import org.savapage.server.dto.MoneyTransferDto;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -194,8 +198,6 @@ import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webprint.DropZoneFileResource;
-import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -4450,11 +4452,22 @@ public final class JsonApiServer extends AbstractPage {
             userData.put("webPrintUploadUrl",
                     WebApp.MOUNT_PATH_UPLOAD_WEBPRINT);
             userData.put("webPrintUploadFileParm",
-                    DropZoneFileResource.UPLOAD_PARAM_NAME_FILE);
+                    WebPrintDropZoneFileResource.UPLOAD_PARAM_NAME_FILE);
             userData.put("webPrintUploadFontParm",
-                    DropZoneFileResource.UPLOAD_PARAM_NAME_FONT);
+                    WebPrintDropZoneFileResource.UPLOAD_PARAM_NAME_FONT);
             userData.put("webPrintFileExt",
                     WebPrintHelper.getSupportedFileExtensions(true));
+        }
+
+        if (ConfigManager.isPdfPgpEnabled()) {
+            userData.put("pdfpgpMaxBytes",
+                    PdfPgpUploadHelper.getMaxUploadSize().bytes());
+            userData.put("pdfpgpUploadUrl",
+                    WebApp.MOUNT_PATH_UPLOAD_PDF_VERIFY);
+            userData.put("pdfpgpUploadFileParm",
+                    PdfPgpDropZoneFileResource.UPLOAD_PARAM_NAME_FILE);
+            userData.put("pdfpgpFileExt",
+                    PdfPgpUploadHelper.getSupportedFileExtensions(true));
         }
 
         // Colors

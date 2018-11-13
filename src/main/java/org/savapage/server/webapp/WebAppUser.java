@@ -59,12 +59,12 @@ import org.savapage.ext.oauth.OAuthProviderEnum;
 import org.savapage.ext.oauth.OAuthUserInfo;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
+import org.savapage.server.dropzone.WebPrintHelper;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
-import org.savapage.server.webprint.WebPrintHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -485,7 +485,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         addZeroPagePanel(WebAppTypeEnum.USER);
 
-        webPrintdMarkup();
+        webPrintMarkup();
 
         addFileDownloadApiPanel();
 
@@ -540,11 +540,11 @@ public final class WebAppUser extends AbstractWebAppPage {
     /**
      * Creates the markup for the Web Print File upload.
      */
-    private void webPrintdMarkup() {
+    private void webPrintMarkup() {
 
         final Label fileUploadField = new Label("fileUpload");
-        fileUploadField
-                .add(new AttributeModifier("accept", getHtmlAcceptString()));
+        fileUploadField.add(new AttributeModifier(MarkupHelper.ATTR_ACCEPT,
+                getHtmlAcceptString()));
         add(fileUploadField);
 
         //

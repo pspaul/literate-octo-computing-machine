@@ -19,7 +19,7 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.webprint;
+package org.savapage.server.dropzone;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public final class WebPrintHelper {
      * The logger.
      */
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(DropZoneFileResource.class);
+            LoggerFactory.getLogger(WebPrintDropZoneFileResource.class);
 
     /**
      * .

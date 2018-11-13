@@ -125,6 +125,8 @@ public enum HtmlButtonEnum {
     TEST,
     /** */
     UPLOAD,
+    /** */
+    VERIFY,
     /** As opposite of {@link #NO}. */
     YES;
 

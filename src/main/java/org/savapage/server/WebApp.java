@@ -69,6 +69,8 @@ import org.savapage.ext.payment.PaymentMethodEnum;
 import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.api.JsonApiServer;
 import org.savapage.server.cometd.AbstractEventService;
+import org.savapage.server.dropzone.PdfPgpDropZoneResourceReference;
+import org.savapage.server.dropzone.WebPrintDropZoneResourceReference;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.img.ImageServer;
 import org.savapage.server.ios.WebClipServer;
@@ -88,7 +90,6 @@ import org.savapage.server.webapp.WebAppPdfPgp;
 import org.savapage.server.webapp.WebAppPos;
 import org.savapage.server.webapp.WebAppPrintSite;
 import org.savapage.server.webapp.WebAppUser;
-import org.savapage.server.webprint.DropZoneResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +125,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     /**
      * Used in this class to set mountPage().
      */
-    public static final String MOUNT_PATH_WEBAPP_PDF2FV =
+    public static final String MOUNT_PATH_WEBAPP_PDFPGP =
             PdfPgpVerifyUrl.MOUNT_PATH_WEBAPP;
 
     /**
@@ -179,9 +180,14 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     private static final String MOUNT_PATH_API = "/api";
 
     /**
-     * Mount path for WenPrint drop zone.
+     * Mount path for WebPrint drop zone.
      */
     public static final String MOUNT_PATH_UPLOAD_WEBPRINT = "/upload/webprint";
+
+    /**
+     * Mount path for PDF/PGP Verification drop zone.
+     */
+    public static final String MOUNT_PATH_UPLOAD_PDF_VERIFY = "/upload/pdfpgp";
 
     /**
      *
@@ -627,7 +633,10 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              *
              */
             mountResource(MOUNT_PATH_UPLOAD_WEBPRINT,
-                    new DropZoneResourceReference("webprint"));
+                    new WebPrintDropZoneResourceReference("webprint"));
+
+            mountResource(MOUNT_PATH_UPLOAD_PDF_VERIFY,
+                    new PdfPgpDropZoneResourceReference("pdfpgp"));
 
             /*
              * Mount a page class to a given path
@@ -639,7 +648,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             mountPage(MOUNT_PATH_WEBAPP_PRINTSITE, WebAppPrintSite.class);
             mountPage(MOUNT_PATH_WEBAPP_POS, WebAppPos.class);
 
-            mountPage(MOUNT_PATH_WEBAPP_PDF2FV, WebAppPdfPgp.class);
+            mountPage(MOUNT_PATH_WEBAPP_PDFPGP, WebAppPdfPgp.class);
 
             mountPage(MOUNT_PATH_WEBAPP_USER, WebAppUser.class);
 

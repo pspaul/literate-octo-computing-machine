@@ -33,6 +33,7 @@ import java.util.Set;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
@@ -47,8 +48,6 @@ import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -59,10 +58,6 @@ public final class WebAppPdfPgp extends AbstractWebAppPage {
 
     /** */
     private static final long serialVersionUID = 1L;
-
-    /** */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(WebAppPdfPgp.class);
 
     /**
      *
@@ -79,10 +74,10 @@ public final class WebAppPdfPgp extends AbstractWebAppPage {
         final String pgpMsgBody = parameters
                 .get(PdfPgpVerifyUrl.URL_POSITION_PGP_MESSAGE).toString();
 
-        if (ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_PDFPGP_ENABLE)) {
+        if (ConfigManager.instance().isConfigValue(Key.WEBAPP_PDFPGP_ENABLE)) {
             if (pgpMsgBody == null) {
-                err = "no verification data";
+                // err = "no verification data";
+                err = null;
             } else {
                 err = null;
             }
@@ -99,16 +94,24 @@ public final class WebAppPdfPgp extends AbstractWebAppPage {
         add(new Label("app-title", appTitle));
 
         final MarkupHelper helper = new MarkupHelper(this);
-        helper.addTextInput("btn-upload", HtmlButtonEnum.UPLOAD);
-        helper.addTextInput("btn-reset", HtmlButtonEnum.RESET);
 
-        handlePgpMessage(helper, PdfPgpVerifyUrl.assemblePgpMsg(pgpMsgBody));
+        // handlePgpMessage(helper, PdfPgpVerifyUrl.assemblePgpMsg(pgpMsgBody));
+        // fileUploadMarkup();
+
+        add(new FileUploadField("fileUpload"));
+
+        helper.addTextInput("btn-reset", HtmlButtonEnum.RESET);
+        helper.addTextInput("btn-verify", HtmlButtonEnum.VERIFY);
+
     }
 
     /**
      * @param helper
+     *            The mark-up helper.
      * @param pgpMessage
+     *            PGP message.
      * @throws PGPBaseException
+     *             When PGP error.
      */
     private void handlePgpMessage(final MarkupHelper helper,
             final String pgpMessage) {

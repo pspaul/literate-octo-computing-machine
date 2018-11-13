@@ -33,8 +33,8 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.doc.DocContentTypeEnum;
+import org.savapage.server.dropzone.WebPrintHelper;
 import org.savapage.server.pages.MarkupHelper;
-import org.savapage.server.webprint.WebPrintHelper;
 
 /**
  * A page showing the HOLD proxy print jobs for a user.
