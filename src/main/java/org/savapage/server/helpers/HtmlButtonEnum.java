@@ -38,6 +38,8 @@ public enum HtmlButtonEnum {
     /** */
     APPLY,
     /** */
+    ARCHIVE,
+    /** */
     BACK,
     /** */
     BROWSE,
@@ -97,6 +99,8 @@ public enum HtmlButtonEnum {
     REFUND,
     /** */
     REGISTER,
+    /** */
+    RENAME,
     /** */
     RESET,
     /** */

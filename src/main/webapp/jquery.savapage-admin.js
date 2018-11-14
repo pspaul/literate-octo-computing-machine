@@ -1414,6 +1414,7 @@
                 _model.editPrinter.printerGroups = $('#printer-printergroups').val();
                 _model.editPrinter.ppdExtFile = $('#printer-ppd-ext-file').val();
                 _model.editPrinter.disabled = $('#printer-disabled').is(':checked');
+                _model.editPrinter.archiveDisabled = $('#printer-archive-disabled').is(':checked');
                 _model.editPrinter.internal = $('#printer-internal').is(':checked');
                 _model.editPrinter.deleted = $('#printer-deleted').is(':checked');
                 _model.editPrinter.jobTicket = $('#printer-jobticket').is(':checked');

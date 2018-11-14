@@ -22,7 +22,13 @@
 package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -41,7 +47,29 @@ public class PagePrinter extends AbstractAdminPage {
      *            The page parameters.
      */
     public PagePrinter(final PageParameters parameters) {
+
         super(parameters, ACLOidEnum.A_PRINTERS, RequiredPermission.EDIT);
+
+        final MarkupHelper helper = new MarkupHelper(this);
+        helper.addButton("btn-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("btn-cancel-1", HtmlButtonEnum.CANCEL);
+        helper.addButton("btn-cancel-2", HtmlButtonEnum.CANCEL);
+
+        helper.addButton("btn-rename", HtmlButtonEnum.RENAME);
+        helper.addLabel("printer-rename",
+                HtmlButtonEnum.RENAME.uiText(getLocale()));
+
+        helper.addLabel("printer-disabled", AdverbEnum.DISABLED);
+
+        helper.addLabel("printer-location", NounEnum.LOCATION);
+
+        if (ConfigManager.instance()
+                .isConfigValue(Key.PROXY_PRINT_ARCHIVE_ENABLE)) {
+            helper.addLabel("printer-archive", NounEnum.ARCHIVE);
+            helper.addLabel("archive-disabled", AdverbEnum.DISABLED);
+        } else {
+            helper.discloseLabel("printer-archive");
+        }
     }
 
 }

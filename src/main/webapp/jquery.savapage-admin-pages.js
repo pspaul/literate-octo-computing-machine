@@ -1251,6 +1251,7 @@
                 $('#printer-ppd-ext-file').val(_model.editPrinter.ppdExtFile);
 
                 _view.checkCb('#printer-disabled', _model.editPrinter.disabled);
+                _view.checkCb('#printer-archive-disabled', _model.editPrinter.archiveDisabled);
                 _view.checkCb('#printer-internal', _model.editPrinter.internal);
                 _view.checkCb('#printer-deleted', _model.editPrinter.deleted);
 
