@@ -245,7 +245,7 @@
 				</label>
 				<input type="text" data-clear-btn="true" id="print-page-ranges"
 					value="" pattern="[0-9]*" autocomplete="off" autocorrect="off"
-					autocapitalize="off" spellcheck="false" 
+					autocapitalize="off" spellcheck="false"
 					wicket:id="print-page-ranges" />
 			</div>
 
@@ -368,7 +368,23 @@
 						wicket:id="delete-pages-after-print-warn" />
 				</div>
 			</wicket:enclosure>
+
 		</li>
+
+		<wicket:enclosure child="archive-print-job-prompt">
+			<li>
+				<span class="sp-txt-wrap" wicket:id="archive-print-job-prompt" />
+			</li>
+		</wicket:enclosure>
+
+		<wicket:enclosure child="archive-print-job">
+			<li>
+				<div class="ui-mini">
+					<label for="print-archive-print-job" wicket:id="archive-print-job" />
+					<input type="checkbox" id="print-archive-print-job" value="0" />
+				</div>
+			</li>
+		</wicket:enclosure>
 
 		<li class="sp-jobticket" data-mini="true">
 

@@ -267,6 +267,48 @@ public class Print extends AbstractUserPage {
         }
 
         //
+        final boolean isArchive;
+        final boolean isArchiveSelectable;
+        final String archivePrompt;
+
+        if (cm.isConfigValue(Key.PROXY_PRINT_ARCHIVE_ENABLE)) {
+
+            final Integer privsArchive = ACCESS_CONTROL_SERVICE
+                    .getPrivileges(user, ACLOidEnum.U_PRINT_ARCHIVE);
+
+            if (privsArchive == null) {
+                isArchive = true;
+                isArchiveSelectable = false;
+            } else {
+                isArchive = ACLPermissionEnum.READER
+                        .isPresent(privsArchive.intValue());
+                isArchiveSelectable = isArchive
+                        && ACLPermissionEnum.SELECT.isPresent(privsArchive);
+            }
+        } else {
+            isArchive = false;
+            isArchiveSelectable = false;
+        }
+
+        if (isArchive && cm
+                .isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_ARCHIVE_PROMPT)) {
+            if (isArchiveSelectable) {
+                archivePrompt = localized("sp-archive-select-prompt");
+            } else {
+                archivePrompt = localized("sp-archive-auto-prompt");
+            }
+        } else {
+            archivePrompt = null;
+        }
+
+        helper.encloseLabel("archive-print-job-prompt", archivePrompt,
+                archivePrompt != null);
+
+        helper.encloseLabel("archive-print-job",
+                HtmlButtonEnum.ARCHIVE.uiText(getLocale()),
+                isArchiveSelectable);
+
+        //
         final Integer privsLetterhead = ACCESS_CONTROL_SERVICE
                 .getPrivileges(user, ACLOidEnum.U_LETTERHEAD);
 
@@ -298,7 +340,7 @@ public class Print extends AbstractUserPage {
 
         //
         final boolean allowPersonalPrint = ACCESS_CONTROL_SERVICE.hasPermission(
-                user, ACLOidEnum.U_PERSONAL_PRINT, ACLPermissionEnum.SELECTOR);
+                user, ACLOidEnum.U_PERSONAL_PRINT, ACLPermissionEnum.READER);
 
         final UserGroupAccountDao.ListFilter filter =
                 new UserGroupAccountDao.ListFilter();
