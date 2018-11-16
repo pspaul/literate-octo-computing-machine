@@ -189,31 +189,24 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public static final String MOUNT_PATH_UPLOAD_PDF_VERIFY = "/upload/pdfpgp";
 
-    /**
-     *
-     */
+    /** */
     public static final String WEBJARS_PATH_JQUERY_CORE_JS =
             "jquery/current/jquery.js";
 
-    /**
-     *
-     */
+    /** */
     public static final String PATH_IMAGES = "/images";
 
-    /**
-     *
-     */
+    /** */
+    public static final String PATH_IMAGES_FAMFAM = "/famfamfam-silk";
+
+    /** */
     public static final String PATH_IMAGES_PAYMENT = PATH_IMAGES + "/payment";
 
-    /**
-     * .
-     */
+    /** */
     public static final String PATH_IMAGES_EXT_SUPPLIER =
             PATH_IMAGES + "/ext-supplier";
 
-    /**
-     * .
-     */
+    /** */
     public static final String PATH_IMAGES_THIRDPARTY =
             PATH_IMAGES + "/thirdparty";
 
@@ -222,19 +215,13 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public static final String FILENAME_WEB_PROPERTIES = "web.properties";
 
-    /**
-     *
-     */
+    /** */
     private static Properties theServerProps = new Properties();
 
-    /**
-    *
-    */
+    /** */
     private static Properties theWebProps = new Properties();
 
-    /**
-     *
-     */
+    /** */
     private static final Logger LOGGER = LoggerFactory.getLogger(WebApp.class);
 
     /**

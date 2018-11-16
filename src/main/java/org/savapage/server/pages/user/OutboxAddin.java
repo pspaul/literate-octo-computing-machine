@@ -348,6 +348,14 @@ public class OutboxAddin extends AbstractUserPage {
             if (isJobTicketItem) {
                 MarkupHelper.modifyLabelAttr(labelImg, MarkupHelper.ATTR_CLASS,
                         CSS_CLASS_TICKET);
+                final HtmlButtonEnum title;
+                if (isCopyJobTicket) {
+                    title = HtmlButtonEnum.COPY;
+                } else {
+                    title = HtmlButtonEnum.PRINT;
+                }
+                MarkupHelper.modifyLabelAttr(labelImg, MarkupHelper.ATTR_TITLE,
+                        title.uiText(locale));
             } else {
                 MarkupHelper.modifyLabelAttr(labelImg, MarkupHelper.ATTR_CLASS,
                         CSS_CLASS_HOLD);
@@ -365,10 +373,30 @@ public class OutboxAddin extends AbstractUserPage {
                 imgSrc.setLength(0);
                 imgSrc.append(WebApp.PATH_IMAGES).append('/');
                 imgSrc.append("copy-jobticket-128x128.png");
-                helper.addModifyLabelAttr("img-job-sheet",
-                        MarkupHelper.ATTR_SRC, imgSrc.toString());
+
+                MarkupHelper.modifyLabelAttr(
+                        helper.addModifyLabelAttr("img-job-sheet",
+                                MarkupHelper.ATTR_SRC, imgSrc.toString()),
+                        MarkupHelper.ATTR_TITLE,
+                        PROXYPRINT_SERVICE.localizePrinterOpt(locale,
+                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_JOB_SHEETS));
+
             } else {
                 helper.discloseLabel("img-job-sheet");
+            }
+
+            //
+            if (BooleanUtils.isTrue(job.getArchive())) {
+                imgSrc.setLength(0);
+                imgSrc.append(WebApp.PATH_IMAGES).append('/');
+                imgSrc.append("archive-16x16.png");
+                MarkupHelper.modifyLabelAttr(
+                        helper.addModifyLabelAttr("img-archive",
+                                MarkupHelper.ATTR_SRC, imgSrc.toString()),
+                        MarkupHelper.ATTR_TITLE,
+                        HtmlButtonEnum.ARCHIVE.uiText(locale));
+            } else {
+                helper.discloseLabel("img-archive");
             }
 
             //

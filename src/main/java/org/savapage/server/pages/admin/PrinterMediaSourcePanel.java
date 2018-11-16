@@ -551,8 +551,10 @@ public final class PrinterMediaSourcePanel extends Panel {
             final Printer printer,
             final List<IppMediaSourceCostDto> mediaSourceList) {
 
-        final boolean enclose = !PRINTER_SERVICE.isJobTicketPrinter(printer)
-                && PRINTER_DAO.isJobTicketRedirectPrinter(printer.getId());
+        final boolean enclose =
+                !PRINTER_SERVICE.isJobTicketPrinter(printer.getId())
+                        && PRINTER_DAO
+                                .isJobTicketRedirectPrinter(printer.getId());
 
         helper.encloseLabel("job-sheets-label",
                 PrintOutNounEnum.JOB_SHEET.uiText(getLocale(), true), enclose);

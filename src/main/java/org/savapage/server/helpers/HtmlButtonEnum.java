@@ -58,6 +58,8 @@ public enum HtmlButtonEnum {
     /** */
     CONTINUE,
     /** */
+    COPY,
+    /** */
     DEFAULT,
     /** */
     DELETE,

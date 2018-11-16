@@ -146,6 +146,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Boolean ecoprint;
         private InboxSelectScopeEnum clearScope;
         private Boolean separateDocs;
+        private Boolean archive;
         private Boolean jobTicket;
         private JobTicketTypeEnum jobTicketType;
         private String jobTicketTag;
@@ -285,6 +286,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setSeparateDocs(Boolean separateDocs) {
             this.separateDocs = separateDocs;
+        }
+
+        public Boolean getArchive() {
+            return archive;
+        }
+
+        public void setArchive(Boolean archive) {
+            this.archive = archive;
         }
 
         public Boolean getJobTicket() {
@@ -682,6 +691,11 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setLocale(this.getLocale());
         printReq.setIdUser(lockedUser.getId());
         printReq.setClearScope(clearScope);
+
+        printReq.setArchive(
+                !isCopyJobTicket && BooleanUtils.isTrue(dtoReq.getArchive())
+                        && cm.isConfigValue(Key.PROXY_PRINT_ARCHIVE_ENABLE)
+                        && !PRINTER_SERVICE.isArchiveDisabled(printer));
 
         printReq.setConvertToGrayscale(!isJobTicket && printReq.isGrayscale()
                 && PROXY_PRINT_SERVICE.isColorPrinter(dtoReq.getPrinter())

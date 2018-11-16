@@ -3740,6 +3740,8 @@
                 //
                 , _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate"))
                 //
+                , _view.isCbChecked($('#print-archive-print-job'))
+                //
                 , _isDelegatedPrint(), separateDocs
                 //
                 , isJobticket, _getJobTicketType(_model.myPrinter.jobTicket)
@@ -3800,6 +3802,9 @@
                     copies = parseInt($('#slider-print-copies').val(), 10);
                 }
 
+                // Assume visible, evaluate later.
+                _view.visible($('.sp-proxyprint-archive'), true);
+
                 _view.visible($('#slider-print-copies-div'), !delegatedPrint && !jobTicket);
                 _view.visible($('#number-print-copies-div'), !delegatedPrint && jobTicket);
                 _view.visible($('#sp-print-shared-account-div'), !delegatedPrint);
@@ -3854,6 +3859,11 @@
                 _view.visible($('.sp-print-job-info'), isPrintJob && hasInboxDocs);
                 _view.visible($('#sp-jobticket-copy-pages-div'), jobTicket && !isPrintJob);
                 _view.visible($('#sp-print-page-ranges-div'), isPrintJob);
+
+                if (!_model.myPrinter || _model.myPrinter.archiveDisabled) {
+                    _view.visible($('.sp-proxyprint-archive'), false);
+                }
+
             },
 
                 _onJobListChange = function() {
@@ -3946,6 +3956,7 @@
                     _view.checkCb("#delete-pages-after-print", false);
                 }
 
+                _view.checkCb("#print-archive-print-job", false);
                 _view.checkRadioValue('sp-print-jobticket-type', _model.TICKETTYPE_PRINT);
                 _view.setSelectedFirst($('#sp-print-shared-account-list'));
             };
@@ -6172,7 +6183,7 @@
             /**
              * Callbacks: page print
              */
-            _view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint, collate, isDelegation, separateDocs, isJobticket, jobTicketType, landscapeView) {
+            _view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint, collate, archive, isDelegation, separateDocs, isJobticket, jobTicketType, landscapeView) {
 
                 var res,
                     sel,
@@ -6231,6 +6242,7 @@
                         ecoprint : ecoprint,
                         clearScope : clearScope,
                         separateDocs : separateDocs,
+                        archive : archive,
                         options : _model.myPrinterOpt,
                         delegation : isDelegation ? _model.printDelegation : null,
                         jobTicket : isJobticket,
@@ -6340,7 +6352,6 @@
                     });
 
                     if (res.result.code === '0') {
-
                         _model.myPrinter = res.printer;
                         _model.setPrinterDefaults();
                         _model.myFirstPageShowPrintSettings = true;

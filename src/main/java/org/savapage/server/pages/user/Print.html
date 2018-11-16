@@ -369,22 +369,23 @@
 				</div>
 			</wicket:enclosure>
 
-		</li>
+			<wicket:enclosure child="archive-print-job-prompt">
+				<div
+					class="sp-proxyprint sp-jobticket-print sp-proxyprint-archive sp-txt-wrap">
+					<hr style="opacity: 0.2; margin-top: 15px;" />
+					<span wicket:id="archive-print-job-prompt" />
+				</div>
+			</wicket:enclosure>
 
-		<wicket:enclosure child="archive-print-job-prompt">
-			<li>
-				<span class="sp-txt-wrap" wicket:id="archive-print-job-prompt" />
-			</li>
-		</wicket:enclosure>
-
-		<wicket:enclosure child="archive-print-job">
-			<li>
-				<div class="ui-mini">
+			<wicket:enclosure child="archive-print-job">
+				<div
+					class="ui-mini sp-proxyprint sp-jobticket-print sp-proxyprint-archive">
 					<label for="print-archive-print-job" wicket:id="archive-print-job" />
 					<input type="checkbox" id="print-archive-print-job" value="0" />
 				</div>
-			</li>
-		</wicket:enclosure>
+			</wicket:enclosure>
+
+		</li>
 
 		<li class="sp-jobticket" data-mini="true">
 

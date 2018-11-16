@@ -381,7 +381,7 @@ public final class PrintersPage extends AbstractAdminListPage {
             item.add(labelWrk);
 
             final boolean isJobTicketPrinter =
-                    PRINTER_SERVICE.isJobTicketPrinter(printer);
+                    PRINTER_SERVICE.isJobTicketPrinter(printer.getId());
 
             final String imageSrc;
 
