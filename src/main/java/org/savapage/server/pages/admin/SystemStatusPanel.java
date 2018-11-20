@@ -275,10 +275,8 @@ public final class SystemStatusPanel extends Panel {
          * OpenPGP
          */
         final PGPPublicKeyInfo pgpPubKey = cm.getPGPPublicKeyInfo();
-        if (cm.isConfigValue(Key.MAIL_PGP_MIME_SIGN)) {
-            helper.addLabel("pgp-uid",
-                    pgpPubKey.getUids().get(0).toString());
-
+        if (pgpPubKey != null) {
+            helper.addLabel("pgp-uid", pgpPubKey.getUids().get(0).toString());
             final TooltipPanel tooltip = new TooltipPanel("tooltip-pgp");
             tooltip.populate(
                     String.format("<p>KeyID: %s</p><p>Fingerprint: %s</p>",
@@ -287,7 +285,6 @@ public final class SystemStatusPanel extends Panel {
                     false);
             tooltip.setEscapeModelStrings(false);
             add(tooltip);
-
         } else {
             helper.discloseLabel("pgp-uid");
         }
