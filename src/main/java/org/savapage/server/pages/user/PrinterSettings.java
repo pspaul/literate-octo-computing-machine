@@ -95,11 +95,13 @@ public class PrinterSettings extends AbstractUserPage {
 
             TooltipPanel tooltip =
                     new TooltipPanel(WICKET_ID_TOOLTIP_LANDSCAPE_PRINT);
-            tooltip.populate(localized("sp-tooltip-page-orientation-print"));
+            tooltip.populate(localized("sp-tooltip-page-orientation-print"),
+                    true);
             add(tooltip);
 
             tooltip = new TooltipPanel(WICKET_ID_TOOLTIP_LANDSCAPE_COPY);
-            tooltip.populate(localized("sp-tooltip-page-orientation-copy"));
+            tooltip.populate(localized("sp-tooltip-page-orientation-copy"),
+                    true);
             add(tooltip);
 
         } else {

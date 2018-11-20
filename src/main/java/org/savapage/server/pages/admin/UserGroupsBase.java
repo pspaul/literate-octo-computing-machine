@@ -71,7 +71,7 @@ public final class UserGroupsBase extends AbstractAdminPage {
 
                 final TooltipPanel tooltip =
                         new TooltipPanel("tooltip-add-remove");
-                tooltip.populate(localized("tooltip-add-remove"));
+                tooltip.populate(localized("tooltip-add-remove"), true);
 
                 add(tooltip);
             } else {

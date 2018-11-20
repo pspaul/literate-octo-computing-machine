@@ -150,6 +150,21 @@
 						</tr>
 					</wicket:enclosure>
 
+					<wicket:enclosure child="pgp-uid">
+						<tr>
+							<th>PGP</th>
+							<td class="sp-txt-wrap sp-txt-info">
+								<small wicket:id="pgp-uid" />
+							</td>
+							<td>
+								<div style="margin-top: -15px;">
+									<wicket:panel wicket:id="tooltip-pgp" />
+								</div>
+							</td>
+						</tr>
+					</wicket:enclosure>
+
+
 					<wicket:enclosure child="jvm-memory">
 						<tr>
 							<th>
@@ -329,7 +344,7 @@
 		<wicket:enclosure child="environmental-impact">
 			<wicket:panel wicket:id="environmental-impact" />
 		</wicket:enclosure>
-		
+
 		<wicket:panel wicket:id="stats-financial-totals" />
 
 	</ul>

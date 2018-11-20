@@ -75,6 +75,7 @@ import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
+import org.savapage.lib.pgp.PGPPublicKeyInfo;
 import org.savapage.server.WebApp;
 import org.savapage.server.cometd.UserEventService;
 import org.savapage.server.ext.ServerPluginManager;
@@ -268,6 +269,27 @@ public final class SystemStatusPanel extends Panel {
         } else {
 
             helper.discloseLabel("mailprint-status");
+        }
+
+        /*
+         * OpenPGP
+         */
+        final PGPPublicKeyInfo pgpPubKey = cm.getPGPPublicKeyInfo();
+        if (cm.isConfigValue(Key.MAIL_PGP_MIME_SIGN)) {
+            helper.addLabel("pgp-uid",
+                    pgpPubKey.getUids().get(0).toString());
+
+            final TooltipPanel tooltip = new TooltipPanel("tooltip-pgp");
+            tooltip.populate(
+                    String.format("<p>KeyID: %s</p><p>Fingerprint: %s</p>",
+                            pgpPubKey.formattedKeyID(),
+                            pgpPubKey.formattedFingerPrint()),
+                    false);
+            tooltip.setEscapeModelStrings(false);
+            add(tooltip);
+
+        } else {
+            helper.discloseLabel("pgp-uid");
         }
 
         /*
@@ -717,7 +739,7 @@ public final class SystemStatusPanel extends Panel {
 
         if (showTechInfo) {
             final TooltipPanel tooltip = new TooltipPanel("tooltip-jvm-memory");
-            tooltip.populate(helper.localized("tooltip-jvm-memory"));
+            tooltip.populate(helper.localized("tooltip-jvm-memory"), true);
             add(tooltip);
         }
 
