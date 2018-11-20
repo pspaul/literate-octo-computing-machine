@@ -606,6 +606,9 @@ public class DocLogItemPanel extends Panel {
                 localizedShortDateTime(obj.getCreatedDate())));
 
         //
+        addArchiveImg(helper, obj);
+
+        //
         String title = null;
         if (ConfigManager.instance()
                 .isConfigValue(Key.WEBAPP_DOCLOG_SHOW_DOC_TITLE)) {
@@ -747,6 +750,30 @@ public class DocLogItemPanel extends Panel {
         } else {
             helper.discloseLabel("img-job-sheet");
         }
+    }
+
+    /**
+     *
+     * @param helper
+     * @param obj
+     */
+    private void addArchiveImg(final MarkupHelper helper,
+            final DocLogItem obj) {
+
+        if (obj.isPrintArchive()) {
+            final StringBuilder imgSrc = new StringBuilder();
+            imgSrc.setLength(0);
+            imgSrc.append(WebApp.PATH_IMAGES).append('/');
+            imgSrc.append("archive-16x16.png");
+            MarkupHelper.modifyLabelAttr(
+                    helper.addModifyLabelAttr("img-archive",
+                            MarkupHelper.ATTR_SRC, imgSrc.toString()),
+                    MarkupHelper.ATTR_TITLE,
+                    NounEnum.ARCHIVE.uiText(getLocale()));
+        } else {
+            helper.discloseLabel("img-archive");
+        }
+
     }
 
     /**

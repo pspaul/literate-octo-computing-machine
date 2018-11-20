@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.PrintOutDao;
@@ -54,6 +55,7 @@ import org.savapage.core.jpa.DocOut;
 import org.savapage.core.jpa.PdfOut;
 import org.savapage.core.jpa.PrintIn;
 import org.savapage.core.jpa.PrintOut;
+import org.savapage.core.print.archive.PrintArchiver;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.DateUtil;
@@ -110,6 +112,8 @@ public final class DocLogItem {
     private boolean finishingStaple;
     private boolean finishingFold;
     private boolean finishingBooklet;
+
+    private boolean printArchive;
 
     private Map<String, String> ippOptions;
 
@@ -418,6 +422,9 @@ public final class DocLogItem {
 
             final List<DocLogItem> list = new ArrayList<>();
 
+            final boolean isArchiveEnabled = ConfigManager.instance()
+                    .isConfigValue(Key.PROXY_PRINT_ARCHIVE_ENABLE);
+
             for (final DocLog docLog : ((List<DocLog>) query.getResultList())) {
 
                 DocLogItem log = new DocLogItem();
@@ -574,6 +581,9 @@ public final class DocLogItem {
                             log.setFinishingStaple(
                                     optionMap.hasFinishingStaple());
                         }
+
+                        log.setPrintArchive(isArchiveEnabled && PrintArchiver
+                                .instance().isArchivePresent(docLog));
 
                     } else if (pdfOut != null) {
 
@@ -1315,6 +1325,14 @@ public final class DocLogItem {
 
     public void setFinishingBooklet(boolean finishingBooklet) {
         this.finishingBooklet = finishingBooklet;
+    }
+
+    public boolean isPrintArchive() {
+        return printArchive;
+    }
+
+    public void setPrintArchive(boolean printArchive) {
+        this.printArchive = printArchive;
     }
 
     public Map<String, String> getIppOptions() {
