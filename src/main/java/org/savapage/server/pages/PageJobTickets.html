@@ -144,9 +144,11 @@
 					<button id="btn-jobtickets-refresh" wicket:id="button-refresh"
 						class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-refresh" />
 
-					<button id="btn-jobtickets-cancel-all" data-rel="popup"
-						wicket:id="button-cancel-all"
-						class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete" />
+					<wicket:enclosure child="button-cancel-all">
+						<button id="btn-jobtickets-cancel-all" data-rel="popup"
+							wicket:id="button-cancel-all"
+							class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete" />
+					</wicket:enclosure>
 
 					<wicket:enclosure child="button-print-all">
 						<button id="btn-jobtickets-print-all" data-rel="popup"

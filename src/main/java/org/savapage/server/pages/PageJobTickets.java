@@ -45,6 +45,10 @@ public final class PageJobTickets extends AbstractAuthPage {
     /** */
     private static final String WICKET_ID_BUTTON_PRINT_ALL = "button-print-all";
 
+    /** */
+    private static final String WICKET_ID_BUTTON_CANCEL_ALL =
+            "button-cancel-all";
+
     @Override
     protected boolean needMembership() {
         return false;
@@ -73,9 +77,13 @@ public final class PageJobTickets extends AbstractAuthPage {
             helper.discloseLabel(WICKET_ID_BUTTON_PRINT_ALL);
         }
 
-        add(addTitle(new Label("button-cancel-all",
-                String.format("%s%s", localized("button-cancel-all"),
-                        HtmlButtonEnum.DOTTED_SUFFIX))));
+        if (cm.isConfigValue(Key.WEBAPP_JOBTICKETS_CANCEL_ALL_ENABLE)) {
+            add(addTitle(new Label(WICKET_ID_BUTTON_CANCEL_ALL,
+                    String.format("%s%s", localized("button-cancel-all"),
+                            HtmlButtonEnum.DOTTED_SUFFIX))));
+        } else {
+            helper.discloseLabel(WICKET_ID_BUTTON_CANCEL_ALL);
+        }
 
         final Label slider = helper.addModifyLabelAttr("jobtickets-max-items",
                 MarkupHelper.ATTR_VALUE, String.valueOf(
