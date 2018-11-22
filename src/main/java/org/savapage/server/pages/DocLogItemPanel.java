@@ -44,6 +44,7 @@ import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.dto.JobTicketTagDto;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
@@ -148,8 +149,8 @@ public class DocLogItemPanel extends Panel {
                 "print-in-denied-reason", "collate", "ecoPrint",
                 "removeGraphics", "pageRotate180", "punch", "staple", "fold",
                 "booklet", "jobticket-media", "jobticket-copy",
-                "jobticket-finishing-ext", "jobticket-custom-ext",
-                "landscape" }) {
+                "jobticket-finishing-ext", "jobticket-custom-ext", "landscape",
+                "scaled" }) {
             mapVisible.put(attr, null);
         }
 
@@ -695,6 +696,11 @@ public class DocLogItemPanel extends Panel {
                 && obj.getIppOptionMap().isLandscapeJob()) {
             mapVisible.put("landscape",
                     helper.localized(PrintOutNounEnum.LANDSCAPE));
+        }
+
+        if (obj.getIppOptionMap() != null
+                && obj.getIppOptionMap().hasPrintScaling()) {
+            mapVisible.put("scaled", AdjectiveEnum.SCALED.uiText(locale));
         }
 
         /*

@@ -593,8 +593,9 @@ public class OutboxAddin extends AbstractUserPage {
                     "pageRotate180", "punch", "staple", "fold", "booklet",
                     "jobticket-media", "jobticket-copy",
                     "jobticket-finishing-ext", "jobticket-custom-ext",
-                    "landscape", "portrait", "job-id", "job-creation-time",
-                    "job-completed-time", "job-printer", "msg-invalid" }) {
+                    "landscape", "scaled", "portrait", "job-id",
+                    "job-creation-time", "job-completed-time", "job-printer",
+                    "msg-invalid" }) {
                 mapVisible.put(attr, null);
             }
 
@@ -645,6 +646,11 @@ public class OutboxAddin extends AbstractUserPage {
             } else {
                 mapVisible.put("portrait",
                         helper.localized(PrintOutNounEnum.PORTRAIT));
+            }
+
+            if (BooleanUtils.isTrue(job.getFitToPage())
+                    || (optionMap != null && optionMap.hasPrintScaling())) {
+                mapVisible.put("scaled", AdjectiveEnum.SCALED.uiText(locale));
             }
 
             if (job.isCollate() && job.getCopies() > 1 && job.getPages() > 1) {

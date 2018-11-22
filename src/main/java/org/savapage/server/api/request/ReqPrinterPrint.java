@@ -76,7 +76,7 @@ import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.services.helpers.PageRangeException;
-import org.savapage.core.services.helpers.PageScalingEnum;
+import org.savapage.core.services.helpers.PrintScalingEnum;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
 import org.savapage.core.services.helpers.ProxyPrintCostDto;
 import org.savapage.core.services.helpers.ProxyPrintCostParms;
@@ -138,7 +138,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private String jobName;
         private Integer jobIndex;
         private Boolean landscapeView;
-        private PageScalingEnum pageScaling;
+        private PrintScalingEnum pageScaling;
         private Integer copies;
         private String ranges;
         private Boolean collate;
@@ -216,12 +216,12 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             this.landscapeView = landscapeView;
         }
 
-        public PageScalingEnum getPageScaling() {
+        public PrintScalingEnum getPageScaling() {
             return pageScaling;
         }
 
         @SuppressWarnings("unused")
-        public void setPageScaling(PageScalingEnum pageScaling) {
+        public void setPageScaling(PrintScalingEnum pageScaling) {
             this.pageScaling = pageScaling;
         }
 
@@ -722,10 +722,15 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         } else {
 
+            PrintScalingEnum printScaling = dtoReq.getPageScaling();
+            if (printScaling == null) {
+                printScaling = PrintScalingEnum.NONE;
+            }
+            printReq.setPrintScalingOption(printScaling);
+
             try {
                 PROXY_PRINT_SERVICE.chunkProxyPrintRequest(lockedUser, printReq,
-                        dtoReq.getPageScaling(), doChunkVanillaJobs,
-                        iVanillaJob);
+                        doChunkVanillaJobs, iVanillaJob);
 
                 for (final ProxyPrintJobChunk chk : printReq.getJobChunkInfo()
                         .getChunks()) {

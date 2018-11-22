@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -39,6 +40,7 @@ import org.savapage.core.print.proxy.JsonProxyPrinterOptChoice;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptGroup;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.PrintScalingEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -178,6 +180,10 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
             }
         }
 
+        // Extra
+        optionList.add(createPrintScalingOpt(job));
+
+        //
         add(new PrinterOptionsView("ipp-option-list", optionList, job));
 
         //
@@ -194,7 +200,7 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
                 !job.isDelegatedPrint());
 
         if (!job.isDelegatedPrint()) {
-            MarkupHelper.modifyLabelAttr(label, "value",
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_VALUE,
                     String.valueOf(job.getCopies()));
         }
 
@@ -202,6 +208,43 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
 
         //
         add(new Label("btn-cancel", HtmlButtonEnum.CANCEL.uiText(getLocale())));
+    }
+
+    /**
+     * Create print-scaling option.
+     *
+     * @param job
+     *            The job.
+     * @return The option.
+     */
+    private JsonProxyPrinterOpt createPrintScalingOpt(final OutboxJobDto job) {
+
+        final JsonProxyPrinterOpt opt = new JsonProxyPrinterOpt();
+
+        opt.setKeyword(PrintScalingEnum.IPP_NAME);
+        // opt.setUiText("Scaling");
+
+        final ArrayList<JsonProxyPrinterOptChoice> choices = new ArrayList<>();
+
+        JsonProxyPrinterOptChoice wlk;
+
+        wlk = new JsonProxyPrinterOptChoice();
+        wlk.setChoice(PrintScalingEnum.NONE.getIppValue());
+        choices.add(wlk);
+
+        wlk = new JsonProxyPrinterOptChoice();
+        wlk.setChoice(PrintScalingEnum.FIT.getIppValue());
+        choices.add(wlk);
+
+        opt.setChoices(choices);
+
+        opt.setDefchoice(StringUtils.defaultString(
+                job.getOptionValues().get(PrintScalingEnum.IPP_NAME),
+                PrintScalingEnum.NONE.getIppValue()));
+
+        PROXY_PRINT_SERVICE.localizePrinterOpt(getLocale(), opt);
+
+        return opt;
     }
 
 }
