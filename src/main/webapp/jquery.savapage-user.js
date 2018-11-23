@@ -3152,9 +3152,10 @@
                     ippOption = target.attr(CUSTOM_HTML5_DATA_ATTR),
                     singleMediaSourceMedia,
                     singleJobMedia,
-                    isScaling,
                     isSingleMediaMatch,
-                    isInboxDocs2Print = _model.hasInboxDocs() && !_model.isCopyJobTicket;
+                    isInboxDocs2Print = _model.hasInboxDocs() && !_model.isCopyJobTicket,
+                    isMediaClash,
+                    showScaling;
 
                 if (ippOption === 'media-source') {
 
@@ -3196,10 +3197,20 @@
 
                 isAuto = _isMediaSourceAutoSelected();
 
-                isScaling = !(isSingleMediaMatch || isAuto || (!isAuto && _model.printSelectedMedia === singleJobMedia));
+                isMediaClash = !(isSingleMediaMatch || isAuto || (!isAuto && _model.printSelectedMedia === singleJobMedia));
 
-                _view.visible($('.sp-print-job-scaling'), isScaling && isInboxDocs2Print);
-                _view.visible($('.sp-print-job-media-info'), isScaling && isInboxDocs2Print);
+                if (_model.printMediaClashCurrent !== isMediaClash) {
+                    _model.printPageScaling = isMediaClash ? _model.PRINT_SCALING_CLASH_DFLT.value : _model.PRINT_SCALING_MATCH_DFLT.value;
+                    _model.printMediaClashCurrent = isMediaClash;
+                    _m2vPrintScaling();
+                }
+
+                _m2vPrintScalingPreview();
+
+                showScaling = isInboxDocs2Print && ( isMediaClash ? _model.PRINT_SCALING_CLASH_DFLT.show : _model.PRINT_SCALING_MATCH_DFLT.show);
+
+                _view.visible($('.sp-print-job-scaling'), showScaling);
+                _view.visible($('.sp-print-job-media-info'), showScaling);
                 _view.visible($('.sp-print-job-info'), isInboxDocs2Print);
 
                 _model.showCopyJobMedia(_view);
@@ -3248,15 +3259,19 @@
             },
             //
                 _m2vPrintScaling = function() {
-                var name = 'print-page-scaling-enum',
-                    radio = 'input[name="' + name + '"]',
-                    sel = $(radio + '[value="' + _model.PRINT_SCALING_ENUM.NONE + '"]');
-                _view.enableCheckboxRadio(sel, _model.myPrinter.printScalingExt);
-
-                if (!_model.myPrinter.printScalingExt) {
-                    _view.checkRadioValue(name, _model.PRINT_SCALING_ENUM.FIT);
+                _view.checkRadioValue('print-page-scaling-enum', _model.printPageScaling);
+            },
+            //
+                _m2vPrintScalingPreview = function() {
+                var html = _model.printSelectedMediaShort() || '';
+                if (_model.printPageScaling !== _model.PRINT_SCALING_ENUM.NONE) {
+                    if (html.length > 0) {
+                        html += ' &bull; ';
+                    }
+                    html += _view.getRadioSelected('print-page-scaling-enum').prev('label').text().toLowerCase();
                 }
-                _model.printPageScaling = _view.getRadioValue(name);
+                $('.sp-nup-preview-title').html(html);
+                $('.sp-nup-preview').attr('title', _model.printSelectedMedia || '');
             },
             //
                 _onNext = function() {
@@ -3478,6 +3493,7 @@
                     _model.printPageScaling = _view.getRadioValue('print-page-scaling-enum');
                     _model.showJobsMatchMedia(_view);
                     _model.showJobsMatchMediaSources(_view);
+                    _m2vPrintScalingPreview();
                 });
 
                 /*
@@ -3601,9 +3617,8 @@
 
                 if (res.result.code === '0') {
                     return res.dto.items.length > 1;
-                } else {
-                    _view.showApiMsg(res);
                 }
+                _view.showApiMsg(res);
                 return true;
             },
 
@@ -4240,6 +4255,8 @@
              */
             this.printPageScaling = this.PRINT_SCALING_ENUM.NONE;
 
+            this.printMediaClashCurrent = undefined;
+
             /**
              *
              */
@@ -4329,6 +4346,23 @@
              *
              */
             this.mySelectPages = {};
+
+            this.printSelectedMediaShort = function() {
+                var kw = ['a5', 'a4', 'a3'],
+                    len = kw.length,
+                    i;
+
+                if (!this.printSelectedMedia) {
+                    return '';
+                }
+
+                for ( i = 0; i < len; i++) {
+                    if (this.printSelectedMedia.indexOf(kw[i]) !== -1) {
+                        return kw[i].toUpperCase();
+                    }
+                }
+                return this.printSelectedMedia;
+            };
 
             /*
              * this.user = { alias : null, id : null, admin : null, role : null,
@@ -4795,6 +4829,9 @@
              */
             this.setPrinterDefaults = function() {
 
+                _this.printPageScaling = _this.PRINT_SCALING_ENUM.NONE;
+                _this.printMediaClashCurrent = undefined;
+
                 _this.myPrinterOpt = {};
 
                 /*
@@ -5154,6 +5191,10 @@
                 _model.prevMsgTime = res.systime;
 
                 _view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, res.authCardSelfAssoc, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
+
+                // ProxyPrint
+                _model.PRINT_SCALING_MATCH_DFLT = res.printScalingMatch;
+                _model.PRINT_SCALING_CLASH_DFLT = res.printScalingClash;
 
                 // WebPrint
                 _model.webPrintEnabled = res.webPrintEnabled;
@@ -6411,7 +6452,8 @@
             _view.pages.print.onClearPrinter = function() {
                 _model.myPrinter = undefined;
                 _model.isPrintManualFeed = false;
-                _model.printPageScaling = _model.PRINT_SCALING_ENUM.NONE;
+                _model.printPageScaling = _model.PRINT_SCALING_MATCH_DFLT.value;
+                _model.printMediaClashCurrent = undefined;
 
                 _model.showJobsMatchMediaSources(_view);
                 _model.showJobsMatchMedia(_view);

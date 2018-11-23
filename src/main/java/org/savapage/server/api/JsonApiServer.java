@@ -4479,6 +4479,25 @@ public final class JsonApiServer extends AbstractPage {
 
         userData.put("colors", colors);
 
+        if (webAppType == WebAppTypeEnum.USER) {
+
+            Map<String, Object> scaling;
+
+            scaling = new HashMap<>();
+            scaling.put("show", cm.isConfigValue(
+                    Key.WEBAPP_USER_PROXY_PRINT_SCALING_MEDIA_MATCH_SHOW));
+            scaling.put("value", cm.getConfigValue(
+                    Key.WEBAPP_USER_PROXY_PRINT_SCALING_MEDIA_MATCH_DEFAULT));
+            userData.put("printScalingMatch", scaling);
+
+            scaling = new HashMap<>();
+            scaling.put("show", cm.isConfigValue(
+                    Key.WEBAPP_USER_PROXY_PRINT_SCALING_MEDIA_CLASH_SHOW));
+            scaling.put("value", cm.getConfigValue(
+                    Key.WEBAPP_USER_PROXY_PRINT_SCALING_MEDIA_CLASH_DEFAULT));
+            userData.put("printScalingClash", scaling);
+        }
+
         //
         return userData;
     }
