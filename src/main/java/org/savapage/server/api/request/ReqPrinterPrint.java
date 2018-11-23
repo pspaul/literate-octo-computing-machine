@@ -566,7 +566,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         //
         final InboxInfoDto jobs;
 
-        final boolean isPrintAllDocuments = dtoReq.getJobIndex().intValue() < 0;
+        final int iJobIndex = dtoReq.getJobIndex().intValue();
+
+        final boolean isPrintAllDocuments = iJobIndex < 0;
         final boolean isPrintAllPages;
 
         int nPagesPrinted;
@@ -582,15 +584,22 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         } else {
 
             jobs = INBOX_SERVICE.getInboxInfo(requestingUser);
+
+            if (iJobIndex > jobs.jobCount() - 1) {
+                setApiResultText(ApiResultCodeEnum.ERROR, String.format(
+                        "Out-of-bound index [%d] for Job List with size [%d]",
+                        iJobIndex, jobs.jobCount()));
+                return;
+            }
+
             ranges = dtoReq.getRanges().trim();
             isPrintAllPages = ranges.isEmpty();
 
             final StringBuilder sortedRangesOut = new StringBuilder();
 
             try {
-                nPagesPrinted = INBOX_SERVICE.calcPagesInRanges(jobs,
-                        dtoReq.getJobIndex().intValue(), ranges,
-                        sortedRangesOut);
+                nPagesPrinted = INBOX_SERVICE.calcPagesInRanges(jobs, iJobIndex,
+                        ranges, sortedRangesOut);
 
             } catch (PageRangeException e) {
                 setApiResultText(ApiResultCodeEnum.ERROR,
