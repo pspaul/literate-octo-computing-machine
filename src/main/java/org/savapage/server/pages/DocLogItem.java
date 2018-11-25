@@ -55,7 +55,7 @@ import org.savapage.core.jpa.DocOut;
 import org.savapage.core.jpa.PdfOut;
 import org.savapage.core.jpa.PrintIn;
 import org.savapage.core.jpa.PrintOut;
-import org.savapage.core.print.archive.PrintArchiver;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.DateUtil;
@@ -420,6 +420,9 @@ public final class DocLogItem {
             final QueueService queueService =
                     ServiceContext.getServiceFactory().getQueueService();
 
+            final DocStoreService docStoreService =
+                    ServiceContext.getServiceFactory().getDocStoreService();
+
             final List<DocLogItem> list = new ArrayList<>();
 
             final boolean isArchiveEnabled = ConfigManager.instance()
@@ -582,8 +585,8 @@ public final class DocLogItem {
                                     optionMap.hasFinishingStaple());
                         }
 
-                        log.setPrintArchive(isArchiveEnabled && PrintArchiver
-                                .instance().isArchivePresent(docLog));
+                        log.setPrintArchive(isArchiveEnabled
+                                && docStoreService.isArchivePresent(docLog));
 
                     } else if (pdfOut != null) {
 
