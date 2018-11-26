@@ -428,7 +428,7 @@ public final class DocLogItem {
             final List<DocLogItem> list = new ArrayList<>();
 
             final boolean isArchiveEnabled = ConfigManager.instance()
-                    .isConfigValue(Key.PROXY_PRINT_ARCHIVE_ENABLE);
+                    .isConfigValue(Key.DOC_STORE_ARCHIVE_OUT_PRINT_ENABLE);
 
             for (final DocLog docLog : ((List<DocLog>) query.getResultList())) {
 

@@ -271,7 +271,7 @@ public class Print extends AbstractUserPage {
         final boolean isArchiveSelectable;
         final String archivePrompt;
 
-        if (cm.isConfigValue(Key.PROXY_PRINT_ARCHIVE_ENABLE)) {
+        if (cm.isConfigValue(Key.DOC_STORE_ARCHIVE_OUT_PRINT_ENABLE)) {
 
             final Integer privsArchive = ACCESS_CONTROL_SERVICE
                     .getPrivileges(user, ACLOidEnum.U_PRINT_ARCHIVE);
@@ -291,7 +291,7 @@ public class Print extends AbstractUserPage {
         }
 
         if (isArchive && cm
-                .isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_ARCHIVE_PROMPT)) {
+                .isConfigValue(Key.WEBAPP_USER_DOC_STORE_ARCHIVE_OUT_PRINT_PROMPT)) {
             if (isArchiveSelectable) {
                 archivePrompt = localized("sp-archive-select-prompt");
             } else {

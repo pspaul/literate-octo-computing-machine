@@ -701,10 +701,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setIdUser(lockedUser.getId());
         printReq.setClearScope(clearScope);
 
-        printReq.setArchive(
-                !isCopyJobTicket && BooleanUtils.isTrue(dtoReq.getArchive())
-                        && cm.isConfigValue(Key.PROXY_PRINT_ARCHIVE_ENABLE)
-                        && !PRINTER_SERVICE.isArchiveDisabled(printer));
+        printReq.setArchive(!isCopyJobTicket
+                && BooleanUtils.isTrue(dtoReq.getArchive())
+                && cm.isConfigValue(Key.DOC_STORE_ARCHIVE_OUT_PRINT_ENABLE)
+                && !PRINTER_SERVICE.isArchiveDisabled(printer));
 
         printReq.setConvertToGrayscale(!isJobTicket && printReq.isGrayscale()
                 && PROXY_PRINT_SERVICE.isColorPrinter(dtoReq.getPrinter())

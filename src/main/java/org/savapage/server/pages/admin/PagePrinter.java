@@ -64,7 +64,7 @@ public class PagePrinter extends AbstractAdminPage {
         helper.addLabel("printer-location", NounEnum.LOCATION);
 
         if (ConfigManager.instance()
-                .isConfigValue(Key.PROXY_PRINT_ARCHIVE_ENABLE)) {
+                .isConfigValue(Key.DOC_STORE_ARCHIVE_OUT_PRINT_ENABLE)) {
             helper.addLabel("printer-archive", NounEnum.ARCHIVE);
             helper.addLabel("archive-disabled", AdverbEnum.DISABLED);
         } else {
