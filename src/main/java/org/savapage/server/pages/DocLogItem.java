@@ -46,6 +46,8 @@ import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.AccountTrx;
@@ -585,8 +587,9 @@ public final class DocLogItem {
                                     optionMap.hasFinishingStaple());
                         }
 
-                        log.setPrintArchive(isArchiveEnabled
-                                && docStoreService.isArchivePresent(docLog));
+                        log.setPrintArchive(isArchiveEnabled && docStoreService
+                                .isDocPresent(DocStoreTypeEnum.ARCHIVE,
+                                        DocStoreBranchEnum.OUT_PRINT, docLog));
 
                     } else if (pdfOut != null) {
 
