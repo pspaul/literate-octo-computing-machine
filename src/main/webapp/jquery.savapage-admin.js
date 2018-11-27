@@ -1415,6 +1415,7 @@
                 _model.editPrinter.ppdExtFile = $('#printer-ppd-ext-file').val();
                 _model.editPrinter.disabled = $('#printer-disabled').is(':checked');
                 _model.editPrinter.archiveDisabled = $('#printer-archive-disabled').is(':checked');
+                _model.editPrinter.journalDisabled = $('#printer-journal-disabled').is(':checked');
                 _model.editPrinter.internal = $('#printer-internal').is(':checked');
                 _model.editPrinter.deleted = $('#printer-deleted').is(':checked');
                 _model.editPrinter.jobTicket = $('#printer-jobticket').is(':checked');
@@ -1833,7 +1834,7 @@
                 language : new _ns.PageLanguage(_i18n, _view, _model),
                 login : new _ns.PageLogin(_i18n, _view, _api),
                 sharedAccount : new _ns.PageSharedAccount(_i18n, _view, _model),
-                admin : new _ns.PageAdmin(_i18n, _view, _model),
+                admin : new _ns.PageAdmin(_i18n, _view, _model, _api),
                 membercard_upload : new _ns.PageMemberCardUpload(_i18n, _view, _model),
                 user : new _ns.PageUser(_i18n, _view, _model),
                 userGroup : new _ns.PageUserGroup(_i18n, _view, _model),

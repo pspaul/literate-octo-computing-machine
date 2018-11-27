@@ -33,6 +33,10 @@
 			<img wicket:id="img-archive" src="" style="margin-bottom: -2px;"
 				height="16" />&nbsp;
         </wicket:enclosure>
+		<wicket:enclosure child="img-journal">
+			<img wicket:id="img-journal" src="" style="margin-bottom: -2px;"
+				height="16" />&nbsp;
+        </wicket:enclosure>
 		<wicket:enclosure child="title">
 			<span wicket:id="title" />
 		</wicket:enclosure>
@@ -180,15 +184,28 @@
 		<wicket:panel wicket:id="extSupplierPanel" />
 	</wicket:enclosure>
 
-	<wicket:enclosure child="btn-account-trx-info">
-		<div data-role="controlgroup" data-type="horizontal" data-mini="true">
-			<button data-savapage="the-doc-log-db-key"
-				wicket:id="btn-account-trx-info"
-				class="sp-doclog-accounttrx-info ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-shop" />
-			<wicket:enclosure child="btn-account-trx-refund">
+	<wicket:enclosure child="btn-group">
+		<div data-role="controlgroup" data-type="horizontal" data-mini="true"
+			wicket:id="btn-group">
+			<wicket:enclosure child="btn-account-trx-info">
 				<button data-savapage="the-doc-log-db-key"
-					wicket:id="btn-account-trx-refund"
-					class="sp-doclog-accounttrx-refund ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-recycle" />
+					wicket:id="btn-account-trx-info"
+					class="sp-doclog-accounttrx-info ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-shop" />
+				<wicket:enclosure child="btn-account-trx-refund">
+					<button data-savapage="the-doc-log-db-key"
+						wicket:id="btn-account-trx-refund"
+						class="sp-doclog-accounttrx-refund ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-recycle" />
+				</wicket:enclosure>
+			</wicket:enclosure>
+			<wicket:enclosure child="btn-doclog-docstore-archive-download">
+				<button data-savapage="the-unique-filename"
+					wicket:id="btn-doclog-docstore-archive-download"
+					class="sp-doclog-docstore-archive-download ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-eye" />
+			</wicket:enclosure>
+			<wicket:enclosure child="btn-doclog-docstore-journal-download">
+				<button data-savapage="the-unique-filename"
+					wicket:id="btn-doclog-docstore-journal-download"
+					class="sp-doclog-docstore-journal-download ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-eye" />
 			</wicket:enclosure>
 		</div>
 	</wicket:enclosure>

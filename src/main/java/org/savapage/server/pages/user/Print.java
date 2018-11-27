@@ -40,6 +40,8 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.dto.JobTicketTagDto;
 import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.i18n.JobTicketNounEnum;
@@ -47,6 +49,7 @@ import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
@@ -82,6 +85,10 @@ public class Print extends AbstractUserPage {
     /** */
     private static final JobTicketService JOBTICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
+
+    /** */
+    private static final DocStoreService DOC_STORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
 
     /** */
     private static final UserGroupAccountDao USER_GROUP_ACCOUNT_DAO =
@@ -271,7 +278,8 @@ public class Print extends AbstractUserPage {
         final boolean isArchiveSelectable;
         final String archivePrompt;
 
-        if (cm.isConfigValue(Key.DOC_STORE_ARCHIVE_OUT_PRINT_ENABLE)) {
+        if (DOC_STORE_SERVICE.isEnabled(DocStoreTypeEnum.ARCHIVE,
+                DocStoreBranchEnum.OUT_PRINT)) {
 
             final Integer privsArchive = ACCESS_CONTROL_SERVICE
                     .getPrivileges(user, ACLOidEnum.U_PRINT_ARCHIVE);
@@ -290,8 +298,8 @@ public class Print extends AbstractUserPage {
             isArchiveSelectable = false;
         }
 
-        if (isArchive && cm
-                .isConfigValue(Key.WEBAPP_USER_DOC_STORE_ARCHIVE_OUT_PRINT_PROMPT)) {
+        if (isArchive && cm.isConfigValue(
+                Key.WEBAPP_USER_DOC_STORE_ARCHIVE_OUT_PRINT_PROMPT)) {
             if (isArchiveSelectable) {
                 archivePrompt = localized("sp-archive-select-prompt");
             } else {

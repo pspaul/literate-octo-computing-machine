@@ -35,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.PrintOutDao;
@@ -116,6 +115,7 @@ public final class DocLogItem {
     private boolean finishingBooklet;
 
     private boolean printArchive;
+    private boolean printJournal;
 
     private Map<String, String> ippOptions;
 
@@ -427,8 +427,11 @@ public final class DocLogItem {
 
             final List<DocLogItem> list = new ArrayList<>();
 
-            final boolean isArchiveEnabled = ConfigManager.instance()
-                    .isConfigValue(Key.DOC_STORE_ARCHIVE_OUT_PRINT_ENABLE);
+            final boolean isArchiveEnabled = docStoreService.isEnabled(
+                    DocStoreTypeEnum.ARCHIVE, DocStoreBranchEnum.OUT_PRINT);
+
+            final boolean isJournalEnabled = docStoreService.isEnabled(
+                    DocStoreTypeEnum.JOURNAL, DocStoreBranchEnum.OUT_PRINT);
 
             for (final DocLog docLog : ((List<DocLog>) query.getResultList())) {
 
@@ -590,6 +593,14 @@ public final class DocLogItem {
                         log.setPrintArchive(isArchiveEnabled && docStoreService
                                 .isDocPresent(DocStoreTypeEnum.ARCHIVE,
                                         DocStoreBranchEnum.OUT_PRINT, docLog));
+
+                        if (!log.isPrintArchive()) {
+                            log.setPrintJournal(isJournalEnabled
+                                    && docStoreService.isDocPresent(
+                                            DocStoreTypeEnum.JOURNAL,
+                                            DocStoreBranchEnum.OUT_PRINT,
+                                            docLog));
+                        }
 
                     } else if (pdfOut != null) {
 
@@ -1339,6 +1350,14 @@ public final class DocLogItem {
 
     public void setPrintArchive(boolean printArchive) {
         this.printArchive = printArchive;
+    }
+
+    public boolean isPrintJournal() {
+        return printJournal;
+    }
+
+    public void setPrintJournal(boolean printJournal) {
+        this.printJournal = printJournal;
     }
 
     public Map<String, String> getIppOptions() {

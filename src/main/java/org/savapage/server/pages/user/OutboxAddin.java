@@ -51,10 +51,13 @@ import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.PrintOutDao;
 import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.dto.JobTicketTagDto;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.AdverbEnum;
@@ -77,7 +80,9 @@ import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.print.proxy.TicketJobSheetDto;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.AccountingService;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ProxyPrintService;
@@ -106,107 +111,110 @@ import org.savapage.server.session.SpSession;
  */
 public class OutboxAddin extends AbstractUserPage {
 
-    /**
-     * .
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * .
-     */
+    /** */
     private static final AccountDao ACCOUNT_DAO =
             ServiceContext.getDaoContext().getAccountDao();
 
-    /**
-     * .
-     */
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
     private static final AccountingService ACCOUNTING_SERVICE =
             ServiceContext.getServiceFactory().getAccountingService();
 
-    /**
-     * .
-     */
+    /** */
+    private static final DocStoreService DOC_STORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
+
+    /** */
     private static final OutboxService OUTBOX_SERVICE =
             ServiceContext.getServiceFactory().getOutboxService();
 
-    /**
-     * .
-     */
+    /** */
     private static final ProxyPrintService PROXYPRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
 
-    /**
-     * .
-     */
+    /** */
     private static final JobTicketService JOBTICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
 
-    /**
-     * .
-     */
+    /** */
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
 
-    /**
-     * .
-     */
+    /** */
     private static final UserDao USER_DAO =
             ServiceContext.getDaoContext().getUserDao();
 
-    /**
-     * .
-     */
+    /** */
     private static final PrintOutDao PRINTOUT_DAO =
             ServiceContext.getDaoContext().getPrintOutDao();
 
+    /** */
     private static final String WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET =
             "button-edit-outbox-jobticket";
 
+    /** */
     private static final String WICKET_ID_BTN_SETTINGS_OUTBOX_JOBTICKET =
             "button-settings-outbox-jobticket";
 
+    /** */
     private static final String WICKET_ID_BTN_CANCEL_OUTBOX_JOB =
             "button-cancel-outbox-job";
 
+    /** */
     private static final String WICKET_ID_BTN_CANCEL_OUTBOX_JOBTICKET =
             "button-cancel-outbox-jobticket";
 
+    /** */
     private static final String WICKET_ID_BTN_PREVIEW_OUTBOX_JOB =
             "button-preview-outbox-job";
-
+    /** */
     private static final String WICKET_ID_BTN_PREVIEW_OUTBOX_JOBTICKET =
             "button-preview-outbox-jobticket";
-
+    /** */
     private static final String WICKET_ID_BTN_JOBTICKET_SETTLE =
             "button-jobticket-settle";
-
+    /** */
     private static final String WICKET_ID_BTN_ACCOUNT_TRX_INFO_JOB =
             "button-account-trx-info-job";
-
+    /** */
     private static final String WICKET_ID_BTN_ACCOUNT_TRX_INFO_JOBTICKET =
             "button-account-trx-info-jobticket";
-
+    /** */
     private static final String WICKET_ID_BTN_JOBTICKET_PRINT =
             "button-jobticket-print";
-
+    /** */
     private static final String WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL =
             "button-jobticket-print-cancel";
-
+    /** */
     private static final String WICKET_ID_BTN_JOBTICKET_PRINT_CLOSE =
             "button-jobticket-print-close";
-
+    /** */
     private static final String WICKET_ID_BTN_JOBTICKET_PRINT_RETRY =
             "button-jobticket-print-retry";
-
+    /** */
     private static final String WICKET_ID_OWNER_USER_ID = "owner-user-id";
+    /** */
     private static final String WICKET_ID_OWNER_USER_EMAIL = "owner-user-email";
 
+    /** */
     private static final String WICKET_ID_JOB_STATE = "job-state";
+    /** */
     private static final String WICKET_ID_JOB_STATE_IND = "job-state-ind";
+    /** */
     private static final String WICKET_ID_JOB_STATE_DURATION =
             "job-state-duration";
+    /** */
     private static final String WICKET_ID_JOB_STATE_DURATION_EXT =
             "job-state-duration-ext";
+
+    /** */
+    private static final String WICKET_ID_IMG_DOC_STORE = "img-docstore";
 
     /**
      * Boolean.
@@ -386,20 +394,6 @@ public class OutboxAddin extends AbstractUserPage {
             }
 
             //
-            if (BooleanUtils.isTrue(job.getArchive())) {
-                imgSrc.setLength(0);
-                imgSrc.append(WebApp.PATH_IMAGES).append('/');
-                imgSrc.append("archive-16x16.png");
-                MarkupHelper.modifyLabelAttr(
-                        helper.addModifyLabelAttr("img-archive",
-                                MarkupHelper.ATTR_SRC, imgSrc.toString()),
-                        MarkupHelper.ATTR_TITLE,
-                        HtmlButtonEnum.ARCHIVE.uiText(locale));
-            } else {
-                helper.discloseLabel("img-archive");
-            }
-
-            //
             helper.encloseLabel("jobticket-remark", job.getComment(),
                     isJobTicketItem
                             && StringUtils.isNotBlank(job.getComment()));
@@ -437,7 +431,7 @@ public class OutboxAddin extends AbstractUserPage {
                     .append(helper.localized(PrintOutNounEnum.PAGE, total > 1));
 
             // n-up
-            if (optionMap.getNumberUp().intValue() > 1) {
+            if (optionMap != null && optionMap.getNumberUp().intValue() > 1) {
                 totals.append(", ")
                         .append(localized("n-up", optionMap.getNumberUp()));
             }
@@ -1002,10 +996,11 @@ public class OutboxAddin extends AbstractUserPage {
                 readUser = false;
             }
 
+            final org.savapage.core.jpa.User user;
+
             if (readUser) {
 
-                final org.savapage.core.jpa.User user =
-                        USER_DAO.findById(job.getUserId());
+                user = USER_DAO.findById(job.getUserId());
 
                 if (user == null) {
                     labelWlk = helper.encloseLabel(WICKET_ID_OWNER_USER_ID,
@@ -1035,6 +1030,8 @@ public class OutboxAddin extends AbstractUserPage {
                                 String.format("mailto:%s", email));
                     }
                 }
+            } else {
+                user = null;
             }
 
             if (enclosePrintSettle) {
@@ -1057,6 +1054,50 @@ public class OutboxAddin extends AbstractUserPage {
             } else {
                 helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
                 helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE);
+            }
+
+            //
+            if (BooleanUtils.isTrue(job.getArchive())) {
+
+                imgSrc.setLength(0);
+                imgSrc.append(WebApp.PATH_IMAGES).append('/');
+                imgSrc.append("archive-16x16.png");
+                MarkupHelper.modifyLabelAttr(
+                        helper.addModifyLabelAttr(WICKET_ID_IMG_DOC_STORE,
+                                MarkupHelper.ATTR_SRC, imgSrc.toString()),
+                        MarkupHelper.ATTR_TITLE,
+                        HtmlButtonEnum.ARCHIVE.uiText(locale));
+
+            } else if (!isJobTicketItem && cachedPrinter != null
+                    && !cachedPrinter.isJournalDisabled()
+                    && DOC_STORE_SERVICE.isEnabled(DocStoreTypeEnum.JOURNAL,
+                            DocStoreBranchEnum.OUT_PRINT)) {
+
+                final org.savapage.core.jpa.User userWlk;
+                if (user == null) {
+                    // Do not use job.getUserId(), because == null.
+                    userWlk = USER_DAO
+                            .findById(SpSession.get().getUser().getId());
+                } else {
+                    userWlk = user;
+                }
+
+                if (ACCESS_CONTROL_SERVICE.hasAccess(userWlk,
+                        ACLOidEnum.U_PRINT_JOURNAL)) {
+                    imgSrc.setLength(0);
+                    imgSrc.append(WebApp.PATH_IMAGES).append('/');
+                    imgSrc.append("journal-16x16.png");
+                    MarkupHelper.modifyLabelAttr(
+                            helper.addModifyLabelAttr(WICKET_ID_IMG_DOC_STORE,
+                                    MarkupHelper.ATTR_SRC, imgSrc.toString()),
+                            MarkupHelper.ATTR_TITLE,
+                            NounEnum.JOURNAL.uiText(locale));
+                } else {
+                    helper.discloseLabel(WICKET_ID_IMG_DOC_STORE);
+                }
+
+            } else {
+                helper.discloseLabel(WICKET_ID_IMG_DOC_STORE);
             }
 
             /*

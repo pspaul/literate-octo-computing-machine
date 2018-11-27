@@ -47,6 +47,8 @@ import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.JsonPrintDelegation;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.PrintDelegationDto;
@@ -71,6 +73,7 @@ import org.savapage.core.print.proxy.ProxyPrintInboxReq;
 import org.savapage.core.print.proxy.ProxyPrintJobChunk;
 import org.savapage.core.print.proxy.ProxyPrintJobChunkInfo;
 import org.savapage.core.print.proxy.ProxyPrintJobChunkRange;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
@@ -111,6 +114,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ReqPrinterPrint.class);
+
+    /** */
+    protected static final DocStoreService DOC_STORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
 
     /**
      * See Mantis #987.
@@ -703,8 +710,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         printReq.setArchive(!isCopyJobTicket
                 && BooleanUtils.isTrue(dtoReq.getArchive())
-                && cm.isConfigValue(Key.DOC_STORE_ARCHIVE_OUT_PRINT_ENABLE)
-                && !PRINTER_SERVICE.isArchiveDisabled(printer));
+                && DOC_STORE_SERVICE.isEnabled(DocStoreTypeEnum.ARCHIVE,
+                        DocStoreBranchEnum.OUT_PRINT)
+                && !PRINTER_SERVICE.isDocStoreDisabled(DocStoreTypeEnum.ARCHIVE,
+                        printer));
 
         printReq.setConvertToGrayscale(!isJobTicket && printReq.isGrayscale()
                 && PROXY_PRINT_SERVICE.isColorPrinter(dtoReq.getPrinter())

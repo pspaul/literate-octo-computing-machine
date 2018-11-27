@@ -24,8 +24,17 @@
 			<img width="16" height="16" wicket:id="printerImage" />
 			<h3>
 				<wicket:enclosure child="deviceUriImg">
-					<img wicket:id="deviceUriImg" src="" height="16" />
+					<img wicket:id="deviceUriImg" src="" style="margin-bottom: -2px;"
+						height="16" />&nbsp;
 				</wicket:enclosure>
+				<wicket:enclosure child="img-journal">
+					<img wicket:id="img-journal" src="" style="margin-bottom: -2px;"
+						height="16" />&nbsp;
+                </wicket:enclosure>
+				<wicket:enclosure child="img-archive">
+					<img wicket:id="img-archive" src="" style="margin-bottom: -2px;"
+						height="16" />&nbsp;
+                </wicket:enclosure>
 				<span wicket:id="displayName" />
 			</h3>
 

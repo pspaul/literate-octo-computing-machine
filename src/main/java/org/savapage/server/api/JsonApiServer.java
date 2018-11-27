@@ -420,6 +420,10 @@ public final class JsonApiServer extends AbstractPage {
                     // no break intended
                 case JsonApiDict.REQ_PDF_OUTBOX:
                     // no break intended
+                case JsonApiDict.REQ_PDF_DOCSTORE_ARCHIVE:
+                    // no break intended
+                case JsonApiDict.REQ_PDF_DOCSTORE_JOURNAL:
+                    // no break intended
                 case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
                     // no break intended
                 case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD_USER:
@@ -637,6 +641,11 @@ public final class JsonApiServer extends AbstractPage {
                                 getSessionWebAppType(), getRequestCycle(),
                                 parameters, isGetAction, requestingUser, null);
                 break;
+
+            case JsonApiDict.REQ_PDF_DOCSTORE_ARCHIVE:
+            case JsonApiDict.REQ_PDF_DOCSTORE_JOURNAL:
+                throw new SpException(
+                        "Request [" + request + "] not implemented.");
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD_USER:

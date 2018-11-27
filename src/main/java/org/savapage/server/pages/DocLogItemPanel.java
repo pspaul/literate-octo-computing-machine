@@ -180,6 +180,8 @@ public class DocLogItemPanel extends Panel {
         // Account Transactions
         final StringBuilder sbAccTrx = new StringBuilder();
 
+        int countButtons = 0;
+
         if (obj.getTransactions().isEmpty()) {
             helper.discloseLabel("account-trx");
             helper.discloseLabel("btn-account-trx-info");
@@ -295,6 +297,8 @@ public class DocLogItemPanel extends Panel {
                     || webAppType == WebAppTypeEnum.ADMIN
                     || webAppType == WebAppTypeEnum.USER) {
 
+                countButtons++;
+
                 Label labelBtn = helper.encloseLabel("btn-account-trx-info",
                         "&nbsp;", true);
                 labelBtn.setEscapeModelStrings(false);
@@ -308,6 +312,8 @@ public class DocLogItemPanel extends Panel {
 
                 if (webAppType == WebAppTypeEnum.JOBTICKETS && !obj.isRefunded()
                         && obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
+
+                    countButtons++;
 
                     labelBtn = helper.encloseLabel("btn-account-trx-refund",
                             "&nbsp;", true);
@@ -607,7 +613,7 @@ public class DocLogItemPanel extends Panel {
                 localizedShortDateTime(obj.getCreatedDate())));
 
         //
-        addArchiveImg(helper, obj);
+        countButtons += addDocStoreImg(helper, obj);
 
         //
         String title = null;
@@ -703,6 +709,12 @@ public class DocLogItemPanel extends Panel {
             mapVisible.put("scaled", AdjectiveEnum.SCALED.uiText(locale));
         }
 
+        if (countButtons > 0) {
+            helper.addTransparant("btn-group");
+        } else {
+            helper.discloseLabel("btn-group");
+        }
+
         /*
          * Hide/Show
          */
@@ -762,24 +774,73 @@ public class DocLogItemPanel extends Panel {
      *
      * @param helper
      * @param obj
+     * @return number of buttons added.
      */
-    private void addArchiveImg(final MarkupHelper helper,
+    private int addDocStoreImg(final MarkupHelper helper,
             final DocLogItem obj) {
 
-        if (obj.isPrintArchive()) {
+        final String widBtnArchiveDownload =
+                "btn-doclog-docstore-archive-download";
+        final String widBtnJournalDownload =
+                "btn-doclog-docstore-journal-download";
+        final String widImgArchive = "img-archive";
+        final String widImgJournal = "img-journal";
+
+        int countButtons = 0;
+
+        if (obj.isPrintArchive() || obj.isPrintJournal()) {
+
             final StringBuilder imgSrc = new StringBuilder();
             imgSrc.setLength(0);
             imgSrc.append(WebApp.PATH_IMAGES).append('/');
-            imgSrc.append("archive-16x16.png");
-            MarkupHelper.modifyLabelAttr(
-                    helper.addModifyLabelAttr("img-archive",
-                            MarkupHelper.ATTR_SRC, imgSrc.toString()),
-                    MarkupHelper.ATTR_TITLE,
-                    NounEnum.ARCHIVE.uiText(getLocale()));
-        } else {
-            helper.discloseLabel("img-archive");
-        }
 
+            final String png;
+            final String widImg;
+            final String widBtn;
+            final NounEnum nounTitle;
+
+            if (obj.isPrintArchive()) {
+                widImg = widImgArchive;
+                widBtn = widBtnArchiveDownload;
+                png = "archive-16x16.png";
+                nounTitle = NounEnum.ARCHIVE;
+                helper.discloseLabel(widImgJournal);
+                helper.discloseLabel(widBtnJournalDownload);
+            } else {
+                widImg = widImgJournal;
+                widBtn = widBtnJournalDownload;
+                png = "journal-16x16.png";
+                nounTitle = NounEnum.JOURNAL;
+                helper.discloseLabel(widImgArchive);
+                helper.discloseLabel(widBtnArchiveDownload);
+            }
+            imgSrc.append(png);
+
+            MarkupHelper.modifyLabelAttr(
+                    helper.addModifyLabelAttr(widImg, MarkupHelper.ATTR_SRC,
+                            imgSrc.toString()),
+                    MarkupHelper.ATTR_TITLE, nounTitle.uiText(getLocale()));
+
+            final Label labelBtn = helper.encloseLabel(widBtn, "&nbsp;", true);
+            labelBtn.setEscapeModelStrings(false);
+
+            //
+            MarkupHelper.modifyLabelAttr(labelBtn,
+                    MarkupHelper.ATTR_DATA_SAVAPAGE,
+                    obj.getDocLogId().toString());
+
+            MarkupHelper.modifyLabelAttr(labelBtn, MarkupHelper.ATTR_TITLE,
+                    nounTitle.uiText(getLocale()));
+
+            countButtons++;
+
+        } else {
+            helper.discloseLabel(widImgArchive);
+            helper.discloseLabel(widImgJournal);
+            helper.discloseLabel(widBtnArchiveDownload);
+            helper.discloseLabel(widBtnJournalDownload);
+        }
+        return countButtons;
     }
 
     /**

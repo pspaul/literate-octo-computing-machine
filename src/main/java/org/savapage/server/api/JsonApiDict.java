@@ -220,6 +220,11 @@ public final class JsonApiDict {
     public static final String REQ_PDF = "pdf";
     public static final String REQ_PDF_OUTBOX = "pdf-outbox";
     public static final String REQ_PDF_JOBTICKET = "pdf-jobticket";
+    public static final String REQ_PDF_DOCSTORE_ARCHIVE =
+            "pdf-docstore-archive";
+    public static final String REQ_PDF_DOCSTORE_JOURNAL =
+            "pdf-docstore-journal";
+
     public static final String REQ_PDF_GET_PROPERTIES = "pdf-get-properties";
     public static final String REQ_PDF_SET_PROPERTIES = "pdf-set-properties";
 
@@ -718,6 +723,8 @@ public final class JsonApiDict {
         case REQ_PDF:
         case REQ_PDF_OUTBOX:
         case REQ_PDF_JOBTICKET:
+        case REQ_PDF_DOCSTORE_ARCHIVE:
+        case REQ_PDF_DOCSTORE_JOURNAL:
         case REQ_REPORT:
         case REQ_REPORT_USER:
         case REQ_ACCOUNT_VOUCHER_BATCH_PRINT:
@@ -969,6 +976,8 @@ public final class JsonApiDict {
 
         usr(REQ_PDF, DbClaim.READ, DbAccess.USER_LOCK);
         usr(REQ_PDF_OUTBOX, DbClaim.NONE, DbAccess.NO);
+        usr(REQ_PDF_DOCSTORE_ARCHIVE, DbClaim.NONE, DbAccess.NO);
+        usr(REQ_PDF_DOCSTORE_JOURNAL, DbClaim.NONE, DbAccess.NO);
         acl(REQ_PDF_JOBTICKET, DbClaim.NONE, DbAccess.NO,
                 EnumSet.of(ACLRoleEnum.JOB_TICKET_CREATOR,
                         ACLRoleEnum.JOB_TICKET_OPERATOR));

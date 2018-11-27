@@ -1252,6 +1252,7 @@
 
                 _view.checkCb('#printer-disabled', _model.editPrinter.disabled);
                 _view.checkCb('#printer-archive-disabled', _model.editPrinter.archiveDisabled);
+                _view.checkCb('#printer-journal-disabled', _model.editPrinter.journalDisabled);
                 _view.checkCb('#printer-internal', _model.editPrinter.internal);
                 _view.checkCb('#printer-deleted', _model.editPrinter.deleted);
 
@@ -1354,7 +1355,7 @@
         /**
          * Constructor
          */
-        _ns.PageAdmin = function(_i18n, _view, _model) {
+        _ns.PageAdmin = function(_i18n, _view, _model, _api) {
 
             var _page = new _ns.Page(_i18n, _view, '#page-admin', 'admin/Main'),
                 _self = _ns.derive(_page),
@@ -1983,6 +1984,12 @@
                     $('#sp-doclog-popup').enhanceWithin().popup('open', {
                         positionTo : $(this)
                     });
+                }).on('click', '.sp-doclog-docstore-archive-download', null, function() {
+                    _api.download("pdf-docstore-archive", null, $(this).attr('data-savapage'));
+                    return false;
+                }).on('click', '.sp-doclog-docstore-journal-download', null, function() {
+                    _api.download("pdf-docstore-journal", null, $(this).attr('data-savapage'));
+                    return false;
                 });
 
                 /*

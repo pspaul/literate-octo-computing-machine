@@ -52,6 +52,8 @@ import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
 import org.savapage.core.dao.helpers.JsonUserGroupAccess;
 import org.savapage.core.dao.helpers.ProxyPrinterSnmpInfoDto;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
@@ -63,6 +65,7 @@ import org.savapage.core.json.TimeSeriesInterval;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.DeviceService;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
@@ -101,6 +104,10 @@ public final class PrintersPage extends AbstractAdminListPage {
     /** */
     private static final DeviceService DEVICE_SERVICE =
             ServiceContext.getServiceFactory().getDeviceService();
+
+    /** */
+    private static final DocStoreService DOC_STORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
 
     /** */
     private static final PrinterService PRINTER_SERVICE =
@@ -242,6 +249,11 @@ public final class PrintersPage extends AbstractAdminListPage {
         /** */
         private final boolean showCups;
 
+        /** */
+        private final boolean isArchiveEnabled;
+        /** */
+        private final boolean isJournalEnabled;
+
         /**
          *
          * @param id
@@ -261,8 +273,20 @@ public final class PrintersPage extends AbstractAdminListPage {
                     .isConfigValue(Key.PRINTER_SNMP_ENABLE);
 
             this.showCups = showCupsBtn;
+
+            this.isArchiveEnabled = DOC_STORE_SERVICE.isEnabled(
+                    DocStoreTypeEnum.ARCHIVE, DocStoreBranchEnum.OUT_PRINT);
+
+            this.isJournalEnabled = DOC_STORE_SERVICE.isEnabled(
+                    DocStoreTypeEnum.JOURNAL, DocStoreBranchEnum.OUT_PRINT);
         }
 
+        /**
+         *
+         * @param device
+         *            Device.
+         * @return Auth mode string.
+         */
         private String getProxyPrintAuthMode(final Device device) {
 
             final StringBuilder proxyPrintAuthMode = new StringBuilder();
@@ -299,6 +323,32 @@ public final class PrintersPage extends AbstractAdminListPage {
                 }
             }
             return proxyPrintAuthMode.toString();
+        }
+
+        /**
+         * @param helper
+         *            Mark-up helper.
+         * @param printer
+         *            Printer.
+         */
+        private void addDocStoreImg(final MarkupHelper helper,
+                final boolean enabled, final String png, final String widImg,
+                final NounEnum nounTitle) {
+
+            if (enabled) {
+
+                final StringBuilder imgSrc = new StringBuilder();
+                imgSrc.setLength(0);
+                imgSrc.append(WebApp.PATH_IMAGES).append('/');
+                imgSrc.append(png);
+
+                MarkupHelper.modifyLabelAttr(
+                        helper.addModifyLabelAttr(widImg, MarkupHelper.ATTR_SRC,
+                                imgSrc.toString()),
+                        MarkupHelper.ATTR_TITLE, nounTitle.uiText(getLocale()));
+            } else {
+                helper.discloseLabel(widImg);
+            }
         }
 
         @Override
@@ -371,6 +421,16 @@ public final class PrintersPage extends AbstractAdminListPage {
                 MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
                         SparklineHtml.CSS_CLASS_PRINTER);
             }
+
+            //
+            addDocStoreImg(helper, this.isArchiveEnabled && !PRINTER_SERVICE
+                    .isDocStoreDisabled(DocStoreTypeEnum.ARCHIVE, printer),
+                    "archive-16x16.png", "img-archive", NounEnum.ARCHIVE);
+
+            addDocStoreImg(helper, this.isJournalEnabled && !PRINTER_SERVICE
+                    .isDocStoreDisabled(DocStoreTypeEnum.JOURNAL, printer),
+                    "journal-16x16.png", "img-journal", NounEnum.JOURNAL);
+
             //
             item.add(new Label("displayName"));
 
@@ -791,6 +851,7 @@ public final class PrintersPage extends AbstractAdminListPage {
                 ctx.rollback();
             }
         }
+
     }
 
     /**

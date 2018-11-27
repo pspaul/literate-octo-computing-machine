@@ -61,9 +61,17 @@
 			<li>
 				<span wicket:id="printer-archive" />
 				<div class="ui-mini">
-					<label for="printer-archive-disabled"
-						wicket:id="archive-disabled" />
+					<label for="printer-archive-disabled" wicket:id="archive-disabled" />
 					<input type="checkbox" id="printer-archive-disabled" value="0" />
+				</div>
+			</li>
+		</wicket:enclosure>
+		<wicket:enclosure child="printer-journal">
+			<li>
+				<span wicket:id="printer-journal" />
+				<div class="ui-mini">
+					<label for="printer-journal-disabled" wicket:id="journal-disabled" />
+					<input type="checkbox" id="printer-journal-disabled" value="0" />
 				</div>
 			</li>
 		</wicket:enclosure>

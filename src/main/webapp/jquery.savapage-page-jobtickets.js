@@ -522,6 +522,13 @@
                     _api.download("pdf-jobticket", null, $(this).attr('data-savapage'));
                     return false;
 
+                }).on('click', '.sp-doclog-docstore-archive-download', null, function() {
+                    _api.download("pdf-docstore-archive", null, $(this).attr('data-savapage'));
+                    return false;
+                }).on('click', '.sp-doclog-docstore-journal-download', null, function() {
+                    _api.download("pdf-docstore-journal", null, $(this).attr('data-savapage'));
+                    return false;
+
                 }).on('click', '.sp-jobticket-print', null, function() {
                     _onPrintPopup($(this).attr('data-savapage'), $(this));
 
@@ -549,6 +556,13 @@
 
                 }).on('click', '.sp-doclog-accounttrx-refund', null, function() {
                     _onDocLogAccountTrxRefundPopup($(this).attr('data-savapage'), $(this));
+
+                }).on('click', '.sp-doclog-docstore-archive-download', null, function() {
+                    _api.download("pdf-docstore-archive", null, $(this).attr('data-savapage'));
+                    return false;
+                }).on('click', '.sp-doclog-docstore-journal-download', null, function() {
+                    _api.download("pdf-docstore-journal", null, $(this).attr('data-savapage'));
+                    return false;
 
                 }).on('click', '.sp-doclog-accounttrx-info', null, function() {
                     _onDocLogAccountTrxPopup($(this).attr('data-savapage'), $(this));

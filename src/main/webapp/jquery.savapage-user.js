@@ -1171,6 +1171,12 @@
                         positionTo : $(this),
                         arrow : 't'
                     });
+                }).on('click', '.sp-doclog-docstore-archive-download', null, function() {
+                    _api.download("pdf-docstore-archive", null, $(this).attr('data-savapage'));
+                    return false;
+                }).on('click', '.sp-doclog-docstore-journal-download', null, function() {
+                    _api.download("pdf-docstore-journal", null, $(this).attr('data-savapage'));
+                    return false;
                 });
 
             }).on("pagebeforeshow", function(event, ui) {
