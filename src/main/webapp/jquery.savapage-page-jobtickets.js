@@ -383,7 +383,8 @@
             },
                 _onSaveJob = function(jobFileName) {
                 var res,
-                    ippOptions = {};
+                    ippOptions = {},
+                    cbArchive = $('#sp-jobticket-edit-archive-cb');
 
                 $('#sp-jobticket-popup').find('select').each(function() {
                     ippOptions[$(this).attr('data-savapage')] = $(this).find(':selected').val();
@@ -394,7 +395,8 @@
                     dto : JSON.stringify({
                         jobFileName : jobFileName,
                         copies : $('#sp-jobticket-edit-copies').val(),
-                        ippOptions : ippOptions
+                        ippOptions : ippOptions,
+                        archive : cbArchive.length > 0 ? _view.isCbChecked(cbArchive) : null
                     })
                 });
 

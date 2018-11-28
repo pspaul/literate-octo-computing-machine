@@ -95,6 +95,7 @@ import org.savapage.core.dao.enums.DocLogProtocolEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.doc.DocContent;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.AccountVoucherBatchDto;
 import org.savapage.core.dto.AccountVoucherRedeemDto;
@@ -184,6 +185,7 @@ import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.api.request.ApiRequestMixin;
 import org.savapage.server.api.request.ApiResultCodeEnum;
+import org.savapage.server.api.request.export.ReqExportDocStorePdf;
 import org.savapage.server.api.request.export.ReqExportOutboxPdf;
 import org.savapage.server.api.request.export.ReqExportUserDataHistory;
 import org.savapage.server.cometd.AbstractEventService;
@@ -643,9 +645,20 @@ public final class JsonApiServer extends AbstractPage {
                 break;
 
             case JsonApiDict.REQ_PDF_DOCSTORE_ARCHIVE:
+                requestHandler =
+                        new ReqExportDocStorePdf(DocStoreTypeEnum.ARCHIVE)
+                                .export(getSessionWebAppType(),
+                                        getRequestCycle(), parameters,
+                                        isGetAction, requestingUser, null);
+                break;
+
             case JsonApiDict.REQ_PDF_DOCSTORE_JOURNAL:
-                throw new SpException(
-                        "Request [" + request + "] not implemented.");
+                requestHandler =
+                        new ReqExportDocStorePdf(DocStoreTypeEnum.JOURNAL)
+                                .export(getSessionWebAppType(),
+                                        getRequestCycle(), parameters,
+                                        isGetAction, requestingUser, null);
+                break;
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD_USER:

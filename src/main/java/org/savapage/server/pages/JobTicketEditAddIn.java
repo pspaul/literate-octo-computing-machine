@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -32,15 +33,20 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.json.JsonPrinterDetail;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.print.proxy.JsonProxyPrinterOpt;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptChoice;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptGroup;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PrintScalingEnum;
+import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -55,11 +61,13 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
      */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * .
-     */
+    /** */
     private static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /** */
+    private static final DocStoreService DOC_STORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
 
     /**
      * .
@@ -156,10 +164,11 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
 
         super(parameters);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
         final OutboxJobDto job = this.getJobTicket();
 
         if (job == null) {
-            final MarkupHelper helper = new MarkupHelper(this);
             helper.discloseLabel("btn-save");
             return;
         }
@@ -205,6 +214,24 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
         }
 
         add(label);
+
+        //
+        if (!job.isCopyJobTicket() && DOC_STORE_SERVICE.isEnabled(
+                DocStoreTypeEnum.ARCHIVE, DocStoreBranchEnum.OUT_PRINT)) {
+            helper.addLabel("cb-archive-label", NounEnum.ARCHIVE);
+            helper.addCheckbox("cb-archive",
+                    BooleanUtils.isTrue(job.getArchive()));
+
+            final StringBuilder imgSrc = new StringBuilder();
+            imgSrc.append(WebApp.PATH_IMAGES).append('/')
+                    .append("archive-32x32.png");
+
+            helper.addModifyLabelAttr("img-archive", MarkupHelper.ATTR_SRC,
+                    imgSrc.toString());
+
+        } else {
+            helper.discloseLabel("cb-archive");
+        }
 
         //
         add(new Label("btn-cancel", HtmlButtonEnum.CANCEL.uiText(getLocale())));

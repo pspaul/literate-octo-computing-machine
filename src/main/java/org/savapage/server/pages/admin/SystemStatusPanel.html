@@ -180,6 +180,16 @@
 							</td>
 						</tr>
 					</wicket:enclosure>
+
+					<wicket:enclosure child="disk-space">
+						<tr>
+							<th wicket:id="disk-space-prompt"/>
+							<td>
+								<span wicket:id="disk-space" class="sp-txt-wrap sp-txt-info" />
+							</td>
+						</tr>
+					</wicket:enclosure>
+
 					<wicket:enclosure child="threads-info">
 						<tr>
 							<th>
@@ -212,6 +222,7 @@
 							<td class="sp-txt-wrap" wicket:id="job-tickets-queue-size" />
 						</tr>
 					</wicket:enclosure>
+
 				</tbody>
 			</table>
 		</li>

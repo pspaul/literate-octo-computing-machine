@@ -22,6 +22,7 @@
 package org.savapage.server.pages.admin;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -64,6 +65,7 @@ import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
 import org.savapage.core.services.AppLogService;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
@@ -116,6 +118,10 @@ public final class SystemStatusPanel extends Panel {
     /** */
     private static final AppLogService APP_LOG_SERVICE =
             ServiceContext.getServiceFactory().getAppLogService();
+
+    /** */
+    private static final DocStoreService DOC_STORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
 
     /** */
     private static final QueueService QUEUE_SERVICE =
@@ -738,6 +744,24 @@ public final class SystemStatusPanel extends Panel {
             final TooltipPanel tooltip = new TooltipPanel("tooltip-jvm-memory");
             tooltip.populate(helper.localized("tooltip-jvm-memory"), true);
             add(tooltip);
+        }
+
+        /*
+         *
+         */
+        if (showTechInfo) {
+            final File file = new File(File.separator);
+            helper.addLabel("disk-space",
+                    String.format("%s Total • %s Free",
+                            NumberUtil.humanReadableByteCount(
+                                    file.getTotalSpace(), true),
+                            NumberUtil.humanReadableByteCount(
+                                    file.getUsableSpace(), true)));
+
+            helper.addLabel("disk-space-prompt", NounEnum.DISK_SPACE);
+
+        } else {
+            helper.discloseLabel("disk-space");
         }
 
         /*

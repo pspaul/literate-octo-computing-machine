@@ -62,6 +62,7 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
 
         private String jobFileName;
         private int copies;
+        private Boolean archive;
         private Map<String, String> ippOptions;
 
         public String getJobFileName() {
@@ -80,6 +81,14 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setCopies(int copies) {
             this.copies = copies;
+        }
+
+        public Boolean getArchive() {
+            return archive;
+        }
+
+        public void setArchive(Boolean archive) {
+            this.archive = archive;
         }
 
         public Map<String, String> getIppOptions() {
@@ -149,6 +158,8 @@ public final class ReqJobTicketSave extends ApiRequestMixin {
         if (!dto.isDelegatedPrint()) {
             dto.setCopies(dtoReq.getCopies());
         }
+
+        dto.setArchive(dtoReq.getArchive());
 
         /*
          * Collect options in temporary map for validation.
