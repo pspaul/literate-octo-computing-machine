@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -215,6 +216,11 @@ public class OutboxAddin extends AbstractUserPage {
 
     /** */
     private static final String WICKET_ID_IMG_DOC_STORE = "img-docstore";
+
+    /** */
+    private static final String WICKET_ID_CHUNK_INDEX = "chunkIndex";
+    /** */
+    private static final String WICKET_ID_CHUNK_SIZE = "chunkSize";
 
     /**
      * Boolean.
@@ -595,6 +601,16 @@ public class OutboxAddin extends AbstractUserPage {
 
             //
             mapVisible.put("title", job.getJobName());
+
+            if (job.getChunkIndex() == null || job.getChunkSize() == null
+                    || job.getChunkSize().intValue() < 2) {
+                helper.discloseLabel(WICKET_ID_CHUNK_SIZE);
+            } else {
+                helper.addLabel(WICKET_ID_CHUNK_INDEX,
+                        job.getChunkIndex().toString());
+                helper.addLabel(WICKET_ID_CHUNK_SIZE,
+                        job.getChunkSize().toString());
+            }
 
             //
             final String mediaOption =
@@ -1424,22 +1440,59 @@ public class OutboxAddin extends AbstractUserPage {
 
         final Comparator<OutboxJobDto> comparator =
                 new Comparator<OutboxJobDto>() {
+
+                    private int compareLong(final long timeLeft,
+                            final long timeRight) {
+
+                        if (timeLeft < timeRight) {
+                            return -1;
+                        } else if (timeLeft > timeRight) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
+
                     @Override
                     public int compare(final OutboxJobDto left,
                             final OutboxJobDto right) {
-                        final int ret;
-                        if (left.getExpiryTime() < right.getExpiryTime()) {
-                            ret = -1;
-                        } else if (left.getExpiryTime() > right
-                                .getExpiryTime()) {
-                            ret = 1;
-                        } else {
-                            ret = 0;
+
+                        final int cmpExpiry = compareLong(left.getExpiryTime(),
+                                right.getExpiryTime());
+
+                        // Sort #1
+                        if (cmpExpiry != 0) {
+                            if (expiryAsc) {
+                                return cmpExpiry;
+                            }
+                            return -cmpExpiry;
                         }
-                        if (expiryAsc) {
-                            return ret;
+
+                        // Sort #2
+                        final int cmpSubmit = compareLong(left.getSubmitTime(),
+                                right.getSubmitTime());
+
+                        if (cmpSubmit != 0) {
+                            return cmpSubmit;
                         }
-                        return -ret;
+
+                        // Sort #3
+                        final int cmpUser =
+                                compareLong(left.getUserId().longValue(),
+                                        right.getUserId().longValue());
+
+                        if (cmpUser != 0) {
+                            return cmpUser;
+                        }
+
+                        // Sort #4 (optional)
+                        if (left.getChunkIndex() == null
+                                || right.getChunkIndex() == null) {
+                            return cmpUser;
+                        }
+
+                        return left.getChunkIndex()
+                                .compareTo(right.getChunkIndex());
                     }
                 };
 
@@ -1447,14 +1500,33 @@ public class OutboxAddin extends AbstractUserPage {
 
         int iItems = 0;
 
-        for (final OutboxJobDto dto : tickets) {
-            outboxInfo.addJob(dto.getFile(), dto);
+        final Iterator<OutboxJobDto> iterTickets = tickets.iterator();
+        OutboxJobDto dtoLast = null;
+
+        // Add to limit.
+        while (iterTickets.hasNext()) {
+            dtoLast = iterTickets.next();
+            outboxInfo.addJob(dtoLast.getFile(), dtoLast);
             if (maxItems != null && maxItems.intValue() > 0
                     && ++iItems >= maxItems.intValue()) {
                 break;
             }
         }
 
+        // Add extra to preserve user/submit-time unit of work.
+        if (dtoLast != null) {
+            while (iterTickets.hasNext()) {
+                final OutboxJobDto dto = iterTickets.next();
+                if (!dto.getUserId().equals(dtoLast.getUserId())
+                        || dto.getExpiryTime() != dtoLast.getExpiryTime()
+                        || dto.getSubmitTime() != dtoLast.getSubmitTime()) {
+                    break;
+                }
+                outboxInfo.addJob(dto.getFile(), dto);
+            }
+        }
+
+        //
         OUTBOX_SERVICE.applyLocaleInfo(outboxInfo, session.getLocale(),
                 SpSession.getAppCurrencySymbol());
 

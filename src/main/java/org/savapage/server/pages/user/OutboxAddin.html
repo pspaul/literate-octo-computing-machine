@@ -67,6 +67,12 @@
 		</wicket:enclosure>
 		<wicket:enclosure child="title">
 			<span wicket:id="title" style="font-style: italic;" />
+			<wicket:enclosure child="chunkSize">
+            &nbsp;<small class="sp-txt-info" style="font-style: italic;">
+					&bull;&nbsp;&nbsp;<span wicket:id="chunkIndex" />&nbsp;/&nbsp;<span
+					wicket:id="chunkSize" />
+				</small>
+			</wicket:enclosure>
 			<p />
 		</wicket:enclosure>
 	</div>
