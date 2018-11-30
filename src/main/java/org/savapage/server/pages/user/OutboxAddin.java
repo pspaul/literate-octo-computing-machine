@@ -1477,9 +1477,17 @@ public class OutboxAddin extends AbstractUserPage {
                         }
 
                         // Sort #3
-                        final int cmpUser =
-                                compareLong(left.getUserId().longValue(),
-                                        right.getUserId().longValue());
+
+                        final int cmpUser;
+
+                        if (left.getUserId() == null
+                                || right.getUserId() == null) {
+                            // User Web App: user is not specified.
+                            cmpUser = 0;
+                        } else {
+                            cmpUser = compareLong(left.getUserId().longValue(),
+                                    right.getUserId().longValue());
+                        }
 
                         if (cmpUser != 0) {
                             return cmpUser;
