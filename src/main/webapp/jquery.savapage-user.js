@@ -3921,13 +3921,10 @@
                 _getJobTicketFirstValidDateTime = function(refDate, offsetDays) {
                 var i,
                     msecDay = 24 * 60 * 60 * 1000,
-                    firstDateTime = refDate.getTime() + offsetDays * msecDay,
-                    fooFind = function(entry) {
-                    return entry === new Date(firstDateTime).getDay();
-                };
+                    firstDateTime = refDate.getTime() + offsetDays * msecDay;
 
                 for ( i = 0; i < 7; i++) {
-                    if (_model.JOBTICKET_DELIVERY_DAYS_OF_WEEK.find(fooFind)) {
+                    if (_ns.Utils.findInArray(_model.JOBTICKET_DELIVERY_DAYS_OF_WEEK, new Date(firstDateTime).getDay())) {
                         break;
                     }
                     firstDateTime += msecDay;
@@ -4104,10 +4101,10 @@
 
                 $('#sp-jobticket-date').change(function(event) {
                     //Sunday is 0
-                    var day = _view.mobipickGetDate($('#sp-jobticket-date')).getDay();
-                    if (!_model.JOBTICKET_DELIVERY_DAYS_OF_WEEK.find(function(entry) {
-                        return entry === day;
-                    })) {
+                    var day = _view.mobipickGetDate($('#sp-jobticket-date')).getDay(),
+                        found = _ns.Utils.findInArray(_model.JOBTICKET_DELIVERY_DAYS_OF_WEEK, day);
+
+                    if (!found) {
                         _ns.Utils.asyncFoo(function(p1) {
                             _view.msgDialogBox(_i18n.format('msg-jobticket-delivery-day-invalid', [p1]), 'sp-msg-popup-warn');
                         }, $('#sp-jobticket-date').val());

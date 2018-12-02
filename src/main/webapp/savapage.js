@@ -247,6 +247,25 @@ String.prototype.endsWith = function(suffix) {
         };
 
         /**
+         * A simple replacement of array.find(), which is not supported in old
+         * IE (11) version(s).
+         * 
+         * @param array The array.
+         * @param value The value to find.
+         * @return value when found, otherwise undefined.
+         */
+        _ns.Utils.findInArray = function(array, value) {
+            var len = array.length,
+                i;
+            for ( i = 0; i < len; i++) {
+                if (array[i] === value) {
+                    return array[i];
+                }
+            }
+            return undefined;
+        };
+
+        /**
          * Constructor
          */
         _ns.User = function() {
