@@ -117,8 +117,7 @@ public final class PdfPgpUploadHelper {
                     ConfigManager.instance().getPGPSecretKeyInfo();
 
             final PGPSignature signature = PdfPgpHelper.instance().verify(
-                    uploadedFile.getInputStream(), secKeyInfo.getPublicKey(),
-                    false);
+                    uploadedFile.getInputStream(), secKeyInfo.getPublicKey());
 
             if (signature == null) {
                 throw new PGPBaseException("Signature is INVALID.");
