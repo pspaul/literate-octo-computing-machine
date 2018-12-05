@@ -231,15 +231,7 @@
             //
             ,
                 _onUploadMsgInfo = function(files, info) {
-                var i,
-                    html = '';
-                for ( i = 0; i < files.length; i++) {
-                    html += files[i].name + ' (' + _ns.DropZone.humanFileSize(files[i].size) + ')<br>';
-                }
-
-                html += '<br>' + info;
-
-                $('#sp-pdfpgp-upload-feedback').addClass('sp-txt-valid').html(html);
+                $('#sp-pdfpgp-upload-feedback').html(info);
                 _showResetButton(true);
             }
             //

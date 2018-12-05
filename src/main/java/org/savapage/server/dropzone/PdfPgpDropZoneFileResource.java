@@ -38,7 +38,6 @@ import org.savapage.core.UnavailableException.State;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.util.JsonHelper;
-import org.savapage.lib.pgp.PGPBaseException;
 import org.savapage.server.api.request.ApiRequestMixin;
 import org.savapage.server.api.request.ApiResultCodeEnum;
 import org.savapage.server.webapp.WebAppHelper;
@@ -146,11 +145,6 @@ public final class PdfPgpDropZoneFileResource extends AbstractResource {
         } catch (FileUploadException | UnavailableException e) {
 
             resultCode = ApiResultCodeEnum.INFO;
-            resultText = e.getMessage();
-
-        } catch (IOException | PGPBaseException e) {
-
-            resultCode = ApiResultCodeEnum.WARN;
             resultText = e.getMessage();
 
         } catch (Exception e) {

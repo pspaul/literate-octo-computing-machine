@@ -31,4 +31,33 @@
     top: 5px;
 }
 
+.sp-pdfpgp-file {
+    color: #2F4F4F;
+}
+
+.sp-pdfpgp-status-img {
+    height: 20px;
+    margin-bottom: -3px;
+}
+
+.sp-pdfpgp-verify-entry {
+    background-color: #fcfcfc;
+    padding: 15px;
+    margin: 10px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.sp-pdfpgp-verify-entry-valid {
+    border: 3px #8FBC8F dotted;
+}
+.sp-pdfpgp-verify-entry-warn {
+    border: 3px #F4A460 dotted;
+}
+.sp-pdfpgp-verify-entry-error {
+    border: 3px #FF6347 dotted;
+}
+
 /* end-of-file */
