@@ -36,6 +36,8 @@ import org.savapage.core.dto.CreditLimitDtoEnum;
 import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
+import org.savapage.core.services.PGPPublicKeyService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -50,6 +52,10 @@ public final class PageUser extends AbstractAdminPage {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final PGPPublicKeyService PGP_PUBLICKEY_SERVICE =
+            ServiceContext.getServiceFactory().getPGPPublicKeyService();
 
     /**
      * @param parameters
@@ -112,11 +118,12 @@ public final class PageUser extends AbstractAdminPage {
         helper.addLabel("user-id-number", NounEnum.ID_NUMBER);
 
         try {
-            final URL pgpPublicKeySearchUrl =
-                    ConfigManager.instance().getPGPPublicKeySearchUrl();
 
-            final String pgpPublicKeyPreviewUrlTemplate = ConfigManager
-                    .instance().getPGPPublicKeyPreviewUrlTemplate();
+            final URL pgpPublicKeySearchUrl =
+                    ConfigManager.instance().getPGPPublicKeyServerUrl();
+
+            final String pgpPublicKeyPreviewUrlTemplate =
+                    PGP_PUBLICKEY_SERVICE.getPublicKeyPreviewUrlTpl();
 
             if (pgpPublicKeySearchUrl == null
                     || pgpPublicKeyPreviewUrlTemplate == null) {
