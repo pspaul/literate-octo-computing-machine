@@ -31,7 +31,7 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.util.NumberUtil;
-import org.savapage.lib.pgp.PGPKeyInfo;
+import org.savapage.lib.pgp.PGPKeyID;
 import org.savapage.lib.pgp.PGPSecretKeyInfo;
 import org.savapage.lib.pgp.PGPSignatureInfo;
 import org.savapage.lib.pgp.pdf.PdfPgpHelper;
@@ -164,7 +164,7 @@ public final class PdfPgpUploadHelper {
                     sigInfo.getSignature().getCreationTime()));
 
             feedbackMsg.append("<br>");
-            feedbackMsg.append(String.format("Key ID: %s", PGPKeyInfo
+            feedbackMsg.append(String.format("Key ID: %s", PGPKeyID
                     .formattedKeyID(sigInfo.getSignature().getKeyID())));
 
             if (isSigTrusted) {

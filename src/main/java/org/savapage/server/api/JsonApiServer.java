@@ -178,6 +178,7 @@ import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.smartschool.SmartschoolPrintMonitor;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.lib.pgp.PGPBaseException;
+import org.savapage.lib.pgp.PGPKeyID;
 import org.savapage.lib.pgp.PGPPublicKeyInfo;
 import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.WebApp;
@@ -2669,7 +2670,8 @@ public final class JsonApiServer extends AbstractPage {
 
                     final PGPPublicKeyInfo info = ServiceContext
                             .getServiceFactory().getPGPPublicKeyService()
-                            .lookup(pgpPubAttr.getValue().toUpperCase());
+                            .readRingEntry(userEmail.getUser(), new PGPKeyID(
+                                    pgpPubAttr.getValue().toUpperCase()));
 
                     if (info != null) {
                         final List<PGPPublicKeyInfo> list = new ArrayList<>();
