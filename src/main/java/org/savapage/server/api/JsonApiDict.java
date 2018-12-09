@@ -50,6 +50,7 @@ import org.savapage.server.api.request.ReqJobTicketQuickSearch;
 import org.savapage.server.api.request.ReqJobTicketSave;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqLogout;
+import org.savapage.server.api.request.ReqMailTest;
 import org.savapage.server.api.request.ReqOAuthUrl;
 import org.savapage.server.api.request.ReqOutboxCancelAll;
 import org.savapage.server.api.request.ReqOutboxCancelJob;
@@ -960,7 +961,7 @@ public final class JsonApiDict {
         usr(REQ_WEBAPP_UNLOAD, DbClaim.NONE, DbAccess.NO);
         put(REQ_WEBAPP_CLOSE_SESSION, AuthReq.NONE, DbClaim.NONE, DbAccess.NO);
 
-        adm(REQ_MAIL_TEST, DbClaim.NONE, DbAccess.NO);
+        adm(REQ_MAIL_TEST, ReqMailTest.class, DbClaim.NONE, DbAccess.NO);
 
         usr(REQ_OUTBOX_CLEAR, ReqOutboxCancelAll.class, DbClaim.NONE,
                 DbAccess.USER_LOCK);

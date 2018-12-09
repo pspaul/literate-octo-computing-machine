@@ -21,8 +21,11 @@
  */
 package org.savapage.server.dropzone;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.mail.internet.InternetAddress;
 
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.util.lang.Bytes;
@@ -32,9 +35,10 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.lib.pgp.PGPKeyID;
+import org.savapage.lib.pgp.PGPPublicKeyInfo;
 import org.savapage.lib.pgp.PGPSecretKeyInfo;
-import org.savapage.lib.pgp.PGPSignatureInfo;
 import org.savapage.lib.pgp.pdf.PdfPgpHelper;
+import org.savapage.lib.pgp.pdf.PdfPgpSignatureInfo;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,13 +110,16 @@ public final class PdfPgpUploadHelper {
                     uploadedFile.getClientFileName());
         }
 
+        File fileTemp = null;
+
         try {
+            fileTemp = uploadedFile.writeToTempFile();
 
             final PGPSecretKeyInfo secKeyInfo =
                     ConfigManager.instance().getPGPSecretKeyInfo();
 
-            final PGPSignatureInfo sigInfo = PdfPgpHelper.instance().verify(
-                    uploadedFile.getInputStream(), secKeyInfo.getPublicKey());
+            final PdfPgpSignatureInfo sigInfo = PdfPgpHelper.instance()
+                    .verify(fileTemp, secKeyInfo.getPublicKey());
 
             final boolean isSigValid = sigInfo.isValid();
             final boolean isSigTrusted = sigInfo.getSignature()
@@ -171,6 +178,38 @@ public final class PdfPgpUploadHelper {
                 feedbackMsg.append("<br>");
                 feedbackMsg.append(String.format("Key fingerprint: %s",
                         secKeyInfo.formattedFingerPrint()));
+            }
+
+            final PGPPublicKeyInfo author = sigInfo.getPubKeyAuthor();
+
+            if (isSigTrusted && author != null && !author.getUids().isEmpty()) {
+
+                feedbackMsg.append(
+                        "<br><br><hr style=\"border: 1px dotted silver;\">");
+                feedbackMsg.append("Author Name: ")
+                        .append(author.getUids().get(0).getPersonal());
+
+                feedbackMsg.append("<br>");
+                feedbackMsg.append(String.format("Author Key ID: %s",
+                        author.formattedKeyID()));
+
+                feedbackMsg.append("<br>");
+                feedbackMsg.append(String.format("Author Key fingerprint: %s",
+                        author.formattedFingerPrint()));
+
+                final StringBuilder authorEmails = new StringBuilder();
+
+                for (final InternetAddress addr : author.getUids()) {
+                    if (authorEmails.length() == 0) {
+                        authorEmails.append("Author Email: ");
+                    } else {
+                        authorEmails.append(", ");
+                    }
+                    authorEmails.append(addr.getAddress());
+                }
+
+                feedbackMsg.append("<br>");
+                feedbackMsg.append(authorEmails.toString());
             }
 
             feedbackMsg.append("</small></div>");

@@ -27,13 +27,11 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -86,9 +84,7 @@ import org.savapage.core.dao.AccountTrxDao;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.UserAccountDao;
-import org.savapage.core.dao.UserAttrDao;
 import org.savapage.core.dao.UserDao;
-import org.savapage.core.dao.UserEmailDao;
 import org.savapage.core.dao.enums.DeviceAttrEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.DocLogProtocolEnum;
@@ -122,8 +118,6 @@ import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
-import org.savapage.core.jpa.UserAttr;
-import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.json.JsonAbstractBase;
 import org.savapage.core.json.JsonPrinterDetail;
 import org.savapage.core.json.PdfProperties;
@@ -163,7 +157,6 @@ import org.savapage.core.users.CommonUserGroup;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.DateUtil;
-import org.savapage.core.util.EmailValidator;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
@@ -177,9 +170,6 @@ import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.smartschool.SmartschoolPrintMonitor;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
-import org.savapage.lib.pgp.PGPBaseException;
-import org.savapage.lib.pgp.PGPKeyID;
-import org.savapage.lib.pgp.PGPPublicKeyInfo;
 import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.request.ApiRequestHandler;
@@ -1274,11 +1264,6 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_WEBAPP_CLOSE_SESSION:
 
             return reqWebAppCloseSession();
-
-        case JsonApiDict.REQ_MAIL_TEST:
-
-            return reqMailTest(requestingUser,
-                    getParmValue(parameters, isGetAction, "mailto"));
 
         case JsonApiDict.REQ_IMAP_TEST:
 
@@ -2615,88 +2600,6 @@ public final class JsonApiServer extends AbstractPage {
             }
         }
         return data;
-    }
-
-    /**
-     * Sends a test mail message to mailto address.
-     *
-     * @param requestingUser
-     * @param mailto
-     * @return
-     * @throws MessagingException
-     * @throws IOException
-     */
-    private Map<String, Object> reqMailTest(final String requestingUser,
-            final String mailto) {
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        if (StringUtils.isBlank(mailto)
-                || !new EmailValidator().validate(mailto)) {
-            setApiResult(userData, ApiResultCodeEnum.ERROR, "msg-email-invalid",
-                    StringUtils.defaultString(mailto));
-            return userData;
-        }
-
-        final String subject = localize("mail-test-subject");
-        final String body = localize("mail-test-body", requestingUser,
-                CommunityDictEnum.SAVAPAGE.getWord() + " "
-                        + ConfigManager.getAppVersion());
-
-        try {
-
-            final EmailMsgParms emailParms = new EmailMsgParms();
-
-            emailParms.setToAddress(mailto);
-            emailParms.setSubject(subject);
-            emailParms.setBodyInStationary(subject, body, getLocale(), true);
-
-            // PGP/MIME Encrypt?
-            final UserEmailDao daoUserEmail =
-                    ServiceContext.getDaoContext().getUserEmailDao();
-
-            final UserEmail userEmail =
-                    daoUserEmail.findByEmail(mailto.toLowerCase());
-
-            if (userEmail != null) {
-
-                final UserAttrDao daoUserAttr =
-                        ServiceContext.getDaoContext().getUserAttrDao();
-
-                final UserAttr pgpPubAttr = daoUserAttr.findByName(
-                        userEmail.getUser(), UserAttrEnum.PGP_PUBKEY_ID);
-
-                if (pgpPubAttr != null) {
-
-                    final PGPPublicKeyInfo info = ServiceContext
-                            .getServiceFactory().getPGPPublicKeyService()
-                            .readRingEntry(userEmail.getUser(), new PGPKeyID(
-                                    pgpPubAttr.getValue().toUpperCase()));
-
-                    if (info != null) {
-                        final List<PGPPublicKeyInfo> list = new ArrayList<>();
-                        list.add(info);
-                        emailParms.setPublicKeyList(list);
-                    }
-                }
-            }
-            EMAIL_SERVICE.sendEmail(emailParms);
-
-            setApiResult(userData, ApiResultCodeEnum.OK, "msg-mail-sent",
-                    mailto);
-
-        } catch (MessagingException | IOException | InterruptedException
-                | CircuitBreakerException | PGPBaseException e) {
-
-            String msg = e.getMessage();
-
-            if (e.getCause() != null) {
-                msg += " (" + e.getCause().getMessage() + ")";
-            }
-            setApiResult(userData, ApiResultCodeEnum.ERROR, "msg-error", msg);
-        }
-
-        return userData;
     }
 
     /**

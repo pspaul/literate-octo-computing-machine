@@ -511,7 +511,10 @@
             _view.pages.admin.onTestMail = function() {
                 _view.showApiMsg(_api.call({
                     request : 'mail-test',
-                    mailto : $('#mail-test-address').val()
+                    dto : JSON.stringify({
+                        emailAddress : $('#mail-test-address').val()
+                    })
+
                 }));
             };
 
