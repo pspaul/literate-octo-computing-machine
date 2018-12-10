@@ -1188,8 +1188,14 @@ public class OutboxAddin extends AbstractUserPage {
                                 locale));
             }
 
-            final BigDecimal weightCopies = ACCOUNTING_SERVICE
-                    .calcPrintedCopies(weightedCost, costPerCopy, 0);
+            final BigDecimal weightCopies;
+
+            if (costPerCopy.compareTo(BigDecimal.ZERO) == 0) {
+                weightCopies = BigDecimal.ZERO;
+            } else {
+                weightCopies = ACCOUNTING_SERVICE
+                        .calcPrintedCopies(weightedCost, costPerCopy, 0);
+            }
 
             sbAccTrx.append("&nbsp;(").append(weightCopies).append(')');
         }
