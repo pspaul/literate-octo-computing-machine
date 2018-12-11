@@ -260,6 +260,9 @@ public final class JsonApiDict {
     public static final String REQ_PRINT_AUTH_CANCEL = "print-auth-cancel";
     public static final String REQ_PRINT_FAST_RENEW = "print-fast-renew";
 
+    public static final String REQ_PRINTER_PPD_DOWNLOAD =
+            "printer-ppd-download";
+
     public static final String REQ_PRINTER_OPT_DOWNLOAD =
             "printer-opt-download";
 
@@ -732,6 +735,7 @@ public final class JsonApiDict {
         case REQ_PAPERCUT_DELEGATOR_COST_CSV:
         case REQ_POS_RECEIPT_DOWNLOAD:
         case REQ_POS_RECEIPT_DOWNLOAD_USER:
+        case REQ_PRINTER_PPD_DOWNLOAD:
         case REQ_PRINTER_OPT_DOWNLOAD:
         case REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
         case REQ_USER_EXPORT_DATA_HISTORY:
@@ -1022,7 +1026,9 @@ public final class JsonApiDict {
 
         adm(REQ_PRINTER_GET, ReqPrinterGet.class, DbClaim.NONE, DbAccess.YES);
 
+        adm(REQ_PRINTER_PPD_DOWNLOAD, DbClaim.NONE, DbAccess.YES);
         adm(REQ_PRINTER_OPT_DOWNLOAD, DbClaim.NONE, DbAccess.YES);
+
         usr(REQ_PRINTER_PRINT, ReqPrinterPrint.class, DbClaim.READ,
                 DbAccess.USER_LOCK);
 

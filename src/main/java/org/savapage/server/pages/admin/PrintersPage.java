@@ -126,6 +126,14 @@ public final class PrintersPage extends AbstractAdminListPage {
      */
     private static final int MAX_PAGES_IN_NAVBAR = 5;
 
+    /** */
+    private static final String CSS_CLASS_PRINTER_OPT_DOWNLOAD =
+            "sp-printer-opt-download";
+
+    /** */
+    private static final String CSS_CLASS_PRINTER_PPD_DOWNLOAD =
+            "sp-printer-ppd-download";
+
     /**
      * Bean for mapping JSON page request.
      * <p>
@@ -434,12 +442,6 @@ public final class PrintersPage extends AbstractAdminListPage {
             //
             item.add(new Label("displayName"));
 
-            labelWrk = new Label("printerName");
-            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
-                    printer.getId()));
-
-            item.add(labelWrk);
-
             final boolean isJobTicketPrinter =
                     PRINTER_SERVICE.isJobTicketPrinter(printer.getId());
 
@@ -675,8 +677,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             final boolean isInternal =
                     PRINTER_ATTR_DAO.isInternalPrinter(attrLookup);
 
-            final boolean isConfigured =
-                    cupsPrinter == null || PROXY_PRINT_SERVICE
+            final boolean isConfigured = cupsPrinter == null
+                    || !cupsPrinter.isPpdPresent() || PROXY_PRINT_SERVICE
                             .isPrinterConfigured(cupsPrinter, attrLookup);
 
             item.add(createVisibleLabel(!isConfigured,
@@ -687,8 +689,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             String signalKey = null;
             color = null;
 
-            String location = "";
-            String info = "";
+            final Label labelPrinterName = new Label("printerName");
+            item.add(labelPrinterName);
 
             if (cupsPrinter == null) {
                 if (printer.getDeleted()) {
@@ -701,7 +703,24 @@ public final class PrintersPage extends AbstractAdminListPage {
                     color = MarkupHelper.CSS_TXT_ERROR;
                     signalKey = "signal-disconnected";
                 }
+
+                helper.discloseLabel("driver");
+                helper.discloseLabel("manufacturer");
+
             } else {
+
+                MarkupHelper.modifyLabelAttr(labelPrinterName,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        printer.getId().toString());
+
+                MarkupHelper.modifyLabelAttr(labelPrinterName,
+                        MarkupHelper.ATTR_CLASS,
+                        CSS_CLASS_PRINTER_OPT_DOWNLOAD);
+
+                MarkupHelper.appendLabelAttr(labelPrinterName,
+                        MarkupHelper.ATTR_TITLE,
+                        localized("title-download-ipp"));
+
                 if (printer.getDisabled()) {
                     color = MarkupHelper.CSS_TXT_ERROR;
                     signalKey = "signal-disabled";
@@ -712,15 +731,36 @@ public final class PrintersPage extends AbstractAdminListPage {
                     color = MarkupHelper.CSS_TXT_VALID;
                     signalKey = "signal-active";
                 }
-                location = cupsPrinter.getLocation();
 
-                if (StringUtils.isNotBlank(cupsPrinter.getPpd())) {
-                    info = cupsPrinter.getPpd() + " version "
-                            + cupsPrinter.getPpdVersion() + ": "
-                            + cupsPrinter.getModelName();
+                String nameWlk = cupsPrinter.getModelName();
+                if (StringUtils.isBlank(nameWlk)) {
+                    nameWlk = null;
                 } else {
-                    info = cupsPrinter.getModelName();
+                    if (cupsPrinter.isPpdPresent()) {
+                        nameWlk = nameWlk.concat(" ⇩ ");
+                    }
                 }
+
+                labelWrk = helper.addLabel("driver",
+                        StringUtils.defaultString(nameWlk, "-"));
+
+                if (nameWlk != null && cupsPrinter.isPpdPresent()) {
+
+                    MarkupHelper.modifyLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_DATA_SAVAPAGE,
+                            printer.getId().toString());
+
+                    MarkupHelper.appendLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_CLASS,
+                            CSS_CLASS_PRINTER_PPD_DOWNLOAD);
+
+                    MarkupHelper.appendLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_TITLE,
+                            localized("title-download-ppd"));
+                }
+                helper.encloseLabel("manufacturer",
+                        cupsPrinter.getManufacturer(),
+                        StringUtils.isNotBlank(cupsPrinter.getManufacturer()));
             }
 
             String signal = "";

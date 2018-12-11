@@ -55,8 +55,6 @@ import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
-import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
-import org.apache.wicket.util.resource.StringBufferResourceStream;
 import org.apache.wicket.util.time.Duration;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -149,7 +147,6 @@ import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
-import org.savapage.core.services.helpers.IppLogger;
 import org.savapage.core.services.helpers.PageRangeException;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.services.helpers.email.EmailMsgParms;
@@ -178,6 +175,8 @@ import org.savapage.server.api.request.ApiRequestMixin;
 import org.savapage.server.api.request.ApiResultCodeEnum;
 import org.savapage.server.api.request.export.ReqExportDocStorePdf;
 import org.savapage.server.api.request.export.ReqExportOutboxPdf;
+import org.savapage.server.api.request.export.ReqExportPrinterOpt;
+import org.savapage.server.api.request.export.ReqExportPrinterPpd;
 import org.savapage.server.api.request.export.ReqExportUserDataHistory;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.dropzone.PdfPgpDropZoneFileResource;
@@ -427,18 +426,15 @@ public final class JsonApiServer extends AbstractPage {
                     // no break intended
                 case JsonApiDict.REQ_PAPERCUT_DELEGATOR_COST_CSV:
                     // no break intended
+                case JsonApiDict.REQ_PRINTER_OPT_DOWNLOAD:
+                    // no break intended
+                case JsonApiDict.REQ_PRINTER_PPD_DOWNLOAD:
+                    // no break intended
                 case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
                     // no break intended
                 case JsonApiDict.REQ_USER_EXPORT_DATA_HISTORY:
                     handleExportFile(requestId, parameters, requestingUser,
                             isGetAction);
-                    break;
-
-                case JsonApiDict.REQ_PRINTER_OPT_DOWNLOAD:
-                    requestCycle.scheduleRequestHandlerAfterCurrent(
-                            this.exportPrinterOpt(
-                                    parameters.get(JsonApiDict.PARM_REQ_SUB)
-                                            .toLongObject()));
                     break;
 
                 case JsonApiDict.REQ_PDF:
@@ -683,6 +679,22 @@ public final class JsonApiServer extends AbstractPage {
                         requestingUser);
                 break;
 
+            case JsonApiDict.REQ_PRINTER_OPT_DOWNLOAD:
+                requestHandler = new ReqExportPrinterOpt(
+                        parameters.get(JsonApiDict.PARM_REQ_SUB).toLongObject())
+                                .export(getSessionWebAppType(),
+                                        getRequestCycle(), parameters,
+                                        isGetAction, requestingUser, null);
+                break;
+
+            case JsonApiDict.REQ_PRINTER_PPD_DOWNLOAD:
+                requestHandler = new ReqExportPrinterPpd(
+                        parameters.get(JsonApiDict.PARM_REQ_SUB).toLongObject())
+                                .export(getSessionWebAppType(),
+                                        getRequestCycle(), parameters,
+                                        isGetAction, requestingUser, null);
+                break;
+
             case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
                 requestHandler = exportPapercutDelegatorCost(
                         ConfigManager.instance().getConfigValue(
@@ -845,43 +857,6 @@ public final class JsonApiServer extends AbstractPage {
     private String getUserFriendlyFilename(final PosDepositReceiptDto receipt) {
         return CommunityDictEnum.SAVAPAGE.getWord() + "-"
                 + receipt.getReceiptNumber() + ".pdf";
-    }
-
-    /**
-     *
-     * @param printerName
-     * @return
-     * @throws ResourceStreamNotFoundException
-     */
-    private IRequestHandler exportPrinterOpt(final Long printerId)
-            throws ResourceStreamNotFoundException {
-
-        final PrinterDao printerDao =
-                ServiceContext.getDaoContext().getPrinterDao();
-
-        final Printer printer = printerDao.findById(printerId);
-
-        /*
-         * INVARIANT: printer must exist in database.
-         */
-        if (printer == null) {
-            throw new SpException("Printer [" + printerId + "] not found.");
-        }
-
-        final StringBufferResourceStream stream =
-                new StringBufferResourceStream("text/text");
-
-        stream.append(
-                IppLogger.logIppPrinterOpt(printer, getSession().getLocale()));
-
-        final ResourceStreamRequestHandler handler =
-                new ResourceStreamRequestHandler(stream);
-
-        handler.setFileName(printer.getPrinterName() + ".txt");
-        handler.setContentDisposition(ContentDisposition.ATTACHMENT);
-        handler.setCacheDuration(Duration.NONE);
-
-        return handler;
     }
 
     /**

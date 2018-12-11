@@ -40,12 +40,20 @@
 
 			<p>
 				<span wicket:id="printer-pie" sparkType="pie" sparkSliceColors="[]"
-					class="" />&nbsp;<span class="sp-printer-opt-download"
-					wicket:id="printerName" />
+					class="" />&nbsp;<span wicket:id="printerName" />
 				<wicket:enclosure child="cups-printer-class-members"> (<span
 						class="sp-txt-wrap" wicket:id="cups-printer-class-members" />)
 				</wicket:enclosure>
 				&bull; <span class="sp-txt-wrap" wicket:id="deviceUri" />
+				<wicket:enclosure child="driver">
+            &bull; <span class="sp-txt-wrap sp-txt-info"
+						wicket:id="driver" />
+				</wicket:enclosure>
+				<wicket:enclosure child="manufacturer">
+            &bull; <span class="sp-txt-wrap sp-txt-info"
+						wicket:id="manufacturer" />
+				</wicket:enclosure>
+
 			</p>
 
 			<wicket:enclosure child="printer-snmp">

@@ -2153,6 +2153,11 @@
                     return false;
                 });
 
+                $(this).on('dblclick', '.sp-printer-ppd-download', null, function() {
+                    _self.onDownload("printer-ppd-download", null, $(this).attr('data-savapage'));
+                    return false;
+                });
+
                 $(this).on('click', '.sp-printer-log', null, function() {
                     var pnl = _panel.DocLogBase;
                     pnl.applyDefaults(pnl);
