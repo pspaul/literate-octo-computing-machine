@@ -687,7 +687,8 @@ public final class WebServer {
         server.setHandler(handlerList);
 
         /*
-         * BASIC Authentication for Atom Feed.
+         * BASIC Authentication for Atom Feed and PaperCut User Syn/Auth
+         * Interface.
          */
         server.addBean(new BasicAuthLoginService(
                 new String[] { AtomFeedServlet.ROLE_ALLOWED,
