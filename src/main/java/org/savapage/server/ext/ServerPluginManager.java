@@ -1028,23 +1028,22 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             pubLevel = PubLevelEnum.WARN;
         }
 
-        publishEvent(pubLevel,
-                localize("payment-confirmed",
-                        //
-                        String.format("%s %s (%s %s)",
-                                CurrencyUtil.CURRENCY_CODE_BITCOIN,
-                                dto.getPaymentMethodAmount().toPlainString(),
-                                dto.getCurrencyCode(), baseCurrencyAmount),
-                        //
-                        trx.getGatewayId(),
-                        //
-                        userId,
-                        //
-                        String.valueOf(trx.getConfirmations()),
-                        //
-                        localize(msgKey)
+        publishEvent(pubLevel, localize("payment-confirmed",
                 //
-                ));
+                String.format("%s %s (%s %s)",
+                        CurrencyUtil.CURRENCY_CODE_BITCOIN,
+                        dto.getPaymentMethodAmount().toPlainString(),
+                        dto.getCurrencyCode(), baseCurrencyAmount),
+                //
+                trx.getGatewayId(),
+                //
+                userId,
+                //
+                String.valueOf(trx.getConfirmations()),
+                //
+                localize(msgKey)
+        //
+        ));
 
         logPaymentTrxReceived(trx, statusMsg, userId);
 
@@ -1211,7 +1210,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             this.oauthClientPlugins.entrySet()) {
                 builder.append("\n| ").append(String.format("[%s]",
                         entry.getValue().getClass().getName()));
-                builder.append("\n| ")
+                builder.append("\n| Authorization: ")
                         .append(entry.getValue().getAuthorizationUrl());
                 builder.append('\n').append(delim);
             }
@@ -1244,6 +1243,15 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 }
 
                 builder.append("]");
+
+                try {
+                    builder.append("\n| CallBack: ")
+                            .append(getCallBackUrl(entry.getValue()));
+                } catch (MalformedURLException e) {
+                    builder.append("\n| ").append(e.getClass().getSimpleName());
+                }
+                builder.append('\n').append(delim);
+
             }
 
             builder.append('\n').append(delim);
