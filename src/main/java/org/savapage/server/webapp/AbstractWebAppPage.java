@@ -204,7 +204,10 @@ public abstract class AbstractWebAppPage extends AbstractPage
     protected final void
             checkInternetAccess(final IConfigProp.Key keyAccessEnabled) {
 
-        if (ConfigManager.instance().isConfigValue(keyAccessEnabled)) {
+        final ConfigManager cm = ConfigManager.instance();
+
+        if (cm.isConfigValue(Key.WEBAPP_INTERNET_ENABLE)
+                && cm.isConfigValue(keyAccessEnabled)) {
             return;
         }
 
