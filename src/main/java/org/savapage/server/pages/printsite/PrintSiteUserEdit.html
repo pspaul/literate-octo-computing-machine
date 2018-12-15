@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -38,7 +38,8 @@
 		<li>
 			<fieldset data-role="controlgroup" data-type="vertical">
 				<label for="user-disabled" wicket:id="label-user-disabled" />
-				<input type="checkbox" id="user-disabled" value="0" />
+				<input type="checkbox" id="user-disabled" value="0"
+					wicket:id="cb-user-disabled" />
 			</fieldset>
 		</li>
 
@@ -46,24 +47,25 @@
 			<label for="user-email" wicket:id="label-user-email-main" />
 			<input type="text" id="user-email" value="" maxlength="128"
 				autocomplete="off" autocorrect="off" autocapitalize="off"
-				spellcheck="false" />
+				spellcheck="false" wicket:id="txt-user-email" />
 
 			<label for="user-email-other" wicket:id="label-user-email-other" />
 			<textarea id="user-email-other" autocomplete="off" autocorrect="off"
-				autocapitalize="off" spellcheck="false" />
+				autocapitalize="off" spellcheck="false"
+				wicket:id="area-user-email-other" />
 		</li>
 
 		<li>
 			<label for="user-card-number" wicket:id="label-user-card-number" />
 			<input type="text" id="user-card-number" maxlength="32" value=""
-				data-clear-btn="true" />
+				data-clear-btn="true" wicket:id="txt-user-card-number" />
 		</li>
 
 		<li data-role="list-divider" wicket:id="label-financial" />
 		<li>
 			<label for="user-account-balance" wicket:id="label-balance" />
 			<input type="text" id="user-account-balance" value="" maxlength="10"
-				pattern="[0-9]*" />
+				pattern="[0-9]*" wicket:id="txt-balance" />
 
 			<fieldset class="ui-mini" data-role="controlgroup"
 				data-type="horizontal">
@@ -89,7 +91,8 @@
 
 			</fieldset>
 			<input type="text" id="user-account-credit-limit-amount" value=""
-				maxlength="10" pattern="[0-9]*" />
+				maxlength="10" pattern="[0-9]*"
+				wicket:id="txt-account-credit-limit-amount" />
 		</li>
 
 		<li>

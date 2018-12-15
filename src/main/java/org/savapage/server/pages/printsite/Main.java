@@ -66,6 +66,10 @@ public final class Main extends AbstractPrintSitePage {
         helper.addLabel("txt-swipe card",
                 PhraseEnum.SWIPE_CARD.uiText(getLocale()));
 
+        MarkupHelper.modifyLabelAttr(helper.addLabel("search-userid", ""),
+                MarkupHelper.ATTR_PLACEHOLDER,
+                NounEnum.USER.uiText(getLocale()).toLowerCase());
+
         helper.addLabel("btn-dashboard",
                 ACLOidEnum.A_DASHBOARD.uiText(getLocale()));
 

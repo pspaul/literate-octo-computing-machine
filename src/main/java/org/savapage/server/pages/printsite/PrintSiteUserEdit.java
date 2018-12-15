@@ -21,16 +21,22 @@
  */
 package org.savapage.server.pages.printsite;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dto.CreditLimitDtoEnum;
+import org.savapage.core.dto.UserDto;
+import org.savapage.core.dto.UserEmailDto;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserService;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -51,9 +57,11 @@ public final class PrintSiteUserEdit extends AbstractPrintSitePage {
      */
     private static final String PAGE_PARM_USERKEY = "userKey";
 
-    /**
-     * .
-     */
+    /** */
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
+
+    /** */
     private static final UserDao USER_DAO =
             ServiceContext.getDaoContext().getUserDao();
 
@@ -70,13 +78,17 @@ public final class PrintSiteUserEdit extends AbstractPrintSitePage {
 
         super(parameters);
 
+        ServiceContext.setLocale(getLocale());
+
         final IRequestParameters parms =
                 getRequestCycle().getRequest().getPostParameters();
 
         final Long userKey =
                 parms.getParameterValue(PAGE_PARM_USERKEY).toOptionalLong();
 
+        //
         final org.savapage.core.jpa.User dbUser = USER_DAO.findById(userKey);
+        final UserDto dto = USER_SERVICE.createUserDto(dbUser);
 
         final MarkupHelper helper = new MarkupHelper(this);
 
@@ -86,18 +98,43 @@ public final class PrintSiteUserEdit extends AbstractPrintSitePage {
                 MarkupHelper.ATTR_VALUE, dbUser.getFullName());
 
         //
-        helper.addLabel("internal-user-ind", "Interne gebruiker");
+        helper.addCheckbox("cb-user-disabled",
+                BooleanUtils.isTrue(dto.getDisabled()));
+
+        helper.addTextInput("txt-user-email", dto.getEmail());
+
+        final StringBuilder emails = new StringBuilder();
+
+        for (final UserEmailDto em : dto.getEmailOther()) {
+            if (emails.length() > 0) {
+                emails.append('\n');
+            }
+            emails.append(em.getAddress());
+        }
+        helper.addLabel("area-user-email-other", emails.toString());
+        helper.addTextInput("txt-user-card-number", dto.getCard());
+
+        //
+        helper.encloseLabel("internal-user-ind",
+                AdjectiveEnum.INTERNAL.uiText(getLocale()),
+                BooleanUtils.isTrue(dto.getInternal()));
+
         helper.addLabel("label-password", NounEnum.PASSWORD);
 
         helper.addLabel("label-user-fullname", NounEnum.NAME);
+
+        //
         helper.addLabel("label-balance", NounEnum.BALANCE);
+        helper.addTextInput("txt-balance", dto.getAccounting().getBalance());
+
         helper.addLabel("label-credit-limit", NounEnum.CREDIT_LIMIT);
         helper.addLabel("label-user-disabled", AdverbEnum.DISABLED);
 
         helper.addLabel("label-user-email-main", LabelEnum.PRIMARY_EMAIL);
         helper.addLabel("label-user-email-other", LabelEnum.OTHER_EMAILS);
-
+        //
         helper.addLabel("label-user-card-number", NounEnum.CARD_NUMBER);
+
         helper.addLabel("user-delete-warning", PhraseEnum.USER_DELETE_WARNING);
 
         helper.addLabel("label-financial",
@@ -112,13 +149,18 @@ public final class PrintSiteUserEdit extends AbstractPrintSitePage {
         helper.addButton("button-user-pw-reset", HtmlButtonEnum.RESET);
         helper.addButton("button-user-pw-erase", HtmlButtonEnum.ERASE);
 
-        helper.addModifyLabelAttr("credit-limit-none", MarkupHelper.ATTR_VALUE,
-                CreditLimitDtoEnum.NONE.toString());
-        helper.addModifyLabelAttr("credit-limit-default",
-                MarkupHelper.ATTR_VALUE, CreditLimitDtoEnum.DEFAULT.toString());
-        helper.addModifyLabelAttr("credit-limit-individual",
-                MarkupHelper.ATTR_VALUE,
-                CreditLimitDtoEnum.INDIVIDUAL.toString());
+        //
+        helper.addTextInput("txt-account-credit-limit-amount",
+                dto.getAccounting().getCreditLimitAmount());
+
+        setCreditLimit(helper, "credit-limit-none", CreditLimitDtoEnum.NONE,
+                dto.getAccounting().getCreditLimit());
+        setCreditLimit(helper, "credit-limit-default",
+                CreditLimitDtoEnum.DEFAULT,
+                dto.getAccounting().getCreditLimit());
+        setCreditLimit(helper, "credit-limit-individual",
+                CreditLimitDtoEnum.INDIVIDUAL,
+                dto.getAccounting().getCreditLimit());
 
         helper.addLabel("label-credit-limit-none",
                 CreditLimitDtoEnum.NONE.uiText(getLocale()));
@@ -128,4 +170,26 @@ public final class PrintSiteUserEdit extends AbstractPrintSitePage {
                 CreditLimitDtoEnum.INDIVIDUAL.uiText(getLocale()));
     }
 
+    /**
+     * Sets (selects) credit limit radio button.
+     *
+     * @param helper
+     *            Helper.
+     * @param labelId
+     *            Wicket label id.
+     * @param credLimit
+     *            Credit limit
+     * @param credLimitSel
+     *            Selected credit limit.
+     */
+    private static void setCreditLimit(final MarkupHelper helper,
+            final String labelId, final CreditLimitDtoEnum credLimit,
+            final CreditLimitDtoEnum credLimitSel) {
+        final Label label = helper.addModifyLabelAttr(labelId,
+                MarkupHelper.ATTR_VALUE, credLimit.toString());
+        if (credLimit == credLimitSel) {
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_CHECKED,
+                    MarkupHelper.ATTR_CHECKED);
+        }
+    }
 }
