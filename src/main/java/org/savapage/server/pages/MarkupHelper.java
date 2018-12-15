@@ -937,6 +937,7 @@ public final class MarkupHelper {
         case IPP_JOB_HELD:
         case IPP_JOB_PENDING:
         case IPP_JOB_PROCESSING:
+        case IPP_JOB_UNKNOWN:
             return CSS_TXT_WARN;
 
         default:

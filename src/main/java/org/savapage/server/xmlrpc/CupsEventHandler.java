@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2018 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -27,6 +27,7 @@ import java.util.Map;
 import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.ipp.IppJobStateEnum;
+import org.savapage.core.ipp.IppPrinterStateEnum;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusCups;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
 import org.savapage.core.services.ProxyPrintService;
@@ -36,21 +37,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Datraverse B.V.
+ *
+ * @author Rijk Ravestein
+ *
  */
 public final class CupsEventHandler implements ServiceEntryPoint {
 
-    /**
-     * .
-     */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(CupsEventHandler.class);
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(CupsEventHandler.class);
 
-    /**
-    *
-    */
-    private static final ProxyPrintService PROXY_PRINT_SERVICE = ServiceContext
-            .getServiceFactory().getProxyPrintService();
+    /** */
+    private static final ProxyPrintService PROXY_PRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /** */
+    private static final String EVENT_JOB_COMPLETED = "job-completed";
+    /** */
+    private static final String EVENT_JOB_CREATED = "job-created";
+    /** */
+    private static final String EVENT_JOB_PROGRESS = "job-progress";
+    /** */
+    private static final String EVENT_JOB_STOPPED = "job-stopped";
 
     /**
      * Notification from custom SavaPage CUPS notifier.
@@ -76,8 +84,8 @@ public final class CupsEventHandler implements ServiceEntryPoint {
      * and then restarting cupsd (editing via the web interface will do this for
      * you...)
      *
-     * See: <a
-     * href="http://comments.gmane.org/gmane.comp.printing.cups.general/28645"
+     * See: <a href=
+     * "http://comments.gmane.org/gmane.comp.printing.cups.general/28645"
      * >here</a>.
      * </p>
      * <p>
@@ -88,39 +96,32 @@ public final class CupsEventHandler implements ServiceEntryPoint {
      * </p>
      *
      * @param apiId
+     *            API ID.
      * @param apiKey
+     *            API key.
      * @param jobId
      * @param jobName
      * @param jobState
      * @param creationTime
      * @param completedTime
      * @param printerName
+     *            Printer name.
      * @param printerState
+     *            Printer state.
      * @return The XML-RPC object map.
      */
-    public Map<String, Object> jobEvent(
-    //
-            final String apiId,
-            //
-            final String apiKey,
-            //
-            final String event,
-            //
-            final Integer jobId,
-            //
-            final String jobName,
-            //
-            final Integer jobState,
-            //
-            final Integer creationTime,
-            //
-            final Integer completedTime,
-            //
-            final String printerName,
-            //
-            final Integer printerState
-    //
-            ) {
+    public Map<String, Object> jobEvent(//
+            final String apiId, //
+            final String apiKey, //
+            final String event, //
+            final Integer jobId, //
+            final String jobName, //
+            final Integer jobState, //
+            final Integer creationTime, //
+            final Integer completedTime, //
+            final String printerName, //
+            final Integer printerState //
+    ) {
 
         final Map<String, Object> map = new HashMap<String, Object>();
 
@@ -140,22 +141,73 @@ public final class CupsEventHandler implements ServiceEntryPoint {
              * notifications from CUPS. CUPS notifies repeatedly (every second),
              * even when there is NO state change.
              */
-            final IppJobStateEnum ippState = IppJobStateEnum.asEnum(jobState);
 
-            final ProxyPrintJobStatusCups jobStatus =
-                    new ProxyPrintJobStatusCups(printerName, jobId, jobName,
-                            ippState);
+            String printerStateTxt = null;
+            try {
+                printerStateTxt =
+                        IppPrinterStateEnum.asEnum(printerState).asLogText();
+            } catch (Exception e) {
+                printerStateTxt = "?";
+            }
 
-            jobStatus.setCupsCreationTime(creationTime);
-            jobStatus.setCupsCompletedTime(completedTime);
+            IppJobStateEnum ippJobState = null;
 
-            /*
-             * We pass the job status to the monitor who detect and handle state
-             * changes.
-             */
-            ProxyPrintJobStatusMonitor.notify(jobStatus);
+            try {
+                ippJobState = IppJobStateEnum.asEnum(jobState);
+            } catch (Exception e) {
+                LOGGER.warn("Printer [{}] [{}] Job #{}: {} [{}]: {}",
+                        printerName, printerStateTxt, jobId, event, jobState,
+                        e.getMessage());
+            }
 
-            //
+            if (ippJobState != null) {
+
+                // Correct job state?
+                IppJobStateEnum ippStateCorr = ippJobState;
+
+                if (ippJobState == IppJobStateEnum.IPP_JOB_UNKNOWN) {
+
+                    if (event.equals(EVENT_JOB_PROGRESS)) {
+                        ippStateCorr = IppJobStateEnum.IPP_JOB_PROCESSING;
+
+                    } else if (event.equals(EVENT_JOB_CREATED)) {
+                        ippStateCorr = IppJobStateEnum.IPP_JOB_PENDING;
+
+                    } else if (event.equals(EVENT_JOB_COMPLETED)) {
+                        ippStateCorr = IppJobStateEnum.IPP_JOB_COMPLETED;
+
+                    } else if (event.equals(EVENT_JOB_STOPPED)) {
+                        ippStateCorr = IppJobStateEnum.IPP_JOB_STOPPED;
+                    }
+                }
+
+                if (ippStateCorr.equals(ippJobState)) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Printer [{}] [{}] Job #{}: {} [{}]",
+                                printerName, printerStateTxt, jobId, event,
+                                ippJobState.asLogText());
+                    }
+                } else {
+                    LOGGER.warn("Printer [{}] [{}] Job #{}: {} [{}]->[{}]",
+                            printerName, printerStateTxt, jobId, event,
+                            ippJobState.asLogText(), ippStateCorr.asLogText());
+                    ippJobState = ippStateCorr;
+                }
+
+                final ProxyPrintJobStatusCups jobStatus =
+                        new ProxyPrintJobStatusCups(printerName, jobId, jobName,
+                                ippJobState);
+
+                jobStatus.setCupsCreationTime(creationTime);
+                jobStatus.setCupsCompletedTime(completedTime);
+
+                /*
+                 * We pass the job status to the monitor who detect and handle
+                 * state changes.
+                 */
+                ProxyPrintJobStatusMonitor.notify(jobStatus);
+            }
+
             rc = 0;
 
         } catch (Exception ex) {
