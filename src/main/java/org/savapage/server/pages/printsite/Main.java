@@ -22,6 +22,8 @@
 package org.savapage.server.pages.printsite;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.i18n.AdjectiveEnum;
@@ -73,7 +75,9 @@ public final class Main extends AbstractPrintSitePage {
         helper.addLabel("btn-dashboard",
                 ACLOidEnum.A_DASHBOARD.uiText(getLocale()));
 
-        helper.addButton("btn-register", HtmlButtonEnum.REGISTER);
+        helper.encloseLabel("btn-register",
+                HtmlButtonEnum.REGISTER.uiText(getLocale()), ConfigManager
+                        .instance().isConfigValue(Key.INTERNAL_USERS_ENABLE));
 
         helper.addLabel("btn-details", NounEnum.USER);
 
@@ -100,6 +104,11 @@ public final class Main extends AbstractPrintSitePage {
                 helper.addTransparant("img-transactions-papercut"),
                 MarkupHelper.ATTR_SRC,
                 WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT));
+
+        helper.addButton("header-user-delete", HtmlButtonEnum.DELETE);
+        helper.addLabel("warn-user-delete", PhraseEnum.USER_DELETE_WARNING);
+        helper.addButton("btn-user-delete-yes", HtmlButtonEnum.YES);
+        helper.addButton("btn-user-delete-no", HtmlButtonEnum.NO);
 
         add(new CommunityStatusFooterPanel("community-status-footer-panel",
                 true));

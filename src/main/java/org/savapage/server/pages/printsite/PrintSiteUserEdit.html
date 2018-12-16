@@ -19,12 +19,8 @@
 	<ul data-role="listview" data-inset="true">
 
 		<li data-role="list-divider">
-			<h3 wicket:id="user-userid" />
+			<h3 id="user-name" wicket:id="user-userid" />
 		</li>
-
-		<wicket:enclosure child="internal-user-ind">
-			<li wicket:id="internal-user-ind" />
-		</wicket:enclosure>
 
 		<li>
 			<div class="ui-field-contain">
@@ -33,10 +29,8 @@
 					autofocus autocomplete="off" autocorrect="off" autocapitalize="off"
 					spellcheck="false" wicket:id="input-user-fullname" />
 			</div>
-		</li>
-
-		<li>
-			<fieldset data-role="controlgroup" data-type="vertical">
+			<fieldset data-role="controlgroup" data-type="vertical"
+				data-mini="true">
 				<label for="user-disabled" wicket:id="label-user-disabled" />
 				<input type="checkbox" id="user-disabled" value="0"
 					wicket:id="cb-user-disabled" />
@@ -53,15 +47,12 @@
 			<textarea id="user-email-other" autocomplete="off" autocorrect="off"
 				autocapitalize="off" spellcheck="false"
 				wicket:id="area-user-email-other" />
-		</li>
 
-		<li>
 			<label for="user-card-number" wicket:id="label-user-card-number" />
 			<input type="text" id="user-card-number" maxlength="32" value=""
 				data-clear-btn="true" wicket:id="txt-user-card-number" />
 		</li>
 
-		<li data-role="list-divider" wicket:id="label-financial" />
 		<li>
 			<label for="user-account-balance" wicket:id="label-balance" />
 			<input type="text" id="user-account-balance" value="" maxlength="10"
@@ -97,46 +88,33 @@
 
 		<li>
 			<div>
-				<button id="button-save-user"
+				<button id="sp-btn-user-save"
 					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
-					wicket:id="button-ok" />
-				<a href="#" tabindex="0"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-					data-rel="back" data-direction="reverse"
-					wicket:id="button-cancel-1" />
+					wicket:id="button-apply" />
+				<wicket:enclosure child="button-delete">
+					<button id="sp-btn-user-delete" data-rel="popup"
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
+						wicket:id="button-delete" />
+				</wicket:enclosure>
 			</div>
 		</li>
 	</ul>
 
-	<ul class="sp-internal-user-edit" data-role="listview"
-		data-inset="true">
-		<li data-role="list-divider" wicket:id="label-password" />
-		<li>
-			<div>
-				<button id="button-user-pw-dialog" wicket:id="button-user-pw-reset"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit" />
-				<button id="button-user-pw-erase" wicket:id="button-user-pw-erase"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete" />
-			</div>
-		</li>
-	</ul>
+	<wicket:enclosure child="label-password">
+		<ul class="sp-internal-user-edit" data-role="listview"
+			data-inset="true">
+			<li data-role="list-divider" wicket:id="label-password" />
+			<li>
+				<div>
+					<button id="sp-btn-user-pw-reset" wicket:id="button-user-pw-reset"
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit" />
+					<button id="sp-btn-user-pw-erase" wicket:id="button-user-pw-erase"
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete" />
+				</div>
+			</li>
+		</ul>
+	</wicket:enclosure>
 
-	<ul data-role="listview" data-inset="true">
-
-		<li data-role="list-divider" data-theme="b" wicket:id="header-delete" />
-
-		<li>
-			<div class="sp-txt-wrap" wicket:id="user-delete-warning" />
-			<div>
-				<button id="button-delete-user"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
-					wicket:id="button-delete" />
-				<a href="#" tabindex="0" data-rel="back" data-direction="reverse"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-					wicket:id="button-cancel-2" />
-			</div>
-		</li>
-	</ul>
 </div>
 
 <wicket:remove>

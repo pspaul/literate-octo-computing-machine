@@ -423,6 +423,41 @@
                     return false;
                 });
 
+                $(this).on('click', '#sp-btn-user-save', null, function() {
+                    var pnl = _panel.UserEdit,
+                        res = _api.call({
+                        request : 'printsite-user-set',
+                        dto : JSON.stringify(pnl.v2m(pnl, _view))
+                    });
+                    _view.showApiMsg(res);
+                    return false;
+
+                }).on('click', '#sp-btn-user-delete', null, function() {
+                    var dlg = $('#sp-printsite-popup-delete-user');
+                    dlg.popup('open', {
+                        positionTo : $(this)
+                    });
+                    $("#sp-printsite-popup-delete-user-btn-no").focus();
+
+                }).on('click', '#sp-printsite-popup-delete-user-btn-yes', null, function() {
+                    alert('not implemented yet');
+                    return false;
+
+                }).on('click', '#sp-btn-user-pw-reset', null, function() {
+                    alert('not implemented yet');
+                    return false;
+
+                }).on('click', '#sp-btn-user-pw-erase', null, function() {
+                    var pnl = _panel.UserEdit,
+                        res = _api.call({
+                        request : 'erase-user-pw',
+                        dto : JSON.stringify({
+                            userDbId : pnl.userKey
+                        })
+                    });
+                    _view.showApiMsg(res);
+                });
+
             });
             return _self;
         };

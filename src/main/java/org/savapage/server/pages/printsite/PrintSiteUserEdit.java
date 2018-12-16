@@ -26,15 +26,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.UserDao;
-import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dto.CreditLimitDtoEnum;
 import org.savapage.core.dto.UserDto;
 import org.savapage.core.dto.UserEmailDto;
-import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
-import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -115,12 +112,17 @@ public final class PrintSiteUserEdit extends AbstractPrintSitePage {
         helper.addTextInput("txt-user-card-number", dto.getCard());
 
         //
-        helper.encloseLabel("internal-user-ind",
-                AdjectiveEnum.INTERNAL.uiText(getLocale()),
-                BooleanUtils.isTrue(dto.getInternal()));
+        final boolean isInternalUser = BooleanUtils.isTrue(dto.getInternal());
 
-        helper.addLabel("label-password", NounEnum.PASSWORD);
+        helper.encloseLabel("label-password",
+                NounEnum.PASSWORD.uiText(getLocale()), isInternalUser);
 
+        if (isInternalUser) {
+            helper.addButton("button-user-pw-reset", HtmlButtonEnum.RESET);
+            helper.addButton("button-user-pw-erase", HtmlButtonEnum.ERASE);
+        }
+
+        //
         helper.addLabel("label-user-fullname", NounEnum.NAME);
 
         //
@@ -135,19 +137,11 @@ public final class PrintSiteUserEdit extends AbstractPrintSitePage {
         //
         helper.addLabel("label-user-card-number", NounEnum.CARD_NUMBER);
 
-        helper.addLabel("user-delete-warning", PhraseEnum.USER_DELETE_WARNING);
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
 
-        helper.addLabel("label-financial",
-                ACLOidEnum.U_FINANCIAL.uiText(getLocale()));
-
-        helper.addButton("button-ok", HtmlButtonEnum.OK);
-        helper.addButton("button-cancel-1", HtmlButtonEnum.CANCEL);
-        helper.addButton("button-cancel-2", HtmlButtonEnum.CANCEL);
-        helper.addButton("button-delete", HtmlButtonEnum.DELETE);
-        helper.addButton("header-delete", HtmlButtonEnum.DELETE);
-
-        helper.addButton("button-user-pw-reset", HtmlButtonEnum.RESET);
-        helper.addButton("button-user-pw-erase", HtmlButtonEnum.ERASE);
+        helper.encloseLabel("button-delete",
+                HtmlButtonEnum.DELETE.uiTextDottedSfx(getLocale()),
+                isInternalUser);
 
         //
         helper.addTextInput("txt-account-credit-limit-amount",

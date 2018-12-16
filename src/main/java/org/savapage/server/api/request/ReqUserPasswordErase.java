@@ -62,6 +62,26 @@ public final class ReqUserPasswordErase extends ApiRequestMixin {
         final DtoReq dtoReq =
                 DtoReq.create(DtoReq.class, this.getParmValueDto());
 
+        final boolean isAuth;
+
+        switch (getSessionWebAppType()) {
+        case USER:
+            isAuth = lockedUser.getId().equals(dtoReq.getUserDbId());
+            break;
+        case ADMIN:
+        case PRINTSITE:
+            isAuth = true;
+            break;
+        default:
+            isAuth = false;
+            break;
+        }
+
+        if (!isAuth) {
+            setApiResultText(ApiResultCodeEnum.ERROR, "not authorized");
+            return;
+        }
+
         final User user = ServiceContext.getDaoContext().getUserDao()
                 .findById(dtoReq.getUserDbId());
 

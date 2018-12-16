@@ -57,6 +57,7 @@ import org.savapage.server.api.request.ReqOutboxCancelJob;
 import org.savapage.server.api.request.ReqOutboxExtend;
 import org.savapage.server.api.request.ReqPdfPropsSetValidate;
 import org.savapage.server.api.request.ReqPosDepositQuickSearch;
+import org.savapage.server.api.request.ReqPrintSiteUserSet;
 import org.savapage.server.api.request.ReqPrinterGet;
 import org.savapage.server.api.request.ReqPrinterOptValidate;
 import org.savapage.server.api.request.ReqPrinterPrint;
@@ -344,6 +345,8 @@ public final class JsonApiDict {
             "usergroup-member-quick-search";
 
     public static final String REQ_GENERATE_UUID = "generate-uuid";
+
+    public static final String REQ_PRINTSITE_USER_SET = "printsite-user-set";
 
     /**
      */
@@ -1095,6 +1098,7 @@ public final class JsonApiDict {
                         ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         adm(REQ_USER_SET, ReqUserSet.class, DbClaim.READ, DbAccess.YES);
+
         adm(REQ_USER_SOURCE_GROUPS, DbClaim.NONE, DbAccess.NO);
         adm(REQ_USER_SYNC, DbClaim.NONE, DbAccess.NO);
 
@@ -1132,6 +1136,9 @@ public final class JsonApiDict {
         usr(REQ_USERGROUP_MEMBER_QUICK_SEARCH,
                 ReqUserGroupMemberQuickSearch.class, DbClaim.READ,
                 DbAccess.YES);
+        //
+        acl(REQ_PRINTSITE_USER_SET, ReqPrintSiteUserSet.class, DbClaim.READ,
+                DbAccess.YES, EnumSet.of(ACLRoleEnum.PRINT_SITE_OPERATOR));
     }
 
     /**

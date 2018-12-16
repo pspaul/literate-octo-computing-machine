@@ -55,8 +55,38 @@
             },
 
             /** */
-            afterload : function(my) {
+            afterload : function() {
                 $.noop();
+            },
+
+            /** */
+            v2m : function(my, _view) {
+                var dto = {};
+
+                dto.dbId = my.userKey;
+                dto.userName = $('#user-name').text();
+                dto.fullName = $('#user-fullname').val();
+                dto.disabled = $('#user-disabled').is(':checked');
+                dto.email = $('#user-email').val();
+
+                dto.emailOther = [];
+                $.each($('#user-email-other').val().split("\n"), function(key, val) {
+                    var address = val.trim();
+                    if (address.length > 0) {
+                        dto.emailOther.push({
+                            address : address
+                        });
+                    }
+                });
+
+                dto.card = $('#user-card-number').val();
+
+                dto.accounting = {};
+                dto.accounting.balance = $('#user-account-balance').val();
+                dto.accounting.creditLimit = _view.getRadioValue("user-account-credit-limit-type");
+                dto.accounting.creditLimitAmount = $('#user-account-credit-limit-amount').val();
+
+                return dto;
             }
         };
 

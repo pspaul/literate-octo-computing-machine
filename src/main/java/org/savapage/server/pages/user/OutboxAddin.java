@@ -190,6 +190,10 @@ public class OutboxAddin extends AbstractUserPage {
     private static final String WICKET_ID_BTN_JOBTICKET_PRINT =
             "button-jobticket-print";
     /** */
+    private static final String WICKET_ID_BTN_OUTBOX_PRINT_RELEASE =
+            "button-outbox-print-release";
+
+    /** */
     private static final String WICKET_ID_BTN_JOBTICKET_PRINT_CANCEL =
             "button-jobticket-print-cancel";
     /** */
@@ -277,6 +281,9 @@ public class OutboxAddin extends AbstractUserPage {
         /** */
         private final MediaSizeName defaultMediaSize;
 
+        /** */
+        private final WebAppTypeEnum webappType;
+
         /**
          *
          * @param id
@@ -285,11 +292,14 @@ public class OutboxAddin extends AbstractUserPage {
          */
         public OutboxJobView(final String id, final List<OutboxJobDto> list,
                 final boolean jobticketView) {
+
             super(id, list);
+
             this.isJobticketView = jobticketView;
             this.scale = ConfigManager.getFinancialDecimalsInDatabase();
             this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
             this.defaultMediaSize = MediaUtils.getDefaultMediaSize();
+            this.webappType = getSessionWebAppType();
         }
 
         @Override
@@ -370,10 +380,18 @@ public class OutboxAddin extends AbstractUserPage {
                 }
                 MarkupHelper.modifyLabelAttr(labelImg, MarkupHelper.ATTR_TITLE,
                         title.uiText(locale));
+
             } else {
                 MarkupHelper.modifyLabelAttr(labelImg, MarkupHelper.ATTR_CLASS,
                         CSS_CLASS_HOLD);
             }
+
+            this.addJobIdAttr(
+                    helper.encloseLabel(WICKET_ID_BTN_OUTBOX_PRINT_RELEASE,
+                            HtmlButtonEnum.PRINT.uiText(locale),
+                            !isJobTicketItem && this.webappType
+                                    .equals(WebAppTypeEnum.PRINTSITE)),
+                    job);
 
             //
             final TicketJobSheetDto jobSheet;
@@ -474,7 +492,7 @@ public class OutboxAddin extends AbstractUserPage {
                             MarkupHelper.ATTR_CLASS,
                             SparklineHtml.CSS_CLASS_PRINTOUT);
             //
-            if (!getSessionWebAppType().equals(WebAppTypeEnum.JOBTICKETS)
+            if (!this.webappType.equals(WebAppTypeEnum.JOBTICKETS)
                     || printOut != null) {
                 helper.discloseLabel(WICKET_ID_BTN_EDIT_OUTBOX_JOBTICKET);
                 helper.discloseLabel(WICKET_ID_BTN_SETTINGS_OUTBOX_JOBTICKET);
@@ -930,8 +948,8 @@ public class OutboxAddin extends AbstractUserPage {
                 item.add(panelExtPrintStatus);
             }
 
-            if (printOut != null && getSessionWebAppType()
-                    .equals(WebAppTypeEnum.JOBTICKETS)) {
+            if (printOut != null
+                    && this.webappType.equals(WebAppTypeEnum.JOBTICKETS)) {
 
                 final IppJobStateEnum jobState = IppJobStateEnum
                         .asEnum(printOut.getCupsJobState().intValue());

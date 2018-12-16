@@ -65,10 +65,12 @@
 				<a tabindex="0" href="#" id="sp-btn-dashboard"
 					wicket:id="btn-dashboard" />
 			</li>
-			<li data-icon="user">
-				<a tabindex="0" href="#" id="sp-btn-user-register"
-					wicket:id="btn-register" />
-			</li>
+			<wicket:enclosure child="btn-register">
+				<li data-icon="user">
+					<a tabindex="0" href="#" id="sp-btn-user-register"
+						wicket:id="btn-register" />
+				</li>
+			</wicket:enclosure>
 			<li data-icon="user">
 				<a tabindex="0" href="#" id="sp-btn-user-details"
 					class="sp-printsite-main-li-user" wicket:id="btn-details" />
@@ -132,6 +134,24 @@
 			&nbsp;</a>
 
 		<wicket:panel wicket:id="community-status-footer-panel" />
+	</div>
+</div>
+
+<div data-role="popup" id="sp-printsite-popup-delete-user"
+	data-overlay-theme="a" data-theme="a" data-dismissible="false"
+	data-arrow="t">
+	    
+	<div class="ui-content">
+		<h3 class="ui-title" wicket:id="header-user-delete" />
+
+		<p class="sp-txt-warn" wicket:id="warn-user-delete" />
+
+		<a href="#" id="sp-printsite-popup-delete-user-btn-no"
+			class="ui-btn ui-btn-inline" data-rel="back"
+			wicket:id="btn-user-delete-no" />
+		<!--  -->
+		<button id="sp-printsite-popup-delete-user-btn-yes"
+			class="ui-btn ui-mini ui-btn-inline" wicket:id="btn-user-delete-yes" />
 	</div>
 </div>
 
