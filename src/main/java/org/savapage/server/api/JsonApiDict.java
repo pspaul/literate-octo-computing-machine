@@ -55,6 +55,7 @@ import org.savapage.server.api.request.ReqOAuthUrl;
 import org.savapage.server.api.request.ReqOutboxCancelAll;
 import org.savapage.server.api.request.ReqOutboxCancelJob;
 import org.savapage.server.api.request.ReqOutboxExtend;
+import org.savapage.server.api.request.ReqOutboxReleaseJob;
 import org.savapage.server.api.request.ReqPdfPropsSetValidate;
 import org.savapage.server.api.request.ReqPosDepositQuickSearch;
 import org.savapage.server.api.request.ReqPrintSiteUserSet;
@@ -211,6 +212,7 @@ public final class JsonApiDict {
 
     public static final String REQ_OUTBOX_CLEAR = "outbox-clear";
     public static final String REQ_OUTBOX_DELETE_JOB = "outbox-delete-job";
+    public static final String REQ_OUTBOX_RELEASE_JOB = "outbox-release-job";
     public static final String REQ_OUTBOX_EXTEND = "outbox-extend";
 
     public static final String REQ_PAGE_DELETE = "page-delete";
@@ -977,6 +979,9 @@ public final class JsonApiDict {
         usr(REQ_OUTBOX_EXTEND, ReqOutboxExtend.class, DbClaim.NONE,
                 DbAccess.USER_LOCK);
 
+        acl(REQ_OUTBOX_RELEASE_JOB, ReqOutboxReleaseJob.class, DbClaim.READ,
+                DbAccess.YES, EnumSet.of(ACLRoleEnum.PRINT_SITE_OPERATOR));
+
         adm(REQ_PAGOMETER_RESET, DbClaim.EXCLUSIVE, DbAccess.YES);
 
         usr(REQ_PAGE_DELETE, DbClaim.NONE, DbAccess.USER_LOCK);
@@ -988,6 +993,7 @@ public final class JsonApiDict {
         usr(REQ_PDF_DOCSTORE_JOURNAL, DbClaim.NONE, DbAccess.NO);
         acl(REQ_PDF_JOBTICKET, DbClaim.NONE, DbAccess.NO,
                 EnumSet.of(ACLRoleEnum.JOB_TICKET_CREATOR,
+                        ACLRoleEnum.PRINT_SITE_OPERATOR,
                         ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         usr(REQ_PDF_GET_PROPERTIES, DbClaim.NONE, DbAccess.YES);

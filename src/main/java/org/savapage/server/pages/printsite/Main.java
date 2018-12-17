@@ -25,12 +25,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
-import org.savapage.core.services.helpers.ThirdPartyEnum;
-import org.savapage.server.WebApp;
+import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
 import org.savapage.server.pages.MarkupHelper;
@@ -87,23 +85,18 @@ public final class Main extends AbstractPrintSitePage {
         helper.addLabel("btn-hold-jobs",
                 NounEnum.DOCUMENT.uiText(getLocale(), true));
 
-        helper.addLabel("btn-transactions",
-                NounEnum.TRANSACTION.uiText(getLocale(), true));
+        final boolean isUserAccountPaperCut =
+                UserAccountContextFactory.hasContextPaperCut();
 
-        helper.addLabel("btn-transactions-sp",
-                NounEnum.TRANSACTION.uiText(getLocale(), true));
+        helper.encloseLabel("btn-transactions-sp",
+                NounEnum.TRANSACTION.uiText(getLocale(), true),
+                !isUserAccountPaperCut);
+
+        helper.encloseLabel("btn-transactions-pc",
+                NounEnum.TRANSACTION.uiText(getLocale(), true),
+                isUserAccountPaperCut);
 
         helper.addButton("btn-logout", HtmlButtonEnum.LOGOUT);
-
-        MarkupHelper.modifyComponentAttr(
-                helper.addTransparant("img-transactions-savapage"),
-                MarkupHelper.ATTR_SRC,
-                WebApp.getExtSupplierEnumImgUrl(ExternalSupplierEnum.SAVAPAGE));
-
-        MarkupHelper.modifyComponentAttr(
-                helper.addTransparant("img-transactions-papercut"),
-                MarkupHelper.ATTR_SRC,
-                WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT));
 
         helper.addButton("header-user-delete", HtmlButtonEnum.DELETE);
         helper.addLabel("warn-user-delete", PhraseEnum.USER_DELETE_WARNING);

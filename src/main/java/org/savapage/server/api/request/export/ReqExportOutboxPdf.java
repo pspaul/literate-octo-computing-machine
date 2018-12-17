@@ -34,6 +34,8 @@ import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.time.Duration;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.WebAppTypeEnum;
+import org.savapage.core.jpa.User;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.api.JsonApiDict;
 import org.savapage.server.session.SpSession;
 
@@ -66,8 +68,23 @@ public class ReqExportOutboxPdf extends ApiRequestExportMixin {
 
         // tempExportFile is NOT applicable.
 
-        return exportOutboxPdf(webAppType,
-                requestingUser, this.getParmValue(requestCycle, parameters,
+        final String userid;
+
+        if (this.isJobTicket) {
+            userid = null;
+        } else if (webAppType == WebAppTypeEnum.USER) {
+            userid = requestingUser;
+        } else {
+            final User user =
+                    ServiceContext.getDaoContext().getUserDao()
+                            .findActiveUserById(this.getParmLong(requestCycle,
+                                    parameters, isGetAction,
+                                    JsonApiDict.PARM_REQ_PARM));
+            userid = user.getUserId();
+        }
+
+        return exportOutboxPdf(
+                webAppType, userid, this.getParmValue(requestCycle, parameters,
                         isGetAction, JsonApiDict.PARM_REQ_SUB),
                 this.isJobTicket);
     }
@@ -97,6 +114,7 @@ public class ReqExportOutboxPdf extends ApiRequestExportMixin {
              */
             if (webAppType != WebAppTypeEnum.JOBTICKETS
                     && webAppType != WebAppTypeEnum.ADMIN
+                    && webAppType != WebAppTypeEnum.PRINTSITE
                     && JOBTICKET_SERVICE.getTicket(
                             SpSession.get().getUser().getId(),
                             fileName) == null) {

@@ -37,7 +37,6 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserPagerReq;
 import org.savapage.core.i18n.AdjectiveEnum;
@@ -46,14 +45,14 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroupMember;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.UserAccountContext;
-import org.savapage.core.services.UserAccountContextFactory;
 import org.savapage.core.services.UserService;
-import org.savapage.core.services.helpers.ThirdPartyEnum;
+import org.savapage.core.services.helpers.account.UserAccountContext;
+import org.savapage.core.services.helpers.account.UserAccountContextEnum;
+import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.core.util.NumberUtil;
-import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.SparklineHtml;
+import org.savapage.server.helpers.account.UserAccountContextHtmlFactory;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -297,16 +296,20 @@ public final class UsersPage extends AbstractAdminListPage {
             } else {
                 helper.addTransparant("balance-papercut-icon")
                         .add(new AttributeModifier(MarkupHelper.ATTR_SRC,
-                                WebApp.getThirdPartyEnumImgUrl(
-                                        ThirdPartyEnum.PAPERCUT)));
+                                UserAccountContextHtmlFactory
+                                        .getContext(
+                                                UserAccountContextEnum.PAPERCUT)
+                                        .getImgUrl()));
                 mapVisible.put("balance-amount-papercut",
                         this.accountCtxPaperCut.getFormattedUserBalance(user,
                                 getLocale(), this.currencySymbol));
 
                 helper.addTransparant("balance-savapage-icon")
                         .add(new AttributeModifier(MarkupHelper.ATTR_SRC,
-                                WebApp.getExtSupplierEnumImgUrl(
-                                        ExternalSupplierEnum.SAVAPAGE)));
+                                UserAccountContextHtmlFactory
+                                        .getContext(
+                                                UserAccountContextEnum.SAVAPAGE)
+                                        .getImgUrl()));
             }
 
             /*

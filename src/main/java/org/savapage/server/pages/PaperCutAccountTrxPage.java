@@ -35,13 +35,13 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.helpers.ThirdPartyEnum;
+import org.savapage.core.services.helpers.account.UserAccountContextEnum;
 import org.savapage.ext.papercut.PaperCutAccountTrx;
 import org.savapage.ext.papercut.PaperCutAccountTrxPagerReq;
 import org.savapage.ext.papercut.PaperCutAccountTrxTypeEnum;
 import org.savapage.ext.papercut.PaperCutDb;
 import org.savapage.ext.papercut.services.PaperCutService;
-import org.savapage.server.WebApp;
+import org.savapage.server.helpers.account.UserAccountContextHtmlFactory;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,9 +155,11 @@ public final class PaperCutAccountTrxPage extends AbstractListPage {
                     localizedShortDateTime(trx.getTransactionDate()));
             helper.addLabel("trxActor", trx.getTransactedBy());
 
-            helper.addTransparant(WID_PAPERCUT_ICON).add(new AttributeModifier(
-                    MarkupHelper.ATTR_SRC,
-                    WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT)));
+            helper.addTransparant(WID_PAPERCUT_ICON)
+                    .add(new AttributeModifier(MarkupHelper.ATTR_SRC,
+                            UserAccountContextHtmlFactory
+                                    .getContext(UserAccountContextEnum.PAPERCUT)
+                                    .getImgUrl()));
         }
     }
 

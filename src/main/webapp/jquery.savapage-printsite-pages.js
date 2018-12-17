@@ -56,7 +56,10 @@
                 _panelCur,
                 _panelCurClass,
                 _onSelectUser,
-                _onClearUser;
+                _onClearUser,
+                _onOutboxDeleteJob,
+                _onOutboxReleaseJob,
+                _onAccountTrxInfo;
 
             /*
              * The map of panels. The key is the Java Wicket class. Each key has
@@ -205,6 +208,56 @@
                 }
             };
 
+            _onOutboxDeleteJob = function(jobFileName, isJobTicket) {
+                var res = _api.call({
+                    request : 'outbox-delete-job',
+                    dto : JSON.stringify({
+                        jobFileName : jobFileName,
+                        jobTicket : isJobTicket,
+                        userDbId : _userKey
+                    })
+                });
+                if (res.result.code === '0') {
+                    $('#sp-btn-user-pending-jobs').click();
+                }
+                _view.showApiMsg(res);
+            };
+
+            _onAccountTrxInfo = function(src, jobticket) {
+                var html = _view.getPageHtml('OutboxAccountTrxAddin', {
+                    jobFileName : src.attr('data-savapage'),
+                    jobticket : jobticket,
+                    userDbId : _userKey
+                }) || 'error';
+                $('#sp-outbox-popup-addin').html(html);
+                // remove trailing poit suffix
+                $('#sp-outbox-popup-title').text(src.attr('title').replace('. . .', ''));
+                $('#sp-outbox-popup').enhanceWithin().popup('open', {
+                    positionTo : src,
+                    arrow : 't'
+                });
+            };
+
+            _onOutboxReleaseJob = function(src) {
+
+                $.mobile.loading("show");
+
+                _ns.Utils.asyncFoo(function() {
+                    var res = _api.call({
+                        request : 'outbox-release-job',
+                        dto : JSON.stringify({
+                            jobFileName : src.attr('data-savapage'),
+                            userDbId : _userKey
+                        })
+                    });
+                    if (res.result.code === '0') {
+                        $('#sp-btn-user-pending-jobs').click();
+                    }
+                    _view.showApiMsg(res);
+                    $.mobile.loading("hide");
+                });
+            };
+
             /** */
             _self.initView = function() {
                 var name = 'Dashboard';
@@ -297,7 +350,21 @@
                     var pnl = _panel.UserOutbox;
                     pnl.userKey = _userKey;
                     pnl.refresh(pnl, true);
-                    return false;
+                }).on('click', '.sp-outbox-account-trx-info-job', null, function() {
+                    _onAccountTrxInfo($(this), false);
+                }).on('click', '.sp-outbox-account-trx-info-jobticket', null, function() {
+                    _onAccountTrxInfo($(this), true);
+                }).on('click', '.sp-outbox-preview-job', null, function() {
+                    _api.download("pdf-outbox", null, $(this).attr('data-savapage'), _userKey);
+                }).on('click', '.sp-outbox-preview-jobticket', null, function() {
+                    _api.download("pdf-jobticket", null, $(this).attr('data-savapage'));
+                    //return false;
+                }).on('click', '.sp-outbox-cancel-job', null, function() {
+                    _onOutboxDeleteJob($(this).attr('data-savapage'), false);
+                }).on('click', '.sp-outbox-cancel-jobticket', null, function() {
+                    _onOutboxDeleteJob($(this).attr('data-savapage'), true);
+                }).on('click', '.sp-outbox-print-release', null, function() {
+                    _onOutboxReleaseJob($(this));
                 });
 
                 /*

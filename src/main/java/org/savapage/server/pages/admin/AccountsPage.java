@@ -35,15 +35,15 @@ import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.helpers.AccountPagerReq;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.UserAccountContextFactory;
+import org.savapage.core.services.helpers.account.UserAccountContextEnum;
+import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.core.util.BigDecimalUtil;
-import org.savapage.server.WebApp;
+import org.savapage.server.helpers.account.UserAccountContextHtmlFactory;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -208,8 +208,9 @@ public final class AccountsPage extends AbstractAdminListPage {
                 if (this.hasPaperCutUserAccountView) {
                     helper.addTransparant(WID_BALANCE_SAVAPAGE_ICON)
                             .add(new AttributeModifier(MarkupHelper.ATTR_SRC,
-                                    WebApp.getExtSupplierEnumImgUrl(
-                                            ExternalSupplierEnum.SAVAPAGE)));
+                                    UserAccountContextHtmlFactory.getContext(
+                                            UserAccountContextEnum.SAVAPAGE)
+                                            .getImgUrl()));
                 } else {
                     helper.discloseLabel(WID_BALANCE_SAVAPAGE_ICON);
                 }

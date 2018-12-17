@@ -83,21 +83,19 @@
 				<a tabindex="0" href="#" id="sp-btn-user-doc-log"
 					class="sp-printsite-main-li-user" wicket:id="btn-hold-jobs" />
 			</li>
-			<li data-icon="shop">
-				<a tabindex="0" href="#" id="sp-btn-user-trx"
-					class="sp-printsite-main-li-user"> <img height="16"
-						class="ui-li-icon ui-corner-none"
-						wicket:id="img-transactions-savapage" /> <span
-					wicket:id="btn-transactions" />
-				</a>
-			</li>
-			<li data-icon="shop">
-				<a tabindex="0" href="#" id="sp-btn-user-trx-pc"
-					class="sp-printsite-main-li-user"><img height="16"
-						class="ui-li-icon ui-corner-none"
-						wicket:id="img-transactions-papercut" /><span
-					wicket:id="btn-transactions-sp" /></a>
-			</li>
+
+			<wicket:enclosure child="btn-transactions-sp">
+				<li data-icon="shop">
+					<a tabindex="0" href="#" id="sp-btn-user-trx"
+						class="sp-printsite-main-li-user" wicket:id="btn-transactions-sp" />
+				</li>
+			</wicket:enclosure>
+			<wicket:enclosure child="btn-transactions-pc">
+				<li data-icon="shop">
+					<a tabindex="0" href="#" id="sp-btn-user-trx-pc"
+						class="sp-printsite-main-li-user" wicket:id="btn-transactions-pc" />
+				</li>
+			</wicket:enclosure>
 			<li data-icon="power">
 				<a tabindex="0" href="#" id="button-logout"> <span
 					style="color: brown;" wicket:id="btn-logout" />
@@ -153,6 +151,16 @@
 		<button id="sp-printsite-popup-delete-user-btn-yes"
 			class="ui-btn ui-mini ui-btn-inline" wicket:id="btn-user-delete-yes" />
 	</div>
+</div>
+
+<div data-role="popup" id="sp-outbox-popup" data-theme="a"
+    data-overlay-theme="a" data-arrow="true">
+    <div class="ui-content">
+        <h3 class="ui-title" id="sp-outbox-popup-title">&nbsp;</h3>
+        <div id="sp-outbox-popup-addin" />
+        <a href="#" data-rel="back"
+            class="ui-btn ui-mini ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" />
+    </div>
 </div>
 
 <wicket:remove>

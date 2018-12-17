@@ -104,6 +104,28 @@ public abstract class ApiRequestExportMixin implements ApiRequestExportHandler {
                 .getParameterValue(parm).toString();
     }
 
+    /**
+    *
+    * @param requestCycle
+    *            The {@link RequestCycle}.
+    * @param getParms
+    *            The {@link PageParameters}.
+    * @param isGetAction
+    *            {@code true} when a GET parameter.
+    * @param parm
+    *            The parameter name.
+    * @return {@code null} when parameter is not present.
+    */
+   protected final Long getParmLong(final RequestCycle requestCycle,
+           final PageParameters getParms, final boolean isGetAction,
+           final String parm) {
+       if (isGetAction) {
+           return getParms.get(parm).toLongObject();
+       }
+       return requestCycle.getRequest().getPostParameters()
+               .getParameterValue(parm).toLongObject();
+   }
+
     @Override
     public final IRequestHandler export(final WebAppTypeEnum webAppType,
             final RequestCycle requestCycle, final PageParameters parameters,

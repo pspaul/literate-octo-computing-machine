@@ -24,6 +24,7 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
 import org.savapage.server.session.SpSession;
@@ -44,6 +45,7 @@ public final class ReqOutboxCancelJob extends ApiRequestMixin {
 
         private String jobFileName;
         private Boolean jobTicket;
+        private Long userDbId;
 
         public String getJobFileName() {
             return jobFileName;
@@ -63,6 +65,15 @@ public final class ReqOutboxCancelJob extends ApiRequestMixin {
             this.jobTicket = jobTicket;
         }
 
+        public Long getUserDbId() {
+            return userDbId;
+        }
+
+        @SuppressWarnings("unused")
+        public void setUserDbId(Long userDbId) {
+            this.userDbId = userDbId;
+        }
+
     }
 
     @Override
@@ -72,12 +83,30 @@ public final class ReqOutboxCancelJob extends ApiRequestMixin {
         final DtoReq dtoReq =
                 DtoReq.create(DtoReq.class, this.getParmValueDto());
 
+        final Long userDbId;
+
+        if (getSessionWebAppType() == WebAppTypeEnum.USER) {
+            userDbId = lockedUser.getId();
+        } else {
+            userDbId = dtoReq.getUserDbId();
+        }
+
         final String msgKey;
 
         if (BooleanUtils.isTrue(dtoReq.getJobTicket())) {
-            msgKey = cancelJobTicket(lockedUser, dtoReq);
+
+            msgKey = cancelJobTicket(userDbId, dtoReq);
+
         } else {
-            msgKey = cancelOutboxJob(lockedUser, dtoReq);
+
+            final User user;
+
+            if (userDbId.equals(lockedUser.getId())) {
+                user = lockedUser;
+            } else {
+                user = USER_DAO.findActiveUserById(userDbId);
+            }
+            msgKey = cancelOutboxJob(user, dtoReq);
         }
 
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);
@@ -107,15 +136,15 @@ public final class ReqOutboxCancelJob extends ApiRequestMixin {
     /**
      * Cancels a Job Ticket from the user.
      *
-     * @param lockedUser
-     *            The user.
+     * @param userDbId
+     *            The user database key of the ticket owner.
      * @param dtoReq
      *            The request.
      * @return The message key.
      */
-    private String cancelJobTicket(final User lockedUser, final DtoReq dtoReq) {
+    private String cancelJobTicket(final Long userDbId, final DtoReq dtoReq) {
 
-        if (JOBTICKET_SERVICE.cancelTicket(lockedUser.getId(),
+        if (JOBTICKET_SERVICE.cancelTicket(userDbId,
                 dtoReq.getJobFileName()) == null) {
             return "msg-outbox-cancelled-jobticket-none";
         }

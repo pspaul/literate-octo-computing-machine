@@ -26,8 +26,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.jpa.AccountTrx;
+import org.savapage.core.jpa.User;
 import org.savapage.core.outbox.OutboxInfoDto.OutboxJobDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.session.SpSession;
@@ -53,6 +55,11 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
      * Boolean.
      */
     private static final String PARM_JOBTICKET = "jobticket";
+
+    /**
+     * Optional
+     */
+    private static final String PARM_USER_DB_ID = "userDbId";
 
     /**
      * Gets the job ticket.
@@ -86,9 +93,19 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
                 setResponsePage(JobTicketNotFound.class);
             }
         } else {
+
+            final String userid;
+
+            if (getSessionWebAppType() == WebAppTypeEnum.USER) {
+                userid = SpSession.get().getUser().getUserId();
+            } else {
+                final User user = ServiceContext.getDaoContext().getUserDao()
+                        .findActiveUserById(this.getParmLong(PARM_USER_DB_ID));
+                userid = user.getUserId();
+            }
+
             job = ServiceContext.getServiceFactory().getOutboxService()
-                    .getOutboxJob(SpSession.get().getUser().getUserId(),
-                            jobFileName);
+                    .getOutboxJob(userid, jobFileName);
         }
         return job;
     }

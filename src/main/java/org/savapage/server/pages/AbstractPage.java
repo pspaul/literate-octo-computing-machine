@@ -370,6 +370,18 @@ public abstract class AbstractPage extends WebPage
     }
 
     /**
+     * Gets the POST-ed parameter Long value.
+     *
+     * @param parm
+     *            Parameter name.
+     * @return The Long value.
+     */
+    protected final Long getParmLong(final String parm) {
+        return getRequestCycle().getRequest().getPostParameters()
+                .getParameterValue(parm).toLongObject();
+    }
+
+    /**
      *
      * @param getParms
      *            The {@link PageParameters}.
