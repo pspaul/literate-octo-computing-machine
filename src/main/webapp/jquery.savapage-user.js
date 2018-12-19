@@ -1292,8 +1292,6 @@
                     _model.propPdf.encryption = "";
                 }
 
-                _model.propPdf.pgpSignature = _view.isCbChecked($('#pdf-pgp-signature'));
-
                 wlk = _model.propPdf.allow;
                 wlk.printing = $("#pdf-allow-printing").is(':checked');
                 wlk.degradedPrinting = $("#pdf-allow-degraded-printing").is(':checked');
@@ -1312,6 +1310,8 @@
                 wlk.passwords = $("#pdf-apply-passwords").is(':checked');
                 wlk.subject = $("#pdf-apply-description").is(':checked');
                 wlk.keywords = wlk.subject;
+
+                _model.propPdf.pgpSignature = wlk.encryption && _view.isCbChecked($('#pdf-pgp-signature'));
             };
 
             /*
