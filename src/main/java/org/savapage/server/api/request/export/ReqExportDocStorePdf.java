@@ -32,6 +32,7 @@ import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.time.Duration;
 import org.savapage.core.config.WebAppTypeEnum;
+import org.savapage.core.doc.DocContent;
 import org.savapage.core.doc.store.DocStoreException;
 import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.jpa.DocLog;
@@ -47,6 +48,10 @@ public class ReqExportDocStorePdf extends ApiRequestExportMixin {
 
     /** */
     private final DocStoreTypeEnum docStore;
+
+    /** */
+    private static final String PDF_FILE_SFX =
+            "." + DocContent.FILENAME_EXT_PDF;
 
     /**
      *
@@ -88,8 +93,14 @@ public class ReqExportDocStorePdf extends ApiRequestExportMixin {
                     new ResourceStreamRequestHandler(
                             new FileResourceStream(pdfFile));
 
+            String fileName = docLog.getTitle();
+
+            if (!fileName.toLowerCase().endsWith(PDF_FILE_SFX)) {
+                fileName = fileName.concat(PDF_FILE_SFX);
+            }
+
+            handler.setFileName(fileName);
             handler.setContentDisposition(ContentDisposition.ATTACHMENT);
-            handler.setFileName(docLog.getTitle());
             handler.setCacheDuration(Duration.NONE);
 
             return handler;
