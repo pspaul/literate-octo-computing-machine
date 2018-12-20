@@ -43,11 +43,14 @@ public final class PageJobTickets extends AbstractAuthPage {
     private static final long serialVersionUID = 1L;
 
     /** */
+    private static final String WICKET_ID_BUTTON_CANCEL_ALL =
+            "button-cancel-all";
+
+    /** */
     private static final String WICKET_ID_BUTTON_PRINT_ALL = "button-print-all";
 
     /** */
-    private static final String WICKET_ID_BUTTON_CANCEL_ALL =
-            "button-cancel-all";
+    private static final String WICKET_ID_BUTTON_CLOSE_ALL = "button-close-all";
 
     @Override
     protected boolean needMembership() {
@@ -69,6 +72,14 @@ public final class PageJobTickets extends AbstractAuthPage {
         addTitle(helper.addButton("button-refresh", HtmlButtonEnum.REFRESH));
         addTitle(helper.addButton("button-logout", HtmlButtonEnum.LOGOUT));
 
+        if (cm.isConfigValue(Key.WEBAPP_JOBTICKETS_CANCEL_ALL_ENABLE)) {
+            add(addTitle(new Label(WICKET_ID_BUTTON_CANCEL_ALL,
+                    String.format("%s%s", localized("button-cancel-all"),
+                            HtmlButtonEnum.DOTTED_SUFFIX))));
+        } else {
+            helper.discloseLabel(WICKET_ID_BUTTON_CANCEL_ALL);
+        }
+
         if (cm.isConfigValue(Key.WEBAPP_JOBTICKETS_PRINT_ALL_ENABLE)) {
             add(addTitle(new Label(WICKET_ID_BUTTON_PRINT_ALL,
                     String.format("%s%s", localized("button-print-all"),
@@ -77,12 +88,16 @@ public final class PageJobTickets extends AbstractAuthPage {
             helper.discloseLabel(WICKET_ID_BUTTON_PRINT_ALL);
         }
 
-        if (cm.isConfigValue(Key.WEBAPP_JOBTICKETS_CANCEL_ALL_ENABLE)) {
-            add(addTitle(new Label(WICKET_ID_BUTTON_CANCEL_ALL,
-                    String.format("%s%s", localized("button-cancel-all"),
-                            HtmlButtonEnum.DOTTED_SUFFIX))));
+        if (cm.isConfigValue(Key.WEBAPP_JOBTICKETS_CLOSE_ALL_ENABLE)) {
+            MarkupHelper
+                    .modifyComponentAttr(
+                            helper.addTransparant(WICKET_ID_BUTTON_CLOSE_ALL),
+                            MarkupHelper.ATTR_TITLE,
+                            String.format("%s%s", localized("button-close-all"),
+                                    HtmlButtonEnum.DOTTED_SUFFIX))
+                    .setEscapeModelStrings(false);
         } else {
-            helper.discloseLabel(WICKET_ID_BUTTON_CANCEL_ALL);
+            helper.discloseLabel(WICKET_ID_BUTTON_CLOSE_ALL);
         }
 
         final Label slider = helper.addModifyLabelAttr("jobtickets-max-items",

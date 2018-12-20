@@ -147,13 +147,22 @@
 					<wicket:enclosure child="button-cancel-all">
 						<button id="btn-jobtickets-cancel-all" data-rel="popup"
 							wicket:id="button-cancel-all"
-							class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete" />
+							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete" />
 					</wicket:enclosure>
 
 					<wicket:enclosure child="button-print-all">
 						<button id="btn-jobtickets-print-all" data-rel="popup"
 							wicket:id="button-print-all"
-							class="sp-jobtickets-all ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action" />
+							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action" />
+					</wicket:enclosure>
+
+					<wicket:enclosure child="button-close-all">
+						<button id="btn-jobtickets-close-all" data-rel="popup"
+							wicket:id="button-close-all"
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+							<span id="btn-jobtickets-close-all-count" style="font-size: 85%;"
+								class="sp-txt-valid">&nbsp;</span>
+						</button>
 					</wicket:enclosure>
 
 					<button id="btn-jobtickets-close" data-rel="back"
@@ -254,7 +263,7 @@
 	</div>
 
 	<div class="ui-content">
-		<wicket:message key="info-cancel-in progress" />
+		<wicket:message key="info-cancel-in-progress" />
 		&nbsp;...
 	</div>
 </div>
@@ -284,7 +293,37 @@
 	</div>
 
 	<div class="ui-content">
-		<wicket:message key="info-print-in progress" />
+		<wicket:message key="info-print-in-progress" />
+		&nbsp;...
+	</div>
+</div>
+
+<div data-role="popup" id="sp-jobticket-popup-close-all"
+	data-overlay-theme="a" data-theme="a" data-dismissible="false"
+	data-arrow="t">
+	    
+	<div class="ui-content">
+		<h4 class="ui-title">
+			<wicket:message key="prompt-close-all" />
+		</h4>
+
+		<p class="sp-txt-valid">
+			<wicket:message key="info-close-all" />
+		</p>
+
+		<a href="#" id="sp-jobticket-popup-close-all-btn-no"
+			class="ui-btn ui-btn-inline" data-rel="back"> <wicket:message
+				key="button-no-rather-not" />
+		</a>
+		<!--  -->
+		<button id="sp-jobticket-popup-close-all-btn-yes"
+			class="ui-btn ui-mini ui-btn-inline">
+			<wicket:message key="button-close-all-yes" />
+		</button>
+	</div>
+
+	<div class="ui-content">
+		<wicket:message key="info-close-in-progress" />
 		&nbsp;...
 	</div>
 </div>

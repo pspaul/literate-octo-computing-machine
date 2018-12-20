@@ -226,6 +226,10 @@ public class OutboxAddin extends AbstractUserPage {
     /** */
     private static final String WICKET_ID_CHUNK_SIZE = "chunkSize";
 
+    /** */
+    private static final String CSS_CLASS_JOBTICKET_PRINT_COMPLETED =
+            "sp-jobticket-print-completed";
+
     /**
      * Boolean.
      */
@@ -957,11 +961,20 @@ public class OutboxAddin extends AbstractUserPage {
                 if (jobState.isPresentOnQueue()) {
                     helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT_CLOSE);
                 } else {
-                    this.addJobIdAttr(
+                    final Label btnClose = this.addJobIdAttr(
                             helper.encloseLabel(
                                     WICKET_ID_BTN_JOBTICKET_PRINT_CLOSE,
                                     HtmlButtonEnum.CLOSE.uiText(locale), true),
                             job);
+
+                    if ((extPrintStatus == null && jobState
+                            .equals(IppJobStateEnum.IPP_JOB_COMPLETED))
+                            || (extPrintStatus != null && extPrintStatus.equals(
+                                    ExternalSupplierStatusEnum.COMPLETED))) {
+                        MarkupHelper.appendLabelAttr(btnClose,
+                                MarkupHelper.ATTR_CLASS,
+                                CSS_CLASS_JOBTICKET_PRINT_COMPLETED);
+                    }
                 }
 
                 boolean enableRetryButton;
