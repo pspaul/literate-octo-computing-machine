@@ -1223,32 +1223,30 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return true;
         }
 
-        final boolean isFinishing;
+        final boolean isStaple = !StringUtils.defaultString(options.get(
+                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE),
+                IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE_NONE)
+                .equals(IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE_NONE);
 
-        String optValWlk = null;
+        final boolean isPunch = !StringUtils.defaultString(options
+                .get(IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH),
+                IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH_NONE)
+                .equals(IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH_NONE);
 
-        optValWlk = options.get(
-                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE);
+        final boolean isBooklet = !StringUtils.defaultString(options.get(
+                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_BOOKLET),
+                IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_BOOKLET_NONE)
+                .equals(IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_BOOKLET_NONE);
 
-        if (StringUtils
-                .defaultString(optValWlk,
-                        IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE_NONE)
-                .equals(IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE_NONE)) {
-
-            optValWlk = options.get(
-                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH);
-
-            isFinishing = !StringUtils
-                    .defaultString(optValWlk,
-                            IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH_NONE)
-                    .equals(IppKeyword.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH_NONE);
-        } else {
-            isFinishing = true;
-        }
-
-        if (!isFinishing) {
+        if (!isStaple && !isPunch && !isBooklet) {
             return true;
         }
+
+        final boolean expectedLandscape =
+                dtoReq.getLandscapeView().booleanValue();
+
+        int nSeenLandscape = 0;
+        int nSeenPortrait = 0;
 
         // Traverse print chunks
         for (final ProxyPrintJobChunk chunk : chunkInfo.getChunks()) {
@@ -1272,9 +1270,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                                 job.getFile())
                         .toFile();
 
-                final boolean expectedLandscape =
-                        dtoReq.getLandscapeView().booleanValue();
-
                 final int firstPage;
                 if (chunkRange.pageBegin == null) {
                     firstPage = 1;
@@ -1291,29 +1286,76 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     throw new IllegalStateException(e.getMessage(), e);
                 }
 
-                if (expectedLandscape == seenLandscape) {
-                    continue;
-                }
-
-                final PrintOutNounEnum orientationAct;
-                final PrintOutNounEnum orientationExp;
                 if (seenLandscape) {
-                    orientationAct = PrintOutNounEnum.LANDSCAPE;
-                    orientationExp = PrintOutNounEnum.PORTRAIT;
+                    nSeenLandscape++;
                 } else {
-                    orientationAct = PrintOutNounEnum.PORTRAIT;
-                    orientationExp = PrintOutNounEnum.LANDSCAPE;
+                    nSeenPortrait++;
                 }
 
-                setApiResult(ApiResultCodeEnum.WARN,
-                        "msg-print-orientation-mismatch",
-                        orientationExp.uiText(getLocale()),
-                        orientationAct.uiText(getLocale()));
-                return false;
             }
         }
 
-        return true;
+        if ((expectedLandscape && nSeenPortrait == 0)
+                || (!expectedLandscape && nSeenLandscape == 0)) {
+            return true;
+        }
+
+        final StringBuilder sbFinish = new StringBuilder();
+
+        if (isStaple) {
+            sbFinish.append("\"").append(PROXY_PRINT_SERVICE.localizePrinterOpt(
+                    getLocale(),
+                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE))
+                    .append("\"");
+        }
+        if (isPunch) {
+            if (sbFinish.length() > 0) {
+                sbFinish.append(", ");
+            }
+            sbFinish.append("\"").append(PROXY_PRINT_SERVICE.localizePrinterOpt(
+                    getLocale(),
+                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH))
+                    .append("\"");
+        }
+        if (isBooklet) {
+            if (sbFinish.length() > 0) {
+                sbFinish.append(", ");
+            }
+            sbFinish.append("\"").append(PROXY_PRINT_SERVICE.localizePrinterOpt(
+                    getLocale(),
+                    IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_BOOKLET))
+                    .append("\"");
+        }
+
+        final PrintOutNounEnum orientationAct;
+        final PrintOutNounEnum orientationExp;
+        final int nDocAct;
+        if (expectedLandscape) {
+            orientationExp = PrintOutNounEnum.LANDSCAPE;
+            orientationAct = PrintOutNounEnum.PORTRAIT;
+            nDocAct = nSeenPortrait;
+        } else {
+            orientationExp = PrintOutNounEnum.PORTRAIT;
+            orientationAct = PrintOutNounEnum.LANDSCAPE;
+            nDocAct = nSeenLandscape;
+        }
+
+        if (nSeenLandscape + nSeenPortrait == 1) {
+
+            setApiResult(ApiResultCodeEnum.WARN,
+                    "msg-print-orientation-mismatch-single",
+                    sbFinish.toString(), orientationExp.uiText(getLocale()),
+                    orientationAct.uiText(getLocale()));
+        } else {
+            setApiResult(ApiResultCodeEnum.WARN,
+                    "msg-print-orientation-mismatch-multiple",
+                    sbFinish.toString(), orientationExp.uiText(getLocale()),
+                    String.valueOf(nDocAct),
+                    String.valueOf(nSeenPortrait + nSeenLandscape),
+                    orientationAct.uiText(getLocale()));
+        }
+
+        return false;
     }
 
     /**
