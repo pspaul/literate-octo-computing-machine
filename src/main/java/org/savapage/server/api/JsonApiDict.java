@@ -42,6 +42,7 @@ import org.savapage.server.api.request.ReqDeviceSet;
 import org.savapage.server.api.request.ReqDocLogRefund;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqI18nCacheClear;
+import org.savapage.server.api.request.ReqInboxClear;
 import org.savapage.server.api.request.ReqJobTicketCancel;
 import org.savapage.server.api.request.ReqJobTicketExec;
 import org.savapage.server.api.request.ReqJobTicketPrintCancel;
@@ -151,6 +152,7 @@ public final class JsonApiDict {
     public static final String REQ_IMAP_START = "imap-start";
     public static final String REQ_IMAP_STOP = "imap-stop";
 
+    public static final String REQ_INBOX_CLEAR = "inbox-clear";
     public static final String REQ_INBOX_JOB_DELETE = "inbox-job-delete";
     public static final String REQ_INBOX_JOB_EDIT = "inbox-job-edit";
     public static final String REQ_INBOX_JOB_PAGES = "inbox-job-pages";
@@ -923,6 +925,9 @@ public final class JsonApiDict {
                 DbAccess.NO);
 
         adm(REQ_PAPERCUT_DELEGATOR_COST_CSV, DbClaim.NONE, DbAccess.NO);
+
+        usr(REQ_INBOX_CLEAR, ReqInboxClear.class, DbClaim.NONE,
+                DbAccess.USER_LOCK);
 
         usr(REQ_INBOX_JOB_DELETE, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_INBOX_JOB_EDIT, DbClaim.NONE, DbAccess.USER_LOCK);

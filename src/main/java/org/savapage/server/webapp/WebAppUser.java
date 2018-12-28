@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -155,19 +155,19 @@ public final class WebAppUser extends AbstractWebAppPage {
 
             switch (button) {
             case PRINT:
-                htmlId = "sp-file-upload-print-button";
+                htmlId = "sp-btn-file-upload-print";
                 cssClass = "ui-icon-main-print";
                 uiText = HtmlButtonEnum.PRINT.uiText(getPage().getLocale());
                 break;
 
             case PDF:
-                htmlId = "sp-file-upload-pdf-button";
+                htmlId = "sp-btn-file-upload-pdf";
                 cssClass = "ui-icon-main-pdf-properties";
                 uiText = "PDF";
                 break;
 
             default:
-                htmlId = "sp-file-upload-inbox-button";
+                htmlId = "sp-btn-file-upload-inbox";
                 cssClass = "ui-icon-main-home";
                 uiText = HtmlButtonEnum.BACK.uiText(getPage().getLocale());
                 break;
@@ -179,6 +179,8 @@ public final class WebAppUser extends AbstractWebAppPage {
             MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_ID, htmlId);
             MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_CLASS,
                     cssClass);
+            MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_TITLE,
+                    localized(htmlId.concat("-tooltip")));
 
             item.add(label);
         }
@@ -497,6 +499,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         nextButtons.add(UploadNextButton.PRINT);
 
         add(new UploadNextButtonView("next-buttons", nextButtons));
+
     }
 
     @Override

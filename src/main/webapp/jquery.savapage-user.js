@@ -1823,9 +1823,17 @@
                 }
             },
                 _setVisibility = function() {
-                var hasInboxDocs = _model.hasInboxDocs();
-                _setButtonVisibility($('#sp-file-upload-print-button'), _isPrintVisible(), hasInboxDocs);
-                _setButtonVisibility($('#sp-file-upload-pdf-button'), _isPdfVisible(), hasInboxDocs);
+                var hasInboxDocs = _model.hasInboxDocs(),
+                    sel;
+                _setButtonVisibility($('#sp-btn-file-upload-print'), _isPrintVisible(), hasInboxDocs);
+                _setButtonVisibility($('#sp-btn-file-upload-pdf'), _isPdfVisible(), hasInboxDocs);
+
+                sel = $('#sp-file-upload-delete-button');
+                _view.visible(sel, hasInboxDocs);
+                if (hasInboxDocs) {
+                    _view.enableUI(sel, hasInboxDocs);
+                    $('#sp-file-upload-delete-button span').html( hasInboxDocs ? _model.myJobs.length : "-");
+                }
             },
                 _onUploadStart = function() {
                 $('#sp-button-file-upload-reset').click();
@@ -1945,15 +1953,21 @@
                     return true;
                 });
 
-                $('#sp-file-upload-print-button').click(function() {
+                $('#sp-file-upload-delete-button').click(function() {
+                    _self.onClear();
+                    _setVisibility();
+                    return true;
+                });
+
+                $('#sp-btn-file-upload-print').click(function() {
                     $('#button-main-print').click();
                     return true;
                 });
-                $('#sp-file-upload-pdf-button').click(function() {
+                $('#sp-btn-file-upload-pdf').click(function() {
                     _view.pages.main.onShowPdfDialog();
                     return true;
                 });
-                $('#sp-file-upload-inbox-button').click(function() {
+                $('#sp-btn-file-upload-inbox').click(function() {
                     _view.changePage($('#page-main'));
                     return true;
                 });
@@ -4848,13 +4862,20 @@
 
                 });
             };
-            /**
-             */
+
+            /** */
             this.addJobPages = function(pages) {
                 var i;
                 for ( i = 0; i < pages.length; i++) {
                     this.myJobPages.push(pages[i]);
                 }
+            };
+
+            /** */
+            this.clearJobs = function() {
+                this.myJobs = [];
+                this.myTotPages = 0;
+                this.myJobPages = [];
             };
 
             /**
@@ -5920,6 +5941,7 @@
                     isOk = res.result.code === "0";
 
                 if (isOk) {
+                    _model.clearJobs();
                     _view.pages.main.onRefreshPages();
                 }
                 _view.showApiMsg(res);
@@ -5971,6 +5993,22 @@
                 } else {
                     _view.pages.printDelegation.onButtonBack();
                 }
+            };
+
+            /**
+             * Callbacks: File Upload Dialog
+             */
+            _view.pages.fileUpload.onClear = function() {
+                var res = _api.call({
+                    request : 'inbox-clear'
+                }),
+                    isOk = res.result.code === "0";
+
+                if (isOk) {
+                    _view.pages.main.onRefreshPages();
+                }
+                _view.showApiMsg(res);
+                return isOk;
             };
 
             /**

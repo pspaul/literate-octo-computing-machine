@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -104,7 +104,7 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 	<div data-role="dialog" data-theme="a" id="page-user-internet-printer" />
 	<div data-role="dialog" data-theme="a" id="page-dashboard" />
 	<div data-role="dialog" data-theme="a" id="page-outbox" />
-    <div data-role="dialog" data-theme="a" id="page-gdpr-export" />
+	<div data-role="dialog" data-theme="a" id="page-gdpr-export" />
 
 	<div data-role="dialog" data-theme="a" id="page-money-transfer"
 		style="display: none;" class="sp-initial-hidden">
@@ -201,15 +201,24 @@ THIS IS REALLY NEEDED for the page after the login to show (why?).
 						<div class="sp-txt-wrap" id="sp-webprint-upload-feedback"
 							style="padding: 10px; margin-bottom: 5px;" />
 
-						<input type="submit" data-corners="false" data-inline="true"
-							data-icon="arrow-u" value="button-file-upload"
+						<input type="submit" data-mini="true" data-corners="false"
+							data-inline="true" data-icon="arrow-u" value="set-by-javascript"
+							wicket:message="title:sp-btn-file-upload-submit-tooltip"
 							id="sp-button-file-upload-submit" />
 
-						<input type="reset" data-inline="true" data-icon="delete"
-							data-corners="false" id="sp-button-file-upload-reset"
-							value="button-file-upload-reset" />
+						<input type="reset" data-mini="true" data-inline="true"
+							data-icon="delete" data-corners="false"
+							wicket:message="title:sp-btn-file-upload-reset-tooltip"
+							id="sp-button-file-upload-reset" value="set-by-javascript" />
+
+						<a tabindex="0" id="sp-file-upload-delete-button"
+							wicket:message="title:sp-btn-file-upload-delete-tooltip"
+							class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-main-clear">
+							<span class="sp-txt-info" />
+						</a>
 
 					</form>
+
 				</li>
 			</ul>
 
