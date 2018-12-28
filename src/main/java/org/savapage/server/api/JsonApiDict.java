@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -75,6 +75,7 @@ import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
 import org.savapage.server.api.request.ReqSystemModeChange;
+import org.savapage.server.api.request.ReqUserCardQuickSearch;
 import org.savapage.server.api.request.ReqUserDelegateAccountsPreferred;
 import org.savapage.server.api.request.ReqUserDelegateGroupsPreferred;
 import org.savapage.server.api.request.ReqUserGet;
@@ -318,6 +319,9 @@ public final class JsonApiDict {
     public static final String REQ_USER_QUICK_SEARCH = "user-quick-search";
     public static final String REQ_USER_SET = "user-set";
     public static final String REQ_USER_SOURCE_GROUPS = "user-source-groups";
+
+    public static final String REQ_USERCARD_QUICK_SEARCH =
+            "usercard-quick-search";
 
     public static final String REQ_USER_SYNC = "user-sync";
 
@@ -1104,6 +1108,12 @@ public final class JsonApiDict {
 
         acl(REQ_USER_QUICK_SEARCH, ReqUserQuickSearch.class, DbClaim.READ,
                 DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.WEB_CASHIER,
+                        ACLRoleEnum.PRINT_SITE_OPERATOR,
+                        ACLRoleEnum.JOB_TICKET_OPERATOR));
+
+        acl(REQ_USERCARD_QUICK_SEARCH, ReqUserCardQuickSearch.class,
+                DbClaim.READ, DbAccess.YES,
                 EnumSet.of(ACLRoleEnum.WEB_CASHIER,
                         ACLRoleEnum.PRINT_SITE_OPERATOR,
                         ACLRoleEnum.JOB_TICKET_OPERATOR));

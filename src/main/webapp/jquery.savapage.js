@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Common | (c) 2011-2018 Datraverse B.V. | GNU Affero
+/*! SavaPage jQuery Mobile Common | (c) 2011-2019 Datraverse B.V. | GNU Affero
  * General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -2998,6 +2998,64 @@
 
         };
     }(jQuery, this, this.document, this.org.savapage));
+
+//--------------------------------------------------------------
+// Logger for Keyboard Emulator Cards/Keys (NFC, Barcode, Yubikey)
+//--------------------------------------------------------------
+( function(window, document, navigator, _ns) {
+        "use strict";
+
+        _ns.KeyboardLogger = {
+
+            /** */
+            setCallback : function(keyzone, maxMsecs, fooFocusIn, fooFocusOut, fooInfo) {
+                var _obj = this,
+                    _hasFocus = false,
+                    _collectStartTime = null,
+                    _collectedKeys = '';
+
+                keyzone.focusin(function() {
+                    _collectStartTime = null;
+                    _hasFocus = true;
+                    fooFocusIn();
+                }).focusout(function() {
+                    _collectStartTime = null;
+                    _hasFocus = false;
+                    fooFocusOut();
+                }).keyup(function(e) {
+                    var key,
+                        collectTimeElapsed;
+                    if (!_hasFocus) {
+                        return;
+                    }
+                    key = e.keyCode || e.which;
+                    if (key === 13) {// <Enter>
+                        if (_collectStartTime) {
+                            collectTimeElapsed = new Date().getTime() - _collectStartTime;
+                            _collectStartTime = null;
+                            if (collectTimeElapsed > maxMsecs) {
+                                return false;
+                            }
+                        }
+                        fooInfo(_collectedKeys);
+                    } else {
+                        /*
+                         * IMPORTANT: only look at printable chars. When doing an
+                         * alt-tab to return to THIS application we do not want
+                         * to collect !!!
+                         */
+                        if (32 < key && key < 127) {
+                            if (_collectStartTime === null) {
+                                _collectStartTime = new Date().getTime();
+                                _collectedKeys = '';
+                            }
+                            _collectedKeys += String.fromCharCode(key);
+                        }
+                    }
+                });
+            }
+        };
+    }(this, this.document, this.navigator, this.org.savapage));
 
 //--------------------------------------------------------------
 // Drop & Drop File Upload

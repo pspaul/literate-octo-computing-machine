@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2018 Datraverse B.V.
+/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2019 Datraverse B.V.
  * | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,7 +45,6 @@
                 _self = _ns.derive(_page),
                 _panel,
                 _quickUserSearch = new _ns.QuickUserSearch(_view, _api),
-                _authKeyLoggerStartTime = null,
                 _userKey,
                 _userText,
                 _refresh,
@@ -328,19 +327,30 @@
                     return false;
                 });
 
-                $('#sp-user-card-local-group').focusin(function() {
-                    _authKeyLoggerStartTime = null;
+                _ns.KeyboardLogger.setCallback($('#sp-user-card-local-group'), 500,
+                //
+                function() {// focusIn
                     $('#sp-user-card-local-focusin').show();
                     $('#sp-user-card-local-focusout').hide();
-                });
-
-                $('#sp-user-card-local-group').focusout(function() {
-                    _authKeyLoggerStartTime = null;
+                }, function() {// focusOut
                     $('#sp-user-card-local-focusin').hide();
                     // Use the fadeIn to prevent a 'flash' effect when just
                     // anotherfocus is lost because another auth method is
                     // selected.
                     $('#sp-user-card-local-focusout').fadeIn(700);
+                }, function(id) {
+                    var res = _api.call({
+                        request : 'usercard-quick-search',
+                        dto : JSON.stringify({
+                            card : id
+                        })
+                    });
+                    if (res.result.code !== '0') {
+                        _view.message(res.result.txt);
+                    } else {
+                        _onSelectUser(res.dto);
+                        $('#sp-btn-user-details').focus();
+                    }
                 });
 
                 /*
@@ -358,7 +368,6 @@
                     _api.download("pdf-outbox", null, $(this).attr('data-savapage'), _userKey);
                 }).on('click', '.sp-outbox-preview-jobticket', null, function() {
                     _api.download("pdf-jobticket", null, $(this).attr('data-savapage'));
-                    //return false;
                 }).on('click', '.sp-outbox-cancel-job', null, function() {
                     _onOutboxDeleteJob($(this).attr('data-savapage'), false);
                 }).on('click', '.sp-outbox-cancel-jobticket', null, function() {
