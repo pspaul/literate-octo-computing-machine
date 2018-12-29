@@ -327,16 +327,13 @@
                     return false;
                 });
 
-                _ns.KeyboardLogger.setCallback($('#sp-user-card-local-group'), 500,
+                _ns.KeyboardLogger.setCallback($('#sp-user-card-local-group'), _model.cardLocalMaxMsecs,
                 //
                 function() {// focusIn
                     $('#sp-user-card-local-focusin').show();
                     $('#sp-user-card-local-focusout').hide();
                 }, function() {// focusOut
                     $('#sp-user-card-local-focusin').hide();
-                    // Use the fadeIn to prevent a 'flash' effect when just
-                    // anotherfocus is lost because another auth method is
-                    // selected.
                     $('#sp-user-card-local-focusout').fadeIn(700);
                 }, function(id) {
                     var res = _api.call({
