@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 
 /**
- * User Group Members Quicksearch.
+ * User Group Members quick search.
  *
  * @author Rijk Ravestein
  *
@@ -85,8 +85,17 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
         userFilter.setDisabled(Boolean.FALSE);
 
         if (dto.getAclRole() != null) {
+
+            final Long aclRoleUserExt;
+            if (dto.getAclRole() == ACLRoleEnum.PRINT_DELEGATOR) {
+                // Add session as delegator.
+                aclRoleUserExt = this.getSessionUser().getId();
+            } else {
+                aclRoleUserExt = null;
+            }
+
             userFilter.setAclFilter(createACLFilter(dto.getAclRole(),
-                    dto.getGroupId() != null));
+                    dto.getGroupId() != null, aclRoleUserExt));
         }
 
         final int totalResults;
@@ -133,13 +142,23 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
      * @param withinGroup
      *            If {@code true}, a filter is created that will work within
      *            User Group scope only.
+     * @param aclRoleUserExt
+     *            Optional database key of requesting user who is assigned
+     *            ACLRoleEnum ad-hoc. This attribute is relevant when role is
+     *            not null.
      * @return The filter.
      */
     private static UserDao.ACLFilter createACLFilter(final ACLRoleEnum role,
-            final boolean withinGroup) {
+            final boolean withinGroup, final Long aclRoleUserExt) {
 
         final UserDao.ACLFilter filter = new UserDao.ACLFilter();
         filter.setAclRole(role);
+
+        if (role != null && aclRoleUserExt != null) {
+            final List<Long> lst = new ArrayList<>();
+            lst.add(aclRoleUserExt);
+            filter.setAclRoleUsersExt(lst);
+        }
 
         if (withinGroup) {
             filter.setAclUserExternal(true);

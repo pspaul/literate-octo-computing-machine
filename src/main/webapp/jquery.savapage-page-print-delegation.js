@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Print Delegation Page | (c) 2011-2018 Datraverse B.V.
+/*! SavaPage jQuery Mobile Print Delegation Page | (c) 2011-2019 Datraverse B.V.
  * | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -247,10 +247,19 @@
             //----------------------------------------------------------------
             ,
                 _htmlDelegatorName = function(item) {
-                var html = item.fullName;
+                var html = '',
+                    sessionUser = item.userId === _model.user.id;
+
+                if (sessionUser) {
+                    html += '<span class=\"sp-txt-warn\">';
+                }
+                html += item.fullName;
                 if (!_model.DELEGATOR_USER_HIDE_ID && item.fullName.indexOf(item.userId) < 0) {
                     html += ' &bull; ';
                     html += item.userId;
+                }
+                if (sessionUser) {
+                    html += '</span>';
                 }
                 return html;
             }
