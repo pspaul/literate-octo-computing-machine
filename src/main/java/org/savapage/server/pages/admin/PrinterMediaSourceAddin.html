@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
     | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -22,7 +23,20 @@
 		</li>
 
 		<li>
-			<div wicket:id="cost-per-side" />
+			<div>
+				<img width="16" height="16" wicket:id="printerImage" />
+				<wicket:enclosure child="deviceUriImg">
+					<img wicket:id="deviceUriImg" src="" style="margin-bottom: -2px;"
+						height="16" />&nbsp;
+                </wicket:enclosure>
+				<span wicket:id="cost-per-side" />
+			</div>
+			<wicket:enclosure child="media-source-remark">
+				<p style="margin-left: 20px;">
+					<span class="sp-txt-wrap sp-txt-warn"
+						wicket:id="media-source-remark" />
+				</p>
+			</wicket:enclosure>
 		</li>
 
 		<li class="sp-printer-charge-media-sources">
@@ -47,3 +61,4 @@
 	</ul>
 
 </wicket:enclosure>
+</html>

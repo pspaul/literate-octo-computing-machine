@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -147,6 +147,7 @@ public final class PrinterMediaSourcePanel extends Panel {
 
         private final boolean isColorPrinter;
         private final boolean isDuplexPrinter;
+        private final boolean showCost;
 
         /**
          *
@@ -159,12 +160,14 @@ public final class PrinterMediaSourcePanel extends Panel {
         public MediaSourceListView(final String id,
                 final List<IppMediaSourceCostDto> mediaSourceList,
                 List<JsonProxyPrinterOptChoice> mediaList,
-                final boolean isColorPrinter, final boolean isDuplexPrinter) {
+                final boolean isColorPrinter, final boolean isDuplexPrinter,
+                final boolean showCost) {
 
             super(id, mediaSourceList);
             this.mediaList = mediaList;
             this.isColorPrinter = isColorPrinter;
             this.isDuplexPrinter = isDuplexPrinter;
+            this.showCost = showCost;
         }
 
         /**
@@ -198,7 +201,7 @@ public final class PrinterMediaSourcePanel extends Panel {
                 throw new SpException(e);
             }
 
-            Label labelWrk = new Label(wicketId, "");
+            final Label labelWrk = new Label(wicketId, "");
 
             labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_VALUE, cost));
             labelWrk.add(
@@ -208,8 +211,16 @@ public final class PrinterMediaSourcePanel extends Panel {
                 labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DISABLED,
                         MarkupHelper.ATTR_DISABLED));
             }
-
             item.add(labelWrk);
+
+            final MarkupHelper helper = new MarkupHelper(item);
+            org.apache.wicket.Component cmp =
+                    helper.addTransparant(wicketId.concat("-td"));
+
+            if (!this.showCost) {
+                MarkupHelper.appendComponentAttr(cmp, MarkupHelper.ATTR_STYLE,
+                        "display:none;");
+            }
 
         }
 
@@ -310,7 +321,7 @@ public final class PrinterMediaSourcePanel extends Panel {
      * @param printer
      *            The printer.
      */
-    public void populate(final Printer printer) {
+    public void populate(final Printer printer, final boolean showCost) {
 
         final List<IppMediaSourceCostDto> mediaSourceList = new ArrayList<>();
 
@@ -404,7 +415,7 @@ public final class PrinterMediaSourcePanel extends Panel {
                         getSession().getLocale());
 
         add(new MediaSourceListView("media-source-row", mediaSourceList,
-                mediaList, isColorPrinter, isDuplexPrinter));
+                mediaList, isColorPrinter, isDuplexPrinter, showCost));
 
         /*
          * Mark the defaults in the header.

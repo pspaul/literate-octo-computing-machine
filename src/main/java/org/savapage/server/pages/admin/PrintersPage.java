@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -74,6 +73,7 @@ import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.HtmlPrinterImgEnum;
 import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
@@ -442,17 +442,13 @@ public final class PrintersPage extends AbstractAdminListPage {
             //
             item.add(new Label("displayName"));
 
-            final boolean isJobTicketPrinter =
-                    PRINTER_SERVICE.isJobTicketPrinter(printer.getId());
-
-            final String imageSrc;
-
             final Map<String, Device> terminalDevices = new HashMap<>();
             final Map<String, Device> readerDevices = new HashMap<>();
 
-            if (isJobTicketPrinter) {
+            final HtmlPrinterImgEnum printerImg =
+                    getImgSrc(printer, terminalDevices, readerDevices);
 
-                imageSrc = "printer-jobticket-32x32.png";
+            if (printerImg == HtmlPrinterImgEnum.JOBTICKET) {
 
                 helper.addLabel("ticketGroupPrompt",
                         NounEnum.GROUP.uiText(getLocale()));
@@ -460,42 +456,12 @@ public final class PrintersPage extends AbstractAdminListPage {
                 helper.addLabel(WID_TICKET_GROUP,
                         PRINTER_SERVICE.getAttributeValue(printer,
                                 PrinterAttrEnum.JOBTICKET_PRINTER_GROUP));
-
             } else {
-
-                final MutableBoolean terminalSecured = new MutableBoolean();
-                final MutableBoolean readerSecured = new MutableBoolean();
-
-                final boolean isSecured = PRINTER_SERVICE.checkPrinterSecurity(
-                        printer, terminalSecured, readerSecured,
-                        terminalDevices, readerDevices);
-
-                if (isSecured) {
-
-                    if (terminalSecured.booleanValue()
-                            && readerSecured.booleanValue()) {
-                        imageSrc = "printer-terminal-custom-or-auth-16x16.png";
-                    } else if (terminalSecured.booleanValue()) {
-                        imageSrc = "printer-terminal-custom-16x16.png";
-                    } else {
-                        imageSrc = "printer-terminal-auth-16x16.png";
-                    }
-                } else if (ConfigManager.instance()
-                        .isNonSecureProxyPrinter(printer)) {
-                    imageSrc = "printer-terminal-any-16x16.png";
-                } else {
-                    imageSrc = "printer-terminal-none-16x16.png";
-                }
-
                 helper.discloseLabel(WID_TICKET_GROUP);
             }
 
-            labelWrk = new Label("printerImage", "");
-
-            labelWrk.add(new AttributeModifier("src",
-                    String.format("%s/%s", WebApp.PATH_IMAGES, imageSrc)));
-
-            item.add(labelWrk);
+            labelWrk = helper.addModifyLabelAttr("printerImage",
+                    MarkupHelper.ATTR_SRC, printerImg.urlPath());
 
             String assocTerminal = null;
             String assocCardReader = null;
@@ -585,12 +551,12 @@ public final class PrintersPage extends AbstractAdminListPage {
             }
 
             labelWrk = new Label("userGroupsPrompt", userGroupsPrompt);
-            labelWrk.add(new AttributeModifier("class", color));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, color));
             item.add(labelWrk);
 
             labelWrk = createVisibleLabel(userGroups.length() > 0, "userGroups",
                     userGroups.toString());
-            labelWrk.add(new AttributeModifier("class", color));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, color));
 
             item.add(labelWrk);
 
@@ -629,7 +595,7 @@ public final class PrintersPage extends AbstractAdminListPage {
             labelWrk = createVisibleLabel(deviceUriImgUrl != null,
                     "deviceUriImg", "");
             if (deviceUriImgUrl != null) {
-                labelWrk.add(new AttributeModifier("src", deviceUriImgUrl));
+                labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_SRC, deviceUriImgUrl));
             }
             item.add(labelWrk);
 
@@ -772,7 +738,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             labelWrk = new Label("signal", signal);
 
             if (color != null) {
-                labelWrk.add(new AttributeModifier("class", color));
+                labelWrk.add(
+                        new AttributeModifier(MarkupHelper.ATTR_CLASS, color));
             }
             item.add(labelWrk);
 
