@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Admin Panels | (c) 2011-2017 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Panels | (c) 2011-2019 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -957,6 +957,7 @@
             onProxyPrintDelegatePaperCutEnabled : function(enabled) {
                 var _view = _ns.PanelCommon.view;
                 _view.visible($('.sp-download-papercut-delegator-cost-enabled'), enabled);
+                _view.visibleCheckboxRadio($('#proxy-print\\.personal\\.papercut\\.enable'), !enabled);
             },
 
             onPaperCutEnabled : function(enabled) {

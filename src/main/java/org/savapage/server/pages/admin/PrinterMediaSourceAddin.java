@@ -109,22 +109,12 @@ public final class PrinterMediaSourceAddin extends AbstractAdminPage {
                     IConfigProp.Key.PROXY_PRINT_PERSONAL_PAPERCUT_ENABLE);
 
             if (isDelegatePaperCut) {
+                showMediaCost = true;
                 remark.append(localized("papercut-delegated-print"));
             } else if (isPersonalPaperCut) {
                 remark.append(localized("papercut-personal-print"));
-            }
-
-            if (PRINTER_SERVICE.isJobTicketPrinter(printer.getId())) {
-                /*
-                 * For Job Ticket, SavaPage cost is leading.
-                 */
-                showMediaCost = true;
-
-            } else if (PRINTER_SERVICE.isHoldReleasePrinter(printer)) {
-
-                showMediaCost = true;
-
-                if (!isDelegatePaperCut && isPersonalPaperCut) {
+                if (PRINTER_SERVICE.isHoldReleasePrinter(printer)) {
+                    showMediaCost = true;
                     /*
                      * Because SavaPage cost is communicated to user before
                      * print release, SavaPage cost must be in-sync with
@@ -134,12 +124,12 @@ public final class PrinterMediaSourceAddin extends AbstractAdminPage {
                         remark.append(" ");
                     }
                     remark.append(localized("papercut-media-cost-match"));
+                } else {
+                    showMediaCost = false;
                 }
-
             } else {
                 showMediaCost = true;
             }
-
         } else {
             showMediaCost = true;
             helper.discloseLabel(WID_DEVICE_URI_IMG);

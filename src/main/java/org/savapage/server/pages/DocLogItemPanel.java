@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -190,7 +190,16 @@ public class DocLogItemPanel extends Panel {
                     .getCurrencySymbol(obj.getCurrencyCode(), getLocale());
 
             BigDecimal totCopiesDelegators = BigDecimal.ZERO;
-            int copiesDelegatorsImplicit = 0;
+            BigDecimal totCopiesPersonal = BigDecimal.ZERO;
+
+            BigDecimal totCopiesDelegatorsRefund = BigDecimal.ZERO;
+            BigDecimal totCopiesPersonalRefund = BigDecimal.ZERO;
+
+            BigDecimal amountCopiesDelegators = BigDecimal.ZERO;
+            BigDecimal amountCopiesPersonal = BigDecimal.ZERO;
+
+            BigDecimal amountCopiesDelegatorsRefund = BigDecimal.ZERO;
+            BigDecimal amountCopiesPersonalRefund = BigDecimal.ZERO;
 
             final BigDecimal costPerCopy =
                     ACCOUNTING_SERVICE.calcCostPerPrintedCopy(
@@ -218,9 +227,34 @@ public class DocLogItemPanel extends Panel {
                 if (accountType != AccountTypeEnum.SHARED
                         && accountType != AccountTypeEnum.GROUP) {
 
-                    if (!isRefund) {
-                        totCopiesDelegators =
-                                totCopiesDelegators.add(trxCopies);
+                    if (trx.getAccount().getName()
+                            .equalsIgnoreCase(obj.getUserId())) {
+
+                        if (isRefund) {
+                            totCopiesPersonalRefund =
+                                    totCopiesPersonalRefund.add(trxCopies);
+                            amountCopiesPersonalRefund =
+                                    amountCopiesPersonalRefund
+                                            .add(trx.getAmount());
+                        } else {
+                            totCopiesPersonal =
+                                    totCopiesPersonal.add(trxCopies);
+                            amountCopiesPersonal =
+                                    amountCopiesPersonal.add(trx.getAmount());
+                        }
+                    } else {
+                        if (isRefund) {
+                            totCopiesDelegatorsRefund =
+                                    totCopiesDelegatorsRefund.add(trxCopies);
+                            amountCopiesDelegatorsRefund =
+                                    amountCopiesDelegatorsRefund
+                                            .add(trx.getAmount());
+                        } else {
+                            totCopiesDelegators =
+                                    totCopiesDelegators.add(trxCopies);
+                            amountCopiesDelegators =
+                                    amountCopiesDelegators.add(trx.getAmount());
+                        }
                     }
                     continue;
                 }
@@ -245,32 +279,31 @@ public class DocLogItemPanel extends Panel {
                             .append(')');
                 }
 
-                copiesDelegatorsImplicit += trxCopies.intValue();
             }
 
-            final int copiesDelegatorsIndividual =
-                    obj.getCopies() - copiesDelegatorsImplicit;
-
-            if (copiesDelegatorsIndividual > 0 && obj.getCopies() > 1) {
-
-                final BigDecimal amount = ACCOUNTING_SERVICE.calcWeightedAmount(
-                        obj.getCost(), obj.getCopies(),
-                        copiesDelegatorsIndividual, 1, this.scale);
-
-                if (amount.compareTo(BigDecimal.ZERO) != 0) {
-                    sbAccTrx.append(" &bull; ").append(currencySymbol)
-                            .append("&nbsp;")
-                            .append(localizedDecimal(amount.negate()));
-                    sbAccTrx.append("&nbsp;(")
-                            .append(copiesDelegatorsIndividual).append(")");
+            if (totCopiesDelegators.compareTo(BigDecimal.ZERO) != 0) {
+                sbAccTrx.append(" &bull; ")
+                        .append(NounEnum.DELEGATOR.uiText(locale, true))
+                        .append(" ");
+                if (amountCopiesDelegators.negate()
+                        .compareTo(obj.getCost()) != 0) {
+                    sbAccTrx.append(currencySymbol).append("&nbsp;")
+                            .append(localizedDecimal(amountCopiesDelegators))
+                            .append("&nbsp;");
                 }
+                sbAccTrx.append("(");
+                sbAccTrx.append(totCopiesDelegators.setScale(0,
+                        RoundingMode.HALF_EVEN));
+                sbAccTrx.append(")");
             }
 
-            if (isExtSupplier
-                    && totCopiesDelegators.compareTo(BigDecimal.ZERO) != 0) {
-                sbAccTrx.append(" &bull; ");
-                sbAccTrx.append(localized("delegators")).append(" (").append(
-                        totCopiesDelegators.setScale(0, RoundingMode.HALF_EVEN))
+            if (totCopiesDelegatorsRefund.compareTo(BigDecimal.ZERO) != 0) {
+                sbAccTrx.append(" &bull; ")
+                        .append(NounEnum.DELEGATOR.uiText(locale, true))
+                        .append(" ").append(currencySymbol).append("&nbsp;")
+                        .append(localizedDecimal(amountCopiesDelegatorsRefund))
+                        .append("&nbsp;(").append(totCopiesDelegatorsRefund
+                                .setScale(0, RoundingMode.HALF_EVEN))
                         .append(")");
             }
 
@@ -278,11 +311,33 @@ public class DocLogItemPanel extends Panel {
             // account only.
             if (sbAccTrx.length() == 0
                     && obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
+                totCopiesPersonal = BigDecimal.valueOf(obj.getCopies());
+            }
+
+            if (totCopiesPersonal.compareTo(BigDecimal.ZERO) != 0) {
+                sbAccTrx.append(" &bull; ")
+                        .append(PrintOutAdjectiveEnum.PERSONAL.uiText(locale))
+                        .append(" ");
+                if (amountCopiesPersonal.negate()
+                        .compareTo(obj.getCost()) != 0) {
+                    sbAccTrx.append(currencySymbol).append("&nbsp;")
+                            .append(localizedDecimal(amountCopiesPersonal))
+                            .append("&nbsp;");
+                }
+                sbAccTrx.append("(");
+                sbAccTrx.append(
+                        totCopiesPersonal.setScale(0, RoundingMode.HALF_EVEN));
+                sbAccTrx.append(")");
+            }
+
+            if (totCopiesPersonalRefund.compareTo(BigDecimal.ZERO) != 0) {
                 sbAccTrx.append(" &bull; ")
                         .append(PrintOutAdjectiveEnum.PERSONAL.uiText(locale))
                         .append(" ").append(currencySymbol).append("&nbsp;")
-                        .append(localizedDecimal(obj.getCost().negate()))
-                        .append("&nbsp;(").append(obj.getCopies()).append(")");
+                        .append(localizedDecimal(amountCopiesPersonalRefund))
+                        .append("&nbsp;(").append(totCopiesPersonalRefund
+                                .setScale(0, RoundingMode.HALF_EVEN))
+                        .append(")");
             }
 
             add(new Label("account-trx", sbAccTrx.toString())
