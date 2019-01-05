@@ -21,10 +21,10 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
@@ -98,21 +98,20 @@ public final class PrinterMediaSourceAddin extends AbstractAdminPage {
             helper.addModifyLabelAttr(WID_DEVICE_URI_IMG, MarkupHelper.ATTR_SRC,
                     WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT));
 
-            final ConfigManager cm = ConfigManager.instance();
+            final MutableBoolean isDelegatePaperCut = new MutableBoolean();
+            final MutableBoolean isPersonalPaperCut = new MutableBoolean();
 
-            final boolean isDelegatePaperCut = cm
-                    .isConfigValue(IConfigProp.Key.PROXY_PRINT_DELEGATE_ENABLE)
-                    && cm.isConfigValue(
-                            IConfigProp.Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
+            PAPERCUT_SERVICE.checkPrintIntegration(isDelegatePaperCut,
+                    isPersonalPaperCut);
 
-            final boolean isPersonalPaperCut = cm.isConfigValue(
-                    IConfigProp.Key.PROXY_PRINT_PERSONAL_PAPERCUT_ENABLE);
-
-            if (isDelegatePaperCut) {
+            if (isDelegatePaperCut.isTrue()) {
                 showMediaCost = true;
                 remark.append(localized("papercut-delegated-print"));
-            } else if (isPersonalPaperCut) {
+            } else if (isPersonalPaperCut.isTrue()) {
                 remark.append(localized("papercut-personal-print"));
+                if (remark.length() > 0) {
+                    remark.append(" ");
+                }
                 if (PRINTER_SERVICE.isHoldReleasePrinter(printer)) {
                     showMediaCost = true;
                     /*
@@ -120,12 +119,14 @@ public final class PrinterMediaSourceAddin extends AbstractAdminPage {
                      * print release, SavaPage cost must be in-sync with
                      * PaperCut cost.
                      */
-                    if (remark.length() > 0) {
-                        remark.append(" ");
-                    }
-                    remark.append(localized("papercut-media-cost-match"));
+                    remark.append(
+                            localized("papercut-personal-print-cost-papercut"))
+                            .append(" ")
+                            .append(localized("papercut-media-cost-match"));
                 } else {
                     showMediaCost = false;
+                    remark.append(localized(
+                            "papercut-personal-print-cost-papercut-ticket"));
                 }
             } else {
                 showMediaCost = true;

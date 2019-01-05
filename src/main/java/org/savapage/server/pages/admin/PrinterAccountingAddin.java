@@ -23,11 +23,11 @@ package org.savapage.server.pages.admin;
 
 import java.text.ParseException;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.jpa.Printer;
@@ -85,19 +85,15 @@ public final class PrinterAccountingAddin extends AbstractAdminPage {
 
         if (PAPERCUT_SERVICE.isExtPaperCutPrint(printer.getPrinterName())) {
 
-            final ConfigManager cm = ConfigManager.instance();
+            final MutableBoolean isDelegatePaperCut = new MutableBoolean();
+            final MutableBoolean isPersonalPaperCut = new MutableBoolean();
 
-            final boolean isDelegatePaperCut = cm
-                    .isConfigValue(IConfigProp.Key.PROXY_PRINT_DELEGATE_ENABLE)
-                    && cm.isConfigValue(
-                            IConfigProp.Key.PROXY_PRINT_DELEGATE_PAPERCUT_ENABLE);
+            PAPERCUT_SERVICE.checkPrintIntegration(isDelegatePaperCut,
+                    isPersonalPaperCut);
 
-            final boolean isPersonalPaperCut = cm.isConfigValue(
-                    IConfigProp.Key.PROXY_PRINT_PERSONAL_PAPERCUT_ENABLE);
-
-            if (isDelegatePaperCut) {
+            if (isDelegatePaperCut.isTrue()) {
                 showMediaCost = true;
-            } else if (isPersonalPaperCut) {
+            } else if (isPersonalPaperCut.isTrue()) {
                 showMediaCost = false;
             } else {
                 showMediaCost = true;
