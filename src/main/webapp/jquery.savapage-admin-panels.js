@@ -952,12 +952,12 @@
                 var _view = _ns.PanelCommon.view;
                 _view.visible($('.sp-proxyprint-delegate-enable-enabled'), enabled);
                 this.onProxyPrintDelegatePaperCutEnabled( enabled ? _view.isCbChecked($("#proxy-print\\.delegate\\.papercut\\.enable")) : false);
+                _view.visibleCheckboxRadio($('#proxy-print\\.personal\\.papercut\\.enable'), !enabled);
             },
 
             onProxyPrintDelegatePaperCutEnabled : function(enabled) {
                 var _view = _ns.PanelCommon.view;
                 _view.visible($('.sp-download-papercut-delegator-cost-enabled'), enabled);
-                _view.visibleCheckboxRadio($('#proxy-print\\.personal\\.papercut\\.enable'), !enabled);
             },
 
             onPaperCutEnabled : function(enabled) {
