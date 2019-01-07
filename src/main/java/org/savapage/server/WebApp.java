@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.RunMode;
+import org.savapage.core.config.RunModeEnum;
 import org.savapage.core.config.SslCertInfo;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
@@ -679,7 +679,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             /*
              * Initialize the ConfigManager (use empty properties for now).
              */
-            ConfigManager.instance().init(RunMode.SERVER,
+            ConfigManager.instance().init(RunModeEnum.SERVER,
                     DatabaseTypeEnum.Internal);
 
             AppLogHelper.logInfo(getClass(), "WebApp.starting",
