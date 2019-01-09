@@ -489,15 +489,14 @@ public final class PrinterMediaSourcePanel extends Panel {
         /*
          * Override 'color' with monochrome?
          */
-        final String labelDefaultMonochrome = "use-grayscale-as-default";
-
         final boolean showMonochromeDefault = isColorPrinter && isDefaultColor;
-        labelWrk = helper.encloseLabel(labelDefaultMonochrome, "",
+
+        labelWrk = helper.encloseLabel("use-grayscale-as-default", "",
                 showMonochromeDefault);
 
-        // Checked?
         if (showMonochromeDefault && printer.getAttributes() != null) {
 
+            // Checked?
             final String colorModeDefault =
                     PRINTER_SERVICE.getPrintColorModeDefault(printer);
 
@@ -513,24 +512,26 @@ public final class PrinterMediaSourcePanel extends Panel {
         /*
          * Client-side monochrome conversion.
          */
-        final String labelClientSideMonochrome =
-                "client-side-monochrome-conversion";
+        final boolean isJobTicketPrinter =
+                PRINTER_SERVICE.isJobTicketPrinter(printer.getId());
 
-        labelWrk = helper.encloseLabel(labelClientSideMonochrome, "",
-                isColorPrinter);
+        final boolean showClientSideMonochrome =
+                isColorPrinter && !isJobTicketPrinter;
 
-        // Checked?
-        if (isColorPrinter && printer.getAttributes() != null) {
+        labelWrk = helper.encloseLabel("client-side-monochrome-conversion", "",
+                showClientSideMonochrome);
+
+        if (showClientSideMonochrome && printer.getAttributes() != null) {
+            // Checked?
             if (PRINTER_SERVICE.isClientSideMonochrome(printer)) {
                 labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CHECKED,
                         MarkupHelper.ATTR_CHECKED));
             }
         }
-
         add(labelWrk);
 
         //
-        handleJobSheets(helper, printer, mediaSourceList);
+        handleJobSheets(helper, printer, isJobTicketPrinter, mediaSourceList);
     }
 
     /**
@@ -555,17 +556,17 @@ public final class PrinterMediaSourcePanel extends Panel {
      *            The helper.
      * @param printer
      *            The printer.
+     * @param jobTicketPrinter
+     *            {@code true} if job ticket printer.
      * @param mediaSourceList
      *            The list of media sources.
      */
     private void handleJobSheets(final MarkupHelper helper,
-            final Printer printer,
+            final Printer printer, final boolean jobTicketPrinter,
             final List<IppMediaSourceCostDto> mediaSourceList) {
 
-        final boolean enclose =
-                !PRINTER_SERVICE.isJobTicketPrinter(printer.getId())
-                        && PRINTER_DAO
-                                .isJobTicketRedirectPrinter(printer.getId());
+        final boolean enclose = !jobTicketPrinter
+                && PRINTER_DAO.isJobTicketRedirectPrinter(printer.getId());
 
         helper.encloseLabel("job-sheets-label",
                 PrintOutNounEnum.JOB_SHEET.uiText(getLocale(), true), enclose);

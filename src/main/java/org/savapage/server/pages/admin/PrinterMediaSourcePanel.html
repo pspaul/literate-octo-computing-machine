@@ -19,26 +19,27 @@
 	<table data-role="table" data-mode="reflow"
 		class="ui-responsive ui-mini">
 		<thead>
-			<wicket:enclosure child="use-grayscale-as-default">
-				<tr>
-					<th colspan="5" style="vertical-align: middle">
+			<tr>
+				<th colspan="5" style="vertical-align: middle">
+
+					<wicket:enclosure child="use-grayscale-as-default">
 						<label for="sp-printer-use-monochrome-as-default">
 							<wicket:message key="use-grayscale-as-default" />
 						</label>
 						<input type="checkbox" id="sp-printer-use-monochrome-as-default"
 							wicket:id="use-grayscale-as-default" />
+					</wicket:enclosure>
 
-						<div id="sp-printer-client-side-convert">
+					<wicket:enclosure child="client-side-monochrome-conversion">
+						<label for="sp-printer-client-side-monochrome">
+							<wicket:message key="client-side-monochrome-conversion" />
+						</label>
+						<input type="checkbox" id="sp-printer-client-side-monochrome"
+							wicket:id="client-side-monochrome-conversion" />
+					</wicket:enclosure>
 
-							<label for="sp-printer-client-side-monochrome">
-								<wicket:message key="client-side-monochrome-conversion" />
-							</label>
-							<input type="checkbox" id="sp-printer-client-side-monochrome"
-								wicket:id="client-side-monochrome-conversion" />
-						</div>
-					</th>
-				</tr>
-			</wicket:enclosure>
+				</th>
+			</tr>
 
 			<tr>
 				<th>

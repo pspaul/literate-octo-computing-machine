@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2018 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2019 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1155,7 +1155,7 @@
             };
 
             _onChangeJobTicket = function(isTicket) {
-                _view.visible($('#sp-printer-client-side-convert'), !isTicket);
+                $.noop();
             };
 
             /**
