@@ -4,7 +4,7 @@
 	<!-- 
     +====================================================================+ 
     | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -24,14 +24,30 @@
 			<thead>
 				<tr>
 					<th data-priority="1" />
-					<th data-priority="2" />
+					<th width="100%" data-priority="2" />
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<th></th>
-					<td class="sp-txt-info" />
-				</tr>
+				<wicket:enclosure child="prompt-pending-ext-users">
+					<tr>
+						<th wicket:id="prompt-pending-ext-users" />
+						<td class="sp-txt-info" wicket:id="pending-ext-users" />
+					</tr>
+					<tr>
+						<th wicket:id="prompt-pending-ext-jobs" />
+						<td class="sp-txt-info" wicket:id="pending-ext-jobs" />
+					</tr>
+				</wicket:enclosure>
+				<wicket:enclosure child="prompt-pending-cups-users">
+					<tr>
+						<th wicket:id="prompt-pending-cups-users" />
+						<td class="sp-txt-info" wicket:id="pending-cups-users" />
+					</tr>
+					<tr>
+						<th wicket:id="prompt-pending-cups-jobs" />
+						<td class="sp-txt-info" wicket:id="pending-cups-jobs" />
+					</tr>
+				</wicket:enclosure>
 			</tbody>
 		</table>
 	</li>
