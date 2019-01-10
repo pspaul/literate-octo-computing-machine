@@ -3739,6 +3739,7 @@
                 }
 
                 _view.visible($('.sp-jobticket'), _model.myPrinter.jobTicket);
+                _view.visible($('.sp-jobticket-tags'), _model.myPrinter.jobTicketTagsEnabled);
                 _view.visible($('.sp-proxyprint'), !_model.myPrinter.jobTicket);
             },
 
@@ -3824,6 +3825,7 @@
                     copies,
                     delegatedPrint = _isDelegatedPrint(),
                     jobTicket = _model.myPrinter && _model.myPrinter.jobTicket,
+                    jobTicketTagsEnabled = _model.myPrinter && _model.myPrinter.jobTicketTagsEnabled,
                     jobTicketType,
                     isPrintJob,
                     hasInboxDocs = _model.hasInboxDocs();
@@ -3871,6 +3873,7 @@
                 if (_model.myPrinter) {
                     _view.visible($('.sp-proxyprint'), !jobTicket);
                     _view.visible($('.sp-jobticket'), jobTicket);
+                    _view.visible($('.sp-jobticket-tags'), jobTicketTagsEnabled);
                 }
 
                 _setVisibilityPrintSeparately(_model.hasMultipleVanillaJobs(), jobTicket);
@@ -6302,7 +6305,7 @@
                 }
 
                 sel = $('#sp-jobticket-tag-list');
-                jobTicketTag = sel.length > 0 ? sel.val() : null;
+                jobTicketTag = _model.myPrinter.jobTicketTagsEnabled && sel.length > 0 ? sel.val() : null;
 
                 _model.myPrintTitle = $('#print-title').val();
 
@@ -6327,10 +6330,10 @@
                         archive : archive,
                         options : _model.myPrinterOpt,
                         delegation : isDelegation ? _model.printDelegation : null,
+                        jobTicketTag : jobTicketTag,
                         jobTicket : isJobticket,
                         jobTicketCopyPages : isJobticket ? $('#sp-jobticket-copy-pages').val() : null,
                         jobTicketType : jobTicketType,
-                        jobTicketTag : jobTicketTag,
                         jobTicketDate : jobTicketDate,
                         jobTicketHrs : isJobticket && isJobTicketDateTime ? $('#sp-jobticket-hrs').val() : null,
                         jobTicketMin : isJobticket && isJobTicketDateTime ? $('#sp-jobticket-min').val() : null,

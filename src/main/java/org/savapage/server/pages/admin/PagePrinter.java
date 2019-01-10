@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,8 @@
 package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.doc.store.DocStoreBranchEnum;
 import org.savapage.core.doc.store.DocStoreTypeEnum;
@@ -57,6 +59,7 @@ public class PagePrinter extends AbstractAdminPage {
         super(parameters, ACLOidEnum.A_PRINTERS, RequiredPermission.EDIT);
 
         final MarkupHelper helper = new MarkupHelper(this);
+
         helper.addButton("btn-apply", HtmlButtonEnum.APPLY);
         helper.addButton("btn-cancel-1", HtmlButtonEnum.CANCEL);
         helper.addButton("btn-cancel-2", HtmlButtonEnum.CANCEL);
@@ -85,6 +88,8 @@ public class PagePrinter extends AbstractAdminPage {
             helper.discloseLabel("printer-journal");
         }
 
+        helper.encloseLabel("printer-jobticket-tags", "", ConfigManager
+                .instance().isConfigValue(Key.JOBTICKET_TAGS_ENABLE));
     }
 
 }

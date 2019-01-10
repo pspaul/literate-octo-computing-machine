@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -89,12 +89,21 @@
 			</label>
 			<input type="checkbox" id="printer-jobticket" value="0" />
 
-			<label for="printer-jobticket-group">
-				<wicket:message key="printer-jobticket-group" />
-			</label>
-			<input type="text" id="printer-jobticket-group" value=""
-				maxlength="128" autocomplete="off" autocorrect="off"
-				autocapitalize="off" spellcheck="false" />
+			<div id="printer-jobticket-group-div" class="ui-mini">
+				<label for="printer-jobticket-group">
+					<wicket:message key="printer-jobticket-group" />
+				</label>
+				<input type="text" id="printer-jobticket-group" value=""
+					maxlength="128" autocomplete="off" autocorrect="off"
+					autocapitalize="off" spellcheck="false" />
+			</div>
+			<wicket:enclosure child="printer-jobticket-tags">
+				<label for="printer-jobticket-tags">
+					<wicket:message key="printer-jobticket-tags" />
+				</label>
+				<input type="checkbox" wicket:id="printer-jobticket-tags"
+					id="printer-jobticket-tags" value="0" />
+			</wicket:enclosure>
 		</li>
 		<li>
 			<div>

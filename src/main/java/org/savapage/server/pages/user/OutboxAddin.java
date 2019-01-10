@@ -613,12 +613,16 @@ public class OutboxAddin extends AbstractUserPage {
                     "collate", "grayscale", "accounts", "removeGraphics",
                     "ecoPrint", "extSupplier", "owner-user-name", "drm",
                     "pageRotate180", "punch", "staple", "fold", "booklet",
-                    "jobticket-media", "jobticket-copy",
+                    "jobticket-tag-plain", "jobticket-media", "jobticket-copy",
                     "jobticket-finishing-ext", "jobticket-custom-ext",
                     "landscape", "scaled", "portrait", "job-id",
                     "job-creation-time", "job-completed-time", "job-printer",
                     "msg-invalid" }) {
                 mapVisible.put(attr, null);
+            }
+            if (!isJobTicketItem
+                    && StringUtils.isNotBlank(job.getJobTicketTag())) {
+                mapVisible.put("jobticket-tag-plain", job.getJobTicketTag());
             }
 
             //

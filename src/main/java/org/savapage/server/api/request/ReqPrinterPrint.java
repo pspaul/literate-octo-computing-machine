@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -74,6 +74,7 @@ import org.savapage.core.print.proxy.ProxyPrintJobChunk;
 import org.savapage.core.print.proxy.ProxyPrintJobChunkInfo;
 import org.savapage.core.print.proxy.ProxyPrintJobChunkRange;
 import org.savapage.core.services.DocStoreService;
+import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
@@ -119,6 +120,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     protected static final DocStoreService DOC_STORE_SERVICE =
             ServiceContext.getServiceFactory().getDocStoreService();
 
+    /** */
+    protected static final PrinterService PRINTER_SERVICE =
+            ServiceContext.getServiceFactory().getPrinterService();
+
     /**
      * See Mantis #987.
      */
@@ -154,9 +159,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private InboxSelectScopeEnum clearScope;
         private Boolean separateDocs;
         private Boolean archive;
+        private String jobTicketTag;
         private Boolean jobTicket;
         private JobTicketTypeEnum jobTicketType;
-        private String jobTicketTag;
         private Integer jobTicketCopyPages;
         private Long jobTicketDate;
         private Integer jobTicketHrs;
@@ -491,17 +496,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 dtoReq.getJobName(), substChars));
 
         // INVARIANT
-        if (isJobTicket && cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE)
-                && cm.isConfigValue(Key.JOBTICKET_TAGS_REQUIRED)
-                && StringUtils.isBlank(dtoReq.getJobTicketTag())) {
-
-            setApiResult(ApiResultCodeEnum.INFO,
-                    "msg-print-select-option-required",
-                    JobTicketNounEnum.TAG.uiText(getLocale()));
-            return;
-        }
-
-        // INVARIANT
         if (dtoReq.getAccountId() != null && dtoReq.getAccountId()
                 .equals(Print.OPTION_VALUE_SELECT_PROMPT)) {
 
@@ -568,6 +562,27 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         } catch (ProxyPrintException e) {
             setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
             return;
+        }
+
+        // INVARIANT
+        final boolean isJobTicketTagEnabled =
+                cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE) && (isJobTicket
+                        || PRINTER_SERVICE.isJobTicketTagsEnabled(printer));
+
+        if (isJobTicketTagEnabled) {
+            if (StringUtils.isBlank(dtoReq.getJobTicketTag())
+                    && cm.isConfigValue(Key.JOBTICKET_TAGS_REQUIRED)) {
+                setApiResult(ApiResultCodeEnum.WARN,
+                        "msg-print-select-option-required",
+                        JobTicketNounEnum.TAG.uiText(getLocale()));
+                return;
+            }
+        } else {
+            if (StringUtils.isNotBlank(dtoReq.getJobTicketTag())) {
+                setApiResultText(ApiResultCodeEnum.ERROR,
+                        "Job Ticket Tag is not permitted.");
+                return;
+            }
         }
 
         //
@@ -707,6 +722,11 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setLocale(this.getLocale());
         printReq.setIdUser(lockedUser.getId());
         printReq.setClearScope(clearScope);
+
+        if (isJobTicketTagEnabled
+                && StringUtils.isNotBlank(dtoReq.getJobTicketTag())) {
+            printReq.setJobTicketTag(dtoReq.getJobTicketTag());
+        }
 
         printReq.setArchive(!isCopyJobTicket
                 && BooleanUtils.isTrue(dtoReq.getArchive())

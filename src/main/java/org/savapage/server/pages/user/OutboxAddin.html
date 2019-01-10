@@ -4,7 +4,7 @@
 	<!-- 
     +========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ..|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein.......| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein.......| 
     |........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ......|
     | it under the terms of the GNU Affero General Public License as ........|
@@ -105,6 +105,11 @@
 			</wicket:enclosure>
             &bull; 
 		</wicket:enclosure>
+
+		<wicket:enclosure child="jobticket-tag-plain">
+			<span class="sp-txt-info" wicket:id="jobticket-tag-plain" /> &bull;
+		</wicket:enclosure>
+
 		<span wicket:id="timeSubmit" />
 		<wicket:enclosure child="timeExpiry">
 			 &bull; <span class="sp-outbox-remaining-time" wicket:id="timeExpiry" />

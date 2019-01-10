@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2018 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2019 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1411,7 +1411,7 @@
             };
 
             _view.pages.printer.onSavePrinter = function() {
-
+                var sel;
                 _model.editPrinter.displayName = $('#printer-displayname').val();
                 _model.editPrinter.location = $('#printer-location').val();
                 _model.editPrinter.printerGroups = $('#printer-printergroups').val();
@@ -1423,6 +1423,11 @@
                 _model.editPrinter.deleted = $('#printer-deleted').is(':checked');
                 _model.editPrinter.jobTicket = $('#printer-jobticket').is(':checked');
                 _model.editPrinter.jobTicketGroup = $('#printer-jobticket-group').val();
+
+                sel = $('#printer-jobticket-tags');
+                if (sel.length > 0) {
+                    _model.editPrinter.jobTicketTagsEnabled = sel.is(':checked');
+                }
 
                 // ProxyPrinterDto
                 var res = _api.call({

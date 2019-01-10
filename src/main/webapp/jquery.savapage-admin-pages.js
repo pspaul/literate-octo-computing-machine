@@ -1155,12 +1155,11 @@
             };
 
             _onChangeJobTicket = function(isTicket) {
-                $.noop();
+                _view.visible($('#printer-jobticket-group-div'), isTicket);
+                _view.visibleCheckboxRadio($('#printer-jobticket-tags'), !isTicket);
             };
 
-            /**
-             *
-             */
+            /** */
             _showAllMediaRows = function(showAll) {
                 var buttonLess = $('#sp-printer-cost-media-less'),
                     buttonMore = $('#sp-printer-cost-media-more');
@@ -1257,6 +1256,8 @@
                 _view.checkCb('#printer-deleted', _model.editPrinter.deleted);
 
                 _view.checkCb('#printer-jobticket', _model.editPrinter.jobTicket);
+                _view.checkCb('#printer-jobticket-tags', _model.editPrinter.jobTicketTagsEnabled);
+
                 $('#printer-jobticket-group').val(_model.editPrinter.jobTicketGroup);
 
                 $('#printer-newname').val('');
