@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -45,12 +44,11 @@ import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.time.Duration;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.UserAccountDao;
 import org.savapage.core.dao.UserAttrDao;
 import org.savapage.core.dao.UserNumberDao;
-import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.Account;
@@ -621,11 +619,7 @@ public class ReqExportUserDataHistory extends ApiRequestExportMixin {
         } else if (voucher != null) {
             reason = voucher.getCardNumber();
         } else if (printOut != null) {
-            final PrintModeEnum printMode = EnumUtils
-                    .getEnum(PrintModeEnum.class, printOut.getPrintMode());
-            if (printMode == PrintModeEnum.TICKET
-                    || printMode == PrintModeEnum.TICKET_C
-                    || printMode == PrintModeEnum.TICKET_E) {
+            if (StringUtils.isNotBlank(docLog.getExternalId())) {
                 reason = docLog.getExternalId();
             }
         }

@@ -148,9 +148,9 @@ public class DocLogItemPanel extends Panel {
                 "job-completed-date", "print-in-denied-reason-hyphen",
                 "print-in-denied-reason", "collate", "ecoPrint",
                 "removeGraphics", "pageRotate180", "punch", "staple", "fold",
-                "booklet", "jobticket-media", "jobticket-copy",
-                "jobticket-finishing-ext", "jobticket-custom-ext", "landscape",
-                "scaled" }) {
+                "booklet", "jobticket-tag-plain", "jobticket-media",
+                "jobticket-copy", "jobticket-finishing-ext",
+                "jobticket-custom-ext", "landscape", "scaled" }) {
             mapVisible.put(attr, null);
         }
 
@@ -510,6 +510,8 @@ public class DocLogItemPanel extends Panel {
                     ticketNumber = null;
                     ticketOperator = null;
                     ticketTag = null;
+
+                    mapVisible.put("jobticket-tag-plain", obj.getExtId());
                     helper.discloseLabel("img-job-sheet");
                 }
 
