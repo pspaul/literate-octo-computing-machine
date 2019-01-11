@@ -30,6 +30,7 @@ import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.ext.papercut.PaperCutIntegrationEnum;
 import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
@@ -78,7 +79,40 @@ public class Dashboard extends AbstractPrintSitePage {
         helper.addLabel("realtime-activity",
                 PhraseEnum.REALTIME_ACTIVITY.uiText(getLocale()));
 
-        if (PAPERCUT_SERVICE.checkPrintIntegration()) {
+        if (PAPERCUT_SERVICE
+                .getPrintIntegration() == PaperCutIntegrationEnum.NONE) {
+
+            helper.discloseLabel(WID_PROMPT_PENDING_EXT_USERS);
+
+            // CUPS
+            helper.addLabel(WID_PROMPT_PENDING_CUPS_USERS,
+                    NounEnum.USER.uiText(getLocale(), true));
+
+            helper.addLabel("prompt-pending-cups-jobs",
+                    PrintOutNounEnum.JOB.uiText(getLocale(), true));
+
+            final long nJobs = PRINT_OUT_DAO.countActiveCupsJobs();
+
+            final String countUsers;
+            final String countJobs;
+
+            if (nJobs == 0) {
+                countJobs = "-";
+                countUsers = "-";
+            } else {
+                countJobs = helper.localizedNumber(nJobs);
+                if (nJobs == 1) {
+                    countUsers = countJobs;
+                } else {
+                    countUsers = helper.localizedNumber(
+                            PRINT_OUT_DAO.countActiveCupsJobUsers());
+                }
+            }
+
+            helper.addLabel("pending-cups-users", countUsers);
+            helper.addLabel("pending-cups-jobs", countJobs);
+
+        } else {
 
             helper.discloseLabel(WID_PROMPT_PENDING_CUPS_USERS);
 
@@ -112,38 +146,6 @@ public class Dashboard extends AbstractPrintSitePage {
 
             helper.addLabel("pending-ext-users", countUsers);
             helper.addLabel("pending-ext-jobs", countJobs);
-
-        } else {
-
-            helper.discloseLabel(WID_PROMPT_PENDING_EXT_USERS);
-
-            // CUPS
-            helper.addLabel(WID_PROMPT_PENDING_CUPS_USERS,
-                    NounEnum.USER.uiText(getLocale(), true));
-
-            helper.addLabel("prompt-pending-cups-jobs",
-                    PrintOutNounEnum.JOB.uiText(getLocale(), true));
-
-            final long nJobs = PRINT_OUT_DAO.countActiveCupsJobs();
-
-            final String countUsers;
-            final String countJobs;
-
-            if (nJobs == 0) {
-                countJobs = "-";
-                countUsers = "-";
-            } else {
-                countJobs = helper.localizedNumber(nJobs);
-                if (nJobs == 1) {
-                    countUsers = countJobs;
-                } else {
-                    countUsers = helper.localizedNumber(
-                            PRINT_OUT_DAO.countActiveCupsJobUsers());
-                }
-            }
-
-            helper.addLabel("pending-cups-users", countUsers);
-            helper.addLabel("pending-cups-jobs", countJobs);
         }
     }
 

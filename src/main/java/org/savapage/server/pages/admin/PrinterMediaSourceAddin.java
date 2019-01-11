@@ -21,7 +21,6 @@
  */
 package org.savapage.server.pages.admin;
 
-import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
@@ -32,6 +31,7 @@ import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
+import org.savapage.ext.papercut.PaperCutIntegrationEnum;
 import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.server.WebApp;
 import org.savapage.server.pages.AbstractPage;
@@ -98,16 +98,19 @@ public final class PrinterMediaSourceAddin extends AbstractAdminPage {
             helper.addModifyLabelAttr(WID_DEVICE_URI_IMG, MarkupHelper.ATTR_SRC,
                     WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT));
 
-            final MutableBoolean isDelegatePaperCut = new MutableBoolean();
-            final MutableBoolean isPersonalPaperCut = new MutableBoolean();
+            final PaperCutIntegrationEnum papercutInt =
+                    PAPERCUT_SERVICE.getPrintIntegration();
 
-            PAPERCUT_SERVICE.checkPrintIntegration(isDelegatePaperCut,
-                    isPersonalPaperCut);
+            switch (papercutInt) {
 
-            if (isDelegatePaperCut.isTrue()) {
-                showMediaCost = true;
-                remark.append(localized("papercut-delegated-print"));
-            } else if (isPersonalPaperCut.isTrue()) {
+            case DELEGATED_PRINT:
+                showMediaCost = false;
+                remark.append(localized("papercut-delegated-print")).append(" ")
+                        .append(localized(
+                                "papercut-personal-print-cost-papercut-ticket"));
+                break;
+
+            case PERSONAL_PRINT:
                 remark.append(localized("papercut-personal-print"));
                 if (remark.length() > 0) {
                     remark.append(" ");
@@ -128,8 +131,11 @@ public final class PrinterMediaSourceAddin extends AbstractAdminPage {
                     remark.append(localized(
                             "papercut-personal-print-cost-papercut-ticket"));
                 }
-            } else {
+                break;
+
+            default:
                 showMediaCost = true;
+                break;
             }
         } else {
             showMediaCost = true;

@@ -23,7 +23,6 @@ package org.savapage.server.pages.admin;
 
 import java.text.ParseException;
 
-import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
@@ -35,6 +34,7 @@ import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.ext.papercut.PaperCutIntegrationEnum;
 import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -84,20 +84,8 @@ public final class PrinterAccountingAddin extends AbstractAdminPage {
         final boolean showMediaCost;
 
         if (PAPERCUT_SERVICE.isExtPaperCutPrint(printer.getPrinterName())) {
-
-            final MutableBoolean isDelegatePaperCut = new MutableBoolean();
-            final MutableBoolean isPersonalPaperCut = new MutableBoolean();
-
-            PAPERCUT_SERVICE.checkPrintIntegration(isDelegatePaperCut,
-                    isPersonalPaperCut);
-
-            if (isDelegatePaperCut.isTrue()) {
-                showMediaCost = true;
-            } else if (isPersonalPaperCut.isTrue()) {
-                showMediaCost = false;
-            } else {
-                showMediaCost = true;
-            }
+            showMediaCost = PAPERCUT_SERVICE
+                    .getPrintIntegration() != PaperCutIntegrationEnum.PERSONAL_PRINT;
         } else {
             showMediaCost = true;
         }
