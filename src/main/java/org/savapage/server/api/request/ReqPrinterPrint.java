@@ -78,6 +78,7 @@ import org.savapage.core.services.PrinterService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
+import org.savapage.core.services.helpers.ExternalSupplierInfo;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.services.helpers.PageRangeException;
 import org.savapage.core.services.helpers.PrintScalingEnum;
@@ -1696,14 +1697,20 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      * @param dtoReq
      *            The {@link DtoReq}.
      * @param printReq
+     *            Print request.
      * @param currencySymbol
+     *            Currency symbol
      * @throws IppConnectException
+     *             If IPP error.
      */
     private void onExtPaperCutPrint(final User lockedUser, final DtoReq dtoReq,
             final ProxyPrintInboxReq printReq, final String currencySymbol)
             throws IppConnectException {
 
-        PAPERCUT_SERVICE.prepareForExtPaperCut(printReq, null,
+        final ExternalSupplierInfo extSupplierInfo =
+                PAPERCUT_SERVICE.createExternalSupplierInfo(printReq);
+
+        PAPERCUT_SERVICE.prepareForExtPaperCut(printReq, extSupplierInfo,
                 PrintModeEnum.PUSH);
 
         try {

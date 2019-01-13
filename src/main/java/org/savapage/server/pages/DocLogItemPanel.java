@@ -60,7 +60,7 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.helpers.JobTicketSupplierData;
+import org.savapage.core.services.helpers.PrintSupplierData;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
 import org.savapage.server.WebApp;
@@ -493,9 +493,8 @@ public class DocLogItemPanel extends Panel {
                         ticketOperator = null;
                     } else {
 
-                        final JobTicketSupplierData extData =
-                                JobTicketSupplierData
-                                        .createFromData(obj.getExtData());
+                        final PrintSupplierData extData = PrintSupplierData
+                                .createFromData(obj.getExtData());
                         if (extData == null || extData.getOperator() == null) {
                             ticketOperator = null;
                         } else {

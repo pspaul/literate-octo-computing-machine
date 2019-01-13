@@ -58,7 +58,7 @@ import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserAccount;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.helpers.JobTicketSupplierData;
+import org.savapage.core.services.helpers.PrintSupplierData;
 import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.BitcoinUtil;
@@ -392,10 +392,8 @@ public final class AccountTrxPage extends AbstractListPage {
                         operator = null;
 
                     } else {
-                        final JobTicketSupplierData supplierData =
-                                JobTicketSupplierData.create(
-                                        JobTicketSupplierData.class,
-                                        docLog.getExternalData());
+                        final PrintSupplierData supplierData = PrintSupplierData
+                                .createFromData(docLog.getExternalData());
                         operator = supplierData.getOperator();
                     }
                     jobticket = String.format("%s %s (%s)",
