@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,6 @@ import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.CostChange;
 import org.savapage.core.jpa.DocLog;
-import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.ext.papercut.PaperCutException;
@@ -92,7 +91,7 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
 
         try {
 
-            final CostChange chg = refund(docLog, requestingUser);
+            final CostChange chg = createRefund(docLog, requestingUser);
 
             /* Commit changes... */
             ServiceContext.getDaoContext().commit();
@@ -100,7 +99,7 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
             /* ... and get full context back from database. */
             ServiceContext.getDaoContext().getCostChangeDao().refresh(chg);
 
-            if (isPaperCutRefund(chg)) {
+            if (PAPERCUT_SERVICE.isExtPaperCutPrintRefund(docLog)) {
                 PROXY_PRINT_SERVICE.refundProxyPrintPaperCut(chg);
             }
 
@@ -144,25 +143,6 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
     }
 
     /**
-     * @param chg
-     *            The {@link CostChange} refund.
-     * @return {@code true} when the refund must be propagated to PaperCut.
-     */
-    private boolean isPaperCutRefund(final CostChange chg) {
-
-        final DocLog docLog = chg.getDocLog();
-
-        if (docLog.getDocOut() != null) {
-
-            final PrintOut printOut = docLog.getDocOut().getPrintOut();
-
-            return printOut != null && PAPERCUT_SERVICE
-                    .isExtPaperCutPrint(printOut.getPrinter().getPrinterName());
-        }
-        return false;
-    }
-
-    /**
      * Refunds the full {@link DocLog#getCost()} to all accounts that were
      * originally charged.
      *
@@ -172,7 +152,7 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
      *            The requesting user.
      * @return The resulting {@link CostChange} of the refund.
      */
-    private CostChange refund(final DocLog docLog, final String trxUser) {
+    private CostChange createRefund(final DocLog docLog, final String trxUser) {
 
         final BigDecimal costOrg = docLog.getCostOriginal();
         final BigDecimal costCur = docLog.getCost();

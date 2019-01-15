@@ -27,7 +27,6 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.List;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -379,8 +378,8 @@ public final class AccountTrxPage extends AbstractListPage {
                     }
                 }
 
-                final PrintModeEnum printMode = EnumUtils
-                        .getEnum(PrintModeEnum.class, printOut.getPrintMode());
+                final PrintModeEnum printMode =
+                        DaoEnumHelper.getPrintMode(printOut);
 
                 if (printMode == PrintModeEnum.TICKET
                         || printMode == PrintModeEnum.TICKET_C
