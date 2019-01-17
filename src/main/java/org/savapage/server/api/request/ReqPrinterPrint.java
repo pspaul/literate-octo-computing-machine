@@ -794,33 +794,24 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             }
         }
 
+        //
+        final boolean isNonSecureProxyPrint = dtoReq.getReaderName() == null;
+        final boolean isNonPersonalPrint =
+                isDelegatedPrint || isSharedAccountPrint;
+
+        final boolean isMonitorPaperCutPrintStatus =
+                PAPERCUT_SERVICE.isMonitorPaperCutPrintStatus(
+                        printer.getPrinterName(), isNonPersonalPrint);
+
         /*
          * Non-secure Proxy Print, integrated with PaperCut?
          */
-        final boolean isNonSecureProxyPrint = dtoReq.getReaderName() == null;
+        final boolean isNonSecurePaperCutPrint =
+                isNonSecureProxyPrint && isMonitorPaperCutPrintStatus;
 
-        final boolean isExtPaperCutPrint =
-                isNonSecureProxyPrint && PAPERCUT_SERVICE
-                        .isMonitorPaperCutPrintStatus(printer.getPrinterName(),
-                                isDelegatedPrint || isSharedAccountPrint);
-
-        if (isExtPaperCutPrint) {
-
-            final List<String> usersNotFound = checkPaperCutUsers(
-                    requestingUser, printReq.getAccountTrxInfoSet());
-
-            if (!usersNotFound.isEmpty()) {
-
-                final StringBuilder users = new StringBuilder();
-
-                for (final String id : usersNotFound) {
-                    users.append(id).append(' ');
-                }
-                setApiResult(ApiResultCodeEnum.ERROR,
-                        "msg-print-users-missing-in-papercut",
-                        users.toString().trim());
-                return;
-            }
+        if (isNonSecurePaperCutPrint
+                && !validatePaperCutUsers(requestingUser, printReq)) {
+            return;
         }
 
         /*
@@ -844,7 +835,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             /*
              * NOTE: For JobTickets the SavaPage calculated costs are leading.
              */
-            if (isExtPaperCutPrint && !isJobTicket) {
+            if (isNonSecurePaperCutPrint && !isJobTicket) {
                 /*
                  * No need to calculate the cost since it is taken from PaperCut
                  * after PaperCut reports that job is printed successfully.
@@ -897,7 +888,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             /*
              * Direct Proxy Print integrated with PaperCut?
              */
-            if (isExtPaperCutPrint) {
+            if (isNonSecurePaperCutPrint) {
                 this.onExtPaperCutPrint(lockedUser, dtoReq, printReq,
                         currencySymbol);
                 return;
@@ -966,6 +957,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         /*
+         * INVARIANT: User(s) must exist in PaperCut.
+         */
+        if (isMonitorPaperCutPrintStatus
+                && !validatePaperCutUsers(requestingUser, printReq)) {
+            return;
+        }
+
+        /*
          * Hold Print?
          */
         final ProxyPrintAuthModeEnum authModeEnum =
@@ -982,9 +981,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setPrintMode(PrintModeEnum.AUTH);
         printReq.setStatus(ProxyPrintInboxReq.Status.NEEDS_AUTH);
 
+        if (isMonitorPaperCutPrintStatus) {
+            // ATTENTION: this will set cost result in print request to zero.
+            PAPERCUT_SERVICE.prepareForExtPaperCut(printReq,
+                    PAPERCUT_SERVICE.createExternalSupplierInfo(printReq),
+                    printReq.getPrintMode());
+        }
+
         if (ProxyPrintAuthManager.submitRequest(dtoReq.getPrinter(),
                 device.getHostname(), printReq)) {
-            onSecurePrint(printReq, currencySymbol);
+            onSecurePrint(printReq, currencySymbol, costResult);
         } else {
             setApiResult(ApiResultCodeEnum.WARN, "msg-print-auth-pending");
         }
@@ -1103,16 +1109,21 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     /**
      *
      * @param printReq
+     *            Print request.
      * @param currencySymbol
+     *            Currency symbol.
+     * @param costUserFeedback
+     *            The cost result to use for user feedback.
      */
     private void onSecurePrint(final ProxyPrintInboxReq printReq,
-            final String currencySymbol) {
+            final String currencySymbol,
+            final ProxyPrintCostDto costUserFeedback) {
 
         final String localizedCost;
 
         try {
-            localizedCost = localizedPrinterCost(
-                    printReq.getCostResult().getCostTotal(), null);
+            localizedCost =
+                    localizedPrinterCost(costUserFeedback.getCostTotal(), null);
         } catch (ParseException e) {
             throw new SpException(e.getMessage());
         }
@@ -1127,7 +1138,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             }
         }
         /*
-         * Signal NEEDS_AUTH
+         * Signal NEEDS_AUTH.
          */
         data.put("requestStatus", printReq.getStatus().toString());
         data.put("printAuthExpirySecs", ConfigManager.instance()
@@ -1470,6 +1481,35 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         return true;
+    }
+
+    /**
+     * Validates if user exist in PaperCut.
+     *
+     * @param requestingUser
+     *            Requesting user.
+     * @param dtoReq
+     *            The user request.
+     * @return {@code true} when all users exist in PaperCut.
+     */
+    private boolean validatePaperCutUsers(final String requestingUser,
+            final ProxyPrintInboxReq printReq) {
+
+        final List<String> usersNotFound = checkPaperCutUsers(requestingUser,
+                printReq.getAccountTrxInfoSet());
+
+        if (usersNotFound.isEmpty()) {
+            return true;
+        }
+
+        final StringBuilder users = new StringBuilder();
+
+        for (final String id : usersNotFound) {
+            users.append(id).append(' ');
+        }
+        setApiResult(ApiResultCodeEnum.ERROR,
+                "msg-print-users-missing-in-papercut", users.toString().trim());
+        return false;
     }
 
     /**

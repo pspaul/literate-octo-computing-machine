@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -61,8 +61,11 @@ import org.slf4j.LoggerFactory;
 public final class ProxyPrintEventService extends AbstractEventService {
 
     private static final String KEY_EVENT = "event";
+    private static final String KEY_ERROR = "error";
     private static final String KEY_DATA = "data";
+
     private static final String EVENT_PRINTED = "printed";
+    private static final String EVENT_ERROR = "error";
 
     /**
     *
@@ -222,8 +225,8 @@ public final class ProxyPrintEventService extends AbstractEventService {
         } catch (InterruptedException e) {
 
             eventData = new HashMap<String, Object>();
-            eventData.put("event", "error");
-            eventData.put("error", e.getMessage());
+            eventData.put(KEY_EVENT, EVENT_ERROR);
+            eventData.put(KEY_ERROR, e.getMessage());
 
         } catch (Exception e) {
 
@@ -231,8 +234,8 @@ public final class ProxyPrintEventService extends AbstractEventService {
                 LOGGER.error(e.getMessage(), e);
             }
             eventData = new HashMap<String, Object>();
-            eventData.put("event", "error");
-            eventData.put("error", e.getMessage());
+            eventData.put(KEY_EVENT, EVENT_ERROR);
+            eventData.put(KEY_ERROR, e.getMessage());
 
         } finally {
 
@@ -336,7 +339,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
         /*
          * Be pessimistic, and assume error.
          */
-        eventData.put("event", "error");
+        eventData.put(KEY_EVENT, EVENT_ERROR);
 
         final long timeout = ProxyPrintAuthManager.getMaxRequestAgeSeconds();
 
