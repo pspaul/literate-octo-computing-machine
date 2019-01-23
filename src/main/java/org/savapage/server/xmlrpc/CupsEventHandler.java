@@ -162,8 +162,9 @@ public final class CupsEventHandler implements ServiceEntryPoint {
 
             if (ippJobState != null) {
 
-                // Correct job state?
+                // Correction of job state and completed time?
                 IppJobStateEnum ippStateCorr = ippJobState;
+                Integer completedTimeCorr = completedTime;
 
                 if (ippJobState == IppJobStateEnum.IPP_JOB_UNKNOWN) {
 
@@ -178,6 +179,12 @@ public final class CupsEventHandler implements ServiceEntryPoint {
 
                     } else if (event.equals(EVENT_JOB_STOPPED)) {
                         ippStateCorr = IppJobStateEnum.IPP_JOB_STOPPED;
+                    }
+
+                    if (ippStateCorr == IppJobStateEnum.IPP_JOB_UNKNOWN
+                            && completedTimeCorr == null) {
+                        completedTimeCorr =
+                                PROXY_PRINT_SERVICE.getCupsSystemTime();
                     }
                 }
 
@@ -199,7 +206,7 @@ public final class CupsEventHandler implements ServiceEntryPoint {
                                 ippJobState);
 
                 jobStatus.setCupsCreationTime(creationTime);
-                jobStatus.setCupsCompletedTime(completedTime);
+                jobStatus.setCupsCompletedTime(completedTimeCorr);
 
                 /*
                  * We pass the job status to the monitor who detect and handle
