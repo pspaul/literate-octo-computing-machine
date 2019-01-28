@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wicket.protocol.http.WebApplication;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.ServerPathEnum;
 import org.savapage.core.util.IOHelper;
 
 /**
@@ -58,12 +59,14 @@ public final class CustomWebServlet extends HttpServlet {
     private static final int BUFFER_SIZE = 1014;
 
     /**
-     * Base path of custom web files (without leading or trailing '/').
+     * Base path of custom web files (without leading or trailing '/'). Same as
+     * {@link ServerPathEnum#CUSTOM_WEB}.
      */
     public static final String PATH_BASE = "custom/web";
 
     /**
-     * Base path of custom web themes (without leading or trailing '/').
+     * Base path of custom web themes (without leading or trailing '/'). Same as
+     * {@link ServerPathEnum#CUSTOM_WEB_THEMES}.
      */
     public static final String PATH_BASE_THEMES = PATH_BASE + "/themes";
 
