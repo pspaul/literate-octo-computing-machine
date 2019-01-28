@@ -54,6 +54,7 @@ import org.savapage.core.dao.AccountTrxDao;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.UserAttrDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dto.UserPaymentGatewayDto;
 import org.savapage.core.jpa.AccountTrx;
@@ -89,6 +90,8 @@ import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.ext.payment.bitcoin.BitcoinGatewayListener;
 import org.savapage.ext.payment.bitcoin.BitcoinGatewayTrx;
 import org.savapage.ext.payment.bitcoin.BitcoinWalletInfo;
+import org.savapage.server.CustomWebServlet;
+import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.callback.CallbackServlet;
 import org.slf4j.Logger;
@@ -200,8 +203,8 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     /**
      * All {@link OAuthClientPlugin} instances.
      */
-    private final Map<OAuthProviderEnum, OAuthClientPlugin> oauthClientPlugins =
-            new HashMap<>();
+    private final Map<OAuthProviderEnum, Map<String, OAuthClientPlugin>> //
+    oauthClientPlugins = new HashMap<>();
 
     /**
      * All {@link NotificationPlugin} instances.
@@ -233,7 +236,8 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      * @return The {@link Map} of (@link {@link OAuthClientPlugin} instances by
      *         unique ID.
      */
-    public Map<OAuthProviderEnum, OAuthClientPlugin> getOAuthClientPlugins() {
+    public Map<OAuthProviderEnum, Map<String, OAuthClientPlugin>>
+            getOAuthClientPlugins() {
         return oauthClientPlugins;
     }
 
@@ -430,7 +434,17 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 oauthPlugin.onInit(pluginId, pluginName, pluginLive,
                         pluginOnline, props, this);
 
-                oauthClientPlugins.put(oauthPlugin.getProvider(), oauthPlugin);
+                Map<String, OAuthClientPlugin> mapPluginInstance =
+                        this.oauthClientPlugins.get(oauthPlugin.getProvider());
+
+                if (mapPluginInstance == null) {
+                    mapPluginInstance = new HashMap<>();
+                }
+
+                mapPluginInstance.put(oauthPlugin.getInstanceId(), oauthPlugin);
+
+                this.oauthClientPlugins.put(oauthPlugin.getProvider(),
+                        mapPluginInstance);
 
                 validateOAuthCallbackUrl(oauthPlugin);
 
@@ -444,7 +458,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 notificationPlugin.onInit(pluginId, pluginName, pluginLive,
                         pluginOnline, props, this);
 
-                notificationPlugins.put(pluginId, notificationPlugin);
+                this.notificationPlugins.put(pluginId, notificationPlugin);
 
             } else {
 
@@ -458,7 +472,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                         String.format("%s [%s] loaded.", pluginType, istrName));
             }
 
-            allPlugins.add((ServerPlugin) plugin);
+            this.allPlugins.add((ServerPlugin) plugin);
 
         } catch (NoSuchMethodException | SecurityException
                 | InstantiationException | IllegalAccessException
@@ -485,11 +499,17 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     private void validateOAuthCallbackUrl(final OAuthClientPlugin plugin)
             throws MalformedURLException {
 
-        final String query =
-                String.format("%s=%s", WebAppParmEnum.SP_OAUTH.parm(),
-                        plugin.getProvider().toString().toLowerCase());
+        final StringBuilder query = new StringBuilder();
 
-        if (!plugin.getCallbackUrl().getQuery().equals(query)) {
+        query.append(WebAppParmEnum.SP_OAUTH.parm()).append('=')
+                .append(plugin.getProvider().toString().toLowerCase());
+
+        if (StringUtils.isNotBlank(plugin.getInstanceId())) {
+            query.append('&').append(WebAppParmEnum.SP_OAUTH_ID.parm())
+                    .append('=').append(plugin.getInstanceId());
+        }
+
+        if (!plugin.getCallbackUrl().getQuery().equals(query.toString())) {
             throw new MalformedURLException(String.format(
                     "Plugin [%s] callback URL [%s] must have query [%s]",
                     plugin.getId(), plugin.getCallbackUrl().toString(), query));
@@ -610,14 +630,33 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     }
 
     /**
-     * Gets the {@link OAuthClientPlugin} by its ID.
+     * Gets the {@link OAuthClientPlugin} by its IDs.
      *
      * @param provider
      *            The OAuth provider.
+     * @param instanceId
+     *            The OAuth instance ID (can be {@code null}).
      * @return The {@link OAuthClientPlugin}, or {@code null} when not found.
      */
-    public OAuthClientPlugin getOAuthClient(final OAuthProviderEnum provider) {
-        return this.oauthClientPlugins.get(provider);
+    public OAuthClientPlugin getOAuthClient(final OAuthProviderEnum provider,
+            final String instanceId) {
+        return this.oauthClientPlugins.get(provider).get(instanceId);
+    }
+
+    /**
+     *
+     * @param plugin
+     *            The{@link OAuthClientPlugin}.
+     * @return The URL path to the icon.
+     */
+    public String getOAuthClientIconPath(final OAuthClientPlugin plugin) {
+        if (plugin.getCustomIconPath() == null) {
+            final ExternalSupplierEnum supplier =
+                    ServerPluginHelper.getEnum(plugin.getProvider());
+            return WebApp.getExtSupplierEnumImgUrl(supplier);
+        }
+        return String.format("%s/%s", CustomWebServlet.PATH_BASE,
+                plugin.getCustomIconPath());
     }
 
     /**
@@ -1206,13 +1245,19 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 builder.append('\n').append(delim);
             }
 
-            for (final Entry<OAuthProviderEnum, OAuthClientPlugin> entry : //
-            this.oauthClientPlugins.entrySet()) {
-                builder.append("\n| ").append(String.format("[%s]",
-                        entry.getValue().getClass().getName()));
-                builder.append("\n| Authorization: ")
-                        .append(entry.getValue().getAuthorizationUrl());
-                builder.append('\n').append(delim);
+            for (final Map<String, OAuthClientPlugin> pluginMap : //
+            this.oauthClientPlugins.values()) {
+                for (final OAuthClientPlugin plugin : pluginMap.values()) {
+                    builder.append("\n| ").append(
+                            String.format("[%s]", plugin.getClass().getName()));
+                    if (plugin.getInstanceId() != null) {
+                        builder.append(
+                                String.format(" [%s]", plugin.getInstanceId()));
+                    }
+                    builder.append("\n| Authorization: ")
+                            .append(plugin.getAuthorizationUrl());
+                    builder.append('\n').append(delim);
+                }
             }
             pluginsWlk++;
         }
@@ -1253,8 +1298,6 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                 builder.append('\n').append(delim);
 
             }
-
-            builder.append('\n').append(delim);
             pluginsWlk++;
         }
 

@@ -2019,7 +2019,8 @@
                     var res = _api.call({
                         request : "oauth-url",
                         dto : JSON.stringify({
-                            provider : $(this).attr('data-savapage')
+                            provider : $(this).attr('data-savapage'),
+                            instanceId : $(this).attr('data-savapage-type')
                         })
                     });
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,8 +24,13 @@ package org.savapage.server.pages;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -44,6 +49,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.LocaleHelper;
+import org.savapage.ext.oauth.OAuthClientPlugin;
 import org.savapage.ext.oauth.OAuthProviderEnum;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
@@ -187,24 +193,37 @@ public final class Login extends AbstractPage {
      */
     private void addOAuthButtons(final boolean localLoginRestricted) {
 
-        final List<OAuthProviderEnum> list = new ArrayList<>();
+        final List<OAuthClientPlugin> pluginList = new ArrayList<>();
+        final List<Pair<OAuthProviderEnum, String>> oauthList =
+                new ArrayList<>();
+
+        final ServerPluginManager mgr = WebApp.get().getPluginManager();
 
         if (!localLoginRestricted) {
-            final ServerPluginManager mgr = WebApp.get().getPluginManager();
 
-            for (final OAuthProviderEnum value : mgr.getOAuthClientPlugins()
-                    .keySet()) {
-                list.add(value);
+            for (final Entry<OAuthProviderEnum, //
+                    Map<String, OAuthClientPlugin>> entry : mgr
+                            .getOAuthClientPlugins().entrySet()) {
+
+                final OAuthProviderEnum provider = entry.getKey();
+
+                for (final Entry<String, OAuthClientPlugin> entry2 : entry
+                        .getValue().entrySet()) {
+                    final String instanceId = entry2.getKey();
+                    oauthList.add(new ImmutablePair<OAuthProviderEnum, String>(
+                            provider, instanceId));
+                    pluginList.add(entry2.getValue());
+                }
             }
         }
 
-        add(new PropertyListView<OAuthProviderEnum>("ext-supplier-icons",
-                list) {
+        add(new PropertyListView<OAuthClientPlugin>("ext-supplier-icons",
+                pluginList) {
 
             private static final long serialVersionUID = 1L;
 
             private static final String OAUTH_PROVIDER_ICON_FORMAT =
-                    ".ui-icon-ext-oauth-provider-%s:after { " + "background: "
+                    ".ui-icon-ext-oauth-provider-%s%s:after { " + "background: "
                             + "url(%s) " + "50%% 50%% no-repeat; "
                             + "background-size: 22px 22px; "
                             + "padding-left: 15px; "
@@ -213,43 +232,61 @@ public final class Login extends AbstractPage {
 
             @Override
             protected void
-                    populateItem(final ListItem<OAuthProviderEnum> item) {
+                    populateItem(final ListItem<OAuthClientPlugin> item) {
 
-                final OAuthProviderEnum provider = item.getModelObject();
+                final OAuthClientPlugin plugin = item.getModelObject();
+
                 final ExternalSupplierEnum supplier =
-                        ServerPluginHelper.getEnum(provider);
+                        ServerPluginHelper.getEnum(plugin.getProvider());
 
                 final Label label = new Label("ext-supplier-icon",
                         String.format(OAUTH_PROVIDER_ICON_FORMAT,
-                                provider.toString().toLowerCase(), WebApp
-                                        .getExtSupplierEnumImgUrl(supplier)));
+                                plugin.getProvider().toString().toLowerCase(),
+                                StringUtils
+                                        .defaultString(plugin.getInstanceId()),
+                                mgr.getOAuthClientIconPath(plugin)));
 
                 label.setEscapeModelStrings(false);
                 item.add(label);
             }
         });
 
-        add(new PropertyListView<OAuthProviderEnum>("oauth-buttons", list) {
+        add(new PropertyListView<Pair<OAuthProviderEnum, String>>(
+                "oauth-buttons", oauthList) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void
-                    populateItem(final ListItem<OAuthProviderEnum> item) {
+            protected void populateItem(
+                    final ListItem<Pair<OAuthProviderEnum, String>> item) {
 
-                final OAuthProviderEnum provider = item.getModelObject();
+                final Pair<OAuthProviderEnum, String> pair =
+                        item.getModelObject();
+
+                final OAuthProviderEnum provider = pair.getLeft();
+                final String instanceId = pair.getRight();
 
                 final Label label = new Label("oauth-button", "&nbsp;");
 
                 MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_CLASS,
-                        String.format("ui-icon-ext-oauth-provider-%s",
-                                provider.toString().toLowerCase()));
-
-                MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_TITLE,
-                        provider.uiText());
+                        String.format("ui-icon-ext-oauth-provider-%s%s",
+                                provider.toString().toLowerCase(),
+                                StringUtils.defaultString(instanceId)));
 
                 MarkupHelper.modifyLabelAttr(label,
                         MarkupHelper.ATTR_DATA_SAVAPAGE, provider.toString());
+
+                final StringBuilder title = new StringBuilder();
+                title.append(provider.uiText());
+
+                if (instanceId != null) {
+                    MarkupHelper.modifyLabelAttr(label,
+                            MarkupHelper.ATTR_DATA_SAVAPAGE_TYPE, instanceId);
+                    title.append(" | ").append(instanceId);
+                }
+
+                MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_TITLE,
+                        title.toString());
 
                 label.setEscapeModelStrings(false);
                 item.add(label);

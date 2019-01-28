@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -48,6 +48,7 @@ public final class ReqOAuthUrl extends ApiRequestMixin {
     private static class DtoReq extends AbstractDto {
 
         private OAuthProviderEnum provider;
+        private String instanceId;
 
         public OAuthProviderEnum getProvider() {
             return provider;
@@ -56,6 +57,15 @@ public final class ReqOAuthUrl extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setProvider(OAuthProviderEnum provider) {
             this.provider = provider;
+        }
+
+        public String getInstanceId() {
+            return instanceId;
+        }
+
+        @SuppressWarnings("unused")
+        public void setInstanceId(String instanceId) {
+            this.instanceId = instanceId;
         }
 
     }
@@ -89,13 +99,12 @@ public final class ReqOAuthUrl extends ApiRequestMixin {
         final ServerPluginManager pluginManager =
                 WebApp.get().getPluginManager();
 
-        final OAuthClientPlugin plugin =
-                pluginManager.getOAuthClient(dtoReq.getProvider());
+        final OAuthClientPlugin plugin = pluginManager
+                .getOAuthClient(dtoReq.getProvider(), dtoReq.getInstanceId());
 
         if (plugin == null) {
-            setApiResultText(ApiResultCodeEnum.ERROR,
-                    String.format("%s plug-in not found.",
-                            dtoReq.getProvider().uiText()));
+            setApiResultText(ApiResultCodeEnum.ERROR, String.format(
+                    "%s plug-in not found.", dtoReq.getProvider().uiText()));
             return;
         }
 

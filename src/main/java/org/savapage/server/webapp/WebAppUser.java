@@ -226,6 +226,21 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         final String oauthProvider = oauthProviderValue.toString();
 
+        final StringValue oauthInstanceIdValue =
+                reqParms.getParameterValue(WebAppParmEnum.SP_OAUTH_ID.parm());
+
+        final String logPfx;
+
+        final String oauthInstanceId;
+        if (oauthInstanceIdValue.isEmpty()) {
+            oauthInstanceId = null;
+            logPfx = String.format("OAuth [%s]", oauthProviderValue);
+        } else {
+            oauthInstanceId = oauthInstanceIdValue.toString();
+            logPfx = String.format("OAuth [%s][%s]", oauthProviderValue,
+                    oauthInstanceId);
+        }
+
         final ServerPluginManager pluginManager =
                 WebApp.get().getPluginManager();
 
@@ -233,7 +248,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         for (final OAuthProviderEnum value : OAuthProviderEnum.values()) {
             if (oauthProvider.equalsIgnoreCase(value.toString())) {
-                plugin = pluginManager.getOAuthClient(value);
+                plugin = pluginManager.getOAuthClient(value, oauthInstanceId);
             }
             if (plugin == null) {
                 continue;
@@ -242,8 +257,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         }
 
         if (plugin == null) {
-            LOGGER.error(String.format("OAuth [%s]: plugin not found.",
-                    oauthProvider));
+            LOGGER.error("{}: plugin not found.", logPfx);
             return Boolean.FALSE;
         }
 
@@ -278,8 +292,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         //
         if (userInfo == null) {
-            LOGGER.error(
-                    String.format("OAuth [%s]: no userinfo.", oauthProvider));
+            LOGGER.error("{}: no userinfo.", logPfx);
             return Boolean.FALSE;
         }
 
@@ -287,9 +300,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         final String email = userInfo.getEmail();
 
         if (userid == null && email == null) {
-            LOGGER.error(
-                    String.format("OAuth [%s]: no userid or email in userinfo.",
-                            oauthProvider));
+            LOGGER.error("{}: no userid or email in userinfo.", logPfx);
             return Boolean.FALSE;
         }
 
@@ -299,8 +310,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             final UserEmail userEmail = ServiceContext.getDaoContext()
                     .getUserEmailDao().findByEmail(email);
             if (userEmail == null) {
-                LOGGER.warn(String.format("OAuth [%s] email [%s]: not found.",
-                        oauthProvider, email));
+                LOGGER.warn("{}: email [{}]: not found.", logPfx, email);
                 return Boolean.FALSE;
             }
             authUser = userEmail.getUser();
@@ -309,8 +319,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             authUser = ServiceContext.getDaoContext().getUserDao()
                     .findActiveUserByUserId(userid);
             if (authUser == null) {
-                LOGGER.warn(String.format("OAuth [%s] user [%s]: not found.",
-                        oauthProvider, email));
+                LOGGER.warn("{}: user [{}]: not found.", logPfx, userid);
                 return Boolean.FALSE;
             }
         } else {
@@ -319,9 +328,8 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         if (authUser.getDeleted().booleanValue()
                 || authUser.getDisabledPrintIn().booleanValue()) {
-            LOGGER.warn(
-                    String.format("OAuth [%s] user [%s]: deleted or disabled.",
-                            oauthProvider, authUser.getUserId()));
+            LOGGER.warn("{}: user [{}]: deleted or disabled.", logPfx,
+                    authUser.getUserId());
             return Boolean.FALSE;
         }
 
@@ -331,8 +339,8 @@ public final class WebAppUser extends AbstractWebAppPage {
         final SpSession session = SpSession.get();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("OAuth [%s] user [%s]: OK [session: %s]",
-                    oauthProvider, authUser.getUserId(), session.getId()));
+            LOGGER.debug("{}: user [{}]: OK [session: {}]",
+                    logPfx, authUser.getUserId(), session.getId());
         }
 
         session.setUser(authUser);

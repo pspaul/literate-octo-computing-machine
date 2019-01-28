@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -76,9 +76,17 @@ public final class OAuthRedirectPage extends RedirectPage {
                 EnumUtils.getEnum(OAuthProviderEnum.class, StringUtils
                         .defaultString(parms.get(0).toString()).toUpperCase());
 
+        final String oauthInstanceId;
+
+        if (parms.get(1).isEmpty()) {
+            oauthInstanceId = null;
+        } else {
+            oauthInstanceId = parms.get(1).toString();
+        }
+
         if (provider != null) {
             final OAuthClientPlugin plugin =
-                    pluginManager.getOAuthClient(provider);
+                    pluginManager.getOAuthClient(provider, oauthInstanceId);
             if (plugin != null) {
                 redirectUrl = plugin.getAuthorizationUrl().toString();
             }
