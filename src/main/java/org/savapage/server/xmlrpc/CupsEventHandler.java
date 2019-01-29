@@ -208,6 +208,8 @@ public final class CupsEventHandler implements ServiceEntryPoint {
                 jobStatus.setCupsCreationTime(creationTime);
                 jobStatus.setCupsCompletedTime(completedTimeCorr);
 
+                jobStatus.setUpdateTime(System.currentTimeMillis());
+
                 /*
                  * We pass the job status to the monitor who detect and handle
                  * state changes.
