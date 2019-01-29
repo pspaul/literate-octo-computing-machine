@@ -228,6 +228,21 @@ public final class About extends AbstractAdminPage {
         }
         add(labelWrk);
 
+        // ---------- qpdf
+        colorInstalled = null;
+        version = SystemInfo.getQPdfVersion();
+        installed = StringUtils.isNotBlank(version);
+        if (!installed) {
+            version = localized("not-installed");
+            colorInstalled = MarkupHelper.CSS_TXT_ERROR;
+        }
+
+        labelWrk = new Label("version-qpdf", version);
+        if (colorInstalled != null) {
+            labelWrk.add(new AttributeModifier("class", colorInstalled));
+        }
+        add(labelWrk);
+
         // ----------xpstopdf
         colorInstalled = null;
         installed = XpsToPdf.isInstalled();

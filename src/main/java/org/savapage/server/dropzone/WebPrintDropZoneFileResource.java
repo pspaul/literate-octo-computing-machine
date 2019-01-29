@@ -94,6 +94,7 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
      * .
      */
     public WebPrintDropZoneFileResource() {
+        ServiceContext.setLocale(SpSession.get().getLocale());
     }
 
     @Override
