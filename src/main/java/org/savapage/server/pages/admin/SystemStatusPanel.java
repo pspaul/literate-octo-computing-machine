@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -798,11 +798,17 @@ public final class SystemStatusPanel extends Panel {
          * Proxy Print
          */
         int size = 0;
+        String printJobQueue = "";
 
         if (showTechInfo) {
+            final long sizeDb = ServiceContext.getDaoContext().getPrintOutDao()
+                    .countActiveCupsJobs();
             size = ProxyPrintJobStatusMonitor.getPendingJobs();
+
+            printJobQueue =
+                    String.format("%d (%d) • monitor (database)", size, sizeDb);
         }
-        helper.encloseLabel("proxy-print-queue-size", String.valueOf(size),
+        helper.encloseLabel("proxy-print-queue-size", printJobQueue,
                 showTechInfo);
 
         /*
