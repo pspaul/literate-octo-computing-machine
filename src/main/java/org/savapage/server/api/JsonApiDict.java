@@ -584,28 +584,55 @@ public final class JsonApiDict {
 
     /**
      *
+     * @param request
+     *            The request id.
+     * @param uid
+     *            The requesting user id.
+     * @return context ID for lock.
+     */
+    private static String createLockContextId(final String request,
+            final String uid) {
+        return String.format("%s:%s", request, uid);
+    }
+
+    /**
+     *
      * @param lock
      *            The {@link LetterheadLock}.
+     * @param request
+     *            The request id.
+     * @param uid
+     *            The requesting user id.
      */
-    public void lock(final LetterheadLock lock) {
+    public void lock(final LetterheadLock lock, final String request,
+            final String uid) {
         if (lock == JsonApiDict.LetterheadLock.READ) {
-            ReadWriteLockEnum.LETTERHEAD_STORE.setReadLock(true);
+            ReadWriteLockEnum.LETTERHEAD_STORE.setReadLock(true,
+                    createLockContextId(request, uid));
         } else if (lock == JsonApiDict.LetterheadLock.UPDATE) {
-            ReadWriteLockEnum.LETTERHEAD_STORE.setWriteLock(true);
+            ReadWriteLockEnum.LETTERHEAD_STORE.setWriteLock(true,
+                    createLockContextId(request, uid));
         }
     }
 
     /**
      * @param claim
      *            The {@link DbClaim}.
+     * @param request
+     *            The request id.
+     * @param uid
+     *            The requesting user id.
      * @throws ReadLockObtainFailedException
      *             When lock could not be acquired.
      */
-    public void lock(final DbClaim claim) throws ReadLockObtainFailedException {
+    public void lock(final DbClaim claim, final String request,
+            final String uid) throws ReadLockObtainFailedException {
         if (claim == JsonApiDict.DbClaim.READ) {
-            ReadWriteLockEnum.DATABASE_READONLY.tryReadLock();
+            ReadWriteLockEnum.DATABASE_READONLY
+                    .tryReadLock(createLockContextId(request, uid));
         } else if (claim == JsonApiDict.DbClaim.EXCLUSIVE) {
-            ReadWriteLockEnum.DATABASE_READONLY.setWriteLock(true);
+            ReadWriteLockEnum.DATABASE_READONLY.setWriteLock(true,
+                    createLockContextId(request, uid));
         }
     }
 
