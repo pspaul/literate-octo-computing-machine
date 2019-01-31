@@ -137,9 +137,9 @@ public final class CupsEventHandler implements ServiceEntryPoint {
             MemberCard.instance().validateContent(apiId, apiKey);
 
             /*
-             * CAUTION: The SavaPage CUPS notifier passes job state
-             * notifications from CUPS. CUPS notifies repeatedly (every second),
-             * even when there is NO state change.
+             * IMPORTANT: CUPS notifies job state CHANGES, but it continuously
+             * (every second) notifies status PROCESSING while job is being
+             * processed.
              */
 
             String printerStateTxt = null;
