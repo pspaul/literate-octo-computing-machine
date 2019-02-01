@@ -65,10 +65,10 @@ import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
 import org.savapage.core.services.AppLogService;
-import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.system.SystemInfo;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.IOHelper;
 import org.savapage.core.util.LocaleHelper;
@@ -120,10 +120,6 @@ public final class SystemStatusPanel extends Panel {
             ServiceContext.getServiceFactory().getAppLogService();
 
     /** */
-    private static final DocStoreService DOC_STORE_SERVICE =
-            ServiceContext.getServiceFactory().getDocStoreService();
-
-    /** */
     private static final QueueService QUEUE_SERVICE =
             ServiceContext.getServiceFactory().getQueueService();
 
@@ -150,6 +146,7 @@ public final class SystemStatusPanel extends Panel {
     public void populate(final boolean hasEditorAccess) {
 
         final MarkupHelper helper = new MarkupHelper(this);
+        final LocaleHelper localeHelper = new LocaleHelper(getLocale());
 
         final ConfigManager cm = ConfigManager.instance();
         final MemberCard memberCard = MemberCard.instance();
@@ -208,7 +205,7 @@ public final class SystemStatusPanel extends Panel {
 
         //
         add(new Label("sys-uptime",
-                DateUtil.formatDuration(ConfigManager.getUptime())));
+                DateUtil.formatDuration(SystemInfo.getUptime())));
 
         //
         final UserDao userDAO = ServiceContext.getDaoContext().getUserDao();
@@ -687,7 +684,6 @@ public final class SystemStatusPanel extends Panel {
         String certClass = null;
 
         if (sslCert != null) {
-            final LocaleHelper localeHelper = new LocaleHelper(getLocale());
             final Date dateRef = new Date();
             if (sslCert.isNotAfterWithinYear(dateRef)) {
                 certText = localeHelper.getMediumDate(sslCert.getNotAfter());
@@ -745,6 +741,17 @@ public final class SystemStatusPanel extends Panel {
             tooltip.populate(helper.localized("tooltip-jvm-memory"), true);
             add(tooltip);
         }
+
+        //
+        final String openFiles;
+        if (showTechInfo) {
+            helper.addLabel("open-files-prompt", "Open Files");
+            openFiles = helper
+                    .localizedNumber(SystemInfo.getOpenFileDescriptorCount());
+        } else {
+            openFiles = "";
+        }
+        helper.encloseLabel("open-files", openFiles, showTechInfo);
 
         /*
          *
