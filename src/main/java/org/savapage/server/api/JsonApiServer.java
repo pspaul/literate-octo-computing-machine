@@ -527,7 +527,7 @@ public final class JsonApiServer extends AbstractPage {
                     }
 
                 } else {
-                    apiRes = handleException(requestId, t);
+                    apiRes = handleException(requestId, requestingUser, t);
                 }
 
                 jsonArray = new ObjectMapper().writeValueAsString(apiRes);
@@ -555,8 +555,8 @@ public final class JsonApiServer extends AbstractPage {
 
             } catch (Exception ex) {
                 try {
-                    jsonArray = new ObjectMapper()
-                            .writeValueAsString(handleException(requestId, ex));
+                    jsonArray = new ObjectMapper().writeValueAsString(
+                            handleException(requestId, requestingUser, ex));
                 } catch (Exception e1) {
                     LOGGER.error(e1.getMessage());
                 }
@@ -1947,11 +1947,13 @@ public final class JsonApiServer extends AbstractPage {
 
     /**
      *
-     * @param e
+     * @param requestId
+     * @param requestingUser
+     * @param exception
      * @return
      */
     private Map<String, Object> handleException(final String requestId,
-            final Exception exception) {
+            final String requestingUser, final Exception exception) {
 
         String msg = null;
         String msgKey = null;
@@ -1974,7 +1976,9 @@ public final class JsonApiServer extends AbstractPage {
                         || exception instanceof PessimisticLockException) {
                     LOGGER.error(exception.getMessage());
                 } else {
-                    LOGGER.error(String.format("[%s] %s", requestId,
+                    LOGGER.error(String.format("[%s][%s][%s]: %s", requestId,
+                            StringUtils.defaultString(requestingUser, "-"),
+                            this.createUserAgentHelper().getUserAgentHeader(),
                             exception.getMessage()), exception);
                 }
             }
