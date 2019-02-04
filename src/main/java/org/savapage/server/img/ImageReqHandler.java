@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -32,65 +32,63 @@ import org.slf4j.LoggerFactory;
 /**
  * Our own handler to service the request for a generated image file.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
-public class ImageReqHandler extends ResourceStreamRequestHandler {
+public final class ImageReqHandler extends ResourceStreamRequestHandler {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ImageReqHandler.class);
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ImageReqHandler.class);
 
+    /** Image file. */
     private final File file;
 
     /**
      *
-     * @param file
+     * @param image
+     *            The image file.
      */
-    public ImageReqHandler(File file) {
+    public ImageReqHandler(final File image) {
 
-        super(new FileResourceStream(file));
+        super(new FileResourceStream(image));
 
-        this.file = file;
+        this.file = image;
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("handle image file [" + file.getAbsolutePath() + "]");
+            LOGGER.trace("handle image file [{}]", image.getAbsolutePath());
         }
     }
 
     /**
      * The actual release of the file.
      *
-     * @param file
+     * @param image
+     *            Image file.
      */
-    protected void releaseFile(File image) {
+    protected void releaseFile(final File image) {
         if (image.exists()) {
             if (image.delete()) {
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("deleted image file ["
-                            + image.getAbsolutePath() + "]");
+                    LOGGER.trace("Deleted image file [{}]",
+                            image.getAbsolutePath());
                 }
             } else {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("delete of image file ["
-                            + image.getAbsolutePath() + "] FAILED");
-                }
+                LOGGER.warn("Delete of image file [{}] FAILED.",
+                        image.getAbsolutePath());
             }
         } else {
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("image file to be deleted ["
-                        + image.getAbsolutePath() + "] does NOT exist");
-            }
+            LOGGER.warn("Image file to be deleted [{}] does NOT exist.",
+                    image.getAbsolutePath());
         }
-
     }
 
     @Override
-    public void detach(IRequestCycle requestCycle) {
-        if (file != null) {
-            releaseFile(file);
+    public void detach(final IRequestCycle requestCycle) {
+        if (this.file != null) {
+            releaseFile(this.file);
         } else {
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("no image file to delete");
-            }
+            LOGGER.warn("No image file to delete");
         }
         super.detach(requestCycle);
     }
