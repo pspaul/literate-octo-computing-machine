@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -276,8 +276,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onSubmit(final AjaxRequestTarget target,
-                    final Form<?> form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
 
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info(String.format("Uploading %s file.",
@@ -289,8 +288,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
             }
 
             @Override
-            protected void onError(final AjaxRequestTarget target,
-                    final Form<?> form) {
+            protected void onError(final AjaxRequestTarget target) {
 
                 LOGGER.error(String.format("Error importing %s",
                         CommunityDictEnum.MEMBER_CARD.getWord()));

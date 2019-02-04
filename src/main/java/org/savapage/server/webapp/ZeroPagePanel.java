@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -80,8 +80,7 @@ public final class ZeroPagePanel extends Panel {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void onSubmit(final AjaxRequestTarget target,
-                            final Form<?> form) {
+                    protected void onSubmit(final AjaxRequestTarget target) {
 
                         final PageParameters parms = new PageParameters();
                         parms.set(WebAppParmEnum.SP_ZERO.parm(), "1");
@@ -106,8 +105,7 @@ public final class ZeroPagePanel extends Panel {
                     }
 
                     @Override
-                    protected void onError(AjaxRequestTarget target,
-                            Form<?> form) {
+                    protected void onError(AjaxRequestTarget target) {
                         // no code intended
                     }
                 };

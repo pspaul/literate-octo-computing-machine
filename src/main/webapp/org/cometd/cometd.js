@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2018 the original author or authors.
+ * Copyright (c) 2008-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-/* CometD Version 3.1.5 */
+/* CometD Version 3.1.8 */
 
-(function(root, factory){
+(function(root, factory) {
     if (typeof exports === 'object') {
         // CommonJS.
         module.exports = factory();
@@ -29,6 +29,61 @@
         root.org.cometd = factory();
     }
 }(this, function() {
+    /**
+     * Browsers may throttle the Window scheduler,
+     * so we may replace it with a Worker scheduler.
+     */
+    var Scheduler = function() {
+        var _ids = 0;
+        var _tasks = {};
+        this.register = function(funktion) {
+            var id = ++_ids;
+            _tasks[id] = funktion;
+            return id;
+        };
+        this.unregister = function(id) {
+            var funktion = _tasks[id];
+            delete _tasks[id];
+            return funktion;
+        };
+        this.setTimeout = function(funktion, delay) {
+            return window.setTimeout(funktion, delay);
+        };
+        this.clearTimeout = function(id) {
+            window.clearTimeout(id);
+        };
+    };
+
+    /**
+     * The scheduler code that will run in the Worker.
+     */
+    function WorkerScheduler() {
+        var _tasks = {};
+        self.onmessage = function(e) {
+            var cmd = e.data;
+            var id = _tasks[cmd.id];
+            switch (cmd.type) {
+                case 'setTimeout':
+                    _tasks[cmd.id] = self.setTimeout(function() {
+                        delete _tasks[cmd.id];
+                        self.postMessage({
+                            id: cmd.id
+                        });
+                    }, cmd.delay);
+                    break;
+                case 'clearTimeout':
+                    delete _tasks[cmd.id];
+                    if (id) {
+                        self.clearTimeout(id);
+                    }
+                    break;
+                default:
+                    throw 'Unknown command ' + cmd.type;
+            }
+        };
+    }
+
+
     /**
      * Utility functions.
      */
@@ -58,19 +113,6 @@
                 }
             }
             return -1;
-        },
-        setTimeout: function(cometd, funktion, delay) {
-            return window.setTimeout(function() {
-                try {
-                    cometd._debug('Invoking timed function', funktion);
-                    funktion();
-                } catch (x) {
-                    cometd._debug('Exception invoking timed function', funktion, x);
-                }
-            }, delay);
-        },
-        clearTimeout: function(timeoutHandle) {
-            window.clearTimeout(timeoutHandle);
         }
     };
 
@@ -212,11 +254,11 @@
         };
 
         this.setTimeout = function(funktion, delay) {
-            return Utils.setTimeout(_cometd, funktion, delay);
+            return _cometd.setTimeout(funktion, delay);
         };
 
-        this.clearTimeout = function(handle) {
-            Utils.clearTimeout(handle);
+        this.clearTimeout = function(id) {
+            _cometd.clearTimeout(id);
         };
 
         /**
@@ -368,7 +410,7 @@
                 envelope: envelope
             };
 
-            // Consider the metaConnect requests which should always be present
+            // Consider the /meta/connect requests which should always be present.
             if (_requests.length < this.getConfiguration().maxConnections - 1) {
                 _requests.push(request);
                 _transportSend.call(this, envelope, request);
@@ -380,12 +422,10 @@
 
         function _metaConnectComplete(request) {
             var requestId = request.id;
-            this._debug('Transport', this.getType(), 'metaConnect complete, request', requestId);
+            this._debug('Transport', this.getType(), '/meta/connect complete, request', requestId);
             if (_metaConnectRequest !== null && _metaConnectRequest.id !== requestId) {
-                throw 'Longpoll request mismatch, completing request ' + requestId;
+                throw '/meta/connect request mismatch, completing request ' + requestId;
             }
-
-            // Reset metaConnect request
             _metaConnectRequest = null;
         }
 
@@ -464,11 +504,11 @@
 
         function _metaConnectSend(envelope) {
             if (_metaConnectRequest !== null) {
-                throw 'Concurrent metaConnect requests not allowed, request id=' + _metaConnectRequest.id + ' not yet completed';
+                throw 'Concurrent /meta/connect requests not allowed, request id=' + _metaConnectRequest.id + ' not yet completed';
             }
 
             var requestId = ++_requestIds;
-            this._debug('Transport', this.getType(), 'metaConnect send, request', requestId, 'envelope', envelope);
+            this._debug('Transport', this.getType(), '/meta/connect send, request', requestId, 'envelope', envelope);
             var request = {
                 id: requestId,
                 metaConnect: true,
@@ -499,7 +539,7 @@
             }
             var metaConnectRequest = _metaConnectRequest;
             if (metaConnectRequest) {
-                this._debug('Aborting metaConnect request', metaConnectRequest);
+                this._debug('Aborting /meta/connect request', metaConnectRequest);
                 if (!this.abortXHR(metaConnectRequest.xhr)) {
                     this.transportFailure(metaConnectRequest.envelope, metaConnectRequest, {reason: 'abort'});
                 }
@@ -961,7 +1001,7 @@
         function _webSocketSend(context, envelope, metaConnect) {
             var json = JSON.stringify(envelope.messages);
             context.webSocket.send(json);
-            this._debug('Transport', this.getType(), 'sent', envelope, 'metaConnect =', metaConnect);
+            this._debug('Transport', this.getType(), 'sent', envelope, '/meta/connect =', metaConnect);
 
             // Manage the timeout waiting for the response.
             var maxDelay = this.getConfiguration().maxNetworkDelay;
@@ -1001,9 +1041,9 @@
             try {
                 if (context === null) {
                     context = _connecting || {
-                            envelopes: {},
-                            timeouts: {}
-                        };
+                        envelopes: {},
+                        timeouts: {}
+                    };
                     _storeEnvelope.call(this, context, envelope, metaConnect);
                     _websocketConnect.call(this, context);
                 } else {
@@ -1159,7 +1199,7 @@
         };
 
         _self.send = function(envelope, metaConnect) {
-            this._debug('Transport', this.getType(), 'sending', envelope, 'metaConnect =', metaConnect);
+            this._debug('Transport', this.getType(), 'sending', envelope, '/meta/connect =', metaConnect);
             _send.call(this, _context, envelope, metaConnect);
         };
 
@@ -1188,7 +1228,8 @@
      * The default name is the string 'default'.
      * @param name the optional name of this cometd object
      */
-    var CometD = function (name) {
+    var CometD = function(name) {
+        var _scheduler = new Scheduler();
         var _cometd = this;
         var _name = name || 'default';
         var _crossDomain = false;
@@ -1214,7 +1255,9 @@
         var _connected = false;
         var _unconnectTime = 0;
         var _handshakeMessages = 0;
+        var _metaConnect = null;
         var _config = {
+            useWorkerScheduler: true,
             protocol: null,
             stickyReconnect: true,
             connectTimeout: 0,
@@ -1353,7 +1396,7 @@
             // [7] = port,
             // [8] = uri,
             // [9] = rest (query / fragment)
-            return /(^https?:\/\/)?(((\[[^\]]+\])|([^:\/\?#]+))(:(\d+))?)?([^\?#]*)(.*)?/.exec(url);
+            return new RegExp('(^https?://)?(((\\[[^\\]]+])|([^:/?#]+))(:(\\d+))?)?([^?#]*)(.*)?').exec(url);
         }
 
         /**
@@ -1376,9 +1419,11 @@
 
         function _configure(configuration) {
             _cometd._debug('Configuring cometd object with', configuration);
-            // Support old style param, where only the Bayeux server URL was passed
+            // Support old style param, where only the Bayeux server URL was passed.
             if (_isString(configuration)) {
-                configuration = { url: configuration };
+                configuration = {
+                    url: configuration
+                };
             }
             if (!configuration) {
                 configuration = {};
@@ -1398,7 +1443,7 @@
             var afterURI = urlParts[9];
             _crossDomain = _cometd._isCrossDomain(hostAndPort);
 
-            // Check if appending extra path is supported
+            // Check if appending extra path is supported.
             if (_config.appendMessageTypeToURL) {
                 if (afterURI !== undefined && afterURI.length > 0) {
                     _cometd._info('Appending message type to URI ' + uri + afterURI + ' is not supported, disabling \'appendMessageTypeToURL\' configuration');
@@ -1416,6 +1461,40 @@
                         _config.appendMessageTypeToURL = false;
                     }
                 }
+            }
+
+            if (window.Worker && window.Blob && window.URL && _config.useWorkerScheduler) {
+                var code = WorkerScheduler.toString();
+                // Remove the function declaration, the opening brace and the closing brace.
+                code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'));
+                var blob = new window.Blob([code], {
+                    type: 'application/json'
+                });
+                var blobURL = window.URL.createObjectURL(blob);
+                var worker = new window.Worker(blobURL);
+                _scheduler.setTimeout = function(funktion, delay) {
+                    var id = _scheduler.register(funktion);
+                    worker.postMessage({
+                        id: id,
+                        type: 'setTimeout',
+                        delay: delay
+                    });
+                    return id;
+                };
+                _scheduler.clearTimeout = function(id) {
+                    _scheduler.unregister(id);
+                    worker.postMessage({
+                        id: id,
+                        type: 'clearTimeout'
+                    });
+                };
+                worker.onmessage = function(e) {
+                    var id = e.data.id;
+                    var funktion = _scheduler.unregister(id);
+                    if (funktion) {
+                        funktion();
+                    }
+                };
             }
         }
 
@@ -1502,7 +1581,7 @@
         }
 
         function _applyOutgoingExtensions(message) {
-            for (var i = _extensions.length - 1; i >= 0 ; --i) {
+            for (var i = _extensions.length - 1; i >= 0; --i) {
                 if (message === undefined || message === null) {
                     break;
                 }
@@ -1568,7 +1647,7 @@
 
         function _cancelDelayedSend() {
             if (_scheduledSend !== null) {
-                Utils.clearTimeout(_scheduledSend);
+                _cometd.clearTimeout(_scheduledSend);
             }
             _scheduledSend = null;
         }
@@ -1577,7 +1656,7 @@
             _cancelDelayedSend();
             var time = _advice.interval + delay;
             _cometd._debug('Function scheduled in', time, 'ms, interval =', _advice.interval, 'backoff =', _backoff, operation);
-            _scheduledSend = Utils.setTimeout(_cometd, operation, time);
+            _scheduledSend = _cometd.setTimeout(operation, time);
         }
 
         // Needed to break cyclic dependencies between function definitions
@@ -1617,6 +1696,10 @@
 
             if (messages.length === 0) {
                 return;
+            }
+
+            if (metaConnect) {
+                _metaConnect = messages[0];
             }
 
             var url = _cometd.getURL();
@@ -1734,7 +1817,9 @@
                 // instead of being held by the server, so that connect listeners
                 // can be notified that the connection has been re-established
                 if (!_connected) {
-                    bayeuxMessage.advice = { timeout: 0 };
+                    bayeuxMessage.advice = {
+                        timeout: 0
+                    };
                 }
 
                 _setStatus('connecting');
@@ -1763,13 +1848,16 @@
             if (abort && _transport) {
                 _transport.abort();
             }
-            _clientId = null;
+            _crossDomain = false;
+            _transport = null;
             _setStatus('disconnected');
+            _clientId = null;
             _batch = 0;
             _resetBackoff();
-            _transport = null;
             _reestablish = false;
             _connected = false;
+            _unconnectTime = 0;
+            _metaConnect = null;
 
             // Fail any existing queued message
             if (_messageQueue.length > 0) {
@@ -1933,7 +2021,7 @@
                 // Clear the timeout, if present.
                 var timeout = context.timeout;
                 if (timeout) {
-                    Utils.clearTimeout(timeout);
+                    _cometd.clearTimeout(timeout);
                 }
 
                 var callback = context.callback;
@@ -2129,6 +2217,17 @@
             });
         }
 
+        function _matchMetaConnect(connect) {
+            if (_status === 'disconnected') {
+                return true;
+            }
+            if (_metaConnect && _metaConnect.id === connect.id) {
+                _metaConnect = null;
+                return true;
+            }
+            return false;
+        }
+
         function _failConnect(message, failureInfo) {
             // Notify the listeners after the status change but before the next action.
             _notifyListeners('/meta/connect', message);
@@ -2143,44 +2242,50 @@
         }
 
         function _connectResponse(message) {
-            _connected = message.successful;
+            if (_matchMetaConnect(message)) {
+                _connected = message.successful;
+                if (_connected) {
+                    _notifyListeners('/meta/connect', message);
 
-            if (_connected) {
-                _notifyListeners('/meta/connect', message);
-
-                // Normally, the advice will say "reconnect: 'retry', interval: 0"
-                // and the server will hold the request, so when a response returns
-                // we immediately call the server again (long polling).
-                // Listeners can call disconnect(), so check the state after they run.
-                var action = _isDisconnected() ? 'none' : _advice.reconnect || 'retry';
-                switch (action) {
-                    case 'retry':
-                        _resetBackoff();
-                        _delayedConnect(_backoff);
-                        break;
-                    case 'none':
-                        _disconnect(false);
-                        break;
-                    default:
-                        throw 'Unrecognized advice action ' + action;
+                    // Normally, the advice will say "reconnect: 'retry', interval: 0"
+                    // and the server will hold the request, so when a response returns
+                    // we immediately call the server again (long polling).
+                    // Listeners can call disconnect(), so check the state after they run.
+                    var action = _isDisconnected() ? 'none' : _advice.reconnect || 'retry';
+                    switch (action) {
+                        case 'retry':
+                            _resetBackoff();
+                            _delayedConnect(_backoff);
+                            break;
+                        case 'none':
+                            _disconnect(false);
+                            break;
+                        default:
+                            throw 'Unrecognized advice action ' + action;
+                    }
+                } else {
+                    _failConnect(message, {
+                        cause: 'unsuccessful',
+                        action: _advice.reconnect || 'retry',
+                        transport: _transport
+                    });
                 }
             } else {
-                _failConnect(message, {
-                    cause: 'unsuccessful',
-                    action: _advice.reconnect || 'retry',
-                    transport: _transport
-                });
+                _cometd._debug('Mismatched /meta/connect reply', message);
             }
         }
 
         function _connectFailure(message) {
-            _connected = false;
-
-            _failConnect(message, {
-                cause: 'failure',
-                action: 'retry',
-                transport: null
-            });
+            if (_matchMetaConnect(message)) {
+                _connected = false;
+                _failConnect(message, {
+                    cause: 'failure',
+                    action: 'retry',
+                    transport: null
+                });
+            } else {
+                _cometd._debug('Mismatched /meta/connect failure', message);
+            }
         }
 
         function _failDisconnect(message) {
@@ -2865,8 +2970,7 @@
             };
             var ext = {
                 ext: {
-                    binary: {
-                    }
+                    binary: {}
                 }
             };
             this.publish(channel, content, ext, callback);
@@ -2917,14 +3021,14 @@
                 callback: callback
             };
             if (timeout > 0) {
-                context.timeout = Utils.setTimeout(_cometd, function() {
+                context.timeout = _cometd.setTimeout(function() {
                     _cometd._debug('Timing out remote call', message, 'after', timeout, 'ms');
                     _failMessage({
                         id: message.id,
                         error: '406::timeout',
                         successful: false,
                         failure: {
-                            message : message,
+                            message: message,
                             reason: 'Remote Call Timeout'
                         }
                     });
@@ -2964,8 +3068,7 @@
             };
             var ext = {
                 ext: {
-                    binary: {
-                    }
+                    binary: {}
                 }
             };
 
@@ -3045,9 +3148,9 @@
          * The format of the extension object is the following:
          * <pre>
          * {
-     *     incoming: function(message) { ... },
-     *     outgoing: function(message) { ... }
-     * }
+         *     incoming: function(message) { ... },
+         *     outgoing: function(message) { ... }
+         * }
          * </pre>
          * Both properties are optional, but if they are present they will be called
          * respectively for each incoming message and for each outgoing message.
@@ -3179,6 +3282,21 @@
 
         this.getAdvice = function() {
             return this._mixin(true, {}, _advice);
+        };
+
+        this.setTimeout = function(funktion, delay) {
+            return _scheduler.setTimeout(function() {
+                try {
+                    _cometd._debug('Invoking timed function', funktion);
+                    funktion();
+                } catch (x) {
+                    _cometd._debug('Exception invoking timed function', funktion, x);
+                }
+            }, delay);
+        };
+
+        this.clearTimeout = function(id) {
+            _scheduler.clearTimeout(id);
         };
 
         // Initialize transports.
