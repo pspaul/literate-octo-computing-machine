@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -383,6 +383,28 @@ public final class WebServer {
         return false;
     }
 
+    private final static int PORT_OFFSET = 1024;
+
+    /**
+     * @return {@code true} when ports are valid.
+     */
+    private static boolean checkPorts() {
+
+        if (getServerPort() > PORT_OFFSET && getServerPortSsl() > PORT_OFFSET) {
+            return true;
+        }
+
+        final String msg =
+                "\n+========================================================+"
+                        + "\n| SavaPage NOT started: server ports MUST be GT "
+                        + String.valueOf(PORT_OFFSET) + "     |"
+                        + "\n+==============================="
+                        + "=========================+";
+        System.err.println(new Date().toString() + " : " + msg);
+        LOGGER.error(msg);
+        return false;
+    }
+
     /**
      * Starts the Web Server.
      * <p>
@@ -427,6 +449,10 @@ public final class WebServer {
 
         serverPortSsl = Integer.parseInt(propsServer.getProperty(
                 PROP_KEY_SERVER_PORT_SSL, ConfigDefaults.SERVER_SSL_PORT));
+
+        if (!checkPorts()) {
+            return;
+        }
 
         /*
          * Check if ports are in use.
