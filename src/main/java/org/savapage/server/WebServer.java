@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -517,6 +518,11 @@ public final class WebServer {
         httpConfig.setSecureScheme("https");
         httpConfig.setSecurePort(serverPortSsl);
 
+        /*
+         * Customize Requests for Proxy Forwarding.
+         */
+        httpConfig.addCustomizer(new ForwardedRequestCustomizer());
+
         if (!isSSLOnly()) {
             /*
              * The server connector we create is the one for http, passing in
@@ -630,13 +636,19 @@ public final class WebServer {
          *
          * A new HttpConfiguration object is needed for the next connector and
          * you can pass the old one as an argument to effectively clone the
-         * contents. On this HttpConfiguration object we add a
-         * SecureRequestCustomizer which is how a new connector is able to
-         * resolve the https connection before handing control over to the Jetty
-         * Server.
+         * contents.
+         *
+         * On this HttpConfiguration object we add a SecureRequestCustomizer
+         * which is how a new connector is able to resolve the https connection
+         * before handing control over to the Jetty Server.
          */
         final HttpConfiguration httpsConfig = new HttpConfiguration(httpConfig);
         httpsConfig.addCustomizer(new SecureRequestCustomizer());
+
+        /*
+         * Customize Requests for Proxy Forwarding.
+         */
+        httpsConfig.addCustomizer(new ForwardedRequestCustomizer());
 
         /*
          * HTTPS connector
