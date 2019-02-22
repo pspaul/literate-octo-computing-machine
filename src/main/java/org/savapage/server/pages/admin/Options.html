@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -1331,12 +1331,12 @@
 							value="0" wicket:id="proxyprint-delegate-papercut-enable" />
 					</div>
 
-                    <div class="ui-mini">
-                        <label for="proxyprint-personal-papercut-enable"
-                            wicket:id="proxyprint-personal-papercut-enable-label" />
-                        <input type="checkbox" id="proxyprint-personal-papercut-enable"
-                            value="0" wicket:id="proxyprint-personal-papercut-enable" />
-                    </div>
+					<div class="ui-mini">
+						<label for="proxyprint-personal-papercut-enable"
+							wicket:id="proxyprint-personal-papercut-enable-label" />
+						<input type="checkbox" id="proxyprint-personal-papercut-enable"
+							value="0" wicket:id="proxyprint-personal-papercut-enable" />
+					</div>
 
 
 					<div class="sp-download-papercut-delegator-cost-enabled ui-mini">
@@ -1952,6 +1952,19 @@
 						</li>
 					</wicket:enclosure>
 				</ul>
+
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>Document Store</h3>
+					</li>
+					<li>
+						<div class="sp-txt-wrap">The Document Store is an advanced
+							function for storing and retrieving incoming and outgoing
+							documents. Refer to the User Manual for information on how to
+							configure this function.</div>
+					</li>
+				</ul>
+
 				<wicket:enclosure child="btn-pagometer-reset">
 					<ul data-role="listview" data-inset="true">
 						<li>
