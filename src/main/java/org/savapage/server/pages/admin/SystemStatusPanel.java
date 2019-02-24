@@ -68,6 +68,7 @@ import org.savapage.core.services.AppLogService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.system.SystemFileDescriptorCount;
 import org.savapage.core.system.SystemInfo;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.IOHelper;
@@ -743,13 +744,14 @@ public final class SystemStatusPanel extends Panel {
         }
 
         //
-        final String openFiles;
+        String openFiles = "-";
         if (showTechInfo) {
             helper.addLabel("open-files-prompt", "Open Files");
-            openFiles = helper
-                    .localizedNumber(SystemInfo.getOpenFileDescriptorCount());
-        } else {
-            openFiles = "";
+            final SystemFileDescriptorCount fileDesc =
+                    SystemInfo.getFileDescriptorCount();
+            if (fileDesc.getOpenFileCount() != null) {
+                openFiles = helper.localizedNumber(fileDesc.getOpenFileCount());
+            }
         }
         helper.encloseLabel("open-files", openFiles, showTechInfo);
 
