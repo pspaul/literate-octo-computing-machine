@@ -41,6 +41,7 @@ import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dto.IppMediaCostDto;
 import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.MediaPageCostDto;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.attribute.syntax.IppKeyword;
@@ -367,7 +368,11 @@ public final class PrinterMediaSourcePanel extends Panel {
         } else {
             signalMediaSourceAuto = "";
         }
-        helper.addLabel("signal-media-source-auto", signalMediaSourceAuto);
+        helper.encloseLabel("signal-media-source-auto", signalMediaSourceAuto,
+                hasMediaSourceAuto);
+
+        helper.addLabel("legend-source-preferred",
+                AdjectiveEnum.PREFERRED.uiText(getLocale()).toLowerCase());
 
         /*
          * For now, ALWAYS hide media-source: auto

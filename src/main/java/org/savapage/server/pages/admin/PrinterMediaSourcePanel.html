@@ -16,31 +16,28 @@
 
 <wicket:panel>
 
+	<div class="ui-mini">
+		<wicket:enclosure child="use-grayscale-as-default">
+			<label for="sp-printer-use-monochrome-as-default">
+				<wicket:message key="use-grayscale-as-default" />
+			</label>
+			<input type="checkbox" id="sp-printer-use-monochrome-as-default"
+				wicket:id="use-grayscale-as-default" />
+		</wicket:enclosure>
+
+		<wicket:enclosure child="client-side-monochrome-conversion">
+			<label for="sp-printer-client-side-monochrome">
+				<wicket:message key="client-side-monochrome-conversion" />
+			</label>
+			<input type="checkbox" id="sp-printer-client-side-monochrome"
+				wicket:id="client-side-monochrome-conversion" />
+		</wicket:enclosure>
+
+	</div>
+
 	<table data-role="table" data-mode="reflow"
 		class="ui-responsive ui-mini">
 		<thead>
-			<tr>
-				<th colspan="5" style="vertical-align: middle">
-
-					<wicket:enclosure child="use-grayscale-as-default">
-						<label for="sp-printer-use-monochrome-as-default">
-							<wicket:message key="use-grayscale-as-default" />
-						</label>
-						<input type="checkbox" id="sp-printer-use-monochrome-as-default"
-							wicket:id="use-grayscale-as-default" />
-					</wicket:enclosure>
-
-					<wicket:enclosure child="client-side-monochrome-conversion">
-						<label for="sp-printer-client-side-monochrome">
-							<wicket:message key="client-side-monochrome-conversion" />
-						</label>
-						<input type="checkbox" id="sp-printer-client-side-monochrome"
-							wicket:id="client-side-monochrome-conversion" />
-					</wicket:enclosure>
-
-				</th>
-			</tr>
-
 			<tr>
 				<th>
 					<wicket:message key="media-source-short" />
@@ -58,7 +55,15 @@
 				</th>
 			</tr>
 			<tr>
-				<th wicket:id="signal-media-source-auto" />
+				<th>
+					<wicket:enclosure child="signal-media-source-auto">
+						<span wicket:id="signal-media-source-auto" />
+						<br />
+					</wicket:enclosure>
+					<img src="/famfamfam-silk/star.png" height="10"/>&nbsp; 
+					<span wicket:id="legend-source-preferred"
+						style="margin: 0px; padding: 0px;" class="sp-txt-info sp-txt-wrap" />
+				</th>
 				<th data-priority="1">
 					<span wicket:id="th-grayscale-1" />
 					<wicket:message key="grayscale" />
