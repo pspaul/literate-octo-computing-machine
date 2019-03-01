@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.jpa.User;
+import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -46,11 +47,13 @@ public final class PagePrintDelegation extends AbstractPage {
      */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * .
-     */
+    /** */
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
+
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
      *
@@ -104,7 +107,9 @@ public final class PagePrintDelegation extends AbstractPage {
         helper.encloseLabel("member-copies", txtCopies, cm.isConfigValue(
                 Key.PROXY_PRINT_DELEGATE_MULTIPLE_MEMBER_COPIES_ENABLE));
 
-        if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_ENABLE)) {
+        if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_ENABLE)
+                && ACCESS_CONTROL_SERVICE
+                        .hasSharedAccountAccess(SpSession.get().getUser())) {
 
             helper.addModifyLabelAttr("radio-account-shared",
                     MarkupHelper.ATTR_VALUE,
