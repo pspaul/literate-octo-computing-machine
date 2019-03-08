@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -101,8 +101,7 @@ public final class ReqLogin extends ApiRequestMixin {
     /**
      * <b>Static</b> lock object for synchronization of lazy user creation.
      */
-    private static final Object LAZY_CREATE_USER_LOCK = new Object() {
-    };
+    private static final Object LAZY_CREATE_USER_LOCK = new Object();
 
     /**
      * .
@@ -1461,7 +1460,6 @@ public final class ReqLogin extends ApiRequestMixin {
      */
     private User onLazyCreateUser(final UserDao userDao, final User userAuth,
             final WebAppTypeEnum webAppType) {
-
         /*
          * Since the user does not exist in the database (yet) we cannot use SQL
          * row locking to protect concurrent user creation: therefore we use the

@@ -217,10 +217,11 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      */
     private final List<ServerPlugin> allPlugins = new ArrayList<>();
 
-    /**
-     *
-     */
+    /** */
     private BitcoinWalletInfo walletInfoCache;
+
+    /** */
+    private final Object walletInfoCacheMutex = new Object();
 
     /**
      *
@@ -255,7 +256,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             return;
         }
 
-        synchronized (this) {
+        synchronized (this.walletInfoCacheMutex) {
             this.walletInfoCache = gateway
                     .getWalletInfo(ConfigManager.getAppCurrency(), false);
         }
@@ -300,7 +301,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
     public BitcoinWalletInfo getWalletInfoCache(final BitcoinGateway gateway,
             final boolean refresh) throws PaymentGatewayException, IOException {
 
-        synchronized (this) {
+        synchronized (this.walletInfoCacheMutex) {
 
             final Currency baseCurrency = ConfigManager.getAppCurrency();
 

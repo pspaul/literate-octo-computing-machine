@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,15 +40,23 @@ import org.savapage.core.config.WebAppTypeEnum;
 public final class WebAppUserAuthManager {
 
     /**
-     * Number of indexes
+     * Number of indexes.
      */
     private static final int IDX_CONTEXT_COUNT = 5;
 
+    /** */
     private static final int IDX_CONTEXT_USER = IDX_CONTEXT_COUNT - 5;
+    /** */
     private static final int IDX_CONTEXT_ADMIN = IDX_CONTEXT_COUNT - 4;
+    /** */
     private static final int IDX_CONTEXT_POS = IDX_CONTEXT_COUNT - 3;
+    /** */
     private static final int IDX_CONTEXT_JOBTICKET = IDX_CONTEXT_COUNT - 2;
+    /** */
     private static final int IDX_CONTEXT_PRINTSITE = IDX_CONTEXT_COUNT - 1;
+
+    /** */
+    private final Object mutexDict = new Object();
 
     /**
      * WebApp User/Admin Context Dictionary of {@link UserAuthToken} objects
@@ -134,12 +142,14 @@ public final class WebAppUserAuthManager {
      *            The {@link WebAppTypeEnum}.
      * @return {@code null} when token is NOT found.
      */
-    public synchronized UserAuthToken getUserAuthToken(final String token,
+    public UserAuthToken getUserAuthToken(final String token,
             final WebAppTypeEnum webAppType) {
         if (webAppType == WebAppTypeEnum.UNDEFINED) {
             return null;
         }
-        return dictTokenAuthToken.get(getDictIndex(webAppType)).get(token);
+        synchronized (this.mutexDict) {
+            return dictTokenAuthToken.get(getDictIndex(webAppType)).get(token);
+        }
     }
 
     /**
@@ -151,13 +161,15 @@ public final class WebAppUserAuthManager {
      *            The {@link WebAppTypeEnum}.
      * @return {@code null} when token is NOT found.
      */
-    public synchronized UserAuthToken getAuthTokenOfUser(final String user,
+    public UserAuthToken getAuthTokenOfUser(final String user,
             final WebAppTypeEnum webAppType) {
 
         if (webAppType == WebAppTypeEnum.UNDEFINED) {
             return null;
         }
-        return dictUserAuthToken.get(getDictIndex(webAppType)).get(user);
+        synchronized (this.mutexDict) {
+            return dictUserAuthToken.get(getDictIndex(webAppType)).get(user);
+        }
     }
 
     /**
@@ -170,22 +182,26 @@ public final class WebAppUserAuthManager {
      *            The {@link WebAppTypeEnum}.
      * @return the old token or {@code null} when no old token was replaced.
      */
-    public synchronized UserAuthToken putUserAuthToken(
-            final UserAuthToken token, final WebAppTypeEnum webAppType) {
+    public UserAuthToken putUserAuthToken(final UserAuthToken token,
+            final WebAppTypeEnum webAppType) {
 
         final int i = getDictIndex(webAppType);
 
-        UserAuthToken oldToken = dictUserAuthToken.get(i).get(token.getUser());
+        synchronized (this.mutexDict) {
 
-        if (oldToken != null) {
-            dictTokenAuthToken.get(i).remove(oldToken.getToken());
-            dictUserAuthToken.get(i).remove(oldToken.getUser());
+            final UserAuthToken oldToken =
+                    dictUserAuthToken.get(i).get(token.getUser());
+
+            if (oldToken != null) {
+                dictTokenAuthToken.get(i).remove(oldToken.getToken());
+                dictUserAuthToken.get(i).remove(oldToken.getUser());
+            }
+
+            dictTokenAuthToken.get(i).put(token.getToken(), token);
+            dictUserAuthToken.get(i).put(token.getUser(), token);
+
+            return oldToken;
         }
-
-        dictTokenAuthToken.get(i).put(token.getToken(), token);
-        dictUserAuthToken.get(i).put(token.getUser(), token);
-
-        return oldToken;
     }
 
     /**
@@ -197,23 +213,26 @@ public final class WebAppUserAuthManager {
      *            The {@link WebAppTypeEnum}.
      * @return the removed token or {@code null} when not found.
      */
-    public synchronized UserAuthToken removeUserAuthToken(final String token,
+    public UserAuthToken removeUserAuthToken(final String token,
             final WebAppTypeEnum webAppType) {
 
         if (webAppType == WebAppTypeEnum.UNDEFINED) {
             return null;
         }
 
-        final int i = getDictIndex(webAppType);
+        synchronized (this.mutexDict) {
+            final int i = getDictIndex(webAppType);
 
-        final UserAuthToken oldToken = dictTokenAuthToken.get(i).remove(token);
+            final UserAuthToken oldToken =
+                    dictTokenAuthToken.get(i).remove(token);
 
-        if (oldToken != null) {
-            dictTokenAuthToken.get(i).remove(oldToken.getToken());
-            dictUserAuthToken.get(i).remove(oldToken.getUser());
+            if (oldToken != null) {
+                dictTokenAuthToken.get(i).remove(oldToken.getToken());
+                dictUserAuthToken.get(i).remove(oldToken.getUser());
+            }
+
+            return oldToken;
         }
-
-        return oldToken;
     }
 
 }

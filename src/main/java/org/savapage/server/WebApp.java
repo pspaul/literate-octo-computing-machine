@@ -224,6 +224,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     /** */
     private static final Logger LOGGER = LoggerFactory.getLogger(WebApp.class);
 
+    /** */
+    private static final Object MUTEX_DICT = new Object();
+
     /**
      * Dictionary with key IP-address, getting the User of an active
      * authenticated WebApp Session.
@@ -340,8 +343,10 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *            The IP address of the remote host.
      * @return {@code null} when user is NOT found.
      */
-    public static synchronized String getAuthUserByIpAddr(final String ipAddr) {
-        return theDictIpAddrUser.get(ipAddr);
+    public static String getAuthUserByIpAddr(final String ipAddr) {
+        synchronized (MUTEX_DICT) {
+            return theDictIpAddrUser.get(ipAddr);
+        }
     }
 
     /**
@@ -349,7 +354,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *
      * @return the number of sessions.
      */
-    public static synchronized int getAuthUserSessionCount() {
+    public static int getAuthUserSessionCount() {
+        // no synchronize needed
         return theDictSessionIpAddr.size();
     }
 
@@ -369,70 +375,68 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * @param user
      *            The authenticated user.
      */
-    public synchronized void onAuthenticatedUser(
-            final WebAppTypeEnum webAppType, final UserAuthModeEnum authMode,
-            final String sessionId, final String ipAddr, final String user) {
+    public void onAuthenticatedUser(final WebAppTypeEnum webAppType,
+            final UserAuthModeEnum authMode, final String sessionId,
+            final String ipAddr, final String user) {
 
-        /*
-         * Removing the old session on same IP address
-         */
-        final String oldUser = theDictIpAddrUser.remove(ipAddr);
-
-        if (oldUser == null) {
+        synchronized (MUTEX_DICT) {
             /*
-             * ADD first-time authenticated user on IP address
+             * Removing the old session on same IP address
              */
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("IP User Session [" + ipAddr + "] [" + user + "] ["
-                        + sessionId + "] added. Sessions ["
-                        + (theDictIpAddrUser.size() + 1) + "].");
-            }
+            final String oldUser = theDictIpAddrUser.remove(ipAddr);
 
-        } else {
-
-            /*
-             * REMOVE current authenticated user on IP address
-             */
-            final String oldSession = theDictIpAddrSession.remove(ipAddr);
-
-            if (oldSession == null) {
-
-                LOGGER.error(
-                        "addSessionIpUser: no session for " + "IP address ["
-                                + ipAddr + "] of old user [" + oldUser + "]");
-
-            } else {
-
-                if (theDictSessionIpAddr.remove(oldSession) == null) {
-                    LOGGER.error("addSessionIpUser: no IP address for "
-                            + "old session [" + oldSession + "] of old user ["
-                            + oldUser + "]");
-                }
-
+            if (oldUser == null) {
+                /*
+                 * ADD first-time authenticated user on IP address
+                 */
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("IP User Session [" + ipAddr + "] [" + user
-                            + "] [" + sessionId + "] replaced [" + oldUser
-                            + "] [" + oldSession + "]. Sessions ["
+                            + "] [" + sessionId + "] added. Sessions ["
                             + (theDictIpAddrUser.size() + 1) + "].");
                 }
+
+            } else {
+                /*
+                 * REMOVE current authenticated user on IP address
+                 */
+                final String oldSession = theDictIpAddrSession.remove(ipAddr);
+
+                if (oldSession == null) {
+
+                    LOGGER.error("addSessionIpUser: no session for "
+                            + "IP address [" + ipAddr + "] of old user ["
+                            + oldUser + "]");
+
+                } else {
+
+                    if (theDictSessionIpAddr.remove(oldSession) == null) {
+                        LOGGER.error("addSessionIpUser: no IP address for "
+                                + "old session [" + oldSession
+                                + "] of old user [" + oldUser + "]");
+                    }
+
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("IP User Session [" + ipAddr + "] [" + user
+                                + "] [" + sessionId + "] replaced [" + oldUser
+                                + "] [" + oldSession + "]. Sessions ["
+                                + (theDictIpAddrUser.size() + 1) + "].");
+                    }
+                }
             }
+
+            /*
+             * Add the new one.
+             */
+            theDictIpAddrUser.put(ipAddr, user);
+            theDictIpAddrSession.put(ipAddr, sessionId);
+            theDictSessionIpAddr.put(sessionId, ipAddr);
+
+            checkIpUserSessionCache("notifyAuthenticatedUser");
         }
 
-        /*
-         * Add the new one.
-         */
-        theDictIpAddrUser.put(ipAddr, user);
-        theDictIpAddrSession.put(ipAddr, sessionId);
-        theDictSessionIpAddr.put(sessionId, ipAddr);
-
-        /*
-         *
-         */
         AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
                 localize("pub-user-login-success", webAppType.getUiText(),
                         UserAuth.getUiText(authMode), user, ipAddr));
-        //
-        checkIpUserSessionCache("notifyAuthenticatedUser");
     }
 
     /**
@@ -442,8 +446,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *            Action string used for logging.
      * @return {@code true} if the cache is in-sync.
      */
-    private static synchronized boolean
-            checkIpUserSessionCache(final String action) {
+    private static boolean checkIpUserSessionCache(final String action) {
 
         boolean inSync = theDictIpAddrUser.size() == theDictSessionIpAddr.size()
                 && theDictSessionIpAddr.size() == theDictIpAddrSession.size();
@@ -914,7 +917,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                     myInitialize();
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
-                    LOGGER.error(e.getMessage());
+                    LOGGER.error(e.getMessage(), e);
                     initializeError = true;
                 }
             }
@@ -1003,7 +1006,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
         super.sessionUnbound(sessionId);
 
-        synchronized (this) {
+        synchronized (MUTEX_DICT) {
 
             String ipAddr = theDictSessionIpAddr.remove(sessionId);
 

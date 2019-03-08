@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.cometd.bayeux.server.BayeuxServer;
@@ -158,7 +159,7 @@ public final class UserEventService extends AbstractEventService {
     /**
      *
      */
-    private static int clientAppCount = 0;
+    private static final AtomicInteger clientAppCount = new AtomicInteger();
 
     /**
      *
@@ -183,27 +184,21 @@ public final class UserEventService extends AbstractEventService {
      * @return
      */
     public static int getClientAppCount() {
-        synchronized (UserEventService.class) {
-            return clientAppCount;
-        }
+        return clientAppCount.get();
     }
 
     /**
      *
      */
     private static void incrementClientAppCount() {
-        synchronized (UserEventService.class) {
-            clientAppCount++;
-        }
+        clientAppCount.incrementAndGet();
     }
 
     /**
      *
      */
     private static void decrementClientAppCount() {
-        synchronized (UserEventService.class) {
-            clientAppCount--;
-        }
+        clientAppCount.decrementAndGet();
     }
 
     /**
