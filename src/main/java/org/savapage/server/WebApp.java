@@ -355,7 +355,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * @return the number of sessions.
      */
     public static int getAuthUserSessionCount() {
-        // no synchronize needed
+        // no synchronized needed
         return theDictSessionIpAddr.size();
     }
 
@@ -390,9 +390,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                  * ADD first-time authenticated user on IP address
                  */
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("IP User Session [" + ipAddr + "] [" + user
-                            + "] [" + sessionId + "] added. Sessions ["
-                            + (theDictIpAddrUser.size() + 1) + "].");
+                    LOGGER.debug(
+                            "IP User Session [{}] [{}] [{}] added."
+                                    + " Sessions [{}]",
+                            ipAddr, user, sessionId,
+                            (theDictIpAddrUser.size() + 1));
                 }
 
             } else {
@@ -402,24 +404,25 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                 final String oldSession = theDictIpAddrSession.remove(ipAddr);
 
                 if (oldSession == null) {
-
-                    LOGGER.error("addSessionIpUser: no session for "
-                            + "IP address [" + ipAddr + "] of old user ["
-                            + oldUser + "]");
-
+                    LOGGER.error(
+                            "addSessionIpUser: no session for "
+                                    + "IP address [{}] of old user [{}]",
+                            ipAddr, oldUser);
                 } else {
 
                     if (theDictSessionIpAddr.remove(oldSession) == null) {
-                        LOGGER.error("addSessionIpUser: no IP address for "
-                                + "old session [" + oldSession
-                                + "] of old user [" + oldUser + "]");
+                        LOGGER.error(
+                                "addSessionIpUser: no IP address for "
+                                        + "old session [{}] of old user [{}]",
+                                oldSession, oldUser);
                     }
 
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("IP User Session [" + ipAddr + "] [" + user
-                                + "] [" + sessionId + "] replaced [" + oldUser
-                                + "] [" + oldSession + "]. Sessions ["
-                                + (theDictIpAddrUser.size() + 1) + "].");
+                        LOGGER.debug(
+                                "IP User Session [{}] [{}] [{}]"
+                                        + " replaced [{}] [{}]. Sessions [{}]",
+                                ipAddr, user, sessionId, oldUser, oldSession,
+                                (theDictIpAddrUser.size() + 1));
                     }
                 }
             }
@@ -452,11 +455,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                 && theDictSessionIpAddr.size() == theDictIpAddrSession.size();
 
         if (!inSync) {
-            LOGGER.error(action + ": SessionIpUserCache is out-of-sync:"
-                    + " IPaddr->User [" + theDictIpAddrUser.size() + "]"
-                    + " IPaddr->SessionId [" + theDictIpAddrSession.size() + "]"
-                    + " SessionId->IPaddr [" + theDictSessionIpAddr.size()
-                    + "]");
+            LOGGER.warn(
+                    "{}: SessionIpUserCache is out-of-sync: IPaddr->User [{}]"
+                            + " IPaddr->SessionId [{}] SessionId->IPaddr [{}]",
+                    action, theDictIpAddrUser.size(),
+                    theDictIpAddrSession.size(), theDictSessionIpAddr.size());
         }
         return inSync;
     }
@@ -959,7 +962,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             session.invalidateNow();
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format("%s [TEMP]", debugMsg));
+                LOGGER.debug("{} [TEMP]", debugMsg);
             }
 
         } else if (urlPath.startsWith(MOUNT_PATH_COMETD.substring(1))) {
@@ -979,7 +982,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             session = super.newSession(request, response);
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(String.format("%s [TEMP]", debugMsg));
+                LOGGER.trace("{} [TEMP]", debugMsg);
             }
 
         } else {
@@ -994,8 +997,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             session.bind();
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format("%s [%s]. Sessions [%d]", debugMsg,
-                        session.getId(), theDictIpAddrUser.size()));
+                LOGGER.debug("{} [{}]. Sessions [{}]", debugMsg,
+                        session.getId(), theDictIpAddrUser.size());
             }
         }
         return session;
@@ -1013,16 +1016,17 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             if (ipAddr == null) {
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("IP User Session [?.?.?.?] [" + sessionId
-                            + "] unbound. Sessions [" + theDictIpAddrUser.size()
-                            + "].");
+                    LOGGER.debug(
+                            "IP User Session [?.?.?.?] [{}] unbound. "
+                                    + "Sessions [{}]",
+                            sessionId, theDictIpAddrUser.size());
                 }
 
             } else {
 
                 if (theDictIpAddrSession.remove(ipAddr) == null) {
                     LOGGER.error("Inconsistent IP User Session cache: "
-                            + "no session found for [" + ipAddr + "]");
+                            + "no session found for [{}]", ipAddr);
                 }
 
                 final String user = theDictIpAddrUser.remove(ipAddr);
@@ -1030,14 +1034,16 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                 if (user == null) {
 
                     LOGGER.error("Inconsistent IP User Session cache: "
-                            + "no user found for [" + ipAddr + "]");
+                            + "no user found for [{}]", ipAddr);
 
                 } else {
 
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("IP User Session [" + ipAddr + "] [" + user
-                                + "] [" + sessionId + "] removed. Sessions ["
-                                + (theDictIpAddrUser.size()) + "].");
+                        LOGGER.debug(
+                                "IP User Session [{}] [{}] [{}] removed."
+                                        + " Sessions [{}]",
+                                ipAddr, user, sessionId,
+                                theDictIpAddrUser.size());
                     }
 
                     /*
