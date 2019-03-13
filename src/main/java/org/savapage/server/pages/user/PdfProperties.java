@@ -83,9 +83,10 @@ public class PdfProperties extends AbstractUserPage {
         helper.addButton("btn-default", HtmlButtonEnum.DEFAULT);
 
         //
-        helper.encloseLabel("pdf-pgp-signature", "",
-                ConfigManager.isPdfPgpEnabled() && ACCESS_CONTROL_SERVICE
-                        .hasPermission(permissions, ACLPermissionEnum.SIGN));
+        helper.encloseLabel("pdf-pgp-signature", localized("pdf-pgp-signature"),
+                ConfigManager.isPdfPgpEnabled() && (permissions == null
+                        || ACCESS_CONTROL_SERVICE.hasPermission(permissions,
+                                ACLPermissionEnum.SIGN)));
 
         //
         final Integer privsLetterhead = ACCESS_CONTROL_SERVICE

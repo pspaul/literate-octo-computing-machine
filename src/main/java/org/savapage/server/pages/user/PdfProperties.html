@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -159,9 +159,7 @@
 
 					<wicket:enclosure child="pdf-pgp-signature">
 						<input type="checkbox" id="pdf-pgp-signature" value="0" />
-						<label for="pdf-pgp-signature">
-							<wicket:message key="pdf-pgp-signature" />
-						</label>
+						<label for="pdf-pgp-signature" wicket:id="pdf-pgp-signature" />
 					</wicket:enclosure>
 
 					<input type="checkbox" id="pdf-encryption" value="128" />
