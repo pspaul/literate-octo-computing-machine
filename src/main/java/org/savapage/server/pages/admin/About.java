@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -208,6 +208,21 @@ public final class About extends AbstractAdminPage {
         }
 
         labelWrk = new Label("version-pdftoppm", version);
+        if (colorInstalled != null) {
+            labelWrk.add(new AttributeModifier("class", colorInstalled));
+        }
+        add(labelWrk);
+
+        // ---------- pdftocairo
+        colorInstalled = null;
+        version = SystemInfo.getPdfToCairoVersion();
+        installed = StringUtils.isNotBlank(version);
+        if (!installed) {
+            version = localized("not-installed");
+            colorInstalled = MarkupHelper.CSS_TXT_ERROR;
+        }
+
+        labelWrk = new Label("version-pdftocairo", version);
         if (colorInstalled != null) {
             labelWrk.add(new AttributeModifier("class", colorInstalled));
         }
