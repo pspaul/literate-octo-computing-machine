@@ -33,6 +33,7 @@ import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
@@ -159,6 +160,11 @@ public final class WebServer {
         public static int getIdleTimeoutMsec() {
             return MAX_IDLE_TIME_MSEC;
         }
+
+        public static int getQueueCapacity() {
+            return -1;
+        }
+
     }
 
     /**
@@ -167,68 +173,178 @@ public final class WebServer {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(WebServer.class);
 
-    /**
-     * .
-     */
+    /** */
     private static final String PROP_KEY_SERVER_PORT = "server.port";
 
-    /**
-     * .
-     */
+    /** */
     private static final String PROP_KEY_SERVER_PORT_SSL = "server.ssl.port";
 
-    /**
-     * .
-     */
+    /** */
     private static final String PROP_KEY_HTML_REDIRECT_SSL =
             "server.html.redirect.ssl";
 
-    /**
-     * .
-     */
+    /** */
     private static final String PROP_KEY_SSL_KEYSTORE = "server.ssl.keystore";
 
-    /**
-     * .
-     */
+    /** */
     private static final String PROP_KEY_SSL_KEYSTORE_PW =
             "server.ssl.keystore-password";
 
-    /**
-     * .
-     */
+    /** */
     private static final String PROP_KEY_SSL_KEY_PW = "server.ssl.key-password";
 
     /** */
     private static final String PROP_KEY_WEBAPP_CUSTOM_I18N =
             "webapp.custom.i18n";
 
-    /**
-     * .
-     */
+    /** */
+    private static final String PROP_KEY_SERVER_THREADPOOL_QUEUE_CAPACITY =
+            "server.threadpool.queue.capacity";
+    /** */
+    private static final String PROP_KEY_SERVER_THREADPOOL_MIN_THREADS =
+            "server.threadpool.minthreads";
+    /** */
+    private static final String PROP_KEY_SERVER_THREADPOOL_MAX_THREADS =
+            "server.threadpool.maxthreads";
+
+    /** */
+    private static final String PROP_KEY_SERVER_THREADPOOL_IDLE_TIMEOUT_MSEC =
+            "server.threadpool.idle-timeout-msec";
+
+    /** */
     private static int serverPort;
 
-    /**
-     * .
-     */
+    /** */
     private static int serverPortSsl;
 
     /**
-     * .
+     * Number of acceptor threads.
      */
+    private static int serverAcceptorThreads;
+
+    /**
+     * ThreadPool parameter information.
+     *
+     * <a href= "https://wiki.eclipse.org/Jetty/Howto/High_Load#Jetty_Tuning">
+     * Jetty/Howto/High Load</a>
+     */
+    public static class ThreadPoolInfo {
+        /**
+         * Configure the number of threads according to the webapp. That is, how
+         * many threads it needs in order to achieve the best performance.
+         * Configure with mind to limiting memory usage maximum available.
+         * Typically >50 and <500.
+         */
+        private static int maxThreads;
+
+        /** */
+        private static int minThreads;
+
+        /**
+         * <p>
+         * It is very important to limit the task queue of Jetty. By default,
+         * the queue is unbounded! As a result, if under high load in excess of
+         * the processing power of the webapp, jetty will keep a lot of requests
+         * on the queue. Even after the load has stopped, Jetty will appear to
+         * have stopped responding to new requests as it still has lots of
+         * requests on the queue to handle.
+         * </p>
+         *
+         * <p>
+         * For a high reliability system, it should reject the excess requests
+         * immediately (fail fast) by using a queue with a bounded capability.
+         * The capability (maximum queue length) should be calculated according
+         * to the "no-response" time tolerable. For example, if the webapp can
+         * handle 100 requests per second, and if you can allow it one minute to
+         * recover from excessive high load, you can set the queue capability to
+         * 60*100=6000. If it is set too low, it will reject requests too soon
+         * and can't handle normal load spike.
+         * </p>
+         */
+        private static int queueCapacity;
+
+        /**
+         * Maximum time a thread may be idle in ms.
+         */
+        private static int idleTimeoutMsec;
+
+        /**
+         * @return Max threads in the {@link QueuedThreadPool}.
+         */
+        public static int getMaxThreads() {
+            return maxThreads;
+        }
+
+        /**
+         * @return Min threads in the {@link QueuedThreadPool}.
+         */
+        public static int getMinThreads() {
+            return minThreads;
+        }
+
+        /**
+         * @return Queue Capacity of the {@link QueuedThreadPool}.
+         */
+        public static int getQueueCapacity() {
+            return queueCapacity;
+        }
+
+        /**
+         * @return Maximum time a thread may be idle in ms.
+         */
+        public static int getIdleTimeoutMsec() {
+            return idleTimeoutMsec;
+        }
+
+        /**
+         * @return Log message for Max threads in the {@link QueuedThreadPool}.
+         */
+        public static String logMaxThreads() {
+            return String.format("%s [%s]",
+                    PROP_KEY_SERVER_THREADPOOL_MAX_THREADS,
+                    ThreadPoolInfo.maxThreads);
+        }
+
+        /**
+         * @return Log message for Min threads in the {@link QueuedThreadPool}.
+         */
+        public static String logMinThreads() {
+            return String.format("%s [%s]",
+                    PROP_KEY_SERVER_THREADPOOL_MIN_THREADS,
+                    ThreadPoolInfo.minThreads);
+        }
+
+        /**
+         * @return Log message for Queue Capacity of the
+         *         {@link QueuedThreadPool}.
+         */
+        public static String logQueueCapacity() {
+            return String.format("%s [%s]",
+                    PROP_KEY_SERVER_THREADPOOL_QUEUE_CAPACITY,
+                    ThreadPoolInfo.queueCapacity);
+        }
+
+        /**
+         * @return Log message for Maximum time a thread may be idle in ms.
+         */
+        public static String logIdleTimeoutMsec() {
+            return String.format("%s [%s]",
+                    PROP_KEY_SERVER_THREADPOOL_IDLE_TIMEOUT_MSEC,
+                    ThreadPoolInfo.idleTimeoutMsec);
+        }
+    }
+
+    /** */
     private static boolean serverSslRedirect;
 
     /** */
     private static boolean webAppCustomI18n;
 
-    /**
-    *
-    */
+    /** */
     private WebServer() {
     }
 
     /**
-     *
      * @return {@code true} when custom Web App i18n is to be applied.
      */
     public static boolean isWebAppCustomI18n() {
@@ -236,7 +352,6 @@ public final class WebServer {
     }
 
     /**
-     *
      * @return The server port.
      */
     public static int getServerPort() {
@@ -244,11 +359,17 @@ public final class WebServer {
     }
 
     /**
-     *
      * @return The server SSL port.
      */
     public static int getServerPortSsl() {
         return serverPortSsl;
+    }
+
+    /**
+     * @return Number of server acceptor threads.
+     */
+    public static int getServerAcceptorThreads() {
+        return serverAcceptorThreads;
     }
 
     /**
@@ -260,7 +381,6 @@ public final class WebServer {
     }
 
     /**
-     *
      * @return {@code true} when non-SSL port is redirected to SSL port.
      */
     public static boolean isSSLRedirect() {
@@ -473,7 +593,6 @@ public final class WebServer {
             return;
         }
 
-        //
         serverSslRedirect = !isSSLOnly() && BooleanUtils.toBooleanDefaultIfNull(
                 BooleanUtils.toBooleanObject(
                         propsServer.getProperty(PROP_KEY_HTML_REDIRECT_SSL)),
@@ -483,16 +602,45 @@ public final class WebServer {
                 BooleanUtils.toBooleanObject(
                         propsServer.getProperty(PROP_KEY_WEBAPP_CUSTOM_I18N)),
                 false);
-        //
-        final QueuedThreadPool threadPool = new QueuedThreadPool();
-        final String poolName = "jetty-threadpool";
 
-        threadPool.setName(poolName);
-        threadPool.setMinThreads(ConnectorConfig.getMinThreads());
-        threadPool.setMaxThreads(ConnectorConfig.getMaxThreads());
-        threadPool.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
+        ThreadPoolInfo.maxThreads = Integer.parseInt(
+                propsServer.getProperty(PROP_KEY_SERVER_THREADPOOL_MAX_THREADS,
+                        String.valueOf(ConnectorConfig.getMaxThreads())));
+
+        ThreadPoolInfo.minThreads = Integer.parseInt(
+                propsServer.getProperty(PROP_KEY_SERVER_THREADPOOL_MIN_THREADS,
+                        String.valueOf(ConnectorConfig.getMinThreads())));
+
+        ThreadPoolInfo.queueCapacity = Integer.parseInt(propsServer.getProperty(
+                PROP_KEY_SERVER_THREADPOOL_QUEUE_CAPACITY,
+                String.valueOf(ConnectorConfig.getQueueCapacity())));
+
+        ThreadPoolInfo.idleTimeoutMsec = Integer.parseInt(propsServer
+                .getProperty(PROP_KEY_SERVER_THREADPOOL_IDLE_TIMEOUT_MSEC,
+                        String.valueOf(ConnectorConfig.getIdleTimeoutMsec())));
+
+        final QueuedThreadPool threadPool;
+
+        /*
+         * https://wiki.eclipse.org/Jetty/Howto/High_Load#Jetty_Tuning
+         *
+         * The number of acceptors is calculated by Jetty based of number of
+         * available CPU cores.
+         */
+        if (ThreadPoolInfo.queueCapacity < 0) {
+            threadPool = new QueuedThreadPool(ThreadPoolInfo.maxThreads,
+                    ThreadPoolInfo.minThreads, ThreadPoolInfo.idleTimeoutMsec);
+        } else {
+            threadPool = new QueuedThreadPool(ThreadPoolInfo.maxThreads,
+                    ThreadPoolInfo.minThreads, ThreadPoolInfo.idleTimeoutMsec,
+                    new ArrayBlockingQueue<>(ThreadPoolInfo.queueCapacity));
+        }
+
+        threadPool.setName("jetty-threadpool");
 
         final Server server = new Server(threadPool);
+
+        server.getThreadPool().getIdleThreads();
 
         /*
          * This is needed to enable the Jetty annotations.
@@ -664,6 +812,8 @@ public final class WebServer {
 
         https.setPort(serverPortSsl);
         https.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
+
+        serverAcceptorThreads = https.getAcceptors();
 
         server.addConnector(https);
 

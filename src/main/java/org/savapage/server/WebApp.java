@@ -697,6 +697,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             final StringBuilder logMsg = new StringBuilder();
             logMsg.append("Web Server started on port ");
 
+            final StringBuilder logMsgAcc = new StringBuilder();
+            logMsgAcc.append("Web Server acceptor threads ");
+
             if (!WebServer.isSSLOnly()) {
                 logMsg.append(WebServer.getServerPort());
 
@@ -705,9 +708,23 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                 } else {
                     logMsg.append(" and ");
                 }
+
+                logMsgAcc.append("[")
+                        .append(WebServer.getServerAcceptorThreads())
+                        .append("] and ");
             }
             logMsg.append(WebServer.getServerPortSsl()).append(" (SSL)");
             SpInfo.instance().log(logMsg.toString());
+
+            logMsgAcc.append("[").append(WebServer.getServerAcceptorThreads())
+                    .append("] (SSL)");
+            SpInfo.instance().log(logMsgAcc.toString());
+
+            SpInfo.instance().log(WebServer.ThreadPoolInfo.logQueueCapacity());
+            SpInfo.instance().log(WebServer.ThreadPoolInfo.logMaxThreads());
+            SpInfo.instance().log(WebServer.ThreadPoolInfo.logMinThreads());
+            SpInfo.instance()
+                    .log(WebServer.ThreadPoolInfo.logIdleTimeoutMsec());
 
             //
             final SslCertInfo sslCert = ConfigManager.getSslCertInfo();
