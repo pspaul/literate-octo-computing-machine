@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,7 +45,9 @@ import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.print.server.DocContentPrintException;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.JsonHelper;
+import org.savapage.core.util.NumberUtil;
 import org.savapage.server.api.request.ApiRequestMixin;
 import org.savapage.server.api.request.ApiResultCodeEnum;
 import org.savapage.server.session.SpSession;
@@ -117,7 +119,7 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
 
         if (user == null) {
             final String msg = "No authenticated user.";
-            LOGGER.error(msg);
+            LOGGER.warn(msg);
             throw new AbortWithHttpErrorCodeException(
                     HttpServletResponse.SC_UNAUTHORIZED, msg);
         }
@@ -167,13 +169,30 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
                 fileItemsToHandle.put(fileItem.getName(), fileItem);
             }
 
+            final int totFiles = fileItems.size();
+            int nFileWlk = 0;
+
             for (final FileItem fileItem : fileItems) {
 
                 final String fileKey = fileItem.getName();
                 filesStatus.put(fileKey, Boolean.FALSE);
 
+                nFileWlk++;
+
+                final long start = System.currentTimeMillis();
+
+                LOGGER.debug("WebPrint [{}] {}/{} [{}] uploading... [{}]",
+                        user.getUserId(), nFileWlk, totFiles,
+                        fileItem.getName(), NumberUtil.humanReadableByteCount(
+                                fileItem.getSize(), true));
+
                 WebPrintHelper.handleFileUpload(originatorIp, user,
                         new FileUpload(fileItem), selectedFont);
+
+                LOGGER.debug("WebPrint [{}] {}/{} [{}] ....uploaded [{}].",
+                        user.getUserId(), nFileWlk, totFiles,
+                        fileItem.getName(), DateUtil.formatDuration(
+                                System.currentTimeMillis() - start));
 
                 filesStatus.put(fileKey, Boolean.TRUE);
                 fileItemsToHandle.remove(fileKey);
