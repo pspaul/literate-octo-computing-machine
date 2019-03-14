@@ -116,58 +116,6 @@ public final class WebServer {
     }
 
     /**
-     *
-     */
-    private static class ConnectorConfig {
-
-        private static final int MIN_THREADS = 20;
-
-        private static final int MAX_THREADS_X64 = 8000;
-
-        private static final int MAX_THREADS_I686 = 4000;
-
-        private static final int MAX_IDLE_TIME_MSEC = 30000;
-
-        /**
-         *
-         * @return
-         */
-        public static int getMinThreads() {
-            return MIN_THREADS;
-        }
-
-        public static boolean isX64() {
-            return System.getProperty("os.arch").equalsIgnoreCase("amd64");
-        }
-
-        /**
-         *
-         * @return
-         */
-        public static int getMaxThreads() {
-
-            final int maxThreads;
-
-            if (isX64()) {
-                maxThreads = MAX_THREADS_X64;
-            } else {
-                maxThreads = MAX_THREADS_I686;
-            }
-
-            return maxThreads;
-        }
-
-        public static int getIdleTimeoutMsec() {
-            return MAX_IDLE_TIME_MSEC;
-        }
-
-        public static int getQueueCapacity() {
-            return -1;
-        }
-
-    }
-
-    /**
      * The logger.
      */
     private static final Logger LOGGER =
@@ -210,6 +158,20 @@ public final class WebServer {
     /** */
     private static final String PROP_KEY_SERVER_THREADPOOL_IDLE_TIMEOUT_MSEC =
             "server.threadpool.idle-timeout-msec";
+
+    /** */
+    private static final String SERVER_THREADPOOL_MIN_THREADS_DEFAULT = "20";
+
+    /** */
+    private static final String SERVER_THREADPOOL_MAX_THREADS_DEFAULT = "200";
+
+    /** */
+    private static final String SERVER_THREADPOOL_IDLE_TIMEOUT_MSEC_DEFAULT =
+            "30000";
+
+    /** */
+    private static final String SERVER_THREADPOOL_QUEUE_CAPACITY_DEFAULT =
+            "3000";
 
     /** */
     private static int serverPort;
@@ -603,21 +565,33 @@ public final class WebServer {
                         propsServer.getProperty(PROP_KEY_WEBAPP_CUSTOM_I18N)),
                 false);
 
+        ThreadPoolInfo.queueCapacity = Integer.parseInt(propsServer.getProperty(
+                PROP_KEY_SERVER_THREADPOOL_QUEUE_CAPACITY,
+                SERVER_THREADPOOL_QUEUE_CAPACITY_DEFAULT));
+
+        if (ThreadPoolInfo.queueCapacity <= 0) {
+            System.err.println(String.format(
+                    "%s not started: %s [%d] is invalid "
+                            + "(capacity must be GT zero, "
+                            + "and can't be unbounded).",
+                    CommunityDictEnum.SAVAPAGE.getWord(),
+                    PROP_KEY_SERVER_THREADPOOL_QUEUE_CAPACITY,
+                    ThreadPoolInfo.queueCapacity));
+            System.exit(-1);
+            return;
+        }
+
         ThreadPoolInfo.maxThreads = Integer.parseInt(
                 propsServer.getProperty(PROP_KEY_SERVER_THREADPOOL_MAX_THREADS,
-                        String.valueOf(ConnectorConfig.getMaxThreads())));
+                        SERVER_THREADPOOL_MAX_THREADS_DEFAULT));
 
         ThreadPoolInfo.minThreads = Integer.parseInt(
                 propsServer.getProperty(PROP_KEY_SERVER_THREADPOOL_MIN_THREADS,
-                        String.valueOf(ConnectorConfig.getMinThreads())));
-
-        ThreadPoolInfo.queueCapacity = Integer.parseInt(propsServer.getProperty(
-                PROP_KEY_SERVER_THREADPOOL_QUEUE_CAPACITY,
-                String.valueOf(ConnectorConfig.getQueueCapacity())));
+                        SERVER_THREADPOOL_MIN_THREADS_DEFAULT));
 
         ThreadPoolInfo.idleTimeoutMsec = Integer.parseInt(propsServer
                 .getProperty(PROP_KEY_SERVER_THREADPOOL_IDLE_TIMEOUT_MSEC,
-                        String.valueOf(ConnectorConfig.getIdleTimeoutMsec())));
+                        SERVER_THREADPOOL_IDLE_TIMEOUT_MSEC_DEFAULT));
 
         final QueuedThreadPool threadPool;
 
@@ -682,7 +656,7 @@ public final class WebServer {
                     new HttpConnectionFactory(httpConfig));
 
             http.setPort(serverPort);
-            http.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
+            http.setIdleTimeout(ThreadPoolInfo.idleTimeoutMsec);
 
             server.addConnector(http);
         }
@@ -811,7 +785,7 @@ public final class WebServer {
                 new HttpConnectionFactory(httpsConfig));
 
         https.setPort(serverPortSsl);
-        https.setIdleTimeout(ConnectorConfig.getIdleTimeoutMsec());
+        https.setIdleTimeout(ThreadPoolInfo.idleTimeoutMsec);
 
         serverAcceptorThreads = https.getAcceptors();
 
