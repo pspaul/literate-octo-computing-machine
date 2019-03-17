@@ -1630,9 +1630,8 @@ public final class JsonApiServer extends AbstractPage {
             if (StringUtils.isBlank(host)) {
                 host = InetUtils.getServerHostAddress();
             }
-            verifyUrl = new PdfPgpVerifyUrl(host, cm.getConfigInt(
-                    Key.PDFPGP_VERIFICATION_PORT,
-                    Integer.parseInt(ConfigManager.getServerSslPort())));
+            verifyUrl = new PdfPgpVerifyUrl(host,
+                    cm.getConfigInteger(Key.PDFPGP_VERIFICATION_PORT));
         } else {
             verifyUrl = null;
         }
