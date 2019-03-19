@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -83,11 +83,11 @@ public class PdfProperties extends AbstractUserPage {
         helper.addButton("btn-default", HtmlButtonEnum.DEFAULT);
 
         //
-        helper.encloseLabel("pdf-pgp-signature", localized("pdf-pgp-signature"),
-                ConfigManager.isPdfPgpEnabled() && (permissions == null
+        helper.encloseLabel("pdf-pgp-signature",
+                ACLPermissionEnum.SIGN.uiText(getLocale()),
+                ConfigManager.isPdfPgpAvailable() && (permissions == null
                         || ACCESS_CONTROL_SERVICE.hasPermission(permissions,
                                 ACLPermissionEnum.SIGN)));
-
         //
         final Integer privsLetterhead = ACCESS_CONTROL_SERVICE
                 .getPrivileges(user, ACLOidEnum.U_LETTERHEAD);

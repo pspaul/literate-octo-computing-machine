@@ -1215,9 +1215,7 @@
                     sign = _view.isCbChecked($('#pdf-pgp-signature'));
                 if (encrypt || sign) {
                     $('#pdf-apply-security').checkboxradio('enable');
-                    if (encrypt) {
-                        $('#pdf-allow-block').show();
-                    }
+                    _view.visible($('#pdf-allow-block'), encrypt);
                 } else {
                     $('#pdf-allow-block').hide();
                     $('#pdf-apply-security').checkboxradio('disable');

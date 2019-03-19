@@ -1624,7 +1624,7 @@ public final class JsonApiServer extends AbstractPage {
 
         final PdfPgpVerifyUrl verifyUrl;
 
-        if (cm.isConfigValue(Key.PDFPGP_VERIFICATION_ENABLE)) {
+        if (ConfigManager.isPdfPgpAvailable()) {
 
             String host = cm.getConfigValue(Key.PDFPGP_VERIFICATION_HOST);
             if (StringUtils.isBlank(host)) {
