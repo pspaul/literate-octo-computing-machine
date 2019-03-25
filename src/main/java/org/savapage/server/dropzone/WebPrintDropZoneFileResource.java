@@ -204,17 +204,31 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
             resultCode = ApiResultCodeEnum.INFO;
             resultText = e.getMessage();
 
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info(String.format("WebPrint [%s] [%s]: %s",
+                        user.getUserId(), e.getClass().getSimpleName(),
+                        e.getMessage()), e);
+            }
+
         } catch (IOException e) {
 
             resultCode = ApiResultCodeEnum.WARN;
             resultText = e.getMessage();
+
+            LOGGER.warn(
+                    String.format("WebPrint [%s] [%s]: %s", user.getUserId(),
+                            e.getClass().getSimpleName(), e.getMessage()),
+                    e);
 
         } catch (Exception e) {
 
             resultCode = ApiResultCodeEnum.ERROR;
             resultText = e.getMessage();
 
-            LOGGER.error("An error occurred while uploading a file.", e);
+            LOGGER.error(
+                    String.format("WebPrint [%s] [%s]: %s", user.getUserId(),
+                            e.getClass().getSimpleName(), e.getMessage()),
+                    e);
 
         } finally {
 

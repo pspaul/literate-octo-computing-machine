@@ -255,6 +255,7 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                         tempFile.delete();
                     }
 
+                    uploadedFile.closeStreams();
                     uploadedFile.delete();
                 }
             }

@@ -230,6 +230,8 @@ public final class PdfPgpUploadHelper {
             feedbackMsg.append("</div>");
 
         } finally {
+            // Close quietly.
+            uploadedFile.closeStreams();
             // Don't wait for garbage collect: delete now.
             uploadedFile.delete();
         }

@@ -254,6 +254,8 @@ public final class WebPrintHelper {
                     true, docContentPrintReq, uploadedFile.getInputStream());
 
         } finally {
+            // Close quietly.
+            uploadedFile.closeStreams();
             // Don't wait for garbage collect: delete now.
             uploadedFile.delete();
         }
