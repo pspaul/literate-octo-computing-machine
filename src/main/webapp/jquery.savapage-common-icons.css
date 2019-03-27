@@ -1,8 +1,8 @@
-/*! SavaPage | (c) 2011-2018 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage | (c) 2011-2019 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -54,6 +54,15 @@
 }
 .ui-icon-mini-preferred-off:after {
     background: url(/famfamfam-silk/star_gray.png) 50% 50% no-repeat;
+    background-size: 12px 12px;
+}
+
+.ui-icon-mini-select-all-on:after {
+    background: url(/images/selected-green-16x16.png) 50% 50% no-repeat;
+    background-size: 12px 12px;
+}
+.ui-icon-mini-select-all-off:after {
+    background: url(/images/unselected-16x16.png) 50% 50% no-repeat;
     background-size: 12px 12px;
 }
 

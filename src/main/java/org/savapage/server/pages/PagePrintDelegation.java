@@ -172,9 +172,12 @@ public final class PagePrintDelegation extends AbstractPage {
                 new QuickSearchPanel("quicksearch-users");
         add(panelUsers);
 
+        scopeHtmlId = "sp-print-delegation-users-select-to-add-all";
+        scopeHtmlTitle = localized("button-select-all");
+
         panelUsers.populate("sp-print-delegation-users-select-to-add",
-                getLocalizer().getString("label-users", this), "", true, null,
-                null);
+                getLocalizer().getString("label-users", this), "", true,
+                scopeHtmlId, scopeHtmlTitle);
 
         //
         final QuickSearchPanel panelAccounts =

@@ -3281,42 +3281,72 @@
     }(this, this.document, this.navigator, this.org.savapage));
 
 //--------------------------------------------------------------
-// Number-up preview
+// Switch Buttons
 //--------------------------------------------------------------
 ( function($, window, document, _ns) {
         "use strict";
 
-        _ns.PreferredButtonSwitch = {
-            CLASS_ICON_ON : 'ui-icon-mini-preferred-on',
-            CLASS_ICON_OFF : 'ui-icon-mini-preferred-off'
-        };
-
-        _ns.PreferredButtonSwitch.toggle = function(button) {
+        //-----------------------------------------
+        _ns.GenericButtonSwitch = {};
+        _ns.GenericButtonSwitch.toggle = function(button, icons) {
             var classRem,
                 classAdd;
 
-            if (button.hasClass(this.CLASS_ICON_ON)) {
-                classRem = this.CLASS_ICON_ON;
-                classAdd = this.CLASS_ICON_OFF;
+            if (button.hasClass(icons.CLASS_ICON_ON)) {
+                classRem = icons.CLASS_ICON_ON;
+                classAdd = icons.CLASS_ICON_OFF;
             } else {
-                classRem = this.CLASS_ICON_OFF;
-                classAdd = this.CLASS_ICON_ON;
+                classRem = icons.CLASS_ICON_OFF;
+                classAdd = icons.CLASS_ICON_ON;
             }
 
             button.removeClass(classRem);
             button.addClass(classAdd);
 
-            return classAdd === this.CLASS_ICON_ON;
+            return classAdd === icons.CLASS_ICON_ON;
         };
 
-        _ns.PreferredButtonSwitch.isOn = function(button) {
-            return button.hasClass(this.CLASS_ICON_ON);
+        _ns.GenericButtonSwitch.isOn = function(button, icons) {
+            return button.hasClass(icons.CLASS_ICON_ON);
         };
 
-        _ns.PreferredButtonSwitch.setState = function(button, isOn) {
-            button.removeClass(this.CLASS_ICON_ON);
-            button.removeClass(this.CLASS_ICON_OFF);
-            button.addClass( isOn ? this.CLASS_ICON_ON : this.CLASS_ICON_OFF);
+        _ns.GenericButtonSwitch.setState = function(button, isOn, icons) {
+            button.removeClass(icons.CLASS_ICON_ON);
+            button.removeClass(icons.CLASS_ICON_OFF);
+            button.addClass( isOn ? icons.CLASS_ICON_ON : icons.CLASS_ICON_OFF);
+        };
+
+        //-----------------------------------------
+        _ns.PreferredButtonSwitch = {
+            icons : {
+                CLASS_ICON_ON : 'ui-icon-mini-preferred-on',
+                CLASS_ICON_OFF : 'ui-icon-mini-preferred-off'
+            },
+            toggle : function(button) {
+                return _ns.GenericButtonSwitch.toggle(button, this.icons);
+            },
+            isOn : function(button) {
+                return _ns.GenericButtonSwitch.isOn(button, this.icons);
+            },
+            setState : function(button, isOn) {
+                _ns.GenericButtonSwitch.setState(button, isOn, this.icons);
+            }
+        };
+        //-----------------------------------------
+        _ns.SelectAllButtonSwitch = {
+            icons : {
+                CLASS_ICON_ON : 'ui-icon-mini-select-all-on',
+                CLASS_ICON_OFF : 'ui-icon-mini-select-all-off'
+            },
+            toggle : function(button) {
+                return _ns.GenericButtonSwitch.toggle(button, this.icons);
+            },
+            isOn : function(button) {
+                return _ns.GenericButtonSwitch.isOn(button, this.icons);
+            },
+            setState : function(button, isOn) {
+                _ns.GenericButtonSwitch.setState(button, isOn, this.icons);
+            }
         };
 
     }(this, this.document, this.navigator, this.org.savapage));
