@@ -1411,7 +1411,9 @@
             };
 
             _view.pages.printer.onSavePrinter = function() {
-                var sel;
+                var sel,
+                    res;
+
                 _model.editPrinter.displayName = $('#printer-displayname').val();
                 _model.editPrinter.location = $('#printer-location').val();
                 _model.editPrinter.printerGroups = $('#printer-printergroups').val();
@@ -1430,7 +1432,7 @@
                 }
 
                 // ProxyPrinterDto
-                var res = _api.call({
+                res = _api.call({
                     request : 'printer-set',
                     dto : JSON.stringify(_model.editPrinter)
                 });
@@ -1513,7 +1515,7 @@
                     // push: org.savapage.core.dto.IppMediaSourceDto
                     dto.sources.push({
                         active : active,
-                        preferred : preferred ? preferred : null,
+                        preferred : preferred || null,
                         source : source,
                         display : display,
                         media : {
@@ -1534,9 +1536,6 @@
 
                 });
 
-                /*
-                 *
-                 */
                 res = _api.call({
                     request : 'printer-set-media-sources',
                     dto : JSON.stringify(dto)
