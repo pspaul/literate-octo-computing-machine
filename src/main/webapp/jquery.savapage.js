@@ -65,6 +65,21 @@
             $(document).bind('drop dragover', function(e) {
                 e.preventDefault();
             });
+
+            /*
+             * Listener for .ajax HTML status codes. All codes are reported
+             * (including informational and succes).
+             */
+            $(document).ajaxError(function(event, request, settings) {
+                /*
+                 * Do not alert 1xx Informational response and 2xx Success.
+                 * https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+                 */
+                if (request.status >= 300) {
+                    _ns.logger.warn('[' + settings.url + '] status ' + request.status + ' (' + request.statusText + ')');
+                    alert('Request: ' + settings.url + '\nStatus: ' + request.status + ' (' + request.statusText + ')');
+                }
+            });
         };
 
         /*
