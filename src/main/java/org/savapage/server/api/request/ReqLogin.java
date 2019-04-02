@@ -1144,9 +1144,10 @@ public final class ReqLogin extends ApiRequestMixin {
         } else {
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(String.format(
-                        "%s WebApp AuthToken Login [%s] denied: user NOT found.",
-                        webAppType.toString(), uid));
+                LOGGER.trace(
+                        "{} WebApp AuthToken Login [{}] denied: "
+                                + "user NOT found.",
+                        webAppType.toString(), uid);
             }
 
             onLoginFailed(null);
@@ -1171,29 +1172,26 @@ public final class ReqLogin extends ApiRequestMixin {
                 return;
             }
 
-            final int minutes;
+            final IConfigProp.Key key;
 
-            if (ApiRequestHelper.isAuthTokenLoginEnabled()) {
-
-                minutes = 0;
-
+            if (webAppType == WebAppTypeEnum.ADMIN) {
+                key = IConfigProp.Key.WEB_LOGIN_ADMIN_SESSION_TIMEOUT_MINS;
             } else {
-
-                final IConfigProp.Key configKey;
-
-                if (webAppType == WebAppTypeEnum.ADMIN) {
-                    configKey =
-                            IConfigProp.Key.WEB_LOGIN_ADMIN_SESSION_TIMEOUT_MINS;
-                } else {
-                    configKey =
-                            IConfigProp.Key.WEB_LOGIN_USER_SESSION_TIMEOUT_MINS;
-                }
-
-                minutes = ConfigManager.instance().getConfigInt(configKey);
-
+                key = IConfigProp.Key.WEB_LOGIN_USER_SESSION_TIMEOUT_MINS;
             }
-            session.setMaxInactiveInterval(
-                    minutes * DateUtil.SECONDS_IN_MINUTE);
+
+            final int timeout = ConfigManager.instance().getConfigInt(key)
+                    * DateUtil.SECONDS_IN_MINUTE;
+
+            final int interval;
+            if (ApiRequestHelper.isAuthTokenLoginEnabled()) {
+                // Mantis #1048
+                interval = timeout;
+            } else {
+                interval = timeout;
+            }
+
+            session.setMaxInactiveInterval(interval);
         }
     }
 

@@ -160,6 +160,10 @@ public final class WebServer {
             "server.threadpool.idle-timeout-msec";
 
     /** */
+    private static final String PROP_KEY_SERVER_SESSION_SCAVENGE_INTERVAL_SEC =
+            "server.session.scavenge.interval-sec";
+
+    /** */
     private static final String SERVER_THREADPOOL_MIN_THREADS_DEFAULT = "20";
 
     /** */
@@ -172,6 +176,10 @@ public final class WebServer {
     /** */
     private static final String SERVER_THREADPOOL_QUEUE_CAPACITY_DEFAULT =
             "3000";
+
+    /** */
+    private static final String SERVER_SESSION_SCAVENGE_INTERVAL_SEC_DEFAULT =
+            "600";
 
     /** */
     private static int serverPort;
@@ -303,6 +311,9 @@ public final class WebServer {
     private static boolean webAppCustomI18n;
 
     /** */
+    private static int sessionScavengeInterval;
+
+    /** */
     private WebServer() {
     }
 
@@ -325,6 +336,15 @@ public final class WebServer {
      */
     public static int getServerPortSsl() {
         return serverPortSsl;
+    }
+
+    /**
+     * @return Log message with session scavenge in seconds.
+     */
+    public static String logSessionScavengeInterval() {
+        return String.format("%s [%d]",
+                PROP_KEY_SERVER_SESSION_SCAVENGE_INTERVAL_SEC,
+                sessionScavengeInterval);
     }
 
     /**
@@ -564,6 +584,10 @@ public final class WebServer {
                 BooleanUtils.toBooleanObject(
                         propsServer.getProperty(PROP_KEY_WEBAPP_CUSTOM_I18N)),
                 false);
+
+        sessionScavengeInterval = Integer.parseInt(propsServer.getProperty(
+                PROP_KEY_SERVER_SESSION_SCAVENGE_INTERVAL_SEC,
+                SERVER_SESSION_SCAVENGE_INTERVAL_SEC_DEFAULT));
 
         ThreadPoolInfo.queueCapacity = Integer.parseInt(propsServer.getProperty(
                 PROP_KEY_SERVER_THREADPOOL_QUEUE_CAPACITY,
@@ -886,6 +910,10 @@ public final class WebServer {
              * Start the server: WebApp is initialized.
              */
             server.start();
+
+            // ... after start() !
+            server.getSessionIdManager().getSessionHouseKeeper()
+                    .setIntervalSec(sessionScavengeInterval);
 
             if (WebApp.hasInitializeError()) {
                 System.exit(1);

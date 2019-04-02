@@ -122,13 +122,6 @@
 
 					<tr>
 						<th>
-							<wicket:message key="web-sessions" />
-						</th>
-						<td class="sp-txt-info" wicket:id="web-sessions" />
-					</tr>
-
-					<tr>
-						<th>
 							<wicket:message key="recent-errors" />
 						</th>
 						<td wicket:id="error-count" />
@@ -178,6 +171,15 @@
 									<wicket:panel wicket:id="tooltip-jvm-memory" />
 								</div>
 							</td>
+						</tr>
+					</wicket:enclosure>
+
+					<wicket:enclosure child="web-sessions">
+						<tr>
+							<th>
+								<wicket:message key="web-sessions" />
+							</th>
+							<td class="sp-txt-info" wicket:id="web-sessions" />
 						</tr>
 					</wicket:enclosure>
 

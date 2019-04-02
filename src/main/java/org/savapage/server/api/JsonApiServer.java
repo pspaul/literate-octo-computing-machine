@@ -2013,14 +2013,17 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
+     * Checks if session is logically expired, and touches the validated time.
      *
      * @param session
-     * @return
+     *            The current session.
+     * @return {@code true} when current session is logically expired.
      */
     private boolean checkTouchSessionExpired(final SpSession session) {
 
+        // Mantis #1048
         if (ApiRequestHelper.isAuthTokenLoginEnabled()) {
-            return false;
+            // no code intended.
         }
 
         if (session == null) {

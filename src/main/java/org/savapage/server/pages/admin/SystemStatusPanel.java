@@ -523,16 +523,13 @@ public final class SystemStatusPanel extends Panel {
         /*
          *
          */
-        add(new Label("client-sessions",
-                helper.localizedNumber(UserEventService.getClientAppCount())));
-
-        add(new Label("web-sessions",
-                helper.localizedNumber(WebApp.getAuthUserSessionCount())));
+        add(new Label("client-sessions", String.format("%s (%s) • web (client)",
+                helper.localizedNumber(UserEventService.getUserWebAppCount()),
+                helper.localizedNumber(UserEventService.getClientAppCount()))));
 
         /*
          * Community Membership
          */
-        //
         add(new Label("membership-status-prompt",
                 CommunityDictEnum.MEMBERSHIP.getWord()));
 
@@ -742,6 +739,15 @@ public final class SystemStatusPanel extends Panel {
             tooltip.populate(helper.localized("tooltip-jvm-memory"), true);
             add(tooltip);
         }
+
+        //
+        String webSessions = null;
+        if (showTechInfo) {
+            webSessions = String.format("%s (%s) • id (ip)",
+                    helper.localizedNumber(WebApp.getAuthSessionCount()),
+                    helper.localizedNumber(WebApp.getAuthIpAddrCount()));
+        }
+        helper.encloseLabel("web-sessions", webSessions, showTechInfo);
 
         //
         String openFiles = "-";
