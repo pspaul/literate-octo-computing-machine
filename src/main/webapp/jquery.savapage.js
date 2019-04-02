@@ -72,10 +72,13 @@
              */
             $(document).ajaxError(function(event, request, settings) {
                 /*
-                 * Do not alert 1xx Informational response and 2xx Success.
+                 * Do not alert 1xx Informational response and 2xx Success. Also,
+                 * do not alert on 401 (Unauthorized), since this code is
+                 * returned with a valid JSON result.code === '9', and handled
+                 * accordingly.
                  * https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
                  */
-                if (request.status >= 300) {
+                if (request.status !== 401 && request.status >= 300) {
                     _ns.logger.warn('[' + settings.url + '] status ' + request.status + ' (' + request.statusText + ')');
                     alert('Request: ' + settings.url + '\nStatus: ' + request.status + ' (' + request.statusText + ')');
                 }
