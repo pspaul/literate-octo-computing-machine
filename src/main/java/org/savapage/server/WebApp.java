@@ -25,9 +25,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.wicket.Session;
@@ -62,6 +64,7 @@ import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.services.helpers.UserAuthModeEnum;
 import org.savapage.core.util.AppLogHelper;
+import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.oauth.OAuthProviderEnum;
@@ -246,6 +249,15 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     private static Map<String, String> theDictIpAddrSession = new HashMap<>();
 
     /**
+     * Last time the session dictionaries were pruned.
+     */
+    private static long theDictLastPruneTime;
+
+    /** 30 minutes. */
+    private static final long DICT_LAST_PRUNE_TIME_PERIOD =
+            30 * DateUtil.DURATION_MSEC_MINUTE;
+
+    /**
      * The RAW Print Server.
      */
     private RawPrintServer rawPrintServer = null;
@@ -350,13 +362,63 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     /**
-     * Gets the number of authenticated user WebApp sessions.
+     * Removes IP addresses from the cache that have no authenticated session.
+     * <p>
+     * When DHCP lease expires <i>before</i> the HTTP session expires, the cache
+     * may contain IP addresses with orphaned Session ID, as exemplified in the
+     * following use-case:
+     * <ul>
+     * <li>User does not explicitly logout of the Web App</li>
+     * <li>After device reboot or wake-up from hibernation, a different IP
+     * address is acquired from the renewed DHCP lease.</li>
+     * <li>User open Web App again, and the client side auth token give him an
+     * automatic login, with the newly acquired IP address.</li>
+     * <li>As a result, the session and user related to the old IP address are
+     * orphaned.</li>
+     * </ul>
+     * </p>
+     *
+     * @return Number of IP addresses removed from cache.
+     */
+    private static int pruneOrphanedAuthIpAddr() {
+        synchronized (MUTEX_DICT) {
+            int removed = 0;
+
+            final Iterator<Entry<String, String>> iter =
+                    theDictIpAddrSession.entrySet().iterator();
+
+            while (iter.hasNext()) {
+                final Entry<String, String> entry = iter.next();
+                final String ipAddr = entry.getKey();
+                final String session = entry.getValue();
+                if (!theDictSessionIpAddr.containsKey(session)) {
+                    theDictIpAddrUser.remove(ipAddr);
+                    iter.remove();
+                    removed++;
+                }
+            }
+            return removed;
+        }
+    }
+
+    /**
+     * Gets the number of authenticated WebApp sessions.
      *
      * @return the number of sessions.
      */
-    public static int getAuthUserSessionCount() {
+    public static int getAuthSessionCount() {
         // no synchronized needed
         return theDictSessionIpAddr.size();
+    }
+
+    /**
+     * Gets the number of IP addresses with authenticated WebApp sessions.
+     *
+     * @return the number of sessions.
+     */
+    public static int getAuthIpAddrCount() {
+        // no synchronized needed
+        return theDictIpAddrSession.size();
     }
 
     /**
@@ -434,34 +496,21 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             theDictIpAddrSession.put(ipAddr, sessionId);
             theDictSessionIpAddr.put(sessionId, ipAddr);
 
-            checkIpUserSessionCache("notifyAuthenticatedUser");
+            //
+            final long now = System.currentTimeMillis();
+            if (now - theDictLastPruneTime > DICT_LAST_PRUNE_TIME_PERIOD) {
+                final int pruned = pruneOrphanedAuthIpAddr();
+                if (pruned > 0) {
+                    SpInfo.instance().log(String.format(
+                            "Removed [%s] orphaned HTTP sessions.", pruned));
+                }
+                theDictLastPruneTime = now;
+            }
         }
 
         AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
                 localize("pub-user-login-success", webAppType.getUiText(),
                         UserAuth.getUiText(authMode), user, ipAddr));
-    }
-
-    /**
-     * Checks if the IP User Session User cache is in-sync.
-     *
-     * @param action
-     *            Action string used for logging.
-     * @return {@code true} if the cache is in-sync.
-     */
-    private static boolean checkIpUserSessionCache(final String action) {
-
-        boolean inSync = theDictIpAddrUser.size() == theDictSessionIpAddr.size()
-                && theDictSessionIpAddr.size() == theDictIpAddrSession.size();
-
-        if (!inSync) {
-            LOGGER.warn(
-                    "{}: SessionIpUserCache is out-of-sync: IPaddr->User [{}]"
-                            + " IPaddr->SessionId [{}] SessionId->IPaddr [{}]",
-                    action, theDictIpAddrUser.size(),
-                    theDictIpAddrSession.size(), theDictSessionIpAddr.size());
-        }
-        return inSync;
     }
 
     /**
@@ -610,6 +659,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     private void myInitialize() {
 
+        theDictLastPruneTime = System.currentTimeMillis();
+
         java.io.FileInputStream fis = null;
 
         try {
@@ -725,6 +776,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             SpInfo.instance().log(WebServer.ThreadPoolInfo.logMinThreads());
             SpInfo.instance()
                     .log(WebServer.ThreadPoolInfo.logIdleTimeoutMsec());
+
+            SpInfo.instance().log(WebServer.logSessionScavengeInterval());
 
             //
             final SslCertInfo sslCert = ConfigManager.getSslCertInfo();
@@ -1041,20 +1094,28 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
             } else {
 
-                if (theDictIpAddrSession.remove(ipAddr) == null) {
+                final String sessionRemoved =
+                        theDictIpAddrSession.remove(ipAddr);
+
+                if (sessionRemoved == null) {
                     LOGGER.error("Inconsistent IP User Session cache: "
                             + "no session found for [{}]", ipAddr);
+                } else {
+                    if (!sessionRemoved.equals(sessionId)) {
+                        LOGGER.warn(
+                                "{}: Inconsistent Session IP cache "
+                                        + "[{}]->[{}]->[{}]",
+                                "sessionUnbound", sessionId, ipAddr,
+                                sessionRemoved);
+                    }
                 }
 
                 final String user = theDictIpAddrUser.remove(ipAddr);
 
                 if (user == null) {
-
                     LOGGER.error("Inconsistent IP User Session cache: "
                             + "no user found for [{}]", ipAddr);
-
                 } else {
-
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(
                                 "IP User Session [{}] [{}] [{}] removed."
@@ -1062,7 +1123,6 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                                 ipAddr, user, sessionId,
                                 theDictIpAddrUser.size());
                     }
-
                     /*
                      * TODO: how to get the WebAppTypEnum?
                      */
@@ -1070,9 +1130,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                             PubLevelEnum.INFO,
                             localize("pub-user-logout", user, ipAddr));
                 }
-
             }
-            checkIpUserSessionCache("sessionUnbound");
         }
     }
 
