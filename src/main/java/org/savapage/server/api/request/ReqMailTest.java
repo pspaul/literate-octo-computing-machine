@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,6 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.mail.MessagingException;
 
@@ -31,17 +29,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.circuitbreaker.CircuitBreakerException;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.dao.UserEmailDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
-import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.services.EmailService;
-import org.savapage.core.services.PGPPublicKeyService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.email.EmailMsgParms;
 import org.savapage.core.util.EmailValidator;
 import org.savapage.lib.pgp.PGPBaseException;
-import org.savapage.lib.pgp.PGPPublicKeyInfo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -57,9 +51,6 @@ public final class ReqMailTest extends ApiRequestMixin {
     /** */
     private static final EmailService EMAIL_SERVICE =
             ServiceContext.getServiceFactory().getEmailService();
-    /** */
-    private static final PGPPublicKeyService PGP_PUBLICKEY_SERVICE =
-            ServiceContext.getServiceFactory().getPGPPublicKeyService();
 
     /**
      * .
@@ -109,24 +100,6 @@ public final class ReqMailTest extends ApiRequestMixin {
             emailParms.setSubject(subject);
             emailParms.setBodyInStationary(subject, body, getLocale(), true);
 
-            // PGP/MIME Encrypt?
-            final UserEmailDao daoUserEmail =
-                    ServiceContext.getDaoContext().getUserEmailDao();
-
-            final UserEmail userEmail =
-                    daoUserEmail.findByEmail(mailto.toLowerCase());
-
-            if (userEmail != null) {
-
-                final PGPPublicKeyInfo info = PGP_PUBLICKEY_SERVICE
-                        .readRingEntry(userEmail.getUser());
-
-                if (info != null) {
-                    final List<PGPPublicKeyInfo> list = new ArrayList<>();
-                    list.add(info);
-                    emailParms.setPublicKeyList(list);
-                }
-            }
             EMAIL_SERVICE.sendEmail(emailParms);
 
             setApiResult(ApiResultCodeEnum.OK, "msg-mail-sent", mailto);

@@ -167,6 +167,7 @@ import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
 import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.ext.smartschool.SmartschoolPrintMonitor;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
+import org.savapage.lib.pgp.PGPBaseException;
 import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.request.ApiRequestHandler;
@@ -814,11 +815,13 @@ public final class JsonApiServer extends AbstractPage {
      * @throws IOException
      * @throws CircuitBreakerException
      * @throws InterruptedException
+     * @throws PGPBaseException
      */
     private void mailDepositReceipt(final Long accountTrxDbId,
             final String toAddress, final String requestingUser,
-            boolean isAdminRequest) throws JRException, MessagingException,
-            IOException, InterruptedException, CircuitBreakerException {
+            boolean isAdminRequest)
+            throws JRException, MessagingException, IOException,
+            InterruptedException, CircuitBreakerException, PGPBaseException {
 
         final File tempPdfFile = new File(OutputProducer
                 .createUniqueTempPdfName(requestingUser, "deposit-receipt"));
@@ -2183,13 +2186,14 @@ public final class JsonApiServer extends AbstractPage {
      * @throws InterruptedException
      * @throws CircuitBreakerException
      * @throws ParseException
+     * @throws PGPBaseException
      */
     private Map<String, Object> reqSend(final User lockedUser,
             final String mailto, final String jobIndex, final String ranges,
             final boolean removeGraphics, final boolean ecoPdf,
-            final boolean grayscalePdf)
-            throws LetterheadNotFoundException, IOException, MessagingException,
-            InterruptedException, CircuitBreakerException, ParseException {
+            final boolean grayscalePdf) throws LetterheadNotFoundException,
+            IOException, MessagingException, InterruptedException,
+            CircuitBreakerException, ParseException, PGPBaseException {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
