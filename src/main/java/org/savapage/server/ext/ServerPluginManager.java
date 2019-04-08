@@ -75,6 +75,7 @@ import org.savapage.ext.ServerPluginContext;
 import org.savapage.ext.ServerPluginException;
 import org.savapage.ext.notification.JobTicketCancelEvent;
 import org.savapage.ext.notification.JobTicketCloseEvent;
+import org.savapage.ext.notification.NotificationEventProgressImpl;
 import org.savapage.ext.notification.NotificationListener;
 import org.savapage.ext.notification.NotificationPlugin;
 import org.savapage.ext.oauth.OAuthClientPlugin;
@@ -1424,15 +1425,27 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
     @Override
     public void onJobTicketEvent(final JobTicketCancelEvent event) {
+        final NotificationEventProgressImpl progress =
+                new NotificationEventProgressImpl();
         this.notificationPlugins.forEach((k, v) -> {
-            v.onJobTicketEvent(event);
+            if (v.onJobTicketEvent(event, progress)) {
+                progress.onAccept(v);
+            } else {
+                progress.onReject(v);
+            }
         });
     }
 
     @Override
     public void onJobTicketEvent(final JobTicketCloseEvent event) {
+        final NotificationEventProgressImpl progress =
+                new NotificationEventProgressImpl();
         this.notificationPlugins.forEach((k, v) -> {
-            v.onJobTicketEvent(event);
+            if (v.onJobTicketEvent(event, progress)) {
+                progress.onAccept(v);
+            } else {
+                progress.onReject(v);
+            }
         });
     }
 
