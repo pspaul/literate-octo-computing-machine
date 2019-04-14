@@ -148,7 +148,7 @@ public final class About extends AbstractAdminPage {
         add(new Label("jre-os-arch", System.getProperty("os.arch")));
 
         add(new Label("jre-java.io.tmpdir",
-                System.getProperty("java.io.tmpdir")));
+                System.getProperty(ConfigManager.SYS_PROP_JAVA_IO_TMPDIR)));
 
         add(new Label("app.dir.tmp-key",
                 ConfigManager.SERVER_PROP_APP_DIR_TMP));
