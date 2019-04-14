@@ -3093,6 +3093,7 @@
                     nameWlk,
                     statWlk,
                     htmlWlk,
+                    fileSize,
                     htmlAccepted = '',
                     htmlRejected = '';
 
@@ -3101,8 +3102,13 @@
                         nameWlk = files[i].name;
                         statWlk = filesStatus[nameWlk];
                         if (statWlk !== undefined) {
+                            fileSize = this.humanFileSize(files[i].size);
                             htmlWlk = '<span class="sp-txt-' + ( statWlk ? 'valid' : 'warn') + '">';
-                            htmlWlk += '&bull; ' + nameWlk + ' (' + this.humanFileSize(files[i].size) + ')</span><br>';
+                            htmlWlk += '&bull; ' + nameWlk;
+                            if (fileSize) {
+                                htmlWlk += ' (' + fileSize + ')';
+                            }
+                            htmlWlk += '</span><br>';
                             if (statWlk) {
                                 htmlAccepted += htmlWlk;
                             } else {
@@ -3165,7 +3171,7 @@
                     unit = bin ? 1024 : 1000,
                     unitArray = bin ? ['', 'Ki', 'Mi', 'Gi', 'Ti'] : ['', 'k', 'M', 'G', 'T'];
                 i = Math.floor(Math.log(size) / Math.log(unit));
-                return (size / Math.pow(unit, i) ).toFixed(decimals) * 1 + '&nbsp;' + unitArray[i] + 'B';
+                return size ? ((size / Math.pow(unit, i) ).toFixed(decimals) * 1 + '&nbsp;' + unitArray[i] + 'B') : undefined;
             },
 
             /**
@@ -3268,6 +3274,56 @@
 
             /**
              *
+             */
+            printURL : function(dataTransfer, url, fontEnum, fileExt, i18n, fooBefore, fooAfter, fooWarn, fooInfo) {
+                var _obj = this,
+                    dataUrl = dataTransfer.getData("URL"),
+                    wlk,
+                    res;
+
+                if (fooBefore) {
+                    fooBefore();
+                }
+
+                if (dataUrl.length > 0) {
+                    wlk = [];
+                    wlk.name = dataUrl;
+
+                    if (_obj.isFileTypeSupported(fileExt, wlk)) {
+                        res = _ns.api.call({
+                            request : 'url-print',
+                            dto : JSON.stringify({
+                                url : dataUrl,
+                                fontEnum : fontEnum
+                            })
+                        });
+                        if (res.result.code === '0') {
+                            if (fooInfo) {
+                                wlk = [];
+                                wlk.push({
+                                    name : dataUrl,
+                                    size : undefined
+                                });
+                                fooInfo(wlk);
+                            }
+                            if (fooAfter) {
+                                fooAfter();
+                            }
+                        } else {
+                            fooWarn(res.result.txt);
+                        }
+                    } else {
+                        fooWarn(i18n.format('msg-file-upload-type-unsupported', [dataUrl]));
+                    }
+                } else {
+                    dataText = dataTransfer.getData("TEXT");
+                    fooWarn('[' + dataText + '] is not supported.');
+                }
+
+            },
+
+            /**
+             *
              * @param {Object} dropzone (JQuery selector).
              */
             setCallbacks : function(dropzone, cssClassDragover, url, fileField, fontField, fooFontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo) {
@@ -3284,12 +3340,21 @@
                 });
 
                 dropzone.bind('drop', function(e) {
-                    var files = e.originalEvent.dataTransfer.files;
+                    var dataTransfer = e.originalEvent.dataTransfer,
+                        files = dataTransfer.files,
+                        fontEnum = fooFontEnum(),
+                        res,
+                        wlk,
+                        supported,
+                        dataText,
+                        dataUrl;
+
                     $(this).removeClass(cssClassDragover);
-                    // A drop of meaningless item(s) results in files.length ===
-                    // zero.
+
                     if (files.length > 0) {
-                        _obj.sendFiles(files, url, fileField, fontField, fooFontEnum(), maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo);
+                        _obj.sendFiles(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo);
+                    } else {
+                        _obj.printURL(dataTransfer, url, fontEnum, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo);
                     }
                     return false;
                 });

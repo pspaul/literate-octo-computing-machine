@@ -1851,9 +1851,15 @@
             },
                 _onUploadMsgInfo = function(files) {
                 var i,
+                    fileSize,
                     html = '';
                 for ( i = 0; i < files.length; i++) {
-                    html += '&bull; ' + files[i].name + ' (' + _ns.DropZone.humanFileSize(files[i].size) + ')<br>';
+                    fileSize = _ns.DropZone.humanFileSize(files[i].size);
+                    html += '&bull; ' + files[i].name;
+                    if (fileSize) {
+                        html += ' (' + fileSize + ')';
+                    }
+                    html += '<br>';
                 }
                 html += '&bull; ' + _i18n.format('msg-file-upload-completed', null);
                 $('#sp-webprint-upload-feedback').addClass('sp-txt-valid').html(html);
@@ -7072,6 +7078,7 @@
             //
 
             _ns.view = _view;
+            _ns.api = _api;
 
             //
             _deviceEvent = new DeviceEvent(_cometd);

@@ -75,6 +75,7 @@ import org.savapage.server.api.request.ReqSharedAccountGet;
 import org.savapage.server.api.request.ReqSharedAccountQuickSearch;
 import org.savapage.server.api.request.ReqSharedAccountSet;
 import org.savapage.server.api.request.ReqSystemModeChange;
+import org.savapage.server.api.request.ReqUrlPrint;
 import org.savapage.server.api.request.ReqUserCardQuickSearch;
 import org.savapage.server.api.request.ReqUserDelegateAccountsPreferred;
 import org.savapage.server.api.request.ReqUserDelegateGroupsPreferred;
@@ -355,6 +356,8 @@ public final class JsonApiDict {
     public static final String REQ_GENERATE_UUID = "generate-uuid";
 
     public static final String REQ_PRINTSITE_USER_SET = "printsite-user-set";
+
+    public static final String REQ_URL_PRINT = "url-print";
 
     /**
      */
@@ -1079,6 +1082,8 @@ public final class JsonApiDict {
 
         usr(REQ_PRINTER_QUICK_SEARCH, ReqPrinterQuickSearch.class, DbClaim.READ,
                 DbAccess.YES);
+
+        usr(REQ_URL_PRINT, ReqUrlPrint.class, DbClaim.NONE, DbAccess.NO);
 
         adm(REQ_I18N_CACHE_CLEAR, ReqI18nCacheClear.class, DbClaim.NONE,
                 DbAccess.NO);
