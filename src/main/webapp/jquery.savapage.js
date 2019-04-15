@@ -3284,6 +3284,7 @@
              */
             printURL : function(dataTransfer, url, fontEnum, fileExt, i18n, fooBefore, fooAfter, fooWarn, fooInfo) {
                 var _obj = this,
+                // Note: "URL" is not supported by Firefox.
                     dataUrl = dataTransfer.getData("URL"),
                     dataText,
                     wlk,
@@ -3294,9 +3295,17 @@
                 }
 
                 if (dataUrl.length === 0) {
-                    dataText = dataTransfer.getData("TEXT");
-                    fooWarn('[' + dataText + '] is not supported.');
-                    return;
+                    dataText = dataTransfer.getData("TEXT").trim();
+                    /*
+                     * Be kind to Firefox, and interpret drag/drop of
+                     * selected text as http(s) URL along the way :-)
+                     */
+                    if (dataText.indexOf(' ') < 0 && (dataText.startsWith('http://') || dataText.startsWith('https://'))) {
+                        dataUrl = dataText;
+                    } else {
+                        fooWarn('[' + dataText + '] is not supported.');
+                        return;
+                    }
                 }
 
                 wlk = [];
