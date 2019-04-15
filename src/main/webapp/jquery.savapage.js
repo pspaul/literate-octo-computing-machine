@@ -3188,7 +3188,14 @@
                 }
                 return false;
             },
-
+            /**
+             *
+             */
+            isHtmlTypeSupported : function(fileExt) {
+                var wlk = [];
+                wlk.name = 'probe.html';
+                return this.isFileTypeSupported(fileExt, wlk);
+            },
             /**
              *
              */
@@ -3278,6 +3285,7 @@
             printURL : function(dataTransfer, url, fontEnum, fileExt, i18n, fooBefore, fooAfter, fooWarn, fooInfo) {
                 var _obj = this,
                     dataUrl = dataTransfer.getData("URL"),
+                    dataText,
                     wlk,
                     res;
 
@@ -3285,41 +3293,46 @@
                     fooBefore();
                 }
 
-                if (dataUrl.length > 0) {
-                    wlk = [];
-                    wlk.name = dataUrl;
-
-                    if (_obj.isFileTypeSupported(fileExt, wlk)) {
-                        res = _ns.api.call({
-                            request : 'url-print',
-                            dto : JSON.stringify({
-                                url : dataUrl,
-                                fontEnum : fontEnum
-                            })
-                        });
-                        if (res.result.code === '0') {
-                            if (fooInfo) {
-                                wlk = [];
-                                wlk.push({
-                                    name : dataUrl,
-                                    size : undefined
-                                });
-                                fooInfo(wlk);
-                            }
-                            if (fooAfter) {
-                                fooAfter();
-                            }
-                        } else {
-                            fooWarn(res.result.txt);
-                        }
-                    } else {
-                        fooWarn(i18n.format('msg-file-upload-type-unsupported', [dataUrl]));
-                    }
-                } else {
+                if (dataUrl.length === 0) {
                     dataText = dataTransfer.getData("TEXT");
                     fooWarn('[' + dataText + '] is not supported.');
+                    return;
                 }
 
+                wlk = [];
+                wlk.name = dataUrl;
+
+                if (!_obj.isFileTypeSupported(fileExt, wlk) && !_obj.isHtmlTypeSupported(fileExt)) {
+                    fooWarn(i18n.format('msg-file-upload-type-unsupported', [dataUrl]));
+                    return;
+                }
+
+                $.mobile.loading("show");
+                _ns.Utils.asyncFoo(function() {
+                    res = _ns.api.call({
+                        request : 'url-print',
+                        dto : JSON.stringify({
+                            url : dataUrl,
+                            fontEnum : fontEnum
+                        })
+                    });
+                    if (res.result.code === '0') {
+                        if (fooInfo) {
+                            wlk = [];
+                            wlk.push({
+                                name : dataUrl,
+                                size : undefined
+                            });
+                            fooInfo(wlk);
+                        }
+                        if (fooAfter) {
+                            fooAfter();
+                        }
+                    } else {
+                        fooWarn(res.result.txt);
+                    }
+                    $.mobile.loading("hide");
+                });
             },
 
             /**
@@ -3342,12 +3355,7 @@
                 dropzone.bind('drop', function(e) {
                     var dataTransfer = e.originalEvent.dataTransfer,
                         files = dataTransfer.files,
-                        fontEnum = fooFontEnum(),
-                        res,
-                        wlk,
-                        supported,
-                        dataText,
-                        dataUrl;
+                        fontEnum = fooFontEnum();
 
                     $(this).removeClass(cssClassDragover);
 

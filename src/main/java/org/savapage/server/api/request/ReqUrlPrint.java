@@ -24,6 +24,10 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 import java.net.URL;
 
+import javax.naming.LimitExceededException;
+
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.jpa.User;
@@ -78,10 +82,12 @@ public final class ReqUrlPrint extends ApiRequestMixin {
 
         final User user = USER_DAO.findActiveUserByUserId(requestingUser);
 
+        final int maxMB = ConfigManager.instance()
+                .getConfigInt(IConfigProp.Key.WEB_PRINT_MAX_FILE_MB);
         try {
             if (ServiceContext.getServiceFactory().getDownloadService()
                     .download(new URL(dtoReq.getUrl()), this.getRemoteAddr(),
-                            user, dtoReq.getFontEnum())) {
+                            user, dtoReq.getFontEnum(), maxMB)) {
                 this.setApiResultOk();
             } else {
                 this.setApiResult(ApiResultCodeEnum.WARN,
@@ -89,6 +95,9 @@ public final class ReqUrlPrint extends ApiRequestMixin {
                         dtoReq.getUrl().toString());
             }
         } catch (IOException e) {
+            this.setApiResult(ApiResultCodeEnum.ERROR, "msg-url-print-error",
+                    dtoReq.getUrl().toString(), e.getMessage());
+        } catch (LimitExceededException e) {
             this.setApiResult(ApiResultCodeEnum.ERROR, "msg-url-print-error",
                     dtoReq.getUrl().toString(), e.getMessage());
         }
