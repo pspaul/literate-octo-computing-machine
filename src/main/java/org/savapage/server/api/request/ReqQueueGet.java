@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,10 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.IppQueueDao;
+import org.savapage.core.dao.enums.IppQueueAttrEnum;
+import org.savapage.core.dao.enums.IppRoutingEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.IppQueue;
@@ -60,6 +63,10 @@ public final class ReqQueueGet extends ApiRequestMixin {
     /**
      * The response.
      */
+    /**
+     * @author Rijk Ravestein
+     *
+     */
     public static class DtoRsp extends AbstractDto {
 
         private Long id;
@@ -71,6 +78,9 @@ public final class ReqQueueGet extends ApiRequestMixin {
         private Boolean deleted;
         private String reserved;
         private String uiText;
+        private boolean ippRoutingEnabled;
+        private IppRoutingEnum ippRouting;
+        private String ippOptions;
 
         public Long getId() {
             return id;
@@ -144,6 +154,30 @@ public final class ReqQueueGet extends ApiRequestMixin {
             this.uiText = uiText;
         }
 
+        public boolean isIppRoutingEnabled() {
+            return ippRoutingEnabled;
+        }
+
+        public void setIppRoutingEnabled(boolean ippRoutingEnabled) {
+            this.ippRoutingEnabled = ippRoutingEnabled;
+        }
+
+        public IppRoutingEnum getIppRouting() {
+            return ippRouting;
+        }
+
+        public void setIppRouting(IppRoutingEnum ippRouting) {
+            this.ippRouting = ippRouting;
+        }
+
+        public String getIppOptions() {
+            return ippOptions;
+        }
+
+        public void setIppOptions(String ippOptions) {
+            this.ippOptions = ippOptions;
+        }
+
     }
 
     @Override
@@ -206,6 +240,22 @@ public final class ReqQueueGet extends ApiRequestMixin {
         dtoRsp.setReserved(reserved);
         dtoRsp.setUiText(uiText);
 
+        //
+        dtoRsp.setIppRoutingEnabled(
+                ConfigManager.instance().isConfigValue(Key.IPP_ROUTING_ENABLE)
+                        && !QUEUE_SERVICE.isReservedQueue(queue.getUrlPath()));
+
+        IppRoutingEnum ippRouting = QUEUE_SERVICE.getIppRouting(queue);
+
+        if (ippRouting == null) {
+            ippRouting = IppRoutingEnum.NONE;
+        }
+
+        dtoRsp.setIppRouting(ippRouting);
+        dtoRsp.setIppOptions(QUEUE_SERVICE.getAttrValue(queue,
+                IppQueueAttrEnum.IPP_ROUTING_OPTIONS));
+
+        //
         this.setResponse(dtoRsp);
 
         setApiResultOk();

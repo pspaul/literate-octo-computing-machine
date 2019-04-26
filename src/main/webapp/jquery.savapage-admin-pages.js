@@ -1099,7 +1099,12 @@
         _ns.PageQueue = function(_i18n, _view, _model) {
 
             var _page = new _ns.Page(_i18n, _view, '#page-queue', 'admin/PageQueue'),
-                _self = _ns.derive(_page);
+                _self = _ns.derive(_page)
+            //
+            ,
+                _onChangeRoutingType = function(routing) {
+                _view.visible($('#queue-ipp-routing-options'), routing !== "NONE");
+            };
 
             $(_self.id()).on('pagecreate', function(event) {
 
@@ -1108,9 +1113,15 @@
                     return false;
                 });
 
+                $(this).on('change', "input:radio[name='queue-ipp-routing-type']", null, function(e) {
+                    _onChangeRoutingType($(this).val());
+                });
+
             }).on("pagebeforeshow", function(event, ui) {
                 var reserved = _model.editQueue.reserved,
+                    selIppOpt = $('#queue-ipp-routing-options'),
                     sect = $('#queue_reserved_section');
+
                 $('#queue-url-path').val(_model.editQueue.urlpath);
                 $('#queue-ip-allowed').val(_model.editQueue.ipallowed);
                 _view.checkCb('#queue-trusted', _model.editQueue.trusted);
@@ -1124,11 +1135,21 @@
                     sect.hide();
                 }
 
+                _view.visible($('#ipp-routing-prompt-section'), _model.editQueue.ippRoutingEnabled);
+
+                if (selIppOpt.length > 0) {
+                    _view.checkRadioValue('queue-ipp-routing-type', _model.editQueue.ippRouting);
+                    selIppOpt.val(_model.editQueue.ippOptions);
+                    _onChangeRoutingType(_model.editQueue.ippRouting);
+                }
+
                 $('#queue-header').text(_model.editQueue.uiText);
 
                 _view.visible($('.queue_user-defined-section'), !reserved && _model.editQueue.id !== null);
+
                 $('#queue-url-path').textinput( reserved ? "disable" : "enable");
                 $('#queue-trusted').checkboxradio(_model.editQueue.fixedTrust ? "disable" : "enable");
+
             });
             return _self;
         };

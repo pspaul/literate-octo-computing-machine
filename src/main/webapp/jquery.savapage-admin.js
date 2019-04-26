@@ -1248,13 +1248,20 @@
             };
 
             _view.pages.queue.onSaveQueue = function() {
-                var res;
+                var res,
+                    sel;
 
                 _model.editQueue.urlpath = $('#queue-url-path').val();
                 _model.editQueue.ipallowed = $('#queue-ip-allowed').val();
                 _model.editQueue.disabled = $('#queue-disabled').is(':checked');
                 _model.editQueue.deleted = $('#queue-deleted').is(':checked');
                 _model.editQueue.trusted = $('#queue-trusted').is(':checked');
+
+                sel = $('#queue-ipp-routing-options');
+                if (sel.length > 0) {
+                    _model.editQueue.ippRouting = _view.getRadioValue('queue-ipp-routing-type');
+                    _model.editQueue.ippOptions = sel.val();
+                }
 
                 res = _api.call({
                     request : 'queue-set',

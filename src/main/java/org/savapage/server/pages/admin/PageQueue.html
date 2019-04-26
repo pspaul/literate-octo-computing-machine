@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
     +====================================================================+ 
-    | This file is part of the SavaPage project <http://savapage.org> ...|
-    | Copyright (c) 2011-2016 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -60,13 +61,34 @@
 				<input type="checkbox" id="queue-disabled" value="0" />
 
 			</fieldset>
+		</li>
 
-			<div class="queue_user-defined-section">
-				<label for="queue-deleted">
-					<wicket:message key="queue-deleted" />
-				</label>
-				<input type="checkbox" id="queue-deleted" value="0" />
-			</div>
+		<li id="ipp-routing-prompt-section">
+			<legend wicket:id="ipp-routing-prompt" />
+
+			<fieldset class="ui-mini" data-role="controlgroup"
+				data-type="horizontal">
+
+				<label for="queue-ipp-routing-type-none"
+					wicket:id="label-ipp-routing-type-none" />
+				<input type="radio" name="queue-ipp-routing-type"
+					id="queue-ipp-routing-type-none" wicket:id="ipp-routing-type-none" />
+
+				<label for="queue-ipp-routing-type-terminal"
+					wicket:id="label-ipp-routing-type-terminal" />
+				<input type="radio" name="queue-ipp-routing-type"
+					id="queue-ipp-routing-type-terminal"
+					wicket:id="ipp-routing-type-terminal" />
+			</fieldset>
+
+			<textarea id="queue-ipp-routing-options" value="" maxlength="1024" />
+		</li>
+
+		<li class="queue_user-defined-section">
+			<label for="queue-deleted">
+				<wicket:message key="queue-deleted" />
+			</label>
+			<input type="checkbox" id="queue-deleted" value="0" />
 		</li>
 	</ul>
 
@@ -89,3 +111,5 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
+
+</html>

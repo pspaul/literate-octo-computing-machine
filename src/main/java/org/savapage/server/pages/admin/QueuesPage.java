@@ -275,10 +275,8 @@ public final class QueuesPage extends AbstractAdminListPage {
             series.clear();
 
             try {
-                series.init(observationTime,
-                        QUEUE_SERVICE.getAttributeValue(queue,
-                                IppQueueAttrEnum.PRINT_IN_ROLLING_DAY_PAGES
-                                        .getDbName()));
+                series.init(observationTime, QUEUE_SERVICE.getAttrValue(queue,
+                        IppQueueAttrEnum.PRINT_IN_ROLLING_DAY_PAGES));
             } catch (IOException e) {
                 throw new SpException(e);
             }

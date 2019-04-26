@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.IppRoutingEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -42,6 +44,20 @@ public final class PageQueue extends AbstractAdminPage {
      */
     public PageQueue(final PageParameters parameters) {
         super(parameters, ACLOidEnum.A_QUEUES, RequiredPermission.EDIT);
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addLabel("ipp-routing-prompt", "IPP Routing Options");
+
+        helper.addLabel("label-ipp-routing-type-none",
+                IppRoutingEnum.NONE.uiText(getLocale()));
+        helper.addModifyLabelAttr("ipp-routing-type-none", "",
+                MarkupHelper.ATTR_VALUE, IppRoutingEnum.NONE.toString());
+
+        helper.addLabel("label-ipp-routing-type-terminal",
+                IppRoutingEnum.TERMINAL.uiText(getLocale()));
+        helper.addModifyLabelAttr("ipp-routing-type-terminal", "",
+                MarkupHelper.ATTR_VALUE, IppRoutingEnum.TERMINAL.toString());
     }
 
 }

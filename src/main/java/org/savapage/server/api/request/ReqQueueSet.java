@@ -24,10 +24,16 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.IppQueueDao;
+import org.savapage.core.dao.enums.IppQueueAttrEnum;
+import org.savapage.core.dao.enums.IppRoutingEnum;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.JsonHelper;
 
 /**
  * Edits or creates a Queue.
@@ -89,51 +95,83 @@ public final class ReqQueueSet extends ApiRequestMixin {
         }
 
         if (isDuplicate) {
-
             setApiResult(ApiResultCodeEnum.ERROR, "msg-queue-duplicate-path",
                     urlPath);
+            return;
+        }
+
+        jpaQueue.setUrlPath(urlPath);
+        jpaQueue.setIpAllowed(dtoReq.getIpallowed());
+        jpaQueue.setTrusted(dtoReq.getTrusted());
+        jpaQueue.setDisabled(dtoReq.getDisabled());
+
+        final String keyOK;
+
+        if (isNew) {
+
+            if (QUEUE_SERVICE.isReservedQueue(urlPath)) {
+
+                setApiResult(ApiResultCodeEnum.ERROR, "msg-queue-reserved-path",
+                        urlPath);
+                return;
+            }
+
+            ippQueueDao.create(jpaQueue);
+
+            keyOK = "msg-queue-created-ok";
 
         } else {
 
-            jpaQueue.setUrlPath(urlPath);
-            jpaQueue.setIpAllowed(dtoReq.getIpallowed());
-            jpaQueue.setTrusted(dtoReq.getTrusted());
-            jpaQueue.setDisabled(dtoReq.getDisabled());
+            final boolean isDeleted = dtoReq.getDeleted();
 
-            if (isNew) {
+            if (jpaQueue.getDeleted() != isDeleted) {
 
-                if (QUEUE_SERVICE.isReservedQueue(urlPath)) {
-
-                    setApiResult(ApiResultCodeEnum.ERROR,
-                            "msg-queue-reserved-path", urlPath);
-
+                if (isDeleted) {
+                    QUEUE_SERVICE.setLogicalDeleted(jpaQueue, now,
+                            requestingUser);
                 } else {
+                    QUEUE_SERVICE.undoLogicalDeleted(jpaQueue);
+                }
+            }
 
-                    ippQueueDao.create(jpaQueue);
+            ippQueueDao.update(jpaQueue);
 
-                    setApiResult(ApiResultCodeEnum.OK, "msg-queue-created-ok");
+            keyOK = "msg-queue-saved-ok";
+        }
+
+        if (ConfigManager.instance().isConfigValue(Key.IPP_ROUTING_ENABLE)) {
+
+            if (dtoReq.getIppRouting() == null
+                    || dtoReq.getIppRouting() == IppRoutingEnum.NONE) {
+
+                if (!isNew) {
+                    QUEUE_SERVICE.deleteQueueAttrValue(jpaQueue,
+                            IppQueueAttrEnum.IPP_ROUTING);
+                    QUEUE_SERVICE.deleteQueueAttrValue(jpaQueue,
+                            IppQueueAttrEnum.IPP_ROUTING_OPTIONS);
                 }
 
             } else {
 
-                final boolean isDeleted = dtoReq.getDeleted();
-
-                if (jpaQueue.getDeleted() != isDeleted) {
-
-                    if (isDeleted) {
-                        QUEUE_SERVICE.setLogicalDeleted(jpaQueue, now,
-                                requestingUser);
-                    } else {
-                        QUEUE_SERVICE.undoLogicalDeleted(jpaQueue);
-                    }
+                if (StringUtils.isNotBlank(dtoReq.getIppOptions())
+                        && JsonHelper.createStringMapOrNull(
+                                dtoReq.getIppOptions()) == null) {
+                    setApiResultText(ApiResultCodeEnum.ERROR,
+                            "Invalid option map (must be JSON format).");
+                    return;
                 }
 
-                ippQueueDao.update(jpaQueue);
+                QUEUE_SERVICE.setQueueAttrValue(jpaQueue,
+                        IppQueueAttrEnum.IPP_ROUTING,
+                        dtoReq.getIppRouting().toString());
 
-                setApiResult(ApiResultCodeEnum.OK, "msg-queue-saved-ok");
+                QUEUE_SERVICE.setQueueAttrValue(jpaQueue,
+                        IppQueueAttrEnum.IPP_ROUTING_OPTIONS,
+                        StringUtils.defaultString(dtoReq.getIppOptions()));
             }
         }
 
+        setApiResult(ApiResultCodeEnum.OK, keyOK);
     }
 
 }
