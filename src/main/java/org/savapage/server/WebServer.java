@@ -54,6 +54,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -67,6 +68,7 @@ import org.savapage.core.ipp.operation.IppMessageMixin;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.ext.papercut.ExtPaperCutSyncServlet;
 import org.savapage.server.feed.AtomFeedServlet;
+import org.savapage.server.restful.RestApplication;
 import org.savapage.server.xmlrpc.SpXmlRpcServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -509,6 +511,22 @@ public final class WebServer {
     }
 
     /**
+     * Add RESTfull servlet.
+     *
+     * @param context
+     *            Web App context.
+     */
+    private static void initRESTful(final WebAppContext context) {
+
+        final ServletHolder jerseyServlet = context.addServlet(
+                org.glassfish.jersey.servlet.ServletContainer.class,
+                RestApplication.SERVLET_URL_PATTERN);
+
+        jerseyServlet.setInitParameter("javax.ws.rs.Application",
+                RestApplication.class.getCanonicalName());
+    }
+
+    /**
      * Starts the Web Server.
      * <p>
      * References:
@@ -879,6 +897,9 @@ public final class WebServer {
         server.addBean(new BasicAuthLoginService(
                 new String[] { AtomFeedServlet.ROLE_ALLOWED,
                         ExtPaperCutSyncServlet.ROLE_ALLOWED }));
+
+        // Add RESTfull servlet.
+        initRESTful(webAppContext);
 
         //
         final String serverStartedFile =
