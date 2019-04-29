@@ -65,6 +65,7 @@ import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.SslCertInfo;
 import org.savapage.core.ipp.operation.IppMessageMixin;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.ext.papercut.ExtPaperCutSyncServlet;
 import org.savapage.server.feed.AtomFeedServlet;
@@ -957,6 +958,10 @@ public final class WebServer {
             }
 
             if (fDevelopment) {
+
+                ServiceContext.getServiceFactory().getRestClientService()
+                        .test();
+
                 System.out
                         .println(" \n+========================================"
                                 + "====================================+"
