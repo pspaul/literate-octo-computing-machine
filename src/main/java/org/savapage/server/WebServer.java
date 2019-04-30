@@ -656,8 +656,8 @@ public final class WebServer {
         threadPool.setName("jetty-threadpool");
 
         final Server server = new Server(threadPool);
-
-        server.getThreadPool().getIdleThreads();
+        // First thing to do.
+        Runtime.getRuntime().addShutdownHook(new WebServerShutdownHook(server));
 
         /*
          * This is needed to enable the Jetty annotations.
@@ -924,9 +924,6 @@ public final class WebServer {
             writer.write("\n");
 
             writer.flush();
-
-            Runtime.getRuntime()
-                    .addShutdownHook(new WebServerShutdownHook(server));
 
             /*
              * Start the server: WebApp is initialized.

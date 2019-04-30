@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://savapage.org>.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -26,8 +26,8 @@ import org.savapage.core.SpInfo;
 
 /**
  *
- * @author Datraverse B.V.
- * @since 0.9.9
+ * @author Rijk Ravestein
+ *
  */
 public final class WebServerShutdownHook extends Thread {
 
@@ -50,20 +50,25 @@ public final class WebServerShutdownHook extends Thread {
     @Override
     public void run() {
 
-        SpInfo.instance().log("Shutting down Web Server...");
+        SpInfo.instance()
+                .log("\n+-------------------------------------+"
+                        + "\n| Shutting down Web Server...         |"
+                        + "\n+-------------------------------------+");
 
         try {
 
             myServer.stop();
             myServer.join();
 
-            SpInfo.instance().log("... Web Server shutdown completed.");
-            SpInfo.instance().log("Bye!");
+            SpInfo.instance()
+                    .log("\n+-------------------------------------+"
+                            + "\n| Web Server shutdown completed.      |"
+                            + "\n+-------------------------------------+");
 
         } catch (Exception e) {
 
-            SpInfo.instance().log(
-                    e.getClass().getSimpleName() + " : " + e.getMessage());
+            SpInfo.instance()
+                    .log(e.getClass().getSimpleName() + " : " + e.getMessage());
 
             System.exit(1);
         }
