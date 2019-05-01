@@ -528,6 +528,14 @@ public final class WebServer {
     }
 
     /**
+     * Initializing action when started in development environment.
+     */
+    private static void initDevelopmenEnv() {
+        ServiceContext.getServiceFactory().getRestClientService().test();
+        //DeadlockedThreadsDetector.createDeadlockTest();
+    }
+
+    /**
      * Starts the Web Server.
      * <p>
      * References:
@@ -956,8 +964,7 @@ public final class WebServer {
 
             if (fDevelopment) {
 
-                ServiceContext.getServiceFactory().getRestClientService()
-                        .test();
+                initDevelopmenEnv();
 
                 System.out
                         .println(" \n+========================================"

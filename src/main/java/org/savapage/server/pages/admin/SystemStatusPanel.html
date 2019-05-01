@@ -206,7 +206,13 @@
 							<th>
 								<wicket:message key="threads-info-prompt" />
 							</th>
-							<td wicket:id="threads-info" class="sp-txt-wrap sp-txt-info" />
+							<td class="sp-txt-wrap">
+								<span wicket:id="threads-info" class="sp-txt-info" />
+								<wicket:enclosure child="threads-info-deadlocks">
+									<span wicket:id="threads-info-deadlocks" class="sp-txt-error" />
+									<span class="sp-txt-info">&bull; active (deadlocked)</span>
+								</wicket:enclosure>
+							</td>
 						</tr>
 					</wicket:enclosure>
 					<wicket:enclosure child="connections-info">

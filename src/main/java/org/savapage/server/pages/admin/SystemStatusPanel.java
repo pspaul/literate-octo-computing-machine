@@ -71,6 +71,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.system.SystemFileDescriptorCount;
 import org.savapage.core.system.SystemInfo;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.DeadlockedThreadsDetector;
 import org.savapage.core.util.IOHelper;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.NumberUtil;
@@ -782,15 +783,21 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Threads info.
          */
-        final String threadInfo;
+        String threadInfo = "";
+        String deadlockedThreads = "";
 
         if (showTechInfo) {
             threadInfo = String.format("%d", Thread.activeCount());
-        } else {
-            threadInfo = "";
+            final int count =
+                    DeadlockedThreadsDetector.getDeadlockedThreadsCount();
+            if (count > 0) {
+                deadlockedThreads = String.format("(%d)", count);
+            }
         }
 
         helper.encloseLabel("threads-info", threadInfo, showTechInfo);
+        helper.encloseLabel("threads-info-deadlocks", deadlockedThreads,
+                !deadlockedThreads.isEmpty());
 
         /*
          * Connections info: correct Dao/Service count for this connection.
