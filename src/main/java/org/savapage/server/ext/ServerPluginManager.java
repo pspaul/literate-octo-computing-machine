@@ -502,19 +502,40 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             throws MalformedURLException {
 
         final StringBuilder query = new StringBuilder();
+        final StringBuilder path = new StringBuilder();
 
         query.append(WebAppParmEnum.SP_OAUTH.parm()).append('=')
                 .append(plugin.getProvider().toString().toLowerCase());
 
+        path.append(WebAppParmEnum.SP_OAUTH.parm()).append('/')
+                .append(plugin.getProvider().toString().toLowerCase());
+
         if (StringUtils.isNotBlank(plugin.getInstanceId())) {
+
             query.append('&').append(WebAppParmEnum.SP_OAUTH_ID.parm())
                     .append('=').append(plugin.getInstanceId());
+
+            path.append('/').append(plugin.getInstanceId());
         }
 
-        if (!plugin.getCallbackUrl().getQuery().equals(query.toString())) {
+        final String pluginQuery = plugin.getCallbackUrl().getQuery();
+        final String pluginPath = plugin.getCallbackUrl().getPath();
+
+        final boolean isValid;
+
+        if (StringUtils.isBlank(pluginQuery)) {
+            isValid = StringUtils.isNotBlank(pluginPath)
+                    && pluginPath.equals(path.toString());
+        } else {
+            isValid = pluginQuery.equals(query.toString());
+        }
+
+        if (!isValid) {
             throw new MalformedURLException(String.format(
-                    "Plugin [%s] callback URL [%s] must have query [%s]",
-                    plugin.getId(), plugin.getCallbackUrl().toString(), query));
+                    "Plugin [%s] callback URL [%s] "
+                            + "must have query [%s] or path [%s]",
+                    plugin.getId(), plugin.getCallbackUrl().toString(),
+                    query.toString(), path.toString()));
         }
     }
 
@@ -657,7 +678,7 @@ public final class ServerPluginManager implements PaymentGatewayListener,
                     ServerPluginHelper.getEnum(plugin.getProvider());
             return WebApp.getExtSupplierEnumImgUrl(supplier);
         }
-        return String.format("%s/%s", CustomWebServlet.PATH_BASE,
+        return String.format("/%s/%s", CustomWebServlet.PATH_BASE,
                 plugin.getCustomIconPath());
     }
 

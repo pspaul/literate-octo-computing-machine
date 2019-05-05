@@ -36,6 +36,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 import org.savapage.core.SpException;
@@ -214,17 +216,40 @@ public final class WebAppUser extends AbstractWebAppPage {
     private Boolean checkOAuthToken(
             final MutableObject<OAuthProviderEnum> mutableProvider) {
 
-        final IRequestParameters reqParms =
-                this.getRequestCycle().getRequest().getRequestParameters();
+        final Request request = this.getRequestCycle().getRequest();
+
+        final IRequestParameters reqParms = request.getRequestParameters();
+
+        /*
+         * Check remainder of previous successful OAuth. If present, do NOT
+         * honor remainder of OAuth URL path.
+         */
+        final StringValue oauthLogIn = reqParms
+                .getParameterValue(WebAppParmEnum.SP_LOGIN_OAUTH.parm());
+
+        if (!oauthLogIn.isEmpty()) {
+            return null;
+        }
 
         final StringValue oauthProviderValue =
                 reqParms.getParameterValue(WebAppParmEnum.SP_OAUTH.parm());
 
+        String oauthProvider = null;
+
         if (oauthProviderValue.isEmpty()) {
-            return null;
+            final Url requestUrl = request.getUrl();
+            final List<String> urlSegments = requestUrl.getSegments();
+            if (urlSegments.size() == 3 && urlSegments.get(1)
+                    .equals(WebAppParmEnum.SP_OAUTH.parm())) {
+                oauthProvider = urlSegments.get(2);
+            }
+        } else {
+            oauthProvider = oauthProviderValue.toString();
         }
 
-        final String oauthProvider = oauthProviderValue.toString();
+        if (oauthProvider == null) {
+            return null;
+        }
 
         final StringValue oauthInstanceIdValue =
                 reqParms.getParameterValue(WebAppParmEnum.SP_OAUTH_ID.parm());
@@ -279,6 +304,8 @@ public final class WebAppUser extends AbstractWebAppPage {
          * Leave no trace, clear all parameters.
          */
         this.getPageParameters().clearNamed();
+
+        // TODO: how to clear /path variant of OAuth request?
 
         /*
          * Perform the callback.
@@ -339,8 +366,8 @@ public final class WebAppUser extends AbstractWebAppPage {
         final SpSession session = SpSession.get();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("{}: user [{}]: OK [session: {}]",
-                    logPfx, authUser.getUserId(), session.getId());
+            LOGGER.debug("{}: user [{}]: OK [session: {}]", logPfx,
+                    authUser.getUserId(), session.getId());
         }
 
         session.setUser(authUser);
