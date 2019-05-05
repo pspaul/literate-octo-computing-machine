@@ -27,7 +27,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
@@ -65,14 +65,15 @@ public final class ZeroPagePanel extends Panel {
     public void populate(final WebAppTypeEnum webAppType,
             final PageParameters webAppParms) {
 
-        final Form<?> form = new Form<Void>("refresh-page-form") {
-            private static final long serialVersionUID = 1L;
+        final StatelessForm<?> form =
+                new StatelessForm<Void>("refresh-page-form") {
+                    private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void onSubmit() {
-                // no code intended
-            }
-        };
+                    @Override
+                    protected void onSubmit() {
+                        // no code intended
+                    }
+                };
 
         final AjaxButton continueButton =
                 new AjaxButton("refresh-page-submit") {
