@@ -80,8 +80,7 @@ public final class ReqMailTest extends ApiRequestMixin {
 
         final String mailto = dtoReq.getEmailAddress();
 
-        if (StringUtils.isBlank(mailto)
-                || !new EmailValidator().validate(mailto)) {
+        if (StringUtils.isBlank(mailto) || !EmailValidator.validate(mailto)) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-email-invalid",
                     StringUtils.defaultString(mailto));
             return;
