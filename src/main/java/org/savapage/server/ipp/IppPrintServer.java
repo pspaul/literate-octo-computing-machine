@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
+import org.savapage.core.ipp.IppProcessingException;
 import org.savapage.core.ipp.operation.AbstractIppOperation;
 import org.savapage.core.ipp.operation.IppMessageMixin;
 import org.savapage.core.ipp.operation.IppOperationId;
@@ -60,7 +61,6 @@ import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.services.UserService;
-import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.WebApp;
 import org.savapage.server.webapp.WebAppUser;
@@ -80,37 +80,30 @@ import org.slf4j.LoggerFactory;
  */
 public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
+    /** */
     private static final String CONTENT_TYPE_PPD = "application/vnd.cups-ppd";
 
-    /**
-     *
-     */
+    /** */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(IppPrintServer.class);
 
-    /**
-     *
-     */
-    private final static QueueService QUEUE_SERVICE =
+    /** */
+    private static final QueueService QUEUE_SERVICE =
             ServiceContext.getServiceFactory().getQueueService();
 
-    /**
-    *
-    */
-    private final static UserService USER_SERVICE =
+    /** */
+    private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
 
     /**
-     *
+     * Milliseconds sleep after an exception.
      */
+    private static final long MSEC_SLEEP_AFTER_EXCEPTION = 5000;
+
+    /** */
     public static void init() {
         SpInfo.instance().log("IPP Print Server started.");
     }
@@ -120,13 +113,17 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
      */
     private static class IppResourceStream extends AbstractResourceStream {
 
-        /**
-         *
-         */
+        /** */
         private static final long serialVersionUID = 1L;
 
+        /** */
         private final InputStream istr;
 
+        /**
+         *
+         * @param istr
+         *            Input stream.
+         */
         IppResourceStream(final InputStream istr) {
             this.istr = istr;
         }
@@ -154,14 +151,12 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
             extends ResourceStreamRequestHandler {
 
         /**
-         *
          * @param istr
          *            The {@link InputStream}.
          */
-        public SpStreamRequestHandler(final InputStream istr) {
+        SpStreamRequestHandler(final InputStream istr) {
             super(new IppResourceStream(istr));
         }
-
     }
 
     /**
@@ -270,9 +265,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
                         queue, serverPageParms.getPrinter(), remoteAddr);
             }
 
-            /*
-             *
-             */
+            //
             final boolean trustedUserAsRequester =
                     reservedQueueEnum == ReservedIppQueueEnum.IPP_PRINT_INTERNET;
 
@@ -308,9 +301,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
                     request.getInputStream(), bos, hasPrintAccessToQueue,
                     trustedIppClientUserId, trustedUserAsRequester);
 
-            /*
-             *
-             */
+            //
             if (ippOperationId != null
                     && ippOperationId == IppOperationId.VALIDATE_JOB) {
 
@@ -354,23 +345,14 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
             }
 
-            /*
-             * Trace logging ...
-             */
             if (LOGGER.isTraceEnabled()) {
                 logIppOutputTrace(bos);
             }
 
-            /*
-             * Finishing up.
-             */
-            final ResourceStreamRequestHandler handler =
-                    new SpStreamRequestHandler(
-                            new ByteArrayInputStream(bos.toByteArray()));
-            handler.setContentDisposition(ContentDisposition.INLINE);
-            requestCycle.scheduleRequestHandlerAfterCurrent(handler);
+            // Finishing up.
+            scheduleRequestHandlerAfterCurrent(requestCycle, bos.toByteArray());
 
-        } catch (Exception e) {
+        } catch (IOException | IppProcessingException e) {
 
             AdminPublisher.instance().publish(PubTopicEnum.IPP,
                     PubLevelEnum.ERROR, e.getMessage());
@@ -380,24 +362,64 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
                  * Prevent continuous messaging when IPP client keeps retrying
                  * with same result.
                  */
-                Thread.sleep(5 * DateUtil.DURATION_MSEC_SECOND);
+                Thread.sleep(MSEC_SLEEP_AFTER_EXCEPTION);
 
             } catch (InterruptedException e1) {
                 // noop
             }
 
-            /*
-             * This will produce HTTP Error 500 Internal server.
-             */
-            throw new SpException(e.getMessage(), e);
+            // Dummy byte for unavailable service.
+            scheduleRequestHandlerAfterCurrent(requestCycle, new byte[1]);
 
-            // response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED); // ??
+            final int httpStatus;
+
+            if (e instanceof IOException) {
+                httpStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            } else {
+                final IppProcessingException procEx =
+                        (IppProcessingException) e;
+
+                switch (procEx.getProcessingState()) {
+                case CONTENT_ERROR:
+                    httpStatus = HttpServletResponse.SC_NOT_ACCEPTABLE;
+                    break;
+                case UNAUTHORIZED:
+                    httpStatus = HttpServletResponse.SC_UNAUTHORIZED;
+                    break;
+                case UNAVAILABLE:
+                    httpStatus = HttpServletResponse.SC_SERVICE_UNAVAILABLE;
+                    break;
+                case INTERNAL_ERROR:
+                    // no break intended
+                default:
+                    httpStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+                    break;
+                }
+            }
+            response.setStatus(httpStatus);
 
         } finally {
 
             ServiceContext.close();
         }
+    }
 
+    /**
+     * Schedules the request handler to be executed after the current one.
+     *
+     * @param requestCycle
+     *            The request cycle.
+     * @param buf
+     *            The buffer to handle.
+     */
+    private static void scheduleRequestHandlerAfterCurrent(
+            final RequestCycle requestCycle, final byte[] buf) {
+
+        final ResourceStreamRequestHandler handler =
+                new SpStreamRequestHandler(new ByteArrayInputStream(buf));
+
+        handler.setContentDisposition(ContentDisposition.INLINE);
+        requestCycle.scheduleRequestHandlerAfterCurrent(handler);
     }
 
     /**
@@ -433,14 +455,16 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
      * Debug Log the request and parameters.
      *
      * @param request
+     *            HTTP request.
      * @param parameters
+     *            Page parameters.
      */
     private static void logDebug(final HttpServletRequest request,
             final PageParameters parameters) {
 
-        final StringBuilder log = new StringBuilder(256).append('\n');
+        final StringBuilder log = new StringBuilder();
 
-        log.append("Request [").append(request.getRequestURL().toString())
+        log.append("\nRequest [").append(request.getRequestURL().toString())
                 .append("] From [").append(request.getRemoteAddr())
                 .append("] Bytes [").append(request.getContentLength())
                 .append("]\n");

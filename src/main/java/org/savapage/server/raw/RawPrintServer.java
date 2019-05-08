@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@ import org.savapage.core.SpInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
+import org.savapage.core.concurrent.ReadLockObtainFailedException;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.IppQueueDao;
@@ -73,9 +74,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
-    /**
-     * .
-     */
+    /** */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(RawPrintServer.class);
 
@@ -95,15 +94,11 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
      */
     private static final int POLL_FOR_ACTIVE_REQUESTS_MSEC = 1000;
 
-    /**
-     * .
-     */
+    /** */
     private static final QueueService QUEUE_SERVICE =
             ServiceContext.getServiceFactory().getQueueService();
 
-    /**
-     * .
-     */
+    /** */
     private boolean keepAcceptingRequests = true;
 
     /**
@@ -634,14 +629,16 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         DocContentPrintProcessor processor = null;
         IppQueue queue = null;
         boolean isAuthorized = false;
-
-        ReadWriteLockEnum.DATABASE_READONLY.setReadLock(true);
+        boolean isDbReadLock = false;
 
         /*
          * NOTE: There is NO top level database transaction. Specialized methods
          * have their own database transaction.
          */
         try {
+
+            ReadWriteLockEnum.DATABASE_READONLY.tryReadLock();
+            isDbReadLock = true;
 
             final IppQueueDao queueDao =
                     ServiceContext.getDaoContext().getIppQueueDao();
@@ -692,6 +689,9 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
                         PubLevelEnum.WARN, warn);
             }
 
+        } catch (ReadLockObtainFailedException e) {
+            LOGGER.warn("application temporarily unavailable.");
+
         } catch (Exception e) {
 
             if (processor != null) {
@@ -701,7 +701,9 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             }
 
         } finally {
-            ReadWriteLockEnum.DATABASE_READONLY.setReadLock(false);
+            if (isDbReadLock) {
+                ReadWriteLockEnum.DATABASE_READONLY.setReadLock(false);
+            }
             consumeWithoutProcessing(istr);
             ServiceContext.close();
         }

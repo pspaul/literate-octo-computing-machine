@@ -517,9 +517,10 @@ public final class JsonApiServer extends AbstractPage {
 
                 if (t instanceof ReadLockObtainFailedException) {
 
-                    apiRes = setApiResult(new HashMap<String, Object>(),
+                    apiRes = setApiResultTxt(new HashMap<String, Object>(),
                             ApiResultCodeEnum.UNAVAILABLE,
-                            "msg-system-temp-unavailable");
+                            PhraseEnum.SYS_TEMP_UNAVAILABLE
+                                    .uiText(ServiceContext.getLocale()));
 
                     if (!dbClaimLockDone) {
                         // dbClaim locking failed or was not executed: reset to
@@ -1902,6 +1903,23 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> setApiResult(final Map<String, Object> out,
             final ApiResultCodeEnum code, final String key) {
         return createApiResult(out, code, key, localize(key));
+    }
+
+    /**
+     * Sets the API result on parameter {@code out}.
+     *
+     * @param out
+     *            The Map to put the result on.
+     * @param code
+     *            The {@link #ApiResultCodeEnum}.
+     * @param txt
+     *            The message text.
+     * @return the {@code out} parameter.
+     *
+     */
+    private Map<String, Object> setApiResultTxt(final Map<String, Object> out,
+            final ApiResultCodeEnum code, final String txt) {
+        return createApiResult(out, code, null, txt);
     }
 
     /**
