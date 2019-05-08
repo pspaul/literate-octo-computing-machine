@@ -198,8 +198,17 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
                 fileItemsToHandle.remove(fileKey);
             }
 
-        } catch (FileUploadException | DocContentPrintException
-                | UnavailableException e) {
+        } catch (UnavailableException | DocContentPrintException e) {
+
+            resultCode = ApiResultCodeEnum.INFO;
+            resultText = e.getMessage();
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("WebPrint [{}] [{}]: {}", user.getUserId(),
+                        e.getClass().getSimpleName(), e.getMessage());
+            }
+
+        } catch (FileUploadException e) {
 
             resultCode = ApiResultCodeEnum.INFO;
             resultText = e.getMessage();
