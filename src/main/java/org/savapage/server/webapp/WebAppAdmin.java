@@ -34,7 +34,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -155,111 +155,117 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                 .setOutputMarkupPlaceholderTag(true);
         add(feedback);
 
-        final Form<?> form = new Form<Void>("memberCardUploadForm") {
+        final StatelessForm<?> form =
+                new StatelessForm<Void>("memberCardUploadForm") {
 
-            private static final long serialVersionUID = 1L;
+                    private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void onSubmit() {
+                    @Override
+                    protected void onSubmit() {
 
-                final List<FileUpload> uploads =
-                        memberCardFileUpload.getFileUploads();
+                        final List<FileUpload> uploads =
+                                memberCardFileUpload.getFileUploads();
 
-                if (uploads == null || uploads.isEmpty()) {
-                    // display uploaded info
-                    warn(getLocalizer()
-                            .getString("msg-membercard-import-no-file", this));
-                    return;
-                }
+                        if (uploads == null || uploads.isEmpty()) {
+                            // display uploaded info
+                            warn(getLocalizer().getString(
+                                    "msg-membercard-import-no-file", this));
+                            return;
+                        }
 
-                final FileUpload uploadedFile =
-                        memberCardFileUpload.getFileUploads().get(0);
+                        final FileUpload uploadedFile =
+                                memberCardFileUpload.getFileUploads().get(0);
 
-                if (uploadedFile == null) {
-                    // display uploaded info
-                    warn(getLocalizer()
-                            .getString("msg-membercard-import-no-file", this));
-                    return;
-                }
+                        if (uploadedFile == null) {
+                            // display uploaded info
+                            warn(getLocalizer().getString(
+                                    "msg-membercard-import-no-file", this));
+                            return;
+                        }
 
-                final File finalFile = MemberCard.getMemberCardFile();
+                        final File finalFile = MemberCard.getMemberCardFile();
 
-                /*
-                 * Write to a temporary file in SAME directory as final member
-                 * card. Do NOT use AppTmpDir(), since its location may be
-                 * configured to be on another partition, making the ATOMIC_MOVE
-                 * fail with java.nio.file.AtomicMoveNotSupportedException.
-                 */
-                final File tempFile = new File(
-                        String.format("%s.%s", finalFile.getAbsolutePath(),
+                        /*
+                         * Write to a temporary file in SAME directory as final
+                         * member card. Do NOT use AppTmpDir(), since its
+                         * location may be configured to be on another
+                         * partition, making the ATOMIC_MOVE fail with
+                         * java.nio.file.AtomicMoveNotSupportedException.
+                         */
+                        final File tempFile = new File(String.format("%s.%s",
+                                finalFile.getAbsolutePath(),
                                 UUID.randomUUID().toString()));
 
-                if (tempFile.exists()) {
-                    tempFile.delete();
-                }
+                        if (tempFile.exists()) {
+                            tempFile.delete();
+                        }
 
-                ServiceContext.open();
-                final DaoContext daoContext = ServiceContext.getDaoContext();
+                        ServiceContext.open();
+                        final DaoContext daoContext =
+                                ServiceContext.getDaoContext();
 
-                daoContext.beginTransaction();
+                        daoContext.beginTransaction();
 
-                try {
+                        try {
 
-                    tempFile.createNewFile();
-                    uploadedFile.writeTo(tempFile);
+                            tempFile.createNewFile();
+                            uploadedFile.writeTo(tempFile);
 
-                    final boolean isValid = MemberCard.instance()
-                            .isMemberCardFormatValid(tempFile);
+                            final boolean isValid = MemberCard.instance()
+                                    .isMemberCardFormatValid(tempFile);
 
-                    if (isValid) {
-                        // Rename to standard Member Card file name
-                        java.nio.file.Files.move(
-                                FileSystems.getDefault()
-                                        .getPath(tempFile.getAbsolutePath()),
-                                FileSystems.getDefault()
-                                        .getPath(finalFile.getAbsolutePath()),
-                                StandardCopyOption.ATOMIC_MOVE,
-                                StandardCopyOption.REPLACE_EXISTING);
+                            if (isValid) {
+                                // Rename to standard Member Card file name
+                                java.nio.file.Files.move(
+                                        FileSystems.getDefault().getPath(
+                                                tempFile.getAbsolutePath()),
+                                        FileSystems.getDefault().getPath(
+                                                finalFile.getAbsolutePath()),
+                                        StandardCopyOption.ATOMIC_MOVE,
+                                        StandardCopyOption.REPLACE_EXISTING);
 
-                        MemberCard.instance().init();
+                                MemberCard.instance().init();
 
-                        info(getLocalizer().getString(
-                                "msg-membercard-import-success", this));
+                                info(getLocalizer().getString(
+                                        "msg-membercard-import-success", this));
 
-                    } else {
-                        error(getLocalizer().getString(
-                                "msg-membercard-import-file-invalid", this));
+                            } else {
+                                error(getLocalizer().getString(
+                                        "msg-membercard-import-file-invalid",
+                                        this));
 
-                        if (LOGGER.isInfoEnabled()) {
-                            LOGGER.info(String.format("%s is not a valid %s.",
-                                    uploadedFile.getClientFileName(),
-                                    CommunityDictEnum.MEMBER_CARD.getWord()));
+                                if (LOGGER.isInfoEnabled()) {
+                                    LOGGER.info(String.format(
+                                            "%s is not a valid %s.",
+                                            uploadedFile.getClientFileName(),
+                                            CommunityDictEnum.MEMBER_CARD
+                                                    .getWord()));
+                                }
+                            }
+
+                            daoContext.commit();
+
+                        } catch (Exception e) {
+
+                            daoContext.rollback();
+
+                            if (finalFile.exists()) {
+                                finalFile.delete();
+                            }
+                            throw new IllegalStateException(e);
+
+                        } finally {
+                            ServiceContext.close();
+
+                            if (tempFile.exists()) {
+                                tempFile.delete();
+                            }
+
+                            uploadedFile.closeStreams();
+                            uploadedFile.delete();
                         }
                     }
-
-                    daoContext.commit();
-
-                } catch (Exception e) {
-
-                    daoContext.rollback();
-
-                    if (finalFile.exists()) {
-                        finalFile.delete();
-                    }
-                    throw new IllegalStateException(e);
-
-                } finally {
-                    ServiceContext.close();
-
-                    if (tempFile.exists()) {
-                        tempFile.delete();
-                    }
-
-                    uploadedFile.closeStreams();
-                    uploadedFile.delete();
-                }
-            }
-        };
+                };
 
         form.setMultiPart(false);
         form.setMaxSize(Bytes.kilobytes(MAX_UPLOAD_KB));
