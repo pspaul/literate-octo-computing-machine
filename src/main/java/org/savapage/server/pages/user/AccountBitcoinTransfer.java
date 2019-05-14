@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,15 +14,13 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
 package org.savapage.server.pages.user;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,7 +28,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
@@ -43,6 +40,8 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.jpa.UserAttr;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.QRCodeException;
+import org.savapage.core.util.QRCodeHelper;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
@@ -53,13 +52,6 @@ import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import net.iharder.Base64;
 
@@ -73,8 +65,8 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates and displays a bitcoin payment address in <a
-     * href="https://en.bitcoin.it/wiki/BIP_0021">BIP 0021</a> format.
+     * Creates and displays a bitcoin payment address in
+     * <a href="https://en.bitcoin.it/wiki/BIP_0021">BIP 0021</a> format.
      */
     public AccountBitcoinTransfer(final PageParameters parameters) {
 
@@ -110,17 +102,15 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
 
             StringBuilder builder = new StringBuilder();
 
-            builder.append("bitcoin:")
-                    .append(address)
-                    .append("?message=")
-                    .append(URLEncoder.encode(message, "UTF-8").replaceAll(
-                            "\\+", "%20"));
+            builder.append("bitcoin:").append(address).append("?message=")
+                    .append(URLEncoder.encode(message, "UTF-8")
+                            .replaceAll("\\+", "%20"));
 
             final URI uri = new URI(builder.toString());
 
             builder = new StringBuilder(1024);
-            builder.append("data:image/png;base64,").append(
-                    createQrCodePngBase64(uri.toString(), 200));
+            builder.append("data:image/png;base64,")
+                    .append(createQrCodePngBase64(uri.toString(), 200));
 
             helper.addModifyLabelAttr("qr-code", "src", builder.toString());
 
@@ -128,11 +118,11 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
                     localized("button-start"), "href", uri.toString());
             helper.addLabel("bitcoin-trx-id", address);
 
-        } catch (URISyntaxException | IOException | WriterException
-                | PaymentGatewayException e) {
+        } catch (URISyntaxException | IOException | PaymentGatewayException
+                | QRCodeException e) {
 
-            setResponsePage(new MessageContent(AppLogLevelEnum.ERROR,
-                    e.getMessage()));
+            setResponsePage(
+                    new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
 
         } finally {
             // Release the user lock.
@@ -167,9 +157,8 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
         /*
          * Use assigned bitcoin address when present.
          */
-        final UserAttr bitcoinAddr =
-                userAttrDao.findByName(user,
-                        UserAttrEnum.BITCOIN_PAYMENT_ADDRESS);
+        final UserAttr bitcoinAddr = userAttrDao.findByName(user,
+                UserAttrEnum.BITCOIN_PAYMENT_ADDRESS);
 
         if (bitcoinAddr == null) {
 
@@ -202,51 +191,29 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
     /**
      *
      * @param codeText
+     *            QR code text.
      * @param squareWidth
+     *            width and height in pixels.
      * @return The base64 encoded PNG file with QR code
-     * @throws WriterException
-     * @throws IOException
+     * @throws QRCodeException
+     *             If error.
      */
     private static String createQrCodePngBase64(final String codeText,
-            final int squareWidth) throws WriterException, IOException {
-
-        final Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap =
-                new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
-
-        hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-
-        final QRCodeWriter qrCodeWriter = new QRCodeWriter();
-
-        final BitMatrix byteMatrix =
-                qrCodeWriter.encode(codeText, BarcodeFormat.QR_CODE,
-                        squareWidth, squareWidth, hintMap);
-
-        final int byteMatrixWidth = byteMatrix.getWidth();
+            final int squareWidth) throws QRCodeException {
 
         final BufferedImage image =
-                new BufferedImage(byteMatrixWidth, byteMatrixWidth,
-                        BufferedImage.TYPE_INT_RGB);
+                QRCodeHelper.createImage(codeText, squareWidth);
 
-        image.createGraphics();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+                OutputStream b64 = new Base64.OutputStream(out)) {
 
-        final Graphics2D graphics = (Graphics2D) image.getGraphics();
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, byteMatrixWidth, byteMatrixWidth);
-        graphics.setColor(Color.BLACK);
+            ImageIO.write(image, "png", b64);
+            return out.toString();
 
-        for (int i = 0; i < byteMatrixWidth; i++) {
-            for (int j = 0; j < byteMatrixWidth; j++) {
-                if (byteMatrix.get(i, j)) {
-                    graphics.fillRect(i, j, 1, 1);
-                }
-            }
+        } catch (IOException e) {
+            throw new QRCodeException(e.getMessage());
         }
 
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final OutputStream b64 = new Base64.OutputStream(out);
-        ImageIO.write(image, "png", b64);
-
-        return out.toString();
     }
 
 }

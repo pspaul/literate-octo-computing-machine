@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -92,6 +92,9 @@ public final class QueuesPage extends AbstractAdminListPage {
 
     /** */
     private static final String WID_QUEUE_SPARKLINE = "queue-sparkline";
+
+    /** */
+    private static final String WID_QUEUE_IPP_ROUTING_IMG = "ipp-routing-img";
 
     /**
      * Bean for mapping JSON page request.
@@ -299,6 +302,21 @@ public final class QueuesPage extends AbstractAdminListPage {
             final MarkupHelper helper = new MarkupHelper(item);
             Label labelWrk = null;
 
+            //
+            final boolean isIppRouting = ConfigManager.instance()
+                    .isConfigValue(Key.IPP_ROUTING_ENABLE)
+                    && QUEUE_SERVICE.isIppRoutingQueue(queue);
+
+            labelWrk = helper.encloseLabel(WID_QUEUE_IPP_ROUTING_IMG, "",
+                    isIppRouting);
+
+            if (isIppRouting) {
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_SRC,
+                        String.format("%s/%s", WebApp.PATH_IMAGES,
+                                "printer-26x26.png"));
+            }
+
+            //
             final boolean hasLine = sparklineData.length() > 0;
             labelWrk = helper.encloseLabel(WID_QUEUE_SPARKLINE,
                     sparklineData.toString(), hasLine);

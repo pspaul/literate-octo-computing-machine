@@ -57,6 +57,8 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dto.UserPaymentGatewayDto;
+import org.savapage.core.ipp.routing.IppRoutingContext;
+import org.savapage.core.ipp.routing.IppRoutingListener;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserAccount;
@@ -91,6 +93,7 @@ import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.ext.payment.bitcoin.BitcoinGatewayListener;
 import org.savapage.ext.payment.bitcoin.BitcoinGatewayTrx;
 import org.savapage.ext.payment.bitcoin.BitcoinWalletInfo;
+import org.savapage.ext.print.IppRoutingPlugin;
 import org.savapage.server.CustomWebServlet;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
@@ -105,8 +108,9 @@ import org.slf4j.LoggerFactory;
  * @author Rijk Ravestein
  *
  */
-public final class ServerPluginManager implements PaymentGatewayListener,
-        BitcoinGatewayListener, NotificationListener, ServerPluginContext {
+public final class ServerPluginManager
+        implements PaymentGatewayListener, BitcoinGatewayListener,
+        NotificationListener, IppRoutingListener, ServerPluginContext {
 
     /**
      * The logger.
@@ -211,6 +215,12 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      * All {@link NotificationPlugin} instances.
      */
     private final Map<String, NotificationPlugin> notificationPlugins =
+            new HashMap<>();
+
+    /**
+     * All {@link IppRoutingPlugin} instances.
+     */
+    private final Map<String, IppRoutingPlugin> ippRoutingPlugins =
             new HashMap<>();
 
     /**
@@ -462,6 +472,18 @@ public final class ServerPluginManager implements PaymentGatewayListener,
 
                 this.notificationPlugins.put(pluginId, notificationPlugin);
 
+            } else if (plugin instanceof IppRoutingPlugin) {
+
+                pluginType = IppRoutingPlugin.class.getSimpleName();
+
+                final IppRoutingPlugin ippRoutingPlugin =
+                        (IppRoutingPlugin) plugin;
+
+                ippRoutingPlugin.onInit(pluginId, pluginName, pluginLive,
+                        pluginOnline, props, this);
+
+                this.ippRoutingPlugins.put(pluginId, ippRoutingPlugin);
+
             } else {
 
                 throw new IllegalArgumentException(
@@ -507,7 +529,8 @@ public final class ServerPluginManager implements PaymentGatewayListener,
         query.append(WebAppParmEnum.SP_OAUTH.parm()).append('=')
                 .append(plugin.getProvider().toString().toLowerCase());
 
-        path.append(WebAppParmEnum.SP_OAUTH.parm()).append('/')
+        path.append(WebApp.MOUNT_PATH_WEBAPP_USER).append("/")
+                .append(WebAppParmEnum.SP_OAUTH.parm()).append('/')
                 .append(plugin.getProvider().toString().toLowerCase());
 
         if (StringUtils.isNotBlank(plugin.getInstanceId())) {
@@ -1339,6 +1362,21 @@ public final class ServerPluginManager implements PaymentGatewayListener,
             pluginsWlk++;
         }
 
+        if (!this.ippRoutingPlugins.isEmpty()) {
+            if (pluginsWlk == 0) {
+                builder.append('\n').append(delim);
+            }
+
+            for (final Entry<String, IppRoutingPlugin> entry : //
+            this.ippRoutingPlugins.entrySet()) {
+                builder.append("\n| ").append(String.format("[%s]",
+                        entry.getValue().getClass().getName()));
+                builder.append("\n| ").append(entry.getValue().getName());
+                builder.append('\n').append(delim);
+            }
+            pluginsWlk++;
+        }
+
         return builder.toString();
     }
 
@@ -1442,6 +1480,13 @@ public final class ServerPluginManager implements PaymentGatewayListener,
      */
     public boolean hasNotificationListener() {
         return !this.notificationPlugins.isEmpty();
+    }
+
+    @Override
+    public void onIppRoutingEvent(final IppRoutingContext ctx) {
+        this.ippRoutingPlugins.forEach((k, v) -> {
+            v.onRouting(ctx);
+        });
     }
 
     @Override

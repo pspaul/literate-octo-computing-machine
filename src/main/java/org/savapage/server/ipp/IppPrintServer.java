@@ -54,6 +54,7 @@ import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.ipp.IppProcessingException;
 import org.savapage.core.ipp.operation.AbstractIppOperation;
 import org.savapage.core.ipp.operation.IppMessageMixin;
+import org.savapage.core.ipp.operation.IppOperationContext;
 import org.savapage.core.ipp.operation.IppOperationId;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.User;
@@ -296,10 +297,18 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
              */
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-            final IppOperationId ippOperationId = AbstractIppOperation.handle(
-                    remoteAddr, queue, requestedQueueUrlPath,
-                    request.getInputStream(), bos, hasPrintAccessToQueue,
-                    trustedIppClientUserId, trustedUserAsRequester);
+            final IppOperationContext ippOperationContext =
+                    new IppOperationContext();
+
+            ippOperationContext.setRemoteAddr(remoteAddr);
+            ippOperationContext.setRequestedQueueUrlPath(requestedQueueUrlPath);
+            ippOperationContext
+                    .setIppRoutingListener(WebApp.get().getPluginManager());
+
+            final IppOperationId ippOperationId =
+                    AbstractIppOperation.handle(queue, request.getInputStream(),
+                            bos, hasPrintAccessToQueue, trustedIppClientUserId,
+                            trustedUserAsRequester, ippOperationContext);
 
             //
             if (ippOperationId != null
