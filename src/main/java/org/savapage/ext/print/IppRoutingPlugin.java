@@ -210,10 +210,9 @@ public final class IppRoutingPlugin implements ServerPlugin {
      */
     public void onRouting(final IppRoutingContext ctx) {
 
-        final String uuid = UUID.randomUUID().toString();
-
         final File fileIn = ctx.getPdfToPrint();
-        final File fileOut = new File(fileIn.getAbsolutePath() + uuid);
+        final File fileOut = new File(
+                fileIn.getAbsolutePath() + UUID.randomUUID().toString());
 
         PdfReader reader = null;
         PdfStamper stamper = null;
@@ -233,7 +232,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
                 image = null;
             } else {
                 final BufferedImage bufferImage =
-                        QRCodeHelper.createImage(uuid, imgHeight);
+                        QRCodeHelper.createImage(this.codeQR, imgHeight);
                 image = Image.getInstance(bufferImage, null);
             }
 
