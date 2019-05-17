@@ -961,7 +961,10 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
         super.init();
 
-        if (WebServer.isWebAppCustomI18n()) {
+        final boolean useCustomI18n = WebServer.isWebAppCustomI18n();
+        Messages.init(useCustomI18n);
+
+        if (useCustomI18n) {
             addCustomStringResourceLoader();
         }
 
