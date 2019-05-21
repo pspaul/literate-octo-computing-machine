@@ -51,6 +51,7 @@ import org.savapage.core.doc.store.DocStoreBranchEnum;
 import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.IppMediaSourceCostDto;
+import org.savapage.core.dto.JobTicketLabelDto;
 import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
@@ -160,6 +161,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private InboxSelectScopeEnum clearScope;
         private Boolean separateDocs;
         private Boolean archive;
+        private String jobTicketDomain;
+        private String jobTicketUse;
         private String jobTicketTag;
         private Boolean jobTicket;
         private JobTicketTypeEnum jobTicketType;
@@ -325,6 +328,24 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         @SuppressWarnings("unused")
         public void setJobTicketType(JobTicketTypeEnum jobTicketType) {
             this.jobTicketType = jobTicketType;
+        }
+
+        public String getJobTicketDomain() {
+            return jobTicketDomain;
+        }
+
+        @SuppressWarnings("unused")
+        public void setJobTicketDomain(String jobTicketDomain) {
+            this.jobTicketDomain = jobTicketDomain;
+        }
+
+        public String getJobTicketUse() {
+            return jobTicketUse;
+        }
+
+        @SuppressWarnings("unused")
+        public void setJobTicketUse(String jobTicketUse) {
+            this.jobTicketUse = jobTicketUse;
         }
 
         public String getJobTicketTag() {
@@ -566,9 +587,51 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         // INVARIANT
+        final boolean isJobTicketDomainEnabled =
+                cm.isConfigValue(Key.JOBTICKET_DOMAINS_ENABLE) && (isJobTicket
+                        || PRINTER_SERVICE.isJobTicketLabelsEnabled(printer));
+
+        if (isJobTicketDomainEnabled) {
+            if (StringUtils.isBlank(dtoReq.getJobTicketDomain())
+                    && cm.isConfigValue(Key.JOBTICKET_DOMAINS_REQUIRED)) {
+                setApiResult(ApiResultCodeEnum.WARN,
+                        "msg-print-select-option-required",
+                        JobTicketNounEnum.DOMAIN.uiText(getLocale()));
+                return;
+            }
+        } else {
+            if (StringUtils.isNotBlank(dtoReq.getJobTicketDomain())) {
+                setApiResultText(ApiResultCodeEnum.ERROR,
+                        "Job Ticket Use is not permitted.");
+                return;
+            }
+        }
+
+        // INVARIANT
+        final boolean isJobTicketUseEnabled =
+                cm.isConfigValue(Key.JOBTICKET_USES_ENABLE) && (isJobTicket
+                        || PRINTER_SERVICE.isJobTicketLabelsEnabled(printer));
+
+        if (isJobTicketUseEnabled) {
+            if (StringUtils.isBlank(dtoReq.getJobTicketUse())
+                    && cm.isConfigValue(Key.JOBTICKET_USES_REQUIRED)) {
+                setApiResult(ApiResultCodeEnum.WARN,
+                        "msg-print-select-option-required",
+                        JobTicketNounEnum.USE.uiText(getLocale()));
+                return;
+            }
+        } else {
+            if (StringUtils.isNotBlank(dtoReq.getJobTicketUse())) {
+                setApiResultText(ApiResultCodeEnum.ERROR,
+                        "Job Ticket Use is not permitted.");
+                return;
+            }
+        }
+
+        // INVARIANT
         final boolean isJobTicketTagEnabled =
                 cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE) && (isJobTicket
-                        || PRINTER_SERVICE.isJobTicketTagsEnabled(printer));
+                        || PRINTER_SERVICE.isJobTicketLabelsEnabled(printer));
 
         if (isJobTicketTagEnabled) {
             if (StringUtils.isBlank(dtoReq.getJobTicketTag())
@@ -585,7 +648,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                 return;
             }
         }
-
         //
         final InboxInfoDto jobs;
 
@@ -724,6 +786,14 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setIdUser(lockedUser.getId());
         printReq.setClearScope(clearScope);
 
+        if (isJobTicketDomainEnabled
+                && StringUtils.isNotBlank(dtoReq.getJobTicketDomain())) {
+            printReq.setJobTicketDomain(dtoReq.getJobTicketDomain());
+        }
+        if (isJobTicketUseEnabled
+                && StringUtils.isNotBlank(dtoReq.getJobTicketUse())) {
+            printReq.setJobTicketUse(dtoReq.getJobTicketUse());
+        }
         if (isJobTicketTagEnabled
                 && StringUtils.isNotBlank(dtoReq.getJobTicketTag())) {
             printReq.setJobTicketTag(dtoReq.getJobTicketTag());
@@ -1609,7 +1679,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setComment(dtoReq.getJobTicketRemark());
 
         JOBTICKET_SERVICE.createCopyJob(lockedUser, printReq,
-                calcJobTicketDeliveryDate(dtoReq), dtoReq.getJobTicketTag());
+                calcJobTicketDeliveryDate(dtoReq),
+                new JobTicketLabelDto(dtoReq.getJobTicketDomain(),
+                        dtoReq.getJobTicketUse(), dtoReq.getJobTicketTag()));
 
         setApiResultMsg(dtoReq, printReq);
 
@@ -1639,7 +1711,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         try {
             JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq,
-                    deliveryDate, dtoReq.getJobTicketTag());
+                    deliveryDate, new JobTicketLabelDto(dtoReq.getJobTicketDomain(),
+                    dtoReq.getJobTicketUse(), dtoReq.getJobTicketTag()));
 
         } catch (EcoPrintPdfTaskPendingException e) {
             setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");

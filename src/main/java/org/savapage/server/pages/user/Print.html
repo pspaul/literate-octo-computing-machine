@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -146,8 +146,42 @@
 				</div>
 			</wicket:enclosure>
 
+			<wicket:enclosure child="label-jobticket-domain">
+				<div class="ui-field-contain sp-jobticket-labels">
+
+					<label data-mini="true" class="sp-txt-wrap"
+						for="sp-jobticket-domain-list" wicket:id="label-jobticket-domain" />
+
+					<select data-mini="true" id="sp-jobticket-domain-list">
+						<option value="" wicket:id="jobticket-domain-option-select" />
+						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+							<wicket:panel wicket:id="jobticket-domain-option">
+								<option value="the-key" wicket:id="option"></option>
+							</wicket:panel>
+						</optgroup>
+					</select>
+				</div>
+			</wicket:enclosure>
+
+			<wicket:enclosure child="label-jobticket-use">
+				<div class="ui-field-contain sp-jobticket-labels">
+
+					<label data-mini="true" class="sp-txt-wrap"
+						for="sp-jobticket-use-list" wicket:id="label-jobticket-use" />
+
+					<select data-mini="true" id="sp-jobticket-use-list">
+						<option value="" wicket:id="jobticket-use-option-select" />
+						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+							<wicket:panel wicket:id="jobticket-use-option">
+								<option value="the-key" wicket:id="option"></option>
+							</wicket:panel>
+						</optgroup>
+					</select>
+				</div>
+			</wicket:enclosure>
+
 			<wicket:enclosure child="label-jobticket-tag">
-				<div class="ui-field-contain sp-jobticket-tags">
+				<div class="ui-field-contain sp-jobticket-labels">
 
 					<label data-mini="true" class="sp-txt-wrap"
 						for="sp-jobticket-tag-list" wicket:id="label-jobticket-tag" />

@@ -88,8 +88,12 @@ public class PagePrinter extends AbstractAdminPage {
             helper.discloseLabel("printer-journal");
         }
 
-        helper.encloseLabel("printer-jobticket-tags", "", ConfigManager
-                .instance().isConfigValue(Key.JOBTICKET_TAGS_ENABLE));
+        final ConfigManager cm = ConfigManager.instance();
+
+        helper.encloseLabel("printer-jobticket-labels", "",
+                cm.isConfigValue(Key.JOBTICKET_DOMAINS_ENABLE)
+                        || cm.isConfigValue(Key.JOBTICKET_USES_ENABLE)
+                        || cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE));
     }
 
 }

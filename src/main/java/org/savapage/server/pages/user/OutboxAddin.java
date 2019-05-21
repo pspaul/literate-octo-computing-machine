@@ -59,7 +59,6 @@ import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.doc.store.DocStoreBranchEnum;
 import org.savapage.core.doc.store.DocStoreTypeEnum;
-import org.savapage.core.dto.JobTicketTagDto;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.NounEnum;
@@ -431,15 +430,8 @@ public class OutboxAddin extends AbstractUserPage {
                     job.getTicketNumber() != null);
 
             if (job.getTicketNumber() != null) {
-
-                final JobTicketTagDto tag = JOBTICKET_SERVICE
-                        .getTicketNumberTag(job.getTicketNumber());
-                final String tagWord;
-                if (tag == null) {
-                    tagWord = null;
-                } else {
-                    tagWord = tag.getWord();
-                }
+                final String tagWord = JOBTICKET_SERVICE
+                        .getTicketNumberLabel(job.getTicketNumber());
                 helper.encloseLabel("jobticket-tag",
                         StringUtils.defaultString(tagWord), tagWord != null);
             }

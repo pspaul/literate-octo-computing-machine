@@ -3743,7 +3743,7 @@
                 }
 
                 _view.visible($('.sp-jobticket'), _model.myPrinter.jobTicket);
-                _view.visible($('.sp-jobticket-tags'), _model.myPrinter.jobTicketTagsEnabled);
+                _view.visible($('.sp-jobticket-labels'), _model.myPrinter.jobTicketLabelsEnabled);
                 _view.visible($('.sp-proxyprint'), !_model.myPrinter.jobTicket);
             },
 
@@ -3829,7 +3829,7 @@
                     copies,
                     delegatedPrint = _isDelegatedPrint(),
                     jobTicket = _model.myPrinter && _model.myPrinter.jobTicket,
-                    jobTicketTagsEnabled = _model.myPrinter && _model.myPrinter.jobTicketTagsEnabled,
+                    jobTicketLabelsEnabled = _model.myPrinter && _model.myPrinter.jobTicketLabelsEnabled,
                     jobTicketType,
                     isPrintJob,
                     hasInboxDocs = _model.hasInboxDocs();
@@ -3877,7 +3877,7 @@
                 if (_model.myPrinter) {
                     _view.visible($('.sp-proxyprint'), !jobTicket);
                     _view.visible($('.sp-jobticket'), jobTicket);
-                    _view.visible($('.sp-jobticket-tags'), jobTicketTagsEnabled);
+                    _view.visible($('.sp-jobticket-labels'), jobTicketLabelsEnabled);
                 }
 
                 _setVisibilityPrintSeparately(_model.hasMultipleVanillaJobs(), jobTicket);
@@ -3929,6 +3929,29 @@
                 _setVisibilityPrintSeparately(!_model.isCopyJobTicket && isAllDocsSelected && _model.hasMultipleVanillaJobs(), _model.myPrinter && _model.myPrinter.jobTicket);
 
                 _model.setPrintPreviewLandscapeHint( isAllDocsSelected ? 0 : parseInt(sel.val(), 10));
+            },
+
+                _onJobTicketDomainListChange = function() {
+                var selDomain = $('#sp-jobticket-domain-list :selected'),
+                    domainID = selDomain.val(),
+                    selUseList = $('#sp-jobticket-use-list'),
+                    selUses = selUseList.find('option'),
+                    selTagList = $('#sp-jobticket-tag-list'),
+                    selTags = selTagList.find('option');
+
+                _view.setSelectedValue(selUseList, '');
+                _view.setSelectedValue(selTagList, '');
+
+                _view.visible(selUses, false);
+                _view.visible(selTags, false);
+
+                _view.visible(selUses.filter('.sp-jobticket-domain'), true);
+                _view.visible(selTags.filter('.sp-jobticket-domain'), true);
+
+                if (domainID) {
+                    _view.visible(selUses.filter('.sp-jobticket-domain-' + domainID), true);
+                    _view.visible(selTags.filter('.sp-jobticket-domain-' + domainID), true);
+                }
             },
 
                 _resetPrinterSearch = function() {
@@ -4117,6 +4140,11 @@
                     return false;
                 });
 
+                $('#sp-jobticket-domain-list').change(function(event) {
+                    _onJobTicketDomainListChange();
+                    return false;
+                });
+
                 _view.mobipick($("#sp-jobticket-date"), true);
                 _this.initJobTicketDateTime();
 
@@ -4158,6 +4186,10 @@
                 _setVisibility();
                 _this.onShow();
                 _onJobListChange();
+
+                if ($('#sp-jobticket-domain-list').lenght > 0) {
+                    _onJobTicketDomainListChange();
+                }
 
                 _view.pages.printSettings.m2v();
 
@@ -6280,6 +6312,8 @@
                     visible,
                     date,
                     jobTicketDate,
+                    jobTicketDomain,
+                    jobTicketUse,
                     jobTicketTag,
                     accountId,
                     isJobTicketDateTime = $('#sp-jobticket-date').length > 0,
@@ -6308,8 +6342,14 @@
                     accountId = $('#sp-print-shared-account-list').val();
                 }
 
+                sel = $('#sp-jobticket-domain-list');
+                jobTicketDomain = _model.myPrinter.jobTicketLabelsEnabled && sel.length > 0 ? sel.val() : null;
+
+                sel = $('#sp-jobticket-use-list');
+                jobTicketUse = _model.myPrinter.jobTicketLabelsEnabled && sel.length > 0 ? sel.val() : null;
+
                 sel = $('#sp-jobticket-tag-list');
-                jobTicketTag = _model.myPrinter.jobTicketTagsEnabled && sel.length > 0 ? sel.val() : null;
+                jobTicketTag = _model.myPrinter.jobTicketLabelsEnabled && sel.length > 0 ? sel.val() : null;
 
                 _model.myPrintTitle = $('#print-title').val();
 
@@ -6334,6 +6374,8 @@
                         archive : archive,
                         options : _model.myPrinterOpt,
                         delegation : isDelegation ? _model.printDelegation : null,
+                        jobTicketDomain : jobTicketDomain,
+                        jobTicketUse : jobTicketUse,
                         jobTicketTag : jobTicketTag,
                         jobTicket : isJobticket,
                         jobTicketCopyPages : isJobticket ? $('#sp-jobticket-copy-pages').val() : null,

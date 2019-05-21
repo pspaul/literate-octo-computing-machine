@@ -1433,9 +1433,9 @@
                 _model.editPrinter.jobTicket = $('#printer-jobticket').is(':checked');
                 _model.editPrinter.jobTicketGroup = $('#printer-jobticket-group').val();
 
-                sel = $('#printer-jobticket-tags');
+                sel = $('#printer-jobticket-labels');
                 if (sel.length > 0) {
-                    _model.editPrinter.jobTicketTagsEnabled = sel.is(':checked');
+                    _model.editPrinter.jobTicketLabelsEnabled = sel.is(':checked');
                 }
 
                 // ProxyPrinterDto

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,10 @@ import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.doc.store.DocStoreBranchEnum;
 import org.savapage.core.doc.store.DocStoreTypeEnum;
+import org.savapage.core.dto.JobTicketDomainDto;
+import org.savapage.core.dto.JobTicketLabelDomainPartDto;
 import org.savapage.core.dto.JobTicketTagDto;
+import org.savapage.core.dto.JobTicketUseDto;
 import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
@@ -400,11 +403,64 @@ public class Print extends AbstractUserPage {
         }
 
         //
+        final boolean isJobTicketDomainsEnable =
+                cm.isConfigValue(Key.JOBTICKET_DOMAINS_ENABLE);
+
+        final Collection<JobTicketDomainDto> jobTicketDomains;
+
+        if (isJobTicketDomainsEnable) {
+
+            jobTicketDomains = JOBTICKET_SERVICE.getTicketDomainsByName();
+
+            if (!jobTicketDomains.isEmpty()) {
+                helper.encloseLabel("label-jobticket-domain",
+                        JobTicketNounEnum.DOMAIN.uiText(getLocale()), true);
+                helper.addLabel("jobticket-domain-option-select",
+                        HtmlButtonEnum.SELECT.uiText(getLocale(), true)
+                                .toLowerCase());
+                addJobTicketDomains(jobTicketDomains);
+
+                hasInvoicingOptions = true;
+            }
+        } else {
+            jobTicketDomains = null;
+        }
+
+        if (jobTicketDomains == null || jobTicketDomains.isEmpty()) {
+            helper.discloseLabel("label-jobticket-domain");
+        }
+
+        //
+        final Collection<JobTicketUseDto> jobTicketUses;
+
+        if (cm.isConfigValue(Key.JOBTICKET_USES_ENABLE)) {
+
+            jobTicketUses = JOBTICKET_SERVICE.getTicketUsesByName();
+
+            if (!jobTicketUses.isEmpty()) {
+                helper.encloseLabel("label-jobticket-use",
+                        JobTicketNounEnum.USE.uiText(getLocale()), true);
+                helper.addLabel("jobticket-use-option-select",
+                        HtmlButtonEnum.SELECT.uiText(getLocale(), true)
+                                .toLowerCase());
+                addJobTicketUses(isJobTicketDomainsEnable, jobTicketUses);
+
+                hasInvoicingOptions = true;
+            }
+        } else {
+            jobTicketUses = null;
+        }
+
+        if (jobTicketUses == null || jobTicketUses.isEmpty()) {
+            helper.discloseLabel("label-jobticket-use");
+        }
+
+        //
         final Collection<JobTicketTagDto> jobTicketTags;
 
         if (cm.isConfigValue(Key.JOBTICKET_TAGS_ENABLE)) {
 
-            jobTicketTags = JOBTICKET_SERVICE.getTicketTagsByWord();
+            jobTicketTags = JOBTICKET_SERVICE.getTicketTagsByName();
 
             if (!jobTicketTags.isEmpty()) {
                 helper.encloseLabel("label-jobticket-tag",
@@ -412,7 +468,7 @@ public class Print extends AbstractUserPage {
                 helper.addLabel("jobticket-tag-option-select",
                         HtmlButtonEnum.SELECT.uiText(getLocale(), true)
                                 .toLowerCase());
-                addJobTicketTags(jobTicketTags);
+                addJobTicketTags(isJobTicketDomainsEnable, jobTicketTags);
 
                 hasInvoicingOptions = true;
             }
@@ -423,6 +479,7 @@ public class Print extends AbstractUserPage {
         if (jobTicketTags == null || jobTicketTags.isEmpty()) {
             helper.discloseLabel("label-jobticket-tag");
         }
+
         //
         helper.addButton("button-send-jobticket", HtmlButtonEnum.SEND);
         helper.addButton("button-inbox", HtmlButtonEnum.BACK);
@@ -482,33 +539,138 @@ public class Print extends AbstractUserPage {
     }
 
     /**
-     * Adds the Job Tickets tags as select options.
+     * Adds the Job Tickets domains as select options.
      *
-     * @param jobTicketTags
-     *            The job ticket tags.
+     * @param jobTicketDomains
+     *            The job ticket domains.
      */
-    private void
-            addJobTicketTags(final Collection<JobTicketTagDto> jobTicketTags) {
+    private void addJobTicketDomains(
+            final Collection<JobTicketDomainDto> jobTicketDomains) {
 
-        final List<JobTicketTagDto> tags = new ArrayList<>();
+        final List<JobTicketDomainDto> domains = new ArrayList<>();
 
-        for (final JobTicketTagDto tag : jobTicketTags) {
-            tags.add(tag);
+        for (final JobTicketDomainDto domain : jobTicketDomains) {
+            domains.add(domain);
         }
 
-        add(new PropertyListView<JobTicketTagDto>("jobticket-tag-option",
-                tags) {
+        add(new PropertyListView<JobTicketDomainDto>("jobticket-domain-option",
+                domains) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(final ListItem<JobTicketTagDto> item) {
-                final JobTicketTagDto dto = item.getModel().getObject();
-                final Label label = new Label("option", dto.getWord());
+            protected void
+                    populateItem(final ListItem<JobTicketDomainDto> item) {
+                final JobTicketDomainDto dto = item.getModel().getObject();
+                final Label label = new Label("option", dto.getName());
                 label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
                         dto.getId()));
                 item.add(label);
             }
         });
     }
+
+    /**
+     * Adds the Job Tickets uses as select options.
+     *
+     * @param isJobTicketDomainsEnable
+     *            If {@code true} job ticket domain label is enabled.
+     * @param jobTicketUses
+     *            The job ticket uses.
+     */
+    private void addJobTicketUses(final boolean isJobTicketDomainsEnable,
+            final Collection<JobTicketUseDto> jobTicketUses) {
+
+        final List<JobTicketLabelDomainPartDto> labels = new ArrayList<>();
+
+        for (final JobTicketUseDto dto : jobTicketUses) {
+            if (isJobTicketDomainsEnable || dto.getDomainIDs().isEmpty()) {
+                labels.add(dto);
+            }
+        }
+
+        addJobTicketLabelDomainPart("jobticket-use-option",
+                isJobTicketDomainsEnable, labels);
+    }
+
+    /**
+     * Adds the Job Tickets tags as select options.
+     *
+     * @param isJobTicketDomainsEnable
+     *            If {@code true} job ticket domain label is enabled.
+     * @param jobTicketTags
+     *            The job ticket tags.
+     */
+    private void addJobTicketTags(final boolean isJobTicketDomainsEnable,
+            final Collection<JobTicketTagDto> jobTicketTags) {
+
+        final List<JobTicketLabelDomainPartDto> labels = new ArrayList<>();
+
+        for (final JobTicketTagDto dto : jobTicketTags) {
+            if (isJobTicketDomainsEnable || dto.getDomainIDs().isEmpty()) {
+                labels.add(dto);
+            }
+        }
+        addJobTicketLabelDomainPart("jobticket-tag-option",
+                isJobTicketDomainsEnable, labels);
+    }
+
+    /**
+     *
+     * Fills select options.
+     *
+     * @param wicketID
+     *            Wicket ID of option list.
+     * @param isJobTicketDomainsEnable
+     *            If {@code true} job ticket domain label is enabled.
+     * @param labels
+     *            The job ticket labels.
+     */
+    private void addJobTicketLabelDomainPart(final String wicketID,
+            final boolean isJobTicketDomainsEnable,
+            final List<JobTicketLabelDomainPartDto> labels) {
+
+        add(new PropertyListView<JobTicketLabelDomainPartDto>(wicketID,
+                labels) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(
+                    final ListItem<JobTicketLabelDomainPartDto> item) {
+                final JobTicketLabelDomainPartDto dto =
+                        item.getModel().getObject();
+                final Label label = new Label("option", dto.getName());
+                item.add(label);
+
+                MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_VALUE,
+                        dto.getId());
+
+                if (!isJobTicketDomainsEnable) {
+                    return;
+                }
+
+                if (dto.getDomainIDs().isEmpty()) {
+                    MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_CLASS,
+                            "sp-jobticket-domain");
+                    return;
+                }
+
+                boolean first = true;
+
+                for (final String id : dto.getDomainIDs()) {
+                    final String cssClass = "sp-jobticket-domain-".concat(id);
+                    if (first) {
+                        MarkupHelper.modifyLabelAttr(label,
+                                MarkupHelper.ATTR_CLASS, cssClass);
+                    } else {
+                        MarkupHelper.appendLabelAttr(label,
+                                MarkupHelper.ATTR_CLASS, cssClass);
+                    }
+                    first = false;
+                }
+            }
+        });
+    }
+
 }

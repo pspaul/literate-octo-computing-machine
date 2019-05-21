@@ -1177,7 +1177,7 @@
 
             _onChangeJobTicket = function(isTicket) {
                 _view.visible($('#printer-jobticket-group-div'), isTicket);
-                _view.visibleCheckboxRadio($('#printer-jobticket-tags'), !isTicket);
+                _view.visibleCheckboxRadio($('#printer-jobticket-labels'), !isTicket);
             };
 
             /** */
@@ -1277,7 +1277,7 @@
                 _view.checkCb('#printer-deleted', _model.editPrinter.deleted);
 
                 _view.checkCb('#printer-jobticket', _model.editPrinter.jobTicket);
-                _view.checkCb('#printer-jobticket-tags', _model.editPrinter.jobTicketTagsEnabled);
+                _view.checkCb('#printer-jobticket-labels', _model.editPrinter.jobTicketLabelsEnabled);
 
                 $('#printer-jobticket-group').val(_model.editPrinter.jobTicketGroup);
 
