@@ -66,6 +66,7 @@ import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
+import org.savapage.core.json.JobTicketProperties;
 import org.savapage.core.pdf.PdfPageRotateHelper;
 import org.savapage.core.print.proxy.JsonProxyPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
@@ -479,6 +480,20 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             }
         }
         return str.toString();
+    }
+
+    /**
+     *
+     * @param requestingUser
+     * @param lockedUser
+     * @return
+     */
+    private User getRetrieveUser(final String requestingUser,
+            final User lockedUser) {
+        if (lockedUser != null) {
+            return lockedUser;
+        }
+        return USER_DAO.findActiveUserByUserId(requestingUser);
     }
 
     @Override
@@ -937,6 +952,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         printReq.setCostResult(costResult);
+
+        /*
+         * Save ticket labels as latest choice.
+         */
+        if (isJobTicketDomainEnabled) {
+            final JobTicketProperties ticketProps = new JobTicketProperties();
+            ticketProps.setDomain(dtoReq.getJobTicketDomain());
+            USER_SERVICE.setJobTicketPropsLatest(
+                    getRetrieveUser(requestingUser, lockedUser), ticketProps);
+        }
 
         /*
          * Copy Job Ticket?
@@ -1711,8 +1736,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         try {
             JOBTICKET_SERVICE.proxyPrintInbox(lockedUser, printReq,
-                    deliveryDate, new JobTicketLabelDto(dtoReq.getJobTicketDomain(),
-                    dtoReq.getJobTicketUse(), dtoReq.getJobTicketTag()));
+                    deliveryDate,
+                    new JobTicketLabelDto(dtoReq.getJobTicketDomain(),
+                            dtoReq.getJobTicketUse(),
+                            dtoReq.getJobTicketTag()));
 
         } catch (EcoPrintPdfTaskPendingException e) {
             setApiResult(ApiResultCodeEnum.INFO, "msg-ecoprint-pending");

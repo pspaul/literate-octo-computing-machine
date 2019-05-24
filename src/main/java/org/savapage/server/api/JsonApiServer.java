@@ -2382,10 +2382,8 @@ public final class JsonApiServer extends AbstractPage {
      *
      * @param user
      * @return
-     * @throws Exception
      */
-    private Map<String, Object> reqPdfPropsGet(final User user)
-            throws Exception {
+    private Map<String, Object> reqPdfPropsGet(final User user) {
 
         final PdfProperties objProps = USER_SERVICE.getPdfProperties(user);
 

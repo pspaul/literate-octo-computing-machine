@@ -51,10 +51,12 @@ import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
+import org.savapage.core.json.JobTicketProperties;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserService;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.util.DateUtil;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -84,6 +86,10 @@ public class Print extends AbstractUserPage {
     /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /** */
     private static final JobTicketService JOBTICKET_SERVICE =
@@ -413,12 +419,17 @@ public class Print extends AbstractUserPage {
             jobTicketDomains = JOBTICKET_SERVICE.getTicketDomainsByName();
 
             if (!jobTicketDomains.isEmpty()) {
+
+                final JobTicketProperties ticketProps =
+                        USER_SERVICE.getJobTicketPropsLatest(user);
+
                 helper.encloseLabel("label-jobticket-domain",
                         JobTicketNounEnum.DOMAIN.uiText(getLocale()), true);
                 helper.addLabel("jobticket-domain-option-select",
                         HtmlButtonEnum.SELECT.uiText(getLocale(), true)
                                 .toLowerCase());
-                addJobTicketDomains(jobTicketDomains);
+
+                addJobTicketDomains(jobTicketDomains, ticketProps.getDomain());
 
                 hasInvoicingOptions = true;
             }
@@ -543,9 +554,12 @@ public class Print extends AbstractUserPage {
      *
      * @param jobTicketDomains
      *            The job ticket domains.
+     * @param defaultDomain
+     *            Default domain as pre-selected option.
      */
     private void addJobTicketDomains(
-            final Collection<JobTicketDomainDto> jobTicketDomains) {
+            final Collection<JobTicketDomainDto> jobTicketDomains,
+            final String defaultDomain) {
 
         final List<JobTicketDomainDto> domains = new ArrayList<>();
 
@@ -561,10 +575,20 @@ public class Print extends AbstractUserPage {
             @Override
             protected void
                     populateItem(final ListItem<JobTicketDomainDto> item) {
+
                 final JobTicketDomainDto dto = item.getModel().getObject();
                 final Label label = new Label("option", dto.getName());
-                label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
-                        dto.getId()));
+
+                MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_VALUE,
+                        dto.getId());
+
+                if (defaultDomain != null
+                        && dto.getId().equals(defaultDomain)) {
+                    MarkupHelper.modifyLabelAttr(label,
+                            MarkupHelper.ATTR_SELECTED,
+                            MarkupHelper.ATTR_SELECTED);
+                }
+
                 item.add(label);
             }
         });
