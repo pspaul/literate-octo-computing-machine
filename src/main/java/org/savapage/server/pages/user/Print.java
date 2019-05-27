@@ -116,6 +116,14 @@ public class Print extends AbstractUserPage {
             ID_DELETE_PAGES_SCOPE;
 
     /** */
+    private static final String CSS_CLASS_JOB_TICKET_DOMAIN =
+            "sp-jobticket-domain";
+
+    /** */
+    private static final String CSS_CLASS_JOB_TICKET_DOMAIN_PFX =
+            CSS_CLASS_JOB_TICKET_DOMAIN + "-";
+
+    /** */
     public static final Long OPTION_VALUE_SELECT_PROMPT = -1L;
     /** */
     public static final Long OPTION_VALUE_SELECT_PERSONAL_ACCOUNT = 0L;
@@ -451,9 +459,13 @@ public class Print extends AbstractUserPage {
             if (!jobTicketUses.isEmpty()) {
                 helper.encloseLabel("label-jobticket-use",
                         JobTicketNounEnum.USE.uiText(getLocale()), true);
-                helper.addLabel("jobticket-use-option-select",
-                        HtmlButtonEnum.SELECT.uiText(getLocale(), true)
-                                .toLowerCase());
+
+                MarkupHelper.modifyLabelAttr(
+                        helper.addLabel("jobticket-use-option-select",
+                                HtmlButtonEnum.SELECT.uiText(getLocale(), true)
+                                        .toLowerCase()),
+                        MarkupHelper.ATTR_CLASS, CSS_CLASS_JOB_TICKET_DOMAIN);
+
                 addJobTicketUses(isJobTicketDomainsEnable, jobTicketUses);
 
                 hasInvoicingOptions = true;
@@ -476,9 +488,12 @@ public class Print extends AbstractUserPage {
             if (!jobTicketTags.isEmpty()) {
                 helper.encloseLabel("label-jobticket-tag",
                         JobTicketNounEnum.TAG.uiText(getLocale()), true);
-                helper.addLabel("jobticket-tag-option-select",
-                        HtmlButtonEnum.SELECT.uiText(getLocale(), true)
-                                .toLowerCase());
+
+                MarkupHelper.modifyLabelAttr(
+                        helper.addLabel("jobticket-tag-option-select",
+                                HtmlButtonEnum.SELECT.uiText(getLocale(), true)
+                                        .toLowerCase()),
+                        MarkupHelper.ATTR_CLASS, CSS_CLASS_JOB_TICKET_DOMAIN);
                 addJobTicketTags(isJobTicketDomainsEnable, jobTicketTags);
 
                 hasInvoicingOptions = true;
@@ -676,14 +691,15 @@ public class Print extends AbstractUserPage {
 
                 if (dto.getDomainIDs().isEmpty()) {
                     MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_CLASS,
-                            "sp-jobticket-domain");
+                            CSS_CLASS_JOB_TICKET_DOMAIN);
                     return;
                 }
 
                 boolean first = true;
 
                 for (final String id : dto.getDomainIDs()) {
-                    final String cssClass = "sp-jobticket-domain-".concat(id);
+                    final String cssClass =
+                            CSS_CLASS_JOB_TICKET_DOMAIN_PFX.concat(id);
                     if (first) {
                         MarkupHelper.modifyLabelAttr(label,
                                 MarkupHelper.ATTR_CLASS, cssClass);

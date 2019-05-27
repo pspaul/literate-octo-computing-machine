@@ -3939,14 +3939,14 @@
                     selTagList = $('#sp-jobticket-tag-list'),
                     selTags = selTagList.find('option');
 
-                _view.setSelectedValue(selUseList, '');
-                _view.setSelectedValue(selTagList, '');
-
                 _view.visible(selUses, false);
                 _view.visible(selTags, false);
 
                 _view.visible(selUses.filter('.sp-jobticket-domain'), true);
                 _view.visible(selTags.filter('.sp-jobticket-domain'), true);
+
+                _view.setSelectedValue(selUseList, '');
+                _view.setSelectedValue(selTagList, '');
 
                 if (domainID) {
                     _view.visible(selUses.filter('.sp-jobticket-domain-' + domainID), true);
@@ -4187,7 +4187,7 @@
                 _this.onShow();
                 _onJobListChange();
 
-                if ($('#sp-jobticket-domain-list').lenght > 0) {
+                if ($('#sp-jobticket-domain-list').length > 0) {
                     _onJobTicketDomainListChange();
                 }
 
