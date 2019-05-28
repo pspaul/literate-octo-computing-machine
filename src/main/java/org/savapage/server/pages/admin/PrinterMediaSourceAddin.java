@@ -161,13 +161,22 @@ public final class PrinterMediaSourceAddin extends AbstractAdminPage {
         final JsonProxyPrinter proxyPrinter =
                 PROXYPRINT_SERVICE.getCachedPrinter(printer.getPrinterName());
 
-        final boolean isCustomCostMedia =
-                proxyPrinter.hasCustomCostRulesMedia();
+        final boolean isCustomCostMedia;
+        final boolean isCustomCostSet;
+        final boolean isCustomCostCopy;
+        final boolean isCustomCostSheet;
 
-        final boolean isCustomCostSet = proxyPrinter.hasCustomCostRulesSet();
-        final boolean isCustomCostCopy = proxyPrinter.hasCustomCostRulesCopy();
-        final boolean isCustomCostSheet =
-                proxyPrinter.hasCustomCostRulesSheet();
+        if (proxyPrinter == null) {
+            isCustomCostMedia = false;
+            isCustomCostSet = false;
+            isCustomCostCopy = false;
+            isCustomCostSheet = false;
+        } else {
+            isCustomCostMedia = proxyPrinter.hasCustomCostRulesMedia();
+            isCustomCostSet = proxyPrinter.hasCustomCostRulesSet();
+            isCustomCostCopy = proxyPrinter.hasCustomCostRulesCopy();
+            isCustomCostSheet = proxyPrinter.hasCustomCostRulesSheet();
+        }
 
         if (isCustomCostMedia || isCustomCostSet || isCustomCostCopy
                 || isCustomCostSheet) {
