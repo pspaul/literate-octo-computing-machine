@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -205,10 +205,12 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
         add(label);
 
         //
-        label = MarkupHelper.createEncloseLabel("jobticket-copies", "",
-                !job.isDelegatedPrint());
+        final boolean isSingleAccountPrint = job.isSingleAccountPrint();
 
-        if (!job.isDelegatedPrint()) {
+        label = MarkupHelper.createEncloseLabel("jobticket-copies", "",
+                isSingleAccountPrint);
+
+        if (isSingleAccountPrint) {
             MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_VALUE,
                     String.valueOf(job.getCopies()));
         }
