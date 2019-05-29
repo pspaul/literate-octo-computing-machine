@@ -40,6 +40,7 @@ import org.savapage.server.api.request.ReqDeviceDelete;
 import org.savapage.server.api.request.ReqDeviceGet;
 import org.savapage.server.api.request.ReqDeviceSet;
 import org.savapage.server.api.request.ReqDocLogRefund;
+import org.savapage.server.api.request.ReqDocLogTicketReopen;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqI18nCacheClear;
 import org.savapage.server.api.request.ReqInboxClear;
@@ -138,6 +139,8 @@ public final class JsonApiDict {
     public static final String REQ_DEVICE_SET = "device-set";
 
     public static final String REQ_DOCLOG_REFUND = "doclog-refund";
+    public static final String REQ_DOCLOG_TICKET_REOPEN =
+            "doclog-ticket-reopen";
 
     public static final String REQ_EXIT_EVENT_MONITOR = "exit-event-monitor";
     public static final String REQ_GCP_GET_DETAILS = "gcp-get-details";
@@ -935,6 +938,9 @@ public final class JsonApiDict {
         adm(REQ_DEVICE_SET, ReqDeviceSet.class, DbClaim.READ, DbAccess.YES);
 
         acl(REQ_DOCLOG_REFUND, ReqDocLogRefund.class, DbClaim.READ,
+                DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
+
+        acl(REQ_DOCLOG_TICKET_REOPEN, ReqDocLogTicketReopen.class, DbClaim.READ,
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         usr(REQ_EXIT_EVENT_MONITOR, DbClaim.NONE, DbAccess.NO);

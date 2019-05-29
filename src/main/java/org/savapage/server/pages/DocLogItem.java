@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1535,6 +1535,12 @@ public final class DocLogItem {
 
     public void setPrintMode(PrintModeEnum printMode) {
         this.printMode = printMode;
+    }
+
+    public boolean isJobTicket() {
+        return this.printMode != null && (this.printMode == PrintModeEnum.TICKET
+                || this.printMode == PrintModeEnum.TICKET_C
+                || this.printMode == PrintModeEnum.TICKET_E);
     }
 
     public String getCurrencyCode() {

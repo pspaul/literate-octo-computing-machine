@@ -43,6 +43,7 @@ import org.savapage.core.print.proxy.JsonProxyPrinterOpt;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptChoice;
 import org.savapage.core.print.proxy.JsonProxyPrinterOptGroup;
 import org.savapage.core.services.DocStoreService;
+import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PrintScalingEnum;
@@ -69,6 +70,10 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
     private static final DocStoreService DOC_STORE_SERVICE =
             ServiceContext.getServiceFactory().getDocStoreService();
 
+    /** */
+    private static final JobTicketService JOB_TICKET_SERVICE =
+            ServiceContext.getServiceFactory().getJobTicketService();
+
     /**
      * .
      */
@@ -82,6 +87,8 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
 
         private final OutboxJobDto jobTicket;
 
+        private final boolean isReopenedTicket;
+
         /**
          *
          * @param id
@@ -90,12 +97,16 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
          *            The item list.
          * @param job
          *            The job.
+         * @param reopenedTicket
+         *            If {@code true}, this ticket is reopened.
          */
         PrinterOptionsView(final String id,
-                final List<JsonProxyPrinterOpt> list, final OutboxJobDto job) {
+                final List<JsonProxyPrinterOpt> list, final OutboxJobDto job,
+                final boolean reopenedTicket) {
 
             super(id, list);
             this.jobTicket = job;
+            this.isReopenedTicket = reopenedTicket;
         }
 
         @Override
@@ -110,10 +121,17 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
             final Fragment optionFragment =
                     new Fragment("ipp-option-div", "ipp-option-select", this);
 
-            optionFragment.add(new AttributeModifier("id", "todo"));
+            optionFragment
+                    .add(new AttributeModifier(MarkupHelper.ATTR_ID, "todo"));
 
             labelWlk = new Label("label", printerOption.getUiText());
             MarkupHelper.modifyLabelAttr(labelWlk, "for", id);
+
+            if (this.isReopenedTicket) {
+                MarkupHelper.appendLabelAttr(labelWlk, MarkupHelper.ATTR_CLASS,
+                        MarkupHelper.CSS_TXT_INFO);
+            }
+
             optionFragment.add(labelWlk);
 
             // How to to this the proper wicket:fragment way?
@@ -139,10 +157,15 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
             labelWlk = new Label("select", choices);
             labelWlk.setEscapeModelStrings(false);
 
-            MarkupHelper.modifyLabelAttr(labelWlk, "id", id);
+            MarkupHelper.modifyLabelAttr(labelWlk, MarkupHelper.ATTR_ID, id);
             MarkupHelper.modifyLabelAttr(labelWlk,
                     MarkupHelper.ATTR_DATA_SAVAPAGE,
                     printerOption.getKeyword());
+
+            if (this.isReopenedTicket) {
+                MarkupHelper.modifyLabelAttr(labelWlk,
+                        MarkupHelper.ATTR_DISABLED, MarkupHelper.ATTR_DISABLED);
+            }
 
             optionFragment.add(labelWlk);
 
@@ -173,6 +196,9 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
             return;
         }
 
+        final boolean isReopenedTicket =
+                JOB_TICKET_SERVICE.isReopenedTicket(job);
+
         final JsonPrinterDetail printer =
                 PROXY_PRINT_SERVICE.getPrinterDetailUserCopy(
                         getSession().getLocale(), job.getPrinter(), true);
@@ -188,12 +214,12 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
                 optionList.add(option);
             }
         }
-
         // Extra
         optionList.add(createPrintScalingOpt(job));
 
         //
-        add(new PrinterOptionsView("ipp-option-list", optionList, job));
+        add(new PrinterOptionsView("ipp-option-list", optionList, job,
+                isReopenedTicket));
 
         //
         final String jobFileName = this.getJobFileName();
@@ -218,8 +244,9 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
         add(label);
 
         //
-        if (!job.isCopyJobTicket() && DOC_STORE_SERVICE.isEnabled(
-                DocStoreTypeEnum.ARCHIVE, DocStoreBranchEnum.OUT_PRINT)) {
+        if (!isReopenedTicket && !job.isCopyJobTicket()
+                && DOC_STORE_SERVICE.isEnabled(DocStoreTypeEnum.ARCHIVE,
+                        DocStoreBranchEnum.OUT_PRINT)) {
             helper.addLabel("cb-archive-label", NounEnum.ARCHIVE);
             helper.addCheckbox("cb-archive",
                     BooleanUtils.isTrue(job.getArchive()));

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,12 +28,15 @@ import javax.persistence.EntityManager;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
@@ -50,8 +53,13 @@ public final class DocLogPage extends AbstractListPage {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(DocLogPage.class);
 
+    /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
+    private static final DocStoreService DOC_STORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
 
     /**
      * Maximum number of pages in the navigation bar. IMPORTANT: this must be an
@@ -78,7 +86,7 @@ public final class DocLogPage extends AbstractListPage {
         final String data = getParmValue(POST_PARM_DATA);
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("data : " + data);
+            LOGGER.trace("data : {}", data);
         }
 
         final boolean showFinancialData;
@@ -117,9 +125,11 @@ public final class DocLogPage extends AbstractListPage {
             userId = null;
         }
 
-        /*
-         *
-         */
+        //
+        final boolean isTicketReopen = webAppType == WebAppTypeEnum.JOBTICKETS
+                && ConfigManager.instance()
+                        .isConfigValue(Key.WEBAPP_JOBTICKETS_REOPEN_ENABLE);
+
         // this.openServiceContext();
         final EntityManager em = DaoContextImpl.peekEntityManager();
 
@@ -142,7 +152,7 @@ public final class DocLogPage extends AbstractListPage {
                  * Step 1: Create panel and add to page.
                  */
                 final DocLogItemPanel panel = new DocLogItemPanel("doc-entry",
-                        item.getModel(), showFinancialData);
+                        item.getModel(), showFinancialData, isTicketReopen);
 
                 item.add(panel);
 

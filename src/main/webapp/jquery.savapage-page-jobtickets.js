@@ -342,6 +342,14 @@
                 }) || 'error';
                 _showPopUp(html, positionTo);
             },
+                _onDocLogTicketReopen = function(docLogId) {
+                return _api.call({
+                    request : 'doclog-ticket-reopen',
+                    dto : JSON.stringify({
+                        docLogId : docLogId
+                    })
+                });
+            },
                 _refundAccountTrx = function(docLogId) {
                 return _api.call({
                     request : 'doclog-refund',
@@ -578,6 +586,15 @@
 
                 }).on('click', '.sp-doclog-accounttrx-info', null, function() {
                     _onDocLogAccountTrxPopup($(this).attr('data-savapage'), $(this));
+
+                }).on('click', '.sp-doclog-ticket-reopen', null, function() {
+                    var res = _onDocLogTicketReopen($(this).attr('data-savapage'));
+                    if (res.result.code === "0") {
+                        _view.showApiMsg(res);
+                        _view.enable($(this), false);
+                    } else {
+                        _view.message(res.result.txt);
+                    }
 
                 }).on('click', '.sp-outbox-account-trx-info-jobticket', null, function() {
                     _onJobTicketAccountTrxPopup($(this).attr('data-savapage'), $(this));

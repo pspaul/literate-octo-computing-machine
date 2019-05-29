@@ -92,15 +92,29 @@ public class DocLogItemPanel extends Panel {
     private final DateFormat dfShortTime = DateFormat
             .getTimeInstance(DateFormat.SHORT, getSession().getLocale());
 
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Number of decimals for decimal scaling.
-     */
-    final int scale;
+    /** */
+    private static final String WID_BTN_GROUP = "btn-group";
+    /** */
+    private static final String WID_BTN_ACCOUNT_TRX_INFO =
+            "btn-account-trx-info";
+    /** */
+    private static final String WID_BTN_ACCOUNT_TRX_REFUND =
+            "btn-account-trx-refund";
+    /** */
+    private static final String WID_BTN_ARCHIVE_DOWNLOAD =
+            "btn-doclog-docstore-archive-download";
+    /** */
+    private static final String WID_BTN_JOURNAL_DOWNLOAD =
+            "btn-doclog-docstore-journal-download";
+    /** */
+    private static final String WID_BTN_TICKET_REOPEN = "btn-ticket-reopen";
+    /** */
+    private static final String WID_IMG_ARCHIVE = "img-archive";
+    /** */
+    private static final String WID_IMG_JOURNAL = "img-journal";
 
     /**
      * Number of currency decimals to display.
@@ -110,19 +124,25 @@ public class DocLogItemPanel extends Panel {
     //
     private final boolean showDocLogCost;
 
+    //
+    private final boolean showTicketReopen;
+
     /**
      *
      * @param id
      * @param model
+     * @param showFinancialData
+     * @param isTicketReopenEnabled
      */
     public DocLogItemPanel(String id, IModel<DocLogItem> model,
-            final boolean showFinancialData) {
+            final boolean showFinancialData,
+            final boolean isTicketReopenEnabled) {
 
         super(id, model);
 
-        this.scale = ConfigManager.getFinancialDecimalsInDatabase();
         this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
         this.showDocLogCost = showFinancialData;
+        this.showTicketReopen = isTicketReopenEnabled;
     }
 
     /**
@@ -183,7 +203,7 @@ public class DocLogItemPanel extends Panel {
 
         if (obj.getTransactions().isEmpty()) {
             helper.discloseLabel("account-trx");
-            helper.discloseLabel("btn-account-trx-info");
+            helper.discloseLabel(WID_BTN_ACCOUNT_TRX_INFO);
         } else {
             final String currencySymbol = CurrencyUtil
                     .getCurrencySymbol(obj.getCurrencyCode(), getLocale());
@@ -353,7 +373,7 @@ public class DocLogItemPanel extends Panel {
 
                 countButtons++;
 
-                Label labelBtn = helper.encloseLabel("btn-account-trx-info",
+                Label labelBtn = helper.encloseLabel(WID_BTN_ACCOUNT_TRX_INFO,
                         "&nbsp;", true);
                 labelBtn.setEscapeModelStrings(false);
 
@@ -369,7 +389,7 @@ public class DocLogItemPanel extends Panel {
 
                     countButtons++;
 
-                    labelBtn = helper.encloseLabel("btn-account-trx-refund",
+                    labelBtn = helper.encloseLabel(WID_BTN_ACCOUNT_TRX_REFUND,
                             "&nbsp;", true);
                     labelBtn.setEscapeModelStrings(false);
 
@@ -382,11 +402,11 @@ public class DocLogItemPanel extends Panel {
                             HtmlButtonEnum.REFUND.uiText(getLocale(), true));
 
                 } else {
-                    helper.discloseLabel("btn-account-trx-refund");
+                    helper.discloseLabel(WID_BTN_ACCOUNT_TRX_REFUND);
                 }
 
             } else {
-                helper.discloseLabel("btn-account-trx-info");
+                helper.discloseLabel(WID_BTN_ACCOUNT_TRX_INFO);
             }
         }
 
@@ -668,7 +688,15 @@ public class DocLogItemPanel extends Panel {
                 localizedShortDateTime(obj.getCreatedDate())));
 
         //
+        final boolean isReopenedTicketNumber =
+                JOBTICKET_SERVICE.isReopenedTicketNumber(obj.getExtId());
+
         countButtons += addDocStoreImg(helper, obj);
+        countButtons += addTicketReopenBtn(helper, obj, isReopenedTicketNumber);
+
+        //
+        helper.encloseLabel("jobticket-reopened",
+                AdjectiveEnum.REOPENED.uiText(locale), isReopenedTicketNumber);
 
         //
         String title = null;
@@ -765,9 +793,9 @@ public class DocLogItemPanel extends Panel {
         }
 
         if (countButtons > 0) {
-            helper.addTransparant("btn-group");
+            helper.addTransparant(WID_BTN_GROUP);
         } else {
-            helper.discloseLabel("btn-group");
+            helper.discloseLabel(WID_BTN_GROUP);
         }
 
         /*
@@ -826,20 +854,14 @@ public class DocLogItemPanel extends Panel {
     }
 
     /**
-     *
      * @param helper
+     *            HTML helper
      * @param obj
+     *            Item.
      * @return number of buttons added.
      */
     private int addDocStoreImg(final MarkupHelper helper,
             final DocLogItem obj) {
-
-        final String widBtnArchiveDownload =
-                "btn-doclog-docstore-archive-download";
-        final String widBtnJournalDownload =
-                "btn-doclog-docstore-journal-download";
-        final String widImgArchive = "img-archive";
-        final String widImgJournal = "img-journal";
 
         int countButtons = 0;
 
@@ -855,19 +877,19 @@ public class DocLogItemPanel extends Panel {
             final NounEnum nounTitle;
 
             if (obj.isPrintArchive()) {
-                widImg = widImgArchive;
-                widBtn = widBtnArchiveDownload;
+                widImg = WID_IMG_ARCHIVE;
+                widBtn = WID_BTN_ARCHIVE_DOWNLOAD;
                 png = "archive-16x16.png";
                 nounTitle = NounEnum.ARCHIVE;
-                helper.discloseLabel(widImgJournal);
-                helper.discloseLabel(widBtnJournalDownload);
+                helper.discloseLabel(WID_IMG_JOURNAL);
+                helper.discloseLabel(WID_BTN_JOURNAL_DOWNLOAD);
             } else {
-                widImg = widImgJournal;
-                widBtn = widBtnJournalDownload;
+                widImg = WID_IMG_JOURNAL;
+                widBtn = WID_BTN_JOURNAL_DOWNLOAD;
                 png = "journal-16x16.png";
                 nounTitle = NounEnum.JOURNAL;
-                helper.discloseLabel(widImgArchive);
-                helper.discloseLabel(widBtnArchiveDownload);
+                helper.discloseLabel(WID_IMG_ARCHIVE);
+                helper.discloseLabel(WID_BTN_ARCHIVE_DOWNLOAD);
             }
             imgSrc.append(png);
 
@@ -890,10 +912,63 @@ public class DocLogItemPanel extends Panel {
             countButtons++;
 
         } else {
-            helper.discloseLabel(widImgArchive);
-            helper.discloseLabel(widImgJournal);
-            helper.discloseLabel(widBtnArchiveDownload);
-            helper.discloseLabel(widBtnJournalDownload);
+            helper.discloseLabel(WID_IMG_ARCHIVE);
+            helper.discloseLabel(WID_IMG_JOURNAL);
+            helper.discloseLabel(WID_BTN_ARCHIVE_DOWNLOAD);
+            helper.discloseLabel(WID_BTN_JOURNAL_DOWNLOAD);
+        }
+        return countButtons;
+    }
+
+    /**
+     *
+     * @param helper
+     *            HTML helper
+     * @param obj
+     *            Item.
+     * @param isReopenedTicketNumber
+     *            If {@code true} ticket is reopened version
+     * @return number of buttons added.
+     */
+    private int addTicketReopenBtn(final MarkupHelper helper,
+            final DocLogItem obj, final boolean isReopenedTicketNumber) {
+
+        int countButtons = 0;
+
+        if (obj.isPrintArchive() || obj.isPrintJournal()
+        // || obj.getPrintMode() == PrintModeEnum.TICKET_C // TODO
+        ) {
+
+            final String ticketNumber = obj.getExtId();
+
+            if (this.showTicketReopen && obj.isJobTicket() && !obj.isRefunded()
+                    && !isReopenedTicketNumber) {
+
+                final Label labelBtn = helper
+                        .encloseLabel(WID_BTN_TICKET_REOPEN, "&nbsp;", true);
+                labelBtn.setEscapeModelStrings(false);
+
+                MarkupHelper.modifyLabelAttr(labelBtn,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        obj.getDocLogId().toString());
+
+                MarkupHelper.modifyLabelAttr(labelBtn, MarkupHelper.ATTR_TITLE,
+                        localized("tooltip-ticket-reopen"));
+
+                if (JOBTICKET_SERVICE.isTicketReopened(ticketNumber)) {
+                    MarkupHelper.modifyLabelAttr(labelBtn,
+                            MarkupHelper.ATTR_DISABLED,
+                            MarkupHelper.ATTR_DISABLED);
+                }
+
+                countButtons++;
+
+            } else {
+                helper.discloseLabel(WID_BTN_TICKET_REOPEN);
+            }
+
+        } else {
+            helper.discloseLabel(WID_BTN_TICKET_REOPEN);
         }
         return countButtons;
     }

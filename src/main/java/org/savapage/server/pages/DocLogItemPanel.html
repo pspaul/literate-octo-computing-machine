@@ -163,6 +163,10 @@
 
 		<wicket:enclosure child="account-trx">
 			<span wicket:id="account-trx" />
+			<wicket:enclosure child="jobticket-reopened">
+            &bull; <span class="sp-txt-warn"
+					wicket:id="jobticket-reopened" />
+			</wicket:enclosure>
 			<wicket:enclosure child="account-trx-refund">
             &bull; <span class="sp-txt-warn"
 					wicket:id="account-trx-refund" />
@@ -209,6 +213,11 @@
 				<button data-savapage="the-unique-filename"
 					wicket:id="btn-doclog-docstore-journal-download"
 					class="sp-doclog-docstore-journal-download ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-eye" />
+			</wicket:enclosure>
+			<wicket:enclosure child="btn-ticket-reopen">
+				<button data-savapage="the-unique-filename"
+					wicket:id="btn-ticket-reopen"
+					class="sp-doclog-ticket-reopen ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-plus" />
 			</wicket:enclosure>
 		</div>
 	</wicket:enclosure>

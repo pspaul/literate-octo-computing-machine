@@ -1081,19 +1081,35 @@ public class OutboxAddin extends AbstractUserPage {
                 if (isCopyJobTicket || optionMap.isJobTicketSettleOnly()) {
                     helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
                 } else {
-                    this.addJobIdAttr(
+                    final Label lbl = this.addJobIdAttr(
                             helper.encloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT,
                                     HtmlButtonEnum.PRINT
                                             .uiTextDottedSfx(locale),
                                     true),
                             job);
+
+                    if (job.getCopies() == 0) {
+                        MarkupHelper.modifyLabelAttr(lbl,
+                                MarkupHelper.ATTR_DISABLED,
+                                MarkupHelper.ATTR_DISABLED);
+                    }
                 }
 
-                this.addJobIdAttr(
-                        helper.encloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE,
-                                HtmlButtonEnum.SETTLE.uiTextDottedSfx(locale),
-                                true),
-                        job);
+                final Label lbl =
+                        this.addJobIdAttr(
+                                helper.encloseLabel(
+                                        WICKET_ID_BTN_JOBTICKET_SETTLE,
+                                        HtmlButtonEnum.SETTLE
+                                                .uiTextDottedSfx(locale),
+                                        true),
+                                job);
+
+                if (job.getCopies() == 0) {
+                    MarkupHelper.modifyLabelAttr(lbl,
+                            MarkupHelper.ATTR_DISABLED,
+                            MarkupHelper.ATTR_DISABLED);
+                }
+
             } else {
                 helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_PRINT);
                 helper.discloseLabel(WICKET_ID_BTN_JOBTICKET_SETTLE);
@@ -1142,6 +1158,11 @@ public class OutboxAddin extends AbstractUserPage {
             } else {
                 helper.discloseLabel(WICKET_ID_IMG_DOC_STORE);
             }
+
+            //
+            helper.encloseLabel("jobticket-reopened",
+                    AdjectiveEnum.REOPENED.uiText(locale),
+                    JOBTICKET_SERVICE.isReopenedTicket(job));
 
             /*
              * Hide/Show
@@ -1205,10 +1226,14 @@ public class OutboxAddin extends AbstractUserPage {
                 final String currencySymbol, final StringBuilder sbAccTrx,
                 final Locale locale) {
 
-            final BigDecimal weightedCost =
-                    ACCOUNTING_SERVICE.calcWeightedAmount(costTotal, copies,
-                            weight, weightunit, this.scale);
+            final BigDecimal weightedCost;
 
+            if (copies == 0) {
+                weightedCost = BigDecimal.ZERO;
+            } else {
+                weightedCost = ACCOUNTING_SERVICE.calcWeightedAmount(costTotal,
+                        copies, weight, weightunit, this.scale);
+            }
             if (weightedCost.compareTo(BigDecimal.ZERO) != 0) {
                 sbAccTrx.append(" ").append(currencySymbol).append("&nbsp;")
                         .append(localizedDecimal(weightedCost.negate(),
