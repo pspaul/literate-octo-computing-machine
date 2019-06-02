@@ -117,6 +117,10 @@ public class DocLogItemPanel extends Panel {
     private static final String WID_IMG_ARCHIVE = "img-archive";
     /** */
     private static final String WID_IMG_JOURNAL = "img-journal";
+    /** */
+    private static final String WID_IMG_COPY_JOB = "img-copy-job";
+    /** */
+    private static final String WID_IMG_JOB_SHEET = "img-job-sheet";
 
     /**
      * Number of currency decimals to display.
@@ -569,7 +573,7 @@ public class DocLogItemPanel extends Panel {
                     ticketLabel = null;
 
                     mapVisible.put("jobticket-tag-plain", obj.getExtId());
-                    helper.discloseLabel("img-job-sheet");
+                    helper.discloseLabel(WID_IMG_JOB_SHEET);
                 }
 
                 mapVisible
@@ -738,6 +742,9 @@ public class DocLogItemPanel extends Panel {
                 AdjectiveEnum.REOPENED.uiText(locale), isReopenedTicketNumber);
 
         //
+        this.addCopyJobImg(helper, obj);
+
+        //
         String title = null;
         if (ConfigManager.instance()
                 .isConfigValue(Key.WEBAPP_DOCLOG_SHOW_DOC_TITLE)) {
@@ -885,10 +892,30 @@ public class DocLogItemPanel extends Panel {
             final StringBuilder imgSrc = new StringBuilder();
             imgSrc.append(WebApp.PATH_IMAGES).append('/');
             imgSrc.append("copy-jobticket-128x128.png");
-            helper.addModifyLabelAttr("img-job-sheet", MarkupHelper.ATTR_SRC,
+            helper.addModifyLabelAttr(WID_IMG_JOB_SHEET, MarkupHelper.ATTR_SRC,
                     imgSrc.toString());
         } else {
-            helper.discloseLabel("img-job-sheet");
+            helper.discloseLabel(WID_IMG_JOB_SHEET);
+        }
+    }
+
+    /**
+     * @param helper
+     *            HTML helper
+     * @param obj
+     *            Item.
+     */
+    private void addCopyJobImg(final MarkupHelper helper,
+            final DocLogItem obj) {
+
+        if (obj.getPrintMode() == PrintModeEnum.TICKET_C) {
+            final StringBuilder imgSrc = new StringBuilder();
+            imgSrc.append(WebApp.PATH_IMAGES).append('/');
+            imgSrc.append("scanner-32x32.png");
+            helper.addModifyLabelAttr(WID_IMG_COPY_JOB, MarkupHelper.ATTR_SRC,
+                    imgSrc.toString());
+        } else {
+            helper.discloseLabel(WID_IMG_COPY_JOB);
         }
     }
 
