@@ -125,6 +125,7 @@
                 _countdownTimer,
                 _countdownCounter = 1,
                 _countdownPaused,
+                _ticketsReopened,
                 _MODE_PRINT = '0',
                 _MODE_CANCEL = '1',
                 _MODE_CLOSE = '2',
@@ -592,6 +593,7 @@
                     if (res.result.code === "0") {
                         _view.showApiMsg(res);
                         _view.enable($(this), false);
+                        _ticketsReopened = true;
                     } else {
                         _view.message(res.result.txt);
                     }
@@ -771,6 +773,10 @@
                     }
 
                 }).on('click', '#sp-jobtickets-tab-open-button', null, function() {
+                    if (_ticketsReopened) {
+                        _refresh();
+                        _ticketsReopened = false;
+                    }
                     if (!_countdownPaused) {
                         _startCountdownTimer();
                     }

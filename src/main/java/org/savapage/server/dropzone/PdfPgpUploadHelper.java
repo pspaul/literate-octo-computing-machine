@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ import org.savapage.lib.pgp.PGPPublicKeyInfo;
 import org.savapage.lib.pgp.PGPSecretKeyInfo;
 import org.savapage.lib.pgp.pdf.PdfPgpHelper;
 import org.savapage.lib.pgp.pdf.PdfPgpSignatureInfo;
+import org.savapage.server.WebApp;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,18 @@ public final class PdfPgpUploadHelper {
      */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(PdfPgpDropZoneFileResource.class);
+
+    /** */
+    private static final String IMG_PATH_VALID =
+            WebApp.PATH_IMAGES_FAMFAM + "/tick.png";
+
+    /** */
+    private static final String IMG_PATH_ERROR =
+            WebApp.PATH_IMAGES_FAMFAM + "/error.png";
+
+    /** */
+    private static final String IMG_PATH_EXCEPTION =
+            WebApp.PATH_IMAGES_FAMFAM + "/cross.png";
 
     /**
      * .
@@ -136,11 +149,11 @@ public final class PdfPgpUploadHelper {
             if (isSigValid) {
                 feedbackMsg.append(MarkupHelper.CSS_TXT_VALID).append(" ")
                         .append("sp-pdfpgp-verify-entry-valid");
-                imgSrc = "/famfamfam-silk/tick.png";
+                imgSrc = IMG_PATH_VALID;
             } else {
                 feedbackMsg.append(MarkupHelper.CSS_TXT_WARN).append(" ")
                         .append("sp-pdfpgp-verify-entry-warn");
-                imgSrc = "/famfamfam-silk/error.png";
+                imgSrc = IMG_PATH_ERROR;
             }
             feedbackMsg.append("\">");
 
@@ -220,8 +233,7 @@ public final class PdfPgpUploadHelper {
                     .append(" ").append(MarkupHelper.CSS_TXT_WRAP).append(" ")
                     .append(MarkupHelper.CSS_TXT_ERROR).append(" ")
                     .append("sp-pdfpgp-verify-entry-error").append("\">");
-            appendFileInfo(uploadedFile, feedbackMsg,
-                    "/famfamfam-silk/cross.png");
+            appendFileInfo(uploadedFile, feedbackMsg, IMG_PATH_EXCEPTION);
 
             feedbackMsg.append("The signature could not be verified");
             feedbackMsg.append("<br><br>");

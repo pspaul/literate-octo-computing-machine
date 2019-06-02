@@ -28,11 +28,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.print.attribute.standard.MediaSizeName;
 
@@ -1284,10 +1286,14 @@ public class OutboxAddin extends AbstractUserPage {
 
             if (trxInfoSet == null) {
                 if (costTotal.compareTo(BigDecimal.ZERO) != 0) {
-                    sbAccTrx.append(" &bull; ")
+                    sbAccTrx.append(
+                            " &bull; <span style=\"white-space:nowrap\">")
+                            .append(MarkupHelper.HTML_IMG_ACCOUNT_PERSONAL)
+                            .append("&nbsp;")
                             .append(PrintOutAdjectiveEnum.PERSONAL
                                     .uiText(locale))
-                            .append(" ").append(currencySymbol).append("&nbsp;")
+                            .append("</span> ").append(currencySymbol)
+                            .append("&nbsp;")
                             .append(localizedDecimal(costTotal.negate(),
                                     locale))
                             .append("&nbsp;(").append(job.getCopies())
@@ -1303,6 +1309,15 @@ public class OutboxAddin extends AbstractUserPage {
 
             int copiesDelegatorsImplicit = 0;
             int missingCopies = 0;
+
+            // Create lookup of group accounts with personal invoicing.
+            final Set<String> setGroupPersonal = new HashSet<>();
+            for (final OutboxAccountTrxInfo trxInfo : trxInfoSet
+                    .getTransactions()) {
+                if (trxInfo.getExtDetails() != null) {
+                    setGroupPersonal.add(trxInfo.getExtDetails());
+                }
+            }
 
             for (final OutboxAccountTrxInfo trxInfo : trxInfoSet
                     .getTransactions()) {
@@ -1352,13 +1367,23 @@ public class OutboxAddin extends AbstractUserPage {
 
                 final Account accountParent = account.getParent();
 
-                sbAccTrx.append(" &bull; ");
+                sbAccTrx.append(" &bull; <span style=\"white-space:nowrap\">");
+
+                if (accountType == AccountTypeEnum.SHARED) {
+                    sbAccTrx.append(MarkupHelper.HTML_IMG_ACCOUNT_SHARED);
+                } else if (accountType == AccountTypeEnum.GROUP) {
+                    sbAccTrx.append(MarkupHelper.HTML_IMG_ACCOUNT_GROUP);
+                    if (setGroupPersonal.contains(account.getName())) {
+                        sbAccTrx.append(MarkupHelper.HTML_IMG_ACCOUNT_PERSONAL);
+                    }
+                }
+                sbAccTrx.append("&nbsp;");
 
                 if (accountParent != null) {
                     sbAccTrx.append(accountParent.getName()).append("\\");
                 }
 
-                sbAccTrx.append(account.getName());
+                sbAccTrx.append(account.getName()).append("</span>");
 
                 appendAccountCost(costTotal, costPerCopy, weight, weightUnit,
                         copies, currencySymbol, sbAccTrx, locale);
@@ -1368,14 +1393,16 @@ public class OutboxAddin extends AbstractUserPage {
                     copies - copiesDelegatorsImplicit - missingCopies;
 
             if (copiesDelegatorsIndividual > 0) {
-                sbAccTrx.append(" &bull; ");
-                sbAccTrx.append(" ").append(currencySymbol).append("&nbsp;")
+                sbAccTrx.append(" &bull; <span style=\"white-space:nowrap\">")
+                        .append(MarkupHelper.HTML_IMG_ACCOUNT_PERSONAL)
+                        .append("&nbsp;");
+                sbAccTrx.append(currencySymbol).append("&nbsp;")
                         .append(localizedDecimal(ACCOUNTING_SERVICE
                                 .calcWeightedAmount(costTotal, copies, 1,
                                         copiesDelegatorsIndividual, this.scale)
                                 .negate(), locale));
                 sbAccTrx.append("&nbsp;(").append(copiesDelegatorsIndividual)
-                        .append(")");
+                        .append(")</span>");
             }
 
             return missingAccounts;

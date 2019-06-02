@@ -28,8 +28,10 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -224,6 +226,21 @@ public class DocLogItemPanel extends Panel {
                     ACCOUNTING_SERVICE.calcCostPerPrintedCopy(
                             obj.getCostOriginal().negate(), obj.getCopies());
 
+            // Create lookup of group accounts with personal invoicing.
+            final Set<String> groupsPersonal = new HashSet<>();
+            final Set<String> groupsPersonalRefund = new HashSet<>();
+            for (final AccountTrx trx : obj.getTransactions()) {
+                if (trx.getExtDetails() != null) {
+                    final boolean isRefund =
+                            trx.getAmount().compareTo(BigDecimal.ZERO) == 1;
+                    if (isRefund) {
+                        groupsPersonalRefund.add(trx.getExtDetails());
+                    } else {
+                        groupsPersonal.add(trx.getExtDetails());
+                    }
+                }
+            }
+            //
             for (final AccountTrx trx : obj.getTransactions()) {
 
                 final Account account = trx.getAccount();
@@ -280,13 +297,26 @@ public class DocLogItemPanel extends Panel {
 
                 final Account accountParent = account.getParent();
 
-                sbAccTrx.append(" &bull; ");
+                sbAccTrx.append(" &bull; <span style=\"white-space:nowrap\">");
+
+                if (accountType == AccountTypeEnum.SHARED) {
+                    sbAccTrx.append(MarkupHelper.HTML_IMG_ACCOUNT_SHARED);
+                } else if (accountType == AccountTypeEnum.GROUP) {
+                    sbAccTrx.append(MarkupHelper.HTML_IMG_ACCOUNT_GROUP);
+                    if ((isRefund
+                            && groupsPersonalRefund.contains(account.getName()))
+                            || (!isRefund && groupsPersonal
+                                    .contains(account.getName()))) {
+                        sbAccTrx.append(MarkupHelper.HTML_IMG_ACCOUNT_PERSONAL);
+                    }
+                }
+                sbAccTrx.append("&nbsp;");
 
                 if (accountParent != null) {
                     sbAccTrx.append(accountParent.getName()).append('\\');
                 }
 
-                sbAccTrx.append(account.getName());
+                sbAccTrx.append(account.getName()).append("</span>");
 
                 if (trx.getAmount().compareTo(BigDecimal.ZERO) != 0) {
 
@@ -297,13 +327,14 @@ public class DocLogItemPanel extends Panel {
                             trxCopies.setScale(0, RoundingMode.HALF_EVEN))
                             .append(')');
                 }
-
             }
 
             if (totCopiesDelegators.compareTo(BigDecimal.ZERO) != 0) {
-                sbAccTrx.append(" &bull; ")
+                sbAccTrx.append(" &bull; <span style=\"white-space:nowrap\">")
+                        .append(MarkupHelper.HTML_IMG_ACCOUNT_PERSONAL)
+                        .append("&nbsp;")
                         .append(NounEnum.DELEGATOR.uiText(locale, true))
-                        .append(" ");
+                        .append("</span> ");
                 if (amountCopiesDelegators.negate()
                         .compareTo(obj.getCost()) != 0) {
                     sbAccTrx.append(currencySymbol).append("&nbsp;")
@@ -317,9 +348,12 @@ public class DocLogItemPanel extends Panel {
             }
 
             if (totCopiesDelegatorsRefund.compareTo(BigDecimal.ZERO) != 0) {
-                sbAccTrx.append(" &bull; ")
+                sbAccTrx.append(" &bull; <span style=\"white-space:nowrap\">")
+                        .append(MarkupHelper.HTML_IMG_ACCOUNT_PERSONAL)
+                        .append("&nbsp;")
                         .append(NounEnum.DELEGATOR.uiText(locale, true))
-                        .append(" ").append(currencySymbol).append("&nbsp;")
+                        .append("</span> ").append(currencySymbol)
+                        .append("&nbsp;")
                         .append(localizedDecimal(amountCopiesDelegatorsRefund))
                         .append("&nbsp;(").append(totCopiesDelegatorsRefund
                                 .setScale(0, RoundingMode.HALF_EVEN))
@@ -334,9 +368,11 @@ public class DocLogItemPanel extends Panel {
             }
 
             if (totCopiesPersonal.compareTo(BigDecimal.ZERO) != 0) {
-                sbAccTrx.append(" &bull; ")
+                sbAccTrx.append(" &bull; <span style=\"white-space:nowrap\">")
+                        .append(MarkupHelper.HTML_IMG_ACCOUNT_PERSONAL)
+                        .append("&nbsp;")
                         .append(PrintOutAdjectiveEnum.PERSONAL.uiText(locale))
-                        .append(" ");
+                        .append("</span> ");
                 if (amountCopiesPersonal.negate()
                         .compareTo(obj.getCost()) != 0) {
                     sbAccTrx.append(currencySymbol).append("&nbsp;")
@@ -350,9 +386,12 @@ public class DocLogItemPanel extends Panel {
             }
 
             if (totCopiesPersonalRefund.compareTo(BigDecimal.ZERO) != 0) {
-                sbAccTrx.append(" &bull; ")
+                sbAccTrx.append(" &bull; <span style=\"white-space:nowrap\">")
+                        .append(MarkupHelper.HTML_IMG_ACCOUNT_PERSONAL)
+                        .append("&nbsp;")
                         .append(PrintOutAdjectiveEnum.PERSONAL.uiText(locale))
-                        .append(" ").append(currencySymbol).append("&nbsp;")
+                        .append("</span> ").append(currencySymbol)
+                        .append("&nbsp;")
                         .append(localizedDecimal(amountCopiesPersonalRefund))
                         .append("&nbsp;(").append(totCopiesPersonalRefund
                                 .setScale(0, RoundingMode.HALF_EVEN))
@@ -898,18 +937,22 @@ public class DocLogItemPanel extends Panel {
                             imgSrc.toString()),
                     MarkupHelper.ATTR_TITLE, nounTitle.uiText(getLocale()));
 
-            final Label labelBtn = helper.encloseLabel(widBtn, "&nbsp;", true);
-            labelBtn.setEscapeModelStrings(false);
+            if (obj.getPrintMode() == PrintModeEnum.TICKET_C) {
+                helper.discloseLabel(widBtn);
+            } else {
+                final Label labelBtn =
+                        helper.encloseLabel(widBtn, "&nbsp;", true);
+                labelBtn.setEscapeModelStrings(false);
 
-            //
-            MarkupHelper.modifyLabelAttr(labelBtn,
-                    MarkupHelper.ATTR_DATA_SAVAPAGE,
-                    obj.getDocLogId().toString());
+                MarkupHelper.modifyLabelAttr(labelBtn,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        obj.getDocLogId().toString());
 
-            MarkupHelper.modifyLabelAttr(labelBtn, MarkupHelper.ATTR_TITLE,
-                    nounTitle.uiText(getLocale()));
+                MarkupHelper.modifyLabelAttr(labelBtn, MarkupHelper.ATTR_TITLE,
+                        nounTitle.uiText(getLocale()));
 
-            countButtons++;
+                countButtons++;
+            }
 
         } else {
             helper.discloseLabel(WID_IMG_ARCHIVE);
@@ -935,14 +978,13 @@ public class DocLogItemPanel extends Panel {
 
         int countButtons = 0;
 
-        if (obj.isPrintArchive() || obj.isPrintJournal()
-        // || obj.getPrintMode() == PrintModeEnum.TICKET_C // TODO
-        ) {
+        if (obj.isPrintArchive() || obj.isPrintJournal()) {
 
             final String ticketNumber = obj.getExtId();
 
             if (this.showTicketReopen && obj.isJobTicket() && !obj.isRefunded()
-                    && !isReopenedTicketNumber) {
+                    && !isReopenedTicketNumber
+                    && obj.getTransactions().size() <= 1) {
 
                 final Label labelBtn = helper
                         .encloseLabel(WID_BTN_TICKET_REOPEN, "&nbsp;", true);

@@ -24,7 +24,6 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.savapage.core.doc.store.DocStoreException;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.DocLog;
@@ -71,8 +70,7 @@ public final class ReqDocLogTicketReopen extends ApiRequestMixin {
         }
 
         try {
-            JOBTICKET_SERVICE.reopenTicketForExtraCopies(docLog,
-                    DateUtils.addHours(ServiceContext.getTransactionDate(), 1));
+            JOBTICKET_SERVICE.reopenTicketForExtraCopies(docLog);
             this.setApiResult(ApiResultCodeEnum.OK, "msg-ticket-reopen-ok");
         } catch (DocStoreException e) {
             this.setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());

@@ -243,10 +243,9 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
 
         add(label);
 
-        //
-        if (!isReopenedTicket && !job.isCopyJobTicket()
-                && DOC_STORE_SERVICE.isEnabled(DocStoreTypeEnum.ARCHIVE,
-                        DocStoreBranchEnum.OUT_PRINT)) {
+        if (!isReopenedTicket && DOC_STORE_SERVICE.isEnabled(
+                DocStoreTypeEnum.ARCHIVE, DocStoreBranchEnum.OUT_PRINT)) {
+
             helper.addLabel("cb-archive-label", NounEnum.ARCHIVE);
             helper.addCheckbox("cb-archive",
                     BooleanUtils.isTrue(job.getArchive()));

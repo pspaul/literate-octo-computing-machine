@@ -47,6 +47,7 @@ import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -120,6 +121,41 @@ public final class MarkupHelper {
      */
     public static final String HTML_ENT_OBL_ANGLE_OPENING_UP = "&#x29A6;";
 
+    /**
+     * Image path for unkown Account.
+     */
+    private static final String IMG_PATH_ACCOUNT_UNKNOWN =
+            WebApp.PATH_IMAGES_FAMFAM + "/cross.png";
+    /**
+     * Image path for Personal Account.
+     */
+    private static final String IMG_PATH_ACCOUNT_PERSONAL =
+            WebApp.PATH_IMAGES_FAMFAM + "/user_gray.png";
+    /**
+     * Image path for Group Account.
+     */
+    private static final String IMG_PATH_ACCOUNT_GROUP =
+            WebApp.PATH_IMAGES_FAMFAM + "/group.png";
+    /**
+     * Image path for Shared Account.
+     */
+    private static final String IMG_PATH_ACCOUNT_SHARED =
+            WebApp.PATH_IMAGES_FAMFAM + "/tag_green.png";
+    /**
+     * HTML img tag for Personal Account.
+     */
+    public static final String HTML_IMG_ACCOUNT_PERSONAL =
+            "<img src=\"" + IMG_PATH_ACCOUNT_PERSONAL + "\"/>";
+    /**
+     * HTML img tag for Group Account.
+     */
+    public static final String HTML_IMG_ACCOUNT_GROUP =
+            "<img src=\"" + IMG_PATH_ACCOUNT_GROUP + "\"/>";
+    /**
+     * HTML img tag for Shared Account.
+     */
+    public static final String HTML_IMG_ACCOUNT_SHARED =
+            "<img src=\"" + IMG_PATH_ACCOUNT_SHARED + "\"/>";
     /**
      *
      */
@@ -955,24 +991,18 @@ public final class MarkupHelper {
      */
     public static String getImgUrlPath(final AccountTypeEnum accountType) {
 
-        final String imageSrc;
-
         if (accountType == null) {
-            imageSrc = "cross.png";
+            return IMG_PATH_ACCOUNT_UNKNOWN;
         } else {
             switch (accountType) {
             case GROUP:
-                imageSrc = "group.png";
-                break;
+                return IMG_PATH_ACCOUNT_GROUP;
             case SHARED:
-                imageSrc = "tag_green.png";
-                break;
+                return IMG_PATH_ACCOUNT_SHARED;
             default:
-                imageSrc = "user_gray.png";
-                break;
+                return IMG_PATH_ACCOUNT_PERSONAL;
             }
         }
-        return String.format("/%s/%s", "famfamfam-silk", imageSrc);
     }
 
     /**
