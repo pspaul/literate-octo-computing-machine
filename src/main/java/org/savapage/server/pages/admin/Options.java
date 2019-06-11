@@ -34,7 +34,6 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.SpException;
 import org.savapage.core.circuitbreaker.CircuitStateEnum;
 import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
@@ -68,6 +67,8 @@ import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -80,6 +81,9 @@ public final class Options extends AbstractAdminPage {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Options.class);
 
     /** */
     private static final String OBFUSCATED_PASSWORD = "* * * * *";
@@ -113,6 +117,7 @@ public final class Options extends AbstractAdminPage {
         try {
             PROXYPRINT_SERVICE.lazyInitPrinterCache();
         } catch (IppConnectException | IppSyntaxException e) {
+            LOGGER.error(e.getMessage());
             throw new RestartResponseException(
                     new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
         }
@@ -509,9 +514,12 @@ public final class Options extends AbstractAdminPage {
                     break;
 
                 default:
-                    throw new SpException("Oops we missed "
+                    final String exMsg = "Unhandled "
                             + CircuitStateEnum.class.getSimpleName()
-                            + " value [" + circuitState.toString() + "]");
+                            + " value [" + circuitState.toString() + "]";
+                    LOGGER.error(exMsg);
+                    throw new RestartResponseException(
+                            new MessageContent(AppLogLevelEnum.ERROR, exMsg));
                 }
             }
 
@@ -607,9 +615,12 @@ public final class Options extends AbstractAdminPage {
             break;
 
         default:
-            throw new SpException(
-                    "Oops we missed " + CircuitStateEnum.class.getSimpleName()
-                            + " value [" + circuitState.toString() + "]");
+            final String exMsg =
+                    "Unhandled " + CircuitStateEnum.class.getSimpleName()
+                            + " value [" + circuitState.toString() + "]";
+            LOGGER.error(exMsg);
+            throw new RestartResponseException(
+                    new MessageContent(AppLogLevelEnum.ERROR, exMsg));
         }
 
         if (msgKey == null) {
@@ -711,7 +722,9 @@ public final class Options extends AbstractAdminPage {
                     IConfigProp.Key.FINANCIAL_GLOBAL_CREDIT_LIMIT, creditLimit);
 
         } catch (ParseException e) {
-            throw new SpException(e);
+            LOGGER.error(e.getMessage());
+            throw new RestartResponseException(
+                    new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
         }
 
         labelledInput("financial-printer-cost-decimals",
@@ -778,13 +791,14 @@ public final class Options extends AbstractAdminPage {
         /*
          * JMX
          */
-        final String jmcRemoteProcess;
+        String jmcRemoteProcess;
 
         try {
             jmcRemoteProcess = InetUtils.getServerHostAddress() + ":"
                     + JmxRemoteProperties.getPort();
         } catch (UnknownHostException e) {
-            throw new SpException("Server IP address could not be found", e);
+            jmcRemoteProcess = "?????:" + JmxRemoteProperties.getPort();
+            LOGGER.warn("Server IP address could not be found: {}", e);
         }
 
         labelWrk = new Label("jmx-remote-process", jmcRemoteProcess);
