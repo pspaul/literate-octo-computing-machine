@@ -131,6 +131,7 @@
                 _MODE_CLOSE = '2',
                 _userKey,
                 _ticketKey,
+                _ticketGroup,
                 _expiryAsc = true,
                 _quickUserSearch = new _ns.QuickUserSearch(_view, _api),
                 _quickUserSearchDocLog = new _ns.QuickUserSearch(_view, _api),
@@ -164,6 +165,7 @@
                 html = _view.getUserPageHtml('OutboxAddin', {
                     jobTickets : true,
                     jobTicketId : _ticketKey,
+                    jobTicketGroupId : _ticketGroup,
                     userKey : _userKey,
                     expiryAsc : _expiryAsc,
                     maxItems : _maxItems()
@@ -603,6 +605,11 @@
 
                 }).on('change', "input[name='sp-jobticket-sort-dir']", null, function() {
                     _expiryAsc = $(this).attr('id') === 'sp-jobticket-sort-dir-asc';
+                    _refresh();
+                    return false;
+
+                }).on('change', '#sp-jobticket-group', null, function() {
+                    _ticketGroup = $(this).val();
                     _refresh();
                     return false;
 

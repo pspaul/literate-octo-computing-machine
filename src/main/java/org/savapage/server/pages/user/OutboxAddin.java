@@ -242,6 +242,15 @@ public class OutboxAddin extends AbstractUserPage {
     private static final String PAGE_PARM_JOBTICKET_ID = "jobTicketId";
 
     /**
+     * Long.
+     * <p>
+     * Primary DB key of job ticket printer group.
+     * </p>
+     */
+    private static final String PAGE_PARM_JOBTICKET_GROUP_ID =
+            "jobTicketGroupId";
+
+    /**
      * String.
      */
     private static final String PAGE_PARM_USERKEY = "userKey";
@@ -1483,6 +1492,9 @@ public class OutboxAddin extends AbstractUserPage {
             filter.setSearchTicketId(
                     parms.getParameterValue(PAGE_PARM_JOBTICKET_ID)
                             .toOptionalString());
+            filter.setPrinterGroupID(
+                    parms.getParameterValue(PAGE_PARM_JOBTICKET_GROUP_ID)
+                            .toOptionalLong());
 
             tickets = JOBTICKET_SERVICE.getTickets(filter);
 

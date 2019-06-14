@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,13 +21,20 @@
  */
 package org.savapage.server.pages;
 
+import java.util.List;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.i18n.JobTicketNounEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.SystemModeEnum;
+import org.savapage.core.jpa.PrinterGroup;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -100,6 +107,33 @@ public final class PageJobTickets extends AbstractAuthPage {
             helper.discloseLabel(WICKET_ID_BUTTON_CLOSE_ALL);
         }
 
+        //
+        final List<PrinterGroup> printerGroups = ServiceContext.getDaoContext()
+                .getPrinterGroupMemberDao().getGroupsWithJobTicketMembers();
+
+        helper.encloseLabel("label-jobticket-group",
+                NounEnum.GROUP.uiText(getLocale()), !printerGroups.isEmpty());
+
+        if (!printerGroups.isEmpty()) {
+            helper.addLabel("option-jobticket-group-all", "―");
+
+            add(new PropertyListView<PrinterGroup>(
+                    "option-list-jobticket-groups", printerGroups) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void populateItem(final ListItem<PrinterGroup> item) {
+                    final PrinterGroup group = item.getModel().getObject();
+                    final Label label = new Label("option-jobticket-group",
+                            group.getDisplayName());
+                    label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                            group.getId()));
+                    item.add(label);
+                }
+            });
+        }
+        //
         final Label slider = helper.addModifyLabelAttr("jobtickets-max-items",
                 MarkupHelper.ATTR_VALUE, String.valueOf(
                         cm.getConfigInt(Key.WEBAPP_JOBTICKETS_LIST_SIZE, 0)));
@@ -137,4 +171,5 @@ public final class PageJobTickets extends AbstractAuthPage {
 
         return label;
     }
+
 }

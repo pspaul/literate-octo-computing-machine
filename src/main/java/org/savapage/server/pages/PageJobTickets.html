@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -53,6 +53,20 @@
 					<h3>
 						<wicket:message key="select-and-sort" />
 					</h3>
+
+					<wicket:enclosure child="label-jobticket-group">
+						<div class="ui-field-contain">
+							<label for="sp-jobticket-group" class="sp-txt-wrap ui-mini"
+								wicket:id="label-jobticket-group" />
+							<select name="sp-jobticket-group" id="sp-jobticket-group"
+								data-native-menu="false" data-mini="true">
+								<option value="0" wicket:id="option-jobticket-group-all" />
+								<wicket:panel wicket:id="option-list-jobticket-groups">
+									<option value="the-key" wicket:id="option-jobticket-group"></option>
+								</wicket:panel>
+							</select>
+						</div>
+					</wicket:enclosure>
 
 					<div class="ui-field-contain">
 						<label for="sp-jobticket-userid">
