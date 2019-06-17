@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.SystemModeEnum;
@@ -115,7 +116,8 @@ public final class PageJobTickets extends AbstractAuthPage {
                 NounEnum.GROUP.uiText(getLocale()), !printerGroups.isEmpty());
 
         if (!printerGroups.isEmpty()) {
-            helper.addLabel("option-jobticket-group-all", "―");
+            helper.addLabel("option-jobticket-group-all", String
+                    .format("― %s ―", AdjectiveEnum.ALL.uiText(getLocale())));
 
             add(new PropertyListView<PrinterGroup>(
                     "option-list-jobticket-groups", printerGroups) {
