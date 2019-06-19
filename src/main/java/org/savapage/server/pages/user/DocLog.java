@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,8 +25,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -57,13 +59,17 @@ public class DocLog extends AbstractUserPage {
 
         if (ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
                 ACLOidEnum.U_FINANCIAL)) {
-            helper.addLabel(wicketId, localized("button-transactions"));
+            helper.addLabel(wicketId,
+                    NounEnum.TRANSACTION.uiText(getLocale(), true));
         } else {
             helper.discloseLabel(wicketId);
         }
 
         helper.encloseLabel("btn-txt-gdpr", "GDPR", ConfigManager.instance()
                 .isConfigValue(Key.WEBAPP_USER_GDPR_ENABLE));
+
+        helper.addLabel("title", NounEnum.DOCUMENT.uiText(getLocale(), true));
+        helper.addButton("button-back", HtmlButtonEnum.BACK);
     }
 
 }

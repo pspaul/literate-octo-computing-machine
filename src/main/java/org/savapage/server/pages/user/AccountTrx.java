@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@ package org.savapage.server.pages.user;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -45,8 +47,16 @@ public class AccountTrx extends AbstractUserPage {
         super(parameters);
 
         final MarkupHelper helper = new MarkupHelper(this);
+
         helper.encloseLabel("btn-txt-gdpr", "GDPR", ConfigManager.instance()
                 .isConfigValue(Key.WEBAPP_USER_GDPR_ENABLE));
+
+        helper.addLabel("title",
+                NounEnum.TRANSACTION.uiText(getLocale(), true));
+
+        helper.addButton("button-back", HtmlButtonEnum.BACK);
+        helper.addLabel("button-documents",
+                NounEnum.DOCUMENT.uiText(getLocale(), true));
     }
 
 }

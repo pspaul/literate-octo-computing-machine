@@ -4,7 +4,7 @@
 	<!-- 
     +====================================================================+ 
     | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -15,9 +15,7 @@
 </wicket:remove>
 
 <div data-role="header" id="header-doclog">
-	<h1>
-		<wicket:message key="title" />
-	</h1>
+	<h1 wicket:id="title" />
 </div>
 
 <div class="ui-content" id="content-doclog" />
@@ -25,9 +23,8 @@
 <div data-role="footer" id="footer-doclog" data-position="fixed">
 	<div data-role="controlgroup" data-type="horizontal">
 		<a href="#page-main"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home"> <wicket:message
-				key="button-back" />
-		</a>
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home" 
+			wicket:id="button-back" />
 		<wicket:enclosure child="button-transactions">
 			<button id="button-goto-accounttrx"
 				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-shop"
