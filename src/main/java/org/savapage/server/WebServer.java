@@ -65,11 +65,11 @@ import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.SslCertInfo;
 import org.savapage.core.ipp.operation.IppMessageMixin;
-import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.ext.papercut.ExtPaperCutSyncServlet;
 import org.savapage.server.feed.AtomFeedServlet;
 import org.savapage.server.restful.RestApplication;
+import org.savapage.server.restful.services.RestSystemService;
 import org.savapage.server.xmlrpc.SpXmlRpcServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -531,8 +531,8 @@ public final class WebServer {
      * Initializing action when started in development environment.
      */
     private static void initDevelopmenEnv() {
-        ServiceContext.getServiceFactory().getRestClientService().test();
-        //DeadlockedThreadsDetector.createDeadlockTest();
+        RestSystemService.test();
+        // DeadlockedThreadsDetector.createDeadlockTest();
     }
 
     /**

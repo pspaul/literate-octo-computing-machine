@@ -24,14 +24,25 @@ package org.savapage.server.restful.services;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.Produces;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.savapage.core.SpInfo;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp;
+import org.savapage.core.services.ServiceContext;
+import org.savapage.server.restful.RestApplication;
 import org.savapage.server.restful.RestAuthFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** */
-@Path("/system")
+@Path("/" + RestSystemService.PATH_MAIN)
 
 /**
  *
@@ -40,14 +51,72 @@ import org.savapage.server.restful.RestAuthFilter;
  */
 public class RestSystemService implements IRestService {
 
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(RestSystemService.class);
+
+    /** */
+    public static final String PATH_MAIN = "system";
+
+    /** */
+    private static final String PATH_SUB_VERSION = "version";
+
     /**
      * @return Application version.
      */
     @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
     @GET
-    @Path("version")
+    @Path(PATH_SUB_VERSION)
     @Produces(MediaType.TEXT_PLAIN)
     public String version() {
         return ConfigManager.getAppNameVersionBuild();
+    }
+
+    /**
+     * Tests the service by calling a simple GET of this RESTful service. The
+     * result is logged.
+     */
+    public static void test() {
+
+        final ConfigManager cm = ConfigManager.instance();
+
+        final Client client = ServiceContext.getServiceFactory()
+                .getRestClientService().createClientAuth(
+                        cm.getConfigValue(
+                                IConfigProp.Key.API_RESTFUL_AUTH_USERNAME),
+                        cm.getConfigValue(
+                                IConfigProp.Key.API_RESTFUL_AUTH_PASSWORD));
+
+        final String restfulPath = RestApplication.RESTFUL_URL_PATH;
+        final String targetPath = PATH_MAIN + "/" + PATH_SUB_VERSION;
+
+        final WebTarget[] webTargets = new WebTarget[] { //
+                client.target("http://localhost:"
+                        + ConfigManager.getServerPort() + restfulPath)
+                        .path(targetPath), //
+                client.target("https://localhost:"
+                        + ConfigManager.getServerSslPort() + restfulPath)
+                        .path(targetPath) };
+        try {
+            for (final WebTarget webTarget : webTargets) {
+
+                final Invocation.Builder invocationBuilder =
+                        webTarget.request(MediaType.TEXT_PLAIN);
+
+                try (Response response = invocationBuilder.get();) {
+                    final String version = response.readEntity(String.class);
+                    SpInfo.instance().log(String.format(
+                            "%s test: GET %s -> %s [%s] [%s]",
+                            RestSystemService.class.getSimpleName(),
+                            webTarget.getUri().toString(), response.getStatus(),
+                            response.getStatusInfo(), version));
+
+                } catch (ProcessingException e) {
+                    LOGGER.error(e.getMessage());
+                }
+            }
+        } finally {
+            client.close();
+        }
     }
 }

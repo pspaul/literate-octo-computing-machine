@@ -31,7 +31,10 @@ import org.glassfish.jersey.server.ResourceConfig;
 public final class RestApplication extends ResourceConfig {
 
     /** */
-    public static final String SERVLET_URL_PATTERN = "/restful/v1/*";
+    public static final String RESTFUL_URL_PATH = "/restful/v1";
+
+    /** */
+    public static final String SERVLET_URL_PATTERN = RESTFUL_URL_PATH + "/*";
 
     /**
      *
@@ -41,7 +44,7 @@ public final class RestApplication extends ResourceConfig {
         packages(org.savapage.server.restful.services.IRestService.class
                 .getPackage().getName());
 
-        //register(LoggingFeature.class); // TODO
+        // register(LoggingFeature.class); // TODO
 
         register(RestAuthFilter.class);
     }
