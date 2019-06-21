@@ -1914,7 +1914,7 @@
                         _onUploadMsgWarn(warn, infoArray, filesStatus);
                     }, function(files) {
                         _onUploadMsgInfo(files);
-                    });
+                    }, true);
                 }
 
                 $('#sp-webprint-upload-form').submit(function(e) {
@@ -2699,7 +2699,7 @@
                         _ns.userEvent.resume();
                     }, function(warn, files, filesStatus) {
                         _view.msgDialogBox(_ns.DropZone.getHtmlWarning(_i18n, warn, files, filesStatus), 'sp-msg-popup-warn');
-                    });
+                    }, null, true);
                 }
 
                 $('#page-main-thumbnail-viewport').css({

@@ -3348,7 +3348,7 @@
              *
              * @param {Object} dropzone (JQuery selector).
              */
-            setCallbacks : function(dropzone, cssClassDragover, url, fileField, fontField, fooFontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo) {
+            setCallbacks : function(dropzone, cssClassDragover, url, fileField, fontField, fooFontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo, forPrint) {
                 var _obj = this;
 
                 dropzone.bind('dragover', function(e) {
@@ -3370,8 +3370,10 @@
 
                     if (files.length > 0) {
                         _obj.sendFiles(files, url, fileField, fontField, fontEnum, maxBytes, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo);
-                    } else {
+                    } else if (forPrint) {
                         _obj.printURL(dataTransfer, url, fontEnum, fileExt, i18n, fooBeforeSend, fooAfterSend, fooWarn, fooInfo);
+                    } else {
+                        fooWarn(i18n.format('msg-file-upload-type-unsupported', ['TEXT']));
                     }
                     return false;
                 });
