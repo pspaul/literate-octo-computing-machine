@@ -21,7 +21,11 @@
  */
 package org.savapage.server.restful;
 
+import org.glassfish.jersey.logging.LoggingFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.savapage.server.restful.services.RestPrintService;
+import org.savapage.server.restful.services.RestSystemService;
 
 /**
  *
@@ -37,16 +41,40 @@ public final class RestApplication extends ResourceConfig {
     public static final String SERVLET_URL_PATTERN = RESTFUL_URL_PATH + "/*";
 
     /**
-     *
+     * RESTFul services to register.
+     */
+    private static final Class<?>[] SERVICES_REGISTRY = new Class<?>[] { //
+            RestSystemService.class, //
+            RestPrintService.class //
+    };
+
+    /**
+     * RESTful Server Application.
      */
     public RestApplication() {
 
-        packages(org.savapage.server.restful.services.IRestService.class
+        this.packages(org.savapage.server.restful.services.IRestService.class
                 .getPackage().getName());
 
-        // register(LoggingFeature.class); // TODO
-
-        register(RestAuthFilter.class);
+        /*
+         * Log level can be overwritten in log4j.properties. For example:
+         *
+         * log4j.logger.org.glassfish.jersey=TRACE
+         */
+        this.register(new LoggingFeature(
+                java.util.logging.Logger
+                        .getLogger(LoggingFeature.DEFAULT_LOGGER_NAME),
+                java.util.logging.Level.WARNING,
+                LoggingFeature.Verbosity.PAYLOAD_ANY,
+                LoggingFeature.DEFAULT_MAX_ENTITY_SIZE));
+        //
+        this.register(RestAuthFilter.class);
+        //
+        this.register(MultiPartFeature.class);
+        //
+        for (final Class<?> clazz : SERVICES_REGISTRY) {
+            this.register(clazz);
+        }
     }
 
 }

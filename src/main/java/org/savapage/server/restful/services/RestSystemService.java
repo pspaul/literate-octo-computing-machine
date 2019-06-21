@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author Rijk Ravestein
  *
  */
-public class RestSystemService implements IRestService {
+public final class RestSystemService implements IRestService {
 
     /** */
     private static final Logger LOGGER =
@@ -87,36 +87,33 @@ public class RestSystemService implements IRestService {
                         cm.getConfigValue(
                                 IConfigProp.Key.API_RESTFUL_AUTH_PASSWORD));
 
-        final String restfulPath = RestApplication.RESTFUL_URL_PATH;
-        final String targetPath = PATH_MAIN + "/" + PATH_SUB_VERSION;
-
         final WebTarget[] webTargets = new WebTarget[] { //
-                client.target("http://localhost:"
-                        + ConfigManager.getServerPort() + restfulPath)
-                        .path(targetPath), //
-                client.target("https://localhost:"
-                        + ConfigManager.getServerSslPort() + restfulPath)
-                        .path(targetPath) };
-        try {
-            for (final WebTarget webTarget : webTargets) {
+                client.target(
+                        "http://localhost:" + ConfigManager.getServerPort())
+                        .path(RestApplication.RESTFUL_URL_PATH).path(PATH_MAIN)
+                        .path(PATH_SUB_VERSION), //
+                client.target(
+                        "https://localhost:" + ConfigManager.getServerSslPort())
+                        .path(RestApplication.RESTFUL_URL_PATH).path(PATH_MAIN)
+                        .path(PATH_SUB_VERSION) };
 
-                final Invocation.Builder invocationBuilder =
-                        webTarget.request(MediaType.TEXT_PLAIN);
+        for (final WebTarget webTarget : webTargets) {
 
-                try (Response response = invocationBuilder.get();) {
-                    final String version = response.readEntity(String.class);
-                    SpInfo.instance().log(String.format(
-                            "%s test: GET %s -> %s [%s] [%s]",
-                            RestSystemService.class.getSimpleName(),
-                            webTarget.getUri().toString(), response.getStatus(),
-                            response.getStatusInfo(), version));
+            final Invocation.Builder invocationBuilder =
+                    webTarget.request(MediaType.TEXT_PLAIN);
 
-                } catch (ProcessingException e) {
-                    LOGGER.error(e.getMessage());
-                }
+            try (Response response = invocationBuilder.get();) {
+                final String version = response.readEntity(String.class);
+                SpInfo.instance()
+                        .log(String.format("%s test: GET %s -> %s [%s] [%s]",
+                                RestSystemService.class.getSimpleName(),
+                                webTarget.getUri().toString(),
+                                response.getStatus(), response.getStatusInfo(),
+                                version));
+
+            } catch (ProcessingException e) {
+                LOGGER.error(e.getMessage());
             }
-        } finally {
-            client.close();
         }
     }
 }
