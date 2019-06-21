@@ -553,6 +553,8 @@ public final class WebServer {
      */
     public static void main(final String[] args) throws Exception {
 
+        ConfigManager.initJavaUtilLogging();
+
         if (!checkJava8()) {
             return;
         }
