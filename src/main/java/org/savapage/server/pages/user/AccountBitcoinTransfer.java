@@ -57,7 +57,7 @@ import net.iharder.Base64;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public class AccountBitcoinTransfer extends AbstractUserPage {
@@ -202,7 +202,7 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
             final int squareWidth) throws QRCodeException {
 
         final BufferedImage image =
-                QRCodeHelper.createImage(codeText, squareWidth);
+                QRCodeHelper.createImage(codeText, squareWidth, null);
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
                 OutputStream b64 = new Base64.OutputStream(out)) {
