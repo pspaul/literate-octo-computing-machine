@@ -82,6 +82,11 @@ public final class IppRoutingPlugin implements ServerPlugin {
     }
 
     /**
+     * Minimum size for QR-code for quiet-zone == zero to take effect. Why ?!
+     */
+    private static final int QR_CODE_SIZE_MINIMUM = 50;
+
+    /**
      * Property key prefix.
      */
     private static final String PROP_KEY_PFX = "routing.";
@@ -271,6 +276,14 @@ public final class IppRoutingPlugin implements ServerPlugin {
      */
     public void onRouting(final IppRoutingContext ctx) {
 
+        final int createQRSize;
+
+        if (this.codeQRSize < QR_CODE_SIZE_MINIMUM) {
+            createQRSize = QR_CODE_SIZE_MINIMUM;
+        } else {
+            createQRSize = this.codeQRSize;
+        }
+
         final File fileIn = ctx.getPdfToPrint();
         final File fileOut = new File(
                 fileIn.getAbsolutePath() + UUID.randomUUID().toString());
@@ -289,9 +302,15 @@ public final class IppRoutingPlugin implements ServerPlugin {
             if (this.codeQR == null) {
                 image = null;
             } else {
+
                 final BufferedImage bufferImage = QRCodeHelper.createImage(
-                        this.codeQR, this.codeQRSize, this.codeQRQuiteZone);
+                        this.codeQR, createQRSize, this.codeQRQuiteZone);
+
                 image = Image.getInstance(bufferImage, null);
+
+                if (this.codeQRSize != createQRSize) {
+                    image.scaleToFit(this.codeQRSize, this.codeQRSize);
+                }
             }
 
             //
