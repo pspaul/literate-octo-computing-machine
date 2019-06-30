@@ -35,6 +35,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.EnumUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.ipp.routing.IppRoutingContext;
+import org.savapage.core.ipp.routing.IppRoutingResult;
 import org.savapage.core.util.QRCodeException;
 import org.savapage.core.util.QRCodeHelper;
 import org.savapage.ext.ServerPlugin;
@@ -99,6 +100,8 @@ public final class IppRoutingPlugin implements ServerPlugin {
     /** */
     private static final String PROP_KEY_PDF_QRCODE =
             PROP_KEY_PFX_PDF + "qrcode";
+    /** */
+    private static final String PROP_VAL_PDF_QRCODE_UUID = "$uuid$";
 
     /** */
     private static final String PROP_KEY_PDF_QRCODE_SIZE =
@@ -152,6 +155,9 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
     /** */
     private String codeQR;
+
+    /** */
+    private boolean codeQRUUID;
 
     /** */
     private Integer codeQRQuiteZone;
@@ -211,6 +217,8 @@ public final class IppRoutingPlugin implements ServerPlugin {
         this.name = pluginName;
 
         this.codeQR = props.getProperty(PROP_KEY_PDF_QRCODE);
+        this.codeQRUUID = this.codeQR.equals(PROP_VAL_PDF_QRCODE_UUID);
+
         this.codeQRSize = Integer
                 .valueOf(props.getProperty(PROP_KEY_PDF_QRCODE_SIZE, "100"))
                 .intValue();
@@ -273,8 +281,11 @@ public final class IppRoutingPlugin implements ServerPlugin {
      *
      * @param ctx
      *            The routing context.
+     * @param res
+     *            The routing result to be filled.
      */
-    public void onRouting(final IppRoutingContext ctx) {
+    public void onRouting(final IppRoutingContext ctx,
+            final IppRoutingResult res) {
 
         final int createQRSize;
 
@@ -302,9 +313,16 @@ public final class IppRoutingPlugin implements ServerPlugin {
             if (this.codeQR == null) {
                 image = null;
             } else {
+                final String codeQRWrk;
+                if (this.codeQRUUID) {
+                    codeQRWrk = UUID.randomUUID().toString();
+                    res.setRoutingId(codeQRWrk);
+                } else {
+                    codeQRWrk = this.codeQR;
+                }
 
                 final BufferedImage bufferImage = QRCodeHelper.createImage(
-                        this.codeQR, createQRSize, this.codeQRQuiteZone);
+                        codeQRWrk, createQRSize, this.codeQRQuiteZone);
 
                 image = Image.getInstance(bufferImage, null);
 
@@ -313,7 +331,6 @@ public final class IppRoutingPlugin implements ServerPlugin {
                 }
             }
 
-            //
             final Phrase phraseHeader;
 
             if (this.header == null) {

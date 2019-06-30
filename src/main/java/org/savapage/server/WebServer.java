@@ -69,8 +69,8 @@ import org.savapage.core.util.InetUtils;
 import org.savapage.server.ext.papercut.ExtPaperCutSyncServlet;
 import org.savapage.server.feed.AtomFeedServlet;
 import org.savapage.server.restful.RestApplication;
-import org.savapage.server.restful.services.RestPrintService;
 import org.savapage.server.restful.services.RestSystemService;
+import org.savapage.server.restful.services.RestTestService;
 import org.savapage.server.xmlrpc.SpXmlRpcServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -533,7 +533,7 @@ public final class WebServer {
      */
     private static void initDevelopmenEnv() {
         RestSystemService.test();
-        RestPrintService.test();
+        RestTestService.test();
         // DeadlockedThreadsDetector.createDeadlockTest();
     }
 

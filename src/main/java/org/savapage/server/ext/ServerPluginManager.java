@@ -59,6 +59,7 @@ import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dto.UserPaymentGatewayDto;
 import org.savapage.core.ipp.routing.IppRoutingContext;
 import org.savapage.core.ipp.routing.IppRoutingListener;
+import org.savapage.core.ipp.routing.IppRoutingResult;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserAccount;
@@ -1483,9 +1484,10 @@ public final class ServerPluginManager
     }
 
     @Override
-    public void onIppRoutingEvent(final IppRoutingContext ctx) {
+    public void onIppRoutingEvent(final IppRoutingContext ctx,
+            final IppRoutingResult res) {
         this.ippRoutingPlugins.forEach((k, v) -> {
-            v.onRouting(ctx);
+            v.onRouting(ctx, res);
         });
     }
 

@@ -22,6 +22,7 @@
 package org.savapage.server.restful.services;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,15 +30,20 @@ import java.io.InputStream;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -46,37 +52,144 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.savapage.core.SpInfo;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
+import org.savapage.core.doc.DocContent;
+import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.restful.RestApplication;
 import org.savapage.server.restful.RestAuthFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
+
 /** */
-@Path("/" + RestPrintService.PATH_MAIN)
+@Path("/" + RestTestService.PATH_MAIN)
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class RestPrintService implements IRestService {
+public final class RestTestService implements IRestService {
 
     /** */
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(RestPrintService.class);
+            LoggerFactory.getLogger(RestTestService.class);
 
     /** */
-    public static final String PATH_MAIN = "print";
+    public static final String PATH_MAIN = "test";
 
     /** */
-    private static final String PATH_SUB_TEST = "test";
+    private static final String PATH_SUB_UPLOAD = "upload";
 
     /** */
-    private static final String PATH_SUB_PDF = "pdf";
+    private static final String PATH_SUB_DOWNLOAD_PDF = "download/pdf";
+
+    /** */
+    private static final String PATH_SUB_ARCHIVES_PDF = "archives";
+
+    /** */
+    private static final String PATH_SUB_ID = "id";
 
     /** */
     private static final String FORM_PARAM_FILE = "file";
+
+    /** */
+    private static final String MEDIA_TYPE_PDF = DocContent.MIMETYPE_PDF;
+
+    /**
+     *
+     * @author Rijk Ravestein
+     *
+     */
+    public static class ArchiveDto extends AbstractDto {
+
+        private String id;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+    }
+
+    /**
+     * @param id
+     *            File ID.
+     * @return {@link Response}.
+     */
+    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @GET
+    @Path(PATH_SUB_ARCHIVES_PDF + "/{" + PATH_SUB_ID + "}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response testArchives(@PathParam(PATH_SUB_ID) final String id) {
+
+        if (StringUtils.isBlank(id)) {
+            return Response.noContent().build();
+        }
+
+        final ArchiveDto dto = new ArchiveDto();
+        dto.setId(id);
+
+        try {
+            return Response.ok(dto.stringifyPrettyPrinted()).build();
+        } catch (IOException e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
+    }
+
+    /**
+     * @param id
+     *            File ID.
+     * @return {@link Response}.
+     */
+    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @GET
+    @Path(PATH_SUB_DOWNLOAD_PDF + "/{" + PATH_SUB_ID + "}")
+    @Produces(MEDIA_TYPE_PDF)
+    public Response testDownloadPdf(@PathParam(PATH_SUB_ID) final String id) {
+
+        if (StringUtils.isBlank(id)) {
+            return Response.noContent().build();
+        }
+
+        final StreamingOutput output = new StreamingOutput() {
+            @Override
+            public void write(final java.io.OutputStream output)
+                    throws IOException, WebApplicationException {
+
+                try {
+                    final ByteArrayOutputStream bos =
+                            new ByteArrayOutputStream();
+
+                    final Document doc = new Document();
+                    final PdfWriter writer = PdfWriter.getInstance(doc, bos);
+                    doc.open();
+                    doc.add(new Paragraph(String
+                            .format("Content of file with ID [%s].\n", id)));
+
+                    doc.close();
+                    writer.close();
+
+                    output.write(bos.toByteArray());
+
+                    output.flush();
+
+                } catch (Exception e) {
+                    throw new WebApplicationException(e.getMessage());
+                }
+            }
+        };
+
+        return Response.ok(output)
+                .header("content-disposition",
+                        "attachment; filename = file.pdf") //
+                .build();
+    }
 
     /**
      *
@@ -84,16 +197,16 @@ public final class RestPrintService implements IRestService {
      *            File input stream.
      * @param disp
      *            Meta data.
-     * @return String message.
+     * @return {@link Response} with string message.
      * @throws Exception
      *             If error.
      */
     @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
     @POST
-    @Path(PATH_SUB_TEST)
+    @Path(PATH_SUB_UPLOAD)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response printTest(//
+    public Response testUpload(//
             @FormDataParam(FORM_PARAM_FILE) final InputStream fos,
             @FormDataParam(FORM_PARAM_FILE) //
             final FormDataContentDisposition disp) {
@@ -162,7 +275,7 @@ public final class RestPrintService implements IRestService {
         final WebTarget webTarget = client
                 .target("https://localhost:" + ConfigManager.getServerSslPort())
                 .path(RestApplication.RESTFUL_URL_PATH).path(PATH_MAIN)
-                .path(PATH_SUB_TEST);
+                .path(PATH_SUB_UPLOAD);
 
         File file = null;
 
@@ -186,7 +299,7 @@ public final class RestPrintService implements IRestService {
 
                 SpInfo.instance()
                         .log(String.format("%s test: POST %s -> %s [%s]",
-                                RestPrintService.class.getSimpleName(),
+                                RestTestService.class.getSimpleName(),
                                 webTarget.getUri().toString(),
                                 response.getStatus(),
                                 response.getStatusInfo()));
