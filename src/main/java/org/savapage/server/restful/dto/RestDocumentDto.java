@@ -24,12 +24,14 @@ package org.savapage.server.restful.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.server.pages.DocLogItem;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  *
@@ -37,18 +39,43 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @JsonInclude(Include.NON_NULL)
+@JsonPropertyOrder({ RestDocumentDto.FIELD_ID, RestDocumentDto.FIELD_EXT_ID,
+        RestDocumentDto.FIELD_TYPE, RestDocumentDto.FIELD_TITLE,
+        RestDocumentDto.FIELD_CREATED, RestDocumentDto.FIELD_STORE })
 public final class RestDocumentDto extends AbstractRestDto {
 
+    /** */
+    public static final String FIELD_ID = "id";
+    /** */
+    public static final String FIELD_EXT_ID = "ext_id";
+    /** */
+    public static final String FIELD_TYPE = "type";
+    /** */
+    public static final String FIELD_TITLE = "title";
+    /** */
+    public static final String FIELD_CREATED = "created";
+    /** */
+    public static final String FIELD_STORE = "store";
+
+    @JsonProperty(FIELD_ID)
     private Long id;
+
+    @JsonProperty(FIELD_TITLE)
     private String title;
+
+    @JsonProperty(FIELD_CREATED)
     private String created;
+
+    @JsonProperty(FIELD_TYPE)
     private String type;
 
-    @JsonProperty("ext_id")
+    @JsonProperty(FIELD_EXT_ID)
     private String extId;
 
-    private String uuid;
+    @JsonProperty(FIELD_STORE)
+    private boolean store;
 
+    //
     public Long getId() {
         return id;
     }
@@ -89,12 +116,12 @@ public final class RestDocumentDto extends AbstractRestDto {
         this.extId = extId;
     }
 
-    public String getUuid() {
-        return uuid;
+    public boolean isStore() {
+        return store;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setStore(boolean store) {
+        this.store = store;
     }
 
     /**
@@ -103,7 +130,8 @@ public final class RestDocumentDto extends AbstractRestDto {
      *            {@link DocLog}.
      * @return {@link RestDocumentDto}.
      */
-    private static RestDocumentDto createObj(final DocLog doc) {
+    private static RestDocumentDto createObj(final DocLog doc,
+            final boolean isStored) {
 
         final RestDocumentDto dto = new RestDocumentDto();
 
@@ -111,7 +139,23 @@ public final class RestDocumentDto extends AbstractRestDto {
         dto.setTitle(doc.getTitle());
         dto.setCreated(toISODateTimeZ(doc.getCreatedDate()));
         dto.setExtId(doc.getExternalId());
-        //dto.setUuid(doc.getUuid());
+        dto.setStore(isStored);
+
+        DocLogDao.Type docType = null;
+
+        if (doc.getDocIn() != null) {
+            docType = DocLogDao.Type.IN;
+        } else if (doc.getDocOut() != null) {
+            if (doc.getDocOut().getPdfOut() != null) {
+                docType = DocLogDao.Type.PDF;
+            } else if (doc.getDocOut().getPrintOut() != null) {
+                docType = DocLogDao.Type.PRINT;
+            }
+        }
+
+        if (docType != null) {
+            dto.setType(docType.toString().toLowerCase());
+        }
 
         return dto;
     }
@@ -131,6 +175,7 @@ public final class RestDocumentDto extends AbstractRestDto {
         dto.setCreated(toISODateTimeZ(item.getCreatedDate()));
         dto.setType(item.getDocType().toString().toLowerCase());
         dto.setExtId(item.getExtId());
+        dto.setStore(item.isPrintArchive() || item.isPrintJournal());
 
         return dto;
     }
@@ -141,8 +186,8 @@ public final class RestDocumentDto extends AbstractRestDto {
      *            {@link DocLog}.
      * @return Pretty-printed JSON.
      */
-    public static String createJSON(final DocLog doc) {
-        return toJSON(createObj(doc));
+    public static String createJSON(final DocLog doc, final boolean isStored) {
+        return toJSON(createObj(doc, isStored));
     }
 
     /**

@@ -64,14 +64,16 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
 
-/** */
-@Path("/" + RestTestService.PATH_MAIN)
-
 /**
+ * REST tests API.
+ * <p>
+ * Implementation of Jersey extended WADL support is <i>under construction</i>.
+ * <p>
  *
  * @author Rijk Ravestein
  *
  */
+@Path("/" + RestTestService.PATH_MAIN)
 public final class RestTestService implements IRestService {
 
     /** */
@@ -79,7 +81,7 @@ public final class RestTestService implements IRestService {
             LoggerFactory.getLogger(RestTestService.class);
 
     /** */
-    public static final String PATH_MAIN = "test";
+    public static final String PATH_MAIN = "tests";
 
     /** */
     private static final String PATH_SUB_UPLOAD = "upload";

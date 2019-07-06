@@ -1,6 +1,6 @@
 #
-# This file is part of the SavaPage project <http://savapage.org>.
-# Copyright (c) 2011-2015 Datraverse B.V.
+# This file is part of the SavaPage project <https://www.savapage.org>.
+# Copyright (c) 2011-2019 Datraverse B.V.
 # Author: Rijk Ravestein.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # For more information, please contact Datraverse B.V. at this
 # address: info@datraverse.com
@@ -33,7 +33,14 @@ package:
 	mvn package
 
 .PHONY: repackage
-repackage:
-	mvn clean package
+repackage: clean package wadl javadoc
+
+.PHONY: wadl
+wadl:
+	mvn com.sun.jersey.contribs:maven-wadl-plugin:generate
+
+.PHONY: javadoc
+javadoc:
+	mvn javadoc:javadoc
 
 # end-of-file

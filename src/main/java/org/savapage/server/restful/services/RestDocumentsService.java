@@ -46,6 +46,7 @@ import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.doc.DocContent;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
 import org.savapage.core.doc.store.DocStoreException;
 import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.jpa.DocLog;
@@ -55,14 +56,16 @@ import org.savapage.server.pages.DocLogItem;
 import org.savapage.server.restful.RestAuthFilter;
 import org.savapage.server.restful.dto.RestDocumentDto;
 
-/** */
-@Path("/" + RestDocumentsService.PATH_MAIN)
-
 /**
+ * REST documents API.
+ * <p>
+ * Implementation of Jersey extended WADL support is <i>under construction</i>.
+ * <p>
  *
  * @author Rijk Ravestein
  *
  */
+@Path("/" + RestDocumentsService.PATH_MAIN)
 public final class RestDocumentsService implements IRestService {
 
     /** */
@@ -78,8 +81,13 @@ public final class RestDocumentsService implements IRestService {
 
     /** */
     public static final String PATH_MAIN = "documents";
+
     /** */
     private static final String PATH_PARAM_ID = "id";
+
+    /** */
+    private static final String PATH_PARAM_EXT_ID = "ext_id";
+
     /** */
     private static final String PATH_SUB_PDF = "pdf";
 
@@ -92,11 +100,30 @@ public final class RestDocumentsService implements IRestService {
     private static final String SORT_PFX_ASC = "+";
     /** */
     private static final String SORT_PFX_DESC = "-";
+
     /** */
-    private static final String FIELD_CREATED = "created";
+    private static final String QUERY_PARAM_PAGE = "page";
+    /** */
+    private static final String QUERY_PARAM_LIMIT = "limit";
+    /** */
+    private static final String QUERY_PARAM_SORT = "sort";
+
+    // response.* annotations are from Jersey's wadl-resourcedoc-doclet
 
     /**
      * Gets document details.
+     *
+     * @response.representation.200.qname document
+     * @response.representation.200.mediaType application/json
+     * @response.representation.200.doc The document object.
+     *
+     *                                  @response.representation.200.example
+     *                                  {"id" : 125, "ext_id" :
+     *                                  "a4fc5e08-9f5e-11e9-81cf-406186940c49",
+     *                                  "type" : "print", "title" : "Sample
+     *                                  Document", "created" :
+     *                                  "2019-07-04T14:15:03+0200", "store" :
+     *                                  "true"}
      *
      * @param id
      *            Document key.
@@ -106,25 +133,55 @@ public final class RestDocumentsService implements IRestService {
     @GET
     @Path("/{" + PATH_PARAM_ID + "}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDocument(//
-            @PathParam(PATH_PARAM_ID) final String id) {
+    public Response getDocumentById(//
+            @PathParam(PATH_PARAM_ID) final Long id) {
 
-        try {
-            final ResponseBuilder rsp;
+        return this.getDocumentRsp(DOCLOG_DAO.findById(id));
+    }
 
-            final Long dbKey = Long.valueOf(id);
+    /**
+     * Gets document details.
+     *
+     * @param externalId
+     *            Unique external id of Document.
+     * @return {@link RestDocumentDto}.
+     */
+    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @GET
+    @Path("/" + RestDocumentDto.FIELD_EXT_ID + "={" + PATH_PARAM_EXT_ID + "}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDocumentByExtId(//
+            @PathParam(PATH_PARAM_EXT_ID) final String externalId) {
 
-            final DocLog doc = DOCLOG_DAO.findById(dbKey);
-            if (doc == null) {
-                rsp = Response.noContent();
-            } else {
-                rsp = Response.ok(RestDocumentDto.createJSON(doc));
+        return this.getDocumentRsp(DOCLOG_DAO.findByExtId(externalId));
+    }
+
+    /**
+     * @param doc
+     *            {@link DocLog}, can be {@code null}.
+     * @return REST response.
+     */
+    private Response getDocumentRsp(final DocLog doc) {
+
+        final ResponseBuilder rsp;
+        if (doc == null) {
+            rsp = Response.noContent();
+        } else {
+
+            DocStoreBranchEnum branch = null;
+            if (doc.getDocOut() != null
+                    && doc.getDocOut().getPrintOut() != null) {
+                branch = DocStoreBranchEnum.OUT_PRINT;
             }
-            return rsp.build();
 
-        } catch (Exception e) {
-            throw new WebApplicationException(e.getMessage());
+            final boolean isStored = branch != null && (DOCSTORE_SERVICE
+                    .isDocPresent(DocStoreTypeEnum.ARCHIVE, branch, doc)
+                    || DOCSTORE_SERVICE.isDocPresent(DocStoreTypeEnum.JOURNAL,
+                            branch, doc));
+
+            rsp = Response.ok(RestDocumentDto.createJSON(doc, isStored));
         }
+        return rsp.build();
     }
 
     /**
@@ -138,14 +195,39 @@ public final class RestDocumentsService implements IRestService {
     @GET
     @Path("/{" + PATH_PARAM_ID + "}/" + PATH_SUB_PDF)
     @Produces(DocContent.MIMETYPE_PDF)
-    public Response getDocumentPdf(//
-            @PathParam(PATH_PARAM_ID) final String id) {
+    public Response getDocumentPdfById(//
+            @PathParam(PATH_PARAM_ID) final Long id) {
+
+        return this.getDocumentPdfRsp(DOCLOG_DAO.findById(id));
+    }
+
+    /**
+     * Gets PDF from archive.
+     *
+     * @param externalId
+     *            Unique external id of Document.
+     * @return PDF file.
+     */
+    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @GET
+    @Path("/" + RestDocumentDto.FIELD_EXT_ID + "={" + PATH_PARAM_EXT_ID + "}/"
+            + PATH_SUB_PDF)
+    @Produces(DocContent.MIMETYPE_PDF)
+    public Response getDocumentPdfByExtId(//
+            @PathParam(PATH_PARAM_EXT_ID) final String externalId) {
+
+        return this.getDocumentPdfRsp(DOCLOG_DAO.findByExtId(externalId));
+    }
+
+    /**
+     * @param doc
+     *            {@link DocLog}, can be {@code null}.
+     * @return REST response.
+     */
+    private Response getDocumentPdfRsp(final DocLog doc) {
 
         try {
             final ResponseBuilder rsp;
-
-            final Long dbKey = Long.valueOf(id);
-            final DocLog doc = DOCLOG_DAO.findById(dbKey);
 
             if (doc == null) {
                 rsp = Response.noContent();
@@ -186,16 +268,20 @@ public final class RestDocumentsService implements IRestService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDocuments(//
-            @DefaultValue("") @QueryParam("type") //
+            @DefaultValue("") @QueryParam(RestDocumentDto.FIELD_TYPE) //
             final String documentType,
-            @DefaultValue("") @QueryParam(FIELD_CREATED + FILTER_SFX_GTE) //
+            @DefaultValue("") @QueryParam(RestDocumentDto.FIELD_CREATED
+                    + FILTER_SFX_GTE) //
             final String createdQte,
-            @DefaultValue("") @QueryParam(FIELD_CREATED + FILTER_SFX_LTE) //
-            final String createdLte,
-            @DefaultValue("0") @QueryParam("page") final Integer page,
-            @DefaultValue("5") @QueryParam("limit") final Integer limit,
-            @DefaultValue(SORT_PFX_ASC
-                    + FIELD_CREATED) @QueryParam("sort") final String sort) {
+            @DefaultValue("") @QueryParam(RestDocumentDto.FIELD_CREATED
+                    + FILTER_SFX_LTE) //
+            final String createdLte, //
+            @DefaultValue("0") @QueryParam(QUERY_PARAM_PAGE) //
+            final Integer page, //
+            @DefaultValue("5") @QueryParam(QUERY_PARAM_LIMIT) //
+            final Integer limit, //
+            @DefaultValue(SORT_PFX_ASC + RestDocumentDto.FIELD_CREATED) //
+            @QueryParam(QUERY_PARAM_SORT) final String sort) {
 
         // Note: the "+" prefix gets lost when using curl.
         final boolean sortAscending = !sort.startsWith(SORT_PFX_DESC);
@@ -232,7 +318,7 @@ public final class RestDocumentsService implements IRestService {
      *            PDF file.
      * @return {@link ResponseBuilder}.
      */
-    public ResponseBuilder downloadPdf(final File filePdf) {
+    private ResponseBuilder downloadPdf(final File filePdf) {
 
         final StreamingOutput output = new StreamingOutput() {
 

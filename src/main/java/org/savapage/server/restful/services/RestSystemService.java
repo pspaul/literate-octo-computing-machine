@@ -41,14 +41,16 @@ import org.savapage.server.restful.RestAuthFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** */
-@Path("/" + RestSystemService.PATH_MAIN)
-
 /**
+ * REST system API.
+ * <p>
+ * Implementation of Jersey extended WADL support is <i>under construction</i>.
+ * <p>
  *
  * @author Rijk Ravestein
  *
  */
+@Path("/" + RestSystemService.PATH_MAIN)
 public final class RestSystemService implements IRestService {
 
     /** */

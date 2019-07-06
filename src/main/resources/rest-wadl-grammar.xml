@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammars xmlns="http://wadl.dev.java.net/2009/02">
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        attributeFormDefault="unqualified"
+        elementFormDefault="unqualified">
+        <xs:element name="document" type="document" />
+        <xs:complexType name="document">
+            <xs:sequence>
+                <xs:element name="id" type="xs:long" />
+                <xs:element minOccurs="0" name="ext_id"
+                    type="xs:string" />
+                <xs:element name="type" type="xs:string" />
+                <xs:element name="title" type="xs:string" />
+                <xs:element name="created" type="xs:date" />
+                <xs:element name="store" type="xs:boolean" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:schema>
+</grammars>
