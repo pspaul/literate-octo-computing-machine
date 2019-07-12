@@ -30,6 +30,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Currency;
@@ -95,6 +96,7 @@ import org.savapage.ext.payment.bitcoin.BitcoinGatewayListener;
 import org.savapage.ext.payment.bitcoin.BitcoinGatewayTrx;
 import org.savapage.ext.payment.bitcoin.BitcoinWalletInfo;
 import org.savapage.ext.print.IppRoutingPlugin;
+import org.savapage.ext.rest.RestClient;
 import org.savapage.server.CustomWebServlet;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
@@ -1526,6 +1528,17 @@ public final class ServerPluginManager
     public boolean isUserInGroup(final String groupName, final String userId) {
         return ServiceContext.getDaoContext().getUserGroupMemberDao()
                 .isUserInGroup(groupName, userId);
+    }
+
+    @Override
+    public RestClient createRestClient(final URI uri) {
+        return RestClientImpl.create(uri);
+    }
+
+    @Override
+    public RestClient createRestClient(final URI uri, final String username,
+            final String password) {
+        return RestClientImpl.create(uri, username, password);
     }
 
 }
