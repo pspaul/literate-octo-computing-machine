@@ -42,6 +42,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
@@ -55,6 +56,8 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.DocLogItem;
 import org.savapage.server.restful.RestAuthFilter;
 import org.savapage.server.restful.dto.RestDocumentDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * REST documents API.
@@ -67,6 +70,10 @@ import org.savapage.server.restful.dto.RestDocumentDto;
  */
 @Path("/" + RestDocumentsService.PATH_MAIN)
 public final class RestDocumentsService implements IRestService {
+
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(RestDocumentsService.class);
 
     /** */
     private static final DocStoreService DOCSTORE_SERVICE =
@@ -163,25 +170,30 @@ public final class RestDocumentsService implements IRestService {
      */
     private Response getDocumentRsp(final DocLog doc) {
 
-        final ResponseBuilder rsp;
-        if (doc == null) {
-            rsp = Response.noContent();
-        } else {
+        try {
+            final ResponseBuilder rsp;
+            if (doc == null) {
+                rsp = Response.noContent();
+            } else {
 
-            DocStoreBranchEnum branch = null;
-            if (doc.getDocOut() != null
-                    && doc.getDocOut().getPrintOut() != null) {
-                branch = DocStoreBranchEnum.OUT_PRINT;
+                DocStoreBranchEnum branch = null;
+                if (doc.getDocOut() != null
+                        && doc.getDocOut().getPrintOut() != null) {
+                    branch = DocStoreBranchEnum.OUT_PRINT;
+                }
+
+                final boolean isStored = branch != null && (DOCSTORE_SERVICE
+                        .isDocPresent(DocStoreTypeEnum.ARCHIVE, branch, doc)
+                        || DOCSTORE_SERVICE.isDocPresent(
+                                DocStoreTypeEnum.JOURNAL, branch, doc));
+
+                rsp = Response.ok(RestDocumentDto.createJSON(doc, isStored));
             }
-
-            final boolean isStored = branch != null && (DOCSTORE_SERVICE
-                    .isDocPresent(DocStoreTypeEnum.ARCHIVE, branch, doc)
-                    || DOCSTORE_SERVICE.isDocPresent(DocStoreTypeEnum.JOURNAL,
-                            branch, doc));
-
-            rsp = Response.ok(RestDocumentDto.createJSON(doc, isStored));
+            return rsp.build();
+        } catch (Exception e) {
+            LOGGER.error("{}: {}", e.getClass().getName(), e.getMessage());
+            throw new WebApplicationException(e.getMessage());
         }
-        return rsp.build();
     }
 
     /**
@@ -245,6 +257,7 @@ public final class RestDocumentsService implements IRestService {
             return rsp.build();
 
         } catch (Exception e) {
+            LOGGER.error("{}: {}", e.getClass().getName(), e.getMessage());
             throw new WebApplicationException(e.getMessage());
         }
     }
@@ -276,40 +289,52 @@ public final class RestDocumentsService implements IRestService {
             @DefaultValue("") @QueryParam(RestDocumentDto.FIELD_CREATED
                     + FILTER_SFX_LTE) //
             final String createdLte, //
-            @DefaultValue("0") @QueryParam(QUERY_PARAM_PAGE) //
+            @DefaultValue("1") @QueryParam(QUERY_PARAM_PAGE) //
             final Integer page, //
             @DefaultValue("5") @QueryParam(QUERY_PARAM_LIMIT) //
             final Integer limit, //
             @DefaultValue(SORT_PFX_ASC + RestDocumentDto.FIELD_CREATED) //
             @QueryParam(QUERY_PARAM_SORT) final String sort) {
 
-        // Note: the "+" prefix gets lost when using curl.
-        final boolean sortAscending = !sort.startsWith(SORT_PFX_DESC);
+        try {
+            // Note: the "+" prefix gets lost when using curl.
+            final boolean sortAscending = !sort.startsWith(SORT_PFX_DESC);
 
-        final DocLogDao.Type daoType = EnumUtils.getEnum(DocLogDao.Type.class,
-                documentType.toUpperCase());
+            final DocLogDao.Type daoType;
 
-        //
-        final DocLogPagerReq req = new DocLogPagerReq();
-        req.setPage(page);
-        req.setMaxResults(limit);
+            if (StringUtils.isBlank(documentType)) {
+                daoType = DocLogDao.Type.ALL;
+            } else {
+                daoType = EnumUtils.getEnum(DocLogDao.Type.class,
+                        documentType.toUpperCase());
+            }
+            //
+            final DocLogPagerReq req = new DocLogPagerReq();
+            req.setPage(page);
+            req.setMaxResults(limit);
 
-        final DocLogPagerReq.Sort reqSort = new DocLogPagerReq.Sort();
-        reqSort.setField(DocLogPagerReq.Sort.FLD_DATE);
-        reqSort.setAscending(sortAscending);
-        req.setSort(reqSort);
+            final DocLogPagerReq.Sort reqSort = new DocLogPagerReq.Sort();
+            reqSort.setField(DocLogPagerReq.Sort.FLD_DATE);
+            reqSort.setAscending(sortAscending);
+            req.setSort(reqSort);
 
-        final DocLogPagerReq.Select reqSelect = new DocLogPagerReq.Select();
-        reqSelect.setDocType(daoType);
-        req.setSelect(reqSelect);
+            final DocLogPagerReq.Select reqSelect = new DocLogPagerReq.Select();
+            reqSelect.setDocType(daoType);
+            req.setSelect(reqSelect);
 
-        final DocLogItem.AbstractQuery query = DocLogItem.createQuery(daoType);
+            final DocLogItem.AbstractQuery query =
+                    DocLogItem.createQuery(daoType);
 
-        final EntityManager em = DaoContextImpl.peekEntityManager();
-        final Long userId = null;
-        final List<DocLogItem> items = query.getListChunk(em, userId, req);
+            final EntityManager em = DaoContextImpl.peekEntityManager();
+            final Long userId = null;
+            final List<DocLogItem> items = query.getListChunk(em, userId, req);
 
-        return Response.ok(RestDocumentDto.itemsToJSON(items)).build();
+            return Response.ok(RestDocumentDto.itemsToJSON(items)).build();
+
+        } catch (Exception e) {
+            LOGGER.error("{}: {}", e.getClass().getName(), e.getMessage());
+            throw new WebApplicationException(e.getMessage());
+        }
     }
 
     /**

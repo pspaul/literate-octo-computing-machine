@@ -41,6 +41,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.commons.lang3.StringUtils;
@@ -82,6 +83,9 @@ public final class RestTestService implements IRestService {
 
     /** */
     public static final String PATH_MAIN = "tests";
+
+    /** */
+    private static final String PATH_SUB_ECHO = "echo";
 
     /** */
     private static final String PATH_SUB_UPLOAD = "upload";
@@ -142,6 +146,20 @@ public final class RestTestService implements IRestService {
         } catch (IOException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
+    }
+
+    /**
+     * @param text
+     *            Text to echo.
+     * @return Application version.
+     */
+    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @POST
+    @Path(PATH_SUB_ECHO)
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response echoTextPlain(final String text) {
+        return Response.status(Status.CREATED).entity(text).build();
     }
 
     /**
