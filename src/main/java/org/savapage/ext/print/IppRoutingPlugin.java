@@ -87,9 +87,9 @@ public final class IppRoutingPlugin implements ServerPlugin {
     }
 
     /**
-     * Minimum size for QR-code for quiet-zone == zero to take effect. Why ?!
+     * Minimum size for QR-code for quiet-zone == 1 to take effect. Why ?!
      */
-    private static final int QR_CODE_SIZE_MINIMUM = 50;
+    private static final int QR_CODE_PIXEL_SIZE_MINIMUM = 60;
 
     /**
      * Property key prefix.
@@ -203,6 +203,15 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private static final String PROP_KEY_PDF_FOOTER_MARGIN_BOTTOM =
             PROP_KEY_PDF_FOOTER + ".margin.bottom";
 
+    /**
+     * Number of image pixels in PDF point.
+     */
+    private static final float PDF_POINT_TO_IMG_PIXEL = 1.25f;
+    /**
+     * Number of PDF points in image pixel.
+     */
+    private static final float IMG_PIXEL_TO_PDF_POINT = 0.75f;
+
     /** */
     private String id;
 
@@ -237,10 +246,10 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private float codeQRPosMarginY;
 
     /** */
-    private int codeQRSize;
+    private int codeQRPixelSize;
 
     /** */
-    private int codeQRSizeCreate;
+    private int codeQRPixelSizeCreate;
 
     /** */
     private String header;
@@ -295,14 +304,15 @@ public final class IppRoutingPlugin implements ServerPlugin {
         //
         this.onInitCodeQRRetrieval(context, props);
         //
-        this.codeQRSize =
-                Integer.valueOf(props.getProperty(PROP_KEY_PDF_QRCODE_SIZE,
-                        Integer.toString(QR_CODE_SIZE_MINIMUM))).intValue();
+        this.codeQRPixelSize = Integer
+                .valueOf(props.getProperty(PROP_KEY_PDF_QRCODE_SIZE,
+                        Integer.toString(QR_CODE_PIXEL_SIZE_MINIMUM)))
+                .intValue();
 
-        if (this.codeQRSize < QR_CODE_SIZE_MINIMUM) {
-            this.codeQRSizeCreate = QR_CODE_SIZE_MINIMUM;
+        if (this.codeQRPixelSize < QR_CODE_PIXEL_SIZE_MINIMUM) {
+            this.codeQRPixelSizeCreate = QR_CODE_PIXEL_SIZE_MINIMUM;
         } else {
-            this.codeQRSizeCreate = this.codeQRSize;
+            this.codeQRPixelSizeCreate = this.codeQRPixelSize;
         }
         //
         if (props.containsKey(PROP_KEY_PDF_QRCODE_QUIET_ZONE)) {
@@ -612,13 +622,16 @@ public final class IppRoutingPlugin implements ServerPlugin {
         if (codeQRWrk == null) {
             codeQRImage = null;
         } else {
-            final BufferedImage bufferImage = QRCodeHelper.createImage(
-                    codeQRWrk, this.codeQRSizeCreate, this.codeQRQuiteZone);
+            final BufferedImage bufferImage =
+                    QRCodeHelper.createImage(codeQRWrk,
+                            this.codeQRPixelSizeCreate, this.codeQRQuiteZone);
 
             codeQRImage = Image.getInstance(bufferImage, null);
 
-            if (this.codeQRSizeCreate != this.codeQRSize) {
-                codeQRImage.scaleToFit(this.codeQRSize, this.codeQRSize);
+            if (this.codeQRPixelSizeCreate != this.codeQRPixelSize) {
+                final float factor =
+                        this.codeQRPixelSize * IMG_PIXEL_TO_PDF_POINT;
+                codeQRImage.scaleToFit(factor, factor);
             }
         }
         return codeQRImage;
@@ -636,8 +649,16 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private void setImagePositionOnPage(final Rectangle pageRect,
             final int pageRotation, final Image image) {
 
-        final float imgHeight = image.getHeight();
-        final float imgWidth = image.getWidth();
+        final float imgHeight;
+        final float imgWidth;
+
+        if (this.codeQRPixelSizeCreate == this.codeQRPixelSize) {
+            imgHeight = image.getHeight();
+            imgWidth = image.getWidth();
+        } else {
+            imgHeight = image.getScaledHeight();
+            imgWidth = image.getScaledWidth();
+        }
 
         final float xImage;
         final float yImage;
