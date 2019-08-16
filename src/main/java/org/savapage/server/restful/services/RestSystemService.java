@@ -66,7 +66,7 @@ public final class RestSystemService implements IRestService {
     /**
      * @return Application version.
      */
-    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
     @GET
     @Path(PATH_SUB_VERSION)
     @Produces(MediaType.TEXT_PLAIN)

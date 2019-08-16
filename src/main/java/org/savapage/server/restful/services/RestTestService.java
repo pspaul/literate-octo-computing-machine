@@ -128,7 +128,7 @@ public final class RestTestService implements IRestService {
      *            File ID.
      * @return {@link Response}.
      */
-    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
     @GET
     @Path(PATH_SUB_ARCHIVES_PDF + "/{" + PATH_SUB_ID + "}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -153,7 +153,7 @@ public final class RestTestService implements IRestService {
      *            Text to echo.
      * @return Application version.
      */
-    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
     @POST
     @Path(PATH_SUB_ECHO)
     @Consumes(MediaType.TEXT_PLAIN)
@@ -167,7 +167,7 @@ public final class RestTestService implements IRestService {
      *            File ID.
      * @return {@link Response}.
      */
-    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
     @GET
     @Path(PATH_SUB_DOWNLOAD_PDF + "/{" + PATH_SUB_ID + "}")
     @Produces(MEDIA_TYPE_PDF)
@@ -221,7 +221,7 @@ public final class RestTestService implements IRestService {
      * @throws Exception
      *             If error.
      */
-    @RolesAllowed(RestAuthFilter.ROLE_ALLOWED)
+    @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
     @POST
     @Path(PATH_SUB_UPLOAD)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
