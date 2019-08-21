@@ -33,14 +33,6 @@ package:
 	mvn package
 
 .PHONY: repackage
-repackage: clean package wadl javadoc
-
-.PHONY: wadl
-wadl:
-	mvn com.sun.jersey.contribs:maven-wadl-plugin:generate
-
-.PHONY: javadoc
-javadoc:
-	mvn javadoc:javadoc
+repackage: clean package
 
 # end-of-file
