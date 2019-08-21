@@ -600,6 +600,12 @@ public final class JsonRpcServlet extends HttpServlet
                         .getParams(ParamsUniqueName.class).getUniqueName());
                 break;
 
+            case DELETE_USER_GROUP_ACCOUNT:
+                rpcResponse = ACCOUNTING_SERVICE.deleteUserGroupAccount(
+                        methodParser.getParams(ParamsUniqueName.class)
+                                .getUniqueName());
+                break;
+
             case ERASE_USER:
                 rpcResponse = USER_SERVICE.eraseUser(methodParser
                         .getParams(ParamsUniqueName.class).getUniqueName());
