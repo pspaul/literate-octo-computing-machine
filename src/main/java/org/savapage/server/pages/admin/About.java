@@ -21,6 +21,7 @@
  */
 package org.savapage.server.pages.admin;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,11 +40,14 @@ import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.doc.XpsToPdf;
 import org.savapage.core.doc.soffice.SOfficeHelper;
+import org.savapage.core.i18n.LabelEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.tools.DbVersionInfo;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.system.SystemInfo;
 import org.savapage.core.system.SystemInfo.SysctlEnum;
+import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
@@ -284,6 +288,19 @@ public final class About extends AbstractAdminPage {
             labelWrk.add(new AttributeModifier("class", colorInstalled));
         }
         add(labelWrk);
+
+        //
+        add(new Label("host-name-prompt", NounEnum.NAME.uiText(getLocale())));
+        add(new Label("host-name", InetUtils.getServerHostName()));
+        add(new Label("host-ip-prompt",
+                LabelEnum.IP_ADDRESS.uiText(getLocale())));
+        String ipAddr = "?";
+        try {
+            ipAddr = InetUtils.getServerHostAddress();
+        } catch (UnknownHostException e) {
+            // no code intended.
+        }
+        add(new Label("host-ip", ipAddr));
 
         //
         add(new Label("system-ulimits-nofile", SystemInfo.getUlimitsNofile()));
