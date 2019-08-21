@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,9 +23,11 @@ package org.savapage.server.jsonrpc;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.Currency;
 import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.ServletException;
@@ -354,10 +356,10 @@ public final class JsonRpcServlet extends HttpServlet
         }
 
         final String clientAddress = httpRequest.getRemoteAddr();
-        final String serverAdress;
+        final Set<String> serverAddresses;
 
         try {
-            serverAdress = InetUtils.getServerHostAddress();
+            serverAddresses = InetUtils.getServerHostAddresses();
         } catch (UnknownHostException e1) {
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INTERNAL_ERROR, "Access denied.",
@@ -390,16 +392,14 @@ public final class JsonRpcServlet extends HttpServlet
         /*
          * INVARIANT (ACCESS): Private API, localhost access only.
          */
-        if (isPrivateApi && !clientAddress.equals(serverAdress)) {
+        if (isPrivateApi && !serverAddresses.contains(clientAddress)) {
 
             onAccessViolation(isPrivateApi);
 
             return JsonRpcMethodError.createBasicError(
                     JsonRpcError.Code.INVALID_REQUEST, "Access denied.",
-                    String.format(
-                            "Client [%s] must be on same platform "
-                                    + "as server [%s].",
-                            clientAddress, serverAdress));
+                    String.format("Client [%s] must be on same platform "
+                            + "as server.", clientAddress));
         }
 
         /*
@@ -484,7 +484,8 @@ public final class JsonRpcServlet extends HttpServlet
         final String jsonInput;
 
         try {
-            jsonInput = IOUtils.toString(httpRequest.getInputStream());
+            jsonInput = IOUtils.toString(httpRequest.getInputStream(),
+                    Charset.defaultCharset());
         } catch (IOException e) {
             return createMethodException(e, false);
         }
@@ -614,6 +615,7 @@ public final class JsonRpcServlet extends HttpServlet
                 rpcResponse = CONFIG_PROPERTY_SERVICE.setPropertyValue(
                         methodParser.getParams(ParamsNameValue.class));
                 break;
+
             case LIST_USERS:
 
                 final ParamsPaging parmsListUsers =
