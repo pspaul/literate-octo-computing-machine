@@ -277,7 +277,7 @@
 						<td wicket:id="host-name" />
 					</tr>
 					<tr>
-						<th wicket:id="host-ip-prompt"/>
+						<th wicket:id="host-ip-prompt" />
 						<td wicket:id="host-ip" />
 					</tr>
 					<tr>
@@ -381,7 +381,7 @@
 			<ul data-role="listview" data-inset="true">
 				<li>
 					<h3>
-						pdftoppm (
+						<span wicket:id="cmd-pdftoppm" /> (
 						<wicket:message key="package-required" />
 						)
 					</h3>
@@ -389,18 +389,26 @@
 				</li>
 				<li>
 					<h3>
-						pdftocairo (
+						<span wicket:id="cmd-pdftocairo" /> (
 						<wicket:message key="package-required" />
 						)
 					</h3>
 					<div class="sp-txt-info sp-txt-wrap" wicket:id="version-pdftocairo" />
+				</li>
+				<li>
+					<h3>
+						<span wicket:id="cmd-pdffonts" /> (
+						<wicket:message key="package-required" />
+						)
+					</h3>
+					<div class="sp-txt-info sp-txt-wrap" wicket:id="version-pdffonts" />
 				</li>
 			</ul>
 
 			<ul data-role="listview" data-inset="true">
 				<li>
 					<h3>
-						qpdf (
+						<span wicket:id="cmd-qpdf" /> (
 						<wicket:message key="package-optional" />
 						)
 					</h3>
@@ -411,7 +419,7 @@
 			<ul data-role="listview" data-inset="true">
 				<li>
 					<h3>
-						xpstopdf (
+						<span wicket:id="cmd-xpstopdf" /> (
 						<wicket:message key="package-optional" />
 						)
 					</h3>

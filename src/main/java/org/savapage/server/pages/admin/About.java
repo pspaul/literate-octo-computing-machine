@@ -125,7 +125,7 @@ public final class About extends AbstractAdminPage {
         //
         labelWrk = new Label("app-copyright-owner-url",
                 CommunityDictEnum.DATRAVERSE_BV.getWord());
-        labelWrk.add(new AttributeModifier("href",
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_HREF,
                 CommunityDictEnum.DATRAVERSE_BV_URL.getWord()));
         add(labelWrk);
 
@@ -187,81 +187,6 @@ public final class About extends AbstractAdminPage {
         labelWrk = new Label("version-cups", version);
         add(labelWrk);
 
-        // ---------- Imagemagick
-        colorInstalled = null;
-        version = SystemInfo.getImageMagickVersion();
-        installed = StringUtils.isNotBlank(version);
-        if (!installed) {
-            version = localized("not-installed");
-            colorInstalled = MarkupHelper.CSS_TXT_ERROR;
-        }
-
-        labelWrk = new Label("version-imagemagick", version);
-        if (colorInstalled != null) {
-            labelWrk.add(new AttributeModifier("class", colorInstalled));
-        }
-        add(labelWrk);
-
-        // ---------- pdftoppm
-        colorInstalled = null;
-        version = SystemInfo.getPdfToPpmVersion();
-        installed = StringUtils.isNotBlank(version);
-        if (!installed) {
-            version = localized("not-installed");
-            colorInstalled = MarkupHelper.CSS_TXT_ERROR;
-        }
-
-        labelWrk = new Label("version-pdftoppm", version);
-        if (colorInstalled != null) {
-            labelWrk.add(new AttributeModifier("class", colorInstalled));
-        }
-        add(labelWrk);
-
-        // ---------- pdftocairo
-        colorInstalled = null;
-        version = SystemInfo.getPdfToCairoVersion();
-        installed = StringUtils.isNotBlank(version);
-        if (!installed) {
-            version = localized("not-installed");
-            colorInstalled = MarkupHelper.CSS_TXT_ERROR;
-        }
-
-        labelWrk = new Label("version-pdftocairo", version);
-        if (colorInstalled != null) {
-            labelWrk.add(new AttributeModifier("class", colorInstalled));
-        }
-        add(labelWrk);
-
-        // ---------- Ghostscript
-        colorInstalled = null;
-        version = SystemInfo.getGhostscriptVersion();
-        installed = StringUtils.isNotBlank(version);
-        if (!installed) {
-            version = localized("not-installed");
-            colorInstalled = MarkupHelper.CSS_TXT_ERROR;
-        }
-
-        labelWrk = new Label("version-ghostscript", version);
-        if (colorInstalled != null) {
-            labelWrk.add(new AttributeModifier("class", colorInstalled));
-        }
-        add(labelWrk);
-
-        // ---------- qpdf
-        colorInstalled = null;
-        version = SystemInfo.getQPdfVersion();
-        installed = StringUtils.isNotBlank(version);
-        if (!installed) {
-            version = localized("not-installed");
-            colorInstalled = MarkupHelper.CSS_TXT_ERROR;
-        }
-
-        labelWrk = new Label("version-qpdf", version);
-        if (colorInstalled != null) {
-            labelWrk.add(new AttributeModifier("class", colorInstalled));
-        }
-        add(labelWrk);
-
         // ----------xpstopdf
         colorInstalled = null;
         installed = XpsToPdf.isInstalled();
@@ -270,24 +195,33 @@ public final class About extends AbstractAdminPage {
 
         labelWrk = new Label("version-xpstopdf", localized(keyInstalled));
         if (colorInstalled != null) {
-            labelWrk.add(new AttributeModifier("class", colorInstalled));
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
+                    colorInstalled));
         }
         add(labelWrk);
 
-        // ---------- LibreOffice
-        colorInstalled = null;
-        version = SOfficeHelper.getLibreOfficeVersion();
-        installed = StringUtils.isNotBlank(version);
-        if (!installed) {
-            version = localized("not-installed");
-            colorInstalled = MarkupHelper.CSS_TXT_WARN;
+        // ---------- other packages
+        final String[][] hostPackageInfo = new String[][] {
+                { "version-imagemagick", SystemInfo.getImageMagickVersion() },
+                { "version-pdftoppm", SystemInfo.getPdfToPpmVersion() },
+                { "version-pdftocairo", SystemInfo.getPdfToCairoVersion() },
+                { "version-pdffonts", SystemInfo.getPdfFontsVersion() },
+                { "version-ghostscript", SystemInfo.getGhostscriptVersion() },
+                { "version-qpdf", SystemInfo.getQPdfVersion() }, //
+                { "version-libreoffice",
+                        SOfficeHelper.getLibreOfficeVersion() }, //
+        };
+
+        for (final String[] info : hostPackageInfo) {
+            addHostPackageInfo(info[0], info[1]);
         }
 
-        labelWrk = new Label("version-libreoffice", version);
-        if (colorInstalled != null) {
-            labelWrk.add(new AttributeModifier("class", colorInstalled));
-        }
-        add(labelWrk);
+        //
+        helper.addLabel("cmd-pdftoppm", SystemInfo.Command.PDFTOPPM.cmd());
+        helper.addLabel("cmd-pdftocairo", SystemInfo.Command.PDFTOCAIRO.cmd());
+        helper.addLabel("cmd-pdffonts", SystemInfo.Command.PDFFONTS.cmd());
+        helper.addLabel("cmd-qpdf", SystemInfo.Command.QPDF.cmd());
+        helper.addLabel("cmd-xpstopdf", SystemInfo.Command.XPSTOPDF.cmd());
 
         //
         add(new Label("host-name-prompt", NounEnum.NAME.uiText(getLocale())));
@@ -499,7 +433,8 @@ public final class About extends AbstractAdminPage {
         //
         labelWrk = new Label("membership-participants",
                 helper.localizedNumber(memberCard.getMemberParticipants()));
-        labelWrk.add(new AttributeModifier("class", signalColor));
+        labelWrk.add(
+                new AttributeModifier(MarkupHelper.ATTR_CLASS, signalColor));
         add(labelWrk);
 
         //
@@ -511,7 +446,8 @@ public final class About extends AbstractAdminPage {
 
         labelWrk = new Label("membership-users",
                 helper.localizedNumber(userDAO.countActiveUsers()));
-        labelWrk.add(new AttributeModifier("class", signalColor));
+        labelWrk.add(
+                new AttributeModifier(MarkupHelper.ATTR_CLASS, signalColor));
         add(labelWrk);
 
         helper.encloseLabel("button-import-membercard",
@@ -523,20 +459,21 @@ public final class About extends AbstractAdminPage {
                 CommunityDictEnum.SAVAPAGE_SUPPORT_URL.getWord();
 
         labelWrk = new Label("savapage-helpdesk-url", urlHelpDesk);
-        labelWrk.add(new AttributeModifier("href", urlHelpDesk));
+        labelWrk.add(
+                new AttributeModifier(MarkupHelper.ATTR_HREF, urlHelpDesk));
         add(labelWrk);
 
         //
         labelWrk = new Label("savapage-url",
                 CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG.getWord());
-        labelWrk.add(new AttributeModifier("href",
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_HREF,
                 CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG_URL.getWord()));
         add(labelWrk);
 
         //
         labelWrk = new Label("savapage-source-code-url",
                 localized("source-code-link"));
-        labelWrk.add(new AttributeModifier("href",
+        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_HREF,
                 CommunityDictEnum.COMMUNITY_SOURCE_CODE_URL
                         .getWord(getLocale())));
         add(labelWrk);
@@ -546,6 +483,34 @@ public final class About extends AbstractAdminPage {
                 new PrinterDriverDownloadPanel("printerdriver-download-panel");
         add(downloadPanel);
         downloadPanel.populate();
-
     }
+
+    /**
+     * @param wid
+     *            Wicket ID.
+     * @param version
+     *            {@code null} or empty if not installed.
+     */
+    private void addHostPackageInfo(final String wid, final String version) {
+
+        final boolean installed = StringUtils.isNotBlank(version);
+        final String colorInstalled;
+        final String versionWrk;
+
+        if (installed) {
+            colorInstalled = null;
+            versionWrk = version;
+        } else {
+            versionWrk = localized("not-installed");
+            colorInstalled = MarkupHelper.CSS_TXT_ERROR;
+        }
+
+        final Label labelWrk = new Label(wid, versionWrk);
+        if (colorInstalled != null) {
+            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
+                    colorInstalled));
+        }
+        add(labelWrk);
+    }
+
 }
