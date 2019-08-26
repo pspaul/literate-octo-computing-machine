@@ -25,6 +25,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -43,6 +45,7 @@ import org.savapage.core.doc.soffice.SOfficeHelper;
 import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.tools.DbVersionInfo;
+import org.savapage.core.pdf.PdfDocumentFonts;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.system.SystemInfo;
@@ -208,6 +211,7 @@ public final class About extends AbstractAdminPage {
                 { "version-pdffonts", SystemInfo.getPdfFontsVersion() },
                 { "version-ghostscript", SystemInfo.getGhostscriptVersion() },
                 { "version-qpdf", SystemInfo.getQPdfVersion() }, //
+                { "version-fc-match", SystemInfo.getFontConfigVersion() }, //
                 { "version-libreoffice",
                         SOfficeHelper.getLibreOfficeVersion() }, //
         };
@@ -222,6 +226,25 @@ public final class About extends AbstractAdminPage {
         helper.addLabel("cmd-pdffonts", SystemInfo.Command.PDFFONTS.cmd());
         helper.addLabel("cmd-qpdf", SystemInfo.Command.QPDF.cmd());
         helper.addLabel("cmd-xpstopdf", SystemInfo.Command.XPSTOPDF.cmd());
+
+        //
+        final Map<String, String> mapFont =
+                PdfDocumentFonts.Font.getStandardFontSubst();
+        final List<String> fontKeys = new ArrayList<>();
+        fontKeys.addAll(mapFont.keySet());
+
+        add(new PropertyListView<String>("font-entry", fontKeys) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(final ListItem<String> item) {
+
+                final String key = item.getModelObject();
+                item.add(new Label("font-key", key));
+                item.add(new Label("font-value", mapFont.get(key)));
+            }
+        });
 
         //
         add(new Label("host-name-prompt", NounEnum.NAME.uiText(getLocale())));

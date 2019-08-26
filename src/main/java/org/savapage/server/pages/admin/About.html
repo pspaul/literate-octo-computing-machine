@@ -408,6 +408,36 @@
 			<ul data-role="listview" data-inset="true">
 				<li>
 					<h3>
+						fontconfig (
+						<wicket:message key="package-required" />
+						)
+					</h3>
+					<div class="sp-txt-info sp-txt-wrap" wicket:id="version-fc-match" />
+					<table data-role="table" data-mode="reflow"
+						class="ui-responsive table-stroke ui-mini">
+						<thead>
+							<tr>
+								<th data-priority="1" />
+								<th data-priority="2" />
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th>PDF Standard Font</th>
+								<th>Substitute</th>
+							</tr>
+							<tr wicket:id="font-entry">
+								<td wicket:id="font-key" />
+								<td wicket:id="font-value" />
+							</tr>
+						</tbody>
+					</table>
+				</li>
+			</ul>
+
+			<ul data-role="listview" data-inset="true">
+				<li>
+					<h3>
 						<span wicket:id="cmd-qpdf" /> (
 						<wicket:message key="package-optional" />
 						)
