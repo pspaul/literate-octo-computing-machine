@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!-- 
+    +=========================================================================+ 
+    | This file is part of the SavaPage project <https://www.savapage.org> ...|
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
+    |.........................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify .......|
+    | it under the terms of the GNU Affero General Public License as .........|
+    | published by the Free Software Foundation, either version 3 of .........|
+    | the License, or (at your option) any later version. ....................|
+    +=========================================================================+ 
+    -->
+</wicket:remove>
+
+
+<div wicket:id="summary" class="sp-txt-wrap" style="max-width: 350px;" />
+
+<wicket:enclosure child="fonts-header">
+
+	<div data-role="collapsible" data-collapsed="true">
+		<h3>
+			&nbsp;<span wicket:id="fonts-header" />
+		</h3>
+
+		<div wicket:id="fonts-embedded"
+			class="sp-txt-wrap sp-txt-valid" />
+
+		<wicket:enclosure child="table-header-font">
+			<table data-role="table" data-mode="reflow"
+				class="ui-responsive table-stroke ui-mini">
+				<thead>
+					<tr>
+						<th data-priority="1" />
+						<th data-priority="2" />
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th wicket:id="table-header-font" />
+						<th wicket:id="table-header-rendering" />
+					</tr>
+					<tr wicket:id="font-entry">
+						<td wicket:id="font-name" />
+						<td wicket:id="font-rendering" />
+					</tr>
+				</tbody>
+			</table>
+		</wicket:enclosure>
+	</div>
+</wicket:enclosure>
+
+</html>

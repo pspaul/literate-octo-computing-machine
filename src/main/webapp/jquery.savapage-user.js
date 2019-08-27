@@ -2530,9 +2530,8 @@
                     page,
                     job,
                     sel2,
-                    nDel
-                //
-                ,
+                    nDel,
+                    html,
                     cssCls = 'sp-thumbnail-subscript'
                 //
                 ;
@@ -2599,6 +2598,12 @@
                         sel2.find('span').html(_ns.Utils.formatDateTime(new Date(page.expiryTime)));
                     }
                     _view.visible(sel2, page.expiryTime);
+
+                    //
+                    html = _view.getUserPageHtml('PdfDocumentFontsAddIn', {
+                        ijob : _model.iPopUpJob
+                    }) || 'error';
+                    $('#sp-popup-job-info-fonts-addin').html(html);
 
                     $('#sp-popup-job-info').enhanceWithin().popup('open', {
                         positionTo : '#page-main-thumbnail-images .sp-thumbnail-page:eq(' + iImg + ')'
