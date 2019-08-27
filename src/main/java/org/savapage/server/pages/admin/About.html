@@ -424,7 +424,7 @@
 						<tbody>
 							<tr>
 								<th>PDF Standard Font</th>
-								<th>Substitute</th>
+								<th wicket:id="table-fonts-header-rendering"/>
 							</tr>
 							<tr wicket:id="font-entry">
 								<td wicket:id="font-key" />
@@ -454,6 +454,18 @@
 						)
 					</h3>
 					<div class="sp-txt-info sp-txt-wrap" wicket:id="version-xpstopdf" />
+				</li>
+			</ul>
+
+			<ul data-role="listview" data-inset="true">
+				<li>
+					<h3>
+						<span wicket:id="cmd-rsvgconvert" /> (
+						<wicket:message key="package-optional" />
+						)
+					</h3>
+					<div class="sp-txt-info sp-txt-wrap"
+						wicket:id="version-rsvgconvert" />
 				</li>
 			</ul>
 

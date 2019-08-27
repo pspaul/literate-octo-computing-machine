@@ -210,8 +210,9 @@ public final class About extends AbstractAdminPage {
                 { "version-pdftocairo", SystemInfo.getPdfToCairoVersion() },
                 { "version-pdffonts", SystemInfo.getPdfFontsVersion() },
                 { "version-ghostscript", SystemInfo.getGhostscriptVersion() },
-                { "version-qpdf", SystemInfo.getQPdfVersion() }, //
-                { "version-fc-match", SystemInfo.getFontConfigVersion() }, //
+                { "version-qpdf", SystemInfo.getQPdfVersion() },
+                { "version-fc-match", SystemInfo.getFontConfigVersion() },
+                { "version-rsvgconvert", SystemInfo.getRSvgConvertVersion() },
                 { "version-libreoffice",
                         SOfficeHelper.getLibreOfficeVersion() }, //
         };
@@ -226,12 +227,16 @@ public final class About extends AbstractAdminPage {
         helper.addLabel("cmd-pdffonts", SystemInfo.Command.PDFFONTS.cmd());
         helper.addLabel("cmd-qpdf", SystemInfo.Command.QPDF.cmd());
         helper.addLabel("cmd-xpstopdf", SystemInfo.Command.XPSTOPDF.cmd());
+        helper.addLabel("cmd-rsvgconvert",
+                SystemInfo.Command.RSVG_CONVERT.cmd());
 
         //
         final Map<String, String> mapFont =
                 PdfDocumentFonts.Font.getStandardFontSubst();
         final List<String> fontKeys = new ArrayList<>();
         fontKeys.addAll(mapFont.keySet());
+
+        helper.addLabel("table-fonts-header-rendering", NounEnum.RENDERING);
 
         add(new PropertyListView<String>("font-entry", fontKeys) {
 
