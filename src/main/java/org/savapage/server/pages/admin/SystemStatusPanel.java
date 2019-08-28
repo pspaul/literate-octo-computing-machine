@@ -83,6 +83,7 @@ import org.savapage.lib.pgp.PGPPublicKeyInfo;
 import org.savapage.server.WebApp;
 import org.savapage.server.cometd.UserEventService;
 import org.savapage.server.ext.ServerPluginManager;
+import org.savapage.server.pages.JobTicketQueueInfoPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.pages.StatsEnvImpactPanel;
@@ -131,6 +132,10 @@ public final class SystemStatusPanel extends Panel {
 
     /** */
     private static final String WID_ENV_IMPACT = "environmental-impact";
+
+    /** */
+    private static final String WID_PANEL_JOB_TICKETS_QUEUE =
+            "job-tickets-queue-panel";
 
     /**
      * @param panelId
@@ -837,15 +842,19 @@ public final class SystemStatusPanel extends Panel {
          * Job Tickets
          */
         if (showTechInfo) {
-            size = TICKET_SERVICE.getJobTicketQueueSize();
+            final JobTicketQueueInfoPanel jobticketPanel =
+                    new JobTicketQueueInfoPanel(WID_PANEL_JOB_TICKETS_QUEUE);
+            add(jobticketPanel);
+            jobticketPanel
+                    .populate(TICKET_SERVICE.getJobTicketQueueSize() == 0);
+        } else {
+            helper.discloseLabel(WID_PANEL_JOB_TICKETS_QUEUE);
         }
-        helper.encloseLabel("job-tickets-queue-size", String.valueOf(size),
-                showTechInfo);
 
         /*
          * Page Totals.
          */
-        StatsPageTotalPanel pageTotalPanel =
+        final StatsPageTotalPanel pageTotalPanel =
                 new StatsPageTotalPanel("stats-pages-total");
         add(pageTotalPanel);
         pageTotalPanel.populate();
@@ -853,7 +862,7 @@ public final class SystemStatusPanel extends Panel {
         /*
          * Financial Totals.
          */
-        StatsFinancialPanel finTotalPanel =
+        final StatsFinancialPanel finTotalPanel =
                 new StatsFinancialPanel("stats-financial-totals");
         add(finTotalPanel);
         finTotalPanel.populate();
@@ -865,7 +874,7 @@ public final class SystemStatusPanel extends Panel {
             final Double esu =
                     (double) (cm.getConfigLong(Key.STATS_TOTAL_PRINT_OUT_ESU)
                             / 100);
-            StatsEnvImpactPanel envImpactPanel =
+            final StatsEnvImpactPanel envImpactPanel =
                     new StatsEnvImpactPanel(WID_ENV_IMPACT);
             add(envImpactPanel);
             envImpactPanel.populate(esu);

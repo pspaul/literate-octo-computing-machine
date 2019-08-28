@@ -14,6 +14,22 @@
     -->
 </wicket:remove>
 
-<wicket:panel wicket:id="panel" />
+<wicket:panel>
+	<div>
+		<wicket:enclosure child="queue-size">
+			<span wicket:id="queue-size" /> 
+		</wicket:enclosure>
+		<wicket:enclosure child="stats-printer">
+			<img style="margin-bottom: -1px;" wicket:id="img-stats-printer"
+				src="" height="12" />
+			<small class="sp-txt-info" wicket:id="stats-printer" />&nbsp;
+		</wicket:enclosure>
+		<wicket:enclosure child="stats-copier">
+			<img style="margin-bottom: -1px;" wicket:id="img-stats-copier" src=""
+				height="12" />
+			<small class="sp-txt-info" wicket:id="stats-copier" />
+		</wicket:enclosure>
+	</div>
+</wicket:panel>
 
 </html>

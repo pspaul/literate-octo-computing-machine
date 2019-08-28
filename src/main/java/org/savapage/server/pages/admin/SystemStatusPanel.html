@@ -232,13 +232,14 @@
 								wicket:id="proxy-print-queue-size" />
 						</tr>
 					</wicket:enclosure>
-					<wicket:enclosure child="job-tickets-queue-size">
+					<wicket:enclosure child="job-tickets-queue-panel">
 						<tr>
 							<th class="sp-txt-wrap">
 								<wicket:message key="job-tickets-queue" />
 							</th>
-							<td class="sp-txt-wrap sp-txt-info"
-								wicket:id="job-tickets-queue-size" />
+							<td class="sp-txt-wrap sp-txt-info">
+								<wicket:panel wicket:id="job-tickets-queue-panel" />
+							</td>
 						</tr>
 					</wicket:enclosure>
 
