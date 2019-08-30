@@ -55,11 +55,23 @@
         _ns.thumbnails2Load = 0;
 
         _ns.removeImgHeight = function(imgDomElement) {
-            $(imgDomElement).removeAttr("height");
+            $(imgDomElement).removeAttr('height').removeClass('sp-preload-spinner');
             _ns.thumbnails2Load--;
             if (_ns.thumbnails2Load === 0) {
                 // All thumbnails are loaded, so resume.
                 _ns.userEvent.resume();
+            }
+        };
+
+        // See Java Wicket: Browser.html
+        _ns.removeSpinnerL = function(imgDomElement) {
+            var sel = $(imgDomElement);
+            sel.removeClass('sp-preload-spinner-l');
+            // Restore heigh/width.
+            if (sel.hasClass('fit_width')) {
+                sel.css('height', '');
+            } else {
+                sel.css('width', '');
             }
         };
 
@@ -725,7 +737,9 @@
                     i,
                     j,
                     idImgBase = 'sp-browse-image-',
-                    prop = {};
+                    prop = {},
+                    tmp,
+                    sel;
 
                 /*
                  * Lazy init.
@@ -815,12 +829,29 @@
                     /*
                      * Active
                      */
-                    $('#' + idImgBase + 1).addClass('active');
+                    sel = $('#' + idImgBase + 1);
+                    tmp = sel.attr('src');
+
+                    // Force an image reload.
+                    sel.attr('src', '');
+
+                    // Set heigh/width so preload spinner is in view (orginal
+                    // values are restored after image load).
+                    if (sel.hasClass('fit_width')) {
+                        sel.css('height', _view.getViewportHeight() + 'px');
+                    } else {
+                        // Just a value to hold the spinner. 
+                        sel.css('width', '100px');
+                    }
+
+                    // Set spinner and set image.
+                    sel.addClass('sp-preload-spinner-l');
+                    sel.attr('src', tmp).addClass('active');
 
                     /*
                      * Re-order
                      */
-                    $('#' + idImgBase + 1).insertAfter('#' + idImgBase + '0');
+                    sel.insertAfter('#' + idImgBase + '0');
                     $('#' + idImgBase + 2).insertAfter('#' + idImgBase + 1);
                 }
 
@@ -2202,7 +2233,7 @@
                          * fixed width and the proper height (ratio).
                          */
                         item = "";
-                        item += '<div><img onload="org.savapage.removeImgHeight(this)" width="' + imgWidth + '" height="' + imgHeightA4 + '" border="0" src="' + _view.getImgSrc(page.url) + '" style="padding: ' + _IMG_PADDING + 'px;" />';
+                        item += '<div><img class="sp-preload-spinner" onload="org.savapage.removeImgHeight(this)" width="' + imgWidth + '" height="' + imgHeightA4 + '" border="0" src="' + _view.getImgSrc(page.url) + '" style="padding: ' + _IMG_PADDING + 'px;" />';
                         item += '<a tabindex="-1" title="' + title + '" href="#" class="sp-thumbnail-subscript ui-btn ui-mini" style="margin-top:-' + (2 * _IMG_PADDING + 1) + 'px; margin-right: ' + _IMG_PADDING + 'px; margin-left: ' + _IMG_PADDING + 'px; border: none; box-shadow: none;">';
                         item += '<span class="sp-thumbnail-page"/>';
                         item += '<span class="sp-thumbnail-tot-pages"/>';
