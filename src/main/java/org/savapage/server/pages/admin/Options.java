@@ -845,10 +845,6 @@ public final class Options extends AbstractAdminPage {
         labelledInput("proxyprint-max-pages",
                 IConfigProp.Key.PROXY_PRINT_MAX_PAGES);
 
-        //
-        labelledCheckbox("proxyprint-check-repair",
-                IConfigProp.Key.PROXY_PRINT_REPAIR_ENABLE);
-
         labelledCheckbox("proxyprint-clear-inbox",
                 IConfigProp.Key.WEBAPP_USER_PROXY_PRINT_CLEAR_INBOX_ENABLE);
 
@@ -970,7 +966,7 @@ public final class Options extends AbstractAdminPage {
          *
          */
         labelledCheckbox("print-in-allow-encrypted-pdf",
-                IConfigProp.Key.PRINT_IN_ALLOW_ENCRYPTED_PDF);
+                IConfigProp.Key.PRINT_IN_PDF_ENCRYPTED_ALLOW);
 
         labelledCheckbox("print-in-clear-at-logout",
                 IConfigProp.Key.WEBAPP_USER_LOGOUT_CLEAR_INBOX);
