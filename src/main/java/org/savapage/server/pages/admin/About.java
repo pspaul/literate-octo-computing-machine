@@ -206,7 +206,6 @@ public final class About extends AbstractAdminPage {
         // ---------- other packages
         final String[][] hostPackageInfo = new String[][] {
                 { "version-imagemagick", SystemInfo.getImageMagickVersion() },
-                { "version-pdftoppm", SystemInfo.getPdfToPpmVersion() },
                 { "version-pdftocairo", SystemInfo.getPdfToCairoVersion() },
                 { "version-pdffonts", SystemInfo.getPdfFontsVersion() },
                 { "version-ghostscript", SystemInfo.getGhostscriptVersion() },
@@ -222,7 +221,6 @@ public final class About extends AbstractAdminPage {
         }
 
         //
-        helper.addLabel("cmd-pdftoppm", SystemInfo.Command.PDFTOPPM.cmd());
         helper.addLabel("cmd-pdftocairo", SystemInfo.Command.PDFTOCAIRO.cmd());
         helper.addLabel("cmd-pdffonts", SystemInfo.Command.PDFFONTS.cmd());
         helper.addLabel("cmd-qpdf", SystemInfo.Command.QPDF.cmd());
