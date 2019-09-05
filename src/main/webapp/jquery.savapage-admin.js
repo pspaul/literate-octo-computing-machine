@@ -891,7 +891,7 @@
 
             _view.pages.admin.onApplyPrintIn = function() {
                 var props = {};
-                _fillConfigPropsYN(props, ['print-in.allow-encrypted-pdf', 'webapp.user.logout.clear-inbox']);
+                _fillConfigPropsYN(props, ['print-in.pdf.encrypted.allow', 'webapp.user.logout.clear-inbox']);
                 _fillConfigPropsText(props, ['print-in.job-expiry.mins', 'webapp.user.print-in.job-expiry.signal-mins']);
                 _saveConfigProps(props);
             };
