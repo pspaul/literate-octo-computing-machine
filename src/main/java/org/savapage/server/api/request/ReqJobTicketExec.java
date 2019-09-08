@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -261,7 +261,6 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
         }
 
         try {
-
             final OutboxJobDto dto;
 
             if (dtoReq.isPrint()) {
@@ -335,7 +334,8 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
             }
 
         } catch (IppConnectException e) {
-            this.setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
+            this.setApiResult(ApiResultCodeEnum.UNAVAILABLE,
+                    "msg-print-service-unavailable");
         } catch (IppRuleValidationException e) {
             this.setApiResultText(ApiResultCodeEnum.WARN, e.getMessage());
         }

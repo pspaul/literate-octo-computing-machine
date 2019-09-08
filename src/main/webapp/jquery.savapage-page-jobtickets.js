@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Job Tickets Page | (c) 2011-2018 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Job Tickets Page | (c) 2011-2019 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -440,14 +440,20 @@
 
                     res = _execJob(jobFileName, print, retry, selPrinter.val(), mediaSource, mediaSourceJobSheet, outputBin, jogOffset);
 
+                    $.mobile.loading("hide");
+
                     if (res.result.code === "0") {
                         $('#sp-jobticket-popup').popup('close');
                         _refresh();
+                    } else if (res.result.code === "5") {
+                        $('#sp-jobticket-popup').popup('close');
+                        _ns.Utils.asyncFoo(function() {
+                            _view.apiResMsg(res.result);
+                        });
+                    } else {
+                        _view.message(res.result.txt);
                     }
 
-                    $.mobile.loading("hide");
-                    //_view.showApiMsg(res);
-                    _view.message(res.result.txt);
                 }, jobFileName, print, retry);
             },
 
