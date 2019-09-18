@@ -22,6 +22,7 @@
 package org.savapage.server.dropzone;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,16 +164,25 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
             final Map<String, List<FileItem>> files =
                     multiPartRequest.getFiles();
 
-            final List<FileItem> fileItems = files.get(UPLOAD_PARAM_NAME_FILE);
+            final List<FileItem> fileItemsAll = new ArrayList<>();
 
-            for (final FileItem fileItem : fileItems) {
-                fileItemsToHandle.put(fileItem.getName(), fileItem);
+            for (final List<FileItem> list : files.values()) {
+                for (final FileItem fileItem : list) {
+                    fileItemsToHandle.put(fileItem.getName(), fileItem);
+                    fileItemsAll.add(fileItem);
+                }
             }
 
-            final int totFiles = fileItems.size();
+            if (files.get(UPLOAD_PARAM_NAME_FILE) == null) {
+                LOGGER.debug("WebPrint [{}]: no files for key [{}]",
+                        user.getUserId(), UPLOAD_PARAM_NAME_FILE);
+            }
+
+            final int totFiles = fileItemsAll.size();
+
             int nFileWlk = 0;
 
-            for (final FileItem fileItem : fileItems) {
+            for (final FileItem fileItem : fileItemsAll) {
 
                 final String fileKey = fileItem.getName();
                 filesStatus.put(fileKey, Boolean.FALSE);
