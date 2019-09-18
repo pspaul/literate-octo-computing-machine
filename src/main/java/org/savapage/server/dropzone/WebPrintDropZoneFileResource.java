@@ -180,6 +180,10 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
 
             final int totFiles = fileItemsAll.size();
 
+            if (totFiles == 0) {
+                throw new DocContentPrintException("No files uploaded.");
+            }
+
             int nFileWlk = 0;
 
             for (final FileItem fileItem : fileItemsAll) {
