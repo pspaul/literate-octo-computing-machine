@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.server.ipp.IppPrintServerUrlParms;
@@ -45,16 +46,15 @@ import org.savapage.server.session.SpSession;
  */
 public final class InternetPrinterAddIn extends AbstractAuthPage {
 
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
-    /**
-    *
-    */
+    /** */
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
+
+    /** */
+    private static final String WID_FDROID_URL = "fdroid-url";
 
     /**
      *
@@ -101,6 +101,17 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
         helper.addLabel("internet-printer-uri-cups", text);
         helper.addLabel("internet-printer-uri-windows",
                 StringUtils.replace(text, "ipps://", "https://"));
+
+        //
+        if (StringUtils.isBlank(userUuid) || StringUtils.isBlank(uriBase)) {
+            helper.discloseLabel(WID_FDROID_URL);
+        } else {
+            helper.addLabel(WID_FDROID_URL,
+                    StringUtils.replaceFirst(uriBase, "ipp", "http"));
+            helper.addLabel("fdroid-user-prompt", NounEnum.USER);
+            helper.addLabel("fdroid-user", user.getUserId());
+            helper.addLabel("fdroid-uuid", userUuid);
+        }
     }
 
     @Override

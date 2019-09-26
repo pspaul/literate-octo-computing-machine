@@ -15,10 +15,10 @@
 </wicket:remove>
 
 <ul data-role="listview" data-inset="true">
-	<li>
-		<h3 class="sp-txt-wrap">
+	<li style="background: #F5F5F5;">
+		<div class="sp-txt-wrap" >
 			<wicket:message key="header" />
-		</h3>
+		</div>
 	</li>
 	<li>
 		<h3>CUPS</h3>
@@ -40,4 +40,44 @@
 		</div>
 	</li>
 </ul>
+
+<wicket:enclosure child="fdroid-url">
+
+	<ul data-role="listview" data-inset="true">
+		<li>
+			<div>
+				<a href="https://f-droid.org/packages/org.savapage.android.print/"
+					target="_blank"> <img
+						src="./images/thirdparty/get-it-on-f-droid-shield.png" /></a>
+
+				<table data-role="table" data-mode="reflow"
+					class="ui-responsive table-stroke">
+					<thead>
+						<tr>
+							<th data-priority="1" />
+							<th data-priority="2" />
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>URL</td>
+							<td class="sp-txt-valid" style="font-family: monospace;"
+								wicket:id="fdroid-url" />
+						</tr>
+						<tr>
+							<td wicket:id="fdroid-user-prompt"/>
+							<td class="sp-txt-valid" style="font-family: monospace;"
+								wicket:id="fdroid-user" />
+						</tr>
+						<tr>
+							<td>UUID</td>
+							<td class="sp-txt-valid" style="font-family: monospace;"
+								wicket:id="fdroid-uuid" />
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</li>
+	</ul>
+</wicket:enclosure>
 </html>
