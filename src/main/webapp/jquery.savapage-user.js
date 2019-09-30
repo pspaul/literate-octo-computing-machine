@@ -840,7 +840,7 @@
                     if (sel.hasClass('fit_width')) {
                         sel.css('height', _view.getViewportHeight() + 'px');
                     } else {
-                        // Just a value to hold the spinner. 
+                        // Just a value to hold the spinner.
                         sel.css('width', '100px');
                     }
 
@@ -1698,9 +1698,20 @@
         /**
          * Constructor
          */
-        function PageUserInternetPrinter(_i18n, _view, _model) {
-            var _page = new _ns.Page(_i18n, _view, '#page-user-internet-printer', 'InternetPrinter'),
+        function PageUserInternetPrinter(_i18n, _view, _model, _api) {
+            var _pageId = '#page-user-internet-printer',
+                _page = new _ns.Page(_i18n, _view, _pageId, 'InternetPrinter'),
                 _self = _ns.derive(_page);
+
+            $(_pageId).on('pagecreate', function(event) {
+                $(this).on('click', '#user-uuid-replace-btn', null, function() {
+                    _view.showApiMsg(_api.call({
+                        'request' : 'user-uuid-replace'
+                    }));
+                    $('#page-user-internet-printer-content').html(_view.getUserPageHtml('InternetPrinterAddIn'));
+                    $(_pageId).enhanceWithin();
+                });
+            });
             return _self;
         }
 
@@ -7141,7 +7152,7 @@
                 printSettings : new PagePrintSettings(_i18n, _view, _model),
                 fileUpload : new PageFileUpload(_i18n, _view, _model),
                 userPinReset : new PageUserPinReset(_i18n, _view, _model),
-                userInternetPrinter : new PageUserInternetPrinter(_i18n, _view, _model),
+                userInternetPrinter : new PageUserInternetPrinter(_i18n, _view, _model, _api),
                 userPwReset : new _ns.PageUserPasswordReset(_i18n, _view, _model),
                 gdprExport : new PageGdprExport(_i18n, _view, _model, _api)
             };

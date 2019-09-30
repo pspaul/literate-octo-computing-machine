@@ -95,6 +95,7 @@ import org.savapage.server.api.request.ReqUserQuickSearch;
 import org.savapage.server.api.request.ReqUserSet;
 import org.savapage.server.api.request.ReqUserSetDelegateAccountsPreferredSelect;
 import org.savapage.server.api.request.ReqUserSetDelegateGroupsPreferredSelect;
+import org.savapage.server.api.request.ReqUserUuidReplace;
 
 /**
  * A dedicated class for initializing the JSON API dictionary at the right time.
@@ -342,6 +343,8 @@ public final class JsonApiDict {
             "user-set-delegate-accounts-preferred-select";
     public static final String REQ_USER_GET_DELEGATE_ACCOUNTS_PREFERRED_SELECT =
             "user-get-delegate-accounts-preferred-select";
+
+    public static final String REQ_USER_UUID_REPLACE = "user-uuid-replace";
 
     public static final String REQ_USERGROUPS_ADD_REMOVE =
             "usergroups-add-remove";
@@ -1044,6 +1047,9 @@ public final class JsonApiDict {
         usr(REQ_PDF_GET_PROPERTIES, DbClaim.NONE, DbAccess.YES);
 
         usr(REQ_PDF_SET_PROPERTIES, ReqPdfPropsSetValidate.class, DbClaim.READ,
+                DbAccess.YES);
+
+        usr(REQ_USER_UUID_REPLACE, ReqUserUuidReplace.class, DbClaim.READ,
                 DbAccess.YES);
 
         non(REQ_PING);

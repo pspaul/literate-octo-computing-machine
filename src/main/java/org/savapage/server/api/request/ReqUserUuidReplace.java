@@ -1,7 +1,7 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2011-2019 Datraverse B.V.
- * Author: Rijk Ravestein.
+ * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,36 +14,41 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-package org.savapage.server.pages.user;
+package org.savapage.server.api.request;
 
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.server.helpers.HtmlButtonEnum;
-import org.savapage.server.pages.MarkupHelper;
+import java.io.IOException;
+import java.util.UUID;
+
+import org.savapage.core.crypto.CryptoUser;
+import org.savapage.core.dao.enums.UserAttrEnum;
+import org.savapage.core.jpa.User;
 
 /**
+ * Replaces User's UUID.
  *
  * @author Rijk Ravestein
  *
  */
-public class InternetPrinter extends AbstractUserPage {
+public final class ReqUserUuidReplace extends ApiRequestMixin {
 
-    private static final long serialVersionUID = 1L;
+    @Override
+    protected void onRequest(final String requestingUser, final User lockedUser)
+            throws IOException {
 
-    /**
-     *
-     * @param parameters
-     *            The parms.
-     */
-    public InternetPrinter(final PageParameters parameters) {
-        super(parameters);
-        final MarkupHelper helper = new MarkupHelper(this);
-        helper.addLabel("button-replace", "UUID");
-        helper.addButton("button-back", HtmlButtonEnum.BACK);
+        final User user = this.getSessionUser();
+
+        final String encryptedUuid = CryptoUser.encryptUserAttr(user.getId(),
+                UUID.randomUUID().toString());
+
+        USER_SERVICE.setUserAttrValue(this.getSessionUser(), UserAttrEnum.UUID,
+                encryptedUuid);
+
+        this.setApiResultOk();
     }
 
 }
