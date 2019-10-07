@@ -88,6 +88,7 @@ import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.pages.StatsEnvImpactPanel;
 import org.savapage.server.pages.StatsPageTotalPanel;
+import org.savapage.server.pages.StatsPrintInTotalPanel;
 import org.savapage.server.pages.TooltipPanel;
 
 /**
@@ -858,6 +859,19 @@ public final class SystemStatusPanel extends Panel {
                 new StatsPageTotalPanel("stats-pages-total");
         add(pageTotalPanel);
         pageTotalPanel.populate();
+
+        /*
+         * Page Totals.
+         */
+        boolean showPrintIn = true;
+        if (showPrintIn) {
+            final StatsPrintInTotalPanel printInTotalPanel =
+                    new StatsPrintInTotalPanel("stats-printin-total");
+            add(printInTotalPanel);
+            printInTotalPanel.populate();
+        } else {
+            helper.discloseLabel("stats-printin-total");
+        }
 
         /*
          * Financial Totals.

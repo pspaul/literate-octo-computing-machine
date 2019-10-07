@@ -134,10 +134,13 @@
 		<wicket:enclosure child="jobticket-custom-ext"> &bull; <span
 				class="sp-txt-job-ticket-attr" wicket:id="jobticket-custom-ext" />
 		</wicket:enclosure>
-		<wicket:enclosure child="drm"> &bull; <span
-				class="sp-txt-warn" wicket:id="drm" />
-			<span wicket:id="print-in-denied-reason-hyphen" />
-			<span class="sp-txt-error" wicket:id="print-in-denied-reason" />
+		<wicket:enclosure child="print-in-label">
+			<span class="sp-txt-warn">&bull;</span>
+			<span class="sp-txt-warn" wicket:id="print-in-label" />
+			<wicket:enclosure child="print-in-denied-reason">
+				<span class="sp-txt-error">&bull;</span>
+				<span class="sp-txt-error" wicket:id="print-in-denied-reason" />
+			</wicket:enclosure>
 		</wicket:enclosure>
 		<wicket:enclosure child="pdfpgp"> &bull; <span
 				class="sp-txt-warn" wicket:id="pdfpgp" />

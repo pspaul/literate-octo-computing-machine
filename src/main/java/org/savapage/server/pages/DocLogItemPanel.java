@@ -166,10 +166,10 @@ public class DocLogItemPanel extends Panel {
 
         for (final String attr : new String[] { "user-name", "title",
                 "log-comment", "printoutMode", "signature", "destination",
-                "letterhead", "author", "subject", "keywords", "drm", "pdfpgp",
-                "userpw", "ownerpw", "duplex", "simplex", "color", "grayscale",
-                "papersize", "media-source", "output-bin", "jog-offset",
-                "cost-currency", "cost", "job-id", "job-state",
+                "letterhead", "author", "subject", "keywords", "print-in-label",
+                "pdfpgp", "userpw", "ownerpw", "duplex", "simplex", "color",
+                "grayscale", "papersize", "media-source", "output-bin",
+                "jog-offset", "cost-currency", "cost", "job-id", "job-state",
                 "job-completed-date", "print-in-denied-reason-hyphen",
                 "print-in-denied-reason", "collate", "ecoPrint",
                 "removeGraphics", "pageRotate180", "punch", "staple", "fold",
@@ -466,23 +466,35 @@ public class DocLogItemPanel extends Panel {
             }
 
             if (obj.getDrmRestricted()) {
-                mapVisible.put("drm", "DRM");
+                mapVisible.put("print-in-label", "DRM");
             }
 
             if (!obj.getPrintInPrinted()) {
 
-                mapVisible.put("print-in-denied-reason-hyphen", "-");
-
-                PrintInDeniedReasonEnum deniedReason =
+                final PrintInDeniedReasonEnum deniedReason =
                         obj.getPrintInDeniedReason();
 
-                String key = "print-in-denied-reason-unknown";
-                if (deniedReason != null
-                        && deniedReason.equals(PrintInDeniedReasonEnum.DRM)) {
-                    key = "print-in-denied-reason-drm";
+                final String reason;
+
+                if (deniedReason == null) {
+                    reason = localized("print-in-denied-reason-unknown");
+                } else {
+                    switch (deniedReason) {
+                    case DRM:
+                        reason = localized("print-in-denied-reason-drm");
+                        break;
+                    case INVALID:
+                        mapVisible.put("print-in-label",
+                                AdjectiveEnum.INVALID.uiText(getLocale()));
+                        reason = AdjectiveEnum.REJECTED.uiText(getLocale());
+                        break;
+                    default:
+                        throw new IllegalStateException(
+                                "Unhandled ".concat(deniedReason.toString()));
+                    }
                 }
 
-                mapVisible.put("print-in-denied-reason", localized(key));
+                mapVisible.put("print-in-denied-reason", reason);
 
             } else {
                 pieData = String.valueOf(obj.getTotalPages());
@@ -512,7 +524,7 @@ public class DocLogItemPanel extends Panel {
                 mapVisible.put("keywords", obj.getKeywords());
 
                 if (obj.getDrmRestricted()) {
-                    mapVisible.put("drm", "DRM");
+                    mapVisible.put("print-in-label", "DRM");
                 }
                 if (obj.getUserPw()) {
                     mapVisible.put("userpw", "U");

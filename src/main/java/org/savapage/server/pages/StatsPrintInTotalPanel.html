@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!-- 
+    +====================================================================+ 
+    | This file is part of the SavaPage project <https://savapage.org> ..|
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein...| 
+    |....................................................................| 
+    | SavaPage is free software: you can redistribute it and/or modify ..|
+    | it under the terms of the GNU Affero General Public License as ....|
+    | published by the Free Software Foundation, either version 3 of ....|
+    | the License, or (at your option) any later version. ...............|
+    +====================================================================+ 
+    -->
+</wicket:remove>
+
+<wicket:panel>
+
+	<li>
+		<p class="ui-li-aside">
+			<strong wicket:id="printin-totals-since" />
+		</p>
+		<table data-role="table" data-mode="reflow" style="width: 50%"
+			class="ui-responsive ui-mini table-stroke">
+			<thead>
+				<tr>
+					<th data-priority="1" wicket:id="received" />
+					<th data-priority="1" wicket:id="period" />
+					<th data-priority="1" wicket:id="valid" style="text-align: right;" />
+					<th data-priority="1" wicket:id="repaired"
+						style="text-align: right;" />
+					<th data-priority="1" wicket:id="rejected"
+						style="text-align: right;" />
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>PDF</td>
+					<td class="sp-txt-info">
+						<span wicket:id="pdf-week" />
+						<div wicket:id="pdf-month" />
+						<div wicket:id="pdf-tot" />
+					</td>
+					<td wicket:id="pdf-valid-cell" style="text-align: right;">
+						<span wicket:id="pdf-valid-week" />
+						<div wicket:id="pdf-valid-month" />
+						<div wicket:id="pdf-valid-tot" />
+					</td>
+					<td class="sp-txt-warn" style="text-align: right;">
+						<span wicket:id="pdf-repaired-week" />
+						<div wicket:id="pdf-repaired-month" />
+						<div wicket:id="pdf-repaired-tot" />
+					</td>
+					<td class="sp-txt-error" style="text-align: right;">
+						<span wicket:id="pdf-rejected-week" />
+						<div wicket:id="pdf-rejected-month" />
+						<div wicket:id="pdf-rejected-tot" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</li>
+
+</wicket:panel>
+</html>

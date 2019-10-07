@@ -252,10 +252,26 @@ public final class MarkupHelper {
      * is used.
      *
      * @param number
+     *            Number value.
      * @return The localized string.
      */
     public String localizedNumber(final long number) {
         return fmNumber.format(number);
+    }
+
+    /**
+     * Gets as localized string of a Number. The locale of the current session
+     * is used.
+     *
+     * @param number
+     *            Number value.
+     * @return The localized string or "&nbsp;" for zero number. .
+     */
+    public String localizedNumberOrSpace(final long number) {
+        if (number == 0) {
+            return "&nbsp;";
+        }
+        return this.localizedNumber(number);
     }
 
     /**
