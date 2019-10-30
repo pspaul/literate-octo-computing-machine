@@ -60,6 +60,7 @@ import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.MediaUtils;
+import org.savapage.ext.google.GSuiteLdapClient;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.EnumRadioPanel;
@@ -150,6 +151,14 @@ public final class Options extends AbstractAdminPage {
         labelledRadio("ldap-schema-type", "-edir",
                 IConfigProp.Key.LDAP_SCHEMA_TYPE,
                 IConfigProp.LDAP_TYPE_V_E_DIR);
+
+        if (GSuiteLdapClient.isConfigured()) {
+        labelledRadio("ldap-schema-type", "-gsuite",
+                IConfigProp.Key.LDAP_SCHEMA_TYPE,
+                IConfigProp.LDAP_TYPE_V_G_SUITE);
+        } else {
+            helper.discloseLabel("ldap-schema-type-gsuite");
+        }
 
         labelledInput("ldap-host", Key.AUTH_LDAP_HOST);
         labelledInput("ldap-port", Key.AUTH_LDAP_PORT);

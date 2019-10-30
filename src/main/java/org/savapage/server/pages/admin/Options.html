@@ -53,6 +53,11 @@
 								<label for="" wicket:id="ldap-schema-type-activ-label" />
 								<input type="radio" name="" id=""
 									wicket:id="ldap-schema-type-activ" />
+								<wicket:enclosure child="ldap-schema-type-gsuite">
+									<label for="" wicket:id="ldap-schema-type-gsuite-label" />
+									<input type="radio" name="" id=""
+										wicket:id="ldap-schema-type-gsuite" />
+								</wicket:enclosure>
 							</fieldset>
 						</div>
 						<div class="ui-field-contain">
@@ -92,7 +97,7 @@
 							autocomplete="off" autocorrect="off" autocapitalize="off"
 							spellcheck="false" />
 					</li>
-					<li class="ldap-parms">
+					<li class="ldap-parms ldap-parms-extra-fields">
 						<h3>
 							<span class="sp-txt-wrap"><wicket:message
 									key="ldap-user-fields" /></span>

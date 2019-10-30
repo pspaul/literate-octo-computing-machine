@@ -840,9 +840,10 @@
         _ns.PanelOptions = {
 
             onAuthMethodSelect : function(method) {
-                var _view = _ns.PanelCommon.view;
+                var _view = _ns.PanelCommon.view,
+                    isLdapMethod = method === 'ldap';
 
-                _view.visible($('.ldap-parms'), method === 'ldap');
+                _view.visible($('.ldap-parms'), isLdapMethod);
 
                 if (method === 'none') {
                     $('.user-source-group-s').hide();
@@ -850,7 +851,15 @@
                     $('.user-source-group-s').show();
                     $('.user-source-group-display').show();
                     $('.user-source-group-edit').hide();
+                    if (isLdapMethod) {
+                        this.onLdapSchemaTypeSelect($("input:radio[name='ldap.schema.type']:checked").val());
+                    }
                 }
+            },
+
+            onLdapSchemaTypeSelect : function(schemaType) {
+                var _view = _ns.PanelCommon.view;
+                _view.visible($('.ldap-parms-extra-fields'), schemaType !== 'G_SUITE');
             },
 
             onInternalUsersEnabled : function(enabled) {
@@ -999,6 +1008,7 @@
                 var _view = _ns.PanelCommon.view;
 
                 my.onAuthMethodSelect($("input:radio[name='auth.method']:checked").val());
+
                 my.onAuthModeLocalEnabled();
                 my.onPrintImapEnabled(_view.isCbChecked($('#print\\.imap\\.enable')));
                 my.onProxyPrintEnabled(_view.isCbChecked($('#proxy-print\\.non-secure')));

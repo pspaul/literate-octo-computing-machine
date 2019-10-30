@@ -2602,6 +2602,10 @@
                     _panel.Options.onAuthMethodSelect($(this).val());
                 });
 
+                $(this).on('change', "input:radio[name='ldap.schema.type']", null, function(e) {
+                    _panel.Options.onLdapSchemaTypeSelect($(this).val());
+                });
+
                 $(this).on('click', '#user-source-change-group', null, function() {
                     _self.onUserSourceGroupEdit();
                     return false;
