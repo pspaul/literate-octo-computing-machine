@@ -394,7 +394,14 @@ public final class JsonApiServer extends AbstractPage {
                             userDao.findActiveUserByUserId(requestingUser);
 
                     if (userTmp != null) {
-                        lockedUser = userDao.lock(userTmp.getId());
+                        if (ConfigManager
+                                .isUserWebAppDatabaseUserRowLocking()) {
+                            lockedUser = USER_SERVICE.lockUser(userTmp.getId());
+                        } else {
+                            // Provide dummy locked user (since some request
+                            // handlers expect a "locked user").
+                            lockedUser = userTmp;
+                        }
                     }
 
                     if (lockedUser == null) {
@@ -3795,7 +3802,7 @@ public final class JsonApiServer extends AbstractPage {
 
     /**
      *
-     * @param lockedUser
+     * @param userId
      * @return
      * @throws IOException
      */

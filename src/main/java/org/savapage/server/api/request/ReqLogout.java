@@ -116,7 +116,7 @@ public final class ReqLogout extends ApiRequestMixin {
         }
         try {
             if (lockedUser == null) {
-                daoCtx.getUserDao().lockByUserId(requestingUser);
+                USER_SERVICE.lockByUserId(requestingUser);
             }
             INBOX_SERVICE.deleteAllPages(requestingUser);
         } finally {

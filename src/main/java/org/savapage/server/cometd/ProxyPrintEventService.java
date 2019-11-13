@@ -44,6 +44,7 @@ import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserService;
 import org.savapage.server.api.JsonApiServer;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.api.request.ReqPrinterPrint;
@@ -67,11 +68,13 @@ public final class ProxyPrintEventService extends AbstractEventService {
     private static final String EVENT_PRINTED = "printed";
     private static final String EVENT_ERROR = "error";
 
-    /**
-    *
-    */
+    /** */
     private static final ProxyPrintService PROXY_PRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /** */
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /**
      * The channel this <i>service</i> <strong>subscribes</strong> (listens) to.
@@ -380,7 +383,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
                 daoContext.beginTransaction();
 
                 final User lockedUser =
-                        daoContext.getUserDao().lock(request.getIdUser());
+                        USER_SERVICE.lockUser(request.getIdUser());
 
                 if (lockedUser == null) {
                     throw new SpException("user [" + request.getIdUser()

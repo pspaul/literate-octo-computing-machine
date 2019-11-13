@@ -1014,7 +1014,8 @@ public final class ServerPluginManager
         /*
          * Lock User.
          */
-        final User lockedUser = daoCtx.getUserDao().lock(trxUser.getId());
+        final User lockedUser = ServiceContext.getServiceFactory()
+                .getUserService().lockUser(trxUser.getId());
 
         final String userId = lockedUser.getUserId();
 
@@ -1229,8 +1230,8 @@ public final class ServerPluginManager
         /*
          * INVARIANT: User must exist.
          */
-        final User lockedUser = ServiceContext.getDaoContext().getUserDao()
-                .lockByUserId(dto.getUserId());
+        final User lockedUser = ServiceContext.getServiceFactory()
+                .getUserService().lockByUserId(dto.getUserId());
 
         final String formattedAmount = String.format("%s %.2f", CurrencyUtil
                 .getCurrencySymbol(trx.getCurrencyCode(), Locale.getDefault()),

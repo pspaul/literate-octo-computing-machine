@@ -1520,7 +1520,7 @@ public class OutboxAddin extends AbstractUserPage {
             daoContext.beginTransaction();
 
             final org.savapage.core.jpa.User lockedUser =
-                    daoContext.getUserDao().lock(userKey);
+                    USER_SERVICE.lockUser(userKey);
 
             final OutboxInfoDto outboxInfoTmp =
                     OUTBOX_SERVICE.getOutboxJobTicketInfo(lockedUser,

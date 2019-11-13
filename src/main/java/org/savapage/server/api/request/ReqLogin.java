@@ -950,7 +950,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 /*
                  * Ad-hoc user lock
                  */
-                userDb = userDao.lock(userDb.getId());
+                userDb = USER_SERVICE.lockUser(userDb.getId());
 
                 try {
                     USER_SERVICE.lazyUserHomeDir(uid);

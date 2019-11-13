@@ -35,11 +35,11 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.UserAttrDao;
-import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.jpa.UserAttr;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserService;
 import org.savapage.core.util.QRCodeException;
 import org.savapage.core.util.QRCodeHelper;
 import org.savapage.ext.payment.PaymentGatewayException;
@@ -144,7 +144,8 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
             final PaymentGatewayPlugin plugin, final String userId)
             throws IOException, PaymentGatewayException {
 
-        final UserDao userDao = daoCtx.getUserDao();
+        final UserService userService =
+                ServiceContext.getServiceFactory().getUserService();
         final UserAttrDao userAttrDao = daoCtx.getUserAttrDao();
 
         final String address;
@@ -152,7 +153,8 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
         /*
          * Lock the user.
          */
-        final org.savapage.core.jpa.User user = userDao.lockByUserId(userId);
+        final org.savapage.core.jpa.User user =
+                userService.lockByUserId(userId);
 
         /*
          * Use assigned bitcoin address when present.
