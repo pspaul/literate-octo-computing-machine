@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -23,18 +23,24 @@
 
 	<div id="outbox-job-list" />
 
-	<a href="#" id="button-outbox-clear"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
-		wicket:id="button-cancel-all" />
+	<a href="#" id="button-outbox-back" data-rel="back"
+		data-direction="reverse"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-home"
+		wicket:id="button-back" />
+	<!--  -->
+	<a href="#" id="button-outbox-clear" wicket:id="button-cancel-all"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"> <span
+		wicket:id="button-cancel-all-text" />&nbsp;(<span
+		id="button-outbox-clear-job-count" />)
+	</a>
 	<!--  -->
 	<a href="#" id="button-outbox-extend"
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-clock"
 		wicket:id="button-extend" />
 	<!--  -->
-	<a href="#" id="button-outbox-back" data-rel="back"
-		data-direction="reverse"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-		wicket:id="button-back" />
+	<a href="#" id="button-outbox-refresh"
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh"
+		wicket:id="button-refresh" />
 </div>
 
 <wicket:remove>

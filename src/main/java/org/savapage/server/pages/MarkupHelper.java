@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -49,6 +49,7 @@ import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.HtmlTooltipEnum;
 
 /**
  * Helper methods for a {@link MarkupContainer}.
@@ -781,6 +782,46 @@ public final class MarkupHelper {
         label.add(new AttributeAppender(attribute,
                 String.format(" %s", value.trim())));
         return label;
+    }
+
+    /**
+     * Adds a {@link #ATTR_TITLE} (tooltip) to a {@ Label}.
+     *
+     * @param label
+     *            The {@link Label}.
+     * @param id
+     *            Wicket ID of localized tooltip string.
+     * @return The {@link Label}.
+     */
+    public Label addTooltip(final Label label, final String id) {
+        return modifyLabelAttr(label, ATTR_TITLE, this.localized(id));
+    }
+
+    /**
+     * Adds a {@link #ATTR_TITLE} (tooltip) to a {@link Component}.
+     *
+     * @param component
+     *            The {@link Label}.
+     * @param id
+     *            Wicket ID of localized tooltip string.
+     * @return The {@link Component}.
+     */
+    public Component addTooltip(final Component component, final String id) {
+        return modifyComponentAttr(component, ATTR_TITLE, this.localized(id));
+    }
+
+    /**
+     * Adds a {@link #ATTR_TITLE} (tooltip) to a {@ Label}.
+     *
+     * @param label
+     *            The {@link Label}.
+     * @param tooltip
+     *            The {@link HtmlTooltipEnum}.
+     * @return The {@link Label}.
+     */
+    public Label addTooltip(final Label label, final HtmlTooltipEnum tooltip) {
+        return modifyLabelAttr(label, ATTR_TITLE,
+                tooltip.uiText(this.container.getLocale()));
     }
 
     /**

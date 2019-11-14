@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@
  */
 package org.savapage.server.pages.user;
 
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.HtmlTooltipEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -46,11 +47,20 @@ public final class Outbox extends AbstractUserPage {
 
         super(parameters);
 
-        add(new Label("button-back", HtmlButtonEnum.BACK.uiText(getLocale())));
-        add(new Label("button-extend",
-                HtmlButtonEnum.EXTEND.uiText(getLocale())));
-        add(new Label("button-cancel-all",
-                HtmlButtonEnum.CANCEL_ALL.uiText(getLocale())));
+        final MarkupHelper helper = new MarkupHelper(this);
 
+        helper.addTooltip(helper.addButton("button-back", HtmlButtonEnum.BACK),
+                HtmlTooltipEnum.BACK_TO_MAIN_PAGE);
+
+        helper.addTooltip(
+                helper.addButton("button-extend", HtmlButtonEnum.EXTEND),
+                "btn-tooltip-extend");
+        helper.addTooltip(
+                helper.addButton("button-refresh", HtmlButtonEnum.REFRESH),
+                "btn-tooltip-refresh");
+        //
+        helper.addButton("button-cancel-all-text", HtmlButtonEnum.CANCEL);
+        helper.addTooltip(helper.addTransparant("button-cancel-all"),
+                "btn-tooltip-cancel-all");
     }
 }

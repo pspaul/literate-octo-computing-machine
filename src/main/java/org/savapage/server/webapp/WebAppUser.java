@@ -64,6 +64,7 @@ import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.dropzone.WebPrintHelper;
 import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.HtmlTooltipEnum;
 import org.savapage.server.pages.FontOptionsPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
@@ -154,21 +155,25 @@ public final class WebAppUser extends AbstractWebAppPage {
             final String htmlId;
             final String cssClass;
             final String uiText;
+            final HtmlTooltipEnum tooltipEnum;
 
             switch (button) {
             case PRINT:
+                tooltipEnum = null;
                 htmlId = "sp-btn-file-upload-print";
                 cssClass = "ui-icon-main-print";
                 uiText = HtmlButtonEnum.PRINT.uiText(getPage().getLocale());
                 break;
 
             case PDF:
+                tooltipEnum = null;
                 htmlId = "sp-btn-file-upload-pdf";
                 cssClass = "ui-icon-main-pdf-properties";
                 uiText = "PDF";
                 break;
 
             default:
+                tooltipEnum = HtmlTooltipEnum.BACK_TO_MAIN_PAGE;
                 htmlId = "sp-btn-file-upload-inbox";
                 cssClass = "ui-icon-main-home";
                 uiText = HtmlButtonEnum.BACK.uiText(getPage().getLocale());
@@ -181,8 +186,14 @@ public final class WebAppUser extends AbstractWebAppPage {
             MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_ID, htmlId);
             MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_CLASS,
                     cssClass);
-            MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_TITLE,
-                    localized(htmlId.concat("-tooltip")));
+
+            if (tooltipEnum != null) {
+                MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_TITLE,
+                        tooltipEnum.uiText(getPage().getLocale()));
+            } else {
+                MarkupHelper.appendLabelAttr(label, MarkupHelper.ATTR_TITLE,
+                        localized(htmlId.concat("-tooltip")));
+            }
 
             item.add(label);
         }

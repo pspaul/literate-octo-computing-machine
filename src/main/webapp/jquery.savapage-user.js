@@ -1549,17 +1549,28 @@
                 $('#button-outbox-back').click();
                 return false;
             },
+                _countJobs = function() {
+                return $('#outbox-job-list .sp-outbox-job-entry').length;
+            },
+                _countJobsToCancel = function() {
+                return $('#outbox-job-list .sp-outbox-cancel-job').length + $('#outbox-job-list .sp-outbox-cancel-jobticket').length;
+            },
                 _refresh = function() {
-                var html = _view.getUserPageHtml('OutboxAddin', {
+                var jobsToCancel,
+                    html = _view.getUserPageHtml('OutboxAddin', {
                     jobTickets : false,
                     expiryAsc : false
                 });
+
                 if (html) {
                     $('#outbox-job-list').html(html).enhanceWithin();
                     $('.sp-sparkline-printout').sparkline('html', {
                         enableTagOptions : true
                     });
+                    jobsToCancel = _countJobsToCancel();
+                    $('#button-outbox-clear-job-count').text(jobsToCancel);
                     _view.visible($('#button-outbox-extend'), $('#outbox-job-list .sp-outbox-item-type-hold').length > 0);
+                    _view.visible($('#button-outbox-clear'), jobsToCancel > 0);
                 }
                 return false;
             },
@@ -1581,6 +1592,18 @@
 
                 $('#button-outbox-clear').click(function() {
                     _this.onOutboxClear();
+                    _refresh();
+                    if (_countJobs() > 0) {
+                        return false;
+                    }
+                    return _close();
+                });
+
+                $('#button-outbox-refresh').click(function() {
+                    _refresh();
+                    if (_countJobs() > 0) {
+                        return false;
+                    }
                     return _close();
                 });
 
