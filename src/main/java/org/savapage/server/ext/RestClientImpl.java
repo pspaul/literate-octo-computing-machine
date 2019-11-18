@@ -61,12 +61,15 @@ public final class RestClientImpl implements RestClient {
 
         try (Response response =
                 builder.post(Entity.entity(entity, mediaTypeReq));) {
+
             switch (response.getStatusInfo().toEnum()) {
             case CREATED:
                 return response.readEntity(String.class);
             default:
                 throw new IllegalStateException(
-                        response.getStatusInfo().toString());
+                        String.format("REST API response status %d (%s)",
+                                response.getStatus(),
+                                response.getStatusInfo().toString()));
             }
         }
     }
