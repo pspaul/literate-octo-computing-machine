@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -114,6 +114,27 @@ public final class ReqDeviceSet extends ApiRequestMixin {
             return;
         }
 
+        //
+        final Device jpaDeviceDuplicateHost = deviceDao.findByHostDeviceType(
+                dtoReq.getHostname(), dtoReq.getDeviceType());
+        isDuplicate = true;
+        if (isNew) {
+            if (jpaDeviceDuplicateHost == null) {
+                isDuplicate = false;
+            }
+        } else {
+            if (jpaDeviceDuplicateHost == null || jpaDeviceDuplicateHost.getId()
+                    .equals(jpaDevice.getId())) {
+                isDuplicate = false;
+            }
+        }
+
+        //
+        if (!this.checkDuplicateHostIP(deviceDao, isNew, dtoReq)) {
+            return;
+        }
+
+        //
         jpaDevice.setDeviceType(dtoReq.getDeviceType().toString());
         jpaDevice.setDeviceName(deviceName);
         jpaDevice.setDisplayName(dtoReq.getDisplayName());
@@ -452,6 +473,44 @@ public final class ReqDeviceSet extends ApiRequestMixin {
         }
 
         setApiResult(ApiResultCodeEnum.OK, resultMsgKey);
+    }
+
+    /**
+     * Checks presence of a duplicate Host/IP device for a device type.
+     *
+     * @param deviceDao
+     *            DAO.
+     * @param isNew
+     *            {@code true} if Add request.
+     * @param dtoReq
+     *            Add/Update request.
+     * @return {@code true} if OK (no duplicate present).
+     */
+    private boolean checkDuplicateHostIP(final DeviceDao deviceDao,
+            final boolean isNew, final ReqDeviceGet.DtoRsp dtoReq) {
+
+        final Device jpaDeviceDuplicateHost = deviceDao.findByHostDeviceType(
+                dtoReq.getHostname(), dtoReq.getDeviceType());
+
+        boolean isDuplicate = true;
+
+        if (isNew) {
+            if (jpaDeviceDuplicateHost == null) {
+                isDuplicate = false;
+            }
+        } else {
+            if (jpaDeviceDuplicateHost == null
+                    || jpaDeviceDuplicateHost.getId().equals(dtoReq.getId())) {
+                isDuplicate = false;
+            }
+        }
+
+        if (isDuplicate) {
+            setApiResult(ApiResultCodeEnum.ERROR, "msg-device-duplicate-name",
+                    dtoReq.getHostname());
+            return false;
+        }
+        return true;
     }
 
     /**
