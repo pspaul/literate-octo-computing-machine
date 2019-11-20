@@ -716,8 +716,8 @@ public final class JsonApiDict {
     /**
      * Checks which Public Letterhead lock is needed for a request.
      * <p>
-     * For convenience, we are conservative and assume that request that use
-     * letterheads use <b>public</b> letterheads.
+     * For convenience, we are optimistic and assume that request that use
+     * <b>public</b> letterheads won't cause concurrency issues.
      * </p>
      * <p>
      * If a user is an administrator this rules out some possibilities too.
@@ -736,7 +736,7 @@ public final class JsonApiDict {
          * @param isPublicContext {@code true} if the request involves a public
          * letterhead.
          */
-        boolean isPublicContext = true;
+        boolean isPublicContext = false;
 
         switch (request) {
 
