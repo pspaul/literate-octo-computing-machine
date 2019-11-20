@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,11 +26,9 @@ import java.io.IOException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.WebAppTypeEnum;
-import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.msg.UserMsgIndicator;
-import org.savapage.core.services.ServiceContext;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.WebAppUserAuthManager;
 import org.savapage.server.session.SpSession;
@@ -85,45 +83,13 @@ public final class ReqLogout extends ApiRequestMixin {
 
         if (webAppType == WebAppTypeEnum.USER && ConfigManager.instance()
                 .isConfigValue(Key.WEBAPP_USER_LOGOUT_CLEAR_INBOX)) {
-            this.clearUserInbox(requestingUser, lockedUser);
-        }
 
+            if (INBOX_SERVICE.getInboxInfo(requestingUser).jobCount() > 0) {
+                INBOX_SERVICE.deleteAllPages(requestingUser);
+            }
+
+        }
         setApiResultOk();
-    }
-
-    /**
-     * Clears the user's inbox.
-     *
-     * @param requestingUser
-     *            The user if of the requesting user.
-     * @param lockedUser
-     *            The locked {@link User} instance: is {@code null} when use is
-     *            <i>not</i> locked.
-     */
-    private void clearUserInbox(final String requestingUser,
-            final User lockedUser) {
-
-        if (INBOX_SERVICE.getInboxInfo(requestingUser).jobCount() == 0) {
-            return;
-        }
-
-        final DaoContext daoCtx = ServiceContext.getDaoContext();
-
-        final boolean applyTransaction = !daoCtx.isTransactionActive();
-
-        if (applyTransaction) {
-            daoCtx.beginTransaction();
-        }
-        try {
-            if (lockedUser == null) {
-                USER_SERVICE.lockByUserId(requestingUser);
-            }
-            INBOX_SERVICE.deleteAllPages(requestingUser);
-        } finally {
-            if (applyTransaction) {
-                daoCtx.rollback();
-            }
-        }
     }
 
 }
