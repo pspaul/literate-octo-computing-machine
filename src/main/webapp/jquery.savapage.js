@@ -1398,17 +1398,18 @@
 
         // =========================================================================
         /**
-         * Constructor
+         * Constructor: Generic Quick Search on Object
          */
-        _ns.QuickUserSearch = function(_view, _api) {
+        _ns.QuickObjectSearch = function(_view, _api) {
             var _this,
-                _quickUserCache = [],
-                _quickUserSelected,
+                _quickObjectCache = [],
+                _quickObjectSelected,
                 _lastFilter,
             //
-                _onQuickUserSearch = function(target, filter) {
+                _onQuickObjectSearch = function(target, request, filter, onFilterProps, onDisplayObject) {
                 /* QuickSearchFilterDto */
                 var res,
+                    filterProps,
                     html = "";
 
                 // Prevent duplicate search on "focusout" of search field.
@@ -1417,55 +1418,68 @@
                 }
                 _lastFilter = filter;
 
-                _quickUserCache = [];
-                _quickUserSelected = undefined;
+                _quickObjectCache = [];
+                _quickObjectSelected = undefined;
 
                 if (filter && filter.length > 0) {
+
+                    filterProps = {
+                        filter : filter,
+                        maxResults : 5
+                    };
+                    if (onFilterProps) {
+                        onFilterProps(filterProps);
+                    }
+
                     res = _api.call({
-                        request : "user-quick-search",
-                        dto : JSON.stringify({
-                            filter : filter,
-                            maxResults : 5
-                        })
+                        request : request,
+                        dto : JSON.stringify(filterProps)
                     });
                     if (res.result.code === '0') {
-                        _quickUserCache = res.dto.items;
-                        $.each(_quickUserCache, function(key, item) {
-                            html += "<li class=\"ui-mini\" data-icon=\"false\" data-savapage=\"" + key + "\"><a tabindex=\"0\" href=\"#\">" + item.text + " &bull; " + (item.email || "&nbsp;") + "</a></li>";
+                        _quickObjectCache = res.dto.items;
+                        $.each(_quickObjectCache, function(key, item) {
+                            html += "<li class=\"ui-mini\" data-icon=\"false\" data-savapage=\"" + key + "\">";
+                            html += "<a tabindex=\"0\" href=\"#\">";
+                            if (onDisplayObject) {
+                                html += onDisplayObject(item);
+                            } else {
+                                html += item.text;
+                            }
+                            html += "</a></li>";
                         });
                     } else {
                         _view.showApiMsg(res);
                     }
                 } else {
-                    if (_this.onClearUser) {
-                        _this.onClearUser();
+                    if (_this.onClearObject) {
+                        _this.onClearObject();
                     }
                 }
                 target.html(html).filterable("refresh");
             };
 
-            this.onCreate = function(parent, filterId, onSelectUser, onClearUser, onQuickSearchBefore) {
-                var filterableUserId = $("#" + filterId);
+            this.onCreate = function(parent, filterId, request, onFilterProps, onDisplayObject, onSelectObject, onClearObject, onQuickSearchBefore) {
+                var filterableObjectId = $("#" + filterId);
 
                 _this = this;
 
-                this.onSelectUser = onSelectUser;
-                this.onClearUser = onClearUser;
+                this.onSelectObject = onSelectObject;
+                this.onClearObject = onClearObject;
                 this.onQuickSearchBefore = onQuickSearchBefore;
 
-                filterableUserId.on("filterablebeforefilter", function(e, data) {
+                filterableObjectId.on("filterablebeforefilter", function(e, data) {
                     if (_this.onQuickSearchBefore) {
                         onQuickSearchBefore();
                     }
-                    _onQuickUserSearch($(this), data.input.get(0).value);
+                    _onQuickObjectSearch($(this), request, data.input.get(0).value, onFilterProps, onDisplayObject);
                 });
 
                 parent.on('click', '#' + filterId + ' li', null, function() {
                     var attr = "data-savapage";
-                    _quickUserSelected = _quickUserCache[$(this).attr(attr)];
-                    filterableUserId.empty().filterable("refresh");
-                    if (_this.onSelectUser) {
-                        _this.onSelectUser(_quickUserSelected);
+                    _quickObjectSelected = _quickObjectCache[$(this).attr(attr)];
+                    filterableObjectId.empty().filterable("refresh");
+                    if (_this.onSelectObject) {
+                        _this.onSelectObject(_quickObjectSelected);
                     }
                 });
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,24 +28,21 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.savapage.core.SpException;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.QuickSearchFilterPrinterDto;
 import org.savapage.core.dto.QuickSearchItemDto;
 import org.savapage.core.dto.QuickSearchPrinterItemDto;
-import org.savapage.core.ipp.IppSyntaxException;
-import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonPrinter;
 import org.savapage.core.json.JsonPrinterList;
 
 /**
- * Proxy Printers Quicksearch.
+ * Proxy Printers Quick Search.
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqPrinterQuickSearch extends ApiRequestMixin {
+public abstract class ReqPrinterQuickSearchMixin extends ApiRequestMixin {
 
     /**
      *
@@ -78,44 +75,31 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
     }
 
     /**
-     * Gets the printers for requesting user on this terminal.
+     * Gets the printers.
      *
-     * @param userName
-     *            The requesting user.
+     * @param requestingUser
+     *            Unique ID of requesting user.
      * @return The {@link JsonPrinterList}.
-     * @throws Exception
      */
-    private JsonPrinterList getUserPrinterList(final String userName) {
-
-        final JsonPrinterList jsonPrinterList;
-
-        try {
-            jsonPrinterList = PROXY_PRINT_SERVICE.getUserPrinterList(
-                    ApiRequestHelper.getHostTerminal(this.getRemoteAddr()),
-                    userName);
-
-        } catch (IppConnectException | IppSyntaxException e) {
-            throw new SpException(e.getMessage());
-        }
-
-        return jsonPrinterList;
-    }
+    protected abstract JsonPrinterList getPrinterList(String requestingUser);
 
     @Override
-    protected void onRequest(final String requestingUser, final User lockedUser)
-            throws IOException {
+    protected final void onRequest(final String requestingUser,
+            final User lockedUser) throws IOException {
 
         final QuickSearchFilterPrinterDto dto = AbstractDto.create(
                 QuickSearchFilterPrinterDto.class, this.getParmValueDto());
 
-        final List<QuickSearchItemDto> items = new ArrayList<>();
+        final boolean searchCupsName =
+                BooleanUtils.isTrue(dto.getSearchCupsName());
 
         final JsonPrinterList jsonPrinterList =
-                this.getUserPrinterList(requestingUser);
+                this.getPrinterList(requestingUser);
 
         final int maxItems = dto.getMaxResults().intValue();
-
         final String filter = dto.getFilter().toLowerCase();
+
+        final List<QuickSearchItemDto> items = new ArrayList<>();
 
         /*
          * First iteration to collect the items, fastPrintAvaliable.
@@ -147,7 +131,9 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
             if (StringUtils.isEmpty(filter)
                     || printer.getAlias().toLowerCase().contains(filter)
                     || (StringUtils.isNotBlank(location)
-                            && location.toLowerCase().contains(filter))) {
+                            && location.toLowerCase().contains(filter))
+                    || (searchCupsName && printer.getName().toLowerCase()
+                            .contains(filter))) {
 
                 if (items.size() < maxItems) {
 
@@ -189,7 +175,6 @@ public final class ReqPrinterQuickSearch extends ApiRequestMixin {
             }
         }
 
-        //
         final DtoRsp rsp = new DtoRsp();
         rsp.setItems(items);
         rsp.setFastPrintAvailable(fastPrintAvailable);

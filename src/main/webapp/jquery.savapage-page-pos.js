@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Admin POS Page | (c) 2011-2018 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin POS Page | (c) 2011-2019 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -44,9 +44,12 @@
             var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale", "PagePointOfSale"),
                 _self = _ns.derive(_page),
                 _quickUserSelected,
-                _quickUserSearch = new _ns.QuickUserSearch(_view, _api),
-                onQuickSearchUserBefore = function() {
+                _quickUserSearch = new _ns.QuickObjectSearch(_view, _api),
+                _onQuickSearchUserBefore = function() {
                 $(".sp-pos-user-selected").hide();
+            },
+                _onQuickSearchUserItemDisplay = function(item) {
+                return item.text + " &bull; " + (item.email || "&nbsp;");
             },
                 _onSelectUser = function(quickUserSelected) {
 
@@ -224,7 +227,7 @@
                     return true;
                 });
 
-                _quickUserSearch.onCreate($(this), 'sp-pos-userid-filter', _onSelectUser, _onClearUser, onQuickSearchUserBefore);
+                _quickUserSearch.onCreate($(this), 'sp-pos-userid-filter', 'user-quick-search', null, _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser, _onQuickSearchUserBefore);
 
             }).on("pageshow", function(event, ui) {
                 $("#sp-pos-tab-deposit-button").click();

@@ -109,8 +109,8 @@
 						key="device-cardreader-print-auth" /></span>
 			</label>
 			<input type="checkbox" id="sp-device-function-proxy-print" value="0" />
-
 		</li>
+
 		<li id="sp-device-proxy-print-auth-fields">
 			<fieldset data-role="controlgroup" data-type="vertical">
 
@@ -140,25 +140,33 @@
 
 			</fieldset>
 		</li>
+
 		<li id="sp-device-proxy-print-group-fields">
 
 			<h3 class="sp-txt-wrap">
 				<wicket:message key="device-proxy-print-target" />
 			</h3>
 
-			<label for="sp-device-proxy-print-printer">
+			<label>
 				<wicket:message key="device-proxy-print-single" />
 			</label>
 			<input type="text" id="sp-device-proxy-print-printer" value=""
-				maxlength="255" autocomplete="off" autocorrect="off"
-				autocapitalize="off" spellcheck="false" />
+				data-type="search" maxlength="255" autocomplete="off"
+				autocorrect="off" autocapitalize="off" spellcheck="false" />
+			<ul id="sp-device-proxy-print-printer-filter" data-role="listview"
+				data-filter="true" data-input="#sp-device-proxy-print-printer"
+				data-filter-theme="a" data-inset="true" />
 
-			<label for="sp-device-proxy-print-printer-group">
+			<label>
 				<wicket:message key="device-proxy-print-group" />
 			</label>
 			<input type="text" id="sp-device-proxy-print-printer-group" value=""
-				maxlength="255" autocomplete="off" autocorrect="off"
-				autocapitalize="off" spellcheck="false" />
+				data-type="search" maxlength="255" autocomplete="off"
+				autocorrect="off" autocapitalize="off" spellcheck="false" />
+			<ul id="sp-device-proxy-print-printer-group-filter"
+				data-role="listview" data-filter="true"
+				data-input="#sp-device-proxy-print-printer-group"
+				data-filter-theme="a" data-inset="true" />
 
 		</li>
 	</ul>

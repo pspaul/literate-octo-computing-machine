@@ -752,7 +752,7 @@
         /**
          * Constructor
          */
-        _ns.PageDevice = function(_i18n, _view, _model) {
+        _ns.PageDevice = function(_i18n, _view, _model, _api) {
 
             var _m2v,
                 _v2m,
@@ -776,7 +776,16 @@
                 _AUTH_ATTR_BOOLS = ['.name', '.yubikey', '.id', '.id.pin-required', '.id.is-masked', '.card-local', '.card-ip', '.card.pin-required', '.card.self-association'],
             // string authentication attributes
                 _AUTH_ATTR_STRINGS = [],
-                _CARD_FORMAT_ATTR = ['.format', '.first-byte'];
+                _CARD_FORMAT_ATTR = ['.format', '.first-byte'],
+
+                _quickPrinterSearch = new _ns.QuickObjectSearch(_view, _api),
+                _onQuickSearchPrinterFilterProps,
+                _onQuickSearchPrinterItemDisplay,
+                _onSelectPrinter,
+
+                _quickPrinterGroupSearch = new _ns.QuickObjectSearch(_view, _api),
+                _onQuickSearchPrinterGroupItemDisplay,
+                _onSelectPrinterGroup;
 
             _onAuthModeEnabled = function() {
                 var authUser = _view.isCbChecked($("#auth-mode\\.name")),
@@ -1058,6 +1067,35 @@
                 device.attr = attr;
             };
 
+            /** */
+            _onQuickSearchPrinterFilterProps = function(props) {
+                props.searchCupsName = true;
+            };
+            /** */
+            _onQuickSearchPrinterItemDisplay = function(item) {
+                var html = item.printer.name;
+                if (item.text !== item.printer.name) {
+                    html += " &bull; " + item.text;
+                }
+                if (item.printer.location) {
+                    html += " &bull; " + item.printer.location;
+                }
+                return html;
+            };
+            /** */
+            _onSelectPrinter = function(item) {
+                $("#sp-device-proxy-print-printer").val(item.printer.name);
+            };
+
+            /** */
+            _onQuickSearchPrinterGroupItemDisplay = function(item) {
+                return item.text;
+            };
+            /** */
+            _onSelectPrinterGroup = function(item) {
+                $("#sp-device-proxy-print-printer-group").val(item.text);
+            };
+
             /**
              *
              */
@@ -1085,6 +1123,10 @@
                 $(this).on('change', "#auth-mode-is-custom", null, function(e) {
                     _onCustomAuthEnabled($(e.target));
                 });
+
+                _quickPrinterSearch.onCreate($(this), 'sp-device-proxy-print-printer-filter', 'printer-quick-search-cups', _onQuickSearchPrinterFilterProps, _onQuickSearchPrinterItemDisplay, _onSelectPrinter);
+
+                _quickPrinterGroupSearch.onCreate($(this), 'sp-device-proxy-print-printer-group-filter', 'printergroup-quick-search', null, _onQuickSearchPrinterGroupItemDisplay, _onSelectPrinterGroup);
 
             }).on("pagebeforeshow", function(event, ui) {
                 _m2v();

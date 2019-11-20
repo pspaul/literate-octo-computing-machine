@@ -3701,7 +3701,7 @@
 
                 _areMultiplePrinterAvailable = function() {
                 var res = _api.call({
-                    request : 'printer-quick-search',
+                    request : 'printer-quick-search-user',
                     dto : JSON.stringify({
                         filter : '',
                         jobTicket : null,
@@ -3746,7 +3746,7 @@
                 _quickPrinterSelected = undefined;
 
                 res = _api.call({
-                    request : 'printer-quick-search',
+                    request : 'printer-quick-search-user',
                     dto : JSON.stringify({
                         filter : filter,
                         jobTicket : filterJobTicket,

@@ -1857,7 +1857,7 @@
                 configProp : new _ns.PageConfigProp(_i18n, _view, _model),
                 queue : new _ns.PageQueue(_i18n, _view, _model),
                 printer : new _ns.PagePrinter(_i18n, _view, _model),
-                device : new _ns.PageDevice(_i18n, _view, _model),
+                device : new _ns.PageDevice(_i18n, _view, _model, _api),
                 voucherCreate : new _ns.PageAccountVoucherCreate(_i18n, _view, _model)
             };
 

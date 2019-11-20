@@ -133,8 +133,8 @@
                 _ticketKey,
                 _ticketGroup,
                 _expiryAsc = true,
-                _quickUserSearch = new _ns.QuickUserSearch(_view, _api),
-                _quickUserSearchDocLog = new _ns.QuickUserSearch(_view, _api),
+                _quickUserSearch = new _ns.QuickObjectSearch(_view, _api),
+                _quickUserSearchDocLog = new _ns.QuickObjectSearch(_view, _api),
                 _quickTicketSearch = new _ns.QuickJobTicketSearch(_view, _api),
             //
                 _maxItems = function() {
@@ -222,6 +222,9 @@
             },
                 _getRedirectPrinterJogOffset = function(redirectPrinterItem) {
                 return redirectPrinterItem.find('.sp-redirect-printer-jog-offset');
+            },
+                _onQuickSearchUserItemDisplay = function(item) {
+                return item.text + " &bull; " + (item.email || "&nbsp;");
             },
                 _onSelectUser = function(quickUserSelected) {
                 $("#sp-jobticket-userid").val(quickUserSelected.text);
@@ -725,8 +728,9 @@
                     }
                 });
 
-                _quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', _onSelectUser, _onClearUser);
-                _quickUserSearchDocLog.onCreate($(this), 'sp-doclog-select-userid-filter', _onSelectUserDocLog, _onClearUserDocLog);
+                _quickUserSearch.onCreate($(this), 'sp-jobticket-userid-filter', 'user-quick-search', null, _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser);
+
+                _quickUserSearchDocLog.onCreate($(this), 'sp-doclog-select-userid-filter', 'user-quick-search', null, _onQuickSearchUserItemDisplay, _onSelectUserDocLog, _onClearUserDocLog);
 
                 _quickTicketSearch.onCreate($(this), 'sp-jobticket-search-ticket-filter', _onSelectTicket, _onClearTicket);
 

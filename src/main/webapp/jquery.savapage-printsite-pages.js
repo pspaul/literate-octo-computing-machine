@@ -44,7 +44,7 @@
             var _page = new _ns.Page(_i18n, _view, '#page-main', 'printsite/Main'),
                 _self = _ns.derive(_page),
                 _panel,
-                _quickUserSearch = new _ns.QuickUserSearch(_view, _api),
+                _quickUserSearch = new _ns.QuickObjectSearch(_view, _api),
                 _userKey,
                 _userText,
                 _refresh,
@@ -54,6 +54,7 @@
                 _refreshPanelByUrl,
                 _panelCur,
                 _panelCurClass,
+                _onQuickSearchUserItemDisplay,
                 _onSelectUser,
                 _onClearUser,
                 _onOutboxDeleteJob,
@@ -182,6 +183,11 @@
             };
 
             /** */
+            _onQuickSearchUserItemDisplay = function(item) {
+                return item.text + " &bull; " + (item.email || "&nbsp;");
+            };
+
+            /** */
             _onSelectUser = function(quickUserSelected) {
                 $("#sp-main-userid").val(quickUserSelected.text);
                 _userKey = quickUserSelected.key;
@@ -299,7 +305,7 @@
 
                 _self.initView();
 
-                _quickUserSearch.onCreate($(this), 'sp-main-userid-filter', _onSelectUser, _onClearUser);
+                _quickUserSearch.onCreate($(this), 'sp-main-userid-filter', 'user-quick-search', null, _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser);
 
                 _onClearUser();
 

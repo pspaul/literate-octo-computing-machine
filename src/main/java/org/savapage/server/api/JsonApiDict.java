@@ -62,9 +62,11 @@ import org.savapage.server.api.request.ReqPdfPropsSetValidate;
 import org.savapage.server.api.request.ReqPosDepositQuickSearch;
 import org.savapage.server.api.request.ReqPrintSiteUserSet;
 import org.savapage.server.api.request.ReqPrinterGet;
+import org.savapage.server.api.request.ReqPrinterGroupQuickSearch;
 import org.savapage.server.api.request.ReqPrinterOptValidate;
 import org.savapage.server.api.request.ReqPrinterPrint;
-import org.savapage.server.api.request.ReqPrinterQuickSearch;
+import org.savapage.server.api.request.ReqPrinterQuickSearchCups;
+import org.savapage.server.api.request.ReqPrinterQuickSearchUser;
 import org.savapage.server.api.request.ReqPrinterSet;
 import org.savapage.server.api.request.ReqPrinterSetMediaSources;
 import org.savapage.server.api.request.ReqPrinterSnmp;
@@ -284,8 +286,15 @@ public final class JsonApiDict {
     public static final String REQ_PRINTER_GET = "printer-get";
     public static final String REQ_PRINTER_PRINT = "printer-print";
     public static final String REQ_PRINTER_RENAME = "printer-rename";
-    public static final String REQ_PRINTER_QUICK_SEARCH =
-            "printer-quick-search";
+
+    public static final String REQ_PRINTER_QUICK_SEARCH_USER =
+            "printer-quick-search-user";
+
+    public static final String REQ_PRINTER_QUICK_SEARCH_CUPS =
+            "printer-quick-search-cups";
+
+    public static final String REQ_PRINTER_GROUP_QUICK_SEARCH =
+            "printergroup-quick-search";
 
     public static final String REQ_PRINTER_SET = "printer-set";
     public static final String REQ_PRINTER_SET_MEDIA_COST =
@@ -1092,8 +1101,14 @@ public final class JsonApiDict {
         usr(REQ_PRINTER_PRINT, ReqPrinterPrint.class, DbClaim.READ,
                 DbAccess.USER_LOCK);
 
-        usr(REQ_PRINTER_QUICK_SEARCH, ReqPrinterQuickSearch.class, DbClaim.READ,
-                DbAccess.YES);
+        usr(REQ_PRINTER_QUICK_SEARCH_USER, ReqPrinterQuickSearchUser.class,
+                DbClaim.READ, DbAccess.YES);
+
+        adm(REQ_PRINTER_QUICK_SEARCH_CUPS, ReqPrinterQuickSearchCups.class,
+                DbClaim.READ, DbAccess.YES);
+
+        usr(REQ_PRINTER_GROUP_QUICK_SEARCH, ReqPrinterGroupQuickSearch.class,
+                DbClaim.READ, DbAccess.YES);
 
         usr(REQ_URL_PRINT, ReqUrlPrint.class, DbClaim.NONE, DbAccess.NO);
 

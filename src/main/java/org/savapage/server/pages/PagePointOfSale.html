@@ -27,14 +27,12 @@
 			<ul>
 				<li>
 					<a href="#sp-pos-tab-deposit" id="sp-pos-tab-deposit-button"
-						data-ajax="false">
-						<wicket:message key="tab-deposit" />
+						data-ajax="false"> <wicket:message key="tab-deposit" />
 					</a>
 				</li>
 				<li>
 					<a href="#sp-pos-tab-receipts" id="sp-pos-tab-receipts-button"
-						data-ajax="false">
-						<wicket:message key="tab-receipts" />
+						data-ajax="false"> <wicket:message key="tab-receipts" />
 					</a>
 				</li>
 			</ul>
@@ -55,7 +53,7 @@
 			<label for="sp-pos-userid">
 				<wicket:message key="prompt-userid" />
 			</label>
-			<input tabindex="1" type="text" id="sp-pos-userid" value=""
+			<input tabindex="0" type="text" id="sp-pos-userid" value=""
 				maxlength="128" autofocus data-type="search" autocomplete="off"
 				autocorrect="off" autocapitalize="off" spellcheck="false" />
 			<ul id="sp-pos-userid-filter" data-role="listview" data-filter="true"
@@ -72,13 +70,13 @@
 						<span wicket:id="currency-symbol" />&nbsp;
 					</td>
 					<td width="100px">
-						<input tabindex="2" type="text" style="text-align: right;"
+						<input type="text" style="text-align: right;"
 							id="sp-pos-amount-main" value="" maxlength="5" pattern="[0-9]*" />
 					</td>
 					<td wicket:id="decimal-separator" />
 					<td width="50px">
-						<input tabindex="2" type="text" id="sp-pos-amount-cents"
-							value="00" maxlength="2" pattern="[0-9]*" />
+						<input type="text" id="sp-pos-amount-cents" value="00"
+							maxlength="2" pattern="[0-9]*" />
 					</td>
 					<td width="50px" />
 					<td class="sp-pos-user-selected">
@@ -92,7 +90,7 @@
 				<label for="sp-pos-payment-type">
 					<wicket:message key="prompt-payment-type" />
 				</label>
-				<select tabindex="3" name="sp-pos-payment-type"
+				<select name="sp-pos-payment-type"
 					id="sp-pos-payment-type" data-native-menu="false">
 					<wicket:remove>
 						<!--
@@ -109,8 +107,7 @@
 			<label for="sp-pos-comment">
 				<wicket:message key="prompt-comment" />
 			</label>
-			<input tabindex="4" type="text" id="sp-pos-comment" value=""
-				maxlength="255" />
+			<input type="text" id="sp-pos-comment" value="" maxlength="255" />
 
 			<div class="sp-pos-user-selected">
 
@@ -122,31 +119,27 @@
 					class="ui-mini">
 
 					<label for="sp-pos-receipt-none">&nbsp;-&nbsp;</label>
-					<input tabindex="5" type="radio" name="sp-pos-receipt-delivery"
+					<input type="radio" name="sp-pos-receipt-delivery"
 						id="sp-pos-receipt-none" value="NONE" checked="checked" />
 
 					<label for="sp-pos-receipt-as-email"
 						id="sp-pos-receipt-as-email-label" />
-					<input tabindex="6" type="radio" name="sp-pos-receipt-delivery"
+					<input type="radio" name="sp-pos-receipt-delivery"
 						id="sp-pos-receipt-as-email" value="EMAIL" />
 
 				</fieldset>
 			</div>
 
-			<a tabindex="10" id="sp-pos-button-deposit" href="#"
+			<a id="sp-pos-button-deposit" href="#"
 				class="sp-pos-user-selected ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 				<wicket:message key="button-deposit" />
-			</a>
-
-			<a tabindex="10" id="sp-pos-button-clear" href="#"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete">
-				<wicket:message key="button-clear" />
-			</a>
-
-			<a tabindex="10" id="sp-pos-button-back" href="#" data-rel="back"
+			</a> <a id="sp-pos-button-clear" href="#"
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"> <wicket:message
+					key="button-clear" />
+			</a> <a id="sp-pos-button-back" href="#" data-rel="back"
 				data-direction="reverse"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-				<wicket:message key="button-back" />
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+					key="button-back" />
 			</a>
 
 		</div>
@@ -165,17 +158,16 @@
 			<label for="sp-pos-quickdate">
 				<wicket:message key="prompt-datetime-offset" />
 			</label>
-			<input tabindex="1" type="text" id="sp-pos-quickdate" value=""
-				maxlength="128" autofocus data-type="search" autocomplete="off"
-				autocorrect="off" autocapitalize="off" spellcheck="false"
-				pattern="[0-9]*" />
+			<input type="text" id="sp-pos-quickdate" value="" maxlength="128"
+				autofocus data-type="search" autocomplete="off" autocorrect="off"
+				autocapitalize="off" spellcheck="false" pattern="[0-9]*" />
 			<ul id="sp-pos-quickdate-filter" data-role="listview"
 				data-filter="true" data-input="#sp-pos-quickdate"
 				data-filter-theme="a" data-inset="true" />
 
-			<a tabindex="10" href="#" data-rel="back" data-direction="reverse"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
-				<wicket:message key="button-back" />
+			<a href="#" data-rel="back" data-direction="reverse"
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
+					key="button-back" />
 			</a>
 
 		</div>
