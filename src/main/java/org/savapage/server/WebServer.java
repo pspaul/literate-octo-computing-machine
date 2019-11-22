@@ -65,6 +65,7 @@ import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.SslCertInfo;
 import org.savapage.core.ipp.operation.IppMessageMixin;
+import org.savapage.core.util.DeadlockedThreadsDetector;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.ext.papercut.ExtPaperCutSyncServlet;
 import org.savapage.server.feed.AtomFeedServlet;
@@ -532,9 +533,14 @@ public final class WebServer {
      * Initializing action when started in development environment.
      */
     private static void initDevelopmenEnv() {
+
         RestSystemService.test();
         RestTestService.test();
-        // DeadlockedThreadsDetector.createDeadlockTest();
+
+        boolean createDeadlockTest = false;
+        if (createDeadlockTest) {
+            DeadlockedThreadsDetector.createDeadlockTest();
+        }
     }
 
     /**
