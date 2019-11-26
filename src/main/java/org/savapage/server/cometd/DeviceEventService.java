@@ -113,7 +113,7 @@ public final class DeviceEventService extends AbstractEventService {
     public void monitorDeviceEvent(final ServerSession remote,
             final ServerMessage message) {
 
-        final String clientIpAddress = getClientIpAddress();
+        final String clientIpAddress = getClientIpAddress(message);
 
         Map<String, Object> eventData = null;
 

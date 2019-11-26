@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.server.AbstractService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Encapsulation of CometD {@link AbstractService}.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public abstract class AbstractEventService extends AbstractService
@@ -104,12 +105,14 @@ public abstract class AbstractEventService extends AbstractService
     }
 
     /**
-     * Gets the remote IP address from the Bayeux context.
+     * Gets the remote IP address from the {@link ServerMessage}.
      *
+     * @param message
+     *            {@link ServerMessage}.
      * @return The IP address.
      */
-    protected final String getClientIpAddress() {
-        return getBayeux().getContext().getRemoteAddress().getHostString();
+    protected final String getClientIpAddress(final ServerMessage message) {
+        return message.getBayeuxContext().getRemoteAddress().getHostString();
     }
 
     /**

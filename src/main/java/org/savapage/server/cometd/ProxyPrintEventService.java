@@ -147,7 +147,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
         final Long idUser = Long.parseLong(input.get("idUser").toString());
         final Locale locale = this.getLocale(input, "language", "country");
 
-        final String clientIpAddress = getClientIpAddress();
+        final String clientIpAddress = getClientIpAddress(message);
 
         Map<String, Object> eventData = null;
 

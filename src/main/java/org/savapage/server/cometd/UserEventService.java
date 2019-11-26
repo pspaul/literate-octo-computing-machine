@@ -396,7 +396,7 @@ public final class UserEventService extends AbstractEventService {
     public void monitorUserEvent(final ServerSession remote,
             final ServerMessage message) {
 
-        final String clientIpAddress = getClientIpAddress();
+        final String clientIpAddress = getClientIpAddress(message);
 
         Map<String, Object> input = message.getDataAsMap();
 

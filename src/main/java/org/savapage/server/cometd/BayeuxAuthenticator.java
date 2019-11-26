@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -55,10 +55,11 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * </p>
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
-public final class BayeuxAuthenticator extends DefaultSecurityPolicy implements
-        ServerSession.RemoveListener {
+public final class BayeuxAuthenticator extends DefaultSecurityPolicy
+        implements ServerSession.RemoveListener {
 
     /**
      * Name of ServerSession attribute for admin indicator: value object
@@ -69,8 +70,8 @@ public final class BayeuxAuthenticator extends DefaultSecurityPolicy implements
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(BayeuxAuthenticator.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(BayeuxAuthenticator.class);
 
     @Override
     public boolean canHandshake(final BayeuxServer server,
@@ -96,9 +97,8 @@ public final class BayeuxAuthenticator extends DefaultSecurityPolicy implements
         }
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> authentication =
-                ((Map<String, Object>) ext
-                        .get(CometdConnectDto.SERVER_MSG_ATTR_AUTH));
+        final Map<String, Object> authentication = ((Map<String, Object>) ext
+                .get(CometdConnectDto.SERVER_MSG_ATTR_AUTH));
 
         if (authentication == null) {
             if (LOGGER.isWarnEnabled()) {
@@ -112,9 +112,8 @@ public final class BayeuxAuthenticator extends DefaultSecurityPolicy implements
          * obtain back server-side authentication data that we can later
          * associate with the remote client
          */
-        final Boolean isAdmin =
-                checkAuthorization(authentication, server.getContext()
-                        .getRemoteAddress().getHostString());
+        final Boolean isAdmin = checkAuthorization(authentication,
+                message.getBayeuxContext().getRemoteAddress().getHostString());
 
         if (isAdmin == null) {
             return false;
@@ -157,9 +156,8 @@ public final class BayeuxAuthenticator extends DefaultSecurityPolicy implements
             /*
              * May be client is administrator?
              */
-            Boolean isAdmin =
-                    (Boolean) session
-                            .getAttribute(SERVER_SESSION_ATTR_IS_ADMIN);
+            Boolean isAdmin = (Boolean) session
+                    .getAttribute(SERVER_SESSION_ATTR_IS_ADMIN);
 
             if (isAdmin != null) {
                 allow = isAdmin;
@@ -200,7 +198,8 @@ public final class BayeuxAuthenticator extends DefaultSecurityPolicy implements
 
                 isAdmin = Boolean.TRUE;
 
-            } else if (sharedToken.equals(CometdClientMixin.SHARED_USER_TOKEN)) {
+            } else if (sharedToken
+                    .equals(CometdClientMixin.SHARED_USER_TOKEN)) {
 
                 final Object userTokenObj =
                         auth.get(CometdConnectDto.SERVER_MSG_ATTR_USER_TOKEN);
@@ -213,9 +212,8 @@ public final class BayeuxAuthenticator extends DefaultSecurityPolicy implements
 
                     final String userToken = userTokenObj.toString();
 
-                    final UserAuthToken userAuthToken =
-                            ClientAppUserAuthManager
-                                    .getIpAuthToken(clientIpAddress);
+                    final UserAuthToken userAuthToken = ClientAppUserAuthManager
+                            .getIpAuthToken(clientIpAddress);
 
                     if (userAuthToken != null
                             && userAuthToken.getToken().equals(userToken)) {
