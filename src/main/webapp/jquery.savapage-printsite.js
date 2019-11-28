@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2018 Datraverse B.V.
+/*! SavaPage jQuery Mobile Print Site Web App | (c) 2011-2019 Datraverse B.V.
  * | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -533,10 +533,7 @@
                     // By NOT returning anything the unload dialog will not show.
                     $.noop();
                 }).on('unload', function() {
-                    _api.removeCallbacks();
-                    _api.call({
-                        request : 'webapp-unload'
-                    });
+                    _api.unloadWebApp();
                 });
 
                 $(document).on('click', '.sp-collapse', null, function() {

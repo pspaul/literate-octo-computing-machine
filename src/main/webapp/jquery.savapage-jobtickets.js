@@ -459,17 +459,13 @@
                     // By NOT returning anything the unload dialog will not show.
                     $.noop();
                 }).on('unload', function() {
-                    _api.removeCallbacks();
-                    _api.call({
-                        request : 'webapp-unload'
-                    });
+                    _api.unloadWebApp();
                 });
 
                 $(document).on('click', '.sp-collapse', null, function() {
                     $(this).closest('[data-role=collapsible]').collapsible('collapse');
                     return false;
                 });
-
             };
         };
 

@@ -526,6 +526,19 @@
                 $(form).submit();
             };
 
+            /** */
+            this.unloadWebApp = function() {
+                var request = 'webapp-unload';
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon('/api?request=' + request + '&webAppType=' + _ns.WEBAPP_TYPE + '&user=' + _user.id, null);
+                } else {
+                    this.removeCallbacks();
+                    this.call({
+                        request : request
+                    });
+                }
+            };
+
             /**
              *
              */

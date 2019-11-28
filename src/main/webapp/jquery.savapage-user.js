@@ -7231,10 +7231,7 @@
                 // By NOT returning anything the unload dialog will not show.
                 $.noop();
             }).on('unload', function() {
-                _api.removeCallbacks();
-                _api.call({
-                    request : 'webapp-unload'
-                });
+                _api.unloadWebApp();
             });
         };
 
