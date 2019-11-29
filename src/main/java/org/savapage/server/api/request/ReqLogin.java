@@ -266,13 +266,9 @@ public final class ReqLogin extends ApiRequestMixin {
         }
 
         /*
-         * INVARIANT: Only one (1) authenticated session allowed for (non Mac OS
-         * X Safari) desktop computers.
+         * INVARIANT: Only one (1) authenticated session allowed.
          */
-        if (!userAgentHelper.isMobileBrowser()
-                && !userAgentHelper.isSafariBrowserMacOsX()
-                && SpSession.get().getAuthWebAppCount() != 0) {
-
+        if (session.getAuthWebAppCount() != 0) {
             this.setApiResult(ApiResultCodeEnum.ERROR,
                     "msg-login-another-session-active");
             return;
