@@ -253,15 +253,15 @@ public class ReqExportUserDataHistory extends ApiRequestExportMixin {
 
         UserAttr attr;
 
-        attr = dao.findByName(user, UserAttrEnum.INTERNAL_PASSWORD);
+        attr = dao.findByName(user.getId(), UserAttrEnum.INTERNAL_PASSWORD);
         if (attr != null && StringUtils.isNotBlank(attr.getValue())) {
             lines.add(new String[] { "Password", SECRET_VALUE });
         }
-        attr = dao.findByName(user, UserAttrEnum.PIN);
+        attr = dao.findByName(user.getId(), UserAttrEnum.PIN);
         if (attr != null && StringUtils.isNotBlank(attr.getValue())) {
             lines.add(new String[] { "PIN", SECRET_VALUE });
         }
-        attr = dao.findByName(user, UserAttrEnum.PGP_PUBKEY_ID);
+        attr = dao.findByName(user.getId(), UserAttrEnum.PGP_PUBKEY_ID);
         if (attr != null && StringUtils.isNotBlank(attr.getValue())) {
             lines.add(new String[] { "PGP key", attr.getValue() });
         }

@@ -935,8 +935,8 @@ public final class ReqLogin extends ApiRequestMixin {
                         return;
                     }
 
-                    final String encryptedPin = USER_SERVICE
-                            .findUserAttrValue(userDb, UserAttrEnum.PIN);
+                    final String encryptedPin = USER_SERVICE.findUserAttrValue(
+                            userDb.getId(), UserAttrEnum.PIN);
                     String pin = "";
                     if (encryptedPin != null) {
                         pin = CryptoUser.decryptUserAttr(userDb.getId(),

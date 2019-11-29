@@ -159,7 +159,7 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
         /*
          * Use assigned bitcoin address when present.
          */
-        final UserAttr bitcoinAddr = userAttrDao.findByName(user,
+        final UserAttr bitcoinAddr = userAttrDao.findByName(user.getId(),
                 UserAttrEnum.BITCOIN_PAYMENT_ADDRESS);
 
         if (bitcoinAddr == null) {
