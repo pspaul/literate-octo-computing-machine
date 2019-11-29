@@ -1,8 +1,8 @@
-/*! SavaPage Common | (c) 2011-2017 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage Common | (c) 2011-2019 Datraverse B.V. | GNU Affero General Public License */
 
 /*
 * This file is part of the SavaPage project <https://www.savapage.org>.
-* Copyright (c) 2011-2017 Datraverse B.V.
+* Copyright (c) 2011-2019 Datraverse B.V.
 * Authors: Rijk Ravestein.
 *
 * This program is free software: you can redistribute it and/or modify
