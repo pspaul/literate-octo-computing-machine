@@ -22,6 +22,7 @@
 package org.savapage.server.pages.user;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -68,12 +69,19 @@ public final class PdfDocumentFontsAddIn extends AbstractAuthPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        int iJob = Integer.parseInt(this.getParmValue("ijob"));
+        final int iJob = Integer.parseInt(this.getParmValue("ijob"));
 
-        final PdfDocumentFonts fonts = INBOX_SERVICE
-                .getJobFonts(SpSession.get().getUser().getUserId(), iJob);
+        Map<String, PdfDocumentFonts.Font> mapFont;
+        String msgException = null;
+        try {
+            final PdfDocumentFonts fonts = INBOX_SERVICE
+                    .getJobFonts(SpSession.get().getUserId(), iJob);
+            mapFont = fonts.getFonts();
+        } catch (Exception e) {
+            msgException = e.getMessage();
+            mapFont = new HashMap<>();
+        }
 
-        final Map<String, PdfDocumentFonts.Font> mapFont = fonts.getFonts();
         final List<String> fontKeys = new ArrayList<>();
 
         final Set<String> subsetFonts = new HashSet<>();
@@ -142,6 +150,9 @@ public final class PdfDocumentFontsAddIn extends AbstractAuthPage {
 
         if (noFonts) {
             msg = PhraseEnum.PDF_FONTS_NONE;
+            if (msgException != null) {
+                cssClass = MarkupHelper.CSS_TXT_ERROR;
+            }
         } else if (nFontNonEmbedded == 0) {
             if (nFontEmbedded > 0 && nFontStandard > 0) {
                 msg = PhraseEnum.PDF_FONTS_STANDARD_OR_EMBEDDED;
@@ -177,6 +188,8 @@ public final class PdfDocumentFontsAddIn extends AbstractAuthPage {
             helper.addLabel("table-header-rendering",
                     NounEnum.RENDERING.uiText(getLocale()));
 
+            final Map<String, PdfDocumentFonts.Font> mapFontWrk = mapFont;
+
             add(new PropertyListView<String>("font-entry", fontKeys) {
 
                 private static final long serialVersionUID = 1L;
@@ -185,7 +198,7 @@ public final class PdfDocumentFontsAddIn extends AbstractAuthPage {
                 protected void populateItem(final ListItem<String> item) {
 
                     final String key = item.getModelObject();
-                    final PdfDocumentFonts.Font font = mapFont.get(key);
+                    final PdfDocumentFonts.Font font = mapFontWrk.get(key);
 
                     final String fontName;
                     if (font.isSubset()) {
@@ -216,7 +229,6 @@ public final class PdfDocumentFontsAddIn extends AbstractAuthPage {
                             .defaultString(font.getSystemFontMatch())));
                 }
             });
-
         }
     }
 
