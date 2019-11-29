@@ -116,7 +116,7 @@ public class ReqExportOutboxPdf extends ApiRequestExportMixin {
                     && webAppType != WebAppTypeEnum.ADMIN
                     && webAppType != WebAppTypeEnum.PRINTSITE
                     && JOBTICKET_SERVICE.getTicket(
-                            SpSession.get().getUser().getId(),
+                            SpSession.get().getUserDbKey(),
                             fileName) == null) {
                 pdfFile = null;
             } else {

@@ -99,6 +99,7 @@ import org.savapage.core.dto.PosDepositReceiptDto;
 import org.savapage.core.dto.PrimaryKeyDto;
 import org.savapage.core.dto.ProxyPrinterCostDto;
 import org.savapage.core.dto.UserCreditTransferDto;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.i18n.PhraseEnum;
@@ -307,7 +308,8 @@ public final class JsonApiServer extends AbstractPage {
                         isGetAction, JsonApiDict.PARM_WEBAPP_TYPE));
 
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Request: " + requestId);
+            LOGGER.info("{} [{}] [{}]", requestingWebAppType, requestingUser,
+                    requestId);
         }
 
         /*
@@ -1153,6 +1155,21 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
+     * Gets fresh JPA User from lockedUser or read new.
+     *
+     * @param lockedUser
+     *            can be {@code null}.
+     * @return
+     */
+    private static User getJPAUser(final User lockedUser) {
+        if (lockedUser == null) {
+            return ServiceContext.getDaoContext().getUserDao()
+                    .findById(SpSession.get().getUserDbKey());
+        }
+        return lockedUser;
+    }
+
+    /**
      *
      * @param request
      * @param parameters
@@ -1168,7 +1185,7 @@ public final class JsonApiServer extends AbstractPage {
             final String requestingUser, final User lockedUser)
             throws Exception {
 
-        final User mySessionUser = SpSession.get().getUser();
+        final SpSession session = SpSession.get();
 
         switch (request) {
 
@@ -1244,7 +1261,7 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_WEBAPP_UNLOAD:
 
-            SpSession.get().decrementAuthWebApp();
+            SpSession.get().decrementAuthWebAppCount();
             return createApiResultOK();
 
         case JsonApiDict.REQ_WEBAPP_CLOSE_SESSION:
@@ -1369,7 +1386,7 @@ public final class JsonApiServer extends AbstractPage {
             return reqJqPlot(getParmValue(parameters, isGetAction, "chartType"),
                     Boolean.parseBoolean(
                             getParmValue(parameters, isGetAction, "isGlobal")),
-                    mySessionUser);
+                    session.getUserDbKey());
 
         case JsonApiDict.REQ_PAGE_DELETE:
 
@@ -1384,7 +1401,7 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_PDF_GET_PROPERTIES:
 
-            return reqPdfPropsGet(mySessionUser);
+            return reqPdfPropsGet(getJPAUser(lockedUser));
 
         case JsonApiDict.REQ_PRINTER_DETAIL:
 
@@ -1413,11 +1430,11 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_LETTERHEAD_LIST:
 
             return setApiResultOK(
-                    INBOX_SERVICE.getLetterheadList(mySessionUser));
+                    INBOX_SERVICE.getLetterheadList(getJPAUser(lockedUser)));
 
         case JsonApiDict.REQ_LETTERHEAD_ATTACH:
 
-            INBOX_SERVICE.attachLetterhead(mySessionUser,
+            INBOX_SERVICE.attachLetterhead(getJPAUser(lockedUser),
                     getParmValue(parameters, isGetAction, "id"),
                     Boolean.parseBoolean(
                             getParmValue(parameters, isGetAction, "pub")));
@@ -1425,7 +1442,7 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_LETTERHEAD_DELETE:
 
-            return reqLetterheadDelete(mySessionUser,
+            return reqLetterheadDelete(getJPAUser(lockedUser),
                     getParmValue(parameters, isGetAction, "id"),
                     Boolean.parseBoolean(
                             getParmValue(parameters, isGetAction, "pub")));
@@ -1438,7 +1455,7 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_LETTERHEAD_NEW:
 
             try {
-                INBOX_SERVICE.createLetterhead(mySessionUser);
+                INBOX_SERVICE.createLetterhead(getJPAUser(lockedUser));
                 return createApiResultOK();
             } catch (PostScriptDrmException e) {
                 return setApiResult(new HashMap<String, Object>(),
@@ -1448,7 +1465,8 @@ public final class JsonApiServer extends AbstractPage {
         case JsonApiDict.REQ_LETTERHEAD_GET:
 
             return setApiResultOK(INBOX_SERVICE.getLetterheadDetails(
-                    mySessionUser, getParmValue(parameters, isGetAction, "id"),
+                    getJPAUser(lockedUser),
+                    getParmValue(parameters, isGetAction, "id"),
                     Boolean.parseBoolean(
                             getParmValue(parameters, isGetAction, "pub")),
                     Boolean.parseBoolean(
@@ -1456,7 +1474,7 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_LETTERHEAD_SET:
 
-            return reqLetterheadSet(mySessionUser,
+            return reqLetterheadSet(getJPAUser(lockedUser),
                     getParmValue(parameters, isGetAction, "id"),
                     getParmValue(parameters, isGetAction, "data"));
 
@@ -1466,19 +1484,19 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_GCP_ONLINE:
 
-            return reqGcpOnline(mySessionUser, Boolean.parseBoolean(
+            return reqGcpOnline(Boolean.parseBoolean(
                     getParmValue(parameters, isGetAction, "online")));
 
         case JsonApiDict.REQ_GCP_REGISTER:
 
-            return reqGcpRegister(mySessionUser,
+            return reqGcpRegister(
                     getParmValue(parameters, isGetAction, "clientId"),
                     getParmValue(parameters, isGetAction, "clientSecret"),
                     getParmValue(parameters, isGetAction, "printerName"));
 
         case JsonApiDict.REQ_GCP_SET_DETAILS:
 
-            return reqGcpSetDetails(mySessionUser,
+            return reqGcpSetDetails(session.getUserIdDto(),
                     Boolean.parseBoolean(
                             getParmValue(parameters, isGetAction, "enabled")),
                     getParmValue(parameters, isGetAction, "clientId"),
@@ -1487,7 +1505,7 @@ public final class JsonApiServer extends AbstractPage {
 
         case JsonApiDict.REQ_GCP_SET_NOTIFICATIONS:
 
-            return reqGcpSetNotifications(mySessionUser,
+            return reqGcpSetNotifications(session.getUserIdDto(),
                     Boolean.parseBoolean(
                             getParmValue(parameters, isGetAction, "enabled")),
                     getParmValue(parameters, isGetAction, "emailSubject"),
@@ -1560,7 +1578,6 @@ public final class JsonApiServer extends AbstractPage {
             return apiReqHandler.process(RequestCycle.get(), parameters,
                     isGetAction, requestingUser, lockedUser);
         }
-
     }
 
     /**
@@ -2116,12 +2133,7 @@ public final class JsonApiServer extends AbstractPage {
 
             authorized = false;
 
-            final String userId;
-            if (session.getUser() == null) {
-                userId = null;
-            } else {
-                userId = session.getUser().getUserId();
-            }
+            final String userId = session.getUserId();
 
             ApiRequestHelper.stopReplaceSession(session, userId,
                     this.getRemoteAddr());
@@ -2132,10 +2144,10 @@ public final class JsonApiServer extends AbstractPage {
 
                 authorized = false;
 
-            } else if (session.getUser().getUserId().equals(uid)) {
+            } else if (session.getUserId().equals(uid)) {
 
                 if (API_DICTIONARY.isAdminAuthenticationNeeded(request)) {
-                    authorized = session.getUser().getAdmin().booleanValue();
+                    authorized = session.isAdmin();
                 } else {
                     authorized = API_DICTIONARY.isWebAppAuthorized(request,
                             webAppType);
@@ -2146,7 +2158,7 @@ public final class JsonApiServer extends AbstractPage {
                             "WebApp [{}] request [{}]: "
                                     + "user [{}] not authorized.",
                             webAppType.toString(), request,
-                            session.getUser().getUserId());
+                            session.getUserId());
                 }
 
             } else {
@@ -2177,8 +2189,7 @@ public final class JsonApiServer extends AbstractPage {
                         + session.getId());
             }
 
-            if (!session.getUser().getAdmin().booleanValue()
-                    && ConfigManager.isSysMaintenance()) {
+            if (!session.isAdmin() && ConfigManager.isSysMaintenance()) {
                 userData = new HashMap<String, Object>();
                 createApiResult(userData, ApiResultCodeEnum.WARN, "",
                         PhraseEnum.SYS_MAINTENANCE.uiText(getLocale()));
@@ -3762,14 +3773,7 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqWebAppCloseSession() throws IOException {
 
         final SpSession session = SpSession.get();
-
-        final String userId;
-
-        if (session.getUser() == null) {
-            userId = null;
-        } else {
-            userId = session.getUser().getUserId();
-        }
+        final String userId = session.getUserId();
 
         /*
          * Save the critical session attribute.
@@ -3874,14 +3878,12 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     *
-     * @param user
      * @param online
      * @return
      * @throws IOException
      */
-    private Map<String, Object> reqGcpOnline(final User user,
-            final boolean online) throws IOException {
+    private Map<String, Object> reqGcpOnline(final boolean online)
+            throws IOException {
 
         Map<String, Object> userData = new HashMap<String, Object>();
 
@@ -3978,7 +3980,7 @@ public final class JsonApiServer extends AbstractPage {
      * @return
      * @throws IOException
      */
-    private Map<String, Object> reqGcpSetNotifications(final User user,
+    private Map<String, Object> reqGcpSetNotifications(final UserIdDto dto,
             boolean enabled, final String emailSubject,
             final String emailBody) {
 
@@ -3987,13 +3989,13 @@ public final class JsonApiServer extends AbstractPage {
         final ConfigManager cm = ConfigManager.instance();
 
         cm.updateConfigKey(Key.GCP_JOB_OWNER_UNKNOWN_CANCEL_MAIL_ENABLE,
-                enabled, user.getUserId());
+                enabled, dto.getUserId());
 
         cm.updateConfigKey(Key.GCP_JOB_OWNER_UNKNOWN_CANCEL_MAIL_SUBJECT,
-                emailSubject, user.getUserId());
+                emailSubject, dto.getUserId());
 
         cm.updateConfigKey(Key.GCP_JOB_OWNER_UNKNOWN_CANCEL_MAIL_BODY,
-                emailBody, user.getUserId());
+                emailBody, dto.getUserId());
 
         return setApiResult(userData, ApiResultCodeEnum.OK,
                 "msg-config-props-applied");
@@ -4004,7 +4006,7 @@ public final class JsonApiServer extends AbstractPage {
      * @return
      * @throws IOException
      */
-    private Map<String, Object> reqGcpSetDetails(final User user,
+    private Map<String, Object> reqGcpSetDetails(final UserIdDto dto,
             boolean enabled, final String clientId, final String clientSecret,
             final String printerName) {
 
@@ -4038,7 +4040,7 @@ public final class JsonApiServer extends AbstractPage {
 
         if (enabledCurrent != enabled) {
 
-            cm.updateConfigKey(key, enabled, user.getUserId());
+            cm.updateConfigKey(key, enabled, dto.getUserId());
 
             if (!enabled) {
                 SpJobScheduler.interruptGcpListener();
@@ -4064,9 +4066,9 @@ public final class JsonApiServer extends AbstractPage {
      * @return
      * @throws IOException
      */
-    private Map<String, Object> reqGcpRegister(final User user,
-            final String clientId, final String clientSecret,
-            final String printerName) throws IOException {
+    private Map<String, Object> reqGcpRegister(final String clientId,
+            final String clientSecret, final String printerName)
+            throws IOException {
 
         Map<String, Object> userData = new HashMap<String, Object>();
 
@@ -4169,12 +4171,12 @@ public final class JsonApiServer extends AbstractPage {
      *            The unique id of the chart type.
      * @param isGlobal
      *            {@code true} if global chart.
-     * @param sessionUser
+     * @param sessionUserDbKey
      * @return
      * @throws IOException
      */
     private Map<String, Object> reqJqPlot(final String chartType,
-            boolean isGlobal, User sessionUser) throws IOException {
+            boolean isGlobal, Long sessionUserDbKey) throws IOException {
 
         Map<String, Object> chartData = null;
 
@@ -4192,7 +4194,7 @@ public final class JsonApiServer extends AbstractPage {
 
             final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
-            final User chartUser = userDao.findById(sessionUser.getId());
+            final User chartUser = userDao.findById(sessionUserDbKey);
 
             if (chartType.equalsIgnoreCase("dashboard-piechart")) {
                 chartData = StatsPageTotalPanel.jqplotPieChart(chartUser);
@@ -4265,9 +4267,11 @@ public final class JsonApiServer extends AbstractPage {
          */
         String authenticatedUser = null;
 
-        if (SpSession.get() != null && SpSession.get().getUser() != null) {
+        final SpSession session = SpSession.get();
 
-            authenticatedUser = SpSession.get().getUser().getUserId();
+        if (session != null && session.getUserId() != null) {
+
+            authenticatedUser = session.getUserId();
 
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("User [" + authenticatedUser

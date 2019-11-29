@@ -1147,7 +1147,7 @@ public class OutboxAddin extends AbstractUserPage {
                 if (user == null) {
                     // Do not use job.getUserId(), because == null.
                     userWlk = USER_DAO
-                            .findById(SpSession.get().getUser().getId());
+                            .findById(SpSession.get().getUserDbKey());
                 } else {
                     userWlk = user;
                 }
@@ -1514,7 +1514,7 @@ public class OutboxAddin extends AbstractUserPage {
                 userKey = parms.getParameterValue(PAGE_PARM_USERKEY)
                         .toOptionalLong();
             } else {
-                userKey = session.getUser().getId();
+                userKey = session.getUserDbKey();
             }
 
             daoContext.beginTransaction();

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -67,7 +67,7 @@ public final class ReqUserSetDelegateAccountsPreferredSelect
 
         final DtoReq dto = DtoReq.create(DtoReq.class, this.getParmValueDto());
 
-        final User dbUser = USER_DAO.findById(this.getSessionUser().getId());
+        final User dbUser = USER_DAO.findById(this.getSessionUserDbKey());
 
         final UserAttrEnum attrName =
                 UserAttrEnum.PROXY_PRINT_DELEGATE_ACCOUNTS_PREFERRED_SELECT;

@@ -27,6 +27,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -64,7 +65,7 @@ public class PdfProperties extends AbstractUserPage {
                 ConfigManager.isEcoPrintEnabled());
 
         //
-        final org.savapage.core.jpa.User user = SpSession.get().getUser();
+        final UserIdDto user = SpSession.get().getUserIdDto();
 
         final List<ACLPermissionEnum> permissions =
                 ACCESS_CONTROL_SERVICE.getPermission(user, ACLOidEnum.U_INBOX);

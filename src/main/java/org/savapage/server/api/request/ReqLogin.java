@@ -247,19 +247,22 @@ public final class ReqLogin extends ApiRequestMixin {
          * Browser diagnostics.
          */
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Browser detection for [" + authId + "] Mobile ["
-                    + userAgentHelper.isMobileBrowser() + "] Mobile Safari ["
-                    + userAgentHelper.isSafariBrowserMobile() + "] UserAgent ["
-                    + userAgentHelper.getUserAgentHeader() + "]");
+            LOGGER.trace(
+                    "HTML Browser AuthID [{}] Mobile [{}] "
+                            + "Mobile Safari [{}] macOS Safari [{}]"
+                            + " UserAgent [{}]",
+                    authId, userAgentHelper.isMobileBrowser(),
+                    userAgentHelper.isSafariBrowserMobile(),
+                    userAgentHelper.isSafariBrowserMacOsX(),
+                    userAgentHelper.getUserAgentHeader());
         }
 
         final ConfigManager cm = ConfigManager.instance();
         final SpSession session = SpSession.get();
 
         if (LOGGER.isTraceEnabled()) {
-            String testLog = "Session [" + session.getId() + "]";
-            testLog += " WebAppCount [" + session.getAuthWebAppCount() + "]";
-            LOGGER.trace(testLog);
+            LOGGER.trace("Session [{}] WebAppCount [{}]", session.getId(),
+                    session.getAuthWebAppCount());
         }
 
         /*
@@ -330,7 +333,7 @@ public final class ReqLogin extends ApiRequestMixin {
             // We need the JPA attached User.
             final User userDb;
 
-            if (session.getUser() == null) {
+            if (session.getUserId() == null) {
                 /*
                  * User logged out?
                  */
@@ -339,8 +342,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 /*
                  * User was authenticated by OAuth provider.
                  */
-                userDb = userDao
-                        .findActiveUserByUserId(session.getUser().getUserId());
+                userDb = userDao.findActiveUserByUserId(session.getUserId());
             }
 
             if (userDb == null) {
@@ -359,7 +361,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 }
 
                 onUserLoginGranted(getUserData(), session, webAppType, authMode,
-                        session.getUser().getUserId(), userDb, token);
+                        session.getUserId(), userDb, token);
 
                 setApiResultOk();
             }
@@ -371,22 +373,21 @@ public final class ReqLogin extends ApiRequestMixin {
              * the user in the active session.
              */
             if ((!isAuthTokenLoginEnabled || session.isOneTimeAuthToken())
-                    && session.getUser() != null) {
+                    && session.getUserId() != null) {
 
                 /*
                  * INVARIANT: User must exist in database.
                  */
 
                 // We need the JPA attached User.
-                final User userDb = userDao
-                        .findActiveUserByUserId(session.getUser().getUserId());
+                final User userDb =
+                        userDao.findActiveUserByUserId(session.getUserId());
 
                 if (userDb == null) {
                     onLoginFailed(null);
                 } else {
                     onUserLoginGranted(getUserData(), session, webAppType,
-                            authMode, session.getUser().getUserId(), userDb,
-                            null);
+                            authMode, session.getUserId(), userDb, null);
                     setApiResultOk();
                 }
 
@@ -397,8 +398,8 @@ public final class ReqLogin extends ApiRequestMixin {
                 if (isAuthTokenLoginEnabled && authMode == UserAuthModeEnum.NAME
                         && StringUtils.isBlank(authPw)) {
                     isCliAppAuthApplied =
-                            this.reqLoginAuthTokenCliApp(getUserData(), authId,
-                                    this.getRemoteAddr(), webAppType);
+                            this.reqLoginAuthTokenCliApp(session, getUserData(),
+                                    authId, this.getRemoteAddr(), webAppType);
                 } else {
                     isCliAppAuthApplied = false;
                 }
@@ -410,11 +411,12 @@ public final class ReqLogin extends ApiRequestMixin {
                             && StringUtils.isBlank(authPw)
                             && StringUtils.isNotBlank(authToken)) {
 
-                        reqLoginAuthTokenWebApp(authId, authToken, webAppType);
+                        reqLoginAuthTokenWebApp(session, authId, authToken,
+                                webAppType);
 
                     } else {
-                        reqLoginNew(authMode, authId, authPw, assocCardNumber,
-                                webAppType);
+                        reqLoginNew(session, authMode, authId, authPw,
+                                assocCardNumber, webAppType);
                     }
                 }
             }
@@ -423,13 +425,13 @@ public final class ReqLogin extends ApiRequestMixin {
         /*
          * INVARIANT: If system maintenance the only login possible is as admin.
          */
-        if (ConfigManager.isSysMaintenance() && session.getUser() != null
-                && !session.getUser().getAdmin().booleanValue()) {
+        if (ConfigManager.isSysMaintenance() && session.getUserId() != null
+                && !session.isAdmin()) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-login-not-possible");
             return;
         }
 
-        getUserData().put("sessionid", SpSession.get().getId());
+        getUserData().put("sessionid", session.getId());
 
         //
         final EnumSet<ApiResultCodeEnum> validResultCodes;
@@ -442,9 +444,19 @@ public final class ReqLogin extends ApiRequestMixin {
         }
 
         if (isApiResultCode(validResultCodes)) {
+
             this.setSessionTimeoutSeconds(webAppType);
+
             session.setWebAppType(webAppType);
-            session.incrementAuthWebApp();
+            session.incrementAuthWebAppCount();
+
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(
+                        "Increment user [{}] in session [{}] of {} WebApp"
+                                + ": {}",
+                        session.getUserId(), session.getId(),
+                        webAppType.toString(), session.getAuthWebAppCount());
+            }
         }
     }
 
@@ -467,6 +479,8 @@ public final class ReqLogin extends ApiRequestMixin {
      * <li>User MUST be active (enabled) at moment of login.</li>
      * </ul>
      *
+     * @param session
+     *            {@link SpSession}.
      * @param authMode
      *            The authentication mode.
      * @param authId
@@ -483,10 +497,10 @@ public final class ReqLogin extends ApiRequestMixin {
      * @throws IOException
      *             When IO error.
      */
-    private void reqLoginNew(final UserAuthModeEnum authMode,
-            final String authId, final String authPw,
-            final String assocCardNumber, final WebAppTypeEnum webAppType)
-            throws IOException {
+    private void reqLoginNew(final SpSession session,
+            final UserAuthModeEnum authMode, final String authId,
+            final String authPw, final String assocCardNumber,
+            final WebAppTypeEnum webAppType) throws IOException {
 
         /*
          * INVARIANT: Password can NOT be empty in Name authentication.
@@ -521,7 +535,6 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
-        final SpSession session = SpSession.get();
         final ConfigManager cm = ConfigManager.instance();
 
         final IExternalUserAuthenticator userAuthenticator =
@@ -1033,8 +1046,7 @@ public final class ReqLogin extends ApiRequestMixin {
             LOGGER.trace(String.format(
                     "Setting user [%s] in session of %s WebApp"
                             + ": isAuthenticated [%s]",
-                    uid, webAppType.toString(),
-                    SpSession.get().isAuthenticated()));
+                    uid, webAppType.toString(), session.isAuthenticated()));
         }
     }
 
@@ -1085,16 +1097,20 @@ public final class ReqLogin extends ApiRequestMixin {
     /**
      * Tries to login with WebApp authentication token.
      *
+     * @param session
+     *            {@link SpSession}.
      * @param uid
+     *            userid.
      * @param authtoken
+     *            token.
      * @param webAppType
      *            The {@link WebAppTypeEnum}.
      * @throws IOException
      *             When IO error.
      */
-    private void reqLoginAuthTokenWebApp(final String uid,
-            final String authtoken, final WebAppTypeEnum webAppType)
-            throws IOException {
+    private void reqLoginAuthTokenWebApp(final SpSession session,
+            final String uid, final String authtoken,
+            final WebAppTypeEnum webAppType) throws IOException {
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
@@ -1132,12 +1148,10 @@ public final class ReqLogin extends ApiRequestMixin {
                         .format("WebApp AuthToken Login [%s] granted.", uid));
             }
 
-            final SpSession session = SpSession.get();
-
             session.setUser(userDb);
 
             onUserLoginGranted(getUserData(), session, webAppType, null, uid,
-                    session.getUser(), authTokenObj);
+                    userDb, authTokenObj);
 
             setApiResultOk();
 
@@ -1198,6 +1212,8 @@ public final class ReqLogin extends ApiRequestMixin {
     /**
      * Tries to login with Client App authentication token.
      *
+     * @param session
+     *            {@link SpSession}.
      * @param userData
      *            The user data to be filled after applying the authentication
      *            method. If method is NOT applied, the userData in not touched.
@@ -1212,9 +1228,10 @@ public final class ReqLogin extends ApiRequestMixin {
      * @throws IOException
      *             When IO error.
      */
-    private boolean reqLoginAuthTokenCliApp(final Map<String, Object> userData,
-            final String userId, final String clientIpAddress,
-            final WebAppTypeEnum webAppType) throws IOException {
+    private boolean reqLoginAuthTokenCliApp(final SpSession session,
+            final Map<String, Object> userData, final String userId,
+            final String clientIpAddress, final WebAppTypeEnum webAppType)
+            throws IOException {
 
         /*
          * INVARIANT: authenticate for User Web App only.
@@ -1274,15 +1291,13 @@ public final class ReqLogin extends ApiRequestMixin {
                         "CliApp AuthToken Login [" + userId + "] granted.");
             }
 
-            final SpSession session = SpSession.get();
-
             session.setUser(userDb);
 
             final UserAuthToken authTokenWebApp =
                     reqLoginLazyCreateAuthToken(userId, webAppType);
 
             onUserLoginGranted(userData, session, webAppType, null, userId,
-                    session.getUser(), authTokenWebApp);
+                    userDb, authTokenWebApp);
 
             setApiResultOk();
 

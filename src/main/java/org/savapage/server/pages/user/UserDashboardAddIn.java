@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         final SpSession session = SpSession.get();
 
         final org.savapage.core.jpa.User user = ServiceContext.getDaoContext()
-                .getUserDao().findById(session.getUser().getId());
+                .getUserDao().findById(session.getUserDbKey());
 
         final MarkupHelper helper = new MarkupHelper(this);
 
@@ -124,7 +124,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         final String keyTitleFinancial = "title-financial";
 
         final Integer financialPriv = ACCESS_CONTROL_SERVICE.getPrivileges(
-                SpSession.get().getUser(), ACLOidEnum.U_FINANCIAL);
+                SpSession.get().getUserIdDto(), ACLOidEnum.U_FINANCIAL);
 
         if (financialPriv == null
                 || ACLPermissionEnum.READER.isPresent(financialPriv)) {

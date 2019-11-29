@@ -684,7 +684,7 @@ public final class AccountTrxPage extends AbstractListPage {
              * If we are called in a User WebApp context we ALWAYS use the user
              * of the current session.
              */
-            userId = SpSession.get().getUser().getId();
+            userId = SpSession.get().getUserDbKey();
         }
 
         filter.setUserId(userId);

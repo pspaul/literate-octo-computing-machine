@@ -95,7 +95,7 @@ public final class AccountTrxBase extends AbstractAuthPage {
              * If we are called in a User WebApp context we ALWAYS use the user
              * of the current session.
              */
-            userId = SpSession.get().getUser().getId();
+            userId = SpSession.get().getUserDbKey();
         }
 
         //

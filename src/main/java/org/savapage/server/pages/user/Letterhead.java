@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -38,14 +38,13 @@ public class Letterhead extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
+    /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
 
     /**
-     *
+     * @param parameters
+     *            PageParameters.
      */
     public Letterhead(final PageParameters parameters) {
 
@@ -59,9 +58,8 @@ public class Letterhead extends AbstractUserPage {
         if (isAdminUser()) {
             canCreate = true;
         } else {
-            final Integer letterheadPriv =
-                    ACCESS_CONTROL_SERVICE.getPrivileges(
-                            SpSession.get().getUser(), ACLOidEnum.U_LETTERHEAD);
+            final Integer letterheadPriv = ACCESS_CONTROL_SERVICE.getPrivileges(
+                    SpSession.get().getUserIdDto(), ACLOidEnum.U_LETTERHEAD);
             canCreate = letterheadPriv == null || ACLPermissionEnum.EDITOR
                     .isPresent(letterheadPriv.intValue());
         }

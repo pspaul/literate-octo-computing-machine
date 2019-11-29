@@ -78,8 +78,8 @@ public final class AccountsBase extends AbstractAdminPage {
             helper.encloseLabel(WICKET_ID_BUTTON_NEW,
                     HtmlButtonEnum.ADD.uiText(getLocale()),
                     ACCESS_CONTROL_SERVICE.hasPermission(
-                            SpSession.get().getUser(), ACLOidEnum.A_ACCOUNTS,
-                            ACLPermissionEnum.EDITOR));
+                            SpSession.get().getUserIdDto(),
+                            ACLOidEnum.A_ACCOUNTS, ACLPermissionEnum.EDITOR));
             helper.discloseLabel(WICKET_ID_TXT_NOT_READY);
 
         } else {

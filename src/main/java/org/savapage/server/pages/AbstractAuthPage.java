@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -101,13 +101,13 @@ public abstract class AbstractAuthPage extends AbstractPage {
 
         final String message;
 
-        if (session.getUser() == null) {
+        if (session.getUserId() == null) {
             message = "Unknown user.";
         } else if (webAppTypeAuth != null && webAppTypeAuth != webAppTypeReq) {
             message = "Wrong Web App Type.";
         } else {
             message = null;
-            this.adminUser = session.getUser().getAdmin();
+            this.adminUser = session.isAdmin();
         }
 
         if (message != null) {
@@ -128,7 +128,7 @@ public abstract class AbstractAuthPage extends AbstractPage {
                 }
             } else {
                 LOGGER.error("User [{}] is not authorized.",
-                        SpSession.get().getUser().getUserId());
+                        session.getUserId());
 
                 throw new RestartResponseException(SessionExpired.class);
             }

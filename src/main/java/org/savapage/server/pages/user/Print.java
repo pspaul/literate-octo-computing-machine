@@ -47,6 +47,7 @@ import org.savapage.core.dto.JobTicketLabelDomainPartDto;
 import org.savapage.core.dto.JobTicketTagDto;
 import org.savapage.core.dto.JobTicketUseDto;
 import org.savapage.core.dto.SharedAccountDto;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
@@ -267,10 +268,10 @@ public class Print extends AbstractUserPage {
         //
         boolean hasInvoicingOptions = false;
 
-        final org.savapage.core.jpa.User user = SpSession.get().getUser();
+        final UserIdDto userIdDto = SpSession.get().getUserIdDto();
 
-        final boolean isPrintDelegate = ACCESS_CONTROL_SERVICE.hasAccess(user,
-                ACLRoleEnum.PRINT_DELEGATE);
+        final boolean isPrintDelegate = ACCESS_CONTROL_SERVICE
+                .hasAccess(userIdDto, ACLRoleEnum.PRINT_DELEGATE);
 
         addVisible(isPrintDelegate, "button-print-delegation",
                 PrintOutNounEnum.COPY.uiText(getLocale(), true));
@@ -299,7 +300,7 @@ public class Print extends AbstractUserPage {
                 DocStoreBranchEnum.OUT_PRINT)) {
 
             final Integer privsArchive = ACCESS_CONTROL_SERVICE
-                    .getPrivileges(user, ACLOidEnum.U_PRINT_ARCHIVE);
+                    .getPrivileges(userIdDto, ACLOidEnum.U_PRINT_ARCHIVE);
 
             if (privsArchive == null) {
                 isArchive = true;
@@ -335,16 +336,16 @@ public class Print extends AbstractUserPage {
 
         //
         final Integer privsLetterhead = ACCESS_CONTROL_SERVICE
-                .getPrivileges(user, ACLOidEnum.U_LETTERHEAD);
+                .getPrivileges(userIdDto, ACLOidEnum.U_LETTERHEAD);
 
         helper.encloseLabel("prompt-letterhead", localized("prompt-letterhead"),
                 privsLetterhead == null || ACLPermissionEnum.READER
                         .isPresent(privsLetterhead.intValue()));
 
         //
-        if (ACCESS_CONTROL_SERVICE.hasAccess(user,
+        if (ACCESS_CONTROL_SERVICE.hasAccess(userIdDto,
                 ACLRoleEnum.JOB_TICKET_CREATOR)
-                && !ACCESS_CONTROL_SERVICE.hasAccess(user,
+                && !ACCESS_CONTROL_SERVICE.hasAccess(userIdDto,
                         ACLRoleEnum.PRINT_CREATOR)) {
             add(new Label("title", localized("title_ticket")));
         } else {
@@ -364,13 +365,14 @@ public class Print extends AbstractUserPage {
         }
 
         //
-        final boolean allowPersonalPrint = ACCESS_CONTROL_SERVICE.hasPermission(
-                user, ACLOidEnum.U_PERSONAL_PRINT, ACLPermissionEnum.READER);
+        final boolean allowPersonalPrint =
+                ACCESS_CONTROL_SERVICE.hasPermission(userIdDto,
+                        ACLOidEnum.U_PERSONAL_PRINT, ACLPermissionEnum.READER);
 
         final UserGroupAccountDao.ListFilter filter =
                 new UserGroupAccountDao.ListFilter();
 
-        filter.setUserId(SpSession.get().getUser().getId());
+        filter.setUserId(SpSession.get().getUserIdDto().getDbKey());
         filter.setDisabled(Boolean.FALSE);
 
         final List<SharedAccountDto> sharedAccounts =
@@ -382,7 +384,7 @@ public class Print extends AbstractUserPage {
                 LOGGER.warn(
                         "User [{}] is not authorized for Personal "
                                 + "and Shared Account Print.",
-                        user.getUserId());
+                        userIdDto.getUserId());
                 throw new RestartResponseException(
                         new PageIllegalState(AppLogLevelEnum.ERROR,
                                 "Not authorized for Personal Print."));
@@ -429,7 +431,7 @@ public class Print extends AbstractUserPage {
             if (!jobTicketDomains.isEmpty()) {
 
                 final JobTicketProperties ticketProps =
-                        USER_SERVICE.getJobTicketPropsLatest(user);
+                        USER_SERVICE.getJobTicketPropsLatest(userIdDto);
 
                 helper.encloseLabel("label-jobticket-domain",
                         JobTicketNounEnum.DOMAIN.uiText(getLocale()), true);

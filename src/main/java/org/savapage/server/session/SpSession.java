@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ import org.apache.wicket.request.Request;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.OneTimeAuthToken;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.jpa.User;
 
 /**
@@ -42,7 +43,7 @@ import org.savapage.core.jpa.User;
  * single browser</i>.
  * </p>
  * <p>
- * NOTE: methods are synchronized, because sessions aren’t thread-safe.
+ * NOTE: synchronized statements are used because sessions aren’t thread-safe.
  * </p>
  *
  * @author Rijk Ravestein
@@ -60,10 +61,11 @@ public final class SpSession extends WebSession {
      */
     private static final String SESSION_ATTR_WEBAPP_TYPE = "sp-webapp-type";
 
-    /**
-    *
-    */
-    private User user;
+    /** */
+    private final Object mutex = new Object();
+
+    /** */
+    private UserIdDto userIdDto;
 
     /**
      * {@code true} when authenticated by {@link OneTimeAuthToken}.
@@ -117,16 +119,20 @@ public final class SpSession extends WebSession {
     /**
      * Increments the authenticated Web App counter.
      */
-    public void incrementAuthWebApp() {
-        this.authWebAppCount++;
+    public void incrementAuthWebAppCount() {
+        synchronized (this.mutex) {
+            this.authWebAppCount++;
+        }
     }
 
     /**
      * Decrements the authenticated Web App counter.
      */
-    public void decrementAuthWebApp() {
-        if (this.authWebAppCount > 0) {
-            this.authWebAppCount--;
+    public void decrementAuthWebAppCount() {
+        synchronized (this.mutex) {
+            if (this.authWebAppCount > 0) {
+                this.authWebAppCount--;
+            }
         }
     }
 
@@ -134,7 +140,9 @@ public final class SpSession extends WebSession {
      * @return The authenticated Web App counter.
      */
     public int getAuthWebAppCount() {
-        return this.authWebAppCount;
+        synchronized (this.mutex) {
+            return this.authWebAppCount;
+        }
     }
 
     /**
@@ -154,9 +162,9 @@ public final class SpSession extends WebSession {
      * @return The decimal separator.
      */
     public static String getDecimalSeparator() {
-        DecimalFormat format = (DecimalFormat) NumberFormat
+        final DecimalFormat format = (DecimalFormat) NumberFormat
                 .getNumberInstance(get().getLocale());
-        DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+        final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         return String.valueOf(symbols.getDecimalSeparator());
     }
 
@@ -164,24 +172,56 @@ public final class SpSession extends WebSession {
      *
      * @return The user.
      */
-    public synchronized User getUser() {
-        return user;
+    public UserIdDto getUserIdDto() {
+        synchronized (this.mutex) {
+            return this.userIdDto;
+        }
+    }
+
+    /**
+     * @return The authenticated unique User ID, or {@code null} if no
+     *         authenticated {@link User}.
+     */
+    public String getUserId() {
+        synchronized (this.mutex) {
+            if (this.userIdDto == null) {
+                return null;
+            }
+            return this.userIdDto.getUserId();
+        }
+    }
+
+    /**
+     * @return The primary database key of authenticated User, or {@code null}
+     *         if no authenticated {@link User}.
+     */
+    public Long getUserDbKey() {
+        synchronized (this.mutex) {
+            if (this.userIdDto == null) {
+                return null;
+            }
+            return this.userIdDto.getDbKey();
+        }
     }
 
     /**
      *
      * @return {@code true} if authenticated.
      */
-    public synchronized boolean isAuthenticated() {
-        return user != null;
+    public boolean isAuthenticated() {
+        synchronized (this.mutex) {
+            return this.userIdDto != null;
+        }
     }
 
     /**
      *
      * @return {@code true} if user is an administrator.
      */
-    public synchronized boolean isAdmin() {
-        return user != null && user.getAdmin();
+    public boolean isAdmin() {
+        synchronized (this.mutex) {
+            return this.userIdDto != null && this.userIdDto.isAdmin();
+        }
     }
 
     /**
@@ -189,8 +229,10 @@ public final class SpSession extends WebSession {
      * @return {@code true} if {@link User} was authenticated by
      *         {@link OneTimeAuthToken}.
      */
-    public synchronized boolean isOneTimeAuthToken() {
-        return this.user != null && this.oneTimeAuthToken;
+    public boolean isOneTimeAuthToken() {
+        synchronized (this.mutex) {
+            return this.userIdDto != null && this.oneTimeAuthToken;
+        }
     }
 
     /**
@@ -200,28 +242,30 @@ public final class SpSession extends WebSession {
      *            Max duration (msec) of session before it expires.
      * @return {@code true} when session expired.
      */
-    public synchronized boolean checkTouchExpired(final long timeToLive) {
-
-        final long currentTime = System.currentTimeMillis();
-        final boolean expired =
-                currentTime - this.lastValidateTime > timeToLive;
-        this.lastValidateTime = currentTime;
-        return expired;
+    public boolean checkTouchExpired(final long timeToLive) {
+        synchronized (this.mutex) {
+            final long currentTime = System.currentTimeMillis();
+            final boolean expired =
+                    currentTime - this.lastValidateTime > timeToLive;
+            this.lastValidateTime = currentTime;
+            return expired;
+        }
     }
 
     /**
      * This sets the session {@link User} object to {@code null} and decrements
      * the authenticated webapp counter.
      */
-    public synchronized void logout() {
+    public void logout() {
+        synchronized (this.mutex) {
+            setUser(null);
+            setWebAppType(WebAppTypeEnum.UNDEFINED);
 
-        setUser(null);
-        setWebAppType(WebAppTypeEnum.UNDEFINED);
+            decrementAuthWebAppCount();
 
-        decrementAuthWebApp();
-
-        this.creationTime = System.currentTimeMillis();
-        this.lastValidateTime = this.creationTime;
+            this.creationTime = System.currentTimeMillis();
+            this.lastValidateTime = this.creationTime;
+        }
     }
 
     /**
@@ -248,11 +292,16 @@ public final class SpSession extends WebSession {
      * @param authToken
      *            {@code true} when authenticated by {@link OneTimeAuthToken}.
      */
-    public synchronized void setUser(final User authUser,
-            final boolean authToken) {
-        this.user = authUser;
-        this.oneTimeAuthToken = authToken;
-        dirty();
+    public void setUser(final User authUser, final boolean authToken) {
+        synchronized (this.mutex) {
+            if (authUser == null) {
+                this.userIdDto = null;
+            } else {
+                this.userIdDto = UserIdDto.create(authUser);
+            }
+            this.oneTimeAuthToken = authToken;
+            dirty();
+        }
     }
 
     /**
@@ -261,8 +310,10 @@ public final class SpSession extends WebSession {
      * @param webAppType
      *            The {@link WebAppTypeEnum}.
      */
-    public synchronized void setWebAppType(final WebAppTypeEnum webAppType) {
-        this.setAttribute(SESSION_ATTR_WEBAPP_TYPE, webAppType.toString());
+    public void setWebAppType(final WebAppTypeEnum webAppType) {
+        synchronized (this.mutex) {
+            this.setAttribute(SESSION_ATTR_WEBAPP_TYPE, webAppType.toString());
+        }
     }
 
     /**
@@ -270,18 +321,20 @@ public final class SpSession extends WebSession {
      *
      * @return The {@link WebAppTypeEnum}.
      */
-    public synchronized WebAppTypeEnum getWebAppType() {
-        WebAppTypeEnum webAppType = WebAppTypeEnum.UNDEFINED;
-        final String value =
-                (String) this.getAttribute(SESSION_ATTR_WEBAPP_TYPE);
-        if (value != null) {
-            webAppType = WebAppTypeEnum.valueOf(value);
+    public WebAppTypeEnum getWebAppType() {
+        synchronized (this.mutex) {
+            WebAppTypeEnum webAppType = WebAppTypeEnum.UNDEFINED;
+            final String value =
+                    (String) this.getAttribute(SESSION_ATTR_WEBAPP_TYPE);
+            if (value != null) {
+                webAppType = WebAppTypeEnum.valueOf(value);
+            }
+            return webAppType;
         }
-        return webAppType;
     }
 
     public JobTicketSession getJobTicketSession() {
-        return jobTicketSession;
+        return this.jobTicketSession;
     }
 
     public void setJobTicketSession(JobTicketSession jobTicketSession) {

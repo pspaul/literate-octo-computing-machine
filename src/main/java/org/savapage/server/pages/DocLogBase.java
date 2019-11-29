@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.Printer;
@@ -91,14 +92,16 @@ public final class DocLogBase extends AbstractAuthPage {
 
         if (webAppType == WebAppTypeEnum.JOBTICKETS) {
 
-            if (!ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
+            if (!ACCESS_CONTROL_SERVICE.hasAccess(
+                    SpSession.get().getUserIdDto(),
                     ACLRoleEnum.JOB_TICKET_OPERATOR)) {
                 throw new RestartResponseException(NotAuthorized.class);
             }
 
         } else if (webAppType == WebAppTypeEnum.PRINTSITE) {
 
-            if (!ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
+            if (!ACCESS_CONTROL_SERVICE.hasAccess(
+                    SpSession.get().getUserIdDto(),
                     ACLRoleEnum.PRINT_SITE_OPERATOR)) {
                 throw new RestartResponseException(NotAuthorized.class);
             }
@@ -143,7 +146,7 @@ public final class DocLogBase extends AbstractAuthPage {
              * If we are called in a User WebApp context we ALWAYS use the user
              * of the current session.
              */
-            userId = SpSession.get().getUser().getId();
+            userId = SpSession.get().getUserDbKey();
             userNameVisible = false;
             accountNameVisible = false;
         }
@@ -222,27 +225,27 @@ public final class DocLogBase extends AbstractAuthPage {
 
         } else {
 
-            final User user = SpSession.get().getUser();
+            final UserIdDto userIdDto = SpSession.get().getUserIdDto();
 
             final List<ACLPermissionEnum> permissions = ACCESS_CONTROL_SERVICE
-                    .getPermission(user, ACLOidEnum.U_INBOX);
+                    .getPermission(userIdDto, ACLOidEnum.U_INBOX);
 
-            visibleLetterhead = user != null
+            visibleLetterhead = userIdDto != null
                     && (permissions == null || ACCESS_CONTROL_SERVICE
-                            .hasAccess(user, ACLOidEnum.U_LETTERHEAD));
+                            .hasAccess(userIdDto, ACLOidEnum.U_LETTERHEAD));
 
-            btnVisiblePdf = user != null && (permissions == null
+            btnVisiblePdf = userIdDto != null && (permissions == null
                     || ACCESS_CONTROL_SERVICE.hasPermission(permissions,
                             ACLPermissionEnum.DOWNLOAD)
                     || ACCESS_CONTROL_SERVICE.hasPermission(permissions,
                             ACLPermissionEnum.SEND));
 
-            btnVisiblePrint = !printerList.isEmpty() && user != null
-                    && ACCESS_CONTROL_SERVICE.hasAccess(user,
+            btnVisiblePrint = !printerList.isEmpty() && userIdDto != null
+                    && ACCESS_CONTROL_SERVICE.hasAccess(userIdDto,
                             ACLRoleEnum.PRINT_CREATOR);
 
-            btnVisibleTicket = user != null && ACCESS_CONTROL_SERVICE
-                    .hasAccess(user, ACLRoleEnum.JOB_TICKET_CREATOR);
+            btnVisibleTicket = userIdDto != null && ACCESS_CONTROL_SERVICE
+                    .hasAccess(userIdDto, ACLRoleEnum.JOB_TICKET_CREATOR);
 
             final List<DocLogScopeEnum> typeDefaultOrder =
                     CONFIG_MNGR.getConfigEnumList(DocLogScopeEnum.class,

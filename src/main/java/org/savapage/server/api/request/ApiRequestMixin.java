@@ -37,6 +37,7 @@ import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.json.rpc.ErrorDataBasic;
@@ -264,12 +265,20 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     }
 
     /**
-     * Gets the {@link User} from {@link SpSession}.
+     * Gets the {@link getUserIdDto} from {@link SpSession}.
      *
-     * @return The {@link User}.
+     * @return The {@link getUserIdDto}.
      */
-    protected final User getSessionUser() {
-        return SpSession.get().getUser();
+    protected final UserIdDto getSessionUserIdDto() {
+        return SpSession.get().getUserIdDto();
+    }
+
+    /**
+     * @return The primary database key of authenticated {@link SpSession} User,
+     *         or {@code null} if no authenticated {@link User}.
+     */
+    protected final Long getSessionUserDbKey() {
+        return SpSession.get().getUserDbKey();
     }
 
     /**
@@ -659,6 +668,5 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
         fillEventCommon(event, requestingUser, user, dto);
         return event;
     }
-
 
 }

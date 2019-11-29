@@ -83,7 +83,7 @@ public final class SpRequestCycleListener implements IRequestCycleListener {
          * is why we do it here, so we can continue with F5 (refresh page),
          * which is convenient at development.
          */
-        SpSession.get().decrementAuthWebApp();
+        SpSession.get().decrementAuthWebAppCount();
 
         final Logger logger = LoggerFactory.getLogger(this.getClass());
         logger.error(ex.getMessage(), ex);

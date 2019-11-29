@@ -418,9 +418,9 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         final String userid = UserAliasList.instance().getUserName(useridRaw);
 
-        final User sessionUser = SpSession.get().getUser();
+        final String sessionUserId = SpSession.get().getUserId();
 
-        if (sessionUser != null && sessionUser.getUserId().equals(userid)) {
+        if (sessionUserId != null && sessionUserId.equals(userid)) {
             return;
         }
 

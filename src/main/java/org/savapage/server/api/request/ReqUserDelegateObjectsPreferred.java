@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -82,6 +82,6 @@ public abstract class ReqUserDelegateObjectsPreferred extends ApiRequestMixin {
      */
     protected final User getDbUser() {
         return ServiceContext.getDaoContext().getUserDao()
-                .findById(this.getSessionUser().getId());
+                .findById(this.getSessionUserDbKey());
     }
 }

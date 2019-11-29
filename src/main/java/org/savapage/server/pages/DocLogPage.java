@@ -115,10 +115,10 @@ public final class DocLogPage extends AbstractListPage {
                  * If we are called in a User WebApp context we ALWAYS use the
                  * user of the current session.
                  */
-                userId = SpSession.get().getUser().getId();
+                userId = SpSession.get().getUserDbKey();
 
                 showFinancialData = ACCESS_CONTROL_SERVICE.hasAccess(
-                        SpSession.get().getUser(), ACLOidEnum.U_FINANCIAL);
+                        SpSession.get().getUserIdDto(), ACLOidEnum.U_FINANCIAL);
             }
         } else {
             showFinancialData = true;

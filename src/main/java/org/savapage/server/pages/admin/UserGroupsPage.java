@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,8 +34,8 @@ import org.savapage.core.dao.UserGroupMemberDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserGroupPagerReq;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
-import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.AccountingService;
@@ -124,12 +124,12 @@ public final class UserGroupsPage extends AbstractAdminListPage {
 
             this.isEditor = isEditor;
 
-            final User reqUser = SpSession.get().getUser();
+            final UserIdDto reqUserDto = SpSession.get().getUserIdDto();
 
-            this.hasAccessAcc = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
+            this.hasAccessAcc = ACCESS_CONTROL_SERVICE.hasAccess(reqUserDto,
                     ACLOidEnum.A_ACCOUNTS);
 
-            this.hasAccessUsers = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
+            this.hasAccessUsers = ACCESS_CONTROL_SERVICE.hasAccess(reqUserDto,
                     ACLOidEnum.A_USERS);
         }
 

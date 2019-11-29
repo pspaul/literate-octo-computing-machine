@@ -78,7 +78,7 @@ public final class ReqSharedAccountQuickSearch extends ReqQuickSearchMixin {
         final int currPosition = dto.getStartPosition();
 
         final User dbUser = ServiceContext.getDaoContext().getUserDao()
-                .findById(this.getSessionUser().getId());
+                .findById(this.getSessionUserDbKey());
 
         final Set<Long> preferredAccounts =
                 USER_SERVICE.getPreferredDelegateAccounts(dbUser);

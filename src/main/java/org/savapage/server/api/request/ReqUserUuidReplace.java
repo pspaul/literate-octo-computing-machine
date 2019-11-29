@@ -40,12 +40,17 @@ public final class ReqUserUuidReplace extends ApiRequestMixin {
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final User user = this.getSessionUser();
+        final User jpaUser;
+        if (lockedUser == null) {
+            jpaUser = USER_DAO.findById(this.getSessionUserDbKey());
+        } else {
+            jpaUser = lockedUser;
+        }
 
-        final String encryptedUuid = CryptoUser.encryptUserAttr(user.getId(),
+        final String encryptedUuid = CryptoUser.encryptUserAttr(jpaUser.getId(),
                 UUID.randomUUID().toString());
 
-        USER_SERVICE.setUserAttrValue(this.getSessionUser(), UserAttrEnum.UUID,
+        USER_SERVICE.setUserAttrValue(jpaUser, UserAttrEnum.UUID,
                 encryptedUuid);
 
         this.setApiResultOk();

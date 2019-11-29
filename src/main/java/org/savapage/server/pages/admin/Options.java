@@ -153,9 +153,9 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.LDAP_TYPE_V_E_DIR);
 
         if (GSuiteLdapClient.isConfigured()) {
-        labelledRadio("ldap-schema-type", "-gsuite",
-                IConfigProp.Key.LDAP_SCHEMA_TYPE,
-                IConfigProp.LDAP_TYPE_V_G_SUITE);
+            labelledRadio("ldap-schema-type", "-gsuite",
+                    IConfigProp.Key.LDAP_SCHEMA_TYPE,
+                    IConfigProp.LDAP_TYPE_V_G_SUITE);
         } else {
             helper.discloseLabel("ldap-schema-type-gsuite");
         }
@@ -1053,8 +1053,9 @@ public final class Options extends AbstractAdminPage {
         this.setReadOnlyAccess(helper, isReadOnlyAccess);
 
         if (!isReadOnlyAccess) {
-            if (ACCESS_CONTROL_SERVICE.hasPermission(SpSession.get().getUser(),
-                    ACLOidEnum.A_CONFIG_EDITOR, ACLPermissionEnum.READER)) {
+            if (ACCESS_CONTROL_SERVICE.hasPermission(
+                    SpSession.get().getUserIdDto(), ACLOidEnum.A_CONFIG_EDITOR,
+                    ACLPermissionEnum.READER)) {
                 helper.encloseLabel("btn-config-editor",
                         localized("button-config-editor"), true);
             } else {

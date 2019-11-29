@@ -76,7 +76,13 @@ public final class ReqPdfPropsSetValidate extends ApiRequestMixin {
             return;
         }
 
-        USER_SERVICE.setPdfProperties(this.getSessionUser(), pdfProp);
+        final User jpaUser;
+        if (lockedUser == null) {
+            jpaUser = USER_DAO.findById(this.getSessionUserDbKey());
+        } else {
+            jpaUser = lockedUser;
+        }
+        USER_SERVICE.setPdfProperties(jpaUser, pdfProp);
         this.setApiResultOk();
     }
 

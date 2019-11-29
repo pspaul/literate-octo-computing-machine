@@ -22,10 +22,10 @@
 package org.savapage.server.pages.user;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.server.pages.MarkupHelper;
@@ -57,14 +57,14 @@ public final class UserDashboard extends AbstractUserPage {
 
         super(parameters);
 
-        final org.savapage.core.jpa.User authUser = SpSession.get().getUser();
+        final UserIdDto authUser = SpSession.get().getUserIdDto();
 
         final boolean canResetPassword;
 
-        if (BooleanUtils.isTrue(authUser.getInternal())) {
+        if (authUser.isInternalUser()) {
 
             final org.savapage.core.jpa.User jpaUser = ServiceContext
-                    .getDaoContext().getUserDao().findById(authUser.getId());
+                    .getDaoContext().getUserDao().findById(authUser.getDbKey());
 
             canResetPassword = ConfigManager.instance()
                     .isConfigValue(Key.INTERNAL_USERS_CAN_CHANGE_PW)

@@ -275,7 +275,7 @@ public final class PrintersPage extends AbstractAdminListPage {
 
             this.isEditor = isEditor;
             this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(
-                    SpSession.get().getUser(), ACLOidEnum.A_DOCUMENTS);
+                    SpSession.get().getUserIdDto(), ACLOidEnum.A_DOCUMENTS);
 
             this.showSnmp = ConfigManager.instance()
                     .isConfigValue(Key.PRINTER_SNMP_ENABLE);
@@ -595,7 +595,8 @@ public final class PrintersPage extends AbstractAdminListPage {
             labelWrk = createVisibleLabel(deviceUriImgUrl != null,
                     "deviceUriImg", "");
             if (deviceUriImgUrl != null) {
-                labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_SRC, deviceUriImgUrl));
+                labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_SRC,
+                        deviceUriImgUrl));
             }
             item.add(labelWrk);
 

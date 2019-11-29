@@ -533,7 +533,7 @@ public abstract class AbstractPage extends WebPage
             final ACLOidEnum oid, final ACLPermissionEnum permission) {
 
         final List<ACLPermissionEnum> perms = ACCESS_CONTROL_SERVICE
-                .getPermission(SpSession.get().getUser(), oid);
+                .getPermission(SpSession.get().getUserIdDto(), oid);
 
         if (perms == null) {
             return null;

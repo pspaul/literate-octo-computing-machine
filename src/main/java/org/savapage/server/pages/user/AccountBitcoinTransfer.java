@@ -88,7 +88,7 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
                 plugin.getId());
 
         //
-        final String userId = SpSession.get().getUser().getUserId();
+        final String userId = SpSession.get().getUserId();
 
         final DaoContext daoCtx = ServiceContext.getDaoContext();
         daoCtx.beginTransaction();

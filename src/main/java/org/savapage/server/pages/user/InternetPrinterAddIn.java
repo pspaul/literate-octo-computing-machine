@@ -72,7 +72,7 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
          * Session).
          */
         final org.savapage.core.jpa.User user =
-                userDao.findById(SpSession.get().getUser().getId());
+                userDao.findById(SpSession.get().getUserDbKey());
 
         final String userNumber = USER_SERVICE.getPrimaryIdNumber(user);
         final String userUuid =

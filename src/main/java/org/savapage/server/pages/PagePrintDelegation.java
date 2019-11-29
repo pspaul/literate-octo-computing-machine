@@ -108,8 +108,8 @@ public final class PagePrintDelegation extends AbstractPage {
                 Key.PROXY_PRINT_DELEGATE_MULTIPLE_MEMBER_COPIES_ENABLE));
 
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_ENABLE)
-                && ACCESS_CONTROL_SERVICE
-                        .hasSharedAccountAccess(SpSession.get().getUser())) {
+                && ACCESS_CONTROL_SERVICE.hasSharedAccountAccess(
+                        SpSession.get().getUserIdDto())) {
 
             helper.addModifyLabelAttr("radio-account-shared",
                     MarkupHelper.ATTR_VALUE,
@@ -218,7 +218,7 @@ public final class PagePrintDelegation extends AbstractPage {
      */
     private User startUserTrx(final DaoContext ctx) {
         final User dbUser = ServiceContext.getDaoContext().getUserDao()
-                .findById(SpSession.get().getUser().getId());
+                .findById(SpSession.get().getUserDbKey());
         ctx.beginTransaction();
         return dbUser;
     }

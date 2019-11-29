@@ -259,7 +259,7 @@ public final class QueuesPage extends AbstractAdminListPage {
 
             this.isEditor = isEditor;
             this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(
-                    SpSession.get().getUser(), ACLOidEnum.A_DOCUMENTS);
+                    SpSession.get().getUserIdDto(), ACLOidEnum.A_DOCUMENTS);
         }
 
         @Override

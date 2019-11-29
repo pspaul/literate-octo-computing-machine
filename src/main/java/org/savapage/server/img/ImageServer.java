@@ -90,7 +90,7 @@ public final class ImageServer extends WebPage implements ServiceEntryPoint {
         try {
 
             if (session.isAuthenticated() && url.getUser() != null
-                    && session.getUser().getUserId().equals(url.getUser())) {
+                    && session.getUserId().equals(url.getUser())) {
 
                 file = getImageFile(url);
 

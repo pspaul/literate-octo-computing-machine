@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ public final class ReqUserGetDelegateGroupsPreferredSelect
             throws IOException {
 
         final User dbUser = ServiceContext.getDaoContext().getUserDao()
-                .findById(this.getSessionUser().getId());
+                .findById(this.getSessionUserDbKey());
 
         final String value = USER_SERVICE.getUserAttrValue(dbUser,
                 UserAttrEnum.PROXY_PRINT_DELEGATE_GROUPS_PREFERRED_SELECT);

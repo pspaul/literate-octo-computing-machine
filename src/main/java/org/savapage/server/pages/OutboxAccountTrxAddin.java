@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
             final String userid;
 
             if (getSessionWebAppType() == WebAppTypeEnum.USER) {
-                userid = SpSession.get().getUser().getUserId();
+                userid = SpSession.get().getUserId();
             } else {
                 final User user = ServiceContext.getDaoContext().getUserDao()
                         .findActiveUserById(this.getParmLong(PARM_USER_DB_ID));
@@ -131,7 +131,7 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
         } else {
             if (outboxJob.getAccountTransactions() == null
                     && outboxJob.getUserId() == null) {
-                outboxJob.setUserId(SpSession.get().getUser().getId());
+                outboxJob.setUserId(SpSession.get().getUserDbKey());
             }
             trxList = ServiceContext.getServiceFactory().getAccountingService()
                     .createAccountTrxsUI(outboxJob);

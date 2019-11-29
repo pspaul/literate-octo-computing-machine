@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -111,7 +111,7 @@ public class PrinterSettings extends AbstractUserPage {
 
         helper.addButton("button-inbox", HtmlButtonEnum.BACK);
 
-        if (ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
+        if (ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUserIdDto(),
                 ACLRoleEnum.PRINT_DELEGATE)) {
             helper.addLabel("button-next-invoicing", NounEnum.INVOICING);
         } else {

@@ -89,7 +89,7 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
             final Long aclRoleUserExt;
             if (dto.getAclRole() == ACLRoleEnum.PRINT_DELEGATOR) {
                 // Add session as delegator.
-                aclRoleUserExt = this.getSessionUser().getId();
+                aclRoleUserExt = this.getSessionUserDbKey();
             } else {
                 aclRoleUserExt = null;
             }

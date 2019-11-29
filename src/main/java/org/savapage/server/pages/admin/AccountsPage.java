@@ -122,7 +122,7 @@ public final class AccountsPage extends AbstractAdminListPage {
 
             this.isEditor = isEditor;
             this.hasAccessTrx = ACCESS_CONTROL_SERVICE.hasAccess(
-                    SpSession.get().getUser(), ACLOidEnum.A_TRANSACTIONS);
+                    SpSession.get().getUserIdDto(), ACLOidEnum.A_TRANSACTIONS);
             this.hasPaperCutUserAccountView =
                     UserAccountContextFactory.hasContextPaperCut();
         }

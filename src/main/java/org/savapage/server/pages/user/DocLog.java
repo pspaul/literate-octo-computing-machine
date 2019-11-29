@@ -57,7 +57,7 @@ public class DocLog extends AbstractUserPage {
         final MarkupHelper helper = new MarkupHelper(this);
         final String wicketId = "button-transactions";
 
-        if (ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUser(),
+        if (ACCESS_CONTROL_SERVICE.hasAccess(SpSession.get().getUserIdDto(),
                 ACLOidEnum.U_FINANCIAL)) {
             helper.addLabel(wicketId,
                     NounEnum.TRANSACTION.uiText(getLocale(), true));

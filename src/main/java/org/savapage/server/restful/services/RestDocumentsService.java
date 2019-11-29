@@ -437,8 +437,8 @@ public final class RestDocumentsService implements IRestService {
             docContentPrintReq.setProtocol(DocLogProtocolEnum.HTTP);
             docContentPrintReq.setTitle(disp.getFileName());
 
-            QUEUE_SERVICE.printDocContent(ReservedIppQueueEnum.WEBSERVICE, user,
-                    true, docContentPrintReq, istr);
+            QUEUE_SERVICE.printDocContent(ReservedIppQueueEnum.WEBSERVICE,
+                    user.getUserId(), true, docContentPrintReq, istr);
 
         } catch (RestAuthException e) {
             return printDocumentWarn(Response.Status.UNAUTHORIZED,

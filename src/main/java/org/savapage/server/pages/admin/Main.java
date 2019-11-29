@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import org.savapage.core.SpException;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
-import org.savapage.core.jpa.User;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.CommunityStatusFooterPanel;
@@ -71,7 +71,7 @@ public final class Main extends AbstractAdminPage {
                 CommunityDictEnum.SAVAPAGE_DOT_ORG.getWord(), "href",
                 CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG_URL.getWord());
 
-        handleACL(helper, SpSession.get().getUser());
+        handleACL(helper, SpSession.get().getUserIdDto());
     }
 
     /**
@@ -79,10 +79,10 @@ public final class Main extends AbstractAdminPage {
      *
      * @param helper
      *            The markup helper.
-     * @param user
+     * @param userDto
      *            The requesting user.
      */
-    private void handleACL(final MarkupHelper helper, final User user) {
+    private void handleACL(final MarkupHelper helper, final UserIdDto userDto) {
 
         for (final ACLOidEnum oid : ACLOidEnum.getAdminOids()) {
 
@@ -137,7 +137,7 @@ public final class Main extends AbstractAdminPage {
 
             if (wicketId != null) {
                 helper.encloseLabel(wicketId, oid.uiText(getLocale()),
-                        ACCESS_CONTROL_SERVICE.hasPermission(user, oid,
+                        ACCESS_CONTROL_SERVICE.hasPermission(userDto, oid,
                                 ACLPermissionEnum.READER));
             }
         }

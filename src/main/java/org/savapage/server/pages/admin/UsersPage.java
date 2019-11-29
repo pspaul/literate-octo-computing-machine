@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserPagerReq;
+import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.User;
@@ -139,14 +140,14 @@ public final class UsersPage extends AbstractAdminListPage {
             this.currencySymbol = SpSession.getAppCurrencySymbol();
             this.isAppReady = ConfigManager.instance().isAppReadyToUse();
 
-            final User reqUser = SpSession.get().getUser();
+            final UserIdDto reqUserDto = SpSession.get().getUserIdDto();
 
             this.isEditor = isEditor;
 
-            this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
+            this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(reqUserDto,
                     ACLOidEnum.A_DOCUMENTS);
 
-            this.hasAccessTrx = ACCESS_CONTROL_SERVICE.hasAccess(reqUser,
+            this.hasAccessTrx = ACCESS_CONTROL_SERVICE.hasAccess(reqUserDto,
                     ACLOidEnum.A_TRANSACTIONS);
 
             this.accountCtxSavaPage =
