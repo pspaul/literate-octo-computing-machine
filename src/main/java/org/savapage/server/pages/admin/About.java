@@ -481,13 +481,19 @@ public final class About extends AbstractAdminPage {
                         CommunityDictEnum.MEMBER_CARD.getWord(getLocale())),
                 hasEditorAccess);
         //
+        final String urlWiki = CommunityDictEnum.SAVAPAGE_WIKI_URL.getWord();
+        helper.addAppendLabelAttr("savapage-wiki-url", urlWiki,
+                MarkupHelper.ATTR_HREF, urlWiki);
+
+        final String urlCommunity =
+                CommunityDictEnum.SAVAPAGE_COMMUNITY_URL.getWord();
+        helper.addAppendLabelAttr("savapage-community-url", urlCommunity,
+                MarkupHelper.ATTR_HREF, urlCommunity);
+
         final String urlHelpDesk =
                 CommunityDictEnum.SAVAPAGE_SUPPORT_URL.getWord();
-
-        labelWrk = new Label("savapage-helpdesk-url", urlHelpDesk);
-        labelWrk.add(
-                new AttributeModifier(MarkupHelper.ATTR_HREF, urlHelpDesk));
-        add(labelWrk);
+        helper.addAppendLabelAttr("savapage-helpdesk-url", urlHelpDesk,
+                MarkupHelper.ATTR_HREF, urlHelpDesk);
 
         //
         labelWrk = new Label("savapage-url",
