@@ -36,7 +36,6 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.services.AccessControlService;
-import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
@@ -56,10 +55,6 @@ public final class DocLogPage extends AbstractListPage {
     /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
-
-    /** */
-    private static final DocStoreService DOC_STORE_SERVICE =
-            ServiceContext.getServiceFactory().getDocStoreService();
 
     /**
      * Maximum number of pages in the navigation bar. IMPORTANT: this must be an
@@ -140,7 +135,8 @@ public final class DocLogPage extends AbstractListPage {
         /*
          * Display the requested page.
          */
-        final List<DocLogItem> entryList = query.getListChunk(em, userId, req);
+        final List<DocLogItem> entryList =
+                query.getListChunk(em, userId, req, getLocale());
 
         add(new PropertyListView<DocLogItem>("doc-entry-view", entryList) {
             private static final long serialVersionUID = 1L;

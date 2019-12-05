@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -355,11 +356,13 @@ public final class DocLogItem {
          * @param em
          * @param userId
          * @param req
+         * @param locale
          * @return
          */
         @SuppressWarnings("unchecked")
         public List<DocLogItem> getListChunk(final EntityManager em,
-                final Long userId, final DocLogPagerReq req) {
+                final Long userId, final DocLogPagerReq req,
+                final Locale locale) {
 
             final PrintOutDao printOutDAO =
                     ServiceContext.getDaoContext().getPrintOutDao();
@@ -478,8 +481,8 @@ public final class DocLogItem {
                 if (docLog.getNumberOfBytes() != null
                         && docLog.getNumberOfBytes().longValue() > 0) {
                     log.setHumanReadableByteCount(
-                            NumberUtil.humanReadableByteCount(
-                                    docLog.getNumberOfBytes(), true));
+                            NumberUtil.humanReadableByteCountSI(locale,
+                                    docLog.getNumberOfBytes()));
                 }
 
                 final DocIn docIn = docLog.getDocIn();
@@ -1213,11 +1216,8 @@ public final class DocLogItem {
         }
     }
 
-    /**
-     *
-     */
+    /** */
     private DocLogItem() {
-
     }
 
     /**

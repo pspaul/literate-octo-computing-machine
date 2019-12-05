@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
@@ -547,7 +548,8 @@ public final class RestDocumentsService implements IRestService {
 
             final EntityManager em = DaoContextImpl.peekEntityManager();
             final Long userId = null;
-            final List<DocLogItem> items = query.getListChunk(em, userId, req);
+            final List<DocLogItem> items =
+                    query.getListChunk(em, userId, req, Locale.US);
 
             return Response.ok(RestDocumentDto.itemsToJSON(items)).build();
 

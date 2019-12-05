@@ -342,17 +342,21 @@ public final class UsersPage extends AbstractAdminListPage {
 
                 //
                 total = user.getNumberOfPrintInPages();
-                totals.append(", ").append(helper.localizedNumber(total));
+                totals.append(" &bull; ").append(helper.localizedNumber(total));
                 key = (total == 1) ? "page" : "pages";
                 totals.append(" ").append(localized(key));
 
                 //
-                totals.append(", ").append(NumberUtil.humanReadableByteCount(
-                        user.getNumberOfPrintInBytes(), true));
+                totals.append(" &bull; ")
+                        .append(NumberUtil.humanReadableByteCountSI(getLocale(),
+                                user.getNumberOfPrintInBytes()));
             }
 
             item.add(new Label("period", period.toString()));
-            item.add(new Label("totals", totals.toString()));
+
+            labelWrk = new Label("totals", totals.toString());
+            labelWrk.setEscapeModelStrings(false);
+            item.add(labelWrk);
 
             /*
              *
@@ -363,10 +367,8 @@ public final class UsersPage extends AbstractAdminListPage {
                     final long size =
                             ConfigManager.getUserHomeDirSize(user.getUserId());
                     if (size > 0) {
-                        // homeSize =
-                        // FileUtils.byteCountToDisplaySize(size);
-                        homeSize =
-                                NumberUtil.humanReadableByteCount(size, true);
+                        homeSize = NumberUtil
+                                .humanReadableByteCountSI(getLocale(), size);
                     }
                 } catch (IOException e) {
                     homeSize = "-";

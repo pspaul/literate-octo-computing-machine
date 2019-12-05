@@ -147,8 +147,8 @@ public final class About extends AbstractAdminPage {
         add(new Label("jre-available-processors",
                 Integer.valueOf(Runtime.getRuntime().availableProcessors())));
 
-        add(new Label("jre-max-memory", NumberUtil.humanReadableByteCount(
-                Runtime.getRuntime().maxMemory(), true)));
+        add(new Label("jre-max-memory", NumberUtil.humanReadableByteCountSI(
+                getLocale(), Runtime.getRuntime().maxMemory())));
 
         add(new Label("jre-os-name", System.getProperty("os.name")));
         add(new Label("jre-os-version", System.getProperty("os.version")));

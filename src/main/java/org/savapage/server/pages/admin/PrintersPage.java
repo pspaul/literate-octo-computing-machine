@@ -776,23 +776,27 @@ public final class PrintersPage extends AbstractAdminListPage {
 
                 //
                 total = printer.getTotalPages();
-                totals.append(", " + helper.localizedNumber(total));
+                totals.append(" &bull; " + helper.localizedNumber(total));
                 key = (total == 1) ? "page" : "pages";
                 totals.append(" ").append(localized(key));
 
                 //
                 total = printer.getTotalSheets();
-                totals.append(", " + helper.localizedNumber(total));
+                totals.append(" &bull; " + helper.localizedNumber(total));
                 key = (total == 1) ? "sheet" : "sheets";
                 totals.append(" ").append(localized(key));
 
                 //
-                totals.append(", ").append(NumberUtil
-                        .humanReadableByteCount(printer.getTotalBytes(), true));
+                totals.append(" &bull; ")
+                        .append(NumberUtil.humanReadableByteCountSI(getLocale(),
+                                printer.getTotalBytes()));
             }
 
             item.add(new Label("period", period.toString()));
-            item.add(new Label("totals", totals.toString()));
+
+            labelWrk = new Label("totals", totals.toString());
+            labelWrk.setEscapeModelStrings(false);
+            item.add(labelWrk);
 
             /*
              * Set the uid in 'data-savapage' attribute, so it can be picked up

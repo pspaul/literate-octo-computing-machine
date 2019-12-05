@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -194,19 +195,21 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
 
                 final long start = System.currentTimeMillis();
 
-                LOGGER.debug("WebPrint [{}] {}/{} [{}] uploading... [{}]",
-                        userId, nFileWlk, totFiles, fileItem.getName(),
-                        NumberUtil.humanReadableByteCount(fileItem.getSize(),
-                                true));
-
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("WebPrint [{}] {}/{} [{}] uploading... [{}]",
+                            userId, nFileWlk, totFiles, fileItem.getName(),
+                            NumberUtil.humanReadableByteCountSI(
+                                    Locale.getDefault(), fileItem.getSize()));
+                }
                 WebPrintHelper.handleFileUpload(originatorIp, userId,
                         new FileUpload(fileItem), selectedFont);
 
-                LOGGER.debug("WebPrint [{}] {}/{} [{}] ....uploaded [{}].",
-                        userId, nFileWlk, totFiles, fileItem.getName(),
-                        DateUtil.formatDuration(
-                                System.currentTimeMillis() - start));
-
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("WebPrint [{}] {}/{} [{}] ....uploaded [{}].",
+                            userId, nFileWlk, totFiles, fileItem.getName(),
+                            DateUtil.formatDuration(
+                                    System.currentTimeMillis() - start));
+                }
                 filesStatus.put(fileKey, Boolean.TRUE);
                 fileItemsToHandle.remove(fileKey);
             }

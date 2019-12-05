@@ -729,12 +729,12 @@ public final class SystemStatusPanel extends Panel {
 
         if (showTechInfo) {
             memoryInfo = String.format("%s Max • %s Total • %s Free",
-                    NumberUtil.humanReadableByteCount(
-                            Runtime.getRuntime().maxMemory(), true),
-                    NumberUtil.humanReadableByteCount(
-                            Runtime.getRuntime().totalMemory(), true),
-                    NumberUtil.humanReadableByteCount(
-                            Runtime.getRuntime().freeMemory(), true));
+                    NumberUtil.humanReadableByteCountSI(getLocale(),
+                            Runtime.getRuntime().maxMemory()),
+                    NumberUtil.humanReadableByteCountSI(getLocale(),
+                            Runtime.getRuntime().totalMemory()),
+                    NumberUtil.humanReadableByteCountSI(getLocale(),
+                            Runtime.getRuntime().freeMemory()));
         } else {
             memoryInfo = "";
         }
@@ -775,10 +775,10 @@ public final class SystemStatusPanel extends Panel {
             final File file = new File(File.separator);
             helper.addLabel("disk-space",
                     String.format("%s Total • %s Free",
-                            NumberUtil.humanReadableByteCount(
-                                    file.getTotalSpace(), true),
-                            NumberUtil.humanReadableByteCount(
-                                    file.getUsableSpace(), true)));
+                            NumberUtil.humanReadableByteCountSI(getLocale(),
+                                    file.getTotalSpace()),
+                            NumberUtil.humanReadableByteCountSI(getLocale(),
+                                    file.getUsableSpace())));
 
             helper.addLabel("disk-space-prompt", NounEnum.DISK_SPACE);
 

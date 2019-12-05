@@ -24,6 +24,7 @@ package org.savapage.server.dropzone;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.mail.internet.InternetAddress;
 
@@ -264,8 +265,8 @@ public final class PdfPgpUploadHelper {
                 "<img class=\"sp-pdfpgp-status-img\" height=\"20\" src=\"")
                 .append(imgSrc).append("\">").append("&nbsp;&nbsp;")
                 .append(uploadedFile.getClientFileName()).append(" &bull; ")
-                .append(NumberUtil
-                        .humanReadableByteCount(uploadedFile.getSize(), true))
+                .append(NumberUtil.humanReadableByteCountSI(Locale.US,
+                        uploadedFile.getSize()))
                 .append("</span>");
         feedbackMsg.append("<br><br>");
     }

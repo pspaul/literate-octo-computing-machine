@@ -780,13 +780,14 @@ public class DocLogItemPanel extends Panel {
 
         // n-up
         if (obj.getNumberUp() != null && obj.getNumberUp().intValue() > 1) {
-            totals.append(", ").append(localized("n-up", obj.getNumberUp()));
+            totals.append(" &bull; ")
+                    .append(localized("n-up", obj.getNumberUp()));
         }
 
         //
         if (copies > 1) {
 
-            totals.append(", ").append(copies).append(" ")
+            totals.append(" &bull; ").append(copies).append(" ")
                     .append(helper.localized(PrintOutNounEnum.COPY, true));
         }
 
@@ -800,10 +801,12 @@ public class DocLogItemPanel extends Panel {
 
         //
         if (obj.getHumanReadableByteCount() != null) {
-            totals.append(", ").append(obj.getHumanReadableByteCount());
+            totals.append(" &bull; ").append(obj.getHumanReadableByteCount());
         }
 
-        add(new Label("totals", totals.toString()));
+        labelWlk = new Label("totals", totals.toString());
+        labelWlk.setEscapeModelStrings(false);
+        add(labelWlk);
 
         //
         if (copies > 1 && obj.getCollateCopies() != null
