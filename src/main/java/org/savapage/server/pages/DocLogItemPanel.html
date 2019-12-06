@@ -24,8 +24,7 @@
 	</h3>
 	<wicket:enclosure child="user-name">
 		<div class="sp-txt-wrap">
-			<wicket:message key="prompt-user" />
-			: <strong wicket:id="user-name" />
+			<span wicket:id="prompt-user" /> : <strong wicket:id="user-name" />
 		</div>
 	</wicket:enclosure>
 	<div class="sp-txt-wrap">
@@ -182,14 +181,18 @@
 	</div>
 	<wicket:enclosure child="signature">
 		<p class="sp-txt-wrap">
-			<wicket:message key="prompt-signature" />
-			: <span wicket:id="signature" />
+			<span wicket:id="prompt-signature" /> : <span wicket:id="signature" />
 		</p>
 	</wicket:enclosure>
 	<wicket:enclosure child="destination">
 		<p class="sp-txt-wrap">
-			<wicket:message key="prompt-destination" />
-			: <span wicket:id="destination" />
+			<span wicket:id="prompt-destination" /> : <span
+				wicket:id="destination" />
+		</p>
+	</wicket:enclosure>
+	<wicket:enclosure child="origin">
+		<p class="sp-txt-wrap">
+			<span wicket:id="prompt-origin" /> : <span wicket:id="origin" />
 		</p>
 	</wicket:enclosure>
 

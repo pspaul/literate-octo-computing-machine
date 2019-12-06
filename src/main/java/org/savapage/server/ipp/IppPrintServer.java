@@ -213,7 +213,6 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         ServiceContext.open();
 
         try {
-
             final String remoteAddr = request.getRemoteAddr();
 
             /*
@@ -247,15 +246,13 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
                 hasPrintAccessToQueue = false;
 
-            } else if (queue == null || queue.getDeleted()) {
-
-                hasPrintAccessToQueue = false;
-
-            } else if (queue.getDisabled()) {
+            } else if (queue == null || queue.getDeleted()
+                    || queue.getDisabled()) {
 
                 hasPrintAccessToQueue = false;
 
             } else if (reservedQueueEnum != ReservedIppQueueEnum.IPP_PRINT_INTERNET
+                    && StringUtils.isBlank(queue.getIpAllowed())
                     && InetUtils.isPublicAddress(remoteAddr)) {
 
                 hasPrintAccessToQueue = false;

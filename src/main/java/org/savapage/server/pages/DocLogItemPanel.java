@@ -133,6 +133,21 @@ public class DocLogItemPanel extends Panel {
     //
     private final boolean showTicketReopen;
 
+    /** */
+    private static final String[] WICKET_IDS = new String[] { "prompt-user",
+            "user-name", "title", "log-comment", "printoutMode",
+            "prompt-signature", "signature", "prompt-origin", "origin",
+            "prompt-destination", "destination", "letterhead", "author",
+            "subject", "keywords", "print-in-label", "pdfpgp", "userpw",
+            "ownerpw", "duplex", "simplex", "color", "grayscale", "papersize",
+            "media-source", "output-bin", "jog-offset", "cost-currency", "cost",
+            "job-id", "job-state", "job-completed-date",
+            "print-in-denied-reason-hyphen", "print-in-denied-reason",
+            "collate", "ecoPrint", "removeGraphics", "pageRotate180", "punch",
+            "staple", "fold", "booklet", "jobticket-tag-plain",
+            "jobticket-media", "jobticket-copy", "jobticket-finishing-ext",
+            "jobticket-custom-ext", "landscape", "scaled" };
+
     /**
      *
      * @param id
@@ -159,23 +174,13 @@ public class DocLogItemPanel extends Panel {
 
         final DocLogItem obj = model.getObject();
         final Locale locale = getLocale();
+        final WebAppTypeEnum webAppType = SpSession.get().getWebAppType();
 
         String cssClass = null;
 
         final Map<String, String> mapVisible = new HashMap<>();
 
-        for (final String attr : new String[] { "user-name", "title",
-                "log-comment", "printoutMode", "signature", "destination",
-                "letterhead", "author", "subject", "keywords", "print-in-label",
-                "pdfpgp", "userpw", "ownerpw", "duplex", "simplex", "color",
-                "grayscale", "papersize", "media-source", "output-bin",
-                "jog-offset", "cost-currency", "cost", "job-id", "job-state",
-                "job-completed-date", "print-in-denied-reason-hyphen",
-                "print-in-denied-reason", "collate", "ecoPrint",
-                "removeGraphics", "pageRotate180", "punch", "staple", "fold",
-                "booklet", "jobticket-tag-plain", "jobticket-media",
-                "jobticket-copy", "jobticket-finishing-ext",
-                "jobticket-custom-ext", "landscape", "scaled" }) {
+        for (final String attr : WICKET_IDS) {
             mapVisible.put(attr, null);
         }
 
@@ -408,8 +413,6 @@ public class DocLogItemPanel extends Panel {
             helper.encloseLabel("account-trx-refund",
                     NounEnum.REFUND.uiText(locale), obj.isRefunded());
 
-            final WebAppTypeEnum webAppType = SpSession.get().getWebAppType();
-
             if (webAppType == WebAppTypeEnum.JOBTICKETS
                     || webAppType == WebAppTypeEnum.ADMIN
                     || webAppType == WebAppTypeEnum.USER) {
@@ -518,6 +521,8 @@ public class DocLogItemPanel extends Panel {
                 cssClass = MarkupHelper.CSS_PRINT_OUT_PDF;
 
                 mapVisible.put("destination", obj.getDestination());
+                mapVisible.put("prompt-destination",
+                        NounEnum.DESTINATION.uiText(getLocale()));
 
                 mapVisible.put("author", obj.getAuthor());
                 mapVisible.put("subject", obj.getSubject());
@@ -735,7 +740,15 @@ public class DocLogItemPanel extends Panel {
 
         //
         if (!obj.getUserId().equals(User.ERASED_USER_ID)) {
+            mapVisible.put("prompt-user", NounEnum.USER.uiText(getLocale()));
             mapVisible.put("user-name", obj.getUserId());
+        }
+
+        //
+        if (StringUtils.isNotBlank(obj.getDocInOriginatorIp())) {
+            mapVisible.put("prompt-origin",
+                    NounEnum.CLIENT.uiText(getLocale()));
+            mapVisible.put("origin", obj.getDocInOriginatorIp());
         }
 
         //
@@ -780,8 +793,8 @@ public class DocLogItemPanel extends Panel {
 
         // n-up
         if (obj.getNumberUp() != null && obj.getNumberUp().intValue() > 1) {
-            totals.append(" &bull; ")
-                    .append(localized("n-up", obj.getNumberUp()));
+            totals.append(" &bull; ").append(PrintOutNounEnum.N_UP
+                    .uiText(locale, obj.getNumberUp().toString()));
         }
 
         //

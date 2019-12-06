@@ -131,6 +131,8 @@ public final class DocLogItem {
     private Boolean encrypted;
     private String paperSize;
 
+    private String docInOriginatorIp;
+
     private Boolean printInPrinted;
     private PrintInDeniedReasonEnum printInDeniedReason;
 
@@ -492,6 +494,8 @@ public final class DocLogItem {
                 log.setCopies(1);
 
                 if (docIn != null) {
+
+                    log.setDocInOriginatorIp(docIn.getOriginatorIp());
 
                     final PrintIn printIn = docIn.getPrintIn();
                     log.setDocType(DocLogDao.Type.IN);
@@ -1494,6 +1498,14 @@ public final class DocLogItem {
 
     public void setPrintInPrinted(Boolean printInPrinted) {
         this.printInPrinted = printInPrinted;
+    }
+
+    public String getDocInOriginatorIp() {
+        return docInOriginatorIp;
+    }
+
+    public void setDocInOriginatorIp(String docInOriginatorIp) {
+        this.docInOriginatorIp = docInOriginatorIp;
     }
 
     public PrintInDeniedReasonEnum getPrintInDeniedReason() {
