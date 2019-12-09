@@ -49,8 +49,21 @@
                 _fillConfigPropsYN,
                 _fillConfigPropsText,
                 _fillConfigPropsRadio,
+                _onIppQueueEnable,
                 _userSync,
                 _updateGcpState;
+
+            _onIppQueueEnable = function(urlPath, enabled) {
+                var res = _api.call({
+                    request : 'queue-enable',
+                    dto : JSON.stringify({
+                        urlPath : urlPath,
+                        enabled : enabled
+                    })
+                });
+                _view.showApiMsg(res);
+                return (res.result.code === '0');
+            };
 
             /**
              *
@@ -531,15 +544,11 @@
             };
 
             _view.pages.admin.onFlipswitchInternetPrint = function(enabled) {
-                var res = _api.call({
-                    request : 'queue-enable',
-                    dto : JSON.stringify({
-                        urlPath : 'internet',
-                        enabled : enabled
-                    })
-                });
-                _view.showApiMsg(res);
-                return (res.result.code === '0');
+                return _onIppQueueEnable('internet', enabled);
+            };
+
+            _view.pages.admin.onFlipswitchRESTfulPrint = function(enabled) {
+                return _onIppQueueEnable('webservice', enabled);
             };
 
             _view.pages.admin.onApplyWebPrint = function(enabled, dropzone) {

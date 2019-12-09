@@ -58,6 +58,7 @@ import org.savapage.core.UnavailableException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
+import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.DocLogProtocolEnum;
@@ -401,7 +402,7 @@ public final class RestDocumentsService implements IRestService {
             @FormDataParam(FORM_PARAM_FILE) //
             final FormDataContentDisposition disp) {
 
-        final String msgPfx = "RESTful Print";
+        final String msgPfx = CommunityDictEnum.RESTFUL_PRINT.getWord();
 
         String userid = "";
 

@@ -2378,6 +2378,10 @@
                     _self.onFlipswitchInternetPrint($(this).is(':checked'));
                 });
 
+                $(this).on('change', "input:checkbox[id='flipswitch-restful-online']", null, function(e) {
+                    _self.onFlipswitchRESTfulPrint($(this).is(':checked'));
+                });
+
                 $(this).on('change', "input:checkbox[id='flipswitch-webprint-online']", null, function(e) {
                     _self.onFlipswitchWebPrint($(this).is(':checked'));
                 });

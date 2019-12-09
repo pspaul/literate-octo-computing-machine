@@ -528,6 +528,18 @@ public final class SystemStatusPanel extends Panel {
         add(labelWrk);
 
         /*
+         * RESTful Print
+         */
+        add(new Label("prompt-restful-print",
+                CommunityDictEnum.RESTFUL_PRINT.getWord(getLocale())));
+
+        labelWrk = helper.addCheckbox("flipswitch-restful-online",
+                QUEUE_SERVICE.isQueueEnabled(
+                        ReservedIppQueueEnum.WEBSERVICE));
+        setFlipswitchOnOffText(labelWrk);
+        add(labelWrk);
+
+        /*
          *
          */
         add(new Label("client-sessions", String.format("%s (%s) • web (client)",

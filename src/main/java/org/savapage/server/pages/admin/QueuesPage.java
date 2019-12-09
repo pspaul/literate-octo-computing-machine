@@ -339,7 +339,8 @@ public final class QueuesPage extends AbstractAdminListPage {
             final ReservedIppQueueEnum reservedQueue =
                     QUEUE_SERVICE.getReservedQueue(queue.getUrlPath());
 
-            if (reservedQueue == null || reservedQueue.isDriverPrint()) {
+            if (reservedQueue == null || reservedQueue.isDriverPrint()
+                    || reservedQueue == ReservedIppQueueEnum.WEBSERVICE) {
                 if (queue.getDeleted()) {
                     color = MarkupHelper.CSS_TXT_ERROR;
                     signalKey = "signal-deleted";
@@ -535,7 +536,8 @@ public final class QueuesPage extends AbstractAdminListPage {
             }
 
             if (this.isEditor && (reservedQueue == null
-                    || reservedQueue.isDriverPrint())) {
+                    || reservedQueue.isDriverPrint()
+                    || reservedQueue == ReservedIppQueueEnum.WEBSERVICE)) {
                 hasButtons = true;
                 helper.encloseLabel(WID_BUTTON_EDIT,
                         getLocalizer().getString("button-edit", this), true)
