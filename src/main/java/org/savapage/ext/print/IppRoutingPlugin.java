@@ -22,7 +22,6 @@
 package org.savapage.ext.print;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -85,11 +84,6 @@ public final class IppRoutingPlugin implements ServerPlugin {
         /** bottom-right. */
         BR
     }
-
-    /**
-     * Minimum size for QR-code for quiet-zone == 1 to take effect. Why ?!
-     */
-    private static final int QR_CODE_PIXEL_SIZE_MINIMUM = 60;
 
     /**
      * Property key prefix.
@@ -203,15 +197,6 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private static final String PROP_KEY_PDF_FOOTER_MARGIN_BOTTOM =
             PROP_KEY_PDF_FOOTER + ".margin.bottom";
 
-    /**
-     * Number of image pixels in PDF point.
-     */
-    private static final float PDF_POINT_TO_IMG_PIXEL = 1.25f;
-    /**
-     * Number of PDF points in image pixel.
-     */
-    private static final float IMG_PIXEL_TO_PDF_POINT = 0.75f;
-
     /** */
     private String id;
 
@@ -236,20 +221,17 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private boolean codeQRUUID;
 
     /** */
-    private Integer codeQRQuiteZone;
+    private int codeQRQuiteZoneMM;
 
     /** */
     private QrPos codeQRPos;
     /** */
-    private float codeQRPosMarginX;
+    private float codeQRPosMarginPointsX;
     /** */
-    private float codeQRPosMarginY;
+    private float codeQRPosMarginPointsY;
 
     /** */
-    private int codeQRPixelSize;
-
-    /** */
-    private int codeQRPixelSizeCreate;
+    private int codeQRSizeMM;
 
     /** */
     private String header;
@@ -258,7 +240,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private Font headerFont;
 
     /** */
-    private int headerMarginTop;
+    private float headerMarginPointsTop;
 
     /** */
     private String footer;
@@ -267,7 +249,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private Font footerFont;
 
     /** */
-    private int footerMarginBottom;
+    private float footerMarginPointsBottom;
 
     /** */
     private String routingId;
@@ -303,23 +285,14 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
         //
         this.onInitCodeQRRetrieval(context, props);
-        //
-        this.codeQRPixelSize = Integer
-                .valueOf(props.getProperty(PROP_KEY_PDF_QRCODE_SIZE,
-                        Integer.toString(QR_CODE_PIXEL_SIZE_MINIMUM)))
-                .intValue();
 
-        if (this.codeQRPixelSize < QR_CODE_PIXEL_SIZE_MINIMUM) {
-            this.codeQRPixelSizeCreate = QR_CODE_PIXEL_SIZE_MINIMUM;
-        } else {
-            this.codeQRPixelSizeCreate = this.codeQRPixelSize;
-        }
-        //
-        if (props.containsKey(PROP_KEY_PDF_QRCODE_QUIET_ZONE)) {
-            this.codeQRQuiteZone = Integer
-                    .valueOf(props.getProperty(PROP_KEY_PDF_QRCODE_QUIET_ZONE));
-        }
-        //
+        this.codeQRSizeMM =
+                Integer.valueOf(props.getProperty(PROP_KEY_PDF_QRCODE_SIZE))
+                        .intValue();
+
+        this.codeQRQuiteZoneMM = Integer.valueOf(
+                props.getProperty(PROP_KEY_PDF_QRCODE_QUIET_ZONE, "0"));
+
         this.codeQRPos = EnumUtils.getEnum(QrPos.class,
                 props.getProperty(PROP_KEY_PDF_QRCODE_POS));
 
@@ -327,14 +300,18 @@ public final class IppRoutingPlugin implements ServerPlugin {
             this.codeQRPos = QrPos.TL;
         }
 
-        this.codeQRPosMarginX = Integer.valueOf(
-                props.getProperty(PROP_KEY_PDF_QRCODE_POS_MARGIN_X, "0"))
-                .floatValue();
+        this.codeQRPosMarginPointsX =
+                QRCodeHelper.pdfMMToPoints(Integer
+                        .valueOf(props.getProperty(
+                                PROP_KEY_PDF_QRCODE_POS_MARGIN_X, "0"))
+                        .intValue());
 
-        this.codeQRPosMarginY = Integer.valueOf(
-                props.getProperty(PROP_KEY_PDF_QRCODE_POS_MARGIN_Y, "0"))
-                .floatValue();
-        //
+        this.codeQRPosMarginPointsY =
+                QRCodeHelper.pdfMMToPoints(Integer
+                        .valueOf(props.getProperty(
+                                PROP_KEY_PDF_QRCODE_POS_MARGIN_Y, "0"))
+                        .intValue());
+
         this.onInitHeaderFooter(props);
     }
 
@@ -410,9 +387,11 @@ public final class IppRoutingPlugin implements ServerPlugin {
             this.headerFont = new Font(Font.HELVETICA, headerFontSize);
             this.headerFont.setColor(Color.GRAY);
 
-            this.headerMarginTop = Integer.valueOf(
-                    props.getProperty(PROP_KEY_PDF_HEADER_MARGIN_TOP, "20"))
-                    .intValue();
+            this.headerMarginPointsTop =
+                    QRCodeHelper.pdfMMToPoints(Integer
+                            .valueOf(props.getProperty(
+                                    PROP_KEY_PDF_HEADER_MARGIN_TOP, "10"))
+                            .intValue());
         }
 
         this.footer = props.getProperty(PROP_KEY_PDF_FOOTER);
@@ -426,10 +405,10 @@ public final class IppRoutingPlugin implements ServerPlugin {
             this.footerFont = new Font(Font.HELVETICA, footerFontSize);
             this.footerFont.setColor(Color.GRAY);
 
-            this.footerMarginBottom = Integer
+            this.footerMarginPointsBottom = QRCodeHelper.pdfMMToPoints(Integer
                     .valueOf(props.getProperty(
-                            PROP_KEY_PDF_FOOTER_MARGIN_BOTTOM, "20"))
-                    .intValue();
+                            PROP_KEY_PDF_FOOTER_MARGIN_BOTTOM, "10"))
+                    .intValue());
         }
     }
 
@@ -449,8 +428,14 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
         //
         final Image codeQRImage;
+        final Image codeQRImageBg;
         try {
             codeQRImage = this.onRoutingQRCodeImage(ctx, res);
+            if (codeQRImage == null) {
+                codeQRImageBg = null;
+            } else {
+                codeQRImageBg = onRoutingQRCodeImageBg();
+            }
         } catch (QRCodeException | DocumentException | IOException e) {
             LOGGER.error(e.getMessage());
             throw new SpException(e.getMessage(), e);
@@ -503,7 +488,11 @@ public final class IppRoutingPlugin implements ServerPlugin {
                 final int rotation = reader.getPageRotation(nPage);
 
                 if (codeQRImage != null) {
-                    this.setImagePositionOnPage(rect, rotation, codeQRImage);
+                    this.setImagePositionOnPage(rect, rotation, codeQRImage,
+                            codeQRImageBg);
+                    if (codeQRImageBg != null) {
+                        content.addImage(codeQRImageBg);
+                    }
                     content.addImage(codeQRImage);
                 }
 
@@ -514,10 +503,10 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
                     if (rotation == 0) {
                         xHeaderFooter = (rect.getRight() - rect.getLeft()) / 2;
-                        yHeader = rect.getHeight() - this.headerMarginTop;
+                        yHeader = rect.getHeight() - this.headerMarginPointsTop;
                     } else {
                         xHeaderFooter = (rect.getTop() - rect.getBottom()) / 2;
-                        yHeader = rect.getWidth() - this.headerMarginTop;
+                        yHeader = rect.getWidth() - this.headerMarginPointsTop;
                     }
 
                     if (phraseHeader != null) {
@@ -527,7 +516,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
                     }
 
                     if (phraseFooter != null) {
-                        final float yFooter = this.footerMarginBottom;
+                        final float yFooter = this.footerMarginPointsBottom;
                         ColumnText.showTextAligned(content,
                                 Element.ALIGN_CENTER, phraseFooter,
                                 xHeaderFooter, yFooter, 0);
@@ -561,7 +550,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
      *            The routing context.
      * @param res
      *            The routing result to be filled.
-     * @return PDF QR-code image.
+     * @return PDF QR-code image, or {@code null} if not applicable.
      * @throws QRCodeException
      *             QR-code image error
      * @throws DocumentException
@@ -622,42 +611,51 @@ public final class IppRoutingPlugin implements ServerPlugin {
         if (codeQRWrk == null) {
             codeQRImage = null;
         } else {
-            final BufferedImage bufferImage =
-                    QRCodeHelper.createImage(codeQRWrk,
-                            this.codeQRPixelSizeCreate, this.codeQRQuiteZone);
-
-            codeQRImage = Image.getInstance(bufferImage, null);
-
-            if (this.codeQRPixelSizeCreate != this.codeQRPixelSize) {
-                final float factor =
-                        this.codeQRPixelSize * IMG_PIXEL_TO_PDF_POINT;
-                codeQRImage.scaleToFit(factor, factor);
-            }
+            codeQRImage =
+                    QRCodeHelper.createPdfImage(codeQRWrk, this.codeQRSizeMM);
         }
         return codeQRImage;
     }
 
     /**
+     * @return PDF QR-code Quiet Zone background image, or {@code null} if not
+     *         applicable.
+     * @throws QRCodeException
+     *             QR-code image error
+     */
+    private Image onRoutingQRCodeImageBg() throws QRCodeException {
+        if (this.codeQRQuiteZoneMM == 0) {
+            return null;
+        }
+        return QRCodeHelper.createPdfImageBackground(
+                this.codeQRSizeMM + 2 * this.codeQRQuiteZoneMM, Color.WHITE);
+    }
+
+    /**
+     * Sets the absolute position of (background) image.
      *
      * @param pageRect
      *            Page rectangle.
      * @param pageRotation
      *            Page rotation
      * @param image
-     *            The image.
+     *            The QR image.
+     * @param imageBg
+     *            Background image (Quiet Zone). Can be {@code null}.
      */
     private void setImagePositionOnPage(final Rectangle pageRect,
-            final int pageRotation, final Image image) {
+            final int pageRotation, final Image image, final Image imageBg) {
 
-        final float imgHeight;
-        final float imgWidth;
+        final float imgPointsHeight = image.getScaledHeight();
+        final float imgPointsWidth = image.getScaledWidth();
 
-        if (this.codeQRPixelSizeCreate == this.codeQRPixelSize) {
-            imgHeight = image.getHeight();
-            imgWidth = image.getWidth();
+        final float codeQRQuiteZonePoints;
+
+        if (this.codeQRQuiteZoneMM == 0) {
+            codeQRQuiteZonePoints = 0f;
         } else {
-            imgHeight = image.getScaledHeight();
-            imgWidth = image.getScaledWidth();
+            codeQRQuiteZonePoints =
+                    QRCodeHelper.pdfMMToPoints(this.codeQRQuiteZoneMM);
         }
 
         final float xImage;
@@ -665,30 +663,38 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
         switch (this.codeQRPos) {
         case TL:
-            xImage = this.codeQRPosMarginX;
-            yImage = pageRect.getTop() - this.codeQRPosMarginY - imgHeight;
+            xImage = this.codeQRPosMarginPointsX;
+            yImage = pageRect.getTop() - this.codeQRPosMarginPointsY
+                    - imgPointsHeight;
             break;
 
         case TR:
-            xImage = pageRect.getRight() - this.codeQRPosMarginX - imgWidth;
-            yImage = pageRect.getTop() - this.codeQRPosMarginY - imgHeight;
+            xImage = pageRect.getRight() - this.codeQRPosMarginPointsX
+                    - imgPointsWidth;
+            yImage = pageRect.getTop() - this.codeQRPosMarginPointsY
+                    - imgPointsHeight;
             break;
 
         case BL:
-            xImage = this.codeQRPosMarginX;
-            yImage = pageRect.getBottom() + this.codeQRPosMarginY;
+            xImage = this.codeQRPosMarginPointsX;
+            yImage = pageRect.getBottom() + this.codeQRPosMarginPointsY;
             break;
 
         case BR:
             // no code intended
         default:
-            xImage = pageRect.getRight() - this.codeQRPosMarginX - imgWidth;
-            yImage = pageRect.getBottom() + this.codeQRPosMarginY;
+            xImage = pageRect.getRight() - this.codeQRPosMarginPointsX
+                    - imgPointsWidth;
+            yImage = pageRect.getBottom() + this.codeQRPosMarginPointsY;
             break;
         }
 
         // TODO pageRotation.
 
+        if (imageBg != null) {
+            imageBg.setAbsolutePosition(xImage - codeQRQuiteZonePoints,
+                    yImage - codeQRQuiteZonePoints);
+        }
         image.setAbsolutePosition(xImage, yImage);
     }
 
