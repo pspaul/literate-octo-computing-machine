@@ -21,6 +21,8 @@
  */
 package org.savapage.server.pages.admin;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.community.CommunityDictEnum;
@@ -66,9 +68,16 @@ public final class Main extends AbstractAdminPage {
         add(new CommunityStatusFooterPanel("community-status-footer-panel",
                 true));
 
+        final Component logoLink = helper.addTransparant("jqm-logo-link");
+        logoLink.add(new AttributeAppender(MarkupHelper.ATTR_HREF,
+                CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG_URL.getWord()));
+        logoLink.add(new AttributeAppender(MarkupHelper.ATTR_TITLE,
+                CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG.getWord()));
+
         //
         helper.addModifyLabelAttr("savapage-org-link",
-                CommunityDictEnum.SAVAPAGE_DOT_ORG.getWord(), "href",
+                CommunityDictEnum.SAVAPAGE_DOT_ORG.getWord(),
+                MarkupHelper.ATTR_HREF,
                 CommunityDictEnum.SAVAPAGE_WWW_DOT_ORG_URL.getWord());
 
         handleACL(helper, SpSession.get().getUserIdDto());

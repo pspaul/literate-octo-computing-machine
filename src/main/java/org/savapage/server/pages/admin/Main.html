@@ -4,7 +4,7 @@
 	<!-- 
     +====================================================================+ 
     | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein...| 
+    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein...| 
     |....................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify ..|
     | it under the terms of the GNU Affero General Public License as ....|
@@ -19,12 +19,15 @@
 	<div class="content-secondary">
 		<!-- -->
 		<div id="jqm-homeheader">
-			<h1 id="jqm-logo">
-				<img src="images/savapage-logo.png" alt="SavaPage" />
-			</h1>
-			<p>
-				<wicket:message key="txt-logo-subtext" />
-			</p>
+			<a wicket:id="jqm-logo-link" class="sp-plain-link" href="" title=""
+				target="_blank">
+				<h1 id="jqm-logo">
+					<img src="images/savapage-logo.png" alt="SavaPage" />
+				</h1>
+				<p>
+					<wicket:message key="txt-logo-subtext" />
+				</p>
+			</a>
 		</div>
 		<p class="intro">
 			<strong><wicket:message key="txt-welcome-salutation" />.</strong>
@@ -120,8 +123,8 @@
 			</wicket:enclosure>
 
 			<li data-icon="power">
-				<a href="#" id="button-logout"> <span
-					style="color: brown;"><wicket:message key="button-logout" /></span>
+				<a href="#" id="button-logout"> <span style="color: brown;"><wicket:message
+							key="button-logout" /></span>
 				</a>
 			</li>
 
