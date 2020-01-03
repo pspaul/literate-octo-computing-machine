@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -179,6 +179,7 @@ import org.savapage.server.api.request.export.ReqExportDocStorePdf;
 import org.savapage.server.api.request.export.ReqExportOutboxPdf;
 import org.savapage.server.api.request.export.ReqExportPrinterOpt;
 import org.savapage.server.api.request.export.ReqExportPrinterPpd;
+import org.savapage.server.api.request.export.ReqExportPrinterPpdExt;
 import org.savapage.server.api.request.export.ReqExportUserDataHistory;
 import org.savapage.server.cometd.AbstractEventService;
 import org.savapage.server.dropzone.PdfPgpDropZoneFileResource;
@@ -440,6 +441,8 @@ public final class JsonApiServer extends AbstractPage {
                     // no break intended
                 case JsonApiDict.REQ_PRINTER_PPD_DOWNLOAD:
                     // no break intended
+                case JsonApiDict.REQ_PRINTER_PPDE_DOWNLOAD:
+                    // no break intended
                 case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
                     // no break intended
                 case JsonApiDict.REQ_USER_EXPORT_DATA_HISTORY:
@@ -700,6 +703,14 @@ public final class JsonApiServer extends AbstractPage {
 
             case JsonApiDict.REQ_PRINTER_PPD_DOWNLOAD:
                 requestHandler = new ReqExportPrinterPpd(
+                        parameters.get(JsonApiDict.PARM_REQ_SUB).toLongObject())
+                                .export(getSessionWebAppType(),
+                                        getRequestCycle(), parameters,
+                                        isGetAction, requestingUser, null);
+                break;
+
+            case JsonApiDict.REQ_PRINTER_PPDE_DOWNLOAD:
+                requestHandler = new ReqExportPrinterPpdExt(
                         parameters.get(JsonApiDict.PARM_REQ_SUB).toLongObject())
                                 .export(getSessionWebAppType(),
                                         getRequestCycle(), parameters,

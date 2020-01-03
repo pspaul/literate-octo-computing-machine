@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -275,6 +275,9 @@ public final class JsonApiDict {
 
     public static final String REQ_PRINTER_PPD_DOWNLOAD =
             "printer-ppd-download";
+
+    public static final String REQ_PRINTER_PPDE_DOWNLOAD =
+            "printer-ppde-download";
 
     public static final String REQ_PRINTER_OPT_DOWNLOAD =
             "printer-opt-download";
@@ -792,6 +795,7 @@ public final class JsonApiDict {
         case REQ_POS_RECEIPT_DOWNLOAD:
         case REQ_POS_RECEIPT_DOWNLOAD_USER:
         case REQ_PRINTER_PPD_DOWNLOAD:
+        case REQ_PRINTER_PPDE_DOWNLOAD:
         case REQ_PRINTER_OPT_DOWNLOAD:
         case REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
         case REQ_USER_EXPORT_DATA_HISTORY:
@@ -1096,6 +1100,7 @@ public final class JsonApiDict {
         adm(REQ_PRINTER_GET, ReqPrinterGet.class, DbClaim.NONE, DbAccess.YES);
 
         adm(REQ_PRINTER_PPD_DOWNLOAD, DbClaim.NONE, DbAccess.YES);
+        adm(REQ_PRINTER_PPDE_DOWNLOAD, DbClaim.NONE, DbAccess.YES);
         adm(REQ_PRINTER_OPT_DOWNLOAD, DbClaim.NONE, DbAccess.YES);
 
         usr(REQ_PRINTER_PRINT, ReqPrinterPrint.class, DbClaim.READ,

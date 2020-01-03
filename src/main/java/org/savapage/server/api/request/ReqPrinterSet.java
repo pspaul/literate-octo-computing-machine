@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  */
 package org.savapage.server.api.request;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -65,6 +66,19 @@ public final class ReqPrinterSet extends ApiRequestMixin {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-printer-not-found",
                     String.valueOf(id));
             return;
+        }
+
+        /*
+         * INVARIANT: PPD extension file MUST exist.
+         */
+        if (StringUtils.isNotBlank(dto.getPpdExtFile())) {
+            final File filePPDExt =
+                    PROXY_PRINT_SERVICE.getPPDExtFile(dto.getPpdExtFile());
+            if (!filePPDExt.exists()) {
+                setApiResult(ApiResultCodeEnum.ERROR, "msg-file-not-present",
+                        filePPDExt.getAbsolutePath());
+                return;
+            }
         }
 
         /*

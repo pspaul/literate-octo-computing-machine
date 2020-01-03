@@ -4,7 +4,7 @@
 	<!-- 
     +=========================================================================+ 
     | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
+    | Copyright (c) 2011-2020 Datraverse B.V. | Author: Rijk Ravestein........| 
     |.........................................................................| 
     | SavaPage is free software: you can redistribute it and/or modify .......|
     | it under the terms of the GNU Affero General Public License as .........|
@@ -79,9 +79,11 @@
 			<label for="printer-ppd-ext-file">
 				<wicket:message key="printer-ppd-ext-file" />
 			</label>
-			<input type="text" id="printer-ppd-ext-file" value="" maxlength="128"
-				autocomplete="off" autocorrect="off" autocapitalize="off"
-				spellcheck="false" />
+			<wicket:remove>
+				<!--   To be filled by JavaScript: see PPDExtFileOptionsAddin.java/html -->
+			</wicket:remove>
+			<select id="printer-ppd-ext-file" data-mini="true"
+				data-native-menu="true" />
 		</li>
 		<li class="ui-mini">
 			<label for="printer-jobticket">
@@ -119,9 +121,7 @@
 	</ul>
 
 	<wicket:remove>
-		<!-- 
-    To be filled by JavaScript: see PrinterMediaSourceAddin.java/html  
-    -->
+		<!--  To be filled by JavaScript: see PrinterMediaSourceAddin.java/html -->
 	</wicket:remove>
 	<div id="sp-printer-media-source-addin" data-role="listview"
 		data-inset="true" />

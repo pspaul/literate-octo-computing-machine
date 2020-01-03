@@ -1,9 +1,9 @@
-/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2019 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2020 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1305,12 +1305,12 @@
 
                 var accounting = $('#sp-printer-accounting-addin'),
                     mediaSource = $('#sp-printer-media-source-addin'),
+                    ppdExtFile = $('#printer-ppd-ext-file'),
                     data = {};
 
                 $('#printer-displayname').val(_model.editPrinter.displayName);
                 $('#printer-location').val(_model.editPrinter.location);
                 $('#printer-printergroups').val(_model.editPrinter.printerGroups);
-                $('#printer-ppd-ext-file').val(_model.editPrinter.ppdExtFile);
 
                 _view.checkCb('#printer-disabled', _model.editPrinter.disabled);
                 _view.checkCb('#printer-archive-disabled', _model.editPrinter.archiveDisabled);
@@ -1328,10 +1328,13 @@
 
                 _view.visible($('.printer-not-present'), !_model.editPrinter.present);
 
+                // PPD ext file
+                ppdExtFile.html(_view.getAdminPageHtml('PPDExtFileOptionsAddin', data)).enhanceWithin();
+                _view.setSelectedValue(ppdExtFile, _model.editPrinter.ppdExtFile);
+
                 /*
                  * Accounting.
                  */
-
                 data.id = _model.editPrinter.id;
 
                 accounting.html(_view.getAdminPageHtml('PrinterAccountingAddin', data)).enhanceWithin();
@@ -2219,6 +2222,11 @@
 
                 $(this).on('dblclick', '.sp-printer-ppd-download', null, function() {
                     _self.onDownload("printer-ppd-download", null, $(this).attr('data-savapage'));
+                    return false;
+                });
+
+                $(this).on('dblclick', '.sp-printer-ppde-download', null, function() {
+                    _self.onDownload("printer-ppde-download", null, $(this).attr('data-savapage'));
                     return false;
                 });
 

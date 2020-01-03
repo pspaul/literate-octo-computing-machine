@@ -134,6 +134,12 @@ public final class PrintersPage extends AbstractAdminListPage {
     private static final String CSS_CLASS_PRINTER_PPD_DOWNLOAD =
             "sp-printer-ppd-download";
 
+    /** */
+    private static final String CSS_CLASS_PRINTER_PPDE_DOWNLOAD =
+            "sp-printer-ppde-download";
+
+    private static final String DOWNLOAD_INDCICATOR = " ⇩ ";
+
     /**
      * Bean for mapping JSON page request.
      * <p>
@@ -603,6 +609,45 @@ public final class PrintersPage extends AbstractAdminListPage {
             //
             final PrinterAttrLookup attrLookup = new PrinterAttrLookup(printer);
 
+            //
+            final String filePPDExt =
+                    attrLookup.get(PrinterAttrEnum.CUSTOM_PPD_EXT_FILE);
+            final boolean hasPPDExt = StringUtils.isNotBlank(filePPDExt);
+            final boolean doesPPDExtExist = hasPPDExt
+                    && PROXY_PRINT_SERVICE.getPPDExtFile(filePPDExt).exists();
+
+            String namePPDExt = filePPDExt;
+            if (doesPPDExtExist) {
+                namePPDExt = namePPDExt.concat(DOWNLOAD_INDCICATOR);
+            }
+
+            labelWrk =
+                    createVisibleLabel(hasPPDExt, "ppd-ext-file", namePPDExt);
+
+            if (hasPPDExt) {
+                if (doesPPDExtExist) {
+                    color = MarkupHelper.CSS_TXT_VALID;
+
+                    MarkupHelper.modifyLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_DATA_SAVAPAGE,
+                            printer.getId().toString());
+
+                    MarkupHelper.appendLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_CLASS,
+                            CSS_CLASS_PRINTER_PPDE_DOWNLOAD);
+
+                    MarkupHelper.appendLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_TITLE,
+                            localized("title-download-ppde"));
+
+                } else {
+                    color = MarkupHelper.CSS_TXT_WARN;
+                }
+                MarkupHelper.appendLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
+                        color);
+            }
+            item.add(labelWrk);
+
             /*
              * SNMP
              */
@@ -704,7 +749,7 @@ public final class PrintersPage extends AbstractAdminListPage {
                     nameWlk = null;
                 } else {
                     if (cupsPrinter.isPpdPresent()) {
-                        nameWlk = nameWlk.concat(" ⇩ ");
+                        nameWlk = nameWlk.concat(DOWNLOAD_INDCICATOR);
                     }
                 }
 
