@@ -1,8 +1,8 @@
-/*! SavaPage | (c) 2011-2019 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage | (c) 2011-2020 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -73,6 +73,24 @@
 
 .sp-amount-min {
     color: red;
+}
+
+.sp-url-wrap {
+    /* These are technically the same, but use both */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    /* This is the dangerous one in WebKit, as it breaks things wherever */
+    /* word-break: break-all;*/
+    /* Instead use this non-standard one: */
+    word-break: break-word;
+    /* Adds a hyphen where the word breaks, if supported (No Blink) */
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    /* */
+    white-space: normal;
 }
 
 .sp-txt-wrap {

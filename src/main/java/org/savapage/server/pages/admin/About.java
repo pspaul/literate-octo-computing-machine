@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@ import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.doc.XpsToPdf;
 import org.savapage.core.doc.soffice.SOfficeHelper;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.tools.DbVersionInfo;
@@ -169,6 +170,16 @@ public final class About extends AbstractAdminPage {
         add(new Label("app.dir.letterheads-key",
                 ConfigManager.SERVER_PROP_APP_DIR_LETTERHEADS));
         add(new Label("app.dir.letterheads", ConfigManager.getLetterheadDir()));
+
+        add(new Label("app.dir.doc.store.archive-key",
+                ConfigManager.SERVER_PROP_APP_DIR_DOC_STORE_ARCHIVE));
+        add(new Label("app.dir.doc.store.archive", ConfigManager
+                .getDocStoreHome(DocStoreTypeEnum.ARCHIVE).toString()));
+
+        add(new Label("app.dir.doc.store.journal-key",
+                ConfigManager.SERVER_PROP_APP_DIR_DOC_STORE_JOURNAL));
+        add(new Label("app.dir.doc.store.journal", ConfigManager
+                .getDocStoreHome(DocStoreTypeEnum.JOURNAL).toString()));
 
         helper.encloseLabel("btn-i18n-cache-clear",
                 HtmlButtonEnum.CLEAR.uiText(getLocale()), hasEditorAccess);
