@@ -1,6 +1,6 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -40,46 +40,37 @@ import org.slf4j.LoggerFactory;
 /**
  * A dedicated CSV logger for {@link PaymentGatewayTrx} audit messages.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
- * @since 0.9.9
  */
-public final class PaymentGatewayLogger implements PaymentGatewayListener,
-        BitcoinGatewayListener {
+public final class PaymentGatewayLogger
+        implements PaymentGatewayListener, BitcoinGatewayListener {
 
-    /**
-     * .
-     */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(PaymentGatewayLogger.class);
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(PaymentGatewayLogger.class);
 
-    /**
-     * .
-     */
+    /** */
     private static final String STAT_TRUSTED = "TRUSTED";
 
-    /**
-     * .
-     */
+    /** */
     private static final String STAT_ACKNOWLEDGED = "ACKNOWLEDGED";
 
-    /**
-     * .
-     */
+    /** */
     private static final String STAT_CONFIRMED = "CONFIRMED";
 
-    /**
-     * .
-     */
+    /** */
     private static final String DATEFORMAT_PATTERN = "yyyy-MM-dd'\t'HH:mm:ss.S";
 
     /**
      * Initial capacity of the {@link StringBuilder} building the audit record.
      */
-    private static int STRING_BUILDER_CAPACITY = 128;
+    private static final int STRING_BUILDER_CAPACITY = 128;
 
+    /** */
     private static final String MODE_LIVE = "live";
 
+    /** */
     private static final String MODE_TEST = "test";
 
     /**
@@ -93,6 +84,7 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
      * .
      */
     private static class SingletonHolder {
+        /** */
         public static final PaymentGatewayLogger INSTANCE =
                 new PaymentGatewayLogger();
     }
@@ -148,8 +140,8 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
         msg.append(formattedDateTime());
         msg.append('\t').append(trx.getGatewayId());
         msg.append('\t').append(trx.getTransactionId());
-        msg.append('\t').append(
-                StringUtils.defaultString(trx.getTransactionAccount()));
+        msg.append('\t')
+                .append(StringUtils.defaultString(trx.getTransactionAccount()));
         msg.append('\t').append(mode);
 
         if (trx.getPaymentMethod() != null) {
@@ -158,8 +150,9 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
 
             if (trx.getPaymentMethod() == PaymentMethodEnum.OTHER) {
                 msg.append(" (")
-                        .append(StringUtils.defaultString(trx
-                                .getPaymentMethodOther())).append(')');
+                        .append(StringUtils
+                                .defaultString(trx.getPaymentMethodOther()))
+                        .append(')');
             }
 
         }
@@ -208,19 +201,25 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
     }
 
     @Override
+    public PaymentGatewayTrxEvent onPaymentFailed(final PaymentGatewayTrx trx) {
+        return onPaymentTrx(trx);
+    }
+
+    @Override
     public PaymentGatewayTrxEvent
             onPaymentCancelled(final PaymentGatewayTrx trx) {
         return onPaymentTrx(trx);
-
     }
 
     @Override
-    public PaymentGatewayTrxEvent onPaymentExpired(final PaymentGatewayTrx trx) {
+    public PaymentGatewayTrxEvent
+            onPaymentExpired(final PaymentGatewayTrx trx) {
         return onPaymentTrx(trx);
     }
 
     @Override
-    public PaymentGatewayTrxEvent onPaymentPending(final PaymentGatewayTrx trx) {
+    public PaymentGatewayTrxEvent
+            onPaymentPending(final PaymentGatewayTrx trx) {
         return onPaymentTrx(trx);
     }
 
@@ -231,8 +230,8 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
     }
 
     @Override
-    public PaymentGatewayTrxEvent onPaymentAcknowledged(
-            final PaymentGatewayTrx trx) {
+    public PaymentGatewayTrxEvent
+            onPaymentAcknowledged(final PaymentGatewayTrx trx) {
         return onPaymentTrx(trx);
     }
 
@@ -264,8 +263,9 @@ public final class PaymentGatewayLogger implements PaymentGatewayListener,
     @Override
     public void onPluginException(final ServerPlugin plugin,
             final IOException ex) {
-        LOGGER.error(String.format("%s in plug-in [%s]: %s", ex.getClass()
-                .getSimpleName(), plugin.getId(), ex.getMessage()));
+        LOGGER.error(String.format("%s in plug-in [%s]: %s",
+                ex.getClass().getSimpleName(), plugin.getId(),
+                ex.getMessage()));
     }
 
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -127,30 +127,18 @@ public final class ServerPluginManager
     private static final BigDecimal SATOSHIS_IN_BTC =
             BigDecimal.valueOf(BitcoinUtil.SATOSHIS_IN_BTC);
 
-    /**
-     * .
-     */
+    /** */
     private static final String STAT_TRUSTED = "TRUSTED";
-
-    /**
-     * .
-     */
+    /** */
     private static final String STAT_ACKNOWLEDGED = "ACKNOWLEDGED";
-
-    /**
-     * .
-     */
+    /** */
     private static final String STAT_CONFIRMED = "CONFIRMED";
-
-    /**
-     * .
-     */
+    /** */
     private static final String STAT_CANCELLED = "CANCELLED";
-
-    /**
-     * .
-     */
+    /** */
     private static final String STAT_EXPIRED = "EXPIRED";
+    /** */
+    private static final String STAT_FAILED = "FAILED";
 
     /**
      * Property key prefix.
@@ -815,6 +803,26 @@ public final class ServerPluginManager
 
         AppLogHelper.log(logLevel, msg);
         publishEvent(level, msg);
+    }
+
+    @Override
+    public PaymentGatewayTrxEvent onPaymentFailed(final PaymentGatewayTrx trx) {
+
+        publishEvent(PubLevelEnum.WARN,
+                localize("payment-failed", trx.getUserId(), trx.getGatewayId(),
+                        String.format("%s %.2f", CurrencyUtil.getCurrencySymbol(
+                                trx.getCurrencyCode(), Locale.getDefault()),
+                                trx.getAmount())));
+        logPaymentTrxReceived(trx, STAT_FAILED);
+        PaymentGatewayLogger.instance().onPaymentFailed(trx);
+
+        //
+        final PaymentGatewayTrxEvent trxEvent = new PaymentGatewayTrxEvent();
+
+        trxEvent.setUserId(trx.getUserId());
+        trxEvent.setBalanceUpdate(false);
+
+        return trxEvent;
     }
 
     @Override
