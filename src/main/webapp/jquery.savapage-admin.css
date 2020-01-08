@@ -1,9 +1,12 @@
-/*! SavaPage | (c) 2011-2018 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage | (c) 2011-2020 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -28,6 +31,15 @@ body {
 }
 
 #page-admin {
+}
+
+#page-ppde-file-browser .ui-dialog-contain {
+    width: 92.5%;
+    max-width: 1920px;
+    margin: 15px auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: 5px;
 }
 
 #sp-gdpr-popup .ui-content {
@@ -346,3 +358,5 @@ dd h4 {
         width: 60%;
     }
 }
+
+/* eof */

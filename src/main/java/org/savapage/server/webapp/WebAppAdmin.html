@@ -1,25 +1,26 @@
-<!DOCTYPE html>
+<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
 	<!-- 
-    +=========================================================================+ 
-    | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
-    |.........................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify .......|
-    | it under the terms of the GNU Affero General Public License as .........|
-    | published by the Free Software Foundation, either version 3 of .........|
-    | the License, or (at your option) any later version. ....................|
-    +=========================================================================+ 
-    -->
++=======================================================================+ 
+| This file is part of the SavaPage project <https://savapage.org> .....|
+| Copyright (c) 2011-2020 Datraverse B.V. | Author: Rijk Ravestein......| 
+| ......................................................................|
+| SPDX-FileCopyrightText: 2011-2020 Datraverse BV <info@datraverse.com> |
+| SPDX-License-Identifier: AGPL-3.0-or-later                            |
+|.......................................................................| 
+| SavaPage is free software: you can redistribute it and/or modify .....|
+| it under the terms of the GNU Affero General Public License as .......|
+| published by the Free Software Foundation, either version 3 of .......|
+| the License, or (at your option) any later version. ..................|
++=======================================================================+ 
+-->
 </wicket:remove>
-
 <wicket:remove>
 	<!--
 <html xmlns:wicket="http://wicket.apache.org" class="ui-mobile-rendering">
 -->
 </wicket:remove>
-
 <head>
 
 <noscript>
@@ -33,7 +34,6 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <wicket:remove>
 	<!--
 Informs the Apple browser that this is a web app. 
@@ -46,7 +46,6 @@ Informs the Apple browser that this is a web app.
 	<!--  Prevent caching in IE: http://support.microsoft.com/kb/234067  -->
 </wicket:remove>
 <META HTTP-EQUIV="Expires" CONTENT="-1">
-
 <link rel="shortcut icon" href="/favicon-admin.ico" type="image/x-icon" />
 
 <wicket:remove>
@@ -90,7 +89,7 @@ If no sizes attribute is set, the element’s size defaults to 57 x 57.
 	</wicket:remove>
 
 	<div data-role="dialog" id="page-zero" style="display: none;">
-		<wicket:panel wicket:id="zero-page-panel"/>
+		<wicket:panel wicket:id="zero-page-panel" />
 	</div>
 
 	<wicket:remove>
@@ -110,6 +109,13 @@ If no sizes attribute is set, the element’s size defaults to 57 x 57.
 	<div data-role="dialog" data-theme="a" id="page-device" />
 	<div data-role="dialog" data-theme="a" id="page-info" />
 	<div data-role="dialog" data-theme="a" id="page-voucher-create" />
+
+	<div data-role="dialog" data-theme="a" id="page-ppde-file-browser">
+		<div data-role="header" data-theme="b">
+			<h1 id="ppde-file-browser-title" />
+		</div>
+		<div id="ppde-file-browser-addin" class="ui-content" />
+	</div>
 
 	<div data-role="dialog" data-theme="a" id="page-membercard-upload"
 		style="display: none;" class="sp-initial-hidden">
@@ -152,7 +158,7 @@ If no sizes attribute is set, the element’s size defaults to 57 x 57.
      See FileDownloadApiPanel     
      ================================================================== -->
 	</wicket:remove>
-	<wicket:panel wicket:id="file-download-api-panel"/>
+	<wicket:panel wicket:id="file-download-api-panel" />
 
 </body>
 </html>

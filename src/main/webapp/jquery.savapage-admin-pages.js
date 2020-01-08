@@ -6,6 +6,9 @@
  * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -1206,6 +1209,7 @@
                 _self = _ns.derive(_page),
                 _onChangeJobTicket,
                 _onChangeChargeType,
+                _onBrowsePPDE,
                 _showAllMediaRows;
 
             _onChangeChargeType = function(chargeType) {
@@ -1220,6 +1224,13 @@
             _onChangeJobTicket = function(isTicket) {
                 _view.visible($('#printer-jobticket-group-div'), isTicket);
                 _view.visibleCheckboxRadio($('#printer-jobticket-labels'), !isTicket);
+            };
+
+            /** */
+            _onBrowsePPDE = function(ppdeFileName) {
+                $('#ppde-file-browser-addin').html(_view.getAdminPageHtml('PPDExtFileBrowserAddin', {'ppdeFileName' : ppdeFileName}) || 'error').enhanceWithin();
+                $('#ppde-file-browser-title').html(ppdeFileName);
+                _view.changePage($('#page-ppde-file-browser'));
             };
 
             /** */
@@ -1251,6 +1262,14 @@
 
                 $(this).on('change', '#printer-jobticket', null, function() {
                     _onChangeJobTicket(_view.isCbChecked($(this)));
+                });
+
+                $(this).on('click', '#printer-ppd-ext-file-btn', null, function() {
+                    var val = $('#printer-ppd-ext-file').val();
+                    if (val && val.length > 0) {
+                        _onBrowsePPDE(val);
+                    }
+                    return false;
                 });
 
                 $(this).on('click', '#button-save-printer', null, function() {
@@ -1302,11 +1321,19 @@
                 });
 
             }).on("pagebeforeshow", function(event, ui) {
+                var accounting,
+                    mediaSource,
+                    ppdExtFile,
+                    data;
 
-                var accounting = $('#sp-printer-accounting-addin'),
-                    mediaSource = $('#sp-printer-media-source-addin'),
-                    ppdExtFile = $('#printer-ppd-ext-file'),
-                    data = {};
+                if (ui.prevPage.attr('id') === 'page-ppde-file-browser') {
+                    return;
+                }
+
+                accounting = $('#sp-printer-accounting-addin');
+                mediaSource = $('#sp-printer-media-source-addin');
+                ppdExtFile = $('#printer-ppd-ext-file');
+                data = {};
 
                 $('#printer-displayname').val(_model.editPrinter.displayName);
                 $('#printer-location').val(_model.editPrinter.location);
