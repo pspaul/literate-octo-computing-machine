@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -292,7 +295,7 @@ public final class UsersPage extends AbstractAdminListPage {
                     this.accountCtxSavaPage.getFormattedUserBalance(user,
                             getLocale(), this.currencySymbol)));
 
-            if (this.accountCtxPaperCut == null) {
+            if (this.accountCtxPaperCut == null || isErased) {
                 mapVisible.put("balance-amount-papercut", null);
             } else {
                 helper.addTransparant("balance-papercut-icon")
