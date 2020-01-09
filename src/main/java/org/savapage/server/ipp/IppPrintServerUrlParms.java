@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -31,6 +34,7 @@ import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
+import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.server.WebApp;
 
 /**
@@ -130,13 +134,21 @@ public final class IppPrintServerUrlParms {
             }
         }
 
-        /*
-         * Make sure printer is an empty string (default queue) when no value
-         * was found.
-         */
-        this.printer = StringUtils.defaultString(tmpPrinter);
+        this.printer = defaultIfBlankUrlPath(tmpPrinter);
         this.userNumber = tmpUserNumber;
         this.userUuid = tmpUserUuid;
+    }
+
+    /**
+     * Creates default URL Path when original path is blank (empty or null).
+     *
+     * @param urlPath
+     *            The original URL path.
+     * @return Resulting URL path.
+     */
+    private static String defaultIfBlankUrlPath(final String urlPath) {
+        return StringUtils.defaultIfBlank(urlPath,
+                ReservedIppQueueEnum.IPP_PRINT.getUrlPath());
     }
 
     /**
@@ -150,7 +162,7 @@ public final class IppPrintServerUrlParms {
             final UUID userUuid) {
 
         this.uriBase = uriBase;
-        this.printer = StringUtils.defaultString(printerPath);
+        this.printer = defaultIfBlankUrlPath(printerPath);
         this.userNumber = userNumber;
         this.userUuid = userUuid;
         this.url = null;

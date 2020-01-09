@@ -372,7 +372,16 @@ public final class QueuesPage extends AbstractAdminListPage {
             item.add(labelWrk);
 
             //
-            labelWrk = new Label("urlPath", "/" + queue.getUrlPath());
+            final boolean isDefaultQueue = queue.getUrlPath()
+                    .equals(ReservedIppQueueEnum.IPP_PRINT.getUrlPath());
+            final String urlPathPfx;
+            if (isDefaultQueue) {
+                urlPathPfx = "";
+            } else {
+                urlPathPfx = "/";
+            }
+            labelWrk =
+                    new Label("urlPath", urlPathPfx.concat(queue.getUrlPath()));
             labelWrk.add(new AttributeModifier("class", color));
             item.add(labelWrk);
 
@@ -383,12 +392,14 @@ public final class QueuesPage extends AbstractAdminListPage {
                     && reservedQueue != ReservedIppQueueEnum.AIRPRINT)) {
 
                 helper.encloseLabel("url-default",
-                        String.format("%s/%s", urlDefault, queue.getUrlPath()),
+                        String.format("%s%s%s", urlDefault, urlPathPfx,
+                                queue.getUrlPath()),
                         true).setEscapeModelStrings(false);
 
                 // For now, do NOT show the Windows URL.
                 helper.encloseLabel("url-windows",
-                        String.format("%s/%s", urlWindows, queue.getUrlPath()),
+                        String.format("%s%s%s", urlWindows, urlPathPfx,
+                                queue.getUrlPath()),
                         false).setEscapeModelStrings(false);
 
             } else {

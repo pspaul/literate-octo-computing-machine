@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -60,6 +63,12 @@ public final class ReqQueueSet extends ApiRequestMixin {
         final Date now = new Date();
         final String urlPath = dtoReq.getUrlpath().trim();
 
+        // INVARIANT: Mantis #1105
+        if (StringUtils.isBlank(urlPath)) {
+            setApiResult(ApiResultCodeEnum.ERROR, "msg-queue-empty-path");
+            return;
+        }
+
         /*
          * Note: returns null when logically deleted!!
          */
@@ -94,6 +103,7 @@ public final class ReqQueueSet extends ApiRequestMixin {
             }
         }
 
+        // INVARIANT
         if (isDuplicate) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-queue-duplicate-path",
                     urlPath);
@@ -109,8 +119,8 @@ public final class ReqQueueSet extends ApiRequestMixin {
 
         if (isNew) {
 
+            // INVARIANT
             if (QUEUE_SERVICE.isReservedQueue(urlPath)) {
-
                 setApiResult(ApiResultCodeEnum.ERROR, "msg-queue-reserved-path",
                         urlPath);
                 return;

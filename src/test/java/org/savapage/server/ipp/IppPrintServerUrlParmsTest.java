@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -24,6 +27,7 @@ package org.savapage.server.ipp;
 import org.apache.wicket.request.Url;
 import org.junit.Assert;
 import org.junit.Test;
+import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 
 /**
  *
@@ -73,7 +77,8 @@ public final class IppPrintServerUrlParmsTest {
 
         Assert.assertTrue("parm 1", parms.getPrinter().equals(printer));
         Assert.assertTrue("parm 2", parms.getUserNumber().equals(user));
-        Assert.assertTrue("parm 3", parms.getUserUuid().toString().equals(uuid));
+        Assert.assertTrue("parm 3",
+                parms.getUserUuid().toString().equals(uuid));
     }
 
     @Test
@@ -83,7 +88,8 @@ public final class IppPrintServerUrlParmsTest {
 
         final IppPrintServerUrlParms parms = createParm(null, null, uuid);
 
-        Assert.assertTrue("parm 1", parms.getPrinter().equals(""));
+        Assert.assertTrue("parm 1", parms.getPrinter()
+                .equals(ReservedIppQueueEnum.IPP_PRINT.getUrlPath()));
         Assert.assertTrue("parm 2", parms.getUserNumber() == null);
         Assert.assertTrue("parm 3", parms.getUserUuid() == null);
     }
@@ -91,7 +97,7 @@ public final class IppPrintServerUrlParmsTest {
     @Test
     public void test3() {
 
-        final String printer = "";
+        final String printer = ReservedIppQueueEnum.IPP_PRINT.getUrlPath();
 
         final IppPrintServerUrlParms parms = createParm(printer, null, null);
 

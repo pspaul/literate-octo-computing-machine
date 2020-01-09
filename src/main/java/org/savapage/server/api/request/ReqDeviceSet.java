@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -33,6 +36,7 @@ import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.PrinterGroupDao;
 import org.savapage.core.dao.enums.DeviceAttrEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.PrinterGroup;
@@ -67,6 +71,23 @@ public final class ReqDeviceSet extends ApiRequestMixin {
         final boolean isNew = dtoReq.getId() == null;
         final Date now = new Date();
         final String deviceName = dtoReq.getDeviceName();
+
+        // Force displayName == devicenName (Mantis #1105)
+        dtoReq.setDisplayName(deviceName);
+
+        // INVARIANT: Mantis #1105
+        if (StringUtils.isBlank(deviceName)) {
+            setApiResult(ApiResultCodeEnum.WARN, "msg-value-cannot-be-empty",
+                    NounEnum.NAME.uiText(getLocale()));
+            return;
+        }
+
+        // INVARIANT: Mantis #1105
+        if (StringUtils.isBlank(dtoReq.getHostname())) {
+            setApiResult(ApiResultCodeEnum.WARN, "msg-value-cannot-be-empty",
+                    "Host/IP"); // TODO
+            return;
+        }
 
         final PrinterDao printerDao =
                 ServiceContext.getDaoContext().getPrinterDao();
@@ -108,13 +129,13 @@ public final class ReqDeviceSet extends ApiRequestMixin {
             }
         }
 
+        // INVARIANT
         if (isDuplicate) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-device-duplicate-name",
                     deviceName);
             return;
         }
 
-        //
         final Device jpaDeviceDuplicateHost = deviceDao.findByHostDeviceType(
                 dtoReq.getHostname(), dtoReq.getDeviceType());
         isDuplicate = true;
