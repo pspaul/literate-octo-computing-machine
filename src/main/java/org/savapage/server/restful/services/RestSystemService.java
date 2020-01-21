@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,7 +24,6 @@
  */
 package org.savapage.server.restful.services;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
@@ -34,10 +36,8 @@ import javax.ws.rs.core.Response;
 
 import org.savapage.core.SpInfo;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.restful.RestApplication;
-import org.savapage.server.restful.RestAuthFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +66,6 @@ public final class RestSystemService implements IRestService {
     /**
      * @return Application version.
      */
-    @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
     @GET
     @Path(PATH_SUB_VERSION)
     @Produces(MediaType.TEXT_PLAIN)
@@ -80,14 +79,8 @@ public final class RestSystemService implements IRestService {
      */
     public static void test() {
 
-        final ConfigManager cm = ConfigManager.instance();
-
         final Client client = ServiceContext.getServiceFactory()
-                .getRestClientService().createClientAuth(
-                        cm.getConfigValue(
-                                IConfigProp.Key.API_RESTFUL_AUTH_USERNAME),
-                        cm.getConfigValue(
-                                IConfigProp.Key.API_RESTFUL_AUTH_PASSWORD));
+                .getRestClientService().createClient();
 
         final WebTarget[] webTargets = new WebTarget[] { //
                 client.target(
