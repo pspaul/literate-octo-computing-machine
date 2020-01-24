@@ -67,6 +67,7 @@ import org.savapage.core.services.ServiceEntryPoint;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.WebApp;
+import org.savapage.server.webapp.WebAppHelper;
 import org.savapage.server.webapp.WebAppUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,7 +217,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         ServiceContext.open();
 
         try {
-            final String remoteAddr = request.getRemoteAddr();
+            final String remoteAddr = WebAppHelper.getClientIP(request);
 
             /*
              * Get the Queue from the URL.
@@ -474,7 +475,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         final StringBuilder log = new StringBuilder();
 
         log.append("\nRequest [").append(request.getRequestURL().toString())
-                .append("] From [").append(request.getRemoteAddr())
+                .append("] From [").append(WebAppHelper.getClientIP(request))
                 .append("] Bytes [").append(request.getContentLength())
                 .append("]\n");
 

@@ -3,6 +3,9 @@
  * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -47,7 +50,6 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -193,6 +195,7 @@ import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.session.SpSession;
+import org.savapage.server.webapp.WebAppHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1126,7 +1129,7 @@ public final class JsonApiServer extends AbstractPage {
              * (2) Write log to database.
              */
             docLog.setDeliveryProtocol(DocLogProtocolEnum.HTTP.getDbName());
-            docLog.getDocOut().setDestination(getRemoteAddr());
+            docLog.getDocOut().setDestination(this.getClientIP());
 
             DOC_LOG_SERVICE.logDocOut(lockedUser, docLog.getDocOut());
 
@@ -2147,7 +2150,7 @@ public final class JsonApiServer extends AbstractPage {
             final String userId = session.getUserId();
 
             ApiRequestHelper.stopReplaceSession(session, userId,
-                    this.getRemoteAddr());
+                    this.getClientIP());
 
         } else if (session.isAuthenticated()) {
 
@@ -3760,17 +3763,11 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * Returns the Internet Protocol (IP) address of the client or last proxy
-     * that sent the request. For HTTP servlets, same as the value of the CGI
-     * variable <code>REMOTE_ADDR</code>.
-     *
-     * @return a <code>String</code> containing the IP address of the client
-     *         that sent the request
-     *
+     * @return <code>String</code> containing the IP address of the client
+     *         that sent the request.
      */
-    private String getRemoteAddr() {
-        return ((ServletWebRequest) RequestCycle.get().getRequest())
-                .getContainerRequest().getRemoteAddr();
+    private String getClientIP() {
+        return WebAppHelper.getClientIP(RequestCycle.get().getRequest());
     }
 
     /**
@@ -3809,7 +3806,7 @@ public final class JsonApiServer extends AbstractPage {
          */
         if (savedWebAppType == WebAppTypeEnum.USER && userId != null) {
             ApiRequestHelper.interruptPendingLongPolls(userId,
-                    this.getRemoteAddr());
+                    this.getClientIP());
         }
 
         return createApiResultOK();
@@ -3824,7 +3821,7 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqExitEventMonitor(final String userId)
             throws IOException {
         ApiRequestHelper.interruptPendingLongPolls(userId,
-                this.getRemoteAddr());
+                this.getClientIP());
         return createApiResultOK();
     }
 
@@ -4297,7 +4294,7 @@ public final class JsonApiServer extends AbstractPage {
 
         //
         final ConfigManager cm = ConfigManager.instance();
-        final String remoteAddr = this.getRemoteAddr();
+        final String remoteAddr = this.getClientIP();
         final UserAuth userAuth = new UserAuth(
                 ApiRequestHelper.getHostTerminal(remoteAddr), authModeReq,
                 webAppType, InetUtils.isPublicAddress(remoteAddr));
@@ -4390,7 +4387,7 @@ public final class JsonApiServer extends AbstractPage {
 
         // Web Print
         final boolean isWebPrintEnabled =
-                WebPrintHelper.isWebPrintEnabled(this.getRemoteAddr());
+                WebPrintHelper.isWebPrintEnabled(this.getClientIP());
 
         userData.put("webPrintEnabled", isWebPrintEnabled);
 

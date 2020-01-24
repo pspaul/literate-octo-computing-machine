@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -74,6 +77,7 @@ import org.savapage.core.util.DateUtil;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.UserAuthToken;
+import org.savapage.server.webapp.WebAppHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -396,7 +400,7 @@ public final class UserEventService extends AbstractEventService {
     public void monitorUserEvent(final ServerSession remote,
             final ServerMessage message) {
 
-        final String clientIpAddress = getClientIpAddress(message);
+        final String clientIpAddress = WebAppHelper.getClientIP(message);
 
         Map<String, Object> input = message.getDataAsMap();
 
@@ -462,10 +466,12 @@ public final class UserEventService extends AbstractEventService {
                             clientIpAddress);
 
                 } catch (IOException e) {
-                    LOGGER.error("Listener removed (timeout) for user [" + user
-                            + "] from [" + clientIpAddress
-                            + "]. UserMsgIndicator write failed: "
-                            + e.getMessage());
+                    if (!ConfigManager.isShutdownInProgress()) {
+                        LOGGER.error("Listener removed (timeout) for user ["
+                                + user + "] from [" + clientIpAddress
+                                + "]. UserMsgIndicator write failed: "
+                                + e.getMessage());
+                    }
                 }
             }
         });

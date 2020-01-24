@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
++ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -82,6 +85,7 @@ import org.savapage.server.pages.DocLogItem;
 import org.savapage.server.restful.RestAuthException;
 import org.savapage.server.restful.RestAuthFilter;
 import org.savapage.server.restful.dto.RestDocumentDto;
+import org.savapage.server.webapp.WebAppHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -434,7 +438,8 @@ public final class RestDocumentsService implements IRestService {
             docContentPrintReq.setContentType(contentType);
             docContentPrintReq.setFileName(disp.getFileName());
             docContentPrintReq.setOriginatorEmail(null);
-            docContentPrintReq.setOriginatorIp(servletRequest.getRemoteAddr());
+            docContentPrintReq
+                    .setOriginatorIp(WebAppHelper.getClientIP(servletRequest));
             docContentPrintReq.setPreferredOutputFont(null);
             docContentPrintReq.setProtocol(DocLogProtocolEnum.HTTP);
             docContentPrintReq.setTitle(disp.getFileName());

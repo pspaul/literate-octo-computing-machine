@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -26,7 +29,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cometd.bayeux.server.BayeuxServer;
-import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.server.AbstractService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
@@ -102,17 +104,6 @@ public abstract class AbstractEventService extends AbstractService
      */
     public static long getMaxNetworkDelayMsecDefault() {
         return MAX_NETWORKDELAY_MSEC_DEFAULT;
-    }
-
-    /**
-     * Gets the remote IP address from the {@link ServerMessage}.
-     *
-     * @param message
-     *            {@link ServerMessage}.
-     * @return The IP address.
-     */
-    protected final String getClientIpAddress(final ServerMessage message) {
-        return message.getBayeuxContext().getRemoteAddress().getHostString();
     }
 
     /**

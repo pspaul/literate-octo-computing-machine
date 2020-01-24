@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -28,6 +31,7 @@ import java.util.Base64;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import org.savapage.server.webapp.WebAppHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,9 +78,11 @@ public abstract class BasicAuthServlet extends HttpServlet {
     protected final boolean
             checkBasicAuthAccess(final HttpServletRequest request) {
 
-        if (!isRemoteAddrAllowed(request.getRemoteAddr())) {
+        final String clientIP = WebAppHelper.getClientIP(request);
+
+        if (!isRemoteAddrAllowed(clientIP)) {
             LOGGER.warn("{}: {} denied.", this.getClass().getSimpleName(),
-                    request.getRemoteAddr());
+                    clientIP);
             return false;
         }
 
@@ -119,8 +125,7 @@ public abstract class BasicAuthServlet extends HttpServlet {
 
             if (!isValid) {
                 LOGGER.warn("{}: {} denied (userid/password).",
-                        this.getClass().getSimpleName(),
-                        request.getRemoteAddr());
+                        this.getClass().getSimpleName(), clientIP);
             }
             return isValid;
         }

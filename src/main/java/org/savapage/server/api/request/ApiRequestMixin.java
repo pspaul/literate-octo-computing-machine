@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -30,7 +33,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.WebAppTypeEnum;
@@ -66,6 +68,7 @@ import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.session.SpSession;
+import org.savapage.server.webapp.WebAppHelper;
 
 /**
  *
@@ -234,17 +237,11 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     }
 
     /**
-     * Returns the Internet Protocol (IP) address of the client or last proxy
-     * that sent the request. For HTTP servlets, same as the value of the CGI
-     * variable <code>REMOTE_ADDR</code>.
-     *
-     * @return a <code>String</code> containing the IP address of the client
-     *         that sent the request
-     *
+     * @return <code>String</code> containing the IP address of the client
+     *         that sent the request.
      */
-    protected final String getRemoteAddr() {
-        return ((ServletWebRequest) RequestCycle.get().getRequest())
-                .getContainerRequest().getRemoteAddr();
+    protected final String getClientIP() {
+        return WebAppHelper.getClientIP(RequestCycle.get().getRequest());
     }
 
     /**

@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -40,6 +43,7 @@ import org.savapage.core.rfid.RfidNumberFormat;
 import org.savapage.core.rfid.RfidReaderManager;
 import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.webapp.WebAppHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +53,8 @@ import org.slf4j.LoggerFactory;
  * Card swipe on an associated RFID Network Reader. Events are published on
  * {@linkplain #CHANNEL_PUBLISH}.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 public final class DeviceEventService extends AbstractEventService {
 
@@ -88,8 +93,8 @@ public final class DeviceEventService extends AbstractEventService {
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(DeviceEventService.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(DeviceEventService.class);
 
     /**
      *
@@ -113,7 +118,7 @@ public final class DeviceEventService extends AbstractEventService {
     public void monitorDeviceEvent(final ServerSession remote,
             final ServerMessage message) {
 
-        final String clientIpAddress = getClientIpAddress(message);
+        final String clientIpAddress = WebAppHelper.getClientIP(message);
 
         Map<String, Object> eventData = null;
 
@@ -126,9 +131,8 @@ public final class DeviceEventService extends AbstractEventService {
             /*
              * Find the TERMINAL and linked CARD_READER device.
              */
-            final Device userDevice =
-                    deviceDao.findByHostDeviceType(clientIpAddress,
-                            DeviceTypeEnum.TERMINAL);
+            final Device userDevice = deviceDao.findByHostDeviceType(
+                    clientIpAddress, DeviceTypeEnum.TERMINAL);
 
             if (userDevice == null) {
                 throw new SpException("No Terminal Device found for ["
@@ -144,8 +148,8 @@ public final class DeviceEventService extends AbstractEventService {
             }
             final String readerIpAddress = readerDevice.getHostname();
 
-            if (!readerDevice.getDeviceType().equals(
-                    DeviceTypeEnum.CARD_READER.toString())) {
+            if (!readerDevice.getDeviceType()
+                    .equals(DeviceTypeEnum.CARD_READER.toString())) {
 
                 throw new SpException("Reader Device [" + "] for ["
                         + clientIpAddress + "] is not type "
@@ -202,9 +206,8 @@ public final class DeviceEventService extends AbstractEventService {
             /*
              * Blocking till event (or timeout)
              */
-            eventData =
-                    watchCardReaderEvent(readerDevice.getHostname(),
-                            rfidNumberFormat);
+            eventData = watchCardReaderEvent(readerDevice.getHostname(),
+                    rfidNumberFormat);
 
             if (eventData == null) {
                 eventData = new HashMap<String, Object>();
@@ -257,8 +260,8 @@ public final class DeviceEventService extends AbstractEventService {
             remote.deliver(getServerSession(), CHANNEL_PUBLISH, jsonEvent);
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Delivered event for device [" + clientIpAddress
-                        + "]");
+                LOGGER.debug(
+                        "Delivered event for device [" + clientIpAddress + "]");
             }
 
         } catch (Exception e) {
@@ -289,12 +292,11 @@ public final class DeviceEventService extends AbstractEventService {
 
         Map<String, Object> eventData = null;
 
-        final RfidEvent event =
-                RfidReaderManager.waitForEvent(readerIpAddress,
-                        rfidNumberFormat, theMaxMonitorMsec,
-                        TimeUnit.MILLISECONDS);
+        final RfidEvent event = RfidReaderManager.waitForEvent(readerIpAddress,
+                rfidNumberFormat, theMaxMonitorMsec, TimeUnit.MILLISECONDS);
 
-        if (event != null && event.getEvent() == RfidEvent.EventEnum.CARD_SWIPE) {
+        if (event != null
+                && event.getEvent() == RfidEvent.EventEnum.CARD_SWIPE) {
             eventData = new HashMap<String, Object>();
             eventData.put("event", "card-swipe");
             eventData.put("cardNumber", event.getCardNumber());

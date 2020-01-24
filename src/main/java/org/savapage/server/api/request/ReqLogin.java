@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -395,7 +398,7 @@ public final class ReqLogin extends ApiRequestMixin {
                         && StringUtils.isBlank(authPw)) {
                     isCliAppAuthApplied =
                             this.reqLoginAuthTokenCliApp(session, getUserData(),
-                                    authId, this.getRemoteAddr(), webAppType);
+                                    authId, this.getClientIP(), webAppType);
                 } else {
                     isCliAppAuthApplied = false;
                 }
@@ -509,7 +512,7 @@ public final class ReqLogin extends ApiRequestMixin {
         /*
          *
          */
-        final String remoteAddr = this.getRemoteAddr();
+        final String remoteAddr = this.getClientIP();
         final boolean isPublicAddress = InetUtils.isPublicAddress(remoteAddr);
 
         final Device terminal = ApiRequestHelper.getHostTerminal(remoteAddr);
@@ -1419,7 +1422,7 @@ public final class ReqLogin extends ApiRequestMixin {
         userData.put("cometdToken", cometdToken);
 
         WebApp.get().onAuthenticatedUser(webAppType, authMode, session.getId(),
-                getRemoteAddr(), uid);
+                this.getClientIP(), uid);
 
         if (webAppType == WebAppTypeEnum.USER) {
 
@@ -1437,7 +1440,7 @@ public final class ReqLogin extends ApiRequestMixin {
              */
             if (UserMsgIndicator.isSafePagesDirPresent(uid)) {
                 ApiRequestHelper.interruptPendingLongPolls(uid,
-                        this.getRemoteAddr());
+                        this.getClientIP());
             }
             /*
              * Check for expired inbox jobs.

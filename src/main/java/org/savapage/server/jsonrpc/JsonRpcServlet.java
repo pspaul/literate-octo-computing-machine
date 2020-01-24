@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -90,6 +93,7 @@ import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.InetUtils;
+import org.savapage.server.webapp.WebAppHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -355,7 +359,7 @@ public final class JsonRpcServlet extends HttpServlet
                     "Secure connection required.");
         }
 
-        final String clientAddress = httpRequest.getRemoteAddr();
+        final String clientAddress = WebAppHelper.getClientIP(httpRequest);
         final Set<String> serverAddresses;
 
         try {
@@ -845,7 +849,7 @@ public final class JsonRpcServlet extends HttpServlet
                     .append("\"");
         }
 
-        msgTxt.append(" from ").append(httpRequest.getRemoteAddr());
+        msgTxt.append(" from ").append(WebAppHelper.getClientIP(httpRequest));
 
         if (StringUtils.isNotBlank(msg)) {
             msgTxt.append(" : ").append(msg);

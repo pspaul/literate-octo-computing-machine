@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -46,6 +49,7 @@ import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.util.InetUtils;
+import org.savapage.server.webapp.WebAppHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +168,7 @@ public final class RestAuthFilter
      */
     private boolean isRemoteAddressAllowed() {
 
-        final String clientAddress = servletRequest.getRemoteAddr();
+        final String clientAddress = WebAppHelper.getClientIP(servletRequest);
 
         final String cidrRanges = ConfigManager.instance()
                 .getConfigValue(Key.API_RESTFUL_IP_ADDRESSES_ALLOWED);

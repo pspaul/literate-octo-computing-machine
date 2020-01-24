@@ -3,6 +3,9 @@
  * Copyright (c) 2011-2019 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -48,6 +51,7 @@ import org.savapage.core.services.UserService;
 import org.savapage.server.api.JsonApiServer;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.api.request.ReqPrinterPrint;
+import org.savapage.server.webapp.WebAppHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,7 +151,7 @@ public final class ProxyPrintEventService extends AbstractEventService {
         final Long idUser = Long.parseLong(input.get("idUser").toString());
         final Locale locale = this.getLocale(input, "language", "country");
 
-        final String clientIpAddress = getClientIpAddress(message);
+        final String clientIpAddress = WebAppHelper.getClientIP(message);
 
         Map<String, Object> eventData = null;
 

@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -34,6 +37,7 @@ import org.apache.xmlrpc.metadata.XmlRpcSystemImpl;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.apache.xmlrpc.webserver.XmlRpcServlet;
+import org.savapage.server.webapp.WebAppHelper;
 
 /**
  * Wrapper class for the main {@link XmlRpcServlet} to capture the Client IP
@@ -118,7 +122,7 @@ public final class SpXmlRpcServlet extends XmlRpcServlet {
             final HttpServletResponse pResponse)
             throws IOException, ServletException {
 
-        clientIpAddress.set(pRequest.getRemoteAddr());
+        clientIpAddress.set(WebAppHelper.getClientIP(pRequest));
         isSslConnection.set(Boolean.valueOf(pRequest.isSecure()));
 
         super.doPost(pRequest, pResponse);
