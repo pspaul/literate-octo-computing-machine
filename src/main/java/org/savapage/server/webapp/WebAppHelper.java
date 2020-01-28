@@ -102,7 +102,7 @@ public final class WebAppHelper {
             }
 
             for (int i = 1; i < xffArray.length; i++) {
-                if (!InetUtils.isIp4AddrInCidrRanges(cidrRangesProxy,
+                if (!InetUtils.isIpAddrInCidrRanges(cidrRangesProxy,
                         xffArray[i].trim())) {
                     warnProxyXFF(xffHeader, cidrRangesProxy);
                     return null;
@@ -150,7 +150,7 @@ public final class WebAppHelper {
         AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.WARN,
                 String.format(
                         "HTTP %s [%s] does not match allowed proxies [%s]: "
-                        + "using remote IP address.",
+                                + "using remote IP address.",
                         HEADER_X_FORWARDED_FOR, xffHeader, cidrRangesProxy));
     }
 
@@ -209,9 +209,21 @@ public final class WebAppHelper {
         }
 
         if (StringUtils.isBlank(clientIP)) {
-            clientIP = request.getRemoteAddr();
+            clientIP = sanitizeRemoteAddr(request.getRemoteAddr());
         }
         return clientIP;
+    }
+
+    /**
+     * @param remoteAddrRaw
+     *            The raw remote address. Note: IPv6 address might be enclosed
+     *            by brackets.
+     *
+     * @return Plain IP address, without formatting.
+     */
+    private static String sanitizeRemoteAddr(final String remoteAddrRaw) {
+        return StringUtils
+                .removeEnd(StringUtils.removeStart(remoteAddrRaw, "["), "]");
     }
 
 }

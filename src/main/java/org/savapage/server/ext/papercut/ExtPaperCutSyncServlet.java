@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -426,7 +429,7 @@ public final class ExtPaperCutSyncServlet extends BasicAuthServlet {
                 Key.EXT_PAPERCUT_USER_SYNC_IP_ADDRESSES_ALLOWED);
 
         return !StringUtils.isBlank(cidrRanges)
-                && InetUtils.isIp4AddrInCidrRanges(cidrRanges, remoteAddr);
+                && InetUtils.isIpAddrInCidrRanges(cidrRanges, remoteAddr);
     }
 
 }

@@ -42,6 +42,7 @@ import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.InetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,13 @@ public final class ReqDeviceSet extends ApiRequestMixin {
         // INVARIANT: Mantis #1105
         if (StringUtils.isBlank(dtoReq.getHostname())) {
             setApiResult(ApiResultCodeEnum.WARN, "msg-value-cannot-be-empty",
-                    "Host/IP"); // TODO
+                    "IP");
+            return;
+        }
+
+        if (!InetUtils.isInetAddressValid(dtoReq.getHostname())) {
+            setApiResult(ApiResultCodeEnum.WARN, "msg-value-invalid", "IP",
+                    dtoReq.getHostname());
             return;
         }
 

@@ -174,7 +174,7 @@ public final class RestAuthFilter
                 .getConfigValue(Key.API_RESTFUL_IP_ADDRESSES_ALLOWED);
 
         final boolean allowed = StringUtils.isBlank(cidrRanges)
-                || InetUtils.isIp4AddrInCidrRanges(cidrRanges, clientAddress);
+                || InetUtils.isIpAddrInCidrRanges(cidrRanges, clientAddress);
 
         if (!allowed) {
             LOGGER.warn("Access denied for {}. Allowed CIDR ranges: {}",

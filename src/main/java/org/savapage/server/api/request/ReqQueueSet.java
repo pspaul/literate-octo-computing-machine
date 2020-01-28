@@ -36,6 +36,7 @@ import org.savapage.core.dao.enums.IppRoutingEnum;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.JsonHelper;
 
 /**
@@ -66,6 +67,14 @@ public final class ReqQueueSet extends ApiRequestMixin {
         // INVARIANT: Mantis #1105
         if (StringUtils.isBlank(urlPath)) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-queue-empty-path");
+            return;
+        }
+
+        // INVARIANT
+        if (StringUtils.isNotBlank(dtoReq.getIpallowed())
+                && !InetUtils.isCidrSetValid(dtoReq.getIpallowed())) {
+            setApiResult(ApiResultCodeEnum.WARN, "msg-value-invalid", "CIDR",
+                    dtoReq.getIpallowed());
             return;
         }
 

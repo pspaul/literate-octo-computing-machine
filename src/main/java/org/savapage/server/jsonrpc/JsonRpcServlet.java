@@ -380,7 +380,7 @@ public final class JsonRpcServlet extends HttpServlet
                     .getConfigValue(Key.API_JSONRPC_IP_ADDRESSES_ALLOWED);
 
             if (StringUtils.isBlank(cidrRanges)
-                    || !InetUtils.isIp4AddrInCidrRanges(cidrRanges,
+                    || !InetUtils.isIpAddrInCidrRanges(cidrRanges,
                             clientAddress)
                     || !secretKey.equals(ConfigManager.instance()
                             .getConfigValue(Key.API_JSONRPC_SECRET_KEY))) {

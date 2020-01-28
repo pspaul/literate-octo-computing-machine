@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -373,7 +376,7 @@ public final class ClientAppHandler {
                 dto.setStatus(ClientAppConnectDto.Status.ERROR_FATAL);
                 dto.setStatusMessage("Invalid API Key.");
 
-            } else if (!InetUtils.isIp4AddrInCidrRanges(ipAllowed,
+            } else if (!InetUtils.isIpAddrInCidrRanges(ipAllowed,
                     clientIpAddress)) {
 
                 if (cm.isConfigValue(
