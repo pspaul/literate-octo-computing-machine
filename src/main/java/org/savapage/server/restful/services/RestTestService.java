@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -29,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -39,6 +43,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -58,6 +63,7 @@ import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.restful.RestApplication;
 import org.savapage.server.restful.RestAuthFilter;
+import org.savapage.server.restful.dto.RestHttpRequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +94,9 @@ public final class RestTestService implements IRestService {
     private static final String PATH_SUB_ECHO = "echo";
 
     /** */
+    private static final String PATH_SUB_HTTP_REQUEST = "http/request";
+
+    /** */
     private static final String PATH_SUB_UPLOAD = "upload";
 
     /** */
@@ -104,6 +113,10 @@ public final class RestTestService implements IRestService {
 
     /** */
     private static final String MEDIA_TYPE_PDF = DocContent.MIMETYPE_PDF;
+
+    /** */
+    @Context
+    private HttpServletRequest servletRequest;
 
     /**
      *
@@ -160,6 +173,16 @@ public final class RestTestService implements IRestService {
     @Produces(MediaType.TEXT_PLAIN)
     public Response echoTextPlain(final String text) {
         return Response.status(Status.CREATED).entity(text).build();
+    }
+
+    /**
+     * @return HTTP request data.
+     */
+    @GET
+    @Path(PATH_SUB_HTTP_REQUEST)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response testHeaders() {
+        return Response.ok(RestHttpRequestDto.createJSON(servletRequest)).build();
     }
 
     /**
