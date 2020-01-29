@@ -58,7 +58,6 @@ import org.savapage.core.ipp.helpers.IppOptionMap;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
-import org.savapage.core.jpa.User;
 import org.savapage.core.print.proxy.TicketJobSheetDto;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.JobTicketService;
@@ -741,11 +740,8 @@ public class DocLogItemPanel extends Panel {
 
         add(labelWlk);
 
-        //
-        if (!obj.getUserId().equals(User.ERASED_USER_ID)) {
-            mapVisible.put("prompt-user", NounEnum.USER.uiText(getLocale()));
-            mapVisible.put("user-name", "");
-        }
+        mapVisible.put("prompt-user", NounEnum.USER.uiText(getLocale()));
+        mapVisible.put("user-name", obj.getUserId());
 
         //
         if (StringUtils.isNotBlank(obj.getDocInOriginatorIp())) {
