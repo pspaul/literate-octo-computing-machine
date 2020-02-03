@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -112,13 +115,27 @@ public final class PdfDocumentFontsAddIn extends AbstractAuthPage {
                 final String embedPart;
 
                 if (font.isSubset()) {
-                    final String fontPart =
-                            StringUtils.split(font.getName(), '+')[1];
+                    final String[] fontNameSplit =
+                            StringUtils.split(font.getName(), '+');
+
+                    final String fontPart;
+
+                    if (fontNameSplit.length > 1) {
+                        fontPart = fontNameSplit[1];
+                    } else {
+                        // Yes, this can happen :-(
+                        fontPart = fontNameSplit[0];
+                    }
 
                     if (subsetFonts.contains(fontPart)) {
                         embedPart = null;
                     } else {
-                        embedPart = "+".concat(fontPart);
+                        if (fontNameSplit.length > 1) {
+                            embedPart = "+".concat(fontPart);
+                        } else {
+                            // Yes, this can happen :-(
+                            embedPart = fontPart.concat("+");
+                        }
                         subsetFonts.add(fontPart);
                     }
 
