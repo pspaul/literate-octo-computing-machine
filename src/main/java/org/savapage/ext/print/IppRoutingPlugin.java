@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -30,6 +33,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -38,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.ipp.routing.IppRoutingContext;
 import org.savapage.core.ipp.routing.IppRoutingResult;
+import org.savapage.core.pdf.ITextPdfCreator;
 import org.savapage.core.util.QRCodeException;
 import org.savapage.core.util.QRCodeHelper;
 import org.savapage.ext.ServerPlugin;
@@ -57,6 +63,7 @@ import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  *
@@ -198,6 +205,22 @@ public final class IppRoutingPlugin implements ServerPlugin {
             PROP_KEY_PDF_FOOTER + ".margin.bottom";
 
     /** */
+    private static final String PROP_KEY_PFX_PDF_INFO =
+            PROP_KEY_PFX_PDF + "info";
+    /** */
+    private static final String PROP_KEY_PDF_INFO_TITLE =
+            PROP_KEY_PFX_PDF_INFO + ".title";
+    /** */
+    private static final String PROP_KEY_PDF_INFO_SUBJECT =
+            PROP_KEY_PFX_PDF_INFO + ".subject";
+    /** */
+    private static final String PROP_KEY_PDF_INFO_AUTHOR =
+            PROP_KEY_PFX_PDF_INFO + ".author";
+    /** */
+    private static final String PROP_KEY_PDF_INFO_KEYWORDS =
+            PROP_KEY_PFX_PDF_INFO + ".keywords";
+
+    /** */
     private String id;
 
     /** */
@@ -253,6 +276,9 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
     /** */
     private String routingId;
+
+    /** */
+    Map<String, String> pdfInfo;
 
     @Override
     public String getId() {
@@ -313,6 +339,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
                         .intValue());
 
         this.onInitHeaderFooter(props);
+        this.onInitPdfInfo(props);
     }
 
     /**
@@ -374,6 +401,38 @@ public final class IppRoutingPlugin implements ServerPlugin {
      * @param props
      *            Configuration properties.
      */
+    private void onInitPdfInfo(final Properties props) {
+
+        this.pdfInfo = new HashMap<>();
+
+        String value;
+
+        value = props.getProperty(PROP_KEY_PDF_INFO_AUTHOR);
+        if (StringUtils.isNotBlank(value)) {
+            this.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_AUTHOR, value);
+        }
+
+        value = props.getProperty(PROP_KEY_PDF_INFO_TITLE);
+        if (StringUtils.isNotBlank(value)) {
+            this.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_TITLE, value);
+        }
+
+        value = props.getProperty(PROP_KEY_PDF_INFO_SUBJECT);
+        if (StringUtils.isNotBlank(value)) {
+            this.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_SUBJECT, value);
+        }
+
+        value = props.getProperty(PROP_KEY_PDF_INFO_KEYWORDS);
+        if (StringUtils.isNotBlank(value)) {
+            this.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_KEYWORDS, value);
+        }
+    }
+
+    /**
+     *
+     * @param props
+     *            Configuration properties.
+     */
     private void onInitHeaderFooter(final Properties props) {
 
         this.header = props.getProperty(PROP_KEY_PDF_HEADER);
@@ -409,6 +468,46 @@ public final class IppRoutingPlugin implements ServerPlugin {
                     .valueOf(props.getProperty(
                             PROP_KEY_PDF_FOOTER_MARGIN_BOTTOM, "10"))
                     .intValue());
+        }
+    }
+
+    /**
+     * @param stamper
+     *            {@link PdfStamper}
+     */
+    private void onRoutingPdfInfo(final PdfStamper stamper) {
+        if (!this.pdfInfo.isEmpty()) {
+            @SuppressWarnings("unchecked")
+            final HashMap<String, String> info = stamper.getReader().getInfo();
+            info.putAll(this.pdfInfo);
+            stamper.setMoreInfo(info);
+        }
+    }
+
+    /**
+     * @param stamper
+     *            {@link PdfStamper}
+     */
+    private void onRoutingPdfPermissions(final PdfStamper stamper) {
+        int iPermissions = 0;
+        boolean bStrength = true; // 128 bit: TODO
+
+        iPermissions |= PdfWriter.ALLOW_COPY;
+        iPermissions |= PdfWriter.ALLOW_SCREENREADERS;
+        iPermissions |= PdfWriter.ALLOW_PRINTING;
+        iPermissions |= PdfWriter.ALLOW_DEGRADED_PRINTING;
+
+        // Don't allow ...
+
+        // iPermissions |= PdfWriter.ALLOW_FILL_IN;
+        // iPermissions |= PdfWriter.ALLOW_ASSEMBLY;
+        // iPermissions |= PdfWriter.ALLOW_MODIFY_CONTENTS;
+        // iPermissions |= PdfWriter.ALLOW_MODIFY_ANNOTATIONS;
+
+        try {
+            stamper.setEncryption(bStrength, null, null, iPermissions);
+        } catch (DocumentException e) {
+            throw new SpException(e);
         }
     }
 
@@ -479,6 +578,9 @@ public final class IppRoutingPlugin implements ServerPlugin {
             reader = new PdfReader(pdfIn);
             stamper = new PdfStamper(reader, pdfSigned);
 
+            // First thing to do.
+            this.onRoutingPdfPermissions(stamper);
+
             final int nPages = reader.getNumberOfPages();
             for (int nPage = 1; nPage <= nPages; nPage++) {
 
@@ -523,6 +625,8 @@ public final class IppRoutingPlugin implements ServerPlugin {
                     }
                 }
             } // end-for
+
+            this.onRoutingPdfInfo(stamper);
 
             stamper.close();
             reader.close();
