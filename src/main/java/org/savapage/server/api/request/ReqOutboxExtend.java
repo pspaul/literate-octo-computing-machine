@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -23,6 +26,8 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.jpa.User;
 import org.savapage.server.session.SpSession;
 
@@ -37,7 +42,8 @@ public final class ReqOutboxExtend extends ApiRequestMixin {
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final int minutes = 10;
+        final int minutes = ConfigManager.instance()
+                .getConfigInt(Key.PROXY_PRINT_HOLD_EXTEND_MINS);
 
         final int jobCount = OUTBOX_SERVICE
                 .extendOutboxExpiry(lockedUser.getUserId(), minutes);

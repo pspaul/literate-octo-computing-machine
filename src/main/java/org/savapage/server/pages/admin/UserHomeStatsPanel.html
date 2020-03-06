@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2011-2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: 2011-2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
+</wicket:remove>
+
+<wicket:panel>
+	<div>
+		<wicket:enclosure child="user-count">
+			<img style="margin-bottom: -1px;" wicket:id="img-user" src=""
+				height="16" />
+			<span wicket:id="user-count" />
+		</wicket:enclosure>
+		<wicket:enclosure child="stats-inbox-count">&nbsp;
+			<img style="margin-bottom: -1px;" wicket:id="img-stats-inbox" src=""
+				height="14" />
+			<span class="sp-txt-info" wicket:id="stats-inbox-count" />
+			<wicket:enclosure child="stats-inbox-size">
+			&nbsp;<small class="sp-txt-info" wicket:id="stats-inbox-size" />
+			</wicket:enclosure>
+		</wicket:enclosure>
+		<wicket:enclosure child="stats-outbox-count">&nbsp;
+			<img style="margin-bottom: -1px;" wicket:id="img-stats-outbox" src=""
+				height="14" />
+			<span class="sp-txt-info" wicket:id="stats-outbox-count" />
+			<wicket:enclosure child="stats-outbox-size">
+				&nbsp;<small class="sp-txt-info" wicket:id="stats-outbox-size" />
+			</wicket:enclosure>
+		</wicket:enclosure>
+		<wicket:enclosure child="stats-date">&nbsp;&nbsp;&nbsp;&nbsp; <small
+				wicket:id="stats-date" />
+		</wicket:enclosure>
+	</div>
+</wicket:panel>
+
+</html>

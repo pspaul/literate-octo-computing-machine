@@ -209,6 +209,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static final String PATH_IMAGES_PAYMENT = PATH_IMAGES + "/payment";
 
     /** */
+    public static final String PATH_IMAGES_FILETYPE = PATH_IMAGES + "/filetype";
+
+    /** */
     public static final String PATH_IMAGES_EXT_SUPPLIER =
             PATH_IMAGES + "/ext-supplier";
 
