@@ -1228,7 +1228,9 @@
 
             /** */
             _onBrowsePPDE = function(ppdeFileName) {
-                $('#ppde-file-browser-addin').html(_view.getAdminPageHtml('PPDExtFileBrowserAddin', {'ppdeFileName' : ppdeFileName}) || 'error').enhanceWithin();
+                $('#ppde-file-browser-addin').html(_view.getAdminPageHtml('PPDExtFileBrowserAddin', {
+                    'ppdeFileName' : ppdeFileName
+                }) || 'error').enhanceWithin();
                 $('#ppde-file-browser-title').html(ppdeFileName);
                 _view.changePage($('#page-ppde-file-browser'));
             };
@@ -2523,6 +2525,11 @@
                     sel.enhanceWithin().popup('open', {
                         positionTo : $(this)
                     });
+                    return false;
+                });
+
+                $(this).on('click', '#sp-btn-userhome-clean', null, function() {
+                    _self.onUserHomeClean();
                     return false;
                 });
 

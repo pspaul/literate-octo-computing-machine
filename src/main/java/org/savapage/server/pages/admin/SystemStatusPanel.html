@@ -122,6 +122,20 @@ the License, or (at your option) any later version.
 					</tr>
 
 					<tr>
+						<th class="sp-txt-wrap">SafePages</th>
+						<td class="sp-txt-wrap sp-txt-info">
+							<wicket:panel wicket:id="userhome-stats-panel" />
+						</td>
+						<wicket:enclosure child="tooltip-userhome-stats">
+							<td>
+								<div style="margin-top: -15px;">
+									<wicket:panel wicket:id="tooltip-userhome-stats" />
+								</div>
+							</td>
+						</wicket:enclosure>
+					</tr>
+
+					<tr>
 						<th>
 							<wicket:message key="recent-errors" />
 						</th>
@@ -243,21 +257,6 @@ the License, or (at your option) any later version.
 							</td>
 						</tr>
 					</wicket:enclosure>
-					<wicket:enclosure child="userhome-stats-panel">
-						<tr>
-							<th class="sp-txt-wrap">User Documents</th>
-							<td class="sp-txt-wrap sp-txt-info">
-								<wicket:panel wicket:id="userhome-stats-panel" />
-							</td>
-							<td>
-								<a wicket:id="btn-userhome-refresh" title="refresh">&nbsp;<img
-										src="/glyphicons/glyphicons_081_refresh.png" height="12"
-										style="opacity: .6;" />&nbsp;
-								</a>
-							</td>
-						</tr>
-					</wicket:enclosure>
-
 				</tbody>
 			</table>
 		</li>

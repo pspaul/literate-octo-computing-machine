@@ -33,7 +33,7 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -64,6 +64,7 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.dto.UserHomeStatsDto;
+import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.print.gcp.GcpPrinter;
@@ -88,7 +89,6 @@ import org.savapage.lib.pgp.PGPPublicKeyInfo;
 import org.savapage.server.WebApp;
 import org.savapage.server.cometd.UserEventService;
 import org.savapage.server.ext.ServerPluginManager;
-import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.JobTicketQueueInfoPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
@@ -147,6 +147,10 @@ public final class SystemStatusPanel extends Panel {
     /** */
     private static final String WID_PANEL_USERHOME_STATS =
             "userhome-stats-panel";
+
+    /** */
+    private static final String WID_TOOLTIP_USERHOME_STATS =
+            "tooltip-userhome-stats";
 
     /**
      * @param panelId
@@ -874,36 +878,18 @@ public final class SystemStatusPanel extends Panel {
         }
 
         /*
-         * User Documents
+         * SafePages
          */
-        if (showTechInfo) {
-            final UserHomeStatsPanel userHomePanel =
-                    new UserHomeStatsPanel(WID_PANEL_USERHOME_STATS);
-            add(userHomePanel);
+        final UserHomeStatsPanel userHomePanel =
+                new UserHomeStatsPanel(WID_PANEL_USERHOME_STATS);
+        add(userHomePanel);
 
-            final String json =
-                    ConfigManager.instance().getConfigValue(Key.STATS_USERHOME);
+        final String json =
+                ConfigManager.instance().getConfigValue(Key.STATS_USERHOME);
 
-            UserHomeStatsDto dto;
-            if (StringUtils.isBlank(json)) {
-                dto = null;
-            } else {
-                try {
-                    dto = UserHomeStatsDto.create(json);
-                } catch (Exception e) {
-                    dto = null;
-                }
-            }
-            userHomePanel.populate(dto);
-
-            MarkupHelper.modifyComponentAttr(
-                    helper.addTransparant("btn-userhome-refresh"),
-                    MarkupHelper.ATTR_TITLE,
-                    HtmlButtonEnum.REFRESH.uiText(getLocale(), true));
-
-        } else {
-            helper.discloseLabel(WID_PANEL_USERHOME_STATS);
-        }
+        final UserHomeStatsDto dto = UserHomeStatsDto.create(json);
+        userHomePanel.populate(dto, hasEditorAccess);
+        this.addSafePagesTooltip(helper, localeHelper, dto);
 
         /*
          * Page Totals.
@@ -974,6 +960,62 @@ public final class SystemStatusPanel extends Panel {
         add(labelNews);
 
         helper.addTransparantDisabled("sect-services", !hasEditorAccess);
+    }
+
+    /**
+     * Adds SafePages tooltip (or not).
+     *
+     * @param helper
+     *            Markup Helper.
+     * @param localeHelper
+     *            Local helper.
+     * @param dto
+     *            SafePages info. If {@code null} tooltip is not displayed.
+     */
+    private void addSafePagesTooltip(final MarkupHelper helper,
+            final LocaleHelper localeHelper, final UserHomeStatsDto dto) {
+
+        if (dto == null) {
+            helper.discloseLabel(WID_TOOLTIP_USERHOME_STATS);
+            return;
+        }
+        final TooltipPanel tooltip =
+                new TooltipPanel(WID_TOOLTIP_USERHOME_STATS);
+
+        final StringBuilder html = new StringBuilder();
+        html.append("<p><b>");
+        if (dto.isCleaned()) {
+            html.append(AdverbEnum.CLEANED_UP.uiText(getLocale()));
+        } else {
+            html.append(AdverbEnum.CLEANABLE.uiText(getLocale()));
+        }
+        html.append("</b>: ");
+
+        final UserHomeStatsDto.Stats stats = dto.getCleanup();
+
+        final long nUsers = stats.getUsers().getCount();
+        html.append(localeHelper.getNumber(nUsers));
+        html.append("&nbsp;")
+                .append(NounEnum.USER.uiText(getLocale(), nUsers != 1));
+
+        if (nUsers > 0) {
+
+            final long nFiles =
+                    stats.getInbox().getCount() + stats.getOutbox().getCount();
+
+            html.append(", ").append(localeHelper.getNumber(nFiles));
+            html.append("&nbsp;")
+                    .append(NounEnum.DOCUMENT.uiText(getLocale(), nFiles != 1));
+
+            html.append(", ");
+            html.append(FileUtils
+                    .byteCountToDisplaySize(stats.getInbox().getSize()
+                            .add(stats.getOutbox().getSize()))
+                    .replace(" ", "&nbsp;"));
+        }
+        html.append(".</p>");
+        tooltip.populate(html.toString(), false);
+        add(tooltip);
     }
 
     /**

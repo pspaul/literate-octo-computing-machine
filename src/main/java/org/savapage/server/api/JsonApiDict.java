@@ -3,6 +3,9 @@
  * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -90,6 +93,7 @@ import org.savapage.server.api.request.ReqUserGroupMemberQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupQuickSearch;
 import org.savapage.server.api.request.ReqUserGroupSet;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
+import org.savapage.server.api.request.ReqUserHomeClean;
 import org.savapage.server.api.request.ReqUserInitInternal;
 import org.savapage.server.api.request.ReqUserNotifyAccountChange;
 import org.savapage.server.api.request.ReqUserPasswordErase;
@@ -336,6 +340,8 @@ public final class JsonApiDict {
     public static final String REQ_USER_QUICK_SEARCH = "user-quick-search";
     public static final String REQ_USER_SET = "user-set";
     public static final String REQ_USER_SOURCE_GROUPS = "user-source-groups";
+
+    public static final String REQ_USERHOME_CLEAN = "userhome-clean";
 
     public static final String REQ_USERCARD_QUICK_SEARCH =
             "usercard-quick-search";
@@ -1183,6 +1189,8 @@ public final class JsonApiDict {
                         ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         adm(REQ_USER_SET, ReqUserSet.class, DbClaim.READ, DbAccess.YES);
+        adm(REQ_USERHOME_CLEAN, ReqUserHomeClean.class, DbClaim.NONE,
+                DbAccess.NO);
 
         adm(REQ_USER_SOURCE_GROUPS, DbClaim.NONE, DbAccess.NO);
         adm(REQ_USER_SYNC, DbClaim.NONE, DbAccess.NO);

@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.dto.UserHomeStatsDto;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -43,6 +44,10 @@ public final class UserHomeStatsPanel extends Panel {
      */
     private static final long serialVersionUID = 1L;
 
+    /** */
+    private static final String WID_BTN_USERHOME_REFRESH =
+            "btn-userhome-refresh";
+
     /**
      *
      * @param id
@@ -56,8 +61,11 @@ public final class UserHomeStatsPanel extends Panel {
      * @param dto
      *            User Home statistics. If {@code null} no statistics are
      *            available.
+     * @param hasEditorAccess
+     *            {@code true} If editor access.
      */
-    public void populate(final UserHomeStatsDto dto) {
+    public void populate(final UserHomeStatsDto dto,
+            final boolean hasEditorAccess) {
 
         final MarkupHelper helper = new MarkupHelper(this);
         final LocaleHelper localeHelper = new LocaleHelper(getLocale());
@@ -134,6 +142,15 @@ public final class UserHomeStatsPanel extends Panel {
 
         } else {
             helper.discloseLabel("stats-outbox-count");
+        }
+
+        if (hasEditorAccess) {
+            MarkupHelper.modifyComponentAttr(
+                    helper.addTransparant(WID_BTN_USERHOME_REFRESH),
+                    MarkupHelper.ATTR_TITLE,
+                    HtmlButtonEnum.REFRESH.uiText(getLocale(), true));
+        } else {
+            helper.discloseLabel(WID_BTN_USERHOME_REFRESH);
         }
 
     }
