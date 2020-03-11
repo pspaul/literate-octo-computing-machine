@@ -17,35 +17,39 @@ the License, or (at your option) any later version.
 
 <wicket:panel>
 	<div>
-		<wicket:enclosure child="user-count">
-			<img style="margin-bottom: -1px;" wicket:id="img-user" src=""
-				height="16" />
-			<span wicket:id="user-count" />
+		<span wicket:id="user-count" />
+		<wicket:enclosure child="user-home-count">&nbsp;
+        <span wicket:id="user-home-count-span"> <img
+					style="margin-bottom: -1px;" wicket:id="img-user" src=""
+					height="16" /> <span wicket:id="user-home-count" />
+			</span>
 		</wicket:enclosure>
 		<wicket:enclosure child="stats-inbox-count">&nbsp;
-			<img style="margin-bottom: -1px;" wicket:id="img-stats-inbox" src=""
-				height="14" />
-			<span class="sp-txt-info" wicket:id="stats-inbox-count" />
+			<span wicket:id="stats-inbox-count-span"><img
+					style="margin-bottom: -1px;" wicket:id="img-stats-inbox" src=""
+					height="14" /> <span class="sp-txt-info"
+				wicket:id="stats-inbox-count" /></span>
 			<wicket:enclosure child="stats-inbox-size">
 			&nbsp;<small class="sp-txt-info" wicket:id="stats-inbox-size" />
 			</wicket:enclosure>
 		</wicket:enclosure>
 		<wicket:enclosure child="stats-outbox-count">&nbsp;
-			<img style="margin-bottom: -1px;" wicket:id="img-stats-outbox" src=""
-				height="14" />
-			<span class="sp-txt-info" wicket:id="stats-outbox-count" />
+			<span wicket:id="stats-outbox-count-span"><img
+					style="margin-bottom: -1px;" wicket:id="img-stats-outbox" src=""
+					height="14" /> <span class="sp-txt-info"
+				wicket:id="stats-outbox-count" /> </span>
 			<wicket:enclosure child="stats-outbox-size">
 				&nbsp;<small class="sp-txt-info" wicket:id="stats-outbox-size" />
 			</wicket:enclosure>
 		</wicket:enclosure>
-		<wicket:enclosure child="stats-date">&nbsp;&nbsp;&nbsp;&nbsp; <small
+		<wicket:enclosure child="stats-date">&nbsp;&nbsp;&nbsp; <small
 				wicket:id="stats-date" />
 		</wicket:enclosure>
 		<wicket:enclosure child="btn-userhome-refresh">
 			<a wicket:id="btn-userhome-refresh" id="sp-btn-userhome-clean"
 				title="refresh">&nbsp;<img
 					src="/glyphicons/glyphicons_081_refresh.png" height="12"
-					style="opacity: .6;" />&nbsp;
+					style="opacity: .6;" />
 			</a>
 		</wicket:enclosure>
 	</div>

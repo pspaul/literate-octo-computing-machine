@@ -24,9 +24,13 @@
  */
 package org.savapage.server.pages.admin;
 
+import java.io.File;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.UserHomeStatsDto;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -47,6 +51,48 @@ public final class UserHomeStatsPanel extends Panel {
     /** */
     private static final String WID_BTN_USERHOME_REFRESH =
             "btn-userhome-refresh";
+
+    /** */
+    private static final String WID_USER_COUNT = "user-count";
+
+    /** */
+    private static final String WID_USER_HOME_COUNT = "user-home-count";
+
+    /** */
+    private static final String WID_USER_HOME_COUNT_SPAN =
+            "user-home-count-span";
+
+    /** */
+    private static final String WID_STATS_DATE = "stats-date";
+
+    /** */
+    private static final String WID_IMG_USER = "img-user";
+
+    /** */
+    private static final String WID_IMG_STATS_INBOX = "img-stats-inbox";
+
+    /** */
+    private static final String WID_IMG_STATS_OUTBOX = "img-stats-outbox";
+
+    /** */
+    private static final String WID_STATS_INBOX_COUNT = "stats-inbox-count";
+
+    /** */
+    private static final String WID_STATS_INBOX_COUNT_SPAN =
+            WID_STATS_INBOX_COUNT + "-span";
+
+    /** */
+    private static final String WID_STATS_INBOX_SIZE = "stats-inbox-size";
+
+    /** */
+    private static final String WID_STATS_OUTBOX_COUNT = "stats-outbox-count";
+
+    /** */
+    private static final String WID_STATS_OUTBOX_COUNT_SPAN =
+            WID_STATS_OUTBOX_COUNT + "-span";
+
+    /** */
+    private static final String WID_STATS_OUTBOX_SIZE = "stats-outbox-size";
 
     /**
      *
@@ -69,24 +115,39 @@ public final class UserHomeStatsPanel extends Panel {
 
         final MarkupHelper helper = new MarkupHelper(this);
         final LocaleHelper localeHelper = new LocaleHelper(getLocale());
+        final UserDao userDAO = ServiceContext.getDaoContext().getUserDao();
 
-        final long userCount;
+        helper.addLabel(WID_USER_COUNT,
+                helper.localizedNumber(userDAO.countActiveUsers()));
+
+        final long userHomeCount;
         if (dto == null) {
-            userCount = 0;
+            userHomeCount = 0;
         } else {
-            userCount = dto.getCurrent().getUsers().getCount();
+            userHomeCount = dto.getCurrent().getUsers().getCount();
         }
-        if (userCount > 0) {
-            helper.addLabel("user-count", helper.localizedNumber(userCount));
-            helper.addModifyLabelAttr("img-user", MarkupHelper.ATTR_SRC,
-                    String.format("%s/%s", WebApp.PATH_IMAGES_FAMFAM,
-                            "user_gray.png"));
-            helper.addLabel("stats-date",
-                    localeHelper.getLongMediumDateTime(dto.getDate()));
 
+        if (dto == null) {
+            helper.discloseLabel(WID_USER_HOME_COUNT);
+            helper.discloseLabel(WID_STATS_DATE);
         } else {
-            helper.discloseLabel("user-count");
-            helper.discloseLabel("stats-date");
+            helper.addLabel(WID_USER_HOME_COUNT,
+                    helper.localizedNumber(userHomeCount));
+            helper.addModifyLabelAttr(WID_IMG_USER, MarkupHelper.ATTR_SRC,
+                    String.format("%s%c%s", WebApp.PATH_IMAGES_FAMFAM,
+                            File.separatorChar, "drive.png"));
+
+            MarkupHelper.modifyComponentAttr(
+                    helper.addTransparant(WID_USER_HOME_COUNT_SPAN),
+                    MarkupHelper.ATTR_TITLE,
+                    FileUtils.byteCountToDisplaySize(
+                            dto.getCurrent().getInbox().getSize().add(
+                                    dto.getCurrent().getOutbox().getSize())));
+
+            helper.addLabel(WID_STATS_DATE,
+                    localeHelper.getLongMediumDateTime(dto.getDate())
+                            .replace(" ", "&nbsp;"))
+                    .setEscapeModelStrings(false);
         }
 
         final long inboxCount;
@@ -100,22 +161,29 @@ public final class UserHomeStatsPanel extends Panel {
 
         if (inboxCount > 0) {
 
-            helper.addModifyLabelAttr("img-stats-inbox", MarkupHelper.ATTR_SRC,
-                    String.format("%s/%s", WebApp.PATH_IMAGES_FILETYPE,
-                            "pdf-32.png"));
-            helper.addLabel("stats-inbox-count",
+            MarkupHelper.modifyComponentAttr(
+                    helper.addTransparant(WID_STATS_INBOX_COUNT_SPAN),
+                    MarkupHelper.ATTR_TITLE, FileUtils.byteCountToDisplaySize(
+                            dto.getCurrent().getInbox().getSize()));
+
+            helper.addModifyLabelAttr(WID_IMG_STATS_INBOX,
+                    MarkupHelper.ATTR_SRC,
+                    String.format("%s%c%s", WebApp.PATH_IMAGES_FILETYPE,
+                            File.separatorChar, "pdf-32.png"));
+
+            helper.addLabel(WID_STATS_INBOX_COUNT,
                     String.format("%d", inboxCount));
 
             if (encloseSize) {
-                helper.addLabel("stats-inbox-size",
+                helper.addLabel(WID_STATS_INBOX_SIZE,
                         FileUtils.byteCountToDisplaySize(
                                 dto.getCurrent().getInbox().getSize()));
             } else {
-                helper.discloseLabel("stats-inbox-size");
+                helper.discloseLabel(WID_STATS_INBOX_SIZE);
             }
 
         } else {
-            helper.discloseLabel("stats-inbox-count");
+            helper.discloseLabel(WID_STATS_INBOX_COUNT);
         }
 
         final long outboxCount;
@@ -126,22 +194,29 @@ public final class UserHomeStatsPanel extends Panel {
         }
         if (outboxCount > 0) {
 
-            helper.addModifyLabelAttr("img-stats-outbox", MarkupHelper.ATTR_SRC,
-                    String.format("%s/%s", WebApp.PATH_IMAGES,
+            MarkupHelper.modifyComponentAttr(
+                    helper.addTransparant(WID_STATS_OUTBOX_COUNT_SPAN),
+                    MarkupHelper.ATTR_TITLE, FileUtils.byteCountToDisplaySize(
+                            dto.getCurrent().getOutbox().getSize()));
+
+            helper.addModifyLabelAttr(WID_IMG_STATS_OUTBOX,
+                    MarkupHelper.ATTR_SRC,
+                    String.format("%s%c%s", WebApp.PATH_IMAGES,
+                            File.separatorChar,
                             "printer-terminal-auth-16x16.png"));
-            helper.addLabel("stats-outbox-count",
+            helper.addLabel(WID_STATS_OUTBOX_COUNT,
                     String.format("%d", outboxCount));
 
             if (encloseSize) {
-                helper.addLabel("stats-outbox-size",
+                helper.addLabel(WID_STATS_OUTBOX_SIZE,
                         FileUtils.byteCountToDisplaySize(
                                 dto.getCurrent().getOutbox().getSize()));
             } else {
-                helper.discloseLabel("stats-outbox-size");
+                helper.discloseLabel(WID_STATS_OUTBOX_SIZE);
             }
 
         } else {
-            helper.discloseLabel("stats-outbox-count");
+            helper.discloseLabel(WID_STATS_OUTBOX_COUNT);
         }
 
         if (hasEditorAccess) {

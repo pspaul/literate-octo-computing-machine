@@ -108,21 +108,7 @@ the License, or (at your option) any later version.
 					</tr>
 
 					<tr>
-						<th>
-							<wicket:message key="users" />
-						</th>
-						<td class="sp-txt-info" wicket:id="user-count" />
-					</tr>
-
-					<tr>
-						<th>
-							<wicket:message key="client-sessions" />
-						</th>
-						<td class="sp-txt-info" wicket:id="client-sessions" />
-					</tr>
-
-					<tr>
-						<th class="sp-txt-wrap">SafePages</th>
+						<th wicket:id="users-prompt" />
 						<td class="sp-txt-wrap sp-txt-info">
 							<wicket:panel wicket:id="userhome-stats-panel" />
 						</td>
@@ -133,6 +119,13 @@ the License, or (at your option) any later version.
 								</div>
 							</td>
 						</wicket:enclosure>
+					</tr>
+
+					<tr>
+						<th>
+							<wicket:message key="client-sessions" />
+						</th>
+						<td class="sp-txt-info" wicket:id="client-sessions" />
 					</tr>
 
 					<tr>
@@ -172,6 +165,12 @@ the License, or (at your option) any later version.
 						</tr>
 					</wicket:enclosure>
 
+					<tr>
+						<th class="sp-txt-wrap" wicket:id="job-tickets-prompt" />
+						<td class="sp-txt-wrap sp-txt-info">
+							<wicket:panel wicket:id="job-tickets-queue-panel" />
+						</td>
+					</tr>
 
 					<wicket:enclosure child="jvm-memory">
 						<tr>
@@ -245,16 +244,6 @@ the License, or (at your option) any later version.
 							</th>
 							<td class="sp-txt-wrap sp-txt-info"
 								wicket:id="proxy-print-queue-size" />
-						</tr>
-					</wicket:enclosure>
-					<wicket:enclosure child="job-tickets-queue-panel">
-						<tr>
-							<th class="sp-txt-wrap">
-								<wicket:message key="job-tickets-queue" />
-							</th>
-							<td class="sp-txt-wrap sp-txt-info">
-								<wicket:panel wicket:id="job-tickets-queue-panel" />
-							</td>
 						</tr>
 					</wicket:enclosure>
 				</tbody>

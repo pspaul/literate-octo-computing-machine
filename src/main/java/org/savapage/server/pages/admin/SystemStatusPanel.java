@@ -59,12 +59,12 @@ import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.SslCertInfo;
-import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.dto.UserHomeStatsDto;
 import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.print.gcp.GcpPrinter;
@@ -229,11 +229,33 @@ public final class SystemStatusPanel extends Panel {
         add(new Label("sys-uptime",
                 DateUtil.formatDuration(SystemInfo.getUptime())));
 
-        //
-        final UserDao userDAO = ServiceContext.getDaoContext().getUserDao();
+        /*
+         * Users
+         */
+        helper.addLabel("users-prompt",
+                NounEnum.USER.uiText(getLocale(), true));
 
-        add(new Label("user-count",
-                helper.localizedNumber(userDAO.countActiveUsers())));
+        final UserHomeStatsPanel userHomePanel =
+                new UserHomeStatsPanel(WID_PANEL_USERHOME_STATS);
+        add(userHomePanel);
+
+        final String json =
+                ConfigManager.instance().getConfigValue(Key.STATS_USERHOME);
+
+        final UserHomeStatsDto dto = UserHomeStatsDto.create(json);
+        userHomePanel.populate(dto, hasEditorAccess);
+        this.addSafePagesTooltip(helper, localeHelper, dto);
+
+        /*
+         * Job Tickets
+         */
+        helper.addLabel("job-tickets-prompt",
+                JobTicketNounEnum.TICKET.uiText(getLocale(), true));
+
+        final JobTicketQueueInfoPanel jobticketPanel =
+                new JobTicketQueueInfoPanel(WID_PANEL_JOB_TICKETS_QUEUE);
+        add(jobticketPanel);
+        jobticketPanel.populate(TICKET_SERVICE.getJobTicketQueueSize() == 0);
 
         /*
          * Mail Print
@@ -863,33 +885,6 @@ public final class SystemStatusPanel extends Panel {
         }
         helper.encloseLabel("proxy-print-queue-size", printJobQueue,
                 showTechInfo);
-
-        /*
-         * Job Tickets
-         */
-        if (showTechInfo) {
-            final JobTicketQueueInfoPanel jobticketPanel =
-                    new JobTicketQueueInfoPanel(WID_PANEL_JOB_TICKETS_QUEUE);
-            add(jobticketPanel);
-            jobticketPanel
-                    .populate(TICKET_SERVICE.getJobTicketQueueSize() == 0);
-        } else {
-            helper.discloseLabel(WID_PANEL_JOB_TICKETS_QUEUE);
-        }
-
-        /*
-         * SafePages
-         */
-        final UserHomeStatsPanel userHomePanel =
-                new UserHomeStatsPanel(WID_PANEL_USERHOME_STATS);
-        add(userHomePanel);
-
-        final String json =
-                ConfigManager.instance().getConfigValue(Key.STATS_USERHOME);
-
-        final UserHomeStatsDto dto = UserHomeStatsDto.create(json);
-        userHomePanel.populate(dto, hasEditorAccess);
-        this.addSafePagesTooltip(helper, localeHelper, dto);
 
         /*
          * Page Totals.
