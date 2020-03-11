@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-	<!-- 
-    +=========================================================================+ 
-    | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
-    |.........................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify .......|
-    | it under the terms of the GNU Affero General Public License as .........|
-    | published by the Free Software Foundation, either version 3 of .........|
-    | the License, or (at your option) any later version. ....................|
-    +=========================================================================+ 
-    -->
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2011-2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: 2011-2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
 </wicket:remove>
 
 <ul data-role="listview" data-inset="true">
@@ -38,28 +39,31 @@
 						</div>
 					</li>
 					<li class="ldap-parms">
-						<div class="ui-field-contain">
-							<fieldset data-role="controlgroup" data-type="horizontal"
-								class="ui-mini">
-								<label for="" wicket:id="ldap-schema-type-open-label" />
-								<input type="radio" name="" id=""
-									wicket:id="ldap-schema-type-open" />
-								<label for="" wicket:id="ldap-schema-type-edir-label" />
-								<input type="radio" name="" id=""
-									wicket:id="ldap-schema-type-edir" />
-								<label for="" wicket:id="ldap-schema-type-apple-label" />
-								<input type="radio" name="" id=""
-									wicket:id="ldap-schema-type-apple" />
-								<label for="" wicket:id="ldap-schema-type-activ-label" />
-								<input type="radio" name="" id=""
-									wicket:id="ldap-schema-type-activ" />
-								<wicket:enclosure child="ldap-schema-type-gsuite">
-									<label for="" wicket:id="ldap-schema-type-gsuite-label" />
-									<input type="radio" name="" id=""
-										wicket:id="ldap-schema-type-gsuite" />
-								</wicket:enclosure>
-							</fieldset>
-						</div>
+
+						<select tabindex="-1" id="sp-ldap-schema-type"
+							data-native-menu="false">
+							<option id="" wicket:id="ldap-schema-type-open">
+								<wicket:message key="ldap-schema-type-open" />
+							</option>
+							<option id="" wicket:id="ldap-schema-type-free">
+								<wicket:message key="ldap-schema-type-free" />
+							</option>
+							<option id="" wicket:id="ldap-schema-type-edir">
+								<wicket:message key="ldap-schema-type-edir" />
+							</option>
+							<option id="" wicket:id="ldap-schema-type-apple">
+								<wicket:message key="ldap-schema-type-apple" />
+							</option>
+							<option id="" wicket:id="ldap-schema-type-activ">
+								<wicket:message key="ldap-schema-type-activ" />
+							</option>
+							<wicket:enclosure child="ldap-schema-type-gsuite">
+								<option id="" wicket:id="ldap-schema-type-gsuite">
+									<wicket:message key="ldap-schema-type-gsuite" />
+								</option>
+							</wicket:enclosure>
+						</select>
+
 						<div class="ui-field-contain">
 							<label for="" wicket:id="ldap-host-label" />
 							<input type="text" id="" wicket:id="ldap-host" value=""

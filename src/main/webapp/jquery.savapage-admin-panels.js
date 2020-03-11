@@ -852,7 +852,7 @@
                     $('.user-source-group-display').show();
                     $('.user-source-group-edit').hide();
                     if (isLdapMethod) {
-                        this.onLdapSchemaTypeSelect($("input:radio[name='ldap.schema.type']:checked").val());
+                        this.onLdapSchemaTypeSelect($('#sp-ldap-schema-type').val());
                     }
                 }
             },

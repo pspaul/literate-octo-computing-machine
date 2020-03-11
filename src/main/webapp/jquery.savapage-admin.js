@@ -406,7 +406,7 @@
                     "auth.method" : method
                 };
                 if (method === 'ldap') {
-                    props['ldap.schema.type'] = _view.getRadioValue('ldap.schema.type');
+                    props['ldap.schema.type'] = $('#sp-ldap-schema-type').val();
                     _fillConfigPropsText(props, ['auth.ldap.host', 'auth.ldap.port', 'auth.ldap.basedn', 'auth.ldap.admin-dn', 'auth.ldap.admin-password', 'ldap.schema.user-id-number-field', 'ldap.schema.user-card-number-field']);
                     _fillConfigPropsYN(props, ['auth.ldap.use-ssl', 'auth.ldap.use-ssl.trust-self-signed']);
                     _fillConfigPropsRadio(props, ['ldap.user-card-number.first-byte', 'ldap.user-card-number.format']);

@@ -31,6 +31,7 @@ import javax.print.attribute.standard.MediaSizeName;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -136,25 +137,35 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.AUTH_METHOD_V_LDAP);
 
         //
-        labelledRadio("ldap-schema-type", "-open",
-                IConfigProp.Key.LDAP_SCHEMA_TYPE,
+        final String configLdapTypeName = ConfigManager.instance()
+                .getConfigKey(IConfigProp.Key.LDAP_SCHEMA_TYPE);
+
+        final String configLdapTypeValue = ConfigManager.instance()
+                .getConfigValue(IConfigProp.Key.LDAP_SCHEMA_TYPE);
+
+        tagLdapTypeOption(helper, "ldap-schema-type", "-open",
+                configLdapTypeName, configLdapTypeValue,
                 IConfigProp.LDAP_TYPE_V_OPEN_LDAP);
 
-        labelledRadio("ldap-schema-type", "-apple",
-                IConfigProp.Key.LDAP_SCHEMA_TYPE,
+        tagLdapTypeOption(helper, "ldap-schema-type", "-free",
+                configLdapTypeName, configLdapTypeValue,
+                IConfigProp.LDAP_TYPE_V_FREE_IPA);
+
+        tagLdapTypeOption(helper, "ldap-schema-type", "-apple",
+                configLdapTypeName, configLdapTypeValue,
                 IConfigProp.LDAP_TYPE_V_APPLE);
 
-        labelledRadio("ldap-schema-type", "-activ",
-                IConfigProp.Key.LDAP_SCHEMA_TYPE,
+        tagLdapTypeOption(helper, "ldap-schema-type", "-activ",
+                configLdapTypeName, configLdapTypeValue,
                 IConfigProp.LDAP_TYPE_V_ACTIV);
 
-        labelledRadio("ldap-schema-type", "-edir",
-                IConfigProp.Key.LDAP_SCHEMA_TYPE,
+        tagLdapTypeOption(helper, "ldap-schema-type", "-edir",
+                configLdapTypeName, configLdapTypeValue,
                 IConfigProp.LDAP_TYPE_V_E_DIR);
 
         if (GSuiteLdapClient.isConfigured()) {
-            labelledRadio("ldap-schema-type", "-gsuite",
-                    IConfigProp.Key.LDAP_SCHEMA_TYPE,
+            tagLdapTypeOption(helper, "ldap-schema-type", "-gsuite",
+                    configLdapTypeName, configLdapTypeValue,
                     IConfigProp.LDAP_TYPE_V_G_SUITE);
         } else {
             helper.discloseLabel("ldap-schema-type-gsuite");
@@ -1248,10 +1259,10 @@ public final class Options extends AbstractAdminPage {
      *
      */
     private void tagSelect(final String id, final IConfigProp.Key key) {
-        Label labelWrk = new Label(id);
-        labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_ID,
+        final Label label = new Label(id);
+        label.add(new AttributeModifier(MarkupHelper.ATTR_ID,
                 ConfigManager.instance().getConfigKey(key)));
-        add(labelWrk);
+        add(label);
     }
 
     /**
@@ -1291,6 +1302,40 @@ public final class Options extends AbstractAdminPage {
 
         labelledRadio(wicketIdBase, wicketIdSuffix, attrName, attrValue,
                 checked);
+    }
+
+    /**
+     *
+     * @param wicketIdBase
+     *            The base {@code wicket:id} for the select options.
+     * @param wicketIdSuffix
+     *            The {@code wicket:id} suffix for this option.
+     * @param configKeyName
+     *            Name of config key.
+     * @param configKeyValue
+     *            Configured vale of this option.
+     * @param attrValue
+     *            The value of the HTML 'value' attribute of this radio button.
+     */
+    private void tagLdapTypeOption(final MarkupHelper helper,
+            final String wicketIdBase, final String wicketIdSuffix,
+            final String configKeyName, final String configKeyValue,
+            final String attrValue) {
+
+        final boolean selected = configKeyValue.equals(attrValue);
+
+        final Component comp =
+                helper.addTransparant(wicketIdBase.concat(wicketIdSuffix));
+
+        MarkupHelper.modifyComponentAttr(comp, MarkupHelper.ATTR_VALUE,
+                attrValue);
+        MarkupHelper.modifyComponentAttr(comp, MarkupHelper.ATTR_ID,
+                configKeyName.concat(wicketIdSuffix));
+
+        if (selected) {
+            MarkupHelper.modifyComponentAttr(comp, MarkupHelper.ATTR_SELECTED,
+                    MarkupHelper.ATTR_SELECTED);
+        }
     }
 
     /**

@@ -2690,8 +2690,9 @@
                     _panel.Options.onAuthMethodSelect($(this).val());
                 });
 
-                $(this).on('change', "input:radio[name='ldap.schema.type']", null, function(e) {
+                $(this).on('change', "select[id='sp-ldap-schema-type']", null, function(e) {
                     _panel.Options.onLdapSchemaTypeSelect($(this).val());
+                    return false;
                 });
 
                 $(this).on('click', '#user-source-change-group', null, function() {
