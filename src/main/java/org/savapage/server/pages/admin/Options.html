@@ -68,7 +68,26 @@ the License, or (at your option) any later version.
 							<small class="ldap-parms-google-cloud"
 								wicket:id="ldap-google-cloud-expiry" />
 						</wicket:enclosure>
-						<div class="ldap-parms-google-cloud"></div>
+
+						<div class="ldap-parms-google-cloud">
+							<wicket:enclosure child="ldap-google-cloud-host">
+
+								<div class="ui-field-contain">
+									<label for="ldap-google-cloud-host"
+										wicket:id="ldap-google-cloud-host-label" />
+									<input type="text" id="ldap-google-cloud-host"
+										wicket:id="ldap-google-cloud-host" disabled="disabled" />
+								</div>
+								<div class="ui-field-contain">
+									<label for="ldap-google-cloud-port"
+										wicket:id="ldap-google-cloud-port-label" />
+									<input type="text" id="ldap-google-cloud-port"
+										wicket:id="ldap-google-cloud-port" disabled="disabled" />
+								</div>
+
+							</wicket:enclosure>
+						</div>
+
 						<div class="ldap-parms-standard">
 							<div class="ui-field-contain">
 								<label for="" wicket:id="ldap-host-label" />

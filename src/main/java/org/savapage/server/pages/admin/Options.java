@@ -64,6 +64,7 @@ import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.ext.google.GoogleLdapClient;
+import org.savapage.ext.google.GoogleLdapUserSource;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.EnumRadioPanel;
@@ -103,6 +104,10 @@ public final class Options extends AbstractAdminPage {
     /** */
     private static final String WID_GOOGLE_CLOUD_EXPIRY =
             "ldap-google-cloud-expiry";
+
+    /** */
+    private static final String WID_GOOGLE_CLOUD_HOST =
+            "ldap-google-cloud-host";
 
     @Override
     protected boolean needMembership() {
@@ -178,10 +183,12 @@ public final class Options extends AbstractAdminPage {
                     IConfigProp.LDAP_TYPE_V_GOOGLE_CLOUD);
 
             this.addGoogleCloudExpiry(helper, localeHelper);
+            this.addGoogleCloudReadOnlyParms(helper);
 
         } else {
             helper.discloseLabel("ldap-schema-type-google");
             helper.discloseLabel(WID_GOOGLE_CLOUD_EXPIRY);
+            helper.discloseLabel(WID_GOOGLE_CLOUD_HOST);
         }
 
         labelledInput("ldap-host", Key.AUTH_LDAP_HOST);
@@ -1458,5 +1465,23 @@ public final class Options extends AbstractAdminPage {
                         localeHelper.getLongDate(
                                 GoogleLdapClient.getCertExpireDate())),
                 MarkupHelper.ATTR_CLASS, clazz);
+    }
+
+    /**
+     *
+     * @param helper
+     *            Markup helper.
+     */
+    private void addGoogleCloudReadOnlyParms(final MarkupHelper helper) {
+
+        helper.addLabel("ldap-google-cloud-host-label",
+                this.getString("ldap-host"));
+        helper.addModifyLabelAttr(WID_GOOGLE_CLOUD_HOST,
+                MarkupHelper.ATTR_VALUE, GoogleLdapUserSource.LDAP_HOST);
+
+        helper.addLabel("ldap-google-cloud-port-label",
+                this.getString("ldap-port"));
+        helper.addModifyLabelAttr("ldap-google-cloud-port",
+                MarkupHelper.ATTR_VALUE, GoogleLdapUserSource.LDAP_PORT);
     }
 }
