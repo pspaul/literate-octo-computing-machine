@@ -1,10 +1,13 @@
-/*! SavaPage jQuery Mobile Admin Panels | (c) 2011-2019 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Panels | (c) 2011-2020 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -859,7 +862,9 @@
 
             onLdapSchemaTypeSelect : function(schemaType) {
                 var _view = _ns.PanelCommon.view;
-                _view.visible($('.ldap-parms-extra-fields'), schemaType !== 'G_SUITE');
+                _view.visible($('.ldap-parms-extra-fields'), schemaType !== 'GOOGLE_CLOUD');
+                _view.visible($('.ldap-parms-standard'), schemaType !== 'GOOGLE_CLOUD');
+                _view.visible($('.ldap-parms-google-cloud'), schemaType === 'GOOGLE_CLOUD');
             },
 
             onInternalUsersEnabled : function(enabled) {

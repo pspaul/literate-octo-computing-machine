@@ -47,6 +47,7 @@ import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.doc.XpsToPdf;
 import org.savapage.core.doc.soffice.SOfficeHelper;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jmx.JmxRemoteProperties;
@@ -60,8 +61,9 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.InetUtils;
+import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
-import org.savapage.ext.google.GSuiteLdapClient;
+import org.savapage.ext.google.GoogleLdapClient;
 import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.EnumRadioPanel;
@@ -98,6 +100,10 @@ public final class Options extends AbstractAdminPage {
     private static final ProxyPrintService PROXYPRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
 
+    /** */
+    private static final String WID_GOOGLE_CLOUD_EXPIRY =
+            "ldap-google-cloud-expiry";
+
     @Override
     protected boolean needMembership() {
         return false;
@@ -126,6 +132,8 @@ public final class Options extends AbstractAdminPage {
 
         //
         final MarkupHelper helper = new MarkupHelper(this);
+        final LocaleHelper localeHelper = new LocaleHelper(this.getLocale());
+
         final ConfigManager cm = ConfigManager.instance();
 
         //
@@ -163,12 +171,17 @@ public final class Options extends AbstractAdminPage {
                 configLdapTypeName, configLdapTypeValue,
                 IConfigProp.LDAP_TYPE_V_E_DIR);
 
-        if (GSuiteLdapClient.isConfigured()) {
-            tagLdapTypeOption(helper, "ldap-schema-type", "-gsuite",
+        if (GoogleLdapClient.isConfigured()) {
+
+            tagLdapTypeOption(helper, "ldap-schema-type", "-google",
                     configLdapTypeName, configLdapTypeValue,
-                    IConfigProp.LDAP_TYPE_V_G_SUITE);
+                    IConfigProp.LDAP_TYPE_V_GOOGLE_CLOUD);
+
+            this.addGoogleCloudExpiry(helper, localeHelper);
+
         } else {
-            helper.discloseLabel("ldap-schema-type-gsuite");
+            helper.discloseLabel("ldap-schema-type-google");
+            helper.discloseLabel(WID_GOOGLE_CLOUD_EXPIRY);
         }
 
         labelledInput("ldap-host", Key.AUTH_LDAP_HOST);
@@ -1411,6 +1424,39 @@ public final class Options extends AbstractAdminPage {
         // Misc ...
         helper.encloseLabel("btn-backup-now", localized("button-backup-now"),
                 !readonly);
+    }
 
+    /**
+     * Adds Google Cloud Directory expiration message.
+     *
+     * @param helper
+     *            Markup helper
+     * @param localeHelper
+     *            Locale helper.
+     */
+    private void addGoogleCloudExpiry(final MarkupHelper helper,
+            final LocaleHelper localeHelper) {
+
+        final Date now = ServiceContext.getTransactionDate();
+
+        final String clazz;
+        final PhraseEnum phrase;
+
+        if (GoogleLdapClient.isCertExpireNearing(now)) {
+            phrase = PhraseEnum.CERT_EXPIRES_ON;
+            clazz = MarkupHelper.CSS_TXT_WARN;
+        } else if (GoogleLdapClient.isCertExpired(now)) {
+            phrase = PhraseEnum.CERT_EXPIRED_ON;
+            clazz = MarkupHelper.CSS_TXT_ERROR;
+        } else {
+            phrase = PhraseEnum.CERT_VALID_UNTIL;
+            clazz = MarkupHelper.CSS_TXT_VALID;
+        }
+
+        helper.addAppendLabelAttr(WID_GOOGLE_CLOUD_EXPIRY,
+                phrase.uiText(getLocale(),
+                        localeHelper.getLongDate(
+                                GoogleLdapClient.getCertExpireDate())),
+                MarkupHelper.ATTR_CLASS, clazz);
     }
 }

@@ -57,34 +57,41 @@ the License, or (at your option) any later version.
 							<option id="" wicket:id="ldap-schema-type-activ">
 								<wicket:message key="ldap-schema-type-activ" />
 							</option>
-							<wicket:enclosure child="ldap-schema-type-gsuite">
-								<option id="" wicket:id="ldap-schema-type-gsuite">
-									<wicket:message key="ldap-schema-type-gsuite" />
+							<wicket:enclosure child="ldap-schema-type-google">
+								<option id="" wicket:id="ldap-schema-type-google">
+									<wicket:message key="ldap-schema-type-google" />
 								</option>
 							</wicket:enclosure>
 						</select>
 
-						<div class="ui-field-contain">
-							<label for="" wicket:id="ldap-host-label" />
-							<input type="text" id="" wicket:id="ldap-host" value=""
-								autocomplete="off" autocorrect="off" autocapitalize="off"
-								spellcheck="false" />
-						</div>
-						<div class="ui-field-contain">
-							<label for="" wicket:id="ldap-port-label" />
-							<input type="text" id="" wicket:id="ldap-port" value=""
-								pattern="[0-9]*" autocomplete="off" autocorrect="off"
-								autocapitalize="off" spellcheck="false" />
-						</div>
+						<wicket:enclosure child="ldap-google-cloud-expiry">
+							<small class="ldap-parms-google-cloud"
+								wicket:id="ldap-google-cloud-expiry" />
+						</wicket:enclosure>
+						<div class="ldap-parms-google-cloud"></div>
+						<div class="ldap-parms-standard">
+							<div class="ui-field-contain">
+								<label for="" wicket:id="ldap-host-label" />
+								<input type="text" id="" wicket:id="ldap-host" value=""
+									autocomplete="off" autocorrect="off" autocapitalize="off"
+									spellcheck="false" />
+							</div>
+							<div class="ui-field-contain">
+								<label for="" wicket:id="ldap-port-label" />
+								<input type="text" id="" wicket:id="ldap-port" value=""
+									pattern="[0-9]*" autocomplete="off" autocorrect="off"
+									autocapitalize="off" spellcheck="false" />
+							</div>
 
-						<label for="" wicket:id="ldap-use-ssl-label" />
-						<input type="checkbox" id="" value="0" data-mini="true"
-							wicket:id="ldap-use-ssl" />
-
-						<div id="ldap-use-ssl-parms">
-							<label for="" wicket:id="ldap-use-ssl-trust-self-signed-label" />
+							<label for="" wicket:id="ldap-use-ssl-label" />
 							<input type="checkbox" id="" value="0" data-mini="true"
-								wicket:id="ldap-use-ssl-trust-self-signed" />
+								wicket:id="ldap-use-ssl" />
+
+							<div id="ldap-use-ssl-parms">
+								<label for="" wicket:id="ldap-use-ssl-trust-self-signed-label" />
+								<input type="checkbox" id="" value="0" data-mini="true"
+									wicket:id="ldap-use-ssl-trust-self-signed" />
+							</div>
 						</div>
 					</li>
 					<li class="ldap-parms">
