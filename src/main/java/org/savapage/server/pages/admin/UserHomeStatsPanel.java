@@ -69,13 +69,23 @@ public final class UserHomeStatsPanel extends Panel {
     private static final String WID_IMG_USER = "img-user";
 
     /** */
+    private static final String WID_IMG_STATS_UNKNOWN = "img-stats-unknown";
+
+    /** */
     private static final String WID_IMG_STATS_INBOX = "img-stats-inbox";
 
     /** */
     private static final String WID_IMG_STATS_OUTBOX = "img-stats-outbox";
 
     /** */
+    private static final String WID_STATS_UNKNOWN_COUNT = "stats-unknown-count";
+
+    /** */
     private static final String WID_STATS_INBOX_COUNT = "stats-inbox-count";
+
+    /** */
+    private static final String WID_STATS_UNKNOWN_COUNT_SPAN =
+            WID_STATS_UNKNOWN_COUNT + "-span";
 
     /** */
     private static final String WID_STATS_INBOX_COUNT_SPAN =
@@ -140,14 +150,37 @@ public final class UserHomeStatsPanel extends Panel {
             MarkupHelper.modifyComponentAttr(
                     helper.addTransparant(WID_USER_HOME_COUNT_SPAN),
                     MarkupHelper.ATTR_TITLE,
-                    FileUtils.byteCountToDisplaySize(
-                            dto.getCurrent().getInbox().getSize().add(
-                                    dto.getCurrent().getOutbox().getSize())));
+                    FileUtils.byteCountToDisplaySize(dto.calcScannedBytes()));
 
             helper.addLabel(WID_STATS_DATE,
                     localeHelper.getLongMediumDateTime(dto.getDate())
                             .replace(" ", "&nbsp;"))
                     .setEscapeModelStrings(false);
+        }
+
+        final long unknownCount;
+        if (dto == null || dto.getCurrent().getUnkown() == null) {
+            unknownCount = 0;
+        } else {
+            unknownCount = dto.getCurrent().getUnkown().getCount();
+        }
+        if (unknownCount > 0) {
+
+            MarkupHelper.modifyComponentAttr(
+                    helper.addTransparant(WID_STATS_UNKNOWN_COUNT_SPAN),
+                    MarkupHelper.ATTR_TITLE, FileUtils.byteCountToDisplaySize(
+                            dto.getCurrent().getUnkown().getSize()));
+
+            helper.addModifyLabelAttr(WID_IMG_STATS_UNKNOWN,
+                    MarkupHelper.ATTR_SRC,
+                    String.format("%s%c%s", WebApp.PATH_IMAGES_FAMFAM,
+                            File.separatorChar, "cross.png"));
+
+            helper.addLabel(WID_STATS_UNKNOWN_COUNT,
+                    String.format("%d", unknownCount));
+
+        } else {
+            helper.discloseLabel(WID_STATS_UNKNOWN_COUNT);
         }
 
         final long inboxCount;
