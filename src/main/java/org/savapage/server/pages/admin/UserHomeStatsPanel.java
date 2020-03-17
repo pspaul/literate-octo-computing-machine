@@ -72,6 +72,9 @@ public final class UserHomeStatsPanel extends Panel {
     private static final String WID_IMG_STATS_UNKNOWN = "img-stats-unknown";
 
     /** */
+    private static final String WID_IMG_STATS_CLEANUP = "img-stats-cleanup";
+
+    /** */
     private static final String WID_IMG_STATS_INBOX = "img-stats-inbox";
 
     /** */
@@ -81,11 +84,18 @@ public final class UserHomeStatsPanel extends Panel {
     private static final String WID_STATS_UNKNOWN_COUNT = "stats-unknown-count";
 
     /** */
+    private static final String WID_STATS_CLEANUP_COUNT = "stats-cleanup-count";
+
+    /** */
     private static final String WID_STATS_INBOX_COUNT = "stats-inbox-count";
 
     /** */
     private static final String WID_STATS_UNKNOWN_COUNT_SPAN =
             WID_STATS_UNKNOWN_COUNT + "-span";
+
+    /** */
+    private static final String WID_STATS_CLEANUP_COUNT_SPAN =
+            WID_STATS_CLEANUP_COUNT + "-span";
 
     /** */
     private static final String WID_STATS_INBOX_COUNT_SPAN =
@@ -156,6 +166,38 @@ public final class UserHomeStatsPanel extends Panel {
                     localeHelper.getLongMediumDateTime(dto.getDate())
                             .replace(" ", "&nbsp;"))
                     .setEscapeModelStrings(false);
+        }
+
+        final long cleanupCount;
+        if (dto == null || dto.getCleanup() == null) {
+            cleanupCount = 0;
+        } else {
+            cleanupCount = dto.calcCleanupFiles();
+        }
+        if (cleanupCount > 0) {
+
+            MarkupHelper.modifyComponentAttr(
+                    helper.addTransparant(WID_STATS_CLEANUP_COUNT_SPAN),
+                    MarkupHelper.ATTR_TITLE,
+                    FileUtils.byteCountToDisplaySize(dto.calcCleanupBytes()));
+
+            final String img;
+
+            if (dto.isCleaned()) {
+                img = "time.png";
+            } else {
+                img = "time_delete.png";
+            }
+            helper.addModifyLabelAttr(WID_IMG_STATS_CLEANUP,
+                    MarkupHelper.ATTR_SRC,
+                    String.format("%s%c%s", WebApp.PATH_IMAGES_FAMFAM,
+                            File.separatorChar, img));
+
+            helper.addLabel(WID_STATS_CLEANUP_COUNT,
+                    String.format("%d", cleanupCount));
+
+        } else {
+            helper.discloseLabel(WID_STATS_CLEANUP_COUNT);
         }
 
         final long unknownCount;

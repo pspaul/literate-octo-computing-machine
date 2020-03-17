@@ -24,14 +24,21 @@ the License, or (at your option) any later version.
 					height="16" /> <span wicket:id="user-home-count" />
 			</span>
 		</wicket:enclosure>
-		
-        <wicket:enclosure child="stats-unknown-count">&nbsp;
+
+		<wicket:enclosure child="stats-cleanup-count">&nbsp;
+            <span wicket:id="stats-cleanup-count-span"><img
+					style="margin-bottom: -1px;" wicket:id="img-stats-cleanup" src=""
+					height="16" /> <span class="sp-txt-info"
+				wicket:id="stats-cleanup-count" /></span>
+		</wicket:enclosure>
+
+		<wicket:enclosure child="stats-unknown-count">&nbsp;
             <span wicket:id="stats-unknown-count-span"><img
-                    style="margin-bottom: -1px;" wicket:id="img-stats-unknown" src=""
-                    height="14" /> <span class="sp-txt-info"
-                wicket:id="stats-unknown-count" /></span>
-        </wicket:enclosure>
-		
+					style="margin-bottom: -1px;" wicket:id="img-stats-unknown" src=""
+					height="14" /> <span class="sp-txt-info"
+				wicket:id="stats-unknown-count" /></span>
+		</wicket:enclosure>
+
 		<wicket:enclosure child="stats-inbox-count">&nbsp;
 			<span wicket:id="stats-inbox-count-span"><img
 					style="margin-bottom: -1px;" wicket:id="img-stats-inbox" src=""

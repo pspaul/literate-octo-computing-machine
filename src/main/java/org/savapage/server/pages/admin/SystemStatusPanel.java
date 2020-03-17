@@ -66,6 +66,7 @@ import org.savapage.core.dto.UserHomeStatsDto;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
@@ -980,7 +981,7 @@ public final class SystemStatusPanel extends Panel {
         final StringBuilder html = new StringBuilder();
         html.append("<p><b>");
         if (dto.isCleaned()) {
-            html.append(AdverbEnum.CLEANED_UP.uiText(getLocale()));
+            html.append(AdverbEnum.CLEANED.uiText(getLocale()));
         } else {
             html.append(AdverbEnum.CLEANABLE.uiText(getLocale()));
         }
@@ -991,24 +992,38 @@ public final class SystemStatusPanel extends Panel {
         final long nUsers = stats.getUsers().getCount();
         html.append(localeHelper.getNumber(nUsers));
         html.append("&nbsp;")
-                .append(NounEnum.USER.uiText(getLocale(), nUsers != 1));
+                .append(NounEnum.USER.uiText(getLocale(), nUsers != 1))
+                .append(".");
 
         if (nUsers > 0) {
 
-            final long nFiles =
-                    stats.getInbox().getCount() + stats.getOutbox().getCount();
+            UserHomeStatsDto.Scope scope = stats.getInbox();
+            long nCount = scope.getCount();
 
-            html.append(", ").append(localeHelper.getNumber(nFiles));
-            html.append("&nbsp;")
-                    .append(NounEnum.DOCUMENT.uiText(getLocale(), nFiles != 1));
-
-            html.append(", ");
-            html.append(FileUtils
-                    .byteCountToDisplaySize(stats.getInbox().getSize()
-                            .add(stats.getOutbox().getSize()))
-                    .replace(" ", "&nbsp;"));
+            if (nCount > 0) {
+                html.append(" ").append(localeHelper.getNumber(nCount));
+                html.append("&nbsp;").append(
+                        NounEnum.DOCUMENT.uiText(getLocale(), nCount != 1));
+                html.append(": ")
+                        .append(FileUtils
+                                .byteCountToDisplaySize(scope.getSize())
+                                .replace(" ", "&nbsp;"))
+                        .append(".");
+            }
+            scope = stats.getOutbox();
+            nCount = scope.getCount();
+            if (nCount > 0) {
+                html.append(" ").append(localeHelper.getNumber(nCount));
+                html.append("&nbsp;").append(
+                        PrintOutNounEnum.JOB.uiText(getLocale(), nCount != 1));
+                html.append(": ")
+                        .append(FileUtils
+                                .byteCountToDisplaySize(scope.getSize())
+                                .replace(" ", "&nbsp;"))
+                        .append(".");
+            }
         }
-        html.append(".</p>");
+        html.append("</p>");
         tooltip.populate(html.toString(), false);
         add(tooltip);
     }
