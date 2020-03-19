@@ -836,7 +836,7 @@
                 }
 
                 _view.visible($('#sp-group-device-auth-mode-default'), nMode > 1);
-                _enableCardFormat(authCardLocal);
+                _enableCardFormat(_model.editDevice.deviceType === 'CARD_READER' || authCardLocal);
 
             };
 
@@ -853,7 +853,7 @@
                 if (customAuth) {
                     _onAuthModeEnabled();
                 }
-                _enableCardFormat(customAuth && authCardLocal);
+                _enableCardFormat(_model.editDevice.deviceType === 'CARD_READER' || (customAuth && authCardLocal));
             };
 
             _enableCardFormat = function(enable) {
