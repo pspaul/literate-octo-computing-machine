@@ -47,6 +47,7 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
+import org.eclipse.jetty.server.Server;
 import org.savapage.common.ConfigDefaults;
 import org.savapage.core.SpException;
 import org.savapage.core.SpInfo;
@@ -751,6 +752,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             /*
              * Web server.
              */
+            SpInfo.instance().log("Jetty ".concat(Server.getVersion()));
+
             final StringBuilder logMsg = new StringBuilder();
             logMsg.append("Web Server started on port ");
 
