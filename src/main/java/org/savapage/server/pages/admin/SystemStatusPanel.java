@@ -35,6 +35,7 @@ import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -1023,6 +1024,18 @@ public final class SystemStatusPanel extends Panel {
                         .append(".");
             }
         }
+
+        html.append(" ");
+
+        if (dto.getDuration() < DateUtil.DURATION_MSEC_SECOND) {
+            html.append(dto.getDuration()).append("&nbsp;msec");
+        } else {
+            html.append(DurationFormatUtils
+                    .formatDurationWords(dto.getDuration(), true, true)
+                    .replace(" ", "&nbsp;"));
+        }
+        html.append(".");
+
         html.append("</p>");
         tooltip.populate(html.toString(), false);
         add(tooltip);
