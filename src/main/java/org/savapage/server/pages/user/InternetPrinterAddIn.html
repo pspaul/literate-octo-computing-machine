@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-	<!-- 
-    +=========================================================================+ 
-    | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
-    |.........................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify .......|
-    | it under the terms of the GNU Affero General Public License as .........|
-    | published by the Free Software Foundation, either version 3 of .........|
-    | the License, or (at your option) any later version. ....................|
-    +=========================================================================+ 
-    -->
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2011-2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: 2011-2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
 </wicket:remove>
 
 <ul data-role="listview" data-inset="true">
 	<li style="background: #F5F5F5;">
-		<div class="sp-txt-wrap" >
+		<div class="sp-txt-wrap">
 			<wicket:message key="header" />
 		</div>
 	</li>
@@ -39,6 +40,48 @@
 			<wicket:message key="windows-driver-msg" />
 		</div>
 	</li>
+	<wicket:enclosure child="chrome-address">
+		<li>
+			<h3>Chrome OS</h3>
+			<div>
+				<table data-role="table" data-mode="reflow"
+					class="ui-responsive table-stroke">
+					<thead>
+						<tr>
+							<th data-priority="1" />
+							<th data-priority="2" />
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td wicket:id="chrome-address-prompt" />
+							<td class="sp-txt-valid" style="font-family: monospace;"
+								wicket:id="chrome-address" />
+						</tr>
+						<tr>
+							<td wicket:id="chrome-protocol-prompt" />
+							<td class="sp-txt-valid" style="font-family: monospace;">Internet
+								Printing Protocol (IPPS)</td>
+						</tr>
+						<tr>
+							<td wicket:id="chrome-queue-prompt" />
+							<td class="sp-txt-valid" style="font-family: monospace;"
+								wicket:id="chrome-queue" />
+						</tr>
+						<tr>
+							<td wicket:id="chrome-manufacturer-prompt" />
+							<td class="sp-txt-valid" style="font-family: monospace;">Generic</td>
+						</tr>
+						<tr>
+							<td wicket:id="chrome-model-prompt" />
+							<td class="sp-txt-valid" style="font-family: monospace;">Generic
+								PostScript Printer</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</li>
+	</wicket:enclosure>
 </ul>
 
 <wicket:enclosure child="fdroid-url">
@@ -65,7 +108,7 @@
 								wicket:id="fdroid-url" />
 						</tr>
 						<tr>
-							<td wicket:id="fdroid-user-prompt"/>
+							<td wicket:id="fdroid-user-prompt" />
 							<td class="sp-txt-valid" style="font-family: monospace;"
 								wicket:id="fdroid-user" />
 						</tr>
@@ -80,4 +123,5 @@
 		</li>
 	</ul>
 </wicket:enclosure>
+
 </html>

@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -56,6 +59,9 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
     /** */
     private static final String WID_FDROID_URL = "fdroid-url";
 
+    /** */
+    private static final String WID_CHROME_ADDRESS = "chrome-address";
+
     /**
      *
      */
@@ -80,19 +86,22 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
         final String uriBase = ConfigManager.instance()
                 .getConfigValue(Key.IPP_INTERNET_PRINTER_URI_BASE);
 
+        IppPrintServerUrlParms urlParms = null;
+
         String text;
 
         if (StringUtils.isBlank(userNumber) || StringUtils.isBlank(userUuid)
                 || StringUtils.isBlank(uriBase)) {
             text = localized("no-url-available");
         } else {
-            final IppPrintServerUrlParms urlParms =
+            final IppPrintServerUrlParms parms =
                     new IppPrintServerUrlParms(uriBase,
                             ReservedIppQueueEnum.IPP_PRINT_INTERNET
                                     .getUrlPath(),
                             userNumber, UUID.fromString(userUuid));
             try {
-                text = urlParms.asUri().toString();
+                text = parms.asUri().toString();
+                urlParms = parms;
             } catch (URISyntaxException e) {
                 text = e.getMessage();
             }
@@ -103,9 +112,33 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
                 StringUtils.replace(text, "ipps://", "https://"));
 
         //
-        if (StringUtils.isBlank(userUuid) || StringUtils.isBlank(uriBase)) {
+        if (urlParms == null) {
+            helper.discloseLabel(WID_CHROME_ADDRESS);
             helper.discloseLabel(WID_FDROID_URL);
         } else {
+            helper.addLabel("chrome-address-prompt",
+                    NounEnum.ADDRESS.uiText(getLocale()));
+            helper.addLabel(WID_CHROME_ADDRESS, StringUtils.removeStart(
+                    StringUtils.removeStart(uriBase, "https://"), "http://"));
+
+            helper.addLabel("chrome-protocol-prompt",
+                    NounEnum.PROTOCOL.uiText(getLocale()));
+
+            helper.addLabel("chrome-queue-prompt",
+                    NounEnum.QUEUE.uiText(getLocale()));
+
+            try {
+                helper.addLabel("chrome-queue", StringUtils
+                        .removeStart(urlParms.asUri().getPath(), "/"));
+            } catch (URISyntaxException e) {
+                //
+            }
+            helper.addLabel("chrome-manufacturer-prompt",
+                    NounEnum.MANUFACTURER.uiText(getLocale()));
+            helper.addLabel("chrome-model-prompt",
+                    NounEnum.MODEL.uiText(getLocale()));
+
+            //
             helper.addLabel(WID_FDROID_URL,
                     StringUtils.replaceFirst(uriBase, "ipp", "http"));
             helper.addLabel("fdroid-user-prompt", NounEnum.USER);
