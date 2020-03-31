@@ -35,6 +35,8 @@ import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
+import org.savapage.core.dao.enums.UserAttrEnum;
+import org.savapage.core.jpa.UserNumber;
 import org.savapage.server.WebApp;
 
 /**
@@ -50,27 +52,17 @@ public final class IppPrintServerUrlParms {
     public static final String PARM_PRINTERS = WebApp.PATH_PRINTERS;
 
     /**
-     * The requesting user number parameter.
-     */
-    public static final String PARM_USER_NUMBER = "user";
-
-    /**
-     * The requesting user UUID parameter.
-     */
-    public static final String PARM_USER_UUID = "uuid";
-
-    /**
      * The value of {@link #PARM_PRINTERS}.
      */
     private final String printer;
 
     /**
-     * The value of {@link #PARM_USER_NUMBER}.
+     * The value of {@link UserNumber#getNumber()}.
      */
     private final String userNumber;
 
     /**
-     * The value of {@link #PARM_USER_UUID}.
+     * The value of {@link UserAttrEnum#UUID}.
      */
     private final UUID userUuid;
 
@@ -81,19 +73,20 @@ public final class IppPrintServerUrlParms {
 
     /**
      * Base URI as delivered by
-     * {@link #IppPrintServerUrlParms(String, String, String, UUID)};
+     * {@link #IppPrintServerUrlParms(String, String, String, UUID)}.
      */
     private final String uriBase;
 
     /**
      * Create from Wicket {@link Url}.
      *
-     * @param url
+     * @param urlPrint
      *            The {@link Url}.
      */
-    public IppPrintServerUrlParms(final Url url) {
 
-        this.url = url;
+    public IppPrintServerUrlParms(final Url urlPrint) {
+
+        this.url = urlPrint;
         this.uriBase = null;
 
         final UrlPathPageParametersEncoder encoder =
@@ -103,7 +96,8 @@ public final class IppPrintServerUrlParms {
         String tmpUserNumber = null;
         UUID tmpUserUuid = null;
 
-        final PageParameters parameters = encoder.decodePageParameters(url);
+        final PageParameters parameters =
+                encoder.decodePageParameters(urlPrint);
 
         if (parameters != null) {
 
@@ -118,17 +112,17 @@ public final class IppPrintServerUrlParms {
                 case PARM_PRINTERS:
                     tmpPrinter = value;
                     break;
-                case PARM_USER_NUMBER:
-                    tmpUserNumber = value;
-                    break;
-                case PARM_USER_UUID:
-                    try {
-                        tmpUserUuid = UUID.fromString(value);
-                    } catch (Exception e) {
-                        // noop
-                    }
-                    break;
                 default:
+                    if (tmpPrinter != null && tmpPrinter
+                            .equals(ReservedIppQueueEnum.IPP_PRINT_INTERNET
+                                    .getUrlPath())) {
+                        tmpUserNumber = parm;
+                        try {
+                            tmpUserUuid = UUID.fromString(value);
+                        } catch (Exception e) {
+                            // noop
+                        }
+                    }
                     break;
                 }
             }
@@ -153,6 +147,7 @@ public final class IppPrintServerUrlParms {
 
     /**
      *
+     * @param uriBase
      * @param printerPath
      * @param userNumber
      * @param userUuid
@@ -208,9 +203,7 @@ public final class IppPrintServerUrlParms {
 
         builder.append(this.uriBase).append('/').append(PARM_PRINTERS)
                 .append('/').append(this.printer).append('/')
-                .append(PARM_USER_NUMBER).append('/').append(this.userNumber)
-                .append('/').append(PARM_USER_UUID).append('/')
-                .append(this.userUuid);
+                .append(this.userNumber).append('/').append(this.userUuid);
 
         return new URI(builder.toString());
     }

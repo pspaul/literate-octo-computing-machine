@@ -55,12 +55,10 @@ public final class IppPrintServerUrlParmsTest {
                     .append("/").append(printer);
         }
         if (user != null) {
-            url.append("/").append(IppPrintServerUrlParms.PARM_USER_NUMBER)
-                    .append("/").append(user);
+            url.append("/").append(user);
         }
         if (uuid != null) {
-            url.append("/").append(IppPrintServerUrlParms.PARM_USER_UUID)
-                    .append("/").append(uuid);
+            url.append("/").append(uuid);
         }
 
         return new IppPrintServerUrlParms(Url.parse(url.toString()));
