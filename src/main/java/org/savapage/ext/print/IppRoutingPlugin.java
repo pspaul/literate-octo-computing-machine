@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
@@ -79,17 +81,290 @@ public final class IppRoutingPlugin implements ServerPlugin {
             LoggerFactory.getLogger(IppRoutingPlugin.class);
 
     /**
-     * QR-code position.
+     *
      */
-    private enum QrPos {
-        /** top-left. */
-        TL,
-        /** top-right. */
-        TR,
-        /** bottom-left. */
-        BL,
-        /** bottom-right. */
-        BR
+    private static class RoutingDataBase {
+
+        /** */
+        protected String pdfQrCodeContent;
+
+        /** Quiet Zone. */
+        protected int pdfQrCodeQzMM;
+
+        /** */
+        protected QrCodeAnchorEnum pdfQrCodePosAnchor;
+        /** */
+        protected float pdfQrCodePosMarginXPt;
+        /** */
+        protected float pdfQrCodePosMarginYPt;
+        /** */
+        protected int pdfQrCodeSizeMM;
+        /** */
+        protected String pdfHeaderText;
+        /** */
+        protected Font pdfHeaderFont;
+        /** */
+        protected float pdfHeaderMarginTopPt;
+        /** */
+        protected String pdfFooterText;
+        /** */
+        protected Font pdfFooterFont;
+        /** */
+        protected float pdfFooterMarginBottomPt;
+        /** */
+        protected String routingId;
+        /** */
+        protected Map<String, String> pdfInfo;
+
+        /**
+         *
+         * @param obj
+         *            Object to copy from.
+         */
+        void copy(final RoutingDataBase obj) {
+
+            this.pdfQrCodeContent = obj.pdfQrCodeContent;
+            this.pdfQrCodeQzMM = obj.pdfQrCodeQzMM;
+            this.pdfQrCodePosAnchor = obj.pdfQrCodePosAnchor;
+            this.pdfQrCodePosMarginXPt = obj.pdfQrCodePosMarginXPt;
+            this.pdfQrCodePosMarginYPt = obj.pdfQrCodePosMarginYPt;
+            this.pdfQrCodeSizeMM = obj.pdfQrCodeSizeMM;
+            this.pdfHeaderText = obj.pdfHeaderText;
+            this.pdfHeaderFont = obj.pdfHeaderFont;
+            this.pdfHeaderMarginTopPt = obj.pdfHeaderMarginTopPt;
+            this.pdfFooterText = obj.pdfFooterText;
+            this.pdfFooterFont = obj.pdfFooterFont;
+            this.pdfFooterMarginBottomPt = obj.pdfFooterMarginBottomPt;
+            this.routingId = obj.routingId;
+
+            if (obj.pdfInfo != null) {
+                this.pdfInfo = new HashMap<>();
+                this.pdfInfo.putAll(obj.pdfInfo);
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private static final class RoutingData extends RoutingDataBase {
+
+        /** */
+        private final UUID routingUUID;
+
+        /**
+         * PDF QR-code image, or {@code null} if not applicable.
+         */
+        private Image pdfQrCodeImage;
+
+        /**
+         * PDF QR-code Quiet Zone background image, or {@code null} if not
+         * applicable.
+         */
+        private Image pdfQrCodeImageBg;
+
+        /**
+         *
+         * @param template
+         *            Data template.
+         */
+        RoutingData(final RoutingDataBase template) {
+
+            this.copy(template);
+
+            this.routingUUID = UUID.randomUUID();
+
+            if (this.routingId != null
+                    && this.routingId.equals(ROUTING_ID_PLACEHOLDER_UUID)) {
+                this.routingId = this.routingUUID.toString();
+            }
+        }
+
+        /**
+         * Updates object with routing data response.
+         *
+         * @param rsp
+         *            Routing data response.
+         */
+        void update(final IppRoutingData rsp) {
+
+            this.routingId = rsp.getId();
+
+            final IppRoutingData.PdfData pdf = rsp.getPdf();
+            if (pdf == null) {
+                return;
+            }
+
+            this.update(pdf.getFooter());
+            this.update(pdf.getHeader());
+            this.update(pdf.getInfo());
+            this.update(pdf.getQrcode());
+        }
+
+        /**
+         * Updates object with routing Footer response.
+         *
+         * @param footer
+         *            Routing Footer response.
+         */
+        void update(final IppRoutingData.Footer footer) {
+
+            if (footer == null || footer.getText() == null) {
+                return;
+            }
+
+            this.pdfFooterText = footer.getText();
+
+            final IppRoutingData.Font font = footer.getFont();
+            if (font != null && font.getSize() != null) {
+                this.pdfFooterFont = new Font(Font.HELVETICA,
+                        Float.valueOf(font.getSize()).floatValue());
+                this.pdfFooterFont.setColor(Color.GRAY);
+            }
+
+            final IppRoutingData.MarginFooter margin = footer.getMargin();
+            if (margin != null && margin.getBottom() != null) {
+                this.pdfFooterMarginBottomPt =
+                        QRCodeHelper.pdfMMToPoints(margin.getBottom());
+            }
+
+        }
+
+        /**
+         * Updates object with routing Header response.
+         *
+         * @param header
+         *            Routing Header response.
+         */
+        void update(final IppRoutingData.Header header) {
+
+            if (header == null || header.getText() == null) {
+                return;
+            }
+
+            this.pdfHeaderText = header.getText();
+
+            final IppRoutingData.Font font = header.getFont();
+            if (font != null && font.getSize() != null) {
+                this.pdfHeaderFont = new Font(Font.HELVETICA,
+                        Float.valueOf(font.getSize()).floatValue());
+                this.pdfHeaderFont.setColor(Color.GRAY);
+            }
+
+            final IppRoutingData.MarginHeader margin = header.getMargin();
+            if (margin != null && margin.getTop() != null) {
+                this.pdfHeaderMarginTopPt =
+                        QRCodeHelper.pdfMMToPoints(margin.getTop());
+            }
+        }
+
+        /**
+         * Updates object with routing PdfInfo response.
+         *
+         * @param info
+         *            Routing PdfInfo response.
+         */
+        void update(final IppRoutingData.PdfInfo info) {
+
+            if (info == null) {
+                return;
+            }
+
+            if (this.pdfInfo == null) {
+                this.pdfInfo = new HashMap<>();
+            }
+
+            String key;
+            String value;
+
+            key = ITextPdfCreator.PDF_INFO_KEY_AUTHOR;
+            value = info.getAuthor();
+            if (StringUtils.isBlank(value)) {
+                this.pdfInfo.remove(key);
+            } else {
+                this.pdfInfo.put(key, value);
+            }
+
+            key = ITextPdfCreator.PDF_INFO_KEY_TITLE;
+            value = info.getTitle();
+            if (StringUtils.isBlank(value)) {
+                this.pdfInfo.remove(key);
+            } else {
+                this.pdfInfo.put(key, value);
+            }
+
+            key = ITextPdfCreator.PDF_INFO_KEY_SUBJECT;
+            value = info.getSubject();
+            if (StringUtils.isBlank(value)) {
+                this.pdfInfo.remove(key);
+            } else {
+                this.pdfInfo.put(key, value);
+            }
+
+            if (info.getKeywords() != null) {
+
+                final StringBuilder kws = new StringBuilder();
+
+                for (final String kw : info.getKeywords()) {
+                    if (StringUtils.isNotBlank(kw)) {
+                        kws.append(kw).append(" ");
+                    }
+                }
+                key = ITextPdfCreator.PDF_INFO_KEY_KEYWORDS;
+                value = kws.toString().trim();
+                if (StringUtils.isBlank(value)) {
+                    this.pdfInfo.remove(key);
+                } else {
+                    this.pdfInfo.put(key, value);
+                }
+            }
+        }
+
+        /**
+         * Updates object with routing QrCode response.
+         *
+         * @param qrcode
+         *            Routing QrCode response.
+         */
+        void update(final IppRoutingData.QrCode qrcode) {
+
+            if (qrcode == null) {
+                return;
+            }
+
+            if (StringUtils.isNotBlank(qrcode.getContent())) {
+                this.pdfQrCodeContent = qrcode.getContent();
+            }
+            if (qrcode.getSize() != null) {
+                this.pdfQrCodeSizeMM = qrcode.getSize().intValue();
+            }
+            if (qrcode.getQz() != null) {
+                this.pdfQrCodeQzMM = qrcode.getQz().intValue();
+            }
+
+            final IppRoutingData.QrCodePosition pos = qrcode.getPos();
+            if (pos == null) {
+                return;
+            }
+
+            if (pos.getAnchor() != null) {
+                this.pdfQrCodePosAnchor = pos.getAnchor();
+            }
+
+            final IppRoutingData.Margin margin = pos.getMargin();
+            if (margin == null) {
+                return;
+            }
+
+            if (margin.getX() != null) {
+                this.pdfQrCodePosMarginXPt =
+                        QRCodeHelper.pdfMMToPoints(margin.getX().intValue());
+            }
+            if (margin.getY() != null) {
+                this.pdfQrCodePosMarginYPt =
+                        QRCodeHelper.pdfMMToPoints(margin.getY().intValue());
+            }
+        }
     }
 
     /**
@@ -101,7 +376,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private static final String PROP_KEY_ROUTING_ID = PROP_KEY_PFX + "id";
 
     /** */
-    private static final String ROUTING_ID_PLACEHOLDER_QRCODE = "$pdf.qrcode$";
+    private static final String ROUTING_ID_PLACEHOLDER_UUID = "$uuid$";
 
     /**
      * Property key prefix.
@@ -109,69 +384,80 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private static final String PROP_KEY_PFX_PDF = PROP_KEY_PFX + "pdf.";
 
     /** */
-    private static final String PROP_KEY_PDF_QRCODE =
-            PROP_KEY_PFX_PDF + "qrcode";
+    private static final String PROP_KEY_PFX_ROUTING_REST =
+            PROP_KEY_PFX + "rest.";
 
     /** */
-    private static final String PROP_KEY_PFX_PDF_QRCODE_REST =
-            PROP_KEY_PFX_PDF + "qrcode.rest.";
-
+    private static final String PROP_KEY_ROUTING_REST_URI =
+            PROP_KEY_PFX_ROUTING_REST + "uri";
     /** */
-    private static final String PROP_KEY_PDF_QRCODE_REST_URI =
-            PROP_KEY_PFX_PDF_QRCODE_REST + "uri";
+    private static final String PROP_KEY_ROUTING_REST_USER =
+            PROP_KEY_PFX_ROUTING_REST + "user";
     /** */
-    private static final String PROP_KEY_PDF_QRCODE_REST_USER =
-            PROP_KEY_PFX_PDF_QRCODE_REST + "user";
-    /** */
-    private static final String PROP_KEY_PDF_QRCODE_REST_PW =
-            PROP_KEY_PFX_PDF_QRCODE_REST + "password";
+    private static final String PROP_KEY_ROUTING_REST_PW =
+            PROP_KEY_PFX_ROUTING_REST + "password";
 
     /** */
     private static final String PROP_KEY_PFX_PDF_QRCODE_REST_POST =
-            PROP_KEY_PFX_PDF_QRCODE_REST + "post.";
+            PROP_KEY_PFX_ROUTING_REST + "post.";
 
     /** */
-    private static final String PROP_KEY_PDF_QRCODE_REST_POST_REQ_ENTITY =
+    private static final String PROP_KEY_ROUTING_REST_POST_REQ_ENTITY =
             PROP_KEY_PFX_PDF_QRCODE_REST_POST + "request.entity";
 
     /** */
-    private static final String PDF_QRCODE_REQ_PLACEHOLDER_USERID = "$user_id$";
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_UUID =
+            "$uuid$";
     /** */
-    private static final String PDF_QRCODE_REQ_PLACEHOLDER_CLIENT_IP =
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_USERID =
+            "$user_id$";
+    /** */
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_CLIENT_IP =
             "$client_ip$";
     /** */
-    private static final String PDF_QRCODE_REQ_PLACEHOLDER_PRINTER_NAME =
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_QUEUE_NAME =
+            "$queue_name$";
+    /** */
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_NAME =
             "$printer_name$";
     /** */
-    private static final String PDF_QRCODE_REQ_PLACEHOLDER_JOB_NAME =
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_JOB_NAME =
             "$job_name$";
     /** */
-    private static final String PDF_QRCODE_REQ_PLACEHOLDER_JOB_TIME =
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_JOB_TIME =
             "$job_time$";
 
     /** */
-    private static final String PROP_KEY_PDF_QRCODE_REST_POST_REQ_MEDIATYPE =
+    private static final String PROP_KEY_ROUTING_REST_POST_REQ_MEDIATYPE =
             PROP_KEY_PFX_PDF_QRCODE_REST_POST + "request.mediatype";
 
     /** */
-    private static final String PROP_KEY_PDF_QRCODE_REST_POST_RSP_MEDIATYPE =
+    private static final String PROP_KEY_ROUTING_REST_POST_RSP_MEDIATYPE =
             PROP_KEY_PFX_PDF_QRCODE_REST_POST + "response.mediatype";
 
     /** */
-    private static final String PDF_QRCODE_PLACEHOLDER_UUID = "$uuid$";
+    private static final String PDF_QRCODE_CONTENT_PLACEHOLDER_ROUTING_ID =
+            "$routing.id$";
 
+    /** */
+    private static final String PROP_KEY_PDF_QRCODE_PFX =
+            PROP_KEY_PFX_PDF + "qrcode";
+    /** */
+    private static final String PROP_KEY_PDF_QRCODE_CONTENT =
+            PROP_KEY_PDF_QRCODE_PFX + ".content";
     /** */
     private static final String PROP_KEY_PDF_QRCODE_SIZE =
-            PROP_KEY_PDF_QRCODE + ".size";
-
+            PROP_KEY_PDF_QRCODE_PFX + ".size";
     /** */
     private static final String PROP_KEY_PDF_QRCODE_QUIET_ZONE =
-            PROP_KEY_PDF_QRCODE + ".qz";
-
+            PROP_KEY_PDF_QRCODE_PFX + ".qz";
     /** */
     private static final String PROP_KEY_PDF_QRCODE_POS =
-            PROP_KEY_PDF_QRCODE + ".pos";
+            PROP_KEY_PDF_QRCODE_PFX + ".pos";
 
+    /** */
+    private static final String PROP_KEY_PDF_QRCODE_POS_ANCHOR =
+            PROP_KEY_PDF_QRCODE_POS + ".anchor";
     /** */
     private static final String PROP_KEY_PDF_QRCODE_POS_MARGIN_X =
             PROP_KEY_PDF_QRCODE_POS + ".margin.x";
@@ -185,6 +471,10 @@ public final class IppRoutingPlugin implements ServerPlugin {
             PROP_KEY_PFX_PDF + "header";
 
     /** */
+    private static final String PROP_KEY_PDF_HEADER_TEXT =
+            PROP_KEY_PDF_HEADER + ".text";
+
+    /** */
     private static final String PROP_KEY_PDF_HEADER_FONT_SIZE =
             PROP_KEY_PDF_HEADER + ".font.size";
 
@@ -195,6 +485,10 @@ public final class IppRoutingPlugin implements ServerPlugin {
     /** */
     private static final String PROP_KEY_PDF_FOOTER =
             PROP_KEY_PFX_PDF + "footer";
+
+    /** */
+    private static final String PROP_KEY_PDF_FOOTER_TEXT =
+            PROP_KEY_PDF_FOOTER + ".text";
 
     /** */
     private static final String PROP_KEY_PDF_FOOTER_FONT_SIZE =
@@ -227,55 +521,17 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private String name;
 
     /** */
-    private RestClient codeQRRestClient;
+    private RestClient routingRestClient;
 
     /** */
-    private String codeQRRestReqEntity;
+    private String routingRestReqEntity;
 
     /** */
-    private String codeQRRestReqMediaType;
+    private String routingRestReqMediaType;
     /** */
-    private String codeQRRestRspMediaType;
+    private String routingRestRspMediaType;
 
-    /** */
-    private String codeQR;
-
-    /** */
-    private boolean codeQRUUID;
-
-    /** */
-    private int codeQRQuiteZoneMM;
-
-    /** */
-    private QrPos codeQRPos;
-    /** */
-    private float codeQRPosMarginPointsX;
-    /** */
-    private float codeQRPosMarginPointsY;
-
-    /** */
-    private int codeQRSizeMM;
-
-    /** */
-    private String header;
-
-    /** */
-    private Font headerFont;
-
-    /** */
-    private float headerMarginPointsTop;
-
-    /** */
-    private String footer;
-
-    /** */
-    private Font footerFont;
-
-    /** */
-    private float footerMarginPointsBottom;
-
-    /** */
-    private String routingId;
+    private RoutingDataBase routingTemplate;
 
     /** */
     Map<String, String> pdfInfo;
@@ -306,40 +562,46 @@ public final class IppRoutingPlugin implements ServerPlugin {
         this.id = pluginId;
         this.name = pluginName;
 
-        //
-        this.routingId = props.getProperty(PROP_KEY_ROUTING_ID);
+        final RoutingDataBase tpl = new RoutingDataBase();
+        this.routingTemplate = tpl;
 
         //
-        this.onInitCodeQRRetrieval(context, props);
+        tpl.routingId = props.getProperty(PROP_KEY_ROUTING_ID);
 
-        this.codeQRSizeMM =
+        //
+        this.onInitRoutingREST(context, props);
+
+        //
+        tpl.pdfQrCodeContent = props.getProperty(PROP_KEY_PDF_QRCODE_CONTENT);
+
+        tpl.pdfQrCodeSizeMM =
                 Integer.valueOf(props.getProperty(PROP_KEY_PDF_QRCODE_SIZE))
                         .intValue();
 
-        this.codeQRQuiteZoneMM = Integer.valueOf(
+        tpl.pdfQrCodeQzMM = Integer.valueOf(
                 props.getProperty(PROP_KEY_PDF_QRCODE_QUIET_ZONE, "0"));
 
-        this.codeQRPos = EnumUtils.getEnum(QrPos.class,
-                props.getProperty(PROP_KEY_PDF_QRCODE_POS));
+        tpl.pdfQrCodePosAnchor = EnumUtils.getEnum(QrCodeAnchorEnum.class,
+                props.getProperty(PROP_KEY_PDF_QRCODE_POS_ANCHOR));
 
-        if (this.codeQRPos == null) {
-            this.codeQRPos = QrPos.TL;
+        if (tpl.pdfQrCodePosAnchor == null) {
+            tpl.pdfQrCodePosAnchor = QrCodeAnchorEnum.TL;
         }
 
-        this.codeQRPosMarginPointsX =
+        tpl.pdfQrCodePosMarginXPt =
                 QRCodeHelper.pdfMMToPoints(Integer
                         .valueOf(props.getProperty(
                                 PROP_KEY_PDF_QRCODE_POS_MARGIN_X, "0"))
                         .intValue());
 
-        this.codeQRPosMarginPointsY =
+        tpl.pdfQrCodePosMarginYPt =
                 QRCodeHelper.pdfMMToPoints(Integer
                         .valueOf(props.getProperty(
                                 PROP_KEY_PDF_QRCODE_POS_MARGIN_Y, "0"))
                         .intValue());
 
-        this.onInitHeaderFooter(props);
-        this.onInitPdfInfo(props);
+        onInitHeaderFooter(props, tpl);
+        onInitPdfInfo(props, tpl);
     }
 
     /**
@@ -350,14 +612,12 @@ public final class IppRoutingPlugin implements ServerPlugin {
      * @throws ServerPluginException
      *             If error.
      */
-    private void onInitCodeQRRetrieval(final ServerPluginContext ctx,
+    private void onInitRoutingREST(final ServerPluginContext ctx,
             final Properties props) throws ServerPluginException {
 
-        final String restUri = props.getProperty(PROP_KEY_PDF_QRCODE_REST_URI);
+        final String restUri = props.getProperty(PROP_KEY_ROUTING_REST_URI);
 
         if (restUri == null) {
-            this.codeQR = props.getProperty(PROP_KEY_PDF_QRCODE);
-            this.codeQRUUID = this.codeQR.equals(PDF_QRCODE_PLACEHOLDER_UUID);
             return;
         }
 
@@ -368,28 +628,27 @@ public final class IppRoutingPlugin implements ServerPlugin {
             throw new ServerPluginException(e.getMessage());
         }
 
-        final String restUser =
-                props.getProperty(PROP_KEY_PDF_QRCODE_REST_USER);
+        final String restUser = props.getProperty(PROP_KEY_ROUTING_REST_USER);
 
         if (restUser == null) {
-            this.codeQRRestClient = ctx.createRestClient(uri);
+            this.routingRestClient = ctx.createRestClient(uri);
         } else {
-            this.codeQRRestClient = ctx.createRestClient(uri, restUser,
-                    props.getProperty(PROP_KEY_PDF_QRCODE_REST_PW, ""));
+            this.routingRestClient = ctx.createRestClient(uri, restUser,
+                    props.getProperty(PROP_KEY_ROUTING_REST_PW, ""));
         }
 
-        this.codeQRRestReqEntity =
-                props.getProperty(PROP_KEY_PDF_QRCODE_REST_POST_REQ_ENTITY);
+        this.routingRestReqEntity =
+                props.getProperty(PROP_KEY_ROUTING_REST_POST_REQ_ENTITY);
 
-        this.codeQRRestReqMediaType =
-                props.getProperty(PROP_KEY_PDF_QRCODE_REST_POST_REQ_MEDIATYPE);
+        this.routingRestReqMediaType =
+                props.getProperty(PROP_KEY_ROUTING_REST_POST_REQ_MEDIATYPE);
 
-        this.codeQRRestRspMediaType =
-                props.getProperty(PROP_KEY_PDF_QRCODE_REST_POST_RSP_MEDIATYPE);
+        this.routingRestRspMediaType =
+                props.getProperty(PROP_KEY_ROUTING_REST_POST_RSP_MEDIATYPE);
 
-        if (this.codeQRRestReqEntity == null
-                || this.codeQRRestReqMediaType == null
-                || this.codeQRRestRspMediaType == null) {
+        if (this.routingRestReqEntity == null
+                || this.routingRestReqMediaType == null
+                || this.routingRestRspMediaType == null) {
             throw new ServerPluginException(
                     String.format("One or more %s properties are missing.",
                             PROP_KEY_PFX_PDF_QRCODE_REST_POST));
@@ -397,74 +656,82 @@ public final class IppRoutingPlugin implements ServerPlugin {
     }
 
     /**
+     * Initializes the PDF info template.
      *
      * @param props
      *            Configuration properties.
+     * @param tpl
+     *            Template.
      */
-    private void onInitPdfInfo(final Properties props) {
+    private static void onInitPdfInfo(final Properties props,
+            final RoutingDataBase tpl) {
 
-        this.pdfInfo = new HashMap<>();
+        tpl.pdfInfo = new HashMap<>();
 
         String value;
 
         value = props.getProperty(PROP_KEY_PDF_INFO_AUTHOR);
         if (StringUtils.isNotBlank(value)) {
-            this.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_AUTHOR, value);
+            tpl.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_AUTHOR, value);
         }
 
         value = props.getProperty(PROP_KEY_PDF_INFO_TITLE);
         if (StringUtils.isNotBlank(value)) {
-            this.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_TITLE, value);
+            tpl.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_TITLE, value);
         }
 
         value = props.getProperty(PROP_KEY_PDF_INFO_SUBJECT);
         if (StringUtils.isNotBlank(value)) {
-            this.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_SUBJECT, value);
+            tpl.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_SUBJECT, value);
         }
 
         value = props.getProperty(PROP_KEY_PDF_INFO_KEYWORDS);
         if (StringUtils.isNotBlank(value)) {
-            this.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_KEYWORDS, value);
+            tpl.pdfInfo.put(ITextPdfCreator.PDF_INFO_KEY_KEYWORDS, value);
         }
     }
 
     /**
+     * Initializes the header and Footer template.
      *
      * @param props
      *            Configuration properties.
+     * @param tpl
+     *            Template.
      */
-    private void onInitHeaderFooter(final Properties props) {
+    private static void onInitHeaderFooter(final Properties props,
+            final RoutingDataBase tpl) {
 
-        this.header = props.getProperty(PROP_KEY_PDF_HEADER);
+        tpl.pdfHeaderText = props.getProperty(PROP_KEY_PDF_HEADER_TEXT);
 
-        if (this.header != null) {
+        if (tpl.pdfHeaderText != null) {
 
             final float headerFontSize = Float.valueOf(
                     props.getProperty(PROP_KEY_PDF_HEADER_FONT_SIZE, "8"))
                     .floatValue();
 
-            this.headerFont = new Font(Font.HELVETICA, headerFontSize);
-            this.headerFont.setColor(Color.GRAY);
+            tpl.pdfHeaderFont = new Font(Font.HELVETICA, headerFontSize);
+            tpl.pdfHeaderFont.setColor(Color.GRAY);
 
-            this.headerMarginPointsTop =
+            tpl.pdfHeaderMarginTopPt =
                     QRCodeHelper.pdfMMToPoints(Integer
                             .valueOf(props.getProperty(
                                     PROP_KEY_PDF_HEADER_MARGIN_TOP, "10"))
                             .intValue());
         }
 
-        this.footer = props.getProperty(PROP_KEY_PDF_FOOTER);
+        tpl.pdfFooterText = props.getProperty(PROP_KEY_PDF_FOOTER_TEXT);
 
-        if (this.footer != null) {
+        if (tpl.pdfFooterText != null) {
 
             final float footerFontSize = Float.valueOf(
                     props.getProperty(PROP_KEY_PDF_FOOTER_FONT_SIZE, "8"))
                     .floatValue();
 
-            this.footerFont = new Font(Font.HELVETICA, footerFontSize);
-            this.footerFont.setColor(Color.GRAY);
+            tpl.pdfFooterFont = new Font(Font.HELVETICA, footerFontSize);
+            tpl.pdfFooterFont.setColor(Color.GRAY);
 
-            this.footerMarginPointsBottom = QRCodeHelper.pdfMMToPoints(Integer
+            tpl.pdfFooterMarginBottomPt = QRCodeHelper.pdfMMToPoints(Integer
                     .valueOf(props.getProperty(
                             PROP_KEY_PDF_FOOTER_MARGIN_BOTTOM, "10"))
                     .intValue());
@@ -474,21 +741,28 @@ public final class IppRoutingPlugin implements ServerPlugin {
     /**
      * @param stamper
      *            {@link PdfStamper}
+     * @param data
+     *            Routing data.
      */
-    private void onRoutingPdfInfo(final PdfStamper stamper) {
-        if (!this.pdfInfo.isEmpty()) {
-            @SuppressWarnings("unchecked")
-            final HashMap<String, String> info = stamper.getReader().getInfo();
-            info.putAll(this.pdfInfo);
-            stamper.setMoreInfo(info);
+    private static void onRoutingPdfInfo(final PdfStamper stamper,
+            final RoutingData data) {
+
+        if (data.pdfInfo == null || data.pdfInfo.isEmpty()) {
+            return;
         }
+
+        @SuppressWarnings("unchecked")
+        final HashMap<String, String> info = stamper.getReader().getInfo();
+        info.putAll(data.pdfInfo);
+        stamper.setMoreInfo(info);
     }
 
     /**
      * @param stamper
      *            {@link PdfStamper}
      */
-    private void onRoutingPdfPermissions(final PdfStamper stamper) {
+    private static void onRoutingPdfPermissions(final PdfStamper stamper) {
+
         int iPermissions = 0;
         boolean bStrength = true; // 128 bit: TODO
 
@@ -514,28 +788,21 @@ public final class IppRoutingPlugin implements ServerPlugin {
     /**
      * @param ctx
      *            The routing context.
-     * @param res
+     * @param result
      *            The routing result to be filled.
      */
     public void onRouting(final IppRoutingContext ctx,
-            final IppRoutingResult res) {
+            final IppRoutingResult result) {
 
-        if (this.routingId != null
-                && !this.routingId.equals(ROUTING_ID_PLACEHOLDER_QRCODE)) {
-            res.setRoutingId(this.routingId);
+        final RoutingData data = new RoutingData(this.routingTemplate);
+
+        if (this.routingRestClient != null) {
+            this.onRoutingREST(ctx, data);
         }
 
-        //
-        final Image codeQRImage;
-        final Image codeQRImageBg;
         try {
-            codeQRImage = this.onRoutingQRCodeImage(ctx, res);
-            if (codeQRImage == null) {
-                codeQRImageBg = null;
-            } else {
-                codeQRImageBg = onRoutingQRCodeImageBg();
-            }
-        } catch (QRCodeException | DocumentException | IOException e) {
+            onRoutingQRCodeImage(data);
+        } catch (QRCodeException e) {
             LOGGER.error(e.getMessage());
             throw new SpException(e.getMessage(), e);
         }
@@ -543,22 +810,22 @@ public final class IppRoutingPlugin implements ServerPlugin {
         //
         final Phrase phraseHeader;
 
-        if (this.header == null) {
+        if (data.pdfHeaderText == null) {
             phraseHeader = null;
         } else {
-            phraseHeader = new Phrase(this.header, this.headerFont);
+            phraseHeader = new Phrase(data.pdfHeaderText, data.pdfHeaderFont);
         }
 
         final Phrase phraseFooter;
 
-        if (this.footer == null) {
+        if (data.pdfFooterText == null) {
             phraseFooter = null;
         } else {
-            phraseFooter = new Phrase(this.footer, this.footerFont);
+            phraseFooter = new Phrase(data.pdfFooterText, data.pdfFooterFont);
         }
 
         //
-        if (codeQRImage == null && phraseHeader == null
+        if (data.pdfQrCodeImage == null && phraseHeader == null
                 && phraseFooter == null) {
             return;
         }
@@ -566,7 +833,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
         //
         final File fileIn = ctx.getPdfToPrint();
         final File fileOut = new File(
-                fileIn.getAbsolutePath() + UUID.randomUUID().toString());
+                fileIn.getAbsolutePath().concat(UUID.randomUUID().toString()));
 
         PdfReader reader = null;
         PdfStamper stamper = null;
@@ -579,7 +846,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
             stamper = new PdfStamper(reader, pdfSigned);
 
             // First thing to do.
-            this.onRoutingPdfPermissions(stamper);
+            onRoutingPdfPermissions(stamper);
 
             final int nPages = reader.getNumberOfPages();
             for (int nPage = 1; nPage <= nPages; nPage++) {
@@ -589,13 +856,13 @@ public final class IppRoutingPlugin implements ServerPlugin {
                 final Rectangle rect = reader.getPageSize(nPage);
                 final int rotation = reader.getPageRotation(nPage);
 
-                if (codeQRImage != null) {
-                    this.setImagePositionOnPage(rect, rotation, codeQRImage,
-                            codeQRImageBg);
-                    if (codeQRImageBg != null) {
-                        content.addImage(codeQRImageBg);
+                if (data.pdfQrCodeImage != null) {
+                    positionQrCodeImagesOnPdfPage(rect, rotation,
+                            data.pdfQrCodeImage, data.pdfQrCodeImageBg, data);
+                    if (data.pdfQrCodeImageBg != null) {
+                        content.addImage(data.pdfQrCodeImageBg);
                     }
-                    content.addImage(codeQRImage);
+                    content.addImage(data.pdfQrCodeImage);
                 }
 
                 if (phraseHeader != null || phraseFooter != null) {
@@ -605,10 +872,10 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
                     if (rotation == 0) {
                         xHeaderFooter = (rect.getRight() - rect.getLeft()) / 2;
-                        yHeader = rect.getHeight() - this.headerMarginPointsTop;
+                        yHeader = rect.getHeight() - data.pdfHeaderMarginTopPt;
                     } else {
                         xHeaderFooter = (rect.getTop() - rect.getBottom()) / 2;
-                        yHeader = rect.getWidth() - this.headerMarginPointsTop;
+                        yHeader = rect.getWidth() - data.pdfHeaderMarginTopPt;
                     }
 
                     if (phraseHeader != null) {
@@ -618,7 +885,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
                     }
 
                     if (phraseFooter != null) {
-                        final float yFooter = this.footerMarginPointsBottom;
+                        final float yFooter = data.pdfFooterMarginBottomPt;
                         ColumnText.showTextAligned(content,
                                 Element.ALIGN_CENTER, phraseFooter,
                                 xHeaderFooter, yFooter, 0);
@@ -626,7 +893,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
                 }
             } // end-for
 
-            this.onRoutingPdfInfo(stamper);
+            onRoutingPdfInfo(stamper, data);
 
             stamper.close();
             reader.close();
@@ -634,6 +901,9 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
             ctx.replacePdfToPrint(fileOut);
             processed = true;
+
+            // Fill result.
+            result.setRoutingId(data.routingId);
 
         } catch (IOException | DocumentException e) {
             LOGGER.error(e.getMessage());
@@ -650,93 +920,98 @@ public final class IppRoutingPlugin implements ServerPlugin {
     }
 
     /**
+     * Retrieves routing data from REST server.
+     *
      * @param ctx
      *            The routing context.
-     * @param res
-     *            The routing result to be filled.
-     * @return PDF QR-code image, or {@code null} if not applicable.
-     * @throws QRCodeException
-     *             QR-code image error
-     * @throws DocumentException
-     *             PDF image error.
-     * @throws IOException
-     *             PDF image error.
+     * @param data
+     *            The routing data.
      */
-    private Image onRoutingQRCodeImage(final IppRoutingContext ctx,
-            final IppRoutingResult res)
-            throws QRCodeException, DocumentException, IOException {
+    private void onRoutingREST(final IppRoutingContext ctx,
+            final RoutingData data) {
 
-        final String codeQRWrk;
+        final String[][] placeholderValues = new String[][] {
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_CLIENT_IP,
+                        ctx.getOriginatorIp() },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_JOB_NAME,
+                        ctx.getJobName() },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_JOB_TIME,
+                        this.routingRestClient
+                                .toISODateTimeZ(ctx.getTransactionDate()) },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_QUEUE_NAME,
+                        ctx.getQueueName() },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_NAME,
+                        ctx.getPrinterName() },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_UUID,
+                        data.routingUUID.toString() },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_USERID, ctx.getUserId() } //
+        };
 
-        if (this.codeQRRestClient != null) {
+        String entity = this.routingRestReqEntity;
 
-            final String[][] placeholderValues = new String[][] {
-                    { PDF_QRCODE_REQ_PLACEHOLDER_CLIENT_IP,
-                            ctx.getOriginatorIp() },
-                    { PDF_QRCODE_REQ_PLACEHOLDER_JOB_NAME, ctx.getJobName() },
-                    { PDF_QRCODE_REQ_PLACEHOLDER_JOB_TIME,
-                            this.codeQRRestClient
-                                    .toISODateTimeZ(ctx.getTransactionDate()) },
-                    { PDF_QRCODE_REQ_PLACEHOLDER_PRINTER_NAME,
-                            ctx.getPrinterName() },
-                    { PDF_QRCODE_PLACEHOLDER_UUID,
-                            UUID.randomUUID().toString() },
-                    { PDF_QRCODE_REQ_PLACEHOLDER_USERID, ctx.getUserId() } //
-            };
+        for (final String[] placeholderValue : placeholderValues) {
+            entity = StringUtils.replace(entity, placeholderValue[0],
+                    placeholderValue[1]);
+        }
 
-            String entity = this.codeQRRestReqEntity;
+        if (MediaType.APPLICATION_JSON.equals(this.routingRestRspMediaType)) {
 
-            for (final String[] placeholderValue : placeholderValues) {
-                entity = StringUtils.replace(entity, placeholderValue[0],
-                        placeholderValue[1]);
+            final IppRoutingData rsp = this.routingRestClient.post(entity,
+                    this.routingRestReqMediaType, this.routingRestRspMediaType,
+                    IppRoutingData.class);
+
+            data.update(rsp);
+
+            try {
+                LOGGER.debug("RESTful POST: {} -> {}", entity,
+                        rsp.stringifyPrettyPrinted());
+            } catch (IOException e) {
+                //
             }
 
-            codeQRWrk = this.codeQRRestClient.post(entity,
-                    this.codeQRRestReqMediaType, this.codeQRRestRspMediaType);
-            LOGGER.debug("RESTful POST: {} -> {}", entity, codeQRWrk);
-
-        } else if (this.codeQR == null) {
-            codeQRWrk = null;
         } else {
-            if (this.codeQRUUID) {
-                codeQRWrk = UUID.randomUUID().toString();
-            } else {
-                codeQRWrk = this.codeQR;
-            }
-        }
+            final String routingIdWrk = this.routingRestClient.post(entity,
+                    this.routingRestReqMediaType, this.routingRestRspMediaType,
+                    String.class);
 
-        if (codeQRWrk != null && this.routingId != null
-                && this.routingId.equals(ROUTING_ID_PLACEHOLDER_QRCODE)) {
-            res.setRoutingId(codeQRWrk);
-        }
+            data.routingId = routingIdWrk;
 
-        final Image codeQRImage;
-
-        if (codeQRWrk == null) {
-            codeQRImage = null;
-        } else {
-            codeQRImage =
-                    QRCodeHelper.createPdfImage(codeQRWrk, this.codeQRSizeMM);
+            LOGGER.debug("RESTful POST: {} -> {}", entity, routingIdWrk);
         }
-        return codeQRImage;
     }
 
     /**
-     * @return PDF QR-code Quiet Zone background image, or {@code null} if not
-     *         applicable.
+     * Creates PDF QR-code and Quiet Zone background images.
+     *
+     * @param data
+     *            Routing data.
      * @throws QRCodeException
      *             QR-code image error
      */
-    private Image onRoutingQRCodeImageBg() throws QRCodeException {
-        if (this.codeQRQuiteZoneMM == 0) {
-            return null;
+    private static void onRoutingQRCodeImage(final RoutingData data)
+            throws QRCodeException {
+
+        if (StringUtils.isBlank(data.pdfQrCodeContent)) {
+            return;
         }
-        return QRCodeHelper.createPdfImageBackground(
-                this.codeQRSizeMM + 2 * this.codeQRQuiteZoneMM, Color.WHITE);
+
+        final String codeQRContentWrk = StringUtils.replace(
+                data.pdfQrCodeContent,
+                PDF_QRCODE_CONTENT_PLACEHOLDER_ROUTING_ID, data.routingId);
+
+        data.pdfQrCodeImage = QRCodeHelper.createPdfImage(codeQRContentWrk,
+                data.pdfQrCodeSizeMM);
+
+        //
+        if (data.pdfQrCodeQzMM == 0) {
+            return;
+        }
+        data.pdfQrCodeImageBg = QRCodeHelper.createPdfImageBackground(
+                data.pdfQrCodeSizeMM + 2 * data.pdfQrCodeQzMM, Color.WHITE);
     }
 
     /**
-     * Sets the absolute position of (background) image.
+     * Sets the absolute position of (background) image(s) on the PDF page.
      *
      * @param pageRect
      *            Page rectangle.
@@ -746,50 +1021,53 @@ public final class IppRoutingPlugin implements ServerPlugin {
      *            The QR image.
      * @param imageBg
      *            Background image (Quiet Zone). Can be {@code null}.
+     * @param data
+     *            Routing data.
      */
-    private void setImagePositionOnPage(final Rectangle pageRect,
-            final int pageRotation, final Image image, final Image imageBg) {
+    private static void positionQrCodeImagesOnPdfPage(final Rectangle pageRect,
+            final int pageRotation, final Image image, final Image imageBg,
+            final RoutingData data) {
 
         final float imgPointsHeight = image.getScaledHeight();
         final float imgPointsWidth = image.getScaledWidth();
 
         final float codeQRQuiteZonePoints;
 
-        if (this.codeQRQuiteZoneMM == 0) {
+        if (data.pdfQrCodeQzMM == 0) {
             codeQRQuiteZonePoints = 0f;
         } else {
             codeQRQuiteZonePoints =
-                    QRCodeHelper.pdfMMToPoints(this.codeQRQuiteZoneMM);
+                    QRCodeHelper.pdfMMToPoints(data.pdfQrCodeQzMM);
         }
 
         final float xImage;
         final float yImage;
 
-        switch (this.codeQRPos) {
+        switch (data.pdfQrCodePosAnchor) {
         case TL:
-            xImage = this.codeQRPosMarginPointsX;
-            yImage = pageRect.getTop() - this.codeQRPosMarginPointsY
+            xImage = data.pdfQrCodePosMarginXPt;
+            yImage = pageRect.getTop() - data.pdfQrCodePosMarginYPt
                     - imgPointsHeight;
             break;
 
         case TR:
-            xImage = pageRect.getRight() - this.codeQRPosMarginPointsX
+            xImage = pageRect.getRight() - data.pdfQrCodePosMarginXPt
                     - imgPointsWidth;
-            yImage = pageRect.getTop() - this.codeQRPosMarginPointsY
+            yImage = pageRect.getTop() - data.pdfQrCodePosMarginYPt
                     - imgPointsHeight;
             break;
 
         case BL:
-            xImage = this.codeQRPosMarginPointsX;
-            yImage = pageRect.getBottom() + this.codeQRPosMarginPointsY;
+            xImage = data.pdfQrCodePosMarginXPt;
+            yImage = pageRect.getBottom() + data.pdfQrCodePosMarginYPt;
             break;
 
         case BR:
             // no code intended
         default:
-            xImage = pageRect.getRight() - this.codeQRPosMarginPointsX
+            xImage = pageRect.getRight() - data.pdfQrCodePosMarginXPt
                     - imgPointsWidth;
-            yImage = pageRect.getBottom() + this.codeQRPosMarginPointsY;
+            yImage = pageRect.getBottom() + data.pdfQrCodePosMarginYPt;
             break;
         }
 

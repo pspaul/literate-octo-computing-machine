@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +62,8 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.ext.print.IppRoutingData;
+import org.savapage.ext.print.QrCodeAnchorEnum;
 import org.savapage.server.restful.RestApplication;
 import org.savapage.server.restful.RestAuthFilter;
 import org.savapage.server.restful.dto.RestHttpRequestDto;
@@ -92,6 +95,9 @@ public final class RestTestService implements IRestService {
 
     /** */
     private static final String PATH_SUB_ECHO = "echo";
+
+    /** */
+    private static final String PATH_SUB_IPP_ROUTING_DATA = "ipp-routing-data";
 
     /** */
     private static final String PATH_SUB_HTTP_REQUEST = "http/request";
@@ -176,13 +182,53 @@ public final class RestTestService implements IRestService {
     }
 
     /**
+     * @param dummy
+     *            Dummy text.
+     * @return {@link IppRoutingData}.
+     */
+    @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
+    @POST
+    @Path(PATH_SUB_IPP_ROUTING_DATA)
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response testIppRoutingData(final String dummy) {
+
+        final IppRoutingData data = new IppRoutingData();
+
+        data.setId(UUID.randomUUID().toString());
+
+        final IppRoutingData.PdfData pdf = new IppRoutingData.PdfData();
+        data.setPdf(pdf);
+
+        final IppRoutingData.QrCode qrcode = new IppRoutingData.QrCode();
+        pdf.setQrcode(qrcode);
+
+        qrcode.setQz(5);
+        qrcode.setSize(40);
+
+        final IppRoutingData.QrCodePosition pos =
+                new IppRoutingData.QrCodePosition();
+        qrcode.setPos(pos);
+        pos.setAnchor(QrCodeAnchorEnum.BL);
+
+        final IppRoutingData.Margin margin =
+                new IppRoutingData.Margin();
+        pos.setMargin(margin);
+        margin.setX(100);
+        margin.setY(150);
+
+        return Response.status(Status.CREATED).entity(data).build();
+    }
+
+    /**
      * @return HTTP request data.
      */
     @GET
     @Path(PATH_SUB_HTTP_REQUEST)
     @Produces(MediaType.TEXT_PLAIN)
     public Response testHeaders() {
-        return Response.ok(RestHttpRequestDto.createJSON(servletRequest)).build();
+        return Response.ok(RestHttpRequestDto.createJSON(servletRequest))
+                .build();
     }
 
     /**
