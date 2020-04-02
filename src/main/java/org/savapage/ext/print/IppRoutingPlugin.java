@@ -259,6 +259,21 @@ public final class IppRoutingPlugin implements ServerPlugin {
         }
 
         /**
+         * Updates pdfinfo.
+         *
+         * @param key
+         *            pdfinfo key.
+         * @param value
+         *            pdfinfo value.
+         */
+        void updatePdfInfo(final String key, final String value) {
+            if (value == null) {
+                return;
+            }
+            this.pdfInfo.put(key, value);
+        }
+
+        /**
          * Updates object with routing PdfInfo response.
          *
          * @param info
@@ -274,32 +289,14 @@ public final class IppRoutingPlugin implements ServerPlugin {
                 this.pdfInfo = new HashMap<>();
             }
 
-            String key;
-            String value;
+            this.updatePdfInfo(ITextPdfCreator.PDF_INFO_KEY_TITLE,
+                    info.getTitle());
 
-            key = ITextPdfCreator.PDF_INFO_KEY_AUTHOR;
-            value = info.getAuthor();
-            if (StringUtils.isBlank(value)) {
-                this.pdfInfo.remove(key);
-            } else {
-                this.pdfInfo.put(key, value);
-            }
+            this.updatePdfInfo(ITextPdfCreator.PDF_INFO_KEY_SUBJECT,
+                    info.getSubject());
 
-            key = ITextPdfCreator.PDF_INFO_KEY_TITLE;
-            value = info.getTitle();
-            if (StringUtils.isBlank(value)) {
-                this.pdfInfo.remove(key);
-            } else {
-                this.pdfInfo.put(key, value);
-            }
-
-            key = ITextPdfCreator.PDF_INFO_KEY_SUBJECT;
-            value = info.getSubject();
-            if (StringUtils.isBlank(value)) {
-                this.pdfInfo.remove(key);
-            } else {
-                this.pdfInfo.put(key, value);
-            }
+            this.updatePdfInfo(ITextPdfCreator.PDF_INFO_KEY_AUTHOR,
+                    info.getAuthor());
 
             if (info.getKeywords() != null) {
 
@@ -310,13 +307,8 @@ public final class IppRoutingPlugin implements ServerPlugin {
                         kws.append(kw).append(" ");
                     }
                 }
-                key = ITextPdfCreator.PDF_INFO_KEY_KEYWORDS;
-                value = kws.toString().trim();
-                if (StringUtils.isBlank(value)) {
-                    this.pdfInfo.remove(key);
-                } else {
-                    this.pdfInfo.put(key, value);
-                }
+                this.updatePdfInfo(ITextPdfCreator.PDF_INFO_KEY_KEYWORDS,
+                        kws.toString().trim());
             }
         }
 
