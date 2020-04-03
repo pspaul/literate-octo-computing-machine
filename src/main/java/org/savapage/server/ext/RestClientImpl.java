@@ -58,7 +58,7 @@ public final class RestClientImpl implements RestClient {
 
     @Override
     public <T> T post(final String entity, final String mediaTypeReq,
-            final String mediaTypeRsp, final Class<T> entityType) {
+            final String mediaTypeRsp, final Class<T> entityRspType) {
 
         final Invocation.Builder builder = this.webTarget.request(mediaTypeRsp);
 
@@ -67,7 +67,7 @@ public final class RestClientImpl implements RestClient {
 
             switch (response.getStatusInfo().toEnum()) {
             case CREATED:
-                return response.readEntity(entityType);
+                return response.readEntity(entityRspType);
             default:
                 throw new IllegalStateException(
                         String.format("REST API response status %d (%s)",

@@ -62,7 +62,7 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.ext.print.IppRoutingData;
+import org.savapage.ext.print.IppRoutingDto;
 import org.savapage.ext.print.QrCodeAnchorEnum;
 import org.savapage.server.restful.RestApplication;
 import org.savapage.server.restful.RestAuthFilter;
@@ -184,7 +184,7 @@ public final class RestTestService implements IRestService {
     /**
      * @param dummy
      *            Dummy text.
-     * @return {@link IppRoutingData}.
+     * @return {@link IppRoutingDto}.
      */
     @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
     @POST
@@ -193,26 +193,26 @@ public final class RestTestService implements IRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response testIppRoutingData(final String dummy) {
 
-        final IppRoutingData data = new IppRoutingData();
+        final IppRoutingDto data = new IppRoutingDto();
 
         data.setId(UUID.randomUUID().toString());
 
-        final IppRoutingData.PdfData pdf = new IppRoutingData.PdfData();
+        final IppRoutingDto.PdfData pdf = new IppRoutingDto.PdfData();
         data.setPdf(pdf);
 
-        final IppRoutingData.QrCode qrcode = new IppRoutingData.QrCode();
+        final IppRoutingDto.QrCode qrcode = new IppRoutingDto.QrCode();
         pdf.setQrcode(qrcode);
 
         qrcode.setQz(5);
         qrcode.setSize(40);
 
-        final IppRoutingData.QrCodePosition pos =
-                new IppRoutingData.QrCodePosition();
+        final IppRoutingDto.QrCodePosition pos =
+                new IppRoutingDto.QrCodePosition();
         qrcode.setPos(pos);
         pos.setAnchor(QrCodeAnchorEnum.BL);
 
-        final IppRoutingData.Margin margin =
-                new IppRoutingData.Margin();
+        final IppRoutingDto.Margin margin =
+                new IppRoutingDto.Margin();
         pos.setMargin(margin);
         margin.setX(100);
         margin.setY(150);

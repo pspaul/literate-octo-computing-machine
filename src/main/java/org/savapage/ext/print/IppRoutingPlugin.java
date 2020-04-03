@@ -46,6 +46,7 @@ import org.savapage.core.SpException;
 import org.savapage.core.ipp.routing.IppRoutingContext;
 import org.savapage.core.ipp.routing.IppRoutingResult;
 import org.savapage.core.pdf.ITextPdfCreator;
+import org.savapage.core.util.JsonHelper;
 import org.savapage.core.util.QRCodeException;
 import org.savapage.core.util.QRCodeHelper;
 import org.savapage.ext.ServerPlugin;
@@ -186,11 +187,11 @@ public final class IppRoutingPlugin implements ServerPlugin {
          * @param rsp
          *            Routing data response.
          */
-        void update(final IppRoutingData rsp) {
+        void update(final IppRoutingDto rsp) {
 
             this.routingId = rsp.getId();
 
-            final IppRoutingData.PdfData pdf = rsp.getPdf();
+            final IppRoutingDto.PdfData pdf = rsp.getPdf();
             if (pdf == null) {
                 return;
             }
@@ -207,7 +208,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
          * @param footer
          *            Routing Footer response.
          */
-        void update(final IppRoutingData.Footer footer) {
+        void update(final IppRoutingDto.Footer footer) {
 
             if (footer == null || footer.getText() == null) {
                 return;
@@ -215,14 +216,14 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
             this.pdfFooterText = footer.getText();
 
-            final IppRoutingData.Font font = footer.getFont();
+            final IppRoutingDto.Font font = footer.getFont();
             if (font != null && font.getSize() != null) {
                 this.pdfFooterFont = new Font(Font.HELVETICA,
                         Float.valueOf(font.getSize()).floatValue());
                 this.pdfFooterFont.setColor(Color.GRAY);
             }
 
-            final IppRoutingData.MarginFooter margin = footer.getMargin();
+            final IppRoutingDto.MarginFooter margin = footer.getMargin();
             if (margin != null && margin.getBottom() != null) {
                 this.pdfFooterMarginBottomPt =
                         QRCodeHelper.pdfMMToPoints(margin.getBottom());
@@ -236,7 +237,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
          * @param header
          *            Routing Header response.
          */
-        void update(final IppRoutingData.Header header) {
+        void update(final IppRoutingDto.Header header) {
 
             if (header == null || header.getText() == null) {
                 return;
@@ -244,14 +245,14 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
             this.pdfHeaderText = header.getText();
 
-            final IppRoutingData.Font font = header.getFont();
+            final IppRoutingDto.Font font = header.getFont();
             if (font != null && font.getSize() != null) {
                 this.pdfHeaderFont = new Font(Font.HELVETICA,
                         Float.valueOf(font.getSize()).floatValue());
                 this.pdfHeaderFont.setColor(Color.GRAY);
             }
 
-            final IppRoutingData.MarginHeader margin = header.getMargin();
+            final IppRoutingDto.MarginHeader margin = header.getMargin();
             if (margin != null && margin.getTop() != null) {
                 this.pdfHeaderMarginTopPt =
                         QRCodeHelper.pdfMMToPoints(margin.getTop());
@@ -279,7 +280,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
          * @param info
          *            Routing PdfInfo response.
          */
-        void update(final IppRoutingData.PdfInfo info) {
+        void update(final IppRoutingDto.PdfInfo info) {
 
             if (info == null) {
                 return;
@@ -318,7 +319,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
          * @param qrcode
          *            Routing QrCode response.
          */
-        void update(final IppRoutingData.QrCode qrcode) {
+        void update(final IppRoutingDto.QrCode qrcode) {
 
             if (qrcode == null) {
                 return;
@@ -334,7 +335,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
                 this.pdfQrCodeQzMM = qrcode.getQz().intValue();
             }
 
-            final IppRoutingData.QrCodePosition pos = qrcode.getPos();
+            final IppRoutingDto.QrCodePosition pos = qrcode.getPos();
             if (pos == null) {
                 return;
             }
@@ -343,7 +344,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
                 this.pdfQrCodePosAnchor = pos.getAnchor();
             }
 
-            final IppRoutingData.Margin margin = pos.getMargin();
+            final IppRoutingDto.Margin margin = pos.getMargin();
             if (margin == null) {
                 return;
             }
@@ -948,15 +949,15 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
         if (MediaType.APPLICATION_JSON.equals(this.routingRestRspMediaType)) {
 
-            final IppRoutingData rsp = this.routingRestClient.post(entity,
+            final IppRoutingDto rsp = this.routingRestClient.post(entity,
                     this.routingRestReqMediaType, this.routingRestRspMediaType,
-                    IppRoutingData.class);
+                    IppRoutingDto.class);
 
             data.update(rsp);
 
             try {
                 LOGGER.debug("RESTful POST: {} -> {}", entity,
-                        rsp.stringifyPrettyPrinted());
+                        JsonHelper.stringifyObjectPretty(rsp));
             } catch (IOException e) {
                 //
             }
