@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -66,6 +69,11 @@ public final class SpSession extends WebSession {
 
     /** */
     private UserIdDto userIdDto;
+
+    /**
+     * User info for TOTP request.
+     */
+    private UserIdDto totpRequest;
 
     /**
      * {@code true} when authenticated by {@link OneTimeAuthToken}.
@@ -166,6 +174,25 @@ public final class SpSession extends WebSession {
                 .getNumberInstance(get().getLocale());
         final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         return String.valueOf(symbols.getDecimalSeparator());
+    }
+
+    /**
+     * @param dto
+     *            User info for TOTP request.
+     */
+    public void setTOTPRequest(final UserIdDto dto) {
+        synchronized (this.mutex) {
+            this.totpRequest = dto;
+        }
+    }
+
+    /**
+     * @return User info for TOTP request.
+     */
+    public UserIdDto getTOTPRequest() {
+        synchronized (this.mutex) {
+            return this.totpRequest;
+        }
     }
 
     /**

@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,15 +24,10 @@
  */
 package org.savapage.server.pages.user;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-
-import javax.imageio.ImageIO;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
@@ -53,8 +51,6 @@ import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
 
-import net.iharder.Base64;
-
 /**
  *
  * @author Rijk Ravestein
@@ -63,6 +59,9 @@ import net.iharder.Base64;
 public class AccountBitcoinTransfer extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final int QR_CODE_WIDTH = 200;
 
     /**
      * Creates and displays a bitcoin payment address in
@@ -100,7 +99,7 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
             final String message =
                     String.format("Increment SavaPage account of %s.", userId);
 
-            StringBuilder builder = new StringBuilder();
+            final StringBuilder builder = new StringBuilder();
 
             builder.append("bitcoin:").append(address).append("?message=")
                     .append(URLEncoder.encode(message, "UTF-8")
@@ -108,14 +107,12 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
 
             final URI uri = new URI(builder.toString());
 
-            builder = new StringBuilder(1024);
-            builder.append("data:image/png;base64,")
-                    .append(createQrCodePngBase64(uri.toString(), 200));
-
-            helper.addModifyLabelAttr("qr-code", "src", builder.toString());
+            helper.addModifyImagePngBase64Attr("qr-code", QRCodeHelper
+                    .createImagePngBase64(uri.toString(), QR_CODE_WIDTH));
 
             helper.addModifyLabelAttr("bitcoin-uri-button",
-                    localized("button-start"), "href", uri.toString());
+                    localized("button-start"), MarkupHelper.ATTR_HREF,
+                    uri.toString());
             helper.addLabel("bitcoin-trx-id", address);
 
         } catch (URISyntaxException | IOException | PaymentGatewayException
@@ -188,34 +185,6 @@ public class AccountBitcoinTransfer extends AbstractUserPage {
         }
 
         return address;
-    }
-
-    /**
-     *
-     * @param codeText
-     *            QR code text.
-     * @param squareWidth
-     *            width and height in pixels.
-     * @return The base64 encoded PNG file with QR code
-     * @throws QRCodeException
-     *             If error.
-     */
-    private static String createQrCodePngBase64(final String codeText,
-            final int squareWidth) throws QRCodeException {
-
-        final BufferedImage image =
-                QRCodeHelper.createImage(codeText, squareWidth, null);
-
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-                OutputStream b64 = new Base64.OutputStream(out)) {
-
-            ImageIO.write(image, "png", b64);
-            return out.toString();
-
-        } catch (IOException e) {
-            throw new QRCodeException(e.getMessage());
-        }
-
     }
 
 }

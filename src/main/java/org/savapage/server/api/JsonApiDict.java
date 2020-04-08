@@ -101,6 +101,9 @@ import org.savapage.server.api.request.ReqUserQuickSearch;
 import org.savapage.server.api.request.ReqUserSet;
 import org.savapage.server.api.request.ReqUserSetDelegateAccountsPreferredSelect;
 import org.savapage.server.api.request.ReqUserSetDelegateGroupsPreferredSelect;
+import org.savapage.server.api.request.ReqUserTOTPEnable;
+import org.savapage.server.api.request.ReqUserTOTPReplace;
+import org.savapage.server.api.request.ReqUserTOTPSend;
 import org.savapage.server.api.request.ReqUserUuidReplace;
 
 /**
@@ -361,6 +364,10 @@ public final class JsonApiDict {
             "user-set-delegate-accounts-preferred-select";
     public static final String REQ_USER_GET_DELEGATE_ACCOUNTS_PREFERRED_SELECT =
             "user-get-delegate-accounts-preferred-select";
+
+    public static final String REQ_USER_TOTP_ENABLE = "user-totp-enable";
+    public static final String REQ_USER_TOTP_REPLACE = "user-totp-replace";
+    public static final String REQ_USER_TOTP_SEND = "user-totp-send";
 
     public static final String REQ_USER_UUID_REPLACE = "user-uuid-replace";
 
@@ -1067,6 +1074,13 @@ public final class JsonApiDict {
 
         usr(REQ_PDF_SET_PROPERTIES, ReqPdfPropsSetValidate.class, DbClaim.READ,
                 DbAccess.YES);
+
+        usr(REQ_USER_TOTP_ENABLE, ReqUserTOTPEnable.class, DbClaim.READ,
+                DbAccess.YES);
+        usr(REQ_USER_TOTP_REPLACE, ReqUserTOTPReplace.class, DbClaim.READ,
+                DbAccess.YES);
+        put(REQ_USER_TOTP_SEND, ReqUserTOTPSend.class, AuthReq.NONE,
+                DbClaim.NONE, DbAccess.YES);
 
         usr(REQ_USER_UUID_REPLACE, ReqUserUuidReplace.class, DbClaim.READ,
                 DbAccess.YES);

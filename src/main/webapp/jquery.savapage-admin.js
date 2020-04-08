@@ -158,6 +158,9 @@
                         _ns.monitorUserIdle(_model.maxIdleSeconds, _view.pages.admin.onLogout);
                     }
 
+                } else if (data.authTOTPRequired) {
+                    _view.pages.login.notifyTOTPRequired();
+
                 } else {
 
                     _view.pages.login.notifyLogout();

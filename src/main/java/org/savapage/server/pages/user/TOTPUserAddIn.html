@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2011-2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: 2011-2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
+</wicket:remove>
+
+<a wicket:id="qr-code-uri"> <img
+		style="display: block; margin-left: auto; margin-right: auto;" src=""
+		wicket:id="qr-code" /></a>
+
+<style type="text/css">
+.sp-checkbox-right-sized {
+	display: table-cell;
+}
+</style>
+
+<center>
+	<label for="sp-user-totp-enable-chb" wicket:id="totp-enable-txt" />
+	<input data-wrapper-class="sp-checkbox-right-sized" data-mini="true"
+		type="checkbox" id="sp-user-totp-enable-chb" value="0"
+		wicket:id="totp-enable" />
+</center>
+<br />
+
+</html>

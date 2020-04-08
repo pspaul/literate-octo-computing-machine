@@ -55,6 +55,7 @@ import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.ext.ServerPluginHelper;
 import org.savapage.server.ext.ServerPluginManager;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.session.SpSession;
 
 /**
@@ -87,6 +88,9 @@ public final class Login extends AbstractPage {
 
         helper.encloseLabel("button-lang", getString("button-lang"),
                 availableLocales.size() > 1);
+
+        //
+        helper.addButton("btn-login-totp-send", HtmlButtonEnum.SEND);
 
         //
         add(new Label("title",

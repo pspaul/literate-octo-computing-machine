@@ -681,6 +681,25 @@ public final class MarkupHelper {
     }
 
     /**
+     * Adds an IMG label with a modified "src" attribute value containing a
+     * base64 encoded PNG image.
+     *
+     * @param wicketId
+     *            The {@code wicket:id} of the HTML entity.
+     * @param base64
+     *            The base64 encoded PNG image.
+     * @return The added {@link Label}.
+     */
+    public Label addModifyImagePngBase64Attr(final String wicketId,
+            final String base64) {
+        final Label labelWrk = new Label(wicketId, "");
+        modifyLabelAttr(labelWrk, ATTR_SRC,
+                "data:image/png;base64,".concat(base64));
+        add(labelWrk);
+        return labelWrk;
+    }
+
+    /**
      * Modifies an attribute value of a {@link Label}.
      *
      * @param label

@@ -1,10 +1,13 @@
-/*! SavaPage jQuery Mobile Common | (c) 2011-2019 Datraverse B.V. | GNU Affero
+/*! SavaPage jQuery Mobile Common | (c) 2011-2020 Datraverse B.V. | GNU Affero
  * General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -1662,6 +1665,8 @@
                 _ID_MODE_CARD_LOCAL = '#sp-div-login-card-local',
                 _ID_MODE_CARD_IP = '#sp-div-login-card-ip',
                 _ID_MODE_CARD_ASSOC = '#sp-div-login-card-assoc',
+                _ID_MODE_TOTP = '#sp-div-login-totp',
+
                 _ID_BTN_MODE_NAME = '#sp-btn-login-mode-name',
                 _ID_BTN_MODE_ID = '#sp-btn-login-mode-id',
                 _ID_BTN_MODE_YUBIKEY = '#sp-btn-login-mode-yubikey',
@@ -1672,7 +1677,16 @@
                 _ID_BTN_LOGIN_YUBIKEY = '#sp-btn-login-yubikey',
                 _ID_BTN_LOGIN_CARD_LOCAL = '#sp-btn-login-card-local',
                 _ID_BTN_LOGIN_CARD_IP = '#sp-btn-login-card-ip',
+
                 _ID_BTN_LOGIN_CARD_ASSOC = '#sp-btn-login-card-assoc',
+                _ID_BTN_LOGIN_CARD_ASSOC_CANCEL = '#sp-btn-login-card-assoc-cancel',
+
+                _ID_BTN_LOGIN_TOTP = '#sp-btn-login-totp',
+                _ID_BTN_LOGIN_TOTP_CANCEL = '#sp-btn-login-totp-cancel',
+                _ID_BTN_LOGIN_TOTP_SEND = '#sp-btn-login-totp-send',
+
+                _authTOTP,
+
                 _authModeDefault,
                 _onAuthModeSelect,
                 _modeSelected,
@@ -1781,6 +1795,13 @@
             /**
              *
              */
+            _self.notifyTOTPRequired = function() {
+                _onAuthModeSelect(_view.AUTH_MODE_TOTP);
+            };
+
+            /**
+             *
+             */
             _self.notifyLoginFailed = function(modeSelected, msg) {
                 _onAuthModeSelect(modeSelected || _authModeDefault);
                 // Do NOT use _view.showApiMsg(data), cause it spoils the
@@ -1826,6 +1847,7 @@
                 $(_ID_MODE_CARD_LOCAL).hide();
                 $(_ID_MODE_CARD_IP).hide();
                 $(_ID_MODE_CARD_ASSOC).hide();
+                $(_ID_MODE_TOTP).hide();
 
                 $(_ID_BTN_MODE_NAME).hide();
                 $(_ID_BTN_MODE_ID).hide();
@@ -1953,7 +1975,13 @@
 
                 }
 
-                if (modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
+                if (modeSelected === _view.AUTH_MODE_TOTP) {
+
+                    $('.sp-login-dialog').hide();
+                    $(_ID_MODE_TOTP).show();
+                    $('#sp-login-user-totp').focus();
+
+                } else if (modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
 
                     $('.sp-login-dialog').hide();
                     $('.sp-login-dialog-assoc').show();
@@ -1967,7 +1995,7 @@
                     _timeoutCardAssoc = window.setInterval(function() {
                         $('#sp-login-card-assoc-countdown').text(_countdownCardAssoc);
                         if (_countdownCardAssoc-- === 0) {
-                            $(_ID_BTN_LOGIN_CARD_ASSOC + '-cancel').click();
+                            $(_ID_BTN_LOGIN_CARD_ASSOC_CANCEL).click();
                         }
                     }, 1000);
 
@@ -2024,6 +2052,8 @@
                             selClick = $(_ID_BTN_LOGIN_CARD_IP);
                         } else if (_modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
                             selClick = $(_ID_BTN_LOGIN_CARD_ASSOC);
+                        } else if (_modeSelected === _view.AUTH_MODE_TOTP) {
+                            selClick = $(_ID_BTN_LOGIN_TOTP);
                         }
                         // Mantis #735
                         if (!selClick.is(':focus')) {
@@ -2031,7 +2061,9 @@
                         }
                     } else if (key === 27) {
                         if (_modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
-                            $(_ID_BTN_LOGIN_CARD_ASSOC + '-cancel').click();
+                            $(_ID_BTN_LOGIN_CARD_ASSOC_CANCEL).click();
+                        } else if (_modeSelected === _view.AUTH_MODE_TOTP) {
+                            $(_ID_BTN_LOGIN_TOTP_CANCEL).click();
                         }
                     } else if ((_modeSelected === _view.AUTH_MODE_CARD_LOCAL && $('#sp-login-card-local-number').val().length === 0) || (_modeSelected === _view.AUTH_MODE_YUBIKEY && $('#sp-login-yubikey').val().length === 0)) {
                         /*
@@ -2284,9 +2316,28 @@
                         _onLogin(_view.AUTH_MODE_NAME, $('#sp-login-user-name-assoc').val(), $('#sp-login-user-password-assoc').val(), _authKeyLoggerCollected);
                         return false;
                     });
-                    $(_ID_BTN_LOGIN_CARD_ASSOC + '-cancel').click(function() {
+                    $(_ID_BTN_LOGIN_CARD_ASSOC_CANCEL).click(function() {
                         _onAuthModeSelect(_authModeDefault);
                         _self.onCardAssocCancel();
+                        return false;
+                    });
+                }
+
+                _authTOTP = $(_ID_MODE_TOTP).length > 0;
+
+                if (_authTOTP) {
+                    $(_ID_BTN_LOGIN_TOTP).click(function() {
+                        _onLogin(null, null, $('#sp-login-user-totp').val());
+                        return false;
+                    });
+                    $(_ID_BTN_LOGIN_TOTP_CANCEL).click(function() {
+                        _onAuthModeSelect(_authModeDefault);
+                        return false;
+                    });
+                    $(_ID_BTN_LOGIN_TOTP_SEND).click(function() {
+                        _view.showApiMsg(_api.call({
+                            request : 'user-totp-send'
+                        }));
                         return false;
                     });
                 }
@@ -2325,8 +2376,7 @@
                 _onDisconnected = null;
 
             /*
-             * AUTH Modes used for login. These names are reserved and are
-             * hardcoded in SavaPage server.
+             * AUTH Modes used for login. See UserAuthModeEnum in Java code.
              */
             this.AUTH_MODE_NAME = 'name';
             this.AUTH_MODE_ID = 'id';
@@ -2335,8 +2385,11 @@
             this.AUTH_MODE_YUBIKEY = 'yubikey';
             this.AUTH_MODE_OAUTH = 'oauth';
 
-            // Dummy AUTH Modes to associate Card with user.
+            // Dummy AUTH Mode to associate Card with user.
             this.AUTH_MODE_CARD_ASSOC = '_CA';
+
+            // Dummy AUTH Mode to enter TOTP.
+            this.AUTH_MODE_TOTP = '_TOTP';
 
             // HTML color: to be set from 'constants' API.
             this.userChartColors = ['printIn', 'printOut', 'pdfOut'];

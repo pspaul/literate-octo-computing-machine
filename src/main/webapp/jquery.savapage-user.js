@@ -1,10 +1,13 @@
-/*! SavaPage jQuery Mobile User Web App | (c) 2011-2019 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile User Web App | (c) 2011-2020 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -1739,6 +1742,36 @@
         }
 
         /**
+         * Constructor
+         */
+        function PageTOTPUser(_i18n, _view, _model, _api) {
+            var _pageId = '#page-user-totp',
+                _page = new _ns.Page(_i18n, _view, _pageId, 'TOTPUser'),
+                _self = _ns.derive(_page);
+
+            $(_pageId).on('pagecreate', function(event) {
+
+                $(this).on('click', '#user-totp-replace-btn', null, function() {
+                    _view.showApiMsg(_api.call({
+                        'request' : 'user-totp-replace'
+                    }));
+                    $('#page-user-totp-content').html(_view.getUserPageHtml('TOTPUserAddIn'));
+                    $(_pageId).enhanceWithin();
+                });
+                $(this).on('change', "input:checkbox[id='sp-user-totp-enable-chb']", null, function(e) {
+                    _view.showApiMsg(_api.call({
+                        'request' : 'user-totp-enable',
+                        dto : JSON.stringify({
+                            'enabled' : $(this).is(':checked')
+                        })
+                    }));
+                });
+
+            });
+            return _self;
+        }
+
+        /**
          *
          */
         function PageDashboard(_i18n, _view, _model) {
@@ -1772,7 +1805,19 @@
                             $('#page-user-internet-printer-content').html(html);
                             $(pageId).enhanceWithin();
                         }
+                        return false;
+                    });
+                }
 
+                if ($('#button-user-totp-dialog')) {
+                    $(this).on('click', '#button-user-totp-dialog', null, function() {
+                        var pageId = '#page-user-totp',
+                            html = _view.getUserPageHtml('TOTPUserAddIn');
+                        _view.showUserPage(pageId, 'TOTPUser');
+                        if (html) {
+                            $('#page-user-totp-content').html(html);
+                            $(pageId).enhanceWithin();
+                        }
                         return false;
                     });
                 }
@@ -5495,6 +5540,8 @@
                                  */
                                 _view.pages.login.notifyCardAssoc(authId);
 
+                            } else if (data.authTOTPRequired) {
+                                _view.pages.login.notifyTOTPRequired();
                             } else {
                                 _view.pages.login.notifyLoginFailed(( assocCardNumber ? null : authMode), data.result.txt);
 
@@ -7176,6 +7223,7 @@
                 fileUpload : new PageFileUpload(_i18n, _view, _model),
                 userPinReset : new PageUserPinReset(_i18n, _view, _model),
                 userInternetPrinter : new PageUserInternetPrinter(_i18n, _view, _model, _api),
+                totpUser : new PageTOTPUser(_i18n, _view, _model, _api),
                 userPwReset : new _ns.PageUserPasswordReset(_i18n, _view, _model),
                 gdprExport : new PageGdprExport(_i18n, _view, _model, _api)
             };
