@@ -90,7 +90,9 @@ public final class Login extends AbstractPage {
                 availableLocales.size() > 1);
 
         //
-        helper.addButton("btn-login-totp-send", HtmlButtonEnum.SEND);
+        helper.encloseLabel("btn-login-totp-send",
+                HtmlButtonEnum.SEND.uiText(getLocale()),
+                this.getWebAppTypeEnum(parameters) == WebAppTypeEnum.USER);
 
         //
         add(new Label("title",

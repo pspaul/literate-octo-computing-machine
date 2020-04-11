@@ -101,12 +101,12 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 
 				<span class="sp-txt-wrap"> <wicket:message key="header-totp" /></span>
 				<div>
-					<input type="password" id="sp-login-user-totp" value=""
+					<input type="password" id="sp-login-user-totp-code" value=""
 						data-clear-btn="true" />
 				</div>
 
 				<div>
-					<button id="sp-btn-login-totp"
+					<button id="sp-btn-login-totp-verify"
 						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 						<wicket:message key="button-ok" />
 					</button>
@@ -114,9 +114,39 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
 							key="button-cancel" />
 					</a>
-					<button id="sp-btn-login-totp-send" wicket:id="btn-login-totp-send"
-						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-mail" />
 				</div>
+
+				<wicket:enclosure child="btn-login-totp-send">
+					<div data-role="collapsible" data-mini="true" data-inset="true"
+						data-collapsed-icon="info" data-expanded-icon="info">
+						<h2>
+							&nbsp;
+							<wicket:message key="header-totp-recovery" />
+						</h2>
+
+						<div class="ui-mini sp-txt-wrap">
+							<wicket:message key="prompt-totp-recovery-send" />
+						</div>
+						<button id="sp-btn-login-totp-send-code"
+							wicket:id="btn-login-totp-send"
+							class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-mail" />
+
+						<div class="ui-mini sp-txt-wrap">
+							<wicket:message key="prompt-totp-recovery-enter-code" />
+						</div>
+						<input class="ui-mini" type="password"
+							id="sp-login-user-totp-code-sent" value="" data-clear-btn="true" />
+
+						<div class="ui-mini sp-txt-wrap">
+							<wicket:message key="prompt-totp-recovery-verify" />
+						</div>
+						<button id="sp-btn-login-totp-verify-code-sent"
+							class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check">
+							<wicket:message key="button-ok" />
+						</button>
+					</div>
+				</wicket:enclosure>
+
 			</div>
 
 			<div id="sp-div-login-name" style="display: none;">

@@ -12,15 +12,11 @@ SavaPage is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
 published by the Free Software Foundation, either version 3 of
 the License, or (at your option) any later version.
-
-Translator: Rijk Ravestein <rijkr@savapage.org>
 -->
 </wicket:remove>
 
 <div data-role="header" data-theme="b">
-	<h1>
-		TOTP
-	</h1>
+	<h1>TOTP</h1>
 </div>
 
 <div class="ui-content">
@@ -28,7 +24,7 @@ Translator: Rijk Ravestein <rijkr@savapage.org>
 	<div id="page-user-totp-content" />
 
 	<div>
-		<button id="user-totp-replace-btn"
+		<button id="user-totp-replace-popup-btn"
 			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh"
 			wicket:id="button-replace" />
 		<a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
@@ -36,6 +32,30 @@ Translator: Rijk Ravestein <rijkr@savapage.org>
 	</div>
 
 </div>
+
+
+<div data-role="popup" id="user-totp-replace-popup"
+	data-overlay-theme="a" data-theme="a" data-dismissible="false"
+	data-arrow="t">
+	    
+	<div class="ui-content">
+		<h4 class="ui-title">
+			<wicket:message key="prompt-totp-replace" />
+		</h4>
+
+		<p class="sp-txt-warn">
+			<wicket:message key="warn-totp-replace" />
+		</p>
+
+		<a href="#" id="user-totp-replace-btn-no" wicket:id="button-no"
+			class="ui-btn ui-btn-inline" data-rel="back" />
+		<!--  -->
+		<button id="user-totp-replace-btn" wicket:id="button-yes"
+			class="ui-btn ui-mini ui-btn-inline" />
+	</div>
+
+</div>
+
 
 <wicket:remove>
 	<!-- 

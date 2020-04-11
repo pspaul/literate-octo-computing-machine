@@ -45,8 +45,10 @@ public class TOTPUser extends AbstractUserPage {
     public TOTPUser(final PageParameters parameters) {
         super(parameters);
         final MarkupHelper helper = new MarkupHelper(this);
-        helper.addLabel("button-replace", "TOTP");
+        helper.addButton("button-replace", HtmlButtonEnum.REPLACE);
         helper.addButton("button-back", HtmlButtonEnum.BACK);
+        helper.addButton("button-no", HtmlButtonEnum.NO);
+        helper.addButton("button-yes", HtmlButtonEnum.YES);
     }
 
 }

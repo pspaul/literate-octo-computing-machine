@@ -5,6 +5,9 @@
  * Copyright (c) 2011-2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -168,6 +171,11 @@
     background: none;
     border: 0;
     opacity: 0.4;
+}
+
+/* Not 100% width but right-sized by text. */
+.sp-checkbox-right-sized {
+    display: table-cell;
 }
 
 /* Classes for tri-state checkbox */

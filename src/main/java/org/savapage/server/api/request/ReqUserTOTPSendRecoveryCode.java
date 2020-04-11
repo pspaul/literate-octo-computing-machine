@@ -31,20 +31,24 @@ import javax.mail.MessagingException;
 import org.savapage.core.SpException;
 import org.savapage.core.circuitbreaker.CircuitBreakerException;
 import org.savapage.core.community.CommunityDictEnum;
+import org.savapage.core.dao.DaoContext;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.EmailService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.email.EmailMsgParms;
+import org.savapage.core.totp.TOTPHelper;
+import org.savapage.core.totp.TOTPRecoveryCodeDto;
 import org.savapage.lib.pgp.PGPBaseException;
 import org.savapage.server.session.SpSession;
 
 /**
- * Replaces User's TOTP secret.
+ * Sends the User's TOTP recovery code.
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqUserTOTPSend extends ApiRequestMixin {
+public final class ReqUserTOTPSendRecoveryCode extends ApiRequestMixin {
 
     /** */
     protected static final EmailService EMAIL_SERVICE =
@@ -60,25 +64,50 @@ public final class ReqUserTOTPSend extends ApiRequestMixin {
         final String toAddress = USER_SERVICE.getPrimaryEmailAddress(jpaUser);
         if (toAddress == null) {
             this.setApiResult(ApiResultCodeEnum.WARN,
-                    "No email address available.");
+                    "msg-no-email-address-available");
             return;
         }
 
         final EmailMsgParms parms = new EmailMsgParms();
         parms.setToAddress(toAddress);
-        final String subject = String.format("%s TOTP recovery",
+
+        final String subject = String.format("%s TOTP recovery code",
                 CommunityDictEnum.SAVAPAGE.getWord());
+
+        final TOTPRecoveryCodeDto recoveryDto =
+                TOTPHelper.generateRecoveryCode();
+
         parms.setSubject(subject);
-        parms.setBodyInStationary(subject, "Use this URL to login: ...",
+        parms.setBodyInStationary(subject,
+                "Your recovery code: ".concat(recoveryDto.getCode()),
                 getLocale(), true);
+
+        final DaoContext daoCtx = ServiceContext.getDaoContext();
+        final boolean hasTrx = daoCtx.isTransactionActive();
+
         try {
+            if (!hasTrx) {
+                daoCtx.beginTransaction();
+            }
+
+            TOTPHelper.setRecoveryCodeDB(USER_SERVICE, jpaUser, recoveryDto);
+
             EMAIL_SERVICE.sendEmail(parms);
+
+            if (!hasTrx) {
+                daoCtx.commit();
+            }
         } catch (InterruptedException | CircuitBreakerException
                 | MessagingException | IOException | PGPBaseException e) {
             throw new SpException(e.getMessage());
+        } finally {
+            if (!hasTrx) {
+                daoCtx.rollback();
+            }
         }
 
-        this.setApiResultText(ApiResultCodeEnum.INFO, "Check your mailbox.");
+        this.setApiResultText(ApiResultCodeEnum.INFO,
+                PhraseEnum.MAIL_SENT.uiText(getLocale()));
     }
 
 }

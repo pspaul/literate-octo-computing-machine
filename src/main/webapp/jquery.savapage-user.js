@@ -1751,14 +1751,19 @@
 
             $(_pageId).on('pagecreate', function(event) {
 
-                $(this).on('click', '#user-totp-replace-btn', null, function() {
+                $(this).on('click', '#user-totp-replace-popup-btn', null, function() {
+                    $('#user-totp-replace-popup').popup('open', {
+                        positionTo : $(this)
+                    });
+                    $("#user-totp-replace-btn-no").focus();
+                }).on('click', '#user-totp-replace-btn', null, function() {
                     _view.showApiMsg(_api.call({
                         'request' : 'user-totp-replace'
                     }));
+                    $('#user-totp-replace-popup').popup('close');
                     $('#page-user-totp-content').html(_view.getUserPageHtml('TOTPUserAddIn'));
                     $(_pageId).enhanceWithin();
-                });
-                $(this).on('change', "input:checkbox[id='sp-user-totp-enable-chb']", null, function(e) {
+                }).on('change', "input:checkbox[id='sp-user-totp-enable-chb']", null, function(e) {
                     _view.showApiMsg(_api.call({
                         'request' : 'user-totp-enable',
                         dto : JSON.stringify({
@@ -1811,13 +1816,7 @@
 
                 if ($('#button-user-totp-dialog')) {
                     $(this).on('click', '#button-user-totp-dialog', null, function() {
-                        var pageId = '#page-user-totp',
-                            html = _view.getUserPageHtml('TOTPUserAddIn');
-                        _view.showUserPage(pageId, 'TOTPUser');
-                        if (html) {
-                            $('#page-user-totp-content').html(html);
-                            $(pageId).enhanceWithin();
-                        }
+                        _view.pages.main.showUserTOTP();
                         return false;
                     });
                 }
@@ -2165,6 +2164,19 @@
              */
             this.clearEditState = function() {
                 _showArrange(_isEditMode);
+            };
+
+            /**
+             *
+             */
+            this.showUserTOTP = function() {
+                var pageId = '#page-user-totp',
+                    html = _view.getUserPageHtml('TOTPUserAddIn');
+                _view.showUserPage(pageId, 'TOTPUser');
+                if (html) {
+                    $('#page-user-totp-content').html(html);
+                    $(pageId).enhanceWithin();
+                }
             };
 
             /**
@@ -5525,6 +5537,12 @@
                         }
 
                         _ns.startAppWatchdog(false);
+
+                        if (!authMode && authPw) {
+                            _ns.Utils.asyncFoo(function() {
+                                _view.pages.main.showUserTOTP();
+                            });
+                        }
 
                     } else {
 

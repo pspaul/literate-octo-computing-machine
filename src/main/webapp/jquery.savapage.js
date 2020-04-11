@@ -1681,9 +1681,13 @@
                 _ID_BTN_LOGIN_CARD_ASSOC = '#sp-btn-login-card-assoc',
                 _ID_BTN_LOGIN_CARD_ASSOC_CANCEL = '#sp-btn-login-card-assoc-cancel',
 
-                _ID_BTN_LOGIN_TOTP = '#sp-btn-login-totp',
+                _ID_BTN_LOGIN_TOTP_VERIFY = '#sp-btn-login-totp-verify',
+                _ID_BTN_LOGIN_TOTP_VERIFY_CODE_SENT = '#sp-btn-login-totp-verify-code-sent',
                 _ID_BTN_LOGIN_TOTP_CANCEL = '#sp-btn-login-totp-cancel',
-                _ID_BTN_LOGIN_TOTP_SEND = '#sp-btn-login-totp-send',
+                _ID_BTN_LOGIN_TOTP_SEND_CODE = '#sp-btn-login-totp-send-code',
+
+                _ID_LOGIN_TOTP_CODE = '#sp-login-user-totp-code',
+                _ID_LOGIN_TOTP_CODE_SENT = '#sp-login-user-totp-code-sent',
 
                 _authTOTP,
 
@@ -1833,6 +1837,11 @@
                 $('#page-login-content :text, :password').val('');
 
                 //
+                if (_authTOTP) {
+                    $(_ID_BTN_LOGIN_TOTP_SEND_CODE).closest('[data-role=collapsible]').collapsible('collapse');
+                }
+
+                //
                 if (_timeoutCardAssoc) {
                     window.clearTimeout(_timeoutCardAssoc);
                     _timeoutCardAssoc = null;
@@ -1979,7 +1988,7 @@
 
                     $('.sp-login-dialog').hide();
                     $(_ID_MODE_TOTP).show();
-                    $('#sp-login-user-totp').focus();
+                    $(_ID_LOGIN_TOTP_CODE).focus();
 
                 } else if (modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
 
@@ -2053,10 +2062,14 @@
                         } else if (_modeSelected === _view.AUTH_MODE_CARD_ASSOC) {
                             selClick = $(_ID_BTN_LOGIN_CARD_ASSOC);
                         } else if (_modeSelected === _view.AUTH_MODE_TOTP) {
-                            selClick = $(_ID_BTN_LOGIN_TOTP);
+                            if ($(_ID_LOGIN_TOTP_CODE).is(':focus')) {
+                                selClick = $(_ID_BTN_LOGIN_TOTP_VERIFY);
+                            } else if ($(_ID_LOGIN_TOTP_CODE_SENT).is(':focus')) {
+                                selClick = $(_ID_BTN_LOGIN_TOTP_VERIFY_CODE_SENT);
+                            }
                         }
                         // Mantis #735
-                        if (!selClick.is(':focus')) {
+                        if (selClick && !selClick.is(':focus')) {
                             selClick.click();
                         }
                     } else if (key === 27) {
@@ -2326,17 +2339,21 @@
                 _authTOTP = $(_ID_MODE_TOTP).length > 0;
 
                 if (_authTOTP) {
-                    $(_ID_BTN_LOGIN_TOTP).click(function() {
-                        _onLogin(null, null, $('#sp-login-user-totp').val());
+                    $(_ID_BTN_LOGIN_TOTP_VERIFY).click(function() {
+                        _onLogin(null, $(_ID_LOGIN_TOTP_CODE).val());
+                        return false;
+                    });
+                    $(_ID_BTN_LOGIN_TOTP_VERIFY_CODE_SENT).click(function() {
+                        _onLogin(null, null, $(_ID_LOGIN_TOTP_CODE_SENT).val());
                         return false;
                     });
                     $(_ID_BTN_LOGIN_TOTP_CANCEL).click(function() {
                         _onAuthModeSelect(_authModeDefault);
                         return false;
                     });
-                    $(_ID_BTN_LOGIN_TOTP_SEND).click(function() {
+                    $(_ID_BTN_LOGIN_TOTP_SEND_CODE).click(function() {
                         _view.showApiMsg(_api.call({
-                            request : 'user-totp-send'
+                            request : 'user-totp-send-recovery-code'
                         }));
                         return false;
                     });
@@ -2359,7 +2376,6 @@
                 // Pick up URL parameters
                 $('#sp-login-user-name').val(_util.getUrlParam(_ns.URL_PARM.USER));
                 $('#sp-login-user-password').val('');
-
             });
             /*
              * IMPORTANT

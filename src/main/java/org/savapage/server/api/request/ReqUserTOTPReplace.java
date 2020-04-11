@@ -29,7 +29,7 @@ import java.io.IOException;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.jpa.User;
-import org.savapage.core.totp.TOTPAuthenticator;
+import org.savapage.lib.totp.TOTPAuthenticator;
 
 /**
  * Replaces User's TOTP secret.

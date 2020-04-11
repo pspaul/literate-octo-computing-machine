@@ -103,7 +103,7 @@ import org.savapage.server.api.request.ReqUserSetDelegateAccountsPreferredSelect
 import org.savapage.server.api.request.ReqUserSetDelegateGroupsPreferredSelect;
 import org.savapage.server.api.request.ReqUserTOTPEnable;
 import org.savapage.server.api.request.ReqUserTOTPReplace;
-import org.savapage.server.api.request.ReqUserTOTPSend;
+import org.savapage.server.api.request.ReqUserTOTPSendRecoveryCode;
 import org.savapage.server.api.request.ReqUserUuidReplace;
 
 /**
@@ -367,7 +367,8 @@ public final class JsonApiDict {
 
     public static final String REQ_USER_TOTP_ENABLE = "user-totp-enable";
     public static final String REQ_USER_TOTP_REPLACE = "user-totp-replace";
-    public static final String REQ_USER_TOTP_SEND = "user-totp-send";
+    public static final String REQ_USER_TOTP_SEND_RECOVERY_CODE =
+            "user-totp-send-recovery-code";
 
     public static final String REQ_USER_UUID_REPLACE = "user-uuid-replace";
 
@@ -1079,8 +1080,8 @@ public final class JsonApiDict {
                 DbAccess.YES);
         usr(REQ_USER_TOTP_REPLACE, ReqUserTOTPReplace.class, DbClaim.READ,
                 DbAccess.YES);
-        put(REQ_USER_TOTP_SEND, ReqUserTOTPSend.class, AuthReq.NONE,
-                DbClaim.NONE, DbAccess.YES);
+        put(REQ_USER_TOTP_SEND_RECOVERY_CODE, ReqUserTOTPSendRecoveryCode.class,
+                AuthReq.NONE, DbClaim.READ, DbAccess.YES);
 
         usr(REQ_USER_UUID_REPLACE, ReqUserUuidReplace.class, DbClaim.READ,
                 DbAccess.YES);

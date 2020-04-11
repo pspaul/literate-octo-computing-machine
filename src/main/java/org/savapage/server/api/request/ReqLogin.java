@@ -66,8 +66,7 @@ import org.savapage.core.services.DeviceService.DeviceAttrLookup;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
 import org.savapage.core.services.helpers.UserAuthModeEnum;
-import org.savapage.core.totp.TOTPAuthenticator;
-import org.savapage.core.totp.TOTPException;
+import org.savapage.core.totp.TOTPHelper;
 import org.savapage.core.users.IExternalUserAuthenticator;
 import org.savapage.core.users.IUserSource;
 import org.savapage.core.users.InternalUserAuthenticator;
@@ -76,6 +75,8 @@ import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.Messages;
+import org.savapage.lib.totp.TOTPAuthenticator;
+import org.savapage.lib.totp.TOTPException;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.auth.ClientAppUserAuthManager;
@@ -235,13 +236,13 @@ public final class ReqLogin extends ApiRequestMixin {
      * @param authMode
      *            The authentication mode. If {@code null} then TOTP response.
      * @param authId
-     *            Offered use name (handled as user alias), ID Number or Card
-     *            Number.
+     *            Offered use name (handled as user alias), ID Number, Card
+     *            Number or TOTP code.
      * @param authPw
-     *            The password or PIN. When {@code null} AND auth mode NAME ,
-     *            the authToken is used to validate.
+     *            The password, PIN or TOTP recovery code. When {@code null} AND
+     *            auth mode NAME, the authToken is used to validate.
      * @param authToken
-     *            The authentication token.
+     *            The authentication token (interpreted in authMode context).
      * @param assocCardNumber
      *            The card number to associate with this user account. When
      *            {@code null} NO card will be associated.
@@ -331,7 +332,7 @@ public final class ReqLogin extends ApiRequestMixin {
 
         if (authMode == null) {
 
-            this.onTOTPResponse(webAppType, authPw);
+            this.onTOTPResponse(session, webAppType, authId, authPw);
 
         } else if (authMode == UserAuthModeEnum.OAUTH) {
 
@@ -1619,20 +1620,23 @@ public final class ReqLogin extends ApiRequestMixin {
     }
 
     /**
-     * Handle TOTP response.
+     * Handle TOTP response. Either "code" or "codeRecovery" is {@code null}.
      *
+     * @param session
+     *            Session.
      * @param webAppType
      *            WebAppTypeEnum
      * @param code
-     *            TOTP code.
+     *            TOTP code from authenticator device.
+     * @param codeRecovery
+     *            Recovery code as sent to user email address.
      * @return {@code true} if TOTP is valid.
      * @throws IOException
      *             If IO error.
      */
-    private boolean onTOTPResponse(final WebAppTypeEnum webAppType,
-            final String code) throws IOException {
-
-        final SpSession session = SpSession.get();
+    private boolean onTOTPResponse(final SpSession session,
+            final WebAppTypeEnum webAppType, final String code,
+            final String codeRecovery) throws IOException {
 
         final UserIdDto dto = session.getTOTPRequest();
 
@@ -1648,54 +1652,59 @@ public final class ReqLogin extends ApiRequestMixin {
 
         final String secretKey =
                 USER_SERVICE.getUserAttrValue(userDb, UserAttrEnum.TOTP_SECRET);
+
         if (secretKey == null) {
             throw new IllegalStateException(
                     "Application error: user TOTP secret missing.");
         }
 
-        final TOTPAuthenticator auth =
-                new TOTPAuthenticator.Builder(secretKey).build();
+        boolean isAuthenticated = false;
 
-        try {
-            final boolean isAuthenticated =
-                    auth.verifyTOTP(Long.parseLong(code));
-
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("{} WebApp user [{}] TOTP verification [{}]",
-                        webAppType, userDb.getUserId(),
-                        Boolean.valueOf(isAuthenticated).toString()
-                                .toUpperCase());
+        if (StringUtils.isBlank(code)) {
+            isAuthenticated = TOTPHelper.verifyRecoveryCode(USER_SERVICE,
+                    userDb, codeRecovery);
+        } else {
+            final TOTPAuthenticator auth =
+                    new TOTPAuthenticator.Builder(secretKey).build();
+            try {
+                isAuthenticated = auth.verifyTOTP(Long.parseLong(code));
+            } catch (NumberFormatException e) {
+                // no code intended.
+            } catch (TOTPException e) {
+                throw new IllegalStateException(e);
             }
-
-            if (isAuthenticated) {
-
-                session.setUser(userDb);
-                session.setTOTPRequest(null);
-
-                final UserAuthToken token;
-                if (ApiRequestHelper.isAuthTokenLoginEnabled()) {
-                    token = reqLoginLazyCreateAuthToken(userDb.getUserId(),
-                            webAppType);
-                } else {
-                    token = null;
-                }
-
-                onUserLoginGranted(getUserData(), session, webAppType, null,
-                        userDb.getUserId(), userDb, token);
-
-                setApiResultOk();
-                return true;
-
-            } else {
-                setApiResultText(ApiResultCodeEnum.ERROR, "Code invalid.");
-            }
-        } catch (NumberFormatException e) {
-            setApiResultText(ApiResultCodeEnum.ERROR, "Code syntax invalid.");
-        } catch (TOTPException e) {
-            throw new IllegalStateException(e);
         }
 
-        return false;
+        if (isAuthenticated) {
+
+            session.setUser(userDb);
+            session.setTOTPRequest(null);
+
+            final UserAuthToken token;
+
+            if (ApiRequestHelper.isAuthTokenLoginEnabled()) {
+                token = reqLoginLazyCreateAuthToken(userDb.getUserId(),
+                        webAppType);
+            } else {
+                token = null;
+            }
+
+            onUserLoginGranted(getUserData(), session, webAppType, null,
+                    userDb.getUserId(), userDb, token);
+
+            setApiResultOk();
+
+        } else {
+            onLoginFailed(null);
+        }
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("{} WebApp user [{}] TOTP verification [{}]",
+                    webAppType, userDb.getUserId(),
+                    Boolean.valueOf(isAuthenticated).toString().toUpperCase());
+        }
+
+        return isAuthenticated;
     }
 
     /**
@@ -1703,6 +1712,7 @@ public final class ReqLogin extends ApiRequestMixin {
      * Membership position. If the membership is ok, the OK message is applied.
      *
      * @throws NumberFormatException
+     *             If number error.
      */
     private void setApiResultMembershipMsg() throws NumberFormatException {
 
