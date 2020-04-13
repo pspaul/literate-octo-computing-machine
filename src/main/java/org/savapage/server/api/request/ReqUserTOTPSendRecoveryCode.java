@@ -38,7 +38,7 @@ import org.savapage.core.services.EmailService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.email.EmailMsgParms;
 import org.savapage.core.totp.TOTPHelper;
-import org.savapage.core.totp.TOTPRecoveryCodeDto;
+import org.savapage.core.totp.TOTPRecoveryDto;
 import org.savapage.lib.pgp.PGPBaseException;
 import org.savapage.server.session.SpSession;
 
@@ -74,7 +74,7 @@ public final class ReqUserTOTPSendRecoveryCode extends ApiRequestMixin {
         final String subject = String.format("%s TOTP recovery code",
                 CommunityDictEnum.SAVAPAGE.getWord());
 
-        final TOTPRecoveryCodeDto recoveryDto =
+        final TOTPRecoveryDto recoveryDto =
                 TOTPHelper.generateRecoveryCode();
 
         parms.setSubject(subject);
