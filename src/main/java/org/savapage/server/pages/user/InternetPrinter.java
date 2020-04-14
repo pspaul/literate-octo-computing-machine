@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,6 +25,7 @@
 package org.savapage.server.pages.user;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -41,9 +45,18 @@ public class InternetPrinter extends AbstractUserPage {
      */
     public InternetPrinter(final PageParameters parameters) {
         super(parameters);
+
         final MarkupHelper helper = new MarkupHelper(this);
+
         helper.addLabel("button-replace", "UUID");
         helper.addButton("button-back", HtmlButtonEnum.BACK);
+        helper.addButton("button-no", HtmlButtonEnum.NO);
+        helper.addButton("button-yes", HtmlButtonEnum.YES);
+
+        helper.addLabel("prompt-uuid-replace",
+                PhraseEnum.Q_REPLACE_SECRET_CODE.uiText(getLocale()));
+        helper.addLabel("warn-uuid-replace",
+                PhraseEnum.ACTION_CANNOT_BE_UNDONE.uiText(getLocale()));
     }
 
 }

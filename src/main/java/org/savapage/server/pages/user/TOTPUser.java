@@ -25,6 +25,7 @@
 package org.savapage.server.pages.user;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -44,11 +45,18 @@ public class TOTPUser extends AbstractUserPage {
      */
     public TOTPUser(final PageParameters parameters) {
         super(parameters);
+
         final MarkupHelper helper = new MarkupHelper(this);
+
         helper.addButton("button-replace", HtmlButtonEnum.REPLACE);
         helper.addButton("button-back", HtmlButtonEnum.BACK);
         helper.addButton("button-no", HtmlButtonEnum.NO);
         helper.addButton("button-yes", HtmlButtonEnum.YES);
+
+        helper.addLabel("prompt-totp-replace",
+                PhraseEnum.Q_REPLACE_SECRET_CODE.uiText(getLocale()));
+        helper.addLabel("warn-totp-replace",
+                PhraseEnum.ACTION_CANNOT_BE_UNDONE.uiText(getLocale()));
     }
 
 }

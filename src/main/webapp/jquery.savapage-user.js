@@ -1730,10 +1730,16 @@
                 _self = _ns.derive(_page);
 
             $(_pageId).on('pagecreate', function(event) {
-                $(this).on('click', '#user-uuid-replace-btn', null, function() {
+                $(this).on('click', '#user-uuid-replace-popup-btn', null, function() {
+                    $('#user-uuid-replace-popup').popup('open', {
+                        positionTo : $(this)
+                    });
+                    $("#user-uuid-replace-btn-no").focus();
+                }).on('click', '#user-uuid-replace-btn', null, function() {
                     _view.showApiMsg(_api.call({
                         'request' : 'user-uuid-replace'
                     }));
+                    $('#user-uuid-replace-popup').popup('close');
                     $('#page-user-internet-printer-content').html(_view.getUserPageHtml('InternetPrinterAddIn'));
                     $(_pageId).enhanceWithin();
                 });

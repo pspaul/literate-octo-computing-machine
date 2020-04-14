@@ -75,8 +75,6 @@ import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.Messages;
-import org.savapage.lib.totp.TOTPAuthenticator;
-import org.savapage.lib.totp.TOTPException;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.auth.ClientAppUserAuthManager;
@@ -1650,29 +1648,13 @@ public final class ReqLogin extends ApiRequestMixin {
                     "Application error: user not found.");
         }
 
-        final String secretKey =
-                USER_SERVICE.getUserAttrValue(userDb, UserAttrEnum.TOTP_SECRET);
-
-        if (secretKey == null) {
-            throw new IllegalStateException(
-                    "Application error: user TOTP secret missing.");
-        }
-
-        boolean isAuthenticated = false;
+        final boolean isAuthenticated;
 
         if (StringUtils.isBlank(code)) {
             isAuthenticated = TOTPHelper.verifyRecoveryCode(USER_SERVICE,
                     userDb, codeRecovery);
         } else {
-            final TOTPAuthenticator auth =
-                    new TOTPAuthenticator.Builder(secretKey).build();
-            try {
-                isAuthenticated = auth.verifyTOTP(Long.parseLong(code));
-            } catch (NumberFormatException e) {
-                // no code intended.
-            } catch (TOTPException e) {
-                throw new IllegalStateException(e);
-            }
+            isAuthenticated = TOTPHelper.verifyCode(USER_SERVICE, userDb, code);
         }
 
         if (isAuthenticated) {
