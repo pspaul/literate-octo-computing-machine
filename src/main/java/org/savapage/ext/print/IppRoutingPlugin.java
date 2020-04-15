@@ -46,6 +46,7 @@ import org.savapage.core.SpException;
 import org.savapage.core.ipp.routing.IppRoutingContext;
 import org.savapage.core.ipp.routing.IppRoutingResult;
 import org.savapage.core.pdf.ITextPdfCreator;
+import org.savapage.core.util.CupsPrinterUriHelper;
 import org.savapage.core.util.JsonHelper;
 import org.savapage.core.util.QRCodeException;
 import org.savapage.core.util.QRCodeHelper;
@@ -416,6 +417,10 @@ public final class IppRoutingPlugin implements ServerPlugin {
     /** */
     private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_URI =
             "$printer_uri$";
+    /** */
+    private static final String //
+    ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_URI_HOST = "$printer_uri_host$";
+
     /** */
     private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_JOB_NAME =
             "$job_name$";
@@ -940,6 +945,8 @@ public final class IppRoutingPlugin implements ServerPlugin {
                         ctx.getPrinterName() },
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_URI,
                         ctx.getPrinterURI().toString() },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_URI_HOST,
+                        CupsPrinterUriHelper.resolveHost(ctx.getPrinterURI()) },
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_UUID,
                         data.routingUUID.toString() },
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_USERID, ctx.getUserId() } //
