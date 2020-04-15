@@ -1004,6 +1004,18 @@
                 }
             };
 
+            _view.pages.user.onGenerateUserIDNumber = function() {
+                var res = _api.call({
+                    request : 'generate-user-id-number'
+                });
+                if (res.result.code === '0') {
+                    _model.editUser.id = res.dto.number;
+                    $('#user-id-number').val(_model.editUser.id);
+                } else {
+                    _view.showApiMsg(res);
+                }
+            };
+
             _view.pages.userGroupsAddRemove.onUserGroupsAddRemove = function(added, removed) {
                 var res = _api.call({
                     request : 'usergroups-add-remove',

@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2011-2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -105,7 +108,8 @@ public final class PageUser extends AbstractAdminPage {
         helper.addButton("button-cancel-1", HtmlButtonEnum.CANCEL);
         helper.addButton("button-cancel-2", HtmlButtonEnum.CANCEL);
         helper.addButton("button-delete", HtmlButtonEnum.DELETE);
-        helper.addButton("button-generate", HtmlButtonEnum.GENERATE);
+        helper.addButton("button-generate-1", HtmlButtonEnum.GENERATE);
+        helper.addButton("button-generate-2", HtmlButtonEnum.GENERATE);
 
         helper.addLabel("button-password", NounEnum.PASSWORD);
 

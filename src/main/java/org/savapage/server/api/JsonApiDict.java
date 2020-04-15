@@ -44,6 +44,7 @@ import org.savapage.server.api.request.ReqDeviceGet;
 import org.savapage.server.api.request.ReqDeviceSet;
 import org.savapage.server.api.request.ReqDocLogRefund;
 import org.savapage.server.api.request.ReqDocLogTicketReopen;
+import org.savapage.server.api.request.ReqGenerateUserIDNumber;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqI18nCacheClear;
 import org.savapage.server.api.request.ReqInboxClear;
@@ -386,6 +387,9 @@ public final class JsonApiDict {
             "usergroup-member-quick-search";
 
     public static final String REQ_GENERATE_UUID = "generate-uuid";
+
+    public static final String REQ_GENERATE_USER_ID_NUMBER =
+            "generate-user-id-number";
 
     public static final String REQ_PRINTSITE_USER_SET = "printsite-user-set";
 
@@ -1088,6 +1092,7 @@ public final class JsonApiDict {
 
         non(REQ_PING);
         non(REQ_GENERATE_UUID, ReqGenerateUuid.class);
+        non(REQ_GENERATE_USER_ID_NUMBER, ReqGenerateUserIDNumber.class);
 
         usr(REQ_USER_CREDIT_TRANSFER, DbClaim.READ, DbAccess.YES);
         usr(REQ_USER_MONEY_TRANSFER_REQUEST, DbClaim.READ, DbAccess.YES);

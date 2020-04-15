@@ -392,6 +392,11 @@
                     return false;
                 });
 
+                $(this).on('click', '#button-user-generate-id-number', null, function() {
+                    _self.onGenerateUserIDNumber();
+                    return false;
+                });
+
                 $(this).on('click', '#button-save-user', null, function() {
                     if (_v2m()) {
                         _self.onSaveUser();

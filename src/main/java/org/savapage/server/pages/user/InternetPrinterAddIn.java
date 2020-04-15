@@ -80,7 +80,7 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
         final org.savapage.core.jpa.User user =
                 userDao.findById(SpSession.get().getUserDbKey());
 
-        final String userNumber = USER_SERVICE.getPrimaryIdNumber(user);
+        final String userNumber = USER_SERVICE.lazyAddUserPrimaryIdNumber(user);
         final String userUuid =
                 USER_SERVICE.getUserAttrValue(user, UserAttrEnum.UUID);
         final String uriBase = ConfigManager.instance()
