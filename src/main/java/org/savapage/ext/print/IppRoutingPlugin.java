@@ -414,6 +414,9 @@ public final class IppRoutingPlugin implements ServerPlugin {
     private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_NAME =
             "$printer_name$";
     /** */
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_URI =
+            "$printer_uri$";
+    /** */
     private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_JOB_NAME =
             "$job_name$";
     /** */
@@ -935,6 +938,8 @@ public final class IppRoutingPlugin implements ServerPlugin {
                         ctx.getQueueName() },
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_NAME,
                         ctx.getPrinterName() },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_URI,
+                        ctx.getPrinterURI().toString() },
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_UUID,
                         data.routingUUID.toString() },
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_USERID, ctx.getUserId() } //
