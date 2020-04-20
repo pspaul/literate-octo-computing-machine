@@ -3,9 +3,9 @@
 <wicket:remove>
 	<!--
 This file is part of the SavaPage project <https://savapage.org>
-Copyright (c) 2011-2020 Datraverse B.V. | Author: Rijk Ravestein 
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
-SPDX-FileCopyrightText: 2011-2020 Datraverse BV <info@datraverse.com>
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
 SPDX-License-Identifier: AGPL-3.0-or-later
 
 SavaPage is free software: you can redistribute it and/or modify
@@ -24,6 +24,16 @@ the License, or (at your option) any later version.
 	<input data-wrapper-class="sp-checkbox-right-sized" data-mini="true"
 		type="checkbox" id="sp-user-totp-enable-chb" value="0"
 		wicket:id="totp-enable" />
+
+	<wicket:enclosure child="totp-telegram-enable">
+		<label for="sp-user-totp-telegram-enable-chb">
+			<wicket:message key="send-code-to-telegram" />
+		</label>
+		<input data-wrapper-class="sp-checkbox-right-sized" data-mini="true"
+			type="checkbox" id="sp-user-totp-telegram-enable-chb" value="0"
+			wicket:id="totp-telegram-enable" />
+	</wicket:enclosure>
+
 </center>
 <br />
 

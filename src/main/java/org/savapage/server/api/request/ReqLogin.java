@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1607,6 +1607,13 @@ public final class ReqLogin extends ApiRequestMixin {
                 || StringUtils.isBlank(USER_SERVICE.getUserAttrValue(userDb,
                         UserAttrEnum.TOTP_SECRET))) {
             return false;
+        }
+
+        try {
+            TOTPHelper.sendCodeToTelegram(USER_SERVICE, userDb);
+        } catch (IOException e) {
+            LOGGER.warn("Sending TOTP code to Telegram ID of User [{}] failed.",
+                    userDb.getUserId());
         }
 
         session.setWebAppType(webAppType);

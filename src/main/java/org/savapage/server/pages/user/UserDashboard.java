@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,9 +28,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -62,12 +64,12 @@ public final class UserDashboard extends AbstractUserPage {
 
         final UserIdDto authUser = SpSession.get().getUserIdDto();
 
+        final org.savapage.core.jpa.User jpaUser = ServiceContext
+                .getDaoContext().getUserDao().findById(authUser.getDbKey());
+
         final boolean canResetPassword;
 
         if (authUser.isInternalUser()) {
-
-            final org.savapage.core.jpa.User jpaUser = ServiceContext
-                    .getDaoContext().getUserDao().findById(authUser.getDbKey());
 
             canResetPassword = ConfigManager.instance()
                     .isConfigValue(Key.INTERNAL_USERS_CAN_CHANGE_PW)
@@ -78,23 +80,40 @@ public final class UserDashboard extends AbstractUserPage {
         }
 
         final MarkupHelper helper = new MarkupHelper(this);
+        final ConfigManager cm = ConfigManager.instance();
 
         helper.encloseLabel("button-user-pw-dialog",
                 this.getLocalizer().getString("button-password", this),
                 canResetPassword);
 
         helper.encloseLabel("button-user-pin-dialog",
-                this.getLocalizer().getString("button-pin", this), ConfigManager
-                        .instance().isConfigValue(Key.USER_CAN_CHANGE_PIN));
+                this.getLocalizer().getString("button-pin", this),
+                cm.isConfigValue(Key.USER_CAN_CHANGE_PIN));
 
-        final boolean hasUriBase = StringUtils.isNotBlank(ConfigManager
-                .instance().getConfigValue(Key.IPP_INTERNET_PRINTER_URI_BASE));
+        final boolean hasUriBase = StringUtils.isNotBlank(
+                cm.getConfigValue(Key.IPP_INTERNET_PRINTER_URI_BASE));
 
         helper.encloseLabel("button-user-internet-printer-dialog",
                 this.getLocalizer().getString("button-internet-printer", this),
                 hasUriBase);
 
+        //
+        final boolean enableTelegram =
+                cm.isConfigValue(Key.USER_EXT_TELEGRAM_TOTP_ENABLE)
+                        && StringUtils.isNotBlank(
+                                cm.getConfigValue(Key.EXT_TELEGRAM_BOT_TOKEN));
+        if (enableTelegram) {
+            helper.addModifyLabelAttr("telegram-id", MarkupHelper.ATTR_VALUE,
+                    USER_SERVICE.getUserAttrValue(jpaUser,
+                            UserAttrEnum.EXT_TELEGRAM_ID));
+            helper.addButton("btn-telegram-ok", HtmlButtonEnum.OK);
+            helper.addButton("btn-telegram-cancel", HtmlButtonEnum.CANCEL);
+        }
+        helper.encloseLabel("btn-telegram", "Telegram", enableTelegram);
+        helper.encloseLabel("header-telegram", "Telegram ID", enableTelegram);
+
+        //
         helper.encloseLabel("button-totp-dialog", "TOTP",
-                ConfigManager.instance().isConfigValue(Key.USER_TOTP_ENABLE));
+                cm.isConfigValue(Key.USER_TOTP_ENABLE));
     }
 }

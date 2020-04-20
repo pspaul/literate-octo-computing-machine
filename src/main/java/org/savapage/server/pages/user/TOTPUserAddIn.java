@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -66,6 +66,10 @@ public final class TOTPUserAddIn extends AbstractAuthPage {
     private static final String WID_TOTP_ENABLE = "totp-enable";
     /** */
     private static final String WID_TOTP_ENABLE_TXT = "totp-enable-txt";
+
+    /** */
+    private static final String WID_TOTP_TELEGRAM_ENABLE =
+            "totp-telegram-enable";
 
     /** */
     private static final String WID_QR_CODE = "qr-code";
@@ -148,6 +152,23 @@ public final class TOTPUserAddIn extends AbstractAuthPage {
 
         helper.addLabel(WID_TOTP_ENABLE_TXT, AdverbEnum.ENABLED);
         helper.addCheckbox(WID_TOTP_ENABLE, enabled);
+
+        //
+        final boolean telegram =
+                cm.isConfigValue(Key.USER_EXT_TELEGRAM_TOTP_ENABLE)
+                        && StringUtils.isNotBlank(
+                                cm.getConfigValue(Key.EXT_TELEGRAM_BOT_TOKEN))
+                        && StringUtils.isNotBlank(USER_SERVICE.getUserAttrValue(
+                                jpaUser, UserAttrEnum.EXT_TELEGRAM_ID));
+
+        if (telegram) {
+            helper.addCheckbox(WID_TOTP_TELEGRAM_ENABLE,
+                    USER_SERVICE.isUserAttrValue(jpaUser,
+                            UserAttrEnum.EXT_TELEGRAM_TOTP_ENABLE));
+        } else {
+            helper.discloseLabel(WID_TOTP_TELEGRAM_ENABLE);
+        }
+
     }
 
     @Override

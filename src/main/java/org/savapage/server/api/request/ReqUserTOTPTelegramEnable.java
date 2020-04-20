@@ -27,16 +27,16 @@ package org.savapage.server.api.request;
 import org.savapage.core.dao.enums.UserAttrEnum;
 
 /**
- * Sets {@link UserAttrEnum#TOTP_ENABLE}.
+ * Sets {@link UserAttrEnum#EXT_TELEGRAM_TOTP_ENABLE}.
  *
  * @author Rijk Ravestein
  *
  */
-public final class ReqUserTOTPEnable extends ReqUserAttrEnable {
+public final class ReqUserTOTPTelegramEnable extends ReqUserAttrEnable {
 
     @Override
     protected UserAttrEnum getUserAttrEnum() {
-        return UserAttrEnum.TOTP_ENABLE;
+        return UserAttrEnum.EXT_TELEGRAM_TOTP_ENABLE;
     }
 
 }

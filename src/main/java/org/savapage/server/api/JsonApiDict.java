@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -102,9 +102,11 @@ import org.savapage.server.api.request.ReqUserQuickSearch;
 import org.savapage.server.api.request.ReqUserSet;
 import org.savapage.server.api.request.ReqUserSetDelegateAccountsPreferredSelect;
 import org.savapage.server.api.request.ReqUserSetDelegateGroupsPreferredSelect;
+import org.savapage.server.api.request.ReqUserSetTelegramID;
 import org.savapage.server.api.request.ReqUserTOTPEnable;
 import org.savapage.server.api.request.ReqUserTOTPReplace;
 import org.savapage.server.api.request.ReqUserTOTPSendRecoveryCode;
+import org.savapage.server.api.request.ReqUserTOTPTelegramEnable;
 import org.savapage.server.api.request.ReqUserUuidReplace;
 
 /**
@@ -343,6 +345,8 @@ public final class JsonApiDict {
             "user-notify-account-change";
     public static final String REQ_USER_QUICK_SEARCH = "user-quick-search";
     public static final String REQ_USER_SET = "user-set";
+    public static final String REQ_USER_SET_TELEGRAM_ID =
+            "user-set-telegram-id";
     public static final String REQ_USER_SOURCE_GROUPS = "user-source-groups";
 
     public static final String REQ_USERHOME_CLEAN = "userhome-clean";
@@ -367,6 +371,8 @@ public final class JsonApiDict {
             "user-get-delegate-accounts-preferred-select";
 
     public static final String REQ_USER_TOTP_ENABLE = "user-totp-enable";
+    public static final String REQ_USER_TOTP_TELEGRAM_ENABLE =
+            "user-totp-telegram-enable";
     public static final String REQ_USER_TOTP_REPLACE = "user-totp-replace";
     public static final String REQ_USER_TOTP_SEND_RECOVERY_CODE =
             "user-totp-send-recovery-code";
@@ -1082,6 +1088,8 @@ public final class JsonApiDict {
 
         usr(REQ_USER_TOTP_ENABLE, ReqUserTOTPEnable.class, DbClaim.READ,
                 DbAccess.YES);
+        usr(REQ_USER_TOTP_TELEGRAM_ENABLE, ReqUserTOTPTelegramEnable.class,
+                DbClaim.READ, DbAccess.YES);
         usr(REQ_USER_TOTP_REPLACE, ReqUserTOTPReplace.class, DbClaim.READ,
                 DbAccess.YES);
         put(REQ_USER_TOTP_SEND_RECOVERY_CODE, ReqUserTOTPSendRecoveryCode.class,
@@ -1223,6 +1231,9 @@ public final class JsonApiDict {
                 DbAccess.YES);
         usr(REQ_USER_SET_DELEGATE_GROUPS_PREFERRED_SELECT,
                 ReqUserSetDelegateGroupsPreferredSelect.class, DbClaim.READ,
+                DbAccess.YES);
+
+        usr(REQ_USER_SET_TELEGRAM_ID, ReqUserSetTelegramID.class, DbClaim.READ,
                 DbAccess.YES);
 
         usr(REQ_USER_DELEGATE_ACCOUNTS_PREFERRED,

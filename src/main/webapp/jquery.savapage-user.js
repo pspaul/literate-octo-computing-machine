@@ -1776,6 +1776,13 @@
                             'enabled' : $(this).is(':checked')
                         })
                     }));
+                }).on('change', "input:checkbox[id='sp-user-totp-telegram-enable-chb']", null, function(e) {
+                    _view.showApiMsg(_api.call({
+                        'request' : 'user-totp-telegram-enable',
+                        dto : JSON.stringify({
+                            'enabled' : $(this).is(':checked')
+                        })
+                    }));
                 });
 
             });
@@ -1785,7 +1792,9 @@
         /**
          *
          */
-        function PageDashboard(_i18n, _view, _model) {
+        function PageDashboard(_i18n, _view, _model, _api) {
+
+            var _savedTelegramID;
 
             $('#page-dashboard').on('pagecreate', function(event) {
 
@@ -1824,6 +1833,26 @@
                     $(this).on('click', '#button-user-totp-dialog', null, function() {
                         _view.pages.main.showUserTOTP();
                         return false;
+                    });
+                }
+
+                if ($('#user-set-telegram-id-popup-btn')) {
+                    $(this).on('click', '#user-set-telegram-id-popup-btn', null, function() {
+                        _savedTelegramID = $('#user-totp-telegram-id').val();
+                        $('#user-set-telegram-id-popup').popup('open', {
+                            positionTo : $(this)
+                        });
+                        $("#user-totp-telegram-id").focus();
+                    }).on('click', '#user-set-telegram-id-btn-ok', null, function() {
+                        _view.showApiMsg(_api.call({
+                            request : 'user-set-telegram-id',
+                            dto : JSON.stringify({
+                                'id' : $('#user-totp-telegram-id').val()
+                            })
+                        }));
+                        $('#user-set-telegram-id-popup').popup('close');
+                    }).on('click', '#user-set-telegram-id-btn-cancel', null, function() {
+                        $('#user-totp-telegram-id').val(_savedTelegramID);
                     });
                 }
 
@@ -7235,7 +7264,7 @@
                 outbox : new PageOutbox(_i18n, _view, _model, _api),
                 send : new PageSend(_i18n, _view, _model),
                 pagebrowser : new PageBrowser(_i18n, _view, _model),
-                pageDashboard : new PageDashboard(_i18n, _view, _model),
+                pageDashboard : new PageDashboard(_i18n, _view, _model, _api),
                 voucherRedeem : new PageVoucherRedeem(_i18n, _view, _model),
                 creditTransfer : new PageCreditTransfer(_i18n, _view, _model),
                 moneyTransfer : new PageMoneyTransfer(_i18n, _view, _model),
