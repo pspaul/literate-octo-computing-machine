@@ -26,10 +26,12 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 
-import org.savapage.core.crypto.CryptoUser;
+import org.apache.commons.lang3.StringUtils;
+import org.savapage.core.community.CommunityDictEnum;
+import org.savapage.core.community.MemberCard;
 import org.savapage.core.dao.enums.UserAttrEnum;
-import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
+import org.savapage.ext.telegram.TelegramHelper;
 
 /**
  * Sets User Telegram ID.
@@ -37,26 +39,17 @@ import org.savapage.core.jpa.User;
  * @author Rijk Ravestein
  *
  */
-public final class ReqUserSetTelegramID extends ApiRequestMixin {
-
-    /** */
-    private static class DtoReq extends AbstractDto {
-
-        private String id;
-
-        public String getId() {
-            return id;
-        }
-
-        @SuppressWarnings("unused")
-        public void setId(String id) {
-            this.id = id;
-        }
-    }
+public final class ReqUserTestTelegramID extends ApiRequestMixin {
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
+
+        if (!TelegramHelper.isMessagingEnabled()) {
+            this.setApiResultText(ApiResultCodeEnum.ERROR,
+                    "Telegram Messaging is disabled.");
+            return;
+        }
 
         final User jpaUser;
         if (lockedUser == null) {
@@ -65,12 +58,24 @@ public final class ReqUserSetTelegramID extends ApiRequestMixin {
             jpaUser = lockedUser;
         }
 
-        final DtoReq dto = DtoReq.create(DtoReq.class, this.getParmValueDto());
+        final String telegramID = USER_SERVICE.getUserAttrValue(jpaUser,
+                UserAttrEnum.EXT_TELEGRAM_ID);
 
-        USER_SERVICE.setUserAttrValue(jpaUser, UserAttrEnum.EXT_TELEGRAM_ID,
-                CryptoUser.encryptUserAttr(jpaUser.getId(), dto.getId()));
+        if (telegramID == null) {
+            this.setApiResultText(ApiResultCodeEnum.ERROR, "No Telegram ID.");
+            return;
+        }
 
-        this.setApiResult(ApiResultCodeEnum.OK, "msg-apply-ok");
+        if (TelegramHelper.sendMessage(telegramID, String.format(
+                "%s : %s [%s]", CommunityDictEnum.SAVAPAGE.getWord(),
+                StringUtils.defaultString(
+                        MemberCard.instance().getMemberOrganisation(), "-"),
+                MemberCard.instance().getStatusUserText(getLocale())))) {
+            this.setApiResult(ApiResultCodeEnum.OK, "msg-apply-ok");
+        } else {
+            this.setApiResult(ApiResultCodeEnum.ERROR, "msg-action-failed");
+        }
+
     }
 
 }

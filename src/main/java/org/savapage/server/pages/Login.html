@@ -3,9 +3,9 @@
 <wicket:remove>
 	<!--
 This file is part of the SavaPage project <https://savapage.org>
-Copyright (c) 2011-2020 Datraverse B.V. | Author: Rijk Ravestein 
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
-SPDX-FileCopyrightText: 2011-2020 Datraverse BV <info@datraverse.com>
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
 SPDX-License-Identifier: AGPL-3.0-or-later
 
 SavaPage is free software: you can redistribute it and/or modify
@@ -99,11 +99,16 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 
 			<div id="sp-div-login-totp" style="display: none;">
 
-				<span class="sp-txt-wrap"> <wicket:message key="header-totp" /></span>
-				<div>
-					<input type="password" id="sp-login-user-totp-code" value=""
-						data-clear-btn="true" />
+				<h3 wicket:id="header-2-step" />
+
+				<div class="sp-txt-wrap sp-txt-info">
+					<wicket:message key="header-totp" />
+					<span style="margin-top: -15px;"> <wicket:panel
+							wicket:id="tooltip-totp" />
+					</span>
 				</div>
+				<input type="password" id="sp-login-user-totp-code" value=""
+					data-clear-btn="true" />
 
 				<div>
 					<button id="sp-btn-login-totp-verify"
@@ -146,7 +151,6 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 						</button>
 					</div>
 				</wicket:enclosure>
-
 			</div>
 
 			<div id="sp-div-login-name" style="display: none;">

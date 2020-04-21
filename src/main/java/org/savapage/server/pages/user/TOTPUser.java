@@ -25,6 +25,8 @@
 package org.savapage.server.pages.user;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.i18n.LabelEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
@@ -41,12 +43,15 @@ public class TOTPUser extends AbstractUserPage {
     /**
      *
      * @param parameters
-     *            The parms.
+     *            Page parameters.
      */
     public TOTPUser(final PageParameters parameters) {
         super(parameters);
 
         final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addLabel("header", NounEnum.AUTHENTICATION);
+        helper.addLabel("title", LabelEnum.TWO_STEP_VERIFICATION);
 
         helper.addButton("button-replace", HtmlButtonEnum.REPLACE);
         helper.addButton("button-back", HtmlButtonEnum.BACK);

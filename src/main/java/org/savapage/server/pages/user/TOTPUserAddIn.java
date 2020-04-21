@@ -39,6 +39,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.util.QRCodeException;
 import org.savapage.core.util.QRCodeHelper;
+import org.savapage.ext.telegram.TelegramHelper;
 import org.savapage.lib.totp.TOTPAuthenticator;
 import org.savapage.server.pages.AbstractAuthPage;
 import org.savapage.server.pages.MarkupHelper;
@@ -154,12 +155,9 @@ public final class TOTPUserAddIn extends AbstractAuthPage {
         helper.addCheckbox(WID_TOTP_ENABLE, enabled);
 
         //
-        final boolean telegram =
-                cm.isConfigValue(Key.USER_EXT_TELEGRAM_TOTP_ENABLE)
-                        && StringUtils.isNotBlank(
-                                cm.getConfigValue(Key.EXT_TELEGRAM_BOT_TOKEN))
-                        && StringUtils.isNotBlank(USER_SERVICE.getUserAttrValue(
-                                jpaUser, UserAttrEnum.EXT_TELEGRAM_ID));
+        final boolean telegram = TelegramHelper.isTOTPEnabled()
+                && StringUtils.isNotBlank(USER_SERVICE.getUserAttrValue(jpaUser,
+                        UserAttrEnum.EXT_TELEGRAM_ID));
 
         if (telegram) {
             helper.addCheckbox(WID_TOTP_TELEGRAM_ENABLE,

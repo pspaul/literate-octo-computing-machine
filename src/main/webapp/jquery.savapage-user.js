@@ -1750,6 +1750,43 @@
         /**
          * Constructor
          */
+        function PageUserTelegram(_i18n, _view, _model, _api) {
+            var _pageId = '#page-user-telegram',
+                _page = new _ns.Page(_i18n, _view, _pageId, 'UserTelegram'),
+                _self = _ns.derive(_page),
+                _savedTelegramID;
+
+            $(_pageId).on('pagecreate', function(event) {
+                $(this).on('click', '#user-set-telegram-id-btn-apply', null, function() {
+                    var id = $('#user-totp-telegram-id').val(),
+                        res = _api.call({
+                        request : 'user-set-telegram-id',
+                        dto : JSON.stringify({
+                            'id' : id
+                        })
+                    });
+                    if (res.result.code === '0') {
+                        _savedTelegramID = id;
+                    }
+                    _view.showApiMsg(res);
+                }).on('click', '#user-set-telegram-id-btn-test', null, function() {
+                    _view.showApiMsg(_api.call({
+                        request : 'user-test-telegram-id'
+                    }));
+                }).on('click', '#user-set-telegram-id-btn-2-step', null, function() {
+                    _view.pages.main.showUserTOTP();
+                }).on('click', '#user-set-telegram-id-btn-back', null, function() {
+                    $('#user-totp-telegram-id').val(_savedTelegramID);
+                });
+            }).on("pagebeforeshow", function(event, ui) {
+                _savedTelegramID = $('#user-totp-telegram-id').val();
+            });
+            return _self;
+        }
+
+        /**
+         * Constructor
+         */
         function PageTOTPUser(_i18n, _view, _model, _api) {
             var _pageId = '#page-user-totp',
                 _page = new _ns.Page(_i18n, _view, _pageId, 'TOTPUser'),
@@ -1794,8 +1831,6 @@
          */
         function PageDashboard(_i18n, _view, _model, _api) {
 
-            var _savedTelegramID;
-
             $('#page-dashboard').on('pagecreate', function(event) {
 
                 if ($('#button-user-pw-dialog')) {
@@ -1836,23 +1871,10 @@
                     });
                 }
 
-                if ($('#user-set-telegram-id-popup-btn')) {
-                    $(this).on('click', '#user-set-telegram-id-popup-btn', null, function() {
-                        _savedTelegramID = $('#user-totp-telegram-id').val();
-                        $('#user-set-telegram-id-popup').popup('open', {
-                            positionTo : $(this)
-                        });
-                        $("#user-totp-telegram-id").focus();
-                    }).on('click', '#user-set-telegram-id-btn-ok', null, function() {
-                        _view.showApiMsg(_api.call({
-                            request : 'user-set-telegram-id',
-                            dto : JSON.stringify({
-                                'id' : $('#user-totp-telegram-id').val()
-                            })
-                        }));
-                        $('#user-set-telegram-id-popup').popup('close');
-                    }).on('click', '#user-set-telegram-id-btn-cancel', null, function() {
-                        $('#user-totp-telegram-id').val(_savedTelegramID);
+                if ($('#button-user-telegram-dialog')) {
+                    $(this).on('click', '#button-user-telegram-dialog', null, function() {
+                        _view.showUserPage('#page-user-telegram', 'UserTelegram');
+                        return false;
                     });
                 }
 
@@ -7277,6 +7299,7 @@
                 userPinReset : new PageUserPinReset(_i18n, _view, _model),
                 userInternetPrinter : new PageUserInternetPrinter(_i18n, _view, _model, _api),
                 totpUser : new PageTOTPUser(_i18n, _view, _model, _api),
+                userTelegram : new PageUserTelegram(_i18n, _view, _model, _api),
                 userPwReset : new _ns.PageUserPasswordReset(_i18n, _view, _model),
                 gdprExport : new PageGdprExport(_i18n, _view, _model, _api)
             };

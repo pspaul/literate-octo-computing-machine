@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
+</wicket:remove>
+
+<div data-role="header" data-theme="b">
+	<h1 wicket:id="header" />
+</div>
+
+<div class="ui-content">
+
+	<!-- 
+	<ul data-role="listview" data-inset="true">
+		<li>
+			<div class="sp-txt-wrap sp-txt-info">Follow the steps below to
+				configure Telegram instant messaging.</div>
+		</li>
+	</ul>
+ -->
+	<ol data-role="listview" data-inset="true">
+		<li>
+			<span class="sp-txt-wrap" wicket:id="step-1" />
+		</li>
+		<li>
+			<span class="sp-txt-wrap"><wicket:message key="step-2" /></span>
+			<input type="text" id="user-totp-telegram-id" value=""
+				wicket:id="telegram-id" />
+			<button id="user-set-telegram-id-btn-apply"
+				class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check"
+				wicket:id="btn-telegram-apply" />
+			<div class="sp-txt-wrap ui-mini">
+				<wicket:message key="step-2-sub" />
+			</div>
+		</li>
+		<li>
+			<span class="sp-txt-wrap" wicket:id="step-3" />
+		</li>
+		<li>
+			<span class="sp-txt-wrap"><wicket:message key="step-4" /></span>
+			<div>
+				<button id="user-set-telegram-id-btn-test"
+					class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-comment"
+					wicket:id="btn-telegram-test" />
+			</div>
+		</li>
+		<li>
+			<span class="sp-txt-wrap"><wicket:message key="step-5" /></span>
+		</li>
+		<wicket:enclosure child="btn-telegram-2-step">
+			<li>
+				<span class="sp-txt-wrap"><wicket:message key="step-6" /></span>
+				<div>
+					<button id="user-set-telegram-id-btn-2-step"
+						class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-lock"
+						wicket:id="btn-telegram-2-step" />
+				</div>
+			</li>
+		</wicket:enclosure>
+	</ol>
+	<div>
+		<a href="#" id="user-set-telegram-id-btn-back"
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+			data-rel="back" wicket:id="btn-telegram-back" />
+	</div>
+</div>
+
+
+<wicket:remove>
+	<!-- 
+THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+-->
+</wicket:remove>
+<div data-role="popup" data-position-to="window"
+	class="sp-msg-popup ui-content" />
+</html>

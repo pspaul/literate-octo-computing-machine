@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -46,6 +49,8 @@ import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.doc.XpsToPdf;
 import org.savapage.core.doc.soffice.SOfficeHelper;
+import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.ipp.IppSyntaxException;
@@ -339,6 +344,15 @@ public final class Options extends AbstractAdminPage {
         labelledRadio("user-auth-mode-default", "-yubikey",
                 IConfigProp.Key.AUTH_MODE_DEFAULT,
                 IConfigProp.AUTH_MODE_V_YUBIKEY);
+
+        //
+        helper.addLabel("user-auth-mode-2-step-header",
+                LabelEnum.TWO_STEP_VERIFICATION);
+
+        tagCheckbox("user-auth-mode-2-step", IConfigProp.Key.USER_TOTP_ENABLE);
+        helper.addModifyLabelAttr("user-auth-mode-2-step-label",
+                AdverbEnum.ENABLED.uiText(getLocale()), MarkupHelper.ATTR_FOR,
+                cm.getConfigKey(Key.USER_TOTP_ENABLE));
 
         /*
          *

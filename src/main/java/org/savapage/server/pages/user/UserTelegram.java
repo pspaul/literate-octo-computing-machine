@@ -24,16 +24,17 @@
  */
 package org.savapage.server.pages.user;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dto.UserIdDto;
-import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.totp.TOTPHelper;
 import org.savapage.ext.telegram.TelegramHelper;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -42,21 +43,21 @@ import org.savapage.server.session.SpSession;
  * @author Rijk Ravestein
  *
  */
-public final class UserDashboard extends AbstractUserPage {
+public class UserTelegram extends AbstractUserPage {
 
     /** */
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
+
     /** */
     private static final long serialVersionUID = 1L;
 
     /**
      *
      * @param parameters
-     *            The parameters.
+     *            Page parameters.
      */
-    public UserDashboard(final PageParameters parameters) {
-
+    public UserTelegram(final PageParameters parameters) {
         super(parameters);
 
         final UserIdDto authUser = SpSession.get().getUserIdDto();
@@ -64,40 +65,25 @@ public final class UserDashboard extends AbstractUserPage {
         final org.savapage.core.jpa.User jpaUser = ServiceContext
                 .getDaoContext().getUserDao().findById(authUser.getDbKey());
 
-        final boolean canResetPassword;
-
-        if (authUser.isInternalUser()) {
-
-            canResetPassword = ConfigManager.instance()
-                    .isConfigValue(Key.INTERNAL_USERS_CAN_CHANGE_PW)
-                    && USER_SERVICE.hasInternalPassword(jpaUser);
-
-        } else {
-            canResetPassword = false;
-        }
-
         final MarkupHelper helper = new MarkupHelper(this);
-        final ConfigManager cm = ConfigManager.instance();
 
-        helper.encloseLabel("button-user-pw-dialog",
-                this.getLocalizer().getString("button-password", this),
-                canResetPassword);
+        helper.addLabel("header", "Telegram Configuration");
+        helper.addModifyLabelAttr("telegram-id", MarkupHelper.ATTR_VALUE,
+                USER_SERVICE.getUserAttrValue(jpaUser,
+                        UserAttrEnum.EXT_TELEGRAM_ID));
 
-        helper.encloseLabel("button-user-pin-dialog",
-                this.getLocalizer().getString("button-pin", this),
-                cm.isConfigValue(Key.USER_CAN_CHANGE_PIN));
+        helper.addLabel("step-1", helper.localized("step-1", TelegramHelper
+                .userNameFormatted(TelegramHelper.MY_ID_BOT_USERNAME)));
+        helper.addLabel("step-3", helper.localized("step-3",
+                TelegramHelper.userNameFormatted(ConfigManager.instance()
+                        .getConfigValue(Key.EXT_TELEGRAM_BOT_USERNAME))));
 
-        final boolean hasUriBase = StringUtils.isNotBlank(
-                cm.getConfigValue(Key.IPP_INTERNET_PRINTER_URI_BASE));
-
-        helper.encloseLabel("button-user-internet-printer-dialog",
-                this.getLocalizer().getString("button-internet-printer", this),
-                hasUriBase);
-
-        helper.encloseLabel("btn-telegram", "Telegram",
-                TelegramHelper.isMessagingEnabled());
-        helper.encloseLabel("button-totp-dialog",
-                NounEnum.AUTHENTICATION.uiText(getLocale()),
+        helper.addButton("btn-telegram-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("btn-telegram-test", HtmlButtonEnum.SEND);
+        helper.addButton("btn-telegram-back", HtmlButtonEnum.BACK);
+        helper.encloseLabel("btn-telegram-2-step",
+                LabelEnum.TWO_STEP_VERIFICATION.uiText(getLocale()),
                 TOTPHelper.isTOTPEnabled());
     }
+
 }

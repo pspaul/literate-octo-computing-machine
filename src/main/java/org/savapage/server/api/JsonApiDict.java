@@ -107,6 +107,7 @@ import org.savapage.server.api.request.ReqUserTOTPEnable;
 import org.savapage.server.api.request.ReqUserTOTPReplace;
 import org.savapage.server.api.request.ReqUserTOTPSendRecoveryCode;
 import org.savapage.server.api.request.ReqUserTOTPTelegramEnable;
+import org.savapage.server.api.request.ReqUserTestTelegramID;
 import org.savapage.server.api.request.ReqUserUuidReplace;
 
 /**
@@ -347,6 +348,8 @@ public final class JsonApiDict {
     public static final String REQ_USER_SET = "user-set";
     public static final String REQ_USER_SET_TELEGRAM_ID =
             "user-set-telegram-id";
+    public static final String REQ_USER_TEST_TELEGRAM_ID =
+            "user-test-telegram-id";
     public static final String REQ_USER_SOURCE_GROUPS = "user-source-groups";
 
     public static final String REQ_USERHOME_CLEAN = "userhome-clean";
@@ -1235,6 +1238,9 @@ public final class JsonApiDict {
 
         usr(REQ_USER_SET_TELEGRAM_ID, ReqUserSetTelegramID.class, DbClaim.READ,
                 DbAccess.YES);
+
+        usr(REQ_USER_TEST_TELEGRAM_ID, ReqUserTestTelegramID.class,
+                DbClaim.READ, DbAccess.YES);
 
         usr(REQ_USER_DELEGATE_ACCOUNTS_PREFERRED,
                 ReqUserDelegateAccountsPreferred.class, DbClaim.READ,

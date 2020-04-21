@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -44,6 +47,7 @@ import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
+import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
@@ -51,6 +55,7 @@ import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.ext.oauth.OAuthClientPlugin;
 import org.savapage.ext.oauth.OAuthProviderEnum;
+import org.savapage.ext.telegram.TelegramHelper;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.ext.ServerPluginHelper;
@@ -90,6 +95,18 @@ public final class Login extends AbstractPage {
                 availableLocales.size() > 1);
 
         //
+        helper.addLabel("header-2-step", LabelEnum.TWO_STEP_VERIFICATION);
+
+        final String ttKey;
+        if (TelegramHelper.isTOTPEnabled()) {
+            ttKey = "tooltip-totp-telegram";
+        } else {
+            ttKey = "tooltip-totp";
+        }
+        final TooltipPanel tooltip = new TooltipPanel("tooltip-totp");
+        tooltip.populate(helper.localized(ttKey), true);
+        add(tooltip);
+
         helper.encloseLabel("btn-login-totp-send",
                 HtmlButtonEnum.SEND.uiText(getLocale()),
                 this.getWebAppTypeEnum(parameters) == WebAppTypeEnum.USER);

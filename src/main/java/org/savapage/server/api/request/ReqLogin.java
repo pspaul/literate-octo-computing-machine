@@ -1601,11 +1601,7 @@ public final class ReqLogin extends ApiRequestMixin {
             final User userDb) {
 
         if (authMode == UserAuthModeEnum.OAUTH
-                || !ConfigManager.instance().isConfigValue(Key.USER_TOTP_ENABLE)
-                || !USER_SERVICE.isUserAttrValue(userDb,
-                        UserAttrEnum.TOTP_ENABLE)
-                || StringUtils.isBlank(USER_SERVICE.getUserAttrValue(userDb,
-                        UserAttrEnum.TOTP_SECRET))) {
+                || !TOTPHelper.isTOTPActivated(userDb)) {
             return false;
         }
 

@@ -1,12 +1,12 @@
-/*! SavaPage jQuery Mobile Admin Web App | (c) 2011-2020 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Web App | © 2020 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -845,7 +845,7 @@
                 //
                 'auth-mode.card-local', 'auth-mode.card-local.show', 'auth-mode.card.pin-required', 'auth-mode.card.self-association',
                 //
-                'auth-mode.yubikey', 'auth-mode.yubikey.show',
+                'auth-mode.yubikey', 'auth-mode.yubikey.show', 'user.totp.enable',
                 //
                 'user.can-change-pin', 'webapp.user.auth.trust-cliapp-auth']);
 
