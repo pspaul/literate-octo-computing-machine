@@ -16,7 +16,7 @@ the License, or (at your option) any later version.
 </wicket:remove>
 
 <div data-role="header" data-theme="b">
-	<h1 wicket:id="header"/>
+	<h1 wicket:id="header" />
 </div>
 
 <div class="ui-content">
@@ -28,12 +28,12 @@ the License, or (at your option) any later version.
 	<div id="page-user-totp-content" />
 
 	<div>
-		<button id="user-totp-replace-popup-btn"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh"
-			wicket:id="button-replace" />
-
 		<a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
 			data-rel="back" data-direction="reverse" wicket:id="button-back" />
+
+		<button id="user-totp-replace-popup-btn"
+			class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-refresh"
+			wicket:id="button-replace" />
 	</div>
 
 </div>

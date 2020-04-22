@@ -1606,7 +1606,7 @@ public final class ReqLogin extends ApiRequestMixin {
         }
 
         try {
-            TOTPHelper.sendCodeToTelegram(USER_SERVICE, userDb);
+            TOTPHelper.sendCodeToTelegram(userDb);
         } catch (IOException e) {
             LOGGER.warn("Sending TOTP code to Telegram ID of User [{}] failed.",
                     userDb.getUserId());
@@ -1654,10 +1654,10 @@ public final class ReqLogin extends ApiRequestMixin {
         final boolean isAuthenticated;
 
         if (StringUtils.isBlank(code)) {
-            isAuthenticated = TOTPHelper.verifyRecoveryCode(USER_SERVICE,
-                    userDb, codeRecovery);
+            isAuthenticated =
+                    TOTPHelper.verifyRecoveryCode(userDb, codeRecovery);
         } else {
-            isAuthenticated = TOTPHelper.verifyCode(USER_SERVICE, userDb, code);
+            isAuthenticated = TOTPHelper.verifyCode(userDb, code);
         }
 
         if (isAuthenticated) {
