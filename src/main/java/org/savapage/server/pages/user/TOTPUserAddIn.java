@@ -69,9 +69,14 @@ public final class TOTPUserAddIn extends AbstractAuthPage {
     private static final String WID_TOTP_ENABLE_TXT = "totp-enable-txt";
 
     /** */
+    private static final String WID_TOTP_TELEGRAM_ENABLE_SPAN =
+            "totp-telegram-enable-span";
+    /** */
     private static final String WID_TOTP_TELEGRAM_ENABLE =
             "totp-telegram-enable";
 
+    /** */
+    private static final String WID_QR_CODE_SPAN = "qr-code-span";
     /** */
     private static final String WID_QR_CODE = "qr-code";
     /** */
@@ -97,7 +102,7 @@ public final class TOTPUserAddIn extends AbstractAuthPage {
                 UserAttrEnum.TOTP_SECRET);
 
         final TOTPAuthenticator.Builder builder;
-        final boolean enabled;
+        final boolean totpEnabled;
         if (secretKey == null) {
             builder = TOTPAuthenticator.buildKey();
             secretKey = builder.getKey();
@@ -108,9 +113,9 @@ public final class TOTPUserAddIn extends AbstractAuthPage {
                 if (doTransaction) {
                     ctx.beginTransaction();
                 }
-                enabled = false;
+                totpEnabled = false;
                 USER_SERVICE.setUserAttrValue(jpaUser, UserAttrEnum.TOTP_ENABLE,
-                        enabled);
+                        totpEnabled);
                 USER_SERVICE.setUserAttrValue(jpaUser, UserAttrEnum.TOTP_SECRET,
                         CryptoUser.encryptUserAttr(jpaUser.getId(), secretKey));
                 if (doTransaction) {
@@ -122,7 +127,7 @@ public final class TOTPUserAddIn extends AbstractAuthPage {
                 }
             }
         } else {
-            enabled = USER_SERVICE.isUserAttrValue(jpaUser,
+            totpEnabled = USER_SERVICE.isUserAttrValue(jpaUser,
                     UserAttrEnum.TOTP_ENABLE);
             builder = new TOTPAuthenticator.Builder(secretKey);
         }
@@ -152,21 +157,32 @@ public final class TOTPUserAddIn extends AbstractAuthPage {
         }
 
         helper.addLabel(WID_TOTP_ENABLE_TXT, AdverbEnum.ENABLED);
-        helper.addCheckbox(WID_TOTP_ENABLE, enabled);
+        helper.addCheckbox(WID_TOTP_ENABLE, totpEnabled);
 
         //
         final boolean telegram = TelegramHelper.isTOTPEnabled()
                 && StringUtils.isNotBlank(USER_SERVICE.getUserAttrValue(jpaUser,
                         UserAttrEnum.EXT_TELEGRAM_ID));
 
+        final boolean telegramEnabled;
+
         if (telegram) {
-            helper.addCheckbox(WID_TOTP_TELEGRAM_ENABLE,
-                    USER_SERVICE.isUserAttrValue(jpaUser,
-                            UserAttrEnum.EXT_TELEGRAM_TOTP_ENABLE));
+            telegramEnabled = USER_SERVICE.isUserAttrValue(jpaUser,
+                    UserAttrEnum.EXT_TELEGRAM_TOTP_ENABLE);
+
+            helper.addCheckbox(WID_TOTP_TELEGRAM_ENABLE, telegramEnabled);
+
+            helper.addTransparantInvisible(WID_TOTP_TELEGRAM_ENABLE_SPAN,
+                    !totpEnabled);
+
         } else {
+            telegramEnabled = false;
             helper.discloseLabel(WID_TOTP_TELEGRAM_ENABLE);
         }
 
+        //
+        helper.addTransparantInvisible(WID_QR_CODE_SPAN,
+                !totpEnabled || telegramEnabled);
     }
 
     @Override

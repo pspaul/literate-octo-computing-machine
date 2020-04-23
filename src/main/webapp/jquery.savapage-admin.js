@@ -924,6 +924,12 @@
                 _saveConfigProps(props);
             };
 
+            _view.pages.admin.onApplyTelegram = function() {
+                var props = {};
+                _fillConfigPropsYN(props, ['ext.telegram.enable']);
+                _saveConfigProps(props);
+            };
+
             _view.pages.admin.onCreateUser = function() {
                 var res = _api.call({
                     request : 'user-init-internal'

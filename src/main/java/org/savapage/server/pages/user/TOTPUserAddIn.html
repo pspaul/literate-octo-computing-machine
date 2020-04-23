@@ -15,26 +15,31 @@ the License, or (at your option) any later version.
 -->
 </wicket:remove>
 
-<a wicket:id="qr-code-uri"> <img
-		style="display: block; margin-left: auto; margin-right: auto;" src=""
-		wicket:id="qr-code" /></a>
+<span wicket:id="qr-code-span" id="sp-user-totp-qr-code"> <a
+	wicket:id="qr-code-uri"> <img
+			style="display: block; margin-left: auto; margin-right: auto;" src=""
+			wicket:id="qr-code" /></a>
+	<center>
+		<small class="s-txt-info"> <wicket:message key="scan-with-app" /></small>
+	</center></span>
 
-<center>
-	<label for="sp-user-totp-enable-chb" wicket:id="totp-enable-txt" />
-	<input data-mini="true"
-		type="checkbox" id="sp-user-totp-enable-chb" value="0"
-		wicket:id="totp-enable" />
+<br />
 
-	<wicket:enclosure child="totp-telegram-enable">
-		<label for="sp-user-totp-telegram-enable-chb">
+<label for="sp-user-totp-enable-chb" wicket:id="totp-enable-txt" />
+<input type="checkbox" id="sp-user-totp-enable-chb" value="0"
+	wicket:id="totp-enable" />
+
+
+<wicket:enclosure child="totp-telegram-enable">
+	<span wicket:id="totp-telegram-enable-span"
+		id="sp-user-totp-telegram-enable-span"><label
+			for="sp-user-totp-telegram-enable-chb">
 			<wicket:message key="send-code-to-telegram" />
-		</label>
-		<input data-mini="true"
-			type="checkbox" id="sp-user-totp-telegram-enable-chb" value="0"
-			wicket:id="totp-telegram-enable" />
-	</wicket:enclosure>
+		</label> <input data-mini="true" type="checkbox"
+			id="sp-user-totp-telegram-enable-chb" value="0"
+			wicket:id="totp-telegram-enable" /> </span>
+</wicket:enclosure>
 
-</center>
 <br />
 
 </html>

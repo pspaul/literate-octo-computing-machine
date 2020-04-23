@@ -1,12 +1,12 @@
-/*! SavaPage jQuery Mobile User Web App | (c) 2011-2020 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile User Web App | (c) 2020 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1790,10 +1790,16 @@
         function PageTOTPUser(_i18n, _view, _model, _api) {
             var _pageId = '#page-user-totp',
                 _page = new _ns.Page(_i18n, _view, _pageId, 'TOTPUser'),
-                _self = _ns.derive(_page);
+                _self = _ns.derive(_page),
+            //
+                _m2v = function() {
+                var isEnabled = $('#sp-user-totp-enable-chb').is(':checked'),
+                    isTelegram = $('#sp-user-totp-telegram-enable-chb').is(':checked');
+                _view.visible($('#sp-user-totp-qr-code'), isEnabled && !isTelegram);
+                _view.visible($('#sp-user-totp-telegram-enable-span'), isEnabled);
+            };
 
             $(_pageId).on('pagecreate', function(event) {
-
                 $(this).on('click', '#user-totp-replace-popup-btn', null, function() {
                     $('#user-totp-replace-popup').popup('open', {
                         positionTo : $(this)
@@ -1806,6 +1812,7 @@
                     $('#user-totp-replace-popup').popup('close');
                     $('#page-user-totp-content').html(_view.getUserPageHtml('TOTPUserAddIn'));
                     $(_pageId).enhanceWithin();
+                    _m2v();
                 }).on('change', "input:checkbox[id='sp-user-totp-enable-chb']", null, function(e) {
                     _view.showApiMsg(_api.call({
                         'request' : 'user-totp-enable',
@@ -1813,6 +1820,7 @@
                             'enabled' : $(this).is(':checked')
                         })
                     }));
+                    _m2v();
                 }).on('change', "input:checkbox[id='sp-user-totp-telegram-enable-chb']", null, function(e) {
                     _view.showApiMsg(_api.call({
                         'request' : 'user-totp-telegram-enable',
@@ -1820,8 +1828,8 @@
                             'enabled' : $(this).is(':checked')
                         })
                     }));
+                    _m2v();
                 });
-
             });
             return _self;
         }

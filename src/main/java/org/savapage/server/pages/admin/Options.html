@@ -2013,6 +2013,30 @@ the License, or (at your option) any later version.
 					</li>
 				</ul>
 
+				<ul data-role="listview" data-inset="true">
+					<li>
+						<h3>Telegram Messaging</h3>
+						<div wicket:id="sect-telegram">
+							<fieldset data-role="controlgroup" data-type="vertical">
+								<label for="" wicket:id="telegram-messaging-label" />
+								<input type="checkbox" id="" value="0"
+									wicket:id="telegram-messaging" />
+							</fieldset>
+						</div>
+						<small class="sp-txt-wrap">Refer to the User Manual for
+							information on how to configure this function.</small>
+					</li>
+					<wicket:enclosure child="btn-apply-telegram">
+						<li>
+							<div>
+								<button id="apply-telegram"
+									class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+									wicket:id="btn-apply-telegram" />
+							</div>
+						</li>
+					</wicket:enclosure>
+				</ul>
+
 				<wicket:enclosure child="btn-pagometer-reset">
 					<ul data-role="listview" data-inset="true">
 						<li>

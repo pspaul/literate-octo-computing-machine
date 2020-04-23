@@ -1,12 +1,12 @@
-/*! SavaPage jQuery Mobile Admin Pages | (c) 2011-2020 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Pages | (c) 2020 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -2650,6 +2650,11 @@
 
                 $(this).on('click', '#apply-print-in', null, function() {
                     _self.onApplyPrintIn();
+                    return false;
+                });
+
+                $(this).on('click', '#apply-telegram', null, function() {
+                    _self.onApplyTelegram();
                     return false;
                 });
 

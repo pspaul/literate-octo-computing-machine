@@ -1094,6 +1094,13 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.SYS_DEFAULT_PAPER_SIZE,
                 IConfigProp.PAPERSIZE_V_A4);
 
+
+        //
+        tagCheckbox("telegram-messaging", IConfigProp.Key.EXT_TELEGRAM_ENABLE);
+        helper.addModifyLabelAttr("telegram-messaging-label",
+                AdverbEnum.ENABLED.uiText(getLocale()), MarkupHelper.ATTR_FOR,
+                cm.getConfigKey(Key.EXT_TELEGRAM_ENABLE));
+
         //
         this.setReadOnlyAccess(helper, isReadOnlyAccess);
 
@@ -1396,7 +1403,7 @@ public final class Options extends AbstractAdminPage {
                 "sect-papercut", "sect-gcp", "sect-mail-print",
                 "sect-web-print", "sect-internet-print", "sect-proxy-print",
                 "sect-eco-print", "sect-financial", "sect-backups",
-                "sect-advanced" }) {
+                "sect-telegram", "sect-advanced" }) {
             helper.addTransparantDisabled(wicketId, readonly);
         }
 
@@ -1416,7 +1423,7 @@ public final class Options extends AbstractAdminPage {
                 "btn-admin-pw-reset", "btn-jmx-pw-reset", "btn-apply-locale",
                 "btn-apply-papersize", "btn-apply-report-fontfamily",
                 "btn-apply-converters", "btn-apply-print-in",
-                "btn-pagometer-reset" }) {
+                "btn-apply-telegram", "btn-pagometer-reset" }) {
             if (readonly) {
                 helper.discloseLabel(wicketId);
             } else {
