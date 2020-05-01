@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -29,14 +32,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.savapage.core.SpException;
+import org.savapage.core.cometd.AdminPublisher;
+import org.savapage.core.cometd.PubLevelEnum;
+import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.PullPushEnum;
 import org.savapage.core.config.validator.ValidationResult;
 import org.savapage.core.dao.PrinterDao;
+import org.savapage.core.ipp.IppSyntaxException;
+import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.jpa.User;
+import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.SOfficeService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketLabelCache;
@@ -70,6 +80,10 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
     private static final PaperCutService PAPERCUT_SERVICE =
             ServiceContext.getServiceFactory().getPaperCutService();
 
+    /** */
+    private static final ProxyPrintService PROXYPRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
+
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
@@ -91,6 +105,9 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
         boolean isSmartSchoolUpdate = false;
         boolean isSOfficeUpdate = false;
         boolean isSOfficeTrigger = false;
+
+        boolean isCUPSNotifierUpdate = false;
+        PullPushEnum cupsNotifierMethodPrv = null;
 
         boolean isValid = true;
         int nJobsRescheduled = 0;
@@ -153,7 +170,12 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                     break;
                 case WEB_PRINT_ENABLE:
                     isSOfficeTrigger = true;
+                case CUPS_NOTIFICATION_METHOD:
+                    isCUPSNotifierUpdate = true;
+                    cupsNotifierMethodPrv =
+                            cm.getConfigEnum(PullPushEnum.class, configKey);
                     break;
+
                 default:
                     break;
                 }
@@ -252,6 +274,8 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                     msgKey = "msg-config-props-applied-smartschool-stopped";
                 }
 
+            } else if (isCUPSNotifierUpdate) {
+                evaluateCUPSNotifierMethod(cm, cupsNotifierMethodPrv);
             } else if (isSOfficeTrigger) {
                 evaluateSOfficeService(cm, false);
             } else if (isSOfficeUpdate) {
@@ -292,6 +316,45 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
 
         } else {
             SOFFICE_SERVICE.shutdown();
+        }
+    }
+
+    /**
+     *
+     * @param cm
+     *            The {@link ConfigManager}.
+     * @param valuePrevious
+     *            Previous value.
+     * @throws IOException
+     *             When IPP error.
+     */
+    private void evaluateCUPSNotifierMethod(final ConfigManager cm,
+            final PullPushEnum valuePrevious) throws IOException {
+
+        final PullPushEnum curr =
+                cm.getConfigEnum(PullPushEnum.class, Key.CUPS_NOTIFICATION_METHOD);
+
+        if (valuePrevious == curr) {
+            return;
+        }
+
+        try {
+            if (curr == PullPushEnum.PULL) {
+                PROXYPRINT_SERVICE.stopCUPSEventSubscription();
+                SpJobScheduler.pauseCUPSPushEventRenewal();
+            } else {
+                PROXYPRINT_SERVICE.startCUPSPushEventSubscription();
+                SpJobScheduler.resumeCUPSPushEventRenewal();
+            }
+
+            AdminPublisher.instance().publish(PubTopicEnum.IPP,
+                    PubLevelEnum.INFO,
+                    this.localize(ConfigManager.getDefaultLocale(),
+                            "msg-cups-notifier-method-changed",
+                            curr.toString()));
+
+        } catch (IppConnectException | IppSyntaxException e) {
+            throw new IOException(e.getMessage(), e);
         }
     }
 

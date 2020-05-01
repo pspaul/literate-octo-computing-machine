@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -237,8 +237,8 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     }
 
     /**
-     * @return <code>String</code> containing the IP address of the client
-     *         that sent the request.
+     * @return <code>String</code> containing the IP address of the client that
+     *         sent the request.
      */
     protected final String getClientIP() {
         return WebAppHelper.getClientIP(RequestCycle.get().getRequest());
@@ -323,8 +323,20 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      * @return The message text.
      */
     protected final String localize(final String key) {
-        return Messages.getMessage(getClass(), ServiceContext.getLocale(), key,
-                (String[]) null);
+        return this.localize(ServiceContext.getLocale(), key);
+    }
+
+    /**
+     * Return a localized message string.
+     *
+     * @param locale
+     *            Locale.
+     * @param key
+     *            The key of the message.
+     * @return The message text.
+     */
+    protected final String localize(final Locale locale, final String key) {
+        return Messages.getMessage(getClass(), locale, key, (String[]) null);
     }
 
     /**
@@ -333,11 +345,28 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      *
      * @param key
      *            The key of the message.
+     * @param args
+     *            Message placeholder arguments.
      * @return The message text.
      */
     protected final String localize(final String key, final String... args) {
-        return Messages.getMessage(getClass(), ServiceContext.getLocale(), key,
-                args);
+        return localize(ServiceContext.getLocale(), key, args);
+    }
+
+    /**
+     * Return a localized message string.
+     *
+     * @param locale
+     *            Locale.
+     * @param key
+     *            The key of the message.
+     * @param args
+     *            Message placeholder arguments.
+     * @return The message text.
+     */
+    protected final String localize(final Locale locale, final String key,
+            final String... args) {
+        return Messages.getMessage(getClass(), locale, key, args);
     }
 
     /**

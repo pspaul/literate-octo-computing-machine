@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -30,18 +33,18 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 public class AdminHandler {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AdminHandler.class);
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(AdminHandler.class);
 
-    /**
-    *
-    */
-    private static final ProxyPrintService PROXY_PRINT_SERVICE = ServiceContext
-            .getServiceFactory().getProxyPrintService();
+    /** */
+    private static final ProxyPrintService PROXY_PRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     /**
      *
@@ -50,8 +53,9 @@ public class AdminHandler {
     public int cupsSubscriptionStart() {
         int rc = 1;
         try {
-            PROXY_PRINT_SERVICE.startSubscription(null);
-            SpJobScheduler.resumeCupSubsRenew();
+            if (PROXY_PRINT_SERVICE.startCUPSPushEventSubscription()) {
+                SpJobScheduler.resumeCUPSPushEventRenewal();
+            }
             rc = 0;
         } catch (Exception e) {
             if (!ConfigManager.isShutdownInProgress()) {
@@ -68,8 +72,8 @@ public class AdminHandler {
     public int cupsSubscriptionStop() {
         int rc = 1;
         try {
-            SpJobScheduler.pauseCupSubsRenew();
-            PROXY_PRINT_SERVICE.stopSubscription(null);
+            SpJobScheduler.pauseCUPSPushEventRenewal();
+            PROXY_PRINT_SERVICE.stopCUPSEventSubscription();
             rc = 0;
         } catch (Exception e) {
             if (!ConfigManager.isShutdownInProgress()) {
