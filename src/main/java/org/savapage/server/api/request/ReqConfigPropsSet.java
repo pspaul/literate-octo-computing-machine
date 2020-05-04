@@ -170,7 +170,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                     break;
                 case WEB_PRINT_ENABLE:
                     isSOfficeTrigger = true;
-                case CUPS_NOTIFICATION_METHOD:
+                case CUPS_IPP_NOTIFICATION_METHOD:
                     isCUPSNotifierUpdate = true;
                     cupsNotifierMethodPrv =
                             cm.getConfigEnum(PullPushEnum.class, configKey);
@@ -331,8 +331,8 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
     private void evaluateCUPSNotifierMethod(final ConfigManager cm,
             final PullPushEnum valuePrevious) throws IOException {
 
-        final PullPushEnum curr =
-                cm.getConfigEnum(PullPushEnum.class, Key.CUPS_NOTIFICATION_METHOD);
+        final PullPushEnum curr = cm.getConfigEnum(PullPushEnum.class,
+                Key.CUPS_IPP_NOTIFICATION_METHOD);
 
         if (valuePrevious == curr) {
             return;
