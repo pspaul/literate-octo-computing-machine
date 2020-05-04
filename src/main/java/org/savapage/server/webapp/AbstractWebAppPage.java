@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -298,12 +301,14 @@ public abstract class AbstractWebAppPage extends AbstractPage
                     + "/" + "%s" + "\");}})();";
 
     /**
-     * {@link StringHeaderItem} pattern to render initially. The %s is the
-     * initial JavaScript as defined in {@link #INITIAL_JAVASCRIPT_PATTERN}.
+     * {@link StringHeaderItem} pattern to render initially. The first %s is the
+     * SavaPage version. The second %s is the initial JavaScript as defined in
+     * {@link #INITIAL_JAVASCRIPT_PATTERN}.
      */
     private static final String INITIAL_HEADERITEM_FORMAT =
-            "\n<script type=\"text/javascript\">\n" + "/*<![CDATA[*/" + "\n"
-                    + "%s" + "\n" + "/*]]>*/" + "\n</script>\n";
+            "\n<script type=\"text/javascript\">\n" + "/* %s */\n"
+                    + "/*<![CDATA[*/" + "\n" + "%s" + "\n" + "/*]]>*/"
+                    + "\n</script>\n";
 
     /**
      * Renders tiny JavaScript snippet at the very start of the page to
@@ -394,9 +399,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
         final String javascript =
                 String.format(INITIAL_JAVASCRIPT_FORMAT, mountPath.toString());
 
-        final HeaderItem firstItem =
-                new PriorityHeaderItem(new StringHeaderItem(
-                        String.format(INITIAL_HEADERITEM_FORMAT, javascript)));
+        final HeaderItem firstItem = new PriorityHeaderItem(
+                new StringHeaderItem(String.format(INITIAL_HEADERITEM_FORMAT,
+                        ConfigManager.getAppNameVersionBuild(), javascript)));
 
         response.render(firstItem);
     }
