@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -273,7 +276,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return removeGraphics;
         }
 
-        @SuppressWarnings("unused")
         public void setRemoveGraphics(Boolean removeGraphics) {
             this.removeGraphics = removeGraphics;
         }
@@ -282,7 +284,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return ecoprint;
         }
 
-        @SuppressWarnings("unused")
         public void setEcoprint(Boolean ecoprint) {
             this.ecoprint = ecoprint;
         }
@@ -516,7 +517,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         final ConfigManager cm = ConfigManager.instance();
 
-        //
         final boolean sanitizeJobName =
                 cm.isConfigValue(Key.IPP_JOB_NAME_SPACE_TO_UNDERSCORE_ENABLE);
 
@@ -1287,13 +1287,18 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
     }
 
     /**
-     * Validates input for Copy Job ticket.
+     * Validates and corrects input for Copy Job ticket.
      *
      * @param dtoReq
      *            The user request.
      * @return {@code true} when input is valid.
      */
     private boolean validateJobTicketCopy(final DtoReq dtoReq) {
+
+        // Correct irrelevant settings for Job Ticket.
+        dtoReq.setEcoprint(Boolean.FALSE);
+        dtoReq.setArchive(Boolean.FALSE);
+        dtoReq.setRemoveGraphics(Boolean.FALSE);
 
         if (StringUtils.isBlank(dtoReq.getJobName())) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-copyjob-title-missing");
