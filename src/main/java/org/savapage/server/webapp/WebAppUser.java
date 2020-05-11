@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -70,6 +73,8 @@ import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.scribejava.core.exceptions.OAuthException;
 
 /**
  *
@@ -324,6 +329,13 @@ public final class WebAppUser extends AbstractWebAppPage {
         final OAuthUserInfo userInfo;
         try {
             userInfo = plugin.onCallBack(parms);
+        } catch (OAuthException e) {
+            /*
+             * Default ScribeJava exception. Represents a problem in the OAuth
+             * signing process.
+             */
+            LOGGER.error("{}: {}", logPfx, e.getMessage());
+            return Boolean.FALSE;
         } catch (IOException | OAuthPluginException e) {
             throw new SpException(e.getMessage());
         }
