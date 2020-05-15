@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -39,10 +42,17 @@ import org.savapage.server.pages.MarkupHelper;
  */
 public final class WebAppOAuthMsg extends AbstractWebAppMsg {
 
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 1L;
+
+    /** */
+    public static final WebAppParmEnum PARM_STATUS = WebAppParmEnum.SP_PARM_1;
+
+    /** */
+    public static final String PARM_STATUS_WARNING = "w";
+
+    /** */
+    public static final String PARM_STATUS_ERROR = "e";
 
     /**
      *
@@ -75,9 +85,17 @@ public final class WebAppOAuthMsg extends AbstractWebAppMsg {
             }
         }
 
-        messageObj.setValue(localized("warning", providerUI));
-        messageCssObj.setValue(MarkupHelper.CSS_TXT_WARN);
-        remedyObj.setValue(localized("remedy"));
+        final StringValue status = parameters.get(PARM_STATUS.parm());
+
+        if (!status.isEmpty() && status.toString().equals(PARM_STATUS_ERROR)) {
+            messageCssObj.setValue(MarkupHelper.CSS_TXT_ERROR);
+            messageObj.setValue(localized("error-header", providerUI));
+            remedyObj.setValue(localized("error-msg"));
+        } else {
+            messageCssObj.setValue(MarkupHelper.CSS_TXT_WARN);
+            messageObj.setValue(localized("warning-header", providerUI));
+            remedyObj.setValue(localized("warning-msg"));
+        }
 
         return webAppTypeRequested;
     }

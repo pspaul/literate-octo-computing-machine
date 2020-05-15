@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -43,7 +44,6 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
-import org.savapage.core.SpException;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
@@ -59,7 +59,6 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.ext.oauth.OAuthClientPlugin;
-import org.savapage.ext.oauth.OAuthPluginException;
 import org.savapage.ext.oauth.OAuthProviderEnum;
 import org.savapage.ext.oauth.OAuthUserInfo;
 import org.savapage.server.WebApp;
@@ -73,8 +72,6 @@ import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.github.scribejava.core.exceptions.OAuthException;
 
 /**
  *
@@ -226,11 +223,16 @@ public final class WebAppUser extends AbstractWebAppPage {
      *
      * @param mutableProvider
      *            The AOuth provider, or {@code null} when not found.
+     * @param isOAuthException
+     *            {@code true} if OAuth exception.
      * @return {@code null} when OAuth is <i>not</i> applicable.
      *         {@link Boolean#FALSE} when authentication failed.
      */
     private Boolean checkOAuthToken(
-            final MutableObject<OAuthProviderEnum> mutableProvider) {
+            final MutableObject<OAuthProviderEnum> mutableProvider,
+            final MutableBoolean isOAuthException) {
+
+        isOAuthException.setFalse();
 
         final Request request = this.getRequestCycle().getRequest();
 
@@ -329,15 +331,11 @@ public final class WebAppUser extends AbstractWebAppPage {
         final OAuthUserInfo userInfo;
         try {
             userInfo = plugin.onCallBack(parms);
-        } catch (OAuthException e) {
-            /*
-             * Default ScribeJava exception. Represents a problem in the OAuth
-             * signing process.
-             */
-            LOGGER.error("{}: {}", logPfx, e.getMessage());
+        } catch (Exception e) {
+            isOAuthException.setTrue();
+            LOGGER.error(String.format("%s - %s: %s",
+                    e.getClass().getSimpleName(), logPfx, e.getMessage()), e);
             return Boolean.FALSE;
-        } catch (IOException | OAuthPluginException e) {
-            throw new SpException(e.getMessage());
         }
 
         //
@@ -518,7 +516,9 @@ public final class WebAppUser extends AbstractWebAppPage {
         final MutableObject<OAuthProviderEnum> mutableProvider =
                 new MutableObject<>();
 
-        final Boolean oauth = checkOAuthToken(mutableProvider);
+        final MutableBoolean isOAuthException = new MutableBoolean(false);
+        final Boolean oauth =
+                checkOAuthToken(mutableProvider, isOAuthException);
 
         if (oauth == null) {
 
@@ -534,6 +534,13 @@ public final class WebAppUser extends AbstractWebAppPage {
             parms.set(WebAppParmEnum.SP_LOGIN_OAUTH.parm(),
                     mutableProvider.toString());
 
+            if (isOAuthException.isTrue()) {
+                parms.set(WebAppOAuthMsg.PARM_STATUS.parm(),
+                        WebAppOAuthMsg.PARM_STATUS_ERROR);
+            } else {
+                parms.set(WebAppOAuthMsg.PARM_STATUS.parm(),
+                        WebAppOAuthMsg.PARM_STATUS_WARNING);
+            }
             setResponsePage(WebAppOAuthMsg.class, parms);
             return;
         }
