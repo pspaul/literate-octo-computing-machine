@@ -1094,7 +1094,6 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.SYS_DEFAULT_PAPER_SIZE,
                 IConfigProp.PAPERSIZE_V_A4);
 
-
         //
         tagCheckbox("telegram-messaging", IConfigProp.Key.EXT_TELEGRAM_ENABLE);
         helper.addModifyLabelAttr("telegram-messaging-label",
@@ -1502,7 +1501,9 @@ public final class Options extends AbstractAdminPage {
 
         helper.addLabel("ldap-google-cloud-port-label",
                 this.getString("ldap-port"));
+
         helper.addModifyLabelAttr("ldap-google-cloud-port",
-                MarkupHelper.ATTR_VALUE, GoogleLdapUserSource.LDAP_PORT);
+                MarkupHelper.ATTR_VALUE,
+                GoogleLdapUserSource.getLdapPortValue());
     }
 }
