@@ -138,12 +138,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
     /**
      * .
      */
-    static final String JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION =
-            "jquery.savapage-page-print-delegation.js";
-
-    /**
-     * .
-     */
     static final String CSS_FILE_JQUERY_MOBILE_THEME_ICONS =
             "jquery.mobile.icons.min.css";
 

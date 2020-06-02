@@ -1,27 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-	<!-- 
-    +=========================================================================+ 
-    | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein........| 
-    |.........................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify .......|
-    | it under the terms of the GNU Affero General Public License as .........|
-    | published by the Free Software Foundation, either version 3 of .........|
-    | the License, or (at your option) any later version. ....................|
-    +=========================================================================+ 
-    -->
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
 </wicket:remove>
+
+<wicket:enclosure child="canvas-color">
+	<div data-role="header" id="header-browser" class="ui-mini"
+		data-position="fixed">
+		<table>
+			<tr>
+				<td>
+					<div data-role="controlgroup" data-type="horizontal"
+						style="margin: 0px; padding: 0px;">
+
+						<label for="sp-canvas-drawing-mode-select">
+							<span class="ui-icon-arrow-u-r ui-btn-icon-notext sp-inline-icon" />
+						</label>
+						<input type="radio" name="sp-canvas-drawing-mode"
+							id="sp-canvas-drawing-mode-select" value="select" />
+
+						<label for="sp-canvas-drawing-mode-free">
+							<span class="ui-icon-edit ui-btn-icon-notext sp-inline-icon" />
+						</label>
+						<input type="radio" name="sp-canvas-drawing-mode"
+							id="sp-canvas-drawing-mode-free" value="free" checked="checked" />
+					</div>
+				</td>
+				<td wicket:id="canvas-color" />
+				<td>
+					<input class="ui-mini" type="color" style="width: 50px;"
+						value="#000000" id="sp-canvas-drawing-color" />
+				</td>
+				<td>
+					<input class="ui-mini" type="number" style="width: 50px;" min="1"
+						value="1" id="sp-canvas-drawing-width" />
+				</td>
+				<td>
+					<button id="sp-canvas-drawing-clear-all"
+						class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete" />
+					<button id="sp-canvas-drawing-save"
+						class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-check" />
+				</td>
+			</tr>
+		</table>
+	</div>
+</wicket:enclosure>
+
 <div class="ui-content" id="content-browser">
 	<div id="page-browser-images" class="image_reel">
-
 		<wicket:remove>
 			<!-- Cache of 3 images -->
 		</wicket:remove>
 		<img onload="org.savapage.removeSpinnerL(this)" src="" />
 		<img onload="org.savapage.removeSpinnerL(this)" src="" />
 		<img onload="org.savapage.removeSpinnerL(this)" src="" />
+
+		<wicket:enclosure child="canvas-browser-img">
+			<div id="sp-canvas-browser-img-div"
+				style="margin-left: auto; margin-right: auto;">
+				<canvas wicket:id="canvas-browser-img" id="sp-canvas-browser-img" />
+			</div>
+		</wicket:enclosure>
 	</div>
 </div>
 
@@ -59,5 +109,4 @@ THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />
-
 </html>

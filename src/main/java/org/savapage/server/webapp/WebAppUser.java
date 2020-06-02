@@ -88,6 +88,14 @@ public final class WebAppUser extends AbstractWebAppPage {
     private final static String WICKET_ID_FILE_UPLOAD_FONTFAMILY_OPT =
             "file-upload-fontfamily-options";
 
+    private static final String JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION =
+            "jquery.savapage-page-print-delegation.js";
+
+    private static final String JS_FILE_FABRIC_JS = "fabricjs/fabric.js";
+
+    private static final String JS_FILE_JQUERY_SAVAPAGE_CANVAS_EDITOR =
+            "jquery.savapage-canvas-editor.js";
+
     /**
      *
      */
@@ -113,6 +121,14 @@ public final class WebAppUser extends AbstractWebAppPage {
     @Override
     protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
+
+        if (ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_USER_PAGE_BROWSER_CANVAS_ENABLE)) {
+            renderJs(response,
+                    String.format("%s%s", JS_FILE_FABRIC_JS, nocache));
+            renderJs(response, String.format("%s%s",
+                    JS_FILE_JQUERY_SAVAPAGE_CANVAS_EDITOR, nocache));
+        }
         renderJs(response, String.format("%s%s",
                 JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION, nocache));
         renderJs(response,

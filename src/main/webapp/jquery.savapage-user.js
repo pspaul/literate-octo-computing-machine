@@ -590,11 +590,136 @@
          */
         function PageBrowser(_i18n, _view, _model) {
             var _this = this,
-                cssClassRotated = 'sp-img-rotated',
+                _cssClassRotated = 'sp-img-rotated',
+                _idCanvasImgDiv = 'sp-canvas-browser-img-div',
+                _idCanvasImg = 'sp-canvas-browser-img',
+                _imgCanvasEditor,
+                _imgScrollBarWidth,
+
+            /** */
+                _initHtmlCanvasEditor = function() {
+
+                _imgCanvasEditor = new _ns.HtmlCanvasEditor(_idCanvasImg);
+                _imgCanvasEditor.setFreeDrawingBrush('Pencil', $('#sp-canvas-drawing-color').val(), 1);
+
+                $("#sp-canvas-drawing-clear-all").click(function() {
+                    _imgCanvasEditor.clear();
+                    _positionImgCanvas();
+                });
+
+                $("#sp-canvas-drawing-save").click(function() {
+                    alert(_imgCanvasEditor.toSVG());
+                    // TODO
+                });
+
+                $('input[name=sp-canvas-drawing-mode]:radio').change(function(event) {
+                    var mode = _view.getRadioValue('sp-canvas-drawing-mode');
+                    _imgCanvasEditor.enableDrawingMode(mode === 'free');
+                });
+                $('#sp-canvas-drawing-color').on('input', function() {
+                    _imgCanvasEditor.setBrushColor($(this).val());
+                });
+
+                $('#sp-canvas-drawing-width').on('input', function() {
+                    _imgCanvasEditor.setBrushWidth(parseInt($(this).val(), 10));
+                });
+
+                $('#page-browser-images').addClass('sp-overflow-scroll');
+                _imgScrollBarWidth = _view.getOverflowScrollBarWidth();
+            },
+
+            /** */
+                _getMaxImgHeight = function() {
+                var yContentPadding,
+                    yImagePadding,
+                    yHeader,
+                    yFooter,
+                    yImage,
+                    yImageScrollbar = 0,
+                    yViewPort;
+                //+------------------------------------------- Viewport
+                //| (yContentPadding)
+                //| +---------------------------------+ #header-browser
+                // (optional)
+                //| | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | (yHeader)
+                //| +---------------------------------+
+                //| (yContentPadding)
+                //| +---------------------------------+ #content-browser
+                //| | (yImagePadding)                 |
+                //| | +-----------------------------+ #page-browser-images
+                //| | |xxxxxxxxxxxxxxxxxxxxxxxxxxx  | |
+                //| | |xxxxxxxxxxxxxxxxxxxxxxxxxxx  |
+                //| | |...........................  | (yImage)
+                //| | |xxxxxxxxxxxxxxxxxxxxxxxxxxx  |
+                //| | |xxxxxxxxxxxxxxxxxxxxxxxxxxx  | |
+                //| | +----------------------------+  |
+                //| | (yImageScrollbar)  (optional)   |
+                //| | (yImagePadding)                 |
+                //| +---------------------------------+
+                //| (yContentPadding)
+                //| +---------------------------------+ #footer-browser
+                //| | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | (yFooter)
+                //| +---------------------------------+
+                //| (yContentPadding)
+                //+-------------------------------------------
+                yViewPort = _view.getViewportHeight();
+
+                if (_imgCanvasEditor) {
+                    yContentPadding = $('#header-browser').position().top;
+                    yHeader = $('#header-browser').outerHeight(true);
+                    yImageScrollbar = _imgScrollBarWidth;
+                } else {
+                    yHeader = 0;
+                    yContentPadding = $('#content-browser').position().top;
+                }
+                yImagePadding = $('#page-browser-images').position().top - $('#content-browser').position().top;
+                yFooter = $('#footer-browser').outerHeight(true);
+
+                yImage = yViewPort - 3 * yContentPadding - yFooter - 2 * yImagePadding - yImageScrollbar - yHeader;
+
+                return yImage;
+            },
+
+            /** */
+                _positionImgCanvas = function() {
+                var selImg,
+                    selDiv,
+                    w,
+                    h,
+                    hMax;
+                if (_imgCanvasEditor) {
+                    selImg = $('#page-browser-images .active');
+                    w = selImg.get(0).naturalWidth;
+                    if (w === 0) {
+                        $.mobile.loading("show");
+                        // Image not loaded yet, try again: RECURSE !!
+                        window.setTimeout(_positionImgCanvas, 500);
+                    } else {
+                        $.mobile.loading("hide");
+                        hMax = _getMaxImgHeight();
+                        h = selImg.get(0).naturalHeight;
+
+                        _imgCanvasEditor.setWidth(w);
+                        _imgCanvasEditor.setHeight(h);
+                        _imgCanvasEditor.setBackgroundImage(selImg.attr('src'));
+
+                        _view.visible(selImg, false);
+                        selDiv = $('#' + _idCanvasImgDiv);
+                        selDiv.width(w);
+                        if (h < hMax) {
+                            selDiv.height(h);
+                        } else {
+                            selDiv.height(hMax);
+                        }
+                        _view.visible(selDiv, true);
+                    }
+                }
+            },
 
             /** */
                 _setSliderValue = function(value) {
                 $('#browser-slider').val(value).slider("refresh").trigger('change');
+                _positionImgCanvas();
             },
 
             /** */
@@ -663,51 +788,19 @@
              * as portrait and adjusted to the viewport height.
              */
             this.adjustImages = function() {
-                var yContentPadding,
-                    yImagePadding,
-                    yFooter,
-                    yImage,
-                    yViewPort;
+                var yImage;
 
                 if ($('#page-browser').children().length === 0) {
-                    // not loaded
                     return;
                 }
                 if ($('#content-browser img').hasClass('fit_width')) {
                     return;
                 }
 
-                //+------------------------------------------- Viewport
-                //| (yContentPadding)
-                //| +---------------------------------+ #content-browser
-                //| | (yImagePadding)                 |
-                //| | +-----------------------------+ #page-browser-images
-                //| | |xxxxxxxxxxxxxxxxxxxxxxxxxxx  | |
-                //| | |xxxxxxxxxxxxxxxxxxxxxxxxxxx  |
-                //| | |...........................  | (yImage)
-                //| | |xxxxxxxxxxxxxxxxxxxxxxxxxxx  |
-                //| | |xxxxxxxxxxxxxxxxxxxxxxxxxxx  | |
-                //| | +----------------------------+  |
-                //| | (yImagePadding)                 |
-                //| +---------------------------------+
-                //| (yContentPadding)
-                //| +---------------------------------+ #footer-browser
-                //| | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | (yFooter)
-                //| +---------------------------------+
-                //| (yContentPadding)
-                //+-------------------------------------------
-
-                // vpWidth = _view.getViewportWidth();
-                yViewPort = _view.getViewportHeight();
-
-                yContentPadding = $('#content-browser').position().top;
-                yImagePadding = $('#page-browser-images').position().top - $('#content-browser').position().top;
-                yFooter = $('#footer-browser').outerHeight(true);
-
-                yImage = yViewPort - 3 * yContentPadding - yFooter - 2 * yImagePadding;
+                yImage = _getMaxImgHeight();
 
                 $('#content-browser img').each(function() {
-                    if ($(this).hasClass(cssClassRotated)) {
+                    if ($(this).hasClass(_cssClassRotated)) {
                         // $(this).css({'width' : widthImg + 'px'});
                         $(this).css({
                             'height' : yImage + 'px'
@@ -820,9 +913,9 @@
                         imgWlk.attr('id', idImgBase + i);
 
                         if (_model.getPageRotate(iPageArray[i])) {
-                            imgWlk.addClass(cssClassRotated);
+                            imgWlk.addClass(_cssClassRotated);
                         } else {
-                            imgWlk.removeClass(cssClassRotated);
+                            imgWlk.removeClass(_cssClassRotated);
                         }
 
                         urlArray[i] = url;
@@ -931,6 +1024,10 @@
 
             $('#page-browser').on('pagecreate', function(event) {
 
+                if ($('#' + _idCanvasImgDiv).length > 0) {
+                    _initHtmlCanvasEditor();
+                }
+
                 _this.setImages();
 
                 $('.image_reel img').mousedown(function(e) {
@@ -939,11 +1036,14 @@
 
                 $(window).resize(function() {
                     _view.pages.pagebrowser.adjustImages();
+                    _positionImgCanvas();
                 });
+
                 // Show first image
                 $(".image_reel img:first").addClass("active");
+                _positionImgCanvas();
 
-                $("#browser-slider").change(function() {
+                $('#browser-slider').change(function() {
                     var val,
                         image;
 
@@ -964,6 +1064,8 @@
                     // $(".image_reel img").removeClass('active');
                     image.addClass('active');
                     // detailedScanImageInBrowser();
+
+                    _positionImgCanvas();
                 });
 
                 $("#browser-nav-right").click(function() {
@@ -976,40 +1078,38 @@
                     return false;
                 });
 
-                $('#page-browser-images').on('vmousedown', null, null, function(event) {
-                    event.preventDefault();
-                }).on('swipeleft', null, null, function(event) {
-                    _navRight();
-                }).on('swiperight', null, null, function(event) {
-                    _navLeft();
-                }).on('tap', null, null, function(event) {
-                    // ----------------------------------------------------------
-                    // IMPORTANT: make sure to handle this event last!
-                    // If tap is handled before swipes, the tap event is
-                    // also
-                    // triggered in case of swipe event
-                    // ----------------------------------------------------------
-                    // So, we don't need the tolerance check any more (left
-                    // here
-                    // for documentation though)
-                    // ----------------------------------------------------------
-                    // Since this event is also triggered with swipes, use a
-                    // tolerance: 10px
-                    //
-                    // if((Math.abs(xStart - event.pageX) < 10) &&
-                    // (Math.abs(yStart -
-                    // event.pageY) < 10)) {
-                    // ----------------------------------------------------------
-                    var images = $('#content-browser img');
-                    images.toggleClass('fit_width');
-                    if (images.hasClass('fit_width')) {
-                        images.css('height', '');
-                    } else {
-                        _view.pages.pagebrowser.adjustImages();
-                    }
-                    // }
-                    return false;
-                });
+                if (!_imgCanvasEditor) {
+                    $('#page-browser-images').on('vmousedown', null, null, function(event) {
+                        event.preventDefault();
+                    }).on('swipeleft', null, null, function(event) {
+                        _navRight();
+                    }).on('swiperight', null, null, function(event) {
+                        _navLeft();
+                    }).on('tap', null, null, function(event) {
+                        // ----------------------------------------------------------
+                        // IMPORTANT: make sure to handle this event last!
+                        // If tap is handled before swipes, the tap event is
+                        // also triggered in case of swipe event
+                        // ----------------------------------------------------------
+                        // So, we don't need the tolerance check any more (left
+                        // here for documentation though)
+                        // ----------------------------------------------------------
+                        // Since this event is also triggered with swipes, use a
+                        // tolerance: 10px
+                        //
+                        // if((Math.abs(xStart - event.pageX) < 10) &&
+                        // (Math.abs(yStart - event.pageY) < 10)) {
+                        // ----------------------------------------------------------
+                        var images = $('#content-browser img');
+                        images.toggleClass('fit_width');
+                        if (images.hasClass('fit_width')) {
+                            images.css('height', '');
+                        } else {
+                            _view.pages.pagebrowser.adjustImages();
+                        }
+                        return false;
+                    });
+                }
 
                 $("#browser-delete").click(function() {
                     var selSlider = $('#browser-slider');
@@ -1037,6 +1137,7 @@
 
                 // Adjust when page is settled.
                 _this.adjustImages();
+                _positionImgCanvas();
 
             }).on("pagehide", function(event, ui) {
                 _ns.userEvent.resume();

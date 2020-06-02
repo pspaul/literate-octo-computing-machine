@@ -1,12 +1,12 @@
-/*! SavaPage jQuery Mobile Common | (c) 2011-2020 Datraverse B.V. | GNU Affero
+/*! SavaPage jQuery Mobile Common | © 2020 Datraverse B.V. | GNU Affero
  * General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -2553,6 +2553,19 @@
              */
             this.initI18n = function(language) {
                 this.language = language;
+            };
+
+            /**
+             * Create temp <div> to determine overflow scrollbar width.
+             * */
+            this.getOverflowScrollBarWidth = function() {
+                var div = $('<div style="width:50px;height:50px;overflow:hidden;position:absolute;top:-200px;left:-200px;"><div style="height:100px;"></div></div>');
+                $('body').append(div);
+                var w1 = $('div', div).innerWidth();
+                div.css('overflow-y', 'auto');
+                var w2 = $('div', div).innerWidth();
+                $(div).remove();
+                return (w1 - w2);
             };
 
             /**
