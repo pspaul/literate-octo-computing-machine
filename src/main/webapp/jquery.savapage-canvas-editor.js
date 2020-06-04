@@ -54,8 +54,29 @@
                 return _canvas.toSVG();
             };
 
+            this.loadSVG = function(svg) {
+                fabric.loadSVGFromString(svg, function(objects, options) {
+                    _canvas.add.apply(_canvas, objects);
+                    _canvas.renderAll();
+                });
+            };
+
             this.clear = function() {
                 _canvas.clear();
+            };
+
+            this.clearSelected = function() {
+                var selected = _canvas.getActiveObjects();
+                if (selected) {
+                    selected.forEachObject(function(obj) {
+                        _canvas.remove(obj);
+                    });
+                    _canvas.discardActiveObject().renderAll();
+                }
+            };
+
+            this.countObjects = function() {
+                return _canvas.getObjects().length;
             };
 
             this.deactivateAll = function() {

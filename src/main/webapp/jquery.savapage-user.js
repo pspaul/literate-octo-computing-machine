@@ -588,7 +588,7 @@
         /**
          *
          */
-        function PageBrowser(_i18n, _view, _model) {
+        function PageBrowser(_i18n, _view, _model, _api) {
             var _this = this,
                 _cssClassRotated = 'sp-img-rotated',
                 _idCanvasImgDiv = 'sp-canvas-browser-img-div',
@@ -604,12 +604,26 @@
 
                 $("#sp-canvas-drawing-clear-all").click(function() {
                     _imgCanvasEditor.clear();
-                    _positionImgCanvas();
+                    _imgCanvasEditor.setBackgroundImage(_getActiveImageUrl());
+                });
+                
+                $("#sp-canvas-drawing-clear-selected").click(function() {
+                    _imgCanvasEditor.clearSelected();
                 });
 
                 $("#sp-canvas-drawing-save").click(function() {
-                    alert(_imgCanvasEditor.toSVG());
-                    // TODO
+                    var res = _api.call({
+                        request : 'page-set-overlay',
+                        dto : JSON.stringify({
+                            imgUrl : $('#page-browser-images .active').attr('src'),
+                            svg64 : _imgCanvasEditor.countObjects() > 0 ? window.btoa(_imgCanvasEditor.toSVG()) : null
+                        })
+                    });
+                    _view.showApiMsg(res);
+                });
+
+                $("#sp-canvas-drawing-undo-all").click(function() {
+                    _setOverlayCanvas();
                 });
 
                 $('input[name=sp-canvas-drawing-mode]:radio').change(function(event) {
@@ -626,6 +640,13 @@
 
                 $('#page-browser-images').addClass('sp-overflow-scroll');
                 _imgScrollBarWidth = _view.getOverflowScrollBarWidth();
+
+                // Hide images in favour of canvas editor.
+                $('#page-browser-images img').each(function() {
+                    _view.visible($(this), false);
+                });
+                // Show <div> container of <canvas>
+                _view.visible($('#' + _idCanvasImgDiv), true);
             },
 
             /** */
@@ -681,37 +702,74 @@
             },
 
             /** */
-                _positionImgCanvas = function() {
+                _resizeOverlayCanvasExt = function(selImg, selDiv) {
+                var w = selImg.get(0).naturalWidth,
+                    h = selImg.get(0).naturalHeight,
+                    hMax = _getMaxImgHeight();
+
+                _imgCanvasEditor.setWidth(w);
+                _imgCanvasEditor.setHeight(h);
+
+                selDiv.width(w);
+                if (h < hMax) {
+                    selDiv.height(h);
+                } else {
+                    selDiv.height(hMax);
+                }
+            },
+
+            /** */
+                _resizeOverlayCanvas = function() {
+                if (_imgCanvasEditor) {
+                    _resizeOverlayCanvasExt($('#page-browser-images .active'), $('#' + _idCanvasImgDiv));
+                }
+            },
+
+            /** */
+                _getActiveImageUrl = function() {
+                return $('#page-browser-images .active').attr('src');
+            },
+
+            /** */
+                _setOverlayCanvas = function() {
                 var selImg,
-                    selDiv,
                     w,
                     h,
-                    hMax;
-                if (_imgCanvasEditor) {
-                    selImg = $('#page-browser-images .active');
-                    w = selImg.get(0).naturalWidth;
-                    if (w === 0) {
-                        $.mobile.loading("show");
-                        // Image not loaded yet, try again: RECURSE !!
-                        window.setTimeout(_positionImgCanvas, 500);
-                    } else {
-                        $.mobile.loading("hide");
-                        hMax = _getMaxImgHeight();
-                        h = selImg.get(0).naturalHeight;
+                    hMax,
+                    imgUrl,
+                    res;
+                if (!_imgCanvasEditor) {
+                    return;
+                }
+                selImg = $('#page-browser-images .active');
+                w = selImg.get(0).naturalWidth;
+                if (w === 0) {
+                    $.mobile.loading("show");
+                    // Image not loaded yet, try again: RECURSE !!
+                    window.setTimeout(_setOverlayCanvas, 500);
+                } else {
+                    $.mobile.loading("hide");
 
-                        _imgCanvasEditor.setWidth(w);
-                        _imgCanvasEditor.setHeight(h);
-                        _imgCanvasEditor.setBackgroundImage(selImg.attr('src'));
+                    imgUrl = selImg.attr('src');
+                    _resizeOverlayCanvasExt(selImg, $('#' + _idCanvasImgDiv));
 
-                        _view.visible(selImg, false);
-                        selDiv = $('#' + _idCanvasImgDiv);
-                        selDiv.width(w);
-                        if (h < hMax) {
-                            selDiv.height(h);
-                        } else {
-                            selDiv.height(hMax);
+                    _imgCanvasEditor.clear();
+                    _imgCanvasEditor.setBackgroundImage(imgUrl);
+
+                    // Load overlay
+                    res = _api.call({
+                        request : 'page-get-overlay',
+                        dto : JSON.stringify({
+                            imgUrl : imgUrl
+                        })
+                    });
+
+                    if (res.result.code === '0') {
+                        if (res.dto.svg64) {
+                            _imgCanvasEditor.loadSVG(window.atob(res.dto.svg64));
                         }
-                        _view.visible(selDiv, true);
+                    } else {
+                        _view.showApiMsg(res);
                     }
                 }
             },
@@ -719,7 +777,6 @@
             /** */
                 _setSliderValue = function(value) {
                 $('#browser-slider').val(value).slider("refresh").trigger('change');
-                _positionImgCanvas();
             },
 
             /** */
@@ -1036,12 +1093,11 @@
 
                 $(window).resize(function() {
                     _view.pages.pagebrowser.adjustImages();
-                    _positionImgCanvas();
+                    _resizeOverlayCanvas();
                 });
 
                 // Show first image
                 $(".image_reel img:first").addClass("active");
-                _positionImgCanvas();
 
                 $('#browser-slider').change(function() {
                     var val,
@@ -1065,7 +1121,7 @@
                     image.addClass('active');
                     // detailedScanImageInBrowser();
 
-                    _positionImgCanvas();
+                    _setOverlayCanvas();
                 });
 
                 $("#browser-nav-right").click(function() {
@@ -1137,7 +1193,7 @@
 
                 // Adjust when page is settled.
                 _this.adjustImages();
-                _positionImgCanvas();
+                _resizeOverlayCanvas();
 
             }).on("pagehide", function(event, ui) {
                 _ns.userEvent.resume();
@@ -7394,7 +7450,7 @@
                 doclog : new PageDocLog(_i18n, _view, _model, _api),
                 outbox : new PageOutbox(_i18n, _view, _model, _api),
                 send : new PageSend(_i18n, _view, _model),
-                pagebrowser : new PageBrowser(_i18n, _view, _model),
+                pagebrowser : new PageBrowser(_i18n, _view, _model, _api),
                 pageDashboard : new PageDashboard(_i18n, _view, _model, _api),
                 voucherRedeem : new PageVoucherRedeem(_i18n, _view, _model),
                 creditTransfer : new PageCreditTransfer(_i18n, _view, _model),

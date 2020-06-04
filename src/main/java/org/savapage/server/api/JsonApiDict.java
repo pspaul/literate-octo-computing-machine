@@ -62,6 +62,8 @@ import org.savapage.server.api.request.ReqOutboxCancelAll;
 import org.savapage.server.api.request.ReqOutboxCancelJob;
 import org.savapage.server.api.request.ReqOutboxExtend;
 import org.savapage.server.api.request.ReqOutboxReleaseJob;
+import org.savapage.server.api.request.ReqPageOverlayGet;
+import org.savapage.server.api.request.ReqPageOverlaySet;
 import org.savapage.server.api.request.ReqPdfPropsSetValidate;
 import org.savapage.server.api.request.ReqPosDepositQuickSearch;
 import org.savapage.server.api.request.ReqPrintSiteUserSet;
@@ -238,6 +240,9 @@ public final class JsonApiDict {
 
     public static final String REQ_PAGE_DELETE = "page-delete";
     public static final String REQ_PAGE_MOVE = "page-move";
+
+    public static final String REQ_PAGE_SET_OVERLAY = "page-set-overlay";
+    public static final String REQ_PAGE_GET_OVERLAY = "page-get-overlay";
 
     public static final String REQ_PAYMENT_GATEWAY_ONLINE =
             "payment-gateway-online";
@@ -1088,6 +1093,12 @@ public final class JsonApiDict {
 
         usr(REQ_PDF_SET_PROPERTIES, ReqPdfPropsSetValidate.class, DbClaim.READ,
                 DbAccess.YES);
+
+        usr(REQ_PAGE_SET_OVERLAY, ReqPageOverlaySet.class, DbClaim.NONE,
+                DbAccess.NO);
+
+        usr(REQ_PAGE_GET_OVERLAY, ReqPageOverlayGet.class, DbClaim.NONE,
+                DbAccess.NO);
 
         usr(REQ_USER_TOTP_ENABLE, ReqUserTOTPEnable.class, DbClaim.READ,
                 DbAccess.YES);
