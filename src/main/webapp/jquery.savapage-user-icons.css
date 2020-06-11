@@ -1,9 +1,12 @@
-/*! SavaPage | (c) 2011-2018 Datraverse B.V. | GNU Affero General Public License */
+/*! SavaPage | (c) 2020 Datraverse B.V. | GNU Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -135,7 +138,6 @@
     /* opacity: .6; */
 }
 
-
 .ui-icon-main-clear:after {
     background: url(/glyphicons/glyphicons_016_bin.png) 50% 50% no-repeat;
     background-size: 18px 26px;
@@ -266,7 +268,101 @@
     border-radius: 0 !important;
     opacity: .6;
 }
+/* ---graphic editor --- */
+.ui-icon-main-browse-canvas-edit:after {
+    background: url(/glyphicons/glyphicons_151_edit.png) 50% 50% no-repeat;
+    background-size: 24px 21px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-brush:after {
+    background: url(/glyphicons/glyphicons_234_brush.png) 50% 50% no-repeat;
+    background-size: 25px 23px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-clear-selected:after {
+    background: url(/glyphicons/glyphicons_256_delete_point.png) 50% 50% no-repeat;
+    background-size: 25px 14px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .5;
+}
+.ui-icon-main-browse-canvas-clear-all:after {
+    background: url(/glyphicons/glyphicons_207_remove_2.png) 50% 50% no-repeat;
+    background-size: 15px 15px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-save:after {
+    background: url(/glyphicons/glyphicons_206_ok_2.png) 50% 50% no-repeat;
+    background-size: 25px 19px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
 
+.ui-icon-main-browse-canvas-circle:after {
+    background: url(/glyphicons/glyphicons_095_vector_path_circle.png) 50% 50% no-repeat;
+    background-size: 24px 24px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-line:after {
+    background: url(/glyphicons/glyphicons_097_vector_path_line.png) 50% 50% no-repeat;
+    background-size: 24px 24px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-square:after {
+    background: url(/glyphicons/glyphicons_094_vector_path_square.png) 50% 50% no-repeat;
+    background-size: 24px 24px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-triangle:after {
+    background: url(/glyphicons/glyphicons_094_sp_triangle.png) 50% 50% no-repeat;
+    background-size: 25px 23px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-font:after {
+    background: url(/glyphicons/glyphicons_100_font.png) 50% 50% no-repeat;
+    background-size: 27px 23px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-text:after {
+    background: url(/glyphicons/glyphicons_107_text_resize.png) 50% 50% no-repeat;
+    background-size: 24px 24px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-opacity-reduce:after {
+    background: url(/glyphicons/glyphicons_188_brightness_reduce.png) 50% 50% no-repeat;
+    background-size: 20px 20px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+.ui-icon-main-browse-canvas-opacity-increase:after {
+    background: url(/glyphicons/glyphicons_189_brightness_increase.png) 50% 50% no-repeat;
+    background-size: 24px 24px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .6;
+}
+
+/* ---mini --- */
 .ui-icon-mini-selected-green:after {
     background: url(/images/selected-green-16x16.png) 50% 50% no-repeat;
     background-size: 12px 12px;

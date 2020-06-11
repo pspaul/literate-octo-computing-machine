@@ -61,6 +61,8 @@ public final class ReqPageOverlaySet extends ApiRequestMixin {
 
         private String svg64;
 
+        private String json64;
+
         public String getImgUrl() {
             return imgUrl;
         }
@@ -79,6 +81,15 @@ public final class ReqPageOverlaySet extends ApiRequestMixin {
             this.svg64 = svg64;
         }
 
+        public String getJson64() {
+            return json64;
+        }
+
+        @SuppressWarnings("unused")
+        public void setJson64(String json64) {
+            this.json64 = json64;
+        }
+
     }
 
     @Override
@@ -90,9 +101,9 @@ public final class ReqPageOverlaySet extends ApiRequestMixin {
 
         setPageOverlay(requestingUser,
                 ImageUrl.getPageOrdinalFromPath(dtoReq.getImgUrl()),
-                dtoReq.getSvg64());
+                dtoReq.getSvg64(), dtoReq.getJson64());
 
-        this.setApiResultText(ApiResultCodeEnum.OK, "Page elements saved.");
+        this.setApiResult(ApiResultCodeEnum.OK, "msg-apply-ok");
     }
 
     /**
@@ -103,9 +114,11 @@ public final class ReqPageOverlaySet extends ApiRequestMixin {
      *            The zero-based page number of the accumulated SafePages.
      * @param svg64
      *            Base64 encoded SVG overlay.
+     * @param json64
+     *            Base64 encoded JSON representation of SVG overlay.
      */
     private static void setPageOverlay(final String userId, final int iPage,
-            final String svg64) {
+            final String svg64, final String json64) {
 
         final InboxPageImageInfo imgPageInfo =
                 INBOX_SERVICE.getPageImageInfo(userId, iPage);
@@ -124,7 +137,8 @@ public final class ReqPageOverlaySet extends ApiRequestMixin {
 
             if (job.getFile().equals(imgPageInfo.getFile())) {
 
-                Map<Integer, String> overlay = job.getOverlay();
+                Map<Integer, InboxInfoDto.PageOverlay> overlay =
+                        job.getOverlay();
 
                 if (overlay == null) {
 
@@ -142,7 +156,11 @@ public final class ReqPageOverlaySet extends ApiRequestMixin {
                 if (noSVG) {
                     overlay.remove(key);
                 } else {
-                    overlay.put(key, svg64);
+                    final InboxInfoDto.PageOverlay pageOverlay =
+                            new InboxInfoDto.PageOverlay();
+                    pageOverlay.setSvg64(svg64);
+                    pageOverlay.setFabric64(json64);
+                    overlay.put(key, pageOverlay);
                 }
 
                 // Prune

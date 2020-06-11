@@ -62,7 +62,8 @@ public class Browser extends AbstractUserPage {
 
         final boolean hasCanvas = ConfigManager.instance()
                 .isConfigValue(Key.WEBAPP_USER_PAGE_BROWSER_CANVAS_ENABLE);
-        helper.encloseLabel("canvas-color", "Color", hasCanvas);
+
+        helper.encloseLabel("canvas-btn-brush", "", hasCanvas);
         helper.encloseLabel("canvas-browser-img", "", hasCanvas);
     }
 

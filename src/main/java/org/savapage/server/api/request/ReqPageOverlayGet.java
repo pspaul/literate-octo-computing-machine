@@ -70,6 +70,8 @@ public final class ReqPageOverlayGet extends ApiRequestMixin {
 
         private String svg64;
 
+        private String json64;
+
         @SuppressWarnings("unused")
         public String getSvg64() {
             return svg64;
@@ -77,6 +79,15 @@ public final class ReqPageOverlayGet extends ApiRequestMixin {
 
         public void setSvg64(String svg64) {
             this.svg64 = svg64;
+        }
+
+        @SuppressWarnings("unused")
+        public String getJson64() {
+            return json64;
+        }
+
+        public void setJson64(String json64) {
+            this.json64 = json64;
         }
 
     }
@@ -94,7 +105,12 @@ public final class ReqPageOverlayGet extends ApiRequestMixin {
                 INBOX_SERVICE.getPageImageInfo(requestingUser, iPage);
 
         final DtoRsp rsp = new DtoRsp();
-        rsp.setSvg64(imgPageInfo.getOverlaySVG64());
+
+        if (imgPageInfo.getOverlayJSON64() != null) {
+            rsp.setJson64(imgPageInfo.getOverlayJSON64());
+        } else {
+            rsp.setSvg64(imgPageInfo.getOverlaySVG64());
+        }
 
         this.setResponse(rsp);
 

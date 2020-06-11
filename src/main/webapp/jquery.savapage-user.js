@@ -589,6 +589,7 @@
          *
          */
         function PageBrowser(_i18n, _view, _model, _api) {
+            const _DRAW_MODE_BRUSH = 'brush';
             var _this = this,
                 _cssClassRotated = 'sp-img-rotated',
                 _idCanvasImgDiv = 'sp-canvas-browser-img-div',
@@ -597,26 +598,66 @@
                 _imgScrollBarWidth,
 
             /** */
+                _setHtmlCanvasDrawingMode = function() {
+                var brush = _view.getRadioValue('sp-canvas-drawing-mode') === _DRAW_MODE_BRUSH;
+                _imgCanvasEditor.enableDrawingMode(brush);
+                _view.enableUI($('.sp-canvas-drawing-mode-select'), !brush);
+                _view.visible($('.sp-canvas-drawing-mode-select-prop'), !brush);
+                _view.visible($('.sp-canvas-drawing-mode-brush'), brush);
+            },
+
+            /** */
                 _initHtmlCanvasEditor = function() {
 
-                _imgCanvasEditor = new _ns.HtmlCanvasEditor(_idCanvasImg);
-                _imgCanvasEditor.setFreeDrawingBrush('Pencil', $('#sp-canvas-drawing-color').val(), 1);
+                _imgCanvasEditor = new _ns.HtmlCanvasEditor(_idCanvasImg, //
+                function(nObjects) {
+                    // onAfterRender
+                    _view.enable($('#sp-canvas-drawing-clear-all'), nObjects > 0);
+                }, function() {
+                    // onSelectionCreated
+                    _view.enable($('#sp-canvas-drawing-clear-selected'), true);
+                }, function() {
+                    // onSelectionCleared
+                    _view.enable($('#sp-canvas-drawing-clear-selected'), false);
+                });
+
+                _imgCanvasEditor.setFreeDrawingBrush('Pencil', $('#sp-canvas-drawing-brush-color').val(), 1);
+
+                _setHtmlCanvasDrawingMode();
+
+                $("#sp-canvas-drawing-add-rect").click(function() {
+                    _imgCanvasEditor.addRect();
+                });
+                $("#sp-canvas-drawing-add-circle").click(function() {
+                    _imgCanvasEditor.addCircle();
+                });
+                $("#sp-canvas-drawing-add-triangle").click(function() {
+                    _imgCanvasEditor.addTriangle();
+                });
+                $("#sp-canvas-drawing-add-line").click(function() {
+                    _imgCanvasEditor.addLine();
+                });
+                $("#sp-canvas-drawing-add-textbox").click(function() {
+                    _imgCanvasEditor.addTextbox();
+                });
 
                 $("#sp-canvas-drawing-clear-all").click(function() {
                     _imgCanvasEditor.clear();
                     _imgCanvasEditor.setBackgroundImage(_getActiveImageUrl());
                 });
-                
+
                 $("#sp-canvas-drawing-clear-selected").click(function() {
                     _imgCanvasEditor.clearSelected();
                 });
 
                 $("#sp-canvas-drawing-save").click(function() {
-                    var res = _api.call({
+                    var nObj = _imgCanvasEditor.countObjects(),
+                        res = _api.call({
                         request : 'page-set-overlay',
                         dto : JSON.stringify({
                             imgUrl : $('#page-browser-images .active').attr('src'),
-                            svg64 : _imgCanvasEditor.countObjects() > 0 ? window.btoa(_imgCanvasEditor.toSVG()) : null
+                            svg64 : nObj > 0 ? window.btoa(_imgCanvasEditor.toSVG()) : null,
+                            json64 : nObj > 0 && _imgCanvasEditor.hasTextObjects() ? window.btoa(_imgCanvasEditor.toJSON()) : null
                         })
                     });
                     _view.showApiMsg(res);
@@ -627,15 +668,38 @@
                 });
 
                 $('input[name=sp-canvas-drawing-mode]:radio').change(function(event) {
-                    var mode = _view.getRadioValue('sp-canvas-drawing-mode');
-                    _imgCanvasEditor.enableDrawingMode(mode === 'free');
+                    _setHtmlCanvasDrawingMode();
                 });
-                $('#sp-canvas-drawing-color').on('input', function() {
+
+                $('#sp-canvas-drawing-brush-color').on('input', function() {
                     _imgCanvasEditor.setBrushColor($(this).val());
                 });
 
-                $('#sp-canvas-drawing-width').on('input', function() {
+                $('#sp-canvas-drawing-brush-width').on('input', function() {
                     _imgCanvasEditor.setBrushWidth(parseInt($(this).val(), 10));
+                });
+
+                $('#sp-canvas-drawing-select-stroke-color').on('input', function() {
+                    _imgCanvasEditor.setStroke($(this).val());
+                    _imgCanvasEditor.setStrokeSelected();
+                });
+                $('#sp-canvas-drawing-select-fill-color').on('input', function() {
+                    _imgCanvasEditor.setFill($(this).val());
+                    _imgCanvasEditor.setFillSelected();
+                });
+
+                $('#sp-canvas-drawing-selected-fill-transparent').click(function() {
+                    _imgCanvasEditor.setFillSelectedExt(null);
+                });
+
+                $('#sp-canvas-drawing-select-stroke-width').on('input', function() {
+                    _imgCanvasEditor.setStrokeWidth(parseInt($(this).val(), 10));
+                    _imgCanvasEditor.setStrokeWidthSelected();
+                });
+
+                $('#sp-canvas-drawing-opacity').on('input', function() {
+                    _imgCanvasEditor.setOpacityPerc(parseInt($(this).val(), 10));
+                    _imgCanvasEditor.setOpacitySelected();
                 });
 
                 $('#page-browser-images').addClass('sp-overflow-scroll');
@@ -765,7 +829,9 @@
                     });
 
                     if (res.result.code === '0') {
-                        if (res.dto.svg64) {
+                        if (res.dto.json64) {
+                            _imgCanvasEditor.loadJSON(window.atob(res.dto.json64));
+                        } else if (res.dto.svg64) {
                             _imgCanvasEditor.loadSVG(window.atob(res.dto.svg64));
                         }
                     } else {
