@@ -2618,6 +2618,11 @@
                         item += '<span class="sp-thumbnail-tot-pages"/>';
                         item += '<span class="sp-thumbnail-tot-chunk"/>';
 
+                        if (page.overlay) {
+                            item += '<span class="sp-txt-info"> &#9998;</span>';
+                        }
+                        item += '<span class="sp-txt-info sp-thumbnail-tot-chunk-overlays"/>';
+
                         if (_model.myJobs[page.job].rotate !== "0") {
                             item += " &#x21b7;";
                         }
@@ -2625,7 +2630,6 @@
                         item += '</a></div>';
 
                         divCur = $(item);
-
                     }
 
                     if (divPrv) {
@@ -2667,6 +2671,19 @@
                         span.text(' (' + page.pages + ')');
                     } else {
                         span.text('');
+                    }
+                    /*
+                     * Set the chunk overlay total.
+                     */
+                    span = divCur.find('.sp-thumbnail-tot-chunk-overlays');
+                    if ((page.overlayPages > 0 && !page.overlay) || page.overlayPages > 1) {
+                        if (page.overlay) {
+                            span.html(' ' + page.overlayPages);
+                        } else {
+                            span.html(' ' + page.overlayPages + '&#9998;');
+                        }
+                    } else {
+                        span.html('');
                     }
 
                     //--------------------------
