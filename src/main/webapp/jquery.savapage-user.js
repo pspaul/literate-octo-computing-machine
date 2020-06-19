@@ -595,6 +595,7 @@
                 _idCanvasImgDiv = 'sp-canvas-browser-img-div',
                 _idCanvasImg = 'sp-canvas-browser-img',
                 _imgCanvasEditor,
+                _imgCanvasObjCountLoaded,
                 _imgScrollBarWidth,
 
             /** */
@@ -661,6 +662,11 @@
                         })
                     });
                     _view.showApiMsg(res);
+                    if (res.result.code === "0") {
+                        if ((_imgCanvasObjCountLoaded > 0 && nObj === 0) || (_imgCanvasObjCountLoaded === 0 && nObj > 0)) {
+                            _this.onOverlayOnOff();
+                        }
+                    }
                 });
 
                 $("#sp-canvas-drawing-undo-all").click(function() {
@@ -834,6 +840,7 @@
                         } else if (res.dto.svg64) {
                             _imgCanvasEditor.loadSVG(window.atob(res.dto.svg64));
                         }
+                        _imgCanvasObjCountLoaded = _imgCanvasEditor.countObjects();
                     } else {
                         _view.showApiMsg(res);
                     }
@@ -2446,6 +2453,9 @@
 
             // for now ...
             this.id = '#page-main';
+
+            //
+            this.refreshPagesOnShow = false;
 
             /**
              * Clears all traces of previous editing.
@@ -5135,7 +5145,12 @@
                 return this.jobsMatchMedia === this.MediaMatchEnum.MATCH;
             };
 
-            this.refreshUniqueImgUrlValue = function() {
+            // Thumbnails
+            this.refreshUniqueImgUrlValueTn = function() {
+                this.uniqueImgUrlValue = new Date().getTime().toString();
+            };
+
+            this.refreshUniqueImgUrlValues = function() {
                 // number of milliseconds since 1970/01/01
                 var d = new Date();
                 this.uniqueImgUrlValue = d.getTime().toString();
@@ -5256,7 +5271,7 @@
                 this.mySelectPages = {};
                 this.myPrinter = undefined;
                 this.propPdf = this.propPdfDefault;
-                this.refreshUniqueImgUrlValue();
+                this.refreshUniqueImgUrlValues();
                 this.prevMsgTime = null;
 
                 this.printDelegation = {};
@@ -6441,6 +6456,10 @@
                 return isOk;
             };
 
+            _view.pages.pagebrowser.onOverlayOnOff = function() {
+                _view.pages.main.refreshPagesOnShow = true;
+            };
+
             /**
              * Callbacks: page redeem voucher
              */
@@ -7333,6 +7352,12 @@
                 // first statement
                 _ns.deferAppWakeUp(false);
 
+                if (this.refreshPagesOnShow) {
+                    this.refreshPagesOnShow = false;
+                    _model.refreshUniqueImgUrlValueTn();
+                    this.onExpandPage(0);
+                }
+
                 _view.pages.main.alignThumbnails();
 
                 _userEvent.resume();
@@ -7352,7 +7377,6 @@
                     }
                     _view.pages.main.showUserStats();
                 }
-
             };
 
             _view.pages.main.onHide = function() {
