@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -47,16 +50,6 @@ public final class DocLogAccountTrxAddin extends AbstractAccountTrxAddin {
     private static final String PARM_DOCLOG_ID = "docLogId";
 
     /**
-     * Uses {@link #PARM_DOCLOG_ID} to get the {@link DocLog}.
-     *
-     * @return The {@link DocLog}.
-     */
-    protected DocLog getDocLog() {
-        return ServiceContext.getDaoContext().getDocLogDao()
-                .findById(Long.valueOf(this.getParmValue(PARM_DOCLOG_ID)));
-    }
-
-    /**
      * @param parameters
      *            The {@link PageParameters}.
      */
@@ -85,7 +78,22 @@ public final class DocLogAccountTrxAddin extends AbstractAccountTrxAddin {
             }
         }
 
-        populate(totalAmount, totalCopies, trxList);
+        this.populate(totalAmount, totalCopies, trxList, false);
+    }
+
+    @Override
+    protected String getJobTicketFileName() {
+        return null;
+    }
+
+    /**
+     * Uses {@link #PARM_DOCLOG_ID} to get the {@link DocLog}.
+     *
+     * @return The {@link DocLog}.
+     */
+    protected DocLog getDocLog() {
+        return ServiceContext.getDaoContext().getDocLogDao()
+                .findById(Long.valueOf(this.getParmValue(PARM_DOCLOG_ID)));
     }
 
 }

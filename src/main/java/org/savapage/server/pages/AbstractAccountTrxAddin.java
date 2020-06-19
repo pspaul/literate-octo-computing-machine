@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -32,6 +35,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -47,6 +51,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
 import org.savapage.core.util.LocaleHelper;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  *
@@ -70,8 +75,19 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
     private static final String MISSING_ACCOUNT_NAME = "";
 
     /** */
+    private static final String WID_BTN_APPLY = "btn-apply";
+    /** */
+    private static final String WID_BTN_RESET = "btn-reset";
+
+    /** */
     private static final class TrxLine {
+
+        private static final String NO_DELEGATORS = "-";
+        private static final String NO_COPIES = "-";
+
         private String imgSrcChoice;
+        private String accountNameDisplay;
+        private Long accountID;
         private String accountName;
         private String delegators;
         private String copies;
@@ -91,10 +107,29 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
     protected static final class AccountTrxView
             extends PropertyListView<TrxLine> {
 
-        /**
-         * .
-         */
+        /** */
         private static final long serialVersionUID = 1L;
+
+        /** */
+        private static final String WID_IMG_CHOICE = "img-choice";
+        /** */
+        private static final String WID_ACCCOUNT = "account";
+
+        /** */
+        private static final String WID_DELEGATORS = "delegators";
+        /** */
+        private static final String WID_COPIES = "copies";
+        /** */
+        private static final String WID_COPIES_EDIT = "copies-edit";
+        /** */
+        private static final String WID_COST = "cost";
+        /** */
+        private static final String WID_REMARK = "remark";
+
+        /**
+         * If {@code true} named account copies can be edited.
+         */
+        private final boolean allowEditCopies;
 
         /**
          *
@@ -102,9 +137,13 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
          *            The wicket id.
          * @param list
          *            The item list.
+         * @param editCopies
+         *            If {@code true} named account copies can be edited.
          */
-        AccountTrxView(final String id, final List<TrxLine> list) {
+        AccountTrxView(final String id, final List<TrxLine> list,
+                final boolean editCopies) {
             super(id, list);
+            this.allowEditCopies = editCopies;
         }
 
         @Override
@@ -113,16 +152,51 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             final TrxLine trxLine = item.getModelObject();
             final MarkupHelper helper = new MarkupHelper(item);
 
-            helper.addModifyLabelAttr("img-choice", MarkupHelper.ATTR_SRC,
+            helper.addModifyLabelAttr(WID_IMG_CHOICE, MarkupHelper.ATTR_SRC,
                     trxLine.imgSrcChoice);
 
-            helper.addLabel("account", trxLine.accountName);
-            helper.addLabel("delegators", trxLine.delegators);
-            helper.addLabel("copies", trxLine.copies);
-            helper.addLabel("cost", trxLine.formattedCost)
+            final Label labelAccount =
+                    helper.addLabel(WID_ACCCOUNT, trxLine.accountNameDisplay);
+
+            if (this.allowEditCopies && trxLine.accountID != null) {
+
+                helper.discloseLabel(WID_COPIES);
+
+                if (!trxLine.delegators.equals(TrxLine.NO_DELEGATORS)) {
+                    MarkupHelper.modifyLabelAttr(labelAccount,
+                            MarkupHelper.ATTR_DATA_SAVAPAGE,
+                            trxLine.accountName);
+                }
+
+                final Label labelCopies = helper.encloseLabel(WID_COPIES_EDIT,
+                        "", trxLine.accountID != null);
+                MarkupHelper.modifyLabelAttr(labelCopies,
+                        MarkupHelper.ATTR_VALUE, trxLine.copies);
+                MarkupHelper.modifyLabelAttr(labelCopies,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE_KEY,
+                        trxLine.accountID.toString());
+                MarkupHelper.modifyLabelAttr(labelCopies,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE, trxLine.copies);
+
+            } else {
+                helper.discloseLabel(WID_COPIES_EDIT);
+                final Label labelCopies =
+                        helper.addLabel(WID_COPIES, trxLine.copies);
+                if (this.allowEditCopies) {
+                    MarkupHelper.modifyLabelAttr(labelCopies,
+                            MarkupHelper.ATTR_ALIGN, "left");
+                    MarkupHelper.modifyLabelAttr(labelCopies,
+                            MarkupHelper.ATTR_STYLE, "padding-left:15px;");
+                }
+            }
+
+            helper.addLabel(WID_DELEGATORS, trxLine.delegators);
+
+            helper.addLabel(WID_COST, trxLine.formattedCost)
                     .setEscapeModelStrings(false);
+
             MarkupHelper.appendLabelAttr(
-                    helper.addLabel("remark",
+                    helper.addLabel(WID_REMARK,
                             StringUtils.defaultString(trxLine.remark)),
                     MarkupHelper.ATTR_CLASS, MarkupHelper.CSS_TXT_WARN);
         }
@@ -142,13 +216,25 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
     }
 
     /**
+     * @return Job ticket file name, or {@code null} when not applicable.
+     */
+    abstract String getJobTicketFileName();
+
+    /**
      * Displays account transactions.
      *
+     * @param totalAmount
+     *            Total amount (cost).
+     * @param totalCopies
+     *            Total number of printed copies.
      * @param trxList
      *            The account transactions (can be {@code null}).
+     * @param editCopies
+     *            If {@code true} named account copies can be edited.
      */
-    protected final void populate(BigDecimal totalAmount, int totalCopies,
-            final List<AccountTrx> trxList) {
+    protected final void populate(final BigDecimal totalAmount,
+            final int totalCopies, final List<AccountTrx> trxList,
+            final boolean editCopies) {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
@@ -162,7 +248,20 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
         final SortedMap<String, DelegatorItem> delegators =
                 fillOptions(totalAmount, totalCopies, trxList, displayOptions);
 
-        add(new AccountTrxView("setting-row", displayOptions));
+        add(new AccountTrxView("setting-row", displayOptions, editCopies));
+
+        if (editCopies && this.getJobTicketFileName() != null) {
+            MarkupHelper.modifyLabelAttr(
+                    helper.addLabel(WID_BTN_APPLY,
+                            HtmlButtonEnum.APPLY.uiText(getLocale())),
+                    MarkupHelper.ATTR_DATA_SAVAPAGE,
+                    this.getJobTicketFileName());
+
+            helper.encloseLabel(WID_BTN_RESET,
+                    HtmlButtonEnum.RESET.uiText(getLocale()), editCopies);
+        } else {
+            helper.discloseLabel(WID_BTN_APPLY);
+        }
 
         final String personalDelegators = formatDelegatorDetails(delegators);
         helper.encloseLabel("persons", personalDelegators,
@@ -428,10 +527,10 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                     trxLine.delegators = accountNameDelegatorCount
                             .get(account.getName()).toString();
                 } else {
-                    trxLine.delegators = "-";
+                    trxLine.delegators = TrxLine.NO_DELEGATORS;
                 }
             } else {
-                trxLine.delegators = "-";
+                trxLine.delegators = TrxLine.NO_DELEGATORS;
             }
 
             trxLine.imgSrcChoice = MarkupHelper.getImgUrlPath(accountType);
@@ -441,18 +540,20 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             if (account == null) {
                 accountParent = null;
             } else {
+                trxLine.accountID = account.getId();
+                trxLine.accountName = account.getName();
                 accountParent = account.getParent();
             }
 
             if (accountParent == null) {
-                trxLine.accountName = accountNameWlk;
+                trxLine.accountNameDisplay = accountNameWlk;
             } else {
-                trxLine.accountName = String.format("%s \\ %s",
+                trxLine.accountNameDisplay = String.format("%s \\ %s",
                         accountParent.getName(), account.getName());
             }
 
             if (costPerCopy.compareTo(BigDecimal.ZERO) == 0) {
-                trxLine.copies = "-";
+                trxLine.copies = TrxLine.NO_COPIES;
             } else {
                 trxLine.copies = ACCOUNTING_SERVICE
                         .calcPrintedCopies(trx.getAmount().negate(),
@@ -530,7 +631,7 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
 
         final TrxLine trxLine = new TrxLine();
 
-        trxLine.accountName = uiName;
+        trxLine.accountNameDisplay = uiName;
         if (showTotDelegators) {
             trxLine.delegators = String.valueOf(totDelegators);
         } else {

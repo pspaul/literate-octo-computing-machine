@@ -1,35 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-	<!-- 
-    +=========================================================================+ 
-    | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2018 Datraverse B.V. | Author: Rijk Ravestein........| 
-    |.........................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify .......|
-    | it under the terms of the GNU Affero General Public License as .........|
-    | published by the Free Software Foundation, either version 3 of .........|
-    | the License, or (at your option) any later version. ....................|
-    +=========================================================================+ 
-    -->
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
+
 </wicket:remove>
 
 <wicket:enclosure child="setting-row">
 
-	<table class="sp-doclog-accounttrx-info-table">
-		<wicket:container wicket:id="setting-row">
-			<tr>
-				<td align="left">
-					<img wicket:id="img-choice" />
-				</td>
-				<th align="left" wicket:id="account" />
-				<td align="right" wicket:id="delegators" />
-				<td align="right" wicket:id="copies" />
-				<td align="right" wicket:id="cost" />
-				<td align="left" wicket:id="remark" />
-			</tr>
-		</wicket:container>
-	</table>
+	<form>
+		<table class="sp-doclog-accounttrx-info-table">
+			<wicket:container wicket:id="setting-row">
+				<tr>
+					<td align="left">
+						<img wicket:id="img-choice" />
+					</td>
+					<th align="left" class="_sp-edit-copies-account"
+						wicket:id="account" />
+					<td align="right" wicket:id="delegators" />
+					<wicket:enclosure child="copies">
+						<td align="right" wicket:id="copies" />
+					</wicket:enclosure>
+					<wicket:enclosure child="copies-edit">
+						<td style="width: 70px; padding-top: 0px; padding-bottom: 1px;">
+							<input type="number" class="_sp-edit-copies" min="1"
+								wicket:id="copies-edit" />
+						</td>
+					</wicket:enclosure>
+					<td style="padding: 0px;" />
+					<td align="right" class="_sp-edit-cost" wicket:id="cost" />
+					<td align="left" wicket:id="remark" />
+				</tr>
+			</wicket:container>
+
+			<wicket:enclosure child="btn-apply">
+				<tr>
+					<td colspan="3">&nbsp;</td>
+					<td colspan="2" align="left" class="ui-mini">
+						<button wicket:id="btn-apply"
+							class="_sp-edit-apply ui-btn ui-btn-inline ui-btn-icon-none" />
+					</td>
+					<td colspan="2" align="left" class="ui-mini">
+						<button type="reset" wicket:id="btn-reset"
+							class="_sp-edit-reset ui-btn ui-btn-inline ui-btn-icon-none" />
+					</td>
+				</tr>
+			</wicket:enclosure>
+		</table>
+	</form>
 	<wicket:enclosure child="persons">
 		<hr />
 		<small wicket:id="persons" />

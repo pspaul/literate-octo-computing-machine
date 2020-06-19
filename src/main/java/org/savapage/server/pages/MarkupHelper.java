@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -66,6 +69,7 @@ import org.savapage.server.helpers.HtmlTooltipEnum;
 public final class MarkupHelper {
 
     public static final String ATTR_ACCEPT = "accept";
+    public static final String ATTR_ALIGN = "align";
     public static final String ATTR_CHECKED = "checked";
     public static final String ATTR_SELECTED = "selected";
     public static final String ATTR_DISABLED = "disabled";
@@ -90,6 +94,7 @@ public final class MarkupHelper {
     public static final String ATTR_DATA_INPUT = "data-input";
 
     public static final String ATTR_DATA_SAVAPAGE = "data-savapage";
+    public static final String ATTR_DATA_SAVAPAGE_KEY = "data-savapage-key";
     public static final String ATTR_DATA_SAVAPAGE_TYPE = "data-savapage-type";
 
     public static final String CSS_AMOUNT_MIN = "sp-amount-min";

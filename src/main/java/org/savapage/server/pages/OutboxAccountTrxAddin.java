@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -26,6 +29,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.jpa.AccountTrx;
@@ -60,6 +65,11 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
      * Optional
      */
     private static final String PARM_USER_DB_ID = "userDbId";
+
+    @Override
+    protected String getJobTicketFileName() {
+        return this.getParmValue(PARM_JOBFILENAME);
+    }
 
     /**
      * Gets the job ticket.
@@ -96,7 +106,7 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
 
             final String userid;
 
-            if (getSessionWebAppType() == WebAppTypeEnum.USER) {
+            if (this.getSessionWebAppType() == WebAppTypeEnum.USER) {
                 userid = SpSession.get().getUserId();
             } else {
                 final User user = ServiceContext.getDaoContext().getUserDao()
@@ -138,7 +148,12 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
             totalCopies = outboxJob.getCopies();
             totalAmount = outboxJob.getCostTotal();
         }
-        populate(totalAmount, totalCopies, trxList);
+
+        final boolean editCopies = ConfigManager.instance().isConfigValue(
+                IConfigProp.Key.WEBAPP_JOBTICKETS_COPIES_EDIT_ENABLE);
+
+        populate(totalAmount, totalCopies, trxList, editCopies
+                && this.getSessionWebAppType() == WebAppTypeEnum.JOBTICKETS);
     }
 
 }

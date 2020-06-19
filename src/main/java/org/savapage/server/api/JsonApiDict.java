@@ -49,11 +49,12 @@ import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqI18nCacheClear;
 import org.savapage.server.api.request.ReqInboxClear;
 import org.savapage.server.api.request.ReqJobTicketCancel;
+import org.savapage.server.api.request.ReqJobTicketSaveCopies;
 import org.savapage.server.api.request.ReqJobTicketExec;
 import org.savapage.server.api.request.ReqJobTicketPrintCancel;
 import org.savapage.server.api.request.ReqJobTicketPrintClose;
 import org.savapage.server.api.request.ReqJobTicketQuickSearch;
-import org.savapage.server.api.request.ReqJobTicketSave;
+import org.savapage.server.api.request.ReqJobTicketSaveOptions;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqLogout;
 import org.savapage.server.api.request.ReqMailTest;
@@ -185,6 +186,8 @@ public final class JsonApiDict {
     public static final String REQ_JOBTICKET_DELETE = "jobticket-delete";
     public static final String REQ_JOBTICKET_EXECUTE = "jobticket-execute";
     public static final String REQ_JOBTICKET_SAVE = "jobticket-save";
+    public static final String REQ_JOBTICKET_SAVE_COPIES =
+            "jobticket-save-copies";
 
     public static final String REQ_JOBTICKET_PRINT_CANCEL =
             "jobticket-print-cancel";
@@ -1025,11 +1028,15 @@ public final class JsonApiDict {
         acl(REQ_JOBTICKET_DELETE, ReqJobTicketCancel.class, DbClaim.READ,
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
-        acl(REQ_JOBTICKET_SAVE, ReqJobTicketSave.class, DbClaim.READ,
+        acl(REQ_JOBTICKET_SAVE, ReqJobTicketSaveOptions.class, DbClaim.READ,
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         acl(REQ_JOBTICKET_EXECUTE, ReqJobTicketExec.class, DbClaim.READ,
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
+
+        acl(REQ_JOBTICKET_SAVE_COPIES, ReqJobTicketSaveCopies.class,
+                DbClaim.READ, DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         acl(REQ_JOBTICKET_PRINT_CANCEL, ReqJobTicketPrintCancel.class,
                 DbClaim.READ, DbAccess.YES,

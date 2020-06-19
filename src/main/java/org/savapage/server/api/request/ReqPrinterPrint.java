@@ -1153,7 +1153,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             final AccountTrxInfoSet infoSet = PRINT_DELEGATION_SERVICE
                     .createAccountTrxInfoSet(jsonDelegation);
 
-            printReq.setNumberOfCopies(infoSet.getUnitTotal());
+            printReq.setNumberOfCopies(infoSet.getWeightTotal());
             printReq.setAccountTrxInfoSet(infoSet);
         }
         return isDelegatedPrint;

@@ -1,10 +1,13 @@
-/*! SavaPage jQuery Mobile Job Tickets Page | (c) 2011-2019 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Job Tickets Page | (c) 2020 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -397,6 +400,7 @@
                     })
                 });
             },
+            //
                 _onSaveJob = function(jobFileName) {
                 var res,
                     ippOptions = {},
@@ -423,6 +427,32 @@
                 //_view.showApiMsg(res);
                 _view.message(res.result.txt);
             },
+            //
+                _onSaveJobCopies = function(jobFileName) {
+                var res,
+                    accounts = {};
+                $('.sp-doclog-accounttrx-info-table').find('._sp-edit-copies').each(function() {
+                    var name = $(this).closest('tr').find('._sp-edit-copies-account').attr('data-savapage');
+                    accounts[$(this).attr('data-savapage-key')] = {
+                        copies : $(this).val(),
+                        accountName : name
+                    };
+                });
+
+                res = _api.call({
+                    request : 'jobticket-save-copies',
+                    dto : JSON.stringify({
+                        jobFileName : jobFileName,
+                        accounts : accounts
+                    })
+                });
+                if (res.result.code === "0") {
+                    $('#sp-jobticket-popup').popup('close');
+                    _refresh();
+                }
+                _view.message(res.result.txt);
+            },
+            //
                 _onExecJob = function(jobFileName, print, retry) {
                 _loadingIconFoo(function(jobFileName, print, retry) {
                     var res,
@@ -611,6 +641,15 @@
 
                 }).on('click', '.sp-outbox-account-trx-info-jobticket', null, function() {
                     _onJobTicketAccountTrxPopup($(this).attr('data-savapage'), $(this));
+
+                }).on('click', '.sp-doclog-accounttrx-info-table ._sp-edit-apply', null, function() {
+                    _onSaveJobCopies($(this).attr('data-savapage'));
+                    return false;
+                }).on('click', '.sp-doclog-accounttrx-info-table ._sp-edit-reset', null, function() {
+                    _view.visible($('.sp-doclog-accounttrx-info-table').find('._sp-edit-cost'), true);
+                    return true;
+                }).on('change', ".sp-doclog-accounttrx-info-table input[class='_sp-edit-copies']", null, function() {
+                    _view.visible($(this).closest('tr').find('._sp-edit-cost'), $(this).val() === $(this).attr('data-savapage'));
 
                 }).on('change', "input[name='sp-jobticket-sort-dir']", null, function() {
                     _expiryAsc = $(this).attr('id') === 'sp-jobticket-sort-dir-asc';
