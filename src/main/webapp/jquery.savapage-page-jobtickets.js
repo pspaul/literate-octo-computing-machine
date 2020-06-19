@@ -338,6 +338,7 @@
                     jobticket : true
                 }) || 'error';
                 _showPopUp(html, positionTo);
+                _disableJobCopiesButtons();
             },
                 _onDocLogAccountTrxPopup = function(docLogId, positionTo) {
                 var html = _view.getPageHtml('DocLogAccountTrxAddin', {
@@ -451,6 +452,29 @@
                     _refresh();
                 }
                 _view.message(res.result.txt);
+            },
+            //
+                _enableJobCopiesButtons = function(selTable, enable) {
+                _view.enableUI(selTable.find('._sp-edit-apply'), enable);
+                _view.enableUI(selTable.find('._sp-edit-reset'), enable);
+            },
+            //
+                _disableJobCopiesButtons = function() {
+                var selTable = $('.sp-doclog-accounttrx-info-table');
+                if (selTable.length > 0) {
+                    _enableJobCopiesButtons(selTable, false);
+                }
+            },
+            //
+                _setJobCopiesButtons = function() {
+                var selTable = $('.sp-doclog-accounttrx-info-table'),
+                    enable;
+                selTable.find('._sp-edit-copies').each(function() {
+                    if ($(this).val() !== $(this).attr('data-savapage')) {
+                        enable = true;
+                    }
+                });
+                _enableJobCopiesButtons(selTable, enable);
             },
             //
                 _onExecJob = function(jobFileName, print, retry) {
@@ -647,10 +671,11 @@
                     return false;
                 }).on('click', '.sp-doclog-accounttrx-info-table ._sp-edit-reset', null, function() {
                     _view.visible($('.sp-doclog-accounttrx-info-table').find('._sp-edit-cost'), true);
+                    _disableJobCopiesButtons();
                     return true;
                 }).on('change', ".sp-doclog-accounttrx-info-table input[class='_sp-edit-copies']", null, function() {
                     _view.visible($(this).closest('tr').find('._sp-edit-cost'), $(this).val() === $(this).attr('data-savapage'));
-
+                    _setJobCopiesButtons();
                 }).on('change', "input[name='sp-jobticket-sort-dir']", null, function() {
                     _expiryAsc = $(this).attr('id') === 'sp-jobticket-sort-dir-asc';
                     _refresh();

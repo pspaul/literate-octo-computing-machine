@@ -243,12 +243,13 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             return;
         }
 
-        final List<TrxLine> displayOptions = new ArrayList<>();
+        final List<TrxLine> displayTrxLines = new ArrayList<>();
 
         final SortedMap<String, DelegatorItem> delegators =
-                fillOptions(totalAmount, totalCopies, trxList, displayOptions);
+                this.fillDisplayOptions(totalAmount, totalCopies, trxList,
+                        displayTrxLines, editCopies);
 
-        add(new AccountTrxView("setting-row", displayOptions, editCopies));
+        add(new AccountTrxView("setting-row", displayTrxLines, editCopies));
 
         if (editCopies && this.getJobTicketFileName() != null) {
             MarkupHelper.modifyLabelAttr(
@@ -406,13 +407,16 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
      *            Total number of (printed) copies.
      * @param accountTrxList
      *            The account transactions (input).
-     * @param options
-     *            The display values (output).
+     * @param displayTrxLines
+     *            The display lines (output).
+     * @param editCopies
+     *            If {@code true} named account copies can be edited.
      * @return The map of delegators that are charged.
      */
-    private SortedMap<String, DelegatorItem> fillOptions(BigDecimal totalCost,
-            int totalCopies, final List<AccountTrx> accountTrxList,
-            final List<TrxLine> options) {
+    private SortedMap<String, DelegatorItem> fillDisplayOptions(
+            BigDecimal totalCost, int totalCopies,
+            final List<AccountTrx> accountTrxList,
+            final List<TrxLine> displayTrxLines, final boolean editCopies) {
 
         final BigDecimal costPerCopy = ACCOUNTING_SERVICE
                 .calcCostPerPrintedCopy(totalCost, totalCopies);
@@ -516,7 +520,10 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                     }
                 }
 
-                continue;
+                if (!editCopies
+                        || StringUtils.isNotBlank(trx.getExtDetails())) {
+                    continue;
+                }
             }
 
             // Account summary line.
@@ -573,19 +580,19 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                             currencyDecimals, getSession().getLocale(), true));
 
             trxLine.formattedCost = sbAccTrx.toString();
-            options.add(trxLine);
+            displayTrxLines.add(trxLine);
         }
 
         // Summary line for personally charged delegators.
-        if (totIndividualDelegators > 0) {
+        if (!editCopies && totIndividualDelegators > 0) {
 
             final TrxLine values = getPersonCatOptions(
                     PrintOutAdjectiveEnum.PERSONAL.uiText(getLocale()),
                     totIndividualDelegators, totIndividualDelegatorsCopies,
                     totIndividualCost, currencySymbolWlk, currencyDecimals,
-                    options.size() > 1 || totIndividualDelegators > 1);
+                    displayTrxLines.size() > 1 || totIndividualDelegators > 1);
 
-            options.add(values);
+            displayTrxLines.add(values);
         }
 
         // Summary line for personally refunded delegators.
@@ -596,10 +603,10 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                     totIndividualDelegatorsRefund,
                     totIndividualDelegatorsCopiesRefund,
                     totIndividualCostRefund, currencySymbolWlk,
-                    currencyDecimals,
-                    options.size() > 1 || totIndividualDelegatorsRefund > 1);
+                    currencyDecimals, displayTrxLines.size() > 1
+                            || totIndividualDelegatorsRefund > 1);
 
-            options.add(values);
+            displayTrxLines.add(values);
         }
 
         return delegatorItemMap;
