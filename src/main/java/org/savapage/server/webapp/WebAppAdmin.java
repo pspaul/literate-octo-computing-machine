@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -56,9 +59,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class WebAppAdmin extends AbstractWebAppPage {
 
-    /**
-     * .
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -67,10 +68,12 @@ public final class WebAppAdmin extends AbstractWebAppPage {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(WebAppAdmin.class);
 
-    /**
-     * .
-     */
+    /** */
     private static final long MAX_UPLOAD_KB = 10L;
+
+    /** */
+    private static final String[] CSS_REQ_FILENAMES =
+            new String[] { "jquery.savapage-common-icons.css" };
 
     /**
      * .
@@ -125,6 +128,11 @@ public final class WebAppAdmin extends AbstractWebAppPage {
                 "jquery.savapage-admin-pages.js", nocache));
         renderJs(response,
                 String.format("%s%s", getSpecializedJsFileName(), nocache));
+    }
+
+    @Override
+    protected String[] getSpecializedCssReqFileNames() {
+        return CSS_REQ_FILENAMES;
     }
 
     @Override

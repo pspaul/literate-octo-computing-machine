@@ -96,6 +96,10 @@ public final class WebAppUser extends AbstractWebAppPage {
     private static final String JS_FILE_JQUERY_SAVAPAGE_CANVAS_EDITOR =
             "jquery.savapage-canvas-editor.js";
 
+    private static final String[] CSS_REQ_FILENAMES =
+            new String[] { "jquery.savapage-common-icons.css",
+                    "jquery.savapage-user-icons.css" };
+
     /**
      *
      */
@@ -581,6 +585,11 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         add(new UploadNextButtonView("next-buttons", nextButtons));
 
+    }
+
+    @Override
+    protected String[] getSpecializedCssReqFileNames() {
+        return CSS_REQ_FILENAMES;
     }
 
     @Override
