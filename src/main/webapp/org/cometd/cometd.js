@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 the original author or authors.
+ * Copyright (c) 2008-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* CometD Version 4.0.5 */
+/* CometD Version 4.0.7 */
 
 (function(root, factory) {
     if (typeof exports === 'object') {
@@ -597,10 +597,20 @@
             return new window.XMLHttpRequest();
         };
 
+        function _copyContext(xhr) {
+            try {
+                // Copy external context, to be used in other environments.
+                xhr.context = _self.context;
+            } catch (e) {
+                // May happen if XHR is wrapped by Object.seal(),
+                // Object.freeze(), or Object.preventExtensions().
+                this._debug('Could not copy transport context into XHR', e);
+            }
+        }
+
         _self.xhrSend = function(packet) {
             var xhr = _self.newXMLHttpRequest();
-            // Copy external context, to be used in other environments.
-            xhr.context = _self.context;
+            _copyContext(xhr);
             xhr.withCredentials = true;
             xhr.open('POST', packet.url, packet.sync !== true);
             var headers = packet.headers;

@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.eclipse.jetty.server.Server;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
@@ -144,9 +145,11 @@ public final class About extends AbstractAdminPage {
 
         // Java
 
+        add(new Label("java.server", Server.getVersion()));
+
         //
-        add(new Label("java.version", System.getProperty("java.version")));
         add(new Label("java.vm.name", System.getProperty("java.vm.name")));
+        add(new Label("java.version", System.getProperty("java.version")));
 
         add(new Label("jre-available-processors",
                 Integer.valueOf(Runtime.getRuntime().availableProcessors())));
