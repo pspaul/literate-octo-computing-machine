@@ -51,9 +51,7 @@
             // ... so, we try to scale to fixed strokeWidth here in Javascript.
                 SCALE_TO_FIXED_STROKEWIDTH = true && !_strokeUniform;
 
-            var _this = this,
-                _canvas,
-            //
+            var _canvas,
                 _coordAddObj = {
                 left : ADD_L_INIT,
                 top : ADD_T_INIT
@@ -63,6 +61,8 @@
                 _strokeWidth = 0,
                 _fillTextbox = 'rgb(0,0,0)',
                 _opacity = 1.0,
+            //
+                __nActiveObjectsWlk = 0,
             //
                 _getLastAddedObject = function() {
                 var count = _canvas.getObjects().length;
@@ -81,15 +81,15 @@
                 }
             },
             //
-                _applyCommonShapeProps = function(obj) {
-                obj.fill = _fill;
-                obj.opacity = _opacity;
-                obj.stroke = _stroke;
-                obj.strokeWidth = _strokeWidth;
+                _applyCommonShapeProps = function(o) {
+                o.fill = _fill;
+                o.opacity = _opacity;
+                o.stroke = _stroke;
+                o.strokeWidth = _strokeWidth;
                 if (_strokeUniform) {
-                    obj.strokeUniform = _strokeUniform;
+                    o.strokeUniform = _strokeUniform;
                 }
-                return obj;
+                return o;
             },
             //
                 _setActiveObjectsProp = function(key, value) {
@@ -118,12 +118,56 @@
                 o.zoomX = 1;
                 o.zoomY = 1;
             },
-            // Constructs this instance.
+            //
+                _onLoadObj = function(o) {
+                if (( o instanceof fabric.Line) || ( o instanceof fabric.Textbox)) {
+                    o.setControlsVisibility({
+                        mt : false,
+                        mb : false,
+                    });
+                } else if ( o instanceof fabric.Rect) {
+                    if (SCALE_TO_FIXED_STROKEWIDTH) {
+                        // Ensure correct resizing if part of active group.
+                        o.objectCaching = false;
+                    }
+                }
+            },
+            //
+                _onObjectScaling = function(o) {
+                var scaleFactor;
+                /*
+                 * Note: A saved Triangle is loaded as Polygon.
+                 */
+                if (( o instanceof fabric.Polygon) || ( o instanceof fabric.Textbox)) {
+                    return;
+                }
+
+                if (!o.strokeWidthUnscaled && o.strokeWidth) {
+                    o.strokeWidthUnscaled = o.strokeWidth;
+                }
+
+                scaleFactor = (o.scaleX + o.scaleY) / 2;
+
+                if (o.strokeWidthUnscaled) {
+                    o.strokeWidth = o.strokeWidthUnscaled / scaleFactor;
+                }
+            },
+            //
+                _onObjectScaled = function(o) {
+                if ( o instanceof fabric.Rect) {
+                    _resizeRect(o);
+                }
+                // set 'dirty' to re-render object's cache !!
+                o.dirty = true;
+            },
+            /**
+             *  Constructs this instance.
+             */
                 _initialize = function() {
+
                 _canvas = new fabric.Canvas(_canvasId, {
                     isDrawingMode : false
                 });
-
                 _canvas.skipOffscreen = true;
 
                 /**
@@ -144,34 +188,38 @@
                         _canvas.isDrawingMode = true;
                     }
                 }).on('selection:created', function(data) {
-                    _onSelectionCreated && _onSelectionCreated();
+                    __nActiveObjectsWlk = _canvas.getActiveObjects().length;
+                    if (__nActiveObjectsWlk > 1) {
+                        data.target.setControlsVisibility({
+                            mt : false,
+                            mb : false,
+                            mr : false,
+                            ml : false,
+                        });
+                    }
+                    _onSelectionCreated && _onSelectionCreated(__nActiveObjectsWlk);
                 }).on('selection:cleared', function(data) {
+                    __nActiveObjectsWlk = 0;
                     _onSelectionCleared && _onSelectionCleared();
                 }).on('selection:updated', function(data) {
-                    _onSelectionUpdated && _onSelectionUpdated();
+                    __nActiveObjectsWlk = _canvas.getActiveObjects().length;
+                    _onSelectionUpdated && _onSelectionUpdated(__nActiveObjectsWlk);
                 }).on('after:render', function(data) {
                     _onAfterRender && _onAfterRender(_canvas.getObjects().length);
                 });
 
                 if (SCALE_TO_FIXED_STROKEWIDTH) {
                     _canvas.on('object:scaling', function(e) {
-                        var o = e.target,
-                            scaleFactor = (o.scaleX + o.scaleY) / 2;
-
-                        if (!o.strokeWidthUnscaled && o.strokeWidth) {
-                            o.strokeWidthUnscaled = o.strokeWidth;
+                        var t = e.target;
+                        if (__nActiveObjectsWlk === 1) {
+                            _onObjectScaling(t);
                         }
-                        if (o.strokeWidthUnscaled) {
-                            o.strokeWidth = o.strokeWidthUnscaled / scaleFactor;
-                        }
-
                     }).on('object:scaled', function(e) {
-                        var o = e.target;
-                        if ( o instanceof fabric.Rect) {
-                            _resizeRect(o);
+                        var t = e.target;
+                        if (__nActiveObjectsWlk === 1) {
+                            _onObjectScaled(t);
+                            t.dirty = true;
                         }
-                        // set 'dirty' to re-render object's cache !!
-                        o.dirty = true;
                     });
                 }
             };
@@ -198,11 +246,16 @@
             };
 
             this.addLine = function() {
-                _addActiveObject(new fabric.Line([50, 100, 200, 100], {
+                var o = new fabric.Line([50, 100, 200, 100], {
                     opacity : _opacity,
                     stroke : _stroke,
                     strokeWidth : _strokeWidth
-                }));
+                });
+                o.setControlsVisibility({
+                    mt : false,
+                    mb : false,
+                });
+                _addActiveObject(o);
             };
 
             this.addCircle = function() {
@@ -212,10 +265,15 @@
             };
 
             this.addRect = function() {
-                _addActiveObject(_applyCommonShapeProps(new fabric.Rect({
+                var o = new fabric.Rect({
                     width : 50,
                     height : 50
-                })));
+                });
+                if (SCALE_TO_FIXED_STROKEWIDTH) {
+                    // Ensure correct resizing if part of active group.
+                    o.objectCaching = false;
+                }
+                _addActiveObject(_applyCommonShapeProps(o));
             };
 
             this.addTriangle = function() {
@@ -226,7 +284,7 @@
             };
 
             this.addTextbox = function() {
-                _addActiveObject(new fabric.Textbox('Line 1\r\nLine 2', {
+                var o = new fabric.Textbox('Line 1\r\nLine 2', {
                     fontSize : 20,
                     fontFamily : 'helvetica',
                     angle : 0,
@@ -238,12 +296,17 @@
                     hasRotatingPoint : true,
                     centerTransform : true,
                     opacity : _opacity
-                }));
+                });
+                o.setControlsVisibility({
+                    mt : false,
+                    mb : false,
+                });
+                _addActiveObject(o);
             };
 
             this.setFreeDrawingBrush = function(name, color, width) {
                 _canvas.freeDrawingBrush = new fabric[name + 'Brush'](_canvas);
-                _this.setBrushColor(color);
+                this.setBrushColor(color);
                 _canvas.freeDrawingBrush.width = width;
             };
 
@@ -313,8 +376,11 @@
             };
 
             this.loadSVG = function(svg) {
-                fabric.loadSVGFromString(svg, function(objects, options) {
-                    _canvas.add.apply(_canvas, objects);
+                fabric.loadSVGFromString(svg, function(objs, options) {
+                    _canvas.add.apply(_canvas, objs);
+                    objs.forEach(function(o) {
+                        _onLoadObj(o);
+                    });
                     _canvas.renderAll();
                 });
             };
@@ -322,19 +388,19 @@
             this.loadJSON = function(json) {
                 var objs;
                 _canvas.loadFromJSON(json, _canvas.renderAll.bind(_canvas));
-                /*
-                 * Workaround to restore borderWidth (strokeUniform) and trigger
-                 * object position. FabricJS bug?.
-                 */
-                if (_strokeUniform) {
-                    objs = _canvas.getObjects();
-                    if (objs.length) {
-                        // Restore strokeUniform
+                objs = _canvas.getObjects();
+                if (objs.length) {
+                    if (_strokeUniform) {
+                        /*
+                         * Workaround to restore borderWidth (strokeUniform) and
+                         * trigger object position. FabricJS bug?.
+                         */
                         objs.forEach(function(obj) {
                             obj.set({
                                 strokeUniform : _strokeUniform,
                                 top : obj.top + 1
                             });
+                            _onLoadObj(obj);
                         });
                         _canvas.renderAll();
                         objs.forEach(function(obj) {
@@ -342,6 +408,12 @@
                                 top : obj.top - 1
                             });
                         });
+
+                    } else {
+                        _canvas.getObjects().forEach(function(o) {
+                            _onLoadObj(o);
+                        });
+                        _canvas.renderAll();
                     }
                 }
             };
@@ -352,12 +424,26 @@
                 _coordAddObj.top = ADD_T_INIT;
             };
 
+            this.selectAll = function() {
+                var selection;
+                this.deactivateAll();
+                selection = new fabric.ActiveSelection(_canvas.getObjects(), {
+                    canvas : _canvas
+                });
+                _canvas.setActiveObject(selection).renderAll();
+                return;
+            };
+
             this.countObjects = function() {
                 return _canvas.getObjects().length;
             };
 
             this.deactivateAll = function() {
                 _canvas.discardActiveObject().renderAll();
+            };
+
+            this.debugSelected = function() {
+                console.log(_canvas.getActiveObjects()[0]);
             };
 
             this.clearSelected = function() {
@@ -371,7 +457,7 @@
             this.enableDrawingMode = function(enable) {
                 _canvas.isDrawingMode = enable;
                 if (enable) {
-                    _this.deactivateAll();
+                    this.deactivateAll();
                 }
             };
 

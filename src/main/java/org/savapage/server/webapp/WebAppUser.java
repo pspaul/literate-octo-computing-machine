@@ -126,8 +126,7 @@ public final class WebAppUser extends AbstractWebAppPage {
     protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
             final String nocache) {
 
-        if (ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_USER_PAGE_BROWSER_CANVAS_ENABLE)) {
+        if (ConfigManager.isPdfOverlayEditorEnabled()) {
             renderJs(response,
                     String.format("%s%s", JS_FILE_FABRIC_JS, nocache));
             renderJs(response, String.format("%s%s",

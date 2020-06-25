@@ -597,14 +597,16 @@
                 _imgCanvasEditor,
                 _imgCanvasObjCountLoaded,
                 _imgScrollBarWidth,
+                _isBrushMode,
 
             /** */
                 _setHtmlCanvasDrawingMode = function() {
-                var brush = _view.getRadioValue('sp-canvas-drawing-mode') === _DRAW_MODE_BRUSH;
-                _imgCanvasEditor.enableDrawingMode(brush);
-                _view.enableUI($('.sp-canvas-drawing-mode-select'), !brush);
-                _view.visible($('.sp-canvas-drawing-mode-select-prop'), !brush);
-                _view.visible($('.sp-canvas-drawing-mode-brush'), brush);
+                _isBrushMode = _view.getRadioValue('sp-canvas-drawing-mode') === _DRAW_MODE_BRUSH;
+                _imgCanvasEditor.enableDrawingMode(_isBrushMode);
+                _view.enableUI($('.sp-canvas-drawing-mode-select'), !_isBrushMode);
+                _view.visible($('.sp-canvas-drawing-mode-select-prop'), !_isBrushMode);
+                _view.visible($('.sp-canvas-drawing-mode-brush'), _isBrushMode);
+                _view.enable($('#sp-canvas-drawing-select-all'), !_isBrushMode);
             },
 
             /** */
@@ -614,12 +616,15 @@
                 function(nObjects) {
                     // onAfterRender
                     _view.enable($('#sp-canvas-drawing-clear-all'), nObjects > 0);
-                }, function() {
+                    _view.enable($('#sp-canvas-drawing-select-all'), !_isBrushMode && nObjects > 0);
+                }, function(nObjectsSelected) {
                     // onSelectionCreated
                     _view.enable($('#sp-canvas-drawing-clear-selected'), true);
+                    _view.enable($('#sp-canvas-drawing-info-selected'), nObjectsSelected === 1);
                 }, function() {
                     // onSelectionCleared
                     _view.enable($('#sp-canvas-drawing-clear-selected'), false);
+                    _view.enable($('#sp-canvas-drawing-info-selected'), false);
                 });
 
                 _imgCanvasEditor.setFreeDrawingBrush('Pencil', $('#sp-canvas-drawing-brush-color').val(), 1);
@@ -642,6 +647,10 @@
                     _imgCanvasEditor.addTextbox();
                 });
 
+                $("#sp-canvas-drawing-select-all").click(function() {
+                    _imgCanvasEditor.selectAll();
+                });
+
                 $("#sp-canvas-drawing-clear-all").click(function() {
                     _imgCanvasEditor.clear();
                     _imgCanvasEditor.setBackgroundImage(_getActiveImageUrl());
@@ -649,6 +658,10 @@
 
                 $("#sp-canvas-drawing-clear-selected").click(function() {
                     _imgCanvasEditor.clearSelected();
+                });
+
+                $("#sp-canvas-drawing-info-selected").click(function() {
+                    _imgCanvasEditor.debugSelected();
                 });
 
                 $("#sp-canvas-drawing-save").click(function() {

@@ -95,6 +95,12 @@ the License, or (at your option) any later version.
 				<td>
 					<div data-role="controlgroup" data-type="horizontal"
 						class="ui-mini">
+						<button id="sp-canvas-drawing-select-all"
+							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-select-all" />
+						<wicket:enclosure child="canvas-btn-info">
+							<button id="sp-canvas-drawing-info-selected" disabled wicket:id="canvas-btn-info"
+								class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-info" />
+						</wicket:enclosure>
 						<button id="sp-canvas-drawing-clear-selected" disabled
 							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-clear-selected" />
 						<button id="sp-canvas-drawing-clear-all" disabled

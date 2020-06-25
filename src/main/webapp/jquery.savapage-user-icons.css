@@ -361,6 +361,13 @@
     border-radius: 0 !important;
     opacity: .6;
 }
+.ui-icon-main-browse-canvas-select-all:after {
+    background: url(/glyphicons/glyphicons_154_show_big_thumbnails.png) 50% 50% no-repeat;
+    background-size: 18px 18px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .5;
+}
 
 /* ---mini --- */
 .ui-icon-mini-selected-green:after {

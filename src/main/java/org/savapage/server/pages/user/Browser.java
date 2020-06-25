@@ -26,7 +26,7 @@ package org.savapage.server.pages.user;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.server.WebServer;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -60,10 +60,12 @@ public class Browser extends AbstractUserPage {
         helper.addModifyLabelAttr("btn-next", MarkupHelper.ATTR_TITLE,
                 HtmlButtonEnum.NEXT.uiText(getLocale()));
 
-        final boolean hasCanvas = ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_USER_PAGE_BROWSER_CANVAS_ENABLE);
+        final boolean hasCanvas = ConfigManager.isPdfOverlayEditorEnabled();
 
         helper.encloseLabel("canvas-btn-brush", "", hasCanvas);
+        helper.encloseLabel("canvas-btn-info", "",
+                hasCanvas && WebServer.isDeveloperEnv());
+
         helper.encloseLabel("canvas-browser-img", "", hasCanvas);
     }
 
