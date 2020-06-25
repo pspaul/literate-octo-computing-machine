@@ -746,7 +746,8 @@ public final class WebServer {
          * be used.
          */
 
-        final SslContextFactory sslContextFactory = new SslContextFactory();
+        final SslContextFactory sslContextFactory =
+                new SslContextFactory.Server();
 
         // Mantis #562
         sslContextFactory.addExcludeCipherSuites(
