@@ -150,10 +150,11 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
         }
 
         final boolean editCopies = ConfigManager.instance().isConfigValue(
-                IConfigProp.Key.WEBAPP_JOBTICKETS_COPIES_EDIT_ENABLE);
+                IConfigProp.Key.WEBAPP_JOBTICKETS_COPIES_EDIT_ENABLE)
+                && this.getSessionWebAppType() == WebAppTypeEnum.JOBTICKETS
+                && StringUtils.isBlank(outboxJob.getPrinterRedirect());
 
-        populate(totalAmount, totalCopies, trxList, editCopies
-                && this.getSessionWebAppType() == WebAppTypeEnum.JOBTICKETS);
+        populate(totalAmount, totalCopies, trxList, editCopies);
     }
 
 }
