@@ -837,7 +837,6 @@
                     _resizeOverlayCanvasExt(selImg, $('#' + _idCanvasImgDiv));
 
                     _imgCanvasEditor.clear();
-                    _imgCanvasEditor.setBackgroundImage(imgUrl);
 
                     // Load overlay
                     res = _api.call({
@@ -853,6 +852,8 @@
                         } else if (res.dto.svg64) {
                             _imgCanvasEditor.loadSVG(window.atob(res.dto.svg64));
                         }
+                        // Set background after load !
+                        _imgCanvasEditor.setBackgroundImage(imgUrl);
                         _imgCanvasObjCountLoaded = _imgCanvasEditor.countObjects();
                     } else {
                         _view.showApiMsg(res);
