@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -57,6 +57,7 @@ import org.savapage.core.util.NumberUtil;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.helpers.account.UserAccountContextHtmlFactory;
+import org.savapage.server.pages.ACLRoleSummaryPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -289,6 +290,15 @@ public final class UsersPage extends AbstractAdminListPage {
                     groups.length() > 0);
 
             /*
+             * Roles
+             */
+            final ACLRoleSummaryPanel rolesPanel =
+                    new ACLRoleSummaryPanel("user-roles");
+            rolesPanel.populate(USER_SERVICE.getUserRoles(user.getId()),
+                    getLocale());
+            item.add(rolesPanel);
+
+            /*
              * Balance
              */
             item.add(new Label("balance-amount",
@@ -399,8 +409,11 @@ public final class UsersPage extends AbstractAdminListPage {
 
             };
 
-            labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_DATA_SAVAPAGE,
-                    user.getUserId()));
+            MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_TITLE,
+                    HtmlButtonEnum.EDIT.uiText(getLocale()));
+
+            MarkupHelper.modifyLabelAttr(labelWrk,
+                    MarkupHelper.ATTR_DATA_SAVAPAGE, user.getUserId());
 
             item.add(labelWrk);
 
@@ -409,8 +422,15 @@ public final class UsersPage extends AbstractAdminListPage {
                 if (this.hasAccessDoc) {
                     labelWrk = new Label(WID_BUTTON_LOG,
                             getLocalizer().getString("button-log", this));
-                    labelWrk.add(new AttributeModifier(
-                            MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
+
+                    MarkupHelper.modifyLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_TITLE,
+                            NounEnum.DOCUMENT.uiText(getLocale(), true));
+
+                    MarkupHelper.modifyLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_DATA_SAVAPAGE,
+                            user.getId().toString());
+
                     item.add(labelWrk);
                 } else {
                     helper.discloseLabel(WID_BUTTON_LOG);
@@ -419,8 +439,15 @@ public final class UsersPage extends AbstractAdminListPage {
                 if (this.hasAccessTrx) {
                     labelWrk = new Label(WID_BUTTON_TRX, getLocalizer()
                             .getString("button-transaction", this));
-                    labelWrk.add(new AttributeModifier(
-                            MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
+
+                    MarkupHelper.modifyLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_TITLE,
+                            NounEnum.TRANSACTION.uiText(getLocale(), true));
+
+                    MarkupHelper.modifyLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_DATA_SAVAPAGE,
+                            user.getId().toString());
+
                     item.add(labelWrk);
                 } else {
                     helper.discloseLabel(WID_BUTTON_TRX);
@@ -431,8 +458,14 @@ public final class UsersPage extends AbstractAdminListPage {
                     helper.discloseLabel(WID_BUTTON_GDPR);
                 } else {
                     labelWrk = new Label(WID_BUTTON_GDPR, "GDPR");
-                    labelWrk.add(new AttributeModifier(
-                            MarkupHelper.ATTR_DATA_SAVAPAGE, user.getId()));
+
+                    MarkupHelper.modifyLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_TITLE, "GDPR");
+
+                    MarkupHelper.modifyLabelAttr(labelWrk,
+                            MarkupHelper.ATTR_DATA_SAVAPAGE,
+                            user.getId().toString());
+
                     item.add(labelWrk);
                 }
 

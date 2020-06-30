@@ -147,6 +147,61 @@ public final class MarkupHelper {
      */
     private static final String IMG_PATH_ACCOUNT_SHARED =
             WebApp.PATH_IMAGES_FAMFAM + "/tag_green.png";
+
+    /**
+     * Image path for User Roles.
+     */
+    public static final String IMG_PATH_USER_ROLES =
+            WebApp.PATH_IMAGES_FAMFAM + "/script.png";
+
+    /**
+     * Image path for enabled User Roles.
+     */
+    public static final String IMG_PATH_USER_ROLES_ENABLED =
+            WebApp.PATH_IMAGES_FAMFAM + "/script_add.png";
+
+    /**
+     * Image path for disabled User Roles.
+     */
+    public static final String IMG_PATH_USER_ROLES_DISABLED =
+            WebApp.PATH_IMAGES_FAMFAM + "/script_delete.png";
+
+    /**
+     * Image path for User Privileges.
+     */
+    public static final String IMG_PATH_USER_PRIVILEGES =
+            WebApp.PATH_IMAGES_FAMFAM + "/shield.png";
+
+    /**
+     * Image path for enabled User Privileges.
+     */
+    public static final String IMG_PATH_USER_PRIVILEGES_ENABLED =
+            WebApp.PATH_IMAGES_FAMFAM + "/shield_add.png";
+
+    /**
+     * Image path for disabled User Privileges.
+     */
+    public static final String IMG_PATH_USER_PRIVILEGES_DISABLED =
+            WebApp.PATH_IMAGES_FAMFAM + "/shield_delete.png";
+
+    /**
+     * Image path for Admin Privileges.
+     */
+    public static final String IMG_PATH_ADMIN_PRIVILEGES =
+            WebApp.PATH_IMAGES_FAMFAM + "/cog.png";
+
+    /**
+     * Image path for enabled Admin Privileges.
+     */
+    public static final String IMG_PATH_ADMIN_PRIVILEGES_ENABLED =
+            WebApp.PATH_IMAGES_FAMFAM + "/cog_add.png";
+
+    /**
+     * Image path for disabled Admin Privileges.
+     */
+    public static final String IMG_PATH_ADMIN_PRIVILEGES_DISABLED =
+            WebApp.PATH_IMAGES_FAMFAM + "/cog_delete.png";
+
     /**
      * HTML img tag for Personal Account.
      */

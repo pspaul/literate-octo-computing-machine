@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
+</wicket:remove>
+
+<wicket:panel>
+	<wicket:enclosure child="enabled">
+		<small class="sp-txt-wrap sp-txt-valid" wicket:id="enabled">
+			&nbsp; <img wicket:id="enabled-img" style="height: 13px;" /> <span
+			wicket:id="enabled-count" />
+		</small>
+	</wicket:enclosure>
+	<wicket:enclosure child="disabled">
+		<small class="sp-txt-wrap sp-txt-warn" wicket:id="disabled">
+			&nbsp; <img wicket:id="disabled-img" style="height: 13px;" />
+			<span wicket:id="disabled-count" />
+		</small>
+	</wicket:enclosure>
+</wicket:panel>
+</html>

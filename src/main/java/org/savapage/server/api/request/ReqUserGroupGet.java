@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,24 +25,19 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.savapage.core.dao.UserGroupAttrDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
-import org.savapage.core.dao.enums.UserGroupAttrEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.UserAccountingDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserGroup;
-import org.savapage.core.jpa.UserGroupAttr;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.util.JsonHelper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -311,38 +309,18 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         dtoRsp.setAccountingEnabled(userGroup.getInitialSettingsEnabled());
 
         // ACL
-        final UserGroupAttrDao attrDao =
-                ServiceContext.getDaoContext().getUserGroupAttrDao();
-
-        final UserGroupAttr aclAttr =
-                attrDao.findByName(userGroup, UserGroupAttrEnum.ACL_ROLES);
-
-        Map<ACLRoleEnum, Boolean> aclRoles;
-
-        if (aclAttr == null) {
-            aclRoles = null;
-        } else {
-            aclRoles = JsonHelper.createEnumBooleanMapOrNull(ACLRoleEnum.class,
-                    aclAttr.getValue());
-        }
-
-        if (aclRoles == null) {
-            aclRoles = new HashMap<ACLRoleEnum, Boolean>();
-        }
-
-        dtoRsp.setAclRoles(aclRoles);
+        dtoRsp.setAclRoles(USER_GROUP_SERVICE.getUserGroupRoles(userGroup));
 
         // ACL OID User
-        Map<ACLOidEnum, Integer> mapOid = getAclOidMap(attrDao, userGroup,
-                UserGroupAttrEnum.ACL_OIDS_USER);
+        Map<ACLOidEnum, Integer> mapOid =
+                USER_GROUP_SERVICE.getUserGroupACLUser(userGroup);
 
         dtoRsp.setAclOidsUser(ACLOidEnum.asMapRole(mapOid));
         dtoRsp.setAclOidsUserReader(ACLOidEnum.asMapPermsReader(mapOid));
         dtoRsp.setAclOidsUserEditor(ACLOidEnum.asMapPermsEditor(mapOid));
 
         // ACL OID Admin
-        mapOid = getAclOidMap(attrDao, userGroup,
-                UserGroupAttrEnum.ACL_OIDS_ADMIN);
+        mapOid = USER_GROUP_SERVICE.getUserGroupACLAdmin(userGroup);
 
         dtoRsp.setAclOidsAdmin(ACLOidEnum.asMapRole(mapOid));
         dtoRsp.setAclOidsAdminReader(ACLOidEnum.asMapPermsReader(mapOid));
@@ -355,35 +333,6 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
         //
         this.setResponse(dtoRsp);
         setApiResultOk();
-    }
-
-    /**
-     *
-     * @param attrDao
-     * @param userGroup
-     * @param attrEnum
-     * @return
-     */
-    private Map<ACLOidEnum, Integer> getAclOidMap(
-            final UserGroupAttrDao attrDao, final UserGroup userGroup,
-            final UserGroupAttrEnum attrEnum) {
-
-        UserGroupAttr aclAttr = attrDao.findByName(userGroup, attrEnum);
-
-        Map<ACLOidEnum, Integer> aclOids;
-
-        if (aclAttr == null) {
-            aclOids = null;
-        } else {
-            aclOids = JsonHelper.createEnumIntegerMapOrNull(ACLOidEnum.class,
-                    aclAttr.getValue());
-        }
-
-        if (aclOids == null) {
-            aclOids = new HashMap<ACLOidEnum, Integer>();
-        }
-
-        return aclOids;
     }
 
 }

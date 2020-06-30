@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -35,11 +38,17 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserGroupPagerReq;
 import org.savapage.core.dto.UserIdDto;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserGroupService;
+import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.ACLOidSummaryPanel;
+import org.savapage.server.pages.ACLRoleSummaryPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -67,6 +76,10 @@ public final class UserGroupsPage extends AbstractAdminListPage {
     /** */
     private static final AccountingService ACCOUNTING_SERVICE =
             ServiceContext.getServiceFactory().getAccountingService();
+
+    /** */
+    private static final UserGroupService USERGROUP_SERVICE =
+            ServiceContext.getServiceFactory().getUserGroupService();
 
     /**
      * @return {@code false} to give Admin a chance to inspect the User Groups.
@@ -171,31 +184,63 @@ public final class UserGroupsPage extends AbstractAdminListPage {
             helper.addLabel("signal", String.valueOf(userCount));
 
             /*
+             * Roles
+             */
+            final ACLRoleSummaryPanel rolesPanel =
+                    new ACLRoleSummaryPanel("user-roles");
+            rolesPanel.populate(USERGROUP_SERVICE.getUserGroupRoles(userGroup),
+                    getLocale());
+            item.add(rolesPanel);
+
+            /*
+             * ACL
+             */
+            final ACLOidSummaryPanel userAclPanel = new ACLOidSummaryPanel(
+                    "user-acl", MarkupHelper.IMG_PATH_USER_PRIVILEGES_ENABLED,
+                    MarkupHelper.IMG_PATH_USER_PRIVILEGES_DISABLED);
+            userAclPanel.populate(
+                    USERGROUP_SERVICE.getUserGroupACLUser(userGroup),
+                    getLocale());
+            item.add(userAclPanel);
+
+            final ACLOidSummaryPanel adminAclPanel = new ACLOidSummaryPanel(
+                    "admin-acl", MarkupHelper.IMG_PATH_ADMIN_PRIVILEGES_ENABLED,
+                    MarkupHelper.IMG_PATH_ADMIN_PRIVILEGES_DISABLED);
+            adminAclPanel.populate(
+                    USERGROUP_SERVICE.getUserGroupACLAdmin(userGroup),
+                    getLocale());
+            item.add(adminAclPanel);
+
+            /*
              * Set the uid in 'data-savapage' attribute, so it can be picked up
              * in JavaScript for editing.
              */
             if (this.isEditor) {
-                MarkupHelper
-                        .modifyLabelAttr(
+                MarkupHelper.modifyLabelAttr(
+                        MarkupHelper.modifyLabelAttr(
                                 helper.encloseLabel(WID_BUTTON_EDIT,
                                         getLocalizer().getString("button-edit",
                                                 this),
                                         true),
                                 MarkupHelper.ATTR_DATA_SAVAPAGE,
-                                userGroup.getId().toString());
+                                userGroup.getId().toString()),
+                        MarkupHelper.ATTR_TITLE,
+                        HtmlButtonEnum.EDIT.uiText(getLocale()));
             } else {
                 helper.discloseLabel(WID_BUTTON_EDIT);
             }
 
             if (this.hasAccessUsers && userCount > 0) {
-                MarkupHelper
-                        .modifyLabelAttr(
+                MarkupHelper.modifyLabelAttr(
+                        MarkupHelper.modifyLabelAttr(
                                 helper.encloseLabel(WID_BUTTON_USERS,
                                         getLocalizer().getString("button-users",
                                                 this),
                                         true),
                                 MarkupHelper.ATTR_DATA_SAVAPAGE,
-                                userGroup.getId().toString());
+                                userGroup.getId().toString()),
+                        MarkupHelper.ATTR_TITLE,
+                        NounEnum.USER.uiText(getLocale(), userCount > 1));
             } else {
                 helper.discloseLabel(WID_BUTTON_USERS);
             }
@@ -214,6 +259,9 @@ public final class UserGroupsPage extends AbstractAdminListPage {
                 MarkupHelper.modifyLabelAttr(labelWrk,
                         MarkupHelper.ATTR_DATA_SAVAPAGE_TYPE,
                         AccountTypeEnum.GROUP.toString());
+
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_TITLE,
+                        PrintOutNounEnum.ACCOUNT.uiText(getLocale()));
 
             } else {
                 helper.discloseLabel(WID_BUTTON_ACCOUNT);

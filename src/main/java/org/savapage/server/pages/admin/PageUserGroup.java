@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -50,6 +53,15 @@ public final class PageUserGroup extends AbstractAdminPage {
 
         super(parameters, ACLOidEnum.A_USER_GROUPS, RequiredPermission.EDIT);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        //
+        helper.addModifyLabelAttr("img-prompt-roles", "", MarkupHelper.ATTR_SRC,
+                MarkupHelper.IMG_PATH_USER_ROLES);
+        helper.addModifyLabelAttr("img-prompt-privileges-user", "",
+                MarkupHelper.ATTR_SRC, MarkupHelper.IMG_PATH_USER_PRIVILEGES);
+        helper.addModifyLabelAttr("img-prompt-privileges-admin", "",
+                MarkupHelper.ATTR_SRC, MarkupHelper.IMG_PATH_ADMIN_PRIVILEGES);
         //
         final ACLRoleEnumPanel aclRolePanel =
                 new ACLRoleEnumPanel("ACLRoleEnumCheckboxes");
@@ -71,9 +83,6 @@ public final class PageUserGroup extends AbstractAdminPage {
         aclPermPanel = new ACLPermissionPanel("ACLPermissionsAdmin");
         aclPermPanel.populate(ACLOidEnum.getAdminOidList());
         add(aclPermPanel);
-
-        //
-        final MarkupHelper helper = new MarkupHelper(this);
 
         helper.addModifyLabelAttr("credit-limit-none", MarkupHelper.ATTR_VALUE,
                 CreditLimitDtoEnum.NONE.toString());

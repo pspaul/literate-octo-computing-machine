@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -80,6 +80,9 @@ public final class PageUser extends AbstractAdminPage {
         add(labelWrk);
 
         //
+        helper.addModifyLabelAttr("img-header-roles", "", MarkupHelper.ATTR_SRC,
+                MarkupHelper.IMG_PATH_USER_ROLES);
+
         final ACLRoleEnumPanel aclRolePanel =
                 new ACLRoleEnumPanel("ACLRoleEnumCheckboxes");
         aclRolePanel.populate(EnumSet.noneOf(ACLRoleEnum.class));
@@ -87,11 +90,12 @@ public final class PageUser extends AbstractAdminPage {
         add(aclRolePanel);
 
         //
-        helper.addModifyLabelAttr("credit-limit-none", "value",
+        helper.addModifyLabelAttr("credit-limit-none", MarkupHelper.ATTR_VALUE,
                 CreditLimitDtoEnum.NONE.toString());
-        helper.addModifyLabelAttr("credit-limit-default", "value",
-                CreditLimitDtoEnum.DEFAULT.toString());
-        helper.addModifyLabelAttr("credit-limit-individual", "value",
+        helper.addModifyLabelAttr("credit-limit-default",
+                MarkupHelper.ATTR_VALUE, CreditLimitDtoEnum.DEFAULT.toString());
+        helper.addModifyLabelAttr("credit-limit-individual",
+                MarkupHelper.ATTR_VALUE,
                 CreditLimitDtoEnum.INDIVIDUAL.toString());
 
         helper.addLabel("label-credit-limit-none",
