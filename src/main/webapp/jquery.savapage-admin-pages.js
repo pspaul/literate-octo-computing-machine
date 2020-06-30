@@ -2066,6 +2066,7 @@
                 $(this).on('click', '#button-doclog-default', null, function() {
                     var pnl = _panel.DocLogBase;
                     pnl.clearHiddenUserid();
+                    pnl.doc_type_default = 'ALL';
                     pnl.applyDefaults(pnl);
                     pnl.m2v(pnl);
                     return false;
@@ -2211,6 +2212,7 @@
 
                 $(this).on('click', '.sp-queue-log', null, function() {
                     var pnl = _panel.DocLogBase;
+                    pnl.doc_type_default = 'IN';
                     pnl.applyDefaults(pnl);
                     pnl.input.select.queue_id = $(this).attr('data-savapage');
                     // skipBeforeLoad
@@ -2266,6 +2268,7 @@
 
                 $(this).on('click', '.sp-printer-log', null, function() {
                     var pnl = _panel.DocLogBase;
+                    pnl.doc_type_default = 'PRINT';
                     pnl.applyDefaults(pnl);
                     pnl.input.select.printer_id = $(this).attr('data-savapage');
                     // skipBeforeLoad
