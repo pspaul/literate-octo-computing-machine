@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -73,6 +76,7 @@ import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.papercut.PaperCutHelper;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.HtmlPrinterImgEnum;
 import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
@@ -850,8 +854,11 @@ public final class PrintersPage extends AbstractAdminListPage {
             if (this.isEditor) {
                 labelWrk = new Label(WID_BUTTON_EDIT,
                         getLocalizer().getString("button-edit", this));
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, printer.getId()));
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        printer.getId().toString());
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_TITLE,
+                        HtmlButtonEnum.EDIT.uiText(getLocale()));
                 item.add(labelWrk);
             } else {
                 helper.discloseLabel(WID_BUTTON_EDIT);
@@ -860,8 +867,11 @@ public final class PrintersPage extends AbstractAdminListPage {
             if (this.hasAccessDoc) {
                 labelWrk = new Label(WID_BUTTON_LOG,
                         getLocalizer().getString("button-log", this));
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, printer.getId()));
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        printer.getId().toString());
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_TITLE,
+                        NounEnum.DOCUMENT.uiText(getLocale(), true));
                 item.add(labelWrk);
             } else {
                 helper.discloseLabel(WID_BUTTON_LOG);

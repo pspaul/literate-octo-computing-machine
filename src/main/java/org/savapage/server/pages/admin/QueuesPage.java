@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -42,6 +45,7 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.IppQueueAttrEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
@@ -51,6 +55,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
@@ -539,8 +544,11 @@ public final class QueuesPage extends AbstractAdminListPage {
                 hasButtons = true;
                 labelWrk = new Label(WID_BUTTON_LOG,
                         getLocalizer().getString("button-log", this));
-                labelWrk.add(new AttributeModifier(
-                        MarkupHelper.ATTR_DATA_SAVAPAGE, queue.getId()));
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        queue.getId().toString());
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_TITLE,
+                        NounEnum.DOCUMENT.uiText(getLocale(), true));
                 item.add(labelWrk);
             } else {
                 helper.discloseLabel(WID_BUTTON_LOG);
@@ -550,11 +558,14 @@ public final class QueuesPage extends AbstractAdminListPage {
                     || reservedQueue.isDriverPrint()
                     || reservedQueue == ReservedIppQueueEnum.WEBSERVICE)) {
                 hasButtons = true;
-                helper.encloseLabel(WID_BUTTON_EDIT,
-                        getLocalizer().getString("button-edit", this), true)
-                        .add(new AttributeModifier(
-                                MarkupHelper.ATTR_DATA_SAVAPAGE,
-                                queue.getId()));
+                labelWrk = helper.addLabel(WID_BUTTON_EDIT,
+                        getLocalizer().getString("button-edit", this));
+                MarkupHelper.modifyLabelAttr(labelWrk,
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        queue.getId().toString());
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_TITLE,
+                        HtmlButtonEnum.EDIT.uiText(getLocale()));
+                item.add(labelWrk);
 
             } else {
                 helper.discloseLabel(WID_BUTTON_EDIT);

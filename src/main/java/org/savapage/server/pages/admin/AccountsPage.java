@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -36,6 +39,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.AccountDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.helpers.AccountPagerReq;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.services.AccessControlService;
@@ -43,6 +47,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.account.UserAccountContextEnum;
 import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.core.util.BigDecimalUtil;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.account.UserAccountContextHtmlFactory;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
@@ -238,19 +243,28 @@ public final class AccountsPage extends AbstractAdminListPage {
              * in JavaScript for editing.
              */
             if (this.isEditor) {
-                helper.addModifyLabelAttr(WID_BUTTON_EDIT,
-                        getLocalizer().getString("button-edit", this),
-                        MarkupHelper.ATTR_DATA_SAVAPAGE,
-                        account.getId().toString());
+                MarkupHelper
+                        .modifyLabelAttr(
+                                helper.addModifyLabelAttr(WID_BUTTON_EDIT,
+                                        getLocalizer().getString("button-edit",
+                                                this),
+                                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                        account.getId().toString()),
+                                MarkupHelper.ATTR_TITLE,
+                                HtmlButtonEnum.EDIT.uiText(getLocale()));
             } else {
                 helper.discloseLabel(WID_BUTTON_EDIT);
             }
 
             if (this.hasAccessTrx) {
-                helper.addModifyLabelAttr(WID_BUTTON_TRX,
-                        getLocalizer().getString("button-transaction", this),
-                        MarkupHelper.ATTR_DATA_SAVAPAGE,
-                        account.getId().toString());
+                MarkupHelper.modifyLabelAttr(
+                        helper.addModifyLabelAttr(WID_BUTTON_TRX,
+                                getLocalizer().getString("button-transaction",
+                                        this),
+                                MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                account.getId().toString()),
+                        MarkupHelper.ATTR_TITLE,
+                        NounEnum.TRANSACTION.uiText(getLocale(), true));
             } else {
                 helper.discloseLabel(WID_BUTTON_TRX);
             }

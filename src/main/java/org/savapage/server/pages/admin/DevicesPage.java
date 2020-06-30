@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -48,6 +51,7 @@ import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.RfIdReaderService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.WebApp;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -416,14 +420,16 @@ public final class DevicesPage extends AbstractAdminListPage {
             final MarkupHelper helper = new MarkupHelper(item);
 
             if (this.isEditor) {
-                MarkupHelper
-                        .modifyLabelAttr(
+                MarkupHelper.modifyLabelAttr(
+                        MarkupHelper.modifyLabelAttr(
                                 helper.encloseLabel(WID_BUTTON_EDIT,
                                         getLocalizer().getString("button-edit",
                                                 this),
                                         true),
                                 MarkupHelper.ATTR_DATA_SAVAPAGE,
-                                device.getId().toString());
+                                device.getId().toString()),
+                        MarkupHelper.ATTR_TITLE,
+                        HtmlButtonEnum.EDIT.uiText(getLocale()));
 
                 item.add(labelWrk);
             } else {
