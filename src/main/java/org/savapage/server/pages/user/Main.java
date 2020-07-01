@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2019 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -28,6 +31,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -310,15 +314,16 @@ public class Main extends AbstractUserPage {
         helper.encloseLabel("mini-user-balance", "", showUserBalance);
 
         //
-        final Label name = MarkupHelper.createEncloseLabel("mini-user-name",
-                userName, true);
+        final Label name = helper.addLabel("mini-user-name", userName);
+        final Component nameButton =
+                helper.addTransparant("btn-mini-user-name");
 
         final boolean showUserDetails =
                 ACCESS_CONTROL_SERVICE.hasAccess(userIdDto, ACLOidEnum.U_USER);
 
         if (showUserDetails) {
-            MarkupHelper.appendLabelAttr(name, MarkupHelper.ATTR_CLASS,
-                    "sp-button-user-details");
+            MarkupHelper.appendComponentAttr(nameButton,
+                    MarkupHelper.ATTR_CLASS, "sp-button-user-details");
         }
 
         //
