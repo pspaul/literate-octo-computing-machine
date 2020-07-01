@@ -25,11 +25,13 @@
 package org.savapage.server.pages.admin;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -40,15 +42,19 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
 import org.savapage.core.dao.helpers.UserPagerReq;
 import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.jpa.User;
+import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.jpa.UserGroupMember;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
 import org.savapage.core.services.helpers.account.UserAccountContext;
 import org.savapage.core.services.helpers.account.UserAccountContextEnum;
@@ -57,6 +63,9 @@ import org.savapage.core.util.NumberUtil;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.helpers.account.UserAccountContextHtmlFactory;
+import org.savapage.server.pages.ACLOidAdminSummaryPanel;
+import org.savapage.server.pages.ACLOidSummaryPanel;
+import org.savapage.server.pages.ACLOidUserSummaryPanel;
 import org.savapage.server.pages.ACLRoleSummaryPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
@@ -81,6 +90,10 @@ public final class UsersPage extends AbstractAdminListPage {
     private static final UserService USER_SERVICE =
             ServiceContext.getServiceFactory().getUserService();
 
+    /** */
+    private static final UserGroupService USER_GROUP_SERVICE =
+            ServiceContext.getServiceFactory().getUserGroupService();
+
     /**
      * Important: must be odd number.
      */
@@ -96,7 +109,92 @@ public final class UsersPage extends AbstractAdminListPage {
 
     /**
      *
-     * @author Rijk Ravestein
+     */
+    private final class UserGroupInfo {
+
+        private String groupName;
+        private ReservedUserGroupEnum reservedGroup;
+        private Map<ACLRoleEnum, Boolean> roles;
+        private Map<ACLOidEnum, Integer> aclUser;
+        private Map<ACLOidEnum, Integer> aclAdmin;
+
+        private boolean hasRolesOrACL() {
+            return !this.roles.isEmpty() || !this.aclUser.isEmpty()
+                    || !this.aclAdmin.isEmpty();
+        }
+    }
+
+    /**
+     *
+     */
+    private final class UserGroupInfoListView
+            extends PropertyListView<UserGroupInfo> {
+
+        /** */
+        private static final long serialVersionUID = 1L;
+
+        /** */
+        private int iItemWlk;
+
+        /**
+         * @param id
+         *            Wicket ID.
+         * @param list
+         *            Groups.
+         */
+        UserGroupInfoListView(final String id, final List<UserGroupInfo> list) {
+            super(id, list);
+            this.iItemWlk = 0;
+        }
+
+        @Override
+        protected void populateItem(final ListItem<UserGroupInfo> item) {
+
+            final MarkupHelper helper = new MarkupHelper(item);
+
+            final UserGroupInfo info = item.getModelObject();
+
+            final String pfx;
+            if (this.iItemWlk == 0) {
+                pfx = "";
+            } else {
+                pfx = ", ";
+            }
+
+            if (info.reservedGroup == null) {
+                helper.addLabel("group-name", pfx.concat(info.groupName));
+                this.iItemWlk++;
+            } else {
+                if (info.roles.isEmpty() && info.aclUser.isEmpty()
+                        && info.aclAdmin.isEmpty()) {
+                    helper.discloseLabel("group-name");
+                } else {
+                    helper.addLabel("group-name",
+                            String.format("%s<i>%s</i>", pfx,
+                                    info.reservedGroup.getUiName()))
+                            .setEscapeModelStrings(false);
+                    this.iItemWlk++;
+                }
+            }
+
+            final ACLRoleSummaryPanel rolesPanel =
+                    new ACLRoleSummaryPanel("group-roles");
+            rolesPanel.populate(info.roles, getLocale());
+            item.add(rolesPanel);
+
+            final ACLOidSummaryPanel aclUserPanel =
+                    new ACLOidUserSummaryPanel("group-acl-user");
+            aclUserPanel.populate(info.aclUser, getLocale());
+            item.add(aclUserPanel);
+
+            final ACLOidSummaryPanel aclAdminPanel =
+                    new ACLOidAdminSummaryPanel("group-acl-admin");
+            aclAdminPanel.populate(info.aclAdmin, getLocale());
+            item.add(aclAdminPanel);
+        }
+    }
+
+    /**
      *
      */
     private final class UserListView extends PropertyListView<User> {
@@ -104,7 +202,7 @@ public final class UsersPage extends AbstractAdminListPage {
         private static final long serialVersionUID = 1L;
 
         /***/
-        private final boolean isEditor;
+        private final boolean isEditorPriv;
         /***/
         private final boolean hasAccessDoc;
         /***/
@@ -133,10 +231,13 @@ public final class UsersPage extends AbstractAdminListPage {
         /**
          *
          * @param id
+         *            Wicket ID.
          * @param list
+         *            User list.
          * @param isEditor
+         *            {@code true} if requesting user has editing privilege.
          */
-        public UserListView(final String id, final List<User> list,
+        UserListView(final String id, final List<User> list,
                 final boolean isEditor) {
 
             super(id, list);
@@ -146,7 +247,7 @@ public final class UsersPage extends AbstractAdminListPage {
 
             final UserIdDto reqUserDto = SpSession.get().getUserIdDto();
 
-            this.isEditor = isEditor;
+            this.isEditorPriv = isEditor;
 
             this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(reqUserDto,
                     ACLOidEnum.A_DOCUMENTS);
@@ -164,7 +265,9 @@ public final class UsersPage extends AbstractAdminListPage {
         /**
          *
          * @param item
+         *            User item.
          * @param mapVisible
+         *            Map of visible Wicket IDs (key) with value.
          */
         private void evaluateVisible(final ListItem<User> item,
                 final Map<String, String> mapVisible) {
@@ -181,6 +284,153 @@ public final class UsersPage extends AbstractAdminListPage {
                         StringUtils.isNotBlank(entry.getValue()),
                         entry.getKey(), entry.getValue(), cssClassWlk));
             }
+        }
+
+        /**
+         * Creates user group info.
+         *
+         * @param user
+         *            User.
+         * @param rolesUser
+         *            User roles.
+         * @return UserGroupInfo list.
+         */
+        private List<UserGroupInfo> createGroupInfo(final User user,
+                final Map<ACLRoleEnum, Boolean> rolesUser) {
+
+            final List<UserGroupInfo> groupInfoList = new ArrayList<>();
+
+            if (!user.getDeleted()) {
+
+                final boolean isAdminUser =
+                        BooleanUtils.isTrue(user.getAdmin());
+
+                final Map<ACLRoleEnum, Boolean> rolesCumulated =
+                        new HashMap<>();
+                final Map<ACLOidEnum, Integer> aclUserCumulated =
+                        new HashMap<>();
+                final Map<ACLOidEnum, Integer> aclAdminCumulated =
+                        new HashMap<>();
+
+                /*
+                 * Add user group is specific order.
+                 */
+                final List<UserGroup> memberGroups = new ArrayList<>();
+
+                /*
+                 * 1: Add explicit group membership.
+                 */
+                final List<UserGroupMember> memberships =
+                        user.getGroupMembership();
+
+                if (memberships != null) {
+                    for (final UserGroupMember member : memberships) {
+                        memberGroups.add(member.getGroup());
+                    }
+                }
+
+                /*
+                 * 2: Add implicit user source group membership.
+                 */
+                if (BooleanUtils.isTrue(user.getInternal())) {
+                    memberGroups.add(USER_GROUP_SERVICE.getInternalUserGroup());
+                } else {
+                    memberGroups.add(USER_GROUP_SERVICE.getExternalUserGroup());
+                }
+
+                /*
+                 * 3: Add implicit all user membership.
+                 */
+                memberGroups.add(USER_GROUP_SERVICE.getAllUserGroup());
+
+                /*
+                 * Process.
+                 */
+                for (final UserGroup group : memberGroups) {
+
+                    final UserGroupInfo info = new UserGroupInfo();
+
+                    info.groupName = group.getGroupName();
+
+                    info.reservedGroup = ReservedUserGroupEnum
+                            .fromDbName(group.getGroupName());
+
+                    info.roles = this.mergeRoles(rolesCumulated, rolesUser,
+                            USER_GROUP_SERVICE.getUserGroupRoles(group));
+
+                    info.aclUser = this.mergeACL(aclUserCumulated,
+                            USER_GROUP_SERVICE.getUserGroupACLUser(group));
+
+                    if (isAdminUser) {
+                        info.aclAdmin = this.mergeACL(aclAdminCumulated,
+                                USER_GROUP_SERVICE.getUserGroupACLAdmin(group));
+                    } else {
+                        info.aclAdmin = new HashMap<>();
+                    }
+
+                    if (info.reservedGroup == null || info.hasRolesOrACL()) {
+                        groupInfoList.add(info);
+                    }
+                }
+            }
+
+            return groupInfoList;
+        }
+
+        /**
+         * Merges group roles.
+         *
+         * @param rolesCumulated
+         *            Accumulated merges (input and output).
+         * @param rolesUser
+         *            User roles.
+         * @param rolesGroup
+         *            Group roles.
+         * @return Merged roles.
+         */
+        private Map<ACLRoleEnum, Boolean> mergeRoles(
+                final Map<ACLRoleEnum, Boolean> rolesCumulated,
+                final Map<ACLRoleEnum, Boolean> rolesUser,
+                final Map<ACLRoleEnum, Boolean> rolesGroup) {
+
+            final Map<ACLRoleEnum, Boolean> rolesMerged = new HashMap<>();
+
+            for (final Map.Entry<ACLRoleEnum, Boolean> entry : rolesGroup
+                    .entrySet()) {
+                final ACLRoleEnum key = entry.getKey();
+                if (!rolesUser.containsKey(key)
+                        && !rolesCumulated.containsKey(key)) {
+                    rolesCumulated.put(key, entry.getValue());
+                    rolesMerged.put(key, entry.getValue());
+                }
+            }
+            return rolesMerged;
+        }
+
+        /**
+         * Merge ACL.
+         *
+         * @param aclCumulated
+         *            Accumulated merges (input and output).
+         * @param aclSource
+         *            Source ACL.
+         * @return Merged ACL.
+         */
+        private Map<ACLOidEnum, Integer> mergeACL(
+                final Map<ACLOidEnum, Integer> aclCumulated,
+                final Map<ACLOidEnum, Integer> aclSource) {
+
+            final Map<ACLOidEnum, Integer> aclMerged = new HashMap<>();
+
+            for (final Map.Entry<ACLOidEnum, Integer> entry : aclSource
+                    .entrySet()) {
+                final ACLOidEnum key = entry.getKey();
+                if (!aclCumulated.containsKey(key)) {
+                    aclCumulated.put(key, entry.getValue());
+                    aclMerged.put(key, entry.getValue());
+                }
+            }
+            return aclMerged;
         }
 
         @Override
@@ -263,40 +513,30 @@ public final class UsersPage extends AbstractAdminListPage {
             item.add(labelWrk);
 
             /*
-             *
-             */
-            final StringBuilder groups = new StringBuilder();
-
-            if (!user.getDeleted()) {
-
-                final List<UserGroupMember> memberships =
-                        user.getGroupMembership();
-
-                if (memberships != null) {
-                    int i = 0;
-                    for (final UserGroupMember member : memberships) {
-                        if (i++ > 0) {
-                            groups.append(", ");
-                        }
-                        groups.append(member.getGroup().getGroupName());
-                    }
-                }
-                if (groups.length() > 0) {
-                    helper.addLabel("userGroupsPrompt",
-                            NounEnum.GROUP.uiText(getLocale()));
-                }
-            }
-            helper.encloseLabel("userGroups", groups.toString(),
-                    groups.length() > 0);
-
-            /*
              * Roles
              */
+            final Map<ACLRoleEnum, Boolean> userRoles =
+                    USER_SERVICE.getUserRoles(user.getId());
+
             final ACLRoleSummaryPanel rolesPanel =
                     new ACLRoleSummaryPanel("user-roles");
-            rolesPanel.populate(USER_SERVICE.getUserRoles(user.getId()),
-                    getLocale());
+            rolesPanel.populate(userRoles, getLocale());
             item.add(rolesPanel);
+
+            /*
+             * Groups
+             */
+            final List<UserGroupInfo> groupInfoList =
+                    this.createGroupInfo(user, userRoles);
+
+            if (groupInfoList.isEmpty()) {
+                helper.discloseLabel("userGroupsPrompt");
+            } else {
+                helper.addLabel("userGroupsPrompt",
+                        NounEnum.GROUP.uiText(getLocale()));
+                item.add(new UserGroupInfoListView("user-groups-view",
+                        groupInfoList));
+            }
 
             /*
              * Balance
@@ -343,21 +583,19 @@ public final class UsersPage extends AbstractAdminListPage {
             if (user.getLastUserActivity() != null) {
                 period.append(localizedMediumDate(user.getLastUserActivity()));
 
-                //
-                String key = null;
                 Integer total = null;
 
                 //
                 total = user.getNumberOfPrintInJobs();
                 totals.append(helper.localizedNumber(total));
-                key = (total == 1) ? "job" : "jobs";
-                totals.append(" ").append(localized(key));
+                totals.append(" ").append(
+                        PrintOutNounEnum.JOB.uiText(getLocale(), total > 1));
 
                 //
                 total = user.getNumberOfPrintInPages();
                 totals.append(" &bull; ").append(helper.localizedNumber(total));
-                key = (total == 1) ? "page" : "pages";
-                totals.append(" ").append(localized(key));
+                totals.append(" ").append(
+                        PrintOutNounEnum.PAGE.uiText(getLocale(), total > 1));
 
                 //
                 totals.append(" &bull; ")
@@ -395,7 +633,7 @@ public final class UsersPage extends AbstractAdminListPage {
              * in JavaScript for editing.
              */
             final boolean visible =
-                    !user.getDeleted() && this.isAppReady && this.isEditor;
+                    !user.getDeleted() && this.isAppReady && this.isEditorPriv;
 
             labelWrk = new Label("button-edit",
                     HtmlButtonEnum.EDIT.uiText(getLocale())) {
@@ -421,7 +659,7 @@ public final class UsersPage extends AbstractAdminListPage {
 
                 if (this.hasAccessDoc) {
                     labelWrk = new Label(WID_BUTTON_LOG,
-                            getLocalizer().getString("button-log", this));
+                            NounEnum.DOCUMENT.uiText(getLocale(), true));
 
                     MarkupHelper.modifyLabelAttr(labelWrk,
                             MarkupHelper.ATTR_TITLE,
@@ -437,8 +675,8 @@ public final class UsersPage extends AbstractAdminListPage {
                 }
 
                 if (this.hasAccessTrx) {
-                    labelWrk = new Label(WID_BUTTON_TRX, getLocalizer()
-                            .getString("button-transaction", this));
+                    labelWrk = new Label(WID_BUTTON_TRX,
+                            NounEnum.TRANSACTION.uiText(getLocale(), true));
 
                     MarkupHelper.modifyLabelAttr(labelWrk,
                             MarkupHelper.ATTR_TITLE,

@@ -47,7 +47,9 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserGroupService;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.ACLOidAdminSummaryPanel;
 import org.savapage.server.pages.ACLOidSummaryPanel;
+import org.savapage.server.pages.ACLOidUserSummaryPanel;
 import org.savapage.server.pages.ACLRoleSummaryPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
@@ -195,17 +197,15 @@ public final class UserGroupsPage extends AbstractAdminListPage {
             /*
              * ACL
              */
-            final ACLOidSummaryPanel userAclPanel = new ACLOidSummaryPanel(
-                    "user-acl", MarkupHelper.IMG_PATH_USER_PRIVILEGES_ENABLED,
-                    MarkupHelper.IMG_PATH_USER_PRIVILEGES_DISABLED);
+            final ACLOidSummaryPanel userAclPanel =
+                    new ACLOidUserSummaryPanel("user-acl");
             userAclPanel.populate(
                     USERGROUP_SERVICE.getUserGroupACLUser(userGroup),
                     getLocale());
             item.add(userAclPanel);
 
-            final ACLOidSummaryPanel adminAclPanel = new ACLOidSummaryPanel(
-                    "admin-acl", MarkupHelper.IMG_PATH_ADMIN_PRIVILEGES_ENABLED,
-                    MarkupHelper.IMG_PATH_ADMIN_PRIVILEGES_DISABLED);
+            final ACLOidSummaryPanel adminAclPanel =
+                    new ACLOidAdminSummaryPanel("admin-acl");
             adminAclPanel.populate(
                     USERGROUP_SERVICE.getUserGroupACLAdmin(userGroup),
                     getLocale());

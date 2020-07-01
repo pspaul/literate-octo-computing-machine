@@ -33,10 +33,13 @@ the License, or (at your option) any later version.
 				</div>
 			</wicket:enclosure>
 
-			<wicket:enclosure child="userGroups">
+			<wicket:enclosure child="userGroupsPrompt">
 				<p class="sp-txt-wrap">
 					<span wicket:id="userGroupsPrompt" /> : <span
-						wicket:id="userGroups" />
+						wicket:id="user-groups-view"> <span wicket:id="group-name" />
+						<wicket:panel wicket:id="group-roles" /> <wicket:panel
+							wicket:id="group-acl-user" /> <wicket:panel
+							wicket:id="group-acl-admin" /> </span>
 				</p>
 			</wicket:enclosure>
 

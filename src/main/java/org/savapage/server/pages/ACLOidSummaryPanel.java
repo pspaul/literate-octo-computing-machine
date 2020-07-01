@@ -24,11 +24,13 @@
  */
 package org.savapage.server.pages;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.UserGroupAttrEnum;
 
 /**
@@ -36,7 +38,7 @@ import org.savapage.core.dao.enums.UserGroupAttrEnum;
  * @author Rijk Ravestein
  *
  */
-public final class ACLOidSummaryPanel extends ACLSummaryPanel {
+public abstract class ACLOidSummaryPanel extends ACLSummaryPanel {
 
     /**
      *
@@ -52,9 +54,9 @@ public final class ACLOidSummaryPanel extends ACLSummaryPanel {
      * @param imgSrcDisabled
      *            Disabled IMG src.
      */
-    public ACLOidSummaryPanel(final String id, final String imgSrcEnabled,
+    protected ACLOidSummaryPanel(final String id, final String imgSrcEnabled,
             final String imgSrcDisabled) {
-        super(id, imgSrcEnabled, imgSrcEnabled);
+        super(id, imgSrcEnabled, imgSrcDisabled);
     }
 
     /**
@@ -68,6 +70,9 @@ public final class ACLOidSummaryPanel extends ACLSummaryPanel {
      */
     public void populate(final Map<ACLOidEnum, Integer> acl,
             final Locale locale) {
+
+        final Map<ACLOidEnum, List<ACLPermissionEnum>> perms =
+                ACLOidEnum.asMapPerms(acl);
 
         final MutableInt nAclEnabled = new MutableInt();
         final MutableInt nAclDisabled = new MutableInt();
@@ -94,6 +99,19 @@ public final class ACLOidSummaryPanel extends ACLSummaryPanel {
                 }
                 txtAcl.append(entry.getKey().uiText(locale));
                 nAcl.increment();
+
+                if (nAcl == nAclEnabled) {
+                    txtAcl.append(" (");
+                    int i = 0;
+                    for (final ACLPermissionEnum perm : perms
+                            .get(entry.getKey())) {
+                        if (i++ > 0) {
+                            txtAcl.append(", ");
+                        }
+                        txtAcl.append(perm.uiText(locale));
+                    }
+                    txtAcl.append(")");
+                }
             }
         }
         this.populate(nAclEnabled, nAclDisabled, txtAclEnabled, txtAclDisabled);
