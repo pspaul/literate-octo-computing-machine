@@ -290,7 +290,15 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
                 }
 
             } else {
-                trustedIppClientUserId = WebApp.getAuthUserByIpAddr(remoteAddr);
+                final String authUserByIP =
+                        WebApp.getAuthUserByIpAddr(remoteAddr);
+
+                if (authUserByIP == null) {
+                    trustedIppClientUserId =
+                            ConfigManager.getTrustedUserByIP(remoteAddr);
+                } else {
+                    trustedIppClientUserId = authUserByIP;
+                }
             }
 
             /*

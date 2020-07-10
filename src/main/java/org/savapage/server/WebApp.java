@@ -201,6 +201,9 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             "jquery/current/jquery.js";
 
     /** */
+    public static final String PATH_IPP_PRINTER_ICONS = "/ipp-printer-icons";
+
+    /** */
     public static final String PATH_IMAGES = "/images";
 
     /** */
@@ -549,7 +552,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
         theServerProps = props;
         ConfigManager.setServerProps(props);
         ConfigManager.setWebAppPaths(MOUNT_PATH_WEBAPP_ADMIN,
-                MOUNT_PATH_WEBAPP_USER);
+                MOUNT_PATH_WEBAPP_USER, PATH_IPP_PRINTER_ICONS);
     }
 
     /**
