@@ -67,7 +67,7 @@ import org.savapage.core.SpException;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.SslCertInfo;
-import org.savapage.core.ipp.operation.IppMessageMixin;
+import org.savapage.core.ipp.operation.IppOperationContext;
 import org.savapage.core.util.DeadlockedThreadsDetector;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.ext.papercut.ExtPaperCutSyncServlet;
@@ -115,7 +115,7 @@ public final class WebServer {
              * Take IPP traffic as it is, do not redirect.
              */
             if (contentTypeReq != null && contentTypeReq
-                    .equalsIgnoreCase(IppMessageMixin.CONTENT_TYPE_IPP)) {
+                    .equalsIgnoreCase(IppOperationContext.CONTENT_TYPE_IPP)) {
                 return;
             }
 

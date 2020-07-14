@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -56,7 +56,6 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.ipp.IppProcessingException;
 import org.savapage.core.ipp.operation.AbstractIppOperation;
-import org.savapage.core.ipp.operation.IppMessageMixin;
 import org.savapage.core.ipp.operation.IppOperationContext;
 import org.savapage.core.ipp.operation.IppOperationId;
 import org.savapage.core.jpa.IppQueue;
@@ -199,7 +198,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
          * Redirect to /user page for content types other than IPP_CONTENT_TYPE.
          */
         if (contentTypeReq == null || !contentTypeReq
-                .equalsIgnoreCase(IppMessageMixin.CONTENT_TYPE_IPP)) {
+                .equalsIgnoreCase(IppOperationContext.CONTENT_TYPE_IPP)) {
             setResponsePage(WebAppUser.class);
             return;
         }
@@ -207,7 +206,7 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
         /*
          * OK, we can handle the IPP request.
          */
-        response.setContentType(IppMessageMixin.CONTENT_TYPE_IPP);
+        response.setContentType(IppOperationContext.CONTENT_TYPE_IPP);
         response.setStatus(HttpServletResponse.SC_OK);
 
         /*
