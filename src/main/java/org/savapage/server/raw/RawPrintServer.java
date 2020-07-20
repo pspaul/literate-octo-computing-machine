@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.PerformanceLogger;
 import org.savapage.core.SpException;
@@ -427,9 +428,6 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
         final String originatorIp = socket.getInetAddress().getHostAddress();
 
-        final String authenticatedWebAppUser =
-                WebApp.getAuthUserByIpAddr(originatorIp);
-
         /*
          * First line
          */
@@ -576,37 +574,73 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
              */
             final String uri = String.format("RAW: %d", this.port);
 
-            final boolean clientIpAllowed = QUEUE_SERVICE
-                    .hasClientIpAccessToQueue(queue, uri, originatorIp);
-
             String warn = null;
 
-            if (clientIpAllowed) {
+            if (BooleanUtils.isTrue(queue.getDisabled())) {
 
-                processor = new DocContentPrintProcessor(queue, originatorIp,
-                        title, authenticatedWebAppUser);
-
-                processor.setReadAheadInputBytes(bos.toByteArray());
-
-                processor.processRequestingUser(userid);
-
-                isAuthorized = processor.isAuthorized();
-
-                if (isAuthorized) {
-                    processor.process(istr, null, DocLogProtocolEnum.RAW, null,
-                            DocContentTypeEnum.PS, null);
-                } else {
-                    warn = String.format(
-                            "IP Print on queue /%s denied for "
-                                    + "user \"%s\" from %s",
-                            ReservedIppQueueEnum.RAW_PRINT.getUrlPath(), userid,
-                            originatorIp);
-                }
-
-            } else {
-                warn = String.format("IP Print on queue /%s denied for host %s",
+                warn = String.format(
+                        "IP Print on queue /%s is disabled (client %s).",
                         ReservedIppQueueEnum.RAW_PRINT.getUrlPath(),
                         originatorIp);
+
+            } else {
+
+                final String assignedUser;
+
+                if (BooleanUtils.isTrue(queue.getTrusted())) {
+                    assignedUser = userid;
+                } else {
+                    final String authWebAppUser =
+                            WebApp.getAuthUserByIpAddr(originatorIp);
+                    if (authWebAppUser == null) {
+                        assignedUser =
+                                ConfigManager.getTrustedUserByIP(originatorIp);
+                    } else {
+                        assignedUser = authWebAppUser;
+                    }
+                }
+
+                if (assignedUser == null) {
+                    warn = String.format(
+                            "IP Print on untrusted queue /%s denied "
+                                    + "for user [%s] on %s",
+                            ReservedIppQueueEnum.RAW_PRINT.getUrlPath(), userid,
+                            originatorIp);
+                } else {
+
+                    final boolean clientIpAllowed = QUEUE_SERVICE
+                            .hasClientIpAccessToQueue(queue, uri, originatorIp);
+
+                    if (clientIpAllowed) {
+
+                        processor = new DocContentPrintProcessor(queue,
+                                originatorIp, title, assignedUser);
+
+                        processor.setReadAheadInputBytes(bos.toByteArray());
+
+                        processor.processAssignedUser(assignedUser);
+
+                        isAuthorized = processor.isAuthorized();
+
+                        if (isAuthorized) {
+                            processor.process(istr, null,
+                                    DocLogProtocolEnum.RAW, null,
+                                    DocContentTypeEnum.PS, null);
+                        } else {
+                            warn = String.format(
+                                    "IP Print on queue /%s denied for "
+                                            + "user \"%s\" from %s",
+                                    ReservedIppQueueEnum.RAW_PRINT.getUrlPath(),
+                                    userid, originatorIp);
+                        }
+
+                    } else {
+                        warn = String.format(
+                                "IP Print on queue /%s denied for host %s",
+                                ReservedIppQueueEnum.RAW_PRINT.getUrlPath(),
+                                originatorIp);
+                    }
+                }
             }
 
             if (warn != null) {

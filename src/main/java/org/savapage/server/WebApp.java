@@ -200,7 +200,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public static final String WEBJARS_PATH_JQUERY_CORE_JS =
             "jquery/current/jquery.js";
 
-    /** */
+    /** SavaPage Printer Icons used by IPP Clients. */
     public static final String PATH_IPP_PRINTER_ICONS = "/ipp-printer-icons";
 
     /** */
@@ -711,6 +711,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             mountPage(MOUNT_PATH_WEBAPP_USER_OAUTH, OAuthRedirectPage.class);
 
             mountPage(MOUNT_PATH_API, JsonApiServer.class);
+
             mountPage(MOUNT_PATH_PRINTERS, IppPrintServer.class);
 
             /*

@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ import org.savapage.server.WebApp;
 public final class IppPrintServerUrlParms {
 
     /**
-     * The requesting printers parameter.
+     * The requesting 'printers' parameter.
      */
     public static final String PARM_PRINTERS = WebApp.PATH_PRINTERS;
 
@@ -109,9 +109,11 @@ public final class IppPrintServerUrlParms {
                 final String value = pair.getValue();
 
                 switch (parm) {
+
                 case PARM_PRINTERS:
                     tmpPrinter = value;
                     break;
+
                 default:
                     if (tmpPrinter != null && tmpPrinter
                             .equals(ReservedIppQueueEnum.IPP_PRINT_INTERNET

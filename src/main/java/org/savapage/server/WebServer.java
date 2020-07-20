@@ -88,7 +88,10 @@ import org.slf4j.LoggerFactory;
 public final class WebServer {
 
     /**
-     * Redirect all traffic except IPP to SSL.
+     * Redirect all traffic to SSL, except
+     * {@link IppOperationContext.CONTENT_TYPE_IPP},
+     * {@link SpXmlRpcServlet.URL_PATTERN_BASE} and
+     * {@link WebApp.PATH_IPP_PRINTER_ICONS}.
      */
     private static class MySecuredRedirectHandler
             extends SecuredRedirectHandler {
@@ -108,6 +111,14 @@ public final class WebServer {
              */
             if (request.getPathInfo()
                     .startsWith(SpXmlRpcServlet.URL_PATTERN_BASE)) {
+                return;
+            }
+
+            /*
+             * SavaPage Printer Icons used by IPP Clients.
+             */
+            if (request.getPathInfo()
+                    .startsWith(WebApp.PATH_IPP_PRINTER_ICONS)) {
                 return;
             }
 
