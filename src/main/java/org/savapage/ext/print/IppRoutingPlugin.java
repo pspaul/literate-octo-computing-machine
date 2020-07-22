@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.SpException;
 import org.savapage.core.ipp.routing.IppRoutingContext;
 import org.savapage.core.ipp.routing.IppRoutingResult;
+import org.savapage.core.pdf.IPdfPageProps;
 import org.savapage.core.pdf.ITextPdfCreator;
 import org.savapage.core.util.CupsPrinterUriHelper;
 import org.savapage.core.util.JsonHelper;
@@ -65,6 +66,9 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNumber;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
@@ -427,6 +431,13 @@ public final class IppRoutingPlugin implements ServerPlugin {
     /** */
     private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_JOB_TIME =
             "$job_time$";
+
+    /** */
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_PAGE_WIDTH =
+            "$page_width_mm$";
+    /** */
+    private static final String ROUTING_REST_POST_REQ_PLACEHOLDER_PAGE_HEIGHT =
+            "$page_height_mm$";
 
     /** */
     private static final String PROP_KEY_ROUTING_REST_POST_REQ_MEDIATYPE =
@@ -795,10 +806,48 @@ public final class IppRoutingPlugin implements ServerPlugin {
     public void onRouting(final IppRoutingContext ctx,
             final IppRoutingResult result) {
 
+        final IPdfPageProps pageProps = ctx.getPageProperties();
+
+        // Rotate pages in PDF dictionary? Mantis #1139.
+        final Integer pdfDictPageRotate;
+        if (pageProps.isLandscape() && !pageProps.isSeenAsLandscape()) {
+            /*
+             * Rotate to user "perceived" landscape.
+             *
+             * Example: Landscape print from LibreOffice gives Width [297]
+             * Height [210] Rotation Page [270] Content [0].
+             */
+            pdfDictPageRotate = pageProps.getRotateToOrientationSeen(true);
+        } else {
+            pdfDictPageRotate = null;
+        }
+
+        /*
+         * Rotate page size to position items on PDF "over content"?
+         *
+         * Mantis #1139. Example: PostScript PDL (Windows) driver print gives
+         * Width [216] Height [279] Rotation Page [90] Content [0].
+         */
+        final boolean rotatePageSizeToPositionContent =
+                !pageProps.isLandscape() && pageProps.isSeenAsLandscape();
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(
+                    "Job: {}\n\tWidth [{}] Height [{}]\n\t"
+                            + "Landscape Page [{}] Seen [{}]\n\t"
+                            + "Rotation Page [{}] Content [{}] -> [{}]",
+                    ctx.getJobName(), pageProps.getMmWidth(),
+                    pageProps.getMmHeight(),
+                    Boolean.valueOf(pageProps.isLandscape()).toString(),
+                    Boolean.valueOf(pageProps.isSeenAsLandscape()).toString(),
+                    pageProps.getRotationFirstPage(),
+                    pageProps.getContentRotationFirstPage(), pdfDictPageRotate);
+        }
+
         final RoutingData data = new RoutingData(this.routingTemplate);
 
         if (this.routingRestClient != null) {
-            this.onRoutingREST(ctx, data);
+            this.onRoutingREST(rotatePageSizeToPositionContent, ctx, data);
         }
 
         try {
@@ -825,7 +874,6 @@ public final class IppRoutingPlugin implements ServerPlugin {
             phraseFooter = new Phrase(data.pdfFooterText, data.pdfFooterFont);
         }
 
-        //
         if (data.pdfQrCodeImage == null && phraseHeader == null
                 && phraseFooter == null) {
             return;
@@ -854,12 +902,27 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
                 final PdfContentByte content = stamper.getOverContent(nPage);
 
-                final Rectangle rect = reader.getPageSize(nPage);
-                final int rotation = reader.getPageRotation(nPage);
+                final int pageRotation = reader.getPageRotation(nPage);
+                final int rotation;
+                if (pdfDictPageRotate == null) {
+                    rotation = pageRotation;
+                } else {
+                    rotation = pdfDictPageRotate.intValue();
+                    final PdfDictionary pageDict = reader.getPageN(nPage);
+                    pageDict.put(PdfName.ROTATE, new PdfNumber(rotation));
+                }
+
+                final Rectangle pageSize = reader.getPageSize(nPage);
+                final Rectangle rect;
+                if (rotatePageSizeToPositionContent) {
+                    rect = pageSize.rotate();
+                } else {
+                    rect = pageSize;
+                }
 
                 if (data.pdfQrCodeImage != null) {
-                    positionQrCodeImagesOnPdfPage(rect, rotation,
-                            data.pdfQrCodeImage, data.pdfQrCodeImageBg, data);
+                    positionQrCodeImagesOnPdfPage(rect, data.pdfQrCodeImage,
+                            data.pdfQrCodeImageBg, data);
                     if (data.pdfQrCodeImageBg != null) {
                         content.addImage(data.pdfQrCodeImageBg);
                     }
@@ -868,16 +931,10 @@ public final class IppRoutingPlugin implements ServerPlugin {
 
                 if (phraseHeader != null || phraseFooter != null) {
 
-                    final float xHeaderFooter;
-                    final float yHeader;
-
-                    if (rotation == 0) {
-                        xHeaderFooter = (rect.getRight() - rect.getLeft()) / 2;
-                        yHeader = rect.getHeight() - data.pdfHeaderMarginTopPt;
-                    } else {
-                        xHeaderFooter = (rect.getTop() - rect.getBottom()) / 2;
-                        yHeader = rect.getWidth() - data.pdfHeaderMarginTopPt;
-                    }
+                    final float xHeaderFooter =
+                            (rect.getRight() - rect.getLeft()) / 2;
+                    final float yHeader =
+                            rect.getHeight() - data.pdfHeaderMarginTopPt;
 
                     if (phraseHeader != null) {
                         ColumnText.showTextAligned(content,
@@ -923,13 +980,27 @@ public final class IppRoutingPlugin implements ServerPlugin {
     /**
      * Retrieves routing data from REST server.
      *
+     * @param rotatePageSizeToPositionContent
+     *            {@code true} if page size must be rotated to position items on
+     *            PDF "over content"?
      * @param ctx
      *            The routing context.
      * @param data
      *            The routing data.
      */
-    private void onRoutingREST(final IppRoutingContext ctx,
-            final RoutingData data) {
+    private void onRoutingREST(final boolean rotatePageSizeToPositionContent,
+            final IppRoutingContext ctx, final RoutingData data) {
+
+        final IPdfPageProps pageProps = ctx.getPageProperties();
+        final int pageWidth;
+        final int pageHeight;
+        if (rotatePageSizeToPositionContent) {
+            pageWidth = pageProps.getMmHeight();
+            pageHeight = pageProps.getMmWidth();
+        } else {
+            pageWidth = pageProps.getMmWidth();
+            pageHeight = pageProps.getMmHeight();
+        }
 
         final String[][] placeholderValues = new String[][] {
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_CLIENT_IP,
@@ -939,6 +1010,10 @@ public final class IppRoutingPlugin implements ServerPlugin {
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_JOB_TIME,
                         this.routingRestClient
                                 .toISODateTimeZ(ctx.getTransactionDate()) },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_PAGE_WIDTH,
+                        String.valueOf(pageWidth) },
+                { ROUTING_REST_POST_REQ_PLACEHOLDER_PAGE_HEIGHT,
+                        String.valueOf(pageHeight) },
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_QUEUE_NAME,
                         ctx.getQueueName() },
                 { ROUTING_REST_POST_REQ_PLACEHOLDER_PRINTER_NAME,
@@ -1020,8 +1095,6 @@ public final class IppRoutingPlugin implements ServerPlugin {
      *
      * @param pageRect
      *            Page rectangle.
-     * @param pageRotation
-     *            Page rotation
      * @param image
      *            The QR image.
      * @param imageBg
@@ -1030,8 +1103,7 @@ public final class IppRoutingPlugin implements ServerPlugin {
      *            Routing data.
      */
     private static void positionQrCodeImagesOnPdfPage(final Rectangle pageRect,
-            final int pageRotation, final Image image, final Image imageBg,
-            final RoutingData data) {
+            final Image image, final Image imageBg, final RoutingData data) {
 
         final float imgPointsHeight = image.getScaledHeight();
         final float imgPointsWidth = image.getScaledWidth();
@@ -1075,8 +1147,6 @@ public final class IppRoutingPlugin implements ServerPlugin {
             yImage = pageRect.getBottom() + data.pdfQrCodePosMarginYPt;
             break;
         }
-
-        // TODO pageRotation.
 
         if (imageBg != null) {
             imageBg.setAbsolutePosition(xImage - codeQRQuiteZonePoints,

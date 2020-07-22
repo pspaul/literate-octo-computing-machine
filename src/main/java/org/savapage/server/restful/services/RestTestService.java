@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -193,6 +194,39 @@ public final class RestTestService implements IRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response testIppRoutingData(final String dummy) {
 
+        final String[] tokens = StringUtils.splitPreserveAllTokens(dummy, ';');
+
+        int width = 0;
+        int height = 0;
+
+        for (final String token : tokens) {
+
+            final String[] keyValue =
+                    StringUtils.splitPreserveAllTokens(token, "=");
+            if (keyValue.length != 2) {
+                continue;
+            }
+            final String key = keyValue[0];
+            final String value = keyValue[1];
+
+            switch (key) {
+            case "page-width":
+                if (NumberUtils.isDigits(value)) {
+                    width = Integer.parseInt(value);
+                }
+                break;
+
+            case "page-height":
+                if (NumberUtils.isDigits(value)) {
+                    height = Integer.parseInt(value);
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+
         final IppRoutingDto data = new IppRoutingDto();
 
         data.setId(UUID.randomUUID().toString());
@@ -203,19 +237,35 @@ public final class RestTestService implements IRestService {
         final IppRoutingDto.QrCode qrcode = new IppRoutingDto.QrCode();
         pdf.setQrcode(qrcode);
 
-        qrcode.setQz(5);
-        qrcode.setSize(40);
+        final int qz = 4;
+        final int qrSize = 40;
+
+        qrcode.setQz(qz);
+        qrcode.setSize(qrSize);
 
         final IppRoutingDto.QrCodePosition pos =
                 new IppRoutingDto.QrCodePosition();
         qrcode.setPos(pos);
-        pos.setAnchor(QrCodeAnchorEnum.BL);
+        pos.setAnchor(QrCodeAnchorEnum.BR);
 
-        final IppRoutingDto.Margin margin =
-                new IppRoutingDto.Margin();
+        final IppRoutingDto.Margin margin = new IppRoutingDto.Margin();
         pos.setMargin(margin);
-        margin.setX(100);
-        margin.setY(150);
+
+        if (width == 0 || height == 0) {
+            margin.setX(100);
+            margin.setY(150);
+        } else {
+            final boolean center = false;
+            if (center) {
+                // center
+                final int offset = (qz + qrSize) / 2;
+                margin.setX(width / 2 - offset);
+                margin.setY(height / 2 - offset);
+            } else {
+                margin.setX(10);
+                margin.setY(10);
+            }
+        }
 
         return Response.status(Status.CREATED).entity(data).build();
     }
