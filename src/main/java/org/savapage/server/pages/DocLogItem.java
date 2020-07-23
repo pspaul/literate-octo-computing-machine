@@ -43,6 +43,7 @@ import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.PrintOutDao;
 import org.savapage.core.dao.enums.DaoEnumHelper;
+import org.savapage.core.dao.enums.DocLogProtocolEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
@@ -628,6 +629,12 @@ public final class DocLogItem {
                                 .isNotBlank(pdfOut.getPasswordOwner()));
                         log.setUserPw(StringUtils
                                 .isNotBlank(pdfOut.getPasswordUser()));
+                    }
+                } else {
+                    if (docLog.getDeliveryProtocol() != null
+                            && docLog.getDeliveryProtocol().equals(
+                                    DocLogProtocolEnum.IPP.getDbName())) {
+                        log.setDocType(DocLogDao.Type.IN);
                     }
                 }
 

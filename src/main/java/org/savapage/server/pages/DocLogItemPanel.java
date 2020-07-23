@@ -466,45 +466,49 @@ public class DocLogItemPanel extends Panel {
 
             cssClass = MarkupHelper.CSS_PRINT_IN_QUEUE;
 
-            if (obj.getPaperSize() != null) {
-                mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
-            }
+            if (obj.getPrintInPrinted() != null) {
 
-            if (obj.getDrmRestricted()) {
-                mapVisible.put("print-in-label", "DRM");
-            }
-
-            if (!obj.getPrintInPrinted()) {
-
-                final PrintInDeniedReasonEnum deniedReason =
-                        obj.getPrintInDeniedReason();
-
-                final String reason;
-
-                if (deniedReason == null) {
-                    reason = localized("print-in-denied-reason-unknown");
-                } else {
-                    switch (deniedReason) {
-                    case DRM:
-                        reason = localized("print-in-denied-reason-drm");
-                        break;
-                    case INVALID:
-                        mapVisible.put("print-in-label",
-                                AdjectiveEnum.INVALID.uiText(getLocale()));
-                        reason = AdjectiveEnum.REJECTED.uiText(getLocale());
-                        break;
-                    default:
-                        throw new IllegalStateException(
-                                "Unhandled ".concat(deniedReason.toString()));
-                    }
+                if (obj.getPaperSize() != null) {
+                    mapVisible.put("papersize",
+                            obj.getPaperSize().toUpperCase());
                 }
 
-                mapVisible.put("print-in-denied-reason", reason);
+                if (obj.getDrmRestricted()) {
+                    mapVisible.put("print-in-label", "DRM");
+                }
 
-            } else {
-                pieData = String.valueOf(obj.getTotalPages());
-                pieSliceColors =
-                        SparklineHtml.arrayAttr(SparklineHtml.COLOR_QUEUE);
+                if (!obj.getPrintInPrinted()) {
+
+                    final PrintInDeniedReasonEnum deniedReason =
+                            obj.getPrintInDeniedReason();
+
+                    final String reason;
+
+                    if (deniedReason == null) {
+                        reason = localized("print-in-denied-reason-unknown");
+                    } else {
+                        switch (deniedReason) {
+                        case DRM:
+                            reason = localized("print-in-denied-reason-drm");
+                            break;
+                        case INVALID:
+                            mapVisible.put("print-in-label",
+                                    AdjectiveEnum.INVALID.uiText(getLocale()));
+                            reason = AdjectiveEnum.REJECTED.uiText(getLocale());
+                            break;
+                        default:
+                            throw new IllegalStateException("Unhandled "
+                                    .concat(deniedReason.toString()));
+                        }
+                    }
+
+                    mapVisible.put("print-in-denied-reason", reason);
+
+                } else {
+                    pieData = String.valueOf(obj.getTotalPages());
+                    pieSliceColors =
+                            SparklineHtml.arrayAttr(SparklineHtml.COLOR_QUEUE);
+                }
             }
 
         } else {
