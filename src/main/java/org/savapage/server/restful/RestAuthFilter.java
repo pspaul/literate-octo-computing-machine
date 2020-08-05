@@ -26,6 +26,7 @@ package org.savapage.server.restful;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +43,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.internal.util.Base64;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
@@ -138,8 +138,8 @@ public final class RestAuthFilter
                 .replaceFirst(HEADER_AUTHENTICATION_SCHEME + " ", "");
 
         // Decode username and password
-        final String usernameAndPassword =
-                new String(Base64.decode(encodedUserPassword.getBytes()));
+        final String usernameAndPassword = new String(
+                Base64.getDecoder().decode(encodedUserPassword.getBytes()));
 
         // Split username and password tokens
         final StringTokenizer tokenizer =

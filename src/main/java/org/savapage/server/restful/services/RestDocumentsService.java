@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -54,7 +55,6 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.internal.util.Base64;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.savapage.core.UnavailableException;
@@ -344,8 +344,8 @@ public final class RestDocumentsService implements IRestService {
                 RestAuthFilter.HEADER_AUTHENTICATION_SCHEME + " ", "");
 
         // Decode username and password
-        final String usernameAndPassword =
-                new String(Base64.decode(encodedUserPassword.getBytes()));
+        final String usernameAndPassword = new String(
+                Base64.getDecoder().decode(encodedUserPassword.getBytes()));
 
         // Split username and password tokens
         final StringTokenizer tokenizer =
