@@ -1,24 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-	<!-- 
-    +====================================================================+ 
-    | This file is part of the SavaPage project <https://savapage.org> ..|
-    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein...| 
-    |....................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ..|
-    | it under the terms of the GNU Affero General Public License as ....|
-    | published by the Free Software Foundation, either version 3 of ....|
-    | the License, or (at your option) any later version. ...............|
-    +====================================================================+ 
-    -->
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
 </wicket:remove>
 
 <ul data-role="listview" data-inset="true">
+	<li data-role="list-divider" wicket:id="title" />
 
-	<li data-role="list-divider">Reports</li>
 	<li>
-		<div>This function is to be implemented in a next release.</div>
+		<div data-role="collapsible" data-collapsed="false" data-mini="false">
+			<h3 wicket:id="cat-users" />
+
+			<div data-role="collapsible" data-collapsed="false" data-mini="false"
+				class="sp-reports-user-printout-tot">
+
+				<h3>
+					<wicket:message key="report-1-title" />
+				</h3>
+
+				<ul data-role="listview" data-inset="true" data-mini="true">
+					<li>
+						<div class="sp-txt-wrap">
+							<wicket:message key="report-1-desc" />
+						</div>
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true" data-mini="true">
+					<li data-role="list-divider" wicket:id="div-period" />
+					<li>
+						<div class="ui-field-contain" data-mini="true">
+							<label for="0df20488-e907-11ea-9286-406186940c49-1"
+								wicket:id="date-from" />
+							<input id="0df20488-e907-11ea-9286-406186940c49-1"
+								data-clear-btn="true" class="_sp-date-from" />
+							<label for="0df20488-e907-11ea-9286-406186940c49-2"
+								wicket:id="date-to" />
+							<input id="0df20488-e907-11ea-9286-406186940c49-2"
+								data-clear-btn="true" class="_sp-date-to" />
+						</div>
+					</li>
+					<li data-role="list-divider" wicket:id="div-groups" />
+					<li>
+						<label for="0df20488-e907-11ea-9286-406186940c49-3"
+							class="sp-txt-wrap">
+							<wicket:message key="report-1-groups-desc" />
+						</label>
+						<input type="text" id="0df20488-e907-11ea-9286-406186940c49-3"
+							value="" data-clear-btn="true" autocomplete="off"
+							autocorrect="off" autocapitalize="off" spellcheck="false"
+							class="_sp-groups" />
+					</li>
+				</ul>
+				<div data-role="controlgroup" data-type="horizontal"
+					data-mini="true">
+					<wicket:panel wicket:id="report-button-panel-trx" />
+				</div>
+			</div>
+		</div>
 	</li>
 </ul>
 </html>

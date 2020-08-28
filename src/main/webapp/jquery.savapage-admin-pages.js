@@ -1550,7 +1550,7 @@
                  */
                 QueuesBase : _ns.PanelQueuesBase,
                 //
-                Reports : {},
+                Reports : _ns.PanelReports,
                 //
                 UsersBase : _ns.PanelUsersBase,
                 //
@@ -2297,6 +2297,16 @@
                 $(this).on('click', '#sp-btn-printer-snmp-all', null, function() {
                     _self.onPrinterSnmp();
                     return false;
+                });
+
+                /*
+                 * Reports Panel
+                 */
+                $(this).on('click', '.sp-btn-reports-user-printout-tot', null, function() {
+                    var pnl = _panel.Reports;
+                    pnl.v2m(pnl);
+                    _self.onDownload("report", pnl.input, "UserPrintOutTotals", $(this).attr('data-savapage'));
+                    return true;
                 });
 
                 /*

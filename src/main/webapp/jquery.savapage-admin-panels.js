@@ -840,6 +840,47 @@
         /**
          *
          */
+        _ns.PanelReports = {
+            refresh : function(my, skipBeforeLoad) {
+                my.scrollTop = $(window).scrollTop();
+                _ns.PanelCommon.refreshPanelAdmin('Reports', skipBeforeLoad);
+            },
+
+            v2m : function(my) {
+                var _view = _ns.PanelCommon.view,
+                    groups = $('.sp-reports-user-printout-tot ._sp-groups').val(),
+                    sel;
+
+                sel = $('.sp-reports-user-printout-tot ._sp-date-from');
+                my.input.timeFrom = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
+
+                sel = $('.sp-reports-user-printout-tot ._sp-date-to');
+                my.input.timeTo = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
+
+                if (groups.length > 0) {
+                    my.input.userGroups = groups.split(" ");
+                } else {
+                    my.input.userGroups = null;
+                }
+            },
+
+            // JSON input: UserPrintOutTotalsReq
+            input : {
+                timeFrom : null,
+                timeTo : null,
+                userGroups : null
+            },
+
+            onOutput : function(my, output) {
+                var _view = _ns.PanelCommon.view;
+                _view.mobipick($('.sp-reports-user-printout-tot ._sp-date-from'));
+                _view.mobipick($('.sp-reports-user-printout-tot ._sp-date-to'));
+            }
+        };
+
+        /**
+         *
+         */
         _ns.PanelOptions = {
 
             onAuthMethodSelect : function(method) {

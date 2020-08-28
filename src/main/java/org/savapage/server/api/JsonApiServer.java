@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -141,6 +141,7 @@ import org.savapage.core.reports.JrVoucherPageDesign;
 import org.savapage.core.reports.impl.AccountTrxListReport;
 import org.savapage.core.reports.impl.ReportCreator;
 import org.savapage.core.reports.impl.UserListReport;
+import org.savapage.core.reports.impl.UserPrintOutTotalsReport;
 import org.savapage.core.services.AccountVoucherService;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DocLogService;
@@ -1000,10 +1001,17 @@ public final class JsonApiServer extends AbstractPage {
             report = new AccountTrxListReport(requestingUser,
                     requestingUserAdmin, jsonData, locale);
 
-        } else if (reportId.equals(UserListReport.REPORT_ID)) {
+        } else if (requestingUserAdmin
+                && reportId.equals(UserListReport.REPORT_ID)) {
 
             report = new UserListReport(requestingUser, requestingUserAdmin,
                     jsonData, locale);
+
+        } else if (requestingUserAdmin
+                && reportId.equals(UserPrintOutTotalsReport.REPORT_ID)) {
+
+            report = new UserPrintOutTotalsReport(requestingUser,
+                    requestingUserAdmin, jsonData, locale);
 
         } else {
             throw new UnsupportedOperationException(
@@ -3763,8 +3771,8 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     * @return <code>String</code> containing the IP address of the client
-     *         that sent the request.
+     * @return <code>String</code> containing the IP address of the client that
+     *         sent the request.
      */
     private String getClientIP() {
         return WebAppHelper.getClientIP(RequestCycle.get().getRequest());
@@ -3820,8 +3828,7 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqExitEventMonitor(final String userId)
             throws IOException {
-        ApiRequestHelper.interruptPendingLongPolls(userId,
-                this.getClientIP());
+        ApiRequestHelper.interruptPendingLongPolls(userId, this.getClientIP());
         return createApiResultOK();
     }
 
