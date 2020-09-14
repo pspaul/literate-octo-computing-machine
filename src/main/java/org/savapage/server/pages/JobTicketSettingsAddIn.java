@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Authors: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -31,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
@@ -76,6 +80,8 @@ public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
     public static final String[] ATTR_SET_DRIVER = new String[] {
             /* */
             IppDictJobTemplateAttr.ATTR_COPIES,
+            /* */
+            IppDictJobTemplateAttr.ATTR_PRINT_SCALING,
             /* */
             IppDictJobTemplateAttr.ATTR_SIDES,
             /* */
@@ -214,6 +220,12 @@ public final class JobTicketSettingsAddIn extends JobTicketAddInBase {
                 tdWlk = String.format("%d %s", job.getCopies(),
                         PrintOutNounEnum.COPY.uiText(getLocale(),
                                 job.getCopies() > 1));
+            } else if (keyword
+                    .equals(IppDictJobTemplateAttr.ATTR_PRINT_SCALING)) {
+
+                if (optionMap.hasPrintScaling()) {
+                    tdWlk = AdjectiveEnum.SCALED.uiText(getLocale());
+                }
             } else if (keyword
                     .equals(IppDictJobTemplateAttr.ATTR_SHEET_COLLATE)) {
 

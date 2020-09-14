@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-	<!-- 
-    +=========================================================================+ 
-    | This file is part of the SavaPage project <https://www.savapage.org> ...|
-    | Copyright (c) 2011-2017 Datraverse B.V. | Author: Rijk Ravestein........| 
-    |.........................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify .......|
-    | it under the terms of the GNU Affero General Public License as .........|
-    | published by the Free Software Foundation, either version 3 of .........|
-    | the License, or (at your option) any later version. ....................|
-    +=========================================================================+ 
-    -->
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
 </wicket:remove>
 
 <wicket:enclosure child="btn-save">
-
 	<table>
 		<tbody>
 			<wicket:enclosure child="jobticket-copies">
@@ -28,6 +28,24 @@
 					<td style="padding: 0px;">
 						<input type="number" id="sp-jobticket-edit-copies" value="?"
 							min="1" wicket:id="jobticket-copies" />
+					</td>
+				</tr>
+			</wicket:enclosure>
+			<wicket:enclosure child="pdf-media-prompt">
+				<tr>
+					<td
+						style="padding: 0px; vertical-align: middle; text-align: right;">
+						<span wicket:id="pdf-media-prompt" /> &nbsp;
+					</td>
+					<td>
+						<wicket:remove>
+							<!-- "Borrow" ui-select CSS class to align width to other <select> items.   -->
+						</wicket:remove>
+						<div class="ui-select ui-mini">
+							<button tabindex="-1"
+								class="ui-btn ui-icon-info ui-btn-icon-right ui-corner-all ui-shadow"
+								wicket:id="pdf-media" />
+						</div>
 					</td>
 				</tr>
 			</wicket:enclosure>
@@ -49,8 +67,7 @@
 				<tr>
 					<td align="right">
 						<img wicket:id="img-archive" src="" style="margin-bottom: -5px;"
-							height="24" />
-						&nbsp;
+							height="24" /> &nbsp;
 					</td>
 					<td style="padding: 0px;">
 						<label wicket:id="cb-archive-label"
@@ -62,19 +79,13 @@
 			</wicket:enclosure>
 		</tbody>
 	</table>
-
 	<wicket:fragment wicket:id="ipp-choice">
 		<option value="ipp-option-value" wicket:id="option" />
 	</wicket:fragment>
-
 	<br />
-
 	<button id="sp-jobticket-edit-popup-btn-save" wicket:id="btn-save"
 		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check" />
-
 	<button id="sp-jobticket-edit-popup-btn-cancel" wicket:id="btn-cancel"
 		class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-delete" />
-
 </wicket:enclosure>
-
 </html>

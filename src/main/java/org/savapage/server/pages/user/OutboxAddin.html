@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-	<!-- 
-    +========================================================================+ 
-    | This file is part of the SavaPage project <https://www.savapage.org> ..|
-    | Copyright (c) 2011-2019 Datraverse B.V. | Author: Rijk Ravestein.......| 
-    |........................................................................| 
-    | SavaPage is free software: you can redistribute it and/or modify ......|
-    | it under the terms of the GNU Affero General Public License as ........|
-    | published by the Free Software Foundation, either version 3 of ........|
-    | the License, or (at your option) any later version. ...................|
-    +========================================================================+ 
-	-->
-</wicket:remove>
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
+</wicket:remove>
 <wicket:remove>
 	<!--
     Mantis #662: Improve hold print jobs display in User Web App.
@@ -23,9 +23,7 @@
     in Wicket development mode, enhancement is executed as expected.
     -->
 </wicket:remove>
-
 <div wicket:id="job-entry" class="sp-outbox-job-entry">
-
 	<h4 style="margin-top: 15px; margin-bottom: 10px;">
 		<span wicket:id="printout-pie" sparkType="pie" sparkSliceColors="[]"
 			class="" />&nbsp;<span wicket:id="printer" />
@@ -49,7 +47,6 @@
 			</div>
 		</wicket:enclosure>
 	</h4>
-
 	<div class="sp-txt-wrap">
 		<wicket:enclosure child="extSupplier">
 			<wicket:enclosure child="extSupplierImg">
@@ -76,7 +73,6 @@
 			<p />
 		</wicket:enclosure>
 	</div>
-
 	<div class="sp-txt-wrap">
 		<img wicket:id="img-job" src="" height="16"
 			style="margin-bottom: -1px;" class="sp-outbox-item-type-???" />
@@ -89,11 +85,10 @@
 			<span wicket:id="owner-user-id" />
 			<wicket:enclosure child="owner-user-email">
 				<small>&bull; <a class="sp-plain-info"
-					wicket:id="owner-user-email" /></small>
+						wicket:id="owner-user-email" /></small>
 			</wicket:enclosure>
 			<p />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="jobticket-nr">
 			<wicket:enclosure child="img-job-sheet">
 				<img wicket:id="img-job-sheet" src="" height="14" />
@@ -105,43 +100,45 @@
 			</wicket:enclosure>
             &bull; 
 		</wicket:enclosure>
-
 		<wicket:enclosure child="jobticket-tag-plain">
 			<span class="sp-txt-info" wicket:id="jobticket-tag-plain" /> &bull;
 		</wicket:enclosure>
-
 		<span wicket:id="timeSubmit" />
 		<wicket:enclosure child="timeExpiry">
 			 &bull; <span class="sp-outbox-remaining-time" wicket:id="timeExpiry" />
 		</wicket:enclosure>
-
 		&bull; <span wicket:id="totals" />
 		<wicket:enclosure child="color"> &bull; <span
 				class="sp-txt-warn" wicket:id="color" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="job-id"> &bull; <span
 				wicket:id="job-printer" />  &bull; <wicket:message key="job-id" />
 			<span wicket:id="job-id" /> &bull; <span wicket:id="job-state" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="job-creation-time">  &bull;
 			<span wicket:id="job-creation-since" />
 			<span wicket:id="job-creation-time" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="job-completed-time"> &bull; <span
 				wicket:id="job-completed-time" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="grayscale"> &bull; <span
 				class="sp-txt-valid" wicket:id="grayscale" />
 		</wicket:enclosure>
-		<wicket:enclosure child="papersize"> &bull; <span
-				wicket:id="papersize" />
+		<wicket:enclosure child="pdf-papersize"> &bull; <span
+				wicket:id="pdf-papersize" />
 		</wicket:enclosure>
-		<wicket:enclosure child="papersize-ext"> &bull; <span
-				class="sp-txt-papersize-ext" wicket:id="papersize-ext" />
+		<wicket:enclosure child="pdf-papersize-ext"> &bull; <span
+				class="sp-txt-papersize-ext" wicket:id="pdf-papersize-ext" />
+		</wicket:enclosure>
+		<wicket:enclosure child="papersize-separator">
+			<span wicket:id="papersize-separator" />
+		</wicket:enclosure>
+		<wicket:enclosure child="papersize">
+			<span wicket:id="papersize" />
+		</wicket:enclosure>
+		<wicket:enclosure child="papersize-ext">
+			<span class="sp-txt-papersize-ext" wicket:id="papersize-ext" />
 		</wicket:enclosure>
 		<wicket:enclosure child="scaled"> &bull; <span
 				class="sp-txt-info" wicket:id="scaled" />
@@ -174,7 +171,6 @@
 				height="12" src="/glyphicons/glyphicons_092_tint.png" />&nbsp;<span
 				class="sp-txt-valid" wicket:id="removeGraphics" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="pageRotate180"> &bull; <span
 				class="sp-txt-job-finishing" wicket:id="pageRotate180" />
 		</wicket:enclosure>
@@ -190,7 +186,6 @@
 		<wicket:enclosure child="booklet"> &bull; <span
 				class="sp-txt-job-finishing" wicket:id="booklet" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="jobticket-media"> &bull; <span
 				class="sp-txt-job-ticket-attr" wicket:id="jobticket-media" />
 		</wicket:enclosure>
@@ -203,130 +198,106 @@
 		<wicket:enclosure child="jobticket-custom-ext"> &bull; <span
 				class="sp-txt-job-ticket-attr" wicket:id="jobticket-custom-ext" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="drm"> &bull; <span
 				class="sp-txt-warn" wicket:id="drm" />
 		</wicket:enclosure>
 		<wicket:enclosure child="cost"> &bull; <span
 				wicket:id="cost" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="jobticket-reopened">
             &bull; <span class="sp-txt-warn"
 				wicket:id="jobticket-reopened" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="extSupplierPanel">
 			<wicket:panel wicket:id="extSupplierPanel" />
 		</wicket:enclosure>
-
 	</div>
-
 	<wicket:enclosure child="jobticket-remark">
 		<div class="sp-txt-wrap sp-outbox-jobticket-remark"
 			wicket:id="jobticket-remark" />
 	</wicket:enclosure>
-
 	<p />
-
 	<wicket:enclosure child="msg-invalid">
 		<div class="sp-txt-wrap sp-txt-error" wicket:id="msg-invalid" />
 		<p />
 	</wicket:enclosure>
-
-
 	<div data-role="controlgroup" data-type="horizontal">
-
 		<wicket:enclosure child="button-settings-outbox-jobticket">
 			<button data-savapage="the-unique-filename"
 				class="sp-jobticket-settings ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-info"
 				wicket:id="button-settings-outbox-jobticket" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-account-trx-info-job">
 			<button data-savapage="the-unique-filename" data-rel="popup"
 				data-position-to="origin" data-transition="pop" data-arrow="t"
 				class="sp-outbox-account-trx-info-job ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-user"
 				wicket:id="button-account-trx-info-job" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-account-trx-info-jobticket">
 			<button data-savapage="the-unique-filename" data-rel="popup"
 				data-position-to="origin" data-transition="pop" data-arrow="t"
 				class="sp-outbox-account-trx-info-jobticket ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-user"
 				wicket:id="button-account-trx-info-jobticket" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-edit-outbox-jobticket">
 			<button data-savapage="the-unique-filename"
 				class="sp-jobticket-edit ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-edit"
 				wicket:id="button-edit-outbox-jobticket" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-preview-outbox-job">
 			<button data-savapage="the-unique-filename"
 				class="sp-outbox-preview-job ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-eye"
 				wicket:id="button-preview-outbox-job" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-preview-outbox-jobticket">
 			<button data-savapage="the-unique-filename"
 				class="sp-outbox-preview-jobticket ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-eye"
 				wicket:id="button-preview-outbox-jobticket" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-cancel-outbox-job">
 			<button data-savapage="the-unique-filename"
 				class="sp-outbox-cancel-job ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete"
 				wicket:id="button-cancel-outbox-job" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-cancel-outbox-jobticket">
 			<button data-savapage="the-unique-filename"
 				class="sp-outbox-cancel-jobticket ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete"
 				wicket:id="button-cancel-outbox-jobticket" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-jobticket-settle">
 			<button data-savapage="the-unique-filename" data-rel="popup"
 				data-position-to="window" data-transition="pop"
 				class="sp-jobticket-settle ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-shop"
 				wicket:id="button-jobticket-settle" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-jobticket-print">
 			<button data-savapage="the-unique-filename" data-rel="popup"
 				data-position-to="window" data-transition="pop"
 				class="sp-jobticket-print ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action"
 				wicket:id="button-jobticket-print" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-outbox-print-release">
 			<button data-savapage="the-unique-filename" data-position-to="window"
 				data-transition="pop"
 				class="sp-outbox-print-release ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action"
 				wicket:id="button-outbox-print-release" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-jobticket-print-close">
 			<button data-savapage="the-unique-filename"
 				class="sp-jobticket-print-close ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-check"
 				wicket:id="button-jobticket-print-close" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-jobticket-print-cancel">
 			<button data-savapage="the-unique-filename"
 				class="sp-jobticket-print-cancel ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete"
 				wicket:id="button-jobticket-print-cancel" />
 		</wicket:enclosure>
-
 		<wicket:enclosure child="button-jobticket-print-retry">
 			<button data-savapage="the-unique-filename" data-rel="popup"
 				data-position-to="window" data-transition="pop"
 				class="sp-jobticket-print-retry ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-action"
 				wicket:id="button-jobticket-print-retry" />
 		</wicket:enclosure>
-
 	</div>
 </div>
 </html>

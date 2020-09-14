@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -611,12 +614,13 @@ public class OutboxAddin extends AbstractUserPage {
 
             final Map<String, String> mapVisible = new HashMap<>();
 
-            for (final String attr : new String[] { "title", "papersize",
-                    "papersize-ext", "letterhead", "duplex", "simplex", "color",
-                    "collate", "grayscale", "accounts", "removeGraphics",
-                    "ecoPrint", "extSupplier", "owner-user-name", "drm",
-                    "pageRotate180", "punch", "staple", "fold", "booklet",
-                    "jobticket-tag-plain", "jobticket-media", "jobticket-copy",
+            for (final String attr : new String[] { "title", "pdf-papersize",
+                    "pdf-papersize-ext", "papersize", "papersize-ext",
+                    "letterhead", "duplex", "simplex", "color", "collate",
+                    "grayscale", "accounts", "removeGraphics", "ecoPrint",
+                    "extSupplier", "owner-user-name", "drm", "pageRotate180",
+                    "punch", "staple", "fold", "booklet", "jobticket-tag-plain",
+                    "jobticket-media", "jobticket-copy",
                     "jobticket-finishing-ext", "jobticket-custom-ext",
                     "landscape", "scaled", "portrait", "job-id",
                     "job-creation-time", "job-completed-time", "job-printer",
@@ -642,15 +646,49 @@ public class OutboxAddin extends AbstractUserPage {
             }
 
             //
+            final MediaSizeName mediaSizeNamePDF;
+            final String mediaPDF = job.getMedia();
+            final String mediaPDFDisplay;
+
+            if (mediaPDF == null) {
+                mediaSizeNamePDF = null;
+                mediaPDFDisplay = null;
+            } else {
+                mediaSizeNamePDF =
+                        MediaUtils.getMediaSizeFromInboxMedia(mediaPDF);
+                if (mediaSizeNamePDF == null) {
+                    mediaPDFDisplay = mediaPDF;
+                    mapVisible.put("pdf-papersize-ext", mediaPDF);
+                } else {
+                    final String mediaKey;
+                    if (mediaSizeNamePDF.equals(this.defaultMediaSize)) {
+                        mediaKey = "pdf-papersize";
+                    } else {
+                        mediaKey = "pdf-papersize-ext";
+                    }
+                    mediaPDFDisplay = MediaUtils
+                            .getUserFriendlyMediaName(mediaSizeNamePDF);
+                    mapVisible.put(mediaKey, mediaPDFDisplay);
+                }
+            }
+
+            //
             final String mediaOption =
                     ProxyPrintInboxReq.getMediaOption(job.getOptionValues());
 
+            final boolean isMediaOptionDisplay;
+
             if (mediaOption != null) {
+
                 final MediaSizeName mediaSizeName =
                         MediaUtils.getMediaSizeFromInboxMedia(mediaOption);
 
                 if (mediaSizeName == null) {
-                    mapVisible.put("papersize-ext", mediaOption);
+                    isMediaOptionDisplay =
+                            !mediaOption.equalsIgnoreCase(mediaPDFDisplay);
+                    if (isMediaOptionDisplay) {
+                        mapVisible.put("papersize-ext", mediaOption);
+                    }
                 } else {
                     final String mediaKey;
                     if (mediaSizeName.equals(this.defaultMediaSize)) {
@@ -658,9 +696,31 @@ public class OutboxAddin extends AbstractUserPage {
                     } else {
                         mediaKey = "papersize-ext";
                     }
-                    mapVisible.put(mediaKey,
-                            MediaUtils.getUserFriendlyMediaName(mediaSizeName));
+                    final String mediaDisplay =
+                            MediaUtils.getUserFriendlyMediaName(mediaSizeName);
+
+                    isMediaOptionDisplay =
+                            !mediaDisplay.equalsIgnoreCase(mediaPDFDisplay);
+
+                    if (isMediaOptionDisplay) {
+                        mapVisible.put(mediaKey, mediaDisplay);
+                    }
                 }
+            } else {
+                isMediaOptionDisplay = false;
+            }
+
+            if (isMediaOptionDisplay) {
+                final String htmlSep;
+                if (mediaPDF == null) {
+                    htmlSep = " &bull; ";
+                } else {
+                    htmlSep = " &gt; ";
+                }
+                helper.addLabel("papersize-separator", htmlSep)
+                        .setEscapeModelStrings(false);
+            } else {
+                helper.discloseLabel("papersize-separator");
             }
 
             if (ProxyPrintInboxReq.isDuplex(job.getOptionValues())) {
@@ -1146,8 +1206,7 @@ public class OutboxAddin extends AbstractUserPage {
                 final org.savapage.core.jpa.User userWlk;
                 if (user == null) {
                     // Do not use job.getUserId(), because == null.
-                    userWlk = USER_DAO
-                            .findById(SpSession.get().getUserDbKey());
+                    userWlk = USER_DAO.findById(SpSession.get().getUserDbKey());
                 } else {
                     userWlk = user;
                 }

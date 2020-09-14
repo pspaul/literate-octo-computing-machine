@@ -50,6 +50,7 @@ import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.PrintScalingEnum;
+import org.savapage.core.util.MediaUtils;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
@@ -207,6 +208,7 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
                         getSession().getLocale(), job.getPrinter(), true);
 
         final List<JsonProxyPrinterOpt> optionList = new ArrayList<>();
+        JsonProxyPrinterOpt optionScaling = this.createPrintScalingOpt(job);
 
         for (final JsonProxyPrinterOptGroup group : printer.getGroups()) {
             for (final JsonProxyPrinterOpt option : group.getOptions()) {
@@ -215,10 +217,17 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
                     continue;
                 }
                 optionList.add(option);
+                if (option.getKeyword()
+                        .equals(IppDictJobTemplateAttr.ATTR_MEDIA)) {
+                    optionList.add(optionScaling);
+                    optionScaling = null; // done
+                }
             }
         }
-        // Extra
-        optionList.add(createPrintScalingOpt(job));
+
+        if (optionScaling != null) {
+            optionList.add(optionScaling);
+        }
 
         //
         add(new PrinterOptionsView("ipp-option-list", optionList, job,
@@ -247,6 +256,16 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
 
         add(label);
 
+        //
+        if (job.getMedia() == null) {
+            helper.discloseLabel("pdf-media-prompt");
+        } else {
+            helper.addLabel("pdf-media-prompt",
+                    NounEnum.DOCUMENT.uiText(getLocale()));
+            helper.addLabel("pdf-media", MediaUtils.getUserFriendlyMediaName(
+                    MediaUtils.getMediaSizeFromInboxMedia(job.getMedia())));
+        }
+        //
         if (!isReopenedTicket && DOC_STORE_SERVICE.isEnabled(
                 DocStoreTypeEnum.ARCHIVE, DocStoreBranchEnum.OUT_PRINT)) {
 
@@ -281,7 +300,6 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
         final JsonProxyPrinterOpt opt = new JsonProxyPrinterOpt();
 
         opt.setKeyword(PrintScalingEnum.IPP_NAME);
-        // opt.setUiText("Scaling");
 
         final ArrayList<JsonProxyPrinterOptChoice> choices = new ArrayList<>();
 
