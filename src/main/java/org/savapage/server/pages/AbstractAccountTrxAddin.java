@@ -146,6 +146,21 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             this.allowEditCopies = editCopies;
         }
 
+        /**
+         * @return {@code true} if there is at least one account ID for which
+         *         copies can be edited.
+         */
+        public boolean hasEditableCopies() {
+            if (this.allowEditCopies) {
+                for (final TrxLine line : this.getList()) {
+                    if (line.accountID != null) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         @Override
         protected void populateItem(final ListItem<TrxLine> item) {
 
@@ -249,9 +264,13 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                 this.fillDisplayOptions(totalAmount, totalCopies, trxList,
                         displayTrxLines, editCopies);
 
-        add(new AccountTrxView("setting-row", displayTrxLines, editCopies));
+        final AccountTrxView trxView =
+                new AccountTrxView("setting-row", displayTrxLines, editCopies);
 
-        if (editCopies && this.getJobTicketFileName() != null) {
+        add(trxView);
+
+        if (trxView.hasEditableCopies()
+                && this.getJobTicketFileName() != null) {
             MarkupHelper.modifyLabelAttr(
                     helper.addLabel(WID_BTN_APPLY,
                             HtmlButtonEnum.APPLY.uiText(getLocale())),
