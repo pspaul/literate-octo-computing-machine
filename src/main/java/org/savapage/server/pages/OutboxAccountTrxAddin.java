@@ -29,8 +29,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.config.ConfigManager;
-import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.jpa.AccountTrx;
@@ -149,10 +147,9 @@ public final class OutboxAccountTrxAddin extends AbstractAccountTrxAddin {
             totalAmount = outboxJob.getCostTotal();
         }
 
-        final boolean editCopies = ConfigManager.instance().isConfigValue(
-                IConfigProp.Key.WEBAPP_JOBTICKETS_COPIES_EDIT_ENABLE)
-                && this.getSessionWebAppType() == WebAppTypeEnum.JOBTICKETS
-                && StringUtils.isBlank(outboxJob.getPrinterRedirect());
+        final boolean editCopies =
+                this.getSessionWebAppType() == WebAppTypeEnum.JOBTICKETS
+                        && StringUtils.isBlank(outboxJob.getPrinterRedirect());
 
         populate(totalAmount, totalCopies, trxList, editCopies);
     }
