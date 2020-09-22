@@ -24,6 +24,8 @@
  */
 package org.savapage.server.pages.user;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.server.WebServer;
@@ -38,6 +40,12 @@ import org.savapage.server.pages.MarkupHelper;
 public class Browser extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
+
+    /** Tools mnal pixel width. */
+    private static final int PANEL_WIDTH_PX = 85;
+
+    /** */
+    private static final String WID_TOOLS_PANEL = "tools-panel";
 
     /**
      * @param parms
@@ -62,9 +70,27 @@ public class Browser extends AbstractUserPage {
 
         final boolean hasCanvas = ConfigManager.isPdfOverlayEditorEnabled();
 
-        helper.encloseLabel("canvas-btn-brush", "", hasCanvas);
-        helper.encloseLabel("canvas-btn-info", "",
-                hasCanvas && WebServer.isDeveloperEnv());
+        final Component compContent = helper.addTransparant("browser-content");
+        final Component compFooter =
+                helper.addTransparant("browser-footer-div");
+
+        if (hasCanvas) {
+            compContent.add(new AttributeAppender(MarkupHelper.ATTR_STYLE,
+                    String.format("margin-left: %dpx;", PANEL_WIDTH_PX)));
+            compFooter.add(new AttributeAppender(MarkupHelper.ATTR_STYLE,
+                    String.format("padding-left: %dpx; padding-right: 20px;",
+                            PANEL_WIDTH_PX)));
+
+            final Component compPanel = helper.addTransparant(WID_TOOLS_PANEL);
+            compPanel.add(new AttributeAppender(MarkupHelper.ATTR_STYLE,
+                    String.format("width: %dpx;", PANEL_WIDTH_PX)));
+        } else {
+            helper.discloseLabel(WID_TOOLS_PANEL);
+        }
+
+        helper.encloseLabel("canvas-btn-info", "&nbsp;",
+                hasCanvas && WebServer.isDeveloperEnv())
+                .setEscapeModelStrings(false);
 
         helper.encloseLabel("canvas-browser-img", "", hasCanvas);
     }

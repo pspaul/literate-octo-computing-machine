@@ -14,118 +14,15 @@ published by the Free Software Foundation, either version 3 of
 the License, or (at your option) any later version.
 -->
 </wicket:remove>
-
-<wicket:enclosure child="canvas-btn-brush">
-	<div data-role="header" id="header-browser" class="ui-mini"
-		data-position="fixed">
-		<table>
-			<tr>
-				<td>
-					<div data-role="controlgroup" data-type="horizontal"
-						style="margin: 0px; padding: 0px;">
-
-						<label for="sp-canvas-drawing-mode-free">
-							<span wicket:id="canvas-btn-brush"
-								class="ui-icon-main-browse-canvas-brush ui-btn-icon-notext sp-inline-icon sp-table-td-button" />
-						</label>
-						<input type="radio" name="sp-canvas-drawing-mode"
-							id="sp-canvas-drawing-mode-free" value="brush" />
-
-						<label for="sp-canvas-drawing-mode-select">
-							<span
-								class="ui-icon-main-browse-canvas-edit ui-btn-icon-notext sp-inline-icon sp-table-td-button" />
-						</label>
-						<input type="radio" name="sp-canvas-drawing-mode"
-							id="sp-canvas-drawing-mode-select" value="select"
-							checked="checked" />
-					</div>
-				</td>
-				<td>
-					<div data-role="controlgroup" data-type="horizontal"
-						class="ui-mini sp-canvas-drawing-mode-select">
-						<button id="sp-canvas-drawing-add-line"
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-line" />
-						<button id="sp-canvas-drawing-add-rect"
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-square" />
-						<button id="sp-canvas-drawing-add-circle"
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-circle" />
-						<button id="sp-canvas-drawing-add-triangle"
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-triangle" />
-						<button id="sp-canvas-drawing-add-textbox"
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-text" />
-					</div>
-				</td>
-				<td class="sp-canvas-drawing-mode-brush">
-					<input class="ui-mini" type="color" style="width: 50px;"
-						value="#000000" id="sp-canvas-drawing-brush-color" />
-				</td>
-				<td class="sp-canvas-drawing-mode-brush">
-					<input class="ui-mini" type="number" style="width: 50px;" min="1"
-						value="1" id="sp-canvas-drawing-brush-width" />
-				</td>
-				<td class="sp-canvas-drawing-mode-select-prop">
-					<input class="ui-mini" type="color" style="width: 50px;"
-						value="#000000" id="sp-canvas-drawing-select-stroke-color" />
-				</td>
-
-				<td class="sp-canvas-drawing-mode-select-prop">
-					<input class="ui-mini" type="color" style="width: 50px;"
-						value="#ffffff" id="sp-canvas-drawing-select-fill-color" />
-				</td>
-				<td class="sp-canvas-drawing-mode-select-prop">
-					<input class="ui-mini" type="number" style="width: 50px;" min="0"
-						value="0" id="sp-canvas-drawing-select-stroke-width" />
-				</td>
-				<td>
-					<wicket:remove>
-						<!-- "square with upper left to lower right fill"  -->
-					</wicket:remove>
-					<span id="sp-canvas-drawing-selected-fill-transparent"
-						style="opacity: .6; font-size: 22px; cursor: pointer;">&nbsp;&#9639;&nbsp;</span>
-				</td>
-				<td>
-					<span
-						class="ui-icon-main-browse-canvas-opacity-increase ui-btn-icon-notext sp-inline-icon sp-table-td-button" />
-				</td>
-				<td>
-					<input class="ui-mini" type="range" data-role="none" min="10"
-						max="100" value="100" id="sp-canvas-drawing-opacity" />
-				</td>
-				<td>&nbsp;&nbsp;</td>
-				<td>
-					<div data-role="controlgroup" data-type="horizontal"
-						class="ui-mini">
-						<button id="sp-canvas-drawing-select-all"
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-select-all" />
-						<wicket:enclosure child="canvas-btn-info">
-							<button id="sp-canvas-drawing-info-selected" disabled wicket:id="canvas-btn-info"
-								class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-info" />
-						</wicket:enclosure>
-						<button id="sp-canvas-drawing-clear-selected" disabled
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-clear-selected" />
-						<button id="sp-canvas-drawing-clear-all" disabled
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-clear-all" />
-						<button id="sp-canvas-drawing-undo-all"
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-arr-undo" />
-						<button id="sp-canvas-drawing-save"
-							class="sp-table-td-button ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-save" />
-					</div>
-				</td>
-			</tr>
-		</table>
-
-	</div>
-</wicket:enclosure>
-
-<div class="ui-content" id="content-browser">
+<div class="ui-content" wicket:id="browser-content" id="content-browser"
+	style="margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px;">
 	<div id="page-browser-images" class="image_reel">
 		<wicket:remove>
 			<!-- Cache of 3 images -->
 		</wicket:remove>
-		<img onload="org.savapage.removeSpinnerL(this)" src="" />
-		<img onload="org.savapage.removeSpinnerL(this)" src="" />
-		<img onload="org.savapage.removeSpinnerL(this)" src="" />
-
+		<img onload="org.savapage.removeSpinnerL(this)" src="" /> <img
+			onload="org.savapage.removeSpinnerL(this)" src="" /> <img
+			onload="org.savapage.removeSpinnerL(this)" src="" />
 		<wicket:enclosure child="canvas-browser-img">
 			<div id="sp-canvas-browser-img-div"
 				style="margin-left: auto; margin-right: auto;">
@@ -134,34 +31,120 @@ the License, or (at your option) any later version.
 		</wicket:enclosure>
 	</div>
 </div>
-
-<div data-role="footer" id="footer-browser" data-position="fixed">
-	<input type="range" id="browser-slider" value="0" min="0" max="0" />
-	<div data-role="navbar">
-		<ul>
-			<li>
-				<a href="#" id="browser-back" data-icon="back" data-rel="back"
-					data-direction="reverse" title="" wicket:id="btn-back" />
-			</li>
-			<li>
-				<button id="browser-delete"
-					class="ui-btn ui-btn-icon-top ui-icon-delete" title=""
-					wicket:id="btn-delete" />
-			</li>
-			<li>
-				<button id="browser-nav-left"
-					class="ui-btn ui-btn-icon-top ui-icon-arrow-l" title=""
-					wicket:id="btn-previous" />
-			</li>
-			<li>
-				<button id="browser-nav-right"
-					class="ui-btn ui-btn-icon-top ui-icon-arrow-r" title=""
-					wicket:id="btn-next" />
-			</li>
-		</ul>
+<div data-role="footer" id="footer-browser" data-position="fixed"
+	style="padding-top: 0px; margin-top: 0px;">
+	<div wicket:id="browser-footer-div" style="margin-top: 0px;">
+		<input type="range" id="browser-slider" value="0" min="0" max="0" />
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#" id="browser-back" data-icon="back"
+						data-rel="back" data-direction="reverse" title=""
+						wicket:id="btn-back" /></li>
+				<li>
+					<button id="browser-delete"
+						class="ui-btn ui-btn-icon-top ui-icon-delete" title=""
+						wicket:id="btn-delete" />
+				</li>
+				<li>
+					<button id="browser-nav-left"
+						class="ui-btn ui-btn-icon-top ui-icon-arrow-l" title=""
+						wicket:id="btn-previous" />
+				</li>
+				<li>
+					<button id="browser-nav-right"
+						class="ui-btn ui-btn-icon-top ui-icon-arrow-r" title=""
+						wicket:id="btn-next" />
+				</li>
+			</ul>
+		</div>
 	</div>
 </div>
-
+<wicket:enclosure child="tools-panel">
+	<div data-role="panel" data-position-fixed="true" style=""
+		data-dismissible="false" data-display="overlay"
+		wicket:id="tools-panel" id="sp-canvas-tools-panel">
+		<div data-role="controlgroup" data-type="horizontal"
+			style="margin: 0px; padding: 0px;" class="ui-mini">
+			<label for="sp-canvas-drawing-mode-free">
+				<span
+					class="ui-icon-main-browse-canvas-brush ui-btn-icon-notext sp-inline-icon" />
+			</label>
+			<input type="radio" name="sp-canvas-drawing-mode"
+				id="sp-canvas-drawing-mode-free" value="brush" />
+			<label for="sp-canvas-drawing-mode-select">
+				<span
+					class="ui-icon-main-browse-canvas-edit ui-btn-icon-notext sp-inline-icon" />
+			</label>
+			<input type="radio" name="sp-canvas-drawing-mode"
+				id="sp-canvas-drawing-mode-select" value="select" checked="checked" />
+		</div>
+		<div style="margin: 0px; padding: 0px"
+			class="ui-mini sp-canvas-drawing-mode-brush">
+			<input class="ui-mini" type="color" style="width: 50px;"
+				value="#000000" id="sp-canvas-drawing-brush-color" />
+		</div>
+		<div style="margin: 0px; padding: 0px"
+			class="ui-mini sp-canvas-drawing-mode-select-prop">
+			<input class="ui-mini" type="color" style="width: 50px;"
+				value="#000000" id="sp-canvas-drawing-select-stroke-color" />
+		</div>
+		<div style="margin: 0px; padding: 0px" class="ui-mini">
+			<input class="ui-mini" type="color" style="width: 50px;"
+				value="#ffffff" id="sp-canvas-drawing-select-fill-color" />
+		</div>
+		<div style="margin: 0px; padding: 0px"
+			class="ui-mini sp-canvas-drawing-mode-brush">
+			<input class="ui-mini" type="number" style="width: 50px;" min="1"
+				value="1" id="sp-canvas-drawing-brush-width" />
+		</div>
+		<div style="margin: 0px; padding: 0px"
+			class="ui-mini  sp-canvas-drawing-mode-select-prop">
+			<input class="ui-mini" type="number" style="width: 50px;" min="0"
+				value="0" id="sp-canvas-drawing-select-stroke-width" />
+		</div>
+		<div style="margin: 0px; padding: 0px;">
+			<input class="ui-mini"
+				style="opacity: 0.5; margin-left: -7px; width: 70px;" type="range"
+				data-role="none" min="10" max="100" value="100"
+				id="sp-canvas-drawing-opacity" />
+		</div>
+		<div data-role="controlgroup"
+			class="ui-mini sp-canvas-drawing-mode-select">
+			<button id="sp-canvas-drawing-selected-fill-transparent"
+				class="ui-btn sp-table-td-button ui-btn-inline ui-icon-eye ui-btn-icon-notext">&nbsp;</button>
+		</div>
+		<div data-role="controlgroup"
+			class="ui-mini sp-canvas-drawing-mode-select">
+			<button id="sp-canvas-drawing-add-line"
+				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-line">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-rect"
+				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-square">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-circle"
+				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-circle">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-triangle"
+				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-triangle">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-textbox"
+				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-text">&nbsp;</button>
+		</div>
+		<div data-role="controlgroup" class="ui-mini">
+			<button id="sp-canvas-drawing-select-all"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-select-all">&nbsp;</button>
+			<wicket:enclosure child="canvas-btn-info">
+				<button id="sp-canvas-drawing-info-selected" disabled
+					wicket:id="canvas-btn-info"
+					class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-info">&nbsp;</button>
+			</wicket:enclosure>
+			<button id="sp-canvas-drawing-clear-selected" disabled
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-clear-selected">&nbsp;</button>
+			<button id="sp-canvas-drawing-clear-all" disabled
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-clear-all">&nbsp;</button>
+			<button id="sp-canvas-drawing-undo-all"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-arr-undo">&nbsp;</button>
+			<button id="sp-canvas-drawing-save"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-save">&nbsp;</button>
+		</div>
+	</div>
+</wicket:enclosure>
 <wicket:remove>
 	<!-- 
 THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 

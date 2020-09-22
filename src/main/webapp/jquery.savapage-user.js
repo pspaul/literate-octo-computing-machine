@@ -612,6 +612,14 @@
             /** */
                 _initHtmlCanvasEditor = function() {
 
+                var selToolsPanel = $('#sp-canvas-tools-panel');
+                selToolsPanel.panel("option", "animate", false);
+                selToolsPanel.on("panelclose", function(event, ui) {
+                    // Is there a better way to preven closing?
+                    $(this).panel('open');
+                    return false;
+                });
+
                 _imgCanvasEditor = new _ns.HtmlCanvasEditor(_idCanvasImg, //
                 function(nObjects) {
                     // onAfterRender
@@ -736,17 +744,11 @@
                 _getMaxImgHeight = function() {
                 var yContentPadding,
                     yImagePadding,
-                    yHeader,
                     yFooter,
                     yImage,
                     yImageScrollbar = 0,
                     yViewPort;
                 //+------------------------------------------- Viewport
-                //| (yContentPadding)
-                //| +---------------------------------+ #header-browser
-                // (optional)
-                //| | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | (yHeader)
-                //| +---------------------------------+
                 //| (yContentPadding)
                 //| +---------------------------------+ #content-browser
                 //| | (yImagePadding)                 |
@@ -768,18 +770,13 @@
                 //+-------------------------------------------
                 yViewPort = _view.getViewportHeight();
 
-                if (_imgCanvasEditor) {
-                    yContentPadding = $('#header-browser').position().top;
-                    yHeader = $('#header-browser').outerHeight(true);
-                    yImageScrollbar = _imgScrollBarWidth;
-                } else {
-                    yHeader = 0;
-                    yContentPadding = $('#content-browser').position().top;
-                }
+                yContentPadding = $('#content-browser').position().top;
+                yImageScrollbar = _imgCanvasEditor ? _imgScrollBarWidth : 0;
+
                 yImagePadding = $('#page-browser-images').position().top - $('#content-browser').position().top;
                 yFooter = $('#footer-browser').outerHeight(true);
 
-                yImage = yViewPort - 3 * yContentPadding - yFooter - 2 * yImagePadding - yImageScrollbar - yHeader;
+                yImage = yViewPort - 3 * yContentPadding - yFooter - 2 * yImagePadding - yImageScrollbar;
 
                 return yImage;
             },
@@ -1276,8 +1273,11 @@
 
                 _ns.userEvent.pause();
 
-            }).on("pageshow", function(event, ui) {
+                if (_imgCanvasEditor) {
+                    $('#sp-canvas-tools-panel').panel('open');
+                }
 
+            }).on("pageshow", function(event, ui) {
                 // Adjust when page is settled.
                 _this.adjustImages();
                 _resizeOverlayCanvas();
