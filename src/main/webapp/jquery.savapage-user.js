@@ -600,6 +600,17 @@
                 _isBrushMode,
 
             /** */
+                _setHtmlCanvasBrushWidth = function(sel) {
+                _imgCanvasEditor.setBrushWidth(parseInt(sel.val(), 10));
+            },
+
+            /** */
+                _setHtmlCanvasStrokeWidth = function(sel) {
+                _imgCanvasEditor.setStrokeWidth(parseInt(sel.val(), 10));
+                _imgCanvasEditor.setStrokeWidthSelected();
+            },
+
+            /** */
                 _setHtmlCanvasDrawingMode = function() {
                 _isBrushMode = _view.getRadioValue('sp-canvas-drawing-mode') === _DRAW_MODE_BRUSH;
                 _imgCanvasEditor.enableDrawingMode(_isBrushMode);
@@ -627,17 +638,25 @@
                     _view.enable($('#sp-canvas-drawing-select-all'), !_isBrushMode && nObjects > 0);
                 }, function(nObjectsSelected) {
                     // onSelectionCreated
-                    _view.enable($('#sp-canvas-drawing-clear-selected'), true);
-                    _view.enable($('#sp-canvas-drawing-info-selected'), nObjectsSelected === 1);
+                    _view.visible($('.sp-canvas-select-prop-label'), true);
+                    _view.enable($('#sp-canvas-drawing-clear-selection'), true);
+                    _view.enable($('#sp-canvas-drawing-selected-fill-transparent'), true);
+                    _view.enable($('#sp-canvas-drawing-info-selection'), nObjectsSelected === 1);
                 }, function() {
                     // onSelectionCleared
-                    _view.enable($('#sp-canvas-drawing-clear-selected'), false);
-                    _view.enable($('#sp-canvas-drawing-info-selected'), false);
+                    _view.visible($('.sp-canvas-select-prop-label'), false);
+                    _view.enable($('#sp-canvas-drawing-clear-selection'), false);
+                    _view.enable($('#sp-canvas-drawing-selected-fill-transparent'), false);
+                    _view.enable($('#sp-canvas-drawing-info-selection'), false);
                 });
 
                 _imgCanvasEditor.setFreeDrawingBrush('Pencil', $('#sp-canvas-drawing-brush-color').val(), 1);
 
+                _view.visible($('.sp-canvas-select-prop-label'), false);
+
                 _setHtmlCanvasDrawingMode();
+                _setHtmlCanvasBrushWidth($('#sp-canvas-drawing-brush-width'));
+                _setHtmlCanvasStrokeWidth($('#sp-canvas-drawing-select-stroke-width'));
 
                 $("#sp-canvas-drawing-add-rect").click(function() {
                     _imgCanvasEditor.addRect();
@@ -664,12 +683,12 @@
                     _imgCanvasEditor.setBackgroundImage(_getActiveImageUrl());
                 });
 
-                $("#sp-canvas-drawing-clear-selected").click(function() {
-                    _imgCanvasEditor.clearSelected();
+                $("#sp-canvas-drawing-clear-selection").click(function() {
+                    _imgCanvasEditor.clearSelection();
                 });
 
-                $("#sp-canvas-drawing-info-selected").click(function() {
-                    _imgCanvasEditor.debugSelected();
+                $("#sp-canvas-drawing-info-selection").click(function() {
+                    _imgCanvasEditor.debugSelection();
                 });
 
                 $("#sp-canvas-drawing-save").click(function() {
@@ -703,12 +722,19 @@
                 });
 
                 $('#sp-canvas-drawing-brush-width').on('input', function() {
-                    _imgCanvasEditor.setBrushWidth(parseInt($(this).val(), 10));
+                    _setHtmlCanvasBrushWidth($(this));
                 });
 
+                $('#sp-canvas-drawing-select-stroke-color-label').click(function() {
+                    _imgCanvasEditor.setStrokeSelected();
+                });
                 $('#sp-canvas-drawing-select-stroke-color').on('input', function() {
                     _imgCanvasEditor.setStroke($(this).val());
                     _imgCanvasEditor.setStrokeSelected();
+                });
+
+                $('#sp-canvas-drawing-select-fill-color-label').click(function() {
+                    _imgCanvasEditor.setFillSelected();
                 });
                 $('#sp-canvas-drawing-select-fill-color').on('input', function() {
                     _imgCanvasEditor.setFill($(this).val());
@@ -719,11 +745,16 @@
                     _imgCanvasEditor.setFillSelectedExt(null);
                 });
 
-                $('#sp-canvas-drawing-select-stroke-width').on('input', function() {
-                    _imgCanvasEditor.setStrokeWidth(parseInt($(this).val(), 10));
+                $('#sp-canvas-drawing-select-stroke-width-label').click(function() {
                     _imgCanvasEditor.setStrokeWidthSelected();
                 });
+                $('#sp-canvas-drawing-select-stroke-width').on('input', function() {
+                    _setHtmlCanvasStrokeWidth($(this));
+                });
 
+                $('#sp-canvas-drawing-opacity-label').click(function() {
+                    _imgCanvasEditor.setOpacitySelected();
+                });
                 $('#sp-canvas-drawing-opacity').on('input', function() {
                     _imgCanvasEditor.setOpacityPerc(parseInt($(this).val(), 10));
                     _imgCanvasEditor.setOpacitySelected();

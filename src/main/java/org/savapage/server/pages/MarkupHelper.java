@@ -779,7 +779,7 @@ public final class MarkupHelper {
     /**
      * Modifies an attribute value of a {@link Component}.
      *
-     * @param label
+     * @param component
      *            The {@link Component}.
      * @param attribute
      *            The name of the attribute
@@ -787,10 +787,10 @@ public final class MarkupHelper {
      *            The value of the attribute.
      * @return The modified {@link Component}.
      */
-    public static Component modifyComponentAttr(final Component label,
+    public static Component modifyComponentAttr(final Component component,
             final String attribute, final String value) {
-        label.add(new AttributeModifier(attribute, value));
-        return label;
+        component.add(new AttributeModifier(attribute, value));
+        return component;
     }
 
     /**
@@ -798,6 +798,9 @@ public final class MarkupHelper {
      *
      * @param label
      *            The flipswitch {@link Label}.
+     * @param locale
+     *            {@link Locale}.
+     * @return label.
      */
     public static Label setFlipswitchOnOffText(final Label label,
             final Locale locale) {
@@ -919,6 +922,69 @@ public final class MarkupHelper {
         component.add(new AttributeAppender(attribute,
                 String.format(" %s", value.trim())));
         return component;
+    }
+
+    /**
+     * Adds a transparant Wicket component and appends HTML attribute value.
+     *
+     * @param wid
+     *            Wicket ID.
+     * @param attr
+     *            HTML attribute.
+     * @param value
+     *            HTML attribute value.
+     * @return {@link Component}.
+     */
+    public Component addTransparentAppendAttr(final String wid,
+            final String attr, final String value) {
+        return appendComponentAttr(this.addTransparant(wid), attr, value);
+    }
+
+    /**
+     * Adds a transparant Wicket component and modifies HTML "title" attribute.
+     *
+     * @param wid
+     *            Wicket ID.
+     * @param value
+     *            HTML "title" attribute value.
+     * @return {@link Component}.
+     */
+    public Component addTransparentWithAttrTitle(final String wid,
+            final String value) {
+        return modifyComponentAttr(this.addTransparant(wid),
+                MarkupHelper.ATTR_TITLE, value);
+    }
+
+    /**
+     * Adds a transparant Wicket component and modifies HTML "title" attribute.
+     *
+     * @param wid
+     *            Wicket ID.
+     * @param value
+     *            HTML "title" attribute value.
+     * @return {@link Component}.
+     */
+    public Component addTransparentWithAttrTitle(final String wid,
+            final HtmlButtonEnum value) {
+        return modifyComponentAttr(this.addTransparant(wid),
+                MarkupHelper.ATTR_TITLE,
+                value.uiText(this.container.getLocale()));
+    }
+
+    /**
+     * Adds a transparant Wicket component and modifies HTML "title" attribute.
+     *
+     * @param wid
+     *            Wicket ID.
+     * @param value
+     *            HTML "title" attribute value.
+     * @return {@link Component}.
+     */
+    public Component addTransparentWithAttrTitle(final String wid,
+            final NounEnum value) {
+        return modifyComponentAttr(this.addTransparant(wid),
+                MarkupHelper.ATTR_TITLE,
+                value.uiText(this.container.getLocale()));
     }
 
     /**

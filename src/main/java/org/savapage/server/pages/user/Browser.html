@@ -14,6 +14,7 @@ published by the Free Software Foundation, either version 3 of
 the License, or (at your option) any later version.
 -->
 </wicket:remove>
+
 <div class="ui-content" wicket:id="browser-content" id="content-browser"
 	style="margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px;">
 	<div id="page-browser-images" class="image_reel">
@@ -31,6 +32,7 @@ the License, or (at your option) any later version.
 		</wicket:enclosure>
 	</div>
 </div>
+
 <div data-role="footer" id="footer-browser" data-position="fixed"
 	style="padding-top: 0px; margin-top: 0px;">
 	<div wicket:id="browser-footer-div" style="margin-top: 0px;">
@@ -59,96 +61,147 @@ the License, or (at your option) any later version.
 		</div>
 	</div>
 </div>
+
 <wicket:enclosure child="tools-panel">
 	<div data-role="panel" data-position-fixed="true" style=""
 		data-dismissible="false" data-display="overlay"
 		wicket:id="tools-panel" id="sp-canvas-tools-panel">
+
 		<div data-role="controlgroup" data-type="horizontal"
 			style="margin: 0px; padding: 0px;" class="ui-mini">
-			<label for="sp-canvas-drawing-mode-free">
+
+			<label for="sp-canvas-drawing-mode-free"
+				wicket:id="input-drawing-mode-free">
 				<span
 					class="ui-icon-main-browse-canvas-brush ui-btn-icon-notext sp-inline-icon" />
 			</label>
 			<input type="radio" name="sp-canvas-drawing-mode"
 				id="sp-canvas-drawing-mode-free" value="brush" />
-			<label for="sp-canvas-drawing-mode-select">
+
+			<label for="sp-canvas-drawing-mode-select"
+				wicket:id="input-drawing-mode-select">
 				<span
 					class="ui-icon-main-browse-canvas-edit ui-btn-icon-notext sp-inline-icon" />
 			</label>
 			<input type="radio" name="sp-canvas-drawing-mode"
 				id="sp-canvas-drawing-mode-select" value="select" checked="checked" />
 		</div>
+
 		<div style="margin: 0px; padding: 0px"
 			class="ui-mini sp-canvas-drawing-mode-brush">
-			<input class="ui-mini" type="color" style="width: 50px;"
-				value="#000000" id="sp-canvas-drawing-brush-color" />
+			<input class="ui-mini" type="color" value="#000000"
+				wicket:id="input-drawing-brush-color"
+				id="sp-canvas-drawing-brush-color" />
 		</div>
+
 		<div style="margin: 0px; padding: 0px"
-			class="ui-mini sp-canvas-drawing-mode-select-prop">
-			<input class="ui-mini" type="color" style="width: 50px;"
-				value="#000000" id="sp-canvas-drawing-select-stroke-color" />
+			class="sp-canvas-drawing-mode-select-prop">
+
+			<input class="ui-mini" style="margin-top: 0px;" type="color"
+				wicket:id="input-drawing-select-stroke-color" value="#000000"
+				id="sp-canvas-drawing-select-stroke-color" />
+
+			<div class="sp-canvas-select-prop-label"
+				wicket:id="label-stroke-color-apply"
+				id="sp-canvas-drawing-select-stroke-color-label" />
 		</div>
-		<div style="margin: 0px; padding: 0px" class="ui-mini">
-			<input class="ui-mini" type="color" style="width: 50px;"
-				value="#ffffff" id="sp-canvas-drawing-select-fill-color" />
-		</div>
+
+		<wicket:remove>
+			<!-- Fixed brush color (disabled) -->
+		</wicket:remove>
 		<div style="margin: 0px; padding: 0px"
 			class="ui-mini sp-canvas-drawing-mode-brush">
-			<input class="ui-mini" type="number" style="width: 50px;" min="1"
-				value="1" id="sp-canvas-drawing-brush-width" />
+			<input class="ui-mini" type="color" disabled value="#ffffff" />
 		</div>
+
 		<div style="margin: 0px; padding: 0px"
-			class="ui-mini  sp-canvas-drawing-mode-select-prop">
-			<input class="ui-mini" type="number" style="width: 50px;" min="0"
-				value="0" id="sp-canvas-drawing-select-stroke-width" />
+			class="sp-canvas-drawing-mode-select-prop">
+
+			<input class="ui-mini" type="color" value="#ffffff"
+				wicket:id="input-drawing-select-fill-color"
+				id="sp-canvas-drawing-select-fill-color" />
+
+			<div class="sp-canvas-select-prop-label"
+				wicket:id="label-fill-color-apply"
+				id="sp-canvas-drawing-select-fill-color-label" />
 		</div>
+
+		<div style="margin: 0px; padding: 0px"
+			class="ui-mini sp-canvas-drawing-mode-brush">
+			<input class="ui-mini" type="number" min="1" value="1"
+				id="sp-canvas-drawing-brush-width" wicket:id="input-brush-width" />
+		</div>
+
+		<div style="margin: 0px; padding: 0px"
+			class="sp-canvas-drawing-mode-select-prop">
+
+			<input class="ui-mini" type="number" min="0" value="1"
+				id="sp-canvas-drawing-select-stroke-width"
+				wicket:id="input-shape-width" />
+
+			<div class="sp-canvas-select-prop-label"
+				wicket:id="label-stroke-width-apply"
+				id="sp-canvas-drawing-select-stroke-width-label" />
+		</div>
+
 		<div style="margin: 0px; padding: 0px;">
+
 			<input class="ui-mini"
-				style="opacity: 0.5; margin-left: -7px; width: 70px;" type="range"
+				style="opacity: 0.5; margin-left: 0px; width: 100%" type="range"
 				data-role="none" min="10" max="100" value="100"
-				id="sp-canvas-drawing-opacity" />
+				id="sp-canvas-drawing-opacity" wicket:id="input-drawing-opacity" />
+
+			<div class="sp-canvas-select-prop-label" style="margin-bottom: 10px;"
+				id="sp-canvas-drawing-opacity-label" wicket:id="label-opacity-apply" />
 		</div>
+
 		<div data-role="controlgroup"
 			class="ui-mini sp-canvas-drawing-mode-select">
 			<button id="sp-canvas-drawing-selected-fill-transparent"
-				class="ui-btn sp-table-td-button ui-btn-inline ui-icon-eye ui-btn-icon-notext">&nbsp;</button>
+				wicket:id="input-drawing-fill-transparent" disabled
+				class="ui-btn ui-btn-inline ui-icon-eye ui-btn-icon-notext">&nbsp;</button>
 		</div>
+
 		<div data-role="controlgroup"
 			class="ui-mini sp-canvas-drawing-mode-select">
-			<button id="sp-canvas-drawing-add-line"
-				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-line">&nbsp;</button>
-			<button id="sp-canvas-drawing-add-rect"
-				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-square">&nbsp;</button>
-			<button id="sp-canvas-drawing-add-circle"
-				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-circle">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-line" wicket:id="btn-add-line"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-line">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-rect" wicket:id="btn-add-rect"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-square">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-circle" wicket:id="btn-add-circle"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-circle">&nbsp;</button>
 			<button id="sp-canvas-drawing-add-triangle"
-				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-triangle">&nbsp;</button>
-			<button id="sp-canvas-drawing-add-textbox"
-				class="ui-btn sp-table-td-button ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-text">&nbsp;</button>
+				wicket:id="btn-add-triangle"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-triangle">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-textbox" wicket:id="btn-add-text"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-text">&nbsp;</button>
 		</div>
+
 		<div data-role="controlgroup" class="ui-mini">
-			<button id="sp-canvas-drawing-select-all"
+			<button id="sp-canvas-drawing-select-all" wicket:id="btn-select-all"
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-select-all">&nbsp;</button>
 			<wicket:enclosure child="canvas-btn-info">
-				<button id="sp-canvas-drawing-info-selected" disabled
+				<button id="sp-canvas-drawing-info-selection" disabled
 					wicket:id="canvas-btn-info"
-					class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-info">&nbsp;</button>
+					title="Write selected objects to browser console"
+					class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-gear">&nbsp;</button>
 			</wicket:enclosure>
-			<button id="sp-canvas-drawing-clear-selected" disabled
+			<button id="sp-canvas-drawing-clear-selection"
+				wicket:id="btn-clear-selection" disabled
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-clear-selected">&nbsp;</button>
-			<button id="sp-canvas-drawing-clear-all" disabled
+			<button id="sp-canvas-drawing-clear-all" wicket:id="btn-clear-all"
+				disabled
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-clear-all">&nbsp;</button>
-			<button id="sp-canvas-drawing-undo-all"
+			<button id="sp-canvas-drawing-undo-all" wicket:id="btn-undo-all"
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-arr-undo">&nbsp;</button>
-			<button id="sp-canvas-drawing-save"
+			<button id="sp-canvas-drawing-save" wicket:id="btn-save"
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-save">&nbsp;</button>
 		</div>
 	</div>
 </wicket:enclosure>
+
 <wicket:remove>
-	<!-- 
-THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
--->
+	<!-- THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG -->
 </wicket:remove>
 <div data-role="popup" data-position-to="window"
 	class="sp-msg-popup ui-content" />

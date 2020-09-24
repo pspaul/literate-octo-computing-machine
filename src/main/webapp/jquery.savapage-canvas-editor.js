@@ -442,11 +442,11 @@
                 _canvas.discardActiveObject().renderAll();
             };
 
-            this.debugSelected = function() {
+            this.debugSelection = function() {
                 console.log(_canvas.getActiveObjects()[0]);
             };
 
-            this.clearSelected = function() {
+            this.clearSelection = function() {
                 var objs = _canvas.getActiveObjects();
                 _canvas.discardActiveObject();
                 if (objs.length) {

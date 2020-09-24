@@ -28,6 +28,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.server.WebServer;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
@@ -41,11 +43,45 @@ public class Browser extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
 
-    /** Tools mnal pixel width. */
+    /** Tools panel pixel width. */
     private static final int PANEL_WIDTH_PX = 85;
 
     /** */
     private static final String WID_TOOLS_PANEL = "tools-panel";
+
+    /**
+     * HTML titles for Wicket IDs.
+     */
+    private static final Object[][] TITLE_WID_HTMLBUTTON = { //
+            { "btn-clear-all", HtmlButtonEnum.CLEAR_ALL }, //
+            { "btn-clear-selection", HtmlButtonEnum.CLEAR_SELECTION }, //
+            { "btn-save", HtmlButtonEnum.SAVE }, //
+            { "btn-select-all", HtmlButtonEnum.SELECT_ALL }, //
+            { "btn-undo-all", HtmlButtonEnum.RESTORE }, //
+            { "label-stroke-color-apply", HtmlButtonEnum.APPLY }, //
+            { "label-fill-color-apply", HtmlButtonEnum.APPLY }, //
+            { "label-stroke-width-apply", HtmlButtonEnum.APPLY }, //
+            { "label-opacity-apply", HtmlButtonEnum.APPLY },//
+    };
+
+    /**
+     * HTML titles for Wicket IDs.
+     */
+    private static final Object[][] TITLE_WID_NOUN = { //
+            { "input-drawing-mode-free", NounEnum.DRAWING }, //
+            { "input-drawing-mode-select", NounEnum.SHAPE }, //
+            { "input-drawing-brush-color", NounEnum.LINE }, //
+            { "input-drawing-select-stroke-color", NounEnum.LINE }, //
+            { "input-drawing-select-fill-color", NounEnum.FILL }, //
+            { "input-drawing-opacity", NounEnum.OPACITY }, //
+            { "input-brush-width", NounEnum.WIDTH }, //
+            { "input-shape-width", NounEnum.WIDTH }, //
+            { "btn-add-line", NounEnum.LINE }, //
+            { "btn-add-circle", NounEnum.CIRCLE }, //
+            { "btn-add-rect", NounEnum.RECTANGLE }, //
+            { "btn-add-triangle", NounEnum.TRIANGLE }, //
+            { "btn-add-text", NounEnum.TEXT }, //
+    };
 
     /**
      * @param parms
@@ -84,6 +120,9 @@ public class Browser extends AbstractUserPage {
             final Component compPanel = helper.addTransparant(WID_TOOLS_PANEL);
             compPanel.add(new AttributeAppender(MarkupHelper.ATTR_STYLE,
                     String.format("width: %dpx;", PANEL_WIDTH_PX)));
+
+            this.populateToolsPanelExt(helper);
+
         } else {
             helper.discloseLabel(WID_TOOLS_PANEL);
         }
@@ -95,4 +134,24 @@ public class Browser extends AbstractUserPage {
         helper.encloseLabel("canvas-browser-img", "", hasCanvas);
     }
 
+    /**
+     * Populates Tools Panel with extra mark-up.
+     *
+     * @param helper
+     *            {@link MarkupHelper}.
+     */
+    private void populateToolsPanelExt(final MarkupHelper helper) {
+
+        for (final Object[] title : TITLE_WID_HTMLBUTTON) {
+            helper.addTransparentWithAttrTitle(title[0].toString(),
+                    (HtmlButtonEnum) title[1]);
+        }
+        for (final Object[] title : TITLE_WID_NOUN) {
+            helper.addTransparentWithAttrTitle(title[0].toString(),
+                    (NounEnum) title[1]);
+        }
+
+        helper.addTransparentWithAttrTitle("input-drawing-fill-transparent",
+                AdjectiveEnum.TRANSPARENT.uiText(getLocale()));
+    }
 }
