@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1084,7 +1084,8 @@ public final class SystemStatusPanel extends Panel {
                         url.append("&v_minor=")
                                 .append(VersionInfo.VERSION_B_MINOR);
                         url.append("&v_revision=")
-                                .append(VersionInfo.VERSION_C_REVISION);
+                                .append(VersionInfo.VERSION_C_REVISION)
+                                .append(VersionInfo.VERSION_D_STATUS);
                         url.append("&v_build=")
                                 .append(VersionInfo.VERSION_E_BUILD);
 
