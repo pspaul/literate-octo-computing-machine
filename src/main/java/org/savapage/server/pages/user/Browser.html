@@ -67,24 +67,36 @@ the License, or (at your option) any later version.
 		data-dismissible="false" data-display="overlay"
 		wicket:id="tools-panel" id="sp-canvas-tools-panel">
 
-		<div data-role="controlgroup" data-type="horizontal"
-			style="margin: 0px; padding: 0px;" class="ui-mini">
-
-			<label for="sp-canvas-drawing-mode-free"
-				wicket:id="input-drawing-mode-free">
+		<fieldset data-role="controlgroup" data-type="horizontal"
+			class="ui-mini" style="margin-top: -5px">
+			<label for="sp-canvas-use-brush" wicket:id="checkbox-brush">
 				<span
 					class="ui-icon-main-browse-canvas-brush ui-btn-icon-notext sp-inline-icon" />
 			</label>
-			<input type="radio" name="sp-canvas-drawing-mode"
-				id="sp-canvas-drawing-mode-free" value="brush" />
+			<input type="checkbox" id="sp-canvas-use-brush" data-mini="true">
+			</input>
+		</fieldset>
 
-			<label for="sp-canvas-drawing-mode-select"
-				wicket:id="input-drawing-mode-select">
-				<span
-					class="ui-icon-main-browse-canvas-edit ui-btn-icon-notext sp-inline-icon" />
-			</label>
-			<input type="radio" name="sp-canvas-drawing-mode"
-				id="sp-canvas-drawing-mode-select" value="select" checked="checked" />
+		<wicket:remove>
+			<!-- style="width: 52px; margin-left: 0px; margin-right: 0px;" 
+			     is used to align with above fieldset. -->
+		</wicket:remove>
+
+		<div data-role="controlgroup"
+			style="width: 52px; margin-left: 0px; margin-right: 0px;"
+			class="ui-mini sp-canvas-drawing-mode-select">
+
+			<button id="sp-canvas-drawing-add-line" wicket:id="btn-add-line"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-line">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-rect" wicket:id="btn-add-rect"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-square">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-circle" wicket:id="btn-add-circle"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-circle">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-triangle"
+				wicket:id="btn-add-triangle"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-triangle">&nbsp;</button>
+			<button id="sp-canvas-drawing-add-textbox" wicket:id="btn-add-text"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-text">&nbsp;</button>
 		</div>
 
 		<div style="margin: 0px; padding: 0px"
@@ -163,21 +175,8 @@ the License, or (at your option) any later version.
 		</div>
 
 		<div data-role="controlgroup"
-			class="ui-mini sp-canvas-drawing-mode-select">
-			<button id="sp-canvas-drawing-add-line" wicket:id="btn-add-line"
-				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-line">&nbsp;</button>
-			<button id="sp-canvas-drawing-add-rect" wicket:id="btn-add-rect"
-				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-square">&nbsp;</button>
-			<button id="sp-canvas-drawing-add-circle" wicket:id="btn-add-circle"
-				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-circle">&nbsp;</button>
-			<button id="sp-canvas-drawing-add-triangle"
-				wicket:id="btn-add-triangle"
-				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-triangle">&nbsp;</button>
-			<button id="sp-canvas-drawing-add-textbox" wicket:id="btn-add-text"
-				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-text">&nbsp;</button>
-		</div>
-
-		<div data-role="controlgroup" class="ui-mini">
+			style="width: 52px; margin-top: 10px; margin-left: 0px; margin-right: 0px;"
+			class="ui-mini">
 			<button id="sp-canvas-drawing-select-all" wicket:id="btn-select-all"
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-select-all">&nbsp;</button>
 			<wicket:enclosure child="canvas-btn-info">

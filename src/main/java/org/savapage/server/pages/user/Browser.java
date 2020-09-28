@@ -28,11 +28,16 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.WebServer;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.session.SpSession;
 
 /**
  *
@@ -42,6 +47,10 @@ import org.savapage.server.pages.MarkupHelper;
 public class Browser extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final AccessControlService ACCESS_CONTROL_SERVICE =
+            ServiceContext.getServiceFactory().getAccessControlService();
 
     /** Tools panel pixel width. */
     private static final int PANEL_WIDTH_PX = 85;
@@ -68,14 +77,13 @@ public class Browser extends AbstractUserPage {
      * HTML titles for Wicket IDs.
      */
     private static final Object[][] TITLE_WID_NOUN = { //
-            { "input-drawing-mode-free", NounEnum.DRAWING }, //
-            { "input-drawing-mode-select", NounEnum.SHAPE }, //
-            { "input-drawing-brush-color", NounEnum.LINE }, //
-            { "input-drawing-select-stroke-color", NounEnum.LINE }, //
+            { "checkbox-brush", NounEnum.BRUSH }, //
+            { "input-drawing-brush-color", NounEnum.BRUSH }, //
+            { "input-drawing-select-stroke-color", NounEnum.BORDER }, //
             { "input-drawing-select-fill-color", NounEnum.FILL }, //
             { "input-drawing-opacity", NounEnum.OPACITY }, //
-            { "input-brush-width", NounEnum.WIDTH }, //
-            { "input-shape-width", NounEnum.WIDTH }, //
+            { "input-brush-width", NounEnum.SIZE }, //
+            { "input-shape-width", NounEnum.BORDER }, //
             { "btn-add-line", NounEnum.LINE }, //
             { "btn-add-circle", NounEnum.CIRCLE }, //
             { "btn-add-rect", NounEnum.RECTANGLE }, //
@@ -104,7 +112,12 @@ public class Browser extends AbstractUserPage {
         helper.addModifyLabelAttr("btn-next", MarkupHelper.ATTR_TITLE,
                 HtmlButtonEnum.NEXT.uiText(getLocale()));
 
-        final boolean hasCanvas = ConfigManager.isPdfOverlayEditorEnabled();
+        final boolean isUserInboxEditor = ACCESS_CONTROL_SERVICE.hasPermission(
+                SpSession.get().getUserIdDto(), ACLOidEnum.U_INBOX,
+                ACLPermissionEnum.EDITOR);
+
+        final boolean hasCanvas =
+                isUserInboxEditor && ConfigManager.isPdfOverlayEditorEnabled();
 
         final Component compContent = helper.addTransparant("browser-content");
         final Component compFooter =

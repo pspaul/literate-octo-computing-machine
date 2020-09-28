@@ -589,7 +589,6 @@
          *
          */
         function PageBrowser(_i18n, _view, _model, _api) {
-            const _DRAW_MODE_BRUSH = 'brush';
             var _this = this,
                 _cssClassRotated = 'sp-img-rotated',
                 _idCanvasImgDiv = 'sp-canvas-browser-img-div',
@@ -612,7 +611,7 @@
 
             /** */
                 _setHtmlCanvasDrawingMode = function() {
-                _isBrushMode = _view.getRadioValue('sp-canvas-drawing-mode') === _DRAW_MODE_BRUSH;
+                _isBrushMode = _view.isCbChecked($('#sp-canvas-use-brush'));
                 _imgCanvasEditor.enableDrawingMode(_isBrushMode);
                 _view.enableUI($('.sp-canvas-drawing-mode-select'), !_isBrushMode);
                 _view.visible($('.sp-canvas-drawing-mode-select-prop'), !_isBrushMode);
@@ -713,7 +712,7 @@
                     _setOverlayCanvas();
                 });
 
-                $('input[name=sp-canvas-drawing-mode]:radio').change(function(event) {
+                $("input:checkbox[id='sp-canvas-use-brush']").change(function(event) {
                     _setHtmlCanvasDrawingMode();
                 });
 
