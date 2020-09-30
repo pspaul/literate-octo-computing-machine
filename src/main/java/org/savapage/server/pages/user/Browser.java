@@ -66,11 +66,7 @@ public class Browser extends AbstractUserPage {
             { "btn-clear-selection", HtmlButtonEnum.CLEAR_SELECTION }, //
             { "btn-save", HtmlButtonEnum.SAVE }, //
             { "btn-select-all", HtmlButtonEnum.SELECT_ALL }, //
-            { "btn-undo-all", HtmlButtonEnum.RESTORE }, //
-            { "label-stroke-color-apply", HtmlButtonEnum.APPLY }, //
-            { "label-fill-color-apply", HtmlButtonEnum.APPLY }, //
-            { "label-stroke-width-apply", HtmlButtonEnum.APPLY }, //
-            { "label-opacity-apply", HtmlButtonEnum.APPLY },//
+            { "btn-undo-all", HtmlButtonEnum.RESTORE } //
     };
 
     /**
@@ -163,6 +159,9 @@ public class Browser extends AbstractUserPage {
             helper.addTransparentWithAttrTitle(title[0].toString(),
                     (NounEnum) title[1]);
         }
+
+        helper.addTransparentWithAttrTitle("checkbox-props-fixed",
+                AdjectiveEnum.FIXED.uiText(getLocale()));
 
         helper.addTransparentWithAttrTitle("input-drawing-fill-transparent",
                 AdjectiveEnum.TRANSPARENT.uiText(getLocale()));

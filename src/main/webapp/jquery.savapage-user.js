@@ -620,6 +620,11 @@
             },
 
             /** */
+                _areHtmlCanvasDrawingPropsFixed = function() {
+                return _view.isCbChecked($('#sp-canvas-drawing-props-fixed'));
+            },
+
+            /** */
                 _initHtmlCanvasEditor = function() {
 
                 var selToolsPanel = $('#sp-canvas-tools-panel');
@@ -637,21 +642,17 @@
                     _view.enable($('#sp-canvas-drawing-select-all'), !_isBrushMode && nObjects > 0);
                 }, function(nObjectsSelected) {
                     // onSelectionCreated
-                    _view.visible($('.sp-canvas-select-prop-label'), true);
-                    _view.enable($('#sp-canvas-drawing-clear-selection'), true);
                     _view.enable($('#sp-canvas-drawing-selected-fill-transparent'), true);
+                    _view.enable($('#sp-canvas-drawing-clear-selection'), true);
                     _view.enable($('#sp-canvas-drawing-info-selection'), nObjectsSelected === 1);
                 }, function() {
                     // onSelectionCleared
-                    _view.visible($('.sp-canvas-select-prop-label'), false);
-                    _view.enable($('#sp-canvas-drawing-clear-selection'), false);
                     _view.enable($('#sp-canvas-drawing-selected-fill-transparent'), false);
+                    _view.enable($('#sp-canvas-drawing-clear-selection'), false);
                     _view.enable($('#sp-canvas-drawing-info-selection'), false);
                 });
 
                 _imgCanvasEditor.setFreeDrawingBrush('Pencil', $('#sp-canvas-drawing-brush-color').val(), 1);
-
-                _view.visible($('.sp-canvas-select-prop-label'), false);
 
                 _setHtmlCanvasDrawingMode();
                 _setHtmlCanvasBrushWidth($('#sp-canvas-drawing-brush-width'));
@@ -671,6 +672,10 @@
                 });
                 $("#sp-canvas-drawing-add-textbox").click(function() {
                     _imgCanvasEditor.addTextbox();
+                });
+
+                $('#sp-canvas-drawing-props-fixed').click(function() {
+                    $('.sp-canvas-drawing-select-color').toggleClass('sp-canvas-color-fixed');
                 });
 
                 $("#sp-canvas-drawing-select-all").click(function() {
@@ -724,37 +729,40 @@
                     _setHtmlCanvasBrushWidth($(this));
                 });
 
-                $('#sp-canvas-drawing-select-stroke-color-label').click(function() {
-                    _imgCanvasEditor.setStrokeSelected();
-                });
-                $('#sp-canvas-drawing-select-stroke-color').on('input', function() {
+                $('#sp-canvas-drawing-select-stroke-color').click(function(e) {
+                    if (_areHtmlCanvasDrawingPropsFixed()) {
+                        _imgCanvasEditor.setStrokeSelected();
+                        e.preventDefault();
+                    }
+                }).on('input', function() {
                     _imgCanvasEditor.setStroke($(this).val());
                     _imgCanvasEditor.setStrokeSelected();
                 });
 
-                $('#sp-canvas-drawing-select-fill-color-label').click(function() {
-                    _imgCanvasEditor.setFillSelected();
-                });
-                $('#sp-canvas-drawing-select-fill-color').on('input', function() {
+                $('#sp-canvas-drawing-select-fill-color').click(function(e) {
+                    if (_areHtmlCanvasDrawingPropsFixed()) {
+                        _imgCanvasEditor.setFillSelected();
+                        e.preventDefault();
+                    }
+                }).on('input', function() {
                     _imgCanvasEditor.setFill($(this).val());
                     _imgCanvasEditor.setFillSelected();
                 });
 
-                $('#sp-canvas-drawing-selected-fill-transparent').click(function() {
+                $('#sp-canvas-drawing-selected-fill-transparent').click(function(e) {
                     _imgCanvasEditor.setFillSelectedExt(null);
+                    e.preventDefault();
                 });
 
-                $('#sp-canvas-drawing-select-stroke-width-label').click(function() {
-                    _imgCanvasEditor.setStrokeWidthSelected();
-                });
-                $('#sp-canvas-drawing-select-stroke-width').on('input', function() {
+                $('#sp-canvas-drawing-select-stroke-width').click(function(e) {
+                    _setHtmlCanvasStrokeWidth($(this));
+                }).on('input', function() {
                     _setHtmlCanvasStrokeWidth($(this));
                 });
 
-                $('#sp-canvas-drawing-opacity-label').click(function() {
+                $('#sp-canvas-drawing-opacity').click(function(e) {
                     _imgCanvasEditor.setOpacitySelected();
-                });
-                $('#sp-canvas-drawing-opacity').on('input', function() {
+                }).on('input', function() {
                     _imgCanvasEditor.setOpacityPerc(parseInt($(this).val(), 10));
                     _imgCanvasEditor.setOpacitySelected();
                 });

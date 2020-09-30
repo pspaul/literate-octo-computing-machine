@@ -99,43 +99,29 @@ the License, or (at your option) any later version.
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-text">&nbsp;</button>
 		</div>
 
-		<div style="margin: 0px; padding: 0px"
+		<fieldset data-role="controlgroup" data-type="horizontal"
+			class="ui-mini">
+
+			<label for="sp-canvas-drawing-props-fixed"
+				wicket:id="checkbox-props-fixed">
+				<span class="ui-icon-lock ui-btn-icon-notext sp-inline-icon" />
+			</label>
+			<input type="checkbox" id="sp-canvas-drawing-props-fixed"
+				data-mini="true"> </input>
+		</fieldset>
+
+		<div style="margin: 0px; padding: 0px;"
 			class="ui-mini sp-canvas-drawing-mode-brush">
 			<input class="ui-mini" type="color" value="#000000"
 				wicket:id="input-drawing-brush-color"
 				id="sp-canvas-drawing-brush-color" />
 		</div>
 
-		<div style="margin: 0px; padding: 0px"
-			class="sp-canvas-drawing-mode-select-prop">
-
-			<input class="ui-mini" style="margin-top: 0px;" type="color"
+		<div style="margin: 0px; padding: 0px;"
+			class="ui-mini sp-canvas-drawing-mode-select-prop">
+			<input class="ui-mini sp-canvas-drawing-select-color" type="color"
 				wicket:id="input-drawing-select-stroke-color" value="#000000"
 				id="sp-canvas-drawing-select-stroke-color" />
-
-			<div class="sp-canvas-select-prop-label"
-				wicket:id="label-stroke-color-apply"
-				id="sp-canvas-drawing-select-stroke-color-label" />
-		</div>
-
-		<wicket:remove>
-			<!-- Fixed brush color (disabled) -->
-		</wicket:remove>
-		<div style="margin: 0px; padding: 0px"
-			class="ui-mini sp-canvas-drawing-mode-brush">
-			<input class="ui-mini" type="color" disabled value="#ffffff" />
-		</div>
-
-		<div style="margin: 0px; padding: 0px"
-			class="sp-canvas-drawing-mode-select-prop">
-
-			<input class="ui-mini" type="color" value="#ffffff"
-				wicket:id="input-drawing-select-fill-color"
-				id="sp-canvas-drawing-select-fill-color" />
-
-			<div class="sp-canvas-select-prop-label"
-				wicket:id="label-fill-color-apply"
-				id="sp-canvas-drawing-select-fill-color-label" />
 		</div>
 
 		<div style="margin: 0px; padding: 0px"
@@ -145,33 +131,37 @@ the License, or (at your option) any later version.
 		</div>
 
 		<div style="margin: 0px; padding: 0px"
-			class="sp-canvas-drawing-mode-select-prop">
+			class="ui-mini sp-canvas-drawing-mode-select-prop">
 
 			<input class="ui-mini" type="number" min="0" value="1"
 				id="sp-canvas-drawing-select-stroke-width"
 				wicket:id="input-shape-width" />
-
-			<div class="sp-canvas-select-prop-label"
-				wicket:id="label-stroke-width-apply"
-				id="sp-canvas-drawing-select-stroke-width-label" />
 		</div>
 
-		<div style="margin: 0px; padding: 0px;">
+		<wicket:remove>
+			<!-- Fixed brush color (disabled) -->
+		</wicket:remove>
+		<div style="margin: 0px; padding: 0px;"
+			class="ui-mini sp-canvas-drawing-mode-brush">
+			<input class="ui-mini" type="color" disabled value="#ffffff" />
+		</div>
 
-			<input class="ui-mini"
-				style="opacity: 0.5; margin-left: 0px; width: 100%" type="range"
-				data-role="none" min="10" max="100" value="100"
+		<div style="margin: 0px; padding: 0px;"
+			class="ui-mini sp-canvas-drawing-mode-select-prop">
+			<input class="ui-mini sp-canvas-drawing-select-color" type="color"
+				value="#ffffff" wicket:id="input-drawing-select-fill-color"
+				id="sp-canvas-drawing-select-fill-color" />
+		</div>
+
+		<div class="ui-mini" style="margin: 0px; padding: 0px;">
+			<input class="ui-mini" type="number" min="0" max="100" value="100"
 				id="sp-canvas-drawing-opacity" wicket:id="input-drawing-opacity" />
-
-			<div class="sp-canvas-select-prop-label" style="margin-bottom: 10px;"
-				id="sp-canvas-drawing-opacity-label" wicket:id="label-opacity-apply" />
 		</div>
 
-		<div data-role="controlgroup"
-			class="ui-mini sp-canvas-drawing-mode-select">
-			<button id="sp-canvas-drawing-selected-fill-transparent"
-				wicket:id="input-drawing-fill-transparent" disabled
-				class="ui-btn ui-btn-inline ui-icon-eye ui-btn-icon-notext">&nbsp;</button>
+		<div style="margin: 0px; padding: 0px" class="ui-mini">
+			<input class="ui-mini" type="color" value="#ffffff"
+				style="padding: 2px;" wicket:id="input-drawing-fill-transparent"
+				id="sp-canvas-drawing-selected-fill-transparent" />
 		</div>
 
 		<div data-role="controlgroup"

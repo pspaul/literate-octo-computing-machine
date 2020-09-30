@@ -277,24 +277,13 @@ a:hover.poll_button {
 }
 
 .sp-canvas-drawing-mode-select-prop {
-    padding-bottom: 0px;
 }
-.sp-canvas-select-prop-label {
-    cursor: pointer;
-    margin-bottom: 0px;
-    /* font-weight: bold; */
-    width: 65%;
-    text-align: center;
-    margin-left: 10px;
-    margin-top: -8px;
-    border: 1px dotted silver;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
-    border-radius: 5px;
+
+.sp-canvas-drawing-select-color {
 }
-.sp-canvas-select-prop-label::after {
-    /* unicode: RIGHT ARROR*/
-    content: "\2192"; 
+
+.sp-canvas-color-fixed {
+    border: 1px solid gray !important;
 }
+
 /* end-of-file */
