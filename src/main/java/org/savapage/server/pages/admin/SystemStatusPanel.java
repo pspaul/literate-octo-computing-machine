@@ -741,7 +741,9 @@ public final class SystemStatusPanel extends Panel {
             final Date dateRef = new Date();
             if (sslCert.isNotAfterWithinYear(dateRef)) {
                 certText = localeHelper.getMediumDate(sslCert.getNotAfter());
-                if (sslCert.isNotAfterWithinMonth(dateRef)) {
+                if (sslCert.isNotAfterWithinDay(dateRef)) {
+                    certClass = "sp-txt-error";
+                } else if (sslCert.isNotAfterWithinMonth(dateRef)) {
                     certClass = "sp-txt-warn";
                 } else {
                     certClass = "sp-txt-info";
