@@ -103,7 +103,7 @@ public final class ReqPageOverlaySet extends ApiRequestMixin {
                 ImageUrl.getPageOrdinalFromPath(dtoReq.getImgUrl()),
                 dtoReq.getSvg64(), dtoReq.getJson64());
 
-        this.setApiResult(ApiResultCodeEnum.OK, "msg-apply-ok");
+        this.setApiResult(ApiResultCodeEnum.OK, "msg-saved-ok");
     }
 
     /**

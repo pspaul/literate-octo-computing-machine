@@ -53,7 +53,14 @@ public class Browser extends AbstractUserPage {
             ServiceContext.getServiceFactory().getAccessControlService();
 
     /** Tools panel pixel width. */
-    private static final int PANEL_WIDTH_PX = 85;
+    private static final int PANEL_WIDTH_PX = 89;
+
+    /** Tools panel checkbox padding left. */
+    private static final int PANEL_CHECKBOX_PADDING_LEFT = 15;
+
+    /** Tools panel checkbox padding right. */
+    private static final int PANEL_CHECKBOX_PADDING_RIGHT =
+            PANEL_CHECKBOX_PADDING_LEFT;
 
     /** */
     private static final String WID_TOOLS_PANEL = "tools-panel";
@@ -73,7 +80,6 @@ public class Browser extends AbstractUserPage {
      * HTML titles for Wicket IDs.
      */
     private static final Object[][] TITLE_WID_NOUN = { //
-            { "checkbox-brush", NounEnum.BRUSH }, //
             { "input-drawing-brush-color", NounEnum.BRUSH }, //
             { "input-drawing-select-stroke-color", NounEnum.BORDER }, //
             { "input-drawing-select-fill-color", NounEnum.FILL }, //
@@ -160,10 +166,22 @@ public class Browser extends AbstractUserPage {
                     (NounEnum) title[1]);
         }
 
-        helper.addTransparentWithAttrTitle("checkbox-props-fixed",
-                AdjectiveEnum.FIXED.uiText(getLocale()));
-
         helper.addTransparentWithAttrTitle("input-drawing-fill-transparent",
                 AdjectiveEnum.TRANSPARENT.uiText(getLocale()));
+
+        final String style = String.format(
+                "padding-left: %dpx; padding-right: %dpx;",
+                PANEL_CHECKBOX_PADDING_LEFT, PANEL_CHECKBOX_PADDING_RIGHT);
+
+        MarkupHelper.modifyComponentAttr(
+                helper.addTransparentWithAttrTitle("checkbox-props-fixed",
+                        AdjectiveEnum.FIXED.uiText(getLocale())),
+                MarkupHelper.ATTR_STYLE, style);
+
+        MarkupHelper.modifyComponentAttr(
+                helper.addTransparentWithAttrTitle("checkbox-brush",
+                        NounEnum.BRUSH.uiText(getLocale())),
+                MarkupHelper.ATTR_STYLE, style);
+
     }
 }

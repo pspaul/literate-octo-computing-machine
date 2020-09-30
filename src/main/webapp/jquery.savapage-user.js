@@ -616,6 +616,7 @@
                 _view.enableUI($('.sp-canvas-drawing-mode-select'), !_isBrushMode);
                 _view.visible($('.sp-canvas-drawing-mode-select-prop'), !_isBrushMode);
                 _view.visible($('.sp-canvas-drawing-mode-brush'), _isBrushMode);
+                _view.enableCheckboxRadio($('#sp-canvas-drawing-props-fixed'), !_isBrushMode);
                 _view.enable($('#sp-canvas-drawing-select-all'), !_isBrushMode);
             },
 

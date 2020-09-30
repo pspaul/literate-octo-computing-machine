@@ -69,21 +69,15 @@ the License, or (at your option) any later version.
 
 		<fieldset data-role="controlgroup" data-type="horizontal"
 			class="ui-mini" style="margin-top: -5px">
-			<label for="sp-canvas-use-brush" wicket:id="checkbox-brush">
+			<label for="sp-canvas-use-brush" style="see:java;" wicket:id="checkbox-brush">
 				<span
 					class="ui-icon-main-browse-canvas-brush ui-btn-icon-notext sp-inline-icon" />
 			</label>
-			<input type="checkbox" id="sp-canvas-use-brush" data-mini="true">
-			</input>
+			<input type="checkbox" id="sp-canvas-use-brush" data-mini="true" />
 		</fieldset>
 
-		<wicket:remove>
-			<!-- style="width: 52px; margin-left: 0px; margin-right: 0px;" 
-			     is used to align with above fieldset. -->
-		</wicket:remove>
-
 		<div data-role="controlgroup"
-			style="width: 52px; margin-left: 0px; margin-right: 0px;"
+			style="margin-left: 0px; margin-right: 0px;"
 			class="ui-mini sp-canvas-drawing-mode-select">
 
 			<button id="sp-canvas-drawing-add-line" wicket:id="btn-add-line"
@@ -99,16 +93,17 @@ the License, or (at your option) any later version.
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-text">&nbsp;</button>
 		</div>
 
-		<fieldset data-role="controlgroup" data-type="horizontal"
-			class="ui-mini">
-
-			<label for="sp-canvas-drawing-props-fixed"
-				wicket:id="checkbox-props-fixed">
-				<span class="ui-icon-lock ui-btn-icon-notext sp-inline-icon" />
-			</label>
-			<input type="checkbox" id="sp-canvas-drawing-props-fixed"
-				data-mini="true"> </input>
-		</fieldset>
+		<div style="margin: 0px; padding: 0px;" class="ui-mini">
+			<fieldset data-role="controlgroup" data-type="horizontal"
+				class="ui-mini">
+				<label for="sp-canvas-drawing-props-fixed" style="see:java;"
+					wicket:id="checkbox-props-fixed">
+					<span class="ui-icon-lock ui-btn-icon-notext sp-inline-icon" />
+				</label>
+				<input type="checkbox" id="sp-canvas-drawing-props-fixed"
+					data-mini="true" />
+			</fieldset>
+		</div>
 
 		<div style="margin: 0px; padding: 0px;"
 			class="ui-mini sp-canvas-drawing-mode-brush">
@@ -158,14 +153,15 @@ the License, or (at your option) any later version.
 				id="sp-canvas-drawing-opacity" wicket:id="input-drawing-opacity" />
 		</div>
 
-		<div style="margin: 0px; padding: 0px" class="ui-mini">
+		<div style="margin: 0px; padding: 0px"
+			class="ui-mini sp-canvas-drawing-mode-select">
 			<input class="ui-mini" type="color" value="#ffffff"
 				style="padding: 2px;" wicket:id="input-drawing-fill-transparent"
 				id="sp-canvas-drawing-selected-fill-transparent" />
 		</div>
 
 		<div data-role="controlgroup"
-			style="width: 52px; margin-top: 10px; margin-left: 0px; margin-right: 0px;"
+			style="margin-top: 10px; margin-left: 0px; margin-right: 0px;"
 			class="ui-mini">
 			<button id="sp-canvas-drawing-select-all" wicket:id="btn-select-all"
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-select-all">&nbsp;</button>
