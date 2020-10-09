@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -44,9 +45,14 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.UrlResourceReference;
+import org.apache.wicket.resource.NoOpTextCompressor;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
+import org.apache.wicket.response.StringResponse;
 import org.eclipse.jetty.server.Server;
 import org.savapage.common.ConfigDefaults;
 import org.savapage.core.SpException;
@@ -83,6 +89,8 @@ import org.savapage.server.ios.WebClipServer;
 import org.savapage.server.ipp.IppPrintServer;
 import org.savapage.server.ipp.IppPrintServerHomePage;
 import org.savapage.server.pages.AbstractPage;
+import org.savapage.server.pages.LibreJsLicenseEnum;
+import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.admin.AbstractAdminPage;
 import org.savapage.server.pages.printsite.AbstractPrintSitePage;
 import org.savapage.server.pages.user.AbstractUserPage;
@@ -105,14 +113,35 @@ import de.agilecoders.wicket.webjars.request.resource.WebjarsCssResourceReferenc
 import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceReference;
 
 /**
- * Application object for your web application. If you want to run this
- * application without deploying, run
- * {@link org.savapage.server.WebServer#main(String[])}.
+ * Apache Wicket Web Application.
  *
  * @author Rijk Ravestein
  *
  */
 public final class WebApp extends WebApplication implements ServiceEntryPoint {
+
+    /**
+     * Native mount path of Apache Wicket.
+     */
+    private static final String WICKET_MOUNT_PATH = "/wicket";
+
+    /**
+     * Native mount path of Apache Wicket with '/' suffix.
+     */
+    public static final String WICKET_PATH_FULL_SLASHES =
+            WICKET_MOUNT_PATH + "/";
+
+    /** */
+    private static final String WICKET_PATH_RESOURCE = "/resource";
+
+    /** */
+    private static final String PATH_PARENT = "..";
+
+    /** */
+    private static final String PATH_PARENT_SLASH = "../";
+    /** */
+    private static final String WICKET_PATH_PARENT_RESOURCE =
+            PATH_PARENT + WICKET_PATH_RESOURCE;
 
     /**
      * Used in {@code web.xml}.
@@ -276,6 +305,18 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * The {@link ServerPluginManager}.
      */
     private ServerPluginManager pluginManager;
+
+    /**
+     * Initially {@code false} and set to {@code true} after JavasScript
+     * reference replacement is applied.
+     */
+    private boolean islazyReplaceJsReferenceApplied = false;
+
+    /**
+     * Object for synchronizing access to
+     * {@link #islazyReplaceJsReferenceApplied}.
+     */
+    private final Object mutexlazyReplaceJsReference = new Object();
 
     /**
      * Return a localized message string. IMPORTANT: The locale from the
@@ -847,6 +888,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             if (WebServer.isWebAppCustomI18n()) {
                 SpInfo.instance().log("Web App Custom i18n enabled.");
             }
+            if (WebServer.isWebAppGNULibreJS()) {
+                SpInfo.instance().log("GNU LibreJS enabled.");
+            } else {
+                SpInfo.instance().log("GNU LibreJS disabled.");
+            }
 
             /*
              * Server plug-in manager.
@@ -911,11 +957,6 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     /**
      * Applies Wicket Application settings.
      * <p>
-     * See Wicket Wiki <a href=
-     * "https://cwiki.apache.org/WICKET/error-pages-and-feedback-messages.html"
-     * >here</a>.
-     * </p>
-     * <p>
      * There are also settings several areas you should check out in:
      * <ul>
      * <li>{@link WebApplication#getApplicationSettings()}</li>
@@ -933,8 +974,128 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     /**
+     * Overrules resource defaults for DEPLOYMENT mode. See:
+     * Application#configure(). Respecting GNU LibreJS: we do NOT want
+     * minified/compressed resources.
+     */
+    private void applyWicketResourceSettings() {
+        this.getResourceSettings().setUseMinifiedResources(false);
+        this.getResourceSettings()
+                .setJavaScriptCompressor(new NoOpTextCompressor());
+    }
+
+    /**
+     * Creates a GNU LibreJS wrapped Wicket Resource reference.
+     *
+     * @param isLibreJsLicenseWrap
+     *            {@code true} if the 'src' URL must me wrapped for GNU LibreJS.
+     * @param lic
+     *            License.
+     * @param orgItem
+     *            Original header item.
+     * @return {@link UrlResourceReference}.
+     */
+    public static UrlResourceReference createLibreJsResourceRef(
+            final boolean isLibreJsLicenseWrap, final LibreJsLicenseEnum lic,
+            final JavaScriptReferenceHeaderItem orgItem) {
+
+        final StringResponse stringRsp = new StringResponse();
+        orgItem.render(stringRsp);
+
+        final String scriptTag = stringRsp.getBuffer().toString();
+
+        final String urlOffset = MarkupHelper.ATTR_SRC + "=\"";
+
+        final int iUrlStart = scriptTag.indexOf(urlOffset) + urlOffset.length();
+        final int iUrlEnd = scriptTag.indexOf("\"", iUrlStart);
+
+        final String orgStringSrc = scriptTag.substring(iUrlStart, iUrlEnd);
+
+        final String newStringSrc;
+
+        if (isLibreJsLicenseWrap) {
+
+            final StringBuilder wrappedURL = new StringBuilder(128);
+
+            wrappedURL.append(LibreJsLicenseServlet.SLASH_PATH_BASE);
+            wrappedURL.append("/").append(lic.toString());
+
+            if (orgStringSrc.startsWith(WICKET_PATH_PARENT_RESOURCE)) {
+                wrappedURL.append(WICKET_PATH_FULL_SLASHES);
+            } else {
+                wrappedURL.append("/");
+            }
+            wrappedURL.append(
+                    StringUtils.removeStart(orgStringSrc, PATH_PARENT_SLASH));
+
+            newStringSrc = wrappedURL.toString();
+
+        } else {
+            newStringSrc = orgStringSrc;
+        }
+
+        return new UrlResourceReference(Url.parse(newStringSrc));
+    }
+
+    /**
      * Replaces the built-in jQuery Core library with the one we need for JQuery
-     * Mobile and other jQuery plugins.
+     * Mobile and other jQuery plugins if {@link WebServer#isWebAppGNULibreJS()}
+     * returns {@code true}. See <a href=
+     * "http://wicketinaction.com/2012/07/wicket-6-resource-management/"> Wicket
+     * 6 resource management</a>.
+     *
+     * <p>
+     * <b>IMPORTANT</b>: a "lazy" timing is required because an active Wicket
+     * {@link RequestCycle} is needed to perform a dummy render of
+     * {@link JavaScriptReferenceHeaderItem} to wrap the LibreJS license tags.
+     * </p>
+     *
+     */
+    public void lazyReplaceJsReference() {
+
+        if (!WebServer.isWebAppGNULibreJS()) {
+            return;
+        }
+
+        synchronized (this.mutexlazyReplaceJsReference) {
+
+            if (!islazyReplaceJsReferenceApplied) {
+
+                // jQuery core.
+                this.getJavaScriptLibrarySettings()
+                        .setJQueryReference(createLibreJsResourceRef(true,
+                                LibreJsLicenseEnum.MIT,
+                                getWebjarsJsRef(WEBJARS_PATH_JQUERY_CORE_JS)));
+
+                /*
+                 * TODO: WicketAjaxReference: how to replace? Code below does
+                 * NOT work: why?
+                 */
+
+                // final ResourceReference jsResource =
+                // getJavaScriptLibrarySettings()
+                // .getWicketAjaxReference();
+                //
+                // final UrlResourceReference urlRef =
+                // createLibreJsResourceRef(true,
+                // LibreJsLicenseEnum.APACHE_2_0,
+                // new JavaScriptReferenceHeaderItem(
+                // jsResource, null, null, false, null,
+                // null));
+                //
+                // this.getJavaScriptLibrarySettings()
+                // .setWicketAjaxReference(urlRef);
+
+                //
+                islazyReplaceJsReferenceApplied = true;
+            }
+        }
+    }
+
+    /**
+     * Replaces the built-in jQuery Core library with the one we need for JQuery
+     * Mobile and other jQuery plugins if {@link WebServer#isWebAppGNULibreJS()}
+     * return {@code false}.
      * <p>
      * See <a href=
      * "http://wicketinaction.com/2012/07/wicket-6-resource-management/"> Wicket
@@ -943,13 +1104,16 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     private void replaceJQueryCore() {
 
-        final JavaScriptReferenceHeaderItem replacement =
-                getWebjarsJsRef(WEBJARS_PATH_JQUERY_CORE_JS);
+        if (!WebServer.isWebAppGNULibreJS()) {
 
-        addResourceReplacement(
-                (JavaScriptResourceReference) getJavaScriptLibrarySettings()
-                        .getJQueryReference(),
-                replacement.getReference());
+            final JavaScriptReferenceHeaderItem replacement =
+                    getWebjarsJsRef(WEBJARS_PATH_JQUERY_CORE_JS);
+
+            addResourceReplacement(
+                    (JavaScriptResourceReference) getJavaScriptLibrarySettings()
+                            .getJQueryReference(),
+                    replacement.getReference());
+        }
     }
 
     /**
@@ -983,6 +1147,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
         }
 
         applyWicketApplicationSettings();
+        applyWicketResourceSettings();
 
         getRequestCycleListeners().add(new SpRequestCycleListener());
 

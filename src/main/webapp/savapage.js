@@ -1,9 +1,14 @@
-/*! SavaPage Common | (c) 2011-2019 Datraverse B.V. | GNU Affero General Public License */
+// @license http://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
+
+/*! SavaPage Common | (c) 2020 Datraverse B.V. | GNU Affero General Public License */
 
 /*
 * This file is part of the SavaPage project <https://www.savapage.org>.
-* Copyright (c) 2011-2019 Datraverse B.V.
-* Authors: Rijk Ravestein.
+* Copyright (c) 2020 Datraverse B.V.
+* Author: Rijk Ravestein.
+*
+* SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+* SPDX-License-Identifier: AGPL-3.0-or-later
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Affero General Public License as
@@ -86,6 +91,15 @@ String.prototype.endsWith = function(suffix) {
 
         _ns.URL_PARM_SHOW_PDF = 'pdf';
         _ns.URL_PARM_SHOW_PRINT = 'print';
+
+        /**
+         *
+         */
+        _ns.onLoadException = function() {
+            document.open("text/html", "replace");
+            document.write("<html><body><p>Page cannot be loaded: check your browser settings.</p></body></html>");
+            document.close();
+        };
 
         /**
          *
@@ -249,7 +263,7 @@ String.prototype.endsWith = function(suffix) {
         /**
          * A simple replacement of array.find(), which is not supported in old
          * IE (11) version(s).
-         * 
+         *
          * @param array The array.
          * @param value The value to find.
          * @return value when found, otherwise undefined.
@@ -397,3 +411,5 @@ String.prototype.endsWith = function(suffix) {
         };
 
     }(this, this.document, this.navigator, this.org.savapage));
+
+// @license-end

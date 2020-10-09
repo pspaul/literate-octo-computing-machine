@@ -1,3 +1,5 @@
+// @license http://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
+
 /*! SavaPage jQuery Mobile Admin Web App | © 2020 Datraverse B.V. | GNU
  * Affero General Public License */
 
@@ -1965,7 +1967,13 @@
         });
         // Initialize AFTER document is read
         $(document).on("ready", null, null, function() {
-            $.savapageAdm.init();
+            try {
+                $.savapageAdm.init();
+            } catch (e) {
+                _ns.onLoadException();
+            }
         });
 
     }(jQuery, this, this.document, JSON, this.org.savapage));
+
+// @license-end

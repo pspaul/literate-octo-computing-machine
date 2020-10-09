@@ -1,3 +1,5 @@
+// @license http://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
+
 /*! SavaPage jQuery Mobile Admin POS Page | (c) 2011-2019 Datraverse B.V. | GNU
  * Affero General Public License */
 
@@ -238,3 +240,5 @@
         };
 
     }(jQuery, this, this.document, JSON, this.org.savapage));
+
+// @license-end

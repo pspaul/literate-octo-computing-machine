@@ -1,3 +1,5 @@
+// @license http://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
+
 /*! SavaPage jQuery Mobile CanvasEditor | (c) 2020 Datraverse B.V. | GNU Affero
 * General Public License */
 
@@ -492,3 +494,4 @@
 
     }(this, this.document, this.navigator, this.org.savapage));
 
+// @license-end

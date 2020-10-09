@@ -34,11 +34,13 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.PriorityHeaderItem;
 import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.UrlResourceReference;
 import org.savapage.core.VersionInfo;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
@@ -49,11 +51,14 @@ import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.util.InetUtils;
 import org.savapage.server.CustomWebServlet;
+import org.savapage.server.LibreJsLicenseServlet;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.WebServer;
 import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.pages.AbstractPage;
+import org.savapage.server.pages.LibreJsHelper;
+import org.savapage.server.pages.LibreJsLicenseEnum;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
@@ -76,6 +81,26 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
     /** */
     private static final String[] CSS_REQ_FILENAMES_DEFAULT = new String[] {};
+
+    /**
+     * JavaScript snippet format to render initially. The %s is the mountPath of
+     * this page.
+     */
+    private static final String INITIAL_JAVASCRIPT_FORMAT =
+            "(function(){" + "if(window.location.href.search('#')>0){"
+                    + "window.location.replace("
+                    + "window.location.protocol+\"//\"+window.location.host+\""
+                    + "/" + "%s" + "\");}})();";
+
+    /**
+     * {@link StringHeaderItem} pattern to render initially. The first %s is the
+     * SavaPage version. The second %s is the initial JavaScript as defined in
+     * {@link #INITIAL_JAVASCRIPT_PATTERN}.
+     */
+    private static final String INITIAL_HEADERITEM_FORMAT =
+            "\n<script type=\"text/javascript\">\n" + "/* %s */\n"
+                    + "/*<![CDATA[*/" + "\n" + "%s" + "\n" + "/*]]>*/"
+                    + "\n</script>\n";
 
     /**
      * .
@@ -300,26 +325,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
     protected abstract Set<JavaScriptLibrary> getJavaScriptToRender();
 
     /**
-     * JavaScript snippet format to render initially. The %s is the mountPath of
-     * this page.
-     */
-    private static final String INITIAL_JAVASCRIPT_FORMAT =
-            "(function(){" + "if(window.location.href.search('#')>0){"
-                    + "window.location.replace("
-                    + "window.location.protocol+\"//\"+window.location.host+\""
-                    + "/" + "%s" + "\");}})();";
-
-    /**
-     * {@link StringHeaderItem} pattern to render initially. The first %s is the
-     * SavaPage version. The second %s is the initial JavaScript as defined in
-     * {@link #INITIAL_JAVASCRIPT_PATTERN}.
-     */
-    private static final String INITIAL_HEADERITEM_FORMAT =
-            "\n<script type=\"text/javascript\">\n" + "/* %s */\n"
-                    + "/*<![CDATA[*/" + "\n" + "%s" + "\n" + "/*]]>*/"
-                    + "\n</script>\n";
-
-    /**
      * Renders tiny JavaScript snippet at the very start of the page to
      * workaround the Browser F5 refresh problem.
      * <p>
@@ -405,6 +410,10 @@ public abstract class AbstractWebAppPage extends AbstractPage
                 nParms++;
             }
         }
+
+        response.render(new PriorityHeaderItem(
+                new StringHeaderItem(LibreJsHelper.getInitialHeaderScript())));
+
         final String javascript =
                 String.format(INITIAL_JAVASCRIPT_FORMAT, mountPath.toString());
 
@@ -438,6 +447,56 @@ public abstract class AbstractWebAppPage extends AbstractPage
     protected final void renderJs(final IHeaderResponse response,
             final String url) {
         response.render(JavaScriptHeaderItem.forUrl(url));
+    }
+
+    /**
+     * Optionally wraps original URL path into GNU LibreJS license path.
+     *
+     * @param isLibreJsLicenseWrap
+     *            {@code true} if the path me wrapped for LibreJS.
+     * @param lic
+     *            License
+     * @param orgPath
+     *            The original URL path.
+     * @return License query string.
+     */
+    protected final String wrapLibreJsPath(final boolean isLibreJsLicenseWrap,
+            final LibreJsLicenseEnum lic, final String orgPath) {
+        if (isLibreJsLicenseWrap) {
+            return LibreJsLicenseServlet.wrapLibreJsPath(lic, orgPath);
+        }
+        return orgPath;
+    }
+
+    /**
+     * @return {@code true} if GNU LibreJS license wrapping must be applied.
+     */
+    protected final boolean isLibreJsLicenseWrap() {
+        return WebServer.isWebAppGNULibreJS();
+    }
+
+    /**
+     * Renders a Wicket JavaScript headeritem.
+     *
+     * @param isLibreJsLicenseWrap
+     *            {@code true} if the src URL must me wrapped for LibreJS.
+     * @param response
+     *            Header response.
+     * @param lic
+     *            License.
+     * @param orgItem
+     *            Original header item.
+     */
+    protected final void renderLibreJs(final boolean isLibreJsLicenseWrap,
+            final IHeaderResponse response, final LibreJsLicenseEnum lic,
+            final JavaScriptReferenceHeaderItem orgItem) {
+
+        final UrlResourceReference urlResRef = WebApp
+                .createLibreJsResourceRef(isLibreJsLicenseWrap, lic, orgItem);
+
+        response.render(new JavaScriptReferenceHeaderItem(urlResRef,
+                orgItem.getPageParameters(), orgItem.getId(), orgItem.isDefer(),
+                orgItem.getCharset(), orgItem.getCondition()));
     }
 
     /**
@@ -610,6 +669,10 @@ public abstract class AbstractWebAppPage extends AbstractPage
     @Override
     public final void renderHead(final IHeaderResponse response) {
 
+        final boolean isLibreJsLicenseWrap = this.isLibreJsLicenseWrap();
+
+        WebApp.get().lazyReplaceJsReference();
+
         renderInitialJavaScript(response);
 
         final String nocache = this.getNoCacheUrlParm();
@@ -631,7 +694,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
                 this.getCssThemeFileName(webAppType);
 
         if (customThemeCssFileName != null) {
-
             response.render(CssHeaderItem.forUrl(
                     String.format("/%s/%s%s", CustomWebServlet.PATH_BASE_THEMES,
                             customThemeCssFileName, nocache)));
@@ -689,20 +751,24 @@ public abstract class AbstractWebAppPage extends AbstractPage
         }
 
         /*
-         * JS files
+         * JS files.
          */
         if (!isJqueryCoreRenderedByWicket()) {
-            response.render(
+            this.renderLibreJs(isLibreJsLicenseWrap, response,
+                    LibreJsLicenseEnum.MIT,
                     WebApp.getWebjarsJsRef(WebApp.WEBJARS_PATH_JQUERY_CORE_JS));
         }
 
         if (jsToRender.contains(JavaScriptLibrary.SPARKLINE)) {
-            response.render(
+            this.renderLibreJs(isLibreJsLicenseWrap, response,
+                    LibreJsLicenseEnum.BSD_3_CLAUSE,
                     WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_SPARKLINE));
         }
 
         if (jsToRender.contains(JavaScriptLibrary.JQPLOT)) {
-            response.render(
+
+            this.renderLibreJs(isLibreJsLicenseWrap, response,
+                    LibreJsLicenseEnum.GPL_2_0,
                     WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_JQPLOT_JS));
 
             for (String plugin : new String[] { "jqplot.highlighter.js",
@@ -710,21 +776,27 @@ public abstract class AbstractWebAppPage extends AbstractPage
                     "jqplot.logAxisRenderer.js",
                     "jqplot.dateAxisRenderer.js" }) {
 
-                response.render(WebApp.getWebjarsJsRef(
-                        String.format("jqplot/current/plugins/%s", plugin)));
-
+                this.renderLibreJs(isLibreJsLicenseWrap, response,
+                        LibreJsLicenseEnum.GPL_2_0,
+                        WebApp.getWebjarsJsRef(String
+                                .format("jqplot/current/plugins/%s", plugin)));
             }
         }
 
-        this.renderJs(response, "jquery/json2.js");
+        this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
+                LibreJsLicenseEnum.CC0_1_0, "jquery/json2.js"));
 
         if (jsToRender.contains(JavaScriptLibrary.COMETD)) {
+
             // Use nocache, to prevent loading of old browser cached .js files,
             // when cometd is upgraded .
-            this.renderJs(response,
-                    String.format("%s%s", "org/cometd/cometd.js", nocache));
-            this.renderJs(response,
-                    String.format("%s%s", "jquery/jquery.cometd.js", nocache));
+            this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
+                    LibreJsLicenseEnum.APACHE_2_0,
+                    String.format("%s%s", "org/cometd/cometd.js", nocache)));
+
+            this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
+                    LibreJsLicenseEnum.APACHE_2_0,
+                    String.format("%s%s", "jquery/jquery.cometd.js", nocache)));
         }
 
         this.renderJs(response, String.format("%s%s", "savapage.js", nocache));
@@ -737,18 +809,27 @@ public abstract class AbstractWebAppPage extends AbstractPage
          * Note: render jQuery Mobile AFTER jquery.savapage.js, because the
          * $(document).bind("mobileinit") is implemented in jquery.savapage.js
          */
-        response.render(WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_MOBILE_JS));
+        this.renderLibreJs(isLibreJsLicenseWrap, response,
+                LibreJsLicenseEnum.MIT,
+                WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_MOBILE_JS));
 
         /*
          * Render after JQM.
          */
         if (jsToRender.contains(JavaScriptLibrary.MOBIPICK)) {
-            this.renderJs(response, String.format("%s%s",
-                    WebApp.getJqMobiPickLocation(), "xdate.js"));
-            this.renderJs(response, String.format("%s%s",
-                    WebApp.getJqMobiPickLocation(), "xdate.i18n.js"));
-            this.renderJs(response, String.format("%s%s",
-                    WebApp.getJqMobiPickLocation(), "mobipick.js"));
+
+            this.renderJs(response,
+                    this.wrapLibreJsPath(isLibreJsLicenseWrap,
+                            LibreJsLicenseEnum.MIT,
+                            WebApp.getJqMobiPickLocation().concat("xdate.js")));
+
+            this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
+                    LibreJsLicenseEnum.MIT,
+                    WebApp.getJqMobiPickLocation().concat("xdate.i18n.js")));
+
+            this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
+                    LibreJsLicenseEnum.MIT,
+                    WebApp.getJqMobiPickLocation().concat("mobipick.js")));
         }
     }
 

@@ -68,6 +68,7 @@ import org.savapage.server.ext.ServerPluginManager;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.HtmlTooltipEnum;
 import org.savapage.server.pages.FontOptionsPanel;
+import org.savapage.server.pages.LibreJsLicenseEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
@@ -127,14 +128,18 @@ public final class WebAppUser extends AbstractWebAppPage {
             final String nocache) {
 
         if (ConfigManager.isPdfOverlayEditorEnabled()) {
-            renderJs(response,
-                    String.format("%s%s", JS_FILE_FABRIC_JS, nocache));
-            renderJs(response, String.format("%s%s",
+
+            this.renderJs(response,
+                    this.wrapLibreJsPath(this.isLibreJsLicenseWrap(),
+                            LibreJsLicenseEnum.UNLICENSE,
+                            String.format("%s%s", JS_FILE_FABRIC_JS, nocache)));
+
+            this.renderJs(response, String.format("%s%s",
                     JS_FILE_JQUERY_SAVAPAGE_CANVAS_EDITOR, nocache));
         }
-        renderJs(response, String.format("%s%s",
+        this.renderJs(response, String.format("%s%s",
                 JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION, nocache));
-        renderJs(response,
+        this.renderJs(response,
                 String.format("%s%s", getSpecializedJsFileName(), nocache));
     }
 

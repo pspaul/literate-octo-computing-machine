@@ -80,7 +80,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The main class for the Web Server.
+ * Jetty Web Server.
  *
  * @author Rijk Ravestein
  *
@@ -163,6 +163,10 @@ public final class WebServer {
     /** */
     private static final String PROP_KEY_WEBAPP_CUSTOM_I18N =
             "webapp.custom.i18n";
+
+    /** */
+    private static final String PROP_KEY_WEBAPP_GNU_LIBREJS =
+            "webapp.gnulibrejs";
 
     /** */
     private static final String PROP_KEY_SERVER_THREADPOOL_QUEUE_CAPACITY =
@@ -333,6 +337,9 @@ public final class WebServer {
     private static boolean webAppCustomI18n;
 
     /** */
+    private static boolean webAppGNULibreJS;
+
+    /** */
     private static int sessionScavengeInterval;
 
     /** */
@@ -344,6 +351,13 @@ public final class WebServer {
      */
     public static boolean isWebAppCustomI18n() {
         return webAppCustomI18n;
+    }
+
+    /**
+     * @return {@code true} when GNU LibreJS is to be applied.
+     */
+    public static boolean isWebAppGNULibreJS() {
+        return webAppGNULibreJS;
     }
 
     /**
@@ -599,7 +613,7 @@ public final class WebServer {
         final Properties propsServer = ConfigManager.loadServerProperties();
 
         /*
-         * Notify central WebApp.
+         * Notify WebApp.
          */
         WebApp.setServerProps(propsServer);
         WebApp.loadWebProperties();
@@ -644,6 +658,11 @@ public final class WebServer {
                 BooleanUtils.toBooleanObject(
                         propsServer.getProperty(PROP_KEY_WEBAPP_CUSTOM_I18N)),
                 false);
+
+        webAppGNULibreJS = BooleanUtils.toBooleanDefaultIfNull(
+                BooleanUtils.toBooleanObject(
+                        propsServer.getProperty(PROP_KEY_WEBAPP_GNU_LIBREJS)),
+                true);
 
         sessionScavengeInterval = Integer.parseInt(propsServer.getProperty(
                 PROP_KEY_SERVER_SESSION_SCAVENGE_INTERVAL_SEC,
