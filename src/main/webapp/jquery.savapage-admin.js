@@ -261,6 +261,11 @@
                     window.location.reload();
                 });
 
+                $('body').on('click', '.sp-btn-show-librejs', null, function() {
+                    _view.changePage($('#page-librejs'));
+                    return false;
+                });
+
                 $(document).on('click', '.sp-collapse', null, function() {
                     $(this).closest('[data-role=collapsible]').collapsible('collapse');
                     return false;

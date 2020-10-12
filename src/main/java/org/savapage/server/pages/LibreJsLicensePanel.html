@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
+</wicket:remove>
+
+<wicket:panel>
+	<div data-role="dialog" data-theme="a" id="page-librejs"
+		style="display: none;"
+		class="sp-dialog-librejs-info sp-initial-hidden">
+
+		<div data-role="header" data-theme="b">
+			<h1>JavaScript License Information</h1>
+		</div>
+
+		<div class="ui-content">
+
+			<wicket:remove>
+				<!-- 
+				<a href="." rel="jslicense"> is required by LibreJS 
+				mozilla add-on to pick up the licenses that are exclusively
+				identified by a LibreJS Web Label in the table below (like 
+				Wicket internal JavaScript Ajax resources). 
+                -->
+			</wicket:remove>
+
+			<a href="." class="sp-plain-link" style="display: none;"
+				rel="jslicense">JavaScript license information</a>
+
+			<div class="ui-mini">
+				This site is
+				<a class="sp-plain-link"
+					href="https://www.gnu.org/software/librejs/" target="_blank">GNU
+					LibreJS</a>
+				compatible. All JavaScript code run in this browser is Free Software
+				as shown in the table below.
+				<br />
+				&nbsp;
+			</div>
+
+			<table id="jslicense-labels1" data-role="table" data-mode="reflow"
+				class="ui-responsive table-stroke ui-mini">
+				<thead>
+					<tr>
+						<th data-priority="1">Script</th>
+						<th data-priority="2">License</th>
+						<th data-priority="2">Source</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr wicket:id="script-entry">
+						<td>
+							<a class="sp-plain-link" target="_blank" wicket:id="script"
+								href=""></a>
+						</td>
+						<td>
+							<a class="sp-plain-link" target="_blank" wicket:id="license"
+								href=""></a>
+						</td>
+						<td>
+							<a class="sp-plain-link" target="_blank" wicket:id="source"
+								href=""></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</wicket:panel>
+</html>

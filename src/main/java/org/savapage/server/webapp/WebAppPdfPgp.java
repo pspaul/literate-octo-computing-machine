@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -30,8 +33,9 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.RestartResponseException;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -46,6 +50,7 @@ import org.savapage.lib.pgp.PGPHelper;
 import org.savapage.lib.pgp.PGPSecretKeyInfo;
 import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.LibreJsLicenseEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 
@@ -102,7 +107,9 @@ public final class WebAppPdfPgp extends AbstractWebAppPage {
 
         helper.addTextInput("btn-reset", HtmlButtonEnum.RESET);
         helper.addTextInput("btn-verify", HtmlButtonEnum.VERIFY);
-
+        //
+        helper.addButton("btn-about", HtmlButtonEnum.ABOUT);
+        this.addLibreJsLicensePanel("librjs-license-page");
     }
 
     /**
@@ -163,10 +170,13 @@ public final class WebAppPdfPgp extends AbstractWebAppPage {
     }
 
     @Override
-    protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
+    protected void appendWebAppTypeJsFiles(
+            final List<Pair<String, LibreJsLicenseEnum>> list,
             final String nocache) {
-        renderJs(response,
-                String.format("%s%s", getSpecializedJsFileName(), nocache));
+
+        list.add(new ImmutablePair<>(
+                String.format("%s%s", getSpecializedJsFileName(), nocache),
+                SAVAPAGE_JS_LICENSE));
     }
 
     @Override

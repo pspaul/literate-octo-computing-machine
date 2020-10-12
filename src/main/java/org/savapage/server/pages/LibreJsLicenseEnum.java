@@ -33,6 +33,9 @@ package org.savapage.server.pages;
 public enum LibreJsLicenseEnum {
 
     /** */
+    AGPL_3_0("http://www.gnu.org/licenses/agpl-3.0.html", "AGPL-3.0"),
+
+    /** */
     APACHE_2_0("http://www.apache.org/licenses/LICENSE-2.0", "Apache-2.0"),
 
     /** */

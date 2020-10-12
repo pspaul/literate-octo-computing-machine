@@ -337,9 +337,6 @@ public final class WebServer {
     private static boolean webAppCustomI18n;
 
     /** */
-    private static boolean webAppGNULibreJS;
-
-    /** */
     private static int sessionScavengeInterval;
 
     /** */
@@ -351,13 +348,6 @@ public final class WebServer {
      */
     public static boolean isWebAppCustomI18n() {
         return webAppCustomI18n;
-    }
-
-    /**
-     * @return {@code true} when GNU LibreJS is to be applied.
-     */
-    public static boolean isWebAppGNULibreJS() {
-        return webAppGNULibreJS;
     }
 
     /**
@@ -658,11 +648,6 @@ public final class WebServer {
                 BooleanUtils.toBooleanObject(
                         propsServer.getProperty(PROP_KEY_WEBAPP_CUSTOM_I18N)),
                 false);
-
-        webAppGNULibreJS = BooleanUtils.toBooleanDefaultIfNull(
-                BooleanUtils.toBooleanObject(
-                        propsServer.getProperty(PROP_KEY_WEBAPP_GNU_LIBREJS)),
-                true);
 
         sessionScavengeInterval = Integer.parseInt(propsServer.getProperty(
                 PROP_KEY_SERVER_SESSION_SCAVENGE_INTERVAL_SEC,

@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,9 +25,11 @@
 package org.savapage.server.webapp;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
-import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.IConfigProp;
@@ -34,6 +39,7 @@ import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.pages.LibreJsLicenseEnum;
 import org.savapage.server.pages.MessageContent;
 
 /**
@@ -88,6 +94,8 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
 
         addZeroPagePanel(WebAppTypeEnum.JOBTICKETS);
         addFileDownloadApiPanel();
+        //
+        this.addLibreJsLicensePanel("librjs-license-page");
     }
 
     @Override
@@ -101,12 +109,19 @@ public final class WebAppJobTickets extends AbstractWebAppPage {
     }
 
     @Override
-    protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
+    protected void appendWebAppTypeJsFiles(
+            final List<Pair<String, LibreJsLicenseEnum>> list,
             final String nocache) {
-        renderJs(response, String.format("%s%s",
-                "jquery.savapage-page-jobtickets.js", nocache));
-        renderJs(response,
-                String.format("%s%s", getSpecializedJsFileName(), nocache));
+
+        list.add(
+                new ImmutablePair<>(
+                        String.format("%s%s",
+                                "jquery.savapage-page-jobtickets.js", nocache),
+                        SAVAPAGE_JS_LICENSE));
+
+        list.add(new ImmutablePair<>(
+                String.format("%s%s", getSpecializedJsFileName(), nocache),
+                SAVAPAGE_JS_LICENSE));
     }
 
     @Override

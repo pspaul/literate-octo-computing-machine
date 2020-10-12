@@ -488,4 +488,13 @@ span.sp-ipp-icon {
     background: transparent url('/images/preload-spinner-64x64.gif') center no-repeat;
 }
 
+.sp-dialog-librejs-info .ui-dialog-contain {
+    width: 90%;
+    max-width: 800px;
+    margin: 15px auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: 5px;
+}
+
 /* end-of-file */

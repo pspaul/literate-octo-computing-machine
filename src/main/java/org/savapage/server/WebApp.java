@@ -48,7 +48,6 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.apache.wicket.resource.NoOpTextCompressor;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
@@ -783,9 +782,6 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             mountPackage("/pages/user", AbstractUserPage.class);
             mountPackage("/pages/printsite", AbstractPrintSitePage.class);
 
-            //
-            replaceJQueryCore();
-
             /*
              * Initialize the ConfigManager (use empty properties for now).
              */
@@ -888,11 +884,6 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             if (WebServer.isWebAppCustomI18n()) {
                 SpInfo.instance().log("Web App Custom i18n enabled.");
             }
-            if (WebServer.isWebAppGNULibreJS()) {
-                SpInfo.instance().log("GNU LibreJS enabled.");
-            } else {
-                SpInfo.instance().log("GNU LibreJS disabled.");
-            }
 
             /*
              * Server plug-in manager.
@@ -985,7 +976,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     /**
-     * Creates a GNU LibreJS wrapped Wicket Resource reference.
+     * Gets the GNU LibreJS (wrapped) 'src' URL path of a JavaScript header
+     * item.
      *
      * @param isLibreJsLicenseWrap
      *            {@code true} if the 'src' URL must me wrapped for GNU LibreJS.
@@ -995,7 +987,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      *            Original header item.
      * @return {@link UrlResourceReference}.
      */
-    public static UrlResourceReference createLibreJsResourceRef(
+    public static String getLibreJsResourceRef(
             final boolean isLibreJsLicenseWrap, final LibreJsLicenseEnum lic,
             final JavaScriptReferenceHeaderItem orgItem) {
 
@@ -1034,13 +1026,39 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             newStringSrc = orgStringSrc;
         }
 
-        return new UrlResourceReference(Url.parse(newStringSrc));
+        return newStringSrc;
+    }
+
+    /**
+     * Creates a GNU LibreJS wrapped Wicket Resource reference.
+     *
+     * @param lic
+     *            License.
+     * @param orgItem
+     *            Original header item.
+     * @return {@link UrlResourceReference}.
+     */
+    private static UrlResourceReference createLibreJsResourceRef(
+            final LibreJsLicenseEnum lic,
+            final JavaScriptReferenceHeaderItem orgItem) {
+
+        return createUrlResourceRef(getLibreJsResourceRef(true, lic, orgItem));
+    }
+
+    /**
+     * Creates an URL Resource reference.
+     *
+     * @param url
+     *            URL path.
+     * @return {@link UrlResourceReference}.
+     */
+    public static UrlResourceReference createUrlResourceRef(final String url) {
+        return new UrlResourceReference(Url.parse(url));
     }
 
     /**
      * Replaces the built-in jQuery Core library with the one we need for JQuery
-     * Mobile and other jQuery plugins if {@link WebServer#isWebAppGNULibreJS()}
-     * returns {@code true}. See <a href=
+     * Mobile and other jQuery plugins. See <a href=
      * "http://wicketinaction.com/2012/07/wicket-6-resource-management/"> Wicket
      * 6 resource management</a>.
      *
@@ -1053,23 +1071,19 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public void lazyReplaceJsReference() {
 
-        if (!WebServer.isWebAppGNULibreJS()) {
-            return;
-        }
-
         synchronized (this.mutexlazyReplaceJsReference) {
 
             if (!islazyReplaceJsReferenceApplied) {
 
                 // jQuery core.
                 this.getJavaScriptLibrarySettings()
-                        .setJQueryReference(createLibreJsResourceRef(true,
+                        .setJQueryReference(createLibreJsResourceRef(
                                 LibreJsLicenseEnum.MIT,
                                 getWebjarsJsRef(WEBJARS_PATH_JQUERY_CORE_JS)));
 
                 /*
-                 * TODO: WicketAjaxReference: how to replace? Code below does
-                 * NOT work: why?
+                 * WicketAjaxReference: how to replace? Code below does NOT
+                 * work: why?
                  */
 
                 // final ResourceReference jsResource =
@@ -1093,27 +1107,31 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     /**
-     * Replaces the built-in jQuery Core library with the one we need for JQuery
-     * Mobile and other jQuery plugins if {@link WebServer#isWebAppGNULibreJS()}
-     * return {@code false}.
-     * <p>
-     * See <a href=
-     * "http://wicketinaction.com/2012/07/wicket-6-resource-management/"> Wicket
-     * 6 resource management</a>.
-     * </p>
+     * Gets URL path for Wicket JavaScript Ajax file.
+     *
+     * @return URL path.
      */
-    private void replaceJQueryCore() {
+    public String getWicketJavaScriptAjaxReferenceUrl() {
 
-        if (!WebServer.isWebAppGNULibreJS()) {
+        return getLibreJsResourceRef(false, null,
+                new JavaScriptReferenceHeaderItem(
+                        this.getJavaScriptLibrarySettings()
+                                .getWicketAjaxReference(),
+                        null, null, false, null, null));
+    }
 
-            final JavaScriptReferenceHeaderItem replacement =
-                    getWebjarsJsRef(WEBJARS_PATH_JQUERY_CORE_JS);
+    /**
+     * Gets URL path for Wicket JavaScript Ajax Debug file.
+     *
+     * @return URL path.
+     */
+    public String getWicketJavaScriptAjaxDebugReferenceUrl() {
 
-            addResourceReplacement(
-                    (JavaScriptResourceReference) getJavaScriptLibrarySettings()
-                            .getJQueryReference(),
-                    replacement.getReference());
-        }
+        return getLibreJsResourceRef(false, null,
+                new JavaScriptReferenceHeaderItem(
+                        this.getJavaScriptLibrarySettings()
+                                .getWicketAjaxDebugReference(),
+                        null, null, false, null, null));
     }
 
     /**

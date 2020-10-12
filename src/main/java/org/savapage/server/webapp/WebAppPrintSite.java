@@ -25,13 +25,16 @@
 package org.savapage.server.webapp;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
-import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.WebAppTypeEnum;
+import org.savapage.server.pages.LibreJsLicenseEnum;
 
 /**
  *
@@ -71,6 +74,8 @@ public final class WebAppPrintSite extends AbstractWebAppPage {
         add(new Label("app-title", appTitle));
 
         addFileDownloadApiPanel();
+        //
+        this.addLibreJsLicensePanel("librjs-license-page");
     }
 
     @Override
@@ -84,15 +89,25 @@ public final class WebAppPrintSite extends AbstractWebAppPage {
     }
 
     @Override
-    protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
+    protected void appendWebAppTypeJsFiles(
+            final List<Pair<String, LibreJsLicenseEnum>> list,
             final String nocache) {
 
-        renderJs(response, String.format("%s%s",
-                "jquery.savapage-printsite-panels.js", nocache));
-        renderJs(response, String.format("%s%s",
-                "jquery.savapage-printsite-pages.js", nocache));
-        renderJs(response,
-                String.format("%s%s", getSpecializedJsFileName(), nocache));
+        list.add(
+                new ImmutablePair<>(
+                        String.format("%s%s",
+                                "jquery.savapage-printsite-panels.js", nocache),
+                        SAVAPAGE_JS_LICENSE));
+
+        list.add(
+                new ImmutablePair<>(
+                        String.format("%s%s",
+                                "jquery.savapage-printsite-pages.js", nocache),
+                        SAVAPAGE_JS_LICENSE));
+
+        list.add(new ImmutablePair<>(
+                String.format("%s%s", getSpecializedJsFileName(), nocache),
+                SAVAPAGE_JS_LICENSE));
     }
 
     @Override

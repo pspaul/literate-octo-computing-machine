@@ -191,6 +191,11 @@
                     window.location.reload();
                 });
 
+                $('body').on('click', '.sp-btn-show-librejs', null, function() {
+                    _view.changePage($('#page-librejs'));
+                    return false;
+                });
+
                 /*
                  * One-time binding the click to a function. We don't want
                  * to bind each time the panel is loaded.

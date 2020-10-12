@@ -24,11 +24,17 @@
  */
 package org.savapage.server.webapp;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
@@ -59,6 +65,7 @@ import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.pages.AbstractPage;
 import org.savapage.server.pages.LibreJsHelper;
 import org.savapage.server.pages.LibreJsLicenseEnum;
+import org.savapage.server.pages.LibreJsLicensePanel;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.session.SpSession;
 import org.slf4j.Logger;
@@ -152,6 +159,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
         /** */
         SPARKLINE
     }
+
+    protected static final LibreJsLicenseEnum SAVAPAGE_JS_LICENSE =
+            LibreJsLicenseEnum.AGPL_3_0;
 
     /**
      * .
@@ -425,18 +435,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
     }
 
     /**
-     * Renders the {@link WebAppTypeEnum} specific JS files.
-     *
-     * @param response
-     *            The {@link IHeaderResponser}.
-     * @param nocache
-     *            The "nocache" string.
-     *
-     */
-    protected abstract void renderWebAppTypeJsFiles(IHeaderResponse response,
-            String nocache);
-
-    /**
      * Renders a JavaScript file.
      *
      * @param response
@@ -444,42 +442,14 @@ public abstract class AbstractWebAppPage extends AbstractPage
      * @param url
      *            The URL of the file to render.
      */
-    protected final void renderJs(final IHeaderResponse response,
+    private final void renderJs(final IHeaderResponse response,
             final String url) {
         response.render(JavaScriptHeaderItem.forUrl(url));
     }
 
     /**
-     * Optionally wraps original URL path into GNU LibreJS license path.
-     *
-     * @param isLibreJsLicenseWrap
-     *            {@code true} if the path me wrapped for LibreJS.
-     * @param lic
-     *            License
-     * @param orgPath
-     *            The original URL path.
-     * @return License query string.
-     */
-    protected final String wrapLibreJsPath(final boolean isLibreJsLicenseWrap,
-            final LibreJsLicenseEnum lic, final String orgPath) {
-        if (isLibreJsLicenseWrap) {
-            return LibreJsLicenseServlet.wrapLibreJsPath(lic, orgPath);
-        }
-        return orgPath;
-    }
-
-    /**
-     * @return {@code true} if GNU LibreJS license wrapping must be applied.
-     */
-    protected final boolean isLibreJsLicenseWrap() {
-        return WebServer.isWebAppGNULibreJS();
-    }
-
-    /**
      * Renders a Wicket JavaScript headeritem.
      *
-     * @param isLibreJsLicenseWrap
-     *            {@code true} if the src URL must me wrapped for LibreJS.
      * @param response
      *            Header response.
      * @param lic
@@ -487,12 +457,14 @@ public abstract class AbstractWebAppPage extends AbstractPage
      * @param orgItem
      *            Original header item.
      */
-    protected final void renderLibreJs(final boolean isLibreJsLicenseWrap,
-            final IHeaderResponse response, final LibreJsLicenseEnum lic,
+    private void renderLibreJs(final IHeaderResponse response,
+            final LibreJsLicenseEnum lic,
             final JavaScriptReferenceHeaderItem orgItem) {
 
-        final UrlResourceReference urlResRef = WebApp
-                .createLibreJsResourceRef(isLibreJsLicenseWrap, lic, orgItem);
+        final String urlPath = WebApp.getLibreJsResourceRef(true, lic, orgItem);
+
+        final UrlResourceReference urlResRef =
+                WebApp.createUrlResourceRef(urlPath);
 
         response.render(new JavaScriptReferenceHeaderItem(urlResRef,
                 orgItem.getPageParameters(), orgItem.getId(), orgItem.isDefer(),
@@ -669,11 +641,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
     @Override
     public final void renderHead(final IHeaderResponse response) {
 
-        final boolean isLibreJsLicenseWrap = this.isLibreJsLicenseWrap();
-
         WebApp.get().lazyReplaceJsReference();
 
-        renderInitialJavaScript(response);
+        this.renderInitialJavaScript(response);
 
         final String nocache = this.getNoCacheUrlParm();
 
@@ -754,83 +724,199 @@ public abstract class AbstractWebAppPage extends AbstractPage
          * JS files.
          */
         if (!isJqueryCoreRenderedByWicket()) {
-            this.renderLibreJs(isLibreJsLicenseWrap, response,
-                    LibreJsLicenseEnum.MIT,
+            this.renderLibreJs(response, LibreJsLicenseEnum.MIT,
                     WebApp.getWebjarsJsRef(WebApp.WEBJARS_PATH_JQUERY_CORE_JS));
         }
 
+        for (final Pair<String, LibreJsLicenseEnum> pair : this
+                .getJavaScriptFiles()) {
+            this.renderJs(response, pair.getKey());
+        }
+    }
+
+    /**
+     * Gets he {@link WebAppTypeEnum} specific JS files.
+     *
+     * @param list
+     *            List to append opn.
+     * @param nocache
+     *            The "nocache" string.
+     *
+     */
+    protected abstract void appendWebAppTypeJsFiles(
+            List<Pair<String, LibreJsLicenseEnum>> list, String nocache);
+
+    /**
+     * Gets JavaScript files to render, <i>except</i> the main (first)
+     * {@link WebApp#WEBJARS_PATH_JQUERY_CORE_JS}.
+     *
+     * @return List of files in render order.
+     */
+    private List<Pair<String, LibreJsLicenseEnum>> getJavaScriptFiles() {
+
+        final Set<JavaScriptLibrary> jsToRender = this.getJavaScriptToRender();
+        final String nocache = this.getNoCacheUrlParm();
+        final List<Pair<String, LibreJsLicenseEnum>> list = new ArrayList<>();
+
         if (jsToRender.contains(JavaScriptLibrary.SPARKLINE)) {
-            this.renderLibreJs(isLibreJsLicenseWrap, response,
-                    LibreJsLicenseEnum.BSD_3_CLAUSE,
-                    WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_SPARKLINE));
+
+            final LibreJsLicenseEnum license = LibreJsLicenseEnum.BSD_3_CLAUSE;
+
+            list.add(
+                    new ImmutablePair<>(
+                            WebApp.getLibreJsResourceRef(true, license,
+                                    WebApp.getWebjarsJsRef(
+                                            WEBJARS_PATH_JQUERY_SPARKLINE)),
+                            license));
         }
 
         if (jsToRender.contains(JavaScriptLibrary.JQPLOT)) {
 
-            this.renderLibreJs(isLibreJsLicenseWrap, response,
-                    LibreJsLicenseEnum.GPL_2_0,
-                    WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_JQPLOT_JS));
+            final LibreJsLicenseEnum license = LibreJsLicenseEnum.GPL_2_0;
+
+            list.add(
+                    new ImmutablePair<>(
+                            WebApp.getLibreJsResourceRef(true, license,
+                                    WebApp.getWebjarsJsRef(
+                                            WEBJARS_PATH_JQUERY_JQPLOT_JS)),
+                            license));
 
             for (String plugin : new String[] { "jqplot.highlighter.js",
                     "jqplot.pieRenderer.js", "jqplot.json2.js",
                     "jqplot.logAxisRenderer.js",
                     "jqplot.dateAxisRenderer.js" }) {
 
-                this.renderLibreJs(isLibreJsLicenseWrap, response,
-                        LibreJsLicenseEnum.GPL_2_0,
-                        WebApp.getWebjarsJsRef(String
-                                .format("jqplot/current/plugins/%s", plugin)));
+                list.add(new ImmutablePair<>(
+                        WebApp.getLibreJsResourceRef(true, license,
+                                WebApp.getWebjarsJsRef(String.format(
+                                        "jqplot/current/plugins/%s", plugin))),
+                        license));
             }
         }
 
-        this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
-                LibreJsLicenseEnum.CC0_1_0, "jquery/json2.js"));
+        list.add(new ImmutablePair<>(
+                this.getJsPathForRender("jquery/json2.js",
+                        LibreJsLicenseEnum.CC0_1_0),
+                LibreJsLicenseEnum.CC0_1_0));
 
         if (jsToRender.contains(JavaScriptLibrary.COMETD)) {
 
             // Use nocache, to prevent loading of old browser cached .js files,
-            // when cometd is upgraded .
-            this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
-                    LibreJsLicenseEnum.APACHE_2_0,
-                    String.format("%s%s", "org/cometd/cometd.js", nocache)));
+            // when cometd is upgraded.
 
-            this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
-                    LibreJsLicenseEnum.APACHE_2_0,
-                    String.format("%s%s", "jquery/jquery.cometd.js", nocache)));
+            list.add(
+                    new ImmutablePair<>(
+                            this.getJsPathForRender(
+                                    String.format("%s%s",
+                                            "org/cometd/cometd.js", nocache),
+                                    LibreJsLicenseEnum.APACHE_2_0),
+                            LibreJsLicenseEnum.APACHE_2_0));
+
+            list.add(
+                    new ImmutablePair<>(
+                            this.getJsPathForRender(
+                                    String.format("%s%s",
+                                            "jquery/jquery.cometd.js", nocache),
+                                    LibreJsLicenseEnum.APACHE_2_0),
+                            LibreJsLicenseEnum.APACHE_2_0));
         }
 
-        this.renderJs(response, String.format("%s%s", "savapage.js", nocache));
-        this.renderJs(response,
-                String.format("%s%s", "jquery.savapage.js", nocache));
+        list.add(new ImmutablePair<>(
+                String.format("%s%s", "savapage.js", nocache),
+                SAVAPAGE_JS_LICENSE));
+        list.add(new ImmutablePair<>(
+                String.format("%s%s", "jquery.savapage.js", nocache),
+                SAVAPAGE_JS_LICENSE));
 
-        this.renderWebAppTypeJsFiles(response, nocache);
+        this.appendWebAppTypeJsFiles(list, nocache);
 
         /*
          * Note: render jQuery Mobile AFTER jquery.savapage.js, because the
          * $(document).bind("mobileinit") is implemented in jquery.savapage.js
          */
-        this.renderLibreJs(isLibreJsLicenseWrap, response,
-                LibreJsLicenseEnum.MIT,
-                WebApp.getWebjarsJsRef(WEBJARS_PATH_JQUERY_MOBILE_JS));
+        list.add(
+                new ImmutablePair<>(
+                        WebApp.getLibreJsResourceRef(true,
+                                LibreJsLicenseEnum.MIT,
+                                WebApp.getWebjarsJsRef(
+                                        WEBJARS_PATH_JQUERY_MOBILE_JS)),
+                        LibreJsLicenseEnum.MIT));
 
         /*
          * Render after JQM.
          */
         if (jsToRender.contains(JavaScriptLibrary.MOBIPICK)) {
 
-            this.renderJs(response,
-                    this.wrapLibreJsPath(isLibreJsLicenseWrap,
-                            LibreJsLicenseEnum.MIT,
-                            WebApp.getJqMobiPickLocation().concat("xdate.js")));
+            final LibreJsLicenseEnum license = LibreJsLicenseEnum.MIT;
 
-            this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
-                    LibreJsLicenseEnum.MIT,
-                    WebApp.getJqMobiPickLocation().concat("xdate.i18n.js")));
+            list.add(new ImmutablePair<>(this.getJsPathForRender(
+                    WebApp.getJqMobiPickLocation().concat("xdate.js"), license),
+                    license));
 
-            this.renderJs(response, this.wrapLibreJsPath(isLibreJsLicenseWrap,
-                    LibreJsLicenseEnum.MIT,
-                    WebApp.getJqMobiPickLocation().concat("mobipick.js")));
+            list.add(new ImmutablePair<>(this.getJsPathForRender(
+                    WebApp.getJqMobiPickLocation().concat("xdate.i18n.js"),
+                    license), license));
+
+            list.add(new ImmutablePair<>(this.getJsPathForRender(
+                    WebApp.getJqMobiPickLocation().concat("mobipick.js"),
+                    license), license));
         }
+
+        return list;
+    }
+
+    /**
+     * Gets JavaScript URL path for render in head.
+     *
+     * @param path
+     *            URL path
+     * @param license
+     *            License.
+     * @return URL path for render.
+     */
+    protected final String getJsPathForRender(final String path,
+            final LibreJsLicenseEnum license) {
+
+        return LibreJsLicenseServlet.wrapLibreJsPath(license, path);
+    }
+
+    /**
+     * Adds LibreJS license panel.
+     *
+     * @param panelId
+     *            Wicket id.
+     */
+    protected final void addLibreJsLicensePanel(final String panelId) {
+
+        // Create insertion-ordered LinkedHashMap.
+        final Map<String, LibreJsLicenseEnum> jsRendered =
+                new LinkedHashMap<>();
+
+        // Main.
+        jsRendered.put(
+                WebApp.getLibreJsResourceRef(true, LibreJsLicenseEnum.MIT,
+                        WebApp.getWebjarsJsRef(
+                                WebApp.WEBJARS_PATH_JQUERY_CORE_JS)),
+                LibreJsLicenseEnum.MIT);
+
+        // Wicket JavaScript resources.
+        jsRendered.put(WebApp.get().getWicketJavaScriptAjaxReferenceUrl(),
+                LibreJsLicenseEnum.APACHE_2_0);
+
+        if (WebServer.isDeveloperEnv()) {
+            jsRendered.put(
+                    WebApp.get().getWicketJavaScriptAjaxDebugReferenceUrl(),
+                    LibreJsLicenseEnum.APACHE_2_0);
+        }
+
+        // Other files.
+        for (final Pair<String, LibreJsLicenseEnum> pair : this
+                .getJavaScriptFiles()) {
+            jsRendered.put(pair.getKey(), pair.getValue());
+        }
+
+        //
+        this.add(new LibreJsLicensePanel(panelId, jsRendered));
     }
 
     /**

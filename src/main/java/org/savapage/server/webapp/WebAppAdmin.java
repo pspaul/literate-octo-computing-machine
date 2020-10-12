@@ -32,10 +32,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -49,6 +50,7 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.pages.LibreJsLicenseEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +108,9 @@ public final class WebAppAdmin extends AbstractWebAppPage {
         memberCardUploadMarkup();
 
         addFileDownloadApiPanel();
+
+        //
+        this.addLibreJsLicensePanel("librjs-license-page");
     }
 
     @Override
@@ -119,15 +124,21 @@ public final class WebAppAdmin extends AbstractWebAppPage {
     }
 
     @Override
-    protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
+    protected void appendWebAppTypeJsFiles(
+            final List<Pair<String, LibreJsLicenseEnum>> list,
             final String nocache) {
 
-        renderJs(response, String.format("%s%s",
-                "jquery.savapage-admin-panels.js", nocache));
-        renderJs(response, String.format("%s%s",
-                "jquery.savapage-admin-pages.js", nocache));
-        renderJs(response,
-                String.format("%s%s", getSpecializedJsFileName(), nocache));
+        list.add(new ImmutablePair<>(String.format("%s%s",
+                "jquery.savapage-admin-panels.js", nocache),
+                SAVAPAGE_JS_LICENSE));
+
+        list.add(new ImmutablePair<>(String.format("%s%s",
+                "jquery.savapage-admin-pages.js", nocache),
+                SAVAPAGE_JS_LICENSE));
+
+        list.add(new ImmutablePair<>(
+                String.format("%s%s", getSpecializedJsFileName(), nocache),
+                SAVAPAGE_JS_LICENSE));
     }
 
     @Override

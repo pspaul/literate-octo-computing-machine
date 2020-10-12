@@ -34,8 +34,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
@@ -124,23 +125,33 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     @Override
-    protected void renderWebAppTypeJsFiles(final IHeaderResponse response,
+    protected void appendWebAppTypeJsFiles(
+            final List<Pair<String, LibreJsLicenseEnum>> list,
             final String nocache) {
 
         if (ConfigManager.isPdfOverlayEditorEnabled()) {
 
-            this.renderJs(response,
-                    this.wrapLibreJsPath(this.isLibreJsLicenseWrap(),
-                            LibreJsLicenseEnum.UNLICENSE,
-                            String.format("%s%s", JS_FILE_FABRIC_JS, nocache)));
+            list.add(
+                    new ImmutablePair<>(
+                            this.getJsPathForRender(
+                                    String.format("%s%s", JS_FILE_FABRIC_JS,
+                                            nocache),
+                                    LibreJsLicenseEnum.UNLICENSE),
+                            LibreJsLicenseEnum.UNLICENSE));
 
-            this.renderJs(response, String.format("%s%s",
-                    JS_FILE_JQUERY_SAVAPAGE_CANVAS_EDITOR, nocache));
+            list.add(new ImmutablePair<>(String.format("%s%s",
+                    JS_FILE_JQUERY_SAVAPAGE_CANVAS_EDITOR, nocache),
+                    SAVAPAGE_JS_LICENSE));
         }
-        this.renderJs(response, String.format("%s%s",
-                JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION, nocache));
-        this.renderJs(response,
-                String.format("%s%s", getSpecializedJsFileName(), nocache));
+
+        list.add(new ImmutablePair<>(
+                String.format("%s%s",
+                        JS_FILE_JQUERY_SAVAPAGE_PAGE_PRINT_DELEGATION, nocache),
+                SAVAPAGE_JS_LICENSE));
+
+        list.add(new ImmutablePair<>(
+                String.format("%s%s", getSpecializedJsFileName(), nocache),
+                SAVAPAGE_JS_LICENSE));
     }
 
     /**
@@ -589,6 +600,8 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         add(new UploadNextButtonView("next-buttons", nextButtons));
 
+        //
+        this.addLibreJsLicensePanel("librjs-license-page");
     }
 
     @Override

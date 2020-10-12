@@ -109,6 +109,16 @@
 
                 _view.initI18n(res.language);
 
+                $('body').on('click', '.sp-btn-show-librejs', null, function() {
+                    _view.changePage($('#page-librejs'));
+                    return false;
+                });
+
+                $('.sp-btn-about').click(function() {
+                    _view.showPageAsync('#page-info', 'AppAbout');
+                    return false;
+                });
+
                 //
                 // Call-back: api
                 //
