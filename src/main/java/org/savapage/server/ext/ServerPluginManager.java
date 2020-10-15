@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -494,9 +497,9 @@ public final class ServerPluginManager
                 | IllegalArgumentException | InvocationTargetException
                 | ServerPluginException e) {
 
-            LOGGER.error(String.format("Plugin [%s] could not be loaded: %s",
-                    clazz.getSimpleName(), e.getMessage()));
-
+            publishAndLogEvent(PubLevelEnum.ERROR, PubTopicEnum.PLUGIN,
+                    String.format("Plugin [%s] could not be loaded: %s",
+                            clazz.getSimpleName(), e.getMessage()));
             return false;
         }
 
@@ -767,48 +770,73 @@ public final class ServerPluginManager
     }
 
     /**
+     * Publishes a payment event.
      *
      * @param level
+     *            {@link PubLevelEnum}.
      * @param msg
+     *            Message.
      */
-    private static void publishEvent(final PubLevelEnum level,
+    private static void publishPaymentEvent(final PubLevelEnum level,
             final String msg) {
-        AdminPublisher.instance().publish(PubTopicEnum.PAYMENT_GATEWAY, level,
-                msg);
+        publishEvent(level, PubTopicEnum.PAYMENT_GATEWAY, msg);
     }
 
     /**
+     * Publishes an event.
      *
      * @param level
+     *            {@link PubLevelEnum}.
+     * @param topic
+     *            {@link PubTopicEnum}.
      * @param msg
+     *            Message.
+     */
+    private static void publishEvent(final PubLevelEnum level,
+            final PubTopicEnum topic, final String msg) {
+        AdminPublisher.instance().publish(topic, level, msg);
+    }
+
+    /**
+     * Publishes and writes event to App Log.
+     *
+     * @param level
+     *            {@link PubLevelEnum}.
+     * @param topic
+     *            {@link PubTopicEnum}.
+     * @param msg
+     *            Message.
      */
     private static void publishAndLogEvent(final PubLevelEnum level,
-            final String msg) {
+            final PubTopicEnum topic, final String msg) {
 
         final AppLogLevelEnum logLevel;
 
         switch (level) {
         case ERROR:
             logLevel = AppLogLevelEnum.ERROR;
+            LOGGER.error(msg);
             break;
         case WARN:
             logLevel = AppLogLevelEnum.WARN;
+            LOGGER.warn(msg);
             break;
         case INFO:
             // no break intended
         default:
+            LOGGER.info(msg);
             logLevel = AppLogLevelEnum.INFO;
             break;
         }
 
         AppLogHelper.log(logLevel, msg);
-        publishEvent(level, msg);
+        publishEvent(level, topic, msg);
     }
 
     @Override
     public PaymentGatewayTrxEvent onPaymentFailed(final PaymentGatewayTrx trx) {
 
-        publishEvent(PubLevelEnum.WARN,
+        publishPaymentEvent(PubLevelEnum.WARN,
                 localize("payment-failed", trx.getUserId(), trx.getGatewayId(),
                         String.format("%s %.2f", CurrencyUtil.getCurrencySymbol(
                                 trx.getCurrencyCode(), Locale.getDefault()),
@@ -829,7 +857,7 @@ public final class ServerPluginManager
     public PaymentGatewayTrxEvent
             onPaymentCancelled(final PaymentGatewayTrx trx) {
 
-        publishEvent(PubLevelEnum.WARN,
+        publishPaymentEvent(PubLevelEnum.WARN,
                 localize("payment-cancelled", trx.getUserId(),
                         trx.getGatewayId(),
                         String.format("%s %.2f", CurrencyUtil.getCurrencySymbol(
@@ -851,7 +879,7 @@ public final class ServerPluginManager
     public PaymentGatewayTrxEvent
             onPaymentExpired(final PaymentGatewayTrx trx) {
 
-        publishEvent(PubLevelEnum.WARN,
+        publishPaymentEvent(PubLevelEnum.WARN,
                 localize("payment-expired", trx.getGatewayId(),
                         String.format("%s %.2f", CurrencyUtil.getCurrencySymbol(
                                 trx.getCurrencyCode(), Locale.getDefault()),
@@ -1125,7 +1153,7 @@ public final class ServerPluginManager
             pubLevel = PubLevelEnum.WARN;
         }
 
-        publishEvent(pubLevel, localize("payment-confirmed",
+        publishPaymentEvent(pubLevel, localize("payment-confirmed",
                 //
                 String.format("%s %s (%s %s)",
                         CurrencyUtil.CURRENCY_CODE_BITCOIN,
@@ -1158,7 +1186,7 @@ public final class ServerPluginManager
             onPaymentPending(final PaymentGatewayTrx trx) {
 
         logPaymentTrxReceived(trx, STAT_CONFIRMED);
-        publishEvent(PubLevelEnum.INFO,
+        publishPaymentEvent(PubLevelEnum.INFO,
                 localize("payment-confirmed", String.format("%s %.2f",
                         CurrencyUtil.getCurrencySymbol(trx.getCurrencyCode(),
                                 Locale.getDefault()),
@@ -1260,7 +1288,7 @@ public final class ServerPluginManager
          */
         service.acceptFundsFromGateway(lockedUser, dto, null);
 
-        publishEvent(PubLevelEnum.CLEAR, localize("payment-acknowledged",
+        publishPaymentEvent(PubLevelEnum.CLEAR, localize("payment-acknowledged",
                 formattedAmount, trx.getGatewayId(), trx.getUserId()));
 
         PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
@@ -1395,7 +1423,7 @@ public final class ServerPluginManager
     @Override
     public void onPluginException(final ServerPlugin plugin,
             final IOException ex) {
-        publishAndLogEvent(PubLevelEnum.ERROR,
+        publishAndLogEvent(PubLevelEnum.ERROR, PubTopicEnum.PLUGIN,
                 String.format("%s in plug-in [%s]: %s",
                         ex.getClass().getSimpleName(), plugin.getId(),
                         ex.getMessage()));
@@ -1409,7 +1437,8 @@ public final class ServerPluginManager
             try {
                 plugin.onStart();
             } catch (ServerPluginException e) {
-                publishAndLogEvent(PubLevelEnum.ERROR, e.getMessage());
+                publishAndLogEvent(PubLevelEnum.ERROR, PubTopicEnum.PLUGIN,
+                        e.getMessage());
             }
         }
     }
@@ -1428,7 +1457,8 @@ public final class ServerPluginManager
                                 "... [%s] plug-in shutdown completed.",
                                 plugin.getName()));
             } catch (ServerPluginException e) {
-                publishAndLogEvent(PubLevelEnum.ERROR, e.getMessage());
+                publishAndLogEvent(PubLevelEnum.ERROR, PubTopicEnum.PLUGIN,
+                        e.getMessage());
             }
         }
     }
