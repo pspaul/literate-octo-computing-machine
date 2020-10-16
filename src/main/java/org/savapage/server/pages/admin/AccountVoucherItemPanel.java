@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -41,8 +44,8 @@ import org.savapage.server.pages.MarkupHelper;
  */
 public final class AccountVoucherItemPanel extends Panel {
 
-    final AccountVoucherService accountVoucherService = ServiceContext
-            .getServiceFactory().getAccountVoucherService();
+    final AccountVoucherService accountVoucherService =
+            ServiceContext.getServiceFactory().getAccountVoucherService();
 
     final Date now = new Date();
 
@@ -101,13 +104,11 @@ public final class AccountVoucherItemPanel extends Panel {
 
             final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
-            final User user =
-                    userDao.findByAccount(voucher.getAccountTrx().getAccount()
-                            .getId());
+            final User user = userDao.findByAccount(
+                    voucher.getAccountTrx().getAccount().getId());
 
-            redeemDate =
-                    localeHelper.getLongMediumDateTime(voucher.getAccountTrx()
-                            .getTransactionDate());
+            redeemDate = localeHelper.getLongMediumDateTime(
+                    voucher.getAccountTrx().getTransactionDate());
 
             redeemUser = user.getUserId();
         }

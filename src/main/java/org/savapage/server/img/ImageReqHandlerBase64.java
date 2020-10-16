@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -24,8 +27,6 @@ package org.savapage.server.img;
 import java.io.File;
 import java.io.IOException;
 
-import net.iharder.Base64;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
@@ -33,18 +34,21 @@ import org.savapage.core.SpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.iharder.Base64;
+
 /**
  * Our own handler to service the request for a generated image file as BASE64
  * encoded output.
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
+ *
  */
 public class ImageReqHandlerBase64 extends TextRequestHandler {
 
     private static final String CONTENT_TYPE_BASE64 = "text/plain";
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ImageReqHandlerBase64.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ImageReqHandlerBase64.class);
 
     private final File file;
 

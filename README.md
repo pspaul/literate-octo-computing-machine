@@ -1,12 +1,19 @@
+<!-- 
+    SPDX-FileCopyrightText: (c) 2020 Datraverse BV <info@datraverse.com> 
+    SPDX-License-Identifier: AGPL-3.0-or-later 
+-->
+
 # savapage-server
     
  
 ### License
 
 This module is part of the SavaPage project <https://www.savapage.org>,
-copyright (c) 2011-2019 Datraverse B.V. and licensed under the
+copyright (c) 2020 Datraverse B.V. and licensed under the
 [GNU Affero General Public License (AGPL)](https://www.gnu.org/licenses/agpl.html)
 version 3, or (at your option) any later version.
+
+[<img src="./img/reuse-horizontal.png" title="REUSE Compliant" alt="REUSE Software" height="25"/>](https://reuse.software/)
 
 ### Join Efforts, Join our Community
 
@@ -34,4 +41,4 @@ jquery.mobipick.version=0.9
 </pre>
 
 Note that in this sample the directory src/main/webapp/jslib-DEVELOPMENT
-should be present containing the relevant the files (and sub-directories). 
+should be present containing the relevant files (and sub-directories). 

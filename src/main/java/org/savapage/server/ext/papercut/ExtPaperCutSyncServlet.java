@@ -1,9 +1,9 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -334,9 +334,8 @@ public final class ExtPaperCutSyncServlet extends BasicAuthServlet {
 
         while (listSize == DB_CHUNK_SIZE) {
 
-            final List<UserGroup> list =
-                    USER_GROUP_DAO.getListChunk(filter, startPosition,
-                            DB_CHUNK_SIZE, UserGroupDao.Field.ID, true);
+            final List<UserGroup> list = USER_GROUP_DAO.getListChunk(filter,
+                    startPosition, DB_CHUNK_SIZE, UserGroupDao.Field.ID, true);
 
             for (final UserGroup group : list) {
                 if (!svc.isReservedGroupName(group.getGroupName())) {

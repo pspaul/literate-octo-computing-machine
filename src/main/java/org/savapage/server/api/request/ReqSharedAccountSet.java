@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
- * Authors: Rijk Ravestein.
+ * Copyright (c) 2020 Datraverse B.V.
+ * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -36,13 +39,11 @@ import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 public final class ReqSharedAccountSet extends ApiRequestMixin {
 
     @Override
-    protected void
-            onRequest(final String requestingUser, final User lockedUser)
-                    throws IOException {
+    protected void onRequest(final String requestingUser, final User lockedUser)
+            throws IOException {
 
-        final SharedAccountDisplayInfoDto dto =
-                AbstractDto.create(SharedAccountDisplayInfoDto.class,
-                        this.getParmValueDto());
+        final SharedAccountDisplayInfoDto dto = AbstractDto.create(
+                SharedAccountDisplayInfoDto.class, this.getParmValueDto());
 
         final AbstractJsonRpcMethodResponse rpcResponse =
                 ACCOUNTING_SERVICE.lazyUpdateSharedAccount(dto);

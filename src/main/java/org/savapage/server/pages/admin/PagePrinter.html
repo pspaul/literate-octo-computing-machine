@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-	<!-- 
-+=======================================================================+ 
-| This file is part of the SavaPage project <https://savapage.org> .....|
-| Copyright (c) 2011-2020 Datraverse B.V. | Author: Rijk Ravestein......| 
-| ......................................................................|
-| SPDX-FileCopyrightText: 2011-2020 Datraverse BV <info@datraverse.com> |
-| SPDX-License-Identifier: AGPL-3.0-or-later                            |
-|.......................................................................| 
-| SavaPage is free software: you can redistribute it and/or modify .....|
-| it under the terms of the GNU Affero General Public License as .......|
-| published by the Free Software Foundation, either version 3 of .......|
-| the License, or (at your option) any later version. ..................|
-+=======================================================================+ 
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 -->
 </wicket:remove>
 
@@ -23,23 +21,17 @@
 
 		<li data-role="list-divider" id="sp-printer-page-name" data-theme="b" />
 
-		<li>
-			<label for="printer-displayname">
+		<li><label for="printer-displayname">
 				<wicket:message key="printer-displayname" />
-			</label>
-			<input type="text" id="printer-displayname" value="" maxlength="128"
+			</label> <input type="text" id="printer-displayname" value="" maxlength="128"
 				autofocus autocomplete="off" autocorrect="off" autocapitalize="off"
-				spellcheck="false" />
-
-			<label for="printer-location" wicket:id="printer-location" />
-			<input type="text" id="printer-location" value="" maxlength="255"
-				autocomplete="off" autocorrect="off" autocapitalize="off"
-				spellcheck="false" />
-
-			<label for="printer-printergroups">
+				spellcheck="false" /> <label for="printer-location"
+				wicket:id="printer-location" /> <input type="text"
+				id="printer-location" value="" maxlength="255" autocomplete="off"
+				autocorrect="off" autocapitalize="off" spellcheck="false" /> <label
+				for="printer-printergroups">
 				<wicket:message key="printer-groups" />
-			</label>
-			<input type="text" id="printer-printergroups" value=""
+			</label> <input type="text" id="printer-printergroups" value=""
 				maxlength="128" autocomplete="off" autocorrect="off"
 				autocapitalize="off" spellcheck="false" />
 
@@ -58,41 +50,31 @@
 					<wicket:message key="printer-deleted" />
 				</label>
 				<input type="checkbox" id="printer-deleted" value="0" />
-			</div>
-		</li>
+			</div></li>
 		<wicket:enclosure child="printer-archive">
-			<li>
-				<span wicket:id="printer-archive" />
+			<li><span wicket:id="printer-archive" />
 				<div class="ui-mini">
 					<label for="printer-archive-disabled" wicket:id="archive-disabled" />
 					<input type="checkbox" id="printer-archive-disabled" value="0" />
-				</div>
-			</li>
+				</div></li>
 		</wicket:enclosure>
 		<wicket:enclosure child="printer-journal">
-			<li>
-				<span wicket:id="printer-journal" />
+			<li><span wicket:id="printer-journal" />
 				<div class="ui-mini">
 					<label for="printer-journal-disabled" wicket:id="journal-disabled" />
 					<input type="checkbox" id="printer-journal-disabled" value="0" />
-				</div>
-			</li>
+				</div></li>
 		</wicket:enclosure>
-		<li>
-			<label id="printer-ppd-ext-file-btn" for="printer-ppd-ext-file">
+		<li><label id="printer-ppd-ext-file-btn"
+				for="printer-ppd-ext-file">
 				<wicket:message key="printer-ppd-ext-file" />
-			</label>
-			<wicket:remove>
+			</label> <wicket:remove>
 				<!--   To be filled by JavaScript: see PPDExtFileOptionsAddin.java/html -->
-			</wicket:remove>
-			<select id="printer-ppd-ext-file" data-mini="true"
-				data-native-menu="true" />
-		</li>
-		<li class="ui-mini">
-			<label for="printer-jobticket">
+			</wicket:remove> <select id="printer-ppd-ext-file" data-mini="true"
+				data-native-menu="true" /></li>
+		<li class="ui-mini"><label for="printer-jobticket">
 				<wicket:message key="printer-jobticket" />
-			</label>
-			<input type="checkbox" id="printer-jobticket" value="0" />
+			</label> <input type="checkbox" id="printer-jobticket" value="0" />
 
 			<div id="printer-jobticket-group-div" class="ui-mini">
 				<label for="printer-jobticket-group">
@@ -101,15 +83,13 @@
 				<input type="text" id="printer-jobticket-group" value=""
 					maxlength="128" autocomplete="off" autocorrect="off"
 					autocapitalize="off" spellcheck="false" />
-			</div>
-			<wicket:enclosure child="printer-jobticket-labels">
+			</div> <wicket:enclosure child="printer-jobticket-labels">
 				<label for="printer-jobticket-labels">
 					<wicket:message key="printer-jobticket-labels" />
 				</label>
 				<input type="checkbox" wicket:id="printer-jobticket-labels"
 					id="printer-jobticket-labels" value="0" />
-			</wicket:enclosure>
-		</li>
+			</wicket:enclosure></li>
 		<li>
 			<div>
 				<button id="button-save-printer"
@@ -146,19 +126,13 @@
 				<wicket:message key="printer-rename-note" />
 			</div>
 
-			<p />
-
-			<label for="printer-newname">
+			<p /> <label for="printer-newname">
 				<wicket:message key="printer-newname" />
-			</label>
-			<input type="text" id="printer-newname" value="" maxlength="128"
+			</label> <input type="text" id="printer-newname" value="" maxlength="128"
 				autocomplete="off" autocorrect="off" autocapitalize="off"
-				spellcheck="false" />
-
-			<label for="printer-rename-replace">
+				spellcheck="false" /> <label for="printer-rename-replace">
 				<wicket:message key="printer-rename-replace" />
-			</label>
-			<input type="checkbox" id="printer-rename-replace" value="0" />
+			</label> <input type="checkbox" id="printer-rename-replace" value="0" />
 
 			<div>
 				<button id="button-rename-printer"

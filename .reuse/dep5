@@ -1,0 +1,64 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: SavaPage Web Server
+Upstream-Contact: Datraverse B.V. <info@datraverse.com>
+Source: https://gitlab.com/savapage/savapage-server/
+
+Files: src/main/webapp/favicon*.ico
+Copyright: (c) 2020 Datraverse BV <info@datraverse.com>
+License: CC-BY-NC-SA-4.0
+
+Files: src/main/webapp/META-INF/MANIFEST.MF
+Copyright: (c) 2020 Datraverse BV <info@datraverse.com>
+License: CC0-1.0
+
+Files: src/main/webapp/apple-touch-icon*.png
+Copyright: (c) 2020 Datraverse BV <info@datraverse.com>
+License: CC-BY-NC-SA-4.0
+
+Files: src/main/webapp/fabricjs/*.*
+Copyright: (c) 2008-2015, Printio (Juriy Zaytsev, Maxim Chernyak)
+License: Unlicense
+
+Files: src/main/webapp/famfamfam-silk/*.png
+Copyright: (c) Mark James <mjames@gmail.com> 
+License: CC-BY-2.5
+
+Files: src/main/webapp/silkicons/*.png
+Copyright: (c) Mark James <mjames@gmail.com> 
+License: CC-BY-2.5
+
+Files: src/main/webapp/glyfx/*.png
+Copyright: PerthWeb Pty <glyfx@perthweb.com.au> 
+License: CC-BY-ND-4.0
+
+Files: src/main/webapp/glyphicons/*.png
+Copyright: (c) glyphicons <glyphicons@gmail.com> 
+License: CC-BY-3.0
+
+Files: src/main/webapp/glyphish-icons/*.png
+Copyright: Joseph Wain - http://glyphish.com
+License: CC-BY-3.0
+
+Files: src/main/webapp/images/*.*
+Copyright: (c) 2020 Datraverse BV <info@datraverse.com>
+License: CC-BY-SA-4.0
+
+Files: src/main/webapp/ipp-printer-icons/*.png
+Copyright: (c) 2020 Datraverse BV <info@datraverse.com>
+License: CC-BY-NC-SA-4.0
+
+Files: src/main/webapp/jquery/json2.js
+Copyright: http://www.JSON.org
+License: CC0-1.0
+
+Files: src/main/webapp/jquery/jquery.cometd*.js
+Copyright: https://cometd.org
+License: Apache-2.0
+
+Files: src/main/webapp/mobipick/*.*
+Copyright: Christoph Baudson - https://github.com/sustainablepace/mobipick
+License: MIT
+
+Files: src/main/webapp/org/cometd/*.js
+Copyright: https://cometd.org
+License: Apache-2.0

@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
- * Authors: Rijk Ravestein.
+ * Copyright (c) 2020 Datraverse B.V.
+ * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -116,8 +119,7 @@ public class ReqExportOutboxPdf extends ApiRequestExportMixin {
                     && webAppType != WebAppTypeEnum.ADMIN
                     && webAppType != WebAppTypeEnum.PRINTSITE
                     && JOBTICKET_SERVICE.getTicket(
-                            SpSession.get().getUserDbKey(),
-                            fileName) == null) {
+                            SpSession.get().getUserDbKey(), fileName) == null) {
                 pdfFile = null;
             } else {
                 pdfFile =

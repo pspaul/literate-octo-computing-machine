@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -50,8 +53,8 @@ public class VoucherDesignOptionsPanel extends Panel {
      */
     public void populate(final JrVoucherPageLayoutEnum designDefault) {
 
-        final List<JrVoucherPageLayoutEnum> entryList =
-                new ArrayList<>(Arrays.asList(JrVoucherPageLayoutEnum.values()));
+        final List<JrVoucherPageLayoutEnum> entryList = new ArrayList<>(
+                Arrays.asList(JrVoucherPageLayoutEnum.values()));
 
         add(new PropertyListView<JrVoucherPageLayoutEnum>("option-list",
                 entryList) {
@@ -59,7 +62,8 @@ public class VoucherDesignOptionsPanel extends Panel {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem<JrVoucherPageLayoutEnum> item) {
+            protected void
+                    populateItem(ListItem<JrVoucherPageLayoutEnum> item) {
 
                 final JrVoucherPageLayoutEnum design =
                         item.getModel().getObject();

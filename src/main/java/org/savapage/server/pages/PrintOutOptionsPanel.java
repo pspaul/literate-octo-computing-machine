@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2017 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -105,24 +108,21 @@ public final class PrintOutOptionsPanel extends Panel {
             final IppOptionMap optionMap = new IppOptionMap(ippOptions);
 
             if (optionMap.hasFinishingPunch()) {
-                mapVisible.put("punch",
-                        uiIppKeywordValue(getLocale(),
-                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH,
-                                optionMap));
+                mapVisible.put("punch", uiIppKeywordValue(getLocale(),
+                        IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_PUNCH,
+                        optionMap));
             }
             if (optionMap.hasFinishingStaple()) {
-                mapVisible.put("staple",
-                        uiIppKeywordValue(getLocale(),
-                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE,
-                                optionMap));
+                mapVisible.put("staple", uiIppKeywordValue(getLocale(),
+                        IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_STAPLE,
+                        optionMap));
             }
             if (optionMap.hasFinishingFold()) {
-                mapVisible.put("fold",
-                        String.format("%s %s",
-                                helper.localized(PrintOutVerbEnum.FOLD),
-                                uiIppKeywordValue(getLocale(),
-                                        IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_FOLD,
-                                        optionMap)));
+                mapVisible.put("fold", String.format("%s %s",
+                        helper.localized(PrintOutVerbEnum.FOLD),
+                        uiIppKeywordValue(getLocale(),
+                                IppDictJobTemplateAttr.ORG_SAVAPAGE_ATTR_FINISHINGS_FOLD,
+                                optionMap)));
             }
             if (optionMap.hasFinishingBooklet()) {
                 mapVisible.put("booklet",

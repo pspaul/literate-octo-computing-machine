@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2014 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -31,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public final class AdminChannelAuthorizer implements Authorizer {
@@ -39,8 +42,8 @@ public final class AdminChannelAuthorizer implements Authorizer {
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AdminChannelAuthorizer.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(AdminChannelAuthorizer.class);
 
     @Override
     public Result authorize(final Operation operation, final ChannelId channel,
@@ -52,14 +55,13 @@ public final class AdminChannelAuthorizer implements Authorizer {
          *
          * See : channel.isWild()
          */
-        boolean isAdminChannel =
-                new ChannelId(AdminPublisher.CHANNEL_PUBLISH)
-                        .isParentOf(channel);
+        boolean isAdminChannel = new ChannelId(AdminPublisher.CHANNEL_PUBLISH)
+                .isParentOf(channel);
 
         if (!isAdminChannel) {
             if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("authorization for channel [" + channel
-                        + "] ignored");
+                LOGGER.warn(
+                        "authorization for channel [" + channel + "] ignored");
             }
             return Result.ignore();
         }
@@ -79,9 +81,8 @@ public final class AdminChannelAuthorizer implements Authorizer {
          * Retrieve session attribute 'isAdmin' as set in handshake handler of
          * our BayeuxAuthenticator.
          */
-        final Boolean isAdmin =
-                (Boolean) session
-                        .getAttribute(BayeuxAuthenticator.SERVER_SESSION_ATTR_IS_ADMIN);
+        final Boolean isAdmin = (Boolean) session
+                .getAttribute(BayeuxAuthenticator.SERVER_SESSION_ATTR_IS_ADMIN);
 
         if (isAdmin != null && isAdmin) {
             return Result.grant();

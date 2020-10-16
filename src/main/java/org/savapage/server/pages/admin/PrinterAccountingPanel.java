@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -54,11 +57,11 @@ public final class PrinterAccountingPanel extends Panel {
      */
     private static final long serialVersionUID = 1L;
 
-    private static final AccountingService ACCOUNTING_SERVICE = ServiceContext
-            .getServiceFactory().getAccountingService();
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
 
-    private static final ProxyPrintService PROXYPRINT_SERVICE = ServiceContext
-            .getServiceFactory().getProxyPrintService();
+    private static final ProxyPrintService PROXYPRINT_SERVICE =
+            ServiceContext.getServiceFactory().getProxyPrintService();
 
     private final boolean isVisible;
 
@@ -77,8 +80,8 @@ public final class PrinterAccountingPanel extends Panel {
         private final boolean isDuplexPrinter;
 
         private final Locale locale = getSession().getLocale();
-        private final int fractionDigits = ConfigManager
-                .getPrinterCostDecimals();
+        private final int fractionDigits =
+                ConfigManager.getPrinterCostDecimals();
 
         /**
          *
@@ -116,10 +119,9 @@ public final class PrinterAccountingPanel extends Panel {
             final String cost;
 
             try {
-                cost =
-                        BigDecimalUtil.localize(
-                                BigDecimalUtil.valueOf(plainCost),
-                                fractionDigits, locale, false);
+                cost = BigDecimalUtil.localize(
+                        BigDecimalUtil.valueOf(plainCost), fractionDigits,
+                        locale, false);
             } catch (ParseException e) {
                 throw new SpException(e);
             }
@@ -150,13 +152,11 @@ public final class PrinterAccountingPanel extends Panel {
             /*
              * media (checkbox + label)
              */
-            String htmlId =
-                    ACCOUNTING_SERVICE.getCostMediaAttr(dto.getMedia())
-                            .getKey();
+            String htmlId = ACCOUNTING_SERVICE.getCostMediaAttr(dto.getMedia())
+                    .getKey();
 
-            labelWrk =
-                    MarkupHelper.createCheckbox("media-checkbox", htmlId,
-                            dto.getActive() || dto.isDefault());
+            labelWrk = MarkupHelper.createCheckbox("media-checkbox", htmlId,
+                    dto.getActive() || dto.isDefault());
 
             // label
             String mediaMnemonic;
@@ -165,9 +165,8 @@ public final class PrinterAccountingPanel extends Panel {
                 mediaMnemonic = helper.localized("default");
                 labelWrk.add(new AttributeModifier("disabled", "disabled"));
             } else {
-                mediaMnemonic =
-                        PROXYPRINT_SERVICE.localizeMnemonic(IppMediaSizeEnum
-                                .findMediaSizeName(dto.getMedia()));
+                mediaMnemonic = PROXYPRINT_SERVICE.localizeMnemonic(
+                        IppMediaSizeEnum.findMediaSizeName(dto.getMedia()));
             }
             item.add(labelWrk);
 

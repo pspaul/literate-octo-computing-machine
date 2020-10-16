@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -126,27 +129,28 @@ public final class StatsFinancialPanel extends Panel {
             helper.encloseLabel("bitcoin-wallet-addr", VALUE_NOT_FOUND, true);
             helper.encloseLabel("bitcoin-wallet-addr-open", VALUE_NOT_FOUND,
                     true);
-            helper.encloseLabel("bitcoin-wallet-addr-received",
-                    VALUE_NOT_FOUND, true);
+            helper.encloseLabel("bitcoin-wallet-addr-received", VALUE_NOT_FOUND,
+                    true);
             helper.encloseLabel("bitcoin-wallet-msg", e.getMessage(), true);
             helper.addLabel("bitcoin-wallet-link", walletHeaderTxt);
 
             return;
         }
 
-        final BigDecimal btc =
-                BigDecimal.valueOf(wallet.getSatoshiBalance()).divide(
-                        BigDecimal.valueOf(BitcoinUtil.SATOSHIS_IN_BTC));
+        final BigDecimal btc = BigDecimal.valueOf(wallet.getSatoshiBalance())
+                .divide(BigDecimal.valueOf(BitcoinUtil.SATOSHIS_IN_BTC));
 
-        final BigDecimal cur =
-                btc.multiply(BigDecimal.valueOf(wallet.getBitcoinExchangeRate()));
+        final BigDecimal cur = btc
+                .multiply(BigDecimal.valueOf(wallet.getBitcoinExchangeRate()));
 
         try {
-            helper.encloseLabel("bitcoin-wallet-cur", BigDecimalUtil.localize(
-                    cur, ConfigManager.getUserBalanceDecimals(), getSession()
-                            .getLocale(), true), true);
-            helper.encloseLabel("bitcoin-wallet-btc", BigDecimalUtil.localize(
-                    btc, 8, getSession().getLocale(), true), true);
+            helper.encloseLabel("bitcoin-wallet-cur",
+                    BigDecimalUtil.localize(cur,
+                            ConfigManager.getUserBalanceDecimals(),
+                            getSession().getLocale(), true),
+                    true);
+            helper.encloseLabel("bitcoin-wallet-btc", BigDecimalUtil
+                    .localize(btc, 8, getSession().getLocale(), true), true);
 
         } catch (ParseException e) {
             throw new SpException(e.getMessage(), e);

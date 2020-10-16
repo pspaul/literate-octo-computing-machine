@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -48,8 +51,8 @@ public final class MembershipMsg extends WebPage {
      */
     public MembershipMsg() {
 
-        add(new Label("title", localized("title",
-                CommunityDictEnum.MEMBERSHIP.getWord())));
+        add(new Label("title",
+                localized("title", CommunityDictEnum.MEMBERSHIP.getWord())));
 
         final MemberCard lic = MemberCard.instance();
 
@@ -60,38 +63,33 @@ public final class MembershipMsg extends WebPage {
             switch (lic.getStatus()) {
 
             case WRONG_MODULE:
-                txtStatus =
-                        localized("membership-status-wrong-module",
-                                CommunityDictEnum.MEMBERSHIP.getWord(),
-                                CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                                CommunityDictEnum.MEMBERSHIP.getWord());
+                txtStatus = localized("membership-status-wrong-module",
+                        CommunityDictEnum.MEMBERSHIP.getWord(),
+                        CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
+                        CommunityDictEnum.MEMBERSHIP.getWord());
                 break;
 
             case WRONG_COMMUNITY:
-                txtStatus =
-                        localized("membership-status-wrong-product",
-                                CommunityDictEnum.MEMBERSHIP.getWord(),
-                                lic.getProduct(),
-                                CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
-                                CommunityDictEnum.MEMBERSHIP.getWord());
+                txtStatus = localized("membership-status-wrong-product",
+                        CommunityDictEnum.MEMBERSHIP.getWord(),
+                        lic.getProduct(),
+                        CommunityDictEnum.SAVAPAGE_SUPPORT.getWord(),
+                        CommunityDictEnum.MEMBERSHIP.getWord());
                 break;
 
             case WRONG_VERSION:
-                txtStatus =
-                        localized("membership-status-wrong-version",
-                                CommunityDictEnum.MEMBERSHIP.getWord());
+                txtStatus = localized("membership-status-wrong-version",
+                        CommunityDictEnum.MEMBERSHIP.getWord());
                 break;
 
             case EXCEEDED:
-                txtStatus =
-                        localized("membership-status-users-exceeded",
-                                CommunityDictEnum.MEMBERSHIP.getWord());
+                txtStatus = localized("membership-status-users-exceeded",
+                        CommunityDictEnum.MEMBERSHIP.getWord());
                 break;
 
             case EXPIRED:
-                txtStatus =
-                        localized("membership-status-expired",
-                                CommunityDictEnum.MEMBERSHIP.getWord());
+                txtStatus = localized("membership-status-expired",
+                        CommunityDictEnum.MEMBERSHIP.getWord());
                 break;
 
             case VISITOR_EXPIRED:
@@ -107,15 +105,16 @@ public final class MembershipMsg extends WebPage {
              *
              */
             Label labelWrk = new Label("membership-status", txtStatus);
-            labelWrk.add(new AttributeAppender("class", String.format(" %s",
-                    MarkupHelper.CSS_TXT_ERROR)));
+            labelWrk.add(new AttributeAppender("class",
+                    String.format(" %s", MarkupHelper.CSS_TXT_ERROR)));
             add(labelWrk);
 
             //
-            add(new Label("membership-msg", localized("membership-msg",
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.MEMBERSHIP.getWord(),
-                    CommunityDictEnum.MEMBER_CARD.getWord())));
+            add(new Label("membership-msg",
+                    localized("membership-msg",
+                            CommunityDictEnum.MEMBERSHIP.getWord(),
+                            CommunityDictEnum.MEMBERSHIP.getWord(),
+                            CommunityDictEnum.MEMBER_CARD.getWord())));
 
         } catch (Exception e) {
             throw new SpException(e);
@@ -131,7 +130,8 @@ public final class MembershipMsg extends WebPage {
      *            The values to fill the placeholders
      * @return The localized string.
      */
-    protected final String localized(final String key, final Object... objects) {
+    protected final String localized(final String key,
+            final Object... objects) {
         return MessageFormat.format(getLocalizer().getString(key, this),
                 objects);
     }

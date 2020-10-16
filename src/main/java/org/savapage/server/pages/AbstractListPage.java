@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2016 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -34,6 +37,7 @@ import org.savapage.core.dao.helpers.AbstractPagerReq;
 /**
  *
  * @author Rijk Ravestein
+ *
  */
 public abstract class AbstractListPage extends AbstractAuthPage {
 
@@ -79,9 +83,9 @@ public abstract class AbstractListPage extends AbstractAuthPage {
      *            The maximum number of pages in the navigation bar.
      * @return List with ordinal numbers of the pages in view.
      */
-    protected final List<Long>
-            getNavBarPages(final long totItems, final int maxItemsOnPage,
-                    final long nPage, final int maxPagesInBar) {
+    protected final List<Long> getNavBarPages(final long totItems,
+            final int maxItemsOnPage, final long nPage,
+            final int maxPagesInBar) {
 
         /*
          * Constants
@@ -162,9 +166,8 @@ public abstract class AbstractListPage extends AbstractAuthPage {
             final long totItems, final int maxPagesInBar,
             final String cssClassBase, String[] navBarIds) {
 
-        List<Long> list =
-                getNavBarPages(totItems, req.getMaxResults(), req.getPage(),
-                        maxPagesInBar);
+        List<Long> list = getNavBarPages(totItems, req.getMaxResults(),
+                req.getPage(), maxPagesInBar);
 
         final Long nPage = req.getPage().longValue();
 

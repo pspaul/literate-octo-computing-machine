@@ -1,7 +1,10 @@
 /*
- * This file is part of the SavaPage project <http://savapage.org>.
- * Copyright (c) 2011-2015 Datraverse B.V.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +17,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
@@ -43,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * configuration file.
  * </p>
  *
- * @author Datraverse B.V.
+ * @author Rijk Ravestein
  *
  */
 public final class BayeuxInitializer extends GenericServlet {
@@ -51,8 +54,8 @@ public final class BayeuxInitializer extends GenericServlet {
     /**
      *
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(BayeuxInitializer.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(BayeuxInitializer.class);
 
     /**
      *
@@ -69,9 +72,8 @@ public final class BayeuxInitializer extends GenericServlet {
 
         LOGGER.trace("INIT");
 
-        final BayeuxServer bayeux =
-                (BayeuxServer) getServletContext().getAttribute(
-                        BayeuxServer.ATTRIBUTE);
+        final BayeuxServer bayeux = (BayeuxServer) getServletContext()
+                .getAttribute(BayeuxServer.ATTRIBUTE);
 
         /*
          * Use our own authenticator, to make sure that only valid users can use
@@ -125,8 +127,8 @@ public final class BayeuxInitializer extends GenericServlet {
 
     @Override
     public void service(final ServletRequest request,
-            final ServletResponse response) throws ServletException,
-            IOException {
+            final ServletResponse response)
+            throws ServletException, IOException {
         throw new ServletException();
     }
 }

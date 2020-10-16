@@ -1,7 +1,10 @@
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2018 Datraverse B.V.
- * Authors: Rijk Ravestein.
+ * Copyright (c) 2020 Datraverse B.V.
+ * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -105,26 +108,26 @@ public abstract class ApiRequestExportMixin implements ApiRequestExportHandler {
     }
 
     /**
-    *
-    * @param requestCycle
-    *            The {@link RequestCycle}.
-    * @param getParms
-    *            The {@link PageParameters}.
-    * @param isGetAction
-    *            {@code true} when a GET parameter.
-    * @param parm
-    *            The parameter name.
-    * @return {@code null} when parameter is not present.
-    */
-   protected final Long getParmLong(final RequestCycle requestCycle,
-           final PageParameters getParms, final boolean isGetAction,
-           final String parm) {
-       if (isGetAction) {
-           return getParms.get(parm).toLongObject();
-       }
-       return requestCycle.getRequest().getPostParameters()
-               .getParameterValue(parm).toLongObject();
-   }
+     *
+     * @param requestCycle
+     *            The {@link RequestCycle}.
+     * @param getParms
+     *            The {@link PageParameters}.
+     * @param isGetAction
+     *            {@code true} when a GET parameter.
+     * @param parm
+     *            The parameter name.
+     * @return {@code null} when parameter is not present.
+     */
+    protected final Long getParmLong(final RequestCycle requestCycle,
+            final PageParameters getParms, final boolean isGetAction,
+            final String parm) {
+        if (isGetAction) {
+            return getParms.get(parm).toLongObject();
+        }
+        return requestCycle.getRequest().getPostParameters()
+                .getParameterValue(parm).toLongObject();
+    }
 
     @Override
     public final IRequestHandler export(final WebAppTypeEnum webAppType,
