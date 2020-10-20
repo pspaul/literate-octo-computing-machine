@@ -183,13 +183,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
 
     /**
      *
-     */
-    protected AbstractWebAppPage() {
-        super();
-    }
-
-    /**
-     *
      * @param suffix
      *            The title suffix, {@code null}. when not applicable.
      * @return The web title
@@ -214,6 +207,21 @@ public abstract class AbstractWebAppPage extends AbstractPage
     }
 
     /**
+     * Common initialization.
+     */
+    private static void commonInit() {
+        WebApp.get().lazyReplaceJsReference();
+    }
+
+    /**
+     * .
+     */
+    protected AbstractWebAppPage() {
+        super();
+        commonInit();
+    }
+
+    /**
      *
      * @param parameters
      *            The {@link PageParameters}.
@@ -221,6 +229,8 @@ public abstract class AbstractWebAppPage extends AbstractPage
     protected AbstractWebAppPage(final PageParameters parameters) {
 
         super(parameters);
+
+        commonInit();
 
         final String language =
                 parameters.get(WebAppParmEnum.SP_LANG.parm()).toString();
@@ -640,8 +650,6 @@ public abstract class AbstractWebAppPage extends AbstractPage
      */
     @Override
     public final void renderHead(final IHeaderResponse response) {
-
-        WebApp.get().lazyReplaceJsReference();
 
         this.renderInitialJavaScript(response);
 
