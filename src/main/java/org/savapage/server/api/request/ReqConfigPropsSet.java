@@ -40,7 +40,6 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.PullPushEnum;
 import org.savapage.core.config.validator.ValidationResult;
-import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.job.SpJobScheduler;
@@ -53,7 +52,6 @@ import org.savapage.core.services.helpers.JobTicketLabelCache;
 import org.savapage.core.services.helpers.SOfficeConfigProps;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.ext.papercut.services.PaperCutService;
-import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.dropzone.WebPrintHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +100,6 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
 
         final Iterator<String> iter = list.getFieldNames();
 
-        boolean isSmartSchoolUpdate = false;
         boolean isSOfficeUpdate = false;
         boolean isSOfficeTrigger = false;
 
@@ -225,10 +222,6 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                         msgKey = "msg-config-props-applied-mail-print-stopped";
                     }
 
-                } else if (configKey == Key.SMARTSCHOOL_1_ENABLE
-                        || configKey == Key.SMARTSCHOOL_2_ENABLE) {
-                    isSmartSchoolUpdate = true;
-
                 } else if (configKey == Key.DOC_CONVERT_LIBRE_OFFICE_ENABLED
                         || configKey == Key.SOFFICE_ENABLE) {
                     isSOfficeUpdate = true;
@@ -265,14 +258,6 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
 
             if (nJobsRescheduled > 0) {
                 msgKey = "msg-config-props-applied-rescheduled";
-
-            } else if (isSmartSchoolUpdate
-                    && !ConfigManager.isSmartSchoolPrintActiveAndEnabled()
-                    && SmartschoolPrinter.isOnline()) {
-
-                if (SpJobScheduler.interruptSmartSchoolPoller()) {
-                    msgKey = "msg-config-props-applied-smartschool-stopped";
-                }
 
             } else if (isCUPSNotifierUpdate) {
                 evaluateCUPSNotifierMethod(cm, cupsNotifierMethodPrv);
@@ -381,28 +366,6 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 setApiResult(ApiResultCodeEnum.ERROR,
                         "msg-device-printer-group-not-found", value);
                 return false;
-            }
-        }
-
-        if (key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER
-                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX
-                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
-                || key == Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX
-                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER
-                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_DUPLEX
-                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE
-                || key == Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX) {
-
-            if (StringUtils.isNotBlank(value)) {
-
-                final PrinterDao printerDao =
-                        ServiceContext.getDaoContext().getPrinterDao();
-
-                if (printerDao.findByName(value) == null) {
-                    setApiResult(ApiResultCodeEnum.ERROR,
-                            "msg-printer-not-found", value);
-                    return false;
-                }
             }
         }
 

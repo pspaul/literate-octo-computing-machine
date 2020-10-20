@@ -2375,43 +2375,6 @@
                     _self.onFlatRequest('papercut-test');
                     return false;
                 });
-                $(this).on('click', '#test-smartschool', null, function() {
-                    _self.onFlatRequest('smartschool-test');
-                    return false;
-                });
-
-                $(this).on('click', '#start-smartschool-simulate', null, function() {
-                    _self.onFlatRequest('smartschool-start-simulate');
-                    return false;
-                });
-
-                $(this).on('change', '.flipswitch-smartschool-online', null, function(e) {
-                    var isChecked = $(this).is(':checked'),
-                        res = _self.onFlatRequest( isChecked ? 'smartschool-start' : 'smartschool-stop');
-                    if (!res || res.result.code !== '0') {
-                        $(this).prop("checked", !isChecked);
-                        // This triggers 'change' event again :-)
-                        $(this).flipswitch("refresh");
-                    }
-                });
-
-                $(this).on('click', '#sp-download-smartschool-papercut-student-cost-csv', null, function() {
-                    var sel = $('#sp-smartschool-papercut-student-cost-date-from'),
-                        from = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null,
-                        to,
-                        klassen = $('#sp-smartschool-papercut-student-cost-klassen').val();
-
-                    sel = $('#sp-smartschool-papercut-student-cost-date-to');
-                    to = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
-
-                    if (klassen.length > 0) {
-                        klassen = klassen.split(" ");
-                    } else {
-                        klassen = null;
-                    }
-                    _self.onDownloadSmartSchoolPaperCutStudentCostCsv(from, to, klassen);
-                    return false;
-                });
 
                 $(this).on('click', '#sp-download-papercut-delegator-cost-csv', null, function() {
                     var sel = $('#sp-papercut-delegator-cost-date-from'),
@@ -2449,32 +2412,6 @@
 
                 $(this).on('change', "input:checkbox[id='eco-print.enable']", null, function(e) {
                     _panel.Options.onEcoPrintEnabled($(this).is(':checked'));
-                });
-
-                $(this).on('change', "input:checkbox[id='smartschool.1.enable']", null, function(e) {
-                    _panel.Options.onSmartSchoolEnabled(_view.isCbChecked($(this)), _view.isCbChecked($('#smartschool\\.2\\.enable')));
-                });
-
-                $(this).on('change', "input:checkbox[id='smartschool.2.enable']", null, function(e) {
-                    _panel.Options.onSmartSchoolEnabled(_view.isCbChecked($('#smartschool\\.1\\.enable')), _view.isCbChecked($(this)));
-                });
-
-                $(this).on('change', "input:checkbox[id='smartschool.1.soap.print.node.enable']", null, function(e) {
-                    _panel.Options.onSmartSchoolNodeEnabled(_view.isCbChecked($(this)), _view.isCbChecked($('#smartschool\\.2\\.soap\\.print\\.node\\.enable')));
-                });
-                $(this).on('change', "input:checkbox[id='smartschool.2.soap.print.node.enable']", null, function(e) {
-                    _panel.Options.onSmartSchoolNodeEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.enable')), _view.isCbChecked($(this)));
-                });
-
-                $(this).on('change', "input:checkbox[id='smartschool.1.soap.print.node.proxy.enable']", null, function(e) {
-                    _panel.Options.onSmartSchoolNodeProxyEnabled(_view.isCbChecked($(this)), _view.isCbChecked($('#smartschool\\.2\\.soap\\.print\\.node\\.proxy\\.enable')));
-                });
-                $(this).on('change', "input:checkbox[id='smartschool.2.soap.print.node.proxy.enable']", null, function(e) {
-                    _panel.Options.onSmartSchoolNodeProxyEnabled(_view.isCbChecked($('#smartschool\\.1\\.soap\\.print\\.node\\.proxy\\.enable')), _view.isCbChecked($(this)));
-                });
-
-                $(this).on('change', "input:checkbox[id='smartschool.papercut.enable']", null, function(e) {
-                    _panel.Options.onSmartSchoolPaperCutEnabled($(this).is(':checked'));
                 });
 
                 $(this).on('change', "input:checkbox[id='proxy-print.delegate.enable']", null, function(e) {
@@ -2521,16 +2458,6 @@
 
                 $(this).on('click', '#apply-internetprint', null, function() {
                     _self.onApplyInternetPrint();
-                    return false;
-                });
-
-                $(this).on('click', '#apply-smartschool', null, function() {
-                    _self.onApplySmartSchool(_view.isCbChecked($('#smartschool\\.1\\.enable')), _view.isCbChecked($('#smartschool\\.2\\.enable')));
-                    return false;
-                });
-
-                $(this).on('click', '#apply-smartschool-papercut', null, function() {
-                    _self.onApplySmartSchoolPaperCut(_view.isCbChecked($('#smartschool\\.papercut\\.enable')));
                     return false;
                 });
 

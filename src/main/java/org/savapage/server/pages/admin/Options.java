@@ -46,7 +46,6 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
-import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.doc.XpsToPdf;
 import org.savapage.core.doc.soffice.SOfficeHelper;
 import org.savapage.core.i18n.AdverbEnum;
@@ -70,7 +69,6 @@ import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.MediaUtils;
 import org.savapage.ext.google.GoogleLdapClient;
 import org.savapage.ext.google.GoogleLdapUserSource;
-import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.EnumRadioPanel;
 import org.savapage.server.pages.FontOptionsPanel;
@@ -381,221 +379,11 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.MAIL_REPLY_TO_ADDRESS);
         labelledInput("mail-reply-name", IConfigProp.Key.MAIL_REPLY_TO_NAME);
 
-        /*
-         * SmartSchool.
-         */
-        final String headerId = "smartschool-print-header";
-
+        //
         String msgKey;
         String cssColor = null;
         String msgText = null;
         Label labelWrk;
-
-        if (ConfigManager.isSmartSchoolPrintModuleActivated()) {
-
-            helper.encloseLabel(headerId,
-                    String.format("%s Print",
-                            ExternalSupplierEnum.SMARTSCHOOL.getUiText()),
-                    true);
-
-            IConfigProp.Key keyWlk;
-
-            // SmartSchool #1
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_ENABLE;
-            tagLabel("smartschool-print-enable-label-1",
-                    "smartschool-print-enable-1", keyWlk);
-            tagCheckbox("smartschool-print-enable-1", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_ENDPOINT_URL;
-            tagLabel("smartschool-print-endpoint-label-1",
-                    "smartschool-print-endpoint", keyWlk);
-            tagInput("smartschool-print-endpoint-1", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_ENDPOINT_PASSWORD;
-            tagLabel("smartschool-print-password-label-1",
-                    "smartschool-print-password", keyWlk);
-            tagPassword("smartschool-print-password-1", keyWlk,
-                    isReadOnlyAccess);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER;
-            tagLabel("smartschool-print-proxyprinter-label-1",
-                    "smartschool-print-proxyprinter", keyWlk);
-            tagInput("smartschool-print-proxyprinter-1", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
-            tagLabel("smartschool-print-proxyprinter-duplex-label-1",
-                    "smartschool-print-proxyprinter-duplex", keyWlk);
-            tagInput("smartschool-print-proxyprinter-duplex-1", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
-            tagLabel("smartschool-print-proxyprinter-grayscale-label-1",
-                    "smartschool-print-proxyprinter-grayscale", keyWlk);
-            tagInput("smartschool-print-proxyprinter-grayscale-1", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
-            tagLabel("smartschool-print-proxyprinter-grayscale-duplex-label-1",
-                    "smartschool-print-proxyprinter-grayscale-duplex", keyWlk);
-            tagInput("smartschool-print-proxyprinter-grayscale-duplex-1",
-                    keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_CHARGE_TO_STUDENTS;
-            tagLabel("smartschool-print-charge-to-students-label-1",
-                    "smartschool-print-charge-to-students", keyWlk);
-            tagCheckbox("smartschool-print-charge-to-students-1", keyWlk);
-
-            //
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_ENABLE;
-            tagLabel("smartschool-print-node-enable-label-1",
-                    "smartschool-print-node-enable", keyWlk);
-            tagCheckbox("smartschool-print-node-enable-1", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_PROXY_ENABLE;
-            tagLabel("smartschool-print-node-proxy-enable-label-1",
-                    "smartschool-print-node-proxy-enable", keyWlk);
-            tagCheckbox("smartschool-print-node-proxy-enable-1", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_ID;
-            tagLabel("smartschool-print-node-id-label-1",
-                    "smartschool-print-node-id", keyWlk);
-            tagInput("smartschool-print-node-id-1", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_1_SOAP_PRINT_NODE_PROXY_ENDPOINT_URL;
-            tagLabel("smartschool-print-node-proxy-endpoint-label-1",
-                    "smartschool-print-node-proxy-endpoint", keyWlk);
-            tagInput("smartschool-print-node-proxy-endpoint-1", keyWlk);
-
-            // SmartSchool #2
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_ENABLE;
-            tagLabel("smartschool-print-enable-label-2",
-                    "smartschool-print-enable-2", keyWlk);
-            tagCheckbox("smartschool-print-enable-2", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_ENDPOINT_URL;
-            tagLabel("smartschool-print-endpoint-label-2",
-                    "smartschool-print-endpoint", keyWlk);
-            tagInput("smartschool-print-endpoint-2", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_ENDPOINT_PASSWORD;
-            tagLabel("smartschool-print-password-label-2",
-                    "smartschool-print-password", keyWlk);
-            tagPassword("smartschool-print-password-2", keyWlk,
-                    isReadOnlyAccess);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER;
-            tagLabel("smartschool-print-proxyprinter-label-2",
-                    "smartschool-print-proxyprinter", keyWlk);
-            tagInput("smartschool-print-proxyprinter-2", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_DUPLEX;
-            tagLabel("smartschool-print-proxyprinter-duplex-label-2",
-                    "smartschool-print-proxyprinter-duplex", keyWlk);
-            tagInput("smartschool-print-proxyprinter-duplex-2", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE;
-            tagLabel("smartschool-print-proxyprinter-grayscale-label-2",
-                    "smartschool-print-proxyprinter-grayscale", keyWlk);
-            tagInput("smartschool-print-proxyprinter-grayscale-2", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE_DUPLEX;
-            tagLabel("smartschool-print-proxyprinter-grayscale-duplex-label-2",
-                    "smartschool-print-proxyprinter-grayscale-duplex", keyWlk);
-            tagInput("smartschool-print-proxyprinter-grayscale-duplex-2",
-                    keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_CHARGE_TO_STUDENTS;
-            tagLabel("smartschool-print-charge-to-students-label-2",
-                    "smartschool-print-charge-to-students", keyWlk);
-            tagCheckbox("smartschool-print-charge-to-students-2", keyWlk);
-
-            //
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_ENABLE;
-            tagLabel("smartschool-print-node-enable-label-2",
-                    "smartschool-print-node-enable", keyWlk);
-            tagCheckbox("smartschool-print-node-enable-2", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_PROXY_ENABLE;
-            tagLabel("smartschool-print-node-proxy-enable-label-2",
-                    "smartschool-print-node-proxy-enable", keyWlk);
-            tagCheckbox("smartschool-print-node-proxy-enable-2", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_ID;
-            tagLabel("smartschool-print-node-id-label-2",
-                    "smartschool-print-node-id", keyWlk);
-            tagInput("smartschool-print-node-id-2", keyWlk);
-
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_2_SOAP_PRINT_NODE_PROXY_ENDPOINT_URL;
-            tagLabel("smartschool-print-node-proxy-endpoint-label-2",
-                    "smartschool-print-node-proxy-endpoint", keyWlk);
-            tagInput("smartschool-print-node-proxy-endpoint-2", keyWlk);
-
-            //
-            keyWlk = IConfigProp.Key.SMARTSCHOOL_USER_INSERT_LAZY_PRINT;
-            tagLabel("smartschool-on-demand-user-creation-label",
-                    "smartschool-on-demand-user-creation", keyWlk);
-            tagCheckbox("smartschool-on-demand-user-creation", keyWlk);
-
-            //
-            labelledCheckbox("smartschool-papercut-enable",
-                    IConfigProp.Key.SMARTSCHOOL_PAPERCUT_ENABLE);
-
-            //
-            if (SmartschoolPrinter.isBlocked()) {
-                msgKey = "blocked";
-                cssColor = MarkupHelper.CSS_TXT_WARN;
-            } else {
-                msgKey = null;
-
-                final CircuitStateEnum circuitState = ConfigManager
-                        .getCircuitBreaker(
-                                CircuitBreakerEnum.SMARTSCHOOL_CONNECTION)
-                        .getCircuitState();
-
-                switch (circuitState) {
-
-                case CLOSED:
-                    break;
-
-                case DAMAGED:
-                    msgKey = "circuit-damaged";
-                    cssColor = MarkupHelper.CSS_TXT_ERROR;
-                    break;
-
-                case HALF_OPEN:
-                    // no break intended
-                case OPEN:
-                    msgKey = "circuit-open";
-                    cssColor = MarkupHelper.CSS_TXT_WARN;
-                    break;
-
-                default:
-                    final String exMsg = "Unhandled "
-                            + CircuitStateEnum.class.getSimpleName()
-                            + " value [" + circuitState.toString() + "]";
-                    LOGGER.error(exMsg);
-                    throw new RestartResponseException(
-                            new MessageContent(AppLogLevelEnum.ERROR, exMsg));
-                }
-            }
-
-            if (msgKey == null) {
-                msgText = "";
-            } else {
-                msgText = getLocalizer().getString(msgKey, this);
-            }
-
-            labelWrk = helper.encloseLabel("smartschool-print-status", msgText,
-                    true);
-
-            MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
-
-            labelWrk = helper.addCheckbox("flipswitch-smartschool-online",
-                    SmartschoolPrinter.isOnline());
-
-            setFlipswitchOnOffText(labelWrk);
-
-        } else {
-            helper.discloseLabel(headerId);
-        }
 
         /*
          * PaperCut Integration.

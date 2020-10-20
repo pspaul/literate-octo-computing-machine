@@ -86,7 +86,6 @@ import org.savapage.core.util.NumberUtil;
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.bitcoin.BitcoinGateway;
-import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.lib.pgp.PGPPublicKeyInfo;
 import org.savapage.server.WebApp;
 import org.savapage.server.cometd.UserEventService;
@@ -433,67 +432,6 @@ public final class SystemStatusPanel extends Panel {
             setResponsePage(
                     new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
             return;
-        }
-
-        /*
-         * Smartschool Print.
-         */
-        if (ConfigManager.isSmartSchoolPrintActiveAndEnabled()) {
-
-            if (SmartschoolPrinter.isBlocked()) {
-                msgKey = "blocked";
-                cssColor = MarkupHelper.CSS_TXT_WARN;
-            } else {
-                msgKey = null;
-
-                final CircuitStateEnum circuitState = ConfigManager
-                        .getCircuitBreaker(
-                                CircuitBreakerEnum.SMARTSCHOOL_CONNECTION)
-                        .getCircuitState();
-
-                switch (circuitState) {
-
-                case CLOSED:
-                    break;
-
-                case DAMAGED:
-                    msgKey = "circuit-damaged";
-                    cssColor = MarkupHelper.CSS_TXT_ERROR;
-                    break;
-
-                case HALF_OPEN:
-                    // no break intended
-                case OPEN:
-                    msgKey = "circuit-open";
-                    cssColor = MarkupHelper.CSS_TXT_WARN;
-                    break;
-
-                default:
-                    throw new SpException("Oops we missed "
-                            + CircuitStateEnum.class.getSimpleName()
-                            + " value [" + circuitState.toString() + "]");
-                }
-            }
-
-            if (msgKey == null) {
-                msgText = "";
-            } else {
-                msgText = getLocalizer().getString(msgKey, this);
-            }
-
-            labelWrk = helper.encloseLabel("smartschool-print-status", msgText,
-                    true);
-
-            MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
-                    cssColor);
-
-            labelWrk = helper.addCheckbox("flipswitch-smartschool-online",
-                    SmartschoolPrinter.isOnline());
-
-            setFlipswitchOnOffText(labelWrk);
-
-        } else {
-            helper.discloseLabel("smartschool-print-status");
         }
 
         /*

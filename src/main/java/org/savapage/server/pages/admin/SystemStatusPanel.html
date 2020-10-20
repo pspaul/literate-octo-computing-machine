@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -19,12 +19,9 @@ the License, or (at your option) any later version.
 
 	<ul data-role="listview" data-inset="true" id="dashboard-system-status">
 
-		<li data-role="list-divider">
-			<wicket:message key="title" />
-		</li>
+		<li data-role="list-divider"><wicket:message key="title" /></li>
 
-		<li>
-			<wicket:remove>
+		<li><wicket:remove>
 				<!--
     +======================================================================+
     | http://api.jquerymobile.com/table-reflow/
@@ -247,13 +244,11 @@ the License, or (at your option) any later version.
 						</tr>
 					</wicket:enclosure>
 				</tbody>
-			</table>
-		</li>
+			</table></li>
 
 
-		<li data-role="list-divider">
-			<wicket:message key="header-services" />
-		</li>
+		<li data-role="list-divider"><wicket:message
+				key="header-services" /></li>
 		<li wicket:id="sect-services">
 			<table data-role="table" data-mode="reflow"
 				class="ui-responsive table-stroke">
@@ -334,19 +329,6 @@ the License, or (at your option) any later version.
 						</td>
 					</tr>
 
-					<wicket:enclosure child="smartschool-print-status">
-						<tr>
-							<th style="vertical-align: middle;">Smartschool Print</th>
-							<td>
-								<input type="checkbox" class="flipswitch-smartschool-online"
-									wicket:id="flipswitch-smartschool-online" data-mini="true"
-									data-role="flipswitch" data-on-text="On" data-off-text="Off" />
-								<span style="margin-left: 20px; vertical-align: middle;"
-									wicket:id="smartschool-print-status" />
-							</td>
-						</tr>
-					</wicket:enclosure>
-
 					<wicket:enclosure child="payment-plugin-generic">
 						<tr>
 							<th style="vertical-align: middle;"
@@ -378,9 +360,7 @@ the License, or (at your option) any later version.
 			</table>
 		</li>
 
-		<li data-role="list-divider">
-			<wicket:message key="news" />
-		</li>
+		<li data-role="list-divider"><wicket:message key="news" /></li>
 		<wicket:panel wicket:id="savapage-news" />
 
 		<wicket:panel wicket:id="stats-pages-total" />

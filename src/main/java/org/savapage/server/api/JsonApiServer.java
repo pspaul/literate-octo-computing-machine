@@ -71,9 +71,7 @@ import org.savapage.core.cometd.CometdClientMixin;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.community.CommunityDictEnum;
-import org.savapage.core.community.MemberCard;
 import org.savapage.core.concurrent.ReadLockObtainFailedException;
-import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
@@ -169,8 +167,6 @@ import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayPlugin;
 import org.savapage.ext.payment.PaymentGatewayPlugin.PaymentRequest;
 import org.savapage.ext.payment.PaymentGatewayTrx;
-import org.savapage.ext.smartschool.SmartschoolPrintMonitor;
-import org.savapage.ext.smartschool.SmartschoolPrinter;
 import org.savapage.lib.pgp.PGPBaseException;
 import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.WebApp;
@@ -447,8 +443,6 @@ public final class JsonApiServer extends AbstractPage {
                     // no break intended
                 case JsonApiDict.REQ_PRINTER_PPDE_DOWNLOAD:
                     // no break intended
-                case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
-                    // no break intended
                 case JsonApiDict.REQ_USER_EXPORT_DATA_HISTORY:
                     handleExportFile(requestId, parameters, requestingUser,
                             isGetAction);
@@ -719,15 +713,6 @@ public final class JsonApiServer extends AbstractPage {
                                 .export(getSessionWebAppType(),
                                         getRequestCycle(), parameters,
                                         isGetAction, requestingUser, null);
-                break;
-
-            case JsonApiDict.REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
-                requestHandler = exportPapercutDelegatorCost(
-                        ConfigManager.instance().getConfigValue(
-                                Key.SMARTSCHOOL_PAPERCUT_ACCOUNT_PERSONAL_TYPE),
-                        "smartschool-papercut-student-cost.csv", tempExportFile,
-                        parameters.get(JsonApiDict.PARM_REQ_SUB).toString(),
-                        requestingUser);
                 break;
 
             case JsonApiDict.REQ_USER_EXPORT_DATA_HISTORY:
@@ -1035,15 +1020,13 @@ public final class JsonApiServer extends AbstractPage {
 
     /**
      * <p>
-     * Handles the {@link JsonApiDict#REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV}
-     * or oor {@link JsonApiDict#REQ_PAPERCUT_DELEGATOR_COST_CSV} request by
-     * returning the {@link IRequestHandler}.
+     * Handles the {@link JsonApiDict#REQ_PAPERCUT_DELEGATOR_COST_CSV} request
+     * by returning the {@link IRequestHandler}.
      * </p>
      *
      * @param personalAccountType
      *            The value of
-     *            {@link Key#PROXY_PRINT_DELEGATE_PAPERCUT_ACCOUNT_PERSONAL_TYPE}
-     *            or {@link Key#SMARTSCHOOL_PAPERCUT_ACCOUNT_PERSONAL_TYPE}.
+     *            {@link Key#PROXY_PRINT_DELEGATE_PAPERCUT_ACCOUNT_PERSONAL_TYPE}.
      * @param csvFileName
      *            The name of the CSV file as shown to the user.
      * @param tempCsvFile
@@ -1313,22 +1296,6 @@ public final class JsonApiServer extends AbstractPage {
                             getParmValue(parameters, isGetAction, "bitcoin")),
                     Boolean.parseBoolean(
                             getParmValue(parameters, isGetAction, "online")));
-
-        case JsonApiDict.REQ_SMARTSCHOOL_TEST:
-
-            return reqSmartSchoolTest();
-
-        case JsonApiDict.REQ_SMARTSCHOOL_START:
-
-            return reqSmartSchoolStart(false);
-
-        case JsonApiDict.REQ_SMARTSCHOOL_START_SIMULATE:
-
-            return reqSmartSchoolStart(true);
-
-        case JsonApiDict.REQ_SMARTSCHOOL_STOP:
-
-            return reqSmartSchoolStop();
 
         case JsonApiDict.REQ_USER_CREDIT_TRANSFER:
 
@@ -2739,109 +2706,6 @@ public final class JsonApiServer extends AbstractPage {
         }
 
         return userData;
-    }
-
-    /**
-     *
-     * @return
-     */
-    private Map<String, Object> reqSmartSchoolTest() {
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        try {
-            final MutableInt nMessagesInbox = new MutableInt();
-
-            SmartschoolPrintMonitor.testConnection(nMessagesInbox);
-
-            setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-smartschool-test-passed", nMessagesInbox.toString());
-
-        } catch (Exception e) {
-            String msg = e.getMessage();
-            if (msg == null) {
-                msg = "connection error.";
-            }
-            setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-smartschool-test-failed", msg);
-        }
-
-        return userData;
-    }
-
-    /**
-     *
-     * @return
-     */
-    private Map<String, Object> reqSmartSchoolStart(final boolean simulate) {
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final String msgKey;
-
-        if (!ConfigManager.isSmartSchoolPrintActiveAndEnabled()) {
-            return setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-smartschool-accounts-disabled");
-        }
-
-        SmartschoolPrinter
-                .setBlocked(MemberCard.instance().isMembershipDesirable());
-
-        if (SmartschoolPrinter.isBlocked()) {
-
-            return setApiResult(userData, ApiResultCodeEnum.WARN,
-                    "msg-smartschool-blocked",
-                    CommunityDictEnum.SAVAPAGE.getWord(),
-                    CommunityDictEnum.MEMBERSHIP.getWord());
-        }
-
-        if (SmartschoolPrinter.isOnline()) {
-
-            msgKey = "msg-smartschool-started-already";
-
-        } else {
-
-            if (simulate) {
-                SmartschoolPrintMonitor.resetJobTickerCounter();
-            }
-
-            SpJobScheduler.instance()
-                    .scheduleOneShotSmartSchoolPrintMonitor(simulate, 1L);
-
-            if (simulate) {
-                msgKey = "msg-smartschool-started-simulation";
-            } else {
-                msgKey = "msg-smartschool-started";
-            }
-
-            /*
-             * Have a retry and close relevant circuits.
-             */
-            ConfigManager
-                    .getCircuitBreaker(
-                            CircuitBreakerEnum.SMARTSCHOOL_CONNECTION)
-                    .closeCircuit();
-
-        }
-        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
-    }
-
-    /**
-     *
-     * @return
-     */
-    private Map<String, Object> reqSmartSchoolStop() {
-
-        final Map<String, Object> userData = new HashMap<String, Object>();
-
-        final String msgKey;
-
-        if (SpJobScheduler.interruptSmartSchoolPoller()) {
-            msgKey = "msg-smartschool-stopped";
-        } else {
-            msgKey = "msg-smartschool-stopped-already";
-        }
-        return setApiResult(userData, ApiResultCodeEnum.OK, msgKey);
     }
 
     /**

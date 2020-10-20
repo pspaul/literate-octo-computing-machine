@@ -437,56 +437,8 @@ public final class QueuesPage extends AbstractAdminListPage {
                     true);
 
             /*
-            *
-            */
-            final ConfigManager cm = ConfigManager.instance();
-
-            String proxyPrinterNames = null;
-
-            if (reservedQueue != null
-                    && reservedQueue == ReservedIppQueueEnum.SMARTSCHOOL) {
-
-                final StringBuilder builder = new StringBuilder();
-
-                if (cm.isConfigValue(Key.SMARTSCHOOL_1_ENABLE)) {
-                    builder.append(cm.getConfigValue(
-                            Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER));
-
-                    final String grayscalePrinter = cm.getConfigValue(
-                            Key.SMARTSCHOOL_1_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE);
-
-                    if (StringUtils.isNotBlank(grayscalePrinter)) {
-                        builder.append(" (").append(grayscalePrinter)
-                                .append(")");
-                    }
-                }
-
-                if (cm.isConfigValue(Key.SMARTSCHOOL_2_ENABLE)) {
-                    if (builder.length() > 0) {
-                        builder.append(", ");
-                    }
-                    builder.append(cm.getConfigValue(
-                            Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER));
-
-                    final String grayscalePrinter = cm.getConfigValue(
-                            Key.SMARTSCHOOL_2_SOAP_PRINT_PROXY_PRINTER_GRAYSCALE);
-
-                    if (StringUtils.isNotBlank(grayscalePrinter)) {
-                        builder.append(" (").append(grayscalePrinter)
-                                .append(")");
-                    }
-                }
-
-                proxyPrinterNames = builder.toString();
-
-            }
-
-            helper.encloseLabel("proxy-printer", proxyPrinterNames,
-                    StringUtils.isNotBlank(proxyPrinterNames));
-
-            /*
-            *
-            */
+             *
+             */
             item.add(new Label("ipAllowed"));
 
             /*

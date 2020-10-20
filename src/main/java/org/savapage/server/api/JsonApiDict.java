@@ -49,11 +49,11 @@ import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqI18nCacheClear;
 import org.savapage.server.api.request.ReqInboxClear;
 import org.savapage.server.api.request.ReqJobTicketCancel;
-import org.savapage.server.api.request.ReqJobTicketSaveCopies;
 import org.savapage.server.api.request.ReqJobTicketExec;
 import org.savapage.server.api.request.ReqJobTicketPrintCancel;
 import org.savapage.server.api.request.ReqJobTicketPrintClose;
 import org.savapage.server.api.request.ReqJobTicketQuickSearch;
+import org.savapage.server.api.request.ReqJobTicketSaveCopies;
 import org.savapage.server.api.request.ReqJobTicketSaveOptions;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqLogout;
@@ -200,15 +200,6 @@ public final class JsonApiDict {
             "jobticket-quick-search";
 
     public static final String REQ_PAPERCUT_TEST = "papercut-test";
-
-    public static final String REQ_SMARTSCHOOL_TEST = "smartschool-test";
-    public static final String REQ_SMARTSCHOOL_START = "smartschool-start";
-    public static final String REQ_SMARTSCHOOL_START_SIMULATE =
-            "smartschool-start-simulate";
-    public static final String REQ_SMARTSCHOOL_STOP = "smartschool-stop";
-
-    public static final String REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV =
-            "smartschool-papercut-student-cost-csv";
 
     public static final String REQ_SYSTEM_MODE_CHANGE = "system-mode-change";
 
@@ -832,7 +823,6 @@ public final class JsonApiDict {
         case REQ_PRINTER_PPD_DOWNLOAD:
         case REQ_PRINTER_PPDE_DOWNLOAD:
         case REQ_PRINTER_OPT_DOWNLOAD:
-        case REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV:
         case REQ_USER_EXPORT_DATA_HISTORY:
             return true;
         default:
@@ -1007,13 +997,6 @@ public final class JsonApiDict {
         adm(REQ_IMAP_STOP, DbClaim.NONE, DbAccess.NO);
 
         adm(REQ_PAPERCUT_TEST, DbClaim.NONE, DbAccess.NO);
-
-        adm(REQ_SMARTSCHOOL_TEST, DbClaim.NONE, DbAccess.NO);
-        adm(REQ_SMARTSCHOOL_START, DbClaim.NONE, DbAccess.NO);
-        adm(REQ_SMARTSCHOOL_START_SIMULATE, DbClaim.NONE, DbAccess.NO);
-        adm(REQ_SMARTSCHOOL_STOP, DbClaim.NONE, DbAccess.NO);
-        adm(REQ_SMARTSCHOOL_PAPERCUT_STUDENT_COST_CSV, DbClaim.NONE,
-                DbAccess.NO);
 
         adm(REQ_PAPERCUT_DELEGATOR_COST_CSV, DbClaim.NONE, DbAccess.NO);
 
