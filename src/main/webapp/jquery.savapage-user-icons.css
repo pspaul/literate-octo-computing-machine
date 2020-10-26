@@ -163,24 +163,28 @@
 }
 
 .ui-icon-main-arr-cut:after {
-    background: url(/glyfx/cut-selected.png) 50% 50% no-repeat;
-    background-size: 23px 23px;
+    background: url(/glyphicons/glyphicons_288_scissors.png) 50% 50% no-repeat;
+    background-size: 20px 22px;
     -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
+    opacity: .6;
 }
 
+
 .ui-icon-main-arr-paste-right:after {
-    background: url(/glyfx/paste-selected.png) 50% 50% no-repeat;
-    background-size: 25px 25px;
+    background: url(/icons-misc/paste-selected-right.png) 50% 50% no-repeat;
+    background-size: 24px 24px;
     -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
+    opacity: .7;
 }
 
 .ui-icon-main-arr-paste-left:after {
-    background: url(/glyfx/paste-selected-left.png) 50% 50% no-repeat;
-    background-size: 25px 25px;
+    background: url(/icons-misc/paste-selected-left.png) 50% 50% no-repeat;
+    background-size: 24px 24px;
     -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
+    opacity: .7;
 }
 
 .ui-icon-main-arr-action-popup:after {
@@ -192,17 +196,19 @@
 }
 
 .ui-icon-main-arr-unselect-all:after {
-    background: url(/glyfx/copy-unselected.png) 50% 50% no-repeat;
-    background-size: 25px 25px;
+    background: url(/icons-misc/unselect.png) 50% 50% no-repeat;
+    background-size: 24px 24px;
     -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
+    opacity: .7;
 }
 
 .ui-icon-main-arr-undo:after {
-    background: url(/glyfx/undo.png) 50% 50% no-repeat;
-    background-size: 25px 25px;
+    background: url(/icons-misc/undo.png) 50% 50% no-repeat;
+    background-size: 24px 24px;
     -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
+    opacity: .6;
 }
 
 .ui-icon-main-arr-edit:after {
@@ -378,8 +384,9 @@
 }
 
 .ui-icon-mini-cut:after {
-    background: url(/glyfx/cut-selected.png) 50% 50% no-repeat;
-    background-size: 16px 16px;
+    background: url(/glyphicons/glyphicons_288_scissors.png) 50% 50% no-repeat;
+    background-size: 15px 16px;
+    opacity: .6;
 }
 
 .ui-icon-mini-select:after {
@@ -419,8 +426,9 @@
 }
 
 .ui-icon-mini-duplex:after {
-    background: url(/glyfx/redo.png) 50% 50% no-repeat;
-    background-size: 20px 20px;
+    background: url(/icons-misc/redo.png) 50% 50% no-repeat;
+    background-size: 16px 16px;
+    opacity: .6;
 }
 
 .ui-icon-mini-print-color:after {
