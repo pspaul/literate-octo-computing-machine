@@ -1589,8 +1589,7 @@
                 pnl.refresh(pnl);
             };
             _self.refreshPrinters = function() {
-                var pnl = _panel.PrintersBase;
-                pnl.refresh(pnl);
+                _panel.PrintersBase.refresh();
             };
             _self.refreshAccountVouchers = function() {
                 var pnl = _panel.AccountVoucherBase;
@@ -1723,6 +1722,7 @@
              * Common Panel parameters to be set be the client.
              */
             _ns.PanelCommon.view = _view;
+            _ns.PanelCommon.api = _api;
             _ns.PanelCommon.userId = _model.user.id;
             _ns.PanelCommon.refreshPanelCommon = _refreshPanelCommon;
             _ns.PanelCommon.refreshPanelAdmin = _refreshPanel;
@@ -2279,15 +2279,14 @@
                 });
 
                 $(this).on('click', '#button-printers-apply', null, function() {
-                    var pnl = _panel.PrintersBase;
-                    pnl.page(pnl, 1);
+                    _panel.PrintersBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-printers-default', null, function() {
                     var pnl = _panel.PrintersBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 

@@ -177,6 +177,7 @@
              * Common Panel parameters to be set be the client.
              */
             _ns.PanelCommon.view = _view;
+            _ns.PanelCommon.api = _api;
             _ns.PanelCommon.userId = _model.user.id;
             _ns.PanelCommon.refreshPanelCommon = _refreshPanelCommon;
             _ns.PanelCommon.refreshPanelAdmin = _refreshPanelAdmin;

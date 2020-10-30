@@ -6207,6 +6207,7 @@
             // ----------------------------------------------------
 
             _ns.PanelCommon.view = _view;
+            _ns.PanelCommon.api = _api;
             _ns.PanelCommon.userId = _model.user.id;
 
             _ns.PanelCommon.onDisconnected = function() {

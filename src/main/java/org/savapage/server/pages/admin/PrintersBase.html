@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -17,51 +17,52 @@ the License, or (at your option) any later version.
 
 <ul data-role="listview" data-inset="true">
 
-	<li data-role="list-divider">
-		<span><wicket:message key="title" /></span>
-	</li>
+	<li data-role="list-divider"><span wicket:id="title" /></li>
 
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 
-			<h3>
-				<wicket:message key="select-and-sort" />
-			</h3>
+			<h3 wicket:id="select-and-sort" />
 
 			<ul data-role="listview" data-inset="true">
 
 				<li>
 					<div class="ui-field-contain">
-						<label for="sp-printer-containing-text" class="sp-txt-wrap">
-							<wicket:message key="prompt-containing-text" />
-						</label>
+						<label for="sp-printer-containing-text" class="sp-txt-wrap"
+							wicket:id="prompt-name" />
 						<input type="text" id="sp-printer-containing-text" value=""
 							maxlength="128" data-clear-btn="true" autocomplete="off"
 							autocorrect="off" autocapitalize="off" spellcheck="false" />
 					</div>
+
+					<div class="ui-field-contain" id="sp-printer-printer-group-contain">
+						<label for="sp-printer-printer-group" wicket:id="group-prompt" />
+						<input type="text" id="sp-printer-printer-group" value=""
+							data-type="search" maxlength="255" autocomplete="off"
+							autocorrect="off" autocapitalize="off" spellcheck="false" />
+						<ul id="sp-printer-printer-group-filter" data-role="listview"
+							data-filter="true" data-input="#sp-printer-printer-group"
+							data-filter-theme="a" data-inset="true" style="float: right;" />
+					</div>
+
+
 					<div class="ui-field-contain">
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
-								<wicket:message key="prompt-printer-status" />
-							</legend>
+							<legend wicket:id="prompt-printer-status" />
 
-							<label for="sp-printer-select-status-all">
-								<wicket:message key="printer-status-all" />
-							</label>
+							<label for="sp-printer-select-status-all">-</label>
 							<input type="radio" name="sp-printer-select-status"
 								id="sp-printer-select-status-all" value="" checked="checked" />
 
-							<label for="sp-printer-select-status-enabled">
-								<wicket:message key="printer-status-enabled" />
-							</label>
+							<label for="sp-printer-select-status-enabled"
+								wicket:id="printer-status-enabled" />
 							<input type="radio" name="sp-printer-select-status"
 								id="sp-printer-select-status-enabled" value="1" />
 
-							<label for="sp-printer-select-status-disabled">
-								<wicket:message key="printer-status-disabled" />
-							</label>
+							<label for="sp-printer-select-status-disabled"
+								wicket:id="printer-status-disabled" />
 							<input type="radio" name="sp-printer-select-status"
 								id="sp-printer-select-status-disabled" value="0" />
 
@@ -72,27 +73,67 @@ the License, or (at your option) any later version.
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
-								<wicket:message key="prompt-printer-deleted" />
-							</legend>
+							<legend wicket:id="prompt-printer-jobticket" />
 
+							<input type="radio" name="sp-printer-select-jobticket"
+								id="sp-printer-select-jobticket-all" value="" checked="checked" />
+							<label for="sp-printer-select-jobticket-all">-</label>
+
+							<input type="radio" name="sp-printer-select-jobticket"
+								id="sp-printer-select-jobticket-n" value="0" />
+							<label for="sp-printer-select-jobticket-n"
+								wicket:id="printer-jobticket-n" />
+
+							<input type="radio" name="sp-printer-select-jobticket"
+								id="sp-printer-select-jobticket-y" value="1" />
+							<label for="sp-printer-select-jobticket-y"
+								wicket:id="printer-jobticket-y" />
+
+						</fieldset>
+					</div>
+
+					<div class="ui-field-contain">
+						<fieldset data-role="controlgroup" data-type="horizontal"
+							class="ui-mini">
+
+							<legend wicket:id="prompt-printer-internal" />
+
+							<input type="radio" name="sp-printer-select-internal"
+								id="sp-printer-select-internal-all" value="" checked="checked" />
+							<label for="sp-printer-select-internal-all">-</label>
+
+							<input type="radio" name="sp-printer-select-internal"
+								id="sp-printer-select-internal-n" value="0" />
+							<label for="sp-printer-select-internal-n"
+								wicket:id="printer-internal-n" />
+
+							<input type="radio" name="sp-printer-select-internal"
+								id="sp-printer-select-internal-y" value="1" />
+							<label for="sp-printer-select-internal-y"
+								wicket:id="printer-internal-y" />
+
+						</fieldset>
+					</div>
+
+					<div class="ui-field-contain">
+						<fieldset data-role="controlgroup" data-type="horizontal"
+							class="ui-mini">
+
+							<legend wicket:id="prompt-printer-deleted" />
+
+							<label for="sp-printer-select-deleted-all">-</label>
 							<input type="radio" name="sp-printer-select-deleted"
 								id="sp-printer-select-deleted-all" value="" />
-							<label for="sp-printer-select-deleted-all">
-								<wicket:message key="printer-deleted-all" />
-							</label>
 
-							<input type="radio" name="sp-printer-select-deleted"
-								id="sp-printer-select-deleted-y" value="1" />
-							<label for="sp-printer-select-deleted-y">
-								<wicket:message key="printer-deleted-y" />
-							</label>
-
+							<label for="sp-printer-select-deleted-n"
+								wicket:id="printer-deleted-n" />
 							<input type="radio" name="sp-printer-select-deleted"
 								id="sp-printer-select-deleted-n" value="0" checked="checked" />
-							<label for="sp-printer-select-deleted-n">
-								<wicket:message key="printer-deleted-n" />
-							</label>
+
+							<label for="sp-printer-select-deleted-y"
+								wicket:id="printer-deleted-y" />
+							<input type="radio" name="sp-printer-select-deleted"
+								id="sp-printer-select-deleted-y" value="1" />
 
 						</fieldset>
 					</div>
@@ -103,21 +144,16 @@ the License, or (at your option) any later version.
 					<div class="ui-field-contain">
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
-							<legend>
-								<wicket:message key="prompt-sort-by" />
-							</legend>
 
+							<legend wicket:id="prompt-sort-by" />
+
+							<label for="sp-printer-sort-dir-asc" wicket:id="sort-asc" />
 							<input type="radio" name="sp-printer-sort-dir"
 								id="sp-printer-sort-dir-asc" checked="checked" />
-							<label for="sp-printer-sort-dir-asc">
-								<wicket:message key="sort-asc" />
-							</label>
 
+							<label for="sp-printer-sort-dir-desc" wicket:id="sort-desc" />
 							<input type="radio" name="sp-printer-sort-dir"
 								id="sp-printer-sort-dir-desc" />
-							<label for="sp-printer-sort-dir-desc">
-								<wicket:message key="sort-desc" />
-							</label>
 
 						</fieldset>
 					</div>
@@ -126,13 +162,11 @@ the License, or (at your option) any later version.
 				<li>
 					<div data-role="controlgroup" data-type="horizontal">
 						<button id="button-printers-apply"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+							wicket:id="button-apply" />
 						<button id="button-printers-default"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-							<wicket:message key="button-default" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+							wicket:id="button-default" />
 						<button
 							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</button>
 					</div>
@@ -160,7 +194,7 @@ the License, or (at your option) any later version.
 			</div>
 		</li>
 	</wicket:enclosure>
-	
+
 	<li id="sp-printer-list-page"></li>
 
 </ul>

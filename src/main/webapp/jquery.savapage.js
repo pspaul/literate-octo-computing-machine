@@ -636,6 +636,7 @@
         _ns.PanelCommon = {
 
             userId : null,
+            api : null,
             view : null,
             refreshPanelCommon : null,
             onDisconnected : null,

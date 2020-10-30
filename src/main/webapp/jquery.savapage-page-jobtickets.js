@@ -804,6 +804,7 @@
                 // Common Panel parameters.
                 //--------------------------------------------
                 _ns.PanelCommon.view = _view;
+                _ns.PanelCommon.api = _api;
 
                 _ns.PanelCommon.refreshPanelCommon = function(wClass, skipBeforeLoad, thePanel) {
                     var jqId = thePanel.jqId,

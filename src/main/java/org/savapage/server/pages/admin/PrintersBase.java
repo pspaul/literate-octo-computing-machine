@@ -29,7 +29,11 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.PrintModeEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -94,6 +98,38 @@ public final class PrintersBase extends AbstractAdminPage {
         } else {
             helper.discloseLabel(WICKET_ID_BUTTON_BAR);
         }
+
+        helper.addLabel("title", ACLOidEnum.A_PRINTERS.uiText(getLocale()));
+
+        helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
+
+        helper.addLabel("prompt-name", NounEnum.NAME);
+
+        helper.addLabel("group-prompt", NounEnum.GROUP);
+        helper.addLabel("prompt-printer-status", NounEnum.STATUS);
+
+        helper.addLabel("prompt-printer-jobticket", NounEnum.MODE);
+        helper.addLabel("printer-jobticket-n", NounEnum.PRINTER);
+        helper.addLabel("printer-jobticket-y",
+                PrintModeEnum.TICKET.uiText(getLocale()));
+
+        helper.addLabel("prompt-printer-internal", NounEnum.SCOPE);
+        helper.addLabel("printer-internal-n", AdjectiveEnum.PUBLIC);
+        helper.addLabel("printer-internal-y", AdjectiveEnum.INTERNAL);
+
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
+
+        helper.addLabel("printer-status-enabled", AdverbEnum.ENABLED);
+        helper.addLabel("printer-status-disabled", AdverbEnum.DISABLED);
+
+        helper.addLabel("prompt-printer-deleted", AdverbEnum.DELETED);
+        helper.addLabel("printer-deleted-y", AdverbEnum.DELETED);
+        helper.addLabel("printer-deleted-n", AdjectiveEnum.ACTIVE);
+
+        helper.addLabel("prompt-sort-by", NounEnum.SORTING);
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
 
     }
 

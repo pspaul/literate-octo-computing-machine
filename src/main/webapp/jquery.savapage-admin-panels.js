@@ -1064,57 +1064,91 @@
          */
         _ns.PanelPrintersBase = {
 
-            applyDefaults : function(my) {
-                my.input.page = 1;
-                my.input.maxResults = 10;
-                my.input.sort.ascending = true;
-                my.input.select.text = null;
-                my.input.select.disabled = null;
-                my.input.select.deleted = false;
+            groupSearchObj : null,
+
+            applyDefaults : function() {
+                this.input.page = 1;
+                this.input.maxResults = 10;
+                this.input.sort.ascending = true;
+                this.input.select.text = null;
+                this.input.select.group = null;
+                this.input.select.disabled = null;
+                this.input.select.ticket = null;
+                this.input.select.internal = null;
+                this.input.select.deleted = false;
             },
 
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
-            afterload : function(my) {
-                my.m2v(my);
-                my.page(my, my.input.page);
+            afterload : function() {
+                if (!this.groupSearchObj) {
+                    this.groupSearchObj = new _ns.QuickObjectSearch(_ns.PanelCommon.view, _ns.PanelCommon.api);
+                }
+                this.groupSearchObj.onCreate($("#sp-printer-printer-group-contain"), 'sp-printer-printer-group-filter', 'printergroup-quick-search', null,
+                //
+                function(item) {
+                    return item.text;
+                }, //
+                function(item) {
+                    $("#sp-printer-printer-group").val(item.text);
+                });
+
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var id,
                     val,
                     _view = _ns.PanelCommon.view;
 
-                $('#sp-printer-containing-text').val(my.input.select.text);
+                $('#sp-printer-containing-text').val(this.input.select.text);
+                $('#sp-printer-printer-group').val(this.input.select.group);
 
-                val = my.input.select.disabled;
+                val = this.input.select.disabled;
                 _view.checkRadioValue('sp-printer-select-status', val === null ? "" : ( val ? "0" : "1"));
 
-                val = my.input.select.deleted;
+                val = this.input.select.ticket;
+                _view.checkRadioValue('sp-printer-select-jobticket', val === null ? "" : ( val ? "1" : "0"));
+
+                val = this.input.select.internal;
+                _view.checkRadioValue('sp-printer-select-internal', val === null ? "" : ( val ? "1" : "0"));
+
+                val = this.input.select.deleted;
                 _view.checkRadioValue('sp-printer-select-deleted', val === null ? "" : ( val ? "1" : "0"));
 
                 //
                 id = 'sp-printer-sort-dir';
-                _view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+                _view.checkRadio(id, this.input.sort.ascending ? id + '-asc' : id + '-desc');
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var val,
                     _view = _ns.PanelCommon.view,
                     sel = $('#sp-printer-containing-text'),
                     present = (sel.val().length > 0);
 
-                my.input.select.text = ( present ? sel.val() : null);
+                this.input.select.text = ( present ? sel.val() : null);
+
+                sel = $('#sp-printer-printer-group'),
+                present = (sel.val().length > 0);
+                this.input.select.group = ( present ? sel.val() : null);
 
                 val = _view.getRadioValue('sp-printer-select-status');
-                my.input.select.disabled = (val === "" ? null : (val === "0"));
+                this.input.select.disabled = (val === "" ? null : (val === "0"));
+
+                val = _view.getRadioValue('sp-printer-select-jobticket');
+                this.input.select.ticket = (val === "" ? null : (val === "1"));
+
+                val = _view.getRadioValue('sp-printer-select-internal');
+                this.input.select.internal = (val === "" ? null : (val === "1"));
 
                 val = _view.getRadioValue('sp-printer-select-deleted');
-                my.input.select.deleted = (val === "" ? null : (val === "1"));
+                this.input.select.deleted = (val === "" ? null : (val === "1"));
 
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-printer-sort-dir', 'sp-printer-sort-dir-asc');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-printer-sort-dir', 'sp-printer-sort-dir-asc');
             },
 
             // JSON input
@@ -1123,6 +1157,8 @@
                 maxResults : 10,
                 select : {
                     disabled : null,
+                    ticket : null,
+                    internal : null,
                     deleted : false
                 },
                 sort : {
@@ -1137,50 +1173,45 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 _ns.PanelCommon.refreshPanelAdmin('PrintersBase', skipBeforeLoad);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageAdmin(my, 'PrintersPage', '#sp-printer-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m(_this);
+                    _ns.PanelCommon.loadListPageAdmin(_this, 'PrintersPage', '#sp-printer-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
             onOutput : function(my, output) {
-
-                my.output = output;
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page gets
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-printers-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
-                    /*
-                     * return false so URL is not followed.
-                     */
+                    _this.page(parseInt($(this).text(), 10));
+                    // return false so URL is not followed.
                     return false;
                 });
                 $(".sp-printers-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
-                    /*
-                     * return false so URL is not followed.
-                     */
+                    _this.page(_this.output.nextPage);
+                    // return false so URL is not followed.
                     return false;
                 });
 
                 $(".sp-printers-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
-                    /*
-                     * return false so URL is not followed.
-                     */
+                    _this.page(_this.output.prevPage);
+                    // return false so URL is not followed.
                     return false;
                 });
 
