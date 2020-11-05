@@ -70,9 +70,9 @@
              * The map of panels. The key is the Java Wicket class. Each key has
              * the following attributes.
              *
-             * getInput : function(my) {}
+             * getInput : function() {}
              *
-             * onOutput : function(my, output) {}
+             * onOutput : function(output) {}
              */
             _panel = {
                 UserOutbox : _ns.PanelUserOutbox,
@@ -112,11 +112,11 @@
                     jsonData = null;
 
                 if (!skipBeforeLoad && panel.beforeload) {
-                    panel.beforeload(panel);
+                    panel.beforeload();
                 }
 
                 if (panel.getInput) {
-                    data = panel.getInput(panel);
+                    data = panel.getInput();
                 }
 
                 if (data) {
@@ -147,7 +147,7 @@
                         /*
                          * We can't retrieve the json-rsp here, why?
                          */
-                        panel.onOutput(panel, undefined);
+                        panel.onOutput(undefined);
                     }
 
                     /*
@@ -156,7 +156,7 @@
                      * first page of the list.
                      */
                     if (panel.afterload) {
-                        panel.afterload(panel);
+                        panel.afterload();
                     } else {
                         $.mobile.loading("hide");
                     }
@@ -368,7 +368,7 @@
                 $(this).on('click', '#sp-btn-user-pending-jobs', null, function() {
                     var pnl = _panel.UserOutbox;
                     pnl.userKey = _userKey;
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                 }).on('click', '.sp-outbox-account-trx-info-job', null, function() {
                     _onAccountTrxInfo($(this), false);
                 }).on('click', '.sp-outbox-account-trx-info-jobticket', null, function() {
@@ -390,31 +390,29 @@
                  */
                 $(this).on('click', '#sp-btn-user-doc-log', null, function() {
                     var pnl = _panel.DocLogBase;
-                    pnl.applyDefaultForPrintSite(pnl);
+                    pnl.applyDefaultForPrintSite();
                     pnl.input.select.user_id = _userKey;
 
                     // HACK: hidden field is present/set in THIS container.
                     $('#sp-doclog-hidden-user-id').val(_userKey);
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
                 $(this).on('click', '#button-doclog-apply', null, function() {
-                    var pnl = _panel.DocLogBase;
-                    pnl.page(pnl, 1);
+                    _panel.DocLogBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-doclog-default', null, function() {
                     var pnl = _panel.DocLogBase;
-                    pnl.applyDefaultForPrintSite(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaultForPrintSite();
+                    pnl.m2v();
                     return false;
                 });
 
                 $(this).on('change', "input[name='sp-doclog-select-type']", null, function() {
-                    var pnl = _panel.DocLogBase;
-                    pnl.setVisibility(pnl);
+                    _panel.DocLogBase.setVisibility();
                     return false;
                 });
 
@@ -423,31 +421,29 @@
                  */
                 $(this).on('click', '#sp-btn-user-trx', null, function() {
                     var pnl = _panel.AccountTrxBase;
-                    //pnl.applyDefaultForPrintSite(pnl);
                     pnl.input.select.user_id = _userKey;
 
                     // HACK: hidden field is present/set in THIS container.
                     $('#sp-accounttrx-hidden-user-id').val(_userKey);
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
                 $(this).on('click', '#button-accounttrx-apply', null, function() {
-                    var pnl = _panel.AccountTrxBase;
-                    pnl.page(pnl, 1);
+                    _panel.AccountTrxBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-accounttrx-default', null, function() {
                     var pnl = _panel.AccountTrxBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
                 $(this).on('click', '.sp-btn-accounttrx-report', null, function() {
                     var pnl = _panel.AccountTrxBase;
-                    pnl.v2m(pnl);
+                    pnl.v2m();
                     _self.onDownload("report", pnl.input, "AccountTrxList", $(this).attr('data-savapage'));
                     return true;
                 });
@@ -467,20 +463,19 @@
 
                     // HACK: hidden field is present/set in THIS container.
                     $('#sp-accounttrx-hidden-user-id-pc').val(_userKey);
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
                 $(this).on('click', '#sp-btn-accounttrx-apply-pc', null, function() {
-                    var pnl = _panel.PaperCutAccountTrxBase;
-                    pnl.page(pnl, 1);
+                    _panel.PaperCutAccountTrxBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#sp-btn-accounttrx-default-pc', null, function() {
                     var pnl = _panel.PaperCutAccountTrxBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
@@ -488,8 +483,7 @@
                  * Dashboard Panel
                  */
                 $(this).on('click', '#sp-btn-dashboard', null, function() {
-                    var pnl = _panel.Dashboard;
-                    pnl.refresh(pnl, true);
+                    _panel.Dashboard.refresh(true);
                     return false;
                 });
 
@@ -503,8 +497,7 @@
                  * UserEdit Panel
                  */
                 $(this).on('click', '#sp-btn-user-details', null, function() {
-                    var pnl = _panel.UserEdit;
-                    pnl.refresh(pnl, true);
+                    _panel.UserEdit.refresh(true);
                     return false;
                 });
 
@@ -512,7 +505,7 @@
                     var pnl = _panel.UserEdit,
                         res = _api.call({
                         request : 'printsite-user-set',
-                        dto : JSON.stringify(pnl.v2m(pnl, _view))
+                        dto : JSON.stringify(pnl.v2m(_view))
                     });
                     _view.showApiMsg(res);
                     return false;

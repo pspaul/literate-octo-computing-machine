@@ -679,7 +679,7 @@
                 _ns.logger.debug(url);
 
                 if (panel.getInput) {
-                    data = panel.getInput(panel);
+                    data = panel.getInput();
                 }
 
                 if (data) {
@@ -700,7 +700,7 @@
                     $(jqId).html(html).enhanceWithin();
                     json = $(jqId + ' .json-rsp').text();
                     if (panel.onOutput && json) {
-                        panel.onOutput(panel, $.parseJSON(json));
+                        panel.onOutput($.parseJSON(json));
                     }
                 }).fail(function() {
                     _ns.PanelCommon.onDisconnected();
@@ -731,54 +731,54 @@
             // The HTML id attribute of the Panel.
             jqId : null,
 
-            applyDefaults : function(my) {
+            applyDefaults : function() {
 
-                my.input.page = 1;
-                my.input.maxResults = 10;
+                this.input.page = 1;
+                this.input.maxResults = 10;
 
-                my.input.select.user_id = null;
-                my.input.select.account_id = null;
+                this.input.select.user_id = null;
+                this.input.select.account_id = null;
 
-                my.input.select.text = null;
+                this.input.select.text = null;
 
-                my.input.select.trxType = null;
-                my.input.select.date_from = null;
-                my.input.select.date_to = null;
+                this.input.select.trxType = null;
+                this.input.select.date_from = null;
+                this.input.select.date_to = null;
 
-                my.input.sort.field = 'TRX_DATE';
-                my.input.sort.ascending = false;
+                this.input.sort.field = 'TRX_DATE';
+                this.input.sort.ascending = false;
 
             },
 
-            beforeload : function(my) {
-                my.applyDefaults(my);
+            beforeload : function() {
+                this.applyDefaults();
             },
 
-            afterload : function(my) {
+            afterload : function() {
                 var _view = _ns.PanelCommon.view;
 
                 _view.mobipick($("#sp-accounttrx-date-from"));
                 _view.mobipick($("#sp-accounttrx-date-to"));
 
-                my.m2v(my);
-                my.page(my, my.input.page);
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var _view = _ns.PanelCommon.view;
 
                 $('#sp-accounttrx-containing-text').val('');
 
                 _view.checkRadio('sp-accounttrx-select-type', 'sp-accounttrx-select-type-all');
 
-                _view.mobipickSetDate($('#sp-accounttrx-date-from'), my.input.select.date_from);
-                _view.mobipickSetDate($('#sp-accounttrx-date-to'), my.input.select.date_to);
+                _view.mobipickSetDate($('#sp-accounttrx-date-from'), this.input.select.date_from);
+                _view.mobipickSetDate($('#sp-accounttrx-date-to'), this.input.select.date_to);
 
                 _view.checkRadio('sp-accounttrx-sort-by', 'sp-accounttrx-sort-by-date');
                 _view.checkRadio('sp-accounttrx-sort-dir', 'sp-accounttrx-sort-dir-desc');
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var _view = _ns.PanelCommon.view,
                     sel = $('#sp-accounttrx-date-from'),
                     date = _view.mobipickGetDate(sel),
@@ -786,35 +786,34 @@
                     present = (sel.val().length > 0);
 
                 //
-                my.input.select.date_from = ( present ? date.getTime() : null);
+                this.input.select.date_from = ( present ? date.getTime() : null);
 
                 //
                 val = $('#sp-accounttrx-hidden-user-id').val();
                 present = (val.length > 0);
-                my.input.select.user_id = ( present ? val : null);
+                this.input.select.user_id = ( present ? val : null);
 
                 //
                 val = $('#sp-accounttrx-hidden-account-id').val();
                 present = (val.length > 0);
-                my.input.select.account_id = ( present ? val : null);
+                this.input.select.account_id = ( present ? val : null);
 
                 //
                 val = _view.getRadioValue('sp-accounttrx-select-type');
                 present = (val.length > 0);
-                my.input.select.trxType = ( present ? val : null);
+                this.input.select.trxType = ( present ? val : null);
 
                 sel = $('#sp-accounttrx-date-to');
                 date = _view.mobipickGetDate(sel);
                 present = (sel.val().length > 0);
-                my.input.select.date_to = ( present ? date.getTime() : null);
+                this.input.select.date_to = ( present ? date.getTime() : null);
 
                 sel = $('#sp-accounttrx-containing-text');
                 present = (sel.val().length > 0);
-                my.input.select.text = ( present ? sel.val() : null);
+                this.input.select.text = ( present ? sel.val() : null);
 
-                my.input.sort.field = _view.getRadioValue('sp-accounttrx-sort-by');
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-accounttrx-sort-dir', 'sp-accounttrx-sort-dir-asc');
-
+                this.input.sort.field = _view.getRadioValue('sp-accounttrx-sort-by');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-accounttrx-sort-dir', 'sp-accounttrx-sort-dir-asc');
             },
 
             // JSON input
@@ -843,49 +842,44 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
-                _ns.PanelCommon.refreshPanelCommon('AccountTrxBase', skipBeforeLoad, my);
+            refresh : function(skipBeforeLoad) {
+                _ns.PanelCommon.refreshPanelCommon('AccountTrxBase', skipBeforeLoad, this);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageCommon(my, 'AccountTrxPage', '#sp-accounttrx-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageCommon(_this, 'AccountTrxPage', '#sp-accounttrx-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-
-                my.output = output;
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page get
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-accounttrx-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
-                    /*
-                     * return false so URL is not followed.
-                     */
+                    _this.page(parseInt($(this).text(), 10));
+                    // return false so URL is not followed.
                     return false;
                 });
                 $(".sp-accounttrx-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
-                    /*
-                     * return false so URL is not followed.
-                     */
+                    _this.page(_this.output.nextPage);
+                    // return false so URL is not followed.
                     return false;
                 });
                 $(".sp-accounttrx-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
-                    /*
-                     * return false so URL is not followed.
-                     */
+                    _this.page(_this.output.prevPage);
+                    // return false so URL is not followed.
                     return false;
                 });
 
@@ -900,79 +894,77 @@
             // The HTML id attribute of the Panel.
             jqId : null,
 
-            applyDefaults : function(my) {
+            applyDefaults : function() {
 
-                my.input.page = 1;
-                my.input.maxResults = 10;
+                this.input.page = 1;
+                this.input.maxResults = 10;
 
-                my.input.select.user_id = null;
+                this.input.select.user_id = null;
 
-                my.input.select.text = null;
+                this.input.select.text = null;
 
-                my.input.select.trxType = null;
-                my.input.select.date_from = null;
-                my.input.select.date_to = null;
+                this.input.select.trxType = null;
+                this.input.select.date_from = null;
+                this.input.select.date_to = null;
 
-                my.input.sort.field = 'TRX_DATE';
-                my.input.sort.ascending = false;
-
+                this.input.sort.field = 'TRX_DATE';
+                this.input.sort.ascending = false;
             },
 
-            beforeload : function(my) {
-                my.applyDefaults(my);
+            beforeload : function() {
+                this.applyDefaults();
             },
 
-            afterload : function(my) {
+            afterload : function() {
                 var _view = _ns.PanelCommon.view;
 
                 _view.mobipick($("#sp-accounttrx-date-from-pc"));
                 _view.mobipick($("#sp-accounttrx-date-to-pc"));
 
-                my.m2v(my);
-                my.page(my, my.input.page);
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var _view = _ns.PanelCommon.view;
 
                 $('#sp-accounttrx-containing-text-pc').val('');
 
                 _view.checkRadio('sp-accounttrx-select-type-pc', 'sp-accounttrx-select-type-all-pc');
 
-                _view.mobipickSetDate($('#sp-accounttrx-date-from-pc'), my.input.select.date_from);
-                _view.mobipickSetDate($('#sp-accounttrx-date-to-pc'), my.input.select.date_to);
+                _view.mobipickSetDate($('#sp-accounttrx-date-from-pc'), this.input.select.date_from);
+                _view.mobipickSetDate($('#sp-accounttrx-date-to-pc'), this.input.select.date_to);
 
                 _view.checkRadio('sp-accounttrx-sort-by-pc', 'sp-accounttrx-sort-by-date-pc');
                 _view.checkRadio('sp-accounttrx-sort-dir-pc', 'sp-accounttrx-sort-dir-desc-pc');
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var _view = _ns.PanelCommon.view,
                     sel = $('#sp-accounttrx-date-from-pc'),
                     date = _view.mobipickGetDate(sel),
                     val,
                     present = (sel.val().length > 0);
 
-                my.input.select.date_from = ( present ? date.getTime() : null);
+                this.input.select.date_from = ( present ? date.getTime() : null);
 
-                my.input.select.user_id = $('#sp-accounttrx-hidden-user-id-pc').val();
+                this.input.select.user_id = $('#sp-accounttrx-hidden-user-id-pc').val();
 
                 val = _view.getRadioValue('sp-accounttrx-select-type-pc');
                 present = (val.length > 0);
-                my.input.select.trxType = ( present ? val : null);
+                this.input.select.trxType = ( present ? val : null);
 
                 sel = $('#sp-accounttrx-date-to-pc');
                 date = _view.mobipickGetDate(sel);
                 present = (sel.val().length > 0);
-                my.input.select.date_to = ( present ? date.getTime() : null);
+                this.input.select.date_to = ( present ? date.getTime() : null);
 
                 sel = $('#sp-accounttrx-containing-text-pc');
                 present = (sel.val().length > 0);
-                my.input.select.text = ( present ? sel.val() : null);
+                this.input.select.text = ( present ? sel.val() : null);
 
-                my.input.sort.field = _view.getRadioValue('sp-accounttrx-sort-by-pc');
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-accounttrx-sort-dir-pc', 'sp-accounttrx-sort-dir-asc-pc');
-
+                this.input.sort.field = _view.getRadioValue('sp-accounttrx-sort-by-pc');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-accounttrx-sort-dir-pc', 'sp-accounttrx-sort-dir-asc-pc');
             },
 
             // JSON input
@@ -1001,40 +993,41 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
-                _ns.PanelCommon.refreshPanelCommon('PaperCutAccountTrxBase', skipBeforeLoad, my);
+            refresh : function(skipBeforeLoad) {
+                _ns.PanelCommon.refreshPanelCommon('PaperCutAccountTrxBase', skipBeforeLoad, this);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageCommon(my, 'PaperCutAccountTrxPage', '#sp-accounttrx-list-page-pc');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageCommon(_this, 'PaperCutAccountTrxPage', '#sp-accounttrx-list-page-pc');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-
-                my.output = output;
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page get
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-accounttrx-page-pc").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     return false;
                 });
                 $(".sp-accounttrx-page-pc-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     return false;
                 });
                 $(".sp-accounttrx-page-pc-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     return false;
                 });
             }
@@ -1060,82 +1053,81 @@
                 $("#sp-doclog-account-title").html("");
             },
 
-            applyDefaultForTicket : function(my) {
-                my.applyDefaults(my);
-                my.input.select.doc_type = 'TICKET';
+            applyDefaultForTicket : function() {
+                this.applyDefaults();
+                this.input.select.doc_type = 'TICKET';
             },
 
-            applyDefaultForPrintSite : function(my) {
-                my.applyDefaults(my);
-                my.input.select.doc_type = 'PRINT';
+            applyDefaultForPrintSite : function() {
+                this.applyDefaults();
+                this.input.select.doc_type = 'PRINT';
             },
 
             /*
              * Generic: can be reused
              */
-            applyDefaults : function(my) {
+            applyDefaults : function() {
 
-                my.input.page = 1;
-                my.input.maxResults = 10;
+                this.input.page = 1;
+                this.input.maxResults = 10;
 
                 /*
                  * NOTE: In User WebApp the user_id of the logged in user
                  * is used. In Admin WebApp value of field below is used.
                  */
-                my.input.select.user_id = null;
+                this.input.select.user_id = null;
 
                 //
-                my.input.select.account_id = null;
+                this.input.select.account_id = null;
 
                 // ALL, IN, OUT, PDF, PRINT, TICKET
-                my.input.select.doc_type = my.doc_type_default;
+                this.input.select.doc_type = this.doc_type_default;
 
-                my.input.select.date_from = null;
-                my.input.select.date_to = null;
-                my.input.select.doc_name = '';
+                this.input.select.date_from = null;
+                this.input.select.date_to = null;
+                this.input.select.doc_name = '';
 
-                my.input.select.queue_id = null;
+                this.input.select.queue_id = null;
 
-                my.input.select.signature = "";
-                my.input.select.destination = "";
+                this.input.select.signature = "";
+                this.input.select.destination = "";
                 // Boolean
-                my.input.select.letterhead = undefined;
+                this.input.select.letterhead = undefined;
 
-                my.input.select.printer_id = null;
-                my.input.select.job_state = "0";
+                this.input.select.printer_id = null;
+                this.input.select.job_state = "0";
                 // Boolean
-                my.input.select.duplex = undefined;
+                this.input.select.duplex = undefined;
 
-                my.input.select.author = '';
-                my.input.select.subject = '';
-                my.input.select.keywords = '';
-                my.input.select.userpw = '';
-                my.input.select.ownerpw = '';
+                this.input.select.author = '';
+                this.input.select.subject = '';
+                this.input.select.keywords = '';
+                this.input.select.userpw = '';
+                this.input.select.ownerpw = '';
                 // Boolean
-                my.input.select.encrypted = undefined;
+                this.input.select.encrypted = undefined;
 
-                my.input.select.ticket_number = '';
+                this.input.select.ticket_number = '';
 
-                my.input.sort.field = 'date';
-                my.input.sort.ascending = false;
-
+                this.input.sort.field = 'date';
+                this.input.sort.ascending = false;
             },
 
-            beforeload : function(my) {
-                my.applyDefaults(my);
+            beforeload : function() {
+                this.applyDefaults();
             },
 
-            afterload : function(my) {
+            afterload : function() {
                 var _view = _ns.PanelCommon.view;
 
                 _view.mobipick($("#sp-doclog-date-from"));
                 _view.mobipick($("#sp-doclog-date-to"));
 
-                my.m2v(my);
-                my.page(my, my.input.page);
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            setVisibility : function(my) {
+            setVisibility : function() {
                 var _view = _ns.PanelCommon.view;
 
                 $('.sp-doclog-cat-out').hide();
@@ -1169,62 +1161,62 @@
                 }
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var val,
                     id,
                     _view = _ns.PanelCommon.view;
 
-                $('#sp-doclog-document-name').val(my.input.select.doc_name);
-                $('#sp-doclog-ticket-number').val(my.input.select.ticket_number);
+                $('#sp-doclog-document-name').val(this.input.select.doc_name);
+                $('#sp-doclog-ticket-number').val(this.input.select.ticket_number);
 
                 // For future use.
-                //$('#sp-doc-out-signature').val(my.input.select.signature);
+                //$('#sp-doc-out-signature').val(this.input.select.signature);
 
-                $('#sp-doc-out-destination').val(my.input.select.destination);
+                $('#sp-doc-out-destination').val(this.input.select.destination);
 
-                _view.mobipickSetDate($('#sp-doclog-date-from'), my.input.select.date_from);
-                _view.mobipickSetDate($('#sp-doclog-date-to'), my.input.select.date_to);
+                _view.mobipickSetDate($('#sp-doclog-date-from'), this.input.select.date_from);
+                _view.mobipickSetDate($('#sp-doclog-date-to'), this.input.select.date_to);
 
                 //--
-                _view.checkRadioValue('sp-doclog-sort-by', my.input.sort.field);
+                _view.checkRadioValue('sp-doclog-sort-by', this.input.sort.field);
 
                 id = 'sp-doclog-sort-dir';
-                _view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+                _view.checkRadio(id, this.input.sort.ascending ? id + '-asc' : id + '-desc');
 
                 //---------------------------------
-                if (my.input.select.printer_id) {
-                    $('#sp-print-out-printer').val(my.input.select.printer_id).selectmenu('refresh');
-                    my.input.select.doc_type = "PRINT";
-                } else if (my.input.select.queue_id) {
-                    $('#sp-print-in-queue').val(my.input.select.queue_id).selectmenu('refresh');
-                    my.input.select.doc_type = "IN";
+                if (this.input.select.printer_id) {
+                    $('#sp-print-out-printer').val(this.input.select.printer_id).selectmenu('refresh');
+                    this.input.select.doc_type = "PRINT";
+                } else if (this.input.select.queue_id) {
+                    $('#sp-print-in-queue').val(this.input.select.queue_id).selectmenu('refresh');
+                    this.input.select.doc_type = "IN";
                 }
 
-                $('#sp-print-out-state').val(my.input.select.job_state).selectmenu('refresh');
+                $('#sp-print-out-state').val(this.input.select.job_state).selectmenu('refresh');
 
                 //--
-                if (!my.doc_type_default) {
+                if (!this.doc_type_default) {
                     // Initialize default from first-time setting.
-                    my.doc_type_default = _view.getRadioValue('sp-doclog-select-type');
-                    my.input.select.doc_type = my.doc_type_default;
+                    this.doc_type_default = _view.getRadioValue('sp-doclog-select-type');
+                    this.input.select.doc_type = this.doc_type_default;
                 }
 
-                _view.checkRadioValue('sp-doclog-select-type', my.input.select.doc_type);
+                _view.checkRadioValue('sp-doclog-select-type', this.input.select.doc_type);
 
-                val = my.input.select.letterhead;
+                val = this.input.select.letterhead;
                 _view.checkRadioValue('sp-doc-out-lh', val === undefined ? "" : ( val ? "1" : "0"));
 
-                val = my.input.select.duplex;
+                val = this.input.select.duplex;
                 _view.checkRadioValue('sp-print-out-duplex', val === undefined ? "" : ( val ? "1" : "0"));
 
-                val = my.input.select.encrypted;
+                val = this.input.select.encrypted;
                 _view.checkRadioValue('sp-pdf-out-encrypt', val === undefined ? "" : ( val ? "1" : "0"));
 
                 //---------------------------------
-                my.setVisibility(my);
+                this.setVisibility();
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var _view = _ns.PanelCommon.view,
                     val,
                     sel,
@@ -1244,94 +1236,94 @@
                 // this panel.
                 val = $('#sp-doclog-hidden-user-id').val();
                 present = (val.length > 0);
-                my.input.select.user_id = ( present ? val : null);
+                this.input.select.user_id = ( present ? val : null);
 
                 // HACK: hidden field must be present/set in the container of
                 // this panel.
                 val = $('#sp-doclog-hidden-account-id').val();
                 present = (val.length > 0);
-                my.input.select.account_id = ( present ? val : null);
+                this.input.select.account_id = ( present ? val : null);
 
                 //
                 date = _view.mobipickGetDate(sel);
                 present = (sel.val().length > 0);
-                my.input.select.date_from = ( present ? date.getTime() : null);
+                this.input.select.date_from = ( present ? date.getTime() : null);
 
-                my.input.select.doc_type = _view.getRadioValue('sp-doclog-select-type');
+                this.input.select.doc_type = _view.getRadioValue('sp-doclog-select-type');
 
                 sel = $('#sp-doclog-date-to');
                 date = _view.mobipickGetDate(sel);
                 present = (sel.val().length > 0);
-                my.input.select.date_to = ( present ? date.getTime() : null);
+                this.input.select.date_to = ( present ? date.getTime() : null);
 
                 sel = $('#sp-doclog-document-name');
                 present = (sel.val().length > 0);
-                my.input.select.doc_name = ( present ? sel.val() : null);
+                this.input.select.doc_name = ( present ? sel.val() : null);
 
                 sel = $('#sp-print-out-printer');
                 present = (sel.val() !== "0");
-                my.input.select.printer_id = ((my.input.select.doc_type === "PRINT" && present) ? sel.val() : null);
+                this.input.select.printer_id = ((this.input.select.doc_type === "PRINT" && present) ? sel.val() : null);
 
-                my.input.select.job_state = $('#sp-print-out-state').val();
+                this.input.select.job_state = $('#sp-print-out-state').val();
 
                 sel = $('#sp-print-in-queue');
                 present = (sel.val() !== "0");
-                my.input.select.queue_id = ((my.input.select.doc_type === "IN" && present) ? sel.val() : null);
+                this.input.select.queue_id = ((this.input.select.doc_type === "IN" && present) ? sel.val() : null);
 
-                my.input.sort.field = _view.getRadioValue('sp-doclog-sort-by');
+                this.input.sort.field = _view.getRadioValue('sp-doclog-sort-by');
 
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-doclog-sort-dir', 'sp-doclog-sort-dir-asc');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-doclog-sort-dir', 'sp-doclog-sort-dir-asc');
 
                 // For future use.
                 /*
                  sel = $('#sp-doc-out-signature');
                  present = (sel.val().length > 0);
-                 my.input.select.signature = ( present ? sel.val() : null);
+                 this.input.select.signature = ( present ? sel.val() : null);
                  */
-                my.input.select.signature = null;
+                this.input.select.signature = null;
 
                 sel = $('#sp-doc-out-destination');
                 present = (sel.val().length > 0);
-                my.input.select.destination = ( present ? sel.val() : null);
+                this.input.select.destination = ( present ? sel.val() : null);
 
                 // val is undefined when radiobutton 'sp-doc-out-lh' is missing,
                 // due to user privileges.
                 val = _view.getRadioValue('sp-doc-out-lh');
-                my.input.select.letterhead = (!val || val === "" ? undefined : (val === "1"));
+                this.input.select.letterhead = (!val || val === "" ? undefined : (val === "1"));
 
                 //
                 val = _view.getRadioValue('sp-print-out-duplex');
-                my.input.select.duplex = (val === "" ? undefined : (val === "1"));
+                this.input.select.duplex = (val === "" ? undefined : (val === "1"));
 
                 //
                 sel = $('#sp-pdf-out-author');
                 present = (sel.val().length > 0);
-                my.input.select.author = ( present ? sel.val() : null);
+                this.input.select.author = ( present ? sel.val() : null);
 
                 sel = $('#sp-pdf-out-subject');
                 present = (sel.val().length > 0);
-                my.input.select.subject = ( present ? sel.val() : null);
+                this.input.select.subject = ( present ? sel.val() : null);
 
                 sel = $('#sp-pdf-out-keywords');
                 present = (sel.val().length > 0);
-                my.input.select.keywords = ( present ? sel.val() : null);
+                this.input.select.keywords = ( present ? sel.val() : null);
 
                 sel = $('#sp-pdf-out-pw-user');
                 present = (sel.val().length > 0);
-                my.input.select.userpw = ( present ? sel.val() : null);
+                this.input.select.userpw = ( present ? sel.val() : null);
 
                 sel = $('#sp-pdf-out-pw-owner');
                 present = (sel.val().length > 0);
-                my.input.select.ownerpw = ( present ? sel.val() : null);
+                this.input.select.ownerpw = ( present ? sel.val() : null);
 
                 //
                 val = _view.getRadioValue('sp-pdf-out-encrypt');
-                my.input.select.encrypted = (val === "" ? undefined : (val === "1"));
+                this.input.select.encrypted = (val === "" ? undefined : (val === "1"));
 
                 //
                 sel = $('#sp-doclog-ticket-number');
                 present = (sel.val().length > 0);
-                my.input.select.ticket_number = ( present ? sel.val() : null);
+                this.input.select.ticket_number = ( present ? sel.val() : null);
 
             },
 
@@ -1362,46 +1354,47 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
-                _ns.PanelCommon.refreshPanelCommon('DocLogBase', skipBeforeLoad, my);
+            refresh : function(skipBeforeLoad) {
+                _ns.PanelCommon.refreshPanelCommon('DocLogBase', skipBeforeLoad, this);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageCommon(my, 'DocLogPage', '#sp-doclog-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageCommon(_this, 'DocLogPage', '#sp-doclog-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-
-                my.output = output;
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page get
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-doclog-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-doclog-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-doclog-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     /*
                      * return false so URL is not followed.
                      */
@@ -1411,7 +1404,6 @@
                 $('.sp-sparkline-doclog').sparkline('html', {
                     enableTagOptions : true
                 });
-
             }
         };
 

@@ -256,14 +256,14 @@
                 $("#sp-doclog-select-userid").val(quickUserSelected.text);
                 // HACK: hidden field is present/set in THIS container.
                 $('#sp-doclog-hidden-user-id').val(quickUserSelected.key);
-                _pnlDocLog.page(_pnlDocLog, 1);
+                _pnlDocLog.page(1);
             },
 
                 _onClearUserDocLog = function() {
                 $("#sp-doclog-select-userid").val('');
                 // HACK: hidden field is present/set in THIS container.
                 $('#sp-doclog-hidden-user-id').val('');
-                _pnlDocLog.page(_pnlDocLog, 1);
+                _pnlDocLog.page(1);
             },
 
                 _onPrintPopup = function(jobFileName, positionTo, settle, retry) {
@@ -769,7 +769,7 @@
                     var res = _refundAccountTrx($(this).attr('data-savapage'));
                     $('#sp-jobticket-popup').popup('close');
                     if (res.result.code === "0") {
-                        _pnlDocLog.refresh(_pnlDocLog);
+                        _pnlDocLog.refresh();
                     }
                     _ns.Utils.asyncFoo(function(res) {
                         _view.showApiMsg(res);
@@ -808,7 +808,7 @@
 
                 _ns.PanelCommon.refreshPanelCommon = function(wClass, skipBeforeLoad, thePanel) {
                     var jqId = thePanel.jqId,
-                        data = thePanel.getInput(thePanel),
+                        data = thePanel.getInput(),
                         jsonData = JSON.stringify(data);
 
                     $.mobile.loading("show");
@@ -828,8 +828,8 @@
                         // Hide the document type selection
                         _view.visible($('#sp-doclog-cat-type'), false);
 
-                        thePanel.onOutput(thePanel, undefined);
-                        thePanel.afterload(thePanel);
+                        thePanel.onOutput(undefined);
+                        thePanel.afterload();
 
                     }).fail(function() {
                         _ns.PanelCommon.onDisconnected();
@@ -840,7 +840,7 @@
 
                 //
                 _pnlDocLog.jqId = '#sp-jobtickets-tab-closed-doclog';
-                _pnlDocLog.applyDefaultForTicket(_pnlDocLog);
+                _pnlDocLog.applyDefaultForTicket();
 
                 // Load page
                 $('#sp-jobtickets-tab-closed-doclog').html(_view.getPageHtml('DocLogBase')).enhanceWithin();
@@ -850,10 +850,10 @@
                         _stopCountdownTimer();
                     }
                     if (_pnlDocLogRefresh) {
-                        _pnlDocLog.refresh(_pnlDocLog);
+                        _pnlDocLog.refresh();
                     } else {
                         _pnlDocLogRefresh = false;
-                        _pnlDocLog.page(_pnlDocLog, 1);
+                        _pnlDocLog.page(1);
                     }
 
                 }).on('click', '#sp-jobtickets-tab-open-button', null, function() {
@@ -866,16 +866,16 @@
                     }
 
                 }).on('click', '#button-doclog-apply', null, function() {
-                    _pnlDocLog.page(_pnlDocLog, 1);
+                    _pnlDocLog.page(1);
                     return false;
 
                 }).on('click', '#button-doclog-default', null, function() {
-                    _pnlDocLog.applyDefaultForTicket(_pnlDocLog);
-                    _pnlDocLog.m2v(_pnlDocLog);
+                    _pnlDocLog.applyDefaultForTicket();
+                    _pnlDocLog.m2v();
                     return false;
 
                 }).on('change', "input[name='sp-doclog-select-type']", null, function() {
-                    _pnlDocLog.setVisibility(_pnlDocLog);
+                    _pnlDocLog.setVisibility();
                     return false;
                 }).on('click', '.sp-btn-about-org', function() {
                     // About Dialog closes immediately, why?

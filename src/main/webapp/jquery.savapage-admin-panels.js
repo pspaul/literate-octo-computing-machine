@@ -1,14 +1,14 @@
 // @license http://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
 
-/*! SavaPage jQuery Mobile Admin Panels | (c) 2011-2020 Datraverse B.V. | GNU
+/*! SavaPage jQuery Mobile Admin Panels | (c) 2020 Datraverse B.V. | GNU
  * Affero General Public License */
 
 /*
  * This file is part of the SavaPage project <https://www.savapage.org>.
- * Copyright (c) 2011-2020 Datraverse B.V.
+ * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
- * SPDX-FileCopyrightText: 2011-2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -46,25 +46,25 @@
          */
         _ns.PanelAccountVoucherBase = {
 
-            applyDefaults : function(my) {
-                my.input.page = 1;
-                my.input.maxResults = 10;
+            applyDefaults : function() {
+                this.input.page = 1;
+                this.input.maxResults = 10;
 
-                my.input.select.batch = null;
-                my.input.select.number = null;
-                my.input.select.userId = null;
+                this.input.select.batch = null;
+                this.input.select.number = null;
+                this.input.select.userId = null;
 
-                my.input.select.dateFrom = null;
-                my.input.select.dateTo = null;
+                this.input.select.dateFrom = null;
+                this.input.select.dateTo = null;
 
                 // boolean
-                my.input.select.used = null;
+                this.input.select.used = null;
                 // boolean
-                my.input.select.expired = null;
+                this.input.select.expired = null;
 
                 // NUMBER, VALUE, USER, DATE_USED, DATE_EXPIRED
-                my.input.sort.field = 'NUMBER';
-                my.input.sort.ascending = true;
+                this.input.sort.field = 'NUMBER';
+                this.input.sort.ascending = true;
 
             },
 
@@ -77,16 +77,16 @@
                 }
             },
 
-            beforeload : function(my) {
-                my.applyDefaults(my);
+            beforeload : function() {
+                this.applyDefaults();
             },
 
-            afterload : function(my) {
+            afterload : function() {
                 var _view = _ns.PanelCommon.view;
                 _view.mobipick($("#sp-voucher-date-from"));
                 _view.mobipick($("#sp-voucher-date-to"));
-                my.m2v(my);
-                my.page(my, my.input.page);
+                this.m2v();
+                this.page(this.input.page);
             },
 
             getBatch : function() {
@@ -99,77 +99,77 @@
                 return $("#sp-voucher-card-print-format").val();
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var id,
                     val,
                     _view = _ns.PanelCommon.view;
 
-                val = my.input.select.batch;
+                val = this.input.select.batch;
                 val = (val === null ? "0" : val);
                 $('#sp-voucher-batch').val(val).selectmenu('refresh');
-                my.onVoucherSelectBatch(val);
+                this.onVoucherSelectBatch(val);
 
-                $('#sp-voucher-number').val(my.input.select.number);
-                $('#sp-voucher-user').val(my.input.select.userId);
+                $('#sp-voucher-number').val(this.input.select.number);
+                $('#sp-voucher-user').val(this.input.select.userId);
 
-                _view.mobipickSetDate($('#sp-voucher-date-from'), my.input.select.dateFrom);
-                _view.mobipickSetDate($('#sp-voucher-date-to'), my.input.select.dateTo);
+                _view.mobipickSetDate($('#sp-voucher-date-from'), this.input.select.dateFrom);
+                _view.mobipickSetDate($('#sp-voucher-date-to'), this.input.select.dateTo);
 
                 //
-                val = my.input.select.used;
+                val = this.input.select.used;
                 _view.checkRadioValue('sp-voucher-select-used', val === null ? "" : ( val ? "1" : "0"));
 
                 //
-                val = my.input.select.expired;
+                val = this.input.select.expired;
                 _view.checkRadioValue('sp-voucher-select-expired', val === null ? "" : ( val ? "1" : "0"));
 
                 //
                 id = 'sp-voucher-sort-by';
-                _view.checkRadioValue(id, my.input.sort.field);
+                _view.checkRadioValue(id, this.input.sort.field);
 
                 id = 'sp-voucher-sort-dir';
-                _view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+                _view.checkRadio(id, this.input.sort.ascending ? id + '-asc' : id + '-desc');
 
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var _view = _ns.PanelCommon.view,
                     val,
                     sel = $('#sp-voucher-date-from'),
                     date = _view.mobipickGetDate(sel),
                     present = (sel.val().length > 0);
 
-                my.input.select.dateFrom = ( present ? date.getTime() : null);
+                this.input.select.dateFrom = ( present ? date.getTime() : null);
 
                 sel = $('#sp-voucher-date-to');
                 date = _view.mobipickGetDate(sel);
                 present = (sel.val().length > 0);
-                my.input.select.dateTo = ( present ? date.getTime() : null);
+                this.input.select.dateTo = ( present ? date.getTime() : null);
 
                 //
-                my.input.select.batch = my.getBatch();
+                this.input.select.batch = this.getBatch();
 
                 //
                 sel = $('#sp-voucher-number');
                 present = (sel.val().length > 0);
-                my.input.select.number = ( present ? sel.val() : null);
+                this.input.select.number = ( present ? sel.val() : null);
 
                 //
                 sel = $('#sp-voucher-user');
                 present = (sel.val().length > 0);
-                my.input.select.userId = ( present ? sel.val() : null);
+                this.input.select.userId = ( present ? sel.val() : null);
 
                 //
                 val = _view.getRadioValue('sp-voucher-select-used');
-                my.input.select.used = (val === "" ? null : val === "1");
+                this.input.select.used = (val === "" ? null : val === "1");
 
                 //
                 val = _view.getRadioValue('sp-voucher-select-expired');
-                my.input.select.expired = (val === "" ? null : val === "1");
+                this.input.select.expired = (val === "" ? null : val === "1");
 
                 //
-                my.input.sort.field = _view.getRadioValue('sp-voucher-sort-by');
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-voucher-sort-dir', 'sp-voucher-sort-dir-asc');
+                this.input.sort.field = _view.getRadioValue('sp-voucher-sort-by');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-voucher-sort-dir', 'sp-voucher-sort-dir-asc');
             },
 
             // JSON input
@@ -201,53 +201,53 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 _ns.PanelCommon.refreshPanelAdmin('AccountVoucherBase', skipBeforeLoad);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageAdmin(my, 'AccountVoucherPage', '#sp-voucher-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageAdmin(_this, 'AccountVoucherPage', '#sp-voucher-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-
-                my.output = output;
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page get reloaded
                  * all
                  * the time, we want a single-shot binding.
                  */
                 $(".sp-voucher-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-voucher-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-voucher-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
-
             }
         };
 
@@ -256,81 +256,81 @@
          */
         _ns.PanelAppLogBase = {
 
-            applyDefaults : function(my) {
-                my.input.page = 1;
-                my.input.maxResults = 10;
+            applyDefaults : function() {
+                this.input.page = 1;
+                this.input.maxResults = 10;
 
-                my.input.select.text = null;
+                this.input.select.text = null;
 
-                my.input.select.level = null;
+                this.input.select.level = null;
                 // INFO | WARN | ERROR
-                my.input.select.date_from = null;
-                my.input.select.date_to = null;
+                this.input.select.date_from = null;
+                this.input.select.date_to = null;
 
-                my.input.sort.field = 'DATE';
+                this.input.sort.field = 'DATE';
                 // LEVEl | DATE
-                my.input.sort.ascending = false;
+                this.input.sort.ascending = false;
 
             },
 
-            beforeload : function(my) {
-                my.applyDefaults(my);
+            beforeload : function() {
+                this.applyDefaults();
             },
 
-            afterload : function(my) {
+            afterload : function() {
                 var _view = _ns.PanelCommon.view;
                 _view.mobipick($("#sp-applog-date-from"));
                 _view.mobipick($("#sp-applog-date-to"));
-                my.m2v(my);
-                my.page(my, my.input.page);
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var id,
                     _view = _ns.PanelCommon.view;
 
-                $('#sp-applog-containing-text').val(my.input.select.text);
+                $('#sp-applog-containing-text').val(this.input.select.text);
 
-                _view.mobipickSetDate($('#sp-applog-date-from'), my.input.select.date_from);
-                _view.mobipickSetDate($('#sp-applog-date-to'), my.input.select.date_to);
+                _view.mobipickSetDate($('#sp-applog-date-from'), this.input.select.date_from);
+                _view.mobipickSetDate($('#sp-applog-date-to'), this.input.select.date_to);
 
-                if (my.input.select.level) {
-                    _view.checkRadioValue('sp-applog-select-level', my.input.select.level);
+                if (this.input.select.level) {
+                    _view.checkRadioValue('sp-applog-select-level', this.input.select.level);
                 } else {
                     _view.checkRadio('sp-applog-select-level', 'sp-applog-select-level-all');
                 }
 
                 id = 'sp-applog-sort-by';
-                _view.checkRadioValue(id, my.input.sort.field);
+                _view.checkRadioValue(id, this.input.sort.field);
 
                 id = 'sp-applog-sort-dir';
-                _view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+                _view.checkRadio(id, this.input.sort.ascending ? id + '-asc' : id + '-desc');
 
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var _view = _ns.PanelCommon.view,
                     level = _view.getRadioValue('sp-applog-select-level'),
                     sel = $('#sp-applog-date-from'),
                     date = _view.mobipickGetDate(sel),
                     present = (sel.val().length > 0);
 
-                my.input.select.date_from = ( present ? date.getTime() : null);
+                this.input.select.date_from = ( present ? date.getTime() : null);
 
                 sel = $('#sp-applog-date-to');
                 date = _view.mobipickGetDate(sel);
                 present = (sel.val().length > 0);
-                my.input.select.date_to = ( present ? date.getTime() : null);
+                this.input.select.date_to = ( present ? date.getTime() : null);
 
                 sel = $('#sp-applog-containing-text');
                 present = (sel.val().length > 0);
-                my.input.select.text = ( present ? sel.val() : null);
+                this.input.select.text = ( present ? sel.val() : null);
 
-                my.input.select.level = (level === "" ? null : level);
+                this.input.select.level = (level === "" ? null : level);
 
-                my.input.sort.field = _view.getRadioValue('sp-applog-sort-by');
+                this.input.sort.field = _view.getRadioValue('sp-applog-sort-by');
 
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-applog-sort-dir', 'sp-applog-sort-dir-asc');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-applog-sort-dir', 'sp-applog-sort-dir-asc');
             },
 
             // JSON input
@@ -359,46 +359,48 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 _ns.PanelCommon.refreshPanelAdmin('AppLogBase', skipBeforeLoad);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageAdmin(my, 'AppLogPage', '#sp-applog-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageAdmin(_this, 'AppLogPage', '#sp-applog-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
+            onOutput : function(output) {
+                var _this = this;
 
-                my.output = output;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page get
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-applog-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-applog-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-applog-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     /*
                      * return false so URL is not followed.
                      */
@@ -413,37 +415,37 @@
          */
         _ns.PanelConfigPropBase = {
 
-            applyDefaults : function(my) {
-                my.input.page = 1;
-                my.input.maxResults = 10;
-                my.input.sort.ascending = true;
-                my.input.select.text = null;
+            applyDefaults : function() {
+                this.input.page = 1;
+                this.input.maxResults = 10;
+                this.input.sort.ascending = true;
+                this.input.select.text = null;
             },
 
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
-            afterload : function(my) {
-                my.m2v(my);
-                my.page(my, my.input.page);
+            afterload : function() {
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
-                var val = my.input.select.text,
+            m2v : function() {
+                var val = this.input.select.text,
                     _view = _ns.PanelCommon.view;
                 $('#sp-config-containing-text').val(val || '');
 
                 _view.checkRadio('sp-config-sort-dir', 'sp-config-sort-dir-asc');
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var sel = $('#sp-config-containing-text'),
                     present = (sel.val().length > 0),
                     _view = _ns.PanelCommon.view;
-                my.input.select.text = ( present ? sel.val() : null);
+                this.input.select.text = ( present ? sel.val() : null);
 
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-config-sort-dir', 'sp-config-sort-dir-asc');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-config-sort-dir', 'sp-config-sort-dir-asc');
             },
 
             // JSON input
@@ -463,52 +465,52 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 _ns.PanelCommon.refreshPanelAdmin('ConfigPropBase', skipBeforeLoad);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageAdmin(my, 'ConfigPropPage', '#sp-config-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageAdmin(_this, 'ConfigPropPage', '#sp-config-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-
-                my.output = output;
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page get
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-config-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-config-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-config-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
-
             }
         };
 
@@ -531,14 +533,14 @@
 
             timeout : null,
 
-            destroyPlots : function(my) {
-                if (my.piechart) {
-                    my.piechart.destroy();
-                    my.piechart = null;
+            destroyPlots : function() {
+                if (this.piechart) {
+                    this.piechart.destroy();
+                    this.piechart = null;
                 }
-                if (my.xychart) {
-                    my.xychart.destroy();
-                    my.xychart = null;
+                if (this.xychart) {
+                    this.xychart.destroy();
+                    this.xychart = null;
                 }
             },
 
@@ -546,7 +548,7 @@
              * Retrieves plot data and shows them.
              * @return true when success, false when connection errors.
              */
-            showPlots : function(my) {
+            showPlots : function() {
                 var _view = _ns.PanelCommon.view,
                     xydata,
                     piedata;
@@ -560,8 +562,8 @@
                     return false;
                 }
 
-                my.xychart = _view.showXyChart('dashboard-xychart', xydata);
-                my.piechart = _view.showPieChart('dashboard-piechart', piedata);
+                this.xychart = _view.showXyChart('dashboard-xychart', xydata);
+                this.piechart = _view.showPieChart('dashboard-piechart', piedata);
 
                 return true;
             },
@@ -569,13 +571,13 @@
             /*
              * A refresh of the WHOLE panel.
              */
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 /*
                  * As an extra check we use #live-messages as indicator
                  * that the Dashboard is in view.
                  */
                 if ($('#live-messages').length > 0) {
-                    my.scrollTop = $(window).scrollTop();
+                    this.scrollTop = $(window).scrollTop();
                     _ns.PanelCommon.refreshPanelAdmin('Dashboard', skipBeforeLoad);
                 }
             },
@@ -588,13 +590,9 @@
                 var scrollTop,
                     heightXyChart,
                     heightPieChart,
-                    html
-                //
-                ,
-                    _view = _ns.PanelCommon.view
-                //
-                ,
-                    my = _ns.PanelDashboard;
+                    html,
+                    _view = _ns.PanelCommon.view,
+                    _this = this;
 
                 /*
                  * As an extra check we use #live-messages as indicator
@@ -618,7 +616,7 @@
                      * NOT releasing introduces a HUGE memory leak, each time
                      * the plots are refreshed.
                      */
-                    my.destroyPlots(my);
+                    this.destroyPlots();
 
                     /*
                      * Load the html.
@@ -627,7 +625,7 @@
 
                     if (!html) {
                         // Failure (and disconnected): stop the timer!
-                        my.onUnload(my);
+                        this.onUnload();
                         return;
                     }
 
@@ -647,28 +645,28 @@
                     /*
                      * Show the plots.
                      */
-                    if (!my.showPlots(my)) {
+                    if (!this.showPlots()) {
                         // Failure (and disconnected): stop the timer!
-                        my.onUnload(my);
+                        this.onUnload();
                     }
                 }
             },
 
-            beforeload : function(my) {
+            beforeload : function() {
                 /*
                  * IMPORTANT: Release all resources occupied by the
                  * jqPlots.
                  * NOT releasing introduces a HUGE memory leak, each time
                  * the plots are refreshed.
                  */
-                my.destroyPlots(my);
+                this.destroyPlots();
             },
 
-            afterload : function(my) {
+            afterload : function() {
 
                 var i,
                     j,
-                    _model = my.model;
+                    _model = this.model;
 
                 for ( i = 0; i < _model.pubMsgStack.length; i++) {
                     $('#live-messages').append(_model.pubMsgAsHtml(_model.pubMsgStack[i]));
@@ -678,37 +676,37 @@
                     $('#live-messages').append('<div>&nbsp;</div>');
                 }
 
-                if (my.showPlots(my)) {
+                if (this.showPlots()) {
                     /*
                      * Interval timer: refresh of part.
                      */
-                    my.timeout = window.setInterval(my.refreshSysStatus, my.REFRESH_MSEC);
+                    this.timeout = window.setInterval(this.refreshSysStatus, this.REFRESH_MSEC);
                 }
             },
 
-            onResize : function(my) {
+            onResize : function() {
                 var selXyChart = $('#dashboard-xychart'),
                     selPieChart = $('#dashboard-piechart');
 
                 if (selXyChart && selPieChart) {
 
                     selXyChart.width(selXyChart.parent().width());
-                    my.xychart.replot({
+                    this.xychart.replot({
                         resetAxes : true
                     });
 
                     selPieChart.width(selPieChart.parent().width());
-                    my.piechart.replot({});
+                    this.piechart.replot({});
 
                 }
 
             },
 
-            onUnload : function(my) {
+            onUnload : function() {
                 /*
                  * Clear the timer asap.
                  */
-                window.clearTimeout(my.timeout);
+                window.clearTimeout(this.timeout);
             }
         };
 
@@ -717,58 +715,58 @@
          */
         _ns.PanelDevicesBase = {
 
-            applyDefaults : function(my) {
-                my.input.page = 1;
-                my.input.maxResults = 10;
-                my.input.sort.ascending = true;
-                my.input.select.text = null;
+            applyDefaults : function() {
+                this.input.page = 1;
+                this.input.maxResults = 10;
+                this.input.sort.ascending = true;
+                this.input.select.text = null;
                 // Boolean
-                my.input.select.disabled = null;
+                this.input.select.disabled = null;
                 // Boolean
-                my.input.select.reader = null;
+                this.input.select.reader = null;
             },
 
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
-            afterload : function(my) {
-                my.m2v(my);
-                my.page(my, my.input.page);
+            afterload : function() {
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var id,
                     val,
                     _view = _ns.PanelCommon.view;
-                $('#sp-device-containing-text').val(my.input.select.text);
+                $('#sp-device-containing-text').val(this.input.select.text);
 
-                val = my.input.select.disabled;
+                val = this.input.select.disabled;
                 _view.checkRadioValue("sp-device-select-status", val === null ? "" : ( val ? "0" : "1"));
 
-                val = my.input.select.reader;
+                val = this.input.select.reader;
                 _view.checkRadioValue("sp-device-select-type", val === null ? "" : ( val ? "1" : "0"));
 
                 id = 'sp-device-sort-dir';
-                _view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+                _view.checkRadio(id, this.input.sort.ascending ? id + '-asc' : id + '-desc');
 
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var val,
                     sel = $('#sp-device-containing-text'),
                     present = (sel.val().length > 0),
                     _view = _ns.PanelCommon.view;
 
-                my.input.select.text = ( present ? sel.val() : null);
+                this.input.select.text = ( present ? sel.val() : null);
 
                 val = _view.getRadioValue("sp-device-select-status");
-                my.input.select.disabled = (val === "" ? null : (val === "0"));
+                this.input.select.disabled = (val === "" ? null : (val === "0"));
 
                 val = _view.getRadioValue("sp-device-select-type");
-                my.input.select.reader = (val === "" ? null : (val === "1"));
+                this.input.select.reader = (val === "" ? null : (val === "1"));
 
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-device-sort-dir', 'sp-device-sort-dir-asc');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-device-sort-dir', 'sp-device-sort-dir-asc');
             },
 
             // JSON input
@@ -791,45 +789,47 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 _ns.PanelCommon.refreshPanelAdmin('DevicesBase', skipBeforeLoad);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageAdmin(my, 'DevicesPage', '#sp-device-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageAdmin(_this, 'DevicesPage', '#sp-device-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-                my.output = output;
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page gets
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-devices-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-devices-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-devices-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     /*
                      * return false so URL is not followed.
                      */
@@ -843,26 +843,27 @@
          *
          */
         _ns.PanelReports = {
-            refresh : function(my, skipBeforeLoad) {
-                my.scrollTop = $(window).scrollTop();
+
+            refresh : function(skipBeforeLoad) {
+                this.scrollTop = $(window).scrollTop();
                 _ns.PanelCommon.refreshPanelAdmin('Reports', skipBeforeLoad);
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var _view = _ns.PanelCommon.view,
                     groups = $('.sp-reports-user-printout-tot ._sp-groups').val(),
                     sel;
 
                 sel = $('.sp-reports-user-printout-tot ._sp-date-from');
-                my.input.timeFrom = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
+                this.input.timeFrom = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
 
                 sel = $('.sp-reports-user-printout-tot ._sp-date-to');
-                my.input.timeTo = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
+                this.input.timeTo = sel.val().length > 0 ? _view.mobipickGetDate(sel).getTime() : null;
 
                 if (groups.length > 0) {
-                    my.input.userGroups = groups.split(" ");
+                    this.input.userGroups = groups.split(" ");
                 } else {
-                    my.input.userGroups = null;
+                    this.input.userGroups = null;
                 }
             },
 
@@ -873,7 +874,7 @@
                 userGroups : null
             },
 
-            onOutput : function(my, output) {
+            onOutput : function(output) {
                 var _view = _ns.PanelCommon.view;
                 _view.mobipick($('.sp-reports-user-printout-tot ._sp-date-from'));
                 _view.mobipick($('.sp-reports-user-printout-tot ._sp-date-to'));
@@ -1003,11 +1004,10 @@
                 _view.visible($('.financial-user-transfers-enabled'), enabled);
             },
 
-            onGcpRefresh : function(my) {
+            onGcpRefresh : function() {
                 var _view = _ns.PanelCommon.view,
-                    _model = my.model,
                     enabled = _view.isCbChecked($('#gcp\\.enable')),
-                    state = _model.gcp.state || $('#gcp-printer-state').text(),
+                    state = this.model.gcp.state || $('#gcp-printer-state').text(),
                     isPresent = (state === 'ON_LINE' || state === 'OFF_LINE'),
                     notPresent = !isPresent;
 
@@ -1028,25 +1028,25 @@
                 _view.visible($('#gcp-set-offline'), enabled && (state === 'ON_LINE'));
             },
 
-            onOutput : function(my, output) {
+            onOutput : function(output) {
                 var _view = _ns.PanelCommon.view;
 
-                my.onAuthMethodSelect($("input:radio[name='auth.method']:checked").val());
+                this.onAuthMethodSelect($("input:radio[name='auth.method']:checked").val());
 
-                my.onAuthModeLocalEnabled();
-                my.onPrintImapEnabled(_view.isCbChecked($('#print\\.imap\\.enable')));
-                my.onProxyPrintEnabled(_view.isCbChecked($('#proxy-print\\.non-secure')));
-                my.onProxyPrintClearInboxEnabled(_view.isCbChecked($('#webapp\\.user\\.proxy-print\\.clear-inbox\\.enable')));
-                my.onWebPrintEnabled(_view.isCbChecked($('#web-print\\.enable')));
-                my.onEcoPrintEnabled(_view.isCbChecked($('#eco-print\\.enable')));
-                my.onAuthLdapUseSsl(_view.isCbChecked($('#auth\\.ldap\\.use-ssl')));
-                my.onInternalUsersEnabled(_view.isCbChecked($('#internal-users\\.enable')));
+                this.onAuthModeLocalEnabled();
+                this.onPrintImapEnabled(_view.isCbChecked($('#print\\.imap\\.enable')));
+                this.onProxyPrintEnabled(_view.isCbChecked($('#proxy-print\\.non-secure')));
+                this.onProxyPrintClearInboxEnabled(_view.isCbChecked($('#webapp\\.user\\.proxy-print\\.clear-inbox\\.enable')));
+                this.onWebPrintEnabled(_view.isCbChecked($('#web-print\\.enable')));
+                this.onEcoPrintEnabled(_view.isCbChecked($('#eco-print\\.enable')));
+                this.onAuthLdapUseSsl(_view.isCbChecked($('#auth\\.ldap\\.use-ssl')));
+                this.onInternalUsersEnabled(_view.isCbChecked($('#internal-users\\.enable')));
 
-                my.onPaperCutEnabled(_view.isCbChecked($('#papercut\\.enable')));
+                this.onPaperCutEnabled(_view.isCbChecked($('#papercut\\.enable')));
 
-                my.onGcpRefresh(my);
+                this.onGcpRefresh();
 
-                my.onFinancialUserTransfersEnabled(_view.isCbChecked($('#financial\\.user\\.transfers\\.enable')));
+                this.onFinancialUserTransfersEnabled(_view.isCbChecked($('#financial\\.user\\.transfers\\.enable')));
 
                 $('.user-source-group-display').show();
                 $('.user-source-group-edit').hide();
@@ -1054,8 +1054,8 @@
                 _view.mobipick($("#sp-papercut-delegator-cost-date-from"));
                 _view.mobipick($("#sp-papercut-delegator-cost-date-to"));
 
-                my.onProxyPrintDelegatePaperCutEnabled(_view.isCbChecked($('#proxy-print\\.delegate\\.papercut\\.enable')));
-                my.onProxyPrintDelegateEnabled(_view.isCbChecked($('#proxy-print\\.delegate\\.enable')));
+                this.onProxyPrintDelegatePaperCutEnabled(_view.isCbChecked($('#proxy-print\\.delegate\\.papercut\\.enable')));
+                this.onProxyPrintDelegateEnabled(_view.isCbChecked($('#proxy-print\\.delegate\\.enable')));
             }
         };
 
@@ -1191,7 +1191,7 @@
                 return this.input;
             },
 
-            onOutput : function(my, output) {
+            onOutput : function(output) {
                 var _this = this;
                 this.output = output;
                 /*
@@ -1227,73 +1227,73 @@
          */
         _ns.PanelQueuesBase = {
 
-            applyDefaults : function(my) {
-                my.input.page = 1;
-                my.input.maxResults = 10;
-                my.input.sort.ascending = true;
-                my.input.select.text = null;
-                my.input.select.trusted = null;
+            applyDefaults : function() {
+                this.input.page = 1;
+                this.input.maxResults = 10;
+                this.input.sort.ascending = true;
+                this.input.select.text = null;
+                this.input.select.trusted = null;
                 // Boolean
-                my.input.select.disabled = null;
+                this.input.select.disabled = null;
                 // Boolean
-                my.input.select.deleted = false;
+                this.input.select.deleted = false;
                 // Boolean
             },
 
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
-            afterload : function(my) {
-                my.m2v(my);
-                my.page(my, my.input.page);
+            afterload : function() {
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var id,
-                    val = my.input.select.text,
+                    val = this.input.select.text,
                     _view = _ns.PanelCommon.view;
                 $('#sp-queue-containing-text').val(val || '');
 
                 //
-                val = my.input.select.trusted;
+                val = this.input.select.trusted;
                 _view.checkRadioValue('sp-queue-select-trust', val === null ? "" : ( val ? "1" : "0"));
 
                 //
-                val = my.input.select.disabled;
+                val = this.input.select.disabled;
                 _view.checkRadioValue('sp-queue-select-status', val === null ? "" : ( val ? "0" : "1"));
 
                 //
-                val = my.input.select.deleted;
+                val = this.input.select.deleted;
                 _view.checkRadioValue('sp-queue-select-deleted', val === null ? "" : ( val ? "1" : "0"));
 
                 //
                 id = 'sp-queue-sort-dir';
-                _view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+                _view.checkRadio(id, this.input.sort.ascending ? id + '-asc' : id + '-desc');
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var val,
                     _view = _ns.PanelCommon.view,
                     sel = $('#sp-queue-containing-text'),
                     present = (sel.val().length > 0);
 
-                my.input.select.text = ( present ? sel.val() : null);
+                this.input.select.text = ( present ? sel.val() : null);
 
                 //
                 val = _view.getRadioValue('sp-queue-select-trust');
-                my.input.select.trusted = (val === "" ? null : (val === "1"));
+                this.input.select.trusted = (val === "" ? null : (val === "1"));
 
                 //
                 val = _view.getRadioValue('sp-queue-select-status');
-                my.input.select.disabled = (val === "" ? null : (val === "0"));
+                this.input.select.disabled = (val === "" ? null : (val === "0"));
 
                 //
                 val = _view.getRadioValue('sp-queue-select-deleted');
-                my.input.select.deleted = (val === "" ? null : (val === "1"));
+                this.input.select.deleted = (val === "" ? null : (val === "1"));
 
                 //
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-queue-sort-dir', 'sp-queue-sort-dir-asc');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-queue-sort-dir', 'sp-queue-sort-dir-asc');
             },
 
             // JSON input
@@ -1317,47 +1317,48 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 _ns.PanelCommon.refreshPanelAdmin('QueuesBase', skipBeforeLoad);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageAdmin(my, 'QueuesPage', '#sp-queue-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageAdmin(_this, 'QueuesPage', '#sp-queue-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-
-                my.output = output;
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
 
                 /*
                  * NOTICE the $().one() construct. Since the page get
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-queues-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-queues-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-queues-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     /*
                      * return false so URL is not followed.
                      */
@@ -1376,103 +1377,103 @@
          */
         _ns.PanelUsersBase = {
 
-            applyDefaults : function(my) {
+            applyDefaults : function() {
 
-                my.input.page = 1;
-                my.input.maxResults = 10;
+                this.input.page = 1;
+                this.input.maxResults = 10;
 
-                my.input.select.name_id_text = null;
-                my.input.select.email_text = null;
+                this.input.select.name_id_text = null;
+                this.input.select.email_text = null;
 
-                my.input.select.usergroup_id = null;
+                this.input.select.usergroup_id = null;
 
                 // Boolean
-                my.input.select.admin = null;
+                this.input.select.admin = null;
                 // Boolean
-                my.input.select.person = null;
+                this.input.select.person = null;
                 // Boolean
-                my.input.select.disabled = null;
+                this.input.select.disabled = null;
                 // Boolean
-                my.input.select.deleted = false;
+                this.input.select.deleted = false;
                 // Boolean
 
-                my.input.sort.field = 'id';
-                my.input.sort.ascending = true;
+                this.input.sort.field = 'id';
+                this.input.sort.ascending = true;
             },
 
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
-            afterload : function(my) {
-                my.m2v(my);
-                my.page(my, my.input.page);
+            afterload : function() {
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var val,
                     id,
                     _view = _ns.PanelCommon.view;
 
-                $('#sp-user-id-containing-text').val(my.input.select.name_id_text);
-                $('#sp-user-email-containing-text').val(my.input.select.email_text);
+                $('#sp-user-id-containing-text').val(this.input.select.name_id_text);
+                $('#sp-user-email-containing-text').val(this.input.select.email_text);
 
-                $('#sp-user-select-group').val(my.input.select.usergroup_id).selectmenu('refresh');
+                $('#sp-user-select-group').val(this.input.select.usergroup_id).selectmenu('refresh');
 
-                val = my.input.select.person;
+                val = this.input.select.person;
                 _view.checkRadioValue('sp-user-select-type', val === null ? "" : ( val ? "1" : "0"));
 
-                val = my.input.select.admin;
+                val = this.input.select.admin;
                 _view.checkRadioValue('sp-user-select-role', val === null ? "" : ( val ? "1" : "0"));
 
-                val = my.input.select.disabled;
+                val = this.input.select.disabled;
                 _view.checkRadioValue('sp-user-select-status', val === null ? "" : ( val ? "0" : "1"));
 
-                val = my.input.select.deleted;
+                val = this.input.select.deleted;
                 _view.checkRadioValue('sp-user-select-deleted', val === null ? "" : ( val ? "1" : "0"));
 
                 //
-                id = (my.input.sort.field === 'id' ? 'sp-user-sort-by-id' : 'sp-user-sort-by-email');
+                id = (this.input.sort.field === 'id' ? 'sp-user-sort-by-id' : 'sp-user-sort-by-email');
                 _view.checkRadio('sp-user-sort-by', id);
 
                 //
                 id = 'sp-user-sort-dir';
-                _view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+                _view.checkRadio(id, this.input.sort.ascending ? id + '-asc' : id + '-desc');
 
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var val,
                     sel,
                     present,
                     _view = _ns.PanelCommon.view;
 
                 val = _view.getRadioValue('sp-user-select-type');
-                my.input.select.person = (val === "" ? null : (val === "1"));
+                this.input.select.person = (val === "" ? null : (val === "1"));
 
                 val = _view.getRadioValue('sp-user-select-role');
-                my.input.select.admin = (val === "" ? null : (val === "1"));
+                this.input.select.admin = (val === "" ? null : (val === "1"));
 
                 val = _view.getRadioValue('sp-user-select-status');
-                my.input.select.disabled = (val === "" ? null : (val === "0"));
+                this.input.select.disabled = (val === "" ? null : (val === "0"));
 
                 val = _view.getRadioValue('sp-user-select-deleted');
-                my.input.select.deleted = (val === "" ? null : (val === "1"));
+                this.input.select.deleted = (val === "" ? null : (val === "1"));
 
                 sel = $('#sp-user-id-containing-text');
                 present = (sel.val().length > 0);
-                my.input.select.name_id_text = ( present ? sel.val() : null);
+                this.input.select.name_id_text = ( present ? sel.val() : null);
 
                 sel = $('#sp-user-email-containing-text');
                 present = (sel.val().length > 0);
-                my.input.select.email_text = ( present ? sel.val() : null);
+                this.input.select.email_text = ( present ? sel.val() : null);
 
                 sel = $('#sp-user-select-group');
                 present = (sel.val() !== "0");
-                my.input.select.usergroup_id = present ? sel.val() : null;
+                this.input.select.usergroup_id = present ? sel.val() : null;
 
-                my.input.sort.field = _view.getRadioValue('sp-user-sort-by');
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-user-sort-dir', 'sp-user-sort-dir-asc');
+                this.input.sort.field = _view.getRadioValue('sp-user-sort-by');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-user-sort-dir', 'sp-user-sort-dir-asc');
             },
 
             // JSON input
@@ -1502,46 +1503,47 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 _ns.PanelCommon.refreshPanelAdmin('UsersBase', skipBeforeLoad);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageAdmin(my, 'UsersPage', '#sp-user-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageAdmin(_this, 'UsersPage', '#sp-user-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-
-                my.output = output;
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page get
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-users-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-users-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-users-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     /*
                      * return false so URL is not followed.
                      */
@@ -1559,49 +1561,48 @@
          */
         _ns.PanelAccountsBase = {
 
-            applyDefaults : function(my) {
+            applyDefaults : function() {
 
-                my.input.page = 1;
-                my.input.maxResults = 10;
+                this.input.page = 1;
+                this.input.maxResults = 10;
 
-                my.input.select.name_text = null;
+                this.input.select.name_text = null;
                 // AccountTypeEnum
-                my.input.select.accountType = undefined;
+                this.input.select.accountType = undefined;
                 // Boolean
-                my.input.select.deleted = false;
+                this.input.select.deleted = false;
                 // Boolean
-                my.input.sort.ascending = true;
+                this.input.sort.ascending = true;
             },
 
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
-            afterload : function(my) {
-                my.m2v(my);
-                my.page(my, my.input.page);
+            afterload : function() {
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var val,
                     id,
                     _view = _ns.PanelCommon.view;
 
-                $('#sp-shared-account-name-containing-text').val(my.input.select.name_text);
+                $('#sp-shared-account-name-containing-text').val(this.input.select.name_text);
 
-                val = my.input.select.deleted;
+                val = this.input.select.deleted;
                 _view.checkRadioValue('sp-shared-account-select-deleted', val === null ? "" : ( val ? "1" : "0"));
 
-                val = my.input.select.accountType;
+                val = this.input.select.accountType;
                 _view.checkRadioValue('sp-shared-account-select-type', val === undefined ? "" : val);
 
                 //
                 id = 'sp-shared-account-sort-dir';
-                _view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
-
+                _view.checkRadio(id, this.input.sort.ascending ? id + '-asc' : id + '-desc');
             },
 
-            v2m : function(my) {
+            v2m : function() {
 
                 var val,
                     sel,
@@ -1609,17 +1610,17 @@
                     _view = _ns.PanelCommon.view;
 
                 val = _view.getRadioValue('sp-shared-account-select-deleted');
-                my.input.select.deleted = (val === "" ? null : (val === "1"));
+                this.input.select.deleted = (val === "" ? null : (val === "1"));
 
                 val = _view.getRadioValue('sp-shared-account-select-type');
-                my.input.select.accountType = (val === "" ? undefined : val);
+                this.input.select.accountType = (val === "" ? undefined : val);
 
                 sel = $('#sp-shared-account-name-containing-text');
                 present = (sel.val().length > 0);
-                my.input.select.name_text = ( present ? sel.val() : null);
+                this.input.select.name_text = ( present ? sel.val() : null);
 
-                my.input.sort.field = _view.getRadioValue('sp-shared-account-sort-by');
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-shared-account-sort-dir', 'sp-shared-account-sort-dir-asc');
+                this.input.sort.field = _view.getRadioValue('sp-shared-account-sort-by');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-shared-account-sort-dir', 'sp-shared-account-sort-dir-asc');
             },
 
             // JSON input
@@ -1645,52 +1646,52 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 _ns.PanelCommon.refreshPanelAdmin('AccountsBase', skipBeforeLoad);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageAdmin(my, 'AccountsPage', '#sp-shared-account-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageAdmin(_this, 'AccountsPage', '#sp-shared-account-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-
-                my.output = output;
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page get
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-shared-accounts-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-shared-accounts-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-shared-accounts-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
-
             }
         };
 
@@ -1699,46 +1700,46 @@
          */
         _ns.PanelUserGroupsBase = {
 
-            applyDefaults : function(my) {
+            applyDefaults : function() {
 
-                my.input.page = 1;
-                my.input.maxResults = 10;
+                this.input.page = 1;
+                this.input.maxResults = 10;
 
-                my.input.select.name_text = null;
+                this.input.select.name_text = null;
                 // Boolean
-                my.input.sort.ascending = true;
+                this.input.sort.ascending = true;
             },
 
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
-            afterload : function(my) {
-                my.m2v(my);
-                my.page(my, my.input.page);
+            afterload : function() {
+                this.m2v();
+                this.page(this.input.page);
             },
 
-            m2v : function(my) {
+            m2v : function() {
                 var id,
                     _view = _ns.PanelCommon.view;
 
-                $('#sp-user-group-name-containing-text').val(my.input.select.name_text);
+                $('#sp-user-group-name-containing-text').val(this.input.select.name_text);
 
                 id = 'sp-user-group-sort-dir';
-                _view.checkRadio(id, my.input.sort.ascending ? id + '-asc' : id + '-desc');
+                _view.checkRadio(id, this.input.sort.ascending ? id + '-asc' : id + '-desc');
 
             },
 
-            v2m : function(my) {
+            v2m : function() {
                 var sel,
                     present,
                     _view = _ns.PanelCommon.view;
 
                 sel = $('#sp-user-group-name-containing-text');
                 present = (sel.val().length > 0);
-                my.input.select.name_text = ( present ? sel.val() : null);
+                this.input.select.name_text = ( present ? sel.val() : null);
 
-                my.input.sort.ascending = _view.isRadioIdSelected('sp-user-group-sort-dir', 'sp-user-group-sort-dir-asc');
+                this.input.sort.ascending = _view.isRadioIdSelected('sp-user-group-sort-dir', 'sp-user-group-sort-dir-asc');
             },
 
             // JSON input
@@ -1762,47 +1763,47 @@
                 prevPage : null
             },
 
-            refresh : function(my, skipBeforeLoad) {
+            refresh : function(skipBeforeLoad) {
                 _ns.PanelCommon.refreshPanelAdmin('UserGroupsBase', skipBeforeLoad);
             },
 
             // show page
-            page : function(my, nPage) {
+            page : function(nPage) {
+                var _this = this;
                 _ns.PanelCommon.onValidPage(function() {
-                    my.input.page = nPage;
-                    my.v2m(my);
-                    _ns.PanelCommon.loadListPageAdmin(my, 'UserGroupsPage', '#sp-user-group-list-page');
+                    _this.input.page = nPage;
+                    _this.v2m();
+                    _ns.PanelCommon.loadListPageAdmin(_this, 'UserGroupsPage', '#sp-user-group-list-page');
                 });
             },
 
-            getInput : function(my) {
-                return my.input;
+            getInput : function() {
+                return this.input;
             },
 
-            onOutput : function(my, output) {
-
-                my.output = output;
-
+            onOutput : function(output) {
+                var _this = this;
+                this.output = output;
                 /*
                  * NOTICE the $().one() construct. Since the page get
                  * reloaded all the time, we want a single-shot binding.
                  */
                 $(".sp-user-groups-page").one('click', null, function() {
-                    my.page(my, parseInt($(this).text(), 10));
+                    _this.page(parseInt($(this).text(), 10));
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-user-groups-page-next").one('click', null, function() {
-                    my.page(my, my.output.nextPage);
+                    _this.page(_this.output.nextPage);
                     /*
                      * return false so URL is not followed.
                      */
                     return false;
                 });
                 $(".sp-user-groups-page-prev").one('click', null, function() {
-                    my.page(my, my.output.prevPage);
+                    _this.page(_this.output.prevPage);
                     /*
                      * return false so URL is not followed.
                      */

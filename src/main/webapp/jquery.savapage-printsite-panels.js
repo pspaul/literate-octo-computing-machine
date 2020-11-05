@@ -33,7 +33,7 @@
  */
 
 /*
- * SavaPage jQuery Mobile Admin Panels
+ * SavaPage jQuery Mobile Print Site Panels
  */
 ( function($, window, document, JSON, _ns) {
         "use strict";
@@ -47,15 +47,16 @@
             userKey : null,
 
             /** */
-            refresh : function(my, skipBeforeLoad) {
-                var html = _ns.PanelCommon.view.getPageHtml('printsite/PrintSiteUserEdit', {
-                    userKey : my.userKey
+            refresh : function(skipBeforeLoad) {
+                var _this = this,
+                    html = _ns.PanelCommon.view.getPageHtml('printsite/PrintSiteUserEdit', {
+                    userKey : _this.userKey
                 });
                 $('#sp-a-content').html(html).enhanceWithin();
             },
 
             /** */
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
@@ -65,10 +66,10 @@
             },
 
             /** */
-            v2m : function(my, _view) {
+            v2m : function(_view) {
                 var dto = {};
 
-                dto.dbId = my.userKey;
+                dto.dbId = this.userKey;
                 dto.userName = $('#user-name').text();
                 dto.fullName = $('#user-fullname').val();
                 dto.disabled = $('#user-disabled').is(':checked');
@@ -102,11 +103,12 @@
             userKey : null,
 
             /** */
-            refresh : function(my, skipBeforeLoad) {
-                var html = _ns.PanelCommon.view.getUserPageHtml('OutboxAddin', {
+            refresh : function(skipBeforeLoad) {
+                var _this = this,
+                    html = _ns.PanelCommon.view.getUserPageHtml('OutboxAddin', {
                     jobTickets : false,
                     expiryAsc : false,
-                    userKey : my.userKey
+                    userKey : _this.userKey
                 });
 
                 if (html) {
@@ -121,12 +123,12 @@
             },
 
             /** */
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
             /** */
-            afterload : function(my) {
+            afterload : function() {
                 $.noop();
             }
         };
@@ -148,19 +150,19 @@
             /*
              * A refresh of the WHOLE panel.
              */
-            refresh : function(my, skipBeforeLoad) {
-                my.scrollTop = $(window).scrollTop();
+            refresh : function(skipBeforeLoad) {
+                this.scrollTop = $(window).scrollTop();
                 _ns.PanelCommon.refreshPanelPrintSite('Dashboard', skipBeforeLoad);
             },
 
-            beforeload : function(my) {
+            beforeload : function() {
                 $.noop();
             },
 
-            afterload : function(my) {
+            afterload : function() {
                 var i,
                     j,
-                    _model = my.model;
+                    _model = this.model;
 
                 $.mobile.loading("hide");
 
@@ -174,7 +176,7 @@
 
             },
 
-            onUnload : function(my) {
+            onUnload : function() {
                 $.noop();
             }
         };

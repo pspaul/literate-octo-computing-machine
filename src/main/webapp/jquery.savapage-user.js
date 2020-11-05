@@ -1384,10 +1384,6 @@
             var
             // AccountTrx (common for Admin and User WebApp)
             _panel = _ns.PanelAccountTrxBase;
-
-            /*
-             *
-             */
             _panel.jqId = '#content-accounttrx';
 
             /**
@@ -1399,18 +1395,18 @@
                  * AccountTrx Panel
                  */
                 $(this).on('click', '#button-accounttrx-apply', null, function() {
-                    _panel.page(_panel, 1);
+                    _panel.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-accounttrx-default', null, function() {
-                    _panel.applyDefaults(_panel);
-                    _panel.m2v(_panel);
+                    _panel.applyDefaults();
+                    _panel.m2v();
                     return false;
                 });
 
                 $(this).on('click', '.sp-btn-accounttrx-report', null, function() {
-                    _panel.v2m(_panel);
+                    _panel.v2m();
                     _api.download("report-user", _panel.input, "AccountTrxList", $(this).attr('data-savapage'));
                     return true;
                 });
@@ -1429,15 +1425,14 @@
                 /*
                  * _panel.input.select.user_id is only used in a Admin WebApp
                  * context. In a User WebApp context the server will use the
-                 * logged
-                 * in user.
+                 * logged in user.
                  */
 
                 /*
                  * Reset to defaults, since a new user might have logged on.
                  */
-                _panel.applyDefaults(_panel);
-                _panel.refresh(_panel);
+                _panel.applyDefaults();
+                _panel.refresh();
             });
         }
 
@@ -1448,7 +1443,6 @@
             var
             // DocLog (common for Admin and User WebApp)
             _panel = _ns.PanelDocLogBase;
-
             _panel.jqId = '#content-doclog';
 
             /**
@@ -1460,18 +1454,18 @@
                  * DocLog Panel
                  */
                 $(this).on('click', '#button-doclog-apply', null, function() {
-                    _panel.page(_panel, 1);
+                    _panel.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-doclog-default', null, function() {
-                    _panel.applyDefaults(_panel);
-                    _panel.m2v(_panel);
+                    _panel.applyDefaults();
+                    _panel.m2v();
                     return false;
                 });
 
                 $(this).on('change', "input[name='sp-doclog-select-type']", null, function() {
-                    _panel.setVisibility(_panel);
+                    _panel.setVisibility();
                     return false;
                 });
 
@@ -1502,15 +1496,14 @@
                 /*
                  * _panel.input.select.user_id is only used in a Admin WebApp
                  * context. In a User WebApp context the server will use the
-                 * logged
-                 * in user.
+                 * logged in user.
                  */
 
                 /*
                  * Reset to defaults, since a new user might have logged on.
                  */
-                _panel.applyDefaults(_panel);
-                _panel.refresh(_panel);
+                _panel.applyDefaults();
+                _panel.refresh();
             });
         }
 
@@ -6216,7 +6209,7 @@
 
             _ns.PanelCommon.refreshPanelCommon = function(wClass, skipBeforeLoad, thePanel) {
                 var jqId = thePanel.jqId,
-                    data = thePanel.getInput(thePanel),
+                    data = thePanel.getInput(),
                     jsonData = JSON.stringify(data);
 
                 $.mobile.loading("show");
@@ -6234,13 +6227,8 @@
                     // Hide the top divider with the title
                     $(jqId + ' > ul > .ui-li-divider').hide();
 
-                    /*
-                    * We can't retrieve the json-rsp here, why?
-                    */
-                    //thePanel.onOutput(thePanel, $.parseJSON($(jqId + '
-                    // .json-rsp').text()));
-                    thePanel.onOutput(thePanel, undefined);
-                    thePanel.afterload(thePanel);
+                    thePanel.onOutput(undefined);
+                    thePanel.afterload();
                 }).fail(function() {
                     _ns.PanelCommon.onDisconnected();
                 }).always(function() {

@@ -1483,12 +1483,10 @@
 
             /*
              * The map of panels. The key is the Java Wicket class. Each key has
-             * the
-             * following attributes.
+             * the following attributes.
              *
-             * getInput : function(my) {}
-             *
-             * onOutput : function(my, output) {}
+             * getInput : function() {}
+             * onOutput : function(output) {}
              */
             _panel = {
 
@@ -1561,39 +1559,31 @@
             };
 
             _self.refreshDashboard = function() {
-                var pnl = _panel.Dashboard;
-                pnl.refresh(pnl);
+                _panel.Dashboard.refresh();
             };
             _self.refreshUsers = function() {
-                var pnl = _panel.UsersBase;
-                pnl.refresh(pnl);
+                _panel.UsersBase.refresh();
             };
             _self.refreshUserGroups = function() {
-                var pnl = _panel.UserGroupsBase;
-                pnl.refresh(pnl);
+                _panel.UserGroupsBase.refresh();
             };
             _self.refreshConfigProps = function() {
-                var pnl = _panel.ConfigPropBase;
-                pnl.refresh(pnl);
+                _panel.ConfigPropBase.refresh();
             };
             _self.refreshQueues = function() {
-                var pnl = _panel.QueuesBase;
-                pnl.refresh(pnl);
+                _panel.QueuesBase.refresh();
             };
             _self.refreshSharedAccounts = function() {
-                var pnl = _panel.AccountsBase;
-                pnl.refresh(pnl);
+                _panel.AccountsBase.refresh();
             };
             _self.refreshDevices = function() {
-                var pnl = _panel.DevicesBase;
-                pnl.refresh(pnl);
+                _panel.DevicesBase.refresh();
             };
             _self.refreshPrinters = function() {
                 _panel.PrintersBase.refresh();
             };
             _self.refreshAccountVouchers = function() {
-                var pnl = _panel.AccountVoucherBase;
-                pnl.refresh(pnl);
+                _panel.AccountVoucherBase.refresh();
             };
 
             _refreshPanel = function(wClass, skipBeforeLoad) {
@@ -1626,11 +1616,11 @@
                 ;
 
                 if (!skipBeforeLoad && panel.beforeload) {
-                    panel.beforeload(panel);
+                    panel.beforeload();
                 }
 
                 if (panel.getInput) {
-                    data = panel.getInput(panel);
+                    data = panel.getInput();
                 }
 
                 if (data) {
@@ -1658,12 +1648,7 @@
                     $('.content-primary').html(html).enhanceWithin();
 
                     if (panel.onOutput) {
-                        /*
-                        * We can't retrieve the json-rsp here, why?
-                        */
-                        //panel.onOutput(panel, $.parseJSON($('.content-primary
-                        // .json-rsp').text()));
-                        panel.onOutput(panel, undefined);
+                        panel.onOutput(undefined);
                     }
 
                     /*
@@ -1673,7 +1658,7 @@
                      * page of the list.
                      */
                     if (panel.afterload) {
-                        panel.afterload(panel);
+                        panel.afterload();
                     } else {
                         $.mobile.loading("hide");
                     }
@@ -1699,11 +1684,11 @@
                 var panel = _panel[wClass];
 
                 if (panel.applyDefaults) {
-                    panel.applyDefaults(panel);
+                    panel.applyDefaults();
                 }
 
                 if (_panelCur && _panelCur.onUnload) {
-                    _panelCur.onUnload(_panelCur);
+                    _panelCur.onUnload();
                 }
                 if (wClass === 'DocLogBase' || wClass === 'AccountTrxBase') {
                     _refreshPanelCommon(wClass);
@@ -1774,7 +1759,7 @@
                  */
                 $(window).on('throttledresize', function() {
                     if (_panelCur && _panelCur.onResize) {
-                        _panelCur.onResize(_panelCur);
+                        _panelCur.onResize();
                     }
                 });
 
@@ -1804,12 +1789,8 @@
                         pnl = _panel[clazz];
 
                     $(this).closest('[data-role="popup"]').popup("close");
+                    pnl.refresh(true);
 
-                    //if (pnl.output.lastPage) {
-                    pnl.refresh(pnl, true);
-                    //} else {
-                    //    _loadPanel(clazz);
-                    //}
                     return false;
                 });
 
@@ -1870,10 +1851,10 @@
 
                 $(this).on('click', '.sp-account-transaction', null, function() {
                     var pnl = _panel.AccountTrxBase;
-                    pnl.applyDefaults(pnl);
+                    pnl.applyDefaults();
                     pnl.input.select.account_id = $(this).attr('data-savapage');
                     // skipBeforeLoad
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
@@ -1883,21 +1864,20 @@
                 });
 
                 $(this).on('click', '#button-accounts-apply', null, function() {
-                    var pnl = _panel.AccountsBase;
-                    pnl.page(pnl, 1);
+                    _panel.AccountsBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-accounts-default', null, function() {
                     var pnl = _panel.AccountsBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
                 $(this).on('click', '.sp-btn-accounts-report', null, function() {
                     var pnl = _panel.AccountsBase;
-                    pnl.v2m(pnl);
+                    pnl.v2m();
                     _self.onDownload("report", pnl.input, "AccountList", $(this).attr('data-savapage'));
                     return true;
                 });
@@ -1906,21 +1886,20 @@
                  * AccountTrx Panel
                  */
                 $(this).on('click', '#button-accounttrx-apply', null, function() {
-                    var pnl = _panel.AccountTrxBase;
-                    pnl.page(pnl, 1);
+                    _panel.AccountTrxBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-accounttrx-default', null, function() {
                     var pnl = _panel.AccountTrxBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
                 $(this).on('click', '.sp-btn-accounttrx-report', null, function() {
                     var pnl = _panel.AccountTrxBase;
-                    pnl.v2m(pnl);
+                    pnl.v2m();
                     _self.onDownload("report", pnl.input, "AccountTrxList", $(this).attr('data-savapage'));
                     return true;
                 });
@@ -1934,15 +1913,14 @@
                  * AccountVoucher Panel
                  */
                 $(this).on('click', '#button-voucher-apply', null, function() {
-                    var pnl = _panel.AccountVoucherBase;
-                    pnl.page(pnl, 1);
+                    _panel.AccountVoucherBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-voucher-default', null, function() {
                     var pnl = _panel.AccountVoucherBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
@@ -1953,14 +1931,14 @@
 
                 $(this).on('click', '#button-voucher-expire-batch', null, function() {
                     var pnl = _panel.AccountVoucherBase;
-                    pnl.v2m(pnl);
+                    pnl.v2m();
                     _self.onVoucherExpireBatch(_panel.AccountVoucherBase.getBatch());
                     return false;
                 });
 
                 $(this).on('click', '#button-voucher-print-batch', null, function() {
                     var pnl = _panel.AccountVoucherBase;
-                    pnl.v2m(pnl);
+                    pnl.v2m();
                     // VoucherBatchPrintDto
                     _self.onDownload("account-voucher-batch-print", null, JSON.stringify({
                         batchId : pnl.getBatch(),
@@ -1973,14 +1951,13 @@
                 $(this).on('click', '#button-voucher-delete-batch', null, function() {
                     var pnl = _panel.AccountVoucherBase,
                         batch = pnl.getBatch();
-                    pnl.applyDefaults(pnl);
+                    pnl.applyDefaults();
                     _self.onVoucherDeleteBatch(batch);
                     return false;
                 });
 
                 $(this).on('click', '#button-voucher-delete-expired', null, function() {
-                    var pnl = _panel.AccountVoucherBase;
-                    pnl.v2m(pnl);
+                    _panel.AccountVoucherBase.v2m();
                     _self.onVoucherDeleteExpired();
                     return false;
                 });
@@ -1993,15 +1970,14 @@
                  * AppLog Panel
                  */
                 $(this).on('click', '#button-applog-apply', null, function() {
-                    var pnl = _panel.AppLogBase;
-                    pnl.page(pnl, 1);
+                    _panel.AppLogBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-applog-default', null, function() {
                     var pnl = _panel.AppLogBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
@@ -2009,15 +1985,14 @@
                  * ConfigProp Panel
                  */
                 $(this).on('click', '#button-configprop-apply', null, function() {
-                    var pnl = _panel.ConfigPropBase;
-                    pnl.page(pnl, 1);
+                    _panel.ConfigPropBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-configprop-default', null, function() {
                     var pnl = _panel.ConfigPropBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
@@ -2035,15 +2010,14 @@
                 });
 
                 $(this).on('click', '#button-devices-apply', null, function() {
-                    var pnl = _panel.DevicesBase;
-                    pnl.page(pnl, 1);
+                    _panel.DevicesBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-devices-default', null, function() {
                     var pnl = _panel.DevicesBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
@@ -2060,8 +2034,7 @@
                  * DocLog Panel
                  */
                 $(this).on('click', '#button-doclog-apply', null, function() {
-                    var pnl = _panel.DocLogBase;
-                    pnl.page(pnl, 1);
+                    _panel.DocLogBase.page(1);
                     return false;
                 });
 
@@ -2069,13 +2042,13 @@
                     var pnl = _panel.DocLogBase;
                     pnl.clearHiddenUserid();
                     pnl.doc_type_default = 'ALL';
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
                 $(this).on('change', "input[name='sp-doclog-select-type']", null, function() {
-                    _panel.DocLogBase.setVisibility(_panel.DocLogBase);
+                    _panel.DocLogBase.setVisibility();
                     return false;
                 });
 
@@ -2111,19 +2084,19 @@
 
                 $(this).on('click', '.sp-user-log', null, function() {
                     var pnl = _panel.DocLogBase;
-                    pnl.applyDefaults(pnl);
+                    pnl.applyDefaults();
                     pnl.input.select.user_id = $(this).attr('data-savapage');
                     // skipBeforeLoad
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
                 $(this).on('click', '.sp-user-transaction', null, function() {
                     var pnl = _panel.AccountTrxBase;
-                    pnl.applyDefaults(pnl);
+                    pnl.applyDefaults();
                     pnl.input.select.user_id = $(this).attr('data-savapage');
                     // skipBeforeLoad
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
@@ -2133,21 +2106,20 @@
                 });
 
                 $(this).on('click', '#button-users-apply', null, function() {
-                    var pnl = _panel.UsersBase;
-                    pnl.page(pnl, 1);
+                    _panel.UsersBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-users-default', null, function() {
                     var pnl = _panel.UsersBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
                 $(this).on('click', '.sp-btn-users-report', null, function() {
                     var pnl = _panel.UsersBase;
-                    pnl.v2m(pnl);
+                    pnl.v2m();
                     _self.onDownload("report", pnl.input, "UserList", $(this).attr('data-savapage'));
                     return true;
                 });
@@ -2162,20 +2134,20 @@
 
                 $(this).on('click', '.sp-user-group-users', null, function() {
                     var pnl = _panel.UsersBase;
-                    pnl.applyDefaults(pnl);
+                    pnl.applyDefaults();
                     pnl.input.select.usergroup_id = $(this).attr('data-savapage');
                     // skipBeforeLoad
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
                 $(this).on('click', '.sp-user-group-account', null, function() {
                     var pnl = _panel.AccountsBase;
-                    pnl.applyDefaults(pnl);
+                    pnl.applyDefaults();
                     pnl.input.select.name_text = $(this).attr('data-savapage');
                     pnl.input.select.accountType = $(this).attr('data-savapage-type');
                     // skipBeforeLoad
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
@@ -2185,21 +2157,20 @@
                 });
 
                 $(this).on('click', '#button-user-groups-apply', null, function() {
-                    var pnl = _panel.UserGroupsBase;
-                    pnl.page(pnl, 1);
+                    _panel.UserGroupsBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-user-groups-default', null, function() {
                     var pnl = _panel.UserGroupsBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
                 $(this).on('click', '.sp-btn-user-groups-report', null, function() {
                     var pnl = _panel.UserGroupsBase;
-                    pnl.v2m(pnl);
+                    pnl.v2m();
                     _self.onDownload("report", pnl.input, "UserGroupsList", $(this).attr('data-savapage'));
                     return true;
                 });
@@ -2215,10 +2186,10 @@
                 $(this).on('click', '.sp-queue-log', null, function() {
                     var pnl = _panel.DocLogBase;
                     pnl.doc_type_default = 'IN';
-                    pnl.applyDefaults(pnl);
+                    pnl.applyDefaults();
                     pnl.input.select.queue_id = $(this).attr('data-savapage');
                     // skipBeforeLoad
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
@@ -2228,15 +2199,14 @@
                 });
 
                 $(this).on('click', '#button-queues-apply', null, function() {
-                    var pnl = _panel.QueuesBase;
-                    pnl.page(pnl, 1);
+                    _panel.QueuesBase.page(1);
                     return false;
                 });
 
                 $(this).on('click', '#button-queues-default', null, function() {
                     var pnl = _panel.QueuesBase;
-                    pnl.applyDefaults(pnl);
-                    pnl.m2v(pnl);
+                    pnl.applyDefaults();
+                    pnl.m2v();
                     return false;
                 });
 
@@ -2271,10 +2241,10 @@
                 $(this).on('click', '.sp-printer-log', null, function() {
                     var pnl = _panel.DocLogBase;
                     pnl.doc_type_default = 'PRINT';
-                    pnl.applyDefaults(pnl);
+                    pnl.applyDefaults();
                     pnl.input.select.printer_id = $(this).attr('data-savapage');
                     // skipBeforeLoad
-                    pnl.refresh(pnl, true);
+                    pnl.refresh(true);
                     return false;
                 });
 
@@ -2305,7 +2275,7 @@
                  */
                 $(this).on('click', '.sp-btn-reports-user-printout-tot', null, function() {
                     var pnl = _panel.Reports;
-                    pnl.v2m(pnl);
+                    pnl.v2m();
                     _self.onDownload("report", pnl.input, "UserPrintOutTotals", $(this).attr('data-savapage'));
                     return true;
                 });
@@ -2426,11 +2396,11 @@
                 });
 
                 $(this).on('change', "input:checkbox[id='gcp.enable']", null, function(e) {
-                    _panel.Options.onGcpRefresh(_panel.Options);
+                    _panel.Options.onGcpRefresh();
                 });
 
                 $(this).on('change', "input:checkbox[id='gcp-mail-after-cancel-enable']", null, function(e) {
-                    _panel.Options.onGcpRefresh(_panel.Options);
+                    _panel.Options.onGcpRefresh();
                 });
 
                 $(this).on('change', "input:checkbox[id='webapp.user.proxy-print.clear-inbox.enable']", null, function(e) {
@@ -2684,8 +2654,7 @@
                 });
 
                 $(this).on('click', '#button-config-editor', null, function() {
-                    var pnl = _panel.ConfigPropBase;
-                    pnl.refresh(pnl);
+                    _panel.ConfigPropBase.refresh();
                     return false;
                 });
 
