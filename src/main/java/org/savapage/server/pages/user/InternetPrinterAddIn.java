@@ -35,6 +35,7 @@ import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.server.ipp.IppPrintServerUrlParms;
@@ -110,6 +111,7 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
         helper.addLabel("internet-printer-uri-cups", text);
         helper.addLabel("internet-printer-uri-windows",
                 StringUtils.replace(text, "ipps://", "https://"));
+        helper.addLabel("windows-driver-msg", PhraseEnum.WINDOWS_DRIVER_MSG);
 
         //
         if (urlParms == null) {

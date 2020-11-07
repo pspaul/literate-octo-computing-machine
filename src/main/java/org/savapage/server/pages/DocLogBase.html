@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -22,20 +22,18 @@ the License, or (at your option) any later version.
 
 <ul data-role="listview" data-inset="true">
 
-	<li data-role="list-divider">
-		<wicket:message key="title" />
-		<span id="sp-doclog-user-title"> <wicket:enclosure
+	<li data-role="list-divider"><wicket:message key="title" /> <span
+		id="sp-doclog-user-title"> <wicket:enclosure
 				child="select-and-sort-user"> 
 		        - <wicket:message key="select-and-sort-user" />: <span
 					wicket:id="select-and-sort-user" />
 			</wicket:enclosure>
-		</span> <span id="sp-doclog-account-title"> <wicket:enclosure
+	</span> <span id="sp-doclog-account-title"> <wicket:enclosure
 				child="select-and-sort-account"> 
                 - <wicket:message key="select-and-sort-account" />: <span
 					wicket:id="select-and-sort-account" />
 			</wicket:enclosure>
-		</span>
-	</li>
+	</span></li>
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 
@@ -58,8 +56,8 @@ the License, or (at your option) any later version.
 								<wicket:message key="type-all" />
 							</label>
 							<input type="radio" name="sp-doclog-select-type"
-								id="sp-doclog-select-type-all"
-								wicket:id="select-type-all" value="" />
+								id="sp-doclog-select-type-all" wicket:id="select-type-all"
+								value="" />
 
 							<label for="sp-doclog-select-type-in">
 								<wicket:message key="type-in" />
@@ -118,8 +116,7 @@ the License, or (at your option) any later version.
 					</div>
 				</li>
 
-				<li>
-					<span class="sp-txt-wrap"><wicket:message
+				<li><span class="sp-txt-wrap"><wicket:message
 							key="prompt-period" /></span>
 
 					<div class="ui-field-contain">
@@ -134,8 +131,7 @@ the License, or (at your option) any later version.
 							<wicket:message key="prompt-period-to" />
 						</label>
 						<input id="sp-doclog-date-to" data-clear-btn="true" />
-					</div>
-				</li>
+					</div></li>
 
 				<li class="sp-doclog-cat-queue">
 					<div class="ui-field-contain">
@@ -176,8 +172,8 @@ the License, or (at your option) any later version.
 								<wicket:message key="prompt-destination" />
 							</label>
 							<input type="text" id="sp-doc-out-destination" value=""
-								maxlength="128" autocomplete="off" autocorrect="off"
-								autocapitalize="off" spellcheck="false" />
+								data-clear-btn="true" maxlength="128" autocomplete="off"
+								autocorrect="off" autocapitalize="off" spellcheck="false" />
 						</div>
 
 						<wicket:enclosure child="prompt-letterhead">
@@ -216,21 +212,21 @@ the License, or (at your option) any later version.
 										<wicket:message key="prompt-author" />
 									</label>
 									<input type="text" id="sp-pdf-out-author" value=""
-										maxlength="128" />
+										data-clear-btn="true" maxlength="128" />
 								</div>
 								<div class="ui-field-contain">
 									<label for="sp-pdf-out-subject" class="sp-txt-wrap">
 										<wicket:message key="prompt-subject" />
 									</label>
 									<input type="text" id="sp-pdf-out-subject" value=""
-										maxlength="128" />
+										data-clear-btn="true" maxlength="128" />
 								</div>
 								<div class="ui-field-contain">
 									<label for="sp-pdf-out-keywords" class="sp-txt-wrap">
 										<wicket:message key="prompt-keywords" />
 									</label>
 									<input type="text" id="sp-pdf-out-keywords" value=""
-										maxlength="128" autocapitalize="off" />
+										data-clear-btn="true" maxlength="128" autocapitalize="off" />
 								</div>
 
 								<div class="ui-field-contain">
@@ -265,7 +261,7 @@ the License, or (at your option) any later version.
 												key="user-password" /></span>
 									</label>
 									<input type="password" id="sp-pdf-out-pw-user" value=""
-										maxlength="255" />
+										data-clear-btn="true" maxlength="255" />
 								</div>
 								<div class="ui-field-contain">
 									<label for="sp-pdf-out-pw-owner">
@@ -273,7 +269,7 @@ the License, or (at your option) any later version.
 												key="owner-password" /></span>
 									</label>
 									<input type="password" id="sp-pdf-out-pw-owner" value=""
-										maxlength="255" />
+										data-clear-btn="true" maxlength="255" />
 								</div>
 							</li>
 

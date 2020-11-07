@@ -25,6 +25,7 @@
 package org.savapage.server.pages;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import org.savapage.core.i18n.PhraseEnum;
 
 /**
  *
@@ -51,5 +52,7 @@ public final class PrinterDriverDownloadPanel extends Panel {
      *
      */
     public void populate() {
+        final MarkupHelper helper = new MarkupHelper(this);
+        helper.addLabel("windows-driver-msg", PhraseEnum.WINDOWS_DRIVER_MSG);
     }
 }

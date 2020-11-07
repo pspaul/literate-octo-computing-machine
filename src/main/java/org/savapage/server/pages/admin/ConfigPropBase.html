@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -17,12 +17,10 @@ the License, or (at your option) any later version.
 
 <ul data-role="listview" data-inset="true">
 
-	<li data-role="list-divider">
-		<span><wicket:message key="title" /></span>
-	</li>
+	<li data-role="list-divider"><span><wicket:message
+				key="title" /></span></li>
 
-	<li>
-		<wicket:enclosure child="txt-warning">
+	<li><wicket:enclosure child="txt-warning">
 			<div class="sp-txt-warn sp-txt-wrap" wicket:id="txt-warning" />
 		</wicket:enclosure>
 
@@ -34,13 +32,11 @@ the License, or (at your option) any later version.
 
 			<ul data-role="listview" data-inset="true">
 
-				<li>
-					<label for="sp-config-containing-text">
+				<li><label for="sp-config-containing-text">
 						<wicket:message key="prompt-containing-text" />
-					</label>
-					<input type="text" id="sp-config-containing-text" value=""
-						maxlength="128" autocomplete="off" autocorrect="off"
-						autocapitalize="off" spellcheck="false" />
+					</label> <input type="text" id="sp-config-containing-text" value=""
+						data-clear-btn="true" maxlength="128" autocomplete="off"
+						autocorrect="off" autocapitalize="off" spellcheck="false" />
 
 					<fieldset data-role="controlgroup" data-type="horizontal"
 						class="ui-mini">
@@ -60,8 +56,7 @@ the License, or (at your option) any later version.
 							<wicket:message key="sort-desc" />
 						</label>
 
-					</fieldset>
-				</li>
+					</fieldset></li>
 				<li>
 					<div data-role="controlgroup" data-type="horizontal">
 						<button id="button-configprop-apply"
@@ -77,8 +72,7 @@ the License, or (at your option) any later version.
 					</div>
 				</li>
 			</ul>
-		</div>
-	</li>
+		</div></li>
 
 	<li id="sp-config-list-page"></li>
 

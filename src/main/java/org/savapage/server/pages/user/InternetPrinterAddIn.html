@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -24,8 +24,7 @@ the License, or (at your option) any later version.
 	<li>
 		<h3>CUPS</h3>
 		<div class="sp-txt-wrap sp-txt-valid" style="font-family: monospace;"
-			wicket:id="internet-printer-uri-cups" />
-		<br />
+			wicket:id="internet-printer-uri-cups" /> <br />
 		<div>
 			<a class="sp-plain-link ui-btn ui-corner-all ui-btn-inline ui-mini"
 				href="/client/SAVAPAGE.ppd" target="_blank">SAVAPAGE.ppd</a>
@@ -34,11 +33,8 @@ the License, or (at your option) any later version.
 	<li>
 		<h3>Windows</h3>
 		<div class="sp-txt-wrap sp-txt-valid" style="font-family: monospace;"
-			wicket:id="internet-printer-uri-windows" />
-		<br />
-		<div>
-			<wicket:message key="windows-driver-msg" />
-		</div>
+			wicket:id="internet-printer-uri-windows" /> <br />
+		<div wicket:id="windows-driver-msg" />
 	</li>
 	<wicket:enclosure child="chrome-address">
 		<li>
@@ -90,8 +86,9 @@ the License, or (at your option) any later version.
 		<li>
 			<div>
 				<a href="https://f-droid.org/packages/org.savapage.android.print/"
-					target="_blank"> <img
-						src="./images/thirdparty/get-it-on-f-droid-shield.png" /></a>
+					target="_blank">
+					<img src="./images/thirdparty/get-it-on-f-droid-shield.png" />
+				</a>
 
 				<table data-role="table" data-mode="reflow"
 					class="ui-responsive table-stroke">
