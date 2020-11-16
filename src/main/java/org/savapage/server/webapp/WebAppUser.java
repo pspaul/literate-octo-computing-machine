@@ -45,6 +45,7 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
+import org.savapage.core.SpInfo;
 import org.savapage.core.cometd.AdminPublisher;
 import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
@@ -53,6 +54,7 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.OneTimeAuthToken;
+import org.savapage.core.dao.UserDao;
 import org.savapage.core.doc.DocContentTypeEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.jpa.UserEmail;
@@ -399,10 +401,8 @@ public final class WebAppUser extends AbstractWebAppPage {
             authUser = userEmail.getUser();
 
         } else if (email == null) {
-            authUser = ServiceContext.getDaoContext().getUserDao()
-                    .findActiveUserByUserId(userid);
+            authUser = this.findOAuthUser(plugin, userid, logPfx);
             if (authUser == null) {
-                LOGGER.warn("{}: user [{}]: not found.", logPfx, userid);
                 return Boolean.FALSE;
             }
         } else {
@@ -436,6 +436,64 @@ public final class WebAppUser extends AbstractWebAppPage {
                 oauthProvider);
 
         return Boolean.TRUE;
+    }
+
+    /**
+     * Finds (lazy inserts) user by OAuth provided User ID.
+     *
+     * @param plugin
+     *            OAuth plug-in.
+     * @param userid
+     *            OAuth provided User ID.
+     * @param logPfx
+     *            Log prefix.
+     * @return {@code null} if not found and not lazy inserted.
+     */
+    private User findOAuthUser(final OAuthClientPlugin plugin,
+            final String userid, final String logPfx) {
+
+        final UserDao dao = ServiceContext.getDaoContext().getUserDao();
+
+        // Regular find.
+        User authUser = dao.findActiveUserByUserId(userid);
+
+        if (authUser == null) {
+
+            final ConfigManager cm = ConfigManager.instance();
+
+            if (plugin.isUserSource() && cm.isUserInsertLazyLogin()) {
+
+                final String group =
+                        cm.getConfigValue(Key.USER_SOURCE_GROUP).trim();
+
+                ServiceContext.getDaoContext().beginTransaction();
+
+                try {
+                    authUser = USER_SERVICE.lazyInsertExternalUser(
+                            cm.getUserSource(), userid, group);
+                } finally {
+                    if (authUser == null) {
+                        ServiceContext.getDaoContext().rollback();
+                        LOGGER.warn(
+                                "{}: user [{}] ad hoc create rejected: "
+                                        + "not a member of group [{}]",
+                                logPfx, userid, group);
+                    } else {
+                        ServiceContext.getDaoContext().commit();
+                        SpInfo.instance()
+                                .log(String.format(
+                                        "%s: user [%s] ad hoc created.", logPfx,
+                                        userid));
+                    }
+                }
+
+            } else {
+                LOGGER.warn("{}: user [{}]: not found.", logPfx, userid);
+            }
+        }
+
+        return authUser;
+
     }
 
     /**
