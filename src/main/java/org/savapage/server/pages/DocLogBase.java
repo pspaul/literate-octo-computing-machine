@@ -44,6 +44,8 @@ import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dto.UserIdDto;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.Printer;
@@ -191,6 +193,9 @@ public final class DocLogBase extends AbstractAuthPage {
 
         //
         final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
+        helper.addLabel("prompt-document-name", NounEnum.DOCUMENT);
 
         //
         final boolean btnVisiblePdf;

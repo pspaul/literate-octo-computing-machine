@@ -37,9 +37,7 @@ the License, or (at your option) any later version.
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 
-			<h3>
-				<wicket:message key="select-and-sort" />
-			</h3>
+			<h3 wicket:id="select-and-sort" />
 
 			<ul data-role="listview" data-inset="true">
 
@@ -107,10 +105,8 @@ the License, or (at your option) any later version.
 
 				<li>
 					<div class="ui-field-contain">
-						<label for="sp-doclog-document-name">
-							<span class="sp-txt-wrap"><wicket:message
-									key="prompt-document-name" /></span>
-						</label>
+						<label for="sp-doclog-document-name"
+							wicket:id="prompt-document-name" />
 						<input type="text" id="sp-doclog-document-name" value=""
 							maxlength="128" data-clear-btn="true" />
 					</div>

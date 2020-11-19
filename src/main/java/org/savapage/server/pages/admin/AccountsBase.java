@@ -28,11 +28,15 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
+import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
-import org.savapage.server.pages.JrExportFileExtButtonPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -70,11 +74,34 @@ public final class AccountsBase extends AbstractAdminPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        helper.addModifyLabelAttr("account-type-group", "value",
+        //
+        helper.addLabel("title", ACLOidEnum.A_ACCOUNTS.uiText(getLocale()));
+        helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
+        helper.addLabel("prompt-name-containing-text", NounEnum.NAME);
+
+        //
+        helper.addLabel("prompt-account-deleted", AdverbEnum.DELETED);
+        helper.addLabel("account-deleted-n", AdjectiveEnum.ACTIVE);
+        helper.addLabel("account-deleted-y", AdverbEnum.DELETED);
+
+        helper.addLabel("prompt-sort-by", NounEnum.SORTING);
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
+
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
+
+        //
+        helper.addLabel("prompt-account-type", NounEnum.TYPE);
+        helper.addLabel("account-type-group-label", NounEnum.GROUP);
+        helper.addLabel("account-type-shared-label",
+                PrintOutAdjectiveEnum.SHARED.uiText(getLocale()));
+
+        helper.addModifyLabelAttr("account-type-group", MarkupHelper.ATTR_VALUE,
                 AccountTypeEnum.GROUP.toString());
 
-        helper.addModifyLabelAttr("account-type-shared", "value",
-                AccountTypeEnum.SHARED.toString());
+        helper.addModifyLabelAttr("account-type-shared",
+                MarkupHelper.ATTR_VALUE, AccountTypeEnum.SHARED.toString());
 
         if (ConfigManager.instance().isAppReadyToUse()) {
 
@@ -91,7 +118,10 @@ public final class AccountsBase extends AbstractAdminPage {
                     localized("warn-not-ready-to-use"), true);
         }
 
-        add(new JrExportFileExtButtonPanel("report-button-panel",
-                "sp-btn-accounts-report"));
+        /*
+         * Reserved for future use.
+         */
+        // add(new JrExportFileExtButtonPanel("report-button-panel",
+        // "sp-btn-accounts-report"));
     }
 }

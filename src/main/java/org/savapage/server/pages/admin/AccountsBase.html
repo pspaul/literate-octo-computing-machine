@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -17,24 +17,19 @@ the License, or (at your option) any later version.
 
 <ul data-role="listview" data-inset="true">
 
-	<li data-role="list-divider">
-		<span><wicket:message key="title" /></span>
-	</li>
+	<li data-role="list-divider"><span wicket:id="title" /></li>
 
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 
-			<h3>
-				<wicket:message key="select-and-sort" />
-			</h3>
+			<h3 wicket:id="select-and-sort" />
 
 			<ul data-role="listview" data-inset="true">
 
 				<li>
 					<div class="ui-field-contain">
-						<label for="sp-shared-account-name-containing-text">
-							<wicket:message key="prompt-name-containing-text" />
-						</label>
+						<label for="sp-shared-account-name-containing-text"
+							wicket:id="prompt-name-containing-text" />
 						<input type="text" id="sp-shared-account-name-containing-text"
 							value="" maxlength="128" data-clear-btn="true" autocomplete="off"
 							autocorrect="off" autocapitalize="off" spellcheck="false" />
@@ -44,30 +39,24 @@ the License, or (at your option) any later version.
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
-								<wicket:message key="prompt-account-type" />
-							</legend>
+							<legend wicket:id="prompt-account-type" />
 
+							<label for="sp-shared-account-select-type-all">-</label>
 							<input type="radio" name="sp-shared-account-select-type"
 								id="sp-shared-account-select-type-all" checked="checked"
 								value="" />
-							<label for="sp-shared-account-select-type-all">
-								<wicket:message key="account-type-all" />
-							</label>
 
+							<label for="sp-shared-account-select-type-group"
+								wicket:id="account-type-group-label" />
 							<input type="radio" name="sp-shared-account-select-type"
 								wicket:id="account-type-group"
 								id="sp-shared-account-select-type-group" value="[enum]" />
-							<label for="sp-shared-account-select-type-group">
-								<wicket:message key="account-type-group" />
-							</label>
 
+							<label for="sp-shared-account-select-type-shared"
+								wicket:id="account-type-shared-label" />
 							<input type="radio" name="sp-shared-account-select-type"
 								wicket:id="account-type-shared"
 								id="sp-shared-account-select-type-shared" value="[enum]" />
-							<label for="sp-shared-account-select-type-shared">
-								<wicket:message key="account-type-shared" />
-							</label>
 
 						</fieldset>
 					</div>
@@ -76,28 +65,22 @@ the License, or (at your option) any later version.
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
-								<wicket:message key="prompt-account-deleted" />
-							</legend>
+							<legend wicket:id="prompt-account-deleted" />
 
+							<label for="sp-shared-account-select-deleted-all">-</label>
 							<input type="radio" name="sp-shared-account-select-deleted"
 								id="sp-shared-account-select-deleted-all" value="" />
-							<label for="sp-shared-account-select-deleted-all">
-								<wicket:message key="account-deleted-all" />
-							</label>
 
+							<label for="sp-shared-account-select-deleted-y"
+								wicket:id="account-deleted-y" />
 							<input type="radio" name="sp-shared-account-select-deleted"
 								id="sp-shared-account-select-deleted-y" value="1" />
-							<label for="sp-shared-account-select-deleted-y">
-								<wicket:message key="account-deleted-y" />
-							</label>
 
+							<label for="sp-shared-account-select-deleted-n"
+								wicket:id="account-deleted-n" />
 							<input type="radio" name="sp-shared-account-select-deleted"
 								id="sp-shared-account-select-deleted-n" value="0"
 								checked="checked" />
-							<label for="sp-shared-account-select-deleted-n">
-								<wicket:message key="account-deleted-n" />
-							</label>
 
 						</fieldset>
 					</div>
@@ -107,21 +90,16 @@ the License, or (at your option) any later version.
 					<div class="ui-field-contain">
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
-							<legend>
-								<wicket:message key="prompt-sort-by" />
-							</legend>
+							<legend wicket:id="prompt-sort-by" />
 
+							<label for="sp-shared-account-sort-dir-asc" wicket:id="sort-asc" />
 							<input type="radio" name="sp-shared-account-sort-dir"
 								id="sp-shared-account-sort-dir-asc" checked="checked" />
-							<label for="sp-shared-account-sort-dir-asc">
-								<wicket:message key="sort-asc" />
-							</label>
 
+							<label for="sp-shared-account-sort-dir-desc"
+								wicket:id="sort-desc" />
 							<input type="radio" name="sp-shared-account-sort-dir"
 								id="sp-shared-account-sort-dir-desc" />
-							<label for="sp-shared-account-sort-dir-desc">
-								<wicket:message key="sort-desc" />
-							</label>
 
 						</fieldset>
 					</div>
@@ -131,17 +109,15 @@ the License, or (at your option) any later version.
 				<li>
 					<div data-role="controlgroup" data-type="horizontal">
 						<button id="button-accounts-apply"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+							wicket:id="button-apply" />
 						<button id="button-accounts-default"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-							<wicket:message key="button-default" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+							wicket:id="button-default" />
 						<wicket:remove>
-							<!-- 
-                        <wicket:panel wicket:id="report-button-panel" />
-    -->
+							<!-- Reserved for future use
+                                <wicket:panel wicket:id="report-button-panel" />
+                            -->
 						</wicket:remove>
 						<button
 							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</button>

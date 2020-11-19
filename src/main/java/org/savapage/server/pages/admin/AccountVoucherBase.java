@@ -34,6 +34,9 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.reports.JrVoucherPageLayoutEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.MediaUtils;
@@ -65,7 +68,17 @@ public final class AccountVoucherBase extends AbstractAdminPage {
                 this.probePermissionToEdit(ACLOidEnum.A_VOUCHERS);
 
         final MarkupHelper helper = new MarkupHelper(this);
+        //
+        helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
 
+        helper.addLabel("prompt-sort-by", NounEnum.SORTING);
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
+
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
+
+        //
         helper.encloseLabel("button-new-batch",
                 HtmlButtonEnum.ADD.uiText(getLocale()), hasEditorAccess);
 

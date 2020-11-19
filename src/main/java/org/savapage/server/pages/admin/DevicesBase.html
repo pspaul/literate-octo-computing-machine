@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -17,25 +17,18 @@ the License, or (at your option) any later version.
 
 <ul data-role="listview" data-inset="true">
 
-	<li data-role="list-divider">
-		<span><wicket:message key="title" /></span>
-	</li>
+	<li data-role="list-divider"><span wicket:id="title" /></li>
 
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 
-			<h3>
-				<wicket:message key="select-and-sort" />
-			</h3>
+			<h3 wicket:id="select-and-sort" />
 
 			<ul data-role="listview" data-inset="true">
 
 				<li>
 					<div class="ui-field-contain">
-						<label for="sp-device-containing-text">
-							<span class="sp-txt-wrap"> <wicket:message
-									key="prompt-containing-text" /></span>
-						</label>
+						<label for="sp-device-containing-text" wicket:id="prompt-name" />
 						<input type="text" id="sp-device-containing-text" value=""
 							maxlength="128" data-clear-btn="true" autocomplete="off"
 							autocorrect="off" autocapitalize="off" spellcheck="false" />
@@ -44,27 +37,21 @@ the License, or (at your option) any later version.
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
-								<wicket:message key="prompt-device-status" />
-							</legend>
+							<legend wicket:id="prompt-device-status" />
 
+							<label for="sp-device-select-status-all">-</label>
 							<input type="radio" name="sp-device-select-status"
 								id="sp-device-select-status-all" value="" checked="checked" />
-							<label for="sp-device-select-status-all">
-								<wicket:message key="device-status-all" />
-							</label>
 
+							<label for="sp-device-select-status-enabled"
+								wicket:id="device-status-enabled" />
 							<input type="radio" name="sp-device-select-status"
 								id="sp-device-select-status-enabled" value="1" />
-							<label for="sp-device-select-status-enabled">
-								<wicket:message key="device-status-enabled" />
-							</label>
 
+							<label for="sp-device-select-status-disabled"
+								wicket:id="device-status-disabled" />
 							<input type="radio" name="sp-device-select-status"
 								id="sp-device-select-status-disabled" value="0" />
-							<label for="sp-device-select-status-disabled">
-								<wicket:message key="device-status-disabled" />
-							</label>
 
 						</fieldset>
 					</div>
@@ -73,27 +60,21 @@ the License, or (at your option) any later version.
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
-								<wicket:message key="prompt-device-type" />
-							</legend>
+							<legend wicket:id="prompt-device-type" />
 
+							<label for="sp-device-select-type-all">-</label>
 							<input type="radio" name="sp-device-select-type"
 								id="sp-device-select-type-all" value="" checked="checked" />
-							<label for="sp-device-select-type-all">
-								<wicket:message key="device-type-all" />
-							</label>
 
+							<label for="sp-device-select-type-reader"
+								wicket:id="device-type-reader" />
 							<input type="radio" name="sp-device-select-type"
 								id="sp-device-select-type-reader" value="1" />
-							<label for="sp-device-select-type-reader">
-								<wicket:message key="device-type-reader" />
-							</label>
 
+							<label for="sp-device-select-type-terminal"
+								wicket:id="device-type-terminal" />
 							<input type="radio" name="sp-device-select-type"
 								id="sp-device-select-type-terminal" value="0" />
-							<label for="sp-device-select-type-terminal">
-								<wicket:message key="device-type-terminal" />
-							</label>
 
 						</fieldset>
 					</div>
@@ -104,21 +85,15 @@ the License, or (at your option) any later version.
 					<div class="ui-field-contain">
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
-							<legend>
-								<wicket:message key="prompt-sort-by" />
-							</legend>
+							<legend wicket:id="prompt-sort-by" />
 
+							<label for="sp-device-sort-dir-asc" wicket:id="sort-asc" />
 							<input type="radio" name="sp-device-sort-dir"
 								id="sp-device-sort-dir-asc" checked="checked" />
-							<label for="sp-device-sort-dir-asc">
-								<wicket:message key="sort-asc" />
-							</label>
 
+							<label for="sp-device-sort-dir-desc" wicket:id="sort-desc" />
 							<input type="radio" name="sp-device-sort-dir"
 								id="sp-device-sort-dir-desc" />
-							<label for="sp-device-sort-dir-desc">
-								<wicket:message key="sort-desc" />
-							</label>
 
 						</fieldset>
 					</div>
@@ -128,13 +103,11 @@ the License, or (at your option) any later version.
 				<li>
 					<div data-role="controlgroup" data-type="horizontal">
 						<button id="button-devices-apply"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+							wicket:id="button-apply" />
 						<button id="button-devices-default"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-							<wicket:message key="button-default" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+							wicket:id="button-default" />
 						<button
 							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</button>
 					</div>

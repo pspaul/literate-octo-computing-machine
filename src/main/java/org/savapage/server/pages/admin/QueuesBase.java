@@ -26,7 +26,12 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -40,9 +45,6 @@ public final class QueuesBase extends AbstractAdminPage {
      */
     private static final long serialVersionUID = 1L;
 
-    /** */
-    private static final String WICKET_ID_BUTTON_NEW = "button-new";
-
     /**
      * @param parameters
      *            The page parameters.
@@ -51,7 +53,30 @@ public final class QueuesBase extends AbstractAdminPage {
 
         super(parameters);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addLabel("title", NounEnum.QUEUE.uiText(getLocale(), true));
+
+        helper.addLabel("prompt-name", NounEnum.NAME);
+        helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
+
+        helper.addLabel("prompt-queue-status", NounEnum.STATUS);
+        helper.addLabel("queue-status-enabled", AdverbEnum.ENABLED);
+        helper.addLabel("queue-status-disabled", AdverbEnum.DISABLED);
+
+        helper.addLabel("prompt-queue-deleted", AdverbEnum.DELETED);
+        helper.addLabel("queue-deleted-y", AdverbEnum.DELETED);
+        helper.addLabel("queue-deleted-n", AdjectiveEnum.ACTIVE);
+
+        helper.addLabel("prompt-sort-by", NounEnum.SORTING);
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
+
+        //
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
+
         addVisible(this.probePermissionToEdit(ACLOidEnum.A_QUEUES),
-                WICKET_ID_BUTTON_NEW, HtmlButtonEnum.ADD.uiText(getLocale()));
+                "button-new", HtmlButtonEnum.ADD.uiText(getLocale()));
     }
 }

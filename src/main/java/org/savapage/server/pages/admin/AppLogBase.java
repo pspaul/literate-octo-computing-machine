@@ -27,6 +27,11 @@ package org.savapage.server.pages.admin;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
+import org.savapage.core.i18n.PrepositionEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -51,13 +56,39 @@ public final class AppLogBase extends AbstractAdminPage {
 
         MarkupHelper helper = new MarkupHelper(this);
 
-        helper.addModifyLabelAttr("level-all", "value", "");
-        helper.addModifyLabelAttr("level-info", "value",
+        helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
+
+        helper.addLabel("prompt-message", NounEnum.MESSAGE);
+
+        //
+        helper.addLabel("prompt-level", NounEnum.LEVEL);
+        helper.addLabel("level-info-label",
+                AppLogLevelEnum.INFO.uiText(getLocale()));
+        helper.addLabel("level-warning-label",
+                AppLogLevelEnum.WARN.uiText(getLocale()));
+        helper.addLabel("level-error-label",
+                AppLogLevelEnum.ERROR.uiText(getLocale()));
+
+        helper.addModifyLabelAttr("level-all", MarkupHelper.ATTR_VALUE, "");
+        helper.addModifyLabelAttr("level-info", MarkupHelper.ATTR_VALUE,
                 AppLogLevelEnum.INFO.toString());
-        helper.addModifyLabelAttr("level-warn", "value",
+        helper.addModifyLabelAttr("level-warn", MarkupHelper.ATTR_VALUE,
                 AppLogLevelEnum.WARN.toString());
-        helper.addModifyLabelAttr("level-error", "value",
+        helper.addModifyLabelAttr("level-error", MarkupHelper.ATTR_VALUE,
                 AppLogLevelEnum.ERROR.toString());
 
+        //
+        helper.addLabel("prompt-period", NounEnum.PERIOD);
+        helper.addLabel("prompt-period-from", PrepositionEnum.FROM_TIME);
+        helper.addLabel("prompt-period-to", PrepositionEnum.TO_TIME);
+
+        helper.addLabel("prompt-sort-by", NounEnum.SORTING);
+        helper.addLabel("sort-by-level", NounEnum.LEVEL);
+        helper.addLabel("sort-by-date", NounEnum.DATE);
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
+
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -17,25 +17,18 @@ the License, or (at your option) any later version.
 
 <ul data-role="listview" data-inset="true">
 
-	<li data-role="list-divider">
-		<span><wicket:message key="title" /></span>
-	</li>
+	<li data-role="list-divider"><span wicket:id="title" /></li>
 
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
 
-			<h3>
-				<wicket:message key="select-and-sort" />
-			</h3>
+			<h3 wicket:id="select-and-sort" />
 
 			<ul data-role="listview" data-inset="true">
 
 				<li>
 					<div class="ui-field-contain">
-						<label for="sp-queue-containing-text">
-							<span class="sp-txt-wrap"><wicket:message
-									key="prompt-containing-text" /></span>
-						</label>
+						<label for="sp-queue-containing-text" wicket:id="prompt-name" />
 						<input type="text" id="sp-queue-containing-text" value=""
 							maxlength="128" data-clear-btn="true" autocomplete="off"
 							autocorrect="off" autocapitalize="off" spellcheck="false" />
@@ -51,9 +44,7 @@ the License, or (at your option) any later version.
 
 							<input type="radio" name="sp-queue-select-trust"
 								id="sp-queue-select-trust-all" value="" checked="checked" />
-							<label for="sp-queue-select-trust-all">
-								<wicket:message key="queue-trust-all" />
-							</label>
+							<label for="sp-queue-select-trust-all">-</label>
 
 							<input type="radio" name="sp-queue-select-trust"
 								id="sp-queue-select-trust-yes" value="1" />
@@ -74,27 +65,21 @@ the License, or (at your option) any later version.
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
-								<wicket:message key="prompt-queue-status" />
-							</legend>
+							<legend wicket:id="prompt-queue-status" />
 
 							<input type="radio" name="sp-queue-select-status"
 								id="sp-queue-select-status-all" value="" checked="checked" />
-							<label for="sp-queue-select-status-all">
-								<wicket:message key="queue-status-all" />
-							</label>
+							<label for="sp-queue-select-status-all">-</label>
 
 							<input type="radio" name="sp-queue-select-status"
 								id="sp-queue-select-status-enabled" value="1" />
-							<label for="sp-queue-select-status-enabled">
-								<wicket:message key="queue-status-enabled" />
-							</label>
+							<label for="sp-queue-select-status-enabled"
+								wicket:id="queue-status-enabled" />
 
 							<input type="radio" name="sp-queue-select-status"
 								id="sp-queue-select-status-disabled" value="0" />
-							<label for="sp-queue-select-status-disabled">
-								<wicket:message key="queue-status-disabled" />
-							</label>
+							<label for="sp-queue-select-status-disabled"
+								wicket:id="queue-status-disabled" />
 
 						</fieldset>
 					</div>
@@ -103,27 +88,21 @@ the License, or (at your option) any later version.
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
-								<wicket:message key="prompt-queue-deleted" />
-							</legend>
+							<legend wicket:id="prompt-queue-deleted" />
 
+							<label for="sp-queue-select-deleted-all">-</label>
 							<input type="radio" name="sp-queue-select-deleted"
 								id="sp-queue-select-deleted-all" value="" />
-							<label for="sp-queue-select-deleted-all">
-								<wicket:message key="queue-deleted-all" />
-							</label>
 
+							<label for="sp-queue-select-deleted-y"
+								wicket:id="queue-deleted-y" />
 							<input type="radio" name="sp-queue-select-deleted"
 								id="sp-queue-select-deleted-y" value="1" />
-							<label for="sp-queue-select-deleted-y">
-								<wicket:message key="queue-deleted-y" />
-							</label>
 
+							<label for="sp-queue-select-deleted-n"
+								wicket:id="queue-deleted-n" />
 							<input type="radio" name="sp-queue-select-deleted"
 								id="sp-queue-select-deleted-n" value="0" checked="checked" />
-							<label for="sp-queue-select-deleted-n">
-								<wicket:message key="queue-deleted-n" />
-							</label>
 
 						</fieldset>
 					</div>
@@ -134,22 +113,15 @@ the License, or (at your option) any later version.
 					<div class="ui-field-contain">
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
-							<legend>
-								<wicket:message key="prompt-sort-by" />
-							</legend>
+							<legend wicket:id="prompt-sort-by" />
 
-							<label for="sp-queue-sort-dir-asc">
-								<wicket:message key="sort-asc" />
-							</label>
+							<label for="sp-queue-sort-dir-asc" wicket:id="sort-asc" />
 							<input type="radio" name="sp-queue-sort-dir"
 								id="sp-queue-sort-dir-asc" checked="checked" />
 
-							<label for="sp-queue-sort-dir-desc">
-								<wicket:message key="sort-desc" />
-							</label>
+							<label for="sp-queue-sort-dir-desc" wicket:id="sort-desc" />
 							<input type="radio" name="sp-queue-sort-dir"
 								id="sp-queue-sort-dir-desc" />
-
 						</fieldset>
 					</div>
 				</li>
@@ -157,13 +129,11 @@ the License, or (at your option) any later version.
 				<li>
 					<div data-role="controlgroup" data-type="horizontal">
 						<button id="button-queues-apply"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+							wicket:id="button-apply" />
 						<button id="button-queues-default"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-							<wicket:message key="button-default" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+							wicket:id="button-default" />
 						<button
 							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</button>
 					</div>

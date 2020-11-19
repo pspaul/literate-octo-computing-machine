@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -27,18 +27,12 @@ the License, or (at your option) any later version.
 
 		<div data-role="navbar">
 			<ul>
-				<li>
-					<a href="#sp-jobtickets-tab-open"
-						id="sp-jobtickets-tab-open-button" data-ajax="false"> <wicket:message
-							key="tab-title-open" />
-					</a>
-				</li>
-				<li>
-					<a href="#sp-jobtickets-tab-closed"
-						id="sp-jobtickets-tab-closed-button" data-ajax="false"> <wicket:message
-							key="tab-title-closed" />
-					</a>
-				</li>
+				<li><a href="#sp-jobtickets-tab-open"
+						id="sp-jobtickets-tab-open-button" data-ajax="false"
+						wicket:id="tab-title-open" /></li>
+				<li><a href="#sp-jobtickets-tab-closed"
+						id="sp-jobtickets-tab-closed-button" data-ajax="false"
+						wicket:id="tab-title-closed" /></li>
 			</ul>
 		</div>
 
@@ -51,9 +45,8 @@ the License, or (at your option) any later version.
 
 			<div id="sp-jobtickets-tab-open-header">
 				<div data-role="collapsible" data-collapsed="true" class="ui-mini">
-					<h3>
-						<wicket:message key="select-and-sort" />
-					</h3>
+
+					<h3 wicket:id="select-and-sort" />
 
 					<wicket:enclosure child="label-jobticket-group">
 						<div class="ui-field-contain">
@@ -104,21 +97,15 @@ the License, or (at your option) any later version.
 						<fieldset data-role="controlgroup" data-type="horizontal"
 							class="ui-mini">
 
-							<legend>
-								<wicket:message key="prompt-expiration" />
-							</legend>
+							<legend wicket:id="prompt-expiration" />
 
+							<label for="sp-jobticket-sort-dir-asc" wicket:id="sort-asc" />
 							<input type="radio" name="sp-jobticket-sort-dir"
 								id="sp-jobticket-sort-dir-asc" checked="checked" />
-							<label for="sp-jobticket-sort-dir-asc">
-								<wicket:message key="sort-asc" />
-							</label>
 
+							<label for="sp-jobticket-sort-dir-desc" wicket:id="sort-desc" />
 							<input type="radio" name="sp-jobticket-sort-dir"
 								id="sp-jobticket-sort-dir-desc" />
-							<label for="sp-jobticket-sort-dir-desc">
-								<wicket:message key="sort-desc" />
-							</label>
 
 						</fieldset>
 					</div>
@@ -137,8 +124,8 @@ the License, or (at your option) any later version.
 					<div style="float: left; margin-left: 15px; margin-top: -5px;">
 						<img style="padding: 0px 3px 3px 0px;"
 							id="sp-btn-jobticket-countdown-pause"
-							src="/famfamfam-silk/control_pause.png" />
-						<img style="padding: 0px 3px 3px 0px; display: none;"
+							src="/famfamfam-silk/control_pause.png" /> <img
+							style="padding: 0px 3px 3px 0px; display: none;"
 							id="sp-btn-jobticket-countdown-play"
 							src="/famfamfam-silk/control_play.png" />
 					</div>
@@ -267,8 +254,8 @@ the License, or (at your option) any later version.
 		</p>
 
 		<a href="#" id="sp-jobticket-popup-cancel-all-btn-no"
-			class="ui-btn ui-btn-inline" data-rel="back"> <wicket:message
-				key="button-no-rather-not" />
+			class="ui-btn ui-btn-inline" data-rel="back">
+			<wicket:message key="button-no-rather-not" />
 		</a>
 		<!--  -->
 		<button id="sp-jobticket-popup-cancel-all-btn-yes"
@@ -297,8 +284,8 @@ the License, or (at your option) any later version.
 		</p>
 
 		<a href="#" id="sp-jobticket-popup-print-all-btn-no"
-			class="ui-btn ui-btn-inline" data-rel="back"> <wicket:message
-				key="button-no-rather-not" />
+			class="ui-btn ui-btn-inline" data-rel="back">
+			<wicket:message key="button-no-rather-not" />
 		</a>
 		<!--  -->
 		<button id="sp-jobticket-popup-print-all-btn-yes"
@@ -327,8 +314,8 @@ the License, or (at your option) any later version.
 		</p>
 
 		<a href="#" id="sp-jobticket-popup-close-all-btn-no"
-			class="ui-btn ui-btn-inline" data-rel="back"> <wicket:message
-				key="button-no-rather-not" />
+			class="ui-btn ui-btn-inline" data-rel="back">
+			<wicket:message key="button-no-rather-not" />
 		</a>
 		<!--  -->
 		<button id="sp-jobticket-popup-close-all-btn-yes"

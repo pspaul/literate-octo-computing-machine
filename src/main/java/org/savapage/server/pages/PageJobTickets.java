@@ -36,6 +36,7 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.jpa.PrinterGroup;
 import org.savapage.core.services.ServiceContext;
@@ -80,6 +81,17 @@ public final class PageJobTickets extends AbstractAuthPage {
         final ConfigManager cm = ConfigManager.instance();
         final MarkupHelper helper = new MarkupHelper(this);
 
+        //
+        helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
+
+        helper.addLabel("tab-title-open", AdjectiveEnum.OPEN);
+        helper.addLabel("tab-title-closed", AdjectiveEnum.CLOSED);
+
+        helper.addLabel("prompt-expiration", NounEnum.EXPIRATION);
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
+
+        //
         addTitle(helper.addButton("button-refresh", HtmlButtonEnum.REFRESH));
         addTitle(helper.addButton("button-logout", HtmlButtonEnum.LOGOUT));
 

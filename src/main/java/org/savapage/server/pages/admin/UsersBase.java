@@ -35,10 +35,15 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.jpa.UserGroup;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.JrExportFileExtButtonPanel;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -71,6 +76,45 @@ public final class UsersBase extends AbstractAdminPage {
         final boolean hasEditorAccess =
                 this.probePermissionToEdit(ACLOidEnum.A_USERS);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        //
+        helper.addLabel("title", NounEnum.USER.uiText(getLocale(), true));
+        helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
+
+        helper.addLabel("prompt-group", NounEnum.GROUP);
+        helper.addLabel("prompt-id-containing-text", NounEnum.NAME);
+
+        helper.addLabel("prompt-email-containing-text", NounEnum.EMAIL);
+
+        helper.addLabel("prompt-user-type", NounEnum.TYPE);
+        helper.addLabel("user-type-person", NounEnum.PERSON);
+        helper.addLabel("user-type-abstract", AdjectiveEnum.ABSTRACT);
+
+        helper.addLabel("prompt-user-role", NounEnum.ROLE);
+        helper.addLabel("user-role-admin", NounEnum.ADMINISTRATOR);
+        helper.addLabel("user-role-user", NounEnum.USER);
+
+        helper.addLabel("prompt-user-status", NounEnum.STATUS);
+        helper.addLabel("user-status-enabled", AdverbEnum.ENABLED);
+        helper.addLabel("user-status-disabled", AdverbEnum.DISABLED);
+
+        helper.addLabel("prompt-user-deleted", AdverbEnum.DELETED);
+        helper.addLabel("user-deleted-y", AdverbEnum.DELETED);
+        helper.addLabel("user-deleted-n", AdjectiveEnum.ACTIVE);
+
+        helper.addLabel("prompt-sort-by", NounEnum.SORTING);
+
+        helper.addLabel("sort-by-id", NounEnum.ID);
+        helper.addLabel("sort-by-email", NounEnum.EMAIL);
+
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
+
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
+
+        //
         final boolean isAppReady = ConfigManager.instance().isAppReadyToUse();
 
         addVisible(isAppReady && hasEditorAccess, WICKET_ID_BUTTON_NEW,
@@ -116,6 +160,5 @@ public final class UsersBase extends AbstractAdminPage {
             }
 
         });
-
     }
 }

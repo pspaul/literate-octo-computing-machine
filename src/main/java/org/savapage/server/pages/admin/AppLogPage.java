@@ -116,27 +116,26 @@ public final class AppLogPage extends AbstractAdminListPage {
                 item.add(new Label("logDate", localizedShortDateTime(
                         item.getModelObject().getLogDate())));
 
-                String cssClass = null;
-                String levelKey = null;
+                final AppLogLevelEnum level = AppLogLevelEnum
+                        .asEnum(item.getModelObject().getLogLevel());
+                final String cssClass;
 
-                switch (AppLogLevelEnum
-                        .asEnum(item.getModelObject().getLogLevel())) {
+                switch (level) {
                 case ERROR:
                     cssClass = MarkupHelper.CSS_TXT_ERROR;
-                    levelKey = "level-error";
                     break;
                 case WARN:
                     cssClass = MarkupHelper.CSS_TXT_WARN;
-                    levelKey = "level-warning";
                     break;
                 default:
                     cssClass = MarkupHelper.CSS_TXT_INFO;
-                    levelKey = "level-info";
                     break;
                 }
 
-                Label labelWlk = new Label("logLevel", localized(levelKey));
-                labelWlk.add(new AttributeModifier("class", cssClass));
+                final Label labelWlk =
+                        new Label("logLevel", level.uiText(getLocale()));
+                labelWlk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS,
+                        cssClass));
                 item.add(labelWlk);
 
             }

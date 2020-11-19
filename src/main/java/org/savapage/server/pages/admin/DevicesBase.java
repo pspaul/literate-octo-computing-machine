@@ -26,6 +26,13 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -48,10 +55,34 @@ public final class DevicesBase extends AbstractAdminPage {
 
         super(parameters);
 
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addLabel("title", NounEnum.DEVICE.uiText(getLocale(), true));
+
+        helper.addLabel("prompt-name", NounEnum.NAME);
+        helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
+
+        helper.addLabel("prompt-sort-by", NounEnum.SORTING);
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
+
+        helper.addLabel("prompt-device-status", NounEnum.STATUS);
+        helper.addLabel("device-status-enabled", AdverbEnum.ENABLED);
+        helper.addLabel("device-status-disabled", AdverbEnum.DISABLED);
+
+        helper.addLabel("prompt-device-type", NounEnum.TYPE);
+        helper.addLabel("device-type-reader",
+                ACLPermissionEnum.READER.uiText(getLocale()));
+        helper.addLabel("device-type-terminal", NounEnum.TERMINAL);
+
+        //
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
+
         final boolean hasEditorAccess =
                 this.probePermissionToEdit(ACLOidEnum.A_DEVICES);
-
         addVisible(hasEditorAccess, "button-new-terminal",
                 localized("button-new-terminal"));
+
     }
 }

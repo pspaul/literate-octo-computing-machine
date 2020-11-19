@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -17,9 +17,8 @@ the License, or (at your option) any later version.
 
 <ul data-role="listview" data-inset="true">
 
-	<li data-role="list-divider">
-		<span><wicket:message key="title" /></span>
-	</li>
+	<li data-role="list-divider"><span><wicket:message
+				key="title" /></span></li>
 
 	<li>
 		<div class="ui-field-contain">
@@ -43,9 +42,7 @@ the License, or (at your option) any later version.
 					<option value="the-key" wicket:id="option-batch"></option>
 				</wicket:panel>
 			</select>
-		</div>
-
-		<wicket:enclosure child="button-new-batch">
+		</div> <wicket:enclosure child="button-new-batch">
 
 			<div data-role="collapsible" data-collapsed="true">
 
@@ -120,20 +117,15 @@ the License, or (at your option) any later version.
 
 		<div data-role="collapsible" data-collapsed="true">
 
-			<h3>
-				<wicket:message key="select-and-sort" />
-			</h3>
+			<h3 wicket:id="select-and-sort" />
 
 			<ul data-role="listview" data-inset="true">
 
-				<li>
-					<label for="sp-voucher-number">
+				<li><label for="sp-voucher-number">
 						<wicket:message key="prompt-number" />
-					</label>
-					<input type="text" id="sp-voucher-number" value="" maxlength="64"
+					</label> <input type="text" id="sp-voucher-number" value="" maxlength="64"
 						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-				</li>
+						spellcheck="false" /></li>
 
 				<li>
 					<div>
@@ -185,15 +177,12 @@ the License, or (at your option) any later version.
 
 				</li>
 
-				<li>
-					<label for="sp-voucher-user">
+				<li><label for="sp-voucher-user">
 						<wicket:message key="prompt-user" />
-					</label>
-					<input type="text" id="sp-voucher-user" value="" maxlength="64"
+					</label> <input type="text" id="sp-voucher-user" value="" maxlength="64"
 						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-
-					<span><wicket:message key="prompt-period" /></span>
+						spellcheck="false" /> <span><wicket:message
+							key="prompt-period" /></span>
 
 					<div class="ui-field-contain">
 						<label for="sp-voucher-date-from">
@@ -207,15 +196,12 @@ the License, or (at your option) any later version.
 							<wicket:message key="prompt-period-to" />
 						</label>
 						<input id="sp-voucher-date-to" data-clear-btn="true" />
-					</div>
-				</li>
+					</div></li>
 
 				<li>
 					<fieldset data-role="controlgroup" data-type="horizontal"
 						class="ui-mini">
-						<legend>
-							<wicket:message key="prompt-sort-by" />
-						</legend>
+						<legend wicket:id="prompt-sort-by" />
 
 						<input type="radio" name="sp-voucher-sort-by"
 							id="sp-voucher-sort-by-number" value="NUMBER" checked="checked" />
@@ -255,30 +241,24 @@ the License, or (at your option) any later version.
 								<wicket:message key="prompt-sort-direction" />
 							</legend>
 
+							<label for="sp-voucher-sort-dir-asc" wicket:id="sort-asc" />
 							<input type="radio" name="sp-voucher-sort-dir"
 								id="sp-voucher-sort-dir-asc" checked="checked" />
-							<label for="sp-voucher-sort-dir-asc">
-								<wicket:message key="sort-asc" />
-							</label>
 
+							<label for="sp-voucher-sort-dir-desc" wicket:id="sort-desc" />
 							<input type="radio" name="sp-voucher-sort-dir"
 								id="sp-voucher-sort-dir-desc" />
-							<label for="sp-voucher-sort-dir-desc">
-								<wicket:message key="sort-desc" />
-							</label>
 						</fieldset>
 					</div>
 				</li>
 				<li>
 					<div data-role="controlgroup" data-type="horizontal">
 						<button id="button-voucher-apply"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-							<wicket:message key="button-apply" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+							wicket:id="button-apply" />
 						<button id="button-voucher-default"
-							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle">
-							<wicket:message key="button-default" />
-						</button>
+							class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-recycle"
+							wicket:id="button-default" />
 						<button
 							class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-minus sp-collapse">&nbsp;</button>
 					</div>
