@@ -17,7 +17,9 @@ the License, or (at your option) any later version.
 
 <ul data-role="listview" data-inset="true">
 
-	<li data-role="list-divider"><span wicket:id="title" /></li>
+	<li data-role="list-divider">
+		<span wicket:id="title" />
+	</li>
 
 	<li>
 		<div data-role="collapsible" data-collapsed="true">
@@ -192,9 +194,8 @@ the License, or (at your option) any later version.
 	<wicket:enclosure child="button-new">
 		<li>
 			<div>
-				<button id="button-create-user"
-					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit"
-					wicket:id="button-new" />
+				<button id="button-create-user" wicket:id="button-new"
+					class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-edit" />
 			</div>
 		</li>
 	</wicket:enclosure>

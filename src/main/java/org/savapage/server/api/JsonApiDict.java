@@ -99,6 +99,7 @@ import org.savapage.server.api.request.ReqUserGroupSet;
 import org.savapage.server.api.request.ReqUserGroupsAddRemove;
 import org.savapage.server.api.request.ReqUserHomeClean;
 import org.savapage.server.api.request.ReqUserInitInternal;
+import org.savapage.server.api.request.ReqUserNameAliasesRefresh;
 import org.savapage.server.api.request.ReqUserNotifyAccountChange;
 import org.savapage.server.api.request.ReqUserPasswordErase;
 import org.savapage.server.api.request.ReqUserQuickSearch;
@@ -352,6 +353,8 @@ public final class JsonApiDict {
     public static final String REQ_USER_SOURCE_GROUPS = "user-source-groups";
 
     public static final String REQ_USERHOME_CLEAN = "userhome-clean";
+    public static final String REQ_USERNAME_ALIASES_REFRESH =
+            "username-aliases-refresh";
 
     public static final String REQ_USERCARD_QUICK_SEARCH =
             "usercard-quick-search";
@@ -1223,6 +1226,8 @@ public final class JsonApiDict {
         adm(REQ_USER_SET, ReqUserSet.class, DbClaim.READ, DbAccess.YES);
         adm(REQ_USERHOME_CLEAN, ReqUserHomeClean.class, DbClaim.NONE,
                 DbAccess.NO);
+        adm(REQ_USERNAME_ALIASES_REFRESH, ReqUserNameAliasesRefresh.class,
+                DbClaim.NONE, DbAccess.NO);
 
         adm(REQ_USER_SOURCE_GROUPS, DbClaim.NONE, DbAccess.NO);
         adm(REQ_USER_SYNC, DbClaim.NONE, DbAccess.NO);

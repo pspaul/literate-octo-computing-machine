@@ -32,14 +32,20 @@ the License, or (at your option) any later version.
 					<span wicket:id="fullName" /> &bull; <span wicket:id="email"></span>
 				</div>
 			</wicket:enclosure>
-
+			<wicket:enclosure child="userAliasesPrompt">
+				<p class="sp-txt-wrap">
+					<span wicket:id="userAliasesPrompt" /> : <span
+						wicket:id="userAliases" />
+				</p>
+			</wicket:enclosure>
 			<wicket:enclosure child="userGroupsPrompt">
 				<p class="sp-txt-wrap">
 					<span wicket:id="userGroupsPrompt" /> : <span
 						wicket:id="user-groups-view"> <span wicket:id="group-name" />
 						<wicket:panel wicket:id="group-roles" /> <wicket:panel
 							wicket:id="group-acl-user" /> <wicket:panel
-							wicket:id="group-acl-admin" /> </span>
+							wicket:id="group-acl-admin" />
+					</span>
 				</p>
 			</wicket:enclosure>
 

@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,7 @@ import org.savapage.core.services.UserService;
 import org.savapage.core.services.helpers.account.UserAccountContext;
 import org.savapage.core.services.helpers.account.UserAccountContextEnum;
 import org.savapage.core.services.helpers.account.UserAccountContextFactory;
+import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.SparklineHtml;
@@ -522,6 +524,26 @@ public final class UsersPage extends AbstractAdminListPage {
                     new ACLRoleSummaryPanel("user-roles");
             rolesPanel.populate(userRoles, getLocale());
             item.add(rolesPanel);
+
+            /*
+             * User aliases
+             */
+            final Set<String> aliases =
+                    UserAliasList.instance().getUserAliases(user.getUserId());
+
+            if (aliases.isEmpty()) {
+                helper.discloseLabel("userAliasesPrompt");
+            } else {
+                final StringBuilder builder = new StringBuilder();
+                for (final String alias : aliases) {
+                    if (builder.length() > 0) {
+                        builder.append(", ");
+                    }
+                    builder.append("\"").append(alias).append("\"");
+                }
+                helper.addLabel("userAliasesPrompt", NounEnum.ALIAS);
+                helper.addLabel("userAliases", builder.toString());
+            }
 
             /*
              * Groups

@@ -2574,6 +2574,11 @@
                     return false;
                 });
 
+                $(this).on('click', "#sp-btn-username-aliases-refresh", null, function() {
+                    _self.onUserNameAliasesRefresh();
+                    return false;
+                });
+
                 $(this).on('click', '#admin-pw-reset', null, function() {
                     _self.onAdminPwReset();
                     return false;

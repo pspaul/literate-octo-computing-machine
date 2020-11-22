@@ -504,14 +504,14 @@ public final class MarkupHelper {
 
         final Label labelWrk = new Label(wicketId);
 
-        labelWrk.add(new AttributeModifier("value", attrValue));
+        labelWrk.add(new AttributeModifier(ATTR_VALUE, attrValue));
 
         if (StringUtils.isNotBlank(attrId)) {
-            labelWrk.add(new AttributeModifier("id", attrId));
+            labelWrk.add(new AttributeModifier(ATTR_ID, attrId));
         }
 
         if (StringUtils.isNotBlank(attrName)) {
-            labelWrk.add(new AttributeModifier("name", attrName));
+            labelWrk.add(new AttributeModifier(ATTR_NAME, attrName));
         }
 
         if (checked) {
@@ -538,7 +538,7 @@ public final class MarkupHelper {
             final String attrFor) {
         final Label labelWrk = new Label(wicketId,
                 getLocalizer().getString(localizerKey, container));
-        labelWrk.add(new AttributeModifier("for", attrFor));
+        labelWrk.add(new AttributeModifier(ATTR_FOR, attrFor));
         add(labelWrk);
         return labelWrk;
     }
@@ -549,7 +549,7 @@ public final class MarkupHelper {
      * @param wicketId
      *            The {@code wicket:id} of the HTML entity.
      * @param text
-     *            The value of the HTML 'value' attribute.
+     *            The The label text.
      * @return The added {@link Label}.
      */
     public Label addLabel(final String wicketId, final String text) {
@@ -700,7 +700,7 @@ public final class MarkupHelper {
      */
     public Label addTextInput(final String wicketId, final String value) {
         final Label labelWrk = new Label(wicketId);
-        labelWrk.add(new AttributeModifier("value", value));
+        labelWrk.add(new AttributeModifier(ATTR_VALUE, value));
         add(labelWrk);
         return labelWrk;
     }

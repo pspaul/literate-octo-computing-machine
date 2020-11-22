@@ -915,6 +915,12 @@
                 }
             };
 
+            _view.pages.admin.onUserNameAliasesRefresh = function() {
+                _view.showApiMsg(_api.call({
+                    request : 'username-aliases-refresh'
+                }));
+            };
+            
             _view.pages.admin.onShowAddRemoveUserGroups = function() {
                 _view.pages.userGroupsAddRemove.loadShowAsync();
             };

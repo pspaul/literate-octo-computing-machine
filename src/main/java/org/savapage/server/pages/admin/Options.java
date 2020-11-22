@@ -781,9 +781,7 @@ public final class Options extends AbstractAdminPage {
                 NounEnum.DATABASE.uiText(getLocale()), MarkupHelper.ATTR_TITLE,
                 NounEnum.STATISTICS.uiText(getLocale()));
 
-        /*
-         *
-         */
+        //
         labelledCheckbox("enable-automatic-backup",
                 IConfigProp.Key.SYS_BACKUP_ENABLE_AUTOMATIC);
         labelledInput("backups-keep-days",
@@ -804,9 +802,7 @@ public final class Options extends AbstractAdminPage {
         labelledInput("backup-delete-app-log-days",
                 IConfigProp.Key.DELETE_APP_LOG_DAYS);
 
-        /*
-         *
-         */
+        //
         labelledCheckbox("print-in-allow-encrypted-pdf",
                 IConfigProp.Key.PRINT_IN_PDF_ENCRYPTED_ALLOW);
 
@@ -819,9 +815,11 @@ public final class Options extends AbstractAdminPage {
         labelledInput("print-in-expiry-signal-mins",
                 IConfigProp.Key.WEBAPP_USER_PRINT_IN_JOB_EXPIRY_SIGNAL_MINS);
 
-        /*
-         *
-         */
+        //
+        helper.addButton("btn-username-aliases-refresh",
+                HtmlButtonEnum.REFRESH);
+
+        //
         helper.labelledCheckbox("pagometer-reset-users",
                 "pagometer-reset-users", false);
         helper.labelledCheckbox("pagometer-reset-queues",
@@ -831,9 +829,7 @@ public final class Options extends AbstractAdminPage {
         helper.labelledCheckbox("pagometer-reset-dashboard",
                 "pagometer-reset-dashboard", false);
 
-        /*
-         *
-         */
+        //
         tagInput("locale-description", Key.SYS_DEFAULT_LOCALE);
         add(new Label("locale-description-label",
                 MessageFormat.format(
