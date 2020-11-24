@@ -1004,30 +1004,6 @@
                 _view.visible($('.financial-user-transfers-enabled'), enabled);
             },
 
-            onGcpRefresh : function() {
-                var _view = _ns.PanelCommon.view,
-                    enabled = _view.isCbChecked($('#gcp\\.enable')),
-                    state = this.model.gcp.state || $('#gcp-printer-state').text(),
-                    isPresent = (state === 'ON_LINE' || state === 'OFF_LINE'),
-                    notPresent = !isPresent;
-
-                $('#gcp-printer-state-display').attr('class', (state === 'ON_LINE') ? 'sp-txt-valid' : 'sp-txt-warn');
-
-                isPresent = (isPresent && enabled);
-                notPresent = (notPresent && enabled);
-
-                _view.visible($('#gcp-notification-section'), enabled);
-
-                _view.visible($('#gcp-mail-after-cancel-detail'), _view.isCbChecked($('#gcp-mail-after-cancel-enable')));
-
-                _view.visible($('#gcp-register-section'), notPresent);
-
-                _view.visible($('#register-gcp'), notPresent);
-
-                _view.visible($('#gcp-set-online'), enabled && (state === 'OFF_LINE'));
-                _view.visible($('#gcp-set-offline'), enabled && (state === 'ON_LINE'));
-            },
-
             onOutput : function(output) {
                 var _view = _ns.PanelCommon.view;
 
@@ -1043,8 +1019,6 @@
                 this.onInternalUsersEnabled(_view.isCbChecked($('#internal-users\\.enable')));
 
                 this.onPaperCutEnabled(_view.isCbChecked($('#papercut\\.enable')));
-
-                this.onGcpRefresh();
 
                 this.onFinancialUserTransfersEnabled(_view.isCbChecked($('#financial\\.user\\.transfers\\.enable')));
 

@@ -2397,14 +2397,6 @@
                     _panel.Options.onPaperCutEnabled($(this).is(':checked'));
                 });
 
-                $(this).on('change', "input:checkbox[id='gcp.enable']", null, function(e) {
-                    _panel.Options.onGcpRefresh();
-                });
-
-                $(this).on('change', "input:checkbox[id='gcp-mail-after-cancel-enable']", null, function(e) {
-                    _panel.Options.onGcpRefresh();
-                });
-
                 $(this).on('change', "input:checkbox[id='webapp.user.proxy-print.clear-inbox.enable']", null, function(e) {
                     _panel.Options.onProxyPrintClearInboxEnabled($(this).is(':checked'));
                 });
@@ -2454,47 +2446,6 @@
                 $(this).on('click', '#sp-btn-sys-mode-apply', null, function() {
                     $('#sp-sys-mode-change-popup').enhanceWithin().popup('close');
                     _self.onApplySysModeChange($(this).attr('data-savapage'));
-                });
-
-                $(this).on('change', "input:checkbox[id='flipswitch-gcp-online']", null, function(e) {
-                    _self.onApplyGcpOnline(_panel, $(this).is(':checked'));
-                });
-
-                $(this).on('click', '#gcp-set-online', null, function() {
-                    return _self.onApplyGcpOnline(_panel, true);
-                });
-                $(this).on('click', '#gcp-set-offline', null, function() {
-                    return _self.onApplyGcpOnline(_panel, false);
-                });
-
-                $(this).on('click', '#gcp-apply-enable', null, function() {
-                    _self.onApplyGcpEnable(_panel, _view.isCbChecked($('#gcp\\.enable')));
-                    return false;
-                });
-
-                $(this).on('click', '#gcp-apply-notification', null, function() {
-                    return _self.onApplyGcpNotification();
-                });
-
-                $(this).on('click', '#gcp-button-refresh', null, function() {
-                    _self.onRefreshGcp(_panel);
-                    return false;
-                });
-
-                $(this).on('click', '#gcp-edit-show', null, function() {
-                    // toggles visibility on/off
-                    $('#gcp-register-section').toggle();
-                    return false;
-                });
-
-                $(this).on('click', '#gcp-edit-hide', null, function() {
-                    $('#gcp-register-section').hide();
-                    return false;
-                });
-
-                $(this).on('click', '#register-gcp', null, function() {
-                    _self.onRegisterGcp();
-                    return false;
                 });
 
                 $(this).on('click', '#apply-proxyprint', null, function() {

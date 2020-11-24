@@ -344,8 +344,6 @@
 
             this.authToken = {};
 
-            this.gcp = {};
-
             this.sessionExpired = false;
 
             this.startSession = function() {

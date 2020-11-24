@@ -55,8 +55,7 @@
                 _fillConfigPropsText,
                 _fillConfigPropsRadio,
                 _onIppQueueEnable,
-                _userSync,
-                _updateGcpState;
+                _userSync;
 
             _onIppQueueEnable = function(urlPath, enabled) {
                 var res = _api.call({
@@ -607,41 +606,6 @@
                 }));
             };
 
-            _view.pages.admin.onApplyGcpEnable = function(_panel, enabled) {
-                var res = _api.call({
-                    request : 'gcp-set-details',
-                    enabled : enabled,
-                    clientId : $('#gcp-client-id').val(),
-                    clientSecret : $('#gcp-client-secret').val(),
-                    printerName : $('#gcp-printer-name').val()
-                });
-
-                _view.showApiMsg(res);
-
-                if (res.result.code === '0') {
-                    _updateGcpState(_panel, res);
-                }
-            };
-
-            _view.pages.admin.onApplyGcpNotification = function() {
-                var res = _api.call({
-                    request : 'gcp-set-notifications',
-                    enabled : _view.isCbChecked($('#gcp-mail-after-cancel-enable')),
-                    emailSubject : $('#gcp-mail-after-cancel-subject').val(),
-                    emailBody : $('#gcp-mail-after-cancel-body').val()
-                });
-                _view.showApiMsg(res);
-                return false;
-            };
-
-            _updateGcpState = function(_panel, apiRes) {
-                $('#gcp-printer-state-display').html(apiRes.displayState);
-                $('#gcp-printer-state').text(apiRes.state);
-                $('#gcp-summary').table('refresh');
-                _model.gcp.state = apiRes.state;
-                _panel.Options.onGcpRefresh(_panel.Options);
-            };
-
             _view.pages.admin.onApplySysModeChange = function(modeEnum) {
                 var res = _api.call({
                     request : 'system-mode-change',
@@ -671,58 +635,6 @@
                     _view.message(res.result.txt || res.result.msg);
                 }
                 return false;
-            };
-
-            _view.pages.admin.onApplyGcpOnline = function(_panel, online) {
-                var res = _api.call({
-                    request : 'gcp-online',
-                    online : online
-                });
-
-                _view.showApiMsg(res);
-
-                if (res.result.code === '0') {
-                    _updateGcpState(_panel, res);
-                }
-
-                return false;
-            };
-
-            _view.pages.admin.onRefreshGcp = function(_panel) {
-                var res = _api.call({
-                    request : 'gcp-get-details'
-                });
-
-                if (res.result.code === '0') {
-
-                    $('#gcp-client-id').val(res.clientId);
-                    $('#gcp-client-secret').val(res.clientSecret);
-
-                    $('#gcp-printer-name').val(res.printerName);
-                    $('#gcp-summary-printer-name').html(res.printerName);
-
-                    $('#gcp-printer-owner').html(res.ownerId);
-
-                    _updateGcpState(_panel, res);
-
-                } else {
-                    _view.showApiMsg(res);
-                }
-            };
-
-            _view.pages.admin.onRegisterGcp = function() {
-                var res = _api.call({
-                    request : 'gcp-register',
-                    clientId : $('#gcp-client-id').val(),
-                    clientSecret : $('#gcp-client-secret').val(),
-                    printerName : $('#gcp-printer-name').val()
-                });
-
-                if (res.result.code === '0') {
-                    window.open(res.complete_invite_url, '', 'top=400,left=400,width=800,height=400,modal=yes,location=0,menubar=0,status=0,titlebar=0,toolbar=0');
-                } else {
-                    _view.showApiMsg(res);
-                }
             };
 
             _view.pages.admin.onApplyProxyPrint = function() {
@@ -1790,8 +1702,6 @@
             this.user = new _ns.User();
 
             this.authToken = {};
-
-            this.gcp = {};
 
             this.sessionExpired = false;
 
