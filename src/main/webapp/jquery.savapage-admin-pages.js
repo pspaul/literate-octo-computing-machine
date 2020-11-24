@@ -1666,7 +1666,9 @@
                     _panelCurClass = wClass;
                     _panelCur = _panel[wClass];
 
-                    $("#sp-a-content-button").click();
+                    if (!panel.onPanelShow || !panel.onPanelShow()) {
+                        $("#sp-a-content-button").click();
+                    }
 
                 }).fail(function() {
                     $.mobile.loading("hide");
@@ -2671,6 +2673,24 @@
                 /*
                  * Dashboard Panel
                  */
+                $(this).on('click', "#sp-btn-setup-smtp", null, function() {
+                    _panel.Options.scrollToAnchor = function() {
+                        $('#sp-cat-options-mail').collapsible("expand");
+                        _view.scrollToAnchor('sp-a-options-mail');
+                        return true;
+                    };
+                    $('.savapage-detail[name=Options]').click();
+                    return false;
+                }).on('click', "#sp-btn-setup-currency-code", null, function() {
+                    _panel.Options.scrollToAnchor = function() {
+                        $('#sp-cat-options-financial').collapsible("expand");
+                        _view.scrollToAnchor('sp-a-options-financial-currency-code');
+                        return true;
+                    };
+                    $('.savapage-detail[name=Options]').click();
+                    return false;
+                });
+
                 $(this).on('click', "#live-messages-clear", null, function() {
                     _model.pubMsgStack = [];
                     $('#live-messages').html('');

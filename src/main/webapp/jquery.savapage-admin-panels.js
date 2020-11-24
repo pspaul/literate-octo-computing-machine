@@ -1056,6 +1056,18 @@
 
                 this.onProxyPrintDelegatePaperCutEnabled(_view.isCbChecked($('#proxy-print\\.delegate\\.papercut\\.enable')));
                 this.onProxyPrintDelegateEnabled(_view.isCbChecked($('#proxy-print\\.delegate\\.enable')));
+            },
+
+            /** One-shot function */
+            scrollToAnchor : null,
+
+            onPanelShow : function() {
+                if (this.scrollToAnchor) {
+                    this.scrollToAnchor();
+                    this.scrollToAnchor = null;
+                    return true;
+                }
+                return false;
             }
         };
 

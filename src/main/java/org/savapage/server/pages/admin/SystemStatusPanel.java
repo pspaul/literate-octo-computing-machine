@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.EnumSet;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -59,6 +60,7 @@ import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.SetupNeededEnum;
 import org.savapage.core.config.SslCertInfo;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
@@ -153,12 +155,45 @@ public final class SystemStatusPanel extends Panel {
     private static final String WID_TOOLTIP_USERHOME_STATS =
             "tooltip-userhome-stats";
 
+    /** */
+    private static final String WID_BTN_SMTP = "btn-setup-smtp";
+
+    /** */
+    private static final String WID_BTN_CURRENCY = "btn-setup-currency";
+
     /**
      * @param panelId
      *            The panel id.
      */
     public SystemStatusPanel(final String panelId) {
         super(panelId);
+    }
+
+    /**
+     *
+     * @param helper
+     *            Markup helper.
+     * @param cm
+     *            ConfigManager.
+     * @param isSetupNeeded
+     *            {@code true} if setup is needed.
+     */
+    private void handleSetupNeeded(final MarkupHelper helper,
+            final ConfigManager cm, final boolean isSetupNeeded) {
+
+        if (!isSetupNeeded) {
+            helper.discloseLabel(WID_BTN_SMTP);
+            helper.discloseLabel(WID_BTN_CURRENCY);
+            return;
+        }
+
+        final EnumSet<SetupNeededEnum> needed = cm.getReadyToUseSetupNeeded();
+        helper.encloseLabel(WID_BTN_SMTP,
+                SetupNeededEnum.MAIL.uiText(getLocale()),
+                needed.contains(SetupNeededEnum.MAIL));
+        helper.encloseLabel(WID_BTN_CURRENCY,
+                SetupNeededEnum.CURRENCY.uiText(getLocale()),
+                needed.contains(SetupNeededEnum.CURRENCY));
     }
 
     /**
@@ -178,10 +213,11 @@ public final class SystemStatusPanel extends Panel {
         String cssColor;
         String msg;
 
-        /*
-         *
-         */
-        if (!cm.isAppReadyToUse()) {
+        //
+        final boolean isSetupNeeded = !cm.isAppReadyToUse();
+        this.handleSetupNeeded(helper, cm, isSetupNeeded);
+
+        if (isSetupNeeded) {
             cssColor = MarkupHelper.CSS_TXT_ERROR;
             msg = getLocalizer().getString("sys-status-setup-needed", this);
         } else if (ConfigManager.isTempUnavailable()) {

@@ -2686,6 +2686,14 @@
                 return this.getPageHtml('admin/' + page, data);
             };
 
+            /** */
+            this.scrollToAnchor = function(aid) {
+                var aTag = $("a[name='" + aid + "']");
+                $('html,body').animate({
+                    scrollTop : aTag.offset().top
+                }, 'slow');
+            };
+
             /**
              * Show (load and change to) a page.
              * @param page

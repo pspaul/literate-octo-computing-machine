@@ -48,6 +48,7 @@ import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.SetupNeededEnum;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.UserDao;
@@ -1009,8 +1010,19 @@ public final class ReqLogin extends ApiRequestMixin {
          * Warnings for Admin WebApp.
          */
         if (webAppType == WebAppTypeEnum.ADMIN) {
+
             if (!cm.isSetupCompleted()) {
-                setApiResult(ApiResultCodeEnum.WARN, "msg-setup-is-needed");
+                final StringBuilder parm = new StringBuilder();
+                for (final SetupNeededEnum value : cm
+                        .getReadyToUseSetupNeeded()) {
+                    if (parm.length() > 0) {
+                        parm.append(", ");
+                    }
+                    parm.append(value.uiText(getLocale()));
+                }
+                parm.append(".");
+                setApiResult(ApiResultCodeEnum.WARN, "msg-setup-is-needed",
+                        parm.toString(), parm.toString());
             } else if (cm.doesInternalAdminHasDefaultPassword()) {
                 setApiResult(ApiResultCodeEnum.WARN,
                         "msg-change-internal-admin-password");
@@ -1291,9 +1303,8 @@ public final class ReqLogin extends ApiRequestMixin {
          * INVARIANT: authentication token MUST not be older than 2 times the
          * max time it takes a long poll to finish.
          */
-        if (ServiceContext.getTransactionDate().getTime()
-                - authTokenCliApp.getCreateTime() > 2
-                        * UserEventService.getMaxMonitorMsec()) {
+        if (ServiceContext.getTransactionDate().getTime() - authTokenCliApp
+                .getCreateTime() > 2 * UserEventService.getMaxMonitorMsec()) {
             return false;
         }
 
