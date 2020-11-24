@@ -161,12 +161,7 @@ public final class JsonApiDict {
             "doclog-ticket-reopen";
 
     public static final String REQ_EXIT_EVENT_MONITOR = "exit-event-monitor";
-    public static final String REQ_GCP_GET_DETAILS = "gcp-get-details";
-    public static final String REQ_GCP_ONLINE = "gcp-online";
-    public static final String REQ_GCP_REGISTER = "gcp-register";
-    public static final String REQ_GCP_SET_DETAILS = "gcp-set-details";
-    public static final String REQ_GCP_SET_NOTIFICATIONS =
-            "gcp-set-notifications";
+
     public static final String REQ_GET_EVENT = "get-event";
 
     public static final String REQ_I18N_CACHE_CLEAR = "i18n-cache-clear";
@@ -988,11 +983,7 @@ public final class JsonApiDict {
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
 
         usr(REQ_EXIT_EVENT_MONITOR, DbClaim.NONE, DbAccess.NO);
-        adm(REQ_GCP_GET_DETAILS, DbClaim.READ, DbAccess.YES);
-        adm(REQ_GCP_ONLINE, DbClaim.READ, DbAccess.YES);
-        adm(REQ_GCP_REGISTER, DbClaim.READ, DbAccess.YES);
-        adm(REQ_GCP_SET_DETAILS, DbClaim.READ, DbAccess.YES);
-        adm(REQ_GCP_SET_NOTIFICATIONS, DbClaim.READ, DbAccess.YES);
+
         usr(REQ_GET_EVENT, DbClaim.NONE, DbAccess.USER_LOCK);
 
         adm(REQ_IMAP_TEST, DbClaim.NONE, DbAccess.NO);

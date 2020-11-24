@@ -71,7 +71,6 @@ import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.SystemModeEnum;
-import org.savapage.core.print.gcp.GcpPrinter;
 import org.savapage.core.print.imap.ImapPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
 import org.savapage.core.services.AppLogService;
@@ -371,53 +370,6 @@ public final class SystemStatusPanel extends Panel {
             add(tooltip);
         } else {
             helper.discloseLabel("pgp-uid");
-        }
-
-        /*
-         * Google Cloud Print
-         */
-        if (ConfigManager.isGcpEnabled()) {
-
-            final GcpPrinter.State gcpStatus = GcpPrinter.getState();
-            final boolean isGcpOnline = GcpPrinter.State.ON_LINE == gcpStatus;
-
-            msgKey = null;
-
-            switch (gcpStatus) {
-            case NOT_CONFIGURED:
-                msgKey = "not-configured";
-                cssColor = MarkupHelper.CSS_TXT_WARN;
-                break;
-            case NOT_FOUND:
-                msgKey = "not-found";
-                cssColor = MarkupHelper.CSS_TXT_WARN;
-                break;
-            case OFF_LINE:
-            case ON_LINE:
-                break;
-            default:
-                throw new SpException(
-                        "Unhandled GcpPrinter.Status [" + gcpStatus + "]");
-            }
-
-            if (msgKey == null) {
-                msgText = "";
-            } else {
-                msgText = getLocalizer().getString(msgKey, this);
-            }
-
-            labelWrk = helper.encloseLabel("gcp-status", msgText, true);
-
-            if (msgKey != null) {
-                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
-                        cssColor);
-            }
-
-            labelWrk = helper.addCheckbox("flipswitch-gcp-online", isGcpOnline);
-            setFlipswitchOnOffText(labelWrk);
-
-        } else {
-            helper.discloseLabel("gcp-status");
         }
 
         /*
