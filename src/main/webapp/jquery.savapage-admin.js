@@ -641,7 +641,7 @@
                 var props = {},
                     key;
 
-                _fillConfigPropsYN(props, ['proxy-print.non-secure', 'proxy-print.delegate.enable', 'proxy-print.delegate.papercut.enable', 'proxy-print.personal.papercut.enable', 'proxy-print.repair.enable', 'webapp.user.proxy-print.clear-inbox.enable', 'webapp.user.proxy-print.clear-inbox.prompt']);
+                _fillConfigPropsYN(props, ['proxy-print.non-secure', 'proxy-print.delegate.enable', 'proxy-print.repair.enable', 'webapp.user.proxy-print.clear-inbox.enable', 'webapp.user.proxy-print.clear-inbox.prompt']);
 
                 if (props['proxy-print.non-secure'] === 'Y') {
                     _fillConfigPropsText(props, ['proxy-print.non-secure-printer-group']);
@@ -652,6 +652,12 @@
 
                 _fillConfigPropsText(props, ['proxy-print.fast-expiry-mins', 'proxy-print.hold-expiry-mins', 'proxy-print.direct-expiry-secs', 'webapp.user.proxy-print.max-copies', 'proxy-print.max-pages']);
 
+                _saveConfigProps(props);
+            };
+
+            _view.pages.admin.onApplyProxyPrintPaperCut = function() {
+                var props = {};
+                _fillConfigPropsYN(props, ['proxy-print.delegate.papercut.enable', 'proxy-print.personal.papercut.enable']);
                 _saveConfigProps(props);
             };
 
@@ -832,7 +838,7 @@
                     request : 'username-aliases-refresh'
                 }));
             };
-            
+
             _view.pages.admin.onShowAddRemoveUserGroups = function() {
                 _view.pages.userGroupsAddRemove.loadShowAsync();
             };

@@ -39,6 +39,7 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.circuitbreaker.CircuitStateEnum;
+import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
@@ -664,6 +665,9 @@ public final class Options extends AbstractAdminPage {
         add(clearInboxScopePanel);
 
         // Delegated Print
+        helper.addLabel("proxyprint-delegate-enable-header",
+                CommunityDictEnum.DELEGATED_PRINT.getWord(getLocale()));
+
         labelledCheckbox("proxyprint-delegate-enable",
                 IConfigProp.Key.PROXY_PRINT_DELEGATE_ENABLE);
 
@@ -673,6 +677,12 @@ public final class Options extends AbstractAdminPage {
 
         labelledCheckbox("proxyprint-personal-papercut-enable",
                 IConfigProp.Key.PROXY_PRINT_PERSONAL_PAPERCUT_ENABLE);
+
+        helper.addLabel("papercut-delegator-cost-period-header",
+                NounEnum.PERIOD.uiText(getLocale()));
+        helper.addLabel(
+                "proxyprint-delegate-papercut-invoicing-accounts-header",
+                NounEnum.GROUP.uiText(getLocale()));
 
         /*
          * xpstopdf
@@ -1155,9 +1165,9 @@ public final class Options extends AbstractAdminPage {
                 "btn-apply-user-auth-mode-local", "btn-apply-smtp",
                 "btn-apply-mail", "btn-apply-papercut", "btn-apply-imap",
                 "btn-apply-webprint", "btn-apply-internetprint",
-                "btn-apply-proxyprint", "btn-apply-ecoprint",
-                "btn-apply-financial-general", "btn-apply-financial-pos",
-                "btn-apply-financial-vouchers",
+                "btn-apply-proxyprint", "btn-apply-proxyprint-papercut",
+                "btn-apply-ecoprint", "btn-apply-financial-general",
+                "btn-apply-financial-pos", "btn-apply-financial-vouchers",
                 "btn-apply-financial-user-transfers",
                 "btn-apply-backup-automatic", "btn-apply-cliapp-auth",
                 "btn-admin-pw-reset", "btn-jmx-pw-reset", "btn-apply-locale",

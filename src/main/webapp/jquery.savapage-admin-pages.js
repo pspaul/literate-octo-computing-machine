@@ -2452,6 +2452,11 @@
                     _self.onApplyProxyPrint();
                     return false;
                 });
+                
+                $(this).on('click', '#apply-proxyprint-papercut', null, function() {
+                    _self.onApplyProxyPrintPaperCut();
+                    return false;
+                });
 
                 $(this).on('click', "#apply-financial-general", null, function() {
                     _self.onApplyFinancialGeneral();
