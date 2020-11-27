@@ -26,50 +26,38 @@ package org.savapage.server.helpers;
 
 import java.util.Locale;
 
-import org.savapage.core.jpa.Printer;
+import org.savapage.core.jpa.Device;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.server.WebApp;
 
 /**
- * Images for {@link Printer}.
+ * Images for {@link Device}.
  *
  * @author Rijk Ravestein
  *
  */
-public enum HtmlPrinterImgEnum {
+public enum HtmlDeviceImgEnum {
 
     /**
-     * A Job Ticket Printer.
+     * A Network Card Reader used for NFC Card Login at a Terminal.
      */
-    JOBTICKET("printer-jobticket-32x32.png"),
+    READER_LOGON("device-card-reader-terminal-16x16.png"),
 
     /**
-     * An unsecured Proxy Printer that no one is allowed to print to.
+     * A Network Card Reader used for NFC Card Proxy Print Authentication.
      */
-    NON_SECURE("printer-terminal-none-16x16.png"),
+    READER_PRINT_AUTH("device-card-reader-16x16.png"),
 
     /**
-     * An unsecured Proxy Printer that <b>anyone</b> can print to.
+     * A Terminal with custom settings.
      */
-    NON_SECURE_ALLOWED("printer-terminal-any-16x16.png"),
+    TERMINAL("device-terminal-16x16.png"),
 
     /**
-     * A secured Proxy Printer whose jobs needs to be authorized with a NFC Card
-     * swipe on a Network Card Reader.
+     * A Terminal with custom settings and a Network Card Reader used for NFC
+     * Card Login.
      */
-    READER("printer-terminal-auth-16x16.png"),
-
-    /**
-     * A Proxy Printer that can only be used from certain Terminals.
-     */
-    TERMINAL("printer-terminal-custom-16x16.png"),
-
-    /**
-     * A Proxy Printer that can only be used from certain Terminals and whose
-     * jobs needs to be authorized with a NFC Card swipe on a Network Card
-     * Reader on other Terminals.
-     */
-    TERMINAL_AND_READER("printer-terminal-custom-or-auth-16x16.png");
+    TERMINAL_READER_LOGON("device-terminal-card-reader-16x16.png");
 
     /**
      * .
@@ -82,7 +70,7 @@ public enum HtmlPrinterImgEnum {
      * @param value
      *            The CSS class.
      */
-    HtmlPrinterImgEnum(final String value) {
+    HtmlDeviceImgEnum(final String value) {
         this.img = value;
     }
 

@@ -50,8 +50,8 @@ import org.savapage.core.jpa.PrinterGroupMember;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.RfIdReaderService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.HtmlDeviceImgEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -392,33 +392,36 @@ public final class DevicesPage extends AbstractAdminListPage {
             item.add(createVisibleLabel(printerGroupAuth != null,
                     "printerGroupAuth", printerGroupAuth));
 
+            //
+            final MarkupHelper helper = new MarkupHelper(item);
+
             /*
              * Device Image
              */
-            final String imageSrc;
+            final HtmlDeviceImgEnum deviceImg;
 
             if (device.getCardReader() != null) {
-                imageSrc = "device-terminal-card-reader-16x16.png";
+                deviceImg = HtmlDeviceImgEnum.TERMINAL_READER_LOGON;
             } else if (device.getCardReaderTerminal() != null) {
-                imageSrc = "device-card-reader-terminal-16x16.png";
+                deviceImg = HtmlDeviceImgEnum.READER_LOGON;
             } else if (device.getDeviceType()
                     .equals(DeviceTypeEnum.CARD_READER.toString())) {
-                imageSrc = "device-card-reader-16x16.png";
+                deviceImg = HtmlDeviceImgEnum.READER_PRINT_AUTH;
             } else {
-                imageSrc = "device-terminal-16x16.png";
+                deviceImg = HtmlDeviceImgEnum.TERMINAL;
             }
 
-            labelWrk = new Label("deviceImage", "");
-            labelWrk.add(new AttributeModifier("src",
-                    String.format("%s/%s", WebApp.PATH_IMAGES, imageSrc)));
+            labelWrk = helper.addModifyLabelAttr("deviceImage",
+                    MarkupHelper.ATTR_SRC, deviceImg.urlPath());
+            MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_TITLE,
+                    deviceImg.uiToolTip(getLocale()));
+
             item.add(labelWrk);
 
             /*
              * Set the uid in 'data-savapage' attribute, so it can be picked up
              * in JavaScript for editing.
              */
-            final MarkupHelper helper = new MarkupHelper(item);
-
             if (this.isEditor) {
                 MarkupHelper.modifyLabelAttr(
                         MarkupHelper.modifyLabelAttr(

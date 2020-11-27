@@ -505,6 +505,9 @@ public final class PrintersPage extends AbstractAdminListPage {
             labelWrk = helper.addModifyLabelAttr("printerImage",
                     MarkupHelper.ATTR_SRC, printerImg.urlPath());
 
+            MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_TITLE,
+                    printerImg.uiToolTip(getLocale()));
+
             String assocTerminal = null;
             String assocCardReader = null;
 
