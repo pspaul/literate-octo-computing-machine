@@ -752,9 +752,9 @@ public abstract class AbstractPage extends WebPage
                 }
             } else if (ConfigManager.instance()
                     .isNonSecureProxyPrinter(printer)) {
-                imageSrc = HtmlPrinterImgEnum.NON_SECURE;
+                imageSrc = HtmlPrinterImgEnum.NON_SECURE_ALLOWED;
             } else {
-                imageSrc = HtmlPrinterImgEnum.SECURE;
+                imageSrc = HtmlPrinterImgEnum.NON_SECURE;
             }
 
         }

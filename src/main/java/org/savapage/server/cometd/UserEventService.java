@@ -45,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.cometd.bayeux.Promise;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
@@ -607,7 +608,8 @@ public final class UserEventService extends AbstractEventService {
              * The JavaScript client subscribes to CHANNEL_PUBLISH like this:
              * $.cometd.subscribe('/user/event', function(message) {
              */
-            remote.deliver(getServerSession(), CHANNEL_PUBLISH, jsonEvent);
+            remote.deliver(getServerSession(), CHANNEL_PUBLISH, jsonEvent,
+                    Promise.noop());
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Delivered event [" + jsonEvent + "] for user ["
