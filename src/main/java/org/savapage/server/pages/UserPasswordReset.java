@@ -25,6 +25,7 @@
 package org.savapage.server.pages;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
  *
@@ -44,6 +45,11 @@ public final class UserPasswordReset extends AbstractAuthPage {
      */
     public UserPasswordReset(final PageParameters parameters) {
         super(parameters);
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-cancel", HtmlButtonEnum.CANCEL);
     }
 
     @Override

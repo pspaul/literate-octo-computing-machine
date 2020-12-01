@@ -27,8 +27,11 @@ package org.savapage.server.pages.user;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -54,7 +57,7 @@ public class Letterhead extends AbstractUserPage {
         super(parameters);
 
         add(MarkupHelper.createEncloseLabel("letterhead-public",
-                localized("letterhead-public"), isAdminUser()));
+                AdjectiveEnum.PUBLIC.uiText(getLocale()), isAdminUser()));
 
         final boolean canCreate;
 
@@ -68,6 +71,20 @@ public class Letterhead extends AbstractUserPage {
         }
 
         add(MarkupHelper.createEncloseLabel("button-new",
-                localized("button-new"), canCreate));
+                HtmlButtonEnum.NEW.uiText(getLocale(), true), canCreate));
+
+        final MarkupHelper helper = new MarkupHelper(this);
+
+        helper.addLabel("title", NounEnum.LETTERHEAD.uiText(getLocale(), true));
+        helper.addLabel("prompt-name", NounEnum.NAME);
+
+        helper.addLabel("prompt-position", NounEnum.POSITION);
+        helper.addLabel("pos-foreground", NounEnum.FOREGROUND);
+        helper.addLabel("pos-background", NounEnum.BACKGROUND);
+
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-delete", HtmlButtonEnum.DELETE);
+        helper.addButton("button-refresh", HtmlButtonEnum.REFRESH);
+        helper.addButton("button-back", HtmlButtonEnum.BACK);
     }
 }

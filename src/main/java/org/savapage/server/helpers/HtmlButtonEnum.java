@@ -91,6 +91,8 @@ public enum HtmlButtonEnum {
     /** */
     LOGOUT,
     /** */
+    NEW,
+    /** */
     NEXT,
     /** As opposite of {@link #YES}. */
     NO,

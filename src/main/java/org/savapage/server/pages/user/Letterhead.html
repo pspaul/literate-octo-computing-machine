@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -16,9 +16,7 @@ the License, or (at your option) any later version.
 </wicket:remove>
 
 <div data-role="header" data-theme="b">
-	<h1>
-		<wicket:message key="title" />
-	</h1>
+	<h1 wicket:id="title" />
 </div>
 
 <div class="ui-content" id="letterhead">
@@ -35,31 +33,24 @@ the License, or (at your option) any later version.
 		<li class="letterhead-actions letterhead-edit-actions">
 
 			<div class="ui-field-contain">
-				<label for="letterhead-name">
-					<wicket:message key="prompt-name" />
-				</label>
-				<input type="text" id="letterhead-name" value="" autocomplete="off"
-					autocorrect="off" spellcheck="false" />
+				<label for="letterhead-name" wicket:id="prompt-name" />
+				<input type="text" id="letterhead-name" value=""
+					data-clear-btn="true" autocomplete="off" autocorrect="off"
+					spellcheck="false" />
 			</div>
 
 			<fieldset data-role="controlgroup" data-type="horizontal"
 				class="ui-mini">
 
-				<legend class="sp-txt-wrap">
-					<wicket:message key="prompt-position" />
-				</legend>
+				<legend class="sp-txt-wrap" wicket:id="prompt-position" />
 
+				<label for="sp-letterhead-pos-b" wicket:id="pos-background" />
 				<input type="radio" name="sp-letterhead-pos"
 					id="sp-letterhead-pos-b" />
-				<label for="sp-letterhead-pos-b">
-					<wicket:message key="pos-background" />
-				</label>
 
+				<label for="sp-letterhead-pos-f" wicket:id="pos-foreground" />
 				<input type="radio" name="sp-letterhead-pos"
 					id="sp-letterhead-pos-f" checked="checked" />
-				<label for="sp-letterhead-pos-f">
-					<wicket:message key="pos-foreground" />
-				</label>
 
 			</fieldset>
 
@@ -76,13 +67,11 @@ the License, or (at your option) any later version.
 
 		<li class="letterhead-actions letterhead-edit-actions">
 			<button id="button-letterhead-apply"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check ui-mini">
-				<wicket:message key="button-apply" />
-			</button>
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check ui-mini"
+				wicket:id="button-apply" />
 			<button id="button-letterhead-delete"
-				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete ui-mini">
-				<wicket:message key="button-delete" />
-			</button>
+				class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete ui-mini"
+				wicket:id="button-delete" />
 		</li>
 	</ul>
 
@@ -92,14 +81,11 @@ the License, or (at your option) any later version.
 	</wicket:enclosure>
 
 	<button id="button-letterhead-refresh"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh">
-		<wicket:message key="button-refresh" />
-	</button>
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-refresh"
+		wicket:id="button-refresh" />
 
 	<a href="#" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-		data-rel="back" data-direction="reverse"> <wicket:message
-			key="button-back" />
-	</a>
+		data-rel="back" data-direction="reverse" wicket:id="button-back" />
 
 	<wicket:remove>
 		<!-- FOR FUTURE USE

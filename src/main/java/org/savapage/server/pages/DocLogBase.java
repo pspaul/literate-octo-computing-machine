@@ -44,8 +44,11 @@ import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dto.UserIdDto;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
+import org.savapage.core.i18n.PrepositionEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.Printer;
@@ -54,6 +57,7 @@ import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.DocLogScopeEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.session.SpSession;
 
 /**
@@ -195,7 +199,44 @@ public final class DocLogBase extends AbstractAuthPage {
         final MarkupHelper helper = new MarkupHelper(this);
 
         helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
+
+        helper.addLabel("prompt-type", NounEnum.TYPE);
         helper.addLabel("prompt-document-name", NounEnum.DOCUMENT);
+
+        helper.addLabel("prompt-period", NounEnum.PERIOD);
+        helper.addLabel("prompt-period-from", PrepositionEnum.FROM_TIME);
+        helper.addLabel("prompt-period-to", PrepositionEnum.TO_TIME);
+
+        helper.addLabel("prompt-author", NounEnum.AUTHOR);
+        helper.addLabel("prompt-subject", NounEnum.SUBJECT);
+        helper.addLabel("prompt-keywords",
+                NounEnum.KEYWORD.uiText(getLocale(), true));
+        helper.addLabel("prompt-encryption", NounEnum.ENCRYPTION);
+        helper.addLabel("prompt-layout", NounEnum.LAYOUT);
+
+        helper.addLabel("encryp-option-yes",
+                HtmlButtonEnum.YES.uiText(getLocale()));
+        helper.addLabel("encryp-option-no",
+                HtmlButtonEnum.NO.uiText(getLocale()));
+
+        helper.addLabel("cat-queue", NounEnum.QUEUE);
+
+        helper.addLabel("prompt-destination", NounEnum.DESTINATION);
+
+        helper.addLabel("option-simplex", PrintOutNounEnum.SIMPLEX);
+        helper.addLabel("option-duplex", PrintOutNounEnum.DUPLEX);
+
+        helper.addLabel("prompt-sort-by", NounEnum.SORTING);
+        helper.addLabel("sort-by-name", NounEnum.NAME);
+        helper.addLabel("sort-by-date", NounEnum.DATE);
+        helper.addLabel("sort-by-queue", NounEnum.QUEUE);
+        helper.addLabel("sort-by-printer", NounEnum.PRINTER);
+
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
+
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
 
         //
         final boolean btnVisiblePdf;
@@ -333,13 +374,28 @@ public final class DocLogBase extends AbstractAuthPage {
 
         //
         helper.encloseLabel(WICKET_ID_PROMPT_LETTERHEAD,
-                localized("prompt-letterhead"), visibleLetterhead);
+                NounEnum.LETTERHEAD.uiText(getLocale()), visibleLetterhead);
+
+        if (visibleLetterhead) {
+            helper.addLabel("lh-option-yes",
+                    HtmlButtonEnum.YES.uiText(getLocale()));
+            helper.addLabel("lh-option-no",
+                    HtmlButtonEnum.NO.uiText(getLocale()));
+        }
 
         //
         helper.encloseLabel(WICKET_ID_SELECT_AND_SORT_USER, userName,
                 userNameVisible);
+        if (userNameVisible) {
+            helper.addLabel("select-and-sort-user-prompt", NounEnum.USER);
+        }
+
         helper.encloseLabel(WICKET_ID_SELECT_AND_SORT_ACCOUNT, accountName,
                 accountNameVisible);
+        if (accountNameVisible) {
+            helper.addLabel("select-and-sort-account-prompt",
+                    PrintOutNounEnum.ACCOUNT.uiText(getLocale()));
+        }
 
         /*
          * Option list: Queues
