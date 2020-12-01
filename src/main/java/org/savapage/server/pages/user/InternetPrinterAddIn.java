@@ -24,6 +24,7 @@
  */
 package org.savapage.server.pages.user;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
@@ -63,8 +64,12 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
     /** */
     private static final String WID_CHROME_ADDRESS = "chrome-address";
 
+    /** */
+    private static final String WID_MAC_OS_ADDRESS = "macos-address";
+
     /**
-     *
+     * @param parameters
+     *            Page parameters.
      */
     public InternetPrinterAddIn(final PageParameters parameters) {
 
@@ -84,6 +89,7 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
         final String userNumber = USER_SERVICE.lazyAddUserPrimaryIdNumber(user);
         final String userUuid =
                 USER_SERVICE.getUserAttrValue(user, UserAttrEnum.UUID);
+
         final String uriBase = ConfigManager.instance()
                 .getConfigValue(Key.IPP_INTERNET_PRINTER_URI_BASE);
 
@@ -115,11 +121,48 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
 
         //
         if (urlParms == null) {
+            helper.discloseLabel(WID_MAC_OS_ADDRESS);
             helper.discloseLabel(WID_CHROME_ADDRESS);
             helper.discloseLabel(WID_FDROID_URL);
         } else {
+
+            final URI uriBaseObj = URI.create(uriBase);
+
+            helper.addLabel("macos-address-prompt",
+                    NounEnum.ADDRESS.uiText(getLocale()));
+
+            final StringBuilder addr = new StringBuilder();
+            final int port = uriBaseObj.getPort();
+
+            addr.append(uriBaseObj.getHost());
+
+            if (port < 0) {
+                if (uriBaseObj.getScheme().endsWith("s")) {
+                    addr.append(":443");
+                }
+            } else {
+                addr.append(":").append(port);
+            }
+
+            helper.addLabel(WID_MAC_OS_ADDRESS, addr.toString());
+
+            helper.addLabel("macos-protocol-prompt",
+                    NounEnum.PROTOCOL.uiText(getLocale()));
+
+            helper.addLabel("macos-queue-prompt",
+                    NounEnum.QUEUE.uiText(getLocale()));
+
+            try {
+                helper.addLabel("macos-queue", StringUtils
+                        .removeStart(urlParms.asUri().getPath(), "/"));
+            } catch (URISyntaxException e) {
+                //
+            }
+
+            //
             helper.addLabel("chrome-address-prompt",
                     NounEnum.ADDRESS.uiText(getLocale()));
+
             helper.addLabel(WID_CHROME_ADDRESS, StringUtils.removeStart(
                     StringUtils.removeStart(uriBase, "https://"), "http://"));
 
@@ -142,7 +185,7 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
 
             //
             helper.addLabel(WID_FDROID_URL,
-                    StringUtils.replaceFirst(uriBase, "ipp", "http"));
+                    uriBase.replaceFirst("ipp", "http"));
             helper.addLabel("fdroid-user-prompt", NounEnum.USER);
             helper.addLabel("fdroid-user", user.getUserId());
             helper.addLabel("fdroid-uuid", userUuid);

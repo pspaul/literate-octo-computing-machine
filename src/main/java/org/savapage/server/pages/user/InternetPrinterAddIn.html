@@ -36,6 +36,44 @@ the License, or (at your option) any later version.
 			wicket:id="internet-printer-uri-windows" /> <br />
 		<div wicket:id="windows-driver-msg" />
 	</li>
+    <wicket:enclosure child="macos-address">
+        <li>
+            <h3>macOS</h3>
+            <div>
+                <table data-role="table" data-mode="reflow"
+                    class="ui-responsive table-stroke">
+                    <thead>
+                        <tr>
+                            <th data-priority="1" />
+                            <th data-priority="2" />
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td wicket:id="macos-address-prompt" />
+                            <td class="sp-txt-valid" style="font-family: monospace;"
+                                wicket:id="macos-address" />
+                        </tr>
+                        <tr>
+                            <td wicket:id="macos-protocol-prompt" />
+                            <td class="sp-txt-valid" style="font-family: monospace;">Internet
+                                Printing Protocol - IPP</td>
+                        </tr>
+                        <tr>
+                            <td wicket:id="macos-queue-prompt" />
+                            <td class="sp-txt-valid" style="font-family: monospace;"
+                                wicket:id="macos-queue" />
+                        </tr>
+                        <tr>
+                            <td><wicket:message key="macos-use-prompt" /></td>
+                            <td class="sp-txt-valid" style="font-family: monospace;">Generic
+                                PostScript Printer</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </li>
+    </wicket:enclosure>
 	<wicket:enclosure child="chrome-address">
 		<li>
 			<h3>Chrome OS</h3>
