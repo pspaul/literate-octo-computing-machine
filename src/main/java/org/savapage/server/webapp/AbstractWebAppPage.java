@@ -166,6 +166,11 @@ public abstract class AbstractWebAppPage extends AbstractPage
     /**
      * .
      */
+    private static final String CSS_FILE_WEBAPP_DEFAULT = "webapp.css";
+
+    /**
+     * .
+     */
     private static final String CSS_FILE_WICKET_SAVAPAGE =
             "wicket.savapage.css";
 
@@ -723,7 +728,14 @@ public abstract class AbstractWebAppPage extends AbstractPage
         // Custom CSS as last.
         final String customCssFileName = this.getCssCustomFileName(webAppType);
 
-        if (customCssFileName != null) {
+        if (customCssFileName == null) {
+            if (ConfigManager.instance()
+                    .isConfigValue(Key.WEBAPP_STYLE_DEFAULT)) {
+                response.render(CssHeaderItem.forUrl(String.format("%s%s%s",
+                        WebApp.getDefaultStyleLocation(),
+                        CSS_FILE_WEBAPP_DEFAULT, nocache)));
+            }
+        } else {
             response.render(CssHeaderItem.forUrl(String.format("/%s/%s%s",
                     CustomWebServlet.PATH_BASE, customCssFileName, nocache)));
         }

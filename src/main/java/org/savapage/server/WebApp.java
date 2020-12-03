@@ -657,6 +657,15 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     }
 
     /**
+     * The location of the default WebApp style files.
+     *
+     * @return The location including a trailing '/'.
+     */
+    public static String getDefaultStyleLocation() {
+        return "style/";
+    }
+
+    /**
      *
      * @param namePath
      * @return

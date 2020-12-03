@@ -1,0 +1,79 @@
+/*! SavaPage | (c) 2020 Datraverse B.V. | GNU Affero General Public License */
+
+/*
+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * Copyright (c) 2020 Datraverse B.V.
+ * Author: Rijk Ravestein.
+ *
+ * SPDX-FileCopyrightText: © 2020 Datraverse B.V. <info@datraverse.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * For more information, please contact Datraverse B.V. at this
+ * address: info@datraverse.com
+ */
+.ui-page {
+	position: relative;
+	z-index: 1;
+}
+
+.ui-page:before {
+	content: "";
+	position: absolute;
+	z-index: -1;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	/* https://openclipart.org/detail/99229/landscape  
+	 * "a-paisaje-boceto": 1920x1080. */
+	background: url(./background.png) !important;
+	background-size: cover !important;
+	background-repeat: no-repeat !important;
+	background-attachment: fixed !important;
+	opacity: 0.5;
+}
+
+#page-login:before {
+	opacity: 1;
+}
+
+.ui-dialog-contain .ui-content {
+	background: white !important;
+}
+
+#page-main-thumbnail-viewport {
+	box-shadow: 1px 2px 4px rgba(0, 0, 0, .1);
+}
+
+.ui-footer {
+	padding-left: 10px;
+	border-color: rgba(255, 255, 255, 0.0) !important;
+	background-color: rgba(255, 255, 255, 0.0) !important;
+}
+
+#main-navbar-action .ui-btn {
+	border: 15px solid !important;
+	border-color: rgba(155, 155, 155, 1.0) !important;
+}
+
+#main-navbar-arrange .ui-btn {
+	border: 15px solid !important;
+	border-color: rgba(155, 155, 155, 1.0) !important;
+}
+
+.thumbnail_viewport {
+	background: none;
+}
