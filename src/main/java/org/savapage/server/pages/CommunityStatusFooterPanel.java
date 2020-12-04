@@ -76,7 +76,12 @@ public final class CommunityStatusFooterPanel extends Panel {
         //
         helper.encloseLabel("membership-status", memberStatus, cardDesirable);
         //
-        helper.encloseLabel("user-id", SpSession.get().getUserId(),
-                showUserId);
+        final Label labelUserId = helper.encloseLabel("user-id",
+                SpSession.get().getUserId(), showUserId);
+
+        if (showUserId) {
+            MarkupHelper.appendLabelAttr(labelUserId, MarkupHelper.ATTR_CLASS,
+                    CssClassEnum.SP_BTN_ABOUT_USER_ID.clazz());
+        }
     }
 }

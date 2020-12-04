@@ -486,7 +486,6 @@
                 _model = new _ns.Model(_i18n),
                 _api = new _ns.Api(_i18n, _model.user),
                 _view = new _ns.View(_i18n, _api),
-                _viewById = {},
                 _ctrl,
                 _cometd,
                 _nativeLogin;
@@ -498,22 +497,6 @@
                 login : new _ns.PageLogin(_i18n, _view, _api),
                 main : new _ns.PageMain(_i18n, _view, _model, _api)
             };
-
-            $.each(_view.pages, function(key, page) {
-                _viewById[page.id().substring(1)] = page;
-            });
-
-            $(document).on('pagecontainershow', function(event, ui) {
-                var prevPage = ui.prevPage[0] ? _viewById[ui.prevPage[0].id] : undefined;
-                if (prevPage && prevPage.onPageHide) {
-                    prevPage.onPageHide();
-                }
-            }).on('pagecontainerhide', function(event, ui) {
-                var nextPage = _viewById[ui.nextPage[0].id];
-                if (nextPage && nextPage.onPageShow) {
-                    nextPage.onPageShow();
-                }
-            });
 
             _ns.PanelDashboard.model = _model;
 

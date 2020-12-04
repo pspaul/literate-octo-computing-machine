@@ -35,7 +35,9 @@ public enum CssClassEnum {
     /**  */
     SP_BTN_ABOUT("sp-btn-about"),
     /** */
-    SP_BTN_ABOUT_ORG("sp-btn-about-org");
+    SP_BTN_ABOUT_ORG("sp-btn-about-org"),
+    /** */
+    SP_BTN_ABOUT_USER_ID("sp-btn-about-userid");
 
     /**
      * .

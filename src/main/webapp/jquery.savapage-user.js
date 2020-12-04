@@ -7341,10 +7341,8 @@
                     /*
                      * NOTE: when we are disconnected the onDisconnected()
                      * callback is called, which displays the login window. The
-                     * BACK
-                     * button WILL work in this case. See Mantis #108 how to
-                     * prevent
-                     * this.
+                     * BACK button WILL work in this case. See Mantis #108 how to
+                     * prevent this.
                      *
                      * Is there a way to unload the whole application !??
                      * window.location.reload(true) does NOT work (why?)
@@ -7359,7 +7357,6 @@
                 }
 
                 _view.pages.main.onClose();
-
             };
 
             _view.pages.main.onClose = function() {

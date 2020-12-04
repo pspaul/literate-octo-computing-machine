@@ -877,10 +877,8 @@
                 }).on('change', "input[name='sp-doclog-select-type']", null, function() {
                     _pnlDocLog.setVisibility();
                     return false;
-                }).on('click', '.sp-btn-about-org', function() {
-                    // About Dialog closes immediately, why?
-                    //_view.showPageAsync('#page-info', 'AppAbout');
-                    $.noop();
+                }).on('click', '.sp-btn-about-org, .sp-btn-about-userid', function() {
+                    _view.showPageAsync('#page-info', 'AppAbout');
                 });
 
                 $("#sp-a-content-button").click();

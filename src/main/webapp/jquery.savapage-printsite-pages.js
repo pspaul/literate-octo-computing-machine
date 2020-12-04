@@ -334,7 +334,7 @@
                     return false;
                 });
 
-                $('.sp-btn-about-org').click(function() {
+                $('.sp-btn-about-org, .sp-btn-about-userid').click(function() {
                     _view.showPageAsync('#page-info', 'AppAbout');
                     return false;
                 });

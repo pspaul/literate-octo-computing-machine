@@ -277,12 +277,7 @@
              */
             _view.pages.pointOfSale.onBack = function() {
                 var res;
-                /*
-                 * Since this method is also called by the generic onPageHide
-                 * call-back,
-                 * as set in on('pagecontainershow'), when Back button is
-                 * pressed.
-                 */
+
                 if (!_model.user.loggedIn) {
                     return true;
                 }
@@ -314,10 +309,6 @@
                 _ns.restartWebApp();
 
                 return true;
-            };
-
-            _view.pages.pointOfSale.onPageHide = function() {
-                _view.pages.pointOfSale.onBack();
             };
 
         };
@@ -404,7 +395,6 @@
                 _model = new _ns.Model(_i18n),
                 _api = new _ns.Api(_i18n, _model.user),
                 _view = new _ns.View(_i18n, _api),
-                _viewById = {},
                 _ctrl,
                 _nativeLogin;
 
@@ -415,22 +405,6 @@
                 login : new _ns.PageLogin(_i18n, _view, _api),
                 pointOfSale : new _ns.PagePointOfSale(_i18n, _view, _model, _api)
             };
-
-            $.each(_view.pages, function(key, page) {
-                _viewById[page.id().substring(1)] = page;
-            });
-
-            $(document).on('pagecontainershow', function(event, ui) {
-                var prevPage = ui.prevPage[0] ? _viewById[ui.prevPage[0].id] : undefined;
-                if (prevPage && prevPage.onPageHide) {
-                    prevPage.onPageHide();
-                }
-            }).on('pagecontainerhide', function(event, ui) {
-                var nextPage = _viewById[ui.nextPage[0].id];
-                if (nextPage && nextPage.onPageShow) {
-                    nextPage.onPageShow();
-                }
-            });
 
             _ctrl = new _ns.Controller(_i18n, _model, _view, _api);
 
