@@ -592,7 +592,9 @@
                     heightPieChart,
                     html,
                     _view = _ns.PanelCommon.view,
-                    _this = this;
+                // NOTE: 'this' does not work, because this method is
+                // called from window.setInterval().
+                    _this = _ns.PanelDashboard;
 
                 /*
                  * As an extra check we use #live-messages as indicator
@@ -616,7 +618,7 @@
                      * NOT releasing introduces a HUGE memory leak, each time
                      * the plots are refreshed.
                      */
-                    this.destroyPlots();
+                    _this.destroyPlots();
 
                     /*
                      * Load the html.
@@ -625,7 +627,7 @@
 
                     if (!html) {
                         // Failure (and disconnected): stop the timer!
-                        this.onUnload();
+                        _this.onUnload();
                         return;
                     }
 
@@ -645,9 +647,9 @@
                     /*
                      * Show the plots.
                      */
-                    if (!this.showPlots()) {
+                    if (!_this.showPlots()) {
                         // Failure (and disconnected): stop the timer!
-                        this.onUnload();
+                        _this.onUnload();
                     }
                 }
             },
