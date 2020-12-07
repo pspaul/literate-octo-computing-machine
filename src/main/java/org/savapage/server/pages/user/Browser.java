@@ -73,7 +73,10 @@ public class Browser extends AbstractUserPage {
             { "btn-clear-selection", HtmlButtonEnum.CLEAR_SELECTION }, //
             { "btn-save", HtmlButtonEnum.SAVE }, //
             { "btn-select-all", HtmlButtonEnum.SELECT_ALL }, //
-            { "btn-undo-all", HtmlButtonEnum.RESTORE } //
+            { "btn-undo-all", HtmlButtonEnum.RESTORE }, //
+            { "btn-zoom-in", HtmlButtonEnum.ZOOM_IN }, //
+            { "btn-zoom-out", HtmlButtonEnum.ZOOM_OUT }, //
+            { "btn-unzoom", HtmlButtonEnum.DEFAULT } //
     };
 
     /**

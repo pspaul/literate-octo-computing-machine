@@ -39,9 +39,10 @@ the License, or (at your option) any later version.
 		<input type="range" id="browser-slider" value="0" min="0" max="0" />
 		<div data-role="navbar">
 			<ul>
-				<li><a href="#" id="browser-back" data-icon="back"
-						data-rel="back" data-direction="reverse" title=""
-						wicket:id="btn-back" /></li>
+				<li>
+					<a href="#" id="browser-back" data-icon="back" data-rel="back"
+						data-direction="reverse" title="" wicket:id="btn-back" />
+				</li>
 				<li>
 					<button id="browser-delete"
 						class="ui-btn ui-btn-icon-top ui-icon-delete" title=""
@@ -69,7 +70,8 @@ the License, or (at your option) any later version.
 
 		<fieldset data-role="controlgroup" data-type="horizontal"
 			class="ui-mini" style="margin-top: -5px">
-			<label for="sp-canvas-use-brush" style="see:java;" wicket:id="checkbox-brush">
+			<label for="sp-canvas-use-brush" style="see: java;"
+				wicket:id="checkbox-brush">
 				<span
 					class="ui-icon-main-browse-canvas-brush ui-btn-icon-notext sp-inline-icon" />
 			</label>
@@ -96,7 +98,7 @@ the License, or (at your option) any later version.
 		<div style="margin: 0px; padding: 0px;" class="ui-mini">
 			<fieldset data-role="controlgroup" data-type="horizontal"
 				class="ui-mini">
-				<label for="sp-canvas-drawing-props-fixed" style="see:java;"
+				<label for="sp-canvas-drawing-props-fixed" style="see: java;"
 					wicket:id="checkbox-props-fixed">
 					<span class="ui-icon-lock ui-btn-icon-notext sp-inline-icon" />
 				</label>
@@ -181,6 +183,16 @@ the License, or (at your option) any later version.
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-arr-undo">&nbsp;</button>
 			<button id="sp-canvas-drawing-save" wicket:id="btn-save"
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-save">&nbsp;</button>
+		</div>
+		<div data-role="controlgroup"
+			style="margin-top: 10px; margin-left: 0px; margin-right: 0px;"
+			class="ui-mini">
+			<button id="sp-canvas-drawing-zoomin" wicket:id="btn-zoom-in"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-zoom-in">&nbsp;</button>
+			<button id="sp-canvas-drawing-zoomout" wicket:id="btn-zoom-out"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-zoom-out">&nbsp;</button>
+			<button id="sp-canvas-drawing-unzoom" wicket:id="btn-unzoom"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-unzoom">&nbsp;</button>
 		</div>
 	</div>
 </wicket:enclosure>

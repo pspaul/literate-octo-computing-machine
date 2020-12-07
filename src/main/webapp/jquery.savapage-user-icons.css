@@ -259,14 +259,6 @@
     opacity: .6;
 }
 
-.ui-icon-main-browse:after {
-    background: url(/glyphicons/glyphicons_236_zoom_in.png) 50% 50% no-repeat;
-    background-size: 20px 20px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-
 .ui-icon-main-about:after {
     background: url(/glyphicons/glyphicons_195_circle_info.png) 50% 50% no-repeat;
     background-size: 22px 22px;
@@ -370,6 +362,27 @@
 .ui-icon-main-browse-canvas-select-all:after {
     background: url(/glyphicons/glyphicons_154_show_big_thumbnails.png) 50% 50% no-repeat;
     background-size: 18px 18px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .5;
+}
+.ui-icon-main-browse-canvas-zoom-in:after {
+    background: url(/glyphicons/glyphicons_236_zoom_in.png) 50% 50% no-repeat;
+    background-size: 22px 22px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .5;
+}
+.ui-icon-main-browse-canvas-zoom-out:after {
+    background: url(/glyphicons/glyphicons_237_zoom_out.png) 50% 50% no-repeat;
+    background-size: 22px 22px;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    opacity: .5;
+}
+.ui-icon-main-browse-canvas-unzoom:after {
+    background: url(/glyphicons/glyphicons_027_search.png) 50% 50% no-repeat;
+    background-size: 22px 22px;
     -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
     opacity: .5;

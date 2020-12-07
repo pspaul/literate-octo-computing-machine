@@ -151,7 +151,11 @@ public enum HtmlButtonEnum {
     /** */
     VERIFY,
     /** As opposite of {@link #NO}. */
-    YES;
+    YES,
+    /** */
+    ZOOM_IN,
+    /** */
+    ZOOM_OUT;
 
     /**
      * Dotted suffix for localized text.

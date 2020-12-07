@@ -686,8 +686,11 @@
                 });
 
                 $("#sp-canvas-drawing-clear-all").click(function() {
+                    var prvZoom = _imgCanvasEditor.unZoom();
                     _imgCanvasEditor.clear();
                     _imgCanvasEditor.setBackgroundImage(_getActiveImageUrl());
+                    _imgCanvasEditor.setZoom(prvZoom);
+                    _resizeOverlayCanvas();
                 });
 
                 $("#sp-canvas-drawing-clear-selection").click(function() {
@@ -698,8 +701,22 @@
                     _imgCanvasEditor.debugSelection();
                 });
 
+                $("#sp-canvas-drawing-zoomin").click(function() {
+                    _imgCanvasEditor.zoomIn();
+                    _resizeOverlayCanvas();
+                });
+                $("#sp-canvas-drawing-zoomout").click(function() {
+                    _imgCanvasEditor.zoomOut();
+                    _resizeOverlayCanvas();
+                });
+                $("#sp-canvas-drawing-unzoom").click(function() {
+                    _imgCanvasEditor.unZoom();
+                    _resizeOverlayCanvas();
+                });
+
                 $("#sp-canvas-drawing-save").click(function() {
-                    var nObj = _imgCanvasEditor.countObjects(),
+                    var prvZoom = _imgCanvasEditor.unZoom(),
+                        nObj = _imgCanvasEditor.countObjects(),
                         res = _api.call({
                         request : 'page-set-overlay',
                         dto : JSON.stringify({
@@ -708,6 +725,10 @@
                             json64 : nObj > 0 && _imgCanvasEditor.hasTextObjects() ? window.btoa(_imgCanvasEditor.toJSON()) : null
                         })
                     });
+
+                    _imgCanvasEditor.setZoom(prvZoom);
+                    _resizeOverlayCanvas();
+
                     _view.showApiMsg(res);
                     if (res.result.code === "0") {
                         if ((_imgCanvasObjCountLoaded > 0 && nObj === 0) || (_imgCanvasObjCountLoaded === 0 && nObj > 0)) {
@@ -717,7 +738,10 @@
                 });
 
                 $("#sp-canvas-drawing-undo-all").click(function() {
+                    var prvZoom = _imgCanvasEditor.unZoom();
                     _setOverlayCanvas();
+                    _imgCanvasEditor.setZoom(prvZoom);
+                    _resizeOverlayCanvas();
                 });
 
                 $("input:checkbox[id='sp-canvas-use-brush']").change(function(event) {
@@ -824,8 +848,9 @@
 
             /** */
                 _resizeOverlayCanvasExt = function(selImg, selDiv) {
-                var w = selImg.get(0).naturalWidth,
-                    h = selImg.get(0).naturalHeight,
+                var zoom = _imgCanvasEditor.getZoom(),
+                    w = zoom * selImg.get(0).naturalWidth,
+                    h = zoom * selImg.get(0).naturalHeight,
                     hMax = _getMaxImgHeight();
 
                 _imgCanvasEditor.setWidth(w);
@@ -1246,7 +1271,12 @@
                     image.addClass('active');
                     // detailedScanImageInBrowser();
 
-                    _setOverlayCanvas();
+                    if (_imgCanvasEditor) {
+                        var zoomPrv = _imgCanvasEditor.unZoom();
+                        _setOverlayCanvas();
+                        _imgCanvasEditor.setZoom(zoomPrv);
+                        _resizeOverlayCanvas();
+                    }
                 });
 
                 $("#browser-nav-right").click(function() {

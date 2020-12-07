@@ -43,6 +43,7 @@
                 ADD_T_INIT = 50,
                 ADD_INC = 20,
                 ADD_VISIBLE = 50,
+                ZOOM_STEP = 1.1,
             /*
             * How to keep fixed strokeWidth afer resize/scaling?
             */
@@ -488,6 +489,31 @@
                     originY : 'top',
                     excludeFromExport : true
                 });
+            };
+
+            this.zoomWidthHeight = function(factor) {
+                this.setWidth(_canvas.getWidth() * factor);
+                this.setHeight(_canvas.getHeight() * factor);
+            };
+            this.getZoom = function() {
+                return _canvas.getZoom();
+            };
+            this.setZoom = function(z) {
+                return _canvas.setZoom(z);
+            };
+            this.zoomIn = function() {
+                this.setZoom(this.getZoom() * ZOOM_STEP);
+                this.zoomWidthHeight(ZOOM_STEP);
+            };
+            this.zoomOut = function() {
+                this.setZoom(this.getZoom() / ZOOM_STEP);
+                this.zoomWidthHeight(1 / ZOOM_STEP);
+            };
+            this.unZoom = function() {
+                var prv = this.getZoom();
+                this.zoomWidthHeight(1 / prv);
+                this.setZoom(1);
+                return prv;
             };
 
         };
