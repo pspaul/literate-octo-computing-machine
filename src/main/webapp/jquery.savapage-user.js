@@ -3078,6 +3078,7 @@
 
                 _showCutPageRanges();
                 _showSelectPageRanges();
+                _showOverlayPageRanges();
                 _showArrButtons();
             };
 
