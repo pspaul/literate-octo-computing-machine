@@ -121,22 +121,19 @@ the License, or (at your option) any later version.
 				<li>
 					<button id="main-arr-cut"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-cut">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-cut" /></span>
+						<span class="sp-nav-button-txt" wicket:id="button-cut" />
 					</button>
 				</li>
 				<li class="main_arr_paste">
 					<button id="main-arr-paste-b"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-paste-left">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-paste-before" /></span>
+						<span class="sp-nav-button-txt" wicket:id="button-paste-before" />
 					</button>
 				</li>
 				<li class="main_arr_paste">
 					<button id="main-arr-paste-a"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-paste-right">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-paste-after" /></span>
+						<span class="sp-nav-button-txt" wicket:id="button-paste-after" />
 					</button>
 				</li>
 				<li class="main_actions main_arr_edit">
@@ -157,15 +154,13 @@ the License, or (at your option) any later version.
 				<li class="main_actions main_arr_edit">
 					<button id="main-arr-unselect-all"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-unselect-all">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-unselect-all" /></span>
+						<span class="sp-nav-button-txt" wicket:id="button-unselect-all" />
 					</button>
 				</li>
 				<li class="main_actions">
 					<button id="main-arr-undo"
 						class="ui-btn ui-btn-icon-top ui-icon-main-arr-undo">
-						<span class="sp-nav-button-txt"><wicket:message
-								key="button-undo" /></span>
+						<span class="sp-nav-button-txt" wicket:id="button-undo" />
 					</button>
 				</li>
 				<li>
@@ -197,7 +192,7 @@ the License, or (at your option) any later version.
 			class="sp-anchor ui-btn ui-btn-icon-notext ui-icon-star">&nbsp;</a>
 
 		<wicket:enclosure child="mini-user-balance">
-			<button data-dialog="true"
+			<button data-dialog="true" wicket:id="button-mini-user-balance"
 				class="ui-btn ui-btn-inline sp-button-user-details">
 				<span class="sp-txt-wrap" id="mini-user-balance"
 					wicket:id="mini-user-balance" />
@@ -207,7 +202,9 @@ the License, or (at your option) any later version.
 		<wicket:enclosure child="button-upload">
 			<button data-dialog="true" id="button-mini-upload"
 				class="ui-btn ui-btn-icon-left ui-icon-arrow-u"
-				wicket:id="button-upload" />
+				wicket:id="button-mini-upload">
+				<span wicket:id="button-upload" />
+			</button>
 		</wicket:enclosure>
 
 		<wicket:enclosure child="button-print-delegation">
@@ -217,25 +214,31 @@ the License, or (at your option) any later version.
                         ui-icon-mini-delegated-print ui-btn ui-corner-all ui-btn-icon-left" />
 		</wicket:enclosure>
 
-		<button id="button-mini-outbox"
+		<button id="button-mini-outbox" wicket:id="button-mini-outbox"
 			class="ui-btn ui-btn-icon-left ui-icon-clock sp-btn-show-outbox">
 			<span class="sp-outbox-remaining-time" />&nbsp;&nbsp;<span
 				class="sp-outbox-jobs" /><span class="sp-outbox-pages" /><span
 				class="sp-outbox-cost" />
 		</button>
 
-		<button tabindex="-1"
+		<button tabindex="-1" wicket:id="button-mini-media-sources-info"
 			class="ui-btn ui-btn-icon-text ui-icon-none sp-print-job-media-sources-info">
 			&nbsp;</button>
 
-		<button tabindex="-1"
+		<button tabindex="-1" wicket:id="button-mini-count-overlays"
+			class="ui-btn ui-btn-icon-left ui-icon-mini-overlays"
+			id="button-mini-overlays">
+			<span id="main-page-count-overlays" />
+		</button>
+
+		<button tabindex="-1" wicket:id="button-mini-page-range-select"
 			class="ui-btn ui-btn-icon-left ui-icon-mini-select"
 			id="button-mini-select">
 			<span id="main-page-range-select" />
 		</button>
 
-		<button tabindex="-1" class="ui-btn ui-btn-icon-left ui-icon-mini-cut"
-			id="button-mini-cut">
+		<button tabindex="-1" wicket:id="button-mini-page-range-cut"
+			class="ui-btn ui-btn-icon-left ui-icon-mini-cut" id="button-mini-cut">
 			<span id="main-page-range-cut" />
 		</button>
 
@@ -256,9 +259,8 @@ Welcome Back POPUP with Refresh button.
 	<div>
 		<wicket:message key="welcome-back-continue" />
 	</div>
-	<button id="sp-popup-wakeup-refresh" class="ui-btn ui-btn-inline">
-		<wicket:message key="button-continue" />
-	</button>
+	<button id="sp-popup-wakeup-refresh" class="ui-btn ui-btn-inline"
+		wicket:id="button-continue" />
 </div>
 
 <wicket:remove>
@@ -282,16 +284,16 @@ POPUP with extra sort mode actions.
 		<wicket:enclosure child="main-arr-action-print">
 			<li>
 				<a href="#" id="main-arr-action-print"
-					class="ui-btn ui-btn-icon-left ui-icon-main-print"> &nbsp;<span
-					wicket:id="main-arr-action-print" />
+					class="ui-btn ui-btn-icon-left ui-icon-main-print">
+					&nbsp;<span wicket:id="main-arr-action-print" />
 				</a>
 			</li>
 		</wicket:enclosure>
 		<wicket:enclosure child="main-arr-action-ticket">
 			<li>
 				<a href="#" id="main-arr-action-print"
-					class="ui-btn ui-btn-icon-left ui-icon-main-jobticket"> &nbsp;<span
-					wicket:id="main-arr-action-ticket" />
+					class="ui-btn ui-btn-icon-left ui-icon-main-jobticket">
+					&nbsp;<span wicket:id="main-arr-action-ticket" />
 				</a>
 			</li>
 		</wicket:enclosure>
@@ -306,9 +308,7 @@ POPUP with Page/Job info
 <div data-role="popup" id="sp-popup-job-info" data-theme="a"
 	data-arrow="true" class="ui-content" style="max-width: 800px;">
 
-	<h3 class="ui-title">
-		<wicket:message key="header-document" />
-	</h3>
+	<h3 class="ui-title" wicket:id="header-document" />
 
 	<h4 class="sp-txt-wrap sp-txt-info" id="popup-job-info-name"
 		style="max-width: 400px;" />
@@ -316,10 +316,10 @@ POPUP with Page/Job info
 	<ul data-role="listview" data-inset="true">
 		<li>
 			<legend>
-				<wicket:message key="prompt-job-pages" />
-				<span id="popup-job-info-pages" /> <span class="sp-txt-warn"
-					id="popup-job-info-pages-deleted">&bull; <span /> <wicket:message
-						key="prompt-deleted" />
+				<span wicket:id="prompt-job-pages" />: <span
+					id="popup-job-info-pages" /> <span class="sp-txt-warn"
+					id="popup-job-info-pages-deleted">&bull; <span /> <span
+					wicket:id="prompt-deleted" />
 				</span> &bull; <span id="popup-job-info-media" /> <span
 					class="sp-msg-popup-warn sp-txt-wrap" id="popup-job-info-drm" />
 			</legend>
@@ -341,20 +341,17 @@ POPUP with Page/Job info
 				</label>
 				<input type="checkbox" id="sp-popup-job-rotate" value="1" />
 				<label for="sp-popup-job-rotate">
-					<wicket:message key="prompt-job-rotate" />
-					<small>&nbsp;&nbsp;&#x21b7;</small>
+					<span wicket:id="prompt-job-rotate" /> <small>&nbsp;&nbsp;&#x21b7;</small>
 				</label>
 			</fieldset>
 
 			<div>
 				<button id="sp-popup-job-apply"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
-					<wicket:message key="button-apply" />
-				</button>
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check"
+					wicket:id="button-apply" />
 				<a href="#" data-rel="back"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-						key="button-close" />
-				</a>
+					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
+					wicket:id="button-close" />
 			</div>
 		</li>
 	</ul>

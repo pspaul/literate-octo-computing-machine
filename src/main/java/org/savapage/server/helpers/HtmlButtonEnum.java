@@ -64,8 +64,10 @@ public enum HtmlButtonEnum {
     CLOSE,
     /** */
     CONTINUE,
-    /** */
+    /** copy, paste, cut. */
     COPY,
+    /** copy, paste, cut. */
+    CUT,
     /** */
     DEFAULT,
     /** */
@@ -98,6 +100,8 @@ public enum HtmlButtonEnum {
     NO,
     /** */
     OK,
+    /** copy, paste, cut. */
+    PASTE,
     /** */
     PREVIEW,
     /** */
@@ -120,6 +124,8 @@ public enum HtmlButtonEnum {
     RESTORE,
     /** */
     RETRY,
+    /** */
+    ROTATE,
     /** */
     SAVE,
     /** */
@@ -146,6 +152,8 @@ public enum HtmlButtonEnum {
     TEST,
     /** */
     UNDO,
+    /** */
+    UNSELECT_ALL,
     /** */
     UPLOAD,
     /** */

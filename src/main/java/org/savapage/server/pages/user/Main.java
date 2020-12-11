@@ -46,9 +46,13 @@ import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dto.SharedAccountDto;
 import org.savapage.core.dto.UserIdDto;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.ipp.IppSyntaxException;
+import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.AccessControlService;
@@ -262,10 +266,38 @@ public class Main extends AbstractUserPage {
                 "btn-txt-gdpr", "GDPR");
 
         // Mini-buttons in footer/header bar
-        addVisible(
-                isUpload && buttonSubstCandidates
-                        .contains(NavButtonEnum.UPLOAD),
-                "button-upload", localized(HtmlButtonEnum.UPLOAD));
+
+        helper.addTransparentWithAttrTitle("button-mini-outbox", String.format(
+                "%s (%s) %s", AdjectiveEnum.HELD.uiText(getLocale()),
+                PrintOutNounEnum.JOB.uiText(getLocale(), true).toLowerCase(),
+                HtmlButtonEnum.DOTTED_SUFFIX));
+
+        helper.addTransparentWithAttrTitle("button-mini-media-sources-info",
+                PROXY_PRINT_SERVICE.localizePrinterOpt(getLocale(),
+                        IppDictJobTemplateAttr.ATTR_MEDIA));
+
+        helper.addTransparentWithAttrTitle("button-mini-count-overlays",
+                String.format("%s (%s)",
+                        AdjectiveEnum.EDITED.uiText(getLocale()),
+                        NounEnum.PAGE.uiText(getLocale(), true).toLowerCase()));
+
+        helper.addTransparentWithAttrTitle("button-mini-page-range-select",
+                String.format("%s (%s)",
+                        AdjectiveEnum.SELECTED.uiText(getLocale()),
+                        NounEnum.RANGE.uiText(getLocale()).toLowerCase()));
+
+        helper.addTransparentWithAttrTitle("button-mini-page-range-cut",
+                String.format("%s (%s)", AdjectiveEnum.CUT.uiText(getLocale()),
+                        NounEnum.RANGE.uiText(getLocale()).toLowerCase()));
+
+        final boolean showUploadInFooter = isUpload
+                && buttonSubstCandidates.contains(NavButtonEnum.UPLOAD);
+        addVisible(showUploadInFooter, "button-upload",
+                localized(HtmlButtonEnum.UPLOAD));
+        if (showUploadInFooter) {
+            helper.addTransparentWithAttrTitle("button-mini-upload",
+                    HtmlButtonEnum.UPLOAD.uiText(getLocale(), true));
+        }
 
         addVisible(buttonSubstCandidates.contains(NavButtonEnum.ABOUT),
                 "button-mini-about", localized(HtmlButtonEnum.ABOUT));
@@ -275,8 +307,7 @@ public class Main extends AbstractUserPage {
                 MarkupHelper.ATTR_CLASS, CssClassEnum.SP_BTN_ABOUT.clazz());
 
         // Action pop-up in sort view.
-        this.add(MarkupHelper.createEncloseLabel("main-arr-action-pdf",
-                localized("button-pdf"),
+        this.add(MarkupHelper.createEncloseLabel("main-arr-action-pdf", "PDF",
                 buttonPrivileged.contains(NavButtonEnum.PDF)));
 
         this.add(MarkupHelper.createEncloseLabel("main-arr-action-print",
@@ -293,8 +324,11 @@ public class Main extends AbstractUserPage {
                         && buttonPrivileged.contains(NavButtonEnum.TICKET)));
 
         // Fixed buttons in sort view.
+        helper.addButton("button-cut", HtmlButtonEnum.CUT);
         helper.addButton("button-back", HtmlButtonEnum.BACK);
         helper.addButton("button-delete", HtmlButtonEnum.DELETE);
+        helper.addButton("button-undo", HtmlButtonEnum.UNDO);
+        helper.addButton("button-unselect-all", HtmlButtonEnum.UNSELECT_ALL);
 
         //
         final String userId;
@@ -312,6 +346,12 @@ public class Main extends AbstractUserPage {
                 userIdDto, ACLOidEnum.U_FINANCIAL, ACLPermissionEnum.READER);
 
         helper.encloseLabel("mini-user-balance", "", showUserBalance);
+
+        if (showUserBalance) {
+            helper.addTransparentWithAttrTitle("button-mini-user-balance",
+                    NounEnum.BALANCE.uiText(getLocale())
+                            .concat(HtmlButtonEnum.DOTTED_SUFFIX));
+        }
 
         //
         final Label name = helper.addLabel("mini-user-name", userName);
@@ -337,7 +377,7 @@ public class Main extends AbstractUserPage {
                             SparklineHtml.COLOR_PDF));
         }
 
-        add(name.add(new AttributeModifier("title", userId)));
+        add(name.add(new AttributeModifier(MarkupHelper.ATTR_TITLE, userId)));
 
         //
         helper.encloseLabel("mini-sys-maintenance",
@@ -360,6 +400,29 @@ public class Main extends AbstractUserPage {
         } else {
             helper.discloseLabel("button-mini-help");
         }
+
+        // Job info pop-up
+        helper.addLabel("header-document", NounEnum.DOCUMENT);
+
+        helper.addLabel("prompt-job-pages",
+                NounEnum.PAGE.uiText(getLocale(), true));
+
+        // as in "Pages: 4 • 1 deleted" or "Pages: 4 • 3 deleted"
+        helper.addLabel("prompt-deleted",
+                AdverbEnum.DELETED.uiText(getLocale()).toLowerCase());
+
+        helper.addButton("prompt-job-rotate", HtmlButtonEnum.ROTATE);
+        helper.addButton("button-apply", HtmlButtonEnum.APPLY);
+        helper.addButton("button-close", HtmlButtonEnum.CLOSE);
+
+        helper.addLabel("button-paste-before",
+                HtmlButtonEnum.PASTE.uiText(getLocale()).concat(" ::"));
+        helper.addLabel("button-paste-after",
+                ":: ".concat(HtmlButtonEnum.PASTE.uiText(getLocale())));
+
+        //
+        helper.addButton("button-continue", HtmlButtonEnum.CONTINUE);
+
     }
 
     /**
@@ -562,7 +625,7 @@ public class Main extends AbstractUserPage {
         if (buttonPrivileged.contains(NavButtonEnum.PDF)) {
             items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS,
                     "ui-icon-main-pdf-properties", "button-main-pdf-properties",
-                    localized("button-pdf")));
+                    "PDF"));
         } else {
             // Immediate replacement.
             items.add(useButtonCandidate(buttonCandidates));
@@ -613,7 +676,7 @@ public class Main extends AbstractUserPage {
         if (buttonPrivileged.contains(NavButtonEnum.LETTERHEAD)) {
             items.add(new NavBarItem(CSS_CLASS_MAIN_ACTIONS_BASE,
                     "ui-icon-main-letterhead", "button-main-letterhead",
-                    localized("button-letterhead")));
+                    NounEnum.LETTERHEAD.uiText(getLocale(), true)));
         }
 
         // ------------

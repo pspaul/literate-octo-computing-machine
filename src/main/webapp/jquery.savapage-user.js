@@ -44,6 +44,11 @@
         /* jslint browser: true */
         /* global $, jQuery, alert */
 
+        _ns.CSS_CLASS_THUMBNAIL_PNG = 'sp-thumbnail-png';
+        _ns.CSS_CLASS_THUMBNAIL_SVG = 'sp-thumbnail-svg-overlay';
+        _ns.CSS_CLASS_THUMBNAIL_PNG_SELECTED = 'main_selected';
+        _ns.CSS_CLASS_PRELOAD_SPINNER = 'sp-preload-spinner';
+        _ns.CSS_CLASS_THUMBNAIL_SUBSCRIPT = 'sp-thumbnail-subscript';
         /*
          * The JSON object is defined in json2.js (which is part of the CometD
          * jquery package)
@@ -60,7 +65,7 @@
         _ns.thumbnails2Load = 0;
 
         _ns.removeImgHeight = function(imgDomElement) {
-            $(imgDomElement).removeAttr('height').removeClass('sp-preload-spinner');
+            $(imgDomElement).removeAttr('height').removeClass(_ns.CSS_CLASS_PRELOAD_SPINNER);
             _ns.thumbnails2Load--;
             if (_ns.thumbnails2Load === 0) {
                 // All thumbnails are loaded, so resume.
@@ -71,7 +76,7 @@
         // See Java Wicket: Browser.html
         _ns.removeSpinnerL = function(imgDomElement) {
             var sel = $(imgDomElement);
-            sel.removeClass('sp-preload-spinner-l');
+            sel.removeClass(_ns.CSS_CLASS_PRELOAD_SPINNER + '-l');
             // Restore heigh/width.
             if (sel.hasClass('fit_width')) {
                 sel.css('height', '');
@@ -591,10 +596,11 @@
          *
          */
         function PageBrowser(_i18n, _view, _model, _api) {
+            const _CSS_CLASS_ROTATED = 'sp-img-rotated',
+                _ID_CANVAS_IMG_DIV = 'sp-canvas-browser-img-div',
+                _ID_CANVAS_IMG = 'sp-canvas-browser-img';
+
             var _this = this,
-                _cssClassRotated = 'sp-img-rotated',
-                _idCanvasImgDiv = 'sp-canvas-browser-img-div',
-                _idCanvasImg = 'sp-canvas-browser-img',
                 _imgCanvasEditor,
                 _imgCanvasObjCountLoaded,
                 _imgScrollBarWidth,
@@ -638,7 +644,7 @@
                     return false;
                 });
 
-                _imgCanvasEditor = new _ns.HtmlCanvasEditor(_idCanvasImg, //
+                _imgCanvasEditor = new _ns.HtmlCanvasEditor(_ID_CANVAS_IMG, //
                 function(nObjects) {
                     // onAfterRender
                     _view.enable($('#sp-canvas-drawing-clear-all'), nObjects > 0);
@@ -731,9 +737,7 @@
 
                     _view.showApiMsg(res);
                     if (res.result.code === "0") {
-                        if ((_imgCanvasObjCountLoaded > 0 && nObj === 0) || (_imgCanvasObjCountLoaded === 0 && nObj > 0)) {
-                            _this.onOverlayOnOff();
-                        }
+                        _this.onOverlayOnOff();
                     }
                 });
 
@@ -802,7 +806,7 @@
                     _view.visible($(this), false);
                 });
                 // Show <div> container of <canvas>
-                _view.visible($('#' + _idCanvasImgDiv), true);
+                _view.visible($('#' + _ID_CANVAS_IMG_DIV), true);
             },
 
             /** */
@@ -867,7 +871,7 @@
             /** */
                 _resizeOverlayCanvas = function() {
                 if (_imgCanvasEditor) {
-                    _resizeOverlayCanvasExt($('#page-browser-images .active'), $('#' + _idCanvasImgDiv));
+                    _resizeOverlayCanvasExt($('#page-browser-images .active'), $('#' + _ID_CANVAS_IMG_DIV));
                 }
             },
 
@@ -897,7 +901,7 @@
                     $.mobile.loading("hide");
 
                     imgUrl = selImg.attr('src');
-                    _resizeOverlayCanvasExt(selImg, $('#' + _idCanvasImgDiv));
+                    _resizeOverlayCanvasExt(selImg, $('#' + _ID_CANVAS_IMG_DIV));
 
                     _imgCanvasEditor.clear();
 
@@ -1007,7 +1011,7 @@
                 yImage = _getMaxImgHeight();
 
                 $('#content-browser img').each(function() {
-                    if ($(this).hasClass(_cssClassRotated)) {
+                    if ($(this).hasClass(_CSS_CLASS_ROTATED)) {
                         // $(this).css({'width' : widthImg + 'px'});
                         $(this).css({
                             'height' : yImage + 'px'
@@ -1120,9 +1124,9 @@
                         imgWlk.attr('id', idImgBase + i);
 
                         if (_model.getPageRotate(iPageArray[i])) {
-                            imgWlk.addClass(_cssClassRotated);
+                            imgWlk.addClass(_CSS_CLASS_ROTATED);
                         } else {
-                            imgWlk.removeClass(_cssClassRotated);
+                            imgWlk.removeClass(_CSS_CLASS_ROTATED);
                         }
 
                         urlArray[i] = url;
@@ -1148,7 +1152,7 @@
                     }
 
                     // Set spinner and set image.
-                    sel.addClass('sp-preload-spinner-l');
+                    sel.addClass(_ns.CSS_CLASS_PRELOAD_SPINNER + '-l');
                     sel.attr('src', tmp).addClass('active');
 
                     /*
@@ -1178,6 +1182,7 @@
              */
             this.adjustSlider = function(valRequested) {
                 var selSlider = $('#browser-slider'),
+                    sel,
                     nPages,
                     val,
                     min;
@@ -1185,14 +1190,14 @@
                 nPages = _model.myTotPages;
                 val = nPages;
 
-                if ($('#page-main-thumbnail-images .main_selected').length > 0) {
-
-                    val = _model.getPageNumber($('#page-main-thumbnail-images img').index($('#page-main-thumbnail-images img.main_selected')));
+                if ($('#page-main-thumbnail-images .' + _ns.CSS_CLASS_THUMBNAIL_PNG_SELECTED).length > 0) {
+                    sel = $('#page-main-thumbnail-images img.' + _ns.CSS_CLASS_THUMBNAIL_PNG);
+                    val = _model.getPageNumber(sel.index($('#page-main-thumbnail-images img.' + _ns.CSS_CLASS_THUMBNAIL_PNG_SELECTED)));
                     /*
                      * reset, so a new page in Browse mode will select the LAST
                      * image.
                      */
-                    $('#page-main-thumbnail-images img').removeClass('main_selected');
+                    sel.removeClass(_ns.CSS_CLASS_THUMBNAIL_PNG_SELECTED);
                 }
 
                 min = 1;
@@ -1231,7 +1236,7 @@
 
             $('#page-browser').on('pagecreate', function(event) {
 
-                if ($('#' + _idCanvasImgDiv).length > 0) {
+                if ($('#' + _ID_CANVAS_IMG_DIV).length > 0) {
                     _initHtmlCanvasEditor();
                 }
 
@@ -2504,6 +2509,7 @@
                 _showArrange,
                 _showCutPageRanges,
                 _showSelectPageRanges,
+                _showOverlayPageRanges,
                 _getFirstJob,
                 _showArrButtons,
                 _onThumbnailTap,
@@ -2519,7 +2525,7 @@
              * Set job expiration marker in thumbnail subscript.
              */
                 _setThumbnailExpiry = function() {
-                var subscripts = $('.sp-thumbnail-subscript'),
+                var subscripts = $('.' + _ns.CSS_CLASS_THUMBNAIL_SUBSCRIPT),
                     i = 0;
                 $.each(_model.myJobPages, function(key, page) {
                     if (page.expiryTime > 0 && page.expiryTime - _model.prevMsgTime < page.expiryTimeSignal) {
@@ -2606,7 +2612,7 @@
             _tnUrl2Img = function() {
                 var i = 0;
 
-                $('#page-main-thumbnail-images img').each(function() {
+                _this.thumbnailImagesImgPNG().each(function() {
                     var prop = {};
                     prop.i = i;
                     prop.img = $(this);
@@ -2700,8 +2706,28 @@
                          * fixed width and the proper height (ratio).
                          */
                         item = "";
-                        item += '<div><img class="sp-preload-spinner" onload="org.savapage.removeImgHeight(this)" width="' + imgWidth + '" height="' + imgHeightA4 + '" border="0" src="' + _view.getImgSrc(page.url) + '" style="padding: ' + _IMG_PADDING + 'px;" />';
-                        item += '<a tabindex="-1" title="' + title + '" href="#" class="sp-thumbnail-subscript ui-btn ui-mini" style="margin-top:-' + (2 * _IMG_PADDING + 1) + 'px; margin-right: ' + _IMG_PADDING + 'px; margin-left: ' + _IMG_PADDING + 'px; border: none; box-shadow: none;">';
+                        item += '<div>';
+
+                        item += '<img class="' + _ns.CSS_CLASS_THUMBNAIL_PNG + ' ' + _ns.CSS_CLASS_PRELOAD_SPINNER + '" onload="org.savapage.removeImgHeight(this)" ';
+                        item += 'width="' + imgWidth + '" height="' + imgHeightA4 + '" ';
+                        item += 'border="0" src="' + _view.getImgSrc(page.url) + '" ';
+                        item += 'style="';
+                        item += 'padding: ' + _IMG_PADDING + 'px;';
+                        item += '"';
+                        item += '/>';
+
+                        if (page.overlay) {
+                            item += '<img class="' + _ns.CSS_CLASS_THUMBNAIL_SVG + '" ';
+                            item += 'style="';
+                            item += 'margin-left: -' + (imgWidth + 2 * _IMG_PADDING) + 'px; ';
+                            item += 'z-index:999;';
+                            item += 'padding: ' + _IMG_PADDING + 'px;';
+                            item += '" ';
+                            item += 'border="0" src="data:image/svg+xml;base64,' + page.overlaySVG64 + '" ';
+                            item += 'width="' + imgWidth + '"/>';
+                        }
+
+                        item += '<a tabindex="-1" title="' + title + '" href="#" class="' + _ns.CSS_CLASS_THUMBNAIL_SUBSCRIPT + ' ui-btn ui-mini" style="margin-top:-' + (2 * _IMG_PADDING + 1) + 'px; margin-right: ' + _IMG_PADDING + 'px; margin-left: ' + _IMG_PADDING + 'px; border: none; box-shadow: none;">';
                         item += '<span class="sp-thumbnail-page"/>';
                         item += '<span class="sp-thumbnail-tot-pages"/>';
                         item += '<span class="sp-thumbnail-tot-chunk"/>';
@@ -2709,6 +2735,7 @@
                         if (page.overlay) {
                             item += '<span class="sp-txt-info"> &#9998;</span>';
                         }
+
                         item += '<span class="sp-txt-info sp-thumbnail-tot-chunk-overlays"/>';
 
                         if (_model.myJobs[page.job].rotate !== "0") {
@@ -2794,6 +2821,8 @@
                         $(this).text(_model.myTotPages);
                     });
                 }
+
+                _showOverlayPageRanges();
 
                 /*
                  * Trigger jQuery Mobile
@@ -2968,6 +2997,21 @@
                     $('#button-mini-select').hide();
                 }
             };
+            /**
+             *
+             */
+            _showOverlayPageRanges = function() {
+                var pages = 0;
+                $.each(_model.myJobPages, function(key, page) {
+                    pages += page.overlayPages;
+                });
+                if (pages > 0) {
+                    $('#main-page-count-overlays').html(pages);
+                    $('#button-mini-overlays').show();
+                } else {
+                    $('#button-mini-overlays').hide();
+                }
+            };
 
             this.alignThumbnails = function() {
                 _moveToEnd();
@@ -2987,7 +3031,7 @@
 
                 _totImages = 0;
 
-                $(".thumbnail_reel img").each(function(index, image) {
+                $(".thumbnail_reel img." + _ns.CSS_CLASS_THUMBNAIL_PNG).each(function(index, image) {
                     _totImages += 1;
                     $(image).css({
                         'width' : _IMG_WIDTH() + 'px',
@@ -3037,6 +3081,9 @@
                 _showArrButtons();
             };
 
+            this.thumbnailImagesImgPNG = function() {
+                return $('#page-main-thumbnail-images img.' + _ns.CSS_CLASS_THUMBNAIL_PNG);
+            };
             /*
              *
              */
@@ -3047,9 +3094,7 @@
                     sel2,
                     nDel,
                     html,
-                    cssCls = 'sp-thumbnail-subscript'
-                //
-                ;
+                    cssCls = _ns.CSS_CLASS_THUMBNAIL_SUBSCRIPT;
                 /*
                  * We try to find out which part of the <a> button was tapped by
                  * querying the discriminating CSS class. If no class is found we
@@ -3146,7 +3191,8 @@
             _onThumbnailTap = function(thumbnail) {
                 var tn,
                     nPage,
-                    iImage = $('#page-main-thumbnail-images img').index(thumbnail);
+                    selImage = _this.thumbnailImagesImgPNG(),
+                    iImage = selImage.index(thumbnail);
 
                 if (iImage < 0) {
                     return;
@@ -3154,7 +3200,7 @@
 
                 nPage = _model.getPageNumber(iImage);
 
-                $('#page-main-thumbnail-images img').removeClass('main_selected');
+                selImage.removeClass(_ns.CSS_CLASS_THUMBNAIL_PNG_SELECTED);
 
                 if (_model.myJobPages[iImage].pages === 1) {
                     /*
@@ -3181,7 +3227,7 @@
                         }
                         _showArrButtons();
                     } else {
-                        thumbnail.addClass('main_selected');
+                        thumbnail.addClass(_ns.CSS_CLASS_THUMBNAIL_PNG_SELECTED);
                         _view.changePage($('#page-browser'));
                     }
                 } else {
@@ -3434,7 +3480,11 @@
                     _isThumbnailDragged = false;
                     _mousedownPosLeft = $(this).position().left;
                     _mousedownPageX = event.pageX;
+
                     _mousedownTarget = $(event.target);
+                    if (_mousedownTarget.attr('src') && _mousedownTarget.hasClass(_ns.CSS_CLASS_THUMBNAIL_SVG)) {
+                        _mousedownTarget = $(event.target).siblings('.' + _ns.CSS_CLASS_THUMBNAIL_PNG);
+                    }
 
                 }).on('vmousemove', null, null, function(event) {
                     if (_model.myIsDragging) {
@@ -3476,7 +3526,6 @@
                         return false;
                     }
                     if (!_isThumbnailDragged) {
-
                         if (_mousedownTarget.attr('src')) {
                             // this is a tap on the <img>
                             _onThumbnailTap(_mousedownTarget);
@@ -4917,10 +4966,7 @@
              * browser
              */
             this.myCutPages = {};
-
-            /*
-             *
-             */
+            //
             this.mySelectPages = {};
 
             this.printSelectedMediaShort = function() {
@@ -6294,11 +6340,11 @@
 
             //--------------------------------------------------
             _userEvent.onWaitingForEvent = function() {
-                _changeIcon("check", 'Watching events . . .');
+                _changeIcon("check", 'Watching events');
             };
 
             _cometd.onConnecting = function() {
-                _changeIcon("recycle", 'Connecting . . .');
+                _changeIcon("recycle", 'Connecting');
             };
 
             _cometd.onHandshakeSuccess = function() {
@@ -6309,19 +6355,19 @@
                 }
             };
             _cometd.onHandshakeFailure = function() {
-                _changeIcon("alert", 'Handshake failure.');
+                _changeIcon("alert", 'Handshake failure');
             };
             _cometd.onReconnect = function() {
                 if (_userEvent.isLongPollPending()) {
-                    _changeIcon("check", 'Watching events . . .');
+                    _changeIcon("check", 'Watching events');
                 } else {
-                    _changeIcon("plus", 'Start event watch . . .');
+                    _changeIcon("plus", 'Start event watch');
                     _userEvent.onPollInvitation();
                 }
             };
 
             _cometd.onConnectionBroken = function() {
-                _changeIcon("delete", 'Connection is broken.');
+                _changeIcon("delete", 'Connection is broken');
                 if (_model.user.loggedIn) {
                     if (_ns.isAppWakeUpDeferred()) {
                         _this.onWakeUpAutoRestore(true);
@@ -6334,11 +6380,11 @@
                 /*
                  * IMPORTANT: This is end-state in Google Chrome.
                  */
-                _changeIcon("minus", 'Connection is closed.');
+                _changeIcon("minus", 'Connection is closed');
             };
 
             _cometd.onDisconnecting = function() {
-                _changeIcon("clock", 'Disconnecting . . .');
+                _changeIcon("clock", 'Disconnecting');
             };
 
             /*
