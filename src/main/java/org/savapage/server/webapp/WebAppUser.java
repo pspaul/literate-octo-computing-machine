@@ -131,7 +131,7 @@ public final class WebAppUser extends AbstractWebAppPage {
             final List<Pair<String, LibreJsLicenseEnum>> list,
             final String nocache) {
 
-        if (ConfigManager.isPdfOverlayEditorEnabled()) {
+        if (ConfigManager.isSavaPageDrawEnabled()) {
 
             list.add(
                     new ImmutablePair<>(

@@ -64,6 +64,10 @@ public class Browser extends AbstractUserPage {
 
     /** */
     private static final String WID_TOOLS_PANEL = "tools-panel";
+    /** */
+    private static final String WID_BTN_DRAW = "btn-draw";
+    /** */
+    private static final String WID_BTN_MORE_ACTIONS = "btn-more-actions";
 
     /**
      * HTML titles for Wicket IDs.
@@ -73,11 +77,7 @@ public class Browser extends AbstractUserPage {
             { "btn-clear-selection", HtmlButtonEnum.CLEAR_SELECTION }, //
             { "btn-save", HtmlButtonEnum.SAVE }, //
             { "btn-select-all", HtmlButtonEnum.SELECT_ALL }, //
-            { "btn-undo-all", HtmlButtonEnum.RESTORE }, //
-            { "btn-zoom-in", HtmlButtonEnum.ZOOM_IN }, //
-            { "btn-zoom-out", HtmlButtonEnum.ZOOM_OUT }, //
-            { "btn-unzoom", HtmlButtonEnum.DEFAULT } //
-    };
+            { "btn-undo-all", HtmlButtonEnum.RESTORE } };
 
     /**
      * HTML titles for Wicket IDs.
@@ -122,18 +122,28 @@ public class Browser extends AbstractUserPage {
                 ACLPermissionEnum.EDITOR);
 
         final boolean hasCanvas =
-                isUserInboxEditor && ConfigManager.isPdfOverlayEditorEnabled();
+                isUserInboxEditor && ConfigManager.isSavaPageDrawEnabled();
 
         final Component compContent = helper.addTransparant("browser-content");
         final Component compFooter =
                 helper.addTransparant("browser-footer-div");
 
         if (hasCanvas) {
+
+            helper.addModifyLabelAttr(WID_BTN_MORE_ACTIONS,
+                    MarkupHelper.ATTR_TITLE,
+                    HtmlButtonEnum.MORE.uiText(getLocale(), true));
+
+            helper.addButton(WID_BTN_DRAW, HtmlButtonEnum.EDIT);
+            helper.addButton("btn-zoom-in", HtmlButtonEnum.ZOOM_IN);
+            helper.addButton("btn-zoom-out", HtmlButtonEnum.ZOOM_OUT);
+            helper.addButton("btn-unzoom", HtmlButtonEnum.DEFAULT);
+
             compContent.add(new AttributeAppender(MarkupHelper.ATTR_STYLE,
-                    String.format("margin-left: %dpx;", PANEL_WIDTH_PX)));
+                    "margin-left: 10px;"));
+
             compFooter.add(new AttributeAppender(MarkupHelper.ATTR_STYLE,
-                    String.format("padding-left: %dpx; padding-right: 20px;",
-                            PANEL_WIDTH_PX)));
+                    String.format("padding-right: 20px;")));
 
             final Component compPanel = helper.addTransparant(WID_TOOLS_PANEL);
             compPanel.add(new AttributeAppender(MarkupHelper.ATTR_STYLE,
@@ -142,6 +152,7 @@ public class Browser extends AbstractUserPage {
             this.populateToolsPanelExt(helper);
 
         } else {
+            helper.discloseLabel(WID_BTN_MORE_ACTIONS);
             helper.discloseLabel(WID_TOOLS_PANEL);
         }
 

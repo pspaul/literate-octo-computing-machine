@@ -28,6 +28,8 @@ the License, or (at your option) any later version.
 			<div id="sp-canvas-browser-img-div"
 				style="margin-left: auto; margin-right: auto;">
 				<canvas wicket:id="canvas-browser-img" id="sp-canvas-browser-img" />
+				<div id="sp-canvas-browser-img-curtain"
+					style="background-color: white; opacity: 0.0; z-index: 999;" />
 			</div>
 		</wicket:enclosure>
 	</div>
@@ -35,10 +37,19 @@ the License, or (at your option) any later version.
 
 <div data-role="footer" id="footer-browser" data-position="fixed"
 	style="padding-top: 0px; margin-top: 0px;">
-	<div wicket:id="browser-footer-div" style="margin-top: 0px;">
+	<div wicket:id="browser-footer-div" id="footer-browser-div"
+		style="margin-top: 0px;">
 		<input type="range" id="browser-slider" value="0" min="0" max="0" />
 		<div data-role="navbar">
 			<ul>
+				<wicket:enclosure child="btn-more-actions">
+					<li>
+						<a href="#sp-browser-page-actions" data-rel="popup"
+							wicket:id="btn-more-actions"
+							class="ui-btn ui-btn-icon-top ui-icon-main-arr-action-popup">
+						</a>
+					</li>
+				</wicket:enclosure>
 				<li>
 					<a href="#" id="browser-back" data-icon="back" data-rel="back"
 						data-direction="reverse" title="" wicket:id="btn-back" />
@@ -64,8 +75,8 @@ the License, or (at your option) any later version.
 </div>
 
 <wicket:enclosure child="tools-panel">
-	<div data-role="panel" data-position-fixed="true" style=""
-		data-dismissible="false" data-display="overlay"
+	<div data-role="panel" data-position="left" style=""
+		data-dismissible="false" data-display="overlay" data-swipe-close="false"
 		wicket:id="tools-panel" id="sp-canvas-tools-panel">
 
 		<fieldset data-role="controlgroup" data-type="horizontal"
@@ -181,21 +192,48 @@ the License, or (at your option) any later version.
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-clear-all">&nbsp;</button>
 			<button id="sp-canvas-drawing-undo-all" wicket:id="btn-undo-all"
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-arr-undo">&nbsp;</button>
-			<button id="sp-canvas-drawing-save" wicket:id="btn-save"
-				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-save">&nbsp;</button>
 		</div>
 		<div data-role="controlgroup"
 			style="margin-top: 10px; margin-left: 0px; margin-right: 0px;"
 			class="ui-mini">
-			<button id="sp-canvas-drawing-zoomin" wicket:id="btn-zoom-in"
-				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-zoom-in">&nbsp;</button>
-			<button id="sp-canvas-drawing-zoomout" wicket:id="btn-zoom-out"
-				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-zoom-out">&nbsp;</button>
-			<button id="sp-canvas-drawing-unzoom" wicket:id="btn-unzoom"
-				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-unzoom">&nbsp;</button>
+			<button id="sp-canvas-drawing-save" wicket:id="btn-save"
+				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-save">&nbsp;</button>
 		</div>
 	</div>
+
+	<div data-role="popup" data-arrow="false" id="sp-browser-page-actions">
+
+		<ul data-role="listview" data-inset="true" data-type="vertical"
+			data-icon="false">
+			<li>
+				<a href="#" id="sp-browser-page-draw"
+					class="ui-btn ui-btn-icon-left ui-icon-edit">
+					&nbsp;<span wicket:id="btn-draw" />
+				</a>
+			</li>
+			<li>
+				<a href="#" id="sp-canvas-drawing-zoomin"
+					class="ui-btn ui-btn-icon-left ui-icon-main-browse-canvas-zoom-in">
+					&nbsp;<span wicket:id="btn-zoom-in" />
+				</a>
+			</li>
+			<li>
+				<a href="#" id="sp-canvas-drawing-zoomout"
+					class="ui-btn ui-btn-icon-left ui-icon-main-browse-canvas-zoom-out">
+					&nbsp;<span wicket:id="btn-zoom-out" />
+				</a>
+			</li>
+			<li>
+				<a href="#" id="sp-canvas-drawing-unzoom"
+					class="ui-btn ui-btn-icon-left ui-icon-main-browse-canvas-unzoom">
+					&nbsp;<span wicket:id="btn-unzoom" />
+				</a>
+			</li>
+		</ul>
+	</div>
+
 </wicket:enclosure>
+
 
 <wicket:remove>
 	<!-- THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG -->

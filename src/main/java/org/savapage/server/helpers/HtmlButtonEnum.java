@@ -93,6 +93,8 @@ public enum HtmlButtonEnum {
     /** */
     LOGOUT,
     /** */
+    MORE,
+    /** */
     NEW,
     /** */
     NEXT,

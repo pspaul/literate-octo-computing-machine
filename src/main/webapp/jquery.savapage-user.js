@@ -598,13 +598,16 @@
         function PageBrowser(_i18n, _view, _model, _api) {
             const _CSS_CLASS_ROTATED = 'sp-img-rotated',
                 _ID_CANVAS_IMG_DIV = 'sp-canvas-browser-img-div',
-                _ID_CANVAS_IMG = 'sp-canvas-browser-img';
+                _ID_CANVAS_IMG = 'sp-canvas-browser-img',
+                _ID_CANVAS_CURTAIN = 'sp-canvas-browser-img-curtain';
 
             var _this = this,
                 _imgCanvasEditor,
                 _imgCanvasObjCountLoaded,
                 _imgScrollBarWidth,
                 _isBrushMode,
+                _drawButtonClicked,
+                _drawPanelOpen,
 
             /** */
                 _setHtmlCanvasBrushWidth = function(sel) {
@@ -635,14 +638,7 @@
 
             /** */
                 _initHtmlCanvasEditor = function() {
-
                 var selToolsPanel = $('#sp-canvas-tools-panel');
-                selToolsPanel.panel("option", "animate", false);
-                selToolsPanel.on("panelclose", function(event, ui) {
-                    // Is there a better way to preven closing?
-                    $(this).panel('open');
-                    return false;
-                });
 
                 _imgCanvasEditor = new _ns.HtmlCanvasEditor(_ID_CANVAS_IMG, //
                 function(nObjects) {
@@ -667,6 +663,40 @@
                 _setHtmlCanvasBrushWidth($('#sp-canvas-drawing-brush-width'));
                 _setHtmlCanvasStrokeWidth($('#sp-canvas-drawing-select-stroke-width'));
 
+                //
+                $("#sp-browser-page-draw").click(function() {
+                    _drawButtonClicked = true;
+                    $('#sp-browser-page-actions').popup('close');
+                    $('#sp-canvas-tools-panel').panel("toggle");
+                });
+
+                selToolsPanel.panel("option", "animate", false);
+                selToolsPanel.on("panelopen", function(event, ui) {
+                    var css = {
+                        'padding-left' : $('#sp-canvas-tools-panel').css('width')
+                    };
+                    $('#content-browser').css(css);
+                    $('#footer-browser-div').css(css);
+                    $('#' + _ID_CANVAS_CURTAIN).hide();
+                    _drawButtonClicked = false;
+                }).on("panelclose", function(event, ui) {
+                    var css = {
+                        'padding-left' : '0px'
+                    };
+                    // <Esc> is propagated to popup and panel
+                    // Prevent close of panel if popup menu is active.
+                    if (!_drawButtonClicked && $('#sp-browser-page-actions').parent().hasClass('ui-popup-active')) {
+                        $(this).panel('open');
+                        return false;
+                    }
+                    _drawButtonClicked = false;
+                    $('#content-browser').css(css);
+                    $('#footer-browser-div').css(css);
+                    _imgCanvasEditor.deactivateAll();
+                    $('#' + _ID_CANVAS_CURTAIN).show();
+                });
+
+                //
                 $("#sp-canvas-drawing-add-rect").click(function() {
                     _imgCanvasEditor.addRect();
                 });
@@ -866,6 +896,12 @@
                 } else {
                     selDiv.height(hMax);
                 }
+
+                $('#' + _ID_CANVAS_CURTAIN).css({
+                    'height' : h,
+                    'width' : w,
+                    'margin-top' : '-' + h + 'px'
+                });
             },
 
             /** */
@@ -1294,7 +1330,13 @@
                     return false;
                 });
 
-                if (!_imgCanvasEditor) {
+                if (_imgCanvasEditor) {
+                    $('#' + _ID_CANVAS_CURTAIN).on('swipeleft', null, null, function(event) {
+                        _navRight();
+                    }).on('swiperight', null, null, function(event) {
+                        _navLeft();
+                    });
+                } else {
                     $('#page-browser-images').on('vmousedown', null, null, function(event) {
                         event.preventDefault();
                     }).on('swipeleft', null, null, function(event) {
@@ -1357,9 +1399,12 @@
                 // Adjust when page is settled.
                 _this.adjustImages();
                 _resizeOverlayCanvas();
-
+                if (_drawPanelOpen) {
+                    $('#sp-canvas-tools-panel').panel("open");
+                }
             }).on("pagehide", function(event, ui) {
                 _ns.userEvent.resume();
+                _drawPanelOpen = $('#sp-canvas-tools-panel').hasClass('ui-panel-open');
             });
         }
 
