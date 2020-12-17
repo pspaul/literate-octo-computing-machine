@@ -1236,7 +1236,6 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              * PPD download needs a SpSession.
              */
             session = new SpSession(request);
-            session.invalidateNow();
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("{} [TEMP]", debugMsg);
