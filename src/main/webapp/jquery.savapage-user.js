@@ -606,6 +606,7 @@
                 _imgCanvasObjCountLoaded,
                 _imgScrollBarWidth,
                 _isBrushMode,
+                _drawButtonPresent,
                 _drawButtonClicked,
                 _drawPanelOpen,
 
@@ -906,9 +907,7 @@
 
             /** */
                 _resizeOverlayCanvas = function() {
-                if (_imgCanvasEditor) {
-                    _resizeOverlayCanvasExt($('#page-browser-images .active'), $('#' + _ID_CANVAS_IMG_DIV));
-                }
+                _resizeOverlayCanvasExt($('#page-browser-images .active'), $('#' + _ID_CANVAS_IMG_DIV));
             },
 
             /** */
@@ -924,9 +923,7 @@
                     hMax,
                     imgUrl,
                     res;
-                if (!_imgCanvasEditor) {
-                    return;
-                }
+
                 selImg = $('#page-browser-images .active');
                 w = selImg.get(0).naturalWidth;
                 if (w === 0) {
@@ -941,26 +938,28 @@
 
                     _imgCanvasEditor.clear();
 
-                    // Load overlay
-                    res = _api.call({
-                        request : 'page-get-overlay',
-                        dto : JSON.stringify({
-                            imgUrl : imgUrl
-                        })
-                    });
+                    if (_drawButtonPresent) {
+                        // Load overlay
+                        res = _api.call({
+                            request : 'page-get-overlay',
+                            dto : JSON.stringify({
+                                imgUrl : imgUrl
+                            })
+                        });
 
-                    if (res.result.code === '0') {
-                        if (res.dto.json64) {
-                            _imgCanvasEditor.loadJSON(window.atob(res.dto.json64));
-                        } else if (res.dto.svg64) {
-                            _imgCanvasEditor.loadSVG(window.atob(res.dto.svg64));
+                        if (res.result.code === '0') {
+                            if (res.dto.json64) {
+                                _imgCanvasEditor.loadJSON(window.atob(res.dto.json64));
+                            } else if (res.dto.svg64) {
+                                _imgCanvasEditor.loadSVG(window.atob(res.dto.svg64));
+                            }
+                            _imgCanvasObjCountLoaded = _imgCanvasEditor.countObjects();
+                        } else {
+                            _view.showApiMsg(res);
                         }
-                        // Set background after load !
-                        _imgCanvasEditor.setBackgroundImage(imgUrl);
-                        _imgCanvasObjCountLoaded = _imgCanvasEditor.countObjects();
-                    } else {
-                        _view.showApiMsg(res);
                     }
+                    // Set background after loadJSON / loadSVG !
+                    _imgCanvasEditor.setBackgroundImage(imgUrl);
                 }
             },
 
@@ -1003,6 +1002,10 @@
                 _navSlider(-1);
             };
 
+            /** */
+            this.isDrawActive = function() {
+                return _drawButtonPresent;
+            };
             /**
              * Adds (replace) page images to the browser.
              */
@@ -1272,9 +1275,9 @@
 
             $('#page-browser').on('pagecreate', function(event) {
 
-                if ($('#' + _ID_CANVAS_IMG_DIV).length > 0) {
-                    _initHtmlCanvasEditor();
-                }
+                _initHtmlCanvasEditor();
+
+                _drawButtonPresent = $('#sp-browser-page-draw').length > 0;
 
                 _this.setImages();
 
@@ -1292,7 +1295,8 @@
 
                 $('#browser-slider').change(function() {
                     var val,
-                        image;
+                        image,
+                        zoomPrv;
 
                     /*
                      * Note: the parseInt() is NEEDED to compare
@@ -1304,20 +1308,15 @@
                     }
 
                     val = parseInt($(this).val(), 10);
-
                     _this.setImgUrls(val);
 
                     image = $("#page-browser-images").find('img').eq(1);
-                    // $(".image_reel img").removeClass('active');
                     image.addClass('active');
-                    // detailedScanImageInBrowser();
 
-                    if (_imgCanvasEditor) {
-                        var zoomPrv = _imgCanvasEditor.unZoom();
-                        _setOverlayCanvas();
-                        _imgCanvasEditor.setZoom(zoomPrv);
-                        _resizeOverlayCanvas();
-                    }
+                    zoomPrv = _imgCanvasEditor.unZoom();
+                    _setOverlayCanvas();
+                    _imgCanvasEditor.setZoom(zoomPrv);
+                    _resizeOverlayCanvas();
                 });
 
                 $("#browser-nav-right").click(function() {
@@ -1329,45 +1328,6 @@
                     _navLeft();
                     return false;
                 });
-
-                if (_imgCanvasEditor) {
-                    $('#' + _ID_CANVAS_CURTAIN).on('swipeleft', null, null, function(event) {
-                        _navRight();
-                    }).on('swiperight', null, null, function(event) {
-                        _navLeft();
-                    });
-                } else {
-                    $('#page-browser-images').on('vmousedown', null, null, function(event) {
-                        event.preventDefault();
-                    }).on('swipeleft', null, null, function(event) {
-                        _navRight();
-                    }).on('swiperight', null, null, function(event) {
-                        _navLeft();
-                    }).on('tap', null, null, function(event) {
-                        // ----------------------------------------------------------
-                        // IMPORTANT: make sure to handle this event last!
-                        // If tap is handled before swipes, the tap event is
-                        // also triggered in case of swipe event
-                        // ----------------------------------------------------------
-                        // So, we don't need the tolerance check any more (left
-                        // here for documentation though)
-                        // ----------------------------------------------------------
-                        // Since this event is also triggered with swipes, use a
-                        // tolerance: 10px
-                        //
-                        // if((Math.abs(xStart - event.pageX) < 10) &&
-                        // (Math.abs(yStart - event.pageY) < 10)) {
-                        // ----------------------------------------------------------
-                        var images = $('#content-browser img');
-                        images.toggleClass('fit_width');
-                        if (images.hasClass('fit_width')) {
-                            images.css('height', '');
-                        } else {
-                            _view.pages.pagebrowser.adjustImages();
-                        }
-                        return false;
-                    });
-                }
 
                 $("#browser-delete").click(function() {
                     var selSlider = $('#browser-slider');
@@ -1390,10 +1350,6 @@
                 }
 
                 _ns.userEvent.pause();
-
-                if (_imgCanvasEditor) {
-                    $('#sp-canvas-tools-panel').panel('open');
-                }
 
             }).on("pageshow", function(event, ui) {
                 // Adjust when page is settled.
@@ -2712,7 +2668,8 @@
             this.setThumbnails = function() {
                 var wlkPageNr = 1,
                     divPrv,
-                    imgContainer = $('#page-main-thumbnail-images');
+                    imgContainer = $('#page-main-thumbnail-images'),
+                    isDrawActive = _view.pages.pagebrowser.isDrawActive();
 
                 if (!_this.tnUrl2Img) {
                     _this.tnUrl2Img = {};
@@ -2729,7 +2686,8 @@
                         span,
                         title,
                         imgWidth = _IMG_WIDTH(),
-                        imgHeightA4 = imgWidth * 1.4;
+                        imgHeightA4 = imgWidth * 1.4,
+                        displayOverlay = isDrawActive && page.overlay;
 
                     tnUrl = _this.tnUrl2Img[page.url];
 
@@ -2761,7 +2719,7 @@
                         item += '"';
                         item += '/>';
 
-                        if (page.overlay) {
+                        if (displayOverlay) {
                             item += '<img class="' + _ns.CSS_CLASS_THUMBNAIL_SVG + '" ';
                             item += 'style="';
                             item += 'margin-left: -' + (imgWidth + 2 * _IMG_PADDING) + 'px; ';
@@ -2777,7 +2735,7 @@
                         item += '<span class="sp-thumbnail-tot-pages"/>';
                         item += '<span class="sp-thumbnail-tot-chunk"/>';
 
-                        if (page.overlay) {
+                        if (displayOverlay) {
                             item += '<span class="sp-txt-info"> &#9998;</span>';
                         }
 
@@ -2836,7 +2794,7 @@
                      * Set the chunk overlay total.
                      */
                     span = divCur.find('.sp-thumbnail-tot-chunk-overlays');
-                    if ((page.overlayPages > 0 && !page.overlay) || page.overlayPages > 1) {
+                    if (isDrawActive && ((page.overlayPages > 0 && !page.overlay) || page.overlayPages > 1)) {
                         if (page.overlay) {
                             span.html(' ' + page.overlayPages);
                         } else {
@@ -3047,9 +3005,11 @@
              */
             _showOverlayPageRanges = function() {
                 var pages = 0;
-                $.each(_model.myJobPages, function(key, page) {
-                    pages += page.overlayPages;
-                });
+                if (_view.pages.pagebrowser.isDrawActive()) {
+                    $.each(_model.myJobPages, function(key, page) {
+                        pages += page.overlayPages;
+                    });
+                }
                 if (pages > 0) {
                     $('#main-page-count-overlays').html(pages);
                     $('#button-mini-overlays').show();

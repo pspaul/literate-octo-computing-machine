@@ -24,14 +24,12 @@ the License, or (at your option) any later version.
 		<img onload="org.savapage.removeSpinnerL(this)" src="" /> <img
 			onload="org.savapage.removeSpinnerL(this)" src="" /> <img
 			onload="org.savapage.removeSpinnerL(this)" src="" />
-		<wicket:enclosure child="canvas-browser-img">
-			<div id="sp-canvas-browser-img-div"
-				style="margin-left: auto; margin-right: auto;">
-				<canvas wicket:id="canvas-browser-img" id="sp-canvas-browser-img" />
-				<div id="sp-canvas-browser-img-curtain"
-					style="background-color: white; opacity: 0.0; z-index: 999;" />
-			</div>
-		</wicket:enclosure>
+		<div id="sp-canvas-browser-img-div"
+			style="margin-left: auto; margin-right: auto;">
+			<canvas id="sp-canvas-browser-img" />
+			<div id="sp-canvas-browser-img-curtain"
+				style="background-color: white; opacity: 0.0; z-index: 999;" />
+		</div>
 	</div>
 </div>
 
@@ -42,14 +40,12 @@ the License, or (at your option) any later version.
 		<input type="range" id="browser-slider" value="0" min="0" max="0" />
 		<div data-role="navbar">
 			<ul>
-				<wicket:enclosure child="btn-more-actions">
-					<li>
-						<a href="#sp-browser-page-actions" data-rel="popup"
-							wicket:id="btn-more-actions"
-							class="ui-btn ui-btn-icon-top ui-icon-main-arr-action-popup">
-						</a>
-					</li>
-				</wicket:enclosure>
+				<li>
+					<a href="#sp-browser-page-actions" data-rel="popup"
+						wicket:id="btn-more-actions"
+						class="ui-btn ui-btn-icon-top ui-icon-main-arr-action-popup">
+					</a>
+				</li>
 				<li>
 					<a href="#" id="browser-back" data-icon="back" data-rel="back"
 						data-direction="reverse" title="" wicket:id="btn-back" />
@@ -74,10 +70,44 @@ the License, or (at your option) any later version.
 	</div>
 </div>
 
+<div data-role="popup" data-arrow="false" id="sp-browser-page-actions">
+
+	<ul data-role="listview" data-inset="true" data-type="vertical"
+		data-icon="false">
+		<wicket:enclosure child="btn-draw">
+			<li>
+				<a href="#" id="sp-browser-page-draw"
+					class="ui-btn ui-btn-icon-left ui-icon-edit">
+					&nbsp;<span wicket:id="btn-draw" />
+				</a>
+			</li>
+		</wicket:enclosure>
+		<li>
+			<a href="#" id="sp-canvas-drawing-zoomin"
+				class="ui-btn ui-btn-icon-left ui-icon-main-browse-canvas-zoom-in">
+				&nbsp;<span wicket:id="btn-zoom-in" />
+			</a>
+		</li>
+		<li>
+			<a href="#" id="sp-canvas-drawing-zoomout"
+				class="ui-btn ui-btn-icon-left ui-icon-main-browse-canvas-zoom-out">
+				&nbsp;<span wicket:id="btn-zoom-out" />
+			</a>
+		</li>
+		<li>
+			<a href="#" id="sp-canvas-drawing-unzoom"
+				class="ui-btn ui-btn-icon-left ui-icon-main-browse-canvas-unzoom">
+				&nbsp;<span wicket:id="btn-unzoom" />
+			</a>
+		</li>
+	</ul>
+</div>
+
 <wicket:enclosure child="tools-panel">
 	<div data-role="panel" data-position="left" style=""
-		data-dismissible="false" data-display="overlay" data-swipe-close="false"
-		wicket:id="tools-panel" id="sp-canvas-tools-panel">
+		data-dismissible="false" data-display="overlay"
+		data-swipe-close="true" wicket:id="tools-panel"
+		id="sp-canvas-tools-panel">
 
 		<fieldset data-role="controlgroup" data-type="horizontal"
 			class="ui-mini" style="margin-top: -5px">
@@ -199,37 +229,6 @@ the License, or (at your option) any later version.
 			<button id="sp-canvas-drawing-save" wicket:id="btn-save"
 				class="ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-main-browse-canvas-save">&nbsp;</button>
 		</div>
-	</div>
-
-	<div data-role="popup" data-arrow="false" id="sp-browser-page-actions">
-
-		<ul data-role="listview" data-inset="true" data-type="vertical"
-			data-icon="false">
-			<li>
-				<a href="#" id="sp-browser-page-draw"
-					class="ui-btn ui-btn-icon-left ui-icon-edit">
-					&nbsp;<span wicket:id="btn-draw" />
-				</a>
-			</li>
-			<li>
-				<a href="#" id="sp-canvas-drawing-zoomin"
-					class="ui-btn ui-btn-icon-left ui-icon-main-browse-canvas-zoom-in">
-					&nbsp;<span wicket:id="btn-zoom-in" />
-				</a>
-			</li>
-			<li>
-				<a href="#" id="sp-canvas-drawing-zoomout"
-					class="ui-btn ui-btn-icon-left ui-icon-main-browse-canvas-zoom-out">
-					&nbsp;<span wicket:id="btn-zoom-out" />
-				</a>
-			</li>
-			<li>
-				<a href="#" id="sp-canvas-drawing-unzoom"
-					class="ui-btn ui-btn-icon-left ui-icon-main-browse-canvas-unzoom">
-					&nbsp;<span wicket:id="btn-unzoom" />
-				</a>
-			</li>
-		</ul>
 	</div>
 
 </wicket:enclosure>

@@ -27,13 +27,10 @@ package org.savapage.server.pages.user;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.config.ConfigManager;
-import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
-import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.UserService;
 import org.savapage.server.WebServer;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
@@ -49,8 +46,8 @@ public class Browser extends AbstractUserPage {
     private static final long serialVersionUID = 1L;
 
     /** */
-    private static final AccessControlService ACCESS_CONTROL_SERVICE =
-            ServiceContext.getServiceFactory().getAccessControlService();
+    private static final UserService USER_SERVICE =
+            ServiceContext.getServiceFactory().getUserService();
 
     /** Tools panel pixel width. */
     private static final int PANEL_WIDTH_PX = 89;
@@ -117,27 +114,24 @@ public class Browser extends AbstractUserPage {
         helper.addModifyLabelAttr("btn-next", MarkupHelper.ATTR_TITLE,
                 HtmlButtonEnum.NEXT.uiText(getLocale()));
 
-        final boolean isUserInboxEditor = ACCESS_CONTROL_SERVICE.hasPermission(
-                SpSession.get().getUserIdDto(), ACLOidEnum.U_INBOX,
-                ACLPermissionEnum.EDITOR);
+        //
+        helper.addModifyLabelAttr(WID_BTN_MORE_ACTIONS, MarkupHelper.ATTR_TITLE,
+                HtmlButtonEnum.MORE.uiText(getLocale(), true));
+        helper.addButton("btn-zoom-in", HtmlButtonEnum.ZOOM_IN);
+        helper.addButton("btn-zoom-out", HtmlButtonEnum.ZOOM_OUT);
+        helper.addButton("btn-unzoom", HtmlButtonEnum.DEFAULT);
 
-        final boolean hasCanvas =
-                isUserInboxEditor && ConfigManager.isSavaPageDrawEnabled();
+        //
+        final boolean isDrawAllowed = USER_SERVICE
+                .hasSavaPageDrawPermission(SpSession.get().getUserIdDto());
 
         final Component compContent = helper.addTransparant("browser-content");
         final Component compFooter =
                 helper.addTransparant("browser-footer-div");
 
-        if (hasCanvas) {
-
-            helper.addModifyLabelAttr(WID_BTN_MORE_ACTIONS,
-                    MarkupHelper.ATTR_TITLE,
-                    HtmlButtonEnum.MORE.uiText(getLocale(), true));
+        if (isDrawAllowed) {
 
             helper.addButton(WID_BTN_DRAW, HtmlButtonEnum.EDIT);
-            helper.addButton("btn-zoom-in", HtmlButtonEnum.ZOOM_IN);
-            helper.addButton("btn-zoom-out", HtmlButtonEnum.ZOOM_OUT);
-            helper.addButton("btn-unzoom", HtmlButtonEnum.DEFAULT);
 
             compContent.add(new AttributeAppender(MarkupHelper.ATTR_STYLE,
                     "margin-left: 10px;"));
@@ -152,15 +146,13 @@ public class Browser extends AbstractUserPage {
             this.populateToolsPanelExt(helper);
 
         } else {
-            helper.discloseLabel(WID_BTN_MORE_ACTIONS);
+            helper.discloseLabel(WID_BTN_DRAW);
             helper.discloseLabel(WID_TOOLS_PANEL);
         }
 
         helper.encloseLabel("canvas-btn-info", "&nbsp;",
-                hasCanvas && WebServer.isDeveloperEnv())
+                isDrawAllowed && WebServer.isDeveloperEnv())
                 .setEscapeModelStrings(false);
-
-        helper.encloseLabel("canvas-browser-img", "", hasCanvas);
     }
 
     /**

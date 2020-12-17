@@ -131,20 +131,16 @@ public final class WebAppUser extends AbstractWebAppPage {
             final List<Pair<String, LibreJsLicenseEnum>> list,
             final String nocache) {
 
-        if (ConfigManager.isSavaPageDrawEnabled()) {
-
-            list.add(
-                    new ImmutablePair<>(
-                            this.getJsPathForRender(
-                                    String.format("%s%s", JS_FILE_FABRIC_JS,
-                                            nocache),
-                                    LibreJsLicenseEnum.UNLICENSE),
-                            LibreJsLicenseEnum.UNLICENSE));
-
-            list.add(new ImmutablePair<>(String.format("%s%s",
-                    JS_FILE_JQUERY_SAVAPAGE_CANVAS_EDITOR, nocache),
-                    SAVAPAGE_JS_LICENSE));
-        }
+        list.add(new ImmutablePair<>(
+                this.getJsPathForRender(
+                        String.format("%s%s", JS_FILE_FABRIC_JS, nocache),
+                        LibreJsLicenseEnum.UNLICENSE),
+                LibreJsLicenseEnum.UNLICENSE));
+        list.add(
+                new ImmutablePair<>(
+                        String.format("%s%s",
+                                JS_FILE_JQUERY_SAVAPAGE_CANVAS_EDITOR, nocache),
+                        SAVAPAGE_JS_LICENSE));
 
         list.add(new ImmutablePair<>(
                 String.format("%s%s",
