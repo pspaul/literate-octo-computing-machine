@@ -165,10 +165,6 @@ public final class WebServer {
             "webapp.custom.i18n";
 
     /** */
-    private static final String PROP_KEY_WEBAPP_GNU_LIBREJS =
-            "webapp.gnulibrejs";
-
-    /** */
     private static final String PROP_KEY_SERVER_THREADPOOL_QUEUE_CAPACITY =
             "server.threadpool.queue.capacity";
     /** */
@@ -203,6 +199,17 @@ public final class WebServer {
     /** */
     private static final String SERVER_SESSION_SCAVENGE_INTERVAL_SEC_DEFAULT =
             "600";
+
+    /**
+     * SavaPage branded session cookie to avoid session conflict with other
+     * Jetty powered Web App instances on same host that use default session
+     * cookie.
+     * <p>
+     * Also see {@code init-param: browserCookieName = SP_BAYEUX_BROWSER} of
+     * {@code cometd} servlet in {@code web.xml}.
+     * </p>
+     */
+    private static final String SERVER_SESSION_COOKIE = "SP_JSESSIONID";
 
     /** */
     private static boolean developerEnv;
@@ -927,6 +934,10 @@ public final class WebServer {
          */
         webAppContext.getSessionHandler().getSessionCookieConfig()
                 .setHttpOnly(true);
+
+        // Override default session cookie.
+        webAppContext.getSessionHandler()
+                .setSessionCookie(SERVER_SESSION_COOKIE);
 
         /*
          * Set the handler(s).

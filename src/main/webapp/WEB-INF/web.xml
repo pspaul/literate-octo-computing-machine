@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com> -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-FileCopyrightText: Â© 2020 Datraverse BV <info@datraverse.com> -->
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
     version="3.0" metadata-complete="false">
 
@@ -13,6 +14,10 @@
         <init-param>
             <param-name>ws.cometdURLMapping</param-name>
             <param-value>/cometd/*</param-value>
+        </init-param>
+        <init-param>
+            <param-name>browserCookieName</param-name>
+            <param-value>SP_BAYEUX_BROWSER</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
