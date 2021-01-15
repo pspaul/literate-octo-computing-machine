@@ -258,6 +258,23 @@ public final class ClientAppHandler {
     }
 
     /**
+     * 
+     * @param userAuthenticatorUser
+     *            authenticator (can be {@code null}).
+     * @param uid
+     *            User ID.
+     * @return User ID in Database format.
+     */
+    private static String asDbUserId(
+            final IExternalUserAuthenticator userAuthenticator,
+            final String uid) {
+        if (userAuthenticator == null) {
+            return uid;
+        }
+        return userAuthenticator.asDbUserId(uid);
+    }
+
+    /**
      *
      * @param userId
      *            The unique user id.
@@ -275,8 +292,8 @@ public final class ClientAppHandler {
          * Get the "real" username from the alias.
          */
         String uid = UserAliasList.instance()
-                .getUserName(userAuthenticator.asDbUserId(userId));
-        uid = userAuthenticator.asDbUserId(uid);
+                .getUserName(asDbUserId(userAuthenticator, userId));
+        uid = asDbUserId(userAuthenticator, uid);
 
         //
         final boolean isAuth;
@@ -426,7 +443,9 @@ public final class ClientAppHandler {
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             dto.setStatus(ClientAppConnectDto.Status.ERROR_FATAL);
-            dto.setStatusMessage(e.getMessage());
+            dto.setStatusMessage(
+                    String.format("Server error: %s", StringUtils.defaultString(
+                            e.getMessage(), e.getClass().getSimpleName())));
         }
 
         if (dto.getStatus() == ClientAppConnectDto.Status.ERROR_FATAL) {
