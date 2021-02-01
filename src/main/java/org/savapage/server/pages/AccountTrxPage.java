@@ -52,6 +52,7 @@ import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
+import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.DocLog;
@@ -220,7 +221,7 @@ public final class AccountTrxPage extends AbstractListPage {
             }
 
             helper.encloseLabel("amount-refund",
-                    NounEnum.REFUND.uiText(getLocale()).toLowerCase(),
+                    NounEnum.REFUND.uiText(getLocale()),
                     printOut != null && accountTrx.getAmount()
                             .compareTo(BigDecimal.ZERO) > 0);
 
@@ -407,6 +408,7 @@ public final class AccountTrxPage extends AbstractListPage {
                 } else if (StringUtils.isNotBlank(docLog.getExternalId())) {
                     jobticket = docLog.getExternalId();
                 }
+
                 break;
 
             case INITIAL:
@@ -419,6 +421,29 @@ public final class AccountTrxPage extends AbstractListPage {
             default:
                 throw new SpException(
                         "TrxType [" + trxType + "] unknown: not handled");
+            }
+
+            helper.encloseLabel("cupsJobPrompt",
+                    PrintOutNounEnum.JOB.uiText(getLocale()),
+                    trxType == AccountTrxTypeEnum.PRINT_OUT);
+
+            if (trxType == AccountTrxTypeEnum.PRINT_OUT) {
+                helper.addLabel("cupsJobId",
+                        printOut.getCupsJobId().toString());
+                final IppJobStateEnum state =
+                        IppJobStateEnum.asEnum(printOut.getCupsJobState());
+                final String cssClass;
+                if (state.isFailure()) {
+                    cssClass = MarkupHelper.CSS_TXT_ERROR;
+                } else if (state.isFinished()) {
+                    cssClass = MarkupHelper.CSS_TXT_VALID;
+                } else {
+                    cssClass = MarkupHelper.CSS_TXT_WARN;
+                }
+                MarkupHelper.modifyLabelAttr(
+                        helper.addLabel("cupsJobState",
+                                state.uiText(getLocale())),
+                        MarkupHelper.ATTR_CLASS, cssClass);
             }
 
             //

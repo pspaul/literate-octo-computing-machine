@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -70,6 +70,10 @@ the License, or (at your option) any later version.
 		<wicket:enclosure child="job-id"> &bull; <wicket:message
 				key="job-id" />
 			<span wicket:id="job-id" /> &bull; <span wicket:id="job-state" />
+		</wicket:enclosure>
+		<wicket:enclosure child="printout-reversed">
+            &bull; <span class="sp-txt-warn"
+				wicket:id="printout-reversed" />
 		</wicket:enclosure>
 		<wicket:enclosure child="job-completed-date"> &bull; <span
 				wicket:id="job-completed-date" />
@@ -208,11 +212,16 @@ the License, or (at your option) any later version.
 				<button data-savapage="the-doc-log-db-key"
 					wicket:id="btn-account-trx-info"
 					class="sp-doclog-accounttrx-info ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-shop" />
-				<wicket:enclosure child="btn-account-trx-refund">
-					<button data-savapage="the-doc-log-db-key"
-						wicket:id="btn-account-trx-refund"
-						class="sp-doclog-accounttrx-refund ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-recycle" />
-				</wicket:enclosure>
+			</wicket:enclosure>
+			<wicket:enclosure child="btn-account-trx-refund">
+				<button data-savapage="the-doc-log-db-key"
+					wicket:id="btn-account-trx-refund"
+					class="sp-doclog-accounttrx-refund ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-recycle" />
+			</wicket:enclosure>
+			<wicket:enclosure child="btn-printout-reverse">
+				<button data-savapage="the-doc-log-db-key"
+					wicket:id="btn-printout-reverse"
+					class="sp-doclog-printout-reverse ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-recycle" />
 			</wicket:enclosure>
 			<wicket:enclosure child="btn-doclog-docstore-archive-download">
 				<button data-savapage="the-unique-filename"

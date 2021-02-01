@@ -26,19 +26,26 @@ package org.savapage.server.api.request;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 
+import org.savapage.core.cometd.AdminPublisher;
+import org.savapage.core.cometd.PubLevelEnum;
+import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.enums.CostChangeStatusEnum;
 import org.savapage.core.dao.enums.CostChangeTypeEnum;
 import org.savapage.core.dto.AbstractDto;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.CostChange;
 import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.ext.papercut.PaperCutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +75,8 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
         }
 
         @SuppressWarnings("unused")
-        public void setDocLogId(Long docLogId) {
-            this.docLogId = docLogId;
+        public void setDocLogId(final Long id) {
+            this.docLogId = id;
         }
 
     }
@@ -84,7 +91,26 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
         final DocLog docLog = ServiceContext.getDaoContext().getDocLogDao()
                 .findById(dtoReq.getDocLogId());
 
-        if (!isRefund(docLog)) {
+        if (docLog == null) {
+            this.setApiResultText(ApiResultCodeEnum.ERROR,
+                    "No document found.");
+            return;
+        }
+
+        final boolean applyRefund = !docLog.getRefunded().booleanValue()
+                && docLog.getCost().equals(docLog.getCostOriginal());
+
+        final boolean applyReverseStats =
+                docLog.getDocOut() != null
+                        && docLog.getDocOut().getPrintOut() != null
+                        && IppJobStateEnum
+                                .asEnum(docLog.getDocOut().getPrintOut()
+                                        .getCupsJobState().intValue())
+                                .isFailure();
+
+        if (!applyRefund && !applyReverseStats) {
+            this.setApiResultText(ApiResultCodeEnum.ERROR,
+                    "Already refunded.");
             return;
         }
 
@@ -94,55 +120,63 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
 
         try {
 
-            final CostChange chg = createRefund(docLog, requestingUser);
+            if (applyRefund) {
 
-            /* Commit changes... */
-            ServiceContext.getDaoContext().commit();
+                final CostChange chg =
+                        this.refundDocLogCost(docLog, requestingUser);
 
-            /* ... and get full context back from database. */
-            ServiceContext.getDaoContext().getCostChangeDao().refresh(chg);
+                /* Commit changes... */
+                ServiceContext.getDaoContext().commit();
 
-            if (PAPERCUT_SERVICE.isExtPaperCutPrintRefund(docLog)) {
-                PROXY_PRINT_SERVICE.refundProxyPrintPaperCut(chg);
+                /* ... and get full context back from database. */
+                ServiceContext.getDaoContext().getCostChangeDao().refresh(chg);
+
+                if (docLog.getCostOriginal().compareTo(BigDecimal.ZERO) != 0) {
+                    try {
+                        final int nTrx;
+                        if (chg.getTransactions() == null) {
+                            nTrx = 1;
+                        } else {
+                            nTrx = chg.getTransactions().size();
+                        }
+                        final String msg = String.format("%s %s : %s (%d).",
+                                NounEnum.REFUND.uiText(getLocale()),
+                                BigDecimalUtil.localizeMinimalPrecision(
+                                        chg.getChgAmount(),
+                                        ConfigManager.getUserBalanceDecimals(),
+                                        getLocale(), chg.getCurrencyCode(),
+                                        true),
+                                NounEnum.TRANSACTION.uiText(getLocale(), true)
+                                        .toLowerCase(),
+                                nTrx);
+
+                        AdminPublisher.instance().publish(PubTopicEnum.USER,
+                                PubLevelEnum.WARN, msg);
+
+                    } catch (ParseException e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                }
+                if (PAPERCUT_SERVICE.isExtPaperCutPrintRefund(docLog)) {
+                    PROXY_PRINT_SERVICE.refundProxyPrintPaperCut(chg);
+                }
+            }
+
+            /* Reverse statistics? */
+            if (applyReverseStats) {
+                DOCLOG_SERVICE.reversePrintOutPagometers(
+                        docLog.getDocOut().getPrintOut(), getLocale());
             }
 
             this.setApiResult(ApiResultCodeEnum.OK, "msg-refund-ok");
 
         } catch (PaperCutException e) {
-            /*
-             * TODO: Changes are committed in the database, so what to do next?
-             */
+            // TODO: Changes are committed in the database, so what to do next?
             this.setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());
 
         } finally {
             ServiceContext.getDaoContext().rollback();
         }
-    }
-
-    /**
-     *
-     * @param docLog
-     *            The {@link DocLog} to refund (can be {@code null}.
-     * @return {@code true} when the refund can be applied.
-     */
-    private boolean isRefund(final DocLog docLog) {
-
-        if (docLog == null) {
-            this.setApiResultText(ApiResultCodeEnum.ERROR,
-                    "No document found."); // TODO
-            return false;
-        }
-
-        /*
-         * INVARIANT: vanilla transaction.
-         */
-        if (!docLog.getCost().equals(docLog.getCostOriginal())) {
-            // TODO
-            this.setApiResultText(ApiResultCodeEnum.ERROR, "Already refunded.");
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -155,7 +189,8 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
      *            The requesting user.
      * @return The resulting {@link CostChange} of the refund.
      */
-    private CostChange createRefund(final DocLog docLog, final String trxUser) {
+    private CostChange refundDocLogCost(final DocLog docLog,
+            final String trxUser) {
 
         final BigDecimal costOrg = docLog.getCostOriginal();
         final BigDecimal costCur = docLog.getCost();

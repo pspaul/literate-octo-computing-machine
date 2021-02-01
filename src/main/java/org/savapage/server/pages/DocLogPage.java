@@ -88,6 +88,9 @@ public final class DocLogPage extends AbstractListPage {
             LOGGER.trace("data : {}", data);
         }
 
+        final boolean isAccountsEditor =
+                this.probePermissionToEdit(ACLOidEnum.A_ACCOUNTS);
+
         final boolean showFinancialData;
 
         final DocLogPagerReq req = DocLogPagerReq.read(data);
@@ -152,7 +155,8 @@ public final class DocLogPage extends AbstractListPage {
                  * Step 1: Create panel and add to page.
                  */
                 final DocLogItemPanel panel = new DocLogItemPanel("doc-entry",
-                        item.getModel(), showFinancialData, isTicketReopen);
+                        item.getModel(), showFinancialData, isTicketReopen,
+                        isAccountsEditor);
 
                 item.add(panel);
 

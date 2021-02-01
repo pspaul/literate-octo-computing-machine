@@ -1568,6 +1568,13 @@ public final class DocLogItem {
                 || this.printMode == PrintModeEnum.TICKET_E);
     }
 
+    /**
+     * @return {@code true} is no cost is charged (optionally after a refund).
+     */
+    public boolean isZeroCost() {
+        return this.getCost().compareTo(BigDecimal.ZERO) == 0;
+    }
+
     public String getCurrencyCode() {
         return currencyCode;
     }

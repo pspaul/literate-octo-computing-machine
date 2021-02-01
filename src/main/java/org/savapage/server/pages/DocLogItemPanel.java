@@ -45,6 +45,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DocLogDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.doc.DocContent;
@@ -108,6 +109,10 @@ public class DocLogItemPanel extends Panel {
     private static final String WID_BTN_ACCOUNT_TRX_REFUND =
             "btn-account-trx-refund";
     /** */
+    private static final String WID_BTN_PRINT_OUT_REVERSE =
+            "btn-printout-reverse";
+
+    /** */
     private static final String WID_BTN_ARCHIVE_DOWNLOAD =
             "btn-doclog-docstore-archive-download";
     /** */
@@ -129,11 +134,21 @@ public class DocLogItemPanel extends Panel {
      */
     private final int currencyDecimals;
 
-    //
+    /**
+     * If {@code true}, financial data is shown.
+     */
     private final boolean showDocLogCost;
 
-    //
+    /**
+     * If {@code true}, ticket reopen button is enabled.
+     */
     private final boolean showTicketReopen;
+
+    /**
+     * If {@code true}, session user has permission to edit accounts:
+     * {@link ACLOidEnum#A_ACCOUNTS}.
+     */
+    private final boolean isAccountsEditor;
 
     /** */
     private static final String[] WICKET_IDS = new String[] { "prompt-user",
@@ -153,19 +168,27 @@ public class DocLogItemPanel extends Panel {
     /**
      *
      * @param id
+     *            Wicket ID.
      * @param model
+     *            The model object.
      * @param showFinancialData
+     *            If {@code true}, financial data is shown.
      * @param isTicketReopenEnabled
+     *            If {@code true}, ticket reopen button is enabled.
+     * @param isAccountsEditor
+     *            If {@code true}, session user has permission to edit accounts:
+     *            {@link ACLOidEnum#A_ACCOUNTS}.
      */
-    public DocLogItemPanel(String id, IModel<DocLogItem> model,
+    public DocLogItemPanel(final String id, final IModel<DocLogItem> model,
             final boolean showFinancialData,
-            final boolean isTicketReopenEnabled) {
+            final boolean isTicketReopenEnabled, final boolean accountsEditor) {
 
         super(id, model);
 
         this.currencyDecimals = ConfigManager.getUserBalanceDecimals();
         this.showDocLogCost = showFinancialData;
         this.showTicketReopen = isTicketReopenEnabled;
+        this.isAccountsEditor = accountsEditor;
     }
 
     /**
@@ -190,6 +213,7 @@ public class DocLogItemPanel extends Panel {
 
         //
         final boolean isExtSupplier = obj.getExtSupplier() != null;
+        final boolean isZeroCost = obj.isZeroCost();
 
         if (isExtSupplier) {
             final ExtSupplierStatusPanel panel =
@@ -373,8 +397,7 @@ public class DocLogItemPanel extends Panel {
 
             // When no text accumulated, this must be a charge to personal
             // account only.
-            if (sbAccTrx.length() == 0
-                    && obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
+            if (sbAccTrx.length() == 0 && !isZeroCost) {
                 totCopiesPersonal = BigDecimal.valueOf(obj.getCopies());
             }
 
@@ -413,7 +436,7 @@ public class DocLogItemPanel extends Panel {
                     .setEscapeModelStrings(false));
 
             helper.encloseLabel("account-trx-refund",
-                    NounEnum.REFUND.uiText(locale), obj.isRefunded());
+                    AdjectiveEnum.REFUNDED.uiText(locale), obj.isRefunded());
 
             if (webAppType == WebAppTypeEnum.JOBTICKETS
                     || webAppType == WebAppTypeEnum.ADMIN
@@ -432,31 +455,12 @@ public class DocLogItemPanel extends Panel {
                 MarkupHelper.modifyLabelAttr(labelBtn, MarkupHelper.ATTR_TITLE,
                         NounEnum.TRANSACTION.uiText(getLocale(), true));
 
-                if (webAppType == WebAppTypeEnum.JOBTICKETS && !obj.isRefunded()
-                        && obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
-
-                    countButtons++;
-
-                    labelBtn = helper.encloseLabel(WID_BTN_ACCOUNT_TRX_REFUND,
-                            "&nbsp;", true);
-                    labelBtn.setEscapeModelStrings(false);
-
-                    MarkupHelper.modifyLabelAttr(labelBtn,
-                            MarkupHelper.ATTR_DATA_SAVAPAGE,
-                            obj.getDocLogId().toString());
-
-                    MarkupHelper.modifyLabelAttr(labelBtn,
-                            MarkupHelper.ATTR_TITLE,
-                            HtmlButtonEnum.REFUND.uiText(getLocale(), true));
-
-                } else {
-                    helper.discloseLabel(WID_BTN_ACCOUNT_TRX_REFUND);
-                }
-
             } else {
                 helper.discloseLabel(WID_BTN_ACCOUNT_TRX_INFO);
             }
         }
+
+        countButtons += this.addRefundReverse(webAppType, helper, obj);
 
         String pieData = null;
         String pieSliceColors = null;
@@ -700,8 +704,7 @@ public class DocLogItemPanel extends Panel {
                     mapVisible.put("job-id", obj.getJobId().toString());
                 }
 
-                if (this.showDocLogCost
-                        && obj.getCost().compareTo(BigDecimal.ZERO) != 0) {
+                if (this.showDocLogCost && !isZeroCost) {
                     mapVisible.put("cost-currency",
                             CurrencyUtil.getCurrencySymbol(
                                     obj.getCurrencyCode(),
@@ -1018,6 +1021,88 @@ public class DocLogItemPanel extends Panel {
             helper.discloseLabel(WID_BTN_ARCHIVE_DOWNLOAD);
             helper.discloseLabel(WID_BTN_JOURNAL_DOWNLOAD);
         }
+        return countButtons;
+    }
+
+    /**
+     * @param webAppType
+     *            Type of Web App.
+     * @param helper
+     *            HTML helper
+     * @param obj
+     *            Item.
+     * @return number of buttons added.
+     */
+    private int addRefundReverse(final WebAppTypeEnum webAppType,
+            final MarkupHelper helper, final DocLogItem obj) {
+
+        HtmlButtonEnum htmlButton = null;
+        int countButtons = 0;
+
+        if (webAppType == WebAppTypeEnum.JOBTICKETS) {
+            // Print is finished and not refunded.
+            if (obj.getJobState().isFinished() && !obj.isRefunded()) {
+                if (obj.getJobState().isFailure()) {
+                    // Reverse (refund) failed print.
+                    htmlButton = HtmlButtonEnum.REVERSE;
+                } else if (!obj.isZeroCost()) {
+                    // Refund completed print.
+                    htmlButton = HtmlButtonEnum.REFUND;
+                }
+            }
+        } else if (webAppType == WebAppTypeEnum.ADMIN && this.isAccountsEditor
+                && obj.getDocType() == DocLogDao.Type.PRINT
+                && obj.getJobState().isFailure() && !obj.isRefunded()) {
+            htmlButton = HtmlButtonEnum.REVERSE;
+        }
+
+        final Label label;
+
+        if (htmlButton == HtmlButtonEnum.REFUND) {
+
+            label = helper.encloseLabel(WID_BTN_ACCOUNT_TRX_REFUND, "&nbsp;",
+                    true);
+
+            helper.discloseLabel(WID_BTN_PRINT_OUT_REVERSE);
+
+        } else if (htmlButton == HtmlButtonEnum.REVERSE) {
+
+            label = helper.encloseLabel(WID_BTN_PRINT_OUT_REVERSE, "&nbsp;",
+                    true);
+
+            helper.discloseLabel(WID_BTN_ACCOUNT_TRX_REFUND);
+
+        } else {
+            label = null;
+            helper.discloseLabel(WID_BTN_ACCOUNT_TRX_REFUND);
+            helper.discloseLabel(WID_BTN_PRINT_OUT_REVERSE);
+        }
+
+        if (label != null) {
+
+            label.setEscapeModelStrings(false);
+
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_DATA_SAVAPAGE,
+                    obj.getDocLogId().toString());
+
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_TITLE,
+                    htmlButton.uiText(getLocale(), true));
+
+            // Disable button if job ticket that is present on ticket queue.
+            if (obj.isJobTicket() && JOBTICKET_SERVICE
+                    .isTicketNumberPresent(obj.getExtId())) {
+                MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_DISABLED,
+                        MarkupHelper.ATTR_DISABLED);
+            }
+
+            countButtons++;
+        }
+
+        helper.encloseLabel("printout-reversed",
+                AdjectiveEnum.REVERSED.uiText(getLocale()),
+                obj.getDocType() == DocLogDao.Type.PRINT
+                        && obj.getJobState().isFailure() && obj.isRefunded());
+
         return countButtons;
     }
 

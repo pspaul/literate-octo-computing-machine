@@ -127,6 +127,10 @@ public enum HtmlButtonEnum {
     /** */
     RETRY,
     /** */
+    REVERSE,
+    /** */
+    ROLLBACK,
+    /** */
     ROTATE,
     /** */
     SAVE,

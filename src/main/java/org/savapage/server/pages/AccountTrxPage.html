@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -88,6 +88,12 @@ the License, or (at your option) any later version.
 				<wicket:enclosure child="extStatus">
                     &bull; <span wicket:id="extStatus" />
 				</wicket:enclosure>
+
+				<wicket:enclosure child="cupsJobPrompt">
+                    &bull; <span wicket:id="cupsJobPrompt" /> #<span
+						wicket:id="cupsJobId" /> &bull; <span wicket:id="cupsJobState" />
+				</wicket:enclosure>
+
 
 				<wicket:enclosure child="comment">
 					<div style="font-style: italic;" wicket:id="comment"></div>
