@@ -40,6 +40,8 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.PullPushEnum;
 import org.savapage.core.config.validator.ValidationResult;
+import org.savapage.core.dao.IppQueueDao;
+import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.ipp.IppSyntaxException;
 import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.job.SpJobScheduler;
@@ -81,6 +83,10 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
     /** */
     private static final ProxyPrintService PROXYPRINT_SERVICE =
             ServiceContext.getServiceFactory().getProxyPrintService();
+
+    /** */
+    private static final IppQueueDao IPP_QUEUE_DAO =
+            ServiceContext.getDaoContext().getIppQueueDao();
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
@@ -167,6 +173,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                     break;
                 case WEB_PRINT_ENABLE:
                     isSOfficeTrigger = true;
+                    break;
                 case CUPS_IPP_NOTIFICATION_METHOD:
                     isCUPSNotifierUpdate = true;
                     cupsNotifierMethodPrv =
@@ -216,10 +223,22 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                         PAPERCUT_SERVICE.resetDbConnectionPool();
                     }
 
-                } else if (configKey == Key.PRINT_IMAP_ENABLE && preValue
-                        && !cm.isConfigValue(configKey)) {
-                    if (SpJobScheduler.interruptImapListener()) {
-                        msgKey = "msg-config-props-applied-mail-print-stopped";
+                } else if (configKey == Key.WEB_PRINT_ENABLE) {
+
+                    IPP_QUEUE_DAO.updateDisabled(ReservedIppQueueEnum.WEBPRINT,
+                            !cm.isConfigValue(configKey));
+
+                } else if (configKey == Key.PRINT_IMAP_ENABLE) {
+
+                    final boolean newValue = cm.isConfigValue(configKey);
+
+                    IPP_QUEUE_DAO.updateDisabled(ReservedIppQueueEnum.MAILPRINT,
+                            !newValue);
+
+                    if (preValue && !newValue) {
+                        if (SpJobScheduler.interruptImapListener()) {
+                            msgKey = "msg-config-props-applied-mail-print-stopped";
+                        }
                     }
 
                 } else if (configKey == Key.DOC_CONVERT_LIBRE_OFFICE_ENABLED
