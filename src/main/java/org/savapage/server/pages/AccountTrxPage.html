@@ -16,7 +16,6 @@ the License, or (at your option) any later version.
 </wicket:remove>
 
 <span style="display: none;" class="json-rsp" wicket:id="json-rsp"></span>
-
 <wicket:panel wicket:id="nav-bar-1" />
 <br />
 <div>
@@ -25,7 +24,7 @@ the License, or (at your option) any later version.
 
 			<h3>
 				<wicket:enclosure child="trxImage">
-					<img height="28" wicket:id="trxImage" />&nbsp;
+					<img height="14" wicket:id="trxImage" />&nbsp;
                 </wicket:enclosure>
 				<span wicket:id="trxType" />
 				<wicket:enclosure child="extSupplier">
@@ -86,7 +85,11 @@ the License, or (at your option) any later version.
 				</wicket:enclosure>
 
 				<wicket:enclosure child="extStatus">
-                    &bull; <span wicket:id="extStatus" />
+                    &bull; 
+                    <wicket:enclosure child="extStatusImg">
+						<img height="12" wicket:id="extStatusImg" />
+					</wicket:enclosure>
+					<span wicket:id="extStatus" />
 				</wicket:enclosure>
 
 				<wicket:enclosure child="cupsJobPrompt">

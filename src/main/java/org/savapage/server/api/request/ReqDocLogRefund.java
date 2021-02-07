@@ -36,6 +36,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.enums.CostChangeStatusEnum;
 import org.savapage.core.dao.enums.CostChangeTypeEnum;
+import org.savapage.core.dao.enums.DaoEnumHelper;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
@@ -97,20 +98,31 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
             return;
         }
 
+        final boolean isCostOriginal =
+                docLog.getCostOriginal().compareTo(BigDecimal.ZERO) != 0;
+
         final boolean applyRefund = !docLog.getRefunded().booleanValue()
                 && docLog.getCost().equals(docLog.getCostOriginal());
 
-        final boolean applyReverseStats =
-                docLog.getDocOut() != null
-                        && docLog.getDocOut().getPrintOut() != null
+        final boolean isPrintOut = docLog.getDocOut() != null
+                && docLog.getDocOut().getPrintOut() != null;
+
+        final boolean applyCupsReverse =
+                isPrintOut
                         && IppJobStateEnum
                                 .asEnum(docLog.getDocOut().getPrintOut()
                                         .getCupsJobState().intValue())
                                 .isFailure();
 
+        final boolean applyExtSupplierReverse = !applyCupsReverse && isPrintOut
+                && docLog.getExternalSupplier() != null && !isCostOriginal
+                && DaoEnumHelper.getExtSupplierStatus(docLog).isFailure();
+
+        final boolean applyReverseStats =
+                applyCupsReverse || applyExtSupplierReverse;
+
         if (!applyRefund && !applyReverseStats) {
-            this.setApiResultText(ApiResultCodeEnum.ERROR,
-                    "Already refunded.");
+            this.setApiResultText(ApiResultCodeEnum.ERROR, "Already refunded.");
             return;
         }
 
@@ -125,13 +137,16 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
                 final CostChange chg =
                         this.refundDocLogCost(docLog, requestingUser);
 
-                /* Commit changes... */
+                // Commit changes...
                 ServiceContext.getDaoContext().commit();
 
-                /* ... and get full context back from database. */
-                ServiceContext.getDaoContext().getCostChangeDao().refresh(chg);
+                if (chg != null) {
+                    // ... and get full context back from database.
+                    ServiceContext.getDaoContext().getCostChangeDao()
+                            .refresh(chg);
+                }
 
-                if (docLog.getCostOriginal().compareTo(BigDecimal.ZERO) != 0) {
+                if (isCostOriginal) {
                     try {
                         final int nTrx;
                         if (chg.getTransactions() == null) {
@@ -157,7 +172,9 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
                         LOGGER.error(e.getMessage(), e);
                     }
                 }
-                if (PAPERCUT_SERVICE.isExtPaperCutPrintRefund(docLog)) {
+
+                if (chg != null
+                        && PAPERCUT_SERVICE.isExtPaperCutPrintRefund(docLog)) {
                     PROXY_PRINT_SERVICE.refundProxyPrintPaperCut(chg);
                 }
             }
@@ -182,18 +199,26 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
     /**
      * Refunds the full {@link DocLog#getCost()} to all accounts that were
      * originally charged.
+     * <p>
+     * <b>Note</b>: The "refund" indicator is set to {@code true} by calling
+     * {@link DocLog#setRefunded(Boolean)} even if the original costs are zero
+     * and thereby no refund transactions are created.
+     * </p>
      *
      * @param docLog
      *            The {@link DocLog} to refund.
      * @param trxUser
      *            The requesting user.
-     * @return The resulting {@link CostChange} of the refund.
+     * @return The resulting {@link CostChange} of the refund, or {@code null}
+     *         if no refund transactions were created.
      */
     private CostChange refundDocLogCost(final DocLog docLog,
             final String trxUser) {
 
         final BigDecimal costOrg = docLog.getCostOriginal();
         final BigDecimal costCur = docLog.getCost();
+
+        final boolean hasCostOrg = costOrg.compareTo(BigDecimal.ZERO) != 0;
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("Cost (Cur) : %s | Cost (Org) : %s",
@@ -214,6 +239,9 @@ public final class ReqDocLogRefund extends ApiRequestMixin {
 
         daoCtx.getDocLogDao().update(docLog);
 
+        if (!hasCostOrg) {
+            return null;
+        }
         //
         final CostChange chg = new CostChange();
 

@@ -64,6 +64,8 @@ import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.PrintSupplierData;
+import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.JsonHelper;
 import org.savapage.core.util.NumberUtil;
@@ -79,6 +81,7 @@ public final class DocLogItem {
     private Long docLogId;
     private ExternalSupplierEnum extSupplier;
     private ExternalSupplierStatusEnum extSupplierStatus;
+    private PrintSupplierData printSupplierData;
     private String extId;
     private String extData;
     private String mimeType;
@@ -112,6 +115,8 @@ public final class DocLogItem {
     private Boolean duplex;
     private Integer numberUp;
     private Boolean grayscale;
+
+    private String printOutPrinterName;
 
     private boolean pageRotate180;
     private boolean finishingPunch;
@@ -164,6 +169,13 @@ public final class DocLogItem {
         this.extSupplier = extSupplier;
     }
 
+    /**
+     * @return {@code true} if external supplier is present.
+     */
+    public boolean isExtSupplierPresent() {
+        return this.extSupplier != null;
+    }
+
     public ExternalSupplierStatusEnum getExtSupplierStatus() {
         return extSupplierStatus;
     }
@@ -171,6 +183,24 @@ public final class DocLogItem {
     public void
             setExtSupplierStatus(ExternalSupplierStatusEnum extSupplierStatus) {
         this.extSupplierStatus = extSupplierStatus;
+    }
+
+    /**
+     * @return {@code null} if not present.
+     */
+    public ThirdPartyEnum getExtPrintManager() {
+        if (this.printSupplierData == null) {
+            return null;
+        }
+        return this.printSupplierData.getClient();
+    }
+
+    public PrintSupplierData getPrintSupplierData() {
+        return printSupplierData;
+    }
+
+    public void setPrintSupplierData(PrintSupplierData printSupplierData) {
+        this.printSupplierData = printSupplierData;
     }
 
     public String getExtId() {
@@ -557,6 +587,14 @@ public final class DocLogItem {
 
                         log.setDocType(DocLogDao.Type.PRINT);
                         log.setHeader(printOut.getPrinter().getDisplayName());
+
+                        log.setPrintOutPrinterName(
+                                printOut.getPrinter().getPrinterName());
+
+                        if (docLog.getExternalData() != null) {
+                            log.setPrintSupplierData(PrintSupplierData
+                                    .createFromData(docLog.getExternalData()));
+                        }
 
                         log.setDuplex(printOut.getDuplex());
                         log.setGrayscale(printOut.getGrayscale());
@@ -1297,6 +1335,14 @@ public final class DocLogItem {
         this.encrypted = encrypted;
     }
 
+    public String getPrintOutPrinterName() {
+        return printOutPrinterName;
+    }
+
+    public void setPrintOutPrinterName(String printOutPrinterName) {
+        this.printOutPrinterName = printOutPrinterName;
+    }
+
     public Boolean getDuplex() {
         return duplex;
     }
@@ -1563,9 +1609,7 @@ public final class DocLogItem {
     }
 
     public boolean isJobTicket() {
-        return this.printMode != null && (this.printMode == PrintModeEnum.TICKET
-                || this.printMode == PrintModeEnum.TICKET_C
-                || this.printMode == PrintModeEnum.TICKET_E);
+        return this.printMode != null && this.printMode.isJobTicket();
     }
 
     /**
@@ -1573,6 +1617,13 @@ public final class DocLogItem {
      */
     public boolean isZeroCost() {
         return this.getCost().compareTo(BigDecimal.ZERO) == 0;
+    }
+
+    /**
+     * @return {@code true} is no original cost is charged.
+     */
+    public boolean isZeroCostOriginal() {
+        return this.getCostOriginal().compareTo(BigDecimal.ZERO) == 0;
     }
 
     public String getCurrencyCode() {

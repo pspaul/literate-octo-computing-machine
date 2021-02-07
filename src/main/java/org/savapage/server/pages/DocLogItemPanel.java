@@ -212,14 +212,14 @@ public class DocLogItemPanel extends Panel {
         final MarkupHelper helper = new MarkupHelper(this);
 
         //
-        final boolean isExtSupplier = obj.getExtSupplier() != null;
+        final boolean isExtSupplier = obj.isExtSupplierPresent();
         final boolean isZeroCost = obj.isZeroCost();
 
         if (isExtSupplier) {
             final ExtSupplierStatusPanel panel =
                     new ExtSupplierStatusPanel("extSupplierPanel");
             panel.populate(obj.getExtSupplier(), obj.getExtSupplierStatus(),
-                    null, null, locale);
+                    null, obj.getExtPrintManager(), locale);
             add(panel);
         } else {
             helper.discloseLabel("extSupplierPanel");
@@ -436,7 +436,8 @@ public class DocLogItemPanel extends Panel {
                     .setEscapeModelStrings(false));
 
             helper.encloseLabel("account-trx-refund",
-                    AdjectiveEnum.REFUNDED.uiText(locale), obj.isRefunded());
+                    AdjectiveEnum.REFUNDED.uiText(locale),
+                    !obj.isZeroCostOriginal() && obj.isRefunded());
 
             if (webAppType == WebAppTypeEnum.JOBTICKETS
                     || webAppType == WebAppTypeEnum.ADMIN
@@ -1039,21 +1040,35 @@ public class DocLogItemPanel extends Panel {
         HtmlButtonEnum htmlButton = null;
         int countButtons = 0;
 
+        final boolean extSupplierFailure = obj.isExtSupplierPresent()
+                && obj.getExtSupplierStatus().isFailure();
+
         if (webAppType == WebAppTypeEnum.JOBTICKETS) {
-            // Print is finished and not refunded.
-            if (obj.getJobState().isFinished() && !obj.isRefunded()) {
-                if (obj.getJobState().isFailure()) {
-                    // Reverse (refund) failed print.
+            if (extSupplierFailure) {
+                if (!obj.isRefunded()) {
                     htmlButton = HtmlButtonEnum.REVERSE;
-                } else if (!obj.isZeroCost()) {
-                    // Refund completed print.
-                    htmlButton = HtmlButtonEnum.REFUND;
+                }
+            } else {
+                // Print is finished and not refunded.
+                if (obj.getJobState().isFinished() && !obj.isRefunded()) {
+                    if (obj.getJobState().isFailure()) {
+                        // Reverse (refund) failed print.
+                        htmlButton = HtmlButtonEnum.REVERSE;
+                    } else if (!obj.isZeroCost()) {
+                        // Refund completed print.
+                        htmlButton = HtmlButtonEnum.REFUND;
+                    }
                 }
             }
         } else if (webAppType == WebAppTypeEnum.ADMIN && this.isAccountsEditor
-                && obj.getDocType() == DocLogDao.Type.PRINT
-                && obj.getJobState().isFailure() && !obj.isRefunded()) {
-            htmlButton = HtmlButtonEnum.REVERSE;
+                && obj.getDocType() == DocLogDao.Type.PRINT) {
+            if (extSupplierFailure) {
+                if (!obj.isRefunded()) {
+                    htmlButton = HtmlButtonEnum.REVERSE;
+                }
+            } else if (obj.getJobState().isFailure() && !obj.isRefunded()) {
+                htmlButton = HtmlButtonEnum.REVERSE;
+            }
         }
 
         final Label label;
@@ -1098,10 +1113,20 @@ public class DocLogItemPanel extends Panel {
             countButtons++;
         }
 
-        helper.encloseLabel("printout-reversed",
-                AdjectiveEnum.REVERSED.uiText(getLocale()),
-                obj.getDocType() == DocLogDao.Type.PRINT
-                        && obj.getJobState().isFailure() && obj.isRefunded());
+        if (obj.getDocType() == DocLogDao.Type.PRINT) {
+            final boolean isCupsFailure = obj.getJobState().isFailure();
+            final boolean isExtSupplierFailure =
+                    obj.isExtSupplierPresent() && obj.isZeroCostOriginal()
+                            && obj.getExtSupplierStatus().isFailure();
+
+            helper.encloseLabel("printout-reversed",
+                    AdjectiveEnum.REVERSED.uiText(getLocale()),
+                    obj.getDocType() == DocLogDao.Type.PRINT
+                            && (isCupsFailure || isExtSupplierFailure)
+                            && obj.isRefunded());
+        } else {
+            helper.discloseLabel("printout-reversed");
+        }
 
         return countButtons;
     }

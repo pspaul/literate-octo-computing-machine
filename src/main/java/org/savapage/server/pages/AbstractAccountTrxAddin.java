@@ -283,7 +283,8 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             helper.discloseLabel(WID_BTN_APPLY);
         }
 
-        final String personalDelegators = formatDelegatorDetails(delegators);
+        final String personalDelegators =
+                this.formatDelegatorDetails(delegators);
         helper.encloseLabel("persons", personalDelegators,
                 StringUtils.isNotBlank(personalDelegators));
     }
@@ -316,21 +317,24 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
                 details.append("* ");
             }
 
-            details.append(entry.getKey()).append(" (");
+            details.append(entry.getKey());
 
+            final StringBuilder entryDetails = new StringBuilder();
             if (item.copiesDecimal.compareTo(BigDecimal.ZERO) != 0) {
-                details.append(localeHelper
+                entryDetails.append(localeHelper
                         .asExactIntegerOrScaled(item.copiesDecimal));
                 totCopiesDecimal = totCopiesDecimal.add(item.copiesDecimal);
             }
 
             if (item.copiesRefundDecimal.compareTo(BigDecimal.ZERO) != 0) {
-                details.append(localeHelper
+                entryDetails.append(localeHelper
                         .asExactIntegerOrScaled(item.copiesRefundDecimal));
                 totCopiesRefundDecimal =
                         totCopiesRefundDecimal.add(item.copiesRefundDecimal);
             }
-            details.append(")");
+            if (entryDetails.length() > 0) {
+                details.append(" (").append(entryDetails).append(")");
+            }
         }
 
         final StringBuilder pfx = new StringBuilder();
@@ -338,15 +342,16 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
         if (delegators.size() > 1) {
             pfx.append(delegators.size());
             pfx.append(" ").append(
-                    NounEnum.DELEGATOR.uiText(getLocale(), true).toLowerCase())
-                    .append(" (");
+                    NounEnum.DELEGATOR.uiText(getLocale(), true).toLowerCase());
+
+            final StringBuilder pfxDetails = new StringBuilder();
 
             boolean copiesPlural = false;
 
             if (totCopiesDecimal.compareTo(BigDecimal.ZERO) != 0) {
                 final BigDecimal bd =
                         totCopiesDecimal.setScale(0, RoundingMode.HALF_DOWN);
-                pfx.append(bd);
+                pfxDetails.append(bd);
                 if (bd.compareTo(BigDecimal.ONE) == 1) {
                     copiesPlural = true;
                 }
@@ -355,15 +360,18 @@ abstract class AbstractAccountTrxAddin extends AbstractAuthPage {
             if (totCopiesRefundDecimal.compareTo(BigDecimal.ZERO) != 0) {
                 final BigDecimal bd = totCopiesRefundDecimal.setScale(0,
                         RoundingMode.HALF_DOWN);
-                pfx.append(bd);
+                pfxDetails.append(bd);
                 if (bd.abs().compareTo(BigDecimal.ONE) == 1) {
                     copiesPlural = true;
                 }
             }
 
-            pfx.append(" ").append(PrintOutNounEnum.COPY
-                    .uiText(getLocale(), copiesPlural).toLowerCase());
-            pfx.append(") : ");
+            if (pfxDetails.length() > 0) {
+                pfxDetails.append(" ").append(PrintOutNounEnum.COPY
+                        .uiText(getLocale(), copiesPlural).toLowerCase());
+                pfx.append(" (").append(pfxDetails).append(")");
+            }
+            pfx.append(" : ");
         }
 
         return String.format("%s%s", pfx.toString(), details.toString());
