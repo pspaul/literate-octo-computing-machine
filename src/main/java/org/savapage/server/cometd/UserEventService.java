@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.cometd.bayeux.Promise;
 import org.cometd.bayeux.server.BayeuxServer;
@@ -255,6 +256,7 @@ public final class UserEventService extends AbstractEventService {
         Map<String, Object> eventData = null;
 
         final UserMsgIndicator msgIndicator = UserMsgIndicator.read(user);
+        final String senderId = msgIndicator.getSenderId();
 
         if (msgIndicator.hasMessage()) {
 
@@ -283,6 +285,16 @@ public final class UserEventService extends AbstractEventService {
                             messageDate);
                     break;
 
+                case PRINT_OUT_EXT_COMPLETED:
+                    eventData = createPrintMsgExt(senderId, user, locale,
+                            messageDate, true);
+                    break;
+
+                case PRINT_OUT_EXT_FAILED:
+                    eventData = createPrintMsgExt(senderId, user, locale,
+                            messageDate, false);
+                    break;
+
                 case PRINT_IN_EXPIRED:
                     eventData = createPrintInExpiredMsg(user, locale);
                     break;
@@ -298,7 +310,6 @@ public final class UserEventService extends AbstractEventService {
                                         + "user [%s] at [%s] ignored",
                                 user, clientIpAddress));
                     }
-
                     break;
 
                 default:
@@ -864,6 +875,7 @@ public final class UserEventService extends AbstractEventService {
                             UserMsgIndicator.read(user);
 
                     final Date messageDate = msgIndicator.getMessageDate();
+                    final String senderId = msgIndicator.getSenderId();
 
                     final UserMsgIndicator.Msg msg = msgIndicator.getMessage();
 
@@ -889,6 +901,16 @@ public final class UserEventService extends AbstractEventService {
                                     messageDate, messageDate);
                             break;
 
+                        case PRINT_OUT_EXT_COMPLETED:
+                            returnData = createPrintMsgExt(senderId, user,
+                                    locale, messageDate, true);
+                            break;
+
+                        case PRINT_OUT_EXT_FAILED:
+                            returnData = createPrintMsgExt(senderId, user,
+                                    locale, messageDate, false);
+                            break;
+
                         case PRINT_IN_EXPIRED:
                             returnData = createPrintInExpiredMsg(user, locale);
                             break;
@@ -906,8 +928,6 @@ public final class UserEventService extends AbstractEventService {
                             if (!isWebAppClient) {
                                 break;
                             }
-
-                            final String senderId = msgIndicator.getSenderId();
 
                             if (clientIpAddress == null || (senderId != null
                                     && senderId.equals(clientIpAddress))) {
@@ -1181,20 +1201,72 @@ public final class UserEventService extends AbstractEventService {
                                 DaoContextImpl.peekEntityManager(), userName,
                                 locale, msgPrevMonitorTime, messageDate);
 
-                userData = new HashMap<String, Object>();
+                if (!json.getMessages().isEmpty()) {
+                    userData = new HashMap<String, Object>();
 
-                userData.put(KEY_EVENT, UserEventEnum.PRINT_MSG);
-                userData.put(KEY_DATA, json);
-                userData.put(KEY_MSG_TIME, json.getMsgTime());
+                    userData.put(KEY_EVENT, UserEventEnum.PRINT_MSG);
+                    userData.put(KEY_DATA, json);
+                    userData.put(KEY_MSG_TIME, json.getMsgTime());
 
-                addUserStats(userData, userName, locale);
-
+                    addUserStats(userData, userName, locale);
+                }
             } finally {
                 ServiceContext.close();
             }
-
         }
 
+        return userData;
+    }
+
+    /**
+     * Creates the user {@link PrintOut} message when printed by external print
+     * manager.
+     *
+     * @param senderId
+     *            Primary database key of {@link PrintOut} instance.
+     * @param userName
+     *            The user (identified with unique user name) to find jobs for.
+     * @param locale
+     *            The user's locale like 'en', 'nl', 'en-EN', 'nl-NL'.
+     * @param messageDate
+     *            The time of the message.
+     * @param isCompleted
+     *            {@code true} if print is completed.
+     * @return The new user messages.
+     */
+    private static Map<String, Object> createPrintMsgExt(final String senderId,
+            final String userName, final Locale locale, final Date messageDate,
+            final boolean isCompleted) {
+
+        final Map<String, Object> userData = new HashMap<>();
+
+        ServiceContext.open();
+        ServiceContext.setLocale(locale);
+        final DaoContext ctx = ServiceContext.getDaoContext();
+
+        try {
+            final PrintOut printOut;
+
+            if (StringUtils.isNumeric(senderId)) {
+                printOut =
+                        ctx.getPrintOutDao().findById(Long.parseLong(senderId));
+            } else {
+                printOut = null;
+            }
+
+            final JsonUserMsgNotification json =
+                    UserMsgIndicator.getPrintOutExtMsgNotification(printOut,
+                            locale, messageDate, isCompleted);
+
+            userData.put(KEY_EVENT, UserEventEnum.PRINT_MSG);
+            userData.put(KEY_DATA, json);
+            userData.put(KEY_MSG_TIME, json.getMsgTime());
+
+            addUserStats(userData, userName, locale);
+
+        } finally {
+            ServiceContext.close();
+        }
         return userData;
     }
 
