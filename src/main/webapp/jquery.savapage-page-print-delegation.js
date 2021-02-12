@@ -35,119 +35,119 @@
 /*jslint browser: true*/
 /*global $, jQuery, alert*/
 
-( function($, window, document, JSON, _ns) {
-        "use strict";
+(function($, window, document, JSON, _ns) {
+    "use strict";
 
-        _ns.PagePrintDelegation = function(_i18n, _view, _model, _api) {
+    _ns.PagePrintDelegation = function(_i18n, _view, _model, _api) {
 
-            var _util = _ns.Utils,
-                _this = this,
-                _previousPageId,
+        var _util = _ns.Utils,
+            _this = this,
+            _previousPageId,
 
-                _ACCOUNT_ENUM_GROUP = 'GROUP',
-                _ACCOUNT_ENUM_USER = 'USER',
-                _ACCOUNT_ENUM_SHARED = 'SHARED',
+            _ACCOUNT_ENUM_GROUP = 'GROUP',
+            _ACCOUNT_ENUM_USER = 'USER',
+            _ACCOUNT_ENUM_SHARED = 'SHARED',
 
-                _RADIO_ACCOUNT_NAME = 'sp-print-delegation-select-account-radio',
-                _RADIO_ACCOUNT_ID_GROUP = 'sp-print-delegation-select-account-group',
-                _RADIO_ACCOUNT_ID_USER = 'sp-print-delegation-select-account-user',
-                _RADIO_ACCOUNT_ID_SHARED = 'sp-print-delegation-select-account-shared',
+            _RADIO_ACCOUNT_NAME = 'sp-print-delegation-select-account-radio',
+            _RADIO_ACCOUNT_ID_GROUP = 'sp-print-delegation-select-account-group',
+            _RADIO_ACCOUNT_ID_USER = 'sp-print-delegation-select-account-user',
+            _RADIO_ACCOUNT_ID_SHARED = 'sp-print-delegation-select-account-shared',
 
-                _RADIO_EDIT_NAME = 'sp-print-delegation-edit-radio',
-                _RADIO_EDIT_ID_GROUPS = _RADIO_EDIT_NAME + '-add-groups',
-                _RADIO_EDIT_ID_USERS = _RADIO_EDIT_NAME + '-add-users',
-                _RADIO_EDIT_ID_COPIES = _RADIO_EDIT_NAME + '-add-copies',
+            _RADIO_EDIT_NAME = 'sp-print-delegation-edit-radio',
+            _RADIO_EDIT_ID_GROUPS = _RADIO_EDIT_NAME + '-add-groups',
+            _RADIO_EDIT_ID_USERS = _RADIO_EDIT_NAME + '-add-users',
+            _RADIO_EDIT_ID_COPIES = _RADIO_EDIT_NAME + '-add-copies',
 
-                _IND_SELECTED_ON = '<img height="12" src="/images/selected-green-16x16.png">&nbsp;',
-                _IND_SELECTED_OFF = '<img height="12" src="/images/unselected-16x16.png">&nbsp;',
+            _IND_SELECTED_ON = '<img height="12" src="/images/selected-green-16x16.png">&nbsp;',
+            _IND_SELECTED_OFF = '<img height="12" src="/images/unselected-16x16.png">&nbsp;',
 
-                _IND_PREFERRED_ON = '&nbsp;<img height="10" src="/famfamfam-silk/star.png">&nbsp;',
-                _IND_PREFERRED_OFF = '&nbsp;<img height="10" src="/famfamfam-silk/star_gray.png">&nbsp;',
+            _IND_PREFERRED_ON = '&nbsp;<img height="10" src="/famfamfam-silk/star.png">&nbsp;',
+            _IND_PREFERRED_OFF = '&nbsp;<img height="10" src="/famfamfam-silk/star_gray.png">&nbsp;',
 
-                _DATA_PREFERRED_ON = 'on',
-                _DATA_PREFERRED_OFF = 'off',
+            _DATA_PREFERRED_ON = 'on',
+            _DATA_PREFERRED_OFF = 'off',
 
-                _QS_MAX_RESULTS = 5,
+            _QS_MAX_RESULTS = 5,
 
-                _CLASS_GROUP = '_sp_group',
-                _CLASS_USER = '_sp_user',
-                _CLASS_COPIES = '_sp_copies',
+            _CLASS_GROUP = '_sp_group',
+            _CLASS_USER = '_sp_user',
+            _CLASS_COPIES = '_sp_copies',
 
-                _CLASS_SELECTED_IND = '_sp_selected',
-                _CLASS_SELECTED_TXT = '_sp_selected_txt',
-                _CLASS_PREFERRED_IMG = '_sp_preferred_img',
+            _CLASS_SELECTED_IND = '_sp_selected',
+            _CLASS_SELECTED_TXT = '_sp_selected_txt',
+            _CLASS_PREFERRED_IMG = '_sp_preferred_img',
 
-                _quickUserGroupFilter,
-                _quickUserFilter,
-                _quickAccountFilter,
+            _quickUserGroupFilter,
+            _quickUserFilter,
+            _quickAccountFilter,
 
-                _quickUserGroupCache,
-                _quickUserCache,
-                _quickAccountCache,
+            _quickUserGroupCache,
+            _quickUserCache,
+            _quickAccountCache,
 
-                _quickUserGroupTotalResults = null,
-                _quickUserTotalResults = null,
-                _quickAccountTotalResults = null,
+            _quickUserGroupTotalResults = null,
+            _quickUserTotalResults = null,
+            _quickAccountTotalResults = null,
 
-                _quickUserGroupSelected,
-                _quickUserSelected,
-                _quickAccountSelected,
+            _quickUserGroupSelected,
+            _quickUserSelected,
+            _quickAccountSelected,
 
-                _nSelectedGroups,
-                _nSelectedUsers,
+            _nSelectedGroups,
+            _nSelectedUsers,
 
-                _delegatorGroups = {},
-                _delegatorUsers = {},
-                _delegatorCopies = {},
+            _delegatorGroups = {},
+            _delegatorUsers = {},
+            _delegatorCopies = {},
 
-                _nDelegatorGroups = 0,
-                _nDelegatorUsers = 0,
-                _nDelegatorCopies = 0,
+            _nDelegatorGroups = 0,
+            _nDelegatorUsers = 0,
+            _nDelegatorCopies = 0,
 
-                _nDelegatorUsersCopies = 0,
-                _nDelegatorGroupMembersCopies = 0,
+            _nDelegatorUsersCopies = 0,
+            _nDelegatorGroupMembersCopies = 0,
 
-                _delegatorGroupsSelected,
-                _delegatorUsersSelected,
-                _delegatorCopiesSelected,
+            _delegatorGroupsSelected,
+            _delegatorUsersSelected,
+            _delegatorCopiesSelected,
 
-                _nSelectedDelegatorGroups,
-                _nSelectedDelegatorUsers,
-                _nSelectedDelegatorCopies,
+            _nSelectedDelegatorGroups,
+            _nSelectedDelegatorUsers,
+            _nSelectedDelegatorCopies,
 
-                _delegationModel = function() {
+            _delegationModel = function() {
                 return {
-                    name : 'a name',
-                    groups : _delegatorGroups,
-                    users : _delegatorUsers,
-                    copies : _delegatorCopies
+                    name: 'a name',
+                    groups: _delegatorGroups,
+                    users: _delegatorUsers,
+                    copies: _delegatorCopies
                 };
             },
-                _isUiStateDisabled = function(sel) {
+            _isUiStateDisabled = function(sel) {
                 return sel.hasClass('ui-state-disabled');
             },
-                _setUiStateDisabled = function(sel) {
+            _setUiStateDisabled = function(sel) {
                 return sel.addClass('ui-state-disabled');
             },
-                _removeUiStateDisabled = function(sel) {
+            _removeUiStateDisabled = function(sel) {
                 return sel.removeClass('ui-state-disabled');
             },
-                _isUserSelectAllSwitchOn = function() {
+            _isUserSelectAllSwitchOn = function() {
                 return _ns.SelectAllButtonSwitch.isOn($('#sp-print-delegation-users-select-to-add-all'));
             },
             //
-                _createModelAccount = function(account, userCount, userCopies, totalCopies) {
+            _createModelAccount = function(account, userCount, userCopies, totalCopies) {
                 // Java: PrintDelegationDto.DelegatorAccount
                 return {
-                    type : account.accountType,
-                    id : account.id,
-                    userCount : userCount,
-                    userCopies : userCopies,
-                    totalCopies : totalCopies || (userCount * userCopies)
+                    type: account.accountType,
+                    id: account.id,
+                    userCount: userCount,
+                    userCopies: userCopies,
+                    totalCopies: totalCopies || (userCount * userCopies)
                 };
             },
 
-                _revertQuickUserGroupsSelected = function() {
+            _revertQuickUserGroupsSelected = function() {
                 _quickUserGroupSelected = {};
                 _nSelectedGroups = 0;
 
@@ -156,11 +156,11 @@
                 });
             },
 
-                _switchQuickUserGroupToSingleSelect = function() {
+            _switchQuickUserGroupToSingleSelect = function() {
                 $('#sp-print-delegation-groups-select-to-add-filter .' + _CLASS_SELECTED_TXT).addClass(_CLASS_SELECTED_IND);
             },
 
-                _revertQuickUserSelected = function() {
+            _revertQuickUserSelected = function() {
                 _quickUserSelected = {};
                 _nSelectedUsers = 0;
 
@@ -168,33 +168,33 @@
                     $(this).html(_IND_SELECTED_OFF);
                 });
             },
-                _onGroupPreferred = function(selection) {
+            _onGroupPreferred = function(selection) {
                 _onObjectPreferred(selection, 'user-delegate-groups-preferred');
             },
-                _isGroupSelectScopePreferred = function() {
+            _isGroupSelectScopePreferred = function() {
                 return _ns.PreferredButtonSwitch.isOn($('#sp-print-delegation-groups-select-to-add-scope'));
             },
-                _isGroupPreferredEnabled = function() {
+            _isGroupPreferredEnabled = function() {
                 return $('#sp-print-delegation-groups-select-to-add-scope').length > 0;
             }
             //
             ,
-                _isAccountGroupSelected = function() {
+            _isAccountGroupSelected = function() {
                 return _view.isRadioIdSelected(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_GROUP);
             }
             //
             ,
-                _isAccountUserSelected = function() {
+            _isAccountUserSelected = function() {
                 return _view.isRadioIdSelected(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_USER);
             }
             //
             ,
-                _isAccountSharedSelected = function() {
+            _isAccountSharedSelected = function() {
                 return _view.isRadioIdSelected(_RADIO_ACCOUNT_NAME, _RADIO_ACCOUNT_ID_SHARED);
             }
             //
             ,
-                _setVisibilityDelegatorsEdit = function() {
+            _setVisibilityDelegatorsEdit = function() {
                 var selectedRows = _nSelectedDelegatorGroups + _nSelectedDelegatorUsers + _nSelectedDelegatorCopies > 0;
 
                 _view.enable($('.sp-print-delegator-rows'), _nDelegatorGroups + _nDelegatorUsers + _nDelegatorCopies > 0);
@@ -203,7 +203,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _initDelegatorSelection = function() {
+            _initDelegatorSelection = function() {
                 _nSelectedDelegatorGroups = 0;
                 _nSelectedDelegatorUsers = 0;
                 _nSelectedDelegatorCopies = 0;
@@ -216,22 +216,22 @@
             }
             //----------------------------------------------------------------
             ,
-                _isModeAddGroups = function() {
+            _isModeAddGroups = function() {
                 return $('#sp-print-delegation-edit-radio-add-groups').is(':checked');
             }
             //----------------------------------------------------------------
             ,
-                _isModeAddUsers = function() {
+            _isModeAddUsers = function() {
                 return $('#sp-print-delegation-edit-radio-add-users').is(':checked');
             }
             //----------------------------------------------------------------
             ,
-                _isModeAddCopies = function() {
+            _isModeAddCopies = function() {
                 return $('#sp-print-delegation-edit-radio-add-copies').is(':checked');
             }
             //----------------------------------------------------------------
             ,
-                _setVisibility = function() {
+            _setVisibility = function() {
                 var showButtonAdd,
                     showAddGroups,
                     showAddUsers;
@@ -263,16 +263,22 @@
             }
             //----------------------------------------------------------------
             ,
-                _htmlDelegatorName = function(item) {
+            _htmlDelegatorName = function(item) {
                 var html = '',
+                    fullName = '',
                     sessionUser = item.userId === _model.user.id;
 
                 if (sessionUser) {
                     html += '<span class=\"sp-txt-warn\">';
                 }
-                html += item.fullName;
-                if (!_model.DELEGATOR_USER_HIDE_ID && item.fullName.indexOf(item.userId) < 0) {
-                    html += ' &bull; ';
+                if (_model.DELEGATOR_USER_DETAIL !== 'ID') {
+                    fullName = item.fullName || '';
+                    html += fullName;
+                }
+                if (_model.DELEGATOR_USER_DETAIL !== 'NAME' && fullName.indexOf(item.userId) < 0) {
+                    if (fullName.length > 0) {
+                        html += ' &bull; ';
+                    }
                     html += item.userId;
                 }
                 if (sessionUser) {
@@ -282,12 +288,14 @@
             }
             //----------------------------------------------------------------
             ,
-                _htmlGroupName = function(item) {
-                var fullName,
-                    html;
-                fullName = item.fullName || '';
-                html = fullName;
-                if (!_model.DELEGATOR_GROUP_HIDE_ID && fullName.toLowerCase() !== item.text.toLowerCase()) {
+            _htmlGroupName = function(item) {
+                var html = '',
+                    fullName = '';
+                if (_model.DELEGATOR_GROUP_DETAIL !== 'ID') {
+                    fullName = item.fullName || '';
+                    html = fullName;
+                }
+                if (_model.DELEGATOR_GROUP_DETAIL !== 'NAME' && fullName.toLowerCase() !== item.text.toLowerCase()) {
                     if (html.length > 0) {
                         html += ' &bull; ';
                     }
@@ -297,29 +305,29 @@
             }
             //----------------------------------------------------------------
             ,
-                _getMemberCopies = function() {
+            _getMemberCopies = function() {
                 return parseInt($('#sp-print-delegation-member-copies').val(), 10) || 1;
             }
             //----------------------------------------------------------------
             ,
-                _resetMemberCopies = function() {
+            _resetMemberCopies = function() {
                 $('#sp-print-delegation-member-copies').val(1);
             }
             //----------------------------------------------------------------
             ,
-                _getPopupGroupCopies = function() {
+            _getPopupGroupCopies = function() {
                 return parseInt($('#sp-print-delegation-popup-copies-to-add').val(), 10) || 1;
             }
             //----------------------------------------------------------------
             ,
-                _resetPopupGroupCopies = function() {
+            _resetPopupGroupCopies = function() {
                 $('#sp-print-delegation-popup-copies-to-add').val(1);
             }
             //----------------------------------------------------------------
             ,
-                _getAccount = function() {
+            _getAccount = function() {
                 var account = {
-                    accountType : _view.getRadioValue(_RADIO_ACCOUNT_NAME)
+                    accountType: _view.getRadioValue(_RADIO_ACCOUNT_NAME)
                 };
 
                 if (_isAccountSharedSelected()) {
@@ -331,7 +339,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _setQuickSearchNavigation = function(qsButtons, res) {
+            _setQuickSearchNavigation = function(qsButtons, res) {
                 var selWlk;
                 if (qsButtons) {
                     selWlk = qsButtons.find('.sp-button-prev');
@@ -353,7 +361,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _selectQuickSearchSingleResult = function(selList) {
+            _selectQuickSearchSingleResult = function(selList) {
                 var li = selList.find('li');
                 if (li.length === 1) {
                     li.click();
@@ -361,13 +369,13 @@
             }
             //----------------------------------------------------------------
             ,
-                _onQuickSearchAccountVisibility = function(refId, filter, totResults, preferredScope) {
+            _onQuickSearchAccountVisibility = function(refId, filter, totResults, preferredScope) {
                 var visible = preferredScope || filter.length !== 0 || totResults > 1;
                 _view.visible($('#' + refId + ' .sp-quicksearch-input'), visible);
                 _view.visible($('#' + refId + ' ul'), visible);
             },
             //----------------------------------------------------------------
-                _showQuickSearchGroupsAdded = function() {
+            _showQuickSearchGroupsAdded = function() {
                 $.each($('#sp-print-delegation-groups-select-to-add-filter li'), function() {
                     var addedAsDelegator = _delegatorGroups[$(this).attr('data-savapage')];
                     if (addedAsDelegator) {
@@ -377,7 +385,7 @@
                     }
                 });
             },
-                _onQuickSearchGroup = function(target, filter, startPosition, paging, rescope) {
+            _onQuickSearchGroup = function(target, filter, startPosition, paging, rescope) {
                 /* QuickSearchFilterUserGroupDto */
                 var res,
                     html = "",
@@ -397,15 +405,15 @@
                 _nSelectedGroups = 0;
 
                 res = _api.call({
-                    request : "usergroup-quick-search",
-                    dto : JSON.stringify({
-                        filter : filter,
-                        totalResults : _quickUserGroupTotalResults,
-                        maxResults : _QS_MAX_RESULTS,
-                        startPosition : startPosition,
-                        aclRole : 'PRINT_DELEGATOR',
-                        preferred : _isGroupSelectScopePreferred(),
-                        hideId : _model.DELEGATOR_GROUP_HIDE_ID
+                    request: "usergroup-quick-search",
+                    dto: JSON.stringify({
+                        filter: filter,
+                        totalResults: _quickUserGroupTotalResults,
+                        maxResults: _QS_MAX_RESULTS,
+                        startPosition: startPosition,
+                        aclRole: 'PRINT_DELEGATOR',
+                        preferred: _isGroupSelectScopePreferred(),
+                        groupDetail: _model.DELEGATOR_GROUP_DETAIL
                     })
                 });
 
@@ -444,7 +452,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _showQuickSearchUsersAdded = function() {
+            _showQuickSearchUsersAdded = function() {
                 $.each($('#sp-print-delegation-users-select-to-add-filter li'), function() {
                     var addedAsDelegator = _delegatorUsers[$(this).attr('data-savapage')];
                     if (addedAsDelegator) {
@@ -454,7 +462,7 @@
                     }
                 });
             },
-                _onQuickSearchUser = function(target, groupId, filter, startPosition, paging) {
+            _onQuickSearchUser = function(target, groupId, filter, startPosition, paging) {
                 /* QuickSearchUserGroupMemberFilterDto */
                 var res,
                     html = "",
@@ -472,15 +480,15 @@
                 _nSelectedUsers = 0;
 
                 res = _api.call({
-                    request : "usergroup-member-quick-search",
-                    dto : JSON.stringify({
-                        groupId : groupId,
-                        filter : filter,
-                        startPosition : startPosition,
-                        totalResults : _quickUserTotalResults,
-                        maxResults : _QS_MAX_RESULTS,
-                        aclRole : 'PRINT_DELEGATOR',
-                        hideId : _model.DELEGATOR_USER_HIDE_ID
+                    request: "usergroup-member-quick-search",
+                    dto: JSON.stringify({
+                        groupId: groupId,
+                        filter: filter,
+                        startPosition: startPosition,
+                        totalResults: _quickUserTotalResults,
+                        maxResults: _QS_MAX_RESULTS,
+                        aclRole: 'PRINT_DELEGATOR',
+                        userDetail: _model.DELEGATOR_USER_DETAIL
                     })
                 });
 
@@ -519,7 +527,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _onQuickSearchAccount = function(target, filter, startPosition, paging, rescope) {
+            _onQuickSearchAccount = function(target, filter, startPosition, paging, rescope) {
                 /* QuickSearchFilterDto */
                 var res,
                     html = "",
@@ -540,13 +548,13 @@
                 _quickAccountSelected = undefined;
 
                 res = _api.call({
-                    request : "shared-account-quick-search",
-                    dto : JSON.stringify({
-                        filter : filter,
-                        startPosition : startPosition,
-                        totalResults : _quickAccountTotalResults,
-                        maxResults : _QS_MAX_RESULTS,
-                        preferred : preferredScope
+                    request: "shared-account-quick-search",
+                    dto: JSON.stringify({
+                        filter: filter,
+                        startPosition: startPosition,
+                        totalResults: _quickAccountTotalResults,
+                        maxResults: _QS_MAX_RESULTS,
+                        preferred: preferredScope
                     })
                 });
 
@@ -585,7 +593,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _updateDelegatorRow = function(tbody, item, cssClass) {
+            _updateDelegatorRow = function(tbody, item, cssClass) {
                 var row = tbody.find('[data-savapage=' + item.id + ']');
                 if (cssClass !== _CLASS_COPIES) {
                     row.find(':nth-child(2)').html(item.userCount);
@@ -594,7 +602,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _appendDelegatorRow = function(tbody, item, account, cssClass, nCopies) {
+            _appendDelegatorRow = function(tbody, item, account, cssClass, nCopies) {
                 var html,
                     isGroup = cssClass === _CLASS_GROUP,
                     isCopies = cssClass === _CLASS_COPIES,
@@ -618,7 +626,7 @@
                 }
                 html += '</th>';
 
-                html += '<td>' + ( isCopies ? '' : nMembers) + '</td>';
+                html += '<td>' + (isCopies ? '' : nMembers) + '</td>';
                 html += '<td>' + nCopies + '</td>';
                 html += '<td><img src="/famfamfam-silk/';
 
@@ -645,12 +653,12 @@
             }
             //----------------------------------------------------------------
             ,
-                _getDelegatorRowBody = function() {
+            _getDelegatorRowBody = function() {
                 return $('#sp-selected-print-delegation tbody');
             }
             //----------------------------------------------------------------
             ,
-                _onAddGroups = function(groupCopies) {
+            _onAddGroups = function(groupCopies) {
                 var tbody = _getDelegatorRowBody(),
                     account = _getAccount(),
                     memberCopies = groupCopies ? 1 : _getMemberCopies();
@@ -679,7 +687,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _onAddUsers = function() {
+            _onAddUsers = function() {
                 var tbody = _getDelegatorRowBody(),
                     account = _getAccount(),
                     memberCopies = _getMemberCopies();
@@ -702,22 +710,22 @@
             }
             //----------------------------------------------------------------
             ,
-                _onAddCopies = function() {
+            _onAddCopies = function() {
                 var selCopies = $('#sp-print-delegation-copies-to-add')
-                //
-                ,
+                    //
+                    ,
                     userCount = parseInt(selCopies.val(), 10)
-                //
-                ,
+                    //
+                    ,
                     tbody = _getDelegatorRowBody(),
                     account = _getAccount()
-                //
-                ,
+                    //
+                    ,
                     item = {
-                    key : account.id,
-                    text : $('#sp-print-delegation-edit-radio-add-copies-label').text(),
-                    userCount : userCount
-                };
+                        key: account.id,
+                        text: $('#sp-print-delegation-edit-radio-add-copies-label').text(),
+                        userCount: userCount
+                    };
 
                 if (userCount < 1) {
                     userCount = 1;
@@ -742,7 +750,7 @@
             }
             //
             ,
-                _moveCopiesButtons = function(selTarget) {
+            _moveCopiesButtons = function(selTarget) {
                 var src = $('#sp-print-delegation-table-copies-add'),
                     html;
                 html = src.html();
@@ -782,29 +790,29 @@
                 $('#sp-print-delegation-button-add-popup').on('click', function() {
                     var sel = $('#sp-print-delegation-popup-add-group-copies');
                     sel.popup('open', {
-                        positionTo : $(this)
+                        positionTo: $(this)
                     });
                     return false;
                 });
             }
             //
             ,
-                _moveCopiesButtons2Groups = function() {
+            _moveCopiesButtons2Groups = function() {
                 _moveCopiesButtons($("#sp-print-delegation-quicksearch-groups .sp-quicksearch-button-group-inject"));
             }
             //
             ,
-                _moveCopiesButtons2Users = function() {
+            _moveCopiesButtons2Users = function() {
                 _moveCopiesButtons($("#sp-print-delegation-quicksearch-users .sp-quicksearch-button-group-inject"));
             }
             //
             ,
-                _moveCopiesButtons2Accounts = function() {
+            _moveCopiesButtons2Accounts = function() {
                 _moveCopiesButtons($("#sp-print-delegation-quicksearch-accounts .sp-quicksearch-button-group-inject"));
             }
             //----------------------------------------------------------------
             ,
-                _onButtonAddVisibility = function() {
+            _onButtonAddVisibility = function() {
                 var enable,
                     modeAddGroups = _isModeAddGroups();
 
@@ -823,33 +831,33 @@
             }
             //----------------------------------------------------------------
             ,
-                _onObjectPreferred = function(selection, request) {
+            _onObjectPreferred = function(selection, request) {
                 var span = selection.find('.' + _CLASS_PREFERRED_IMG),
                     dbKey = span.closest('li').attr('data-savapage'),
                     preferredNew = span.attr('data-savapage') !== _DATA_PREFERRED_ON,
                     res;
 
-                span.html( preferredNew ? _IND_PREFERRED_ON : _IND_PREFERRED_OFF);
+                span.html(preferredNew ? _IND_PREFERRED_ON : _IND_PREFERRED_OFF);
                 span.attr('data-savapage', preferredNew ? _DATA_PREFERRED_ON : _DATA_PREFERRED_OFF);
 
                 res = _api.call({
-                    request : request,
-                    dto : JSON.stringify({
-                        dbKeys : [dbKey],
-                        add : preferredNew
+                    request: request,
+                    dto: JSON.stringify({
+                        dbKeys: [dbKey],
+                        add: preferredNew
                     })
                 });
 
                 if (res.result.code !== '0') {
                     _view.showApiMsg(res);
                     // reverse
-                    span.html( preferredNew ? _IND_PREFERRED_OFF : _IND_PREFERRED_ON);
+                    span.html(preferredNew ? _IND_PREFERRED_OFF : _IND_PREFERRED_ON);
                     span.attr('data-savapage', preferredNew ? _DATA_PREFERRED_OFF : _DATA_PREFERRED_ON);
                 }
             }
             //----------------------------------------------------------------
             ,
-                _usersSelectAll = function(select) {
+            _usersSelectAll = function(select) {
                 $.each($('#sp-print-delegation-users-select-to-add-filter li'), function() {
                     _onUserSelectIdempotent($(this), select);
                 });
@@ -857,17 +865,17 @@
             }
             //----------------------------------------------------------------
             ,
-                _onUsersSelectAllToggle = function(selection) {
+            _onUsersSelectAllToggle = function(selection) {
                 _usersSelectAll(_ns.SelectAllButtonSwitch.toggle(selection));
             }
             //----------------------------------------------------------------
             ,
-                _onGroupSelectScope = function(selection) {
+            _onGroupSelectScope = function(selection) {
                 var selected = _ns.PreferredButtonSwitch.toggle(selection);
                 _api.call({
-                    request : 'user-set-delegate-groups-preferred-select',
-                    dto : JSON.stringify({
-                        select : selected
+                    request: 'user-set-delegate-groups-preferred-select',
+                    dto: JSON.stringify({
+                        select: selected
                     })
                 });
 
@@ -875,7 +883,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _onGroupSelected = function(selection) {
+            _onGroupSelected = function(selection) {
                 var span,
                     dbkey,
                     dbKeySelected;
@@ -925,7 +933,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _onUserSelect = function(selection, toggle, select) {
+            _onUserSelect = function(selection, toggle, select) {
                 var span,
                     dbkey;
 
@@ -950,36 +958,36 @@
                     }
                 }
             },
-                _onUserSelectIdempotent = function(selection, select) {
+            _onUserSelectIdempotent = function(selection, select) {
                 _onUserSelect(selection, false, select);
             },
-                _onUserSelected = function(selection) {
+            _onUserSelected = function(selection) {
                 _onUserSelect(selection, true);
                 _onButtonAddVisibility();
             }
             //----------------------------------------------------------------
             ,
-                _isAccountSelectScopePreferred = function() {
+            _isAccountSelectScopePreferred = function() {
                 return _ns.PreferredButtonSwitch.isOn($('#sp-print-delegation-select-shared-account-scope'));
             }
             //----------------------------------------------------------------
             ,
-                _isAccountPreferredEnabled = function() {
+            _isAccountPreferredEnabled = function() {
                 return $('#sp-print-delegation-select-shared-account-scope').length > 0;
             }
             //----------------------------------------------------------------
             ,
-                _onAccountPreferred = function(selection) {
+            _onAccountPreferred = function(selection) {
                 _onObjectPreferred(selection, 'user-delegate-accounts-preferred');
             }
             //----------------------------------------------------------------
             ,
-                _onAccountSelectScope = function(selection) {
+            _onAccountSelectScope = function(selection) {
                 var selected = _ns.PreferredButtonSwitch.toggle(selection);
                 _api.call({
-                    request : 'user-set-delegate-accounts-preferred-select',
-                    dto : JSON.stringify({
-                        select : selected
+                    request: 'user-set-delegate-accounts-preferred-select',
+                    dto: JSON.stringify({
+                        select: selected
                     })
                 });
 
@@ -987,7 +995,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _onAccountSelected = function(selection) {
+            _onAccountSelected = function(selection) {
                 var span = selection.find('.' + _CLASS_SELECTED_TXT),
                     dbkey = selection.attr('data-savapage'),
                     dbKeySelected = _quickAccountSelected ? _quickAccountSelected.key : null;
@@ -1005,7 +1013,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _onDelegatorSelectRow = function(selection) {
+            _onDelegatorSelectRow = function(selection) {
                 var span = selection.find('.' + _CLASS_SELECTED_TXT),
                     isGroup = selection.hasClass(_CLASS_GROUP),
                     isCopies = selection.hasClass(_CLASS_COPIES),
@@ -1046,7 +1054,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _onDelegatorSelectAll = function() {
+            _onDelegatorSelectAll = function() {
                 _initDelegatorSelection();
                 $.each($('#sp-selected-print-delegation-rows .' + _CLASS_SELECTED_TXT), function() {
                     _onDelegatorSelectRow($(this).closest('tr'));
@@ -1054,7 +1062,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _onDelegatorDeselectAll = function() {
+            _onDelegatorDeselectAll = function() {
                 _initDelegatorSelection();
                 $.each($('#sp-selected-print-delegation-rows .' + _CLASS_SELECTED_TXT), function() {
                     $(this).html(_IND_SELECTED_OFF);
@@ -1062,10 +1070,10 @@
             }
             //----------------------------------------------------------------
             ,
-                _onDelegatorRemoveSelected = function() {
+            _onDelegatorRemoveSelected = function() {
                 var nUsersBefore = _nDelegatorUsers,
                     nGroupsBefore =
-                    _nDelegatorGroups;
+                        _nDelegatorGroups;
 
                 $.each($('.' + _CLASS_SELECTED_TXT).closest('tr'), function() {
                     var dbkey = $(this).attr('data-savapage');
@@ -1105,7 +1113,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _visibleClickCheckboxRadio = function(name, id, visible) {
+            _visibleClickCheckboxRadio = function(name, id, visible) {
                 _view.visible($('#' + id), visible);
                 if (visible) {
                     _view.checkRadio(name, id);
@@ -1113,7 +1121,7 @@
             }
             //
             ,
-                _onChangeEditMode = function(id) {
+            _onChangeEditMode = function(id) {
                 var dbkey,
                     filterWrk,
                     selWlk,
@@ -1169,7 +1177,7 @@
             }
             //----------------------------------------------------------------
             ,
-                _onChangeAccountType = function() {
+            _onChangeAccountType = function() {
                 var enableGroups,
                     enableUsers,
                     enableCopies,
@@ -1209,209 +1217,209 @@
             }
             //
             ,
-                _updateModel = function() {
+            _updateModel = function() {
                 _model.printDelegation = _delegationModel();
                 _model.printDelegationCopies = _nDelegatorGroupMembersCopies + _nDelegatorUsersCopies + _nDelegatorCopies;
             }
             //
             ;
 
-            //--------
-            this.clear = function() {
-                _resetMemberCopies();
-                $('#sp-print-delegation-copies-to-add').val(1);
-                _onDelegatorSelectAll();
-                _onDelegatorRemoveSelected();
-                _updateModel();
-                _this.onBeforeHide();
-            };
-
-            //----------------------------------------------------------------
-            $('#page-print-delegation').on('pagecreate', function(event) {
-
-                var filterableGroups = $("#sp-print-delegation-groups-select-to-add-filter"),
-                    filterableUsers = $("#sp-print-delegation-users-select-to-add-filter"),
-                    filterableAccounts = $("#sp-print-delegation-select-shared-account-filter"),
-                    selBtnGroupsSelectScope = $('#sp-print-delegation-groups-select-to-add-scope'),
-                    selBtnAccountSelectScope = $('#sp-print-delegation-select-shared-account-scope'),
-                    selBtnUsersSelectAll = $('#sp-print-delegation-users-select-to-add-all'),
-                    res;
-
-                _initDelegatorSelection();
-
-                $('#sp-print-delegation-button-back').click(function() {
-                    _this.onButtonBack();
-                });
-
-                $('#sp-print-delegation-button-next').click(function() {
-                    _this.onButtonNext(_previousPageId);
-                });
-
-                $('#sp-print-delegation-button-select-all').click(function() {
-                    _onDelegatorSelectAll();
-                });
-
-                $('#sp-print-delegation-button-deselect-all').click(function() {
-                    _onDelegatorDeselectAll();
-                });
-
-                $('#sp-print-delegation-button-remove-selected').click(function() {
-                    _onDelegatorRemoveSelected();
-                });
-
-                $('input[name="' + _RADIO_EDIT_NAME + '"]').click(function() {
-                    _onChangeEditMode($(this).attr('id'));
-                    _setVisibility();
-                });
-
-                $('input[name="' + _RADIO_ACCOUNT_NAME + '"]').click(function() {
-                    _onChangeAccountType();
-                    _setVisibility();
-                });
-
-                //
-                $(this).on('click', '#sp-selected-print-delegation-rows tr', null, function() {
-                    _onDelegatorSelectRow($(this));
-                });
-
-                // Start with first account option (and trigger visibility
-                // actions).
-                _view.checkRadioFirst(_RADIO_ACCOUNT_NAME);
-                _onChangeAccountType();
-
-                //---------------------
-                // Group selection
-                //---------------------
-                filterableGroups.on("filterablebeforefilter", function(e, data) {
-                    _onQuickSearchGroup($(this), data.input.get(0).value, 0);
-                });
-
-                $(this).on('click', '#sp-print-delegation-groups-select-to-add-filter li', null, function() {
-                    _onGroupSelected($(this));
-                });
-
-                if (_isGroupPreferredEnabled()) {
-                    $(this).on('click', '#sp-print-delegation-groups-select-to-add-filter li .ui-li-count', null, function() {
-                        _onGroupPreferred($(this));
-                        return false;
-                    });
-                }
-
-                //
-                selBtnGroupsSelectScope.click(function() {
-                    _onGroupSelectScope($(this));
-                });
-
-                res = _api.call({
-                    request : 'user-get-delegate-groups-preferred-select'
-                });
-
-                _ns.PreferredButtonSwitch.setState(selBtnGroupsSelectScope, res.dto.select);
-                selBtnGroupsSelectScope.addClass('ui-btn-icon-notext');
-
-                // Show available groups on first open
-                _onQuickSearchGroup(filterableGroups, "", 0);
-
-                //---------------------
-                // User selection
-                //---------------------
-                filterableUsers.on("filterablebeforefilter", function(e, data) {
-                    var dbkey = _util.getFirstProp(_quickUserGroupSelected);
-                    _onQuickSearchUser($(this), dbkey, data.input.get(0).value, 0);
-                });
-
-                $(this).on('click', '#sp-print-delegation-users-select-to-add-filter li', null, function() {
-                    _onUserSelected($(this));
-                });
-
-                selBtnUsersSelectAll.click(function() {
-                    _onUsersSelectAllToggle($(this));
-                });
-
-                _ns.SelectAllButtonSwitch.setState(selBtnUsersSelectAll, false);
-                selBtnUsersSelectAll.addClass('ui-btn-icon-notext');
-
-                //---------------------
-                // Account selection
-                //---------------------
-                filterableAccounts.on("filterablebeforefilter", function(e, data) {
-                    _onQuickSearchAccount($(this), data.input.get(0).value, 0, false);
-                });
-
-                $(this).on('click', '#sp-print-delegation-select-shared-account-filter li', null, function() {
-                    _onAccountSelected($(this));
-                });
-
-                if (_isAccountPreferredEnabled()) {
-                    $(this).on('click', '#sp-print-delegation-select-shared-account-filter li .ui-li-count', null, function() {
-                        _onAccountPreferred($(this));
-                        return false;
-                    });
-                }
-
-                //
-                selBtnAccountSelectScope.click(function() {
-                    _onAccountSelectScope($(this));
-                });
-
-                res = _api.call({
-                    request : 'user-get-delegate-accounts-preferred-select'
-                });
-
-                _ns.PreferredButtonSwitch.setState(selBtnAccountSelectScope, res.dto.select);
-                selBtnAccountSelectScope.addClass('ui-btn-icon-notext');
-
-                //-----------------------------------
-                // User | Group | Account selection
-                //-----------------------------------
-                $(this).on('click', '#sp-print-delegation-mode-add-table img', null, function(event) {
-                    event.preventDefault();
-                });
-
-                //-----------------------
-                // Group list navigation
-                //-----------------------
-                $("#sp-print-delegation-quicksearch-groups .sp-quicksearch-buttons .ui-btn").click(function() {
-                    _onQuickSearchGroup($("#sp-print-delegation-groups-select-to-add-filter"), $('#sp-print-delegation-groups-select-to-add').val(), $(this).attr('data-savapage'), true);
-                });
-
-                //-----------------------
-                // User list navigation
-                //-----------------------
-                $("#sp-print-delegation-quicksearch-users .sp-quicksearch-buttons .ui-btn").click(function() {
-                    var dbkey = _util.getFirstProp(_quickUserGroupSelected),
-                        nextPosition = $(this).attr('data-savapage');
-                    _onQuickSearchUser($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), nextPosition, true);
-                });
-
-                //-----------------------
-                // Account list navigation
-                //-----------------------
-                $("#sp-print-delegation-quicksearch-accounts .sp-quicksearch-buttons .ui-btn").click(function() {
-                    _onQuickSearchAccount($("#sp-print-delegation-select-shared-account-filter"), $('#sp-print-delegation-select-shared-account').val(), $(this).attr('data-savapage'), true);
-                });
-
-                //-----------------------
-                // Group copies popup
-                //-----------------------
-                $('#sp-print-delegation-btn-add-group-copies').on('click', function() {
-                    _onAddGroups(_getPopupGroupCopies());
-                    $('#sp-print-delegation-popup-add-group-copies').popup('close');
-                    return false;
-                });
-
-                // Show available accounts on first open
-                _onQuickSearchAccount(filterableAccounts, "", 0, false);
-
-            }).on("pagebeforeshow", function(event, ui) {
-                _previousPageId = ui.prevPage.attr('id');
-                _setVisibility();
-            }).on("pagebeforehide", function(event, ui) {
-                _updateModel();
-                _this.onBeforeHide();
-            });
+        //--------
+        this.clear = function() {
+            _resetMemberCopies();
+            $('#sp-print-delegation-copies-to-add').val(1);
+            _onDelegatorSelectAll();
+            _onDelegatorRemoveSelected();
+            _updateModel();
+            _this.onBeforeHide();
         };
 
-    }(jQuery, this, this.document, JSON, this.org.savapage));
+        //----------------------------------------------------------------
+        $('#page-print-delegation').on('pagecreate', function(event) {
+
+            var filterableGroups = $("#sp-print-delegation-groups-select-to-add-filter"),
+                filterableUsers = $("#sp-print-delegation-users-select-to-add-filter"),
+                filterableAccounts = $("#sp-print-delegation-select-shared-account-filter"),
+                selBtnGroupsSelectScope = $('#sp-print-delegation-groups-select-to-add-scope'),
+                selBtnAccountSelectScope = $('#sp-print-delegation-select-shared-account-scope'),
+                selBtnUsersSelectAll = $('#sp-print-delegation-users-select-to-add-all'),
+                res;
+
+            _initDelegatorSelection();
+
+            $('#sp-print-delegation-button-back').click(function() {
+                _this.onButtonBack();
+            });
+
+            $('#sp-print-delegation-button-next').click(function() {
+                _this.onButtonNext(_previousPageId);
+            });
+
+            $('#sp-print-delegation-button-select-all').click(function() {
+                _onDelegatorSelectAll();
+            });
+
+            $('#sp-print-delegation-button-deselect-all').click(function() {
+                _onDelegatorDeselectAll();
+            });
+
+            $('#sp-print-delegation-button-remove-selected').click(function() {
+                _onDelegatorRemoveSelected();
+            });
+
+            $('input[name="' + _RADIO_EDIT_NAME + '"]').click(function() {
+                _onChangeEditMode($(this).attr('id'));
+                _setVisibility();
+            });
+
+            $('input[name="' + _RADIO_ACCOUNT_NAME + '"]').click(function() {
+                _onChangeAccountType();
+                _setVisibility();
+            });
+
+            //
+            $(this).on('click', '#sp-selected-print-delegation-rows tr', null, function() {
+                _onDelegatorSelectRow($(this));
+            });
+
+            // Start with first account option (and trigger visibility
+            // actions).
+            _view.checkRadioFirst(_RADIO_ACCOUNT_NAME);
+            _onChangeAccountType();
+
+            //---------------------
+            // Group selection
+            //---------------------
+            filterableGroups.on("filterablebeforefilter", function(e, data) {
+                _onQuickSearchGroup($(this), data.input.get(0).value, 0);
+            });
+
+            $(this).on('click', '#sp-print-delegation-groups-select-to-add-filter li', null, function() {
+                _onGroupSelected($(this));
+            });
+
+            if (_isGroupPreferredEnabled()) {
+                $(this).on('click', '#sp-print-delegation-groups-select-to-add-filter li .ui-li-count', null, function() {
+                    _onGroupPreferred($(this));
+                    return false;
+                });
+            }
+
+            //
+            selBtnGroupsSelectScope.click(function() {
+                _onGroupSelectScope($(this));
+            });
+
+            res = _api.call({
+                request: 'user-get-delegate-groups-preferred-select'
+            });
+
+            _ns.PreferredButtonSwitch.setState(selBtnGroupsSelectScope, res.dto.select);
+            selBtnGroupsSelectScope.addClass('ui-btn-icon-notext');
+
+            // Show available groups on first open
+            _onQuickSearchGroup(filterableGroups, "", 0);
+
+            //---------------------
+            // User selection
+            //---------------------
+            filterableUsers.on("filterablebeforefilter", function(e, data) {
+                var dbkey = _util.getFirstProp(_quickUserGroupSelected);
+                _onQuickSearchUser($(this), dbkey, data.input.get(0).value, 0);
+            });
+
+            $(this).on('click', '#sp-print-delegation-users-select-to-add-filter li', null, function() {
+                _onUserSelected($(this));
+            });
+
+            selBtnUsersSelectAll.click(function() {
+                _onUsersSelectAllToggle($(this));
+            });
+
+            _ns.SelectAllButtonSwitch.setState(selBtnUsersSelectAll, false);
+            selBtnUsersSelectAll.addClass('ui-btn-icon-notext');
+
+            //---------------------
+            // Account selection
+            //---------------------
+            filterableAccounts.on("filterablebeforefilter", function(e, data) {
+                _onQuickSearchAccount($(this), data.input.get(0).value, 0, false);
+            });
+
+            $(this).on('click', '#sp-print-delegation-select-shared-account-filter li', null, function() {
+                _onAccountSelected($(this));
+            });
+
+            if (_isAccountPreferredEnabled()) {
+                $(this).on('click', '#sp-print-delegation-select-shared-account-filter li .ui-li-count', null, function() {
+                    _onAccountPreferred($(this));
+                    return false;
+                });
+            }
+
+            //
+            selBtnAccountSelectScope.click(function() {
+                _onAccountSelectScope($(this));
+            });
+
+            res = _api.call({
+                request: 'user-get-delegate-accounts-preferred-select'
+            });
+
+            _ns.PreferredButtonSwitch.setState(selBtnAccountSelectScope, res.dto.select);
+            selBtnAccountSelectScope.addClass('ui-btn-icon-notext');
+
+            //-----------------------------------
+            // User | Group | Account selection
+            //-----------------------------------
+            $(this).on('click', '#sp-print-delegation-mode-add-table img', null, function(event) {
+                event.preventDefault();
+            });
+
+            //-----------------------
+            // Group list navigation
+            //-----------------------
+            $("#sp-print-delegation-quicksearch-groups .sp-quicksearch-buttons .ui-btn").click(function() {
+                _onQuickSearchGroup($("#sp-print-delegation-groups-select-to-add-filter"), $('#sp-print-delegation-groups-select-to-add').val(), $(this).attr('data-savapage'), true);
+            });
+
+            //-----------------------
+            // User list navigation
+            //-----------------------
+            $("#sp-print-delegation-quicksearch-users .sp-quicksearch-buttons .ui-btn").click(function() {
+                var dbkey = _util.getFirstProp(_quickUserGroupSelected),
+                    nextPosition = $(this).attr('data-savapage');
+                _onQuickSearchUser($("#sp-print-delegation-users-select-to-add-filter"), dbkey, $('#sp-print-delegation-users-select-to-add').val(), nextPosition, true);
+            });
+
+            //-----------------------
+            // Account list navigation
+            //-----------------------
+            $("#sp-print-delegation-quicksearch-accounts .sp-quicksearch-buttons .ui-btn").click(function() {
+                _onQuickSearchAccount($("#sp-print-delegation-select-shared-account-filter"), $('#sp-print-delegation-select-shared-account').val(), $(this).attr('data-savapage'), true);
+            });
+
+            //-----------------------
+            // Group copies popup
+            //-----------------------
+            $('#sp-print-delegation-btn-add-group-copies').on('click', function() {
+                _onAddGroups(_getPopupGroupCopies());
+                $('#sp-print-delegation-popup-add-group-copies').popup('close');
+                return false;
+            });
+
+            // Show available accounts on first open
+            _onQuickSearchAccount(filterableAccounts, "", 0, false);
+
+        }).on("pagebeforeshow", function(event, ui) {
+            _previousPageId = ui.prevPage.attr('id');
+            _setVisibility();
+        }).on("pagebeforehide", function(event, ui) {
+            _updateModel();
+            _this.onBeforeHide();
+        });
+    };
+
+}(jQuery, this, this.document, JSON, this.org.savapage));
 
 // @license-end

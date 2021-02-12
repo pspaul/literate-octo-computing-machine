@@ -98,6 +98,8 @@ import org.savapage.core.dto.PosDepositDto;
 import org.savapage.core.dto.PosDepositReceiptDto;
 import org.savapage.core.dto.PrimaryKeyDto;
 import org.savapage.core.dto.ProxyPrinterCostDto;
+import org.savapage.core.dto.QuickSearchFilterUserGroupDto;
+import org.savapage.core.dto.QuickSearchUserGroupMemberFilterDto;
 import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
@@ -3981,15 +3983,32 @@ public final class JsonApiServer extends AbstractPage {
 
         if (cm.isConfigValue(Key.PROXY_PRINT_DELEGATE_ENABLE)) {
 
-            userData.put("delegatorGroupHideId", cm.isConfigValue(
-                    Key.WEBAPP_USER_PROXY_PRINT_DELEGATOR_GROUP_HIDE_ID));
+            final QuickSearchFilterUserGroupDto.GroupDetail groupDetail;
+            if (cm.isConfigValue(
+                    Key.WEBAPP_USER_PROXY_PRINT_DELEGATOR_GROUP_HIDE_ID)) {
+                groupDetail = QuickSearchFilterUserGroupDto.GroupDetail.NAME;
+            } else {
+                groupDetail = cm.getConfigEnum(
+                        QuickSearchFilterUserGroupDto.GroupDetail.class,
+                        Key.WEBAPP_USER_PROXY_PRINT_DELEGATOR_GROUP_DETAIL);
+            }
+            userData.put("delegatorGroupDetail", groupDetail.toString());
+            //
+            final QuickSearchUserGroupMemberFilterDto.UserDetail userDetail;
+            if (cm.isConfigValue(
+                    Key.WEBAPP_USER_PROXY_PRINT_DELEGATOR_USER_HIDE_ID)) {
+                userDetail =
+                        QuickSearchUserGroupMemberFilterDto.UserDetail.NAME;
+            } else {
+                userDetail = cm.getConfigEnum(
+                        QuickSearchUserGroupMemberFilterDto.UserDetail.class,
+                        Key.WEBAPP_USER_PROXY_PRINT_DELEGATOR_USER_DETAIL);
+            }
+            userData.put("delegatorUserDetail", userDetail.toString());
 
-            userData.put("delegatorUserHideId", cm.isConfigValue(
-                    Key.WEBAPP_USER_PROXY_PRINT_DELEGATOR_USER_HIDE_ID));
-
+            //
             userData.put("proxyPrintClearDelegate", cm
                     .isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_DELEGATE));
-
             userData.put("delegateAccountSharedGroup", cm.isConfigValue(
                     Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_GROUP_ENABLE));
         }

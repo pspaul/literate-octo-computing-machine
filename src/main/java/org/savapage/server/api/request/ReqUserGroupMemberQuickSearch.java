@@ -79,11 +79,26 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
         final UserDao.ListFilter userFilter = new UserDao.ListFilter();
 
         userFilter.setUserGroupId(dto.getGroupId());
-        if (BooleanUtils.isTrue(dto.getHideId())) {
-            userFilter.setContainingNameText(dto.getFilter());
-        } else {
+
+        final UserDao.Field sortField;
+
+        switch (dto.getUserDetail()) {
+        case FULL:
             userFilter.setContainingNameOrIdText(dto.getFilter());
+            sortField = UserDao.Field.NAME;
+            break;
+        case ID:
+            userFilter.setContainingIdText(dto.getFilter());
+            sortField = UserDao.Field.USERID;
+            break;
+        case NAME:
+            userFilter.setContainingNameText(dto.getFilter());
+            sortField = UserDao.Field.NAME;
+            break;
+        default:
+            throw new RuntimeException(dto.getUserDetail() + " NOT handled.");
         }
+
         userFilter.setDeleted(Boolean.FALSE);
         userFilter.setDisabled(Boolean.FALSE);
 
@@ -109,9 +124,8 @@ public final class ReqUserGroupMemberQuickSearch extends ReqQuickSearchMixin {
             totalResults = dto.getTotalResults().intValue();
         }
 
-        final List<User> userListChunkFirst =
-                userDao.getListChunk(userFilter, dto.getStartPosition(),
-                        dto.getMaxResults(), UserDao.Field.USERID, true);
+        final List<User> userListChunkFirst = userDao.getListChunk(userFilter,
+                dto.getStartPosition(), dto.getMaxResults(), sortField, true);
 
         for (final User user : userListChunkFirst) {
 
