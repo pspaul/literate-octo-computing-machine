@@ -3144,7 +3144,7 @@
                 $('#popup-job-info-name').html(job.title);
                 $('#popup-job-info-pages').html(job.pages);
 
-                $('#popup-job-info-pages-deleted').find('span').html(nDel);
+                $('#popup-job-info-pages-deleted').find('span:first').html(nDel);
                 _view.visible($('#popup-job-info-pages-deleted'), nDel > 0);
 
                 $('#popup-job-info-media').html(job.media);
