@@ -106,10 +106,12 @@ public final class ReqPageOverlayGet extends ApiRequestMixin {
 
         final DtoRsp rsp = new DtoRsp();
 
-        if (imgPageInfo.getOverlayJSON64() != null) {
-            rsp.setJson64(imgPageInfo.getOverlayJSON64());
-        } else {
-            rsp.setSvg64(imgPageInfo.getOverlaySVG64());
+        if (imgPageInfo != null) {
+            if (imgPageInfo.getOverlayJSON64() != null) {
+                rsp.setJson64(imgPageInfo.getOverlayJSON64());
+            } else {
+                rsp.setSvg64(imgPageInfo.getOverlaySVG64());
+            }
         }
 
         this.setResponse(rsp);
