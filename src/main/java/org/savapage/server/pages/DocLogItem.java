@@ -144,6 +144,7 @@ public final class DocLogItem {
 
     private Boolean printInPrinted;
     private PrintInDeniedReasonEnum printInDeniedReason;
+    private ReservedIppQueueEnum printInReservedQueue;
 
     private String author;
     private String subject;
@@ -466,11 +467,17 @@ public final class DocLogItem {
 
             final List<DocLogItem> list = new ArrayList<>();
 
-            final boolean isArchiveEnabled = docStoreService.isEnabled(
+            final boolean isPrintOutArchiveEnabled = docStoreService.isEnabled(
                     DocStoreTypeEnum.ARCHIVE, DocStoreBranchEnum.OUT_PRINT);
 
-            final boolean isJournalEnabled = docStoreService.isEnabled(
+            final boolean isPrintOutJournalEnabled = docStoreService.isEnabled(
                     DocStoreTypeEnum.JOURNAL, DocStoreBranchEnum.OUT_PRINT);
+
+            final boolean isPrintInArchiveEnabled = docStoreService.isEnabled(
+                    DocStoreTypeEnum.ARCHIVE, DocStoreBranchEnum.IN_PRINT);
+
+            final boolean isPrintInJournalEnabled = docStoreService.isEnabled(
+                    DocStoreTypeEnum.JOURNAL, DocStoreBranchEnum.IN_PRINT);
 
             for (final DocLog docLog : ((List<DocLog>) query.getResultList())) {
 
@@ -560,9 +567,23 @@ public final class DocLogItem {
 
                         log.setPaperSize(printIn.getPaperSize());
 
+                        log.setPrintInReservedQueue(reservedQueue);
                         log.setPrintInPrinted(printIn.getPrinted());
                         log.setPrintInDeniedReason(PrintInDeniedReasonEnum
                                 .parseDbValue(printIn.getDeniedReason()));
+
+                        log.setPrintArchive(isPrintInArchiveEnabled
+                                && docStoreService.isDocPresent(
+                                        DocStoreTypeEnum.ARCHIVE,
+                                        DocStoreBranchEnum.IN_PRINT, docLog));
+
+                        if (!log.isPrintArchive()) {
+                            log.setPrintJournal(isPrintInJournalEnabled
+                                    && docStoreService.isDocPresent(
+                                            DocStoreTypeEnum.JOURNAL,
+                                            DocStoreBranchEnum.IN_PRINT,
+                                            docLog));
+                        }
 
                     } else {
                         log.setHeader("???");
@@ -642,12 +663,13 @@ public final class DocLogItem {
                                     optionMap.hasFinishingStaple());
                         }
 
-                        log.setPrintArchive(isArchiveEnabled && docStoreService
-                                .isDocPresent(DocStoreTypeEnum.ARCHIVE,
+                        log.setPrintArchive(isPrintOutArchiveEnabled
+                                && docStoreService.isDocPresent(
+                                        DocStoreTypeEnum.ARCHIVE,
                                         DocStoreBranchEnum.OUT_PRINT, docLog));
 
                         if (!log.isPrintArchive()) {
-                            log.setPrintJournal(isJournalEnabled
+                            log.setPrintJournal(isPrintOutJournalEnabled
                                     && docStoreService.isDocPresent(
                                             DocStoreTypeEnum.JOURNAL,
                                             DocStoreBranchEnum.OUT_PRINT,
@@ -1565,6 +1587,15 @@ public final class DocLogItem {
 
     public void setDocInOriginatorIp(String docInOriginatorIp) {
         this.docInOriginatorIp = docInOriginatorIp;
+    }
+
+    public ReservedIppQueueEnum getPrintInReservedQueue() {
+        return printInReservedQueue;
+    }
+
+    public void
+            setPrintInReservedQueue(ReservedIppQueueEnum printInReservedQueue) {
+        this.printInReservedQueue = printInReservedQueue;
     }
 
     public PrintInDeniedReasonEnum getPrintInDeniedReason() {

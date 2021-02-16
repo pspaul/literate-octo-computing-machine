@@ -48,6 +48,7 @@ import org.savapage.server.api.request.ReqGenerateUserIDNumber;
 import org.savapage.server.api.request.ReqGenerateUuid;
 import org.savapage.server.api.request.ReqI18nCacheClear;
 import org.savapage.server.api.request.ReqInboxClear;
+import org.savapage.server.api.request.ReqInboxRestorePrintIn;
 import org.savapage.server.api.request.ReqJobTicketCancel;
 import org.savapage.server.api.request.ReqJobTicketExec;
 import org.savapage.server.api.request.ReqJobTicketPrintCancel;
@@ -174,6 +175,8 @@ public final class JsonApiDict {
     public static final String REQ_INBOX_JOB_DELETE = "inbox-job-delete";
     public static final String REQ_INBOX_JOB_EDIT = "inbox-job-edit";
     public static final String REQ_INBOX_JOB_PAGES = "inbox-job-pages";
+    public static final String REQ_INBOX_RESTORE_PRINTIN =
+            "inbox-restore-printin";
 
     public static final String REQ_INBOX_IS_VANILLA = "inbox-is-vanilla";
     public static final String REQ_JQPLOT = "jqplot";
@@ -996,6 +999,8 @@ public final class JsonApiDict {
 
         usr(REQ_INBOX_CLEAR, ReqInboxClear.class, DbClaim.NONE,
                 DbAccess.USER_LOCK);
+        usr(REQ_INBOX_RESTORE_PRINTIN, ReqInboxRestorePrintIn.class,
+                DbClaim.NONE, DbAccess.USER_LOCK);
 
         usr(REQ_INBOX_JOB_DELETE, DbClaim.NONE, DbAccess.USER_LOCK);
         usr(REQ_INBOX_JOB_EDIT, DbClaim.NONE, DbAccess.USER_LOCK);

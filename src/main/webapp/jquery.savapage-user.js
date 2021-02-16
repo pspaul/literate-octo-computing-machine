@@ -1478,8 +1478,25 @@
     function PageDocLog(_i18n, _view, _model, _api) {
         var
             // DocLog (common for Admin and User WebApp)
-            _panel = _ns.PanelDocLogBase;
+            _panel = _ns.PanelDocLogBase,
+            _onInboxRestorePrintIn;
+
         _panel.jqId = '#content-doclog';
+
+        _onInboxRestorePrintIn = function(docLogId, replace) {
+            var res = _api.call({
+                'request': 'inbox-restore-printin',
+                'dto': JSON.stringify({
+                    'docLogId': docLogId,
+                    'replace': replace
+                })
+            });
+            _view.showApiMsg(res);
+            _view.pages.main.refreshPagesOnShow = true;
+            if (replace && res.result.code === '0') {
+                _view.changePage($('#page-main'));
+            }
+        };
 
         /**
          *
@@ -1525,6 +1542,12 @@
                 return false;
             }).on('click', '.sp-doclog-docstore-journal-download', null, function() {
                 _api.download("pdf-docstore-journal", null, $(this).attr('data-savapage'));
+                return false;
+            }).on('click', '.sp-inbox-restore-printin-add', null, function() {
+                _onInboxRestorePrintIn($(this).attr('data-savapage'), false);
+                return false;
+            }).on('click', '.sp-inbox-restore-printin-replace', null, function() {
+                _onInboxRestorePrintIn($(this).attr('data-savapage'), true);
                 return false;
             });
 

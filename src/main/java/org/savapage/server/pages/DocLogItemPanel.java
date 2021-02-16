@@ -36,6 +36,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -48,9 +49,12 @@ import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
+import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PrepositionEnum;
 import org.savapage.core.i18n.PrintOutAdjectiveEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
@@ -64,6 +68,7 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.ImapPrintInData;
 import org.savapage.core.services.helpers.PrintSupplierData;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
@@ -118,6 +123,14 @@ public class DocLogItemPanel extends Panel {
     /** */
     private static final String WID_BTN_JOURNAL_DOWNLOAD =
             "btn-doclog-docstore-journal-download";
+
+    /** */
+    private static final String WID_BTN_INBOX_PRINTIN_RESTORE_ADD =
+            "btn-inbox-printin-restore-add";
+    /** */
+    private static final String WID_BTN_INBOX_PRINTIN_RESTORE_REPLACE =
+            "btn-inbox-printin-restore-replace";
+
     /** */
     private static final String WID_BTN_TICKET_REOPEN = "btn-ticket-reopen";
     /** */
@@ -154,16 +167,17 @@ public class DocLogItemPanel extends Panel {
     private static final String[] WICKET_IDS = new String[] { "prompt-user",
             "user-name", "title", "log-comment", "printoutMode",
             "prompt-signature", "signature", "prompt-origin", "origin",
-            "prompt-destination", "destination", "letterhead", "author",
-            "subject", "keywords", "print-in-label", "pdfpgp", "userpw",
-            "ownerpw", "duplex", "simplex", "color", "grayscale", "papersize",
-            "media-source", "output-bin", "jog-offset", "cost-currency", "cost",
-            "job-id", "job-state", "job-completed-date",
-            "print-in-denied-reason-hyphen", "print-in-denied-reason",
-            "collate", "ecoPrint", "removeGraphics", "pageRotate180", "punch",
-            "staple", "fold", "booklet", "jobticket-tag-plain",
-            "jobticket-media", "jobticket-copy", "jobticket-finishing-ext",
-            "jobticket-custom-ext", "landscape", "scaled" };
+            "prompt-email-ticket", "email-ticket", "prompt-destination",
+            "destination", "letterhead", "author", "subject", "keywords",
+            "print-in-label", "pdfpgp", "userpw", "ownerpw", "duplex",
+            "simplex", "color", "grayscale", "papersize", "media-source",
+            "output-bin", "jog-offset", "cost-currency", "cost", "job-id",
+            "job-state", "job-completed-date", "print-in-denied-reason-hyphen",
+            "print-in-denied-reason", "collate", "ecoPrint", "removeGraphics",
+            "pageRotate180", "punch", "staple", "fold", "booklet",
+            "jobticket-tag-plain", "jobticket-media", "jobticket-copy",
+            "jobticket-finishing-ext", "jobticket-custom-ext", "landscape",
+            "scaled" };
 
     /**
      *
@@ -752,7 +766,20 @@ public class DocLogItemPanel extends Panel {
         mapVisible.put("user-name", obj.getUserId());
 
         //
-        if (StringUtils.isNotBlank(obj.getDocInOriginatorIp())) {
+        if (obj.getPrintInReservedQueue() == ReservedIppQueueEnum.MAILPRINT) {
+            final ImapPrintInData extData =
+                    ImapPrintInData.createFromData(obj.getExtData());
+            if (extData != null && extData.getFromAddress() != null) {
+                mapVisible.put("prompt-origin",
+                        PrepositionEnum.FROM_LOCATION.uiText(getLocale()));
+                mapVisible.put("origin", extData.getFromAddress());
+                if (StringUtils.isNotBlank(obj.getExtId())) {
+                    mapVisible.put("prompt-email-ticket",
+                            JobTicketNounEnum.TICKET.uiText(getLocale()));
+                    mapVisible.put("email-ticket", obj.getExtId());
+                }
+            }
+        } else if (StringUtils.isNotBlank(obj.getDocInOriginatorIp())) {
             mapVisible.put("prompt-origin",
                     NounEnum.CLIENT.uiText(getLocale()));
             mapVisible.put("origin", obj.getDocInOriginatorIp());
@@ -766,8 +793,9 @@ public class DocLogItemPanel extends Panel {
         final boolean isReopenedTicketNumber =
                 JOBTICKET_SERVICE.isReopenedTicketNumber(obj.getExtId());
 
-        countButtons += addDocStoreImg(helper, obj);
-        countButtons += addTicketReopenBtn(helper, obj, isReopenedTicketNumber);
+        countButtons += this.addDocStoreImg(webAppType, helper, obj);
+        countButtons +=
+                this.addTicketReopenBtn(helper, obj, isReopenedTicketNumber);
 
         //
         helper.encloseLabel("jobticket-reopened",
@@ -955,14 +983,16 @@ public class DocLogItemPanel extends Panel {
     }
 
     /**
+     * @param webAppType
+     *            {@link WebAppTypeEnum}.
      * @param helper
      *            HTML helper
      * @param obj
      *            Item.
      * @return number of buttons added.
      */
-    private int addDocStoreImg(final MarkupHelper helper,
-            final DocLogItem obj) {
+    private int addDocStoreImg(final WebAppTypeEnum webAppType,
+            final MarkupHelper helper, final DocLogItem obj) {
 
         int countButtons = 0;
 
@@ -1016,11 +1046,43 @@ public class DocLogItemPanel extends Panel {
                 countButtons++;
             }
 
+            if (webAppType == WebAppTypeEnum.USER
+                    && obj.getDocType() == DocLogDao.Type.IN
+                    && BooleanUtils.isTrue(obj.getPrintInPrinted())) {
+
+                MarkupHelper.modifyLabelAttr(MarkupHelper.modifyLabelAttr(
+                        helper.encloseLabel(WID_BTN_INBOX_PRINTIN_RESTORE_ADD,
+                                "&nbsp;", true),
+                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                        obj.getDocLogId().toString()), MarkupHelper.ATTR_TITLE,
+                        HtmlButtonEnum.ADD.uiText(getLocale()))
+                        .setEscapeModelStrings(false);
+                countButtons++;
+
+                MarkupHelper
+                        .modifyLabelAttr(MarkupHelper.modifyLabelAttr(
+                                helper.encloseLabel(
+                                        WID_BTN_INBOX_PRINTIN_RESTORE_REPLACE,
+                                        "&nbsp;", true),
+                                MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                obj.getDocLogId().toString()),
+                                MarkupHelper.ATTR_TITLE,
+                                HtmlButtonEnum.REPLACE.uiText(getLocale()))
+                        .setEscapeModelStrings(false);
+                countButtons++;
+
+            } else {
+                helper.discloseLabel(WID_BTN_INBOX_PRINTIN_RESTORE_ADD);
+                helper.discloseLabel(WID_BTN_INBOX_PRINTIN_RESTORE_REPLACE);
+            }
+
         } else {
             helper.discloseLabel(WID_IMG_ARCHIVE);
             helper.discloseLabel(WID_IMG_JOURNAL);
             helper.discloseLabel(WID_BTN_ARCHIVE_DOWNLOAD);
             helper.discloseLabel(WID_BTN_JOURNAL_DOWNLOAD);
+            helper.discloseLabel(WID_BTN_INBOX_PRINTIN_RESTORE_ADD);
+            helper.discloseLabel(WID_BTN_INBOX_PRINTIN_RESTORE_REPLACE);
         }
         return countButtons;
     }

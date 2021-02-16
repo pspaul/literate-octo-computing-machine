@@ -28,6 +28,7 @@ the License, or (at your option) any later version.
 			<span wicket:id="prompt-user" /> : <strong wicket:id="user-name" />
 		</div>
 	</wicket:enclosure>
+
 	<div class="sp-txt-wrap">
 		<wicket:enclosure child="img-copy-job">
 			<img wicket:id="img-copy-job" src="" height="16" />&nbsp;
@@ -198,6 +199,10 @@ the License, or (at your option) any later version.
 	<wicket:enclosure child="origin">
 		<p class="sp-txt-wrap">
 			<span wicket:id="prompt-origin" /> : <span wicket:id="origin" />
+			<wicket:enclosure child="email-ticket">&bull;
+            <span wicket:id="prompt-email-ticket" /> : <span
+					wicket:id="email-ticket" />
+			</wicket:enclosure>
 		</p>
 	</wicket:enclosure>
 
@@ -232,6 +237,16 @@ the License, or (at your option) any later version.
 				<button data-savapage="the-unique-filename"
 					wicket:id="btn-doclog-docstore-journal-download"
 					class="sp-doclog-docstore-journal-download ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-eye" />
+			</wicket:enclosure>
+			<wicket:enclosure child="btn-inbox-printin-restore-add">
+				<button data-savapage="the-doc-log-db-key"
+					wicket:id="btn-inbox-printin-restore-add"
+					class="sp-inbox-restore-printin-add ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-plus" />
+			</wicket:enclosure>
+			<wicket:enclosure child="btn-inbox-printin-restore-replace">
+				<button data-savapage="the-doc-log-db-key"
+					wicket:id="btn-inbox-printin-restore-replace"
+					class="sp-inbox-restore-printin-replace ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-refresh" />
 			</wicket:enclosure>
 			<wicket:enclosure child="btn-ticket-reopen">
 				<button data-savapage="the-unique-filename"
