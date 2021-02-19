@@ -26,456 +26,506 @@
  */
 
 /* ------------------------------------------------------ */
-
 .ui-icon-main-header-home:after {
-    background: url(/glyphicons/glyphicons_020_home.png) 50% 50% no-repeat;
-    background-size: 17px 15px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .4;
+	background: url(/glyphicons/glyphicons_020_home.png) 50% 50% no-repeat;
+	background-size: 17px 15px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .4;
 }
 
 .ui-icon-main-header-help:after {
-    background: url(/glyphish-icons/90-life-buoy.png) 50% 50% no-repeat;
-    background-size: 16px 16px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphish-icons/90-life-buoy.png) 50% 50% no-repeat;
+	background-size: 16px 16px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-header-menu:after {
-    background: url(/glyphicons/glyphicons_157_show_lines.png) 50% 50% no-repeat;
-    background-size: 16px 14px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_157_show_lines.png) 50% 50%
+		no-repeat;
+	background-size: 16px 14px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-header-logout:after {
-    background: url(/glyphicons/glyphicons_063_power.png) 50% 50% no-repeat;
-    background-size: 16px 16px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_063_power.png) 50% 50% no-repeat;
+	background-size: 16px 16px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-header-about:after {
-    background: url(/glyphicons/glyphicons_195_circle_info.png) 50% 50% no-repeat;
-    background-size: 17px 17px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .3;
+	background: url(/glyphicons/glyphicons_195_circle_info.png) 50% 50%
+		no-repeat;
+	background-size: 17px 17px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .3;
 }
 
 .ui-icon-main-header-warning:after {
-    background: url(/glyphish-icons/184-warning.png) 50% 50% no-repeat;
-    background-size: 16px 14px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphish-icons/184-warning.png) 50% 50% no-repeat;
+	background-size: 16px 14px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 /* ------------------------------------------------------ */
 .ui-icon-main-home:after {
-    background: url(/glyphicons/glyphicons_020_home.png) 50% 50% no-repeat;
-    background-size: 24px 23px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .4;
+	background: url(/glyphicons/glyphicons_020_home.png) 50% 50% no-repeat;
+	background-size: 24px 23px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .4;
 }
 
 .ui-icon-main-left-arrow:after {
-    background: url(/glyphicons/glyphicons_210_left_arrow.png) 50% 50% no-repeat;
-    background-size: 20px 18px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_210_left_arrow.png) 50% 50%
+		no-repeat;
+	background-size: 20px 18px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-right-arrow:after {
-    background: url(/glyphicons/glyphicons_211_right_arrow.png) 50% 50% no-repeat;
-    background-size: 20px 18px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_211_right_arrow.png) 50% 50%
+		no-repeat;
+	background-size: 20px 18px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-refresh:after {
-    background: url(/glyphicons/glyphicons_081_refresh.png) 50% 50% no-repeat;
-    background-size: 22px 23px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_081_refresh.png) 50% 50%
+		no-repeat;
+	background-size: 22px 23px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-print:after {
-    background: url(/glyphish-icons/185-printer.png) 50% 50% no-repeat;
-    background-size: 24px 21px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .8;
+	background: url(/glyphish-icons/185-printer.png) 50% 50% no-repeat;
+	background-size: 24px 21px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .8;
 }
 
 .ui-icon-main-jobticket:after {
-    background: url(/glyphish-icons/14-tag-flipped.png) 50% 50% no-repeat;
-    background-size: 22px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
+	background: url(/glyphish-icons/14-tag-flipped.png) 50% 50% no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
 }
 
 .ui-icon-main-hold-jobs:after {
-    background: url(/glyphish-icons/11-clock.png) 50% 50% no-repeat;
-    background-size: 22px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
+	background: url(/glyphish-icons/11-clock.png) 50% 50% no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
 }
 
 .ui-icon-main-help:after {
-    background: url(/glyphish-icons/90-life-buoy.png) 50% 50% no-repeat;
-    background-size: 22px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    /* opacity: .6; */
+	background: url(/glyphish-icons/90-life-buoy.png) 50% 50% no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	/* opacity: .6; */
 }
 
 .ui-icon-main-clear:after {
-    background: url(/glyphicons/glyphicons_016_bin.png) 50% 50% no-repeat;
-    background-size: 18px 26px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_016_bin.png) 50% 50% no-repeat;
+	background-size: 18px 26px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-pdf-properties:after {
-    background: url(/glyphicons/glyphicons_258_pdf.png) 100% 100% no-repeat;
-    background-size: 17px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_258_pdf.png) 100% 100% no-repeat;
+	background-size: 17px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-letterhead:after {
-    background: url(/glyphicons/glyphicons_153_more_windows.png) 50% 50% no-repeat;
-    background-size: 22px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_153_more_windows.png) 50% 50%
+		no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-arr-cut:after {
-    background: url(/glyphicons/glyphicons_288_scissors.png) 50% 50% no-repeat;
-    background-size: 20px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_288_scissors.png) 50% 50%
+		no-repeat;
+	background-size: 20px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
-
 .ui-icon-main-arr-paste-right:after {
-    background: url(/icons-misc/paste-selected-right.png) 50% 50% no-repeat;
-    background-size: 24px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .7;
+	background: url(/icons-misc/paste-selected-right.png) 50% 50% no-repeat;
+	background-size: 24px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .7;
 }
 
 .ui-icon-main-arr-paste-left:after {
-    background: url(/icons-misc/paste-selected-left.png) 50% 50% no-repeat;
-    background-size: 24px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .7;
+	background: url(/icons-misc/paste-selected-left.png) 50% 50% no-repeat;
+	background-size: 24px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .7;
 }
 
 .ui-icon-main-arr-action-popup:after {
-    background: url(/glyphicons/glyphicons_187_more.png) 50% 50% no-repeat;
-    background-size: 22px 7px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_187_more.png) 50% 50% no-repeat;
+	background-size: 22px 7px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-arr-unselect-all:after {
-    background: url(/icons-misc/unselect.png) 50% 50% no-repeat;
-    background-size: 24px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .7;
+	background: url(/icons-misc/unselect.png) 50% 50% no-repeat;
+	background-size: 24px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .7;
 }
 
 .ui-icon-main-arr-undo:after {
-    background: url(/icons-misc/undo.png) 50% 50% no-repeat;
-    background-size: 24px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/icons-misc/undo.png) 50% 50% no-repeat;
+	background-size: 24px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-arr-edit:after {
-    background: url(/glyphicons/glyphicons_075_sort.png) 50% 50% no-repeat;
-    background-size: 25px 25px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_075_sort.png) 50% 50% no-repeat;
+	background-size: 25px 25px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-arr-back:after {
-    background: url(/glyphicons/glyphicons_318_more-items.png) 50% 50% no-repeat;
-    background-size: 21px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .5;
+	background: url(/glyphicons/glyphicons_318_more-items.png) 50% 50%
+		no-repeat;
+	background-size: 21px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .5;
 }
 
 .ui-icon-main-inbox:after {
-    background: url(/glyphish-icons/44-shoebox.png) 50% 50% no-repeat;
-    background-size: 24px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphish-icons/44-shoebox.png) 50% 50% no-repeat;
+	background-size: 24px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-logout:after {
-    background: url(/glyphicons/glyphicons_063_power.png) 50% 50% no-repeat;
-    background-size: 22px 23px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_063_power.png) 50% 50% no-repeat;
+	background-size: 22px 23px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-doclog:after {
-    background: url(/glyphicons/glyphicons_087_log_book.png) 50% 50% no-repeat;
-    background-size: 22px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_087_log_book.png) 50% 50%
+		no-repeat;
+	background-size: 22px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-upload:after {
-    background: url(/glyphicons/glyphicons_213_up_arrow.png) 50% 50% no-repeat;
-    background-size: 16px 18px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_213_up_arrow.png) 50% 50%
+		no-repeat;
+	background-size: 16px 18px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
 .ui-icon-main-about:after {
-    background: url(/glyphicons/glyphicons_195_circle_info.png) 50% 50% no-repeat;
-    background-size: 22px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-/* ---graphic editor --- */
-.ui-icon-main-browse-canvas-edit:after {
-    background: url(/glyphicons/glyphicons_151_edit.png) 50% 50% no-repeat;
-    background-size: 24px 21px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-brush:after {
-    background: url(/glyphicons/glyphicons_234_brush.png) 50% 50% no-repeat;
-    background-size: 25px 23px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-clear-selected:after {
-    background: url(/glyphicons/glyphicons_256_delete_point.png) 50% 50% no-repeat;
-    background-size: 25px 14px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .5;
-}
-.ui-icon-main-browse-canvas-clear-all:after {
-    background: url(/glyphicons/glyphicons_207_remove_2.png) 50% 50% no-repeat;
-    background-size: 15px 15px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-save:after {
-    background: url(/glyphicons/glyphicons_206_ok_2.png) 50% 50% no-repeat;
-    background-size: 25px 19px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_195_circle_info.png) 50% 50%
+		no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
 }
 
-.ui-icon-main-browse-canvas-circle:after {
-    background: url(/glyphicons/glyphicons_095_vector_path_circle.png) 50% 50% no-repeat;
-    background-size: 24px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-line:after {
-    background: url(/glyphicons/glyphicons_097_vector_path_line.png) 50% 50% no-repeat;
-    background-size: 24px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-square:after {
-    background: url(/glyphicons/glyphicons_094_vector_path_square.png) 50% 50% no-repeat;
-    background-size: 24px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-triangle:after {
-    background: url(/glyphicons/glyphicons_094_sp_triangle.png) 50% 50% no-repeat;
-    background-size: 25px 23px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-font:after {
-    background: url(/glyphicons/glyphicons_100_font.png) 50% 50% no-repeat;
-    background-size: 27px 23px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-text:after {
-    background: url(/glyphicons/glyphicons_107_text_resize.png) 50% 50% no-repeat;
-    background-size: 24px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-opacity-reduce:after {
-    background: url(/glyphicons/glyphicons_188_brightness_reduce.png) 50% 50% no-repeat;
-    background-size: 20px 20px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-opacity-increase:after {
-    background: url(/glyphicons/glyphicons_189_brightness_increase.png) 50% 50% no-repeat;
-    background-size: 24px 24px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
-}
-.ui-icon-main-browse-canvas-select-all:after {
-    background: url(/glyphicons/glyphicons_154_show_big_thumbnails.png) 50% 50% no-repeat;
-    background-size: 18px 18px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .5;
-}
-.ui-icon-main-browse-canvas-zoom-in:after {
-    background: url(/glyphicons/glyphicons_236_zoom_in.png) 50% 50% no-repeat;
-    background-size: 22px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .5;
-}
-.ui-icon-main-browse-canvas-zoom-out:after {
-    background: url(/glyphicons/glyphicons_237_zoom_out.png) 50% 50% no-repeat;
-    background-size: 22px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .5;
-}
-.ui-icon-main-browse-canvas-unzoom:after {
+.ui-icon-main-browse:after {
     background: url(/glyphicons/glyphicons_027_search.png) 50% 50% no-repeat;
     background-size: 22px 22px;
     -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
-    opacity: .5;
+	opacity: .6;
+}
+
+/* ---graphic editor --- */
+.ui-icon-main-browse-canvas-edit:after {
+	background: url(/glyphicons/glyphicons_151_edit.png) 50% 50% no-repeat;
+	background-size: 24px 21px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-brush:after {
+	background: url(/glyphicons/glyphicons_234_brush.png) 50% 50% no-repeat;
+	background-size: 25px 23px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-clear-selected:after {
+	background: url(/glyphicons/glyphicons_256_delete_point.png) 50% 50%
+		no-repeat;
+	background-size: 25px 14px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .5;
+}
+
+.ui-icon-main-browse-canvas-clear-all:after {
+	background: url(/glyphicons/glyphicons_207_remove_2.png) 50% 50%
+		no-repeat;
+	background-size: 15px 15px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-save:after {
+	background: url(/glyphicons/glyphicons_206_ok_2.png) 50% 50% no-repeat;
+	background-size: 25px 19px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-circle:after {
+	background: url(/glyphicons/glyphicons_095_vector_path_circle.png) 50%
+		50% no-repeat;
+	background-size: 24px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-line:after {
+	background: url(/glyphicons/glyphicons_097_vector_path_line.png) 50% 50%
+		no-repeat;
+	background-size: 24px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-square:after {
+	background: url(/glyphicons/glyphicons_094_vector_path_square.png) 50%
+		50% no-repeat;
+	background-size: 24px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-triangle:after {
+	background: url(/glyphicons/glyphicons_094_sp_triangle.png) 50% 50%
+		no-repeat;
+	background-size: 25px 23px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-font:after {
+	background: url(/glyphicons/glyphicons_100_font.png) 50% 50% no-repeat;
+	background-size: 27px 23px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-text:after {
+	background: url(/glyphicons/glyphicons_107_text_resize.png) 50% 50%
+		no-repeat;
+	background-size: 24px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-opacity-reduce:after {
+	background: url(/glyphicons/glyphicons_188_brightness_reduce.png) 50%
+		50% no-repeat;
+	background-size: 20px 20px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-opacity-increase:after {
+	background: url(/glyphicons/glyphicons_189_brightness_increase.png) 50%
+		50% no-repeat;
+	background-size: 24px 24px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-main-browse-canvas-select-all:after {
+	background: url(/glyphicons/glyphicons_154_show_big_thumbnails.png) 50%
+		50% no-repeat;
+	background-size: 18px 18px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .5;
+}
+
+.ui-icon-main-browse-canvas-zoom-in:after {
+	background: url(/glyphicons/glyphicons_236_zoom_in.png) 50% 50%
+		no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .5;
+}
+
+.ui-icon-main-browse-canvas-zoom-out:after {
+	background: url(/glyphicons/glyphicons_237_zoom_out.png) 50% 50%
+		no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .5;
+}
+
+.ui-icon-main-browse-canvas-unzoom:after {
+	background: url(/glyphicons/glyphicons_027_search.png) 50% 50% no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .5;
 }
 
 /* ---mini --- */
 .ui-icon-mini-selected-green:after {
-    background: url(/images/selected-green-16x16.png) 50% 50% no-repeat;
-    background-size: 12px 12px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
+	background: url(/images/selected-green-16x16.png) 50% 50% no-repeat;
+	background-size: 12px 12px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
 }
 
 .ui-icon-mini-cut:after {
-    background: url(/glyphicons/glyphicons_288_scissors.png) 50% 50% no-repeat;
-    background-size: 15px 16px;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_288_scissors.png) 50% 50%
+		no-repeat;
+	background-size: 15px 16px;
+	opacity: .6;
 }
 
 .ui-icon-mini-select:after {
-    background: url(/glyphicons/glyphicons_335_pin_classic.png) 50% 50% no-repeat;
-    background-size: 16px 16px;
+	background: url(/glyphicons/glyphicons_335_pin_classic.png) 50% 50%
+		no-repeat;
+	background-size: 16px 16px;
 }
 
 .ui-icon-mini-overlays:after {
-    background: url(/glyphicons/glyphicons_030_pencil.png) 50% 50% no-repeat;
-    background-size: 14px 14px;
-    opacity: .6;
-    transform: rotate(270deg);
+	background: url(/glyphicons/glyphicons_030_pencil.png) 50% 50% no-repeat;
+	background-size: 14px 14px;
+	opacity: .6;
+	transform: rotate(270deg);
 }
 
 .ui-icon-mini-no-graphics:after {
-    background: url(/glyphicons/glyphicons_092_tint.png) 50% 50% no-repeat;
-    background-size: 13px 15px;
+	background: url(/glyphicons/glyphicons_092_tint.png) 50% 50% no-repeat;
+	background-size: 13px 15px;
 }
 
 .ui-icon-mini-ecoprint:after {
-    background: url(/glyphicons/glyphicons_001_leaf.png) 50% 50% no-repeat;
-    background-size: 13px 15px;
+	background: url(/glyphicons/glyphicons_001_leaf.png) 50% 50% no-repeat;
+	background-size: 13px 15px;
 }
 
 .ui-icon-mini-letterhead:after {
-    background: url(/glyphicons/glyphicons_153_more_windows.png) 50% 50% no-repeat;
-    background-size: 14px 14px;
+	background: url(/glyphicons/glyphicons_153_more_windows.png) 50% 50%
+		no-repeat;
+	background-size: 14px 14px;
 }
 
 .ui-icon-mini-lock:after {
-    background: url(/glyphish-icons/54-lock.png) 50% 50% no-repeat;
-    background-size: 12px 14px;
+	background: url(/glyphish-icons/54-lock.png) 50% 50% no-repeat;
+	background-size: 12px 14px;
 }
 
 .ui-icon-mini-keys:after {
-    background: url(/glyphicons/glyphicons_044_keys.png) 50% 50% no-repeat;
-    background-size: 13px 14px;
+	background: url(/glyphicons/glyphicons_044_keys.png) 50% 50% no-repeat;
+	background-size: 13px 14px;
 }
 
 .ui-icon-mini-n-up:after {
-    background: url(/glyphicons/glyphicons_154_show_big_thumbnails.png) 50% 50% no-repeat;
-    background-size: 14px 14px;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_154_show_big_thumbnails.png) 50%
+		50% no-repeat;
+	background-size: 14px 14px;
+	opacity: .6;
 }
 
 .ui-icon-mini-duplex:after {
-    background: url(/icons-misc/redo.png) 50% 50% no-repeat;
-    background-size: 16px 16px;
-    opacity: .6;
+	background: url(/icons-misc/redo.png) 50% 50% no-repeat;
+	background-size: 16px 16px;
+	opacity: .6;
 }
 
 .ui-icon-mini-print-color:after {
-    background: url(/silkicons/color_wheel.png) 50% 50% no-repeat;
-    background-size: 16px 16px;
+	background: url(/silkicons/color_wheel.png) 50% 50% no-repeat;
+	background-size: 16px 16px;
 }
 
 .ui-icon-mini-print-mono:after {
-    background: url(/glyphicons/glyphicons_091_adjust.png) 50% 50% no-repeat;
-    background-size: 15px 15px;
-    opacity: .6;
+	background: url(/glyphicons/glyphicons_091_adjust.png) 50% 50% no-repeat;
+	background-size: 15px 15px;
+	opacity: .6;
 }
 
 .ui-icon-mini-delegated-print:after {
-    background: url(/famfamfam-silk/group.png) 50% 50% no-repeat;
-    background-size: 16px 16px;
+	background: url(/famfamfam-silk/group.png) 50% 50% no-repeat;
+	background-size: 16px 16px;
 }
 
 .ui-icon-mini-user:after {
-    background: url(/famfamfam-silk/user_gray.png) 50% 50% no-repeat;
-    background-size: 16px 16px;
+	background: url(/famfamfam-silk/user_gray.png) 50% 50% no-repeat;
+	background-size: 16px 16px;
 }
 
 .ui-icon-mini-expired-clock:after {
-    background: url(/glyphicons/glyphicons_057_history.png) 50% 50% no-repeat;
-    background-size: 18px 18px;
-    opacity: 0.5;
+	background: url(/glyphicons/glyphicons_057_history.png) 50% 50%
+		no-repeat;
+	background-size: 18px 18px;
+	opacity: 0.5;
 }
 
 /* end-of-file */
