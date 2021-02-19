@@ -236,7 +236,7 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                             !newValue);
 
                     if (preValue && !newValue) {
-                        if (SpJobScheduler.interruptImapListener()) {
+                        if (SpJobScheduler.interruptMailPrintListener()) {
                             msgKey = "msg-config-props-applied-mail-print-stopped";
                         }
                     }

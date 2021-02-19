@@ -58,7 +58,7 @@ import org.savapage.core.ipp.client.IppConnectException;
 import org.savapage.core.jmx.JmxRemoteProperties;
 import org.savapage.core.job.SpJobScheduler;
 import org.savapage.core.job.SpJobType;
-import org.savapage.core.print.imap.ImapPrinter;
+import org.savapage.core.print.imap.MailPrinter;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
@@ -475,7 +475,7 @@ public final class Options extends AbstractAdminPage {
         MarkupHelper.modifyLabelAttr(labelWrk, "class", cssColor);
 
         labelWrk = helper.addCheckbox("flipswitch-mailprint-online",
-                ImapPrinter.isOnline());
+                MailPrinter.isOnline());
         setFlipswitchOnOffText(labelWrk);
 
         /*

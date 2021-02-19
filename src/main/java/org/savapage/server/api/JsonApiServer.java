@@ -128,8 +128,8 @@ import org.savapage.core.json.rpc.JsonRpcError;
 import org.savapage.core.json.rpc.ResultDataBasic;
 import org.savapage.core.json.rpc.impl.ResultPosDeposit;
 import org.savapage.core.pdf.PdfCreateRequest;
-import org.savapage.core.print.imap.ImapListener;
-import org.savapage.core.print.imap.ImapPrinter;
+import org.savapage.core.print.imap.MailPrintListener;
+import org.savapage.core.print.imap.MailPrinter;
 import org.savapage.core.print.proxy.ProxyPrintAuthManager;
 import org.savapage.core.reports.JrExportFileExtEnum;
 import org.savapage.core.reports.JrPosDepositReceipt;
@@ -2587,7 +2587,7 @@ public final class JsonApiServer extends AbstractPage {
             MutableInt nMessagesInbox = new MutableInt();
             MutableInt nMessagesTrash = new MutableInt();
 
-            ImapListener.test(nMessagesInbox, nMessagesTrash);
+            MailPrintListener.test(nMessagesInbox, nMessagesTrash);
 
             setApiResult(userData, ApiResultCodeEnum.INFO,
                     "msg-imap-test-passed", nMessagesInbox.toString(),
@@ -2613,16 +2613,16 @@ public final class JsonApiServer extends AbstractPage {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
-        if (!ConfigManager.isPrintImapEnabled()) {
+        if (!ConfigManager.isMailPrintEnabled()) {
             return setApiResultOK(userData);
         }
 
         final String msgKey;
 
-        if (ImapPrinter.isOnline()) {
+        if (MailPrinter.isOnline()) {
             msgKey = "msg-imap-started-already";
         } else {
-            SpJobScheduler.instance().scheduleOneShotImapListener(1L);
+            SpJobScheduler.instance().scheduleOneShotMailPrintListener(1L);
             msgKey = "msg-imap-started";
         }
 
@@ -2638,7 +2638,7 @@ public final class JsonApiServer extends AbstractPage {
         final Map<String, Object> userData = new HashMap<String, Object>();
         final String msgKey;
 
-        if (SpJobScheduler.interruptImapListener()) {
+        if (SpJobScheduler.interruptMailPrintListener()) {
             msgKey = "msg-imap-stopped";
         } else {
             msgKey = "msg-imap-stopped-already";

@@ -71,7 +71,7 @@ import org.savapage.core.i18n.JobTicketNounEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.SystemModeEnum;
-import org.savapage.core.print.imap.ImapPrinter;
+import org.savapage.core.print.imap.MailPrinter;
 import org.savapage.core.print.proxy.ProxyPrintJobStatusMonitor;
 import org.savapage.core.services.AppLogService;
 import org.savapage.core.services.JobTicketService;
@@ -302,7 +302,7 @@ public final class SystemStatusPanel extends Panel {
         String msgKey;
         String msgText;
 
-        final boolean isMailPrintEnabled = ConfigManager.isPrintImapEnabled();
+        final boolean isMailPrintEnabled = ConfigManager.isMailPrintEnabled();
 
         if (isMailPrintEnabled) {
 
@@ -346,7 +346,7 @@ public final class SystemStatusPanel extends Panel {
                     cssColor);
 
             labelWrk = helper.addCheckbox("flipswitch-mailprint-online",
-                    ImapPrinter.isOnline());
+                    MailPrinter.isOnline());
             setFlipswitchOnOffText(labelWrk);
 
         } else {
