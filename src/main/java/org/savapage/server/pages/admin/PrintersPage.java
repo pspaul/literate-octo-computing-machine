@@ -378,8 +378,14 @@ public final class PrintersPage extends AbstractAdminListPage {
         /**
          * @param helper
          *            Mark-up helper.
-         * @param printer
-         *            Printer.
+         * @param enabled
+         *            {@code true} if enabled.
+         * @param png
+         *            PNG source (src).
+         * @param widImg
+         *            Wicket ID.
+         * @param nounTitle
+         *            Title.
          */
         private void addDocStoreImg(final MarkupHelper helper,
                 final boolean enabled, final String png, final String widImg,

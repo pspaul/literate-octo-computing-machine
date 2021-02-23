@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -24,9 +24,13 @@ the License, or (at your option) any later version.
 		<li wicket:id="queues-view">
 			<h3>
 				<wicket:enclosure child="ipp-routing-img">
-					<img width="14" height="14" wicket:id="ipp-routing-img"
-						src="" title="IPP routing" />&nbsp;
+					<img width="14" height="14" wicket:id="ipp-routing-img" src=""
+						title="IPP routing" />&nbsp;
 				</wicket:enclosure>
+				<wicket:enclosure child="img-journal">
+					<img wicket:id="img-journal" src="" style="margin-bottom: -2px;"
+						height="16" />&nbsp;
+                </wicket:enclosure>
 				<span wicket:id="urlPath" />
 			</h3>
 

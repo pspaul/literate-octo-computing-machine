@@ -124,6 +124,9 @@ public final class ReqQueueSet extends ApiRequestMixin {
         jpaQueue.setTrusted(dtoReq.getTrusted());
         jpaQueue.setDisabled(dtoReq.getDisabled());
 
+        QUEUE_SERVICE.setQueueAttrValue(jpaQueue,
+                IppQueueAttrEnum.JOURNAL_DISABLE, dtoReq.getJournalDisabled());
+
         final String keyOK;
 
         if (isNew) {

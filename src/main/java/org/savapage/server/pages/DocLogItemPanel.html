@@ -197,12 +197,27 @@ the License, or (at your option) any later version.
 		</p>
 	</wicket:enclosure>
 	<wicket:enclosure child="origin">
-		<p class="sp-txt-wrap">
-			<span wicket:id="prompt-origin" /> : <span wicket:id="origin" />
-			<wicket:enclosure child="email-ticket">&bull;
+		<p>
+		<div class="sp-txt-wrap">
+			<small> <span wicket:id="prompt-origin" /> : <span
+				wicket:id="origin" /> <wicket:enclosure child="email-ticket">&bull;
             <span wicket:id="prompt-email-ticket" /> : <span
-					wicket:id="email-ticket" />
-			</wicket:enclosure>
+						wicket:id="email-ticket" />
+				</wicket:enclosure> <wicket:enclosure child="email-ticket-completed">&bull;
+            <span class="sp-txt-valid"
+						wicket:id="prompt-email-ticket-completed" /> : <span
+						wicket:id="email-ticket-completed" />
+				</wicket:enclosure> <wicket:enclosure child="email-ticket-failed">&bull;
+            <span class="sp-txt-error"
+						wicket:id="prompt-email-ticket-failed" /> : <span
+						wicket:id="email-ticket-failed" />
+				</wicket:enclosure> <wicket:enclosure child="email-ticket-pending">&bull;
+            <span class="sp-txt-warn"
+						wicket:id="prompt-email-ticket-pending" /> : <span
+						wicket:id="email-ticket-pending" />
+				</wicket:enclosure>
+			</small>
+		</div>
 		</p>
 	</wicket:enclosure>
 

@@ -1178,6 +1178,7 @@
             $('#queue-ip-allowed').val(_model.editQueue.ipallowed);
             _view.checkCb('#queue-trusted', _model.editQueue.trusted);
             _view.checkCb('#queue-disabled', _model.editQueue.disabled);
+            _view.checkCb('#queue-journal-disabled', _model.editQueue.journalDisabled);
             _view.checkCb('#queue-deleted', _model.editQueue.deleted);
 
             if (reserved) {

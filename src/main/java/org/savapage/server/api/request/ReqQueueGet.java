@@ -78,6 +78,7 @@ public final class ReqQueueGet extends ApiRequestMixin {
         private Boolean trusted;
         private Boolean fixedTrust;
         private Boolean disabled;
+        private Boolean journalDisabled;
         private Boolean deleted;
         private String reserved;
         private String uiText;
@@ -131,6 +132,14 @@ public final class ReqQueueGet extends ApiRequestMixin {
 
         public void setDisabled(Boolean disabled) {
             this.disabled = disabled;
+        }
+
+        public Boolean getJournalDisabled() {
+            return journalDisabled;
+        }
+
+        public void setJournalDisabled(Boolean journalDisabled) {
+            this.journalDisabled = journalDisabled;
         }
 
         public Boolean getDeleted() {
@@ -210,6 +219,8 @@ public final class ReqQueueGet extends ApiRequestMixin {
         dtoRsp.setTrusted(queue.getTrusted());
         dtoRsp.setDisabled(queue.getDisabled());
         dtoRsp.setDeleted(queue.getDeleted());
+        dtoRsp.setJournalDisabled(
+                QUEUE_SERVICE.isDocStoreJournalDisabled(queue));
 
         final ReservedIppQueueEnum reservedQueue =
                 QUEUE_SERVICE.getReservedQueue(queue.getUrlPath());

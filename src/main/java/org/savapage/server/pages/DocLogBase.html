@@ -103,11 +103,20 @@ the License, or (at your option) any later version.
 
 				<li>
 					<div class="ui-field-contain">
+
 						<label for="sp-doclog-document-name"
 							wicket:id="prompt-document-name" />
 						<input type="text" id="sp-doclog-document-name" value=""
 							maxlength="128" data-clear-btn="true" />
 					</div>
+					<wicket:enclosure child="prompt-ticket-number-mail">
+						<div class="ui-field-contain">
+							<label for="sp-doclog-ticket-number-mail"
+								wicket:id="prompt-ticket-number-mail" />
+							<input type="text" id="sp-doclog-ticket-number-mail"
+								value="" maxlength="64" data-clear-btn="true" />
+						</div>
+					</wicket:enclosure>
 				</li>
 
 				<li>
@@ -138,9 +147,11 @@ the License, or (at your option) any later version.
 			                if not it is just a header.
 			                -->
 							</wicket:remove>
-							<option value="0">-
-								<wicket:message key="option-all" /> -
-							</option>
+							<wicket:enclosure child="option-queue-all">
+								<option value="0">- <span wicket:id="option-queue-all" />
+									-
+								</option>
+							</wicket:enclosure>
 							<wicket:panel wicket:id="option-list-queues">
 								<option value="the-key" wicket:id="option-queue"></option>
 							</wicket:panel>
@@ -150,14 +161,15 @@ the License, or (at your option) any later version.
 
 				<li class="sp-doclog-cat-out">
 					<div>
-						<div class="ui-field-contain sp-doclog-cat-out-detail">
-							<label for="sp-doc-out-destination" class="sp-txt-wrap"
-								wicket:id="prompt-destination" />
-							<input type="text" id="sp-doc-out-destination" value=""
-								data-clear-btn="true" maxlength="128" autocomplete="off"
-								autocorrect="off" autocapitalize="off" spellcheck="false" />
-						</div>
-
+						<wicket:enclosure child="prompt-destination">
+							<div class="ui-field-contain sp-doclog-cat-out-detail">
+								<label for="sp-doc-out-destination" class="sp-txt-wrap"
+									wicket:id="prompt-destination" />
+								<input type="text" id="sp-doc-out-destination" value=""
+									data-clear-btn="true" maxlength="128" autocomplete="off"
+									autocorrect="off" autocapitalize="off" spellcheck="false" />
+							</div>
+						</wicket:enclosure>
 						<wicket:enclosure child="prompt-letterhead">
 							<div class="ui-field-contain sp-doclog-cat-out-detail">
 								<fieldset data-role="controlgroup" data-type="horizontal"
@@ -259,9 +271,11 @@ the License, or (at your option) any later version.
 	                                if not it is just a header.
 	                                -->
 										</wicket:remove>
-										<option value="0">-
-											<wicket:message key="option-all" /> -
-										</option>
+										<wicket:enclosure child="option-printer-all">
+											<option value="0">- <span
+													wicket:id="option-printer-all" /> -
+											</option>
+										</wicket:enclosure>
 										<wicket:panel wicket:id="option-list-printers">
 											<option value="the-key" wicket:id="option-printer"></option>
 										</wicket:panel>
@@ -336,17 +350,21 @@ the License, or (at your option) any later version.
 							<input type="radio" name="sp-doclog-sort-by"
 								id="sp-doclog-sort-by-name" value="name" />
 
-							<label class="sp-doclog-cat-queue" for="sp-doclog-sort-by-queue"
-								wicket:id="sort-by-queue" />
-							<input class="sp-doclog-cat-queue" type="radio"
-								name="sp-doclog-sort-by" id="sp-doclog-sort-by-queue"
-								value="queue" />
+							<wicket:enclosure child="sort-by-queue">
+								<label class="sp-doclog-cat-queue" for="sp-doclog-sort-by-queue"
+									wicket:id="sort-by-queue" />
+								<input class="sp-doclog-cat-queue" type="radio"
+									name="sp-doclog-sort-by" id="sp-doclog-sort-by-queue"
+									value="queue" />
+							</wicket:enclosure>
 
-							<label class="sp-doclog-cat-printer"
-								for="sp-doclog-sort-by-printer" wicket:id="sort-by-printer" />
-							<input class="sp-doclog-cat-printer" type="radio"
-								name="sp-doclog-sort-by" id="sp-doclog-sort-by-printer"
-								value="printer" />
+							<wicket:enclosure child="sort-by-printer">
+								<label class="sp-doclog-cat-printer"
+									for="sp-doclog-sort-by-printer" wicket:id="sort-by-printer" />
+								<input class="sp-doclog-cat-printer" type="radio"
+									name="sp-doclog-sort-by" id="sp-doclog-sort-by-printer"
+									value="printer" />
+							</wicket:enclosure>
 
 							<label for="sp-doclog-sort-dir-asc" wicket:id="sort-asc" />
 							<input type="radio" name="sp-doclog-sort-dir"

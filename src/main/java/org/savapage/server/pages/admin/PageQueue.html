@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -64,6 +64,16 @@ the License, or (at your option) any later version.
 			</fieldset>
 		</li>
 
+		<wicket:enclosure child="queue-journal">
+			<li>
+				<span wicket:id="queue-journal" />
+				<div class="ui-mini">
+					<label for="queue-journal-disabled" wicket:id="journal-disabled" />
+					<input type="checkbox" id="queue-journal-disabled" value="0" />
+				</div>
+			</li>
+		</wicket:enclosure>
+
 		<li id="ipp-routing-prompt-section">
 			<legend wicket:id="ipp-routing-prompt" />
 
@@ -100,7 +110,8 @@ the License, or (at your option) any later version.
 
 	<a href="#" data-rel="back" data-direction="reverse"
 		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-		id="button-cancel-queue"> <wicket:message key="button-cancel" />
+		id="button-cancel-queue">
+		<wicket:message key="button-cancel" />
 	</a>
 
 </div>

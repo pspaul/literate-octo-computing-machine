@@ -1197,6 +1197,7 @@
                 _model.editQueue.urlpath = $('#queue-url-path').val();
                 _model.editQueue.ipallowed = $('#queue-ip-allowed').val();
                 _model.editQueue.disabled = $('#queue-disabled').is(':checked');
+                _model.editQueue.journalDisabled = $('#queue-journal-disabled').is(':checked');
                 _model.editQueue.deleted = $('#queue-deleted').is(':checked');
                 _model.editQueue.trusted = $('#queue-trusted').is(':checked');
 

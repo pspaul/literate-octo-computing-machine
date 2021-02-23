@@ -45,11 +45,14 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.IppQueueAttrEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
 import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
@@ -86,6 +89,10 @@ public final class QueuesPage extends AbstractAdminListPage {
     /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
+
+    /** */
+    private static final DocStoreService DOC_STORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
 
     /** */
     private static final QueueService QUEUE_SERVICE =
@@ -227,6 +234,9 @@ public final class QueuesPage extends AbstractAdminListPage {
         /***/
         private final boolean hasAccessDoc;
 
+        /** */
+        private final boolean isJournalEnabled;
+
         /**
          *
          * @param id
@@ -265,6 +275,40 @@ public final class QueuesPage extends AbstractAdminListPage {
             this.isEditor = isEditor;
             this.hasAccessDoc = ACCESS_CONTROL_SERVICE.hasAccess(
                     SpSession.get().getUserIdDto(), ACLOidEnum.A_DOCUMENTS);
+            this.isJournalEnabled = DOC_STORE_SERVICE.isEnabled(
+                    DocStoreTypeEnum.JOURNAL, DocStoreBranchEnum.IN_PRINT);
+        }
+
+        /**
+         * @param helper
+         *            Mark-up helper.
+         * @param enabled
+         *            {@code true} if enabled.
+         * @param png
+         *            PNG source (src).
+         * @param widImg
+         *            Wicket ID.
+         * @param nounTitle
+         *            Title.
+         */
+        private void addDocStoreJournalImg(final MarkupHelper helper,
+                final boolean enabled, final String png, final String widImg,
+                final NounEnum nounTitle) {
+
+            if (enabled) {
+
+                final StringBuilder imgSrc = new StringBuilder();
+                imgSrc.setLength(0);
+                imgSrc.append(WebApp.PATH_IMAGES).append('/');
+                imgSrc.append(png);
+
+                MarkupHelper.modifyLabelAttr(
+                        helper.addModifyLabelAttr(widImg, MarkupHelper.ATTR_SRC,
+                                imgSrc.toString()),
+                        MarkupHelper.ATTR_TITLE, nounTitle.uiText(getLocale()));
+            } else {
+                helper.discloseLabel(widImg);
+            }
         }
 
         @Override
@@ -336,6 +380,11 @@ public final class QueuesPage extends AbstractAdminListPage {
                 MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_CLASS,
                         SparklineHtml.CSS_CLASS_QUEUE);
             }
+
+            this.addDocStoreJournalImg(helper,
+                    this.isJournalEnabled
+                            && !QUEUE_SERVICE.isDocStoreJournalDisabled(queue),
+                    "journal-16x16.png", "img-journal", NounEnum.JOURNAL);
 
             //
             String color = null;

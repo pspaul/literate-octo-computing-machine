@@ -27,6 +27,12 @@ package org.savapage.server.pages.admin;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.IppRoutingEnum;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
+import org.savapage.core.i18n.AdverbEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.services.DocStoreService;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -41,6 +47,10 @@ public final class PageQueue extends AbstractAdminPage {
      */
     private static final long serialVersionUID = 1L;
 
+    /** */
+    private static final DocStoreService DOC_STORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
+
     /**
      * @param parameters
      *            The page parameters.
@@ -49,6 +59,14 @@ public final class PageQueue extends AbstractAdminPage {
         super(parameters, ACLOidEnum.A_QUEUES, RequiredPermission.EDIT);
 
         final MarkupHelper helper = new MarkupHelper(this);
+
+        if (DOC_STORE_SERVICE.isEnabled(DocStoreTypeEnum.JOURNAL,
+                DocStoreBranchEnum.IN_PRINT)) {
+            helper.addLabel("queue-journal", NounEnum.JOURNAL);
+            helper.addLabel("journal-disabled", AdverbEnum.DISABLED);
+        } else {
+            helper.discloseLabel("queue-journal");
+        }
 
         helper.addLabel("ipp-routing-prompt", "IPP Routing Options");
 
