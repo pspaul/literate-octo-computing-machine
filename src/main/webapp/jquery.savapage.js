@@ -1335,7 +1335,10 @@
 
             //
             sel = $('#sp-doclog-ticket-number-mail');
-            present = sel.length > 0 && sel.val().length > 0;
+            present = sel.length > 0;
+            this.input.ticketNumberMailView = present;
+            
+            present = present && sel.val().length > 0;
             this.input.select.ticket_number_mail = (present ? sel.val() : null);
         },
 
@@ -1343,6 +1346,7 @@
         input: {
             page: 1,
             maxResults: 10,
+            ticketNumberMailView: null,
             select: {
                 date_from: null,
                 date_to: null,

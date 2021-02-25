@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -697,6 +698,43 @@ public class DocLogItemPanel extends Panel {
      * @param obj
      *            Item.
      * @param locale
+     *            Locale.
+     */
+    private void populatePrintOutMailPrintTicket(final MarkupHelper helper,
+            final Map<String, String> mapVisible, final DocLogItem obj,
+            final Locale locale) {
+
+        final Map<String, MailPrintData> map = obj.getMailPrintInData();
+        if (map == null || map.isEmpty()) {
+            return;
+        }
+
+        final StringBuilder from = new StringBuilder();
+        final StringBuilder ticket = new StringBuilder();
+
+        for (final Entry<String, MailPrintData> entry : map.entrySet()) {
+            final MailPrintData data = entry.getValue();
+            from.append(data.getFromAddress()).append(" ");
+            ticket.append(entry.getKey()).append(" ");
+        }
+
+        mapVisible.put("prompt-origin",
+                PrepositionEnum.FROM_LOCATION.uiText(getLocale()));
+        mapVisible.put("origin", from.toString().trim());
+
+        mapVisible.put("prompt-email-ticket",
+                JobTicketNounEnum.TICKET.uiText(getLocale()));
+        mapVisible.put("email-ticket", ticket.toString().trim());
+    }
+
+    /**
+     * @param helper
+     *            HTML helper
+     * @param mapVisible
+     * @param obj
+     *            Item.
+     * @param locale
+     *            Locale.
      */
     private void populateDocOutPrintTicket(final MarkupHelper helper,
             final Map<String, String> mapVisible, final DocLogItem obj,
@@ -742,6 +780,9 @@ public class DocLogItemPanel extends Panel {
             ticketNumber = null;
             ticketOperator = null;
             ticketLabel = null;
+
+            this.populatePrintOutMailPrintTicket(helper, mapVisible, obj,
+                    locale);
 
             mapVisible.put("jobticket-tag-plain", obj.getExtId());
             helper.discloseLabel(WID_IMG_JOB_SHEET);
@@ -797,7 +838,6 @@ public class DocLogItemPanel extends Panel {
 
         mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
 
-        //
         final String mediaSource = obj.getIppOptionMap()
                 .getOptionValue(IppDictJobTemplateAttr.ATTR_MEDIA_SOURCE);
 

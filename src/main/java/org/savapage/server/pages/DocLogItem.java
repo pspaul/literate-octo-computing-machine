@@ -35,6 +35,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.map.HashedMap;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.savapage.core.SpException;
@@ -65,6 +67,7 @@ import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.MailPrintData;
 import org.savapage.core.services.helpers.PrintSupplierData;
 import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.core.util.DateUtil;
@@ -156,6 +159,7 @@ public final class DocLogItem {
     private List<AccountTrx> transactions;
 
     private List<PrintOut> printOutOfDocIn;
+    private Map<String, MailPrintData> mailPrintInData;
 
     public Long getDocLogId() {
         return docLogId;
@@ -245,6 +249,14 @@ public final class DocLogItem {
 
     public void setPrintOutOfDocIn(List<PrintOut> printOutOfDocIn) {
         this.printOutOfDocIn = printOutOfDocIn;
+    }
+
+    public Map<String, MailPrintData> getMailPrintInData() {
+        return mailPrintInData;
+    }
+
+    public void setMailPrintInData(Map<String, MailPrintData> mailPrintInData) {
+        this.mailPrintInData = mailPrintInData;
     }
 
     public String getHeader() {
@@ -343,7 +355,7 @@ public final class DocLogItem {
 
         protected static final String QPARM_EXTERNAL_ID_TEXT = "externalIdText";
 
-        protected abstract String getExtraWhere(DocLogPagerReq req);
+        protected abstract String getExtraWhereAnd(DocLogPagerReq req);
 
         protected abstract String getExtraJoin();
 
@@ -371,21 +383,24 @@ public final class DocLogItem {
                 jpql.append(" ").append(join);
             }
 
+            int nWhere = 0;
             //
             final String whereCommon = getWhereCommon(userId, req);
             if (whereCommon != null) {
                 jpql.append(" WHERE ").append(whereCommon);
+                nWhere++;
             }
 
             //
-            final String where = getExtraWhere(req);
+            final String where = getExtraWhereAnd(req);
             if (where != null) {
-                if (whereCommon == null) {
+                if (nWhere == 0) {
                     jpql.append(" WHERE ");
                 } else {
                     jpql.append(" AND ");
                 }
                 jpql.append(where);
+                nWhere++;
             }
 
             return jpql.toString();
@@ -449,9 +464,6 @@ public final class DocLogItem {
 
             jpql.append(getSelectString(em, false, userId, req));
 
-            /*
-             *
-             */
             final DocLogDao.FieldEnum orderBy = req.getSort().getSortField();
             final boolean sortAscending = req.getSort().getAscending();
 
@@ -731,6 +743,12 @@ public final class DocLogItem {
                                             docLog));
                         }
 
+                        if (BooleanUtils
+                                .isTrue(req.getTicketNumberMailView())) {
+                            log.setMailPrintInData(this
+                                    .getMailPrintInData(docInOutDao, printOut));
+                        }
+
                     } else if (pdfOut != null) {
 
                         log.setDocType(DocLogDao.Type.PDF);
@@ -756,7 +774,49 @@ public final class DocLogItem {
                 list.add(log);
             }
             return list;
+        }
 
+        /**
+         * {@link MailPrintData} by Ticket (key) related to {@link PrintOut}.
+         *
+         * @param docInOutDao
+         *            DAO.
+         * @param printOut
+         *            {@link PrintOut}.
+         * @return {@link MailPrintData} map by Ticket key.
+         */
+        private Map<String, MailPrintData> getMailPrintInData(
+                final DocInOutDao docInOutDao, final PrintOut printOut) {
+
+            final QueueService svc =
+                    ServiceContext.getServiceFactory().getQueueService();
+
+            final Map<String, MailPrintData> map = new HashedMap<>();
+
+            for (final DocIn docIn : docInOutDao
+                    .getDocInOfDocOut(printOut.getDocOut().getId())) {
+
+                final DocLog docLog = docIn.getDocLog();
+
+                if (StringUtils.isBlank(docLog.getExternalId())
+                        || StringUtils.isBlank(docLog.getExternalData())
+                        || docIn.getPrintIn() == null) {
+                    continue;
+                }
+
+                if (svc.getReservedQueue(docIn.getPrintIn().getQueue()
+                        .getUrlPath()) != ReservedIppQueueEnum.MAILPRINT) {
+                    continue;
+                }
+
+                final MailPrintData obj =
+                        MailPrintData.createFromData(docLog.getExternalData());
+
+                if (obj != null) {
+                    map.put(docLog.getExternalId(), obj);
+                }
+            }
+            return map;
         }
 
         /**
@@ -846,11 +906,19 @@ public final class DocLogItem {
 
             if (ticketNumberMail != null) {
                 if (nWhere > 0) {
-                    where.append(" AND ");
+                    where.append(" AND (");
                 }
                 nWhere++;
+
                 where.append("lower(D.externalId) like :")
                         .append(QPARM_TICKET_NUMBER_MAIL);
+
+                where.append(" OR (");
+                where.append("SELECT COUNT(XIO.docIn.docLog.id) "
+                        + "FROM DocInOut XIO WHERE XIO.docOut = D.docOut "
+                        + "AND lower(XIO.docIn.docLog.externalId) like :");
+                where.append(QPARM_TICKET_NUMBER_MAIL).append(") > 0");
+                where.append(")");
             }
 
             if (nWhere == 0) {
@@ -910,7 +978,7 @@ public final class DocLogItem {
         }
 
         @Override
-        public final String getExtraWhere(final DocLogPagerReq req) {
+        public final String getExtraWhereAnd(final DocLogPagerReq req) {
             return null;
         }
 
@@ -932,7 +1000,7 @@ public final class DocLogItem {
     private static class QIn extends AbstractQuery {
 
         @Override
-        protected String getExtraWhere(final DocLogPagerReq req) {
+        protected String getExtraWhereAnd(final DocLogPagerReq req) {
             String jpql = null;
             Long id = req.getSelect().getQueueId();
             if (id != null && id > 0) {
@@ -972,7 +1040,7 @@ public final class DocLogItem {
     private static class QOut extends AbstractQuery {
 
         @Override
-        protected String getExtraWhere(final DocLogPagerReq req) {
+        protected String getExtraWhereAnd(final DocLogPagerReq req) {
 
             final String selSignature = req.getSelect().getSignature();
             final String selDestination = req.getSelect().getDestination();
@@ -1051,14 +1119,14 @@ public final class DocLogItem {
      */
     private static class QPdf extends QOut {
         @Override
-        protected String getExtraWhere(final DocLogPagerReq req) {
+        protected String getExtraWhereAnd(final DocLogPagerReq req) {
 
             int nWhere = 0;
 
             final StringBuilder where = new StringBuilder();
 
             //
-            final String extraWhere = super.getExtraWhere(req);
+            final String extraWhere = super.getExtraWhereAnd(req);
             if (extraWhere != null) {
                 where.append(extraWhere);
                 nWhere++;
@@ -1175,14 +1243,14 @@ public final class DocLogItem {
     private static class QPrint extends QOut {
 
         @Override
-        protected String getExtraWhere(final DocLogPagerReq req) {
+        protected String getExtraWhereAnd(final DocLogPagerReq req) {
 
             int nWhere = 0;
 
             final StringBuilder where = new StringBuilder();
 
             //
-            String extraWhere = super.getExtraWhere(req);
+            String extraWhere = super.getExtraWhereAnd(req);
             if (extraWhere != null) {
                 where.append(extraWhere);
                 nWhere++;
@@ -1313,14 +1381,14 @@ public final class DocLogItem {
     private static class QTicket extends QPrint {
 
         @Override
-        protected String getExtraWhere(final DocLogPagerReq req) {
+        protected String getExtraWhereAnd(final DocLogPagerReq req) {
 
             int nWhere = 0;
 
             final StringBuilder where = new StringBuilder();
 
             //
-            final String extraWhere = super.getExtraWhere(req);
+            final String extraWhere = super.getExtraWhereAnd(req);
             if (extraWhere != null) {
                 where.append(extraWhere);
                 nWhere++;
@@ -1371,6 +1439,7 @@ public final class DocLogItem {
                 }
             }
         }
+
     }
 
     /** */
