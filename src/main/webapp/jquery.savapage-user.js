@@ -1494,6 +1494,7 @@
             _view.showApiMsg(res);
             _view.pages.main.refreshPagesOnShow = true;
             if (replace && res.result.code === '0') {
+                _model.refreshUniqueImgUrlValue4Browser();
                 _view.changePage($('#page-main'));
             }
         };
