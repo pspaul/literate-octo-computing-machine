@@ -64,15 +64,13 @@ the License, or (at your option) any later version.
 			</fieldset>
 		</li>
 
-		<wicket:enclosure child="queue-journal">
-			<li>
-				<span wicket:id="queue-journal" />
-				<div class="ui-mini">
-					<label for="queue-journal-disabled" wicket:id="journal-disabled" />
-					<input type="checkbox" id="queue-journal-disabled" value="0" />
-				</div>
-			</li>
-		</wicket:enclosure>
+		<li id="queue-journal-disabled-li">
+			<span wicket:id="queue-journal" />
+			<div class="ui-mini">
+				<label for="queue-journal-disabled" wicket:id="journal-disabled" />
+				<input type="checkbox" id="queue-journal-disabled" value="0" />
+			</div>
+		</li>
 
 		<li id="ipp-routing-prompt-section">
 			<legend wicket:id="ipp-routing-prompt" />
