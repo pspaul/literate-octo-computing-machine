@@ -28,7 +28,8 @@ the License, or (at your option) any later version.
 				<ul data-role="listview" data-inset="true">
 					<li>
 						<div class="ui-field-contain">
-							<fieldset data-role="controlgroup" data-type="horizontal">
+							<fieldset data-role="controlgroup" data-type="horizontal"
+								class="sp-jqm-fieldset-radio">
 								<label for="" wicket:id="auth-method-none-label" />
 								<input type="radio" name="" id="" wicket:id="auth-method-none" />
 								<label for="" wicket:id="auth-method-unix-label" />
@@ -456,7 +457,8 @@ the License, or (at your option) any later version.
 							<wicket:message key="user-auth-mode-default" />
 						</h3>
 						<div class="ui-field-contain">
-							<fieldset data-role="controlgroup" data-type="vertical">
+							<fieldset data-role="controlgroup" data-type="vertical"
+								class="sp-jqm-fieldset-radio">
 								<label for="" wicket:id="user-auth-mode-default-user-label" />
 								<input type="radio" name="" id=""
 									wicket:id="user-auth-mode-default-user" />
@@ -1162,7 +1164,7 @@ the License, or (at your option) any later version.
 						</div>
 					</wicket:enclosure>
 					<div data-role="collapsible" data-collapsed="true"
-					data-collapsed-icon="sp-file-type-csv" 
+						data-collapsed-icon="sp-file-type-csv"
 						class="sp-download-papercut-delegator-cost-enabled"
 						style="margin-top: 20px;">
 						<h3>

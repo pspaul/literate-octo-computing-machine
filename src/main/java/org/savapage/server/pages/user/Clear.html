@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -25,7 +25,8 @@ the License, or (at your option) any later version.
 
 	<span class="sp-txt-wrap"><wicket:message key="clear-range" /></span>
 
-	<fieldset data-role="controlgroup" data-type="vertical">
+	<fieldset data-role="controlgroup" data-type="vertical"
+		class="sp-jqm-fieldset-radio">
 
 		<input type="radio" name="clear-pages" id="clear-pages-all"
 			value="clear-pages-all" checked="checked" />
@@ -53,7 +54,7 @@ the License, or (at your option) any later version.
 		autocapitalize="off" spellcheck="false" />
 
 	<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
-		wicket:id="button-clear" id="button-clear-pages-ok"/>
+		wicket:id="button-clear" id="button-clear-pages-ok" />
 
 	<a href="#" data-rel="back" data-direction="reverse"
 		wicket:id="button-back" id="button-clear-pages-cancel"

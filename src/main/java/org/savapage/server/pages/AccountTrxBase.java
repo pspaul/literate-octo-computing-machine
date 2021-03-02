@@ -31,6 +31,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.AccountTrxTypeEnum;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
+import org.savapage.core.i18n.AdjectiveEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
@@ -197,6 +199,10 @@ public final class AccountTrxBase extends AbstractAuthPage {
             helper.addModifyLabelAttr("accountImage", "", "src",
                     MarkupHelper.getImgUrlPath(accountType));
         }
+
+        helper.addLabel("prompt-sort-by", NounEnum.SORTING);
+        helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
+        helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);
 
     }
 

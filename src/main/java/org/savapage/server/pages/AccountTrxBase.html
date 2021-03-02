@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -51,78 +51,78 @@ the License, or (at your option) any later version.
 						maxlength="128" data-clear-btn="true" autocomplete="off"
 						autocorrect="off" autocapitalize="off" spellcheck="false" />
 
-					<fieldset data-role="controlgroup" data-type="horizontal"
-						class="ui-mini">
+					<div class="ui-field-contain">
+						<fieldset data-role="controlgroup" data-type="horizontal"
+							class="ui-mini sp-jqm-fieldset-radio">
 
-						<legend>
-							<wicket:message key="prompt-type" />
-						</legend>
+							<legend>
+								<wicket:message key="prompt-type" />
+							</legend>
 
-						<label for="sp-accounttrx-select-type-all">
-							<wicket:message key="type-all" />
-						</label>
-						<input type="radio" name="sp-accounttrx-select-type"
-							id="sp-accounttrx-select-type-all" value="" checked="checked" />
+							<label for="sp-accounttrx-select-type-all">
+								<wicket:message key="type-all" />
+							</label>
+							<input type="radio" name="sp-accounttrx-select-type"
+								id="sp-accounttrx-select-type-all" value="" checked="checked" />
 
-						<label for="sp-accounttrx-select-type-initial">
-							<wicket:message key="type-initial" />
-						</label>
-						<input type="radio" name="sp-accounttrx-select-type"
-							id="sp-accounttrx-select-type-initial"
-							wicket:id="accounttrx-select-type-initial" value="enum" />
+							<label for="sp-accounttrx-select-type-initial">
+								<wicket:message key="type-initial" />
+							</label>
+							<input type="radio" name="sp-accounttrx-select-type"
+								id="sp-accounttrx-select-type-initial"
+								wicket:id="accounttrx-select-type-initial" value="enum" />
 
-						<label for="sp-accounttrx-select-type-adjust">
-							<wicket:message key="type-adjust" />
-						</label>
-						<input type="radio" name="sp-accounttrx-select-type"
-							id="sp-accounttrx-select-type-adjust"
-							wicket:id="accounttrx-select-type-adjust" value="enum" />
+							<label for="sp-accounttrx-select-type-adjust">
+								<wicket:message key="type-adjust" />
+							</label>
+							<input type="radio" name="sp-accounttrx-select-type"
+								id="sp-accounttrx-select-type-adjust"
+								wicket:id="accounttrx-select-type-adjust" value="enum" />
 
-						<label for="sp-accounttrx-select-type-deposit">
-							<wicket:message key="type-deposit" />
-						</label>
-						<input type="radio" name="sp-accounttrx-select-type"
-							id="sp-accounttrx-select-type-deposit"
-							wicket:id="accounttrx-select-type-deposit" value="enum" />
+							<label for="sp-accounttrx-select-type-deposit">
+								<wicket:message key="type-deposit" />
+							</label>
+							<input type="radio" name="sp-accounttrx-select-type"
+								id="sp-accounttrx-select-type-deposit"
+								wicket:id="accounttrx-select-type-deposit" value="enum" />
 
-						<!--  -->
-						<label for="sp-accounttrx-select-type-gateway">
-							<wicket:message key="type-gateway" />
-						</label>
-						<input type="radio" name="sp-accounttrx-select-type"
-							id="sp-accounttrx-select-type-gateway"
-							wicket:id="accounttrx-select-type-gateway" value="enum" />
+							<!--  -->
+							<label for="sp-accounttrx-select-type-gateway">
+								<wicket:message key="type-gateway" />
+							</label>
+							<input type="radio" name="sp-accounttrx-select-type"
+								id="sp-accounttrx-select-type-gateway"
+								wicket:id="accounttrx-select-type-gateway" value="enum" />
 
-						<label for="sp-accounttrx-select-type-transfer">
-							<wicket:message key="type-transfer" />
-						</label>
-						<input type="radio" name="sp-accounttrx-select-type"
-							id="sp-accounttrx-select-type-transfer"
-							wicket:id="accounttrx-select-type-transfer" value="enum" />
+							<label for="sp-accounttrx-select-type-transfer">
+								<wicket:message key="type-transfer" />
+							</label>
+							<input type="radio" name="sp-accounttrx-select-type"
+								id="sp-accounttrx-select-type-transfer"
+								wicket:id="accounttrx-select-type-transfer" value="enum" />
 
-						<label for="sp-accounttrx-select-type-voucher">
-							<wicket:message key="type-voucher" />
-						</label>
-						<input type="radio" name="sp-accounttrx-select-type"
-							id="sp-accounttrx-select-type-voucher"
-							wicket:id="accounttrx-select-type-voucher" value="enum" />
+							<label for="sp-accounttrx-select-type-voucher">
+								<wicket:message key="type-voucher" />
+							</label>
+							<input type="radio" name="sp-accounttrx-select-type"
+								id="sp-accounttrx-select-type-voucher"
+								wicket:id="accounttrx-select-type-voucher" value="enum" />
 
-						<label for="sp-accounttrx-select-type-printin">
-							<wicket:message key="type-printin" />
-						</label>
-						<input type="radio" name="sp-accounttrx-select-type"
-							id="sp-accounttrx-select-type-printin"
-							wicket:id="accounttrx-select-type-printin" value="enum" />
+							<label for="sp-accounttrx-select-type-printin">
+								<wicket:message key="type-printin" />
+							</label>
+							<input type="radio" name="sp-accounttrx-select-type"
+								id="sp-accounttrx-select-type-printin"
+								wicket:id="accounttrx-select-type-printin" value="enum" />
 
-						<label for="sp-accounttrx-select-type-printout">
-							<wicket:message key="type-printout" />
-						</label>
-						<input type="radio" name="sp-accounttrx-select-type"
-							id="sp-accounttrx-select-type-printout"
-							wicket:id="accounttrx-select-type-printout" value="enum" />
-
-					</fieldset>
-
+							<label for="sp-accounttrx-select-type-printout">
+								<wicket:message key="type-printout" />
+							</label>
+							<input type="radio" name="sp-accounttrx-select-type"
+								id="sp-accounttrx-select-type-printout"
+								wicket:id="accounttrx-select-type-printout" value="enum" />
+						</fieldset>
+					</div>
 				</li>
 				<li>
 					<span><wicket:message key="prompt-period" /></span>
@@ -143,38 +143,34 @@ the License, or (at your option) any later version.
 				</li>
 
 				<li>
-					<fieldset data-role="controlgroup" data-type="horizontal"
-						class="ui-mini">
-						<legend>
-							<wicket:message key="prompt-sort-by" />
-						</legend>
+					<div class="ui-field-contain">
+						<fieldset data-role="controlgroup" data-type="horizontal"
+							class="ui-mini sp-jqm-fieldset-radio">
 
-						<label for="sp-accounttrx-sort-by-date">
-							<wicket:message key="sort-by-date" />
-						</label>
-						<input type="radio" name="sp-accounttrx-sort-by"
-							id="sp-accounttrx-sort-by-date" checked="checked"
-							value="TRX_DATE" />
+							<legend wicket:id="prompt-sort-by" />
 
-						<label for="sp-accounttrx-sort-by-type">
-							<wicket:message key="sort-by-type" />
-						</label>
-						<input type="radio" name="sp-accounttrx-sort-by"
-							id="sp-accounttrx-sort-by-type" value="TRX_TYPE" />
+							<label for="sp-accounttrx-sort-by-date">
+								<wicket:message key="sort-by-date" />
+							</label>
+							<input type="radio" name="sp-accounttrx-sort-by"
+								id="sp-accounttrx-sort-by-date" checked="checked"
+								value="TRX_DATE" />
 
-						<label for="sp-accounttrx-sort-dir-asc">
-							<wicket:message key="sort-asc" />
-						</label>
-						<input type="radio" name="sp-accounttrx-sort-dir"
-							id="sp-accounttrx-sort-dir-asc" checked="checked" />
+							<label for="sp-accounttrx-sort-by-type">
+								<wicket:message key="sort-by-type" />
+							</label>
+							<input type="radio" name="sp-accounttrx-sort-by"
+								id="sp-accounttrx-sort-by-type" value="TRX_TYPE" />
 
-						<label for="sp-accounttrx-sort-dir-desc">
-							<wicket:message key="sort-desc" />
-						</label>
-						<input type="radio" name="sp-accounttrx-sort-dir"
-							id="sp-accounttrx-sort-dir-desc" />
+							<label for="sp-accounttrx-sort-dir-asc" wicket:id="sort-asc" />
+							<input type="radio" name="sp-accounttrx-sort-dir"
+								id="sp-accounttrx-sort-dir-asc" checked="checked" />
 
-					</fieldset>
+							<label for="sp-accounttrx-sort-dir-desc" wicket:id="sort-desc" />
+							<input type="radio" name="sp-accounttrx-sort-dir"
+								id="sp-accounttrx-sort-dir-desc" />
+						</fieldset>
+					</div>
 				</li>
 
 				<li>
