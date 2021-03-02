@@ -50,6 +50,7 @@ import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.DocLogService;
+import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.InboxService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.OutboxService;
@@ -125,6 +126,10 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
      */
     protected static final DocLogService DOCLOG_SERVICE =
             ServiceContext.getServiceFactory().getDocLogService();
+
+    /** */
+    protected static final DocStoreService DOCSTORE_SERVICE =
+            ServiceContext.getServiceFactory().getDocStoreService();
 
     /**
      * .

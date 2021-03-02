@@ -32,6 +32,8 @@ import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.enums.IppQueueAttrEnum;
 import org.savapage.core.dao.enums.IppRoutingEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.User;
@@ -45,9 +47,7 @@ import org.savapage.core.services.ServiceContext;
 public final class ReqQueueGet extends ApiRequestMixin {
 
     /**
-     *
      * The request.
-     *
      */
     private static class DtoReq extends AbstractDto {
 
@@ -65,10 +65,6 @@ public final class ReqQueueGet extends ApiRequestMixin {
 
     /**
      * The response.
-     */
-    /**
-     * @author Rijk Ravestein
-     *
      */
     public static class DtoRsp extends AbstractDto {
 
@@ -199,19 +195,37 @@ public final class ReqQueueGet extends ApiRequestMixin {
         final DtoReq dtoReq =
                 DtoReq.create(DtoReq.class, this.getParmValueDto());
 
-        final IppQueueDao ippQueueDao =
-                ServiceContext.getDaoContext().getIppQueueDao();
+        final DtoRsp dtoRsp = new DtoRsp();
 
-        final IppQueue queue = ippQueueDao.findById(dtoReq.getId());
+        if (dtoReq.getId() == null) {
+            this.fillResponseNew(dtoRsp);
+        } else {
+            final IppQueueDao ippQueueDao =
+                    ServiceContext.getDaoContext().getIppQueueDao();
+            final IppQueue queue = ippQueueDao.findById(dtoReq.getId());
 
-        if (queue == null) {
-
-            setApiResult(ApiResultCodeEnum.ERROR, "msg-queue-not-found",
-                    dtoReq.getId().toString());
-            return;
+            if (queue == null) {
+                setApiResult(ApiResultCodeEnum.ERROR, "msg-queue-not-found",
+                        dtoReq.getId().toString());
+                return;
+            }
+            this.fillResponse(queue, dtoRsp);
         }
 
-        final DtoRsp dtoRsp = new DtoRsp();
+        this.setResponse(dtoRsp);
+
+        setApiResultOk();
+    }
+
+    /**
+     * Fills response for queue.
+     *
+     * @param queue
+     *            Queue.
+     * @param dtoRsp
+     *            Response.
+     */
+    private void fillResponse(final IppQueue queue, final DtoRsp dtoRsp) {
 
         dtoRsp.setId(queue.getId());
         dtoRsp.setUrlpath(queue.getUrlPath());
@@ -219,8 +233,12 @@ public final class ReqQueueGet extends ApiRequestMixin {
         dtoRsp.setTrusted(queue.getTrusted());
         dtoRsp.setDisabled(queue.getDisabled());
         dtoRsp.setDeleted(queue.getDeleted());
-        dtoRsp.setJournalDisabled(
-                QUEUE_SERVICE.isDocStoreJournalDisabled(queue));
+
+        if (DOCSTORE_SERVICE.isEnabled(DocStoreTypeEnum.JOURNAL,
+                DocStoreBranchEnum.IN_PRINT)) {
+            dtoRsp.setJournalDisabled(
+                    QUEUE_SERVICE.isDocStoreJournalDisabled(queue));
+        }
 
         final ReservedIppQueueEnum reservedQueue =
                 QUEUE_SERVICE.getReservedQueue(queue.getUrlPath());
@@ -268,11 +286,30 @@ public final class ReqQueueGet extends ApiRequestMixin {
         dtoRsp.setIppRouting(ippRouting);
         dtoRsp.setIppOptions(QUEUE_SERVICE.getAttrValue(queue,
                 IppQueueAttrEnum.IPP_ROUTING_OPTIONS));
+    }
 
-        //
-        this.setResponse(dtoRsp);
+    /**
+     * Fills response for default queue.
+     *
+     * @param dtoRsp
+     *            Response.
+     */
+    private void fillResponseNew(final DtoRsp dtoRsp) {
 
-        setApiResultOk();
+        dtoRsp.setId(null);
+        dtoRsp.setUrlpath("untitled");
+        dtoRsp.setIpallowed("");
+        dtoRsp.setTrusted(Boolean.FALSE);
+        dtoRsp.setDisabled(Boolean.FALSE);
+        dtoRsp.setDeleted(Boolean.FALSE);
+        dtoRsp.setReserved(null);
+        dtoRsp.setUiText("Untitled");
+        dtoRsp.setFixedTrust(Boolean.FALSE);
+
+        if (DOCSTORE_SERVICE.isEnabled(DocStoreTypeEnum.JOURNAL,
+                DocStoreBranchEnum.IN_PRINT)) {
+            dtoRsp.setJournalDisabled(Boolean.FALSE);
+        }
     }
 
 }

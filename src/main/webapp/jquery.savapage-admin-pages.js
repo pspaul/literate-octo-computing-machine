@@ -1178,7 +1178,11 @@
             $('#queue-ip-allowed').val(_model.editQueue.ipallowed);
             _view.checkCb('#queue-trusted', _model.editQueue.trusted);
             _view.checkCb('#queue-disabled', _model.editQueue.disabled);
+
+            // check null && undefined
+            _view.visible($('#queue-journal-disabled-li'), _model.editQueue.journalDisabled != null);
             _view.checkCb('#queue-journal-disabled', _model.editQueue.journalDisabled);
+
             _view.checkCb('#queue-deleted', _model.editQueue.deleted);
 
             if (reserved) {
@@ -1231,7 +1235,7 @@
 
         _onChangeJobTicket = function(isTicket) {
             _view.visible($('#printer-jobticket-group-div'), isTicket);
-            _view.visibleCheckboxRadio($('#printer-jobticket-labels'), !isTicket);
+            _view.visibleCheckboxRadio($('#printer-jobticket-labels'), !isTicket && _model.editPrinter.jobTicketLabelsEnabled != null);
         };
 
         /** */
@@ -1350,12 +1354,22 @@
             $('#printer-printergroups').val(_model.editPrinter.printerGroups);
 
             _view.checkCb('#printer-disabled', _model.editPrinter.disabled);
+
+            // check null && undefined
+            _view.visible($('#printer-archive-disabled-li'), _model.editPrinter.archiveDisabled != null);
             _view.checkCb('#printer-archive-disabled', _model.editPrinter.archiveDisabled);
+
+            // check null && undefined
+            _view.visible($('#printer-journal-disabled-li'), _model.editPrinter.journalDisabled != null);
             _view.checkCb('#printer-journal-disabled', _model.editPrinter.journalDisabled);
+
             _view.checkCb('#printer-internal', _model.editPrinter.internal);
             _view.checkCb('#printer-deleted', _model.editPrinter.deleted);
 
             _view.checkCb('#printer-jobticket', _model.editPrinter.jobTicket);
+
+            // check null && undefined
+            _view.visibleCheckboxRadio($('#printer-jobticket-labels'), _model.editPrinter.jobTicketLabelsEnabled != null);
             _view.checkCb('#printer-jobticket-labels', _model.editPrinter.jobTicketLabelsEnabled);
 
             $('#printer-jobticket-group').val(_model.editPrinter.jobTicketGroup);
@@ -2220,7 +2234,7 @@
             });
 
             $(this).on('click', "#button-create-queue", null, function() {
-                _self.onCreateQueue();
+                _self.onEditQueue(null);
                 return false;
             });
 

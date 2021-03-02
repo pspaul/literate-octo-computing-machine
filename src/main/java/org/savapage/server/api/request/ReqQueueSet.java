@@ -33,6 +33,8 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.enums.IppQueueAttrEnum;
 import org.savapage.core.dao.enums.IppRoutingEnum;
+import org.savapage.core.doc.store.DocStoreBranchEnum;
+import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
@@ -124,8 +126,12 @@ public final class ReqQueueSet extends ApiRequestMixin {
         jpaQueue.setTrusted(dtoReq.getTrusted());
         jpaQueue.setDisabled(dtoReq.getDisabled());
 
-        QUEUE_SERVICE.setQueueAttrValue(jpaQueue,
-                IppQueueAttrEnum.JOURNAL_DISABLE, dtoReq.getJournalDisabled());
+        if (DOCSTORE_SERVICE.isEnabled(DocStoreTypeEnum.JOURNAL,
+                DocStoreBranchEnum.IN_PRINT)) {
+            QUEUE_SERVICE.setQueueAttrValue(jpaQueue,
+                    IppQueueAttrEnum.JOURNAL_DISABLE,
+                    dtoReq.getJournalDisabled());
+        }
 
         final String keyOK;
 
