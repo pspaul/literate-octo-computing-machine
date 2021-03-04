@@ -142,14 +142,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         PRINT, COPY
     }
 
-    /**
-     *
-     * @author Rijk Ravestein
-     *
-     */
+    /** */
     @JsonInclude(Include.NON_NULL)
     private static class DtoReq extends AbstractDto {
-
+        private Boolean calcCostMode;
         private String user;
         private String printer;
         private String readerName;
@@ -178,6 +174,15 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         private Map<String, String> options;
         private PrintDelegationDto delegation;
         private Long accountId;
+
+        public Boolean getCalcCostMode() {
+            return calcCostMode;
+        }
+
+        @SuppressWarnings("unused")
+        public void setCalcCostMode(Boolean calcCostMode) {
+            this.calcCostMode = calcCostMode;
+        }
 
         @SuppressWarnings("unused")
         public String getUser() {
@@ -437,6 +442,21 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
                     && (!this.delegation.getGroups().isEmpty()
                             || !this.delegation.getUsers().isEmpty()
                             || !this.delegation.getCopies().isEmpty());
+        }
+    }
+
+    /** */
+    @JsonInclude(Include.NON_NULL)
+    private static class DtoRspCost extends AbstractDto {
+        private String cost;
+
+        @SuppressWarnings("unused")
+        public String getCost() {
+            return cost;
+        }
+
+        public void setCost(String cost) {
+            this.cost = cost;
         }
     }
 
@@ -952,6 +972,16 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         printReq.setCostResult(costResult);
+
+        // Cost mode?
+        if (BooleanUtils.isTrue(dtoReq.getCalcCostMode())) {
+            final DtoRspCost rsp = new DtoRspCost();
+            rsp.setCost(BigDecimalUtil.localize(costResult.getCostTotal(), 2,
+                    getLocale(), currencySymbol, true));
+            this.setResponse(rsp);
+            this.setApiResultOk();
+            return;
+        }
 
         /*
          * Save ticket labels as latest choice.

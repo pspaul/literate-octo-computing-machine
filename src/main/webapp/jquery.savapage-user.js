@@ -1736,7 +1736,6 @@
                 selTitle.val(sel.text());
             }
             _model.myPrintTitle = selTitle.val();
-
         };
 
         /*
@@ -4358,7 +4357,7 @@
                 return isJobTicket ? _view.getRadioValue('sp-print-jobticket-type') || _model.TICKETTYPE_PRINT : _model.TICKETTYPE_PRINT;
             },
 
-            _onPrint = function(isClose) {
+            _onPrint = function(isClose, calcCostMode) {
                 var clearScope = null,
                     isJobticket = _model.myPrinter.jobTicket,
                     separateDocs = null,
@@ -4375,17 +4374,13 @@
                 }
                 separateDocs = selWlk.length > 0 ? _view.isCbChecked(selWlk) : null;
 
-                _this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics"))
-                    //
+                return _this.onPrint(clearScope, isClose, _view.isCbChecked($("#print-remove-graphics"))
                     , _view.isCbChecked($("#print-ecoprint")), _view.isCbChecked($("#print-collate"))
-                    //
                     , _view.isCbChecked($('#print-archive-print-job'))
-                    //
                     , _isDelegatedPrint(), separateDocs
-                    //
                     , isJobticket, _getJobTicketType(_model.myPrinter.jobTicket)
-                    //
-                    , _view.isCbChecked($('#cb-nup-preview-landscape')));
+                    , _view.isCbChecked($('#cb-nup-preview-landscape'))
+                    , calcCostMode);
             },
 
             _onPrintAsync = function() {
@@ -4394,6 +4389,19 @@
                     _onPrint(true);
                     $.mobile.loading("hide");
                 });
+            },
+
+            _onPrintPopup = function(src) {
+                var res = _onPrint(false, true);
+                if (res.result.code === "0") {
+                    $('#sp-popup-print-and-close-cost').html(res.dto.cost);
+                    $('#sp-popup-print-and-close').popup('open', {
+                        positionTo: src ? src : 'window',
+                        arrow: 'b'
+                    });
+                } else {
+                    _view.showApiMsg(res);
+                }
             },
 
             _onJobTicketType = function(ticketType) {
@@ -4709,6 +4717,19 @@
                 return false;
             });
 
+            $('#button-print-and-close-popup').click(function(e) {
+                _onPrintPopup($(this));
+                return false;
+            });
+            $('#button-print-and-close-popup-cancel').click(function(e) {
+                $('#sp-popup-print-and-close').popup('close');
+                return false;
+            });
+            $('#button-print-and-close-popup-ok').click(function(e) {
+                $('#sp-popup-print-and-close').popup('close');
+                _onPrintAsync();
+                return false;
+            });
             $('#button-print-and-close').click(function(e) {
                 _onPrintAsync();
                 return false;
@@ -6917,7 +6938,9 @@
         /**
          * Callbacks: page print
          */
-        _view.pages.print.onPrint = function(clearScope, isClose, removeGraphics, ecoprint, collate, archive, isDelegation, separateDocs, isJobticket, jobTicketType, landscapeView) {
+        _view.pages.print.onPrint = function(clearScope, isClose, removeGraphics,
+            ecoprint, collate, archive, isDelegation, separateDocs, isJobticket,
+            jobTicketType, landscapeView, calcCostMode) {
 
             var res,
                 sel,
@@ -6969,6 +6992,7 @@
             res = _api.call({
                 request: 'printer-print',
                 dto: JSON.stringify({
+                    calcCostMode: calcCostMode,
                     user: _model.user.id,
                     accountId: accountId,
                     printer: _model.myPrinter.name,
@@ -6999,20 +7023,21 @@
                     jobTicketRemark: isJobticket ? $('#sp-jobticket-remark').val() : null
                 })
             });
-
+            if (calcCostMode) {
+                return res;
+            }
             if (res.requestStatus === 'NEEDS_AUTH') {
 
                 _view.pages.print.clearInput();
                 _model.closePrintDlg = isClose;
 
-                _proxyprintEvent.poll(_model.user.key_id, _model.myPrinter.name, _model.myPrinterReaderName, _model.language, _model.country);
+                _proxyprintEvent.poll(_model.user.key_id, _model.myPrinter.name,
+                    _model.myPrinterReaderName, _model.language, _model.country);
 
                 _view.visible($('#auth-popup-content-wait'), true);
                 _view.visible($('#auth-popup-content-msg'), false);
 
-                /*
-                 * Financial.
-                 */
+                // Financial.
                 cost = res.formattedCost;
                 visible = (cost !== null);
 
@@ -7026,19 +7051,12 @@
                     sel.text(cost);
                 }
 
-                /*
-                 * Countdown start.
-                 */
+                // Countdown start.
                 $('#sp-print-auth-countdown').text(res.printAuthExpirySecs);
 
-                /*
-                 *
-                 */
                 $('#sp-popup-print-auth').popup('open', {});
 
-                /*
-                 * Countdown timer.
-                 */
+                // Countdown timer.
                 _countdownAuthPrint = res.printAuthExpirySecs - 1;
                 _timeoutAuthPrint = window.setInterval(function() {
                     $('#sp-print-auth-countdown').text(_countdownAuthPrint);
