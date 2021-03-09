@@ -2514,7 +2514,7 @@
     /**
      * Constructor
      */
-    function PageMain(_i18n, _view, _model) {
+    function PageMain(_i18n, _view, _model, _api) {
         var _this = this,
             _util = _ns.Utils,
             _IMG_PADDING = 3,
@@ -2557,6 +2557,38 @@
                     }
                     i = i + 1;
                 });
+            },
+            //
+            _quickMailTicketSearch,
+            //
+            _onQuickMailTicketSearchProps = function(props) {
+                props.userId = _model.user.key_id;
+            },
+            _onQuickMailTicketSearchItemDisplay = function(item) {
+                var clazz = item.docStore ? 'sp-txt-valid' : 'sp-txt-warn',
+                    html = '<span class="' + clazz + ' sp-font-monospace">'
+                        + item.text + '</span><span class="sp-txt-info"> &bull; '
+                        + item.email;
+                if (item.printOutJobs) {
+                    html += ' &bull; &#128438;&nbsp;' + item.printOutJobs;
+                }
+                html += '</span>';
+                return html;
+            },
+            _onQuickMailTicketSearchSelect = function(quickSelected) {
+                var replace = _view.isCbChecked($('#sp-quick-search-mailticket-mode-replace')),
+                    res = _api.call({
+                        'request': 'inbox-restore-printin',
+                        'dto': JSON.stringify({
+                            'docLogId': quickSelected.key,
+                            'replace': replace
+                        })
+                    });
+                $('#sp-quick-search-mailticket').val('');
+                _view.showApiMsg(res);
+            },
+            _onQuickMailTicketSearchClear = function() {
+                $.noop();
             };
 
         // for now ...
@@ -3333,18 +3365,12 @@
                 return false;
             });
 
-            $('.sp-btn-about-org').click(function() {
-                _view.showPageAsync('#page-info', 'AppAbout');
-                return false;
-            });
-
             $('#button-mini-upload').click(function() {
                 var pageId = '#page-file-upload';
                 /*
                  * This page is a fixed part of WebAppUserPage.html
                  */
                 _view.changePage(pageId);
-
                 return false;
             });
 
@@ -3464,6 +3490,7 @@
 
             $('#button-browser').click(function() {
                 _view.changePage($('#page-browser'));
+                _view.pages.pagebrowser.adjustSlider(1);
                 return false;
             });
 
@@ -3665,6 +3692,13 @@
                 return false;
             });
 
+            if ($('#sp-quick-search-mailticket-filter').length) {
+                _quickMailTicketSearch = new _ns.QuickObjectSearch(_view, _api);
+                _quickMailTicketSearch.onCreate($(this), 'sp-quick-search-mailticket-filter'
+                    , 'mailticket-quick-search', _onQuickMailTicketSearchProps
+                    , _onQuickMailTicketSearchItemDisplay
+                    , _onQuickMailTicketSearchSelect, _onQuickMailTicketSearchClear);
+            }
             // Last, but not least!!
             _this.onCreated();
 
@@ -6324,7 +6358,6 @@
         // ----------------------------------------------------
         // Common Panel parameters.
         // ----------------------------------------------------
-
         _ns.PanelCommon.view = _view;
         _ns.PanelCommon.api = _api;
         _ns.PanelCommon.userId = _model.user.id;
@@ -7732,7 +7765,7 @@
             creditTransfer: new PageCreditTransfer(_i18n, _view, _model),
             moneyTransfer: new PageMoneyTransfer(_i18n, _view, _model),
             pdfprop: new PagePdfProp(_i18n, _view, _model),
-            main: new PageMain(_i18n, _view, _model),
+            main: new PageMain(_i18n, _view, _model, _api),
             print: new PagePrint(_i18n, _view, _model, _api),
             printDelegation: new _ns.PagePrintDelegation(_i18n, _view, _model, _api),
             printSettings: new PagePrintSettings(_i18n, _view, _model),

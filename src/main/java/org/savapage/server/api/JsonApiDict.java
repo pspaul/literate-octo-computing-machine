@@ -59,6 +59,7 @@ import org.savapage.server.api.request.ReqJobTicketSaveOptions;
 import org.savapage.server.api.request.ReqLogin;
 import org.savapage.server.api.request.ReqLogout;
 import org.savapage.server.api.request.ReqMailTest;
+import org.savapage.server.api.request.ReqMailTicketQuickSearch;
 import org.savapage.server.api.request.ReqOAuthUrl;
 import org.savapage.server.api.request.ReqOutboxCancelAll;
 import org.savapage.server.api.request.ReqOutboxCancelJob;
@@ -197,6 +198,9 @@ public final class JsonApiDict {
 
     public static final String REQ_JOBTICKET_QUICK_SEARCH =
             "jobticket-quick-search";
+
+    public static final String REQ_MAILTICKET_QUICK_SEARCH =
+            "mailticket-quick-search";
 
     public static final String REQ_PAPERCUT_TEST = "papercut-test";
 
@@ -1030,6 +1034,9 @@ public final class JsonApiDict {
 
         put(REQ_JOBTICKET_QUICK_SEARCH, ReqJobTicketQuickSearch.class,
                 AuthReq.NONE, DbClaim.NONE, DbAccess.NO);
+
+        put(REQ_MAILTICKET_QUICK_SEARCH, ReqMailTicketQuickSearch.class,
+                AuthReq.USER, DbClaim.READ, DbAccess.YES);
 
         usr(REQ_JQPLOT, DbClaim.NONE, DbAccess.YES);
         non(REQ_LANGUAGE);

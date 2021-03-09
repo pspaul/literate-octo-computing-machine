@@ -66,11 +66,6 @@ the License, or (at your option) any later version.
 			</a>
 		</wicket:enclosure>
 
-		<wicket:enclosure child="button-mini-about">
-			<a wicket:id="button-mini-about" tabindex="0"
-				class="sp-anchor sp-btn-about ui-btn ui-btn-icon-notext ui-icon-main-header-about" />
-		</wicket:enclosure>
-
 	</div>
 </div>
 
@@ -171,6 +166,52 @@ the License, or (at your option) any later version.
 				</li>
 			</ul>
 		</div>
+
+		<wicket:enclosure child="ticket-input">
+			<div
+				style="max-width: 430px; padding-left: 15px; margin-left: auto; margin-right: auto; border: 0;">
+
+				<table style="width: 100%; padding: 0px; margin: 0px;">
+					<tr>
+						<td>
+							<input wicket:id="ticket-input" type="text" style="width: 100%;"
+								id="sp-quick-search-mailticket" value="" placeholder=""
+								maxlength="32" data-type="search" autocomplete="off"
+								autocorrect="off" autocapitalize="off" spellcheck="false"
+								data-clear-btn="true" />
+						</td>
+						<td>
+							<fieldset data-role="controlgroup" data-type="horizontal"
+								class="ui-mini" style="margin: 0; opacity: 1.0;">
+
+								<label for="sp-quick-search-mailticket-mode-replace"
+									wicket:id="mailticket-mode-replace"
+									class="sp-quick-search-mailticket-mode-btn">
+									<span class="ui-icon-refresh ui-btn-icon-notext sp-inline-icon" />
+								</label>
+								<input type="radio" name="sp-quick-search-mailticket-mode"
+									checked="checked" id="sp-quick-search-mailticket-mode-replace"
+									value="1" />
+
+								<label for="sp-quick-search-mailticket-mode-add"
+									wicket:id="mailticket-mode-add"
+									class="sp-quick-search-mailticket-mode-btn">
+									<span class="ui-icon-plus ui-btn-icon-notext sp-inline-icon" />
+								</label>
+								<input type="radio" name="sp-quick-search-mailticket-mode"
+									id="sp-quick-search-mailticket-mode-add" value="0" />
+							</fieldset>
+
+						</td>
+					</tr>
+				</table>
+
+				<ul id="sp-quick-search-mailticket-filter" data-role="listview"
+					data-filter="true" data-input="#sp-quick-search-mailticket"
+					data-filter-theme="a" data-inset="true"
+					style="margin: 0; float: right; width: 100%;" />
+			</div>
+		</wicket:enclosure>
 
 	</div>
 

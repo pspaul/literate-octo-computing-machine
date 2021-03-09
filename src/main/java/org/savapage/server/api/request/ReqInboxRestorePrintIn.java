@@ -114,8 +114,8 @@ public final class ReqInboxRestorePrintIn extends ApiRequestMixin {
                 srcPdf = DOCSTORE_SERVICE.retrievePdf(DocStoreTypeEnum.JOURNAL,
                         docLog);
             } catch (DocStoreException e1) {
-                this.setApiResultText(ApiResultCodeEnum.ERROR,
-                        "DocLog not stored.");
+                this.setApiResult(ApiResultCodeEnum.WARN,
+                        "msg-inbox-restore-printin-unavailable");
                 return;
             }
         }
@@ -146,11 +146,14 @@ public final class ReqInboxRestorePrintIn extends ApiRequestMixin {
             msgKey = "msg-inbox-restore-printin-added";
         }
 
-        AdminPublisher.instance().publish(PubTopicEnum.USER, PubLevelEnum.INFO,
-                String.format("%s \"%s\" - %s",
-                        NounEnum.USER.uiText(getLocale()), requestingUser,
-                        this.localize(msgKey)));
-
+        boolean adminMsg = false; // for now
+        if (adminMsg) {
+            AdminPublisher.instance().publish(PubTopicEnum.USER,
+                    PubLevelEnum.INFO,
+                    String.format("%s \"%s\" - %s",
+                            NounEnum.USER.uiText(getLocale()), requestingUser,
+                            this.localize(msgKey)));
+        }
         this.setApiResult(ApiResultCodeEnum.OK, msgKey);
     }
 

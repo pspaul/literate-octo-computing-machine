@@ -24,266 +24,294 @@
  * For more information, please contact Datraverse B.V. at this
  * address: info@datraverse.com
  */
-
 .main_actions {
+	
 }
+
 .main_action_base {
+	
 }
 /*--Main Container--*/
 .fit_width {
-    width: 95%;
+	width: 95%;
 }
 
 .sp-overflow-scroll {
-    overflow: scroll;
+	overflow: scroll;
 }
 
 .image_reel img {
-    position: relative;
-    top: 0;
-    left: 0;
-    /* width: 100%; */
-    margin: 0 auto; /* center */
-    display: none;
+	position: relative;
+	top: 0;
+	left: 0;
+	/* width: 100%; */
+	margin: 0 auto; /* center */
+	display: none;
 }
+
 img.active {
-    display: block;
+	display: block;
 }
+
 .thumbnail_viewport {
-    position: relative;
-    overflow: hidden; /*scroll;*/
-    z-index: 2;
-    border: 1px silver solid;
-    margin-bottom: 0px;
-    /* border-bottom: 0px; */
-    padding-top: 7px;
-    padding-bottom: 7px;
+	position: relative;
+	overflow: hidden; /*scroll;*/
+	z-index: 2;
+	border: 1px silver solid;
+	margin-bottom: 0px;
+	/* border-bottom: 0px; */
+	padding-top: 7px;
+	padding-bottom: 7px;
 }
+
 .thumbnail_viewport_empty {
-    background: url(/images/savapage-banner.png) 50% 50% no-repeat;
-    height: 162px;
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-    /* IE 5-7 */
-    filter: alpha(opacity=30);
-    /* Netscape */
-    -moz-opacity: 0.3;
-    /* Safari 1.x */
-    -khtml-opacity: 0.3;
-    /* Good browsers */
-    opacity: 0.3;
+	background: url(/images/savapage-banner.png) 50% 50% no-repeat;
+	height: 162px;
+	/* IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	/* IE 5-7 */
+	filter: alpha(opacity = 30);
+	/* Netscape */
+	-moz-opacity: 0.3;
+	/* Safari 1.x */
+	-khtml-opacity: 0.3;
+	/* Good browsers */
+	opacity: 0.3;
 }
+
 .thumbnail_reel {
-    position: relative;
-    z-index: 1;
+	position: relative;
+	z-index: 1;
 }
+
 .thumbnail_reel div {
-    float: left;
+	float: left;
 }
+
 .main_selected {
-    background: gray;
+	background: gray;
 }
+
 .sp-ipp-media-info-match {
-    color: #006600;
-    padding: 2px;
-    border: 1px #DDDDDD solid;
+	color: #006600;
+	padding: 2px;
+	border: 1px #DDDDDD solid;
 }
 
 /* !important is needed to override JQM style */
 .sp-print-job-media-info {
-    background: #FAF0E6 !important;
+	background: #FAF0E6 !important;
 }
 
 .sp-ipp-media-info-none {
-    color: #DC5C05;
-    padding: 2px;
-    border: 1px #DDDDDD solid;
+	color: #DC5C05;
+	padding: 2px;
+	border: 1px #DDDDDD solid;
 }
 
 .sp-ipp-media-info-fit {
-    color: #DC5C05;
-    padding: 2px;
-    border: 1px #006600 solid;
+	color: #DC5C05;
+	padding: 2px;
+	border: 1px #006600 solid;
 }
 
 .sp-thumbnail-cut {
-    background: red;
+	background: red;
 }
+
 .sp-thumbnail-selected {
-    background: orange;
+	background: orange;
 }
 
 .sp-thumbnail-subscript-job-expired {
-    background: #fff2e6 !important;
+	background: #fff2e6 !important;
 }
 
 .thumbnail_reel img {
+	
 }
+
 .thumbnail_reel p {
-    font-size: small;
-    width: 100%;
-    text-align: center;
-    padding: 0px;
-    margin: 0px;
-    border: 0px silver dotted;
+	font-size: small;
+	width: 100%;
+	text-align: center;
+	padding: 0px;
+	margin: 0px;
+	border: 0px silver dotted;
 }
+
 .thumbnail_nav {
-    padding: 5px;
-    margin-top: -7px;
-    z-index: 3;
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    color: rgb(96,96,96);
-    background: rgb(228,228,228);
-    font-weight: bold;
-    /* border: 1px silver solid; */
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-    /* IE 5-7 */
-    filter: alpha(opacity=30);
-    /* Netscape */
-    -moz-opacity: 0.3;
-    /* Safari 1.x */
-    -khtml-opacity: 0.3;
-    /* Good browsers */
-    opacity: 0.3;
-    /* prevent a tap-hold from display of select popup */
-    -moz-user-select: none;
-    -webkit-user-select: none;
+	padding: 5px;
+	margin-top: -7px;
+	z-index: 3;
+	width: 40px;
+	height: 40px;
+	text-align: center;
+	color: rgb(96, 96, 96);
+	background: rgb(228, 228, 228);
+	font-weight: bold;
+	/* border: 1px silver solid; */
+	/* IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	/* IE 5-7 */
+	filter: alpha(opacity = 30);
+	/* Netscape */
+	-moz-opacity: 0.3;
+	/* Safari 1.x */
+	-khtml-opacity: 0.3;
+	/* Good browsers */
+	opacity: 0.3;
+	/* prevent a tap-hold from display of select popup */
+	-moz-user-select: none;
+	-webkit-user-select: none;
 }
+
 .thumbnail_nav_l {
-    position: absolute;
-    background: url(/images/nav-l-30x30.png) 50% 50% no-repeat;
-    /* prevent a tap-hold from display of select popup */
-    -moz-user-select: none;
-    -webkit-user-select: none;
+	position: absolute;
+	background: url(/images/nav-l-30x30.png) 50% 50% no-repeat;
+	/* prevent a tap-hold from display of select popup */
+	-moz-user-select: none;
+	-webkit-user-select: none;
 }
+
 .thumbnail_nav_r {
-    position: absolute;
-    background: url(/images/nav-r-30x30.png) 50% 50% no-repeat;
-    /* prevent a tap-hold from display of select popup */
-    -moz-user-select: none;
-    -webkit-user-select: none;
+	position: absolute;
+	background: url(/images/nav-r-30x30.png) 50% 50% no-repeat;
+	/* prevent a tap-hold from display of select popup */
+	-moz-user-select: none;
+	-webkit-user-select: none;
 }
+
 .poll_button {
-    color: silver;
-    text-decoration: none;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 10px;
+	color: silver;
+	text-decoration: none;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 10px;
 }
+
 a:link.poll_button {
+	
 }
+
 a:active.poll_button {
+	
 }
+
 a:visited.poll_button {
+	
 }
+
 a:hover.poll_button {
+	
 }
+
 .mini_button_selected {
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-    /* IE 5-7 */
-    filter: alpha(opacity=30);
-    /* Netscape */
-    -moz-opacity: 0.3;
-    /* Safari 1.x */
-    -khtml-opacity: 0.3;
-    /* Good browsers */
-    opacity: 0.3;
+	/* IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	/* IE 5-7 */
+	filter: alpha(opacity = 30);
+	/* Netscape */
+	-moz-opacity: 0.3;
+	/* Safari 1.x */
+	-khtml-opacity: 0.3;
+	/* Good browsers */
+	opacity: 0.3;
 }
 
 .print_collate_sheet_first {
-    width: 15px;
-    height: 18px;
-    background-color: white;
-    border: 1px silver solid;
-    font-size: 11px;
-    text-align: right;
-    margin-top: -10px;
-    padding: 2px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px;
-    border-radius: 3px;
+	width: 15px;
+	height: 18px;
+	background-color: white;
+	border: 1px silver solid;
+	font-size: 11px;
+	text-align: right;
+	margin-top: -10px;
+	padding: 2px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
 }
+
 .print_collate_sheet_next {
-    width: 15px;
-    height: 18px;
-    background-color: white;
-    border: 1px silver solid;
-    font-size: 11px;
-    text-align: right;
-    margin-left: 9px;
-    padding: 2px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px;
-    border-radius: 3px;
+	width: 15px;
+	height: 18px;
+	background-color: white;
+	border: 1px silver solid;
+	font-size: 11px;
+	text-align: right;
+	margin-left: 9px;
+	padding: 2px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
 }
 
 #page-user-internet-printer .ui-dialog-contain {
-    width: 80%;
-    max-width: 1920px;
-    margin: 15px auto 15px auto;
-    padding: 0;
-    position: relative;
-    top: 15px;
+	width: 80%;
+	max-width: 1920px;
+	margin: 15px auto 15px auto;
+	padding: 0;
+	position: relative;
+	top: 15px;
 }
 
 #page-print .ui-dialog-contain {
-    margin: 15px auto 15px auto;
-    padding: 0;
-    position: relative;
-    top: 5px;
+	margin: 15px auto 15px auto;
+	padding: 0;
+	position: relative;
+	top: 5px;
 }
 
 #page-printer-settings .ui-dialog-contain {
-    margin: 15px auto 15px auto;
-    padding: 0;
-    position: relative;
-    top: 5px;
+	margin: 15px auto 15px auto;
+	padding: 0;
+	position: relative;
+	top: 5px;
 }
 
 #page-pdf-properties  .ui-dialog-contain {
-    margin: 15px auto 15px auto;
-    padding: 0;
-    position: relative;
-    top: 5px;
+	margin: 15px auto 15px auto;
+	padding: 0;
+	position: relative;
+	top: 5px;
 }
 
 #page-print-delegation .ui-dialog-contain {
-    width: 92.5%;
-    max-width: 1920px;
-    margin: 15px auto 15px auto;
-    padding: 0;
-    position: relative;
-    top: 5px;
+	width: 92.5%;
+	max-width: 1920px;
+	margin: 15px auto 15px auto;
+	padding: 0;
+	position: relative;
+	top: 5px;
 }
 
 #page-doclog .ui-content {
-    margin-left: auto;
-    margin-right: auto;
-    width: 90%;
-    max-width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	max-width: 700px;
 }
 
 #page-accounttrx .ui-content {
-    margin-left: auto;
-    margin-right: auto;
-    width: 90%;
-    max-width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	max-width: 700px;
 }
 
 .sp-canvas-drawing-mode-select-prop {
+	
 }
 
 .sp-canvas-drawing-select-color {
+	
 }
 
 .sp-canvas-color-fixed {
-    border: 1px solid gray !important;
+	border: 1px solid gray !important;
 }
 
 /* end-of-file */
