@@ -576,6 +576,20 @@ public abstract class AbstractPage extends WebPage
     }
 
     /**
+     * @param oid
+     *            The OID.
+     * @return {@code true} if session user has {@link ACLPermissionEnum#EDITOR}
+     *         permission.
+     */
+    protected final boolean hasPermissionToEdit(final ACLOidEnum oid) {
+        try {
+            return this.probePermissionToEdit(oid);
+        } catch (RestartResponseException e) {
+            return false;
+        }
+    }
+
+    /**
      * @return The {@link UserAgentHelper}.
      */
     protected final UserAgentHelper createUserAgentHelper() {

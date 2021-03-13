@@ -53,6 +53,7 @@ public final class DocLogPage extends AbstractListPage {
 
     private static final long serialVersionUID = 1L;
 
+    /** */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(DocLogPage.class);
 
@@ -72,14 +73,20 @@ public final class DocLogPage extends AbstractListPage {
     }
 
     /**
-     *
+     * @param parameters
+     *            Page parameters.
      */
     public DocLogPage(final PageParameters parameters) {
 
         super(parameters);
 
+        final boolean isAccountsEditor;
+
         if (this.getSessionWebAppType() == WebAppTypeEnum.ADMIN) {
             this.probePermissionToRead(ACLOidEnum.A_DOCUMENTS);
+            isAccountsEditor = this.hasPermissionToEdit(ACLOidEnum.A_ACCOUNTS);
+        } else {
+            isAccountsEditor = false;
         }
 
         final String data = getParmValue(POST_PARM_DATA);
@@ -87,9 +94,6 @@ public final class DocLogPage extends AbstractListPage {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("data : {}", data);
         }
-
-        final boolean isAccountsEditor =
-                this.probePermissionToEdit(ACLOidEnum.A_ACCOUNTS);
 
         final boolean showFinancialData;
 
