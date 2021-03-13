@@ -1337,7 +1337,7 @@
             sel = $('#sp-doclog-ticket-number-mail');
             present = sel.length > 0;
             this.input.ticketNumberMailView = present;
-            
+
             present = present && sel.val().length > 0;
             this.input.select.ticket_number_mail = (present ? sel.val() : null);
         },
@@ -1486,8 +1486,11 @@
                 target.html(html).filterable("refresh");
             };
 
-        this.onCreate = function(parent, filterId, request, onFilterProps, onDisplayObject, onSelectObject, onClearObject, onQuickSearchBefore) {
-            var filterableObjectId = $("#" + filterId);
+        this.onCreate = function(parent, filterId, request, onFilterProps,
+            onDisplayObject, onSelectObject, onClearObject, onQuickSearchBefore,
+            listItemSelector) {
+
+            var filterableObjectId = $("#" + filterId), clickSelector;
 
             _this = this;
 
@@ -1502,15 +1505,21 @@
                 _onQuickObjectSearch($(this), request, data.input.get(0).value, onFilterProps, onDisplayObject);
             });
 
-            parent.on('click', '#' + filterId + ' li', null, function() {
-                var attr = "data-savapage";
-                _quickObjectSelected = _quickObjectCache[$(this).attr(attr)];
+            clickSelector = '#' + filterId + ' li';
+            if (listItemSelector) {
+                clickSelector += ' ' + listItemSelector;
+            }
+
+            parent.on('click', clickSelector, null, function(event) {
+                var attr = "data-savapage",
+                    selListItem = listItemSelector ? $(this).closest('li') : $(this),
+                    iCache = selListItem.attr(attr);
+                _quickObjectSelected = _quickObjectCache[iCache];
                 filterableObjectId.empty().filterable("refresh");
                 if (_this.onSelectObject) {
-                    _this.onSelectObject(_quickObjectSelected);
+                    _this.onSelectObject(_quickObjectSelected, event);
                 }
             });
-
         };
     };
 

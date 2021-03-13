@@ -169,42 +169,13 @@ the License, or (at your option) any later version.
 
 		<wicket:enclosure child="ticket-input">
 			<div
-				style="max-width: 430px; padding-left: 15px; margin-left: auto; margin-right: auto; border: 0;">
+				style="max-width: 420px; margin-left: auto; margin-right: auto; border: 0;">
 
-				<table style="width: 100%; padding: 0px; margin: 0px;">
-					<tr>
-						<td>
-							<input wicket:id="ticket-input" type="text" style="width: 100%;"
-								id="sp-quick-search-mailticket" value="" placeholder=""
-								maxlength="32" data-type="search" autocomplete="off"
-								autocorrect="off" autocapitalize="off" spellcheck="false"
-								data-clear-btn="true" />
-						</td>
-						<td>
-							<fieldset data-role="controlgroup" data-type="horizontal"
-								class="ui-mini" style="margin: 0; opacity: 1.0;">
-
-								<label for="sp-quick-search-mailticket-mode-replace"
-									wicket:id="mailticket-mode-replace"
-									class="sp-quick-search-mailticket-mode-btn">
-									<span class="ui-icon-refresh ui-btn-icon-notext sp-inline-icon" />
-								</label>
-								<input type="radio" name="sp-quick-search-mailticket-mode"
-									checked="checked" id="sp-quick-search-mailticket-mode-replace"
-									value="1" />
-
-								<label for="sp-quick-search-mailticket-mode-add"
-									wicket:id="mailticket-mode-add"
-									class="sp-quick-search-mailticket-mode-btn">
-									<span class="ui-icon-plus ui-btn-icon-notext sp-inline-icon" />
-								</label>
-								<input type="radio" name="sp-quick-search-mailticket-mode"
-									id="sp-quick-search-mailticket-mode-add" value="0" />
-							</fieldset>
-
-						</td>
-					</tr>
-				</table>
+				<input wicket:id="ticket-input" type="text" style="width: 100%;"
+					id="sp-quick-search-mailticket" value="" placeholder=""
+					maxlength="32" data-type="search" autocomplete="off"
+					autocorrect="off" autocapitalize="off" spellcheck="false"
+					data-clear-btn="true" />
 
 				<ul id="sp-quick-search-mailticket-filter" data-role="listview"
 					data-filter="true" data-input="#sp-quick-search-mailticket"

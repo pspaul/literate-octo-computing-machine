@@ -278,14 +278,6 @@ public class Main extends AbstractUserPage {
             helper.addTransparentAppendAttr("ticket-input",
                     MarkupHelper.ATTR_PLACEHOLDER,
                     JobTicketNounEnum.TICKET.uiText(getLocale()));
-
-            helper.addTransparentAppendAttr("mailticket-mode-add",
-                    MarkupHelper.ATTR_TITLE,
-                    HtmlButtonEnum.ADD.uiText(getLocale()));
-
-            helper.addTransparentAppendAttr("mailticket-mode-replace",
-                    MarkupHelper.ATTR_TITLE,
-                    HtmlButtonEnum.REPLACE.uiText(getLocale()));
         } else {
             helper.discloseLabel("ticket-input");
         }
@@ -360,8 +352,9 @@ public class Main extends AbstractUserPage {
             userId = "";
             userName = "";
         } else {
-            userName = StringUtils.defaultString(userIdDto.getFullName());
             userId = userIdDto.getUserId();
+            userName =
+                    StringUtils.defaultIfBlank(userIdDto.getFullName(), userId);
         }
 
         final boolean showUserBalance = ACCESS_CONTROL_SERVICE.hasPermission(

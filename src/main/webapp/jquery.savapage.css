@@ -541,4 +541,15 @@ span.sp-ipp-icon {
 	top: 5px;
 }
 
+.sp-ui-footer.ui-footer {
+	background-color: rgba(248, 248, 248, 0.6) !important;
+	padding: 0px 0px 5px 0px;
+	margin: 0px 0px 0px 5px;
+	border: 0px;
+}
+
+.sp-ui-footer .ui-controlgroup-horizontal {
+	margin: 0px;
+}
+
 /* end-of-file */

@@ -2563,29 +2563,50 @@
             //
             _onQuickMailTicketSearchProps = function(props) {
                 props.userId = _model.user.key_id;
+                props.docStore = true;
             },
             _onQuickMailTicketSearchItemDisplay = function(item) {
-                var clazz = item.docStore ? 'sp-txt-valid' : 'sp-txt-warn',
-                    html = '<span class="' + clazz + ' sp-font-monospace">'
-                        + item.text + '</span><span class="sp-txt-info"> &bull; '
-                        + item.email;
-                if (item.printOutJobs) {
-                    html += ' &bull; &#128438;&nbsp;' + item.printOutJobs;
-                }
+                var html = '',
+                    btnClass = 'sp-quick-search-mailticket-item-btn ' +
+                        'ui-btn ui-input-btn ui-corner-all ui-shadow ' +
+                        'ui-btn-inline ui-btn-icon-notext',
+                    clazz = item.docStore ? 'sp-txt-valid' : 'sp-txt-warn';
+
+                html += '<button class="ui-icon-plus ' + btnClass + '" />';
+                html += '<button class="sp-quick-search-mailticket-item-btn-replace ui-icon-refresh ' + btnClass + '" />';
+
+                html += '<span class="sp-txt-wrap ' + clazz + ' sp-font-monospace">'
+                    + item.text + '</span><span class="sp-txt-info"> &bull; ' + item.email;
                 html += '</span>';
+                html += '<div style="font-weight: normal;" class="sp-txt-wrap sp-txt-info">';
+                if (item.printOutJobs) {
+                    html += '&nbsp;<img src="/images/printer-26x26.png" height="12"/>&nbsp;'
+                        + item.printOutJobs
+                        + '&nbsp;&bull;&nbsp;';
+                }
+                html += item.title + ' &bull; ' + item.paperSize + ' &bull; ' +
+                    item.pages + ' &bull; ' + item.byteCount + '</div>';
+
                 return html;
             },
-            _onQuickMailTicketSearchSelect = function(quickSelected) {
-                var replace = _view.isCbChecked($('#sp-quick-search-mailticket-mode-replace')),
-                    res = _api.call({
-                        'request': 'inbox-restore-printin',
-                        'dto': JSON.stringify({
-                            'docLogId': quickSelected.key,
-                            'replace': replace
-                        })
-                    });
-                $('#sp-quick-search-mailticket').val('');
+            _onQuickMailTicketSearchSelect = function(quickSelected, event) {
+                var res, replace = $(event.target).hasClass('sp-quick-search-mailticket-item-btn-replace');
+                if (replace) {
+                    _model.refreshUniqueImgUrlValues();
+                }
+                res = _api.call({
+                    'request': 'inbox-restore-printin',
+                    'dto': JSON.stringify({
+                        'docLogId': quickSelected.key,
+                        'replace': replace
+                    })
+                });
+                // click the clear button.
+                $('#sp-quick-search-mailticket').next('a').click();
                 _view.showApiMsg(res);
+                if (res.result.code === '0') {
+                    this.onExpandPage(0);
+                }
             },
             _onQuickMailTicketSearchClear = function() {
                 $.noop();
@@ -3693,11 +3714,14 @@
             });
 
             if ($('#sp-quick-search-mailticket-filter').length) {
+
                 _quickMailTicketSearch = new _ns.QuickObjectSearch(_view, _api);
+
                 _quickMailTicketSearch.onCreate($(this), 'sp-quick-search-mailticket-filter'
                     , 'mailticket-quick-search', _onQuickMailTicketSearchProps
                     , _onQuickMailTicketSearchItemDisplay
-                    , _onQuickMailTicketSearchSelect, _onQuickMailTicketSearchClear);
+                    , _onQuickMailTicketSearchSelect, _onQuickMailTicketSearchClear
+                    , null, '.sp-quick-search-mailticket-item-btn');
             }
             // Last, but not least!!
             _this.onCreated();

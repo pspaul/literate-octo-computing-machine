@@ -34,9 +34,10 @@ import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.dto.AbstractDto;
-import org.savapage.core.dto.QuickSearchFilterJobTicketDto;
+import org.savapage.core.dto.QuickSearchFilterMailTicketDto;
 import org.savapage.core.dto.QuickSearchItemDto;
 import org.savapage.core.dto.QuickSearchMailTicketItemDto;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.helpers.MailPrintData;
 import org.savapage.server.pages.DocLogItem;
@@ -73,12 +74,11 @@ public final class ReqMailTicketQuickSearch extends ApiRequestMixin {
     protected void onRequest(final String requestingUser, final User lockedUser)
             throws IOException {
 
-        final QuickSearchFilterJobTicketDto dto = AbstractDto.create(
-                QuickSearchFilterJobTicketDto.class, this.getParmValueDto());
+        final QuickSearchFilterMailTicketDto dto = AbstractDto.create(
+                QuickSearchFilterMailTicketDto.class, this.getParmValueDto());
 
         //
         final DocLogPagerReq req = new DocLogPagerReq();
-        req.setPage(1);
         req.setMaxResults(dto.getMaxResults());
         req.setTicketNumberMailView(Boolean.TRUE);
 
@@ -97,29 +97,61 @@ public final class ReqMailTicketQuickSearch extends ApiRequestMixin {
                 DocLogItem.createQuery(DocLogDao.Type.IN);
 
         //
-        final List<QuickSearchItemDto> list = new ArrayList<>();
+        final List<QuickSearchItemDto> resultList = new ArrayList<>();
+        int nPage = 0;
 
-        for (final DocLogItem log : query.getListChunk(em, dto.getUserId(), req,
-                getLocale())) {
+        while (true) {
 
-            final QuickSearchMailTicketItemDto item =
-                    new QuickSearchMailTicketItemDto();
+            nPage++;
+            req.setPage(nPage);
 
-            item.setKey(log.getDocLogId());
-            item.setText(log.getExtId());
-            item.setEmail(MailPrintData.createFromData(log.getExtData())
-                    .getFromAddress());
-            item.setDocStore(log.isPrintArchive() || log.isPrintJournal());
+            final List<DocLogItem> itemListWlk =
+                    query.getListChunk(em, dto.getUserId(), req, getLocale());
 
-            if (log.getPrintOutOfDocIn() != null
-                    && log.getPrintOutOfDocIn().size() > 0) {
-                item.setPrintOutJobs(log.getPrintOutOfDocIn().size());
+            for (final DocLogItem log : itemListWlk) {
+
+                final boolean hasDocStore =
+                        log.isPrintArchive() || log.isPrintJournal();
+
+                if (dto.isDocStore() && !hasDocStore) {
+                    continue;
+                }
+
+                final QuickSearchMailTicketItemDto item =
+                        new QuickSearchMailTicketItemDto();
+
+                item.setKey(log.getDocLogId());
+                item.setText(log.getExtId());
+                item.setEmail(MailPrintData.createFromData(log.getExtData())
+                        .getFromAddress());
+                item.setDocStore(hasDocStore);
+
+                if (log.getPrintOutOfDocIn() != null
+                        && log.getPrintOutOfDocIn().size() > 0) {
+                    item.setPrintOutJobs(log.getPrintOutOfDocIn().size());
+                }
+                item.setPaperSize(log.getPaperSize());
+                item.setTitle(log.getTitle());
+                item.setPages(String.format("%d %s", log.getTotalPages(),
+                        NounEnum.PAGE.uiText(getLocale(),
+                                log.getTotalPages() > 1)));
+                item.setByteCount(log.getHumanReadableByteCount());
+
+                resultList.add(item);
+
+                if (resultList.size() == dto.getMaxResults()) {
+                    break;
+                }
             }
-            list.add(item);
+
+            if (resultList.size() == dto.getMaxResults()
+                    || itemListWlk.size() < dto.getMaxResults()) {
+                break;
+            }
         }
 
         final DtoRsp rsp = new DtoRsp();
-        rsp.setItems(list);
+        rsp.setItems(resultList);
 
         setResponse(rsp);
         setApiResultOk();
