@@ -807,7 +807,7 @@ public final class SystemStatusPanel extends Panel {
 
         if (showTechInfo) {
             final long sizeDb = ServiceContext.getDaoContext().getPrintOutDao()
-                    .countActiveCupsJobs();
+                    .countActiveCupsJobs(false);
             size = ProxyPrintJobStatusMonitor.getPendingJobs();
 
             printJobQueue =

@@ -94,7 +94,7 @@ public class Dashboard extends AbstractPrintSitePage {
             helper.addLabel("prompt-pending-cups-jobs",
                     PrintOutNounEnum.JOB.uiText(getLocale(), true));
 
-            final long nJobs = PRINT_OUT_DAO.countActiveCupsJobs();
+            final long nJobs = PRINT_OUT_DAO.countActiveCupsJobs(false);
 
             final String countUsers;
             final String countJobs;
@@ -108,7 +108,7 @@ public class Dashboard extends AbstractPrintSitePage {
                     countUsers = countJobs;
                 } else {
                     countUsers = helper.localizedNumber(
-                            PRINT_OUT_DAO.countActiveCupsJobUsers());
+                            PRINT_OUT_DAO.countActiveCupsJobUsers(false));
                 }
             }
 
