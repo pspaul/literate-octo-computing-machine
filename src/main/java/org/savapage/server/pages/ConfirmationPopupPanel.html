@@ -15,30 +15,20 @@ the License, or (at your option) any later version.
 -->
 </wicket:remove>
 
-<span style="display: none;" class="json-rsp" wicket:id="json-rsp"></span>
-
-<wicket:panel wicket:id="nav-bar-1" />
-<br />
-<div>
-	<ul data-role="listview" data-filter="false">
-		<li wicket:id="doc-entry-view">
-			<wicket:panel wicket:id="doc-entry" />
-		</li>
-	</ul>
-</div>
-<p>&nbsp;</p>
-<wicket:panel wicket:id="nav-bar-2" />
-
-<div data-role="popup" id="sp-doclog-popup" data-theme="a"
-	data-overlay-theme="a" data-arrow="t">
-	<div class="ui-content">
-		<h3 class="ui-title" id="sp-doclog-popup-title">&nbsp;</h3>
-		<div id="sp-doclog-popup-addin" />
+<wicket:panel>
+	<div data-role="popup" id="POPUP-ID" data-theme="a" wicket:id="popup"
+		data-overlay-theme="a" data-arrow="l,t,r,b" class="ui-content">
+		<h4 class="ui-title" wicket:id="title" />
+		<div class="sp-txt-warn sp-txt-wrap" wicket:id="msg" />
+		<br />
 		<a href="#" data-rel="back"
 			class="ui-btn ui-mini ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" />
+		<button
+			class="sp-ui-btn-ok ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-check"
+			wicket:id="btn-ok" />
+		<button wicket:id="btn-cancel"
+			class="sp-ui-btn-cancel ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-back" />
 	</div>
-</div>
-
-<wicket:panel wicket:id="doclog-store-delete-popup" />
+</wicket:panel>
 
 </html>

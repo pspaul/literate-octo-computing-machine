@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -49,6 +48,7 @@ import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DocLogDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.PrintInDeniedReasonEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
@@ -129,6 +129,10 @@ public class DocLogItemPanel extends Panel {
             "btn-doclog-docstore-journal-download";
 
     /** */
+    private static final String WID_BTN_DOCLOG_STORE_DELETE =
+            "btn-doclog-store-delete";
+
+    /** */
     private static final String WID_BTN_INBOX_PRINTIN_RESTORE_ADD =
             "btn-inbox-printin-restore-add";
     /** */
@@ -167,6 +171,12 @@ public class DocLogItemPanel extends Panel {
      */
     private final boolean isAccountsEditor;
 
+    /**
+     * User Web App Privilege bitmask for {@link ACLOidEnum#U_QUEUE_JOURNAL}. If
+     * {@code null}, all privileges are granted.
+     */
+    private final Integer userQueueJournalPrivilege;
+
     /** */
     private static final String[] WICKET_IDS = new String[] { "prompt-user",
             "user-name", "title", "log-comment", "printoutMode",
@@ -196,13 +206,18 @@ public class DocLogItemPanel extends Panel {
      *            If {@code true}, financial data is shown.
      * @param isTicketReopenEnabled
      *            If {@code true}, ticket reopen button is enabled.
-     * @param isAccountsEditor
+     * @param accountsEditor
      *            If {@code true}, session user has permission to edit accounts:
      *            {@link ACLOidEnum#A_ACCOUNTS}.
+     * @param userQueueJournalPriv
+     *            User Web App Privilege bitmask for
+     *            {@link ACLOidEnum#U_QUEUE_JOURNAL}. If {@code null}, all
+     *            privileges are granted.
      */
     public DocLogItemPanel(final String id, final IModel<DocLogItem> model,
             final boolean showFinancialData,
-            final boolean isTicketReopenEnabled, final boolean accountsEditor) {
+            final boolean isTicketReopenEnabled, final boolean accountsEditor,
+            final Integer userQueueJournalPriv) {
 
         super(id, model);
 
@@ -210,12 +225,15 @@ public class DocLogItemPanel extends Panel {
         this.showDocLogCost = showFinancialData;
         this.showTicketReopen = isTicketReopenEnabled;
         this.isAccountsEditor = accountsEditor;
+        this.userQueueJournalPrivilege = userQueueJournalPriv;
     }
 
     /**
-     * 
+     *
+     * @param mapVisible
      * @param helper
      * @param obj
+     * @param extData
      * @param locale
      */
     private void populateMailPrintTicket(final Map<String, String> mapVisible,
@@ -1139,6 +1157,17 @@ public class DocLogItemPanel extends Panel {
     }
 
     /**
+     * @param aclPermission
+     *            {@link ACLPermissionEnum}.
+     * @return {@code true} if permission is granted
+     */
+    private boolean
+            isUserQueuePrivilegeGranted(final ACLPermissionEnum aclPermission) {
+        return this.userQueueJournalPrivilege == null
+                || aclPermission.isPresent(this.userQueueJournalPrivilege);
+    }
+
+    /**
      * @param webAppType
      *            {@link WebAppTypeEnum}.
      * @param helper
@@ -1178,14 +1207,19 @@ public class DocLogItemPanel extends Panel {
                 helper.discloseLabel(WID_IMG_ARCHIVE);
                 helper.discloseLabel(WID_BTN_ARCHIVE_DOWNLOAD);
             }
+            // Image
             imgSrc.append(png);
-
             MarkupHelper.modifyLabelAttr(
                     helper.addModifyLabelAttr(widImg, MarkupHelper.ATTR_SRC,
                             imgSrc.toString()),
                     MarkupHelper.ATTR_TITLE, nounTitle.uiText(getLocale()));
 
-            if (obj.getPrintMode() == PrintModeEnum.TICKET_C) {
+            // Download
+            if (webAppType == WebAppTypeEnum.USER && obj.hasQueueJournal()
+                    && !this.isUserQueuePrivilegeGranted(
+                            ACLPermissionEnum.DOWNLOAD)) {
+                helper.discloseLabel(widBtn);
+            } else if (obj.getPrintMode() == PrintModeEnum.TICKET_C) {
                 helper.discloseLabel(widBtn);
             } else {
                 final Label labelBtn =
@@ -1202,9 +1236,10 @@ public class DocLogItemPanel extends Panel {
                 countButtons++;
             }
 
-            if (webAppType == WebAppTypeEnum.USER
-                    && obj.getDocType() == DocLogDao.Type.IN
-                    && BooleanUtils.isTrue(obj.getPrintInPrinted())) {
+            // Add/Restore Queue Journal?
+            if (webAppType == WebAppTypeEnum.USER && obj.hasQueueJournal()
+                    && this.isUserQueuePrivilegeGranted(
+                            ACLPermissionEnum.SELECT)) {
 
                 MarkupHelper.modifyLabelAttr(MarkupHelper.modifyLabelAttr(
                         helper.encloseLabel(WID_BTN_INBOX_PRINTIN_RESTORE_ADD,
@@ -1232,11 +1267,34 @@ public class DocLogItemPanel extends Panel {
                 helper.discloseLabel(WID_BTN_INBOX_PRINTIN_RESTORE_REPLACE);
             }
 
+            // Delete Queue Journal?
+            if (webAppType == WebAppTypeEnum.USER && obj.hasQueueJournal()
+                    && !this.isUserQueuePrivilegeGranted(
+                            ACLPermissionEnum.DELETE)) {
+                helper.discloseLabel(WID_BTN_DOCLOG_STORE_DELETE);
+            } else if (obj.hasQueueJournal()) {
+                MarkupHelper
+                        .modifyLabelAttr(
+                                MarkupHelper.modifyLabelAttr(
+                                        helper.encloseLabel(
+                                                WID_BTN_DOCLOG_STORE_DELETE,
+                                                "&nbsp;", true),
+                                        MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                        obj.getDocLogId().toString()),
+                                MarkupHelper.ATTR_TITLE,
+                                HtmlButtonEnum.DELETE.uiText(getLocale()))
+                        .setEscapeModelStrings(false);
+                countButtons++;
+            } else {
+                helper.discloseLabel(WID_BTN_DOCLOG_STORE_DELETE);
+            }
+
         } else {
             helper.discloseLabel(WID_IMG_ARCHIVE);
             helper.discloseLabel(WID_IMG_JOURNAL);
             helper.discloseLabel(WID_BTN_ARCHIVE_DOWNLOAD);
             helper.discloseLabel(WID_BTN_JOURNAL_DOWNLOAD);
+            helper.discloseLabel(WID_BTN_DOCLOG_STORE_DELETE);
             helper.discloseLabel(WID_BTN_INBOX_PRINTIN_RESTORE_ADD);
             helper.discloseLabel(WID_BTN_INBOX_PRINTIN_RESTORE_REPLACE);
         }

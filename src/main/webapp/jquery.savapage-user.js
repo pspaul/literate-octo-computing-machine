@@ -1538,12 +1538,6 @@
                     positionTo: $(this),
                     arrow: 't'
                 });
-            }).on('click', '.sp-doclog-docstore-archive-download', null, function() {
-                _api.download("pdf-docstore-archive", null, $(this).attr('data-savapage'));
-                return false;
-            }).on('click', '.sp-doclog-docstore-journal-download', null, function() {
-                _api.download("pdf-docstore-journal", null, $(this).attr('data-savapage'));
-                return false;
             }).on('click', '.sp-inbox-restore-printin-add', null, function() {
                 _onInboxRestorePrintIn($(this).attr('data-savapage'), false);
                 return false;
@@ -1551,6 +1545,8 @@
                 _onInboxRestorePrintIn($(this).attr('data-savapage'), true);
                 return false;
             });
+
+            _panel.onDocStoreDownloadDelete($(this), _api, _view);
 
         }).on("pagebeforeshow", function(event, ui) {
             /*

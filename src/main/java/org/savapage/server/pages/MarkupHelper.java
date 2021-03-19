@@ -941,6 +941,22 @@ public final class MarkupHelper {
     }
 
     /**
+     * Adds a transparant Wicket component and modifies HTML attribute value.
+     *
+     * @param wid
+     *            Wicket ID.
+     * @param attr
+     *            HTML attribute.
+     * @param value
+     *            HTML attribute value.
+     * @return {@link Component}.
+     */
+    public Component addTransparentModifyAttr(final String wid,
+            final String attr, final String value) {
+        return modifyComponentAttr(this.addTransparant(wid), attr, value);
+    }
+
+    /**
      * Adds a transparant Wicket component and modifies HTML "title" attribute.
      *
      * @param wid

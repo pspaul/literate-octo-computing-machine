@@ -416,6 +416,8 @@
                 return false;
             });
 
+            _panel.DocLogBase.onDocStoreDownloadDelete($(this), _api, _view);
+
             /*
              * AccountTrx Panel
              */

@@ -2101,13 +2101,9 @@
                 _ns.Utils.asyncFoo(function(res) {
                     _view.showApiMsg(res);
                 }, res);
-            }).on('click', '.sp-doclog-docstore-archive-download', null, function() {
-                _api.download("pdf-docstore-archive", null, $(this).attr('data-savapage'));
-                return false;
-            }).on('click', '.sp-doclog-docstore-journal-download', null, function() {
-                _api.download("pdf-docstore-journal", null, $(this).attr('data-savapage'));
-                return false;
             });
+
+            _panel.DocLogBase.onDocStoreDownloadDelete($(this), _api, _view);
 
             /*
              * Users Panel

@@ -1793,6 +1793,15 @@ public final class DocLogItem {
     }
 
     /**
+     * @return {@code true} if object is a successful PrintIn with a doc store
+     *         journal.
+     */
+    public boolean hasQueueJournal() {
+        return this.getDocType() == DocLogDao.Type.IN && this.isPrintJournal()
+                && BooleanUtils.isTrue(this.getPrintInPrinted());
+    }
+
+    /**
      * @return {@code true} is no cost is charged (optionally after a refund).
      */
     public boolean isZeroCost() {

@@ -43,6 +43,7 @@ import org.savapage.server.api.request.ReqDeviceDelete;
 import org.savapage.server.api.request.ReqDeviceGet;
 import org.savapage.server.api.request.ReqDeviceSet;
 import org.savapage.server.api.request.ReqDocLogRefund;
+import org.savapage.server.api.request.ReqDocLogStoreDelete;
 import org.savapage.server.api.request.ReqDocLogTicketReopen;
 import org.savapage.server.api.request.ReqGenerateUserIDNumber;
 import org.savapage.server.api.request.ReqGenerateUuid;
@@ -161,6 +162,7 @@ public final class JsonApiDict {
     public static final String REQ_DOCLOG_REFUND = "doclog-refund";
     public static final String REQ_DOCLOG_TICKET_REOPEN =
             "doclog-ticket-reopen";
+    public static final String REQ_DOCLOG_STORE_DELETE = "doclog-store-delete";
 
     public static final String REQ_EXIT_EVENT_MONITOR = "exit-event-monitor";
 
@@ -988,6 +990,9 @@ public final class JsonApiDict {
 
         acl(REQ_DOCLOG_TICKET_REOPEN, ReqDocLogTicketReopen.class, DbClaim.READ,
                 DbAccess.YES, EnumSet.of(ACLRoleEnum.JOB_TICKET_OPERATOR));
+
+        usr(REQ_DOCLOG_STORE_DELETE, ReqDocLogStoreDelete.class, DbClaim.NONE,
+                DbAccess.NO);
 
         usr(REQ_EXIT_EVENT_MONITOR, DbClaim.NONE, DbAccess.NO);
 

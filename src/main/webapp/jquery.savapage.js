@@ -1421,6 +1421,40 @@
             $('.sp-sparkline-doclog').sparkline('html', {
                 enableTagOptions: true
             });
+        },
+
+        onDocStoreDownloadDelete: function(jqParent, _api, _view) {
+            var _this = this;
+            jqParent.on('click', '.sp-doclog-docstore-archive-download', null, function() {
+                _api.download("pdf-docstore-archive", null, $(this).attr('data-savapage'));
+                return false;
+            }).on('click', '.sp-doclog-docstore-journal-download', null, function() {
+                _api.download("pdf-docstore-journal", null, $(this).attr('data-savapage'));
+                return false;
+            }).on('click', '.sp-doclog-docstore-delete', null, function() {
+                $('#sp-doclog-store-delete-popup .sp-ui-btn-ok').attr('data-savapage',
+                    $(this).attr('data-savapage'));
+                $('#sp-doclog-store-delete-popup').popup('open', {
+                    positionTo: $(this)
+                });
+                return false;
+            }).on('click', '#sp-doclog-store-delete-popup .sp-ui-btn-ok', null, function() {
+                var res;
+                $('#sp-doclog-store-delete-popup').popup('close');
+                res = _api.call({
+                    'request': 'doclog-store-delete',
+                    'dto': JSON.stringify({
+                        'docLogId': $(this).attr('data-savapage')
+                    })
+                });
+                if (res.result.code === '0') {
+                    _this.refresh();
+                }
+                _view.showApiMsg(res);
+                return false;
+            }).on('click', '#sp-doclog-store-delete-popup .sp-ui-btn-cancel', null, function() {
+                $('#sp-doclog-store-delete-popup').popup('close');
+            });
         }
     };
 

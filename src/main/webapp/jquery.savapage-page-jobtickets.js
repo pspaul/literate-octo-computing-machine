@@ -653,13 +653,6 @@
             }).on('click', '.sp-doclog-printout-reverse', null, function() {
                 _onDocLogPrintOutReversePopup($(this).attr('data-savapage'), $(this));
 
-            }).on('click', '.sp-doclog-docstore-archive-download', null, function() {
-                _api.download("pdf-docstore-archive", null, $(this).attr('data-savapage'));
-                return false;
-            }).on('click', '.sp-doclog-docstore-journal-download', null, function() {
-                _api.download("pdf-docstore-journal", null, $(this).attr('data-savapage'));
-                return false;
-
             }).on('click', '.sp-doclog-accounttrx-info', null, function() {
                 _onDocLogAccountTrxPopup($(this).attr('data-savapage'), $(this));
 
