@@ -470,8 +470,8 @@ public class Main extends AbstractUserPage {
 
             final boolean allowPrint;
 
-            if (ACCESS_CONTROL_SERVICE.hasPermission(user,
-                    ACLOidEnum.U_PERSONAL_PRINT, ACLPermissionEnum.SELECT)) {
+            if (ACCESS_CONTROL_SERVICE.hasAccess(user,
+                    ACLOidEnum.U_PERSONAL_PRINT)) {
 
                 allowPrint = true;
 
