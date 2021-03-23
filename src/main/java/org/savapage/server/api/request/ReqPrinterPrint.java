@@ -988,7 +988,10 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          */
         if (isJobTicketDomainEnabled) {
             final JobTicketProperties ticketProps = new JobTicketProperties();
-            ticketProps.setDomain(dtoReq.getJobTicketDomain());
+            if (ConfigManager.instance()
+                    .isConfigValue(Key.JOBTICKET_DOMAINS_RETAIN)) {
+                ticketProps.setDomain(dtoReq.getJobTicketDomain());
+            }
             USER_SERVICE.setJobTicketPropsLatest(
                     getRetrieveUser(requestingUser, lockedUser), ticketProps);
         }
