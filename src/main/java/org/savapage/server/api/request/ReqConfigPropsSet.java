@@ -249,17 +249,19 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                     // Provoke errors/warnings in server.log.
                     WebPrintHelper.getExcludeTypes();
 
-                } else if (configKey == Key.JOBTICKET_DOMAINS
-                        && StringUtils.isNotBlank(value)) {
+                } else if (configKey == Key.JOBTICKET_DOMAINS) {
                     JobTicketLabelCache.initTicketDomains(value);
 
-                } else if (configKey == Key.JOBTICKET_USES
-                        && StringUtils.isNotBlank(value)) {
+                } else if (configKey == Key.JOBTICKET_USES) {
                     JobTicketLabelCache.initTicketUses(value);
 
-                } else if (configKey == Key.JOBTICKET_TAGS
-                        && StringUtils.isNotBlank(value)) {
-                    JobTicketLabelCache.initTicketTags(value);
+                } else if (configKey == Key.JOBTICKET_TAGS) {
+                    JobTicketLabelCache.initTicketTags(value,
+                            cm.getConfigValue(Key.JOBTICKET_TAGS_1));
+
+                } else if (configKey == Key.JOBTICKET_TAGS_1) {
+                    JobTicketLabelCache.initTicketTags(
+                            cm.getConfigValue(Key.JOBTICKET_TAGS), value);
                 }
 
             } else {
@@ -394,7 +396,8 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                     JobTicketLabelCache.parseTicketDomains(value);
                 } else if (key == Key.JOBTICKET_USES) {
                     JobTicketLabelCache.parseTicketUses(value);
-                } else if (key == Key.JOBTICKET_TAGS) {
+                } else if (key == Key.JOBTICKET_TAGS
+                        || key == Key.JOBTICKET_TAGS_1) {
                     JobTicketLabelCache.parseTicketTags(value);
                 }
             } catch (IllegalArgumentException e) {
