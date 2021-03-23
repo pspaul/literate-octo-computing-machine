@@ -4750,7 +4750,7 @@
             });
 
             $('#button-printer-back').click(function(e) {
-
+                var sel;
                 _view.checkRadioValue('sp-print-jobticket-type', _model.TICKETTYPE_PRINT);
                 _model.isCopyJobTicket = false;
 
@@ -4764,6 +4764,13 @@
                         _view.pages.print.onClearPrinter();
                     } else {
                         _view.pages.print.onClearPrinterInd();
+                    }
+                }
+
+                if (!_model.JOBTICKET_DOMAINS_RETAIN) {
+                    sel = $('#sp-jobticket-domain-list');
+                    if (sel.length > 0) {
+                        _view.setSelectedFirst(sel);
                     }
                 }
                 _model.myShowUserStatsGet = true;
@@ -5963,6 +5970,8 @@
             _model.PROXY_PRINT_CLEAR_DELEGATE = res.proxyPrintClearDelegate;
 
             _model.JOBTICKET_COPIER_ENABLE = res.jobticketCopierEnable;
+
+            _model.JOBTICKET_DOMAINS_RETAIN = res.jobticketDomainsRetain;
 
             _model.JOBTICKET_DELIVERY_DAYS = res.jobticketDeliveryDays;
             _model.JOBTICKET_DELIVERY_DAYS_MIN = res.jobticketDeliveryDaysMin;

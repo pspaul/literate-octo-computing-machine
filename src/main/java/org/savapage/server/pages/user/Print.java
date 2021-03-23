@@ -442,8 +442,14 @@ public class Print extends AbstractUserPage {
 
             if (!jobTicketDomains.isEmpty()) {
 
-                final JobTicketProperties ticketProps =
-                        USER_SERVICE.getJobTicketPropsLatest(userIdDto);
+                final JobTicketProperties ticketProps;
+
+                if (cm.isConfigValue(Key.JOBTICKET_DOMAINS_RETAIN)) {
+                    ticketProps =
+                            USER_SERVICE.getJobTicketPropsLatest(userIdDto);
+                } else {
+                    ticketProps = new JobTicketProperties();
+                }
 
                 helper.encloseLabel("label-jobticket-domain",
                         JobTicketNounEnum.DOMAIN.uiText(getLocale()), true);

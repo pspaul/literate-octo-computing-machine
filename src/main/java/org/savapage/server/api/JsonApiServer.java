@@ -3977,6 +3977,9 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("jobticketDeliveryDaysOfweek",
                 JOBTICKET_SERVICE.getDeliveryDaysOfWeek());
 
+        userData.put("jobticketDomainsRetain",
+                cm.isConfigValue(Key.JOBTICKET_DOMAINS_RETAIN));
+
         //
         userData.put("proxyPrintClearPrinter",
                 cm.isConfigValue(Key.WEBAPP_USER_PROXY_PRINT_CLEAR_PRINTER));
