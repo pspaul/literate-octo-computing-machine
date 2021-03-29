@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.net.URLConnection;
 
 import javax.net.ssl.SSLContext;
 import javax.servlet.ServletException;
@@ -127,21 +126,8 @@ public final class LibreJsLicenseServlet extends HttpServlet {
 
         if (this.isWrappedWicketJs(req)) {
 
-            if (req.isSecure()) {
-                this.writeFromSSL(resp,
-                        new URL("https", req.getServerName(),
-                                req.getServerPort(), urlUnwrapped.getPath())
-                                        .toString(),
-                        ostr, licenceStart, licenceEnd);
-            } else {
-                final URLConnection connection = urlUnwrapped.openConnection();
-                final InputStream istr = connection.getInputStream();
-
-                resp.setContentLength(connection.getContentLength()
-                        + licenceStart.length + licenceEnd.length);
-
-                this.write(istr, ostr, licenceStart, licenceEnd);
-            }
+            this.writeFromLocalHost(resp, urlUnwrapped.getPath(), ostr,
+                    licenceStart, licenceEnd);
 
         } else {
             final InputStream istr = this.getServletContext()
@@ -203,12 +189,13 @@ public final class LibreJsLicenseServlet extends HttpServlet {
     }
 
     /**
-     * Writes GNU LibreJS wrapped JavaScript from SSL URL to output stream.
+     * Writes unwrapped GNU LibreJS JavaScript from localhost URL to output
+     * stream.
      *
      * @param resp
      *            HTTP response.
-     * @param unwrappedURL
-     *            Unwrapped URL.
+     * @param unwrappedPath
+     *            Unwrapped Path.
      * @param ostr
      *            Output stream.
      * @param licenceStart
@@ -218,17 +205,32 @@ public final class LibreJsLicenseServlet extends HttpServlet {
      * @throws IOException
      *             If IO error.
      */
-    private void writeFromSSL(final HttpServletResponse resp,
-            final String unwrappedURL, final OutputStream ostr,
+    private void writeFromLocalHost(final HttpServletResponse resp,
+            final String unwrappedPath, final OutputStream ostr,
             final byte[] licenceStart, final byte[] licenceEnd)
             throws IOException {
 
-        try (CloseableHttpClient client = HttpClientBuilder.create()
-                .setSSLContext(SSLCONTEXT_TRUST_SELFSIGNED)
-                .setSSLHostnameVerifier(InetUtils.getHostnameVerifierTrustAll())
-                .build();) {
+        final HttpClientBuilder builder = HttpClientBuilder.create();
+        final URL localhostURL;
 
-            final HttpGet request = new HttpGet(unwrappedURL);
+        if (WebServer.isSSLRedirect()) {
+            // Shortcut to SSL and set trust precautions.
+            localhostURL = new URL("https", InetUtils.LOCAL_HOST,
+                    Integer.parseInt(ConfigManager.getServerSslPort()),
+                    unwrappedPath);
+
+            builder.setSSLContext(SSLCONTEXT_TRUST_SELFSIGNED)
+                    .setSSLHostnameVerifier(
+                            InetUtils.getHostnameVerifierTrustAll());
+        } else {
+            localhostURL = new URL("http", InetUtils.LOCAL_HOST,
+                    Integer.parseInt(ConfigManager.getServerPort()),
+                    unwrappedPath);
+        }
+
+        try (CloseableHttpClient client = builder.build();) {
+
+            final HttpGet request = new HttpGet(localhostURL.toString());
 
             try {
                 final HttpResponse response = client.execute(request);
