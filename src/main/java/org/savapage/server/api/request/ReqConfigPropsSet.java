@@ -40,6 +40,7 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.PullPushEnum;
 import org.savapage.core.config.validator.ValidationResult;
+import org.savapage.core.config.validator.ValidationStatusEnum;
 import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.ipp.IppSyntaxException;
@@ -265,8 +266,12 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 }
 
             } else {
-                setApiResult(ApiResultCodeEnum.ERROR, "msg-config-props-error",
-                        value);
+                if (res.getStatus() == ValidationStatusEnum.ERROR_MAX_LEN_EXCEEDED) {
+                    setApiResultText(ApiResultCodeEnum.ERROR, res.getMessage());
+                } else {
+                    setApiResult(ApiResultCodeEnum.ERROR,
+                            "msg-config-props-error", res.getValue());
+                }
             }
 
         } // end-while
