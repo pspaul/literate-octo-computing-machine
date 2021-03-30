@@ -26,6 +26,7 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.helpers.UserPrintOutTotalsReq;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrepositionEnum;
 import org.savapage.server.pages.JrExportFileExtButtonPanel;
@@ -56,6 +57,48 @@ public final class Reports extends AbstractAdminPage {
 
         helper.addLabel("cat-users", NounEnum.USER.uiText(getLocale(), true));
 
+        //
+        helper.addLabel("report-1-totals",
+                NounEnum.TOTAL.uiText(getLocale(), true));
+
+        helper.addLabel("prompt-options",
+                NounEnum.OPTION.uiText(getLocale(), true));
+
+        UserPrintOutTotalsReq.Aspect aspectWlk;
+
+        aspectWlk = UserPrintOutTotalsReq.Aspect.PAGES;
+        helper.addLabel("opt-pages-label", aspectWlk.uiText(this.getLocale()));
+        helper.addTransparentModifyAttr("opt-pages", MarkupHelper.ATTR_VALUE,
+                aspectWlk.toString());
+
+        aspectWlk = UserPrintOutTotalsReq.Aspect.JOBS;
+        helper.addLabel("opt-jobs-label", aspectWlk.uiText(this.getLocale()));
+        helper.addTransparentModifyAttr("opt-jobs", MarkupHelper.ATTR_VALUE,
+                aspectWlk.toString());
+
+        aspectWlk = UserPrintOutTotalsReq.Aspect.COPIES;
+        helper.addLabel("opt-copies-label", aspectWlk.uiText(this.getLocale()));
+        helper.addTransparentModifyAttr("opt-copies", MarkupHelper.ATTR_VALUE,
+                aspectWlk.toString());
+
+        //
+        helper.addLabel("prompt-pages",
+                UserPrintOutTotalsReq.Aspect.PAGES.uiText(this.getLocale()));
+
+        UserPrintOutTotalsReq.Pages pagesWlk;
+
+        pagesWlk = UserPrintOutTotalsReq.Pages.SENT;
+        helper.addLabel("pages-sent-label", pagesWlk.uiText(this.getLocale()));
+        helper.addTransparentModifyAttr("pages-sent", MarkupHelper.ATTR_VALUE,
+                pagesWlk.toString());
+
+        pagesWlk = UserPrintOutTotalsReq.Pages.PRINTED;
+        helper.addLabel("pages-printed-label",
+                pagesWlk.uiText(this.getLocale()));
+        helper.addTransparentModifyAttr("pages-printed",
+                MarkupHelper.ATTR_VALUE, pagesWlk.toString());
+
+        //
         helper.addLabel("div-period", NounEnum.PERIOD);
         helper.addLabel("date-from", PrepositionEnum.FROM_TIME);
         helper.addLabel("date-to", PrepositionEnum.TO_TIME);
