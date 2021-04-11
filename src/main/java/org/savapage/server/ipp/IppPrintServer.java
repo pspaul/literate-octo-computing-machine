@@ -325,9 +325,18 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
             ippOperationContext
                     .setIppRoutingListener(WebApp.get().getPluginManager());
 
-            final IppOperationId ippOperationId = AbstractIppOperation.handle(
-                    queue, request.getInputStream(), bos, authUser,
-                    isAuthUserIppRequester, ippOperationContext);
+            final InputStream istr;
+            if ("chunked".equals(request.getHeader("Transfer-Encoding"))) {
+                // TODO use IppChunkedInputStream like this?
+                // istr = new IppChunkedInputStream(request.getInputStream());
+                istr = request.getInputStream();
+            } else {
+                istr = request.getInputStream();
+            }
+
+            final IppOperationId ippOperationId =
+                    AbstractIppOperation.handle(queue, istr, bos, authUser,
+                            isAuthUserIppRequester, ippOperationContext);
 
             if (ippOperationId != null
                     && ippOperationId == IppOperationId.VALIDATE_JOB) {
@@ -491,10 +500,15 @@ public class IppPrintServer extends WebPage implements ServiceEntryPoint {
 
         final StringBuilder log = new StringBuilder();
 
-        log.append("\nRequest [").append(request.getRequestURL().toString())
-                .append("] From [").append(WebAppHelper.getClientIP(request))
-                .append("] Bytes [").append(request.getContentLength())
-                .append("]\n");
+        final String bar = "\n+-------------------------------------"
+                + "-------------------------------------------+";
+
+        log.append(bar);
+        log.append("\n| Request [").append(request.getRequestURL().toString())
+                .append("]\n|    From [")
+                .append(WebAppHelper.getClientIP(request)).append("] Bytes [")
+                .append(request.getContentLength()).append("]");
+        log.append(bar).append("\n");
 
         final Enumeration<String> headerNames = request.getHeaderNames();
 
