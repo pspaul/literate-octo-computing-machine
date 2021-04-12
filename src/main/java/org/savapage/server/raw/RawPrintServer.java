@@ -618,7 +618,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
                         processor.setReadAheadInputBytes(bos.toByteArray());
 
-                        processor.processAssignedUser(assignedUser);
+                        processor.processAssignedUser(assignedUser, userid);
 
                         isAuthorized = processor.isAuthorized();
 
@@ -669,7 +669,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         }
 
         if (processor != null) {
-            processor.evaluateErrorState(isAuthorized);
+            processor.evaluateErrorState(isAuthorized, userid);
         }
 
         PerformanceLogger.log(this.getClass(), "readAndPrint", perfStartTime,

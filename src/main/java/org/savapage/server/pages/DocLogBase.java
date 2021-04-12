@@ -44,6 +44,7 @@ import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
+import org.savapage.core.dao.helpers.IppQueueHelper;
 import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.JobTicketNounEnum;
@@ -442,8 +443,8 @@ public final class DocLogBase extends AbstractAuthPage {
             @Override
             protected void populateItem(final ListItem<IppQueue> item) {
                 final IppQueue queue = item.getModel().getObject();
-                final Label label = new Label("option-queue",
-                        String.format("/%s", queue.getUrlPath()));
+                final Label label =
+                        new Label("option-queue", IppQueueHelper.uiPath(queue));
                 label.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
                         queue.getId()));
                 item.add(label);

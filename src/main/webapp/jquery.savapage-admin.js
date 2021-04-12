@@ -1169,7 +1169,8 @@
             if (res && res.result.code === '0') {
                 _model.editQueue = res.dto;
                 _view.pages.queue.loadShowAsync(function() {
-                    $('#title-queue').html(_model.editQueue.urlpath);
+                    var txt = _model.editQueue.urlpath;
+                    $('#title-queue').html(txt === '/' ? txt : '/' + txt);
                 });
             } else {
                 _view.showApiMsg(res);
