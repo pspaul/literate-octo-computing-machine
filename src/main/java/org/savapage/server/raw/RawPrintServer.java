@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.savapage.common.SystemPropertyEnum;
 import org.savapage.core.PerformanceLogger;
 import org.savapage.core.SpException;
 import org.savapage.core.SpInfo;
@@ -330,7 +331,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
     private static void warnHeaderLines(final String comment,
             final List<String> headerLines) {
         final StringBuilder msg = new StringBuilder(comment);
-        final String lf = System.getProperty("line.separator");
+        final String lf = SystemPropertyEnum.LINE_SEPARATOR.getValue();
         for (final String line : headerLines) {
             final String stripped = StringUtils.strip(line, "\r\n");
             if (StringUtils.isNotBlank(stripped)) {

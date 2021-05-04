@@ -39,6 +39,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.eclipse.jetty.server.Server;
+import org.savapage.common.SystemPropertyEnum;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.community.MemberCard;
 import org.savapage.core.config.ConfigManager;
@@ -148,8 +149,10 @@ public final class About extends AbstractAdminPage {
         add(new Label("java.server", Server.getVersion()));
 
         //
-        add(new Label("java.vm.name", System.getProperty("java.vm.name")));
-        add(new Label("java.version", System.getProperty("java.version")));
+        add(new Label("java.vm.name",
+                SystemPropertyEnum.JAVA_VM_NAME.getValue()));
+        add(new Label("java.version",
+                SystemPropertyEnum.JAVA_VERSION.getValue()));
 
         add(new Label("jre-available-processors",
                 Integer.valueOf(Runtime.getRuntime().availableProcessors())));
@@ -157,12 +160,13 @@ public final class About extends AbstractAdminPage {
         add(new Label("jre-max-memory", NumberUtil.humanReadableByteCountSI(
                 getLocale(), Runtime.getRuntime().maxMemory())));
 
-        add(new Label("jre-os-name", System.getProperty("os.name")));
-        add(new Label("jre-os-version", System.getProperty("os.version")));
-        add(new Label("jre-os-arch", System.getProperty("os.arch")));
+        add(new Label("jre-os-name", SystemPropertyEnum.OS_NAME.getValue()));
+        add(new Label("jre-os-version",
+                SystemPropertyEnum.OS_VERSION.getValue()));
+        add(new Label("jre-os-arch", SystemPropertyEnum.OS_ARCH.getValue()));
 
         add(new Label("jre-java.io.tmpdir",
-                System.getProperty(ConfigManager.SYS_PROP_JAVA_IO_TMPDIR)));
+                SystemPropertyEnum.JAVA_IO_TMPDIR.getValue()));
 
         add(new Label("app.dir.tmp-key",
                 ConfigManager.SERVER_PROP_APP_DIR_TMP));

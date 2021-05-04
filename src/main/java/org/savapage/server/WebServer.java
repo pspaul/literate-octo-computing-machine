@@ -63,6 +63,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.savapage.common.ConfigDefaults;
+import org.savapage.common.SystemPropertyEnum;
 import org.savapage.core.SpException;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
@@ -895,7 +896,7 @@ public final class WebServer {
         webAppContext.setServer(server);
         webAppContext.setContextPath("/");
 
-        developerEnv = (System.getProperty("savapage.war.file") == null);
+        developerEnv = SystemPropertyEnum.SAVAPAGE_WAR_FILE.getValue() == null;
 
         String pathToWarFile = null;
 
@@ -903,7 +904,7 @@ public final class WebServer {
             pathToWarFile = "src/main/webapp";
         } else {
             pathToWarFile = serverHome + "/lib/"
-                    + System.getProperty("savapage.war.file");
+                    + SystemPropertyEnum.SAVAPAGE_WAR_FILE.getValue();
         }
 
         webAppContext.setWar(pathToWarFile);
