@@ -178,6 +178,50 @@ public final class JobTicketPrintAddIn extends JobTicketAddInBase {
             this.jobSheetDto = jobSheet;
             this.tabindexWlk = 9;
             this.printerListSize = list.size();
+
+            final Long lastRedirectPrinterId = getLastRedirectPrinterId();
+
+            if (lastRedirectPrinterId != null
+                    && isPrinterOnList(list, lastRedirectPrinterId)) {
+                for (final RedirectPrinterDto dto : list) {
+                    dto.setPreferred(dto.getId().equals(lastRedirectPrinterId));
+                }
+            }
+        }
+
+        /**
+         * @return Printer ID (DB primary key) of last selected redirect
+         *         printer, or {@code null} if not present.
+         */
+        private static Long getLastRedirectPrinterId() {
+
+            final JobTicketSession session =
+                    SpSession.get().getJobTicketSession();
+
+            if (session != null && session.getLastRedirectPrinterId() != null) {
+                return session.getLastRedirectPrinterId();
+            }
+            return null;
+        }
+
+        /**
+         * Checks if printer is on the list.
+         *
+         * @param list
+         *            Printer list.
+         * @param printerId
+         *            Printer ID (DB primary key).
+         * @return {@code true} if printerId is part of the list.
+         */
+        private static boolean isPrinterOnList(
+                final List<RedirectPrinterDto> list, final Long printerId) {
+
+            for (final RedirectPrinterDto dto : list) {
+                if (dto.getId().equals(printerId)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /**

@@ -359,6 +359,8 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
             SpSession.get().setJobTicketSession(session);
         }
 
+        session.setLastRedirectPrinterId(dto.getPrinterId());
+
         session.setJogOffsetOption(dto.getJogOffset());
 
         Map<Long, Map<JobTicketSession.PrinterOpt, String>> printerOpts =

@@ -40,6 +40,11 @@ public class JobTicketSession {
     private String jogOffsetOption;
 
     /**
+     * Printer ID (DB primary key) of last selected redirect printer.
+     */
+    private Long lastRedirectPrinterId;
+
+    /**
      * Map with key (printer db key) and most recent IPP option choices.
      */
     private Map<Long, Map<PrinterOpt, String>> redirectPrinterOptions;
@@ -59,6 +64,21 @@ public class JobTicketSession {
     public void setRedirectPrinterOptions(
             Map<Long, Map<PrinterOpt, String>> redirectPrinterOptions) {
         this.redirectPrinterOptions = redirectPrinterOptions;
+    }
+
+    /**
+     * @return Printer ID (DB primary key) of last selected redirect printer.
+     */
+    public Long getLastRedirectPrinterId() {
+        return lastRedirectPrinterId;
+    }
+
+    /**
+     * @param lastRedirectPrinterId
+     *            Printer ID (DB primary key) of last selected redirect printer.
+     */
+    public void setLastRedirectPrinterId(Long lastRedirectPrinterId) {
+        this.lastRedirectPrinterId = lastRedirectPrinterId;
     }
 
 }
