@@ -108,6 +108,9 @@ public class Print extends AbstractUserPage {
     private static final UserGroupAccountDao USER_GROUP_ACCOUNT_DAO =
             ServiceContext.getDaoContext().getUserGroupAccountDao();
 
+    private static final String ID_BTN_JOBTICKET_DATETIME_DEFAULT =
+            "btn-jobticket-datetime-default";
+
     /** */
     private static final String ID_BTN_PRINT_AND_CLOSE = "btn-print-and-close";
     /** */
@@ -267,10 +270,15 @@ public class Print extends AbstractUserPage {
                             JOBTICKET_SERVICE.getDeliveryDaysOfWeek(),
                             getLocale()));
 
-            MarkupHelper.modifyComponentAttr(
-                    helper.addTransparant("btn-jobticket-datetime-default"),
-                    MarkupHelper.ATTR_TITLE,
-                    HtmlButtonEnum.DEFAULT.uiText(getLocale()));
+            if (cm.getConfigInt(Key.JOBTICKET_DELIVERY_DAYS, 0) > 0) {
+                MarkupHelper.modifyComponentAttr(
+                        helper.addTransparant(
+                                ID_BTN_JOBTICKET_DATETIME_DEFAULT),
+                        MarkupHelper.ATTR_TITLE,
+                        HtmlButtonEnum.DEFAULT.uiText(getLocale()));
+            } else {
+                helper.discloseLabel(ID_BTN_JOBTICKET_DATETIME_DEFAULT);
+            }
 
             helper.encloseLabel("jobticket-delivery-time-hr", "",
                     cm.isConfigValue(Key.JOBTICKET_DELIVERY_TIME_ENABLE));

@@ -423,11 +423,13 @@ the License, or (at your option) any later version.
 					wicket:id="prompt-jobticket-delivery-datetime-weekdays" />
 				<table width="100%" style="font-size: 90%;">
 					<tr>
-						<td>
-							<div wicket:id="btn-jobticket-datetime-default"
-								id="sp-btn-jobticket-datetime-default"
-								class="ui-input-btn ui-btn ui-icon-recycle ui-btn-icon-notext ui-corner-all" />
-						</td>
+						<wicket:enclosure child="btn-jobticket-datetime-default">
+							<td>
+								<div wicket:id="btn-jobticket-datetime-default"
+									id="sp-btn-jobticket-datetime-default"
+									class="ui-input-btn ui-btn ui-icon-recycle ui-btn-icon-notext ui-corner-all" />
+							</td>
+						</wicket:enclosure>
 						<td style="padding-left: 0px;">
 							<input id="sp-jobticket-date" />
 						</td>

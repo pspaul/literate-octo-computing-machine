@@ -57,6 +57,7 @@ import org.savapage.core.dto.IppMediaSourceCostDto;
 import org.savapage.core.dto.JobTicketLabelDto;
 import org.savapage.core.dto.PrintDelegationDto;
 import org.savapage.core.i18n.JobTicketNounEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.inbox.InboxInfoDto;
@@ -534,6 +535,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         }
 
         final boolean isJobTicket = BooleanUtils.isTrue(dtoReq.getJobTicket());
+        if (isJobTicket && !validateJobTicket(dtoReq)) {
+            return;
+        }
 
         final ConfigManager cm = ConfigManager.instance();
 
@@ -1326,6 +1330,27 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      *            The user request.
      * @return {@code true} when input is valid.
      */
+    private boolean validateJobTicket(final DtoReq dtoReq) {
+
+        final boolean isValid = ConfigManager.instance()
+                .isConfigValue(Key.JOBTICKET_DELIVERY_DATETIME_ENABLE)
+                && dtoReq.getJobTicketDate() != null;
+
+        if (!isValid) {
+            this.setApiResult(ApiResultCodeEnum.ERROR,
+                    "msg-value-cannot-be-empty",
+                    NounEnum.DATE.uiText(getLocale()));
+        }
+        return isValid;
+    }
+
+    /**
+     * Validates and corrects input for Copy Job ticket.
+     *
+     * @param dtoReq
+     *            The user request.
+     * @return {@code true} when input is valid.
+     */
     private boolean validateJobTicketCopy(final DtoReq dtoReq) {
 
         // Correct irrelevant settings for Job Ticket.
@@ -1692,10 +1717,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         if (dtoReq.getJobTicketDate() == null) {
             if (isJobTicketDateTime) {
-                deliveryDate = new Date();
-            } else {
-                deliveryDate = null;
+                throw new SpException("Job Ticket delivery date is missing.");
             }
+            deliveryDate = null;
         } else {
             deliveryDate = new Date(dtoReq.getJobTicketDate().longValue());
         }

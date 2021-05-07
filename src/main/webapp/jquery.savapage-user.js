@@ -4244,6 +4244,8 @@
             _lastPrinterFilterJobTicket,
             _fastPrintAvailable,
             _hasDelegatedPrint,
+            _jobticketDatetimeDefaultPresent,
+
             //
             _getPrinterImg = function(item, isDirect) {
                 if (item.printer.jobTicket) {
@@ -4648,9 +4650,16 @@
                     minDate: new Date(_getJobTicketFirstValidDateTime(today, _model.JOBTICKET_DELIVERY_DAYS_MIN))
                 });
 
-                _view.mobipickSetDate(selJobticketDate, _getJobTicketFirstValidDateTime(today, _model.JOBTICKET_DELIVERY_DAYS));
+                _view.mobipickSetDate(selJobticketDate,
+                    _getJobTicketFirstValidDateTime(today, _model.JOBTICKET_DELIVERY_DAYS));
 
-                $('#sp-btn-jobticket-datetime-default').attr('title', selJobticketDate.val());
+                if (!_model.JOBTICKET_DELIVERY_DATE_PRESET) {
+                    selJobticketDate.val('');
+                }
+
+                if (_jobticketDatetimeDefaultPresent) {
+                    $('#sp-btn-jobticket-datetime-default').attr('title', selJobticketDate.val());
+                }
 
                 selJobticketHrs = $('#sp-jobticket-hrs');
 
@@ -4826,6 +4835,8 @@
                 return false;
             });
 
+            _jobticketDatetimeDefaultPresent = $('#sp-btn-jobticket-datetime-default').length > 0;
+
             _view.mobipick($("#sp-jobticket-date"), true);
             _this.initJobTicketDateTime();
 
@@ -4843,9 +4854,11 @@
                 return false;
             });
 
-            $('#sp-btn-jobticket-datetime-default').click(function(e) {
-                _this.initJobTicketDateTime();
-            });
+            if (_jobticketDatetimeDefaultPresent) {
+                $('#sp-btn-jobticket-datetime-default').click(function(e) {
+                    _this.initJobTicketDateTime();
+                });
+            }
 
         }).on("pagebeforeshow", function(event, ui) {
 
@@ -5974,6 +5987,7 @@
             _model.JOBTICKET_DOMAINS_RETAIN = res.jobticketDomainsRetain;
 
             _model.JOBTICKET_DELIVERY_DAYS = res.jobticketDeliveryDays;
+            _model.JOBTICKET_DELIVERY_DATE_PRESET = _model.JOBTICKET_DELIVERY_DAYS > 0;
             _model.JOBTICKET_DELIVERY_DAYS_MIN = res.jobticketDeliveryDaysMin;
             _model.JOBTICKET_DELIVERY_DAYS_OF_WEEK = res.jobticketDeliveryDaysOfweek;
             _model.JOBTICKET_DELIVERY_HOUR = res.jobticketDeliveryHour;
