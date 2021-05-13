@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -84,11 +85,10 @@ public final class Login extends AbstractPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        final List<Locale> availableLocales =
-                LocaleHelper.getI18nAvailable();
+        final Set<Locale> availableLocales = LocaleHelper.getI18nAvailable();
 
         if (availableLocales.size() == 1) {
-            SpSession.get().setLocale(availableLocales.get(0));
+            SpSession.get().setLocale(availableLocales.iterator().next());
         }
 
         helper.encloseLabel("button-lang", getString("button-lang"),

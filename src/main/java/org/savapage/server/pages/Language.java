@@ -24,8 +24,12 @@
  */
 package org.savapage.server.pages;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -56,15 +60,23 @@ public class Language extends AbstractPage {
         helper.addButton("button-cancel", HtmlButtonEnum.CANCEL);
 
         final Map<Locale, Integer> i18nPercentage;
-
         if (WebServer.isDeveloperEnv()) {
             i18nPercentage = I18nStats.getI18nPercentages();
         } else {
             i18nPercentage = I18nStats.getI18nPercentagesCached(true);
         }
 
+        final Set<Locale> i18nAvailable = LocaleHelper.getI18nAvailable();
+        final List<Locale> i18nAvailableSorted = new ArrayList<>();
+        for (final Entry<Locale, Integer> entry : i18nPercentage.entrySet()) {
+            final Locale key = entry.getKey();
+            if (i18nAvailable.contains(key)) {
+                i18nAvailableSorted.add(key);
+            }
+        }
+
         this.add(new PropertyListView<Locale>("language-list",
-                LocaleHelper.getI18nAvailable()) {
+                i18nAvailableSorted) {
 
             private static final long serialVersionUID = 1L;
 
