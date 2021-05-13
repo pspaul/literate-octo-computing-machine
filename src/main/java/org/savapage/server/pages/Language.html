@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -32,7 +32,11 @@ the License, or (at your option) any later version.
 			<wicket:panel wicket:id="language-list">
 				<li>
 					<a href="#" data-language="xx" data-country="XX"
-						wicket:id="language">Xxxx</a>
+						wicket:id="language">
+						<span wicket:id="language-txt" /><span
+							style="font-size: small; color: #666666;" class="ui-li-count"
+							wicket:id="language-perc" />
+					</a>
 				</li>
 			</wicket:panel>
 		</ul>

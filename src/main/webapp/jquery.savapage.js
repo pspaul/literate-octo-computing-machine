@@ -1626,7 +1626,14 @@
         $(_self.id()).on('pagecreate', function(event) {
 
             $('#language-list').on('click', null, null, function(event) {
-                _onSelectLocale($(event.target).attr('data-language'), $(event.target).attr('data-country'));
+                var target = $(event.target), sel = target;
+                if (!sel.attr('data-language')) {
+                    sel = sel.closest('[data-language]'); // up
+                    if (!sel.attr('data-language')) {
+                        sel = target.find('[data-language]'); // down
+                    }
+                }
+                _onSelectLocale(sel.attr('data-language'), sel.attr('data-country'));
                 $('#button-lang-cancel').click();
                 return false;
             });

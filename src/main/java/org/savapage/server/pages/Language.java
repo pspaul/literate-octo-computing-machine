@@ -25,13 +25,16 @@
 package org.savapage.server.pages;
 
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
+import org.savapage.core.util.I18nStats;
 import org.savapage.core.util.LocaleHelper;
+import org.savapage.server.WebServer;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -52,25 +55,44 @@ public class Language extends AbstractPage {
 
         helper.addButton("button-cancel", HtmlButtonEnum.CANCEL);
 
-        add(new PropertyListView<Locale>("language-list",
-                LocaleHelper.getAvailableLanguages()) {
+        final Map<Locale, Integer> i18nPercentage;
+
+        if (WebServer.isDeveloperEnv()) {
+            i18nPercentage = I18nStats.getI18nPercentages();
+        } else {
+            i18nPercentage = I18nStats.getI18nPercentagesCached(true);
+        }
+
+        this.add(new PropertyListView<Locale>("language-list",
+                LocaleHelper.getI18nAvailable()) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(final ListItem<Locale> item) {
 
+                final MarkupHelper itemHelper = new MarkupHelper(item);
                 final Locale locale = item.getModel().getObject();
 
-                final Label label = new Label("language", StringUtils
-                        .capitalize(locale.getDisplayLanguage(locale)));
+                final Component lang = itemHelper.addTransparant("language");
 
-                label.add(new AttributeModifier("data-language",
-                        locale.getLanguage()));
-                label.add(new AttributeModifier("data-country",
-                        locale.getCountry()));
+                MarkupHelper.modifyComponentAttr(lang, "data-language",
+                        locale.getLanguage());
+                MarkupHelper.modifyComponentAttr(lang, "data-country",
+                        locale.getCountry());
 
-                item.add(label);
+                item.add(new Label("language-txt", StringUtils
+                        .capitalize(locale.getDisplayLanguage(locale))));
+
+                final Integer perc = i18nPercentage.get(locale);
+                final StringBuilder uiPerc = new StringBuilder();
+                if (perc == null) {
+                    uiPerc.append("-");
+                } else {
+                    uiPerc.append(perc);
+                }
+                uiPerc.append("%");
+                item.add(new Label("language-perc", uiPerc));
             }
         });
     }

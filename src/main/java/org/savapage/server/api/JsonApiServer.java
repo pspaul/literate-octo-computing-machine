@@ -264,7 +264,7 @@ public final class JsonApiServer extends AbstractPage {
     private void applyLocaleToSession() {
 
         final String currentLanguage = getSession().getLocale().getLanguage();
-        for (final Locale locale : LocaleHelper.getAvailableLanguages()) {
+        for (final Locale locale : LocaleHelper.getI18nAvailable()) {
             if (locale.getLanguage().equals(currentLanguage)) {
                 return;
             }

@@ -85,7 +85,7 @@ public final class Login extends AbstractPage {
         final MarkupHelper helper = new MarkupHelper(this);
 
         final List<Locale> availableLocales =
-                LocaleHelper.getAvailableLanguages();
+                LocaleHelper.getI18nAvailable();
 
         if (availableLocales.size() == 1) {
             SpSession.get().setLocale(availableLocales.get(0));
