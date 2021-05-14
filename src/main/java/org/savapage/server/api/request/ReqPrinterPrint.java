@@ -1332,9 +1332,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
      */
     private boolean validateJobTicket(final DtoReq dtoReq) {
 
-        final boolean isValid = ConfigManager.instance()
+        final boolean isValid = !ConfigManager.instance()
                 .isConfigValue(Key.JOBTICKET_DELIVERY_DATETIME_ENABLE)
-                && dtoReq.getJobTicketDate() != null;
+                || dtoReq.getJobTicketDate() != null;
 
         if (!isValid) {
             this.setApiResult(ApiResultCodeEnum.ERROR,
