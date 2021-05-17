@@ -26,6 +26,7 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.SystemStatusEnum;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.i18n.AdjectiveEnum;
@@ -103,19 +104,20 @@ public final class AccountsBase extends AbstractAdminPage {
         helper.addModifyLabelAttr("account-type-shared",
                 MarkupHelper.ATTR_VALUE, AccountTypeEnum.SHARED.toString());
 
-        if (ConfigManager.instance().isAppReadyToUse()) {
+        if (ConfigManager.instance()
+                .getSystemStatus() == SystemStatusEnum.SETUP) {
 
+            helper.discloseLabel(WICKET_ID_BUTTON_NEW);
+            helper.encloseLabel(WICKET_ID_TXT_NOT_READY,
+                    localized("warn-not-ready-to-use"), true);
+
+        } else {
             helper.encloseLabel(WICKET_ID_BUTTON_NEW,
                     HtmlButtonEnum.ADD.uiText(getLocale()),
                     ACCESS_CONTROL_SERVICE.hasPermission(
                             SpSession.get().getUserIdDto(),
                             ACLOidEnum.A_ACCOUNTS, ACLPermissionEnum.EDITOR));
             helper.discloseLabel(WICKET_ID_TXT_NOT_READY);
-
-        } else {
-            helper.discloseLabel(WICKET_ID_BUTTON_NEW);
-            helper.encloseLabel(WICKET_ID_TXT_NOT_READY,
-                    localized("warn-not-ready-to-use"), true);
         }
 
         /*

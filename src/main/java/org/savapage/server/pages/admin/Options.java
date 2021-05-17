@@ -44,6 +44,7 @@ import org.savapage.core.config.CircuitBreakerEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.SystemStatusEnum;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
@@ -535,8 +536,8 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.Key.FINANCIAL_USER_BALANCE_DECIMALS);
 
         //
-        boolean disableCurrencyChange =
-                ConfigManager.instance().isAppReadyToUse();
+        final boolean disableCurrencyChange = ConfigManager.instance()
+                .getSystemStatus() != SystemStatusEnum.SETUP;
 
         final Label labelCurrency = tagInput("financial-currency-code",
                 Key.FINANCIAL_GLOBAL_CURRENCY_CODE);

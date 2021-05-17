@@ -62,6 +62,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.SetupNeededEnum;
 import org.savapage.core.config.SslCertInfo;
+import org.savapage.core.config.SystemStatusEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.impl.DaoContextImpl;
@@ -213,13 +214,15 @@ public final class SystemStatusPanel extends Panel {
         String msg;
 
         //
-        final boolean isSetupNeeded = !cm.isAppReadyToUse();
+        final SystemStatusEnum systemStatus = cm.getSystemStatus();
+
+        final boolean isSetupNeeded = systemStatus == SystemStatusEnum.SETUP;
         this.handleSetupNeeded(helper, cm, isSetupNeeded);
 
         if (isSetupNeeded) {
             cssColor = MarkupHelper.CSS_TXT_ERROR;
             msg = getLocalizer().getString("sys-status-setup-needed", this);
-        } else if (ConfigManager.isTempUnavailable()) {
+        } else if (systemStatus == SystemStatusEnum.UNAVAILABLE) {
             cssColor = MarkupHelper.CSS_TXT_WARN;
             msg = getLocalizer().getString("sys-status-not-available", this);
         } else if (memberCard.isMembershipDesirable()) {

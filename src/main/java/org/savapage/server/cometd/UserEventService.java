@@ -61,6 +61,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.impl.DaoContextImpl;
+import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.inbox.PageImages;
 import org.savapage.core.inbox.PageImages.PageImage;
@@ -1116,7 +1117,8 @@ public final class UserEventService extends AbstractEventService {
             }
 
             if (isWebAppClient && !lockedUser.getAdmin().booleanValue()
-                    && ConfigManager.isSysMaintenance()) {
+                    && ConfigManager
+                            .getSystemMode() == SystemModeEnum.MAINTENANCE) {
 
                 userData = createSysMaintenanceEvent();
 

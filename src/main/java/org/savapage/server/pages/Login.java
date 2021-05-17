@@ -49,6 +49,7 @@ import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.i18n.LabelEnum;
+import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.UserAuth;
@@ -200,7 +201,7 @@ public final class Login extends AbstractPage {
         addOAuthButtons(localLoginRestricted);
 
         //
-        if (ConfigManager.isSysMaintenance()) {
+        if (ConfigManager.getSystemMode() == SystemModeEnum.MAINTENANCE) {
             helper.addLabel("maintenance-header",
                     localized("maintenance-header"));
             helper.addLabel("maintenance-body", localized("maintenance-body"));

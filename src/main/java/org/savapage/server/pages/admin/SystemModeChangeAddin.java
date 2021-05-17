@@ -65,7 +65,7 @@ public final class SystemModeChangeAddin extends AbstractAdminPage {
 
         final int iCur;
         final int iChg;
-        if (ConfigManager.isSysMaintenance()) {
+        if (ConfigManager.getSystemMode() == SystemModeEnum.MAINTENANCE) {
             iCur = 0;
             iChg = 1;
         } else {

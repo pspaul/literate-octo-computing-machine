@@ -40,6 +40,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.SystemStatusEnum;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
@@ -245,7 +246,8 @@ public final class UsersPage extends AbstractAdminListPage {
             super(id, list);
 
             this.currencySymbol = SpSession.getAppCurrencySymbol();
-            this.isAppReady = ConfigManager.instance().isAppReadyToUse();
+            this.isAppReady = ConfigManager.instance()
+                    .getSystemStatus() != SystemStatusEnum.SETUP;
 
             final UserIdDto reqUserDto = SpSession.get().getUserIdDto();
 

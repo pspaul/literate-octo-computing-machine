@@ -26,6 +26,7 @@ package org.savapage.server.pages.admin;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.SystemStatusEnum;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
@@ -81,8 +82,14 @@ public final class UserGroupsBase extends AbstractAdminPage {
         helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
 
         //
-        if (ConfigManager.instance().isAppReadyToUse()) {
+        if (ConfigManager.instance()
+                .getSystemStatus() == SystemStatusEnum.SETUP) {
 
+            helper.discloseLabel(WICKET_ID_BUTTON_ADD_REMOVE);
+            helper.encloseLabel(WICKET_ID_TXT_NOT_READY,
+                    localized("warn-not-ready-to-use"), true);
+
+        } else {
             if (hasEditorAccess) {
 
                 helper.encloseLabel(WICKET_ID_BUTTON_ADD_REMOVE,
@@ -98,11 +105,6 @@ public final class UserGroupsBase extends AbstractAdminPage {
             }
 
             helper.discloseLabel(WICKET_ID_TXT_NOT_READY);
-
-        } else {
-            helper.discloseLabel(WICKET_ID_BUTTON_ADD_REMOVE);
-            helper.encloseLabel(WICKET_ID_TXT_NOT_READY,
-                    localized("warn-not-ready-to-use"), true);
         }
 
         /*

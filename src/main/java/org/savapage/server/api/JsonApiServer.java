@@ -104,6 +104,7 @@ import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.i18n.PhraseEnum;
+import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.imaging.EcoPrintPdfTask;
 import org.savapage.core.imaging.EcoPrintPdfTaskPendingException;
 import org.savapage.core.imaging.ImageUrl;
@@ -2143,7 +2144,8 @@ public final class JsonApiServer extends AbstractPage {
                         + session.getId());
             }
 
-            if (!session.isAdmin() && ConfigManager.isSysMaintenance()) {
+            if (!session.isAdmin() && ConfigManager
+                    .getSystemMode() == SystemModeEnum.MAINTENANCE) {
                 userData = new HashMap<String, Object>();
                 createApiResult(userData, ApiResultCodeEnum.WARN, "",
                         PhraseEnum.SYS_MAINTENANCE.uiText(getLocale()));

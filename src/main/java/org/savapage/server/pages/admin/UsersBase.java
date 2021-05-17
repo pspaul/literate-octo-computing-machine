@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.SystemStatusEnum;
 import org.savapage.core.dao.UserGroupDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ReservedUserGroupEnum;
@@ -115,7 +116,8 @@ public final class UsersBase extends AbstractAdminPage {
         helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
 
         //
-        final boolean isAppReady = ConfigManager.instance().isAppReadyToUse();
+        final boolean isAppReady = ConfigManager.instance()
+                .getSystemStatus() != SystemStatusEnum.SETUP;
 
         addVisible(isAppReady && hasEditorAccess, WICKET_ID_BUTTON_NEW,
                 HtmlButtonEnum.ADD.uiText(getLocale()));

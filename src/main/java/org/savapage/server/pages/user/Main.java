@@ -397,7 +397,7 @@ public class Main extends AbstractUserPage {
         //
         helper.encloseLabel("mini-sys-maintenance",
                 SystemModeEnum.MAINTENANCE.uiText(getLocale()),
-                ConfigManager.isSysMaintenance());
+                ConfigManager.getSystemMode() == SystemModeEnum.MAINTENANCE);
 
         if (hasHelpURL) {
 

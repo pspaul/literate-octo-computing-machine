@@ -49,6 +49,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.SetupNeededEnum;
+import org.savapage.core.config.SystemStatusEnum;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.UserDao;
@@ -57,6 +58,7 @@ import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.UserIdDto;
+import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Entity;
 import org.savapage.core.jpa.User;
@@ -314,14 +316,13 @@ public final class ReqLogin extends ApiRequestMixin {
         }
 
         /*
-         * INVARIANT: If Application is NOT ready-to-use the only login possible
-         * is as admin in the admin application.
+         * INVARIANT: If application must be setup the only login possible is as
+         * "admin" user in the Admin Web App.
          */
-        if (!cm.isAppReadyToUse()) {
-            if (webAppType != WebAppTypeEnum.ADMIN) {
-                setApiResult(ApiResultCodeEnum.ERROR, "msg-login-app-config");
-                return;
-            }
+        if (cm.getSystemStatus() == SystemStatusEnum.SETUP
+                && webAppType != WebAppTypeEnum.ADMIN) {
+            setApiResult(ApiResultCodeEnum.ERROR, "msg-login-app-config");
+            return;
         }
 
         final boolean isAuthTokenLoginEnabled =
@@ -336,7 +337,7 @@ public final class ReqLogin extends ApiRequestMixin {
         } else if (authMode == UserAuthModeEnum.OAUTH) {
 
             /*
-             * If user was AOuth Sign-In is enabled
+             * If user was AOuth Sign-In is enabled.
              *
              * TODO: check if OAuth is enabled.
              */
@@ -440,8 +441,8 @@ public final class ReqLogin extends ApiRequestMixin {
         /*
          * INVARIANT: If system maintenance the only login possible is as admin.
          */
-        if (ConfigManager.isSysMaintenance() && session.getUserId() != null
-                && !session.isAdmin()) {
+        if (ConfigManager.getSystemMode() == SystemModeEnum.MAINTENANCE
+                && session.getUserId() != null && !session.isAdmin()) {
             setApiResult(ApiResultCodeEnum.ERROR, "msg-login-not-possible");
             return;
         }
@@ -711,7 +712,8 @@ public final class ReqLogin extends ApiRequestMixin {
                  */
                 if (userDb == null) {
 
-                    if (ConfigManager.isSysMaintenance()) {
+                    if (ConfigManager
+                            .getSystemMode() == SystemModeEnum.MAINTENANCE) {
                         setApiResult(ApiResultCodeEnum.ERROR,
                                 "msg-login-not-possible");
                     } else {

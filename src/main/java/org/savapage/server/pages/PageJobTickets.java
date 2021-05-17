@@ -169,7 +169,7 @@ public final class PageJobTickets extends AbstractAuthPage {
         //
         helper.encloseLabel("mini-sys-maintenance",
                 SystemModeEnum.MAINTENANCE.uiText(getLocale()),
-                ConfigManager.isSysMaintenance());
+                ConfigManager.getSystemMode() == SystemModeEnum.MAINTENANCE);
 
         add(new CommunityStatusFooterPanel("community-status-footer-panel",
                 true));
