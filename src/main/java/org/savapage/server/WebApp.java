@@ -28,12 +28,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Session;
@@ -100,6 +102,7 @@ import org.savapage.server.webapp.OAuthRedirectPage;
 import org.savapage.server.webapp.WebAppAdmin;
 import org.savapage.server.webapp.WebAppHelper;
 import org.savapage.server.webapp.WebAppJobTickets;
+import org.savapage.server.webapp.WebAppMailTickets;
 import org.savapage.server.webapp.WebAppPdfPgp;
 import org.savapage.server.webapp.WebAppPos;
 import org.savapage.server.webapp.WebAppPrintSite;
@@ -192,22 +195,27 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     /**
      * Used in this class to set mountPage().
      */
-    public static final String MOUNT_PATH_WEBAPP_ADMIN = "/admin";
+    private static final String MOUNT_PATH_WEBAPP_ADMIN = "/admin";
 
     /**
      * The Point-of-Sale mount path.
      */
-    public static final String MOUNT_PATH_WEBAPP_POS = "/pos";
+    private static final String MOUNT_PATH_WEBAPP_POS = "/pos";
 
     /**
      * The Job Tickets mount path.
      */
-    public static final String MOUNT_PATH_WEBAPP_JOBTICKETS = "/jobtickets";
+    private static final String MOUNT_PATH_WEBAPP_JOBTICKETS = "/jobtickets";
+
+    /**
+     * The Mail Tickets mount path.
+     */
+    private static final String MOUNT_PATH_WEBAPP_MAILTICKETS = "/mailtickets";
 
     /**
      * The Print Site mount path.
      */
-    public static final String MOUNT_PATH_WEBAPP_PRINTSITE = "/printsite";
+    private static final String MOUNT_PATH_WEBAPP_PRINTSITE = "/printsite";
 
     /**
      * Used in this class to set mountPage().
@@ -269,22 +277,50 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     private static final Object MUTEX_DICT = new Object();
 
     /**
-     * Dictionary with key IP-address, getting the User of an active
+     * Map of IP-address (key) with the most recent User (value) of an active
      * authenticated WebApp Session.
      */
-    private static Map<String, String> theDictIpAddrUser = new HashMap<>();
+    private static Map<String, String> theMapIpAddr2RecentUser =
+            new HashMap<>();
 
     /**
-     * Dictionary with key SessionId, getting the IP-address of an active
-     * authenticated WebApp Session.
+     * Map of IP-address (key) and active authenticated WebApp Sessions (value).
      */
-    private static Map<String, String> theDictSessionIpAddr = new HashMap<>();
+    private static Map<String, Set<String>> theMapIpAddr2Sessions =
+            new HashMap<>();
 
     /**
-     * Dictionary with key IP-address, getting the SessionId of an active
-     * authenticated WebApp Session.
+     * Map of SessionId (key) with IP-address (value) of an active authenticated
+     * WebApp Session.
      */
-    private static Map<String, String> theDictIpAddrSession = new HashMap<>();
+    private static Map<String, String> theMapSession2IpAddr = new HashMap<>();
+
+    /**
+     * Map of SessionId (key) with User (value) of an active authenticated User
+     * WebApp Session.
+     */
+    private static Map<String, WebAppTypeEnum> theMapSession2WebAppType =
+            new HashMap<>();
+
+    /**
+     * Map of SessionId (key) with User (value) of an active authenticated User
+     * WebApp Session.
+     */
+    private static Map<String, String> theMapSession2User4WebApp =
+            new HashMap<>();
+
+    /**
+     * Map of active authenticated User (key) Web App session count (value).
+     */
+    private static Map<String, Integer> theMapUsers2WebAppUserCount =
+            new HashMap<>();
+
+    /**
+     * Map of active authenticated User (key) Mail Tickets Web App session count
+     * (value).
+     */
+    private static Map<String, Integer> theMapUsers2WebAppMailTicketsCount =
+            new HashMap<>();
 
     /**
      * Last time the session dictionaries were pruned.
@@ -330,6 +366,33 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     private String localize(final String key, final String... args) {
         return Messages.getMessage(getClass(), key, args);
+    }
+
+    /**
+     * Gets the mount path for a Web App Type.
+     *
+     * @param webAppType
+     *            The {@link WebAppTypeEnum}.
+     * @return The mount path (with "/" prefix).
+     */
+    public static String getMountPath(final WebAppTypeEnum webAppType) {
+
+        switch (webAppType) {
+        case ADMIN:
+            return WebApp.MOUNT_PATH_WEBAPP_ADMIN;
+        case PRINTSITE:
+            return WebApp.MOUNT_PATH_WEBAPP_PRINTSITE;
+        case JOBTICKETS:
+            return WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
+        case MAILTICKETS:
+            return WebApp.MOUNT_PATH_WEBAPP_MAILTICKETS;
+        case POS:
+            return WebApp.MOUNT_PATH_WEBAPP_POS;
+        case USER:
+        case UNDEFINED:
+        default:
+            return WebApp.MOUNT_PATH_WEBAPP_USER;
+        }
     }
 
     /**
@@ -398,7 +461,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * Gets the WebApp authenticated user on remote host using IP address of
      * remote host.
      * <p>
-     * <b>Note</b>: IP User Session cache is used to retrieve the user.
+     * <b>Note</b>: IP User Session cache is used to retrieve the most recent
+     * authenticated user .
      * </p>
      *
      * @param ipAddr
@@ -407,7 +471,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public static String getAuthUserByIpAddr(final String ipAddr) {
         synchronized (MUTEX_DICT) {
-            return theDictIpAddrUser.get(ipAddr);
+            return theMapIpAddr2RecentUser.get(ipAddr);
         }
     }
 
@@ -431,18 +495,36 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * @return Number of IP addresses removed from cache.
      */
     private static int pruneOrphanedAuthIpAddr() {
+
         synchronized (MUTEX_DICT) {
+
             int removed = 0;
 
-            final Iterator<Entry<String, String>> iter =
-                    theDictIpAddrSession.entrySet().iterator();
+            final Iterator<Entry<String, Set<String>>> iter =
+                    theMapIpAddr2Sessions.entrySet().iterator();
 
             while (iter.hasNext()) {
-                final Entry<String, String> entry = iter.next();
+
+                final Entry<String, Set<String>> entry = iter.next();
                 final String ipAddr = entry.getKey();
-                final String session = entry.getValue();
-                if (!theDictSessionIpAddr.containsKey(session)) {
-                    theDictIpAddrUser.remove(ipAddr);
+
+                final Iterator<String> iterSession =
+                        entry.getValue().iterator();
+
+                int nSessions = entry.getValue().size();
+
+                while (iterSession.hasNext()) {
+                    final String session = iterSession.next();
+                    final String ipAddrSession =
+                            theMapSession2IpAddr.get(session);
+                    if (ipAddrSession == null
+                            || !ipAddrSession.equals(ipAddr)) {
+                        iterSession.remove();
+                        nSessions--;
+                    }
+                }
+                if (nSessions == 0) {
+                    theMapIpAddr2RecentUser.remove(ipAddr);
                     iter.remove();
                     removed++;
                 }
@@ -458,7 +540,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public static int getAuthSessionCount() {
         // no synchronized needed
-        return theDictSessionIpAddr.size();
+        return theMapSession2WebAppType.size();
     }
 
     /**
@@ -468,7 +550,38 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public static int getAuthIpAddrCount() {
         // no synchronized needed
-        return theDictIpAddrSession.size();
+        return theMapIpAddr2Sessions.size();
+    }
+
+    /**
+     * @param userid
+     *            Unique user id.
+     * @return Number of authenticated User Web App sessions.
+     */
+    public static int getWebAppUserSessions(final String userid) {
+        synchronized (MUTEX_DICT) {
+            final Integer count = theMapUsers2WebAppUserCount.get(userid);
+            if (count == null) {
+                return 0;
+            }
+            return count.intValue();
+        }
+    }
+
+    /**
+     * @param userid
+     *            Unique user id.
+     * @return Number of authenticated Mail Tickets Web App sessions.
+     */
+    public static int getWebAppMailTicketsSessions(final String userid) {
+        synchronized (MUTEX_DICT) {
+            final Integer count =
+                    theMapUsers2WebAppMailTicketsCount.get(userid);
+            if (count == null) {
+                return 0;
+            }
+            return count.intValue();
+        }
     }
 
     /**
@@ -492,59 +605,30 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             final String ipAddr, final String user) {
 
         synchronized (MUTEX_DICT) {
-            /*
-             * Removing the old session on same IP address
-             */
-            final String oldUser = theDictIpAddrUser.remove(ipAddr);
 
-            if (oldUser == null) {
-                /*
-                 * ADD first-time authenticated user on IP address
-                 */
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "IP User Session [{}] [{}] [{}] added."
-                                    + " Sessions [{}]",
-                            ipAddr, user, sessionId,
-                            (theDictIpAddrUser.size() + 1));
-                }
+            final boolean newIP =
+                    theMapIpAddr2RecentUser.put(ipAddr, user) == null;
 
-            } else {
-                /*
-                 * REMOVE current authenticated user on IP address
-                 */
-                final String oldSession = theDictIpAddrSession.remove(ipAddr);
+            if (newIP && LOGGER.isDebugEnabled()) {
 
-                if (oldSession == null) {
-                    LOGGER.error(
-                            "addSessionIpUser: no session for "
-                                    + "IP address [{}] of old user [{}]",
-                            ipAddr, oldUser);
-                } else {
-
-                    if (theDictSessionIpAddr.remove(oldSession) == null) {
-                        LOGGER.error(
-                                "addSessionIpUser: no IP address for "
-                                        + "old session [{}] of old user [{}]",
-                                oldSession, oldUser);
-                    }
-
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug(
-                                "IP User Session [{}] [{}] [{}]"
-                                        + " replaced [{}] [{}]. Sessions [{}]",
-                                ipAddr, user, sessionId, oldUser, oldSession,
-                                (theDictIpAddrUser.size() + 1));
-                    }
-                }
+                LOGGER.debug(
+                        "IP Recent User [{}] [{}] [{}] added."
+                                + " Total [{}]",
+                        ipAddr, user, sessionId,
+                        theMapIpAddr2RecentUser.size());
             }
 
-            /*
-             * Add the new one.
-             */
-            theDictIpAddrUser.put(ipAddr, user);
-            theDictIpAddrSession.put(ipAddr, sessionId);
-            theDictSessionIpAddr.put(sessionId, ipAddr);
+            theMapSession2IpAddr.put(sessionId, ipAddr);
+
+            // Add session to IP addr sessions.
+            final Set<String> ipAddrSessions;
+            if (theMapIpAddr2Sessions.containsKey(ipAddr)) {
+                ipAddrSessions = theMapIpAddr2Sessions.get(ipAddr);
+            } else {
+                ipAddrSessions = new HashSet<>();
+            }
+            ipAddrSessions.add(sessionId);
+            theMapIpAddr2Sessions.put(ipAddr, ipAddrSessions);
 
             //
             final long now = System.currentTimeMillis();
@@ -555,6 +639,29 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                             "Removed [%s] orphaned HTTP sessions.", pruned));
                 }
                 theDictLastPruneTime = now;
+            }
+
+            //
+            theMapSession2WebAppType.put(sessionId, webAppType);
+
+            if (webAppType.isUserTypeOrVariant()) {
+
+                theMapSession2User4WebApp.put(sessionId, user);
+
+                // Increment user session count.
+                final Map<String, Integer> mapWrk;
+                if (webAppType == WebAppTypeEnum.MAILTICKETS) {
+                    mapWrk = theMapUsers2WebAppMailTicketsCount;
+                } else {
+                    mapWrk = theMapUsers2WebAppUserCount;
+                }
+                final int countUpd;
+                if (mapWrk.containsKey(user)) {
+                    countUpd = mapWrk.get(user).intValue() + 1;
+                } else {
+                    countUpd = 1;
+                }
+                mapWrk.put(user, Integer.valueOf(countUpd));
             }
         }
 
@@ -749,6 +856,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
              */
             mountPage(MOUNT_PATH_WEBAPP_ADMIN, WebAppAdmin.class);
             mountPage(MOUNT_PATH_WEBAPP_JOBTICKETS, WebAppJobTickets.class);
+            mountPage(MOUNT_PATH_WEBAPP_MAILTICKETS, WebAppMailTickets.class);
             mountPage(MOUNT_PATH_WEBAPP_PRINTSITE, WebAppPrintSite.class);
             mountPage(MOUNT_PATH_WEBAPP_POS, WebAppPos.class);
 
@@ -1274,7 +1382,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("{} [{}]. Sessions [{}]", debugMsg,
-                        session.getId(), theDictIpAddrUser.size());
+                        session.getId(), theMapIpAddr2RecentUser.size());
             }
         }
         return session;
@@ -1287,36 +1395,63 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
         synchronized (MUTEX_DICT) {
 
-            String ipAddr = theDictSessionIpAddr.remove(sessionId);
+            final WebAppTypeEnum webAppType =
+                    theMapSession2WebAppType.remove(sessionId);
+
+            if (webAppType.isUserTypeOrVariant()) {
+
+                final String userId =
+                        theMapSession2User4WebApp.remove(sessionId);
+
+                // Decrement/delete user session count.
+                final Map<String, Integer> mapWrk;
+
+                if (webAppType == WebAppTypeEnum.MAILTICKETS) {
+                    mapWrk = theMapUsers2WebAppMailTicketsCount;
+                } else {
+                    mapWrk = theMapUsers2WebAppUserCount;
+                }
+                final int countUpd = mapWrk.get(userId).intValue() - 1;
+                if (countUpd == 0) {
+                    mapWrk.remove(userId);
+                } else {
+                    mapWrk.put(userId, Integer.valueOf(countUpd));
+                }
+            }
+
+            final String ipAddr = theMapSession2IpAddr.remove(sessionId);
 
             if (ipAddr == null) {
 
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "IP User Session [?.?.?.?] [{}] unbound. "
-                                    + "Sessions [{}]",
-                            sessionId, theDictIpAddrUser.size());
-                }
+                LOGGER.warn(
+                        "IP User Session [?.?.?.?] [{}] unbound. "
+                                + "Sessions [{}]",
+                        sessionId, theMapIpAddr2RecentUser.size());
 
             } else {
 
-                final String sessionRemoved =
-                        theDictIpAddrSession.remove(ipAddr);
+                if (theMapIpAddr2Sessions.containsKey(ipAddr)) {
 
-                if (sessionRemoved == null) {
-                    LOGGER.error("Inconsistent IP User Session cache: "
-                            + "no session found for [{}]", ipAddr);
-                } else {
-                    if (!sessionRemoved.equals(sessionId)) {
+                    final Set<String> sessions =
+                            theMapIpAddr2Sessions.get(ipAddr);
+
+                    final boolean found = sessions.remove(sessionId);
+
+                    if (!found) {
                         LOGGER.warn(
-                                "{}: Inconsistent Session IP cache "
-                                        + "[{}]->[{}]->[{}]",
-                                "sessionUnbound", sessionId, ipAddr,
-                                sessionRemoved);
+                                "{}: Inconsistent IP sessions cache "
+                                        + "[{}]->[{}]",
+                                "sessionUnbound", sessionId, ipAddr);
                     }
+                    if (sessions.isEmpty()) {
+                        theMapIpAddr2Sessions.remove(ipAddr);
+                    }
+                } else {
+                    LOGGER.error("Inconsistent IP sessions cache: "
+                            + "no sessions found for [{}]", ipAddr);
                 }
 
-                final String user = theDictIpAddrUser.remove(ipAddr);
+                final String user = theMapIpAddr2RecentUser.remove(ipAddr);
 
                 if (user == null) {
                     LOGGER.error("Inconsistent IP User Session cache: "
@@ -1327,14 +1462,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                                 "IP User Session [{}] [{}] [{}] removed."
                                         + " Sessions [{}]",
                                 ipAddr, user, sessionId,
-                                theDictIpAddrUser.size());
+                                theMapIpAddr2RecentUser.size());
                     }
-                    /*
-                     * TODO: how to get the WebAppTypEnum?
-                     */
                     AdminPublisher.instance().publish(PubTopicEnum.USER,
-                            PubLevelEnum.INFO,
-                            localize("pub-user-logout", user, ipAddr));
+                            PubLevelEnum.INFO, localize("pub-user-logout",
+                                    webAppType.getUiText(), user, ipAddr));
                 }
             }
         }
