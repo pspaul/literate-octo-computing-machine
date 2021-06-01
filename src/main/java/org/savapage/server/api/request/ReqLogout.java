@@ -32,8 +32,10 @@ import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.msg.UserMsgIndicator;
+import org.savapage.core.services.helpers.InboxContext;
 import org.savapage.server.auth.ClientAppUserAuthManager;
 import org.savapage.server.auth.WebAppUserAuthManager;
+import org.savapage.server.session.InboxContextSession;
 import org.savapage.server.session.SpSession;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -76,6 +78,10 @@ public final class ReqLogout extends ApiRequestMixin {
 
         final WebAppTypeEnum webAppType = this.getSessionWebAppType();
 
+        // Save context from session before replacing the session.
+        final InboxContext inboxContext =
+                new InboxContextSession(requestingUser, SpSession.get());
+
         ClientAppUserAuthManager.removeUserAuthToken(this.getClientIP());
 
         WebAppUserAuthManager.instance()
@@ -84,10 +90,10 @@ public final class ReqLogout extends ApiRequestMixin {
         ApiRequestHelper.stopReplaceSession(SpSession.get(), requestingUser,
                 this.getClientIP());
 
-        if (webAppType == WebAppTypeEnum.USER && ConfigManager.instance()
+        if (webAppType.isUserTypeOrVariant() && ConfigManager.instance()
                 .isConfigValue(Key.WEBAPP_USER_LOGOUT_CLEAR_INBOX)) {
 
-            if (INBOX_SERVICE.getInboxInfo(requestingUser).jobCount() > 0) {
+            if (INBOX_SERVICE.getInboxInfo(inboxContext).jobCount() > 0) {
                 INBOX_SERVICE.deleteAllPages(requestingUser);
             }
 

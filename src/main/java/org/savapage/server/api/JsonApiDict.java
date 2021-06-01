@@ -923,21 +923,24 @@ public final class JsonApiDict {
                 allowed = webAppType == WebAppTypeEnum.PRINTSITE;
                 break;
             case JOB_TICKET_CREATOR:
-                allowed = webAppType == WebAppTypeEnum.USER;
+                allowed = webAppType.isUserTypeOrVariant();
                 break;
             case JOB_TICKET_OPERATOR:
                 allowed = EnumSet
                         .of(WebAppTypeEnum.ADMIN, WebAppTypeEnum.JOBTICKETS)
                         .contains(webAppType);
                 break;
+            case MAIL_TICKET_OPERATOR:
+                allowed = webAppType == WebAppTypeEnum.MAILTICKETS;
+                break;
             case PRINT_CREATOR:
-                allowed = webAppType == WebAppTypeEnum.USER;
+                allowed = webAppType.isUserTypeOrVariant();
                 break;
             case PRINT_DELEGATE:
-                allowed = webAppType == WebAppTypeEnum.USER;
+                allowed = webAppType.isUserTypeOrVariant();
                 break;
             case PRINT_DELEGATOR:
-                allowed = webAppType == WebAppTypeEnum.USER;
+                allowed = webAppType.isUserTypeOrVariant();
                 break;
             case WEB_CASHIER:
                 allowed = EnumSet.of(WebAppTypeEnum.ADMIN, WebAppTypeEnum.POS)

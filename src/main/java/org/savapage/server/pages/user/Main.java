@@ -40,6 +40,7 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.UserGroupAccountDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
@@ -226,7 +227,8 @@ public class Main extends AbstractUserPage {
         final boolean hasHelpURL = StringUtils.isNotBlank(urlHelp)
                 && cm.isConfigValue(Key.WEBAPP_USER_HELP_URL_ENABLE);
 
-        final UserIdDto userIdDto = SpSession.get().getUserIdDto();
+        final SpSession session = SpSession.get();
+        final UserIdDto userIdDto = session.getUserIdDto();
 
         final Set<NavButtonEnum> buttonPrivileged =
                 this.getNavButtonPriv(userIdDto);
@@ -270,11 +272,19 @@ public class Main extends AbstractUserPage {
                 "btn-txt-gdpr", "GDPR");
 
         //
-        final boolean isMailPrintTicketOperator =
+        final boolean isMailTicketOperatorNative =
                 userIdDto != null && ConfigManager
                         .isMailPrintTicketOperator(userIdDto.getUserId());
 
-        if (isMailPrintTicketOperator) {
+        final WebAppTypeEnum webAppType = this.getSessionWebAppType();
+
+        final boolean isMailTicketOperatorRole =
+                userIdDto != null && webAppType == WebAppTypeEnum.MAILTICKETS
+                        && ConfigManager.isMailPrintTicketingEnabled()
+                        && ACCESS_CONTROL_SERVICE.hasAccess(userIdDto,
+                                ACLRoleEnum.MAIL_TICKET_OPERATOR);
+
+        if (isMailTicketOperatorNative || isMailTicketOperatorRole) {
             helper.addTransparentAppendAttr("ticket-input",
                     MarkupHelper.ATTR_PLACEHOLDER,
                     JobTicketNounEnum.TICKET.uiText(getLocale()));
@@ -368,6 +378,16 @@ public class Main extends AbstractUserPage {
                             .concat(HtmlButtonEnum.DOTTED_SUFFIX));
         }
 
+        final UserIdDto userIdDtoDocLog = session.getUserIdDtoDocLog();
+        if (userIdDtoDocLog != null) {
+            helper.encloseLabel("btn-mini-user-name-doclog",
+                    StringUtils.defaultIfBlank(userIdDtoDocLog.getFullName(),
+                            userIdDtoDocLog.getUserId()),
+                    userIdDtoDocLog != null && !userIdDto.getDbKey()
+                            .equals(userIdDtoDocLog.getDbKey()));
+        } else {
+            helper.discloseLabel("btn-mini-user-name-doclog");
+        }
         //
         final Label name = helper.addLabel("mini-user-name", userName);
         final Component nameButton =

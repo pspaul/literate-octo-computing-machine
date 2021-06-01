@@ -75,7 +75,7 @@ public class ReqExportOutboxPdf extends ApiRequestExportMixin {
 
         if (this.isJobTicket) {
             userid = null;
-        } else if (webAppType == WebAppTypeEnum.USER) {
+        } else if (webAppType.isUserTypeOrVariant()) {
             userid = requestingUser;
         } else {
             final User user =

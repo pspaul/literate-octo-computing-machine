@@ -149,7 +149,7 @@ public final class ApiRequestHelper {
      * one and creating a new one.
      * <p>
      * NOTE: {@link #interruptPendingLongPolls(String, String)} is executed when
-     * {@link WebAppTypeEnum#USER}.
+     * (derived Web App of) {@link WebAppTypeEnum#USER} .
      * </p>
      * <p>
      * NOTE: When replacing the session, the Wicket framework invalidate() calls
@@ -189,7 +189,7 @@ public final class ApiRequestHelper {
          * Make sure that all User Web App long polls for this user are
          * interrupted.
          */
-        if (userId != null && savedWebAppType == WebAppTypeEnum.USER) {
+        if (userId != null && savedWebAppType.isUserTypeOrVariant()) {
             interruptPendingLongPolls(userId, remoteAddr);
         }
     }

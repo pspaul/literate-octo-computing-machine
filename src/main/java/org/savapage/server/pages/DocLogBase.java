@@ -111,6 +111,14 @@ public final class DocLogBase extends AbstractAuthPage {
                 throw new RestartResponseException(NotAuthorized.class);
             }
 
+        } else if (webAppType == WebAppTypeEnum.MAILTICKETS) {
+
+            if (!ACCESS_CONTROL_SERVICE.hasAccess(
+                    SpSession.get().getUserIdDto(),
+                    ACLRoleEnum.MAIL_TICKET_OPERATOR)) {
+                throw new RestartResponseException(NotAuthorized.class);
+            }
+
         } else if (webAppType == WebAppTypeEnum.PRINTSITE) {
 
             if (!ACCESS_CONTROL_SERVICE.hasAccess(
@@ -159,7 +167,7 @@ public final class DocLogBase extends AbstractAuthPage {
              * If we are called in a User WebApp context we ALWAYS use the user
              * of the current session.
              */
-            userId = SpSession.get().getUserDbKey();
+            userId = SpSession.get().getUserDbKeyDocLog();
             userNameVisible = false;
             accountNameVisible = false;
         }
@@ -171,17 +179,21 @@ public final class DocLogBase extends AbstractAuthPage {
         final String userNameCheck;
 
         if (userNameVisible) {
+
             final User user = ServiceContext.getDaoContext().getUserDao()
                     .findById(userId);
             userName = user.getUserId();
             userNameCheck = userName;
+
         } else if (accountNameVisible) {
+
             final Account account = ServiceContext.getDaoContext()
                     .getAccountDao().findById(accountId);
             accountName = account.getName();
             userNameCheck = null;
+
         } else {
-            userNameCheck = SpSession.get().getUserId();
+            userNameCheck = SpSession.get().getUserIdDocLog();
         }
 
         final boolean isMailPrintTicketOperator = userNameCheck != null
@@ -189,24 +201,26 @@ public final class DocLogBase extends AbstractAuthPage {
 
         //
         Label hiddenLabel = new Label("hidden-user-id");
-        String hiddenValue = "";
-
-        if (userId != null) {
-            hiddenValue = userId.toString();
+        final String hiddenUserId;
+        if (userId == null) {
+            hiddenUserId = "";
+        } else {
+            hiddenUserId = userId.toString();
         }
         hiddenLabel.add(
-                new AttributeModifier(MarkupHelper.ATTR_VALUE, hiddenValue));
+                new AttributeModifier(MarkupHelper.ATTR_VALUE, hiddenUserId));
         add(hiddenLabel);
 
         //
         hiddenLabel = new Label("hidden-account-id");
-        hiddenValue = "";
-
-        if (accountId != null) {
-            hiddenValue = accountId.toString();
+        final String hiddenAccountId;
+        if (accountId == null) {
+            hiddenAccountId = "";
+        } else {
+            hiddenAccountId = accountId.toString();
         }
-        hiddenLabel.add(
-                new AttributeModifier(MarkupHelper.ATTR_VALUE, hiddenValue));
+        hiddenLabel.add(new AttributeModifier(MarkupHelper.ATTR_VALUE,
+                hiddenAccountId));
         add(hiddenLabel);
 
         //
@@ -326,6 +340,7 @@ public final class DocLogBase extends AbstractAuthPage {
                             Key.WEBAPP_USER_DOCLOG_SELECT_TYPE_DEFAULT_ORDER);
 
             DocLogScopeEnum scopeSecondChoice = null;
+
             for (final DocLogScopeEnum scope : typeDefaultOrder) {
                 if ((scope == DocLogScopeEnum.PDF && btnVisiblePdf)
                         || (scope == DocLogScopeEnum.PRINT && btnVisiblePrint)

@@ -289,6 +289,7 @@ String.prototype.endsWith = function(suffix) {
             this.mail = null;
             this.mailDefault = null;
             this.loggedOn = false;
+            this.doclog = {};
         };
         /**
          * Constructor

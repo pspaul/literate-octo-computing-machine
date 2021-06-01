@@ -34,7 +34,7 @@ import org.savapage.core.config.WebAppTypeEnum;
  * Singleton manager of WebApp User Authentications Tokens.
  * <p>
  * A separate cache dictionary for each Web App context is maintained (User,
- * Admin, POS, JobTicket).
+ * Admin, POS, JobTicket, MailTicket, PrintSite).
  * </p>
  *
  * @author Rijk Ravestein
@@ -45,16 +45,18 @@ public final class WebAppUserAuthManager {
     /**
      * Number of indexes.
      */
-    private static final int IDX_CONTEXT_COUNT = 5;
+    private static final int IDX_CONTEXT_COUNT = 6;
 
     /** */
-    private static final int IDX_CONTEXT_USER = IDX_CONTEXT_COUNT - 5;
+    private static final int IDX_CONTEXT_USER = IDX_CONTEXT_COUNT - 6;
     /** */
-    private static final int IDX_CONTEXT_ADMIN = IDX_CONTEXT_COUNT - 4;
+    private static final int IDX_CONTEXT_ADMIN = IDX_CONTEXT_COUNT - 5;
     /** */
-    private static final int IDX_CONTEXT_POS = IDX_CONTEXT_COUNT - 3;
+    private static final int IDX_CONTEXT_POS = IDX_CONTEXT_COUNT - 4;
     /** */
-    private static final int IDX_CONTEXT_JOBTICKET = IDX_CONTEXT_COUNT - 2;
+    private static final int IDX_CONTEXT_JOBTICKET = IDX_CONTEXT_COUNT - 3;
+    /** */
+    private static final int IDX_CONTEXT_MAILTICKET = IDX_CONTEXT_COUNT - 2;
     /** */
     private static final int IDX_CONTEXT_PRINTSITE = IDX_CONTEXT_COUNT - 1;
 
@@ -111,8 +113,8 @@ public final class WebAppUserAuthManager {
     }
 
     /**
-     *
-     * @param isAdminContext
+     * @param webAppType
+     *            Web App Type.
      * @return
      */
     private int getDictIndex(final WebAppTypeEnum webAppType) {
@@ -124,6 +126,8 @@ public final class WebAppUserAuthManager {
             return IDX_CONTEXT_PRINTSITE;
         case JOBTICKETS:
             return IDX_CONTEXT_JOBTICKET;
+        case MAILTICKETS:
+            return IDX_CONTEXT_MAILTICKET;
         case POS:
             return IDX_CONTEXT_POS;
         case USER:

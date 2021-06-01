@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2020 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+Translator: Rijk Ravestein <rijkr@savapage.org>
+-->
+</wicket:remove>
+
+<head>
+
+<noscript>
+	<h2>Your browser does not support JavaScript or JavaScript is
+		disabled!</h2>
+	<h3>Please enable JavaScript to run this application.</h3>
+	<hr />
+</noscript>
+
+<title wicket:id="app-title" />
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<wicket:remove>
+	<!--
+Informs the Apple browser that this is a web app.
+<meta name="apple-mobile-web-app-capable" content="yes">
+-->
+</wicket:remove>
+
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<wicket:remove>
+	<!--  Prevent chaching in IE: http://support.microsoft.com/kb/234067  -->
+</wicket:remove>
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+<wicket:remove>
+	<!--  
+http://developer.apple.com/library/ios/#DOCUMENTATION/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+http://iconhandbook.co.uk/reference/chart/ios/
+
+sizes="72x72"   : iPad
+sizes="114x114" : iPhone 4+
+sizes="144x144" : iPad 3+
+
+If no sizes attribute is set, the element’s size defaults to 57 x 57.  
+-->
+</wicket:remove>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="apple-touch-icon" sizes="72x72"
+	href="/apple-touch-icon-72x72.png" />
+<link rel="apple-touch-icon" sizes="114x114"
+	href="/apple-touch-icon-114x114.png" />
+<link rel="apple-touch-icon" sizes="144x144"
+	href="/apple-touch-icon-144x144.png" />
+
+</head>
+
+<body>
+
+	<wicket:remove>
+		<!--  
+This is the ZERO window with empty background, which is never shown, because 
+the login window is shown as a first action. See jquery.savapage.js
+
+THIS IS REALLY NEEDED for the page after the login to show (why?).
+-->
+	</wicket:remove>
+	<div data-role="dialog" id="page-zero" style="display: none;">
+		<wicket:panel wicket:id="zero-page-panel" />
+	</div>
+
+	<wicket:remove>
+		<!--  Placeholder for pages to load -->
+	</wicket:remove>
+	<div data-role="dialog" data-theme="a" id="page-login" />
+	<div data-role="page" data-theme="a" id="page-main" />
+	<div data-role="page" data-theme="a" id="page-browser" />
+	<div data-role="page" data-theme="a" id="page-doclog" />
+	<div data-role="page" data-theme="a" id="page-accounttrx" />
+	<div data-role="dialog" data-theme="a" id="page-print" />
+	<div data-role="dialog" data-theme="a" id="page-print-delegation" />
+	<div data-role="dialog" data-theme="a" id="page-send" />
+	<div data-role="dialog" data-theme="a" id="page-printer-settings" />
+	<div data-role="dialog" data-theme="a" id="page-pdf-properties" />
+	<div data-role="dialog" data-theme="a" id="page-letterhead" />
+	<div data-role="dialog" data-theme="a" id="page-clear" />
+	<div data-role="dialog" data-theme="a" id="page-language" />
+	<div data-role="dialog" data-theme="a" id="page-user" />
+	<div data-role="dialog" data-theme="a" id="page-user-pw-reset" />
+	<div data-role="dialog" data-theme="a" id="page-user-pin-reset" />
+	<div data-role="dialog" data-theme="a" id="page-voucher-redeem" />
+	<div data-role="dialog" data-theme="a" id="page-credit-transfer" />
+	<div data-role="dialog" data-theme="a" id="page-info" />
+	<div data-role="dialog" data-theme="a" id="page-user-internet-printer" />
+	<div data-role="dialog" data-theme="a" id="page-user-totp" />
+	<div data-role="dialog" data-theme="a" id="page-user-telegram" />
+
+	<div data-role="dialog" data-theme="a" id="page-dashboard" />
+	<div data-role="dialog" data-theme="a" id="page-outbox" />
+	<div data-role="dialog" data-theme="a" id="page-gdpr-export" />
+
+	<div data-role="dialog" data-theme="a" id="page-money-transfer"
+		style="display: none;" class="sp-initial-hidden">
+
+		<div data-role="header" data-theme="b">
+			<h1>
+				<wicket:message key="money-transfer-title" />
+			</h1>
+		</div>
+
+		<div class="ui-content">
+
+			<div id="page-money-transfer-content" />
+
+		</div>
+
+		<wicket:remove>
+			<!-- 
+    THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+    -->
+		</wicket:remove>
+		<div data-role="popup" data-position-to="window"
+			class="sp-msg-popup ui-content" />
+	</div>
+
+
+	<div data-role="dialog" data-theme="a" id="page-bitcoin-transfer"
+		style="display: none;" class="sp-initial-hidden">
+
+		<div data-role="header" data-theme="b">
+			<h1>
+				<wicket:message key="bitcoin-transfer-title" />
+			</h1>
+		</div>
+
+		<div class="ui-content">
+
+			<div id="page-bitcoin-transfer-content" />
+
+		</div>
+
+		<wicket:remove>
+			<!-- 
+    THIS POPUP MUST BE PRESENT IN EVERY PAGE AND DIALOG 
+    -->
+		</wicket:remove>
+		<div data-role="popup" data-position-to="window"
+			class="sp-msg-popup ui-content" />
+	</div>
+
+	<wicket:remove>
+		<!-- ==============================================================  
+     See FileDownloadApiPanel     
+     ================================================================== -->
+	</wicket:remove>
+	<wicket:panel wicket:id="file-download-api-panel" />
+
+	<wicket:remove>
+		<!-- ==============================================================  
+    Dialog for File upload must be pre-loaded for the Wicket 
+    handler to work. It does NOT work on injected mobile pages. 
+     ================================================================== -->
+	</wicket:remove>
+	<div data-role="dialog" data-theme="a" id="page-file-upload"
+		style="display: none;" class="sp-initial-hidden">
+
+		<div data-role="header" data-theme="b">
+			<h1 id="file-upload-title" />
+		</div>
+
+		<div class="ui-content">
+
+			<ul data-role="listview" data-inset="true" id="file-upload-addin" />
+
+
+			<ul data-role="listview" data-inset="true">
+				<wicket:enclosure child="file-upload-fontfamily-options">
+					<li>
+						<div class="sp-txt-info sp-txt-wrap"
+							id="file-upload-txt-font-family" /> <select tabindex="-1"
+							id="file-upload-fontfamily" data-native-menu="false"
+							data-mini="true">
+							<wicket:panel wicket:id="file-upload-fontfamily-options" />
+						</select>
+					</li>
+				</wicket:enclosure>
+				<li>
+					<form id="sp-webprint-upload-form" enctype="multipart/form-data">
+
+						<label for="sp-webprint-upload-file" />
+						<input id="sp-webprint-upload-file" wicket:id="fileUpload"
+							type="file" accept="" size="50" style="font-size: 110%;" multiple />
+
+						<div class="sp-txt-wrap" id="sp-webprint-upload-feedback"
+							style="padding: 10px; margin-bottom: 5px;" />
+
+						<input type="submit" data-mini="true" data-corners="false"
+							data-inline="true" data-icon="arrow-u" value="set-by-javascript"
+							wicket:message="title:sp-btn-file-upload-submit-tooltip"
+							id="sp-button-file-upload-submit" />
+
+						<input type="reset" data-mini="true" data-inline="true"
+							data-icon="delete" data-corners="false"
+							wicket:message="title:sp-btn-file-upload-reset-tooltip"
+							id="sp-button-file-upload-reset" value="set-by-javascript" />
+
+						<a tabindex="0" id="sp-file-upload-delete-button"
+							wicket:message="title:sp-btn-file-upload-delete-tooltip"
+							class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-main-clear">
+							<span class="sp-txt-info" />
+						</a>
+
+					</form>
+
+				</li>
+			</ul>
+
+			<div style="opacity: 0.8;">
+				<wicket:panel wicket:id="next-buttons">
+					<button id="[ID]" wicket:id="next-button"
+						class="ui-btn ui-btn-inline ui-btn-icon-left" />
+				</wicket:panel>
+			</div>
+
+		</div>
+
+	</div>
+
+	<wicket:panel wicket:id="librjs-license-page" />
+
+</body>
+
+</html>

@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
  * @author Rijk Ravestein
  *
  */
-public final class WebAppUser extends AbstractWebAppPage {
+public class WebAppUser extends AbstractWebAppPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -117,17 +117,20 @@ public final class WebAppUser extends AbstractWebAppPage {
             ServiceContext.getServiceFactory().getUserService();
 
     @Override
-    protected boolean isJqueryCoreRenderedByWicket() {
+    protected final boolean isJqueryCoreRenderedByWicket() {
         return true;
     }
 
+    /**
+     * Note: this method can be overridden by any subclass.
+     */
     @Override
     protected WebAppTypeEnum getWebAppType() {
         return WebAppTypeEnum.USER;
     }
 
     @Override
-    protected void appendWebAppTypeJsFiles(
+    protected final void appendWebAppTypeJsFiles(
             final List<Pair<String, LibreJsLicenseEnum>> list,
             final String nocache) {
 
@@ -423,6 +426,7 @@ public final class WebAppUser extends AbstractWebAppPage {
         }
 
         session.setUser(authUser);
+        session.setUserIdDtoDocLog(null);
 
         /*
          * Pass the WebAppParmEnum.SP_LOGIN_OAUTH.parm() so JavaScript can act
@@ -639,7 +643,7 @@ public final class WebAppUser extends AbstractWebAppPage {
 
         add(new Label("app-title", appTitle));
 
-        addZeroPagePanel(WebAppTypeEnum.USER);
+        addZeroPagePanel(this.getWebAppType());
 
         webPrintMarkup();
 
@@ -659,22 +663,22 @@ public final class WebAppUser extends AbstractWebAppPage {
     }
 
     @Override
-    protected String[] getSpecializedCssReqFileNames() {
+    protected final String[] getSpecializedCssReqFileNames() {
         return CSS_REQ_FILENAMES;
     }
 
     @Override
-    protected String getSpecializedCssFileName() {
+    protected final String getSpecializedCssFileName() {
         return "jquery.savapage-user.css";
     }
 
     @Override
-    protected String getSpecializedJsFileName() {
+    protected final String getSpecializedJsFileName() {
         return "jquery.savapage-user.js";
     }
 
     @Override
-    protected Set<JavaScriptLibrary> getJavaScriptToRender() {
+    protected final Set<JavaScriptLibrary> getJavaScriptToRender() {
 
         final EnumSet<JavaScriptLibrary> libs =
                 EnumSet.allOf(JavaScriptLibrary.class);

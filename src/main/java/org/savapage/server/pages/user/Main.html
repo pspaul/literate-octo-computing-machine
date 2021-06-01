@@ -41,10 +41,15 @@ the License, or (at your option) any later version.
 				class="ui-mini ui-btn-inline ui-btn ui-btn-icon-left ui-icon-main-header-about" />
 		</div>
 
+		<wicket:enclosure child="btn-mini-user-name-doclog">
+			<button wicket:id="btn-mini-user-name-doclog"
+				class="sp-plain-info ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left ui-icon-mini-doclog" />
+		</wicket:enclosure>
+
 		<wicket:panel wicket:id="community-status-footer-panel" />
 
 		<button wicket:id="btn-mini-user-name"
-			class="sp-plain-info ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-none ">
+			class="sp-plain-info ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-none">
 			<wicket:enclosure child="sparkline-user-pie">
 				<span wicket:id="sparkline-user-pie" sparkType="pie"
 					sparkSliceColors="[]" id="sp-sparkline-user-pie" /> &nbsp;

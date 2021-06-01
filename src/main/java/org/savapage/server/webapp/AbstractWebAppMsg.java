@@ -135,20 +135,7 @@ public abstract class AbstractWebAppMsg extends AbstractWebAppPage {
      */
     private String
             getMountPathRequested(final WebAppTypeEnum webAppTypeRequested) {
-        switch (webAppTypeRequested) {
-        case ADMIN:
-            return WebApp.MOUNT_PATH_WEBAPP_ADMIN;
-        case PRINTSITE:
-            return WebApp.MOUNT_PATH_WEBAPP_PRINTSITE;
-        case JOBTICKETS:
-            return WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
-        case POS:
-            return WebApp.MOUNT_PATH_WEBAPP_POS;
-        case USER:
-        case UNDEFINED:
-        default:
-            return WebApp.MOUNT_PATH_WEBAPP_USER;
-        }
+        return WebApp.getMountPath(webAppTypeRequested);
     }
 
     @Override

@@ -116,6 +116,19 @@ public final class HtmlInjectComponent extends WebComponent {
                 break;
             }
             break;
+        case MAILTICKETS:
+            switch (this.htmlInject) {
+            case ABOUT:
+                configKey = Key.WEBAPP_HTML_MAILTICKETS_ABOUT;
+                break;
+            case LOGIN:
+                configKey = Key.WEBAPP_HTML_MAILTICKETS_LOGIN;
+                break;
+            default:
+                configKey = null;
+                break;
+            }
+            break;
         case POS:
             switch (this.htmlInject) {
             case ABOUT:

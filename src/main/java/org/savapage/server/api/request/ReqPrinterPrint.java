@@ -44,9 +44,11 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.DeviceDao;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.dao.enums.PrintModeEnum;
 import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.helpers.JsonPrintDelegation;
@@ -85,7 +87,9 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountTrxInfo;
 import org.savapage.core.services.helpers.AccountTrxInfoSet;
 import org.savapage.core.services.helpers.ExternalSupplierInfo;
+import org.savapage.core.services.helpers.InboxContext;
 import org.savapage.core.services.helpers.InboxSelectScopeEnum;
+import org.savapage.core.services.helpers.MailTicketOperData;
 import org.savapage.core.services.helpers.PageRangeException;
 import org.savapage.core.services.helpers.PrintScalingEnum;
 import org.savapage.core.services.helpers.PrinterAttrLookup;
@@ -688,6 +692,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             }
         }
         //
+        final InboxContext inboxContext = getInboxContext(requestingUser);
         final InboxInfoDto jobs;
 
         final int iJobIndex = dtoReq.getJobIndex().intValue();
@@ -707,7 +712,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
         } else {
 
-            jobs = INBOX_SERVICE.getInboxInfo(requestingUser);
+            jobs = INBOX_SERVICE.getInboxInfo(inboxContext);
 
             if (iJobIndex > jobs.jobCount() - 1) {
                 setApiResultText(ApiResultCodeEnum.ERROR, String.format(
@@ -812,6 +817,9 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
          */
         final ProxyPrintInboxReq printReq = new ProxyPrintInboxReq(iVanillaJob);
 
+        printReq.setIdUser(lockedUser.getId());
+        printReq.setIdUserDocLog(SpSession.get().getUserDbKeyDocLog());
+
         printReq.setCollate(dtoReq.getCollate());
         printReq.setJobName(dtoReq.getJobName());
         printReq.setPageRanges(ranges);
@@ -822,7 +830,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setRemoveGraphics(dtoReq.getRemoveGraphics());
         printReq.setEcoPrintShadow(dtoReq.getEcoprint());
         printReq.setLocale(this.getLocale());
-        printReq.setIdUser(lockedUser.getId());
         printReq.setClearScope(clearScope);
 
         if (isJobTicketDomainEnabled
@@ -852,6 +859,11 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
         printReq.setLocalBooklet(!isJobTicket
                 && ProxyPrintInboxReq.isBooklet(dtoReq.getOptions())
                 && PRINTER_SERVICE.isClientSideBooklet(printer));
+
+        final WebAppTypeEnum webAppType = this.getSessionWebAppType();
+        if (webAppType == WebAppTypeEnum.MAILTICKETS) {
+            this.onExtMailTicketsPrint(printReq, inboxContext);
+        }
 
         final boolean isDelegatedPrint = applyPrintDelegation(dtoReq, printReq);
         final boolean isSharedAccountPrint;
@@ -1930,6 +1942,29 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             ApiRequestHelper.addUserStats(this.getUserData(), lockedUser,
                     this.getLocale(), currencySymbol);
         }
+    }
+
+    /**
+     * Sets the {@link ExternalSupplierInfo} for
+     * {@link WebAppTypeEnum#MAILTICKETS} .
+     *
+     * @param printReq
+     *            Print request.
+     * @param inboxContext
+     *            Inbox context.
+     */
+    private void onExtMailTicketsPrint(final ProxyPrintInboxReq printReq,
+            final InboxContext inboxContext) {
+
+        final ExternalSupplierInfo supplierInfo = new ExternalSupplierInfo();
+        supplierInfo.setSupplier(ExternalSupplierEnum.MAIL_TICKET_OPER);
+
+        final MailTicketOperData data = new MailTicketOperData();
+        data.setOperator(inboxContext.getUserIdInbox());
+
+        supplierInfo.setData(data);
+
+        printReq.setSupplierInfo(supplierInfo);
     }
 
     /**

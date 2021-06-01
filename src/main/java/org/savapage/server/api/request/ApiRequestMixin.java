@@ -61,6 +61,7 @@ import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserGroupService;
 import org.savapage.core.services.UserService;
+import org.savapage.core.services.helpers.InboxContext;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.notification.JobTicketCancelEvent;
 import org.savapage.ext.notification.JobTicketCloseEvent;
@@ -69,6 +70,7 @@ import org.savapage.ext.notification.NotificationListener;
 import org.savapage.ext.papercut.services.PaperCutService;
 import org.savapage.server.WebApp;
 import org.savapage.server.api.UserAgentHelper;
+import org.savapage.server.session.InboxContextSession;
 import org.savapage.server.session.SpSession;
 import org.savapage.server.webapp.WebAppHelper;
 
@@ -395,6 +397,15 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
             final String txt) {
         final Map<String, Object> out = this.getResponseMap();
         createApiResult(out, code, msg, txt);
+    }
+
+    /**
+     * @param userIdInbox
+     *            User id of inbox (SafePages).
+     * @return {@link InboxContext}.
+     */
+    public static InboxContext getInboxContext(final String userIdInbox) {
+        return new InboxContextSession(userIdInbox, SpSession.get());
     }
 
     /**

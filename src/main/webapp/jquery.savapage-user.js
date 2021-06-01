@@ -430,7 +430,7 @@
          * between clients).
          * </p>
          */
-        this.poll = function(userid, pagecount, uniqueUrlVal, prevMsgTime, language, country, base64) {
+        this.poll = function(userid, useridDocLog, pagecount, uniqueUrlVal, prevMsgTime, language, country, base64) {
 
             if (!_longPollStartTime && userid && _cometd.isOn()) {
 
@@ -443,6 +443,7 @@
                 try {
                     $.cometd.publish('/service/user', {
                         user: userid,
+                        userDocLog: useridDocLog,
                         'page-offset': pagecount,
                         'unique-url-value': uniqueUrlVal,
                         'msg-prev-time': prevMsgTime,
@@ -2558,7 +2559,7 @@
             _quickMailTicketSearch,
             //
             _onQuickMailTicketSearchProps = function(props) {
-                props.userId = _model.user.key_id;
+                props.userId = _model.user.doclog.key_id;
                 props.docStore = true;
             },
             _onQuickMailTicketSearchItemDisplay = function(item) {
@@ -2601,7 +2602,7 @@
                 $('#sp-quick-search-mailticket').next('a').click();
                 _view.showApiMsg(res);
                 if (res.result.code === '0') {
-                    this.onExpandPage(0);
+                    _this.onExpandPage(0);
                 }
             },
             _onQuickMailTicketSearchClear = function() {
@@ -4965,6 +4966,12 @@
         this.webPrintUploadFileParm = null;
         this.webPrintUploadFontParm = null;
 
+        this.setMailTicketsLocalStorageParms = function() {
+            _LOC_AUTH_NAME = 'sp.auth.mailtickets.name';
+            _LOC_AUTH_TOKEN = 'sp.auth.mailtickets.token';
+            _LOC_LANG = 'sp.mailtickets.language';
+            _LOC_COUNTRY = 'sp.mailtickets.country';
+        };
         /**
          * Creates a string with page range format from the cut pages.
          *
@@ -5753,6 +5760,9 @@
             _model.user.id = loginRes.id;
             _model.user.uuid = loginRes.uuid;
             _model.user.number = loginRes.number;
+
+            _model.user.doclog.key_id = loginRes.doclog_key_id;
+            _model.user.doclog.id = loginRes.doclog_id;
 
             _model.user.fullname = loginRes.fullname;
 
@@ -6638,7 +6648,9 @@
         };
 
         _userEvent.onPollInvitation = function() {
-            _userEvent.poll(_model.user.id, _model.getPageCount(), _model.uniqueImgUrlValue, _model.prevMsgTime, _model.language, _model.country, _view.imgBase64);
+            _userEvent.poll(_model.user.id, _model.user.doclog.id, _model.getPageCount(),
+                _model.uniqueImgUrlValue, _model.prevMsgTime,
+                _model.language, _model.country, _view.imgBase64);
         };
 
         /*
@@ -7856,7 +7868,13 @@
                 // Note: getUrlParam() does not work properly for LOGIN_OAUTH
                 isLoginOAuth = _ns.Utils.hasUrlParam(_ns.URL_PARM.LOGIN_OAUTH);
 
-            _ns.initWebApp('USER');
+            // Java: WebAppTypeEnum
+            if (window.location.pathname === '/mailtickets') {
+                _model.setMailTicketsLocalStorageParms();
+                _ns.initWebApp('MAILTICKETS');
+            } else {
+                _ns.initWebApp('USER');
+            }
 
             _ctrl.init();
 

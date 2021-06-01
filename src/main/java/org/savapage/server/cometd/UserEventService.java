@@ -65,6 +65,7 @@ import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.imaging.ImageUrl;
 import org.savapage.core.inbox.PageImages;
 import org.savapage.core.inbox.PageImages.PageImage;
+import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.PrintIn;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.jpa.User;
@@ -74,6 +75,8 @@ import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.services.InboxService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
+import org.savapage.core.services.helpers.InboxContext;
+import org.savapage.core.services.helpers.InboxContextCommon;
 import org.savapage.core.users.AbstractUserSource;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.DateUtil;
@@ -242,7 +245,9 @@ public final class UserEventService extends AbstractEventService {
      * @param msgPrevMonitorTime
      *            The previous date (time) since messages were monitored.
      * @param user
-     *            The user id.
+     *            The user id of the inbox (SafePages).
+     * @param userDocLog
+     *            The user id of the {@link DocLog}.
      * @param locale
      *            The user locale.
      * @return The messages to notify, or {@code null} when no user messages are
@@ -252,7 +257,8 @@ public final class UserEventService extends AbstractEventService {
      */
     private Map<String, Object> checkUserMsgIndicator(
             final String clientIpAddress, final Date msgPrevMonitorTime,
-            final String user, final Locale locale) throws IOException {
+            final String user, final String userDocLog, final Locale locale)
+            throws IOException {
 
         Map<String, Object> eventData = null;
 
@@ -282,8 +288,8 @@ public final class UserEventService extends AbstractEventService {
                 case PRINT_IN_DENIED:
                     // no break intended
                 case PRINT_OUT_COMPLETED:
-                    eventData = createPrintMsg(user, locale, msgPrevMonitorTime,
-                            messageDate);
+                    eventData = createPrintMsg(user, userDocLog, locale,
+                            msgPrevMonitorTime, messageDate);
                     break;
 
                 case PRINT_OUT_EXT_COMPLETED:
@@ -418,8 +424,11 @@ public final class UserEventService extends AbstractEventService {
         Map<String, Object> input = message.getDataAsMap();
 
         // Mantis #503
-        final String user = AbstractUserSource.asDbUserId(
-                (String) input.get("user"), ConfigManager.isLdapUserSync());
+        final boolean isLdapUserSync = ConfigManager.isLdapUserSync();
+        final String userInbox = AbstractUserSource
+                .asDbUserId((String) input.get("user"), isLdapUserSync);
+        final String userDocLog = AbstractUserSource
+                .asDbUserId((String) input.get("userDocLog"), isLdapUserSync);
 
         // NOTE: The Java Client does not give a pageOffset.
         final Long pageOffset = (Long) input.get("page-offset");
@@ -442,7 +451,7 @@ public final class UserEventService extends AbstractEventService {
              * Replaces an existing token, so the creation time is refreshed.
              */
             ClientAppUserAuthManager.replaceIpAuthToken(clientIpAddress,
-                    new UserAuthToken(user));
+                    new UserAuthToken(userInbox));
             incrementClientAppCount();
         }
 
@@ -465,7 +474,7 @@ public final class UserEventService extends AbstractEventService {
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Listener removed (timeout) " + "for user ["
-                            + user + "] from [" + clientIpAddress + "]");
+                            + userInbox + "] from [" + clientIpAddress + "]");
                 }
 
                 // See Mantis #515
@@ -474,14 +483,14 @@ public final class UserEventService extends AbstractEventService {
                 }
 
                 try {
-                    UserMsgIndicator.write(user, new Date(),
+                    UserMsgIndicator.write(userInbox, new Date(),
                             UserMsgIndicator.Msg.STOP_POLL_REQ,
                             clientIpAddress);
 
                 } catch (IOException e) {
                     if (!ConfigManager.isShutdownInProgress()) {
                         LOGGER.error("Listener removed (timeout) for user ["
-                                + user + "] from [" + clientIpAddress
+                                + userInbox + "] from [" + clientIpAddress
                                 + "]. UserMsgIndicator write failed: "
                                 + e.getMessage());
                     }
@@ -499,8 +508,8 @@ public final class UserEventService extends AbstractEventService {
 
         if (LOGGER.isTraceEnabled()) {
 
-            LOGGER.trace("START job monitoring for user [" + user + "] at ["
-                    + clientIpAddress + "] pageOffset [" + pageOffset
+            LOGGER.trace("START job monitoring for user [" + userInbox
+                    + "] at [" + clientIpAddress + "] pageOffset [" + pageOffset
                     + "] uniqueUrlValue [" + uniqueUrlValue + "] base64 ["
                     + base64 + "] locale [" + locale + "] msgPrevTime ["
                     + msgPrevTime + "]");
@@ -518,7 +527,7 @@ public final class UserEventService extends AbstractEventService {
          * Initial probe to see if new jobs arrived.
          */
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("initial check for user [" + user + "]");
+            LOGGER.trace("initial check for user [" + userInbox + "]");
         }
 
         Map<String, Object> eventData = null;
@@ -533,14 +542,14 @@ public final class UserEventService extends AbstractEventService {
              * here (with a max delay of theMaxMonitorMsec).
              */
             if (isWebAppClient) {
-                eventData = getChangedJobsEvent(user, pageOffset,
-                        uniqueUrlValue, base64, isWebAppClient, locale,
-                        dateStart.getTime());
+                eventData = getChangedJobsEvent(userInbox, userDocLog,
+                        pageOffset, uniqueUrlValue, base64, isWebAppClient,
+                        locale, dateStart.getTime());
 
             } else if (msgPrevMonitorTime != null) {
 
                 final Long lastPrintInTime =
-                        INBOX_SERVICE.getLastPrintInTime(user);
+                        INBOX_SERVICE.getLastPrintInTime(userInbox);
 
                 if (lastPrintInTime != null && lastPrintInTime
                         .longValue() > msgPrevMonitorTime.getTime()) {
@@ -553,7 +562,7 @@ public final class UserEventService extends AbstractEventService {
              */
             if (eventData == null && msgPrevMonitorTime != null) {
                 eventData = checkUserMsgIndicator(clientIpAddress,
-                        msgPrevMonitorTime, user, locale);
+                        msgPrevMonitorTime, userInbox, userDocLog, locale);
             }
 
             /*
@@ -562,16 +571,16 @@ public final class UserEventService extends AbstractEventService {
             if (eventData == null) {
 
                 eventData = watchUserFileEvents(clientIpAddress, dateStart,
-                        user, locale, pageOffset, uniqueUrlValue, base64,
-                        isWebAppClient);
+                        userInbox, userDocLog, locale, pageOffset,
+                        uniqueUrlValue, base64, isWebAppClient);
             }
 
             if (eventData == null) {
-                eventData = checkPrintInJobExpiry(user, dateStart, locale);
+                eventData = checkPrintInJobExpiry(userInbox, dateStart, locale);
             }
 
             if (eventData == null) {
-                eventData = createNullMsg(user, isWebAppClient, locale,
+                eventData = createNullMsg(userInbox, isWebAppClient, locale,
                         dateStart.getTime());
             }
 
@@ -581,8 +590,8 @@ public final class UserEventService extends AbstractEventService {
                         .valueOf(eventData.get(KEY_EVENT).toString());
 
                 if (userEvent != UserEventEnum.NULL) {
-                    publishAdminEvent(user, clientIpAddress, isWebAppClient,
-                            userEvent);
+                    publishAdminEvent(userInbox, clientIpAddress,
+                            isWebAppClient, userEvent);
                 }
             }
 
@@ -605,7 +614,8 @@ public final class UserEventService extends AbstractEventService {
                     LOGGER.error(e.getMessage(), e);
                 }
 
-                publishAdminException(user, clientIpAddress, e, isWebAppClient);
+                publishAdminException(userInbox, clientIpAddress, e,
+                        isWebAppClient);
             }
 
         }
@@ -625,7 +635,7 @@ public final class UserEventService extends AbstractEventService {
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Delivered event [" + jsonEvent + "] for user ["
-                        + user + "]");
+                        + userInbox + "]");
             }
 
         } catch (Exception e) {
@@ -646,7 +656,7 @@ public final class UserEventService extends AbstractEventService {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
                     String.format("STOP job monitoring for user [%s] at [%s]",
-                            user, clientIpAddress));
+                            userInbox, clientIpAddress));
         }
     }
 
@@ -669,9 +679,13 @@ public final class UserEventService extends AbstractEventService {
      *
      * @param clientIpAddress
      * @param dateStart
-     * @param user
+     * @param userInbox
      *            The user (identified with unique user name) to find jobs for.
+     * @param userDocLog
+     *            The user (identified with unique user name) of {@link DocLog}
+     *            instances.
      * @param locale
+     *            Locale.
      * @param pageOffset
      *            The page offset as trigger for the event. Is {@code null} for
      *            Java Web Client.
@@ -692,7 +706,8 @@ public final class UserEventService extends AbstractEventService {
      */
     private Map<String, Object> watchUserFileEvents(
             final String clientIpAddress, final Date dateStart,
-            final String user, final Locale locale, final Long pageOffset,
+            final String userInbox, final String userDocLog,
+            final Locale locale, final Long pageOffset,
             final String uniqueUrlValue, final boolean base64,
             final boolean isWebAppClient)
             throws IOException, UserNotFoundException, ShutdownException {
@@ -700,7 +715,7 @@ public final class UserEventService extends AbstractEventService {
         final WatchService watchService =
                 FileSystems.getDefault().newWatchService();
 
-        final String userHomeDir = ConfigManager.getUserHomeDir(user);
+        final String userHomeDir = ConfigManager.getUserHomeDir(userInbox);
 
         final Path path2WatchJob = Paths.get(userHomeDir);
 
@@ -727,8 +742,8 @@ public final class UserEventService extends AbstractEventService {
                 i++;
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("watch [" + i + "] for user [" + user + "] ["
-                            + clientIpAddress + "]");
+                    LOGGER.debug("watch [" + i + "] for user [" + userInbox
+                            + "] [" + clientIpAddress + "]");
                 }
                 /*
                  * WAIT for key to be signaled ...
@@ -799,7 +814,7 @@ public final class UserEventService extends AbstractEventService {
 
                         if (!isJobEvent) {
                             isMsgEvent = UserMsgIndicator
-                                    .isMsgIndicatorFile(user, file);
+                                    .isMsgIndicatorFile(userInbox, file);
                         }
 
                         /*
@@ -873,7 +888,7 @@ public final class UserEventService extends AbstractEventService {
                 } else if (bMsgCreated) {
 
                     final UserMsgIndicator msgIndicator =
-                            UserMsgIndicator.read(user);
+                            UserMsgIndicator.read(userInbox);
 
                     final Date messageDate = msgIndicator.getMessageDate();
                     final String senderId = msgIndicator.getSenderId();
@@ -885,40 +900,43 @@ public final class UserEventService extends AbstractEventService {
                         switch (msg) {
 
                         case ACCOUNT_INFO:
-                            returnData = createAccountMsg(user, locale);
+                            returnData = createAccountMsg(userInbox, locale);
                             break;
 
                         case JOBTICKET_CHANGED:
                         case JOBTICKET_DENIED:
                         case JOBTICKET_SETTLED_COPY:
                         case JOBTICKET_SETTLED_PRINT:
-                            returnData = createJobTicketMsg(user, msg, locale);
+                            returnData =
+                                    createJobTicketMsg(userInbox, msg, locale);
                             break;
 
                         case PRINT_IN_DENIED:
                             // no break intended
                         case PRINT_OUT_COMPLETED:
-                            returnData = createPrintMsg(user, locale,
-                                    messageDate, messageDate);
+                            returnData = createPrintMsg(userInbox, userDocLog,
+                                    locale, messageDate, messageDate);
                             break;
 
                         case PRINT_OUT_EXT_COMPLETED:
-                            returnData = createPrintMsgExt(senderId, user,
+                            returnData = createPrintMsgExt(senderId, userInbox,
                                     locale, messageDate, true);
                             break;
 
                         case PRINT_OUT_EXT_FAILED:
-                            returnData = createPrintMsgExt(senderId, user,
+                            returnData = createPrintMsgExt(senderId, userInbox,
                                     locale, messageDate, false);
                             break;
 
                         case PRINT_IN_EXPIRED:
-                            returnData = createPrintInExpiredMsg(user, locale);
+                            returnData =
+                                    createPrintInExpiredMsg(userInbox, locale);
                             break;
 
                         case PRINT_OUT_HOLD:
-                            returnData = createNullMsg(user, isWebAppClient,
-                                    locale, fileLastModifiedRecent);
+                            returnData =
+                                    createNullMsg(userInbox, isWebAppClient,
+                                            locale, fileLastModifiedRecent);
                             break;
 
                         case STOP_POLL_REQ:
@@ -933,8 +951,9 @@ public final class UserEventService extends AbstractEventService {
                             if (clientIpAddress == null || (senderId != null
                                     && senderId.equals(clientIpAddress))) {
 
-                                returnData = createNullMsg(user, isWebAppClient,
-                                        locale, fileLastModifiedRecent);
+                                returnData =
+                                        createNullMsg(userInbox, isWebAppClient,
+                                                locale, fileLastModifiedRecent);
                                 break;
                             }
 
@@ -973,9 +992,9 @@ public final class UserEventService extends AbstractEventService {
                 } else if (bJobsCreated || bJobsDeleted) {
 
                     if (isWebAppClient) {
-                        returnData = getChangedJobsEvent(user, pageOffset,
-                                uniqueUrlValue, base64, isWebAppClient, locale,
-                                fileLastModifiedRecent);
+                        returnData = getChangedJobsEvent(userInbox, userDocLog,
+                                pageOffset, uniqueUrlValue, base64,
+                                isWebAppClient, locale, fileLastModifiedRecent);
                     } else if (bJobsCreated) {
                         returnData = createPrintInEvent(fileLastModifiedRecent);
                     }
@@ -1052,6 +1071,9 @@ public final class UserEventService extends AbstractEventService {
      *
      * @param userName
      *            The user (identified with unique user name) to find jobs for.
+     * @param userNameDocLog
+     *            The user (identified with unique user name) of {@link DocLog}
+     *            instances.
      * @param nPageOffset
      *            The page offset as trigger for the event.
      * @param uniqueUrlValue
@@ -1076,10 +1098,11 @@ public final class UserEventService extends AbstractEventService {
      *             created.
      */
     private static Map<String, Object> getChangedJobsEvent(
-            final String userName, final Long nPageOffset,
-            final String uniqueUrlValue, final boolean base64,
-            final boolean isWebAppClient, final Locale locale,
-            final long msgTime) throws UserNotFoundException, IOException {
+            final String userName, final String userNameDocLog,
+            final Long nPageOffset, final String uniqueUrlValue,
+            final boolean base64, final boolean isWebAppClient,
+            final Locale locale, final long msgTime)
+            throws UserNotFoundException, IOException {
 
         final Date perfStartTime = PerformanceLogger.startTime();
 
@@ -1126,7 +1149,10 @@ public final class UserEventService extends AbstractEventService {
 
                 USER_SERVICE.lazyUserHomeDir(userName);
 
-                final PageImages pages = INBOX_SERVICE.getPageChunks(userName,
+                final InboxContext inboxCtx =
+                        new InboxContextCommon(userName, userNameDocLog);
+
+                final PageImages pages = INBOX_SERVICE.getPageChunks(inboxCtx,
                         null, uniqueUrlValue, base64);
 
                 long totPages = 0;
@@ -1174,8 +1200,11 @@ public final class UserEventService extends AbstractEventService {
      * Creates the user {@link PrintIn} or {@link PrintOut} message since
      * lastTime, or null when no new messages are present.
      *
-     * @param userName
+     * @param userInbox
      *            The user (identified with unique user name) to find jobs for.
+     * @param userDocLog
+     *            The user (identified with unique user name) of {@link DocLog}
+     *            instances.
      * @param locale
      *            The user's locale like 'en', 'nl', 'en-EN', 'nl-NL'.
      * @param msgPrevMonitorTime
@@ -1185,9 +1214,10 @@ public final class UserEventService extends AbstractEventService {
      * @return The new user messages, or null when no new messages are present
      *         since lastTime.
      */
-    private static Map<String, Object> createPrintMsg(final String userName,
-            final Locale locale, final Date msgPrevMonitorTime,
-            final Date messageDate) throws IOException {
+    private static Map<String, Object> createPrintMsg(final String userInbox,
+            final String userDocLog, final Locale locale,
+            final Date msgPrevMonitorTime, final Date messageDate)
+            throws IOException {
 
         Map<String, Object> userData = null;
 
@@ -1200,7 +1230,7 @@ public final class UserEventService extends AbstractEventService {
             try {
                 JsonUserMsgNotification json =
                         UserMsgIndicator.getPrintMsgNotification(
-                                DaoContextImpl.peekEntityManager(), userName,
+                                DaoContextImpl.peekEntityManager(), userDocLog,
                                 locale, msgPrevMonitorTime, messageDate);
 
                 if (!json.getMessages().isEmpty()) {
@@ -1210,7 +1240,7 @@ public final class UserEventService extends AbstractEventService {
                     userData.put(KEY_DATA, json);
                     userData.put(KEY_MSG_TIME, json.getMsgTime());
 
-                    addUserStats(userData, userName, locale);
+                    addUserStats(userData, userInbox, locale);
                 }
             } finally {
                 ServiceContext.close();

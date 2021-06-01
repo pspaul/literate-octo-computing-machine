@@ -471,25 +471,8 @@ public final class JsonApiServer extends AbstractPage {
                 if (requestId != null
                         && JsonApiDict.isDownloadRequest(requestId)) {
 
-                    String urlPath;
-
-                    switch (getSessionWebAppType()) {
-                    case ADMIN:
-                        urlPath = WebApp.MOUNT_PATH_WEBAPP_ADMIN;
-                        break;
-                    case PRINTSITE:
-                        urlPath = WebApp.MOUNT_PATH_WEBAPP_PRINTSITE;
-                        break;
-                    case JOBTICKETS:
-                        urlPath = WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
-                        break;
-                    case POS:
-                        urlPath = WebApp.MOUNT_PATH_WEBAPP_POS;
-                        break;
-                    default:
-                        urlPath = WebApp.MOUNT_PATH_WEBAPP_USER;
-                        break;
-                    }
+                    final String urlPath =
+                            WebApp.getMountPath(getSessionWebAppType());
 
                     final StringBuilder html = new StringBuilder();
 
@@ -1584,7 +1567,8 @@ public final class JsonApiServer extends AbstractPage {
         /*
          * Get the (filtered) jobs.
          */
-        InboxInfoDto inboxInfo = INBOX_SERVICE.getInboxInfo(user.getUserId());
+        InboxInfoDto inboxInfo = INBOX_SERVICE.getInboxInfo(
+                ApiRequestMixin.getInboxContext(user.getUserId()));
 
         if (StringUtils.isNotBlank(documentPageRangeFilter)) {
             inboxInfo = INBOX_SERVICE.filterInboxInfoPages(inboxInfo,
@@ -1691,8 +1675,8 @@ public final class JsonApiServer extends AbstractPage {
         /*
          * Get the (filtered) jobs.
          */
-        InboxInfoDto inboxInfo =
-                INBOX_SERVICE.getInboxInfo(lockedUser.getUserId());
+        InboxInfoDto inboxInfo = INBOX_SERVICE.getInboxInfo(
+                ApiRequestMixin.getInboxContext(lockedUser.getUserId()));
 
         if (StringUtils.isNotBlank(documentPageRangeFilter)) {
             inboxInfo = INBOX_SERVICE.filterInboxInfoPages(inboxInfo,
@@ -2196,7 +2180,8 @@ public final class JsonApiServer extends AbstractPage {
 
         try {
             INBOX_SERVICE.calcPagesInRanges(
-                    INBOX_SERVICE.getInboxInfo(lockedUser.getUserId()),
+                    INBOX_SERVICE.getInboxInfo(ApiRequestMixin
+                            .getInboxContext(lockedUser.getUserId())),
                     Integer.valueOf(jobIndex),
                     StringUtils.defaultString(getParmValue("ranges")), null);
         } catch (PageRangeException e) {
@@ -3643,7 +3628,7 @@ public final class JsonApiServer extends AbstractPage {
          * Make sure that all User Web App long polls for this user are
          * interrupted.
          */
-        if (savedWebAppType == WebAppTypeEnum.USER && userId != null) {
+        if (savedWebAppType.isUserTypeOrVariant() && userId != null) {
             ApiRequestHelper.interruptPendingLongPolls(userId,
                     this.getClientIP());
         }
@@ -3673,8 +3658,9 @@ public final class JsonApiServer extends AbstractPage {
 
         int nPageOffset = Integer.parseInt(pageOffset);
 
-        final PageImages pages =
-                INBOX_SERVICE.getPageChunks(user, null, uniqueUrlValue, base64);
+        final PageImages pages = INBOX_SERVICE.getPageChunks(
+                ApiRequestMixin.getInboxContext(user), null, uniqueUrlValue,
+                base64);
 
         int totPages = 0;
 
@@ -3703,8 +3689,8 @@ public final class JsonApiServer extends AbstractPage {
      */
     private Map<String, Object> reqInboxIsVanilla(final String user) {
 
-        final boolean isVanilla =
-                INBOX_SERVICE.isInboxVanilla(INBOX_SERVICE.getInboxInfo(user));
+        final boolean isVanilla = INBOX_SERVICE.isInboxVanilla(INBOX_SERVICE
+                .getInboxInfo(ApiRequestMixin.getInboxContext(user)));
         final Map<String, Object> userData = new HashMap<String, Object>();
         userData.put("vanilla", Boolean.valueOf(isVanilla));
         return setApiResultOK(userData);
@@ -3852,7 +3838,8 @@ public final class JsonApiServer extends AbstractPage {
 
         setApiResultOK(userData);
 
-        PageImages pages = INBOX_SERVICE.getPageChunks(user, nFirstDetailPage,
+        PageImages pages = INBOX_SERVICE.getPageChunks(
+                ApiRequestMixin.getInboxContext(user), nFirstDetailPage,
                 uniqueUrlValue, base64);
 
         userData.put("jobs", pages.getJobs());
@@ -4059,7 +4046,7 @@ public final class JsonApiServer extends AbstractPage {
 
         userData.put("colors", colors);
 
-        if (webAppType == WebAppTypeEnum.USER) {
+        if (webAppType.isUserTypeOrVariant()) {
 
             Map<String, Object> scaling;
 

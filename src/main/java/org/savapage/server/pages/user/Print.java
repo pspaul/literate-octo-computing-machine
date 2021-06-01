@@ -38,6 +38,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.UserGroupAccountDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
@@ -535,8 +536,10 @@ public class Print extends AbstractUserPage {
         }
 
         //
-        final boolean isMailPrintTicketOperator = ConfigManager
-                .isMailPrintTicketingEnabled(userIdDto.getUserId());
+        final WebAppTypeEnum webAppType = getSessionWebAppType();
+        final boolean isMailPrintTicketOperator =
+                webAppType == WebAppTypeEnum.MAILTICKETS || ConfigManager
+                        .isMailPrintTicketingEnabled(userIdDto.getUserId());
 
         helper.encloseLabel(ID_BTN_PRINT_AND_CLOSE_POPUP,
                 HtmlButtonEnum.PRINT.uiText(getLocale(), true),

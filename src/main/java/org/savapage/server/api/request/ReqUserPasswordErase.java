@@ -69,6 +69,7 @@ public final class ReqUserPasswordErase extends ApiRequestMixin {
 
         switch (getSessionWebAppType()) {
         case USER:
+        case MAILTICKETS:
             isAuth = lockedUser.getId().equals(dtoReq.getUserDbId());
             break;
         case ADMIN:

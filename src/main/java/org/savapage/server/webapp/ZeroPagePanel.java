@@ -99,6 +99,9 @@ public final class ZeroPagePanel extends Panel {
                         case JOBTICKETS:
                             setResponsePage(WebAppJobTickets.class, parms);
                             break;
+                        case MAILTICKETS:
+                            setResponsePage(WebAppMailTickets.class, parms);
+                            break;
                         case POS:
                             setResponsePage(WebAppPos.class, parms);
                             break;
@@ -109,7 +112,7 @@ public final class ZeroPagePanel extends Panel {
                     }
 
                     @Override
-                    protected void onError(AjaxRequestTarget target) {
+                    protected void onError(final AjaxRequestTarget target) {
                         // no code intended
                     }
                 };

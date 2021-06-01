@@ -620,7 +620,7 @@ public class DocLogItemPanel extends Panel {
 
         if (webAppType == WebAppTypeEnum.JOBTICKETS
                 || webAppType == WebAppTypeEnum.ADMIN
-                || webAppType == WebAppTypeEnum.USER) {
+                || webAppType.isUserTypeOrVariant()) {
 
             countButtons++;
 
@@ -1215,7 +1215,7 @@ public class DocLogItemPanel extends Panel {
                     MarkupHelper.ATTR_TITLE, nounTitle.uiText(getLocale()));
 
             // Download
-            if (webAppType == WebAppTypeEnum.USER && obj.hasQueueJournal()
+            if (webAppType.isUserTypeOrVariant() && obj.hasQueueJournal()
                     && !this.isUserQueuePrivilegeGranted(
                             ACLPermissionEnum.DOWNLOAD)) {
                 helper.discloseLabel(widBtn);
@@ -1237,7 +1237,7 @@ public class DocLogItemPanel extends Panel {
             }
 
             // Add/Restore Queue Journal?
-            if (webAppType == WebAppTypeEnum.USER && obj.hasQueueJournal()
+            if (webAppType.isUserTypeOrVariant() && obj.hasQueueJournal()
                     && this.isUserQueuePrivilegeGranted(
                             ACLPermissionEnum.SELECT)) {
 
@@ -1268,19 +1268,17 @@ public class DocLogItemPanel extends Panel {
             }
 
             // Delete Queue Journal?
-            if (webAppType == WebAppTypeEnum.USER && obj.hasQueueJournal()
+            if (webAppType.isUserTypeOrVariant() && obj.hasQueueJournal()
                     && !this.isUserQueuePrivilegeGranted(
                             ACLPermissionEnum.DELETE)) {
                 helper.discloseLabel(WID_BTN_DOCLOG_STORE_DELETE);
             } else if (obj.hasQueueJournal()) {
                 MarkupHelper
-                        .modifyLabelAttr(
-                                MarkupHelper.modifyLabelAttr(
-                                        helper.encloseLabel(
-                                                WID_BTN_DOCLOG_STORE_DELETE,
-                                                "&nbsp;", true),
-                                        MarkupHelper.ATTR_DATA_SAVAPAGE,
-                                        obj.getDocLogId().toString()),
+                        .modifyLabelAttr(MarkupHelper.modifyLabelAttr(
+                                helper.encloseLabel(WID_BTN_DOCLOG_STORE_DELETE,
+                                        "&nbsp;", true),
+                                MarkupHelper.ATTR_DATA_SAVAPAGE,
+                                obj.getDocLogId().toString()),
                                 MarkupHelper.ATTR_TITLE,
                                 HtmlButtonEnum.DELETE.uiText(getLocale()))
                         .setEscapeModelStrings(false);
@@ -1316,8 +1314,9 @@ public class DocLogItemPanel extends Panel {
         HtmlButtonEnum htmlButton = null;
         int countButtons = 0;
 
-        final boolean extSupplierFailure = obj.isExtSupplierPresent()
-                && obj.getExtSupplierStatus().isFailure();
+        final boolean extSupplierFailure =
+                obj.isExtSupplierPresent() && obj.getExtSupplierStatus() != null
+                        && obj.getExtSupplierStatus().isFailure();
 
         if (webAppType == WebAppTypeEnum.JOBTICKETS) {
             if (extSupplierFailure) {

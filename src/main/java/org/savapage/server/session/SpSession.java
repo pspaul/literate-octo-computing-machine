@@ -36,6 +36,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.OneTimeAuthToken;
 import org.savapage.core.dto.UserIdDto;
+import org.savapage.core.jpa.DocLog;
 import org.savapage.core.jpa.User;
 
 /**
@@ -69,6 +70,9 @@ public final class SpSession extends WebSession {
 
     /** */
     private UserIdDto userIdDto;
+
+    /** */
+    private UserIdDto userIdDtoDocLog;
 
     /**
      * User info for TOTP request.
@@ -206,6 +210,28 @@ public final class SpSession extends WebSession {
     }
 
     /**
+     * @param dto
+     *            The {@link DocLog} user.
+     */
+    public void setUserIdDtoDocLog(final UserIdDto dto) {
+        synchronized (this.mutex) {
+            this.userIdDtoDocLog = dto;
+        }
+    }
+
+    /**
+     * @return The {@link DocLog} user.
+     */
+    public UserIdDto getUserIdDtoDocLog() {
+        synchronized (this.mutex) {
+            if (this.userIdDtoDocLog == null) {
+                return this.userIdDto;
+            }
+            return this.userIdDtoDocLog;
+        }
+    }
+
+    /**
      * @return The authenticated unique User ID, or {@code null} if no
      *         authenticated {@link User}.
      */
@@ -219,6 +245,24 @@ public final class SpSession extends WebSession {
     }
 
     /**
+     * @return The unique User ID for the {@link DocLog}, or {@code null} if no
+     *         authenticated {@link User}.
+     */
+    public String getUserIdDocLog() {
+        synchronized (this.mutex) {
+            final String userId;
+            if (this.userIdDto == null) {
+                userId = null;
+            } else if (this.userIdDtoDocLog == null) {
+                userId = this.userIdDto.getUserId();
+            } else {
+                userId = this.userIdDtoDocLog.getUserId();
+            }
+            return userId;
+        }
+    }
+
+    /**
      * @return The primary database key of authenticated User, or {@code null}
      *         if no authenticated {@link User}.
      */
@@ -228,6 +272,24 @@ public final class SpSession extends WebSession {
                 return null;
             }
             return this.userIdDto.getDbKey();
+        }
+    }
+
+    /**
+     * @return The primary database key of the User for the {@link DocLog}, or
+     *         {@code null} if no authenticated {@link User}.
+     */
+    public Long getUserDbKeyDocLog() {
+        synchronized (this.mutex) {
+            final Long dbKey;
+            if (this.userIdDto == null) {
+                dbKey = null;
+            } else if (this.userIdDtoDocLog == null) {
+                dbKey = this.userIdDto.getDbKey();
+            } else {
+                dbKey = this.userIdDtoDocLog.getDbKey();
+            }
+            return dbKey;
         }
     }
 
@@ -286,6 +348,7 @@ public final class SpSession extends WebSession {
     public void logout() {
         synchronized (this.mutex) {
             setUser(null);
+            setUserIdDtoDocLog(null);
             setWebAppType(WebAppTypeEnum.UNDEFINED);
 
             decrementAuthWebAppCount();

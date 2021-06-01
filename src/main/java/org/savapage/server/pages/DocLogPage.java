@@ -105,7 +105,8 @@ public final class DocLogPage extends AbstractListPage {
         final DocLogDao.Type docType = req.getSelect().getDocType();
 
         final Long userId;
-        final UserIdDto sessionUserIdDto = SpSession.get().getUserIdDto();
+        final UserIdDto sessionUserIdDtoDocLog =
+                SpSession.get().getUserIdDtoDocLog();
 
         final WebAppTypeEnum webAppType = this.getSessionWebAppType();
 
@@ -125,18 +126,19 @@ public final class DocLogPage extends AbstractListPage {
                  * If we are called in a User WebApp context we ALWAYS use the
                  * user of the current session.
                  */
-                userId = SpSession.get().getUserDbKey();
+                userId = SpSession.get().getUserDbKeyDocLog();
 
-                showFinancialData = ACCESS_CONTROL_SERVICE
-                        .hasAccess(sessionUserIdDto, ACLOidEnum.U_FINANCIAL);
+                showFinancialData = ACCESS_CONTROL_SERVICE.hasAccess(
+                        sessionUserIdDtoDocLog, ACLOidEnum.U_FINANCIAL);
             }
         } else {
             showFinancialData = true;
             userId = null;
         }
 
-        final Integer userQueueJournalPrivilege = ACCESS_CONTROL_SERVICE
-                .getPrivileges(sessionUserIdDto, ACLOidEnum.U_QUEUE_JOURNAL);
+        final Integer userQueueJournalPrivilege =
+                ACCESS_CONTROL_SERVICE.getPrivileges(sessionUserIdDtoDocLog,
+                        ACLOidEnum.U_QUEUE_JOURNAL);
 
         final boolean isTicketReopen = webAppType == WebAppTypeEnum.JOBTICKETS
                 && ConfigManager.instance()

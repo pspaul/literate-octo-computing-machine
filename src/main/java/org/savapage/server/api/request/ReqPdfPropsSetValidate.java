@@ -48,7 +48,8 @@ public final class ReqPdfPropsSetValidate extends ApiRequestMixin {
         if (StringUtils.isNotBlank(jobIndex)) {
             try {
                 INBOX_SERVICE.calcPagesInRanges(
-                        INBOX_SERVICE.getInboxInfo(requestingUser),
+                        INBOX_SERVICE
+                                .getInboxInfo(getInboxContext(requestingUser)),
                         Integer.valueOf(jobIndex),
                         StringUtils.defaultString(getParmValue("ranges")),
                         null);

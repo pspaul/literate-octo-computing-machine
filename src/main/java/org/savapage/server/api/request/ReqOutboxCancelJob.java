@@ -27,7 +27,6 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
 import org.savapage.server.session.SpSession;
@@ -88,7 +87,7 @@ public final class ReqOutboxCancelJob extends ApiRequestMixin {
 
         final Long userDbId;
 
-        if (getSessionWebAppType() == WebAppTypeEnum.USER) {
+        if (this.getSessionWebAppType().isUserTypeOrVariant()) {
             userDbId = lockedUser.getId();
         } else {
             userDbId = dtoReq.getUserDbId();

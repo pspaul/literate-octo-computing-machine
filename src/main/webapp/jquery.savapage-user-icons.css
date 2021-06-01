@@ -277,10 +277,10 @@
 }
 
 .ui-icon-main-browse:after {
-    background: url(/glyphicons/glyphicons_027_search.png) 50% 50% no-repeat;
-    background-size: 22px 22px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
+	background: url(/glyphicons/glyphicons_027_search.png) 50% 50% no-repeat;
+	background-size: 22px 22px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
 	opacity: .6;
 }
 
@@ -526,6 +526,13 @@
 		no-repeat;
 	background-size: 18px 18px;
 	opacity: 0.5;
+}
+
+.ui-icon-mini-doclog:after {
+	background: url(/glyphicons/glyphicons_087_log_book.png) 50% 50%
+		no-repeat;
+	background-size: 16px 16px;
+	opacity: .4;
 }
 
 /* end-of-file */

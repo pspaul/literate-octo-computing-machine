@@ -569,6 +569,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
         case JOBTICKETS:
             configKey = Key.WEBAPP_THEME_JOBTICKETS;
             break;
+        case MAILTICKETS:
+            configKey = Key.WEBAPP_THEME_MAILTICKETS;
+            break;
         case POS:
             configKey = Key.WEBAPP_THEME_POS;
             break;
@@ -610,6 +613,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
             break;
         case JOBTICKETS:
             configKey = Key.WEBAPP_CUSTOM_JOBTICKETS;
+            break;
+        case MAILTICKETS:
+            configKey = Key.WEBAPP_CUSTOM_MAILTICKETS;
             break;
         case POS:
             configKey = Key.WEBAPP_CUSTOM_POS;
