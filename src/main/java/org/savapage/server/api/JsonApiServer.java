@@ -1605,7 +1605,8 @@ public final class JsonApiServer extends AbstractPage {
 
         pdfRequest.setVerifyUrl(verifyUrl);
 
-        return OutputProducer.instance().generatePdfForExport(pdfRequest,
+        return OutputProducer.instance().generatePdfForExport(
+                ApiRequestMixin.getInboxContext(user.getUserId()), pdfRequest,
                 docLog);
     }
 

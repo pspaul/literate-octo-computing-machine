@@ -717,14 +717,15 @@ public class DocLogItemPanel extends Panel {
      *            Item.
      * @param locale
      *            Locale.
+     * @return {@code true} if this item is a PrintOut of a Mail Print Ticket.
      */
-    private void populatePrintOutMailPrintTicket(final MarkupHelper helper,
+    private boolean populatePrintOutMailPrintTicket(final MarkupHelper helper,
             final Map<String, String> mapVisible, final DocLogItem obj,
             final Locale locale) {
 
         final Map<String, MailPrintData> map = obj.getMailPrintInData();
         if (map == null || map.isEmpty()) {
-            return;
+            return false;
         }
 
         final StringBuilder from = new StringBuilder();
@@ -743,6 +744,8 @@ public class DocLogItemPanel extends Panel {
         mapVisible.put("prompt-email-ticket",
                 JobTicketNounEnum.TICKET.uiText(getLocale()));
         mapVisible.put("email-ticket", ticket.toString().trim());
+
+        return true;
     }
 
     /**
@@ -799,11 +802,14 @@ public class DocLogItemPanel extends Panel {
             ticketOperator = null;
             ticketLabel = null;
 
-            this.populatePrintOutMailPrintTicket(helper, mapVisible, obj,
-                    locale);
+            if (this.populatePrintOutMailPrintTicket(helper, mapVisible, obj,
+                    locale)) {
+                this.populateJobSheetImg(obj.getIppOptionMap(), helper);
+            } else {
+                helper.discloseLabel(WID_IMG_JOB_SHEET);
+            }
 
             mapVisible.put("jobticket-tag-plain", obj.getExtId());
-            helper.discloseLabel(WID_IMG_JOB_SHEET);
         }
 
         mapVisible.put("printoutMode",
@@ -1129,8 +1135,10 @@ public class DocLogItemPanel extends Panel {
             final StringBuilder imgSrc = new StringBuilder();
             imgSrc.append(WebApp.PATH_IMAGES).append('/');
             imgSrc.append("copy-jobticket-128x128.png");
-            helper.addModifyLabelAttr(WID_IMG_JOB_SHEET, MarkupHelper.ATTR_SRC,
-                    imgSrc.toString());
+            final Label label = helper.addModifyLabelAttr(WID_IMG_JOB_SHEET,
+                    MarkupHelper.ATTR_SRC, imgSrc.toString());
+            MarkupHelper.modifyLabelAttr(label, MarkupHelper.ATTR_TITLE,
+                    PrintOutNounEnum.JOB_SHEET.uiText(getLocale()));
         } else {
             helper.discloseLabel(WID_IMG_JOB_SHEET);
         }
