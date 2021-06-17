@@ -1432,8 +1432,10 @@ public final class ReqLogin extends ApiRequestMixin {
      * @param webAppType
      *            The {@link WebAppTypeEnum}.
      * @param userDbAuth
-     *            The authenticated {@link User}.
-     * @return The {@link DocLog} user.
+     *            The authenticated {@link User}. Is {@code null} in case of
+     *            {@link WebAppTypeEnum#ADMIN} and reserved user id "admin".
+     * @return The {@link DocLog} user, or {@code null} in case of
+     *         {@link WebAppTypeEnum#ADMIN} and reserved user id "admin".
      */
     private User resolveDocLogUser(final WebAppTypeEnum webAppType,
             final User userDbAuth) {
@@ -1468,8 +1470,6 @@ public final class ReqLogin extends ApiRequestMixin {
      *            The authenticated {@link User}.
      * @param authToken
      *            {@code null} when not available.
-     * @return The effective user (can be different than the authenticated
-     *         user).
      * @throws IOException
      *             When IO errors.
      */
@@ -1481,7 +1481,8 @@ public final class ReqLogin extends ApiRequestMixin {
 
         final User docLogUser = this.resolveDocLogUser(webAppType, userDbAuth);
 
-        if (docLogUser.getId().equals(userDbAuth.getId())) {
+        if (webAppType == WebAppTypeEnum.ADMIN
+                || docLogUser.getId().equals(userDbAuth.getId())) {
             session.setUserIdDtoDocLog(null);
         } else {
             session.setUserIdDtoDocLog(UserIdDto.create(docLogUser));
