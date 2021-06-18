@@ -72,6 +72,7 @@ import org.savapage.core.jpa.UserCard;
 import org.savapage.core.jpa.UserEmail;
 import org.savapage.core.jpa.UserNumber;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.NumberUtil;
 import org.savapage.server.api.JsonApiDict;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -512,8 +513,10 @@ public class ReqExportUserDataHistory extends ApiRequestExportMixin {
                 drm, //
                 paperSize, //
                 docLog.getTitle(), //
-                docLog.getNumberOfBytes().toString(), //
-                docLog.getNumberOfPages().toString(), //
+                NumberUtil.defaulValueZero(docLog.getNumberOfBytes())
+                        .toString(), //
+                NumberUtil.defaulValueZero(docLog.getNumberOfPages())
+                        .toString(), //
                 numberUp, //
                 printedCopies, printedSheets, printedDuplex, printedColor, //
                 eco, letterhead, removeGraphics, //
