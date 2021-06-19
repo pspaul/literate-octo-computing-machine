@@ -4335,7 +4335,7 @@
                     dto: JSON.stringify({
                         filter: filter,
                         jobTicket: filterJobTicket,
-                        maxResults: 5
+                        maxResults: _model.PRINTERS_QUICK_SEARCH_MAX
                     })
                 });
 
@@ -6011,6 +6011,9 @@
             if (res.delegatorUserDetail) {
                 _model.DELEGATOR_USER_DETAIL = res.delegatorUserDetail;
             }
+
+            _model.PRINTERS_QUICK_SEARCH_MAX = res.quickSearchMaxPrinters;
+
             //
             _view.userChartColors = [res.colors.printIn, res.colors.printOut, res.colors.pdfOut];
             _view.imgBase64 = res.img_base64;

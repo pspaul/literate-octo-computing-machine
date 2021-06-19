@@ -4006,6 +4006,10 @@ public final class JsonApiServer extends AbstractPage {
                     Key.PROXY_PRINT_DELEGATE_ACCOUNT_SHARED_GROUP_ENABLE));
         }
 
+        //
+        userData.put("quickSearchMaxPrinters",
+                cm.getConfigLong(Key.WEBAPP_USER_PRINTERS_QUICK_SEARCH_MAX));
+
         // Web Print
         final boolean isWebPrintEnabled =
                 WebPrintHelper.isWebPrintEnabled(this.getClientIP());
