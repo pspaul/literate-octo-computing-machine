@@ -192,9 +192,9 @@ public class DocLogItemPanel extends Panel {
             "job-state", "job-completed-date", "print-in-denied-reason-hyphen",
             "print-in-denied-reason", "collate", "ecoPrint", "removeGraphics",
             "pageRotate180", "punch", "staple", "fold", "booklet",
-            "jobticket-tag-plain", "jobticket-media", "jobticket-copy",
-            "jobticket-finishing-ext", "jobticket-custom-ext", "landscape",
-            "scaled" };
+            "jobcopy-options", "jobticket-tag-plain", "jobticket-media",
+            "jobticket-copy", "jobticket-finishing-ext", "jobticket-custom-ext",
+            "landscape", "scaled" };
 
     /**
      *
@@ -859,6 +859,9 @@ public class DocLogItemPanel extends Panel {
             mapVisible.put("booklet",
                     helper.localized(PrintOutNounEnum.BOOKLET));
         }
+
+        mapVisible.put("jobcopy-options", PROXYPRINT_SERVICE
+                .getJobCopyOptionsHtml(getLocale(), obj.getIppOptions()));
 
         mapVisible.put("papersize", obj.getPaperSize().toUpperCase());
 
