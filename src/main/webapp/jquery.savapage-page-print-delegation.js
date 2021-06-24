@@ -340,24 +340,7 @@
             //----------------------------------------------------------------
             ,
             _setQuickSearchNavigation = function(qsButtons, res) {
-                var selWlk;
-                if (qsButtons) {
-                    selWlk = qsButtons.find('.sp-button-prev');
-                    selWlk.attr('data-savapage', res.dto.prevPosition).show();
-
-                    selWlk = qsButtons.find('.sp-button-curr');
-                    selWlk.attr('data-savapage', res.dto.currPosition).show();
-                    selWlk.html(res.dto.currPage);
-
-                    selWlk = qsButtons.find('.sp-button-next');
-                    selWlk.attr('data-savapage', res.dto.nextPosition).show();
-
-                    selWlk = qsButtons.find('.sp-button-last');
-                    selWlk.attr('data-savapage', res.dto.lastPosition).show();
-                    selWlk.html(res.dto.lastPage);
-
-                    _view.visible(qsButtons, res.dto.lastPosition > 0);
-                }
+                _ns.QuickSearchUtils.setNavigation(_view, qsButtons, res.dto);
             }
             //----------------------------------------------------------------
             ,

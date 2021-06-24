@@ -1459,6 +1459,31 @@
     };
 
     // =========================================================================
+    _ns.QuickSearchUtils = {
+        /**
+         * @param rsp DtoQuickSearchRsp
+         */
+        setNavigation: function(_view, qsButtons, rsp) {
+            var selWlk;
+            if (qsButtons) {
+                selWlk = qsButtons.find('.sp-button-prev');
+                selWlk.attr('data-savapage', rsp.prevPosition).show();
+
+                selWlk = qsButtons.find('.sp-button-curr');
+                selWlk.attr('data-savapage', rsp.currPosition).show();
+                selWlk.html(rsp.currPage);
+
+                selWlk = qsButtons.find('.sp-button-next');
+                selWlk.attr('data-savapage', rsp.nextPosition).show();
+
+                selWlk = qsButtons.find('.sp-button-last');
+                selWlk.attr('data-savapage', rsp.lastPosition).show();
+                selWlk.html(rsp.lastPage);
+
+                _view.visible(qsButtons, rsp.lastPosition > 0);
+            }
+        }
+    };
     /**
      * Constructor: Generic Quick Search on Object
      */
@@ -3134,6 +3159,14 @@
 
         this.visibleCheckboxRadio = function(jqsel, show) {
             this.visible(jqsel.parent(), show);
+        };
+
+        /**
+         * A workaround method to fix incomplete rendering of background image 
+         * by performing a dummy windows resize.
+         */
+        this.repairVisibility = function() {
+            $(window).trigger('resize');
         };
 
         /**

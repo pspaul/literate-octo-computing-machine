@@ -38,6 +38,7 @@ import org.savapage.core.dto.QuickSearchPrinterItemDto;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.JsonPrinter;
 import org.savapage.core.json.JsonPrinterList;
+import org.savapage.server.api.request.ReqQuickSearchMixin.DtoQuickSearchRsp;
 
 /**
  * Proxy Printers Quick Search.
@@ -52,7 +53,7 @@ public abstract class ReqPrinterQuickSearchMixin extends ApiRequestMixin {
      * @author Rijk Ravestein
      *
      */
-    private static class DtoRsp extends AbstractDto {
+    private static class DtoRsp extends DtoQuickSearchRsp {
 
         private List<QuickSearchItemDto> items;
         private Boolean fastPrintAvailable;
@@ -93,6 +94,13 @@ public abstract class ReqPrinterQuickSearchMixin extends ApiRequestMixin {
         final QuickSearchFilterPrinterDto dto = AbstractDto.create(
                 QuickSearchFilterPrinterDto.class, this.getParmValueDto());
 
+        final int startPosition;
+        if (dto.getStartPosition() == null) {
+            startPosition = 0;
+        } else {
+            startPosition = dto.getStartPosition().intValue();
+        }
+
         final boolean searchCupsName =
                 BooleanUtils.isTrue(dto.getSearchCupsName());
 
@@ -111,6 +119,9 @@ public abstract class ReqPrinterQuickSearchMixin extends ApiRequestMixin {
 
         // Is printer with Fast Proxy Print available?
         Boolean fastPrintAvailable = null;
+
+        int totalResults = 0;
+        int iPosition = 0;
 
         while (iter.hasNext()) {
 
@@ -138,7 +149,10 @@ public abstract class ReqPrinterQuickSearchMixin extends ApiRequestMixin {
                     || (searchCupsName && printer.getName().toLowerCase()
                             .contains(filter))) {
 
-                if (items.size() < maxItems) {
+                totalResults++;
+                iPosition++;
+
+                if (iPosition > startPosition && items.size() < maxItems) {
 
                     final QuickSearchPrinterItemDto itemWlk =
                             new QuickSearchPrinterItemDto();
@@ -148,8 +162,6 @@ public abstract class ReqPrinterQuickSearchMixin extends ApiRequestMixin {
                     itemWlk.setPrinter(printer);
 
                     items.add(itemWlk);
-                } else {
-                    break;
                 }
             }
         }
@@ -181,6 +193,8 @@ public abstract class ReqPrinterQuickSearchMixin extends ApiRequestMixin {
         final DtoRsp rsp = new DtoRsp();
         rsp.setItems(items);
         rsp.setFastPrintAvailable(fastPrintAvailable);
+        rsp.calcNavPositions(dto.getMaxResults().intValue(), startPosition,
+                totalResults);
 
         setResponse(rsp);
         setApiResultOk();

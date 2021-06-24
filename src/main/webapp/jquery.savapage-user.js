@@ -4246,7 +4246,7 @@
             _fastPrintAvailable,
             _hasDelegatedPrint,
             _jobticketDatetimeDefaultPresent,
-
+            _qsButtons,
             //
             _getPrinterImg = function(item, isDirect) {
                 if (item.printer.jobTicket) {
@@ -4301,14 +4301,14 @@
                 return true;
             },
 
-            _onQuickPrinterSearch = function(target, filter) {
+            _onQuickPrinterSearch = function(target, filter, startPosition, paging) {
                 /* QuickSearchFilterPrinterDto */
                 var res,
                     filterJobTicket = _model.hasInboxDocs() ? null : true,
                     html = "";
 
                 // Prevent duplicate search on "focusout" of search field.
-                if (_lastPrinterFilter === filter && _lastPrinterFilterJobTicket === filterJobTicket) {
+                if (!paging && _lastPrinterFilter === filter && _lastPrinterFilterJobTicket === filterJobTicket) {
                     return;
                 }
                 _lastPrinterFilter = filter;
@@ -4316,6 +4316,7 @@
 
                 if (!_quickPrinterSelected || (_quickPrinterSelected && filter !== _quickPrinterSelected.text)) {
                     _view.visible($('#content-print .printer-selected'), false);
+                    _view.repairVisibility();
                 } else {
                     _view.visible($('#button-print-settings'), true);
                     return;
@@ -4335,6 +4336,7 @@
                     dto: JSON.stringify({
                         filter: filter,
                         jobTicket: filterJobTicket,
+                        startPosition: startPosition,
                         maxResults: _model.PRINTERS_QUICK_SEARCH_MAX
                     })
                 });
@@ -4356,6 +4358,9 @@
                         html += _getQuickPrinterHtml(item);
                         html += "</a></li>";
                     });
+
+                    _ns.QuickSearchUtils.setNavigation(_view, _qsButtons, res.dto);
+
                 } else {
                     _view.showApiMsg(res);
                 }
@@ -4390,6 +4395,8 @@
                     _view.visible($('#content-print .printer-fast-print-info'), false);
 
                     $("#print-title").focus();
+
+                    _view.visible(_qsButtons, false);
 
                 } else {
                     // An error occurred, re-show available printers...
@@ -4700,6 +4707,7 @@
             filterablePrinter.focus();
             //
             _hasDelegatedPrint = $('#button-print-delegation').length > 0;
+            _qsButtons = $("#sp-print-quicksearch-printer-div .sp-quicksearch-buttons");
 
             //
             filterablePrinter.on("filterablebeforefilter", function(e, data) {
@@ -4722,6 +4730,11 @@
                     _view.visible($('#sp-print-quicksearch-printer-div'), false);
                 }
             }
+
+            // Pinter list navigation
+            $("#sp-print-quicksearch-printer-div .sp-quicksearch-buttons .ui-btn").click(function() {
+                _onQuickPrinterSearch(filterablePrinter, $("#sp-print-qs-printer").val(), $(this).attr('data-savapage'), true);
+            });
 
             $("#print-collate").on("change", null, null, function(event, ui) {
                 _setVisibility();
