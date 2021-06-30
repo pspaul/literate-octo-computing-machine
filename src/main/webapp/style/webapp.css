@@ -39,7 +39,7 @@
 	right: 0;
 	/* https://openclipart.org/detail/99229/landscape  
 	 * "a-paisaje-boceto": 1920x1080. */
-	background: url(./background.png) !important;
+	background-image: url(./background.png) !important;
 	background-size: cover !important;
 	background-repeat: no-repeat !important;
 	background-attachment: fixed !important;
