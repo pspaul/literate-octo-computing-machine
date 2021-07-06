@@ -60,7 +60,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.savapage.core.SpInfo;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
-import org.savapage.core.doc.DocContent;
+import org.savapage.core.doc.MimeTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.ext.print.IppRoutingDto;
@@ -119,7 +119,8 @@ public final class RestTestService implements IRestService {
     private static final String FORM_PARAM_FILE = "file";
 
     /** */
-    private static final String MEDIA_TYPE_PDF = DocContent.MIMETYPE_PDF;
+    private static final String MEDIA_TYPE_PDF =
+            MimeTypeEnum.MIME_APPLICATION_PDF;
 
     /** */
     @Context

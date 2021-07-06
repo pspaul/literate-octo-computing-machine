@@ -70,6 +70,7 @@ import org.savapage.core.dao.helpers.DocLogPagerReq;
 import org.savapage.core.dao.impl.DaoContextImpl;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.doc.DocContentTypeEnum;
+import org.savapage.core.doc.MimeTypeEnum;
 import org.savapage.core.doc.store.DocStoreBranchEnum;
 import org.savapage.core.doc.store.DocStoreException;
 import org.savapage.core.doc.store.DocStoreTypeEnum;
@@ -261,7 +262,7 @@ public final class RestDocumentsService implements IRestService {
     @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
     @GET
     @Path("/{" + PATH_PARAM_ID + "}/" + PATH_SUB_PDF)
-    @Produces(DocContent.MIMETYPE_PDF)
+    @Produces(MimeTypeEnum.MIME_APPLICATION_PDF)
     public Response getDocumentPdfById(//
             @PathParam(PATH_PARAM_ID) final Long id) {
 
@@ -279,7 +280,7 @@ public final class RestDocumentsService implements IRestService {
     @GET
     @Path("/" + RestDocumentDto.FIELD_EXT_ID + "={" + PATH_PARAM_EXT_ID + "}/"
             + PATH_SUB_PDF)
-    @Produces(DocContent.MIMETYPE_PDF)
+    @Produces(MimeTypeEnum.MIME_APPLICATION_PDF)
     public Response getDocumentPdfByExtId(//
             @PathParam(PATH_PARAM_EXT_ID) final String externalId) {
 
