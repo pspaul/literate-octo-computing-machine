@@ -46,9 +46,7 @@ public class PdfProperties extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
+    /** */
     private static final AccessControlService ACCESS_CONTROL_SERVICE =
             ServiceContext.getServiceFactory().getAccessControlService();
 
@@ -63,11 +61,11 @@ public class PdfProperties extends AbstractUserPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        //
         helper.encloseLabel("pdf-ecoprint", "",
                 ConfigManager.isEcoPrintEnabled());
 
-        //
+        helper.addButton("pdf-rasterize", HtmlButtonEnum.RASTERIZE);
+
         final UserIdDto user = SpSession.get().getUserIdDto();
 
         final List<ACLPermissionEnum> permissions =

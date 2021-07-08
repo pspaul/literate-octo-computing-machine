@@ -111,6 +111,8 @@ public enum HtmlButtonEnum {
     /** */
     PRINT,
     /** */
+    RASTERIZE,
+    /** */
     REFRESH,
     /** */
     REFUND,

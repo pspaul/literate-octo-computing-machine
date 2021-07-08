@@ -86,7 +86,7 @@
 	color: red;
 }
 
-.sp-url-wrap , .sp-filename-wrap {
+.sp-url-wrap, .sp-filename-wrap {
 	/* These are technically the same, but use both */
 	overflow-wrap: break-word;
 	word-wrap: break-word;
@@ -193,6 +193,11 @@
 /* Classes for tri-state checkbox */
 .sp-checkbox-tristate-label {
 	
+}
+
+/* Image within JQM checkbox */
+img.sp-checkbox-img {
+	border-top-left-radius: 0px !important;
 }
 
 .sp-tristate-null {

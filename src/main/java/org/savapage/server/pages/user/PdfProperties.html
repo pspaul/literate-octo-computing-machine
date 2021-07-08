@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -71,9 +71,8 @@ the License, or (at your option) any later version.
 			<div class="ui-field-contain">
 				<wicket:enclosure child="pdf-ecoprint">
 					<label data-mini="true" for="pdf-ecoprint">
-						&nbsp;&nbsp;
-						<img height="12" src="/glyphicons/glyphicons_001_leaf.png" />
-						&nbsp;&nbsp;
+						&nbsp;&nbsp; <img height="12" class="sp-checkbox-img"
+							src="/glyphicons/glyphicons_001_leaf.png" /> &nbsp;&nbsp;
 						<wicket:message key="pdf-ecoprint" />
 					</label>
 					<input data-mini="true" type="checkbox" wicket:id="pdf-ecoprint"
@@ -81,21 +80,26 @@ the License, or (at your option) any later version.
 				</wicket:enclosure>
 
 				<label data-mini="true" for="pdf-remove-graphics">
-					&nbsp;&nbsp;
-					<img height="12" src="/glyphicons/glyphicons_092_tint.png" />
-					&nbsp;&nbsp;
+					&nbsp;&nbsp; <img height="12" class="sp-checkbox-img"
+						src="/glyphicons/glyphicons_092_tint.png" /> &nbsp;&nbsp;
 					<wicket:message key="pdf-remove-graphics" />
 				</label>
 				<input data-mini="true" type="checkbox" id="pdf-remove-graphics"
 					value="1" />
 
 				<label data-mini="true" for="pdf-grayscale">
-					&nbsp;&nbsp;
-					<img height="12" src="/glyphicons/glyphicons_091_adjust.png" />
-					&nbsp;&nbsp;
+					&nbsp;&nbsp; <img height="12" class="sp-checkbox-img"
+						src="/glyphicons/glyphicons_091_adjust.png" /> &nbsp;&nbsp;
 					<wicket:message key="pdf-grayscale" />
 				</label>
 				<input data-mini="true" type="checkbox" id="pdf-grayscale" value="1" />
+
+				<label data-mini="true" for="pdf-rasterize">
+					&nbsp;&nbsp; <img height="12" class="sp-checkbox-img"
+						src="/glyphicons/glyphicons_155_show_thumbnails.png" />
+					&nbsp;&nbsp; <span wicket:id="pdf-rasterize" />
+				</label>
+				<input data-mini="true" type="checkbox" id="pdf-rasterize" value="1" />
 			</div>
 
 			<fieldset data-role="controlgroup" data-type="horizontal"

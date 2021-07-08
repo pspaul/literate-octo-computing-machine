@@ -2001,7 +2001,8 @@
         $("#page-send").on("pagecreate", function(event) {
 
             $('#button-send-send').click(function() {
-                _this.onSend($('#send-mailto').val(), _model.pdfPageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfGrayscale);
+                _this.onSend($('#send-mailto').val(), _model.pdfPageRanges, _model.removeGraphics,
+                    _model.ecoprint, _model.pdfGrayscale, _model.pdfRasterize);
                 return false;
             });
 
@@ -5690,6 +5691,10 @@
                 _model.pdfGrayscale = _view.isCbChecked($(sel));
             },
 
+            _savePdfRasterize = function(sel) {
+                _model.pdfRasterize = _view.isCbChecked($(sel));
+            },
+
             _checkVanillaJobs = function() {
 
                 var res = _api.call({
@@ -6877,7 +6882,7 @@
         /**
          * Callbacks: page send
          */
-        _view.pages.send.onSend = function(mailto, ranges, removeGraphics, ecoprint, grayscale) {
+        _view.pages.send.onSend = function(mailto, ranges, removeGraphics, ecoprint, grayscale, rasterize) {
             var res;
 
             if (_util.isEmailValid(mailto)) {
@@ -6888,7 +6893,8 @@
                     ranges: ranges,
                     removeGraphics: removeGraphics,
                     ecoprint: ecoprint,
-                    grayscale: grayscale
+                    grayscale: grayscale,
+                    rasterize: rasterize
                 });
                 if (res.result.code === "0") {
                     _model.user.stats = res.stats;
@@ -6929,6 +6935,7 @@
             _saveRemoveGraphics('#pdf-remove-graphics');
             _saveEcoprint('#pdf-ecoprint');
             _savePdfGrayscale('#pdf-grayscale');
+            _savePdfRasterize('#pdf-rasterize');
 
             _model.pdfPageRanges = $('#pdf-page-ranges').val();
 
@@ -6948,8 +6955,9 @@
             _saveRemoveGraphics('#pdf-remove-graphics');
             _saveEcoprint('#pdf-ecoprint');
             _savePdfGrayscale('#pdf-grayscale');
+            _savePdfRasterize('#pdf-rasterize');
 
-            filters = (_model.removeGraphics ? 1 : 0) + (_model.ecoprint ? 1 : 0) + (_model.pdfGrayscale ? 1 : 0);
+            filters = (_model.removeGraphics ? 1 : 0) + (_model.ecoprint ? 1 : 0);
 
             if (filters > 1) {
                 _view.message(_i18n.format('msg-select-single-pdf-filter', null));
@@ -6970,7 +6978,8 @@
             _ns.deferAppWakeUp(true);
 
             //
-            window.location.assign(_api.getUrl4Pdf(pageRanges, _model.removeGraphics, _model.ecoprint, _model.pdfGrayscale, _model.pdfJobIndex));
+            window.location.assign(_api.getUrl4Pdf(pageRanges, _model.removeGraphics,
+                _model.ecoprint, _model.pdfGrayscale, _model.pdfRasterize, _model.pdfJobIndex));
             _model.myShowUserStatsGet = true;
             return true;
         };

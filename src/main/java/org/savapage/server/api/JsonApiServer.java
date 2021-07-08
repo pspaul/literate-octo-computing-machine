@@ -1087,6 +1087,9 @@ public final class JsonApiServer extends AbstractPage {
             final boolean grayscalePdf = Boolean.parseBoolean(
                     getParmValue(parameters, isGetAction, "grayscale"));
 
+            final boolean rasterizePdf = Boolean.parseBoolean(
+                    getParmValue(parameters, isGetAction, "rasterize"));
+
             final DocLog docLog = new DocLog();
 
             /*
@@ -1096,7 +1099,8 @@ public final class JsonApiServer extends AbstractPage {
                     Integer.parseInt(
                             getParmValue(parameters, isGetAction, "jobIndex")),
                     getParmValue(parameters, isGetAction, "ranges"),
-                    removeGraphics, ecoPrint, grayscalePdf, docLog, "download");
+                    removeGraphics, ecoPrint, grayscalePdf, rasterizePdf,
+                    docLog, "download");
 
             /*
              * (2) Write log to database.
@@ -1470,10 +1474,11 @@ public final class JsonApiServer extends AbstractPage {
                     Boolean.parseBoolean(getParmValue(parameters, isGetAction,
                             "removeGraphics")),
                     Boolean.parseBoolean(
-                            getParmValue(parameters, isGetAction, "ecoprint"))
-                    //
-                    , Boolean.parseBoolean(getParmValue(parameters, isGetAction,
-                            "grayscale")));
+                            getParmValue(parameters, isGetAction, "ecoprint")),
+                    Boolean.parseBoolean(
+                            getParmValue(parameters, isGetAction, "grayscale")),
+                    Boolean.parseBoolean(getParmValue(parameters, isGetAction,
+                            "rasterize")));
 
         case JsonApiDict.REQ_USER_LAZY_ECOPRINT:
 
@@ -1538,6 +1543,8 @@ public final class JsonApiServer extends AbstractPage {
      *            <code>true</code> if Eco PDF is to be generated.
      * @param grayscalePdf
      *            <code>true</code> if Grayscale PDF is to be generated.
+     * @param rasterizePdf
+     *            <code>true</code> if rasterize PDF is to be generated.
      * @param docLog
      * @param purpose
      *            A simple tag to insert into the filename (to add some
@@ -1553,8 +1560,8 @@ public final class JsonApiServer extends AbstractPage {
     private File generatePdfForExport(final User user,
             final int vanillaJobIndex, final String pageRangeFilter,
             final boolean removeGraphics, final boolean ecoPdf,
-            final boolean grayscalePdf, final DocLog docLog,
-            final String purpose)
+            final boolean grayscalePdf, final boolean rasterizePdf,
+            final DocLog docLog, final String purpose)
             throws LetterheadNotFoundException, IOException,
             PostScriptDrmException, EcoPrintPdfTaskPendingException {
 
@@ -1586,6 +1593,7 @@ public final class JsonApiServer extends AbstractPage {
         pdfRequest.setForPrinting(false);
         pdfRequest.setEcoPdfShadow(ecoPdf);
         pdfRequest.setGrayscale(grayscalePdf);
+        pdfRequest.setRasterized(rasterizePdf);
 
         final ConfigManager cm = ConfigManager.instance();
 
@@ -2156,6 +2164,8 @@ public final class JsonApiServer extends AbstractPage {
      *            <code>true</code> if Eco PDF is to be generated.
      * @param grayscalePdf
      *            <code>true</code> if Grayscale PDF is to be generated.
+     * @param rasterizePdf
+     *            <code>true</code> if Imaged PDF is to be generated.
      * @return
      * @throws LetterheadNotFoundException
      * @throws IOException
@@ -2168,9 +2178,10 @@ public final class JsonApiServer extends AbstractPage {
     private Map<String, Object> reqSend(final User lockedUser,
             final String mailto, final String jobIndex, final String ranges,
             final boolean removeGraphics, final boolean ecoPdf,
-            final boolean grayscalePdf) throws LetterheadNotFoundException,
-            IOException, MessagingException, InterruptedException,
-            CircuitBreakerException, ParseException, PGPBaseException {
+            final boolean grayscalePdf, final boolean rasterizePdf)
+            throws LetterheadNotFoundException, IOException, MessagingException,
+            InterruptedException, CircuitBreakerException, ParseException,
+            PGPBaseException {
 
         final Map<String, Object> userData = new HashMap<String, Object>();
 
@@ -2203,7 +2214,7 @@ public final class JsonApiServer extends AbstractPage {
              */
             fileAttach = generatePdfForExport(lockedUser,
                     Integer.parseInt(jobIndex), ranges, removeGraphics, ecoPdf,
-                    grayscalePdf, docLog, "email");
+                    grayscalePdf, rasterizePdf, docLog, "email");
             /*
              * INVARIANT: Since sending the mail is synchronous, file length is
              * important and MUST be less than criterion.
