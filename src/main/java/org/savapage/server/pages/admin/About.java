@@ -131,6 +131,18 @@ public final class About extends AbstractAdminPage {
                 String.valueOf(Calendar.getInstance().get(Calendar.YEAR))));
 
         //
+        add(new Label("app-license-name-2",
+                CommunityDictEnum.SAVAPAGE.getWord()));
+
+        helper.addModifyLabelAttr("gdpr-url",
+                CommunityDictEnum.EU_GDPR_FULL_TXT.getWord(),
+                MarkupHelper.ATTR_HREF,
+                CommunityDictEnum.EU_GDPR_URL.getWord());
+
+        helper.addModifyLabelAttr("eu-url",
+                CommunityDictEnum.EU_FULL_TXT.getWord(), MarkupHelper.ATTR_HREF,
+                CommunityDictEnum.EU_URL.getWord());
+
         //
         labelWrk = new Label("app-copyright-owner-url",
                 CommunityDictEnum.DATRAVERSE_BV.getWord());
