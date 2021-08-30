@@ -535,26 +535,19 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
         } else {
 
             final JsonRpcError error = rpcResponse.asError().getError();
-            final StringBuilder text = new StringBuilder();
-
-            if (StringUtils.isNotBlank(error.getMessage())) {
-                text.append(error.getMessage());
-            }
-
             final ErrorDataBasic errorData = error.data(ErrorDataBasic.class);
 
+            final String text;
             if (errorData != null
                     && StringUtils.isNotBlank(errorData.getReason())) {
-
-                final boolean hasMessage = text.length() > 0;
-
-                if (hasMessage) {
-                    text.append(" : ");
-                }
-                text.append(errorData.getReason());
+                text = errorData.getReason();
+            } else if (StringUtils.isNotBlank(error.getMessage())) {
+                text = error.getMessage();
+            } else {
+                text = "unknown error";
             }
 
-            this.setApiResultText(ApiResultCodeEnum.ERROR, text.toString());
+            this.setApiResultText(ApiResultCodeEnum.ERROR, text);
         }
     }
 
