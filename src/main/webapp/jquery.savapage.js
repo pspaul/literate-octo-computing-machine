@@ -538,7 +538,9 @@
         this.unloadWebApp = function() {
             var request = 'webapp-unload';
             if (navigator.sendBeacon) {
-                navigator.sendBeacon('/api?request=' + request + '&webAppType=' + _ns.WEBAPP_TYPE + '&user=' + _user.id, null);
+                navigator.sendBeacon('/api?request=' + request +
+                    '&webAppType=' + _ns.WEBAPP_TYPE +
+                    '&user=' + encodeURIComponent(_user.id), null);
             } else {
                 this.removeCallbacks();
                 this.call({
@@ -960,7 +962,7 @@
             sel = $('#sp-accounttrx-date-to-pc');
             date = _view.mobipickGetDate(sel);
             present = (sel.val().length > 0);
-            this.input.select.date_to = (resent ? date.getTime() : null);
+            this.input.select.date_to = (present ? date.getTime() : null);
 
             sel = $('#sp-accounttrx-containing-text-pc');
             present = (sel.val().length > 0);
@@ -3274,6 +3276,7 @@
                         }
                     }
                     fooInfo(_collectedKeys);
+                    _collectedKeys = '';
                 } else {
                     /*
                      * IMPORTANT: only look at printable chars. When doing an
