@@ -48,6 +48,10 @@ public final class WebAppPos extends AbstractWebAppPage {
      */
     private static final long serialVersionUID = 1L;
 
+    private static final String[] CSS_REQ_FILENAMES =
+            new String[] { "jquery.savapage-common-icons.css",
+                    "jquery.savapage-user-icons.css" };
+
     /**
      *
      * @param parameters
@@ -103,6 +107,11 @@ public final class WebAppPos extends AbstractWebAppPage {
     @Override
     protected String getSpecializedCssFileName() {
         return "jquery.savapage-pos.css";
+    }
+
+    @Override
+    protected final String[] getSpecializedCssReqFileNames() {
+        return CSS_REQ_FILENAMES;
     }
 
     @Override

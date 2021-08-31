@@ -38,25 +38,26 @@
 /*
  * SavaPage jQuery Mobile Admin Pages.
  */
-( function($, window, document, JSON, _ns) {
-        "use strict";
+(function($, window, document, JSON, _ns) {
+    "use strict";
 
-        // =========================================================================
-        /**
-         * Constructor
-         */
-        _ns.PagePointOfSale = function(_i18n, _view, _model, _api) {
-            var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale", "PagePointOfSale"),
-                _self = _ns.derive(_page),
-                _quickUserSelected,
-                _quickUserSearch = new _ns.QuickObjectSearch(_view, _api),
-                _onQuickSearchUserBefore = function() {
+    // =========================================================================
+    /**
+     * Constructor
+     */
+    _ns.PagePointOfSale = function(_i18n, _view, _model, _api, isMain) {
+        var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale",
+            (isMain ? "PagePointOfSaleMain" : "PagePointOfSalePage")),
+            _self = _ns.derive(_page),
+            _quickUserSelected,
+            _quickUserSearch = new _ns.QuickObjectSearch(_view, _api),
+            _onQuickSearchUserBefore = function() {
                 $(".sp-pos-user-selected").hide();
             },
-                _onQuickSearchUserItemDisplay = function(item) {
+            _onQuickSearchUserItemDisplay = function(item) {
                 return item.text + " &bull; " + (item.email || "&nbsp;");
             },
-                _onSelectUser = function(quickUserSelected) {
+            _onSelectUser = function(quickUserSelected) {
 
                 var attr = "data-savapage",
                     sel = $("#sp-pos-userid");
@@ -72,30 +73,32 @@
 
                 $("#sp-pos-amount-main").focus();
             },
-                _onClearUser = function() {
+            _onClearUser = function() {
                 $.noop();
             },
-                _clear = function() {
+            _clearSales = function() {
+                $("#sp-pos-sales-amount-cents").val("00");
+                $("#sp-pos-sales-comment").val("");
+                _view.asyncFocus($("#sp-pos-sales-amount-main").val(""));
+            },
+            _clear = function() {
                 $("#sp-pos-userid").val("").focus();
                 $("#sp-pos-amount-main").val("");
                 $("#sp-pos-comment").val("");
                 $("#sp-pos-amount-cents").val("00");
                 $(".sp-pos-user-selected").hide();
             },
-                _onDeposit = function() {
-                var sel = $('#sp-pos-payment-type')
-                // PosDepositDto
-                ,
-                    res = _api.call({
-                    request : "pos-deposit",
-                    dto : JSON.stringify({
-                        userId : _quickUserSelected.text,
-                        amountMain : $("#sp-pos-amount-main").val(),
-                        amountCents : $("#sp-pos-amount-cents").val(),
-                        comment : $("#sp-pos-comment").val(),
-                        paymentType : ( sel ? sel.val() : undefined ),
-                        receiptDelivery : _view.getRadioValue('sp-pos-receipt-delivery'),
-                        userEmail : _quickUserSelected.email
+            _onSales = function(userKey, userId) {
+                var res = _api.call({
+                    request: "pos-sales",
+                    dto: JSON.stringify({
+                        userKey: userKey,
+                        accountContext: $('#sp-pos-sales-account').val(),
+                        userId: userId,
+                        amountMain: $("#sp-pos-sales-amount-main").val(),
+                        amountCents: $("#sp-pos-sales-amount-cents").val(),
+                        comment: $("#sp-pos-sales-comment").val(),
+                        invoiceDelivery: undefined
                     })
                 });
 
@@ -104,9 +107,41 @@
                 if (res.result.code === '0') {
 
                     if (_api.call({
-                        request : "user-notify-account-change",
-                        dto : JSON.stringify({
-                            key : _quickUserSelected.key
+                        request: "user-notify-account-change",
+                        dto: JSON.stringify({
+                            key: userKey
+                        })
+                    }).result.code !== '0') {
+                        _view.showApiMsg(res);
+                    }
+                    _clearSales();
+                }
+            },
+            _onDeposit = function() {
+                var sel = $('#sp-pos-payment-type')
+                    // PosDepositDto
+                    ,
+                    res = _api.call({
+                        request: "pos-deposit",
+                        dto: JSON.stringify({
+                            userId: _quickUserSelected.text,
+                            amountMain: $("#sp-pos-amount-main").val(),
+                            amountCents: $("#sp-pos-amount-cents").val(),
+                            comment: $("#sp-pos-comment").val(),
+                            paymentType: (sel ? sel.val() : undefined),
+                            receiptDelivery: _view.getRadioValue('sp-pos-receipt-delivery'),
+                            userEmail: _quickUserSelected.email
+                        })
+                    });
+
+                _view.showApiMsg(res);
+
+                if (res.result.code === '0') {
+
+                    if (_api.call({
+                        request: "user-notify-account-change",
+                        dto: JSON.stringify({
+                            key: _quickUserSelected.key
                         })
                     }).result.code !== '0') {
                         _view.showApiMsg(res);
@@ -116,15 +151,15 @@
                 }
             },
             // Get Date as yyyymmdd. Usage: _getQuickDate(new Date())
-                _getQuickDate = function(date) {
+            _getQuickDate = function(date) {
                 var yyyy = date.getFullYear().toString(),
                     mm = (date.getMonth() + 1).toString(),
-                // getMonth() is zero-based
+                    // getMonth() is zero-based
                     dd = date.getDate().toString();
                 // padding
                 return yyyy + (mm[1] ? mm : "0" + mm[0]) + (dd[1] ? dd : "0" + dd[0]);
             },
-                _onQuickPurchaseSearch = function(target, filter) {
+            _onQuickPurchaseSearch = function(target, filter) {
                 /* QuickSearchFilterDto */
                 var res,
                     btnCls = "ui-btn ui-btn-inline ui-btn-icon-left ui-mini",
@@ -132,10 +167,10 @@
 
                 if (filter && filter.length > 0) {
                     res = _api.call({
-                        request : "pos-deposit-quick-search",
-                        dto : JSON.stringify({
-                            filter : filter,
-                            maxResults : 20
+                        request: "pos-deposit-quick-search",
+                        dto: JSON.stringify({
+                            filter: filter,
+                            maxResults: 20
                         })
                     });
                     if (res.result.code === '0') {
@@ -178,70 +213,97 @@
                 target.html(html).filterable("refresh");
             };
 
-            /**
-             *
-             */
-            $(_self.id()).on('pagecreate', function(event) {
+        /**
+         *
+         */
+        $(_self.id()).on('pagecreate', function(event) {
 
-                var filterableDateTime = $("#sp-pos-quickdate-filter");
+            var filterableDateTime = $("#sp-pos-quickdate-filter");
 
-                $(this).on('click', '#sp-pos-button-deposit', null, function() {
-                    _onDeposit();
-                });
-
-                $(this).on('click', '#sp-pos-button-clear', null, function() {
-                    _clear();
-                });
-
-                $(this).on('click', "#sp-pos-tab-deposit-button", null, function() {
-                    $("#sp-pos-userid").val("").focus();
-                });
-
-                $(this).on('click', "#sp-pos-tab-receipts-button", null, function() {
-                    var value = _getQuickDate(new Date());
-                    $("#sp-pos-quickdate").val(value).focus();
-                    _onQuickPurchaseSearch(filterableDateTime, value);
-                });
-
-                // Receipts tab
-                filterableDateTime.on("filterablebeforefilter", function(e, data) {
-                    _onQuickPurchaseSearch($(this), data.input.get(0).value);
-                });
-
-                $(this).on('click', ".sp-download-receipt", null, function() {
-                    _api.download("pos-receipt-download", null, $(this).attr('data-savapage'));
-                    return false;
-                });
-
-                $(this).on('click', ".sp-download-mail", null, function() {
-                    var res = _api.call({
-                        request : "pos-receipt-sendmail",
-                        // PrimaryKeyDto
-                        dto : JSON.stringify({
-                            key : $(this).attr('data-savapage')
-                        })
-                    });
-                    _view.showApiMsg(res);
-                    return false;
-                });
-
-                $(this).on('click', "#sp-pos-button-back", null, function() {
-                    if (_self.onBack) {
-                        return _self.onBack();
-                    }
-                    return true;
-                });
-
-                _quickUserSearch.onCreate($(this), 'sp-pos-userid-filter', 'user-quick-search', null, _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser, _onQuickSearchUserBefore);
-
-            }).on("pageshow", function(event, ui) {
-                $("#sp-pos-tab-deposit-button").click();
-                _clear();
+            $(this).on('click', '#sp-pos-button-deposit', null, function() {
+                _onDeposit();
             });
 
-            return _self;
-        };
+            $(this).on('click', '#sp-pos-button-clear', null, function() {
+                _clear();
+            }).on('click', '#sp-pos-sales-button-clear', null, function() {
+                _clearSales();
+            }).on('click', "#sp-pos-tab-sales-button", null, function() {
+                _clearSales();
+            });
 
-    }(jQuery, this, this.document, JSON, this.org.savapage));
+            $(this).on('click', "#sp-pos-tab-deposit-button", null, function() {
+                _view.asyncFocus($("#sp-pos-userid").val(""));
+            });
+
+            $(this).on('click', "#sp-pos-tab-receipts-button", null, function() {
+                var value = _getQuickDate(new Date());
+                $("#sp-pos-quickdate").val(value).focus();
+                _onQuickPurchaseSearch(filterableDateTime, value);
+            });
+
+            // Receipts tab
+            filterableDateTime.on("filterablebeforefilter", function(e, data) {
+                _onQuickPurchaseSearch($(this), data.input.get(0).value);
+            });
+
+            $(this).on('click', ".sp-download-receipt", null, function() {
+                _api.download("pos-receipt-download", null, $(this).attr('data-savapage'));
+                return false;
+            });
+
+            $(this).on('click', ".sp-download-mail", null, function() {
+                var res = _api.call({
+                    request: "pos-receipt-sendmail",
+                    // PrimaryKeyDto
+                    dto: JSON.stringify({
+                        key: $(this).attr('data-savapage')
+                    })
+                });
+                _view.showApiMsg(res);
+                return false;
+            });
+
+            $(this).on('click', ".sp-pos-button-back", null, function() {
+                if (_self.onBack) {
+                    return _self.onBack();
+                }
+                return true;
+            });
+
+            _quickUserSearch.onCreate($(this), 'sp-pos-userid-filter', 'user-quick-search', null, _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser, _onQuickSearchUserBefore);
+
+            _ns.KeyboardLogger.setCallback($('#sp-pos-sales-user-card-local-group'), _model.cardLocalMaxMsecs,
+                //
+                function() {// focusIn
+                    $('#sp-pos-sales-user-card-local-focusin').show();
+                    $('#sp-pos-sales-user-card-local-focusout').hide();
+                }, function() {// focusOut
+                    $('#sp-pos-sales-user-card-local-focusin').hide();
+                    $('#sp-pos-sales-user-card-local-focusout').fadeIn(700);
+                }, function(id) {
+                    var res = _api.call({
+                        request: 'usercard-quick-search',
+                        dto: JSON.stringify({
+                            card: id
+                        })
+                    });
+                    if (res.result.code !== '0') {
+                        _view.message(res.result.txt);
+                    } else {
+                        _onSales(res.dto.key, res.dto.text);
+                    }
+                });
+
+        }).on("pageshow", function(event, ui) {
+            // open first tab
+            $('.sp-pos-tab-button').get(0).click();
+            _clear();
+        });
+
+        return _self;
+    };
+
+}(jQuery, this, this.document, JSON, this.org.savapage));
 
 // @license-end

@@ -70,6 +70,7 @@ import org.savapage.server.api.request.ReqPageOverlayGet;
 import org.savapage.server.api.request.ReqPageOverlaySet;
 import org.savapage.server.api.request.ReqPdfPropsSetValidate;
 import org.savapage.server.api.request.ReqPosDepositQuickSearch;
+import org.savapage.server.api.request.ReqPosSales;
 import org.savapage.server.api.request.ReqPrintSiteUserSet;
 import org.savapage.server.api.request.ReqPrinterGet;
 import org.savapage.server.api.request.ReqPrinterGroupQuickSearch;
@@ -269,6 +270,8 @@ public final class JsonApiDict {
 
     public static final String REQ_BITCOIN_WALLET_REFRESH =
             "bitcoin-wallet-refresh";
+
+    public static final String REQ_POS_SALES = "pos-sales";
 
     public static final String REQ_POS_DEPOSIT = "pos-deposit";
     public static final String REQ_POS_RECEIPT_DOWNLOAD =
@@ -1124,6 +1127,9 @@ public final class JsonApiDict {
         usr(REQ_USER_MONEY_TRANSFER_REQUEST, DbClaim.READ, DbAccess.YES);
 
         adm(REQ_BITCOIN_WALLET_REFRESH, DbClaim.NONE, DbAccess.NO);
+
+        acl(REQ_POS_SALES, ReqPosSales.class, DbClaim.NONE, DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.WEB_CASHIER));
 
         acl(REQ_POS_DEPOSIT, DbClaim.NONE, DbAccess.YES,
                 EnumSet.of(ACLRoleEnum.WEB_CASHIER));

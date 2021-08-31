@@ -421,6 +421,7 @@ public final class AccountTrxPage extends AbstractListPage {
             case ADJUST:
             case DEPOSIT:
             case TRANSFER:
+            case PURCHASE:
             case VOUCHER:
                 break;
 

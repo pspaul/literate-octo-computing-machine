@@ -66,7 +66,7 @@ public final class Main extends AbstractPrintSitePage {
         helper.addLabel("txt-activate-reader",
                 PhraseEnum.ACTIVATE_CARD_READER.uiText(getLocale()));
 
-        helper.addLabel("txt-swipe card",
+        helper.addLabel("txt-swipe-card",
                 PhraseEnum.SWIPE_CARD.uiText(getLocale()));
 
         MarkupHelper.modifyLabelAttr(helper.addLabel("search-userid", ""),

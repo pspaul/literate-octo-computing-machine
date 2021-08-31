@@ -26,47 +26,69 @@
  */
 
 /* ------------------------------------------------------ */
-
 .ui-icon-sp-file-type-pdf:after {
-    background: url(/images/filetype/pdf-32.png) 100% 100% no-repeat;
-    background-size: 21px 21px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .7;
+	background: url(/images/filetype/pdf-32.png) 100% 100% no-repeat;
+	background-size: 21px 21px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .7;
 }
 
 .ui-icon-sp-file-type-csv:after {
-    background: url(/images/filetype/csv-32.png) 100% 100% no-repeat;
-    background-size: 21px 21px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .7;
+	background: url(/images/filetype/csv-32.png) 100% 100% no-repeat;
+	background-size: 21px 21px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .7;
 }
 
 .ui-icon-sp-eu-flag:after {
-    background: url(/images/thirdparty/eu-flag-34x34-bw.png) 100% 100% no-repeat;
-    background-size: 21px 21px;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    opacity: .6;
+	background: url(/images/thirdparty/eu-flag-34x34-bw.png) 100% 100%
+		no-repeat;
+	background-size: 21px 21px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	opacity: .6;
+}
+
+.ui-icon-sp-papercut:after {
+	background: url(/images/thirdparty/papercut-logo.png) 100% 100%
+		no-repeat;
+	background-size: 16px 21px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	filter: grayscale(100%);
+	opacity: .7;
+	margin-right: 3px;
+}
+
+.ui-icon-sp-savapage:after {
+	background: url(/images/ext-supplier/savapage.png) 100% 100% no-repeat;
+	background-size: 21px 21px;
+	-webkit-border-radius: 0 !important;
+	border-radius: 0 !important;
+	filter: grayscale(100%);
+	opacity: .6;
 }
 
 .ui-icon-mini-preferred-on:after {
-    background: url(/famfamfam-silk/star.png) 50% 50% no-repeat;
-    background-size: 12px 12px;
+	background: url(/famfamfam-silk/star.png) 50% 50% no-repeat;
+	background-size: 12px 12px;
 }
+
 .ui-icon-mini-preferred-off:after {
-    background: url(/famfamfam-silk/star_gray.png) 50% 50% no-repeat;
-    background-size: 12px 12px;
+	background: url(/famfamfam-silk/star_gray.png) 50% 50% no-repeat;
+	background-size: 12px 12px;
 }
 
 .ui-icon-mini-select-all-on:after {
-    background: url(/images/selected-green-16x16.png) 50% 50% no-repeat;
-    background-size: 12px 12px;
+	background: url(/images/selected-green-16x16.png) 50% 50% no-repeat;
+	background-size: 12px 12px;
 }
+
 .ui-icon-mini-select-all-off:after {
-    background: url(/images/unselected-16x16.png) 50% 50% no-repeat;
-    background-size: 12px 12px;
+	background: url(/images/unselected-16x16.png) 50% 50% no-repeat;
+	background-size: 12px 12px;
 }
 
 /* end-of-file */

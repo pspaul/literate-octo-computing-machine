@@ -3093,6 +3093,10 @@
             return ($("input:radio[name='" + name + "']:checked").attr('id') === id);
         };
 
+        /** Return sel if present, or null if not. */
+        this.getSelPresent = function(sel) {
+            return sel.length > 0 ? sel : null;
+        }
         /**
          * Set JQM selectmenu value.
          */

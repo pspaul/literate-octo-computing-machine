@@ -27,6 +27,7 @@ package org.savapage.server.pages;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -35,14 +36,16 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.i18n.PhraseEnum;
+import org.savapage.core.services.helpers.account.UserAccountContextEnum;
+import org.savapage.core.services.helpers.account.UserAccountContextFactory;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.session.SpSession;
 
 /**
- *
  * @author Rijk Ravestein
- *
  */
-public final class PagePointOfSale extends AbstractAuthPage {
+public abstract class PagePointOfSale extends AbstractAuthPage {
 
     /**
      * Version for serialization.
@@ -50,16 +53,55 @@ public final class PagePointOfSale extends AbstractAuthPage {
     private static final long serialVersionUID = 1L;
 
     /**
-     *
+     * @return Back button.
      */
-    public PagePointOfSale(final PageParameters parameters) {
+    protected abstract HtmlButtonEnum buttonBack();
+
+    /**
+     * @param parameters
+     *            Page parameters.
+     */
+    PagePointOfSale(final PageParameters parameters) {
 
         super(parameters);
 
-        MarkupHelper helper = new MarkupHelper(this);
+        final MarkupHelper helper = new MarkupHelper(this);
+        helper.addButton("btn-back-main", this.buttonBack());
 
-        helper.addLabel("currency-symbol", SpSession.getAppCurrencySymbol());
-        helper.addLabel("decimal-separator", SpSession.getDecimalSeparator());
+        final ConfigManager cm = ConfigManager.instance();
+
+        if (cm.isConfigValue(Key.FINANCIAL_POS_SALES_ENABLE)) {
+
+            helper.addLabel("tab-sales", this.localized("tab-sales"));
+            helper.addLabel("currency-symbol-1",
+                    SpSession.getAppCurrencySymbol());
+            helper.addLabel("decimal-separator-1",
+                    SpSession.getDecimalSeparator());
+
+            helper.addButton("btn-clear-1", HtmlButtonEnum.CLEAR);
+
+            helper.addLabel("txt-activate-reader",
+                    PhraseEnum.ACTIVATE_CARD_READER);
+            helper.addLabel("txt-swipe-card", PhraseEnum.SWIPE_CARD);
+
+            this.addAccountContext(cm, helper);
+
+        } else {
+            helper.discloseLabel("tab-sales");
+            helper.discloseLabel("currency-symbol-1");
+        }
+
+        if (!cm.isConfigValue(Key.FINANCIAL_POS_DEPOSIT_ENABLE)) {
+            helper.discloseLabel("tab-deposit");
+            helper.discloseLabel("currency-symbol-2");
+            return;
+        }
+
+        helper.addLabel("tab-deposit", this.localized("tab-deposit"));
+
+        helper.addButton("btn-clear-2", HtmlButtonEnum.CLEAR);
+        helper.addLabel("currency-symbol-2", SpSession.getAppCurrencySymbol());
+        helper.addLabel("decimal-separator-2", SpSession.getDecimalSeparator());
 
         /*
          * Option list: Payment types
@@ -93,8 +135,45 @@ public final class PagePointOfSale extends AbstractAuthPage {
         }
     }
 
+    /**
+     * @param cm
+     * @param helper
+     */
+    private void addAccountContext(final ConfigManager cm,
+            final MarkupHelper helper) {
+
+        final Set<UserAccountContextEnum> accountContextSet =
+                cm.getConfigEnumSet(UserAccountContextEnum.class,
+                        Key.FINANCIAL_POS_SALES_ACCOUNTS);
+
+        final boolean isPaperCutAccount =
+                UserAccountContextFactory.hasContextPaperCut()
+                        && (accountContextSet.isEmpty() || accountContextSet
+                                .contains(UserAccountContextEnum.PAPERCUT));
+        //
+        String widWlk = "sp-pos-sales-account-papercut";
+        UserAccountContextEnum ctxWlk = UserAccountContextEnum.PAPERCUT;
+        if (isPaperCutAccount) {
+            helper.addModifyLabelAttr(widWlk, ctxWlk.getUiText(),
+                    MarkupHelper.ATTR_VALUE, ctxWlk.toString());
+        } else {
+            helper.discloseLabel(widWlk);
+        }
+        //
+        widWlk = "sp-pos-sales-account-savapage";
+        ctxWlk = UserAccountContextEnum.SAVAPAGE;
+        if (accountContextSet.contains(ctxWlk)
+                || (accountContextSet.isEmpty() && !isPaperCutAccount)) {
+            helper.addModifyLabelAttr(widWlk, ctxWlk.getUiText(),
+                    MarkupHelper.ATTR_VALUE, ctxWlk.toString());
+        } else {
+            helper.discloseLabel(widWlk);
+        }
+    }
+
     @Override
-    protected boolean needMembership() {
+    protected final boolean needMembership() {
         return false;
     }
+
 }
