@@ -884,7 +884,8 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
 
             PrintScalingEnum printScaling = dtoReq.getPageScaling();
             if (printScaling == null) {
-                printScaling = PrintScalingEnum.NONE;
+                printScaling = cm.getConfigEnum(PrintScalingEnum.class,
+                        Key.WEBAPP_USER_PROXY_PRINT_SCALING_MEDIA_MATCH_DEFAULT);
             }
             printReq.setPrintScalingOption(printScaling);
 

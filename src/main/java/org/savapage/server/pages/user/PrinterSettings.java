@@ -32,7 +32,7 @@ import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.services.AccessControlService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.helpers.PrintScalingEnum;
+import org.savapage.core.services.helpers.PrintScalingClashEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.NumberUpPreviewPanel;
@@ -77,19 +77,19 @@ public class PrinterSettings extends AbstractUserPage {
         super(parameters);
 
         final MarkupHelper helper = new MarkupHelper(this);
+        final ConfigManager cm = ConfigManager.instance();
 
         final String htmlRadioName = "print-page-scaling-enum";
 
         labelledRadio("page-scaling", "-none", htmlRadioName,
-                PrintScalingEnum.NONE.toString(), false);
+                PrintScalingClashEnum.NONE.toString(), false);
 
         labelledRadio("page-scaling", "-fit", htmlRadioName,
-                PrintScalingEnum.FIT.toString(), false);
+                PrintScalingClashEnum.FIT.toString(), false);
 
         helper.addButton("button-default", HtmlButtonEnum.DEFAULT);
 
-        if (ConfigManager.instance()
-                .isConfigValue(Key.WEBAPP_NUMBER_UP_PREVIEW_ENABLE)) {
+        if (cm.isConfigValue(Key.WEBAPP_NUMBER_UP_PREVIEW_ENABLE)) {
 
             add(new NumberUpPreviewPanel(WICKET_ID_NUMBER_UP_PREVIEW));
 

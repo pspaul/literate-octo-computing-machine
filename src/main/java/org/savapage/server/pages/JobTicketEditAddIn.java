@@ -310,6 +310,10 @@ public final class JobTicketEditAddIn extends JobTicketAddInBase {
         choices.add(wlk);
 
         wlk = new JsonProxyPrinterOptChoice();
+        wlk.setChoice(PrintScalingEnum.AUTO.getIppValue());
+        choices.add(wlk);
+
+        wlk = new JsonProxyPrinterOptChoice();
         wlk.setChoice(PrintScalingEnum.FIT.getIppValue());
         choices.add(wlk);
 
