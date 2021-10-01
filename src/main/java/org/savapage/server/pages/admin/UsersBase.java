@@ -108,6 +108,7 @@ public final class UsersBase extends AbstractAdminPage {
 
         helper.addLabel("sort-by-id", NounEnum.ID);
         helper.addLabel("sort-by-email", NounEnum.EMAIL);
+        helper.addLabel("sort-by-activity", NounEnum.ACTIVITY);
 
         helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);
         helper.addLabel("sort-desc", AdjectiveEnum.DESCENDING);

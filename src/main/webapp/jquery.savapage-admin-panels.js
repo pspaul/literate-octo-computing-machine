@@ -1426,7 +1426,8 @@
             _view.checkRadioValue('sp-user-select-deleted', val === null ? "" : (val ? "1" : "0"));
 
             //
-            id = (this.input.sort.field === 'id' ? 'sp-user-sort-by-id' : 'sp-user-sort-by-email');
+            id = (this.input.sort.field === 'id' ? 'sp-user-sort-by-id' :
+                (this.input.sort.field === 'email' ? 'sp-user-sort-by-email' : 'sp-user-sort-by-activity'));
             _view.checkRadio('sp-user-sort-by', id);
 
             //
