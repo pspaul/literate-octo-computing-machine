@@ -27,11 +27,14 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dto.PosSalesDto;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
+import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.account.UserAccountContextEnum;
 import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.ext.papercut.PaperCutServerProxy;
@@ -52,6 +55,25 @@ public final class ReqPosSales extends ApiRequestMixin {
 
         final PosSalesDto dto =
                 PosSalesDto.create(PosSalesDto.class, this.getParmValueDto());
+
+        final Object[][] enabledInvariantCheck = { //
+                { Key.FINANCIAL_POS_SALES_LABEL_LOCATIONS_ENABLE,
+                        NounEnum.LOCATION, dto.getPosLocation() }, //
+                { Key.FINANCIAL_POS_SALES_LABEL_SHOPS_ENABLE, NounEnum.SHOP,
+                        dto.getPosShop() }, //
+                { Key.FINANCIAL_POS_SALES_LABEL_ITEMS_ENABLE, NounEnum.ITEM,
+                        dto.getPosItem() } //
+        };
+
+        for (final Object[] entry : enabledInvariantCheck) {
+            if (CONFIG_MNGR.isConfigValue((Key) entry[0]) && (entry[2] == null
+                    || StringUtils.isBlank(entry[2].toString()))) {
+                this.setApiResult(ApiResultCodeEnum.ERROR,
+                        "msg-value-cannot-be-empty",
+                        ((NounEnum) entry[1]).uiText(getLocale()));
+                return;
+            }
+        }
 
         final boolean isPaperCutAccount;
 
@@ -91,6 +113,13 @@ public final class ReqPosSales extends ApiRequestMixin {
 
         if (rpcResponse.isResult()) {
             this.setApiResult(ApiResultCodeEnum.OK, "msg-apply-ok");
+            this.setApiResultText(ApiResultCodeEnum.INFO,
+                    String.format("%s [%s] %s [%s]: %s %s.%s",
+                            NounEnum.USER.uiText(getLocale()), dto.getUserId(),
+                            NounEnum.ITEM.uiText(getLocale()),
+                            dto.createComment(),
+                            ServiceContext.getAppCurrencySymbol(),
+                            dto.getAmountMain(), dto.getAmountCents()));
         } else {
             this.setApiResultText(rpcResponse);
         }

@@ -397,14 +397,21 @@
             _api = new _ns.Api(_i18n, _model.user),
             _view = new _ns.View(_i18n, _api),
             _ctrl,
-            _nativeLogin;
+            _nativeLogin,
+            // WebApp URL parameters.
+            URL_PARM = {
+                SALES_LOCATION: 'sp-sales-location',
+                SALES_SHOP: 'sp-sales-shop'
+            };
 
         _ns.commonWebAppInit();
 
         _view.pages = {
             language: new _ns.PageLanguage(_i18n, _view, _model),
             login: new _ns.PageLogin(_i18n, _view, _api),
-            pointOfSale: new _ns.PagePointOfSale(_i18n, _view, _model, _api, true)
+            pointOfSale: new _ns.PagePointOfSale(_i18n, _view, _model, _api, true,
+                _ns.Utils.getUrlParam(URL_PARM.SALES_LOCATION),
+                _ns.Utils.getUrlParam(URL_PARM.SALES_SHOP))
         };
 
         _ctrl = new _ns.Controller(_i18n, _model, _view, _api);

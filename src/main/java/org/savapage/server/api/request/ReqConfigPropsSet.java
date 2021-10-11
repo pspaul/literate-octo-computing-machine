@@ -52,6 +52,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.SOfficeService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.JobTicketLabelCache;
+import org.savapage.core.services.helpers.PosSalesLabelCache;
 import org.savapage.core.services.helpers.SOfficeConfigProps;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.ext.papercut.services.PaperCutService;
@@ -263,6 +264,18 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 } else if (configKey == Key.JOBTICKET_TAGS_1) {
                     JobTicketLabelCache.initTicketTags(
                             cm.getConfigValue(Key.JOBTICKET_TAGS), value);
+
+                } else if (configKey == Key.FINANCIAL_POS_SALES_LABEL_LOCATIONS) {
+                    PosSalesLabelCache.initSalesLocations(value);
+
+                } else if (configKey == Key.FINANCIAL_POS_SALES_LABEL_SHOPS) {
+                    PosSalesLabelCache.initSalesShops(value);
+
+                } else if (configKey == Key.FINANCIAL_POS_SALES_LABEL_ITEMS) {
+                    PosSalesLabelCache.initSalesItems(value);
+
+                } else if (configKey == Key.FINANCIAL_POS_SALES_LABEL_PRICES) {
+                    PosSalesLabelCache.initSalesPrices(value);
                 }
 
             } else {
@@ -404,6 +417,14 @@ public final class ReqConfigPropsSet extends ApiRequestMixin {
                 } else if (key == Key.JOBTICKET_TAGS
                         || key == Key.JOBTICKET_TAGS_1) {
                     JobTicketLabelCache.parseTicketTags(value);
+                } else if (key == Key.FINANCIAL_POS_SALES_LABEL_LOCATIONS) {
+                    PosSalesLabelCache.parseSalesLocations(value);
+                } else if (key == Key.FINANCIAL_POS_SALES_LABEL_SHOPS) {
+                    PosSalesLabelCache.parseSalesShops(value);
+                } else if (key == Key.FINANCIAL_POS_SALES_LABEL_ITEMS) {
+                    PosSalesLabelCache.parseSalesItems(value);
+                } else if (key == Key.FINANCIAL_POS_SALES_LABEL_PRICES) {
+                    PosSalesLabelCache.parseSalesPrices(value);
                 }
             } catch (IllegalArgumentException e) {
                 setApiResultText(ApiResultCodeEnum.ERROR, e.getMessage());

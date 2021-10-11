@@ -55,54 +55,131 @@ the License, or (at your option) any later version.
 
 			<div id="sp-pos-tab-sales" class="ui-content">
 
-				<table>
-					<tr>
-						<td>
-							<div class="ui-field-contain">
-								<wicket:remove>
-									<!-- UserAccountContextEnum -->
-								</wicket:remove>
-								<select id="sp-pos-sales-account" data-iconpos="left"
-									data-icon="user" data-mini="true" data-native-menu="false">
-									<wicket:enclosure child="sp-pos-sales-account-papercut">
-										<option wicket:id="sp-pos-sales-account-papercut" value="" />
-									</wicket:enclosure>
-									<wicket:enclosure child="sp-pos-sales-account-savapage">
-										<option wicket:id="sp-pos-sales-account-savapage" value="" />
-									</wicket:enclosure>
-								</select>
-							</div>
-						</td>
-					</tr>
-				</table>
-				<table>
-					<tr>
-						<td>
-							<span wicket:id="currency-symbol-1" />&nbsp;
-						</td>
-						<td width="100px">
-							<input type="text" style="text-align: right;"
-								id="sp-pos-sales-amount-main" value="" maxlength="5"
-								pattern="[0-9]*" />
-						</td>
-						<td wicket:id="decimal-separator-1" />
-						<td width="50px">
-							<input type="text" id="sp-pos-sales-amount-cents" value="00"
-								maxlength="2" pattern="[0-9]*" />
-						</td>
-					</tr>
-				</table>
+				<wicket:remove>
+					<!-- UserAccountContextEnum -->
+				</wicket:remove>
+				<select id="sp-pos-sales-account" data-iconpos="right"
+					data-icon="user" data-mini="true" data-native-menu="false">
+					<wicket:enclosure child="sp-pos-sales-account-papercut">
+						<option wicket:id="sp-pos-sales-account-papercut" value="" />
+					</wicket:enclosure>
+					<wicket:enclosure child="sp-pos-sales-account-savapage">
+						<option wicket:id="sp-pos-sales-account-savapage" value="" />
+					</wicket:enclosure>
+				</select>
 
-				<br />
-				<label for="sp-pos-sales-comment">
-					<wicket:message key="prompt-comment" />
-				</label>
-				<input type="text" id="sp-pos-sales-comment" value=""
-					data-clear-btn="true" maxlength="255" />
+				<wicket:enclosure child="pos-sales-location-option-select">
+					<select data-mini="true" id="sp-pos-sales-location-list"
+						data-icon="location">
+						<option value="" wicket:id="pos-sales-location-option-select" />
+						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+							<wicket:panel wicket:id="pos-sales-location-option">
+								<option value="the-key" wicket:id="option"></option>
+							</wicket:panel>
+						</optgroup>
+					</select>
+				</wicket:enclosure>
+
+				<wicket:enclosure child="pos-sales-shop-option-select">
+					<select data-mini="true" id="sp-pos-sales-shop-list"
+						data-icon="shop">
+						<option value="" wicket:id="pos-sales-shop-option-select" />
+						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+							<wicket:panel wicket:id="pos-sales-shop-option">
+								<option value="the-key" wicket:id="option"></option>
+							</wicket:panel>
+						</optgroup>
+					</select>
+				</wicket:enclosure>
 
 				<ul data-role="listview" data-inset="true" id="sp-a-menu">
+					<wicket:enclosure child="pos-sales-item-option-select">
+						<li>
+							<select data-mini="false" id="sp-pos-sales-item-list">
+								<option value="" wicket:id="pos-sales-item-option-select" />
+								<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+									<wicket:panel wicket:id="pos-sales-item-option">
+										<option value="the-key" wicket:id="option"></option>
+									</wicket:panel>
+								</optgroup>
+							</select>
+						</li>
+					</wicket:enclosure>
+					<wicket:enclosure child="pos-sales-item-radio">
+						<li>
+							<fieldset data-role="controlgroup" data-type="horizontal">
+								<wicket:panel wicket:id="pos-sales-item-radio">
+									<label wicket:id="label" for="id"
+										class="sp-pos-sales-item-radio-label" />
+									<input wicket:id="input" type="radio"
+										name="sp-pos-sales-item-radio" id="id" value="the-key" />
+								</wicket:panel>
+							</fieldset>
+						</li>
+					</wicket:enclosure>
+
+					<wicket:enclosure child="pos-sales-price-option-select">
+						<li>
+							<select data-mini="false" id="sp-pos-sales-price-list">
+								<option value="" wicket:id="pos-sales-price-option-select" />
+								<optgroup label="&#11835;&#11835;&#11835;&#11835;">
+									<wicket:panel wicket:id="pos-sales-price-option">
+										<option value="the-key" wicket:id="option"></option>
+									</wicket:panel>
+								</optgroup>
+							</select>
+						</li>
+					</wicket:enclosure>
+					<wicket:enclosure child="pos-sales-price-radio">
+						<li>
+							<fieldset data-role="controlgroup" data-type="horizontal">
+								<wicket:panel wicket:id="pos-sales-price-radio">
+									<label wicket:id="label" for="id"
+										class="sp-pos-sales-price-radio-label" />
+									<input wicket:id="input" type="radio"
+										name="sp-pos-sales-price-radio" id="id" value="the-key" />
+								</wicket:panel>
+							</fieldset>
+						</li>
+					</wicket:enclosure>
+
 					<li>
-						<div tabindex="0" id="sp-pos-sales-user-card-local-group">
+						<table>
+							<tr>
+								<td>
+									<span wicket:id="currency-symbol-1" />&nbsp;
+								</td>
+								<td width="100px">
+									<input type="number" style="text-align: right;"
+										id="sp-pos-sales-amount-main" value="" maxlength="5" min="0"
+										pattern="[0-9]*" />
+								</td>
+								<td wicket:id="decimal-separator-1" />
+								<td width="60px">
+									<input type="number" id="sp-pos-sales-amount-cents" value="00"
+										maxlength="2" min="00" max="99" />
+								</td>
+								<td>
+
+									<a id="sp-pos-sales-button-clear" href="#"
+										class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all"
+										wicket:id="btn-clear-1" />
+								</td>
+							</tr>
+						</table>
+					</li>
+					<wicket:enclosure child="prompt-comment-1">
+						<li>
+							<div class="ui-field-contain">
+								<label for="sp-pos-sales-comment" wicket:id="prompt-comment-1" />
+								<input type="text" id="sp-pos-sales-comment" value=""
+									data-clear-btn="true" maxlength="255" />
+							</div>
+						</li>
+					</wicket:enclosure>
+
+					<li>
+						<div tabindex="0" id="sp-pos-sales-user-card-local-group" style="text-align: center;">
 							<h4 class="sp-txt-info" style="padding: 5px;">
 								<span class="sp-txt-wrap"
 									id="sp-pos-sales-user-card-local-focusout"
@@ -116,10 +193,6 @@ the License, or (at your option) any later version.
 						</div>
 					</li>
 				</ul>
-
-				<a id="sp-pos-sales-button-clear" href="#"
-					class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete"
-					wicket:id="btn-clear-1" />
 			</div>
 		</wicket:enclosure>
 

@@ -45,7 +45,8 @@
     /**
      * Constructor
      */
-    _ns.PagePointOfSale = function(_i18n, _view, _model, _api, isMain) {
+    _ns.PagePointOfSale = function(_i18n, _view, _model, _api, isMain,
+        _salesLocation, _salesShop) {
         var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale",
             (isMain ? "PagePointOfSaleMain" : "PagePointOfSalePage")),
             _self = _ns.derive(_page),
@@ -79,6 +80,8 @@
             _clearSales = function() {
                 $("#sp-pos-sales-amount-cents").val("00");
                 $("#sp-pos-sales-comment").val("");
+                _view.setSelectedValue($('#sp-pos-sales-price-list'), '');
+                _view.checkRadioValue('sp-pos-sales-price-radio', '');
                 _view.asyncFocus($("#sp-pos-sales-amount-main").val(""));
             },
             _clear = function() {
@@ -88,8 +91,96 @@
                 $("#sp-pos-amount-cents").val("00");
                 $(".sp-pos-user-selected").hide();
             },
+            //
+            _onSalesLocationSelect = function() {
+                var selLocation = $('#sp-pos-sales-location-list :selected'),
+                    locationID = selLocation.val(),
+                    selShopList = $('#sp-pos-sales-shop-list'),
+                    selShops = selShopList.find('option'),
+                    selItemList = $('#sp-pos-sales-item-list'),
+                    selItems = selItemList.find('option');
+
+                _view.visible(selShops, false);
+                _view.visible(selItems, false);
+
+                _view.visible(selShops.filter('.sp-pos-sales-location'), true);
+                _view.visible(selItems.filter('.sp-pos-sales-location'), true);
+
+                _view.setSelectedValue(selShopList, '');
+                _view.setSelectedValue(selItemList, '');
+
+                if (locationID) {
+                    _view.visible(selShops.filter('.sp-pos-sales-location-' + locationID), true);
+                    _view.visible(selItems.filter('.sp-pos-sales-location-' + locationID), true);
+                }
+            },
+            //
+            _onSalesShopSelect = function() {
+                var selShop = $('#sp-pos-sales-shop-list :selected'),
+                    shopID = selShop.val(),
+                    selItemList = $('#sp-pos-sales-item-list'),
+                    selItems = selItemList.find('option'),
+                    selItemsRadio = $('.sp-pos-sales-item-radio-label');
+
+                _view.visible(selItems, false);
+                _view.visible(selItemsRadio.parent(), false);
+
+                _view.visible(selItems.filter('.sp-pos-sales-shop'), true);
+                _view.visible(selItemsRadio.filter('.sp-pos-sales-shop').parent(), true);
+
+                _view.setSelectedValue(selItemList, '');
+
+                if (shopID) {
+                    _view.visible(selItems.filter('.sp-pos-sales-shop-' + shopID), true);
+                    _view.visible(selItemsRadio.filter('.sp-pos-sales-shop-' + shopID).parent(), true);
+                }
+            },
+            //
+            _onSalesItemSelect = function() {
+                var selItem = $('#sp-pos-sales-item-list :selected'),
+                    itemID = selItem.val() || _view.getRadioValue('sp-pos-sales-item-radio'),
+                    selPriceList = $('#sp-pos-sales-price-list'),
+                    selPrices = selPriceList.find('option'),
+                    selPricesRadio = $('.sp-pos-sales-price-radio-label'),
+                    clazzDomainFilter = '.sp-pos-sales-item';
+
+                _view.visible(selPrices, false);
+                _view.visible(selPricesRadio.parent(), false);
+
+                _view.visible(selPrices.filter(clazzDomainFilter), true);
+                _view.visible(selPricesRadio.filter(clazzDomainFilter).parent(), true);
+
+                _clearSales();
+
+                if (itemID) {
+                    _view.visible(selPrices.filter(clazzDomainFilter + '-' + itemID), true);
+                    _view.visible(selPricesRadio.filter(clazzDomainFilter + '-' + itemID).parent(), true);
+                }
+            },
+            //
+            _onSalesPriceSelect = function() {
+                var priceID = $('#sp-pos-sales-price-list :selected').val() ||
+                    _view.getRadioValue('sp-pos-sales-price-radio');
+                $("#sp-pos-sales-amount-main").val(priceID.slice(0, -2) || '0');
+                $("#sp-pos-sales-amount-cents").val(priceID.slice(-2));
+                $('#sp-pos-sales-user-card-local-group').focus();
+            },
+            //
             _onSales = function(userKey, userId) {
-                var res = _api.call({
+                var sel, res,
+                    posLocation, posShop, posItem;
+
+                sel = $('#sp-pos-sales-location-list');
+                posLocation = sel.length > 0 ? sel.val() : null;
+
+                sel = $('#sp-pos-sales-shop-list');
+                posShop = sel.length > 0 ? sel.val() : null;
+
+                sel = $('#sp-pos-sales-item-list');
+                posItem = sel.length > 0 ? sel.val() :
+                    _view.getRadioValue('sp-pos-sales-item-radio');
+
+                res = _api.call({
                     request: "pos-sales",
                     dto: JSON.stringify({
                         userKey: userKey,
@@ -97,6 +188,9 @@
                         userId: userId,
                         amountMain: $("#sp-pos-sales-amount-main").val(),
                         amountCents: $("#sp-pos-sales-amount-cents").val(),
+                        posLocation: posLocation,
+                        posShop: posShop,
+                        posItem: posItem,
                         comment: $("#sp-pos-sales-comment").val(),
                         invoiceDelivery: undefined
                     })
@@ -218,7 +312,7 @@
          */
         $(_self.id()).on('pagecreate', function(event) {
 
-            var filterableDateTime = $("#sp-pos-quickdate-filter");
+            var sel, filterableDateTime = $("#sp-pos-quickdate-filter");
 
             $(this).on('click', '#sp-pos-button-deposit', null, function() {
                 _onDeposit();
@@ -232,6 +326,42 @@
                 _clearSales();
             });
 
+            //
+            sel = $('#sp-pos-sales-location-list');
+            if (_salesLocation) {
+                _view.enableUI(sel, false);
+            } else {
+                sel.change(function() {
+                    _onSalesLocationSelect();
+                    return false;
+                });
+            }
+            sel = $('#sp-pos-sales-shop-list');
+            if (_salesShop) {
+                _view.enableUI(sel, false);
+            } else {
+                sel.change(function() {
+                    _onSalesShopSelect();
+                    return false;
+                });
+            }
+            sel = $('#sp-pos-sales-item-list');
+            sel.change(function() {
+                _onSalesItemSelect();
+                return false;
+            });
+            sel = $("input:radio[name='" + 'sp-pos-sales-item-radio' + "']")
+            sel.change(function() {
+                _onSalesItemSelect();
+                return false;
+            });
+            sel = $("input:radio[name='" + 'sp-pos-sales-price-radio' + "']")
+            sel.change(function() {
+                _onSalesPriceSelect();
+                return false;
+            });
+
+            //
             $(this).on('click', "#sp-pos-tab-deposit-button", null, function() {
                 _view.asyncFocus($("#sp-pos-userid").val(""));
             });
@@ -276,11 +406,17 @@
             _ns.KeyboardLogger.setCallback($('#sp-pos-sales-user-card-local-group'), _model.cardLocalMaxMsecs,
                 //
                 function() {// focusIn
-                    $('#sp-pos-sales-user-card-local-focusin').show();
                     $('#sp-pos-sales-user-card-local-focusout').hide();
+                    $('#sp-pos-sales-user-card-local-focusin').show();
+                    $('#sp-pos-sales-user-card-local-group').parent().css('background-color', 'lightgreen');
+                    $("#sp-pos-sales-amount-main").css('background-color', 'lightgreen');
+                    $("#sp-pos-sales-amount-cents").css('background-color', 'lightgreen');
                 }, function() {// focusOut
                     $('#sp-pos-sales-user-card-local-focusin').hide();
-                    $('#sp-pos-sales-user-card-local-focusout').fadeIn(700);
+                    $('#sp-pos-sales-user-card-local-focusout').show();
+                    $('#sp-pos-sales-user-card-local-group').parent().css('background-color', '');
+                    $("#sp-pos-sales-amount-main").css('background-color', '');
+                    $("#sp-pos-sales-amount-cents").css('background-color', '');
                 }, function(id) {
                     var res = _api.call({
                         request: 'usercard-quick-search',
@@ -294,6 +430,19 @@
                         _onSales(res.dto.key, res.dto.text);
                     }
                 });
+
+        }).on("pagebeforeshow", function(event, ui) {
+            var sel;
+            sel = $('#sp-pos-sales-location-list');
+            if (sel.length > 0) {
+                _view.setSelectedValue(sel, _salesLocation);
+                _onSalesLocationSelect();
+            }
+            sel = $('#sp-pos-sales-shop-list');
+            if (sel.length > 0) {
+                _view.setSelectedValue(sel, _salesShop);
+                _onSalesShopSelect();
+            }
 
         }).on("pageshow", function(event, ui) {
             // open first tab
