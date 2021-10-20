@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,6 +73,8 @@ import org.savapage.core.msg.UserMsgIndicator;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.AccountingException;
+import org.savapage.core.services.helpers.account.UserAccountContextEnum;
+import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.BitcoinUtil;
 import org.savapage.core.util.CurrencyUtil;
@@ -87,6 +90,8 @@ import org.savapage.ext.notification.NotificationListener;
 import org.savapage.ext.notification.NotificationPlugin;
 import org.savapage.ext.oauth.OAuthClientPlugin;
 import org.savapage.ext.oauth.OAuthProviderEnum;
+import org.savapage.ext.papercut.PaperCutException;
+import org.savapage.ext.papercut.PaperCutServerProxy;
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentGatewayListener;
@@ -607,6 +612,38 @@ public final class ServerPluginManager
     }
 
     /**
+     * @param accountContextReq
+     *            Requested Payment Context.
+     * @return {@code true} if PaperCut Personal Account must be used Payment
+     *         Gateway.
+     */
+    private static boolean isPaperCutPersonalAccount(
+            final UserAccountContextEnum accountContextReq) {
+
+        final boolean isPaperCutAccount;
+
+        if (accountContextReq == UserAccountContextEnum.PAPERCUT) {
+
+            if (UserAccountContextFactory.hasContextPaperCut()) {
+
+                final Set<UserAccountContextEnum> accountContextSet =
+                        ConfigManager.instance().getConfigEnumSet(
+                                UserAccountContextEnum.class,
+                                Key.FINANCIAL_PAYMENT_GATEWAY_ACCOUNTS);
+
+                isPaperCutAccount =
+                        accountContextSet.isEmpty() || accountContextSet
+                                .contains(UserAccountContextEnum.PAPERCUT);
+            } else {
+                isPaperCutAccount = false;
+            }
+        } else {
+            isPaperCutAccount = false;
+        }
+        return isPaperCutAccount;
+    }
+
+    /**
      * Gets the first {@link BitcoinGateway}.
      *
      * @return The {@link BitcoinGateway}, or {@code null} when not found.
@@ -760,6 +797,8 @@ public final class ServerPluginManager
      *            The {@link PaymentGatewayTrx} received.
      * @param status
      *            The status text.
+     * @param userId
+     *            User ID.
      */
     private void logPaymentTrxReceived(final BitcoinGatewayTrx trx,
             final String status, final String userId) {
@@ -1286,10 +1325,25 @@ public final class ServerPluginManager
          * Note: orphanedPaymentAccount is irrelevant since at this point User
          * is known.
          */
-        service.acceptFundsFromGateway(lockedUser, dto, null);
+        final String msgConcat;
+        if (UserAccountContextFactory.hasContextPaperCut()
+                && isPaperCutPersonalAccount(UserAccountContextEnum.PAPERCUT)) {
 
-        publishPaymentEvent(PubLevelEnum.CLEAR, localize("payment-acknowledged",
-                formattedAmount, trx.getGatewayId(), trx.getUserId()));
+            try {
+                service.acceptFundsFromGateway(PaperCutServerProxy
+                        .create(ConfigManager.instance(), true), dto);
+            } catch (PaperCutException e) {
+                throw new PaymentGatewayException(e.getMessage(), e);
+            }
+            msgConcat = " [PaperCut]";
+        } else {
+            service.acceptFundsFromGateway(lockedUser, dto, null);
+            msgConcat = "";
+        }
+
+        publishPaymentEvent(PubLevelEnum.CLEAR,
+                localize("payment-acknowledged", formattedAmount,
+                        trx.getGatewayId(), trx.getUserId()).concat(msgConcat));
 
         PaymentGatewayLogger.instance().onPaymentAcknowledged(trx);
 

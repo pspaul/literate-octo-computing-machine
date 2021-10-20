@@ -489,8 +489,7 @@ public final class AccountTrxPage extends AbstractListPage {
                             && extPaymentMethod != null;
 
             if (isGatewayPaymentMethodInHeader) {
-                item.add(new Label("trxType",
-                        extPaymentMethod.toString().toLowerCase()));
+                item.add(new Label("trxType", extPaymentMethod.uiText()));
             } else {
                 item.add(new Label("trxType", trxType.uiText(getLocale())));
             }
@@ -555,10 +554,18 @@ public final class AccountTrxPage extends AbstractListPage {
 
                 if (trxType == AccountTrxTypeEnum.DEPOSIT) {
 
-                    helper.encloseLabel("downloadReceipt",
-                            localized("button-receipt"), isVisible);
+                    labelWrk = helper.encloseLabel("downloadReceipt",
+                            NounEnum.RECEIPT.uiText(getLocale()), isVisible);
 
-                    labelWrk = (Label) item.get("downloadReceipt");
+                    labelWrk.add(new AttributeModifier(
+                            MarkupHelper.ATTR_DATA_SAVAPAGE,
+                            accountTrx.getId().toString()));
+
+                } else if (trxType == AccountTrxTypeEnum.PURCHASE) {
+
+                    labelWrk = helper.encloseLabel("downloadInvoice",
+                            NounEnum.INVOICE.uiText(getLocale()), isVisible);
+
                     labelWrk.add(new AttributeModifier(
                             MarkupHelper.ATTR_DATA_SAVAPAGE,
                             accountTrx.getId().toString()));
@@ -608,6 +615,9 @@ public final class AccountTrxPage extends AbstractListPage {
 
             if (!isVisible || trxType != AccountTrxTypeEnum.DEPOSIT) {
                 helper.discloseLabel("downloadReceipt");
+            }
+            if (!isVisible || trxType != AccountTrxTypeEnum.PURCHASE) {
+                helper.discloseLabel("downloadInvoice");
             }
 
             //

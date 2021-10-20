@@ -24,7 +24,6 @@
  */
 package org.savapage.server.pages.user;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,8 +72,12 @@ public final class UserDashboardAddIn extends AbstractUserPage {
     /** */
     private static final String WID_ENV_IMPACT = "environmental-impact";
 
+    /** */
+    private static final String WID_PAGOMETER = "pagometer";
+
     /**
-     *
+     * @param parameters
+     *            Page parameters.
      */
     public UserDashboardAddIn(final PageParameters parameters) {
 
@@ -84,8 +87,6 @@ public final class UserDashboardAddIn extends AbstractUserPage {
 
     /**
      *
-     * @param em
-     * @throws ParseException
      */
     private void handlePage() {
 
@@ -97,13 +98,17 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         final MarkupHelper helper = new MarkupHelper(this);
 
         /*
-         * Page Totals.
+         * Pagometer.
          */
-        final StatsPageTotalPanel pageTotalPanel =
-                new StatsPageTotalPanel("stats-pages-total");
-        add(pageTotalPanel);
-        pageTotalPanel.populate();
-
+        if (ConfigManager.instance()
+                .isConfigValue(Key.WEBAPP_USER_SHOW_PAGOMETER)) {
+            final StatsPageTotalPanel pageTotalPanel =
+                    new StatsPageTotalPanel(WID_PAGOMETER);
+            add(pageTotalPanel);
+            pageTotalPanel.populate();
+        } else {
+            helper.discloseLabel(WID_PAGOMETER);
+        }
         /*
          * Environmental Impact.
          */

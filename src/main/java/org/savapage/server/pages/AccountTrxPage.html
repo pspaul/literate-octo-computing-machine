@@ -129,6 +129,13 @@ the License, or (at your option) any later version.
 							wicket:id="downloadReceipt" />
 					</div>
 				</wicket:enclosure>
+				<wicket:enclosure child="downloadInvoice">
+					<div>
+						<button data-savapage="the-db-id"
+							class="sp-download-invoice ui-btn ui-btn-inline ui-btn-icon-left ui-icon-arrow-d"
+							wicket:id="downloadInvoice" />
+					</div>
+				</wicket:enclosure>
 			</div>
 			<p class="ui-li-aside">
 				<span wicket:id="trxDate" />

@@ -274,10 +274,16 @@ public final class JsonApiDict {
     public static final String REQ_POS_SALES = "pos-sales";
 
     public static final String REQ_POS_DEPOSIT = "pos-deposit";
+
     public static final String REQ_POS_RECEIPT_DOWNLOAD =
             "pos-receipt-download";
     public static final String REQ_POS_RECEIPT_DOWNLOAD_USER =
             "pos-receipt-download-user";
+
+    public static final String REQ_POS_INVOICE_DOWNLOAD =
+            "pos-invoice-download";
+    public static final String REQ_POS_INVOICE_DOWNLOAD_USER =
+            "pos-invoice-download-user";
 
     /**
      * An administrator sending email to a POS Receipt.
@@ -830,6 +836,8 @@ public final class JsonApiDict {
         case REQ_PAPERCUT_DELEGATOR_COST_CSV:
         case REQ_POS_RECEIPT_DOWNLOAD:
         case REQ_POS_RECEIPT_DOWNLOAD_USER:
+        case REQ_POS_INVOICE_DOWNLOAD:
+        case REQ_POS_INVOICE_DOWNLOAD_USER:
         case REQ_PRINTER_PPD_DOWNLOAD:
         case REQ_PRINTER_PPDE_DOWNLOAD:
         case REQ_PRINTER_OPT_DOWNLOAD:
@@ -1136,8 +1144,11 @@ public final class JsonApiDict {
 
         acl(REQ_POS_RECEIPT_DOWNLOAD, DbClaim.READ, DbAccess.YES,
                 EnumSet.of(ACLRoleEnum.WEB_CASHIER));
-
         usr(REQ_POS_RECEIPT_DOWNLOAD_USER, DbClaim.READ, DbAccess.YES);
+
+        acl(REQ_POS_INVOICE_DOWNLOAD, DbClaim.READ, DbAccess.YES,
+                EnumSet.of(ACLRoleEnum.WEB_CASHIER));
+        usr(REQ_POS_INVOICE_DOWNLOAD_USER, DbClaim.READ, DbAccess.YES);
 
         acl(REQ_POS_RECEIPT_SENDMAIL, DbClaim.READ, DbAccess.YES,
                 EnumSet.of(ACLRoleEnum.WEB_CASHIER));

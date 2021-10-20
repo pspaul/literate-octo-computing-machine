@@ -83,6 +83,7 @@ import org.savapage.core.dao.DaoContext;
 import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.UserAccountDao;
 import org.savapage.core.dao.UserDao;
+import org.savapage.core.dao.enums.AccountTrxTypeEnum;
 import org.savapage.core.dao.enums.DeviceAttrEnum;
 import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.DocLogProtocolEnum;
@@ -430,6 +431,10 @@ public final class JsonApiServer extends AbstractPage {
                     // no break intended
                 case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD_USER:
                     // no break intended
+                case JsonApiDict.REQ_POS_INVOICE_DOWNLOAD:
+                    // no break intended
+                case JsonApiDict.REQ_POS_INVOICE_DOWNLOAD_USER:
+                    // no break intended
                 case JsonApiDict.REQ_REPORT:
                     // no break intended
                 case JsonApiDict.REQ_REPORT_USER:
@@ -643,10 +648,20 @@ public final class JsonApiServer extends AbstractPage {
 
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD:
             case JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD_USER:
-                requestHandler = exportPosPurchaseReceipt(tempExportFile,
+                requestHandler = this.exportPosPurchaseDocument(
+                        AccountTrxTypeEnum.DEPOSIT, tempExportFile,
                         parameters.get(JsonApiDict.PARM_REQ_SUB).toLongObject(),
                         requestingUser,
                         request.equals(JsonApiDict.REQ_POS_RECEIPT_DOWNLOAD));
+                break;
+
+            case JsonApiDict.REQ_POS_INVOICE_DOWNLOAD:
+            case JsonApiDict.REQ_POS_INVOICE_DOWNLOAD_USER:
+                requestHandler = this.exportPosPurchaseDocument(
+                        AccountTrxTypeEnum.PURCHASE, tempExportFile,
+                        parameters.get(JsonApiDict.PARM_REQ_SUB).toLongObject(),
+                        requestingUser,
+                        request.equals(JsonApiDict.REQ_POS_INVOICE_DOWNLOAD));
                 break;
 
             case JsonApiDict.REQ_REPORT:
@@ -734,6 +749,8 @@ public final class JsonApiServer extends AbstractPage {
      * requested receipt MUST be for the requesting user.
      * </p>
      *
+     * @param accountTrxType
+     *            Trx type.
      * @param pdfFile
      *            The PDF file to create.
      * @param accountTrxDbId
@@ -747,15 +764,25 @@ public final class JsonApiServer extends AbstractPage {
      * @throws JRException
      *             When JasperReport error
      */
-    private PosDepositReceiptDto createPosPurchaseReceipt(final File pdfFile,
+    private PosDepositReceiptDto createPosPurchaseDto(
+            final AccountTrxTypeEnum accountTrxType, final File pdfFile,
             final Long accountTrxDbId, final String requestingUser,
             final boolean requestingUserAdmin) throws JRException {
 
-        final Locale reportLocale = ConfigManager.getDefaultLocale();
+        final Locale reportLocale = SpSession.get().getLocale();
 
-        final PosDepositReceiptDto receipt =
-                ACCOUNTING_SERVICE.createPosDepositReceiptDto(accountTrxDbId);
+        final PosDepositReceiptDto receipt;
 
+        if (accountTrxType == AccountTrxTypeEnum.DEPOSIT) {
+            receipt = ACCOUNTING_SERVICE
+                    .createPosDepositReceiptDto(accountTrxDbId);
+        } else if (accountTrxType == AccountTrxTypeEnum.PURCHASE) {
+            receipt = ACCOUNTING_SERVICE
+                    .createPosDepositInvoiceDto(accountTrxDbId);
+        } else {
+            throw new SpException("Unhandled AccountTrxTypeEnum "
+                    .concat(accountTrxType.name()));
+        }
         /*
          * INVARIANT: A user can only create his own receipts.
          */
@@ -819,9 +846,9 @@ public final class JsonApiServer extends AbstractPage {
                 .createUniqueTempPdfName(requestingUser, "deposit-receipt"));
         try {
 
-            final PosDepositReceiptDto receipt =
-                    createPosPurchaseReceipt(tempPdfFile, accountTrxDbId,
-                            requestingUser, isAdminRequest);
+            final PosDepositReceiptDto receipt = this.createPosPurchaseDto(
+                    AccountTrxTypeEnum.DEPOSIT, tempPdfFile, accountTrxDbId,
+                    requestingUser, isAdminRequest);
 
             final String subject = localize("msg-deposit-email-subject",
                     receipt.getReceiptNumber());
@@ -855,21 +882,23 @@ public final class JsonApiServer extends AbstractPage {
     }
 
     /**
-     *
+     * @param accountTrxType
      * @param tempFile
      * @param accountTrxDbId
      * @param requestingUser
      * @param requestingUserAdmin
      *            {@code true} if requesting user is an administrator.
-     * @return
+     * @return Request handler.
      * @throws JRException
      */
-    private IRequestHandler exportPosPurchaseReceipt(final File tempFile,
+    private IRequestHandler exportPosPurchaseDocument(
+            final AccountTrxTypeEnum accountTrxType, final File tempFile,
             final Long accountTrxDbId, final String requestingUser,
             final boolean requestingUserAdmin) throws JRException {
 
-        final PosDepositReceiptDto receipt = createPosPurchaseReceipt(tempFile,
-                accountTrxDbId, requestingUser, requestingUserAdmin);
+        final PosDepositReceiptDto receipt =
+                this.createPosPurchaseDto(accountTrxType, tempFile,
+                        accountTrxDbId, requestingUser, requestingUserAdmin);
 
         final ResourceStreamRequestHandler handler =
                 new DownloadRequestHandler(tempFile);

@@ -1456,6 +1456,9 @@
             $(this).on('click', ".sp-download-receipt", null, function() {
                 _api.download("pos-receipt-download-user", null, $(this).attr('data-savapage'));
                 return false;
+            }).on('click', ".sp-download-invoice", null, function() {
+                _api.download("pos-invoice-download-user", null, $(this).attr('data-savapage'));
+                return false;
             });
 
         }).on("pagebeforeshow", function(event, ui) {
@@ -2271,13 +2274,15 @@
             }
 
             $(window).resize(function() {
-                var sel = $('#dashboard-piechart'),
+                var sel = _view.getSelPresent($('#dashboard-piechart')), width;
+                if (sel) {
                     width = sel.parent().width();
-                sel.width(width);
-                try {
-                    _model.dashboardPiechart.replot({});
-                } catch (ignore) {
-                    // replot() get throw error: no code intended.
+                    sel.width(width);
+                    try {
+                        _model.dashboardPiechart.replot({});
+                    } catch (ignore) {
+                        // replot() get throw error: no code intended.
+                    }
                 }
             });
 
@@ -3406,9 +3411,7 @@
             });
 
             $('.sp-button-user-details').click(function() {
-                var html,
-                    xydata,
-                    piedata,
+                var html, xydata, piedata,
                     pageId = '#page-dashboard';
 
                 _view.showUserPage(pageId, 'UserDashboard');
@@ -3431,8 +3434,10 @@
                     $('#dashboard-list').listview('refresh');
 
                     //----
-                    xydata = _view.jqPlotData('dashboard-xychart', false);
-                    piedata = _view.jqPlotData('dashboard-piechart', false);
+                    if (_view.getSelPresent($('#dashboard-piechart'))) {
+                        xydata = _view.jqPlotData('dashboard-xychart', false);
+                        piedata = _view.jqPlotData('dashboard-piechart', false);
+                    }
 
                     if (!xydata || !piedata) {
                         return;

@@ -168,8 +168,8 @@ public class AccountMoneyTransfer extends AbstractUserPage {
             throw new SpException(e.getMessage(), e);
         }
 
-        helper.addLabel("prompt-transfer-money", localized(
-                "prompt-transfer-money", method.toString().toLowerCase()));
+        helper.addLabel("prompt-transfer-money",
+                localized("prompt-transfer-money", method.uiText()));
 
         //
         helper.addLabel("currency-symbol", currencySymbol);

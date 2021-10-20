@@ -167,7 +167,7 @@
             },
             //
             _onSales = function(userKey, userId) {
-                var sel, res,
+                var sel, res, audio,
                     posLocation, posShop, posItem;
 
                 sel = $('#sp-pos-sales-location-list');
@@ -210,6 +210,11 @@
                     }
                     _clearSales();
                 }
+
+                if (audio) {
+                    new Audio(audio).play();
+                }
+
             },
             _onDeposit = function() {
                 var sel = $('#sp-pos-payment-type')

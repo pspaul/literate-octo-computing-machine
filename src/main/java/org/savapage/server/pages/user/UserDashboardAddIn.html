@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -18,7 +18,10 @@ the License, or (at your option) any later version.
 <wicket:remove>
 	<!-- These panels are used in WebAppUserPage -->
 </wicket:remove>
-<wicket:panel wicket:id="stats-pages-total" />
+
+<wicket:enclosure child="pagometer">
+	<wicket:panel wicket:id="pagometer" />
+</wicket:enclosure>
 
 <wicket:enclosure child="environmental-impact">
 	<wicket:panel wicket:id="environmental-impact" />
@@ -86,13 +89,15 @@ the License, or (at your option) any later version.
 
 		<div class="sp-txt-wrap">
 
-			<span wicket:id="payment-methods"> <a href="#"> <img
-						wicket:id="img-payment-method" class="sp-transfer-money-img"
-						src="" title="" data-payment-gateway="" data-payment-method="" /></a>&nbsp;&nbsp;
+			<span wicket:id="payment-methods"> <a href="#">
+					<img wicket:id="img-payment-method" class="sp-transfer-money-img"
+						src="" title="" data-payment-gateway="" data-payment-method="" />
+				</a>&nbsp;&nbsp;
 			</span>
 
 			<wicket:enclosure child="img-transfer-bitcoin">
-				<a href="#"> <img wicket:id="img-transfer-bitcoin"
+				<a href="#">
+					<img wicket:id="img-transfer-bitcoin"
 						id="button-transfer-bitcoin-page" src="" />
 				</a>
 			</wicket:enclosure>

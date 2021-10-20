@@ -112,7 +112,6 @@ public final class ReqPosSales extends ApiRequestMixin {
         }
 
         if (rpcResponse.isResult()) {
-            this.setApiResult(ApiResultCodeEnum.OK, "msg-apply-ok");
             this.setApiResultText(ApiResultCodeEnum.INFO,
                     String.format("%s [%s] %s [%s]: %s %s.%s",
                             NounEnum.USER.uiText(getLocale()), dto.getUserId(),
