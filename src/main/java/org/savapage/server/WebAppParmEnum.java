@@ -111,6 +111,13 @@ public enum WebAppParmEnum {
      */
     private final String pageParm;
 
+    /** */
+    public static final String URL_PARM_SHOW_PDF = "pdf";
+    /** */
+    public static final String URL_PARM_SHOW_PRINT = "print";
+    /** */
+    public static final String URL_PARM_SHOW_USER = "user";
+
     /**
      * Constructor.
      *

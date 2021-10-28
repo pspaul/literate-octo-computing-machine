@@ -170,6 +170,7 @@ import org.savapage.ext.payment.PaymentGatewayTrx;
 import org.savapage.lib.pgp.PGPBaseException;
 import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.WebApp;
+import org.savapage.server.WebAppParmEnum;
 import org.savapage.server.api.request.ApiRequestHandler;
 import org.savapage.server.api.request.ApiRequestHelper;
 import org.savapage.server.api.request.ApiRequestMixin;
@@ -3295,8 +3296,12 @@ public final class JsonApiServer extends AbstractPage {
 
             final URL callbackUrl = ServerPluginManager.getCallBackUrl(plugin);
 
-            final URL redirectUrl =
-                    ServerPluginManager.getRedirectUrl(dto.getSenderUrl());
+            final Map<String, String> urlParms = new HashMap<>();
+            urlParms.put(WebAppParmEnum.SP_SHOW.parm(),
+                    WebAppParmEnum.URL_PARM_SHOW_USER);
+
+            final URL redirectUrl = ServerPluginManager
+                    .getRedirectUrl(dto.getSenderUrl(), urlParms);
 
             final PaymentRequest req = new PaymentRequest();
 

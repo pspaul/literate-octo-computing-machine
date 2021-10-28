@@ -103,6 +103,7 @@ import org.savapage.server.webapp.WebAppAdmin;
 import org.savapage.server.webapp.WebAppHelper;
 import org.savapage.server.webapp.WebAppJobTickets;
 import org.savapage.server.webapp.WebAppMailTickets;
+import org.savapage.server.webapp.WebAppPayment;
 import org.savapage.server.webapp.WebAppPdfPgp;
 import org.savapage.server.webapp.WebAppPos;
 import org.savapage.server.webapp.WebAppPrintSite;
@@ -170,6 +171,11 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      * Used in this class to set mountPage().
      */
     public static final String MOUNT_PATH_WEBAPP_USER = "/user";
+
+    /**
+     * Used in this class to set mountPage().
+     */
+    public static final String MOUNT_PATH_WEBAPP_PAYMENT = "/payment";
 
     /**
      * The URL path for "printers" as used in {@link #MOUNT_PATH_WEBAPP_OAUTH}
@@ -323,6 +329,13 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             new HashMap<>();
 
     /**
+     * Map of active authenticated User (key) Payment Web App session count
+     * (value).
+     */
+    private static Map<String, Integer> theMapUsers2WebAppPaymentCount =
+            new HashMap<>();
+
+    /**
      * Last time the session dictionaries were pruned.
      */
     private static long theDictLastPruneTime;
@@ -386,6 +399,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             return WebApp.MOUNT_PATH_WEBAPP_JOBTICKETS;
         case MAILTICKETS:
             return WebApp.MOUNT_PATH_WEBAPP_MAILTICKETS;
+        case PAYMENT:
+            return WebApp.MOUNT_PATH_WEBAPP_PAYMENT;
         case POS:
             return WebApp.MOUNT_PATH_WEBAPP_POS;
         case USER:
@@ -612,8 +627,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             if (newIP && LOGGER.isDebugEnabled()) {
 
                 LOGGER.debug(
-                        "IP Recent User [{}] [{}] [{}] added."
-                                + " Total [{}]",
+                        "IP Recent User [{}] [{}] [{}] added." + " Total [{}]",
                         ipAddr, user, sessionId,
                         theMapIpAddr2RecentUser.size());
             }
@@ -652,6 +666,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
                 final Map<String, Integer> mapWrk;
                 if (webAppType == WebAppTypeEnum.MAILTICKETS) {
                     mapWrk = theMapUsers2WebAppMailTicketsCount;
+                } else if (webAppType == WebAppTypeEnum.PAYMENT) {
+                    mapWrk = theMapUsers2WebAppPaymentCount;
                 } else {
                     mapWrk = theMapUsers2WebAppUserCount;
                 }
@@ -863,6 +879,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             mountPage(MOUNT_PATH_WEBAPP_PDFPGP, WebAppPdfPgp.class);
 
             mountPage(MOUNT_PATH_WEBAPP_USER, WebAppUser.class);
+            mountPage(MOUNT_PATH_WEBAPP_PAYMENT, WebAppPayment.class);
 
             mountPage(MOUNT_PATH_WEBAPP_OAUTH, OAuthRedirectPage.class);
             mountPage(MOUNT_PATH_WEBAPP_USER_OAUTH, OAuthRedirectPage.class);
@@ -1408,6 +1425,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
                 if (webAppType == WebAppTypeEnum.MAILTICKETS) {
                     mapWrk = theMapUsers2WebAppMailTicketsCount;
+                } else if (webAppType == WebAppTypeEnum.PAYMENT) {
+                    mapWrk = theMapUsers2WebAppPaymentCount;
                 } else {
                     mapWrk = theMapUsers2WebAppUserCount;
                 }

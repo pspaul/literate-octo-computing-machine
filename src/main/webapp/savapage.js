@@ -91,6 +91,7 @@ String.prototype.endsWith = function(suffix) {
 
         _ns.URL_PARM_SHOW_PDF = 'pdf';
         _ns.URL_PARM_SHOW_PRINT = 'print';
+        _ns.URL_PARM_SHOW_USER = 'user';
 
         /**
          *

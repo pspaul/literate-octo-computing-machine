@@ -155,6 +155,19 @@ public final class HtmlInjectComponent extends WebComponent {
                 break;
             }
             break;
+        case PAYMENT:
+            switch (this.htmlInject) {
+            case ABOUT:
+                configKey = Key.WEBAPP_HTML_PAYMENT_ABOUT;
+                break;
+            case LOGIN:
+                configKey = Key.WEBAPP_HTML_PAYMENT_LOGIN;
+                break;
+            default:
+                configKey = null;
+                break;
+            }
+            break;
         default:
             configKey = null;
             break;

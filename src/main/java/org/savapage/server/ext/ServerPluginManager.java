@@ -612,35 +612,21 @@ public final class ServerPluginManager
     }
 
     /**
-     * @param accountContextReq
-     *            Requested Payment Context.
-     * @return {@code true} if PaperCut Personal Account must be used Payment
+     * @return {@code true} if PaperCut Personal Account is used in Payment
      *         Gateway.
      */
-    private static boolean isPaperCutPersonalAccount(
-            final UserAccountContextEnum accountContextReq) {
+    public static boolean isPaperCutPaymentGateway() {
 
-        final boolean isPaperCutAccount;
+        if (UserAccountContextFactory.hasContextPaperCut()) {
 
-        if (accountContextReq == UserAccountContextEnum.PAPERCUT) {
+            final Set<UserAccountContextEnum> accountContextSet = ConfigManager
+                    .instance().getConfigEnumSet(UserAccountContextEnum.class,
+                            Key.FINANCIAL_PAYMENT_GATEWAY_ACCOUNTS);
 
-            if (UserAccountContextFactory.hasContextPaperCut()) {
-
-                final Set<UserAccountContextEnum> accountContextSet =
-                        ConfigManager.instance().getConfigEnumSet(
-                                UserAccountContextEnum.class,
-                                Key.FINANCIAL_PAYMENT_GATEWAY_ACCOUNTS);
-
-                isPaperCutAccount =
-                        accountContextSet.isEmpty() || accountContextSet
-                                .contains(UserAccountContextEnum.PAPERCUT);
-            } else {
-                isPaperCutAccount = false;
-            }
-        } else {
-            isPaperCutAccount = false;
+            return accountContextSet.isEmpty() || accountContextSet
+                    .contains(UserAccountContextEnum.PAPERCUT);
         }
-        return isPaperCutAccount;
+        return false;
     }
 
     /**
@@ -919,11 +905,10 @@ public final class ServerPluginManager
             onPaymentExpired(final PaymentGatewayTrx trx) {
 
         publishPaymentEvent(PubLevelEnum.WARN,
-                localize("payment-expired", trx.getGatewayId(),
-                        String.format("%s %.2f", CurrencyUtil.getCurrencySymbol(
-                                trx.getCurrencyCode(), Locale.getDefault()),
-                                trx.getAmount()),
-                        trx.getUserId()));
+                localize("payment-expired", String.format("%s %.2f",
+                        CurrencyUtil.getCurrencySymbol(trx.getCurrencyCode(),
+                                Locale.getDefault()),
+                        trx.getAmount()), trx.getGatewayId(), trx.getUserId()));
 
         logPaymentTrxReceived(trx, STAT_EXPIRED);
 
@@ -1326,9 +1311,8 @@ public final class ServerPluginManager
          * is known.
          */
         final String msgConcat;
-        if (UserAccountContextFactory.hasContextPaperCut()
-                && isPaperCutPersonalAccount(UserAccountContextEnum.PAPERCUT)) {
 
+        if (isPaperCutPaymentGateway()) {
             try {
                 service.acceptFundsFromGateway(PaperCutServerProxy
                         .create(ConfigManager.instance(), true), dto);
@@ -1523,12 +1507,14 @@ public final class ServerPluginManager
      *
      * @param dfaultUrl
      *            De default URL.
+     * @param urlParms
+     *            URL parameters.
      * @return The {@link URL}.
      * @throws MalformedURLException
      *             When format of the URL is invalid.
      */
-    public static URL getRedirectUrl(final String dfaultUrl)
-            throws MalformedURLException {
+    public static URL getRedirectUrl(final String dfaultUrl,
+            final Map<String, String> urlParms) throws MalformedURLException {
 
         String urlValue = ConfigManager.instance().getConfigValue(
                 IConfigProp.Key.EXT_WEBAPI_REDIRECT_URL_WEBAPP_USER);
@@ -1537,7 +1523,17 @@ public final class ServerPluginManager
             urlValue = dfaultUrl;
         }
 
-        return new URL(urlValue);
+        final StringBuilder parms = new StringBuilder();
+        for (final Entry<String, String> entry : urlParms.entrySet()) {
+            if (parms.length() == 0 && !urlValue.contains("?")) {
+                parms.append("?");
+            } else {
+                parms.append("&");
+            }
+            parms.append(entry.getKey()).append("=").append(entry.getValue());
+        }
+
+        return new URL(urlValue.concat(parms.toString()));
     }
 
     /**

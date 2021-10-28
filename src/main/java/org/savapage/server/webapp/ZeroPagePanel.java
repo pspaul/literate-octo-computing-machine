@@ -102,6 +102,9 @@ public final class ZeroPagePanel extends Panel {
                         case MAILTICKETS:
                             setResponsePage(WebAppMailTickets.class, parms);
                             break;
+                        case PAYMENT:
+                            setResponsePage(WebAppPayment.class, parms);
+                            break;
                         case POS:
                             setResponsePage(WebAppPos.class, parms);
                             break;

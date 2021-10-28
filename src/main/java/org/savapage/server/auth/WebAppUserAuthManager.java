@@ -45,18 +45,20 @@ public final class WebAppUserAuthManager {
     /**
      * Number of indexes.
      */
-    private static final int IDX_CONTEXT_COUNT = 6;
+    private static final int IDX_CONTEXT_COUNT = 7;
 
     /** */
-    private static final int IDX_CONTEXT_USER = IDX_CONTEXT_COUNT - 6;
+    private static final int IDX_CONTEXT_USER = IDX_CONTEXT_COUNT - 7;
     /** */
-    private static final int IDX_CONTEXT_ADMIN = IDX_CONTEXT_COUNT - 5;
+    private static final int IDX_CONTEXT_ADMIN = IDX_CONTEXT_COUNT - 6;
     /** */
-    private static final int IDX_CONTEXT_POS = IDX_CONTEXT_COUNT - 4;
+    private static final int IDX_CONTEXT_POS = IDX_CONTEXT_COUNT - 5;
     /** */
-    private static final int IDX_CONTEXT_JOBTICKET = IDX_CONTEXT_COUNT - 3;
+    private static final int IDX_CONTEXT_JOBTICKET = IDX_CONTEXT_COUNT - 4;
     /** */
-    private static final int IDX_CONTEXT_MAILTICKET = IDX_CONTEXT_COUNT - 2;
+    private static final int IDX_CONTEXT_MAILTICKET = IDX_CONTEXT_COUNT - 3;
+    /** */
+    private static final int IDX_CONTEXT_PAYMENT = IDX_CONTEXT_COUNT - 2;
     /** */
     private static final int IDX_CONTEXT_PRINTSITE = IDX_CONTEXT_COUNT - 1;
 
@@ -128,6 +130,8 @@ public final class WebAppUserAuthManager {
             return IDX_CONTEXT_JOBTICKET;
         case MAILTICKETS:
             return IDX_CONTEXT_MAILTICKET;
+        case PAYMENT:
+            return IDX_CONTEXT_PAYMENT;
         case POS:
             return IDX_CONTEXT_POS;
         case USER:

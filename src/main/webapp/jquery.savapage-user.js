@@ -2646,10 +2646,8 @@
          */
         this.showUserStats = function() {
             var stats = _model.user.stats,
-                outbox,
-                pages = 0,
-                status,
-                selBalance;
+                outbox, pages = 0,
+                accInfo, status, selBalance;
 
             _setThumbnailExpiry();
 
@@ -2659,10 +2657,18 @@
                     enableTagOptions: true
                 });
 
-                status = stats.accountInfo.status;
                 selBalance = $('#mini-user-balance');
-                if (selBalance) {
-                    selBalance.html(stats.accountInfo.balance).attr("class", status === "CREDIT" ? "sp-txt-warn" : (status === "DEBIT" ? "sp-txt-valid" : "sp-txt-error"));
+                accInfo = stats.accountInfo;
+                if (selBalance && accInfo) {
+                    status = accInfo.status;
+                    selBalance.html(accInfo.balance).attr("class", status === "CREDIT" ? "sp-txt-warn" : (status === "DEBIT" ? "sp-txt-valid" : "sp-txt-error"));
+                }
+
+                selBalance = $('#mini-user-balance-papercut');
+                accInfo = stats.accountInfoPaperCut;
+                if (selBalance && accInfo) {
+                    status = accInfo.status;
+                    selBalance.html(accInfo.balance).attr("class", status === "CREDIT" ? "sp-txt-warn" : (status === "DEBIT" ? "sp-txt-valid" : "sp-txt-error"));
                 }
 
                 outbox = _model.user.stats.outbox;
@@ -3728,6 +3734,15 @@
             }
             // Last, but not least!!
             _this.onCreated();
+
+            // Show initial user view.
+            if (_this.initialView === _ns.URL_PARM_SHOW_USER) {
+                _ns.Utils.asyncFoo(function() {
+                    var sel = _view.getSelPresent($('#mini-user-balance-papercut'))
+                        || _view.getSelPresent($('#mini-user-balance'));
+                    sel.click();
+                });
+            }
 
         }).on("pageshow", function(event, ui) {
             /* @2014-02-20
@@ -4990,6 +5005,12 @@
             _LOC_AUTH_TOKEN = 'sp.auth.mailtickets.token';
             _LOC_LANG = 'sp.mailtickets.language';
             _LOC_COUNTRY = 'sp.mailtickets.country';
+        };
+        this.setPaymentLocalStorageParms = function() {
+            _LOC_AUTH_NAME = 'sp.auth.payment.name';
+            _LOC_AUTH_TOKEN = 'sp.auth.payment.token';
+            _LOC_LANG = 'sp.payment.language';
+            _LOC_COUNTRY = 'sp.payment.country';
         };
         /**
          * Creates a string with page range format from the cut pages.
@@ -7902,6 +7923,9 @@
             if (window.location.pathname === '/mailtickets') {
                 _model.setMailTicketsLocalStorageParms();
                 _ns.initWebApp('MAILTICKETS');
+            } else if (window.location.pathname === '/payment') {
+                _model.setPaymentLocalStorageParms();
+                _ns.initWebApp('PAYMENT');
             } else {
                 _ns.initWebApp('USER');
             }

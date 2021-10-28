@@ -41,7 +41,10 @@ import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.ThirdPartyEnum;
+import org.savapage.ext.papercut.PaperCutServerProxy;
 import org.savapage.ext.payment.PaymentGateway;
 import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentMethodEnum;
@@ -70,10 +73,23 @@ public final class UserDashboardAddIn extends AbstractUserPage {
             ServiceContext.getServiceFactory().getAccessControlService();
 
     /** */
+    private static final AccountingService ACCOUNTING_SERVICE =
+            ServiceContext.getServiceFactory().getAccountingService();
+
+    /** */
     private static final String WID_ENV_IMPACT = "environmental-impact";
 
     /** */
     private static final String WID_PAGOMETER = "pagometer";
+
+    /** */
+    private static final String WID_BALANCE = "balance";
+
+    /** */
+    private static final String WID_BALANCE_IMG = "balance-img";
+
+    /** */
+    private static final String WID_CREDIT_LIMIT = "credit-limit";
 
     /**
      * @param parameters
@@ -137,7 +153,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         if (financialPriv == null
                 || ACLPermissionEnum.READER.isPresent(financialPriv)) {
             helper.addLabel(keyTitleFinancial, localized(keyTitleFinancial));
-            showFinancialDetails(helper, user, financialPriv == null
+            this.showFinancialDetails(helper, user, financialPriv == null
                     || ACLPermissionEnum.EDITOR.isPresent(financialPriv));
         } else {
             helper.discloseLabel(keyTitleFinancial);
@@ -160,19 +176,34 @@ public final class UserDashboardAddIn extends AbstractUserPage {
 
         final ConfigManager cm = ConfigManager.instance();
 
-        final AccountDisplayInfoDto dto =
-                ServiceContext.getServiceFactory().getAccountingService()
-                        .getAccountDisplayInfo(user, ServiceContext.getLocale(),
-                                SpSession.getAppCurrencySymbol());
+        final boolean isPaperCutAccount =
+                ServerPluginManager.isPaperCutPaymentGateway();
+
+        final AccountDisplayInfoDto dto;
 
         // ------------------
-        String creditLimit = dto.getCreditLimit();
+        if (isPaperCutAccount) {
 
-        if (StringUtils.isBlank(creditLimit)) {
-            creditLimit = helper.localized("credit-limit-none");
+            helper.discloseLabel(WID_CREDIT_LIMIT);
+
+            dto = ACCOUNTING_SERVICE.getAccountDisplayInfo(
+                    PaperCutServerProxy.create(cm, false), user,
+                    ServiceContext.getLocale(),
+                    SpSession.getAppCurrencySymbol());
+
+        } else {
+            dto = ACCOUNTING_SERVICE.getAccountDisplayInfo(user,
+                    ServiceContext.getLocale(),
+                    SpSession.getAppCurrencySymbol());
+
+            String creditLimit = dto.getCreditLimit();
+
+            if (StringUtils.isBlank(creditLimit)) {
+                creditLimit = helper.localized("credit-limit-none");
+            }
+            helper.addModifyLabelAttr(WID_CREDIT_LIMIT, creditLimit,
+                    MarkupHelper.ATTR_CLASS, MarkupHelper.CSS_TXT_INFO);
         }
-        helper.addModifyLabelAttr("credit-limit", creditLimit, "class",
-                MarkupHelper.CSS_TXT_INFO);
 
         // ------------------
         final String clazzBalance;
@@ -192,8 +223,16 @@ public final class UserDashboardAddIn extends AbstractUserPage {
                     "Status [" + dto.getStatus() + "] not handled.");
         }
 
-        helper.addModifyLabelAttr("balance", dto.getBalance(), "class",
-                clazzBalance);
+        helper.addModifyLabelAttr(WID_BALANCE, dto.getBalance(),
+                MarkupHelper.ATTR_CLASS, clazzBalance);
+
+        if (isPaperCutAccount) {
+            helper.addModifyLabelAttr(WID_BALANCE_IMG, "",
+                    MarkupHelper.ATTR_SRC,
+                    WebApp.getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT));
+        } else {
+            helper.discloseLabel(WID_BALANCE_IMG);
+        }
 
         // Redeem voucher?
         final Label labelVoucherRedeem = MarkupHelper.createEncloseLabel(
@@ -201,8 +240,8 @@ public final class UserDashboardAddIn extends AbstractUserPage {
                 allowFinancialTrx && cm
                         .isConfigValue(Key.FINANCIAL_USER_VOUCHERS_ENABLE));
 
-        add(MarkupHelper.appendLabelAttr(labelVoucherRedeem, "title",
-                localized("button-title-voucher")));
+        add(MarkupHelper.appendLabelAttr(labelVoucherRedeem,
+                MarkupHelper.ATTR_TITLE, localized("button-title-voucher")));
 
         // Credit transfer?
         final boolean enableTransferCredit = allowFinancialTrx
@@ -213,7 +252,8 @@ public final class UserDashboardAddIn extends AbstractUserPage {
                 "button-transfer-credit", localized("button-transfer-to-user"),
                 enableTransferCredit);
 
-        add(MarkupHelper.appendLabelAttr(labelTransferCredit, "title",
+        add(MarkupHelper.appendLabelAttr(labelTransferCredit,
+                MarkupHelper.ATTR_TITLE,
                 localized("button-title-transfer-to-user")));
 
         /*
@@ -272,7 +312,6 @@ public final class UserDashboardAddIn extends AbstractUserPage {
                 list.addAll(
                         externalPlugin.getExternalPaymentMethods().values());
             }
-
         } catch (PaymentGatewayException e) {
             setResponsePage(
                     new MessageContent(AppLogLevelEnum.ERROR, e.getMessage()));
@@ -313,6 +352,5 @@ public final class UserDashboardAddIn extends AbstractUserPage {
 
         helper.encloseLabel("header-gateway", localized("header-gateway"),
                 methodCount > 0);
-
     }
 }

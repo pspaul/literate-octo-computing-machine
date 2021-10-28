@@ -578,6 +578,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
         case USER:
             configKey = Key.WEBAPP_THEME_USER;
             break;
+        case PAYMENT:
+            configKey = Key.WEBAPP_THEME_PAYMENT;
+            break;
         default:
             configKey = null;
             break;
@@ -622,6 +625,9 @@ public abstract class AbstractWebAppPage extends AbstractPage
             break;
         case USER:
             configKey = Key.WEBAPP_CUSTOM_USER;
+            break;
+        case PAYMENT:
+            configKey = Key.WEBAPP_CUSTOM_PAYMENT;
             break;
         default:
             configKey = null;

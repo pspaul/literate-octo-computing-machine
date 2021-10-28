@@ -43,6 +43,8 @@ import org.savapage.core.outbox.OutboxInfoDto;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.OutboxService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.account.UserAccountContextFactory;
+import org.savapage.ext.papercut.PaperCutServerProxy;
 import org.savapage.server.WebApp;
 import org.savapage.server.session.SpSession;
 
@@ -108,8 +110,18 @@ public final class ApiRequestHelper {
 
         final AccountDisplayInfoDto dto = ACCOUNTING_SERVICE
                 .getAccountDisplayInfo(user, locale, currencySymbol);
-
         stats.put("accountInfo", dto);
+
+        if (UserAccountContextFactory.hasContextPaperCut()) {
+
+            final AccountDisplayInfoDto dtoPC =
+                    ACCOUNTING_SERVICE
+                            .getAccountDisplayInfo(
+                                    PaperCutServerProxy.create(
+                                            ConfigManager.instance(), false),
+                                    user, locale, currencySymbol);
+            stats.put("accountInfoPaperCut", dtoPC);
+        }
 
         final OutboxInfoDto outbox = OUTBOX_SERVICE.getOutboxJobTicketInfo(user,
                 ServiceContext.getTransactionDate());

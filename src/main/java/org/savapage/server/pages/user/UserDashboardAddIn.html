@@ -53,16 +53,21 @@ the License, or (at your option) any later version.
 			<tbody>
 				<tr>
 					<th>
+						<wicket:enclosure child="balance-img">
+							<img height="12" wicket:id="balance-img" />
+						</wicket:enclosure>
 						<wicket:message key="balance" />
 					</th>
 					<td wicket:id="balance" />
 				</tr>
-				<tr>
-					<th>
-						<wicket:message key="credit-limit" />
-					</th>
-					<td wicket:id="credit-limit" />
-				</tr>
+				<wicket:enclosure child="credit-limit">
+					<tr>
+						<th>
+							<wicket:message key="credit-limit" />
+						</th>
+						<td wicket:id="credit-limit" />
+					</tr>
+				</wicket:enclosure>
 			</tbody>
 		</table>
 
@@ -89,7 +94,8 @@ the License, or (at your option) any later version.
 
 		<div class="sp-txt-wrap">
 
-			<span wicket:id="payment-methods"> <a href="#">
+			<span wicket:id="payment-methods"> <a href="#"
+					style="text-decoration: none;">
 					<img wicket:id="img-payment-method" class="sp-transfer-money-img"
 						src="" title="" data-payment-gateway="" data-payment-method="" />
 				</a>&nbsp;&nbsp;

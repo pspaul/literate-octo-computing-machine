@@ -76,7 +76,7 @@ the License, or (at your option) any later version.
 
 <div class="ui-content" id="main">
 
-	<div id="page-main-thumbnail-viewport"
+	<div id="page-main-thumbnail-viewport" wicket:id="thumbnail-viewport"
 		class="thumbnail_viewport thumbnail_viewport_empty">
 		<div id="page-main-thumbnail-images" class="thumbnail_reel"></div>
 		<div id="thumbnail_nav_l" class="thumbnail_nav thumbnail_nav_l" />
@@ -84,6 +84,10 @@ the License, or (at your option) any later version.
 	</div>
 
 	<div class='ui-content'>
+
+		<wicket:enclosure child="webapp-payment-navbar-margin">
+			<div style="margin-top: 10%" wicket:id="webapp-payment-navbar-margin" />
+		</wicket:enclosure>
 
 		<div id="main-navbar-action" data-role="navbar"
 			style="max-width: 480px; margin-left: auto; margin-right: auto; border: 0;"
@@ -210,9 +214,22 @@ the License, or (at your option) any later version.
 
 		<wicket:enclosure child="mini-user-balance">
 			<button data-dialog="true" wicket:id="button-mini-user-balance"
-				class="ui-btn ui-btn-inline sp-button-user-details">
+				class="ui-btn ui-btn-inline">
+				<wicket:enclosure child="balance-img">
+					<img height="12" wicket:id="balance-img" />
+				</wicket:enclosure>
 				<span class="sp-txt-wrap" id="mini-user-balance"
 					wicket:id="mini-user-balance" />
+			</button>
+		</wicket:enclosure>
+
+		<wicket:enclosure child="mini-user-balance-papercut">
+			<button data-dialog="true"
+				wicket:id="button-mini-user-balance-papercut"
+				class="ui-btn ui-btn-inline">
+				<img height="12" wicket:id="balance-papercut-img" /> <span
+					class="sp-txt-wrap" id="mini-user-balance-papercut"
+					wicket:id="mini-user-balance-papercut" />
 			</button>
 		</wicket:enclosure>
 
