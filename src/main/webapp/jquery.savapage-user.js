@@ -430,7 +430,9 @@
          * between clients).
          * </p>
          */
-        this.poll = function(userid, useridDocLog, pagecount, uniqueUrlVal, prevMsgTime, language, country, base64) {
+        this.poll = function(userid, useridDocLog, pagecount, uniqueUrlVal,
+            prevMsgTime, language, country, base64,
+            userInternal, userDocLogInternal) {
 
             if (!_longPollStartTime && userid && _cometd.isOn()) {
 
@@ -443,7 +445,9 @@
                 try {
                     $.cometd.publish('/service/user', {
                         user: userid,
+                        userInternal: userInternal,
                         userDocLog: useridDocLog,
+                        userDocLogInternal: userDocLogInternal,
                         'page-offset': pagecount,
                         'unique-url-value': uniqueUrlVal,
                         'msg-prev-time': prevMsgTime,
@@ -5802,11 +5806,13 @@
 
             _model.user.key_id = loginRes.key_id;
             _model.user.id = loginRes.id;
+            _model.user.id_internal = loginRes.id_internal;
             _model.user.uuid = loginRes.uuid;
             _model.user.number = loginRes.number;
 
             _model.user.doclog.key_id = loginRes.doclog_key_id;
             _model.user.doclog.id = loginRes.doclog_id;
+            _model.user.doclog.id_internal = loginRes.doclog_id_internal;
 
             _model.user.fullname = loginRes.fullname;
 
@@ -6695,9 +6701,11 @@
         };
 
         _userEvent.onPollInvitation = function() {
-            _userEvent.poll(_model.user.id, _model.user.doclog.id, _model.getPageCount(),
+            _userEvent.poll(_model.user.id, _model.user.doclog.id,
+                _model.getPageCount(),
                 _model.uniqueImgUrlValue, _model.prevMsgTime,
-                _model.language, _model.country, _view.imgBase64);
+                _model.language, _model.country, _view.imgBase64,
+                _model.user.id_internal, _model.user.doclog.id_internal);
         };
 
         /*

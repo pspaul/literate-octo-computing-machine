@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.cometd.bayeux.Promise;
@@ -425,10 +426,18 @@ public final class UserEventService extends AbstractEventService {
 
         // Mantis #503
         final boolean isLdapUserSync = ConfigManager.isLdapUserSync();
-        final String userInbox = AbstractUserSource
-                .asDbUserId((String) input.get("user"), isLdapUserSync);
-        final String userDocLog = AbstractUserSource
-                .asDbUserId((String) input.get("userDocLog"), isLdapUserSync);
+
+        // Mantis #1211
+        final Boolean isInternalUser = (Boolean) input.get("userInternal");
+        final Boolean isInternalUserDocLog =
+                (Boolean) input.get("userDocLogInternal");
+
+        final String userInbox = AbstractUserSource.asDbUserId(
+                (String) input.get("user"),
+                isLdapUserSync && BooleanUtils.isNotTrue(isInternalUser));
+        final String userDocLog = AbstractUserSource.asDbUserId(
+                (String) input.get("userDocLog"),
+                isLdapUserSync && BooleanUtils.isNotTrue(isInternalUserDocLog));
 
         // NOTE: The Java Client does not give a pageOffset.
         final Long pageOffset = (Long) input.get("page-offset");

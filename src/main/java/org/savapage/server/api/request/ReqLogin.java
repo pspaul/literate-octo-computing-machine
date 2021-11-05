@@ -666,20 +666,24 @@ public final class ReqLogin extends ApiRequestMixin {
 
             } else if (authMode == UserAuthModeEnum.NAME) {
 
-                /*
-                 * Get the "real" username from the alias.
-                 */
+                final String uidRaw =
+                        UserAliasList.instance().getUserName(authId);
                 if (allowInternalUsersOnly) {
-                    uid = UserAliasList.instance().getUserName(authId);
+                    uid = uidRaw;
                 } else {
-                    uid = UserAliasList.instance()
-                            .getUserName(userAuthenticator.asDbUserId(authId));
-                    uid = userAuthenticator.asDbUserId(uid);
+                    uid = userAuthenticator.asDbUserId(uidRaw);
                 }
-                /*
-                 * Read real user from database.
-                 */
+                // Read "real" user from database.
                 userDb = userDao.findActiveUserByUserId(uid);
+                if (userDb == null && !uid.equals(uidRaw)) {
+                    // Is internal user?
+                    userDb = userDao.findActiveUserByUserId(uidRaw);
+                    if (userDb.getInternal().booleanValue()) {
+                        uid = uidRaw;
+                    } else {
+                        userDb = null;
+                    }
+                }
 
             } else if (authMode == UserAuthModeEnum.ID) {
 
@@ -1489,9 +1493,11 @@ public final class ReqLogin extends ApiRequestMixin {
         }
 
         userData.put("id", userDbAuth.getUserId());
+        userData.put("id_internal", userDbAuth.getInternal());
         userData.put("key_id", userDbAuth.getId());
 
         userData.put("doclog_id", docLogUser.getUserId());
+        userData.put("doclog_id_internal", docLogUser.getInternal());
         userData.put("doclog_key_id", docLogUser.getId());
 
         userData.put("fullname", userDbAuth.getFullName());
