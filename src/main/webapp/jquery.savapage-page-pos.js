@@ -366,6 +366,12 @@
                 return false;
             });
 
+            sel = $('#sp-pos-sales-price-list');
+            sel.change(function() {
+                _onSalesPriceSelect();
+                return false;
+            });
+
             //
             $(this).on('click', "#sp-pos-tab-deposit-button", null, function() {
                 _view.asyncFocus($("#sp-pos-userid").val(""));
