@@ -390,6 +390,8 @@ public final class Options extends AbstractAdminPage {
          * PaperCut Integration.
          */
         labelledCheckbox("papercut-enable", IConfigProp.Key.PAPERCUT_ENABLE);
+        labelledCheckbox("papercut-db-enable",
+                IConfigProp.Key.PAPERCUT_DB_ENABLE);
 
         labelledInput("papercut-host", IConfigProp.Key.PAPERCUT_SERVER_HOST);
         labelledInput("papercut-port", IConfigProp.Key.PAPERCUT_SERVER_PORT);

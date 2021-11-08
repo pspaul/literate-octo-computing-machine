@@ -104,6 +104,7 @@ import org.savapage.core.dto.QuickSearchUserGroupMemberFilterDto;
 import org.savapage.core.dto.UserCreditTransferDto;
 import org.savapage.core.dto.VoucherBatchPrintDto;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.imaging.EcoPrintPdfTask;
@@ -2685,19 +2686,50 @@ public final class JsonApiServer extends AbstractPage {
 
         final ConfigManager cm = ConfigManager.instance();
 
-        String error = PaperCutServerProxy.create(cm, false).testConnection();
+        final StringBuilder msg = new StringBuilder();
+        final ApiResultCodeEnum resultCode;
+        String msgKey = "msg-papercut-test-failed";
 
-        if (error == null) {
-            error = new PaperCutDbProxy(cm, false).testConnection();
-        }
+        if (cm.isConfigValue(Key.PAPERCUT_ENABLE)) {
 
-        if (error == null) {
-            setApiResult(userData, ApiResultCodeEnum.INFO,
-                    "msg-papercut-test-passed");
+            int nTestsPassed = 0;
+
+            String error =
+                    PaperCutServerProxy.create(cm, false).testConnection();
+
+            if (error == null) {
+                nTestsPassed++;
+                if (ConfigManager.isPaperCutPrintEnabled()) {
+                    error = new PaperCutDbProxy(cm, false).testConnection();
+                    if (error == null) {
+                        nTestsPassed++;
+                    }
+                }
+            }
+
+            if (error == null) {
+                msg.append("API");
+                if (nTestsPassed > 1) {
+                    msg.append(" + ")
+                            .append(NounEnum.DATABASE.uiText(getLocale()));
+                }
+                resultCode = ApiResultCodeEnum.INFO;
+                msgKey = "msg-papercut-test-passed";
+            } else {
+                if (nTestsPassed == 0) {
+                    msg.append("API");
+                } else {
+                    msg.append(NounEnum.DATABASE.uiText(getLocale()));
+                }
+                msg.append(" | ").append(error);
+                resultCode = ApiResultCodeEnum.ERROR;
+            }
         } else {
-            setApiResult(userData, ApiResultCodeEnum.ERROR,
-                    "msg-papercut-test-failed", error);
+            resultCode = ApiResultCodeEnum.WARN;
+            msg.append(HtmlButtonEnum.APPLY.uiText(getLocale()));
+
         }
+        setApiResult(userData, resultCode, msgKey, msg.toString());
 
         return userData;
     }

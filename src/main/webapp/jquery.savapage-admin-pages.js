@@ -1924,6 +1924,9 @@
             $(this).on('click', ".sp-download-receipt", null, function() {
                 _self.onDownload("pos-receipt-download", null, $(this).attr('data-savapage'));
                 return false;
+            }).on('click', ".sp-download-invoice", null, function() {
+                _api.download("pos-invoice-download-user", null, $(this).attr('data-savapage'));
+                return false;
             });
 
             /*
@@ -2428,7 +2431,13 @@
             });
 
             $(this).on('change', "input:checkbox[id='papercut.enable']", null, function(e) {
-                _panel.Options.onPaperCutEnabled($(this).is(':checked'));
+                var isEnabled = $(this).is(':checked');
+                _panel.Options.onPaperCutEnabled(isEnabled);
+                _panel.Options.onPaperCutDbEnabled(isEnabled &&
+                    _view.isCbChecked($('#papercut\\.db\\.enable')));
+            });
+            $(this).on('change', "input:checkbox[id='papercut.db.enable']", null, function(e) {
+                _panel.Options.onPaperCutDbEnabled($(this).is(':checked'));
             });
 
             $(this).on('change', "input:checkbox[id='webapp.user.proxy-print.clear-inbox.enable']", null, function(e) {
@@ -2459,7 +2468,8 @@
             });
 
             $(this).on('click', '#apply-papercut', null, function() {
-                _self.onApplyPaperCut(_view.isCbChecked($('#papercut\\.enable')));
+                _self.onApplyPaperCut(_view.isCbChecked($('#papercut\\.enable')),
+                    _view.isCbChecked($('#papercut\\.db\\.enable')));
                 return false;
             });
 

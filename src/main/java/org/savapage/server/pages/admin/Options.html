@@ -1089,8 +1089,9 @@ the License, or (at your option) any later version.
 					<label for="papercut-enable" wicket:id="papercut-enable-label" />
 					<input type="checkbox" id="papercut-enable" value="0"
 						wicket:id="papercut-enable" />
-					<div class="papercut-enabled">
-						<div data-role="collapsible" data-collapsed="true">
+					<div class="papercut-enabled" style="margin-left: 30px;">
+						<div data-role="collapsible" data-collapsed="true"
+							data-mini="true">
 							<h3>
 								<wicket:message key="papercut-server-text" />
 							</h3>
@@ -1107,7 +1108,15 @@ the License, or (at your option) any later version.
 								autocomplete="off" autocorrect="off" autocapitalize="off"
 								spellcheck="false" />
 						</div>
-						<div data-role="collapsible" data-collapsed="true">
+
+						<label for="papercut-db-enable"
+							wicket:id="papercut-db-enable-label" />
+						<input type="checkbox" id="papercut-db-enable" value="0"
+							wicket:id="papercut-db-enable" />
+
+						<div data-role="collapsible" data-collapsed="true"
+							data-mini="true" class="papercut-db-enabled"
+							style="margin-left: 30px;">
 							<h3>
 								<wicket:message key="papercut-db-text" />
 							</h3>
@@ -1141,7 +1150,7 @@ the License, or (at your option) any later version.
 						</div>
 					</wicket:enclosure>
 				</li>
-				<li class="papercut-enabled">
+				<li class="papercut-enabled papercut-db-enabled">
 					<div class="sp-proxyprint-delegate-enable-enabled">
 						<label for="proxyprint-delegate-papercut-enable"
 							wicket:id="proxyprint-delegate-papercut-enable-label" />

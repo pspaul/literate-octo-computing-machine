@@ -586,10 +586,11 @@
             _saveConfigProps(_fillConfigPropsText({}, ['ipp.internet-printer.uri-base']));
         };
 
-        _view.pages.admin.onApplyPaperCut = function(enable) {
+        _view.pages.admin.onApplyPaperCut = function(enable, enableDb) {
             var props = {};
 
             props['papercut.enable'] = enable ? 'Y' : 'N';
+            props['papercut.db.enable'] = enableDb ? 'Y' : 'N';
 
             if (enable) {
                 _fillConfigPropsText(props, ['papercut.server.host', 'papercut.server.port', 'papercut.webservices.auth-token', 'papercut.db.jdbc-driver', 'papercut.db.jdbc-url', 'papercut.db.user', 'papercut.db.password']);

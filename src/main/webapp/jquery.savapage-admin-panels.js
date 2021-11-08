@@ -1004,6 +1004,13 @@
         onPaperCutEnabled: function(enabled) {
             var _view = _ns.PanelCommon.view;
             _view.visible($('.papercut-enabled'), enabled);
+            _view.visible($('.papercut-db-enabled'), enabled &&
+                _view.isCbChecked($('#papercut\\.db\\.enable')));
+        },
+
+        onPaperCutDbEnabled: function(enabled) {
+            var _view = _ns.PanelCommon.view;
+            _view.visible($('.papercut-db-enabled'), enabled);
         },
 
         onFinancialUserTransfersEnabled: function(enabled) {
@@ -1012,7 +1019,8 @@
         },
 
         onOutput: function(output) {
-            var _view = _ns.PanelCommon.view;
+            var _view = _ns.PanelCommon.view,
+                paperCutDbEnabled = _view.isCbChecked($('#papercut\\.db\\.enable'));
 
             this.onAuthMethodSelect($("input:radio[name='auth.method']:checked").val());
 
