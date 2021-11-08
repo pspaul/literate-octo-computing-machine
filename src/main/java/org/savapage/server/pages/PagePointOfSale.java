@@ -341,7 +341,9 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
                     ACCOUNTING_SERVICE.getPosSalesPricesByName();
             hasPrices = !posSalesPrices.isEmpty();
             if (hasPrices) {
-                this.addPosSalesPrices(helper, hasItems, posSalesPrices);
+                this.addPosSalesPrices(helper, hasItems, posSalesPrices,
+                        cm.getConfigInt(
+                                Key.WEBAPP_POS_SALES_LABEL_PRICES_BUTTON_MAX));
             }
         } else {
             hasPrices = false;
@@ -471,7 +473,8 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
      */
     private void addPosSalesPrices(final MarkupHelper helper,
             final boolean hasItems,
-            final Collection<PosSalesPriceDto> posSalesPrices) {
+            final Collection<PosSalesPriceDto> posSalesPrices,
+            final int posItemSelectSplit) {
 
         final List<PosSalesLabelDomainPartDto> labels = new ArrayList<>();
 
@@ -481,8 +484,6 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
             }
         }
 
-        final int posItemSelectSplit = 7;
-
         if (posSalesPrices.size() > posItemSelectSplit) {
 
             MarkupHelper.modifyLabelAttr(
@@ -491,7 +492,7 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
                                     .concat(HtmlButtonEnum.DOTTED_SUFFIX)),
                     MarkupHelper.ATTR_CLASS, CSS_CLASS_POS_SALES_ITEM);
 
-            this.addPosSalesLabelDomainPart("pos-sales-item-option", hasItems,
+            this.addPosSalesLabelDomainPart("pos-sales-price-option", hasItems,
                     labels, CSS_CLASS_POS_SALES_ITEM,
                     CSS_CLASS_POS_SALES_ITEM_PFX);
 
