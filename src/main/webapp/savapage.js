@@ -399,7 +399,7 @@ String.prototype.endsWith = function(suffix) {
 
             this.debug = function() {
                 if (this.logLevel === this.LEVEL_DEBUG) {
-                    _log(this.LEVEL_DEBUG, arguments);
+                    _log(this.LEVEL_INFO, arguments);
                 }
             };
         };
