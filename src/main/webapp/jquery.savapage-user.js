@@ -2461,8 +2461,21 @@
                 return false;
             });
 
-            $(this).on('change', '#sp-webprint-upload-file', function() {
+            $(this).on('input', '#sp-webprint-upload-file', function() {
                 var show = $(this).val();
+
+                if (_ns.logger.isDebugEnabled()) {
+                    (function logFiles(show, files) {
+                        var file, i, msg = '';
+                        for (i = 0; i < files.length; i++) {
+                            file = files[i];
+                            msg += file.name + ' (' + file.size + ') | ';
+                        }
+                        _ns.logger.debug('onInput #sp-webprint-upload-file: show = '
+                            + (show ? 'true' : 'false') + ' | ' + msg);
+                    })(show, document.getElementById('sp-webprint-upload-file').files);
+                }
+
                 _showUploadButton(show);
                 _showResetButton(show);
                 _setUploadFeedbackDefault(_DROPZONE);
