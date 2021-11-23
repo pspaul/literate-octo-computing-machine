@@ -590,6 +590,13 @@ public class WebAppUser extends AbstractWebAppPage {
     }
 
     /**
+     * @return Key used to check if Web App access from Internet is allowed.
+     */
+    protected IConfigProp.Key getInternetEnableKey() {
+        return IConfigProp.Key.WEBAPP_INTERNET_USER_ENABLE;
+    }
+
+    /**
      *
      * @param parameters
      *            The {@link PageParameters}.
@@ -598,7 +605,7 @@ public class WebAppUser extends AbstractWebAppPage {
 
         super(parameters);
 
-        checkInternetAccess(IConfigProp.Key.WEBAPP_INTERNET_USER_ENABLE);
+        checkInternetAccess(this.getInternetEnableKey());
 
         if (isWebAppCountExceeded(parameters)) {
             discloseAll();

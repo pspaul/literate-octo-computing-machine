@@ -162,6 +162,9 @@ public final class Login extends AbstractPage {
                 loginDescript = localized("login-descript-role",
                         ACLRoleEnum.WEB_CASHIER.uiText(getLocale()));
                 break;
+            case PAYMENT:
+                loginDescript = localized("login-descript-user-payment");
+                break;
             default:
                 loginDescript = localized("login-descript-user");
                 break;

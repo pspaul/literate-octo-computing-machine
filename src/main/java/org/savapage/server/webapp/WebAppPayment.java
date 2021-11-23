@@ -25,6 +25,7 @@
 package org.savapage.server.webapp;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.WebAppTypeEnum;
 
 public final class WebAppPayment extends WebAppUser {
@@ -39,6 +40,11 @@ public final class WebAppPayment extends WebAppUser {
      */
     public WebAppPayment(final PageParameters parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected IConfigProp.Key getInternetEnableKey() {
+        return IConfigProp.Key.WEBAPP_INTERNET_PAYMENT_ENABLE;
     }
 
     @Override
