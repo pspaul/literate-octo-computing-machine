@@ -70,7 +70,7 @@ the License, or (at your option) any later version.
 
 				<wicket:enclosure child="pos-sales-location-option-select">
 					<select data-mini="true" id="sp-pos-sales-location-list"
-						data-icon="location">
+						data-icon="location" data-native-menu="false">
 						<option value="" wicket:id="pos-sales-location-option-select" />
 						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
 							<wicket:panel wicket:id="pos-sales-location-option">
@@ -82,7 +82,7 @@ the License, or (at your option) any later version.
 
 				<wicket:enclosure child="pos-sales-shop-option-select">
 					<select data-mini="true" id="sp-pos-sales-shop-list"
-						data-icon="shop">
+						data-icon="shop" data-native-menu="false">
 						<option value="" wicket:id="pos-sales-shop-option-select" />
 						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
 							<wicket:panel wicket:id="pos-sales-shop-option">
@@ -107,7 +107,8 @@ the License, or (at your option) any later version.
 					</wicket:enclosure>
 					<wicket:enclosure child="pos-sales-item-radio">
 						<li>
-							<fieldset data-role="controlgroup" data-type="horizontal">
+							<fieldset data-role="controlgroup" data-type="horizontal"
+								id="sp-pos-sales-item-radio-list">
 								<wicket:panel wicket:id="pos-sales-item-radio">
 									<label wicket:id="label" for="id"
 										class="sp-pos-sales-item-radio-label" />
@@ -132,7 +133,8 @@ the License, or (at your option) any later version.
 					</wicket:enclosure>
 					<wicket:enclosure child="pos-sales-price-radio">
 						<li>
-							<fieldset data-role="controlgroup" data-type="horizontal">
+							<fieldset data-role="controlgroup" data-type="horizontal"
+								class="sp-a-menu-price">
 								<wicket:panel wicket:id="pos-sales-price-radio">
 									<label wicket:id="label" for="id"
 										class="sp-pos-sales-price-radio-label" />
@@ -144,7 +146,7 @@ the License, or (at your option) any later version.
 					</wicket:enclosure>
 
 					<li>
-						<table>
+						<table class="sp-a-menu-price">
 							<tr>
 								<td>
 									<span wicket:id="currency-symbol-1" />&nbsp;
@@ -179,7 +181,8 @@ the License, or (at your option) any later version.
 					</wicket:enclosure>
 
 					<li>
-						<div tabindex="0" id="sp-pos-sales-user-card-local-group" style="text-align: center;">
+						<div tabindex="0" id="sp-pos-sales-user-card-local-group"
+							class="sp-a-menu-price" style="text-align: center;">
 							<h4 class="sp-txt-info" style="padding: 5px;">
 								<span class="sp-txt-wrap"
 									id="sp-pos-sales-user-card-local-focusout"

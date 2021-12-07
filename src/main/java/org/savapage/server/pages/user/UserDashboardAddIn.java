@@ -36,6 +36,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
@@ -113,10 +114,13 @@ public final class UserDashboardAddIn extends AbstractUserPage {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
+        final boolean isWebAppPayment =
+                this.getSessionWebAppType() == WebAppTypeEnum.PAYMENT;
+
         /*
          * Pagometer.
          */
-        if (ConfigManager.instance()
+        if (!isWebAppPayment && ConfigManager.instance()
                 .isConfigValue(Key.WEBAPP_USER_SHOW_PAGOMETER)) {
             final StatsPageTotalPanel pageTotalPanel =
                     new StatsPageTotalPanel(WID_PAGOMETER);
@@ -128,7 +132,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         /*
          * Environmental Impact.
          */
-        if (ConfigManager.instance()
+        if (!isWebAppPayment && ConfigManager.instance()
                 .isConfigValue(Key.WEBAPP_USER_SHOW_ENV_INFO)) {
 
             final Double esu = (double) (user.getNumberOfPrintOutEsu() / 100);
@@ -152,7 +156,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
 
         if (financialPriv == null
                 || ACLPermissionEnum.READER.isPresent(financialPriv)) {
-            helper.addLabel(keyTitleFinancial, localized(keyTitleFinancial));
+            helper.addLabel(keyTitleFinancial, localized("sp-title-financial"));
             this.showFinancialDetails(helper, user, financialPriv == null
                     || ACLPermissionEnum.EDITOR.isPresent(financialPriv));
         } else {
@@ -350,7 +354,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
 
         });
 
-        helper.encloseLabel("header-gateway", localized("header-gateway"),
+        helper.encloseLabel("header-gateway", localized("sp-header-gateway"),
                 methodCount > 0);
     }
 }

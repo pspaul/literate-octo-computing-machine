@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 
 /**
@@ -45,7 +46,8 @@ public final class AppAbout extends AbstractPage {
     private static final long serialVersionUID = 1L;
 
     /**
-     *
+     * @param parameters
+     *            Page parameters.
      */
     public AppAbout(final PageParameters parameters) {
 
@@ -62,9 +64,11 @@ public final class AppAbout extends AbstractPage {
         final String appName =
                 CommunityDictEnum.SAVAPAGE.getWord(Locale.getDefault());
 
+        final WebAppTypeEnum webAppType = this.getWebAppTypeEnum(parameters);
+
         if (inject.isInjectAvailable()) {
             helper.discloseLabel("app-version");
-            add(new AppAboutPanel("savapage-info-after-inject"));
+            add(new AppAboutPanel("savapage-info-after-inject", webAppType));
             add(new Label("app-product-name", appName));
             add(new Label("app-product-slogan",
                     CommunityDictEnum.SAVAPAGE_SLOGAN.getWord()));
@@ -76,7 +80,7 @@ public final class AppAbout extends AbstractPage {
                     ConfigManager.getAppNameVersion(), true);
             add(new Label("app-slogan",
                     CommunityDictEnum.SAVAPAGE_SLOGAN.getWord()));
-            add(new AppAboutPanel("savapage-info"));
+            add(new AppAboutPanel("savapage-info", webAppType));
         }
 
         helper.addButton("button-back", HtmlButtonEnum.BACK);

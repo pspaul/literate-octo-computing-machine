@@ -35,6 +35,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.server.WebApp;
 
 /**
@@ -44,11 +45,10 @@ import org.savapage.server.WebApp;
  */
 public final class AppAboutPanel extends Panel {
 
-    /**
-     * .
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
+    /** */
     private static final boolean SHOW_TRANSLATOR_INFO = false;
 
     /**
@@ -58,7 +58,7 @@ public final class AppAboutPanel extends Panel {
      *            The key from the XML resource file
      * @return The localized string.
      */
-    private final String localized(final String key) {
+    private String localized(final String key) {
         return getLocalizer().getString(key, this);
     }
 
@@ -71,16 +71,18 @@ public final class AppAboutPanel extends Panel {
      *            The values to fill the placeholders
      * @return The localized string.
      */
-    protected final String localized(final String key,
-            final Object... objects) {
+    protected String localized(final String key, final Object... objects) {
         return MessageFormat.format(getLocalizer().getString(key, this),
                 objects);
     }
 
     /**
-     *
+     * @param id
+     *            Panel ID.
+     * @param webAppType
+     *            WebApp type.
      */
-    public AppAboutPanel(final String id) {
+    public AppAboutPanel(final String id, final WebAppTypeEnum webAppType) {
 
         super(id);
 
@@ -133,8 +135,10 @@ public final class AppAboutPanel extends Panel {
         //
         final String downloadPanelId = "printerdriver-download-panel";
 
-        if (ConfigManager.instance().isConfigValue(
-                IConfigProp.Key.WEBAPP_ABOUT_DRIVER_DOWNLOAD_ENABLE)) {
+        if ((webAppType != WebAppTypeEnum.PAYMENT)
+                && (webAppType != WebAppTypeEnum.POS)
+                && ConfigManager.instance().isConfigValue(
+                        IConfigProp.Key.WEBAPP_ABOUT_DRIVER_DOWNLOAD_ENABLE)) {
 
             final PrinterDriverDownloadPanel downloadPanel =
                     new PrinterDriverDownloadPanel(downloadPanelId);
@@ -159,7 +163,6 @@ public final class AppAboutPanel extends Panel {
 
         helper.encloseLabel("translator-info", translatorInfo,
                 StringUtils.isNotBlank(translatorInfo));
-
     }
 
 }

@@ -76,6 +76,7 @@ import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.OnOffEnum;
+import org.savapage.core.config.ServerBasePath;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.AccountTrxDao;
@@ -4020,8 +4021,14 @@ public final class JsonApiServer extends AbstractPage {
         userData.put("systime", Long.valueOf(System.currentTimeMillis()));
 
         //
-        userData.put("showNavButtonTxt", cm.getConfigEnum(OnOffEnum.class,
-                Key.WEBAPP_USER_MAIN_NAV_BUTTON_TEXT));
+        final Key keyNavText;
+        if (webAppType == WebAppTypeEnum.PAYMENT) {
+            keyNavText = Key.WEBAPP_PAYMENT_MAIN_NAV_BUTTON_TEXT;
+        } else {
+            keyNavText = Key.WEBAPP_USER_MAIN_NAV_BUTTON_TEXT;
+        }
+        userData.put("showNavButtonTxt",
+                cm.getConfigEnum(OnOffEnum.class, keyNavText));
 
         //
         userData.put("jobticketCopierEnable",
@@ -4147,6 +4154,19 @@ public final class JsonApiServer extends AbstractPage {
             userData.put("printScalingClash", scaling);
         }
 
+        if (webAppType == WebAppTypeEnum.POS) {
+            final Map<String, Object> sounds = new HashMap<>();
+            final String urlPath = ServerBasePath.CUSTOM_WEB.concat("/");
+            String sound = cm.getConfigValue(Key.WEBAPP_POS_SOUND_SUCCESS);
+            if (StringUtils.isNotBlank(sound)) {
+                sounds.put("success", urlPath.concat(sound));
+            }
+            sound = cm.getConfigValue(Key.WEBAPP_POS_SOUND_FAILURE);
+            if (StringUtils.isNotBlank(sound)) {
+                sounds.put("failure", urlPath.concat(sound));
+            }
+            userData.put("sounds", sounds);
+        }
         //
         return userData;
     }

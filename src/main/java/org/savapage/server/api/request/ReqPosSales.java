@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dto.PosSalesDto;
+import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
@@ -38,6 +39,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.account.UserAccountContextEnum;
 import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.ext.papercut.PaperCutServerProxy;
+import org.savapage.server.pages.MarkupHelper;
 
 /**
  *
@@ -55,6 +57,20 @@ public final class ReqPosSales extends ApiRequestMixin {
 
         final PosSalesDto dto =
                 PosSalesDto.create(PosSalesDto.class, this.getParmValueDto());
+
+        // Correct for empty values;
+        if (dto.getAmountMain().length() == 0) {
+            dto.setAmountMain("0");
+        }
+        if (dto.getAmountCents().length() == 0) {
+            dto.setAmountCents("00");
+        }
+        // INVARIANT: cents must be 2 digits.
+        if (dto.getAmountCents().length() != 2) {
+            this.setApiResult(ApiResultCodeEnum.ERROR, "msg-value-invalid",
+                    NounEnum.VALUE.uiText(getLocale()), dto.formatAmount());
+            return;
+        }
 
         final Object[][] enabledInvariantCheck = { //
                 { Key.FINANCIAL_POS_SALES_LABEL_LOCATIONS_ENABLE,
@@ -113,12 +129,20 @@ public final class ReqPosSales extends ApiRequestMixin {
 
         if (rpcResponse.isResult()) {
             this.setApiResultText(ApiResultCodeEnum.INFO,
-                    String.format("%s [%s] %s [%s]: %s %s.%s",
-                            NounEnum.USER.uiText(getLocale()), dto.getUserId(),
-                            NounEnum.ITEM.uiText(getLocale()),
-                            dto.createComment(),
+                    String.format("<div style=\"text-align: center; "
+                            + "min-width: 250px; font-size: 32pt;\" class=\""
+                            + MarkupHelper.CSS_TXT_VALID + "\">" //
+                            + "<b>%s</b><br>%s&nbsp;%s.%s" //
+                            + "</div>" //
+                            + "<div style=\"text-align: center; "
+                            + "font-size: 16pt;\"  class=\"" //
+                            + MarkupHelper.CSS_TXT_VALID + "\">" + "%s</div>",
+                            dto.getUserId(),
+                            // NounEnum.ITEM.uiText(getLocale()),
+                            // dto.createComment(),
                             ServiceContext.getAppCurrencySymbol(),
-                            dto.getAmountMain(), dto.getAmountCents()));
+                            dto.getAmountMain(), dto.getAmountCents(),
+                            AdjectiveEnum.PAID.uiText(getLocale())));
         } else {
             this.setApiResultText(rpcResponse);
         }

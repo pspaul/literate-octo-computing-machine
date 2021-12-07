@@ -51,6 +51,15 @@
             _lastAppHeartbeat = new Date().getTime();
         };
 
+    _ns.ApiResultCodeEnum = {
+        OK: '0',
+        INFO: "1",
+        WARN: "2",
+        ERROR: "3",
+        UNAVAILABLE: "5",
+        UNAUTH: "9"
+    };
+
     /**
      * Common initializing actions for all Web App types.
      */
@@ -1452,7 +1461,7 @@
                         'docLogId': $(this).attr('data-savapage')
                     })
                 });
-                if (res.result.code === '0') {
+                if (res.result.code === _ns.ApiResultCodeEnum.OK) {
                     _this.refresh();
                 }
                 _view.showApiMsg(res);
@@ -1527,7 +1536,7 @@
                         request: request,
                         dto: JSON.stringify(filterProps)
                     });
-                    if (res.result.code === '0') {
+                    if (res.result.code === _ns.ApiResultCodeEnum.OK) {
                         _quickObjectCache = res.dto.items;
                         $.each(_quickObjectCache, function(key, item) {
                             html += "<li class=\"ui-mini\" data-icon=\"false\" data-savapage=\"" + key + "\">";
@@ -1911,7 +1920,7 @@
                     'request': 'card-is-registered',
                     card: card
                 });
-            if (res.result.code === '0') {
+            if (res.result.code === _ns.ApiResultCodeEnum.OK) {
                 reg = res.registered;
             } else {
                 _view.showApiMsg(res);
@@ -2206,7 +2215,7 @@
                     })
                 });
 
-                if (res.result.code === '0') {
+                if (res.result.code === _ns.ApiResultCodeEnum.OK) {
                     window.location.assign(res.dto.url);
                 } else {
                     _view.showApiMsg(res);
@@ -2876,9 +2885,9 @@
 
         this.apiResMsgTitle = function(result) {
             var title;
-            if (result.code === "1") {
+            if (result.code === _ns.ApiResultCodeEnum.INFO) {
                 title = _i18n.string('title-info');
-            } else if (result.code === "2" || result.code === "5") {
+            } else if (result.code === _ns.ApiResultCodeEnum.WARN || result.code === _ns.ApiResultCodeEnum.UNAVAILABLE) {
                 title = _i18n.string('title-warning');
             } else {
                 title = _i18n.string('title-error');
@@ -2888,9 +2897,9 @@
 
         this.apiResMsgCssClass = function(result) {
             var klas;
-            if (result.code === "1") {
+            if (result.code === _ns.ApiResultCodeEnum.INFO) {
                 klas = 'sp-msg-popup-info';
-            } else if (result.code === "2" || result.code === "5") {
+            } else if (result.code === _ns.ApiResultCodeEnum.WARN || result.code === _ns.ApiResultCodeEnum.UNAVAILABLE) {
                 klas = 'sp-msg-popup-warn';
             } else {
                 klas = 'sp-msg-popup-error';
@@ -2905,7 +2914,7 @@
                 sel,
                 html;
 
-            if (result.code === "9") {
+            if (result.code === _ns.ApiResultCodeEnum.UNAUTH) {
                 /*
                  * Do NOT show a session expiration error, since this will be
                  * handled in the onExpire() callback.
@@ -2913,7 +2922,7 @@
                 return;
             }
 
-            if (result.code === "0") {
+            if (result.code === _ns.ApiResultCodeEnum.OK) {
                 if (result.txt) {
                     this.message(result.txt);
                 }
@@ -3068,6 +3077,15 @@
             var sel = $('input[name="' + name + '"]');
             sel.prop('checked', false).first().prop('checked', true);
             sel.checkboxradio("refresh");
+        };
+
+        /**
+         * Unchecks a radiobutton.
+         */
+        this.uncheckRadioValue = function(name) {
+            var radio = 'input[name="' + name + '"]';
+            $(radio).prop('checked', false);
+            $(radio).checkboxradio("refresh");
         };
 
         /**
@@ -3549,7 +3567,7 @@
                         fontEnum: fontEnum
                     })
                 });
-                if (res.result.code === '0') {
+                if (res.result.code === _ns.ApiResultCodeEnum.OK) {
                     if (fooInfo) {
                         wlk = [];
                         wlk.push({

@@ -52,6 +52,7 @@
             _self = _ns.derive(_page),
             _quickUserSelected,
             _quickUserSearch = new _ns.QuickObjectSearch(_view, _api),
+            //
             _onQuickSearchUserBefore = function() {
                 $(".sp-pos-user-selected").hide();
             },
@@ -78,11 +79,11 @@
                 $.noop();
             },
             _clearSales = function() {
-                $("#sp-pos-sales-amount-cents").val("00");
+                $("#sp-pos-sales-amount-main").val("");
                 $("#sp-pos-sales-comment").val("");
                 _view.setSelectedValue($('#sp-pos-sales-price-list'), '');
                 _view.checkRadioValue('sp-pos-sales-price-radio', '');
-                _view.asyncFocus($("#sp-pos-sales-amount-main").val(""));
+                _view.asyncFocus($("#sp-pos-sales-amount-cents").val(""));
             },
             _clear = function() {
                 $("#sp-pos-userid").val("").focus();
@@ -90,6 +91,42 @@
                 $("#sp-pos-comment").val("");
                 $("#sp-pos-amount-cents").val("00");
                 $(".sp-pos-user-selected").hide();
+            },
+            // 
+            _onEnableSalesItems = function(locationID, shopID, itemID) {
+                var sel;
+                if (!locationID) {
+                    sel = _view.getSelPresent($('#sp-pos-sales-location-list'));
+                    if (sel) {
+                        locationID = sel.find(':selected').val() !== '';
+                    } else {
+                        locationID = 'no-location';
+                    }
+                }
+                if (!shopID) {
+                    sel = _view.getSelPresent($('#sp-pos-sales-shop-list'));
+                    if (sel) {
+                        shopID = sel.find(':selected').val() !== '';
+                    } else {
+                        shopID = 'no-shop';
+                    }
+                }
+                _view.enableUI($('#sp-a-menu'), locationID && shopID);
+
+                if (!itemID) {
+                    sel = _view.getSelPresent($('#sp-pos-sales-item-list'));
+                    if (sel) {
+                        itemID = sel.val() !== '';
+                    } else {
+                        sel = _view.getSelPresent($('#sp-pos-sales-item-radio-list'));
+                        if (sel) {
+                            itemID = _view.getRadioValue('sp-pos-sales-item-radio');
+                        } else {
+                            itemID = 'no-item';
+                        }
+                    }
+                }
+                _view.enableUI($('.sp-a-menu-price'), locationID && shopID && itemID);
             },
             //
             _onSalesLocationSelect = function() {
@@ -113,6 +150,7 @@
                     _view.visible(selShops.filter('.sp-pos-sales-location-' + locationID), true);
                     _view.visible(selItems.filter('.sp-pos-sales-location-' + locationID), true);
                 }
+                _onEnableSalesItems(locationID, null);
             },
             //
             _onSalesShopSelect = function() {
@@ -129,11 +167,13 @@
                 _view.visible(selItemsRadio.filter('.sp-pos-sales-shop').parent(), true);
 
                 _view.setSelectedValue(selItemList, '');
+                _view.uncheckRadioValue('sp-pos-sales-item-radio');
 
                 if (shopID) {
                     _view.visible(selItems.filter('.sp-pos-sales-shop-' + shopID), true);
                     _view.visible(selItemsRadio.filter('.sp-pos-sales-shop-' + shopID).parent(), true);
                 }
+                _onEnableSalesItems(null, shopID);
             },
             //
             _onSalesItemSelect = function() {
@@ -156,6 +196,7 @@
                     _view.visible(selPrices.filter(clazzDomainFilter + '-' + itemID), true);
                     _view.visible(selPricesRadio.filter(clazzDomainFilter + '-' + itemID).parent(), true);
                 }
+                _onEnableSalesItems(null, null, itemID);
             },
             //
             _onSalesPriceSelect = function() {
@@ -167,7 +208,7 @@
             },
             //
             _onSales = function(userKey, userId) {
-                var sel, res, audio,
+                var sel, res, sound, soundURL,
                     posLocation, posShop, posItem;
 
                 sel = $('#sp-pos-sales-location-list');
@@ -198,23 +239,22 @@
 
                 _view.showApiMsg(res);
 
-                if (res.result.code === '0') {
-
+                if (res.result.code === _ns.ApiResultCodeEnum.OK ||
+                    res.result.code === _ns.ApiResultCodeEnum.INFO) {
+                    sound = _model.sounds.success;
                     if (_api.call({
                         request: "user-notify-account-change",
                         dto: JSON.stringify({
                             key: userKey
                         })
-                    }).result.code !== '0') {
+                    }).result.code !== _ns.ApiResultCodeEnum.OK) {
                         _view.showApiMsg(res);
                     }
                     _clearSales();
+                } else {
+                    sound = _model.sounds.failure;
                 }
-
-                if (audio) {
-                    new Audio(audio).play();
-                }
-
+                _ns.playSound(sound);
             },
             _onDeposit = function() {
                 var sel = $('#sp-pos-payment-type')
@@ -235,14 +275,14 @@
 
                 _view.showApiMsg(res);
 
-                if (res.result.code === '0') {
+                if (res.result.code === _ns.ApiResultCodeEnum.OK) {
 
                     if (_api.call({
                         request: "user-notify-account-change",
                         dto: JSON.stringify({
                             key: _quickUserSelected.key
                         })
-                    }).result.code !== '0') {
+                    }).result.code !== _ns.ApiResultCodeEnum.OK) {
                         _view.showApiMsg(res);
                     }
 
@@ -272,7 +312,7 @@
                             maxResults: 20
                         })
                     });
-                    if (res.result.code === '0') {
+                    if (res.result.code === _ns.ApiResultCodeEnum.OK) {
 
                         $.each(res.dto.items, function(key, item) {
 
@@ -435,8 +475,9 @@
                             card: id
                         })
                     });
-                    if (res.result.code !== '0') {
+                    if (res.result.code !== _ns.ApiResultCodeEnum.OK) {
                         _view.message(res.result.txt);
+                        _ns.playSound(_model.sounds.failure);
                     } else {
                         _onSales(res.dto.key, res.dto.text);
                     }

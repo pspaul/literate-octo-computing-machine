@@ -148,6 +148,7 @@
 
             _view.userChartColors = [res.colors.printIn, res.colors.printOut, res.colors.pdfOut];
 
+            _model.sounds = res.sounds;
             _model.locale = res.locale;
             _model.maxIdleSeconds = res.maxIdleSeconds;
             _model.cardLocalMaxMsecs = res.cardLocalMaxMsecs;

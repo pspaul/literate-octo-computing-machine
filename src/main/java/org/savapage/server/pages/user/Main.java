@@ -232,19 +232,30 @@ public class Main extends AbstractUserPage {
 
         super(parameters);
 
+        final WebAppTypeEnum webAppType = this.getSessionWebAppType();
+        final boolean isPaymentWebApp = webAppType == WebAppTypeEnum.PAYMENT;
+
         final ConfigManager cm = ConfigManager.instance();
 
-        final String urlHelp = cm.getConfigValue(Key.WEBAPP_USER_HELP_URL);
+        // -------------------
+        final Key keyHelpUrl;
+        final Key keyHelpUrlEnable;
+        if (isPaymentWebApp) {
+            keyHelpUrl = Key.WEBAPP_PAYMENT_HELP_URL;
+            keyHelpUrlEnable = Key.WEBAPP_PAYMENT_HELP_URL_ENABLE;
+        } else {
+            keyHelpUrl = Key.WEBAPP_USER_HELP_URL;
+            keyHelpUrlEnable = Key.WEBAPP_USER_HELP_URL_ENABLE;
+        }
+        final String urlHelp = cm.getConfigValue(keyHelpUrl);
         final boolean hasHelpURL = StringUtils.isNotBlank(urlHelp)
-                && cm.isConfigValue(Key.WEBAPP_USER_HELP_URL_ENABLE);
+                && cm.isConfigValue(keyHelpUrlEnable);
 
+        // -------------------
         final MarkupHelper helper = new MarkupHelper(this);
 
         final SpSession session = SpSession.get();
         final UserIdDto userIdDto = session.getUserIdDto();
-
-        final WebAppTypeEnum webAppType = this.getSessionWebAppType();
-        final boolean isPaymentWebApp = webAppType == WebAppTypeEnum.PAYMENT;
 
         final Set<NavButtonEnum> buttonPrivileged =
                 this.getNavButtonPriv(userIdDto);
@@ -267,7 +278,7 @@ public class Main extends AbstractUserPage {
             buttonSubstCandidates.add(NavButtonEnum.TICKET_QUEUE);
         }
 
-        if (hasHelpURL) {
+        if (hasHelpURL && !isPaymentWebApp) {
             buttonSubstCandidatesFill.add(NavButtonEnum.HELP);
         }
 
@@ -276,7 +287,7 @@ public class Main extends AbstractUserPage {
                 helper.addTransparant("thumbnail-viewport");
 
         if (isPaymentWebApp) {
-            this.populateNavBarWebAppPayment();
+            this.populateNavBarWebAppPayment(hasHelpURL);
             MarkupHelper.appendComponentAttr(cmpTnViewport,
                     MarkupHelper.ATTR_CLASS, MarkupHelper.CSS_INVISIBLE);
         } else {
@@ -294,7 +305,9 @@ public class Main extends AbstractUserPage {
         add(new CommunityStatusFooterPanel("community-status-footer-panel",
                 false));
 
-        addVisible(cm.isConfigValue(Key.WEBAPP_USER_GDPR_ENABLE),
+        addVisible(
+                !isPaymentWebApp
+                        && cm.isConfigValue(Key.WEBAPP_USER_GDPR_ENABLE),
                 "btn-txt-gdpr", "GDPR");
 
         //
@@ -323,10 +336,13 @@ public class Main extends AbstractUserPage {
                 PrintOutNounEnum.JOB.uiText(getLocale(), true).toLowerCase(),
                 HtmlButtonEnum.DOTTED_SUFFIX));
 
-        helper.addTransparentWithAttrTitle("button-mini-media-sources-info",
-                PROXY_PRINT_SERVICE.localizePrinterOpt(getLocale(),
-                        IppDictJobTemplateAttr.ATTR_MEDIA));
-
+        if (isPaymentWebApp) {
+            helper.discloseLabel("button-mini-media-sources-info");
+        } else {
+            helper.addTransparentWithAttrTitle("button-mini-media-sources-info",
+                    PROXY_PRINT_SERVICE.localizePrinterOpt(getLocale(),
+                            IppDictJobTemplateAttr.ATTR_MEDIA));
+        }
         helper.addTransparentWithAttrTitle("button-mini-count-overlays",
                 String.format("%s (%s)",
                         AdjectiveEnum.EDITED.uiText(getLocale()),
@@ -391,11 +407,19 @@ public class Main extends AbstractUserPage {
                     StringUtils.defaultIfBlank(userIdDto.getFullName(), userId);
         }
 
-        final boolean showUserBalance = ACCESS_CONTROL_SERVICE.hasPermission(
-                userIdDto, ACLOidEnum.U_FINANCIAL, ACLPermissionEnum.READER);
+        final boolean showUserBalance;
+        final boolean showUserBalancePaperCut;
 
-        final boolean showUserBalancePaperCut = showUserBalance
-                && UserAccountContextFactory.hasContextPaperCut();
+        if (isPaymentWebApp) {
+            showUserBalancePaperCut =
+                    UserAccountContextFactory.hasContextPaperCut();
+            showUserBalance = !showUserBalancePaperCut;
+        } else {
+            showUserBalance = ACCESS_CONTROL_SERVICE.hasPermission(userIdDto,
+                    ACLOidEnum.U_FINANCIAL, ACLPermissionEnum.READER);
+            showUserBalancePaperCut = showUserBalance
+                    && UserAccountContextFactory.hasContextPaperCut();
+        }
 
         helper.encloseLabel("mini-user-balance", "", showUserBalance);
         if (showUserBalance) {
@@ -870,8 +894,11 @@ public class Main extends AbstractUserPage {
 
     /**
      * Populates the central navigation bar for {@link WebAppTypeEnum#PAYMENT}.
+     * 
+     * @param hasHelpURL
+     *            If Help URL is available.
      */
-    private void populateNavBarWebAppPayment() {
+    private void populateNavBarWebAppPayment(final boolean hasHelpURL) {
 
         // ----------------------------------------------------------
         // Row 1
@@ -881,7 +908,11 @@ public class Main extends AbstractUserPage {
         final Set<NavButtonEnum> buttonCandidatesFill = new HashSet<>();
 
         buttonCandidatesFill.add(NavButtonEnum.PAYMENT);
-        buttonCandidatesFill.add(NavButtonEnum.ABOUT);
+        if (hasHelpURL) {
+            buttonCandidatesFill.add(NavButtonEnum.HELP);
+        } else {
+            buttonCandidatesFill.add(NavButtonEnum.ABOUT);
+        }
 
         final int nFill = buttonCandidatesFill.size();
         for (int i = 0; i < nFill; i++) {
