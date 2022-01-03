@@ -28,6 +28,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.services.helpers.ThirdPartyEnum;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
@@ -70,6 +71,11 @@ public class PagePrinter extends AbstractAdminPage {
 
         helper.addLabel("printer-journal", NounEnum.JOURNAL);
         helper.addLabel("journal-disabled", AdverbEnum.DISABLED);
+
+        helper.addLabel("printer-papercut-front-end",
+                ThirdPartyEnum.PAPERCUT.getUiText().concat(" front-end"));
+        helper.addLabel("papercut-front-end-enabled", AdverbEnum.ENABLED);
+
     }
 
 }

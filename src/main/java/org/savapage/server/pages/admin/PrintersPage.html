@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -45,7 +45,12 @@ the License, or (at your option) any later version.
 				<wicket:enclosure child="cups-printer-class-members"> (<span
 						class="sp-txt-wrap" wicket:id="cups-printer-class-members" />)
 				</wicket:enclosure>
-				&bull; <span class="sp-txt-wrap" wicket:id="deviceUri" />
+				&bull;
+				<wicket:enclosure child="papercutFrontEndImg">
+                    &nbsp;<img wicket:id="papercutFrontEndImg" src=""
+						height="12" style="margin-bottom: -2px;" />
+				</wicket:enclosure>
+				<span class="sp-txt-wrap" wicket:id="deviceUri" />
 				<wicket:enclosure child="driver">
             &bull; <span class="sp-txt-wrap sp-txt-info"
 						wicket:id="driver" />

@@ -1363,6 +1363,10 @@
             _view.visible($('#printer-journal-disabled-li'), _model.editPrinter.journalDisabled != null);
             _view.checkCb('#printer-journal-disabled', _model.editPrinter.journalDisabled);
 
+            // check null && undefined
+            _view.visible($('#printer-papercut-front-end-enabled-li'), _model.editPrinter.papercutFrontEnd != null);
+            _view.checkCb('#printer-papercut-front-end-enabled', _model.editPrinter.papercutFrontEnd);
+
             _view.checkCb('#printer-internal', _model.editPrinter.internal);
             _view.checkCb('#printer-deleted', _model.editPrinter.deleted);
 

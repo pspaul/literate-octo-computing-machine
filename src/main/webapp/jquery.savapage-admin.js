@@ -1350,8 +1350,7 @@
         };
 
         _view.pages.printer.onSavePrinter = function() {
-            var sel,
-                res;
+            var sel, res;
 
             _model.editPrinter.displayName = $('#printer-displayname').val();
             _model.editPrinter.location = $('#printer-location').val();
@@ -1360,6 +1359,7 @@
             _model.editPrinter.disabled = $('#printer-disabled').is(':checked');
             _model.editPrinter.archiveDisabled = $('#printer-archive-disabled').is(':checked');
             _model.editPrinter.journalDisabled = $('#printer-journal-disabled').is(':checked');
+            _model.editPrinter.papercutFrontEnd = $('#printer-papercut-front-end-enabled').is(':checked');
             _model.editPrinter.internal = $('#printer-internal').is(':checked');
             _model.editPrinter.deleted = $('#printer-deleted').is(':checked');
             _model.editPrinter.jobTicket = $('#printer-jobticket').is(':checked');

@@ -620,19 +620,26 @@ public final class PrintersPage extends AbstractAdminListPage {
             String deviceUriText = "";
             String deviceUriImgUrl = null;
 
+            final boolean isPaperCutManagedPrinter;
             final int nCupsClassMembers;
-            if (cupsPrinter != null) {
+
+            if (cupsPrinter == null) {
+                nCupsClassMembers = 0;
+                isPaperCutManagedPrinter = false;
+            } else {
                 final URI deviceUri = cupsPrinter.getDeviceUri();
-                if (deviceUri != null) {
+                if (deviceUri == null) {
+                    isPaperCutManagedPrinter = false;
+                } else {
+                    isPaperCutManagedPrinter =
+                            PaperCutHelper.isPaperCutPrinter(deviceUri);
                     deviceUriText = deviceUri.toString();
-                    if (PaperCutHelper.isPaperCutPrinter(deviceUri)) {
+                    if (isPaperCutManagedPrinter) {
                         deviceUriImgUrl = WebApp.getThirdPartyEnumImgUrl(
                                 ThirdPartyEnum.PAPERCUT);
                     }
                 }
                 nCupsClassMembers = cupsPrinter.getCupsClassMembers();
-            } else {
-                nCupsClassMembers = 0;
             }
 
             item.add(new Label("deviceUri", deviceUriText));
@@ -729,6 +736,19 @@ public final class PrintersPage extends AbstractAdminListPage {
                 item.add(new PrinterSnmpPanel("printer-snmp", printerID,
                         snmpDate, snmpDto, false));
             }
+
+            //
+            final boolean isPaperCutFrontEnd = !isPaperCutManagedPrinter
+                    && ConfigManager.instance().isConfigValue(
+                            Key.PROXY_PRINT_DELEGATE_PAPERCUT_FRONTEND_ENABLE)
+                    && PRINTER_ATTR_DAO.isPaperCutFrontEnd(attrLookup);
+            labelWrk = createVisibleLabel(isPaperCutFrontEnd,
+                    "papercutFrontEndImg", "");
+            if (isPaperCutFrontEnd) {
+                labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_SRC, WebApp
+                        .getThirdPartyEnumImgUrl(ThirdPartyEnum.PAPERCUT)));
+            }
+            item.add(labelWrk);
 
             //
             final boolean isInternal =
