@@ -271,6 +271,8 @@ public final class Options extends AbstractAdminPage {
          */
         labelledCheckbox("user-auth-mode-name-pw",
                 IConfigProp.Key.AUTH_MODE_NAME);
+        labelledCheckbox("user-auth-mode-email-pw",
+                IConfigProp.Key.AUTH_MODE_EMAIL);
         labelledCheckbox("user-auth-mode-id-number",
                 IConfigProp.Key.AUTH_MODE_ID);
         labelledCheckbox("user-auth-mode-card-local",
@@ -281,6 +283,11 @@ public final class Options extends AbstractAdminPage {
         //
         labelledCheckbox("user-auth-mode-name-pw-dialog",
                 IConfigProp.Key.AUTH_MODE_NAME_SHOW);
+        //
+        add(new Label("user-auth-mode-email-pw-prompt",
+                NounEnum.EMAIL.uiText(getLocale())));
+        labelledCheckbox("user-auth-mode-email-pw-dialog",
+                IConfigProp.Key.AUTH_MODE_EMAIL_SHOW);
         //
         labelledCheckbox("user-auth-mode-yubikey-dialog",
                 IConfigProp.Key.AUTH_MODE_YUBIKEY_SHOW);
@@ -332,6 +339,10 @@ public final class Options extends AbstractAdminPage {
         labelledRadio("user-auth-mode-default", "-user",
                 IConfigProp.Key.AUTH_MODE_DEFAULT,
                 IConfigProp.AUTH_MODE_V_NAME);
+
+        labelledRadio("user-auth-mode-default", "-email",
+                IConfigProp.Key.AUTH_MODE_DEFAULT,
+                IConfigProp.AUTH_MODE_V_EMAIL);
 
         labelledRadio("user-auth-mode-default", "-number",
                 IConfigProp.Key.AUTH_MODE_DEFAULT, IConfigProp.AUTH_MODE_V_ID);

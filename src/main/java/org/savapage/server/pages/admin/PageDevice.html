@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -189,6 +189,10 @@ the License, or (at your option) any later version.
 				<input type="checkbox" id="" value="0"
 					wicket:id="user-auth-mode-name" />
 
+				<label for="" wicket:id="user-auth-mode-email-label" />
+				<input type="checkbox" id="" value="0"
+					wicket:id="user-auth-mode-email" />
+
 				<label for="" wicket:id="user-auth-mode-id-label" />
 				<input type="checkbox" id="" value="0" wicket:id="user-auth-mode-id" />
 
@@ -276,6 +280,10 @@ the License, or (at your option) any later version.
 				<input type="radio" name="" id=""
 					wicket:id="user-auth-mode-default-user" />
 
+				<label for="" wicket:id="user-auth-mode-default-email-label" />
+				<input type="radio" name="" id=""
+					wicket:id="user-auth-mode-default-email" />
+
 				<label for="" wicket:id="user-auth-mode-default-id-label" />
 				<input type="radio" name="" id=""
 					wicket:id="user-auth-mode-default-id" />
@@ -345,7 +353,8 @@ the License, or (at your option) any later version.
 
 		<a href="#" data-rel="back" data-direction="reverse"
 			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"
-			id="button-cancel-device"> <wicket:message key="button-cancel" />
+			id="button-cancel-device">
+			<wicket:message key="button-cancel" />
 		</a>
 	</div>
 

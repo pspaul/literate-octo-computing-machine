@@ -931,18 +931,25 @@
         onAuthModeLocalEnabled: function() {
             var _view = _ns.PanelCommon.view,
                 userPw = _view.isCbChecked($("#auth-mode\\.name")),
+                emailPw = _view.isCbChecked($("#auth-mode\\.email")),
                 idNumber = _view.isCbChecked($("#auth-mode\\.id")),
                 cardNumber = _view.isCbChecked($("#auth-mode\\.card-local")),
                 yubikey = _view.isCbChecked($("#auth-mode\\.yubikey")),
                 nMode = 0;
 
             $('#auth-mode-default-user').checkboxradio(userPw ? 'enable' : 'disable');
+            $('#auth-mode-default-email').checkboxradio(emailPw ? 'enable' : 'disable');
             $('#auth-mode-default-number').checkboxradio(idNumber ? 'enable' : 'disable');
             $('#auth-mode-default-card').checkboxradio(cardNumber ? 'enable' : 'disable');
             $('#auth-mode-default-yubikey').checkboxradio(yubikey ? 'enable' : 'disable');
 
             _view.visible($('#group-user-auth-mode-name-pw'), userPw);
             if (userPw) {
+                nMode++;
+            }
+
+            _view.visible($('#group-user-auth-mode-email-pw'), emailPw);
+            if (emailPw) {
                 nMode++;
             }
 

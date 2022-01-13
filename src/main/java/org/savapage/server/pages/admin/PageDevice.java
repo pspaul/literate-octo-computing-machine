@@ -64,6 +64,8 @@ public final class PageDevice extends AbstractAdminPage {
         //
         helper.labelledCheckbox("user-auth-mode-name",
                 DeviceAttrEnum.AUTH_MODE_NAME.getDbName(), false);
+        helper.labelledCheckbox("user-auth-mode-email",
+                DeviceAttrEnum.AUTH_MODE_EMAIL.getDbName(), false);
         helper.labelledCheckbox("user-auth-mode-id",
                 DeviceAttrEnum.AUTH_MODE_ID.getDbName(), false);
         helper.labelledCheckbox("user-auth-mode-card-local",
@@ -122,8 +124,10 @@ public final class PageDevice extends AbstractAdminPage {
 
         labelledRadio(wicketIdBase, "-user", attrName,
                 IConfigProp.AUTH_MODE_V_NAME, false);
-        labelledRadio(wicketIdBase, "-id", attrName, IConfigProp.AUTH_MODE_V_ID,
-                false);
+        labelledRadio(wicketIdBase, "-email", attrName,
+                IConfigProp.AUTH_MODE_V_EMAIL, false);
+        labelledRadio(wicketIdBase, "-id", attrName, //
+                IConfigProp.AUTH_MODE_V_ID, false);
         labelledRadio(wicketIdBase, "-card-local", attrName,
                 IConfigProp.AUTH_MODE_V_CARD_LOCAL, false);
         labelledRadio(wicketIdBase, "-card-network", attrName,

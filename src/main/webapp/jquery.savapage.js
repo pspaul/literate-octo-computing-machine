@@ -1753,6 +1753,7 @@
             _onLogin,
             _onShow,
             _authName,
+            _authEmail,
             _authId,
             _authCardLocal,
             _authCardIp,
@@ -1761,6 +1762,7 @@
             _authCardSelfAssoc,
 
             _ID_MODE_NAME = '#sp-div-login-name',
+            _ID_MODE_EMAIL = '#sp-div-login-email',
             _ID_MODE_ID = '#sp-div-login-number',
             _ID_MODE_YUBIKEY = '#sp-div-login-yubikey',
             _ID_MODE_CARD_LOCAL = '#sp-div-login-card-local',
@@ -1769,11 +1771,14 @@
             _ID_MODE_TOTP = '#sp-div-login-totp',
 
             _ID_BTN_MODE_NAME = '#sp-btn-login-mode-name',
+            _ID_BTN_MODE_EMAIL = '#sp-btn-login-mode-email',
             _ID_BTN_MODE_ID = '#sp-btn-login-mode-id',
             _ID_BTN_MODE_YUBIKEY = '#sp-btn-login-mode-yubikey',
             _ID_BTN_MODE_CARD_LOCAL = '#sp-btn-login-mode-card-local',
             _ID_BTN_MODE_CARD_IP = '#sp-btn-login-mode-card-ip',
+
             _ID_BTN_LOGIN_NAME = '#sp-btn-login-name',
+            _ID_BTN_LOGIN_EMAIL = '#sp-btn-login-email',
             _ID_BTN_LOGIN_ID = '#sp-btn-login-number',
             _ID_BTN_LOGIN_YUBIKEY = '#sp-btn-login-yubikey',
             _ID_BTN_LOGIN_CARD_LOCAL = '#sp-btn-login-card-local',
@@ -1859,14 +1864,13 @@
         };
 
         /**
-         * Sets the authentication mode and adapts the visibility of the
-         * dialog.
-         *
-         * Example: pages.login.setAuthMode(true, true, true,
-         * _view.AUTH_MODE_NAME);
+         * Sets the authentication mode and adapts the visibility of the dialog.
          */
-        _self.setAuthMode = function(authName, authId, authYubiKey, authCardLocal, authCardIp, modeDefault, authCardPinReq, authCardSelfAssoc, yubikeyMaxMsecs, cardLocalMaxMsecs, cardAssocMaxSecs) {
+        _self.setAuthMode = function(authName, authEmail, authId, authYubiKey,
+            authCardLocal, authCardIp, modeDefault, authCardPinReq, authCardSelfAssoc,
+            yubikeyMaxMsecs, cardLocalMaxMsecs, cardAssocMaxSecs) {
             _authName = authName;
+            _authEmail = authEmail;
             _authId = authId;
             _authYubiKey = authYubiKey;
             _authCardLocal = authCardLocal;
@@ -1952,6 +1956,7 @@
             _modeSelected = modeSelected;
 
             $(_ID_MODE_NAME).hide();
+            $(_ID_MODE_EMAIL).hide();
             $(_ID_MODE_ID).hide();
             $(_ID_MODE_YUBIKEY).hide();
             $(_ID_MODE_CARD_LOCAL).hide();
@@ -1960,6 +1965,7 @@
             $(_ID_MODE_TOTP).hide();
 
             $(_ID_BTN_MODE_NAME).hide();
+            $(_ID_BTN_MODE_EMAIL).hide();
             $(_ID_BTN_MODE_ID).hide();
             $(_ID_BTN_MODE_YUBIKEY).hide();
             $(_ID_BTN_MODE_CARD_LOCAL).hide();
@@ -1970,6 +1976,9 @@
                 $(_ID_MODE_NAME).show();
                 $(_ID_BTN_MODE_NAME).hide();
 
+                if (_authEmail) {
+                    $(_ID_BTN_MODE_EMAIL).show();
+                }
                 if (_authId) {
                     $(_ID_BTN_MODE_ID).show();
                 }
@@ -1985,6 +1994,29 @@
 
                 $('#sp-login-user-name').focus();
 
+            } else if (modeSelected === _view.AUTH_MODE_EMAIL) {
+
+                $(_ID_MODE_EMAIL).show();
+                $(_ID_BTN_MODE_EMAIL).hide();
+
+                if (_authId) {
+                    $(_ID_BTN_MODE_ID).show();
+                }
+                if (_authYubiKey) {
+                    $(_ID_BTN_MODE_YUBIKEY).show();
+                }
+                if (_authName) {
+                    $(_ID_BTN_MODE_NAME).show();
+                }
+                if (_authCardLocal) {
+                    $(_ID_BTN_MODE_CARD_LOCAL).show();
+                }
+                if (_authCardIp) {
+                    $(_ID_BTN_MODE_CARD_IP).show();
+                }
+
+                $('#sp-login-email').focus();
+
             } else if (modeSelected === _view.AUTH_MODE_ID) {
 
                 $(_ID_MODE_ID).show();
@@ -1995,6 +2027,9 @@
                 }
                 if (_authName) {
                     $(_ID_BTN_MODE_NAME).show();
+                }
+                if (_authEmail) {
+                    $(_ID_BTN_MODE_EMAIL).show();
                 }
                 if (_authCardLocal) {
                     $(_ID_BTN_MODE_CARD_LOCAL).show();
@@ -2012,6 +2047,9 @@
 
                 if (_authName) {
                     $(_ID_BTN_MODE_NAME).show();
+                }
+                if (_authEmail) {
+                    $(_ID_BTN_MODE_EMAIL).show();
                 }
                 if (_authId) {
                     $(_ID_BTN_MODE_ID).show();
@@ -2040,6 +2078,9 @@
 
                 if (_authName) {
                     $(_ID_BTN_MODE_NAME).show();
+                }
+                if (_authEmail) {
+                    $(_ID_BTN_MODE_EMAIL).show();
                 }
                 if (_authId) {
                     $(_ID_BTN_MODE_ID).show();
@@ -2071,6 +2112,9 @@
                 if (_authName) {
                     $(_ID_BTN_MODE_NAME).show();
                 }
+                if (_authEmail) {
+                    $(_ID_BTN_MODE_EMAIL).show();
+                }
                 if (_authId) {
                     $(_ID_BTN_MODE_ID).show();
                 }
@@ -2082,7 +2126,6 @@
                 }
                 $('#sp-login-card-ip-pin-group').hide();
                 $('#sp-login-card-ip-number-group').show();
-
             }
 
             if (modeSelected === _view.AUTH_MODE_TOTP) {
@@ -2118,6 +2161,9 @@
             if (_authName) {
                 nMethods++;
             }
+            if (_authEmail) {
+                nMethods++;
+            }
             if (_authId) {
                 nMethods++;
             }
@@ -2150,6 +2196,8 @@
                 if (key === 13) {
                     if (_modeSelected === _view.AUTH_MODE_NAME) {
                         selClick = $(_ID_BTN_LOGIN_NAME);
+                    } else if (_modeSelected === _view.AUTH_MODE_EMAIL) {
+                        selClick = $(_ID_BTN_LOGIN_EMAIL);
                     } else if (_modeSelected === _view.AUTH_MODE_ID) {
                         selClick = $(_ID_BTN_LOGIN_ID);
                     } else if (_modeSelected === _view.AUTH_MODE_CARD_LOCAL) {
@@ -2268,6 +2316,27 @@
                 });
 
                 $("#sp-login-user-name").focus(function() {
+                    // Select input field contents
+                    $(this).select();
+                });
+            }
+
+            if (_authEmail) {
+
+                $(_ID_BTN_MODE_EMAIL).click(function() {
+                    _onAuthModeSelect(_view.AUTH_MODE_EMAIL);
+                    return false;
+                });
+
+                $(_ID_BTN_LOGIN_EMAIL).click(function() {
+                    var sel = $('#sp-login-email-password'),
+                        pw = sel.val();
+                    sel.val('');
+                    _onLogin(_view.AUTH_MODE_EMAIL, $('#sp-login-email').val(), pw);
+                    return false;
+                });
+
+                $("#sp-login-email").focus(function() {
                     // Select input field contents
                     $(this).select();
                 });
@@ -2470,8 +2539,7 @@
 
         }).on('pagebeforeshow', function(event, ui) {
 
-            _onAuthModeSelect(_authModeDefault);
-
+            _onAuthModeSelect(_modeSelected || _authModeDefault);
             _onShow(event, ui);
 
             // Pick up URL parameters
@@ -2496,6 +2564,7 @@
          * AUTH Modes used for login. See UserAuthModeEnum in Java code.
          */
         this.AUTH_MODE_NAME = 'name';
+        this.AUTH_MODE_EMAIL = 'email';
         this.AUTH_MODE_ID = 'id';
         this.AUTH_MODE_CARD_LOCAL = 'nfc-local';
         this.AUTH_MODE_CARD_IP = 'nfc-network';

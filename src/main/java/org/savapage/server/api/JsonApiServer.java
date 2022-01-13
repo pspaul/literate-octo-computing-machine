@@ -3979,6 +3979,7 @@ public final class JsonApiServer extends AbstractPage {
                 webAppType, InetUtils.isPublicAddress(remoteAddr));
 
         userData.put("authName", userAuth.isVisibleAuthName());
+        userData.put("authEmail", userAuth.isVisibleAuthEmail());
         userData.put("authId", userAuth.isVisibleAuthId());
         userData.put("authCardLocal", userAuth.isVisibleAuthCardLocal());
         userData.put("authCardIp", userAuth.isVisibleAuthCardIp());

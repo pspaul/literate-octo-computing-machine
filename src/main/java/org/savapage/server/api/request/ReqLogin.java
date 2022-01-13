@@ -77,6 +77,7 @@ import org.savapage.core.users.InternalUserAuthenticator;
 import org.savapage.core.users.conf.UserAliasList;
 import org.savapage.core.util.AppLogHelper;
 import org.savapage.core.util.DateUtil;
+import org.savapage.core.util.EmailValidator;
 import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.Messages;
 import org.savapage.server.WebApp;
@@ -205,6 +206,11 @@ public final class ReqLogin extends ApiRequestMixin {
         }
 
         MemberCard.instance().recalcStatus(new Date());
+
+        // Sanitize.
+        if (authMode == UserAuthModeEnum.EMAIL) {
+            dtoReq.setAuthId(dtoReq.getAuthId().trim());
+        }
 
         reqLogin(authMode, dtoReq.getAuthId(), dtoReq.getAuthPw(),
                 dtoReq.getAuthToken(), dtoReq.getAssocCardNumber(),
@@ -523,10 +529,17 @@ public final class ReqLogin extends ApiRequestMixin {
             final String authPw, final String assocCardNumber,
             final WebAppTypeEnum webAppType) throws IOException {
 
-        /*
-         * INVARIANT: Password can NOT be empty in Name authentication.
-         */
-        if (authMode == UserAuthModeEnum.NAME && StringUtils.isBlank(authPw)) {
+        // INVARIANT: Password can NOT be empty in Name authentication.
+        if ((authMode == UserAuthModeEnum.NAME
+                || authMode == UserAuthModeEnum.EMAIL)
+                && StringUtils.isBlank(authPw)) {
+            this.onLoginFailed(null);
+            return;
+        }
+
+        // INVARIANT: valid email address.
+        if (authMode == UserAuthModeEnum.EMAIL
+                && !EmailValidator.validate(authId)) {
             this.onLoginFailed(null);
             return;
         }
@@ -548,11 +561,7 @@ public final class ReqLogin extends ApiRequestMixin {
             }
         }
 
-        /*
-         *
-         */
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
-
         final ConfigManager cm = ConfigManager.instance();
 
         final IExternalUserAuthenticator userAuthenticator =
@@ -684,6 +693,19 @@ public final class ReqLogin extends ApiRequestMixin {
                         userDb = null;
                     }
                 }
+
+            } else if (authMode == UserAuthModeEnum.EMAIL) {
+
+                userDb = USER_SERVICE.findActiveUserByEmail(authId);
+                /*
+                 * INVARIANT: User MUST be present in database.
+                 */
+                if (userDb == null) {
+                    this.onLoginFailed("msg-login-failed",
+                            webAppType.getUiText(), authId, remoteAddr);
+                    return;
+                }
+                uid = userDb.getUserId();
 
             } else if (authMode == UserAuthModeEnum.ID) {
 
@@ -889,8 +911,11 @@ public final class ReqLogin extends ApiRequestMixin {
              */
             if (authMode == UserAuthModeEnum.YUBIKEY
                     || authMode == UserAuthModeEnum.OAUTH) {
+
                 // no code intended
-            } else if (authMode == UserAuthModeEnum.NAME) {
+
+            } else if (authMode == UserAuthModeEnum.NAME
+                    || authMode == UserAuthModeEnum.EMAIL) {
 
                 if (isInternalUser) {
 
@@ -930,10 +955,10 @@ public final class ReqLogin extends ApiRequestMixin {
                         return;
                     }
 
-                    /**
-                     * Lazy user insert.
+                    /*
+                     * Lazy user insert for NAME authentication only.
                      */
-                    if (userDb == null) {
+                    if (userDb == null && authMode == UserAuthModeEnum.NAME) {
 
                         boolean lazyInsert = false;
 

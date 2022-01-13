@@ -219,7 +219,10 @@
             _model.maxIdleSeconds = res.maxIdleSeconds;
 
             // NOTE: authCardSelfAssoc is DISABLED
-            _view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, null, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
+            _view.pages.login.setAuthMode(res.authName, res.authEmail, res.authId,
+                res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault,
+                res.authCardPinReq, null, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs,
+                res.cardAssocMaxSecs);
 
             // Configures CometD (without starting it)
             _cometd.configure(res.cometdMaxNetworkDelay);
@@ -730,15 +733,11 @@
         _view.pages.admin.onApplyUserAuthModeLocal = function() {
             var props = {};
             _fillConfigPropsYN(props, ['web-login.authtoken.enable',
-                //
                 'auth-mode.name', 'auth-mode.name.show',
-                //
+                'auth-mode.email', 'auth-mode.email.show',
                 'auth-mode.id', 'auth-mode.id.show', 'auth-mode.id.is-masked', 'auth-mode.id.pin-required',
-                //
                 'auth-mode.card-local', 'auth-mode.card-local.show', 'auth-mode.card.pin-required', 'auth-mode.card.self-association',
-                //
                 'auth-mode.yubikey', 'auth-mode.yubikey.show', 'user.totp.enable',
-                //
                 'user.can-change-pin', 'webapp.user.auth.trust-cliapp-auth']);
 
             _fillConfigPropsRadio(props, ['auth-mode-default', 'card.number.format', 'card.number.first-byte']);

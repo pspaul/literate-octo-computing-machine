@@ -6022,7 +6022,10 @@
 
             _model.prevMsgTime = res.systime;
 
-            _view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, res.authCardSelfAssoc, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
+            _view.pages.login.setAuthMode(res.authName, res.authEmail, res.authId,
+                res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault,
+                res.authCardPinReq, res.authCardSelfAssoc, res.yubikeyMaxMsecs,
+                res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
 
             // ProxyPrint
             _model.PRINT_SCALING_MATCH_DFLT = res.printScalingMatch;

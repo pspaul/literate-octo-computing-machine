@@ -783,7 +783,9 @@
             _PROXY_PRINT_AUTH_MODE = 'proxy-print.auth-mode',
             _WEBAPP_USER_IDLE_SECS = 'webapp.user.max-idle-secs',
             // boolean authentication attributes
-            _AUTH_ATTR_BOOLS = ['.name', '.yubikey', '.id', '.id.pin-required', '.id.is-masked', '.card-local', '.card-ip', '.card.pin-required', '.card.self-association'],
+            _AUTH_ATTR_BOOLS = ['.name', '.email', '.yubikey',
+                '.id', '.id.pin-required', '.id.is-masked',
+                '.card-local', '.card-ip', '.card.pin-required', '.card.self-association'],
             // string authentication attributes
             _AUTH_ATTR_STRINGS = [],
             _CARD_FORMAT_ATTR = ['.format', '.first-byte'],
@@ -799,6 +801,7 @@
 
         _onAuthModeEnabled = function() {
             var authUser = _view.isCbChecked($("#auth-mode\\.name")),
+                authEmail = _view.isCbChecked($("#auth-mode\\.email")),
                 authId = _view.isCbChecked($("#auth-mode\\.id")),
                 authCardLocal = _view.isCbChecked($("#auth-mode\\.card-local")),
                 authCardIp = _view.isCbChecked($("#auth-mode\\.card-ip")),
@@ -807,12 +810,17 @@
                 nMode = 0;
 
             $('#auth-mode-default-user').checkboxradio(authUser ? 'enable' : 'disable');
+            $('#auth-mode-default-email').checkboxradio(authEmail ? 'enable' : 'disable');
             $('#auth-mode-default-id').checkboxradio(authId ? 'enable' : 'disable');
             $('#auth-mode-default-card-local').checkboxradio(authCardLocal ? 'enable' : 'disable');
             $('#auth-mode-default-card-network').checkboxradio(authCardIp ? 'enable' : 'disable');
             $('#auth-mode-default-yubikey').checkboxradio(authYubikey ? 'enable' : 'disable');
 
             if (authUser) {
+                nMode++;
+            }
+
+            if (authEmail) {
                 nMode++;
             }
 

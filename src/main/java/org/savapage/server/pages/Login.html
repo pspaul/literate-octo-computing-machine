@@ -91,8 +91,8 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 						<wicket:message key="button-ok" />
 					</button>
 					<a href="#" id="sp-btn-login-card-assoc-cancel"
-						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-							key="button-cancel" />
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+						<wicket:message key="button-cancel" />
 					</a>
 				</div>
 			</div>
@@ -116,8 +116,8 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 						<wicket:message key="button-ok" />
 					</button>
 					<a href="#" id="sp-btn-login-totp-cancel"
-						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-							key="button-cancel" />
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+						<wicket:message key="button-cancel" />
 					</a>
 				</div>
 
@@ -170,6 +170,27 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 
 				<div>
 					<button id="sp-btn-login-name"
+						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
+						<wicket:message key="button-login" />
+					</button>
+				</div>
+			</div>
+
+			<div id="sp-div-login-email" style="display: none;">
+
+				<label for="sp-login-email" wicket:id="label-email-1" />
+				<input type="text" id="sp-login-email" value="" maxlength="128"
+					data-clear-btn="true" autofocus autocomplete="off"
+					autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+				<label for="sp-login-email-password">
+					<wicket:message key="label-password" />
+				</label>
+				<input type="password" id="sp-login-email-password" value=""
+					data-clear-btn="true" />
+
+				<div>
+					<button id="sp-btn-login-email"
 						class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check">
 						<wicket:message key="button-login" />
 					</button>
@@ -289,6 +310,10 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 						class="ui-btn ui-btn-inline ui-mini">
 						<span class="sp-txt-info"><wicket:message
 								key="label-user-name" /></span>
+					</button>
+					<button id="sp-btn-login-mode-email"
+						class="ui-btn ui-btn-inline ui-mini">
+						<span class="sp-txt-info" wicket:id="label-email-2" />
 					</button>
 					<button id="sp-btn-login-mode-id"
 						class="ui-btn ui-btn-inline ui-mini">

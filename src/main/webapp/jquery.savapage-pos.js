@@ -154,7 +154,10 @@
             _model.cardLocalMaxMsecs = res.cardLocalMaxMsecs;
 
             // NOTE: authCardSelfAssoc is DISABLED
-            _view.pages.login.setAuthMode(res.authName, res.authId, res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault, res.authCardPinReq, null, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs, res.cardAssocMaxSecs);
+            _view.pages.login.setAuthMode(res.authName, res.authEmail, res.authId,
+                res.authYubiKey, res.authCardLocal, res.authCardIp, res.authModeDefault,
+                res.authCardPinReq, null, res.yubikeyMaxMsecs, res.cardLocalMaxMsecs,
+                res.cardAssocMaxSecs);
 
             language = _util.getUrlParam(_ns.URL_PARM.LANGUAGE);
             if (!language) {

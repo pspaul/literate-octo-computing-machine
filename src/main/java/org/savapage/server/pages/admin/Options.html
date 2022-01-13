@@ -366,6 +366,10 @@ the License, or (at your option) any later version.
 						<input type="checkbox" id="" value="0"
 							wicket:id="user-auth-mode-name-pw" />
 
+						<label for="" wicket:id="user-auth-mode-email-pw-label" />
+						<input type="checkbox" id="" value="0"
+							wicket:id="user-auth-mode-email-pw" />
+
 						<label for="" wicket:id="user-auth-mode-id-number-label" />
 						<input type="checkbox" id="" value="0"
 							wicket:id="user-auth-mode-id-number" />
@@ -388,6 +392,15 @@ the License, or (at your option) any later version.
 							<label for="" wicket:id="user-auth-mode-name-pw-dialog-label" />
 							<input type="checkbox" id="" value="0"
 								wicket:id="user-auth-mode-name-pw-dialog" />
+						</fieldset>
+					</div>
+					<div id="group-user-auth-mode-email-pw">
+						<br />
+						<h3 wicket:id="user-auth-mode-email-pw-prompt" />
+						<fieldset data-role="controlgroup" data-type="vertical">
+							<label for="" wicket:id="user-auth-mode-email-pw-dialog-label" />
+							<input type="checkbox" id="" value="0"
+								wicket:id="user-auth-mode-email-pw-dialog" />
 						</fieldset>
 					</div>
 					<div id="group-user-auth-mode-id-number">
@@ -459,9 +472,14 @@ the License, or (at your option) any later version.
 						<div class="ui-field-contain">
 							<fieldset data-role="controlgroup" data-type="vertical"
 								class="sp-jqm-fieldset-radio">
+
 								<label for="" wicket:id="user-auth-mode-default-user-label" />
 								<input type="radio" name="" id=""
 									wicket:id="user-auth-mode-default-user" />
+
+								<label for="" wicket:id="user-auth-mode-default-email-label" />
+								<input type="radio" name="" id=""
+									wicket:id="user-auth-mode-default-email" />
 
 								<label for="" wicket:id="user-auth-mode-default-number-label" />
 								<input type="radio" name="" id=""
