@@ -1227,10 +1227,13 @@
 
         var _page = new _ns.Page(_i18n, _view, '#page-printer', 'admin/PagePrinter'),
             _self = _ns.derive(_page),
-            _onChangeJobTicket,
-            _onChangeChargeType,
-            _onBrowsePPDE,
+            _onChangeJobTicket, _onChangeChargeType, _onBrowsePPDE, _onChangePPDE,
             _showAllMediaRows;
+
+        _onChangePPDE = function(selPPDE) {
+            var val = selPPDE.val();
+            _view.visible($('#printer-ppd-ext-file-btn'), val && val.length > 0);
+        };
 
         _onChangeChargeType = function(chargeType) {
             var isSimple = (chargeType === 'SIMPLE');
@@ -1342,11 +1345,12 @@
                 return false;
             });
 
+            $(this).on('change', "#printer-ppd-ext-file", null, function(e) {
+                _onChangePPDE($(this));
+            });
+
         }).on("pagebeforeshow", function(event, ui) {
-            var accounting,
-                mediaSource,
-                ppdExtFile,
-                data;
+            var accounting, mediaSource, ppdExtFile, data;
 
             if (ui.prevPage.attr('id') === 'page-ppde-file-browser') {
                 return;
@@ -1394,6 +1398,7 @@
             // PPD ext file
             ppdExtFile.html(_view.getAdminPageHtml('PPDExtFileOptionsAddin', data)).enhanceWithin();
             _view.setSelectedValue(ppdExtFile, _model.editPrinter.ppdExtFile);
+            _onChangePPDE(ppdExtFile);
 
             /*
              * Accounting.

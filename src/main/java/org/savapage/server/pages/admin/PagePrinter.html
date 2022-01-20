@@ -80,8 +80,13 @@ the License, or (at your option) any later version.
 			</div>
 		</li>
 		<li>
-			<label id="printer-ppd-ext-file-btn" for="printer-ppd-ext-file">
+			<label for="printer-ppd-ext-file">
 				<wicket:message key="printer-ppd-ext-file" />
+				<span id="printer-ppd-ext-file-btn"
+					class="sp-tooltip-btn ui-btn ui-alt-icon 
+					ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext"
+					style="margin-right: 0px !important; display: none;"
+					title="Detail ..." />
 			</label>
 			<wicket:remove>
 				<!--   To be filled by JavaScript: see PPDExtFileOptionsAddin.java/html -->
