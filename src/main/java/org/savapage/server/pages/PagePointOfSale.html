@@ -58,8 +58,11 @@ the License, or (at your option) any later version.
 				<wicket:remove>
 					<!-- UserAccountContextEnum -->
 				</wicket:remove>
+				<wicket:remove>
+					<!-- Native <select> menu: consistent with other selects. -->
+				</wicket:remove>
 				<select id="sp-pos-sales-account" data-iconpos="right"
-					data-icon="user" data-mini="true" data-native-menu="false">
+					data-icon="user" data-mini="true" data-native-menu="true">
 					<wicket:enclosure child="sp-pos-sales-account-papercut">
 						<option wicket:id="sp-pos-sales-account-papercut" value="" />
 					</wicket:enclosure>
@@ -69,8 +72,11 @@ the License, or (at your option) any later version.
 				</select>
 
 				<wicket:enclosure child="pos-sales-location-option-select">
+					<wicket:remove>
+						<!-- Native <select> menu: consistent with other selects. -->
+					</wicket:remove>
 					<select data-mini="true" id="sp-pos-sales-location-list"
-						data-icon="location" data-native-menu="false">
+						data-icon="location" data-native-menu="true">
 						<option value="" wicket:id="pos-sales-location-option-select" />
 						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
 							<wicket:panel wicket:id="pos-sales-location-option">
@@ -81,8 +87,11 @@ the License, or (at your option) any later version.
 				</wicket:enclosure>
 
 				<wicket:enclosure child="pos-sales-shop-option-select">
+					<wicket:remove>
+						<!-- Native <select> menu because shop <option> hide/show is dependent on location. -->
+					</wicket:remove>
 					<select data-mini="true" id="sp-pos-sales-shop-list"
-						data-icon="shop" data-native-menu="false">
+						data-icon="shop" data-native-menu="true">
 						<option value="" wicket:id="pos-sales-shop-option-select" />
 						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
 							<wicket:panel wicket:id="pos-sales-shop-option">
@@ -95,7 +104,11 @@ the License, or (at your option) any later version.
 				<ul data-role="listview" data-inset="true" id="sp-a-menu">
 					<wicket:enclosure child="pos-sales-item-option-select">
 						<li>
-							<select data-mini="false" id="sp-pos-sales-item-list">
+							<wicket:remove>
+								<!-- Native <select> menu because item <option> hide/show is dependent on shop. -->
+							</wicket:remove>
+							<select id="sp-pos-sales-item-list" data-mini="false"
+								data-native-menu="true">
 								<option value="" wicket:id="pos-sales-item-option-select" />
 								<optgroup label="&#11835;&#11835;&#11835;&#11835;">
 									<wicket:panel wicket:id="pos-sales-item-option">
@@ -121,7 +134,11 @@ the License, or (at your option) any later version.
 
 					<wicket:enclosure child="pos-sales-price-option-select">
 						<li>
-							<select data-mini="false" id="sp-pos-sales-price-list">
+							<wicket:remove>
+								<!-- Native <select> menu because price <option> hide/show is dependent on item. -->
+							</wicket:remove>
+							<select id="sp-pos-sales-price-list" data-mini="false"
+								data-native-menu="true">
 								<option value="" wicket:id="pos-sales-price-option-select" />
 								<optgroup label="&#11835;&#11835;&#11835;&#11835;">
 									<wicket:panel wicket:id="pos-sales-price-option">

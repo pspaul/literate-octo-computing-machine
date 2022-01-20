@@ -152,8 +152,11 @@ the License, or (at your option) any later version.
 
 					<label data-mini="true" class="sp-txt-wrap"
 						for="sp-jobticket-domain-list" wicket:id="label-jobticket-domain" />
-
-					<select data-mini="true" id="sp-jobticket-domain-list">
+					<wicket:remove>
+						<!-- Native <select> menu: consistent with use and tag selects. -->
+					</wicket:remove>
+					<select id="sp-jobticket-domain-list" data-mini="true"
+						data-native-menu="true">
 						<option value="" wicket:id="jobticket-domain-option-select" />
 						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
 							<wicket:panel wicket:id="jobticket-domain-option">
@@ -169,8 +172,11 @@ the License, or (at your option) any later version.
 
 					<label data-mini="true" class="sp-txt-wrap"
 						for="sp-jobticket-use-list" wicket:id="label-jobticket-use" />
-
-					<select data-mini="true" id="sp-jobticket-use-list">
+					<wicket:remove>
+						<!-- Native <select> menu because use <option> hide/show is dependent on domain. -->
+					</wicket:remove>
+					<select id="sp-jobticket-use-list" data-mini="true"
+						data-native-menu="true">
 						<option value="" wicket:id="jobticket-use-option-select" />
 						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
 							<wicket:panel wicket:id="jobticket-use-option">
@@ -186,8 +192,11 @@ the License, or (at your option) any later version.
 
 					<label data-mini="true" class="sp-txt-wrap"
 						for="sp-jobticket-tag-list" wicket:id="label-jobticket-tag" />
-
-					<select data-mini="true" id="sp-jobticket-tag-list">
+					<wicket:remove>
+						<!-- Native <select> menu because tag <option> hide/show is dependent on use. -->
+					</wicket:remove>
+					<select id="sp-jobticket-tag-list" data-mini="true"
+						data-native-menu="true">
 						<option value="" wicket:id="jobticket-tag-option-select" />
 						<optgroup label="&#11835;&#11835;&#11835;&#11835;">
 							<wicket:panel wicket:id="jobticket-tag-option">

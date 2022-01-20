@@ -48,7 +48,6 @@ import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.UserService;
 import org.savapage.core.services.helpers.account.UserAccountContextEnum;
 import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.server.helpers.HtmlButtonEnum;
@@ -67,10 +66,6 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
     /** */
     private static final AccountingService ACCOUNTING_SERVICE =
             ServiceContext.getServiceFactory().getAccountingService();
-
-    /** */
-    private static final UserService USER_SERVICE =
-            ServiceContext.getServiceFactory().getUserService();
 
     /** */
     private static final String WID_TAB_SALES = "tab-sales";
@@ -323,7 +318,9 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
                     ACCOUNTING_SERVICE.getPosSalesItemsByName();
             hasItems = !posSalesItems.isEmpty();
             if (hasItems) {
-                this.addPosSalesItems(helper, hasShops, posSalesItems);
+                this.addPosSalesItems(helper, hasShops, posSalesItems,
+                        cm.getConfigInt(
+                                Key.WEBAPP_POS_SALES_LABEL_ITEMS_BUTTON_MAX));
             }
         } else {
             hasItems = false;
@@ -423,10 +420,13 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
      *            If {@code true} POS Sales Shops are present.
      * @param posSalesItems
      *            The items.
+     * @param maxRadioButtons
+     *            Max radio buttons.
      */
     private void addPosSalesItems(final MarkupHelper helper,
             final boolean hasShops,
-            final Collection<PosSalesItemDto> posSalesItems) {
+            final Collection<PosSalesItemDto> posSalesItems,
+            final int maxRadioButtons) {
 
         final List<PosSalesLabelDomainPartDto> labels = new ArrayList<>();
 
@@ -436,9 +436,7 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
             }
         }
 
-        final int posItemSelectSplit = 7;
-
-        if (posSalesItems.size() > posItemSelectSplit) {
+        if (posSalesItems.size() > maxRadioButtons) {
 
             MarkupHelper.modifyLabelAttr(
                     helper.addLabel(WID_POS_SALES_ITEM_OPTION_SELECT,
@@ -470,11 +468,13 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
      *            If {@code true} POS Sales Items are present.
      * @param posSalesPrices
      *            The prices.
+     * @param maxRadioButtons
+     *            Max radio buttons.
      */
     private void addPosSalesPrices(final MarkupHelper helper,
             final boolean hasItems,
             final Collection<PosSalesPriceDto> posSalesPrices,
-            final int posItemSelectSplit) {
+            final int maxRadioButtons) {
 
         final List<PosSalesLabelDomainPartDto> labels = new ArrayList<>();
 
@@ -484,7 +484,7 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
             }
         }
 
-        if (posSalesPrices.size() > posItemSelectSplit) {
+        if (posSalesPrices.size() > maxRadioButtons) {
 
             MarkupHelper.modifyLabelAttr(
                     helper.addLabel(WID_POS_SALES_PRICE_OPTION_SELECT,
