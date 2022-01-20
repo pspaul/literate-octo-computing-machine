@@ -158,7 +158,8 @@ public final class UserDashboardAddIn extends AbstractUserPage {
                 || ACLPermissionEnum.READER.isPresent(financialPriv)) {
             helper.addLabel(keyTitleFinancial, localized("sp-title-financial"));
             this.showFinancialDetails(helper, user, financialPriv == null
-                    || ACLPermissionEnum.EDITOR.isPresent(financialPriv));
+                    || ACLPermissionEnum.EDITOR.isPresent(financialPriv),
+                    isWebAppPayment);
         } else {
             helper.discloseLabel(keyTitleFinancial);
         }
@@ -176,7 +177,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
      */
     private void showFinancialDetails(final MarkupHelper helper,
             final org.savapage.core.jpa.User user,
-            final boolean allowFinancialTrx) {
+            final boolean allowFinancialTrx, final boolean isWebAppPayment) {
 
         final ConfigManager cm = ConfigManager.instance();
 
@@ -241,7 +242,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         // Redeem voucher?
         final Label labelVoucherRedeem = MarkupHelper.createEncloseLabel(
                 "button-voucher-redeem", localized("button-voucher"),
-                allowFinancialTrx && cm
+                allowFinancialTrx && !isWebAppPayment && cm
                         .isConfigValue(Key.FINANCIAL_USER_VOUCHERS_ENABLE));
 
         add(MarkupHelper.appendLabelAttr(labelVoucherRedeem,
