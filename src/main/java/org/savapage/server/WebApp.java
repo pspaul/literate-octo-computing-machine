@@ -78,7 +78,10 @@ import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.LocaleHelper;
 import org.savapage.core.util.Messages;
 import org.savapage.ext.oauth.OAuthProviderEnum;
+import org.savapage.ext.payment.PaymentGateway;
+import org.savapage.ext.payment.PaymentGatewayException;
 import org.savapage.ext.payment.PaymentMethodEnum;
+import org.savapage.ext.payment.bitcoin.BitcoinGateway;
 import org.savapage.lib.pgp.pdf.PdfPgpVerifyUrl;
 import org.savapage.server.api.JsonApiServer;
 import org.savapage.server.cometd.AbstractEventService;
@@ -702,6 +705,42 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
      */
     public ServerPluginManager getPluginManager() {
         return this.pluginManager;
+    }
+
+    /**
+     * @return {@code true} if Bitcoin gateway is online.
+     */
+    public boolean isBitcoinGatewayOnline() {
+
+        final BitcoinGateway plugin =
+                this.getPluginManager().getBitcoinGateway();
+
+        return plugin != null && plugin.isOnline() && plugin
+                .isCurrencySupported(ConfigManager.getAppCurrencyCode());
+    }
+
+    /**
+     * @return {@code true} if Payment gateway is online.
+     */
+    public boolean isPaymentGatewayOnline() {
+
+        int paymentMethods = 0;
+
+        try {
+            final PaymentGateway plugin =
+                    this.getPluginManager().getExternalPaymentGateway();
+
+            if (plugin != null && plugin.isOnline() && plugin
+                    .isCurrencySupported(ConfigManager.getAppCurrencyCode())) {
+                paymentMethods +=
+                        plugin.getExternalPaymentMethods().values().size();
+            }
+
+        } catch (PaymentGatewayException e) {
+            paymentMethods = 0;
+        }
+
+        return paymentMethods > 0;
     }
 
     /**

@@ -24,9 +24,13 @@
  */
 package org.savapage.server.webapp;
 
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.IConfigProp;
 import org.savapage.core.config.WebAppTypeEnum;
+import org.savapage.core.dao.enums.AppLogLevelEnum;
+import org.savapage.server.WebApp;
+import org.savapage.server.pages.MessageContent;
 
 public final class WebAppPayment extends WebAppUser {
 
@@ -40,6 +44,11 @@ public final class WebAppPayment extends WebAppUser {
      */
     public WebAppPayment(final PageParameters parameters) {
         super(parameters);
+
+        if (!WebApp.get().isPaymentGatewayOnline()) {
+            throw new RestartResponseException(new MessageContent(
+                    AppLogLevelEnum.ERROR, "No payment gateway available."));
+        }
     }
 
     @Override
