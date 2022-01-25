@@ -27,6 +27,7 @@ package org.savapage.server.api.request;
 import java.io.IOException;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -54,6 +55,8 @@ import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.crypto.CryptoUser;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.UserNumberDao;
+import org.savapage.core.dao.enums.ACLOidEnum;
+import org.savapage.core.dao.enums.ACLPermissionEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dto.AbstractDto;
@@ -457,6 +460,14 @@ public final class ReqLogin extends ApiRequestMixin {
             return;
         }
 
+        /*
+         * INVARIANT: Authenticated user must have privilege.
+         */
+        if (isApiResultOk()
+                && !this.validateWebAppUserPrivilege(authMode, webAppType)) {
+            return;
+        }
+
         getUserData().put("sessionid", session.getId());
 
         //
@@ -485,6 +496,56 @@ public final class ReqLogin extends ApiRequestMixin {
                         webAppType.toString(), session.getAuthWebAppCount());
             }
         }
+    }
+
+    /**
+     * Validates user privilege.
+     *
+     * @param authMode
+     *            The authentication mode. If {@code null} then TOTP response.
+     * @param webAppType
+     *            The {@link WebAppTypeEnum}. *
+     * @return {@code false} if non-privileged.
+     */
+    private boolean validateWebAppUserPrivilege(final UserAuthModeEnum authMode,
+            final WebAppTypeEnum webAppType) {
+        /*
+         * INVARIANT: Authenticated user must have Financial Editor rights for
+         * Payment Web App.
+         */
+        if (webAppType == WebAppTypeEnum.PAYMENT) {
+
+            final UserIdDto userIdDto = SpSession.get().getUserIdDto();
+
+            if (userIdDto != null) {
+
+                final Integer financialPriv = ACCESSCONTROL_SERVICE
+                        .getPrivileges(userIdDto, ACLOidEnum.U_FINANCIAL);
+
+                if (financialPriv != null
+                        && !ACLPermissionEnum.EDITOR.isPresent(financialPriv)) {
+
+                    final Locale localePriv = ConfigManager.getDefaultLocale();
+
+                    final String msg = this.localize(localePriv,
+                            "msg-login-non-privileged", webAppType.getUiText(),
+                            UserAuth.getUiText(authMode), userIdDto.getUserId(),
+                            String.format("%s/%s",
+                                    ACLOidEnum.U_FINANCIAL.uiText(localePriv),
+                                    ACLPermissionEnum.EDITOR
+                                            .uiText(localePriv)));
+
+                    LOGGER.warn(msg);
+                    AdminPublisher.instance().publish(PubTopicEnum.USER,
+                            PubLevelEnum.WARN, msg);
+                    this.setApiResult(ApiResultCodeEnum.ERROR,
+                            "msg-login-missing-privilege");
+
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

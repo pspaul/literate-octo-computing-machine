@@ -148,7 +148,6 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         /*
          * Financial.
          */
-
         final String keyTitleFinancial = "title-financial";
 
         final Integer financialPriv = ACCESS_CONTROL_SERVICE.getPrivileges(
@@ -174,6 +173,8 @@ public final class UserDashboardAddIn extends AbstractUserPage {
      *            The requesting user.
      * @param allowFinancialTrx
      *            {@code true} when financial transactions are allowed.
+     * @param isWebAppPayment
+     *            Payment Web All if {@code true}.
      */
     private void showFinancialDetails(final MarkupHelper helper,
             final org.savapage.core.jpa.User user,
@@ -255,7 +256,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
 
         final Label labelTransferCredit = MarkupHelper.createEncloseLabel(
                 "button-transfer-credit", localized("button-transfer-to-user"),
-                enableTransferCredit);
+                !isWebAppPayment && enableTransferCredit);
 
         add(MarkupHelper.appendLabelAttr(labelTransferCredit,
                 MarkupHelper.ATTR_TITLE,

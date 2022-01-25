@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.services.ServiceContext;
@@ -79,25 +80,28 @@ public final class UserDashboard extends AbstractUserPage {
         final MarkupHelper helper = new MarkupHelper(this);
         final ConfigManager cm = ConfigManager.instance();
 
+        final boolean isWebAppPayment =
+                this.getSessionWebAppType() == WebAppTypeEnum.PAYMENT;
+
         helper.encloseLabel("button-user-pw-dialog",
                 this.getLocalizer().getString("button-password", this),
-                canResetPassword);
+                canResetPassword && !isWebAppPayment);
 
         helper.encloseLabel("button-user-pin-dialog",
                 this.getLocalizer().getString("button-pin", this),
-                cm.isConfigValue(Key.USER_CAN_CHANGE_PIN));
+                !isWebAppPayment && cm.isConfigValue(Key.USER_CAN_CHANGE_PIN));
 
         final boolean hasUriBase = StringUtils.isNotBlank(
                 cm.getConfigValue(Key.IPP_INTERNET_PRINTER_URI_BASE));
 
         helper.encloseLabel("button-user-internet-printer-dialog",
                 this.getLocalizer().getString("button-internet-printer", this),
-                hasUriBase);
+                !isWebAppPayment && hasUriBase);
 
         helper.encloseLabel("btn-telegram", "Telegram",
-                TelegramHelper.isMessagingEnabled());
+                !isWebAppPayment && TelegramHelper.isMessagingEnabled());
         helper.encloseLabel("button-totp-dialog",
                 NounEnum.AUTHENTICATION.uiText(getLocale()),
-                TOTPHelper.isTOTPEnabled());
+                !isWebAppPayment && TOTPHelper.isTOTPEnabled());
     }
 }
