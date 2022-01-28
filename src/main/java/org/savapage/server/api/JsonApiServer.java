@@ -3323,6 +3323,8 @@ public final class JsonApiServer extends AbstractPage {
                     dto.getMethod().toString());
         }
 
+        String errMsg = null;
+
         try {
             final String comment = localize("msg-payment-gateway-comment",
                     CommunityDictEnum.SAVAPAGE.getWord(), requestingUser);
@@ -3330,8 +3332,12 @@ public final class JsonApiServer extends AbstractPage {
             final URL callbackUrl = ServerPluginManager.getCallBackUrl(plugin);
 
             final Map<String, String> urlParms = new HashMap<>();
+
             urlParms.put(WebAppParmEnum.SP_SHOW.parm(),
                     WebAppParmEnum.URL_PARM_SHOW_USER);
+
+            // Decrement so the redirect is not blocked.
+            SpSession.get().decrementAuthWebAppCount();
 
             final URL redirectUrl = ServerPluginManager
                     .getRedirectUrl(dto.getSenderUrl(), urlParms);
@@ -3355,12 +3361,17 @@ public final class JsonApiServer extends AbstractPage {
 
             final StringBuilder err = new StringBuilder();
             err.append("Communication error: ").append(e.getMessage());
-            createApiResult(userData, ApiResultCodeEnum.ERROR, "",
-                    err.toString());
+            errMsg = err.toString();
+            createApiResult(userData, ApiResultCodeEnum.ERROR, "", errMsg);
 
         } catch (PaymentGatewayException e) {
-            createApiResult(userData, ApiResultCodeEnum.ERROR, "",
-                    e.getMessage());
+            errMsg = e.getMessage();
+            createApiResult(userData, ApiResultCodeEnum.ERROR, "", errMsg);
+        }
+
+        if (errMsg != null) {
+            LOGGER.error("[{}/{}] User \"{}\": {}", dto.getGatewayId(),
+                    dto.getMethod().toString(), requestingUser, errMsg);
         }
 
         return userData;

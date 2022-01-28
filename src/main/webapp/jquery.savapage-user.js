@@ -3752,15 +3752,6 @@
             // Last, but not least!!
             _this.onCreated();
 
-            // Show initial user view.
-            if (_this.initialView === _ns.URL_PARM_SHOW_USER) {
-                _ns.Utils.asyncFoo(function() {
-                    var sel = _view.getSelPresent($('#mini-user-balance-papercut'))
-                        || _view.getSelPresent($('#mini-user-balance'));
-                    sel.click();
-                });
-            }
-
         }).on("pageshow", function(event, ui) {
             /* @2014-02-20
              *
@@ -3782,6 +3773,14 @@
              * written to response!
              */
             _this.onShow();
+
+            // Show initial user view.
+            if (_this.initialView === _ns.URL_PARM_SHOW_USER) {
+                var sel = _view.getSelPresent($('#mini-user-balance-papercut'))
+                    || _view.getSelPresent($('#mini-user-balance'));
+                sel.click();
+                _this.initialView = null;
+            }
 
         }).on('pagebeforehide', function(event, ui) {
             _this.onHide();
