@@ -159,9 +159,6 @@ public final class WebServer {
             "server.ssl.keystore-password";
 
     /** */
-    private static final String PROP_KEY_SSL_KEY_PW = "server.ssl.key-password";
-
-    /** */
     private static final String PROP_KEY_WEBAPP_CUSTOM_I18N =
             "webapp.custom.i18n";
 
@@ -803,9 +800,6 @@ public final class WebServer {
 
             InputStream istr;
 
-            /**
-             *
-             */
             final Properties propsPw = new Properties();
 
             istr = new java.io.FileInputStream(
@@ -815,9 +809,6 @@ public final class WebServer {
             ksPassword = propsPw.getProperty("password");
             istr.close();
 
-            /**
-             *
-             */
             ksLocation = serverHome + "/data/default-ssl-keystore";
 
             istr = new java.io.FileInputStream(ksLocation);
@@ -825,11 +816,7 @@ public final class WebServer {
             ks.load(istr, ksPassword.toCharArray());
             istr.close();
 
-            /**
-             *
-             */
             sslContextFactory.setKeyStore(ks);
-            sslContextFactory.setKeyManagerPassword(ksPassword);
 
         } else {
 
@@ -839,14 +826,10 @@ public final class WebServer {
             ksPassword = propsServer.getProperty(PROP_KEY_SSL_KEYSTORE_PW);
 
             final Resource keystore = Resource.newResource(ksLocation);
-
             sslContextFactory.setKeyStoreResource(keystore);
-
-            sslContextFactory.setKeyStorePassword(ksPassword);
-
-            sslContextFactory.setKeyManagerPassword(
-                    propsServer.getProperty(PROP_KEY_SSL_KEY_PW));
         }
+
+        sslContextFactory.setKeyStorePassword(ksPassword);
 
         ConfigManager.setSslCertInfo(createSslCertInfo(ksLocation, ksPassword));
 
