@@ -1190,8 +1190,14 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             } else {
                 wrappedURL.append("/");
             }
-            wrappedURL.append(
-                    StringUtils.removeStart(orgStringSrc, PATH_PARENT_SLASH));
+
+            String strippedStringSrc = orgStringSrc;
+            while (StringUtils.startsWith(strippedStringSrc,
+                    PATH_PARENT_SLASH)) {
+                strippedStringSrc = StringUtils.removeStart(strippedStringSrc,
+                        PATH_PARENT_SLASH);
+            }
+            wrappedURL.append(strippedStringSrc);
 
             newStringSrc = wrappedURL.toString();
 
