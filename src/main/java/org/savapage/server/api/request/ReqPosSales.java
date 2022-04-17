@@ -25,17 +25,22 @@
 package org.savapage.server.api.request;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.dto.AccountDisplayInfoDto;
 import org.savapage.core.dto.PosSalesDto;
 import org.savapage.core.i18n.AdjectiveEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.jpa.User;
 import org.savapage.core.json.rpc.AbstractJsonRpcMethodResponse;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.account.UserAccountContext;
 import org.savapage.core.services.helpers.account.UserAccountContextEnum;
 import org.savapage.core.services.helpers.account.UserAccountContextFactory;
 import org.savapage.ext.papercut.PaperCutServerProxy;
@@ -92,6 +97,7 @@ public final class ReqPosSales extends ApiRequestMixin {
         }
 
         final boolean isPaperCutAccount;
+        final UserAccountContext accountCtx;
 
         if (dto.getAccountContext() == UserAccountContextEnum.PAPERCUT) {
 
@@ -113,10 +119,18 @@ public final class ReqPosSales extends ApiRequestMixin {
                         "PaperCut action is not allowed.");
                 return;
             }
+            accountCtx = UserAccountContextFactory.getContextPaperCut();
         } else {
             isPaperCutAccount = false;
+            accountCtx = UserAccountContextFactory.getContextSavaPage();
         }
 
+        // INVARIANT: there must be enough balance left after the sales.
+        if (!this.checkCreditLimit(dto, accountCtx, isPaperCutAccount)) {
+            return;
+        }
+
+        // Charge POS sales.
         final AbstractJsonRpcMethodResponse rpcResponse;
 
         if (isPaperCutAccount) {
@@ -148,4 +162,74 @@ public final class ReqPosSales extends ApiRequestMixin {
         }
     }
 
+    /**
+     * Checks if there is enough balance left after the sales.
+     *
+     * @param dto
+     *            Sales.
+     * @param accountCtx
+     *            Account context.
+     * @param isPaperCutAccount
+     *            {@code true} is POS sales is charged to PaperCut account.
+     * @return {@code true} if checked OK.
+     */
+    private boolean checkCreditLimit(final PosSalesDto dto,
+            final UserAccountContext accountCtx,
+            final boolean isPaperCutAccount) {
+
+        final BigDecimal userBalance;
+        final BigDecimal userCreditLimit;
+
+        if (CONFIG_MNGR
+                .isConfigValue(Key.FINANCIAL_POS_SALES_CREDIT_LIMIT_ENABLE)) {
+
+            userBalance = accountCtx.getUserBalance(
+                    USER_DAO.findActiveUserById(dto.getUserKey()));
+            userCreditLimit = CONFIG_MNGR
+                    .getConfigBigDecimal(Key.FINANCIAL_POS_SALES_CREDIT_LIMIT);
+
+        } else {
+
+            if (isPaperCutAccount) {
+
+                // Let PaperCut apply its credit limit check.
+                userBalance = null;
+                userCreditLimit = null;
+
+            } else {
+
+                final AccountDisplayInfoDto accountInfo =
+                        ACCOUNTING_SERVICE.getAccountDisplayInfo(
+                                USER_DAO.findActiveUserById(dto.getUserKey()),
+                                Locale.ENGLISH, null);
+
+                if (accountInfo.getCreditLimit() == null) {
+                    userBalance = null;
+                    userCreditLimit = null;
+                } else {
+                    userBalance = BigDecimal.valueOf(
+                            Double.parseDouble(accountInfo.getBalance()));
+                    userCreditLimit = BigDecimal.valueOf(
+                            Double.parseDouble(accountInfo.getCreditLimit()));
+                }
+            }
+        }
+
+        // Check
+        if (userBalance != null && userCreditLimit != null) {
+
+            final BigDecimal balanceAfter =
+                    userBalance.subtract(dto.amountBigDecimal());
+
+            // Note: credit limit is a positive amount.
+            if (balanceAfter.compareTo(userCreditLimit.negate()) < 0) {
+
+                this.setApiResultText(ApiResultCodeEnum.ERROR,
+                        PhraseEnum.AMOUNT_EXCEEDS_CREDIT.uiText(getLocale(),
+                                dto.getUserId()));
+                return false;
+            }
+        }
+        return true;
+    }
 }
