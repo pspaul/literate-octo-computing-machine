@@ -61,6 +61,25 @@ public final class Reports extends AbstractAdminPage {
         helper.addLabel("report-1-totals",
                 NounEnum.TOTAL.uiText(getLocale(), true));
 
+        //
+        helper.addLabel("prompt-group-by",
+                PrepositionEnum.PER.uiText(this.getLocale()));
+
+        UserPrintOutTotalsReq.GroupBy groupByWlk;
+
+        groupByWlk = UserPrintOutTotalsReq.GroupBy.USER;
+        helper.addLabel("opt-group-by-none-label",
+                groupByWlk.uiText(this.getLocale()));
+        helper.addTransparentModifyAttr("opt-group-by-none",
+                MarkupHelper.ATTR_VALUE, groupByWlk.toString());
+
+        groupByWlk = UserPrintOutTotalsReq.GroupBy.PRINTER_USER;
+        helper.addLabel("opt-group-by-printer-label",
+                groupByWlk.uiText(this.getLocale()));
+        helper.addTransparentModifyAttr("opt-group-by-printer",
+                MarkupHelper.ATTR_VALUE, groupByWlk.toString());
+
+        //
         helper.addLabel("prompt-options",
                 NounEnum.OPTION.uiText(getLocale(), true));
 

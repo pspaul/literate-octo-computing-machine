@@ -37,8 +37,28 @@ the License, or (at your option) any later version.
 					</li>
 				</ul>
 				<ul data-role="listview" data-inset="true" data-mini="true">
-					<li data-role="list-divider" wicket:id="report-1-totals"/>
+					<li data-role="list-divider" wicket:id="report-1-totals" />
 					<li>
+						<div class="ui-field-contain">
+							<fieldset data-role="controlgroup" data-type="horizontal"
+								class="ui-mini sp-jqm-fieldset-radio">
+
+								<legend wicket:id="prompt-group-by" />
+
+								<input type="radio" name="sp-reports-user-printout-tot-group-by"
+									id="87ab8a88-d68b-11ec-952b-0394390a3c20" value=""
+									checked="checked" wicket:id="opt-group-by-none" />
+								<label for="87ab8a88-d68b-11ec-952b-0394390a3c20"
+									wicket:id="opt-group-by-none-label" />
+
+								<input type="radio" name="sp-reports-user-printout-tot-group-by"
+									id="04a2ab3e-d68c-11ec-978a-733495284676" value=""
+									wicket:id="opt-group-by-printer" />
+								<label for="04a2ab3e-d68c-11ec-978a-733495284676"
+									wicket:id="opt-group-by-printer-label" />
+							</fieldset>
+						</div>
+
 						<div class="ui-field-contain">
 							<fieldset data-role="controlgroup" data-type="horizontal"
 								class="ui-mini sp-jqm-fieldset-radio">

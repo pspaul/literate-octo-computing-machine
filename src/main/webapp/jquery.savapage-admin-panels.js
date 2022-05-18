@@ -868,6 +868,7 @@
                 this.input.userGroups = null;
             }
 
+            this.input.groupBy = _view.getRadioValue('sp-reports-user-printout-tot-group-by');
             this.input.aspect = _view.getRadioValue('sp-reports-user-printout-tot-aspect');
             this.input.pages = _view.getRadioValue('sp-reports-user-printout-tot-aspect-pages');
         },
@@ -878,7 +879,8 @@
             timeTo: null,
             userGroups: null,
             aspect: 'PAGES',
-            pages: 'SENT'
+            pages: 'SENT',
+            groupBy : 'USER'
         },
 
         onOutput: function(output) {
