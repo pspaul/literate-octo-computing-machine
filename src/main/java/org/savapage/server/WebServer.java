@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.Handler;
@@ -157,6 +158,9 @@ public final class WebServer {
     /** */
     private static final String PROP_KEY_SSL_KEYSTORE_PW =
             "server.ssl.keystore-password";
+
+    /** */
+    private static final String PROP_KEY_SSL_KEY_PW = "server.ssl.key-password";
 
     /** */
     private static final String PROP_KEY_WEBAPP_CUSTOM_I18N =
@@ -817,6 +821,7 @@ public final class WebServer {
             istr.close();
 
             sslContextFactory.setKeyStore(ks);
+            sslContextFactory.setKeyStorePassword(ksPassword);
 
         } else {
 
@@ -827,9 +832,19 @@ public final class WebServer {
 
             final Resource keystore = Resource.newResource(ksLocation);
             sslContextFactory.setKeyStoreResource(keystore);
-        }
 
-        sslContextFactory.setKeyStorePassword(ksPassword);
+            // Step 1: KeyStore password.
+            sslContextFactory.setKeyStorePassword(ksPassword);
+
+            // Step 2: KeyManager password.
+            final String kmPassword =
+                    propsServer.getProperty(PROP_KEY_SSL_KEY_PW);
+
+            if (StringUtils.isNoneBlank(kmPassword)
+                    && !StringUtils.equals(ksPassword, kmPassword)) {
+                sslContextFactory.setKeyManagerPassword(kmPassword);
+            }
+        }
 
         ConfigManager.setSslCertInfo(createSslCertInfo(ksLocation, ksPassword));
 
