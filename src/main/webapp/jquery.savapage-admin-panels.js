@@ -880,7 +880,7 @@
             userGroups: null,
             aspect: 'PAGES',
             pages: 'SENT',
-            groupBy : 'USER'
+            groupBy: 'USER'
         },
 
         onOutput: function(output) {
@@ -897,9 +897,11 @@
 
         onAuthMethodSelect: function(method) {
             var _view = _ns.PanelCommon.view,
-                isLdapMethod = method === 'ldap';
+                isLdapMethod = method === 'ldap',
+                isCustomMethod = method === 'custom';
 
             _view.visible($('.ldap-parms'), isLdapMethod);
+            _view.visible($('.custom-auth-parms'), isCustomMethod);
 
             if (method === 'none') {
                 $('.user-source-group-s').hide();

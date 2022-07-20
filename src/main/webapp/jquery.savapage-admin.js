@@ -422,6 +422,8 @@
                 _fillConfigPropsText(props, ['auth.ldap.host', 'auth.ldap.port', 'auth.ldap.basedn', 'auth.ldap.admin-dn', 'auth.ldap.admin-password', 'ldap.schema.user-id-number-field', 'ldap.schema.user-card-number-field']);
                 _fillConfigPropsYN(props, ['auth.ldap.use-ssl', 'auth.ldap.use-ssl.trust-self-signed']);
                 _fillConfigPropsRadio(props, ['ldap.user-card-number.first-byte', 'ldap.user-card-number.format']);
+            } else if (method === 'custom') {
+                _fillConfigPropsText(props, ['auth.custom.user-sync', 'auth.custom.user-auth']);
             }
             _saveConfigProps(props);
         };

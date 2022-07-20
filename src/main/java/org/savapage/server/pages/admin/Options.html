@@ -36,8 +36,20 @@ the License, or (at your option) any later version.
 								<input type="radio" name="" id="" wicket:id="auth-method-unix" />
 								<label for="" wicket:id="auth-method-ldap-label" />
 								<input type="radio" name="" id="" wicket:id="auth-method-ldap" />
+								<label for="" wicket:id="auth-method-custom-label" />
+								<input type="radio" name="" id="" wicket:id="auth-method-custom" />
 							</fieldset>
 						</div>
+					</li>
+					<li class="custom-auth-parms">
+						<label for="custom-auth-user-program"
+							wicket:id="custom-user-sync-label" />
+						<input type="text" id="custom-auth-user-program"
+							wicket:id="custom-user-sync" />
+						<label for="custom-auth-user-auth-program"
+							wicket:id="custom-user-auth-label" />
+						<input type="text" id="custom-auth-user-auth-program"
+							wicket:id="custom-user-auth" />
 					</li>
 					<li class="ldap-parms">
 						<select tabindex="-1" id="sp-ldap-schema-type"

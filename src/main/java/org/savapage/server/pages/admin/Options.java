@@ -152,6 +152,15 @@ public final class Options extends AbstractAdminPage {
                 IConfigProp.AUTH_METHOD_V_UNIX);
         labelledRadio("auth-method", "-ldap", IConfigProp.Key.AUTH_METHOD,
                 IConfigProp.AUTH_METHOD_V_LDAP);
+        labelledRadio("auth-method", "-custom", IConfigProp.Key.AUTH_METHOD,
+                IConfigProp.AUTH_METHOD_V_CUSTOM);
+
+        //
+        helper.addLabel("custom-user-sync-label", NounEnum.SYNCHRONIZATION);
+        helper.addLabel("custom-user-auth-label", NounEnum.AUTHENTICATION);
+
+        tagInput("custom-user-sync", Key.AUTH_CUSTOM_USER_SYNC);
+        tagInput("custom-user-auth", Key.AUTH_CUSTOM_USER_AUTH);
 
         //
         final String configLdapTypeName = ConfigManager.instance()
