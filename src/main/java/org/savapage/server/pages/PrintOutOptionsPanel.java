@@ -180,6 +180,7 @@ public final class PrintOutOptionsPanel extends Panel {
      *            The key from the XML resource file
      * @return The localized string.
      */
+    @SuppressWarnings("unused")
     private String localized(final String key) {
         return getLocalizer().getString(key, this);
     }

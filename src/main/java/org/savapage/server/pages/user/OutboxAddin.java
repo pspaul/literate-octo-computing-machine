@@ -950,6 +950,7 @@ public class OutboxAddin extends AbstractUserPage {
                 //
                 final String cssClassInd;
                 final String cssClassIndCups;
+                @SuppressWarnings("unused")
                 final String cssClassIndExt;
                 final String jobStateInd;
 

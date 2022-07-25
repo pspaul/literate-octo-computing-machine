@@ -127,7 +127,6 @@ public final class ReqJobTicketExec extends ApiRequestMixin {
             return mediaSource;
         }
 
-        @SuppressWarnings("unused")
         public void setMediaSource(String mediaSource) {
             this.mediaSource = mediaSource;
         }

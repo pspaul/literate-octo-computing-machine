@@ -152,7 +152,6 @@ public final class ReqLogin extends ApiRequestMixin {
             return authId;
         }
 
-        @SuppressWarnings("unused")
         public void setAuthId(String authId) {
             this.authId = authId;
         }

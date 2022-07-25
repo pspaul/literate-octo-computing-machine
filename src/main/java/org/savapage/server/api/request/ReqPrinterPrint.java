@@ -189,7 +189,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             this.calcCostMode = calcCostMode;
         }
 
-        @SuppressWarnings("unused")
         public String getUser() {
             return user;
         }
@@ -221,7 +220,6 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return jobName;
         }
 
-        @SuppressWarnings("unused")
         public void setJobName(String jobName) {
             this.jobName = jobName;
         }
@@ -242,6 +240,7 @@ public final class ReqPrinterPrint extends ApiRequestMixin {
             return landscapeView;
         }
 
+        @SuppressWarnings("unused")
         public void setLandscapeView(Boolean landscapeView) {
             this.landscapeView = landscapeView;
         }

@@ -67,6 +67,7 @@ public final class ReqJobTicketSaveCopies extends ReqJobTicketSave {
             this.copies = copies;
         }
 
+        @SuppressWarnings("unused")
         public String getAccountName() {
             return accountName;
         }

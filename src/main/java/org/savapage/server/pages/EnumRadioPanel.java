@@ -130,7 +130,7 @@ public final class EnumRadioPanel extends Panel {
 
         // //value.uiText(getLocale()));
 
-        add(new EnumRadioView("enum-values", entryList, selected, uiText,
+        add(new EnumRadioView<>("enum-values", entryList, selected, uiText,
                 htmlName));
     }
 

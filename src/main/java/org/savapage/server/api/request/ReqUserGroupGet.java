@@ -158,6 +158,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.name = name;
         }
 
+        @SuppressWarnings("unused")
         public String getFullName() {
             return fullName;
         }
@@ -175,6 +176,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.aclRoles = aclRoles;
         }
 
+        @SuppressWarnings("unused")
         public Map<ACLOidEnum, ACLPermissionEnum> getAclOidsUser() {
             return aclOidsUser;
         }
@@ -184,6 +186,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.aclOidsUser = aclOidsUser;
         }
 
+        @SuppressWarnings("unused")
         public Map<ACLOidEnum, List<ACLPermissionEnum>> getAclOidsUserReader() {
             return aclOidsUserReader;
         }
@@ -193,6 +196,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.aclOidsUserReader = aclOidsUserReader;
         }
 
+        @SuppressWarnings("unused")
         public Map<ACLOidEnum, List<ACLPermissionEnum>> getAclOidsUserEditor() {
             return aclOidsUserEditor;
         }
@@ -202,6 +206,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.aclOidsUserEditor = aclOidsUserEditor;
         }
 
+        @SuppressWarnings("unused")
         public Map<ACLOidEnum, ACLPermissionEnum> getAclOidsAdmin() {
             return aclOidsAdmin;
         }
@@ -211,6 +216,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.aclOidsAdmin = aclOidsAdmin;
         }
 
+        @SuppressWarnings("unused")
         public Map<ACLOidEnum, List<ACLPermissionEnum>>
                 getAclOidsAdminReader() {
             return aclOidsAdminReader;
@@ -221,6 +227,7 @@ public final class ReqUserGroupGet extends ApiRequestMixin {
             this.aclOidsAdminReader = aclOidsAdminReader;
         }
 
+        @SuppressWarnings("unused")
         public Map<ACLOidEnum, List<ACLPermissionEnum>>
                 getAclOidsAdminEditor() {
             return aclOidsAdminEditor;

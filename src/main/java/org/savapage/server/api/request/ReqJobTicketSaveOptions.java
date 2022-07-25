@@ -77,6 +77,7 @@ public final class ReqJobTicketSaveOptions extends ReqJobTicketSave {
             return archive;
         }
 
+        @SuppressWarnings("unused")
         public void setArchive(Boolean archive) {
             this.archive = archive;
         }

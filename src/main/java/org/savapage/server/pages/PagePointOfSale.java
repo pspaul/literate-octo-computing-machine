@@ -263,6 +263,7 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
 
         final Collection<PosSalesLocationDto> posSalesLocations;
 
+        @SuppressWarnings("unused")
         final UserIdDto userIdDto = SpSession.get().getUserIdDto();
 
         if (isPosSalesLocationsEnable) {

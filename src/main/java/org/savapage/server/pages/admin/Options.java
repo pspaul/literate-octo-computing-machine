@@ -981,6 +981,7 @@ public final class Options extends AbstractAdminPage {
      *            {@code true} when HTML value must me obfuscated.
      * @return The added {@link Label}.
      */
+    @SuppressWarnings("unused")
     private Label tagPassword(final String id, final IConfigProp.Key key,
             final boolean obfuscate) {
         if (obfuscate) {
@@ -1028,6 +1029,7 @@ public final class Options extends AbstractAdminPage {
     /**
      *
      */
+    @SuppressWarnings("unused")
     private void addCheckbox(final String wicketId, boolean checked) {
         Label labelWrk = new Label(wicketId);
         if (checked) {

@@ -120,6 +120,7 @@ public final class WebAppPdfPgp extends AbstractWebAppPage {
      * @throws PGPBaseException
      *             When PGP error.
      */
+    @SuppressWarnings("unused")
     private void handlePgpMessage(final MarkupHelper helper,
             final String pgpMessage) {
 

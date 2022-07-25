@@ -29,10 +29,8 @@ import java.text.ParseException;
 
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
-import org.savapage.core.dao.ConfigPropertyDao;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.jpa.User;
-import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.BigDecimalUtil;
 
 /**
@@ -109,9 +107,6 @@ public final class ReqConfigPropGet extends ApiRequestMixin {
 
         final DtoReq dtoReq =
                 DtoReq.create(DtoReq.class, this.getParmValueDto());
-
-        final ConfigPropertyDao dao =
-                ServiceContext.getDaoContext().getConfigPropertyDao();
 
         final ConfigManager cm = ConfigManager.instance();
 

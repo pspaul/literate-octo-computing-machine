@@ -24,6 +24,7 @@
  */
 package org.savapage.server.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1321,8 +1322,10 @@ public final class JsonApiDict {
         }
 
         try {
-            return req.handler.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return req.handler.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e) {
             throw new SpException(e.getMessage(), e);
         }
     }

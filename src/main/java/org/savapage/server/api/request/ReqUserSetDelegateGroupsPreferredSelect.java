@@ -58,6 +58,7 @@ public final class ReqUserSetDelegateGroupsPreferredSelect
             return select;
         }
 
+        @SuppressWarnings("unused")
         public void setSelect(boolean select) {
             this.select = select;
         }

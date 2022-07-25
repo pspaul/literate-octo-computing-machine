@@ -271,6 +271,7 @@ public final class Login extends AbstractPage {
 
                 final OAuthClientPlugin plugin = item.getModelObject();
 
+                @SuppressWarnings("unused")
                 final ExternalSupplierEnum supplier =
                         ServerPluginHelper.getEnum(plugin.getProvider());
 

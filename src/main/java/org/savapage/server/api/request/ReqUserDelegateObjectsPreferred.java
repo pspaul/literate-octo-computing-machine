@@ -65,7 +65,6 @@ public abstract class ReqUserDelegateObjectsPreferred extends ApiRequestMixin {
             return add;
         }
 
-        @SuppressWarnings("unused")
         public void setAdd(boolean add) {
             this.add = add;
         }

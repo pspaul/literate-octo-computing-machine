@@ -165,6 +165,7 @@ public final class RestDocumentsService implements IRestService {
     private static final String FORM_PARAM_FILE = "file";
 
     /** */
+    @SuppressWarnings("unused")
     private static final String FORM_PARAM_DESCRIPTION = "description";
 
     /** */
