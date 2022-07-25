@@ -467,10 +467,10 @@ public final class UserEventService extends AbstractEventService {
         /*
          * Mantis #328
          */
-        remote.addListener(new ServerSession.RemoveListener() {
+        remote.addListener(new ServerSession.RemovedListener() {
             @Override
             public void removed(final ServerSession session,
-                    final boolean timeout) {
+                    final ServerMessage message, final boolean timeout) {
 
                 if (!isWebAppClient) {
                     ClientAppUserAuthManager

@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class BayeuxAuthenticator extends DefaultSecurityPolicy
-        implements ServerSession.RemoveListener {
+        implements ServerSession.RemovedListener {
 
     /**
      * Name of ServerSession attribute for admin indicator: value object
@@ -169,14 +169,6 @@ public final class BayeuxAuthenticator extends DefaultSecurityPolicy
         return allow && super.canCreate(server, session, channelId, message);
     }
 
-    @Override
-    public void removed(final ServerSession session, final boolean expired) {
-        /*
-         * Unlink authentication data from the remote client
-         */
-        session.removeAttribute(SERVER_SESSION_ATTR_IS_ADMIN);
-    }
-
     /**
      * Verifies the authentication information sent by the client.
      *
@@ -232,5 +224,14 @@ public final class BayeuxAuthenticator extends DefaultSecurityPolicy
             }
         }
         return isAdmin;
+    }
+
+    @Override
+    public void removed(final ServerSession session,
+            final ServerMessage message, final boolean timeout) {
+        /*
+         * Unlink authentication data from the remote client
+         */
+        session.removeAttribute(SERVER_SESSION_ATTR_IS_ADMIN);
     }
 }

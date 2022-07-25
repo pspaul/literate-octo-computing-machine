@@ -293,10 +293,8 @@ public abstract class ApiRequestMixin implements ApiRequestHandler {
     }
 
     /**
-     * @deprecated
      * @return The response {@link Map}.
      */
-    @Deprecated
     protected final Map<String, Object> getUserData() {
         return responseMap;
     }

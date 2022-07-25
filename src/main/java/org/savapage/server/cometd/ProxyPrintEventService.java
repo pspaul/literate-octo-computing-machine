@@ -182,9 +182,10 @@ public final class ProxyPrintEventService extends AbstractEventService {
             /*
              * Mantis #328
              */
-            remote.addListener(new ServerSession.RemoveListener() {
+            remote.addListener(new ServerSession.RemovedListener() {
                 @Override
-                public void removed(ServerSession session, boolean timeout) {
+                public void removed(final ServerSession session,
+                        final ServerMessage message, final boolean timeout) {
 
                     if (!timeout) {
                         return;
