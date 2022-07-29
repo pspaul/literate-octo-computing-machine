@@ -302,6 +302,11 @@ public final class WebAppAdmin extends AbstractWebAppPage {
             private static final long serialVersionUID = 1L;
 
             @Override
+            protected boolean getStatelessHint() {
+                return true;
+            }
+
+            @Override
             protected void onSubmit(final AjaxRequestTarget target) {
 
                 if (LOGGER.isInfoEnabled()) {

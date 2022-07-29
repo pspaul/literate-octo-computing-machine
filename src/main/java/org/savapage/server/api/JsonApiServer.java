@@ -4253,7 +4253,9 @@ public final class JsonApiServer extends AbstractPage {
             locale = Locale.US;
         }
 
-        SpSession.get().setLocale(locale);
+        final SpSession session = SpSession.get();
+        session.setLocale(locale);
+        session.setHumanDetected(true);
 
         /*
          *

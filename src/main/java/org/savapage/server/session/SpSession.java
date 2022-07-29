@@ -105,6 +105,12 @@ public final class SpSession extends WebSession {
     private JobTicketSession jobTicketSession;
 
     /**
+     * {@code true} when a session attribute changed by human interaction in
+     * WebApp.
+     */
+    private boolean humanDetected = false;
+
+    /**
      *
      * @param request
      *            The {@link Request}.
@@ -350,6 +356,8 @@ public final class SpSession extends WebSession {
             setUser(null);
             setUserIdDtoDocLog(null);
             setWebAppType(WebAppTypeEnum.UNDEFINED);
+            setHumanDetected(false);
+            oneTimeAuthToken = false;
 
             decrementAuthWebAppCount();
 
@@ -429,6 +437,14 @@ public final class SpSession extends WebSession {
 
     public void setJobTicketSession(JobTicketSession jobTicketSession) {
         this.jobTicketSession = jobTicketSession;
+    }
+
+    public boolean isHumanDetected() {
+        return humanDetected;
+    }
+
+    public void setHumanDetected(boolean userInteraction) {
+        this.humanDetected = userInteraction;
     }
 
 }

@@ -729,10 +729,22 @@ public final class SystemStatusPanel extends Panel {
 
         //
         String webSessions = null;
+        final int nAuthSessions = WebApp.getAuthSessionCount();
         if (showTechInfo) {
-            webSessions = String.format("%s (%s) • id (ip)",
-                    helper.localizedNumber(WebApp.getAuthSessionCount()),
-                    helper.localizedNumber(WebApp.getAuthIpAddrCount()));
+            final long nSessions = WebApp.getSessionCount();
+            final String webSessionsExtra;
+            if (nSessions > nAuthSessions) {
+                // TODO: nSessions is not precise
+                // webSessionsExtra = String.format(" +%s",
+                // helper.localizedNumber(nSessions - nAuthSessions));
+                webSessionsExtra = "";
+            } else {
+                webSessionsExtra = "";
+            }
+            webSessions = String.format("%s (%s)%s • id (ip)",
+                    helper.localizedNumber(nAuthSessions),
+                    helper.localizedNumber(WebApp.getAuthIpAddrCount()),
+                    webSessionsExtra);
         }
         helper.encloseLabel("web-sessions", webSessions, showTechInfo);
 
@@ -824,6 +836,7 @@ public final class SystemStatusPanel extends Panel {
          */
         final StatsPageTotalPanel pageTotalPanel =
                 new StatsPageTotalPanel("stats-pages-total");
+
         add(pageTotalPanel);
         pageTotalPanel.populate();
 

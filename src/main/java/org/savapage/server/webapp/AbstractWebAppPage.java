@@ -310,7 +310,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
         final boolean isZeroPanel =
                 !parameters.get(WebAppParmEnum.SP_ZERO.parm()).isEmpty();
 
-        return !isZeroPanel && SpSession.get().getAuthWebAppCount() > 0;
+        return !isZeroPanel && SpSession.get().getAuthWebAppCount() > 1;
     }
 
     /**

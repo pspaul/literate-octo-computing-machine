@@ -305,6 +305,7 @@ public final class ReqLogin extends ApiRequestMixin {
         if (!cm.isInitialized()) {
             this.setApiResult(ApiResultCodeEnum.ERROR,
                     "msg-login-not-possible");
+            this.onSessionDenied(session);
             return;
         }
 
@@ -317,11 +318,13 @@ public final class ReqLogin extends ApiRequestMixin {
                     || authMode != UserAuthModeEnum.NAME) {
                 this.setApiResult(ApiResultCodeEnum.ERROR,
                         "msg-login-install-mode");
+                this.onSessionDenied(session);
                 return;
             }
             if (!ConfigManager.isInternalAdmin(authId)) {
                 this.setApiResult(ApiResultCodeEnum.ERROR,
                         "msg-login-as-internal-admin");
+                this.onSessionDenied(session);
                 return;
             }
         }
@@ -333,6 +336,7 @@ public final class ReqLogin extends ApiRequestMixin {
         if (cm.getSystemStatus() == SystemStatusEnum.SETUP
                 && webAppType != WebAppTypeEnum.ADMIN) {
             this.setApiResult(ApiResultCodeEnum.ERROR, "msg-login-app-config");
+            this.onSessionDenied(session);
             return;
         }
 
@@ -456,6 +460,7 @@ public final class ReqLogin extends ApiRequestMixin {
                 && session.getUserId() != null && !session.isAdmin()) {
             this.setApiResult(ApiResultCodeEnum.ERROR,
                     "msg-login-not-possible");
+            this.onSessionDenied(session);
             return;
         }
 
@@ -464,6 +469,7 @@ public final class ReqLogin extends ApiRequestMixin {
          */
         if (isApiResultOk()
                 && !this.validateWebAppUserPrivilege(authMode, webAppType)) {
+            this.onSessionDenied(session);
             return;
         }
 
@@ -494,6 +500,8 @@ public final class ReqLogin extends ApiRequestMixin {
                         session.getUserId(), session.getId(),
                         webAppType.toString(), session.getAuthWebAppCount());
             }
+        } else {
+            this.onSessionDenied(session);
         }
     }
 
@@ -1730,6 +1738,23 @@ public final class ReqLogin extends ApiRequestMixin {
 
             AdminPublisher.instance().publish(PubTopicEnum.USER,
                     PubLevelEnum.ERROR, msg);
+        }
+    }
+
+    /**
+     * Deny requested session.
+     *
+     * @param session
+     *            Requested session.
+     */
+    private void onSessionDenied(final SpSession session) {
+        /*
+         * TOTPRequest must be held in session to handle TOTPResponse. Also, any
+         * session change by human interaction (so not a crawler) must be
+         * preserved.
+         */
+        if (session.getTOTPRequest() == null && !session.isHumanDetected()) {
+            session.invalidate();
         }
     }
 

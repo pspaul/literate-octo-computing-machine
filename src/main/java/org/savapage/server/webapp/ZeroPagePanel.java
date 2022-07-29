@@ -76,6 +76,7 @@ public final class ZeroPagePanel extends Panel {
                     protected void onSubmit() {
                         // no code intended
                     }
+
                 };
 
         final AjaxButton continueButton =
@@ -117,6 +118,11 @@ public final class ZeroPagePanel extends Panel {
                     @Override
                     protected void onError(final AjaxRequestTarget target) {
                         // no code intended
+                    }
+
+                    @Override
+                    protected boolean getStatelessHint() {
+                        return true;
                     }
                 };
 

@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Session;
@@ -125,6 +126,11 @@ import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceR
  *
  */
 public final class WebApp extends WebApplication implements ServiceEntryPoint {
+
+    /**
+     * Count of all sessions authenticated or not.
+     */
+    private static AtomicLong sessionCount = new AtomicLong();
 
     /**
      * Native mount path of Apache Wicket.
@@ -549,6 +555,18 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             }
             return removed;
         }
+    }
+
+    /**
+     * Gets count of all sessions authenticated or not.
+     *
+     * NOTE: increment/decrement of this counter is not balanced so it can even
+     * turn negative.
+     *
+     * @return Number of sessions.
+     */
+    public static long getSessionCount() {
+        return sessionCount.get();
     }
 
     /**
@@ -1379,6 +1397,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     @Override
     public Session newSession(final Request request, final Response response) {
 
+        sessionCount.incrementAndGet();
+
         final String remoteAddr = WebAppHelper.getClientIP(request);
         final String urlPath = request.getUrl().getPath();
 
@@ -1454,6 +1474,8 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
     public void sessionUnbound(final String sessionId) {
 
         super.sessionUnbound(sessionId);
+
+        sessionCount.decrementAndGet();
 
         synchronized (MUTEX_DICT) {
 

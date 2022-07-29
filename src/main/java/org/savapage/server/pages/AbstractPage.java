@@ -222,6 +222,30 @@ public abstract class AbstractPage extends WebPage
             }
         }
 
+        if (SpSession.exists()) {
+            /*
+             * Note: a session is persisted on disk by Wicket if Page is
+             * stateful.
+             */
+            final SpSession session = SpSession.get();
+
+            if (!session.isHumanDetected() && !session.isAuthenticated()
+                    && session.getTOTPRequest() == null) {
+
+                /*
+                 * Invalidate session as precaution against web crawlers. These
+                 * crawlers act outside a web browser and don't trigger
+                 * Javascript events (after DOM is fully loaded). Note: a web
+                 * crawler can be simulated with `wget` of SavaPage Web App.
+                 */
+                session.invalidate();
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("session.invalidate(): stateless [{}]",
+                            Boolean.valueOf(this.isStateless()));
+                }
+            }
+        }
+
         if (PerformanceLogger.isEnabled()) {
             PerformanceLogger.log(this.getClass(), "onAfterRender",
                     perfStartTime, getSessionWebAppType().toString());
