@@ -1482,7 +1482,7 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
             final WebAppTypeEnum webAppType =
                     theMapSession2WebAppType.remove(sessionId);
 
-            if (webAppType.isUserTypeOrVariant()) {
+            if (webAppType != null && webAppType.isUserTypeOrVariant()) {
 
                 final String userId =
                         theMapSession2User4WebApp.remove(sessionId);
@@ -1509,10 +1509,12 @@ public final class WebApp extends WebApplication implements ServiceEntryPoint {
 
             if (ipAddr == null) {
 
-                LOGGER.warn(
-                        "IP User Session [?.?.?.?] [{}] unbound. "
-                                + "Sessions [{}]",
-                        sessionId, theMapIpAddr2RecentUser.size());
+                if (webAppType != null) {
+                    LOGGER.warn(
+                            "IP User Session [?.?.?.?] [{}] unbound. "
+                                    + "Sessions [{}]",
+                            sessionId, theMapIpAddr2RecentUser.size());
+                }
 
             } else {
 

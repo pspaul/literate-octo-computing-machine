@@ -66,4 +66,8 @@
         <session-timeout>20</session-timeout>
     </session-config>
 
+    <login-config>
+        <auth-method>BASIC</auth-method>
+    </login-config>
+
 </web-app>

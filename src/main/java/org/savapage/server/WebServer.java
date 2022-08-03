@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -950,9 +951,18 @@ public final class WebServer {
          * BASIC Authentication for Atom Feed and PaperCut User Syn/Auth
          * Interface.
          */
-        server.addBean(new BasicAuthLoginService(
+        final LoginService basicAuthLoginService = new BasicAuthLoginService(
                 new String[] { AtomFeedServlet.ROLE_ALLOWED,
-                        ExtPaperCutSyncServlet.ROLE_ALLOWED }));
+                        ExtPaperCutSyncServlet.ROLE_ALLOWED });
+
+        server.addBean(basicAuthLoginService);
+
+        /*
+         * See web.xml:
+         * <login-config><auth-method>BASIC</auth-method></login-config>
+         */
+        webAppContext.getSecurityHandler()
+                .setLoginService(basicAuthLoginService);
 
         // Add RESTfull servlet.
         initRESTful(webAppContext);
