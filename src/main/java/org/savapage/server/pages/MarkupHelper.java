@@ -24,9 +24,11 @@
  */
 package org.savapage.server.pages;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
 
@@ -38,6 +40,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.savapage.core.SpException;
 import org.savapage.core.dao.enums.AppLogLevelEnum;
 import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.i18n.AdjectiveEnum;
@@ -50,6 +53,7 @@ import org.savapage.core.i18n.PrintOutNounEnum;
 import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
+import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.helpers.HtmlTooltipEnum;
@@ -222,11 +226,11 @@ public final class MarkupHelper {
      */
     private final MarkupContainer container;
 
-    /**
-     *
-     */
+    /** */
+    private final Locale locale;
+    /** */
     private final NumberFormat fmNumber;
-
+    /** */
     private final DateFormat dfLongDate;
 
     /**
@@ -235,8 +239,8 @@ public final class MarkupHelper {
      */
     public MarkupHelper(MarkupContainer container) {
         this.container = container;
-        this.fmNumber =
-                NumberFormat.getInstance(container.getSession().getLocale());
+        this.locale = container.getSession().getLocale();
+        this.fmNumber = NumberFormat.getInstance(this.locale);
         this.dfLongDate = DateFormat.getDateInstance(DateFormat.LONG,
                 container.getSession().getLocale());
     }
@@ -326,13 +330,37 @@ public final class MarkupHelper {
      *
      * @param number
      *            Number value.
-     * @return The localized string or "&nbsp;" for zero number. .
+     * @return The localized string or {@code "&nbsp;"} for zero number.
      */
     public String localizedNumberOrSpace(final long number) {
         if (number == 0) {
             return "&nbsp;";
         }
         return this.localizedNumber(number);
+    }
+
+    /**
+     * Gets as localized string of a Number. The locale of the current session
+     * is used.
+     *
+     * @param number
+     *            Number value.
+     * @param maxFractionDigits
+     *            Number of digits for the fraction.
+     * @return The localized string or {@code "&nbsp;"} for zero number.
+     */
+    public String localizedNumberOrSpace(final long number,
+            final int maxFractionDigits) {
+        if (number == 0) {
+            return "&nbsp;";
+        }
+        try {
+            return BigDecimalUtil.localize(
+                    BigDecimal.valueOf(number, maxFractionDigits),
+                    maxFractionDigits, this.locale, false, true);
+        } catch (ParseException e) {
+            throw new SpException(e);
+        }
     }
 
     /**
@@ -359,7 +387,7 @@ public final class MarkupHelper {
      */
     public String localizedNumber(final double number,
             final int maxFractionDigits) {
-        NumberFormat fm =
+        final NumberFormat fm =
                 NumberFormat.getInstance(container.getSession().getLocale());
         fm.setMaximumFractionDigits(maxFractionDigits);
         return fm.format(number);

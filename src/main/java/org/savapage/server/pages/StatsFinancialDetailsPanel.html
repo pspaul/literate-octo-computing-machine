@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:remove>
+	<!--
+This file is part of the SavaPage project <https://savapage.org>
+Copyright (c) 2022 Datraverse B.V. | Author: Rijk Ravestein 
+
+SPDX-FileCopyrightText: © 2022 Datraverse BV <info@datraverse.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+SavaPage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+-->
+</wicket:remove>
+
+<wicket:panel>
+
+	<li>
+		<table data-role="table" data-mode="reflow" style="width: 50%"
+			class="ui-responsive ui-mini table-stroke">
+			<thead>
+				<tr>
+					<th data-priority="1" wicket:id="period" />
+
+					<wicket:enclosure child="deposit">
+						<th colspan="2" data-priority="1" wicket:id="deposit"
+							style="text-align: right;" />
+					</wicket:enclosure>
+					<wicket:enclosure child="gateway">
+						<th colspan="2" data-priority="1" wicket:id="gateway"
+							style="text-align: right;" />
+					</wicket:enclosure>
+					<wicket:enclosure child="purchase">
+						<th colspan="2" data-priority="1" wicket:id="purchase"
+							style="text-align: right;" />
+					</wicket:enclosure>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="sp-txt-info">
+						<span wicket:id="day" />
+						<div wicket:id="week" />
+						<div wicket:id="month" />
+					</td>
+					<wicket:enclosure child="deposit-day">
+						<td class="sp-txt-valid" style="text-align: right;">
+							<span wicket:id="deposit-day" />
+							<div wicket:id="deposit-week" />
+							<div wicket:id="deposit-month" />
+						</td>
+						<td class="sp-txt-valid" style="text-align: right;">
+							<span wicket:id="deposit-day-cents" />
+							<div wicket:id="deposit-week-cents" />
+							<div wicket:id="deposit-month-cents" />
+						</td>
+					</wicket:enclosure>
+					<wicket:enclosure child="gateway-day">
+						<td class="sp-txt-valid" style="text-align: right;">
+							<span wicket:id="gateway-day" />
+							<div wicket:id="gateway-week" />
+							<div wicket:id="gateway-month" />
+						</td>
+						<td class="sp-txt-valid" style="text-align: right;">
+							<span wicket:id="gateway-day-cents" />
+							<div wicket:id="gateway-week-cents" />
+							<div wicket:id="gateway-month-cents" />
+						</td>
+					</wicket:enclosure>
+					<wicket:enclosure child="purchase-day">
+						<td class="sp-txt-warn" style="text-align: right;">
+							<span wicket:id="purchase-day" />
+							<div wicket:id="purchase-week" />
+							<div wicket:id="purchase-month" />
+						</td>
+						<td class="sp-txt-warn" style="text-align: right;">
+							<span wicket:id="purchase-day-cents" />
+							<div wicket:id="purchase-week-cents" />
+							<div wicket:id="purchase-month-cents" />
+						</td>
+					</wicket:enclosure>
+				</tr>
+			</tbody>
+		</table>
+	</li>
+
+</wicket:panel>
+</html>

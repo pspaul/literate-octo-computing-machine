@@ -96,9 +96,12 @@ import org.savapage.server.pages.JobTicketQueueInfoPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.pages.MessageContent;
 import org.savapage.server.pages.StatsEnvImpactPanel;
+import org.savapage.server.pages.StatsFinancialDetailsPanel;
 import org.savapage.server.pages.StatsPageTotalPanel;
 import org.savapage.server.pages.StatsPrintInTotalPanel;
 import org.savapage.server.pages.TooltipPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -106,6 +109,10 @@ import org.savapage.server.pages.TooltipPanel;
  *
  */
 public final class SystemStatusPanel extends Panel {
+
+    /** */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(SystemStatusPanel.class);
 
     /**
      * Version for serialization.
@@ -860,6 +867,29 @@ public final class SystemStatusPanel extends Panel {
                 new StatsFinancialPanel("stats-financial-totals");
         add(finTotalPanel);
         finTotalPanel.populate();
+
+        // Statistics?
+        final boolean isPosDeposit =
+                cm.isConfigValue(Key.FINANCIAL_POS_DEPOSIT_ENABLE);
+        final boolean isPosSales =
+                cm.isConfigValue(Key.FINANCIAL_POS_SALES_ENABLE);
+        boolean isExternal = false;
+        try {
+            isExternal = WebApp.get().getPluginManager()
+                    .getExternalPaymentGateway() != null;
+        } catch (PaymentGatewayException e) {
+            LOGGER.error(e.getMessage());
+        }
+
+        if (isPosDeposit || isPosSales || isExternal) {
+            final StatsFinancialDetailsPanel statsFinDetailsPanel =
+                    new StatsFinancialDetailsPanel("stats-financial-details",
+                            isPosDeposit, isPosSales, isExternal);
+            add(statsFinDetailsPanel);
+            statsFinDetailsPanel.populate();
+        } else {
+            helper.discloseLabel("stats-financial-details");
+        }
 
         /*
          * Environmental Impact.

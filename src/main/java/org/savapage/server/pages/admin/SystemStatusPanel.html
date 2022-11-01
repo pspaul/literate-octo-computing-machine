@@ -19,9 +19,12 @@ the License, or (at your option) any later version.
 
 	<ul data-role="listview" data-inset="true" id="dashboard-system-status">
 
-		<li data-role="list-divider"><wicket:message key="title" /></li>
+		<li data-role="list-divider">
+			<wicket:message key="title" />
+		</li>
 
-		<li><wicket:remove>
+		<li>
+			<wicket:remove>
 				<!--
     +======================================================================+
     | http://api.jquerymobile.com/table-reflow/
@@ -256,11 +259,13 @@ the License, or (at your option) any later version.
 						</tr>
 					</wicket:enclosure>
 				</tbody>
-			</table></li>
+			</table>
+		</li>
 
 
-		<li data-role="list-divider"><wicket:message
-				key="header-services" /></li>
+		<li data-role="list-divider">
+			<wicket:message key="header-services" />
+		</li>
 		<li wicket:id="sect-services">
 			<table data-role="table" data-mode="reflow"
 				class="ui-responsive table-stroke">
@@ -359,7 +364,9 @@ the License, or (at your option) any later version.
 			</table>
 		</li>
 
-		<li data-role="list-divider"><wicket:message key="news" /></li>
+		<li data-role="list-divider">
+			<wicket:message key="news" />
+		</li>
 		<wicket:panel wicket:id="savapage-news" />
 
 		<wicket:panel wicket:id="stats-pages-total" />
@@ -373,6 +380,10 @@ the License, or (at your option) any later version.
 		</wicket:enclosure>
 
 		<wicket:panel wicket:id="stats-financial-totals" />
+
+		<wicket:enclosure child="stats-financial-details">
+			<wicket:panel wicket:id="stats-financial-details" />
+		</wicket:enclosure>
 
 	</ul>
 </wicket:panel>

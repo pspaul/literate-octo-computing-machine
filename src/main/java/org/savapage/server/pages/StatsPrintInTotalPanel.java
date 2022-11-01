@@ -24,9 +24,6 @@
  */
 package org.savapage.server.pages;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.i18n.AdjectiveEnum;
@@ -34,7 +31,6 @@ import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
-import org.savapage.core.services.ServiceContext;
 import org.savapage.server.helpers.SparklineHtml;
 
 /**
@@ -83,7 +79,9 @@ public final class StatsPrintInTotalPanel extends StatsTotalPanel {
                 String.format("color: %s;", SparklineHtml.COLOR_QUEUE));
 
         //
-        long totPdf, totPdfRepaired, totPdfRejected;
+        long totPdf;
+        long totPdfRepaired;
+        long totPdfRejected;
 
         //
         TimeSeriesInterval intervalWlk = TimeSeriesInterval.WEEK;
@@ -152,28 +150,6 @@ public final class StatsPrintInTotalPanel extends StatsTotalPanel {
         helper.addLabel("pdf-rejected-tot",
                 helper.localizedNumberOrSpace(totPdfRejected))
                 .setEscapeModelStrings(false);
-    }
-
-    /**
-     *
-     * @param data
-     * @param interval
-     * @param configKey
-     * @return
-     */
-    private static long getTodayValue(final JsonRollingTimeSeries<Integer> data,
-            final TimeSeriesInterval interval, final Key configKey) {
-        try {
-            final List<Object> dataSerie = jqplotXYLineChartSerie(configKey,
-                    ServiceContext.getTransactionDate(), interval, data);
-            if (dataSerie.size() == 1) {
-                return ((Integer) ((List<Object>) dataSerie.get(0)).get(1))
-                        .longValue();
-            }
-        } catch (IOException e) {
-            // noop
-        }
-        return 0;
     }
 
 }

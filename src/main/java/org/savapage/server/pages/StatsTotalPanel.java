@@ -36,8 +36,10 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
+import org.savapage.core.services.ServiceContext;
 
 /**
  *
@@ -86,6 +88,30 @@ public abstract class StatsTotalPanel extends Panel {
      *
      */
     public abstract void populate();
+
+    /**
+     *
+     * @param data
+     * @param interval
+     * @param configKey
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    protected static long getTodayValue(
+            final JsonRollingTimeSeries<Integer> data,
+            final TimeSeriesInterval interval, final Key configKey) {
+        try {
+            final List<Object> dataSerie = jqplotXYLineChartSerie(configKey,
+                    ServiceContext.getTransactionDate(), interval, data);
+            if (dataSerie.size() == 1) {
+                return ((Integer) ((List<Object>) dataSerie.get(0)).get(1))
+                        .longValue();
+            }
+        } catch (IOException e) {
+            // noop
+        }
+        return 0;
+    }
 
     /**
      *
