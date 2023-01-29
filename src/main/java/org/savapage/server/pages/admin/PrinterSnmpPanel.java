@@ -146,56 +146,66 @@ public final class PrinterSnmpPanel extends Panel {
             helper.encloseLabel(WID_SERIAL, info.getSerial(),
                     hasInfo && extended);
 
-            final StringBuilder markers = new StringBuilder();
-            final String[] markerValues = new String[info.getMarkers().size()];
-            final String[] markerColors = new String[info.getMarkers().size()];
+            final boolean hasMarkers = info.getMarkers() != null;
 
-            int i = 0;
+            if (hasMarkers) {
 
-            for (final Entry<SnmpPrtMarkerColorantValueEnum, Integer> entry : //
-            info.getMarkers().entrySet()) {
+                final StringBuilder markers = new StringBuilder();
+                final String[] markerValues =
+                        new String[info.getMarkers().size()];
+                final String[] markerColors =
+                        new String[info.getMarkers().size()];
 
-                if (extended) {
-                    markers.append(" &bull; ")
-                            .append(entry.getKey().uiText(getLocale()))
-                            .append("&nbsp;").append(entry.getValue())
-                            .append("%");
+                int i = 0;
+
+                for (final Entry<SnmpPrtMarkerColorantValueEnum, Integer> entry : //
+                info.getMarkers().entrySet()) {
+
+                    if (extended) {
+                        markers.append(" &bull; ")
+                                .append(entry.getKey().uiText(getLocale()))
+                                .append("&nbsp;").append(entry.getValue())
+                                .append("%");
+                    }
+
+                    markerValues[i] = entry.getValue().toString();
+                    markerColors[i] = entry.getKey().getHtmlColor();
+
+                    i++;
                 }
 
-                markerValues[i] = entry.getValue().toString();
-                markerColors[i] = entry.getKey().getHtmlColor();
+                if (markers.length() > 0) {
+                    helper.addLabel("supplies",
+                            info.getSupplies().uiText(getLocale()));
 
-                i++;
-            }
+                    this.add(new Label(WID_MARKERS, markers.toString())
+                            .setEscapeModelStrings(false));
+                } else {
+                    helper.discloseLabel(WID_MARKERS);
+                }
 
-            if (markers.length() > 0) {
-                helper.addLabel("supplies",
-                        info.getSupplies().uiText(getLocale()));
+                final int barWidth;
 
-                this.add(new Label(WID_MARKERS, markers.toString())
-                        .setEscapeModelStrings(false));
+                if (markerColors.length > 0 && markerColors.length < 5) {
+                    barWidth = BAR_WIDTH[markerColors.length - 1];
+                } else {
+                    barWidth = BAR_WIDTH[BAR_WIDTH.length - 1];
+                }
+
+                final Label bar = helper.addModifyLabelAttr(WID_MARKER_BAR,
+                        SparklineHtml.valueString(markerValues),
+                        SparklineHtml.ATTR_COLOR_MAP,
+                        SparklineHtml.arrayAttr(markerColors));
+
+                MarkupHelper.modifyLabelAttr(bar, MarkupHelper.ATTR_CLASS,
+                        SparklineHtml.CSS_CLASS_PRINTER);
+
+                MarkupHelper.modifyLabelAttr(bar, SparklineHtml.ATTR_BAR_WIDTH,
+                        String.valueOf(barWidth));
             } else {
                 helper.discloseLabel(WID_MARKERS);
+                helper.discloseLabel(WID_MARKER_BAR);
             }
-
-            final int barWidth;
-
-            if (markerColors.length > 0 && markerColors.length < 5) {
-                barWidth = BAR_WIDTH[markerColors.length - 1];
-            } else {
-                barWidth = BAR_WIDTH[BAR_WIDTH.length - 1];
-            }
-
-            final Label bar = helper.addModifyLabelAttr(WID_MARKER_BAR,
-                    SparklineHtml.valueString(markerValues),
-                    SparklineHtml.ATTR_COLOR_MAP,
-                    SparklineHtml.arrayAttr(markerColors));
-
-            MarkupHelper.modifyLabelAttr(bar, MarkupHelper.ATTR_CLASS,
-                    SparklineHtml.CSS_CLASS_PRINTER);
-
-            MarkupHelper.modifyLabelAttr(bar, SparklineHtml.ATTR_BAR_WIDTH,
-                    String.valueOf(barWidth));
 
             //
             final long duration = date.getTime() - info.getDate().getTime();
