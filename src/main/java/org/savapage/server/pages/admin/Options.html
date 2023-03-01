@@ -565,14 +565,28 @@ the License, or (at your option) any later version.
 						<input type="radio" name="" id=""
 							wicket:id="smtp-security-ssl-tls" />
 					</fieldset>
-					<label for="" wicket:id="smtp-username-label" />
-					<input type="text" id="" value="" wicket:id="smtp-username"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<label for="" wicket:id="smtp-password-label" />
-					<input type="password" id="" wicket:id="smtp-password" value=""
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
+
+					<wicket:enclosure child="smtp-username">
+						<label for="" wicket:id="smtp-username-label" />
+						<input type="text" id="" value="" wicket:id="smtp-username"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+						<label for="" wicket:id="smtp-password-label" />
+						<input type="password" id="" wicket:id="smtp-password" value=""
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+					</wicket:enclosure>
+					<wicket:enclosure child="smtp-plugin-email">
+						<li>
+							PLUGIN
+							<div class="ui-field-contain">
+								<label for="14461b7c-b82a-11ed-993a-739b5297b7a4"
+									wicket:id="smtp-plugin-email-label" />
+								<label id="14461b7c-b82a-11ed-993a-739b5297b7a4"
+									wicket:id="smtp-plugin-email" />
+							</div>
+						</li>
+					</wicket:enclosure>
 					<wicket:enclosure child="btn-apply-smtp">
 						<div>
 							<button id="apply-smtp"
@@ -670,14 +684,29 @@ the License, or (at your option) any later version.
 						<input type="radio" name="" id=""
 							wicket:id="imap-security-ssl-tls" />
 					</fieldset>
-					<label for="" wicket:id="imap-username-label" />
-					<input type="text" id="" value="" wicket:id="imap-username"
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
-					<label for="" wicket:id="imap-password-label" />
-					<input type="password" id="" wicket:id="imap-password" value=""
-						autocomplete="off" autocorrect="off" autocapitalize="off"
-						spellcheck="false" />
+
+					<wicket:enclosure child="imap-username">
+						<label for="" wicket:id="imap-username-label" />
+						<input type="text" id="" value="" wicket:id="imap-username"
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+						<label for="" wicket:id="imap-password-label" />
+						<input type="password" id="" wicket:id="imap-password" value=""
+							autocomplete="off" autocorrect="off" autocapitalize="off"
+							spellcheck="false" />
+					</wicket:enclosure>
+
+					<wicket:enclosure child="imap-plugin-email">
+						<li>
+							PLUGIN
+							<div class="ui-field-contain">
+								<label for="0600e446-a639-11ed-8742-f3dea46b960e"
+									wicket:id="imap-plugin-email-label" />
+								<label id="0600e446-a639-11ed-8742-f3dea46b960e"
+									wicket:id="imap-plugin-email" />
+							</div>
+						</li>
+					</wicket:enclosure>
 				</li>
 				<li class="imap-enabled">
 					<label for="" wicket:id="imap-folder-inbox-label" />

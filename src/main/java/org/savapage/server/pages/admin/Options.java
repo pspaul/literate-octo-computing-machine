@@ -113,6 +113,26 @@ public final class Options extends AbstractAdminPage {
     private static final String WID_GOOGLE_CLOUD_HOST =
             "ldap-google-cloud-host";
 
+    /** */
+    private static final String WID_IMAP_USERNAME = "imap-username";
+    /** */
+    private static final String WID_IMAP_PASSWORD = "imap-password";
+    /** */
+    private static final String WID_IMAP_PLUGIN_EMAIL_LABEL =
+            "imap-plugin-email-label";
+    /** */
+    private static final String WID_IMAP_PLUGIN_EMAIL = "imap-plugin-email";
+
+    /** */
+    private static final String WID_SMTP_USERNAME = "smtp-username";
+    /** */
+    private static final String WID_SMTP_PASSWORD = "smtp-password";
+    /** */
+    private static final String WID_SMTP_PLUGIN_EMAIL_LABEL =
+            "smtp-plugin-email-label";
+    /** */
+    private static final String WID_SMTP_PLUGIN_EMAIL = "smtp-plugin-email";
+
     @Override
     protected boolean needMembership() {
         return false;
@@ -378,9 +398,19 @@ public final class Options extends AbstractAdminPage {
          */
         labelledInput("smtp-host", IConfigProp.Key.MAIL_SMTP_HOST);
         labelledInput("smtp-port", IConfigProp.Key.MAIL_SMTP_PORT);
-        labelledInput("smtp-username", IConfigProp.Key.MAIL_SMTP_USER_NAME);
-        labelledPassword("smtp-password", IConfigProp.Key.MAIL_SMTP_PASSWORD,
-                isReadOnlyAccess);
+
+        if (ConfigManager.hasSmtpOAuthTokenRetriever()) {
+            helper.discloseLabel(WID_SMTP_USERNAME);
+            helper.addLabel(WID_SMTP_PLUGIN_EMAIL_LABEL, NounEnum.EMAIL);
+            helper.addLabel(WID_SMTP_PLUGIN_EMAIL, ConfigManager
+                    .getSmtpOAuthTokenRetriever().getMailAddress());
+        } else {
+            labelledInput(WID_SMTP_USERNAME,
+                    IConfigProp.Key.MAIL_SMTP_USER_NAME);
+            labelledPassword(WID_SMTP_PASSWORD,
+                    IConfigProp.Key.MAIL_SMTP_PASSWORD, isReadOnlyAccess);
+            helper.discloseLabel(WID_SMTP_PLUGIN_EMAIL);
+        }
 
         labelledRadio("smtp-security", "-none",
                 IConfigProp.Key.MAIL_SMTP_SECURITY,
@@ -433,9 +463,19 @@ public final class Options extends AbstractAdminPage {
 
         labelledInput("imap-host", IConfigProp.Key.PRINT_IMAP_HOST);
         labelledInput("imap-port", IConfigProp.Key.PRINT_IMAP_PORT);
-        labelledInput("imap-username", IConfigProp.Key.PRINT_IMAP_USER_NAME);
-        labelledPassword("imap-password", IConfigProp.Key.PRINT_IMAP_PASSWORD,
-                isReadOnlyAccess);
+
+        if (ConfigManager.hasImapPrintOAuthTokenRetriever()) {
+            helper.discloseLabel(WID_IMAP_USERNAME);
+            helper.addLabel(WID_IMAP_PLUGIN_EMAIL_LABEL, NounEnum.EMAIL);
+            helper.addLabel(WID_IMAP_PLUGIN_EMAIL, ConfigManager
+                    .getImapPrintOAuthTokenRetriever().getMailAddress());
+        } else {
+            labelledInput(WID_IMAP_USERNAME,
+                    IConfigProp.Key.PRINT_IMAP_USER_NAME);
+            labelledPassword(WID_IMAP_PASSWORD,
+                    IConfigProp.Key.PRINT_IMAP_PASSWORD, isReadOnlyAccess);
+            helper.discloseLabel(WID_IMAP_PLUGIN_EMAIL);
+        }
 
         labelledRadio("imap-security", "-none",
                 IConfigProp.Key.PRINT_IMAP_SECURITY,

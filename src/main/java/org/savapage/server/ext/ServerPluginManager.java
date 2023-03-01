@@ -104,7 +104,9 @@ import org.savapage.ext.payment.bitcoin.BitcoinGatewayListener;
 import org.savapage.ext.payment.bitcoin.BitcoinGatewayTrx;
 import org.savapage.ext.payment.bitcoin.BitcoinWalletInfo;
 import org.savapage.ext.print.IppRoutingPlugin;
+import org.savapage.ext.print.OAuthImapPlugin;
 import org.savapage.ext.rest.RestClient;
+import org.savapage.ext.smtp.OAuthSmtpPlugin;
 import org.savapage.server.CustomWebServlet;
 import org.savapage.server.WebApp;
 import org.savapage.server.WebAppParmEnum;
@@ -209,6 +211,16 @@ public final class ServerPluginManager
      */
     private final Map<OAuthProviderEnum, Map<String, OAuthClientPlugin>> //
     oauthClientPlugins = new HashMap<>();
+
+    /**
+     * {@link OAuthImapPlugin instance.
+     */
+    private OAuthImapPlugin oAuthImapPlugin;
+
+    /**
+     * {@link OAuthSmtpPlugin instance.
+     */
+    private OAuthSmtpPlugin oAuthSmtpPlugin;
 
     /**
      * All {@link NotificationPlugin} instances.
@@ -482,6 +494,28 @@ public final class ServerPluginManager
                         pluginOnline, props, this);
 
                 this.ippRoutingPlugins.put(pluginId, ippRoutingPlugin);
+
+            } else if (plugin instanceof OAuthImapPlugin) {
+
+                pluginType = OAuthImapPlugin.class.getSimpleName();
+
+                this.oAuthImapPlugin = (OAuthImapPlugin) plugin;
+
+                oAuthImapPlugin.onInit(pluginId, pluginName, pluginLive,
+                        pluginOnline, props, this);
+
+                ConfigManager.setImapPrintOAuthTokenRetriever(oAuthImapPlugin);
+
+            } else if (plugin instanceof OAuthSmtpPlugin) {
+
+                pluginType = OAuthSmtpPlugin.class.getSimpleName();
+
+                this.oAuthSmtpPlugin = (OAuthSmtpPlugin) plugin;
+
+                oAuthSmtpPlugin.onInit(pluginId, pluginName, pluginLive,
+                        pluginOnline, props, this);
+
+                ConfigManager.setSmtpOAuthTokenRetriever(oAuthSmtpPlugin);
 
             } else {
 
@@ -1455,7 +1489,40 @@ public final class ServerPluginManager
             pluginsWlk++;
         }
 
+        if (this.oAuthImapPlugin != null) {
+            pluginsWlk = appendPlugin(builder, this.oAuthImapPlugin, pluginsWlk,
+                    delim);
+        }
+        if (this.oAuthSmtpPlugin != null) {
+            pluginsWlk = appendPlugin(builder, this.oAuthSmtpPlugin, pluginsWlk,
+                    delim);
+        }
+
         return builder.toString();
+    }
+
+    /**
+     *
+     * @param builder
+     * @param plugin
+     * @param pluginsWlk
+     * @param delim
+     * @return incremented pluginsWlk
+     */
+    private static int appendPlugin(final StringBuilder builder,
+            final ServerPlugin plugin, final int pluginsWlk,
+            final String delim) {
+
+        if (pluginsWlk == 0) {
+            builder.append('\n').append(delim);
+        }
+
+        builder.append("\n| ")
+                .append(String.format("[%s]", plugin.getClass().getName()));
+        builder.append("\n| ").append(plugin.getName());
+        builder.append('\n').append(delim);
+
+        return pluginsWlk + 1;
     }
 
     @Override
@@ -1564,6 +1631,20 @@ public final class ServerPluginManager
     private String localize(final String key, final String... args) {
         return Messages.getMessage(getClass(), ConfigManager.getDefaultLocale(),
                 key, args);
+    }
+
+    /**
+     * @return {@code true} when {@link OAuthImapPlugin} is present.
+     */
+    public boolean hasOAuthImapPlugin() {
+        return this.oAuthImapPlugin != null;
+    }
+
+    /**
+     * @return {@code true} when {@link OAuthSmtpPlugin} is present.
+     */
+    public boolean hasOAuthSmtpPlugin() {
+        return this.oAuthSmtpPlugin != null;
     }
 
     /**
