@@ -6215,7 +6215,7 @@
                         } else if (data.authTOTPRequired) {
                             _view.pages.login.notifyTOTPRequired();
                         } else {
-                            _view.pages.login.notifyLoginFailed((assocCardNumber ? null : authMode), data.result.txt);
+                            _view.pages.login.notifyLoginFailed((assocCardNumber ? null : authMode), data.result);
 
                             if (_model.authCardIp) {
                                 _deviceEvent.resume();

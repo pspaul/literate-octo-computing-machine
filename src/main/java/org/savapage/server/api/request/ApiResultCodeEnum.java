@@ -59,7 +59,12 @@ public enum ApiResultCodeEnum {
     /**
      * .
      */
-    UNAUTH("9");
+    UNAUTH("9"),
+
+    /**
+     * .
+     */
+    RELOAD("99");
 
     private final String value;
 

@@ -50,6 +50,7 @@ import org.savapage.core.dao.enums.DeviceTypeEnum;
 import org.savapage.core.dao.enums.ExternalSupplierEnum;
 import org.savapage.core.i18n.LabelEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.services.ServiceContext;
@@ -76,6 +77,16 @@ public final class Login extends AbstractPage {
 
     private static final long serialVersionUID = 1L;
 
+    /** */
+    private static final String WID_MAINTENANCE_HEADER = "maintenance-header";
+    /** */
+    private static final String WID_MAINTENANCE_BODY = "maintenance-body";
+
+    /** */
+    private static final String WID_RESET_HEADER = "reset-header";
+    /** */
+    private static final String WID_RESET_BODY = "reset-body";
+
     /**
      *
      * @param parameters
@@ -86,11 +97,12 @@ public final class Login extends AbstractPage {
         super(parameters);
 
         final MarkupHelper helper = new MarkupHelper(this);
+        final SpSession session = SpSession.get();
 
         final Set<Locale> availableLocales = LocaleHelper.getI18nAvailable();
 
         if (availableLocales.size() == 1) {
-            SpSession.get().setLocale(availableLocales.iterator().next());
+            session.setLocale(availableLocales.iterator().next());
         }
 
         helper.encloseLabel("button-lang", getString("button-lang"),
@@ -211,13 +223,26 @@ public final class Login extends AbstractPage {
 
         addOAuthButtons(localLoginRestricted);
 
-        //
         if (ConfigManager.getSystemMode() == SystemModeEnum.MAINTENANCE) {
-            helper.addLabel("maintenance-header",
+            helper.addLabel(WID_MAINTENANCE_HEADER,
                     localized("maintenance-header"));
-            helper.addLabel("maintenance-body", localized("maintenance-body"));
+            helper.addLabel(WID_MAINTENANCE_BODY,
+                    localized("maintenance-body"));
         } else {
-            helper.discloseLabel("maintenance-header");
+            helper.discloseLabel(WID_MAINTENANCE_HEADER);
+        }
+
+        final boolean anotherSessionActive = session.getAuthWebAppCount() != 0;
+        final String btnTextReset = HtmlButtonEnum.RESET.uiText(getLocale());
+        helper.encloseLabel("button-reset", btnTextReset, anotherSessionActive);
+        if (anotherSessionActive) {
+            helper.addLabel(WID_RESET_HEADER,
+                    PhraseEnum.ANOTHER_BROWSER_SESSION_ACTIVE
+                            .uiText(getLocale()));
+            helper.addLabel(WID_RESET_BODY,
+                    localized("reset-body", btnTextReset));
+        } else {
+            helper.discloseLabel(WID_RESET_HEADER);
         }
     }
 

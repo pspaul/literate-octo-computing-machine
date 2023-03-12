@@ -111,7 +111,7 @@
                 _view.pages.login.notifyLogout();
 
                 if (_view.activePage().attr('id') === 'page-login') {
-                    _view.pages.login.notifyLoginFailed(authMode, data.result.txt);
+                    _view.pages.login.notifyLoginFailed(authMode, data.result);
                 } else {
                     _view.pages.login.loadShow(_ns.WEBAPP_TYPE);
                 }

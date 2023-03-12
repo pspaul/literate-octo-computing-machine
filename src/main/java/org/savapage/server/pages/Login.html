@@ -346,6 +346,15 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 		</li>
 	</ul>
 
+	<wicket:enclosure child="reset-header">
+		<ul class="sp-login-dialog" data-role="listview" data-inset="true">
+			<li>
+				<h3 class="sp-txt-warn" wicket:id="reset-header" />
+				<div class="sp-txt-warn sp-txt-wrap" wicket:id="reset-body" />
+			</li>
+		</ul>
+	</wicket:enclosure>
+
 	<p>
 	<div class="sp-login-dialog">
 		<a href="#" id="button-app-about" data-dialog="true"
@@ -356,6 +365,12 @@ autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 			<a href="#" id="button-app-language" data-dialog="true"
 				class="ui-mini ui-btn ui-btn-inline ui-btn-icon-left ui-icon-gear">
 				<span class="sp-txt-info" wicket:id="button-lang" />
+			</a>
+		</wicket:enclosure>
+		<wicket:enclosure child="button-reset">
+			<a href="#" id="button-app-reset" data-dialog="true"
+				class="ui-mini ui-btn ui-btn-inline ui-btn-icon-left ui-icon-power">
+				<span class="sp-txt-warn" wicket:id="button-reset" />
 			</a>
 		</wicket:enclosure>
 	</div>

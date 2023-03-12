@@ -62,6 +62,7 @@ import org.savapage.core.dao.enums.UserAttrEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.dto.UserIdDto;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.i18n.SystemModeEnum;
 import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.Entity;
@@ -294,8 +295,9 @@ public final class ReqLogin extends ApiRequestMixin {
          * INVARIANT: Only one (1) authenticated session allowed.
          */
         if (session.getAuthWebAppCount() != 0) {
-            this.setApiResult(ApiResultCodeEnum.ERROR,
-                    "msg-login-another-session-active");
+            this.setApiResultText(ApiResultCodeEnum.RELOAD,
+                    PhraseEnum.ANOTHER_BROWSER_SESSION_ACTIVE
+                            .uiText(getLocale()));
             return;
         }
 

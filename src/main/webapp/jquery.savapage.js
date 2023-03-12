@@ -57,7 +57,8 @@
         WARN: "2",
         ERROR: "3",
         UNAVAILABLE: "5",
-        UNAUTH: "9"
+        UNAUTH: "9",
+        RELOAD: "99"
     };
 
     /**
@@ -1911,11 +1912,16 @@
         /**
          *
          */
-        _self.notifyLoginFailed = function(modeSelected, msg) {
+        _self.notifyLoginFailed = function(modeSelected, result) {
             _onAuthModeSelect(modeSelected || _authModeDefault);
             // Do NOT use _view.showApiMsg(data), cause it spoils the
             // focus() in case of Card Swipe.
-            _view.message(msg);
+            _view.message(result.txt);
+            if (result.code === _ns.ApiResultCodeEnum.RELOAD) {
+                window.setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            }
         };
 
         _isCardRegistered = function(card) {
@@ -2251,6 +2257,14 @@
 
             $('#button-app-language').click(function() {
                 _onLanguage();
+                return false;
+            });
+
+            $('#button-app-reset').click(function() {
+                _api.call({
+                    request: 'webapp-close-session',
+                });
+                window.location.reload();
                 return false;
             });
 
