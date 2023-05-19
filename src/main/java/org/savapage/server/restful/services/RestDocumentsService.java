@@ -1,5 +1,5 @@
 /*
-+ * This file is part of the SavaPage project <https://www.savapage.org>.
+ * This file is part of the SavaPage project <https://www.savapage.org>.
  * Copyright (c) 2020 Datraverse B.V.
  * Author: Rijk Ravestein.
  *
