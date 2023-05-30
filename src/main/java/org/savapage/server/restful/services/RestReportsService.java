@@ -38,7 +38,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.savapage.core.SpException;
@@ -53,9 +52,14 @@ import org.savapage.core.reports.impl.ReportCreator;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.JsonHelper;
 import org.savapage.server.restful.RestAuthFilter;
+import org.savapage.server.restful.dto.AbstractRestDto;
 import org.savapage.server.restful.dto.AccountTrxReportReqDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * REST reports API.
@@ -83,6 +87,39 @@ public class RestReportsService implements IRestService {
     private static final AccountDao ACCOUNT_DAO =
             ServiceContext.getDaoContext().getAccountDao();
 
+    @JsonInclude(Include.NON_NULL)
+    private static class RspError extends AbstractRestDto {
+        /** */
+        @JsonProperty("error")
+        private String error;
+
+        public String getError() {
+            return error;
+        }
+
+        public void setError(String error) {
+            this.error = error;
+        }
+    }
+
+    /**
+     * Creates an error response.
+     *
+     * @param err
+     * @return Response
+     * @throws IOException
+     */
+    private static Response createErrorResponse(final String err) {
+        final RspError obj = new RspError();
+        obj.setError(err);
+        try {
+            return Response.ok(obj.stringifyPrettyPrinted().concat("\n"))
+                    .build();
+        } catch (IOException e) {
+            throw new SpException(e.getMessage());
+        }
+    }
+
     /**
      * POST a selection and get a CSV report as response.
      *
@@ -97,8 +134,7 @@ public class RestReportsService implements IRestService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
-    public Response printTransactions(//
-            final String jsonInput) {
+    public Response reportAccountTrx(final String jsonInput) {
 
         final File tempExportFile = ConfigManager.createAppTmpFile("export-");
 
@@ -113,13 +149,14 @@ public class RestReportsService implements IRestService {
             // VALIDATE
             final Long userIdKey;
             final Long accountIdKey;
+            String msgError = null;
 
             if (requestIn.getSelect() == null
                     || requestIn.getSelect().getAccountType() == null
                     || requestIn.getSelect().getAccountName() == null) {
                 userIdKey = null;
                 accountIdKey = null;
-                LOGGER.warn("Account is missing.");
+                msgError = "Account is missing.";
             } else {
                 final String accountName =
                         requestIn.getSelect().getAccountName();
@@ -133,7 +170,8 @@ public class RestReportsService implements IRestService {
                                     requestIn.getSelect().getAccountType());
                     if (account == null) {
                         accountIdKey = null;
-                        LOGGER.warn("Account [{}] not found.", accountName);
+                        msgError = String.format("Account [%s] not found.",
+                                accountName);
                     } else {
                         accountIdKey = account.getId();
                     }
@@ -144,7 +182,8 @@ public class RestReportsService implements IRestService {
                             USER_DAO.findActiveUserByUserId(accountName);
                     if (user == null) {
                         userIdKey = null;
-                        LOGGER.warn("User [{}] not found.", accountName);
+                        msgError = String.format("User [%s] not found.",
+                                accountName);
                     } else {
                         userIdKey = user.getId();
                     }
@@ -157,7 +196,11 @@ public class RestReportsService implements IRestService {
             }
 
             if (userIdKey == null && accountIdKey == null) {
-                return Response.serverError().status(Status.NOT_FOUND).build();
+                if (msgError == null) {
+                    msgError = "No user or account specified.";
+                }
+                LOGGER.warn(msgError);
+                return createErrorResponse(msgError);
             }
 
             // Selection
@@ -218,8 +261,8 @@ public class RestReportsService implements IRestService {
             if (tempExportFile != null && tempExportFile.exists()) {
                 tempExportFile.delete();
             }
-            LOGGER.error(e.toString(), e);
-            throw new SpException(e.getMessage());
+            LOGGER.warn(e.getMessage());
+            return createErrorResponse(e.getMessage());
         }
     }
 
