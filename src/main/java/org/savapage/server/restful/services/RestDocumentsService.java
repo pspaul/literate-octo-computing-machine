@@ -28,11 +28,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
@@ -63,7 +60,6 @@ import org.savapage.core.cometd.PubLevelEnum;
 import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.community.CommunityDictEnum;
 import org.savapage.core.dao.DocLogDao;
-import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.enums.DocLogProtocolEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.DocLogPagerReq;
@@ -81,7 +77,6 @@ import org.savapage.core.print.server.DocContentPrintReq;
 import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
-import org.savapage.core.services.UserService;
 import org.savapage.server.pages.DocLogItem;
 import org.savapage.server.restful.RestAuthException;
 import org.savapage.server.restful.RestAuthFilter;
@@ -100,7 +95,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Path("/" + RestDocumentsService.PATH_MAIN)
-public final class RestDocumentsService implements IRestService {
+public final class RestDocumentsService extends AbstractRestService {
 
     /** */
     private static final Logger LOGGER =
@@ -111,20 +106,12 @@ public final class RestDocumentsService implements IRestService {
             ServiceContext.getServiceFactory().getQueueService();
 
     /** */
-    private static final UserService USER_SERVICE =
-            ServiceContext.getServiceFactory().getUserService();
-
-    /** */
     private static final DocStoreService DOCSTORE_SERVICE =
             ServiceContext.getServiceFactory().getDocStoreService();
 
     /** */
     private static final DocLogDao DOCLOG_DAO =
             ServiceContext.getDaoContext().getDocLogDao();
-
-    /** */
-    private static final UserDao USER_DAO =
-            ServiceContext.getDaoContext().getUserDao();
 
     /** */
     private static final int INPUT_STREAM_BUFFER_SIZE = 1024;
@@ -320,71 +307,6 @@ public final class RestDocumentsService implements IRestService {
     }
 
     /**
-     *
-     * @param authorization
-     *            Header with format "Basic base64(user:password)"
-     * @param msgPfx
-     *            Message prefix.
-     * @param disp
-     *            Meta data.
-     * @return Authenticated user.
-     * @throws RestAuthException
-     *             If authentication failed.
-     */
-    private User isUserAuthenticated(final String authorization,
-            final String msgPfx, final FormDataContentDisposition disp)
-            throws RestAuthException {
-
-        if (authorization == null || authorization.isEmpty()) {
-            throw new RestAuthException(String.format(
-                    "%s of document [%s] failed: no authorization data.",
-                    msgPfx, disp.getFileName()));
-        }
-
-        // Get encoded username and password
-        final String encodedUserPassword = authorization.replaceFirst(
-                RestAuthFilter.HEADER_AUTHENTICATION_SCHEME + " ", "");
-
-        // Decode username and password
-        final String usernameAndPassword = new String(
-                Base64.getDecoder().decode(encodedUserPassword.getBytes()));
-
-        // Split username and password tokens
-        final StringTokenizer tokenizer =
-                new StringTokenizer(usernameAndPassword, ":");
-
-        final String userid = tokenizer.nextToken();
-        final String uuid = tokenizer.nextToken();
-
-        final UUID uuidObj;
-        try {
-            uuidObj = UUID.fromString(uuid);
-        } catch (Exception e) {
-            throw new RestAuthException(String.format(
-                    "%s of document [%s] for user [%s] failed: "
-                            + "UUID invalid.",
-                    msgPfx, disp.getFileName(), userid));
-        }
-
-        final User user = USER_DAO.findActiveUserByUserId(userid);
-
-        if (user == null) {
-            throw new RestAuthException(String.format(
-                    "%s of document [%s] failed: user [%s] not found.", msgPfx,
-                    disp.getFileName()));
-        }
-
-        if (!USER_SERVICE.isUserUuidPresent(user, uuidObj)) {
-            throw new RestAuthException(String.format(
-                    "%s of document [%s] for user [%s] failed: "
-                            + "UUID not found.",
-                    msgPfx, disp.getFileName(), userid));
-        }
-
-        return user;
-    }
-
-    /**
      * Prints a document.
      *
      * @param authString
@@ -408,13 +330,16 @@ public final class RestDocumentsService implements IRestService {
             @FormDataParam(FORM_PARAM_FILE) //
             final FormDataContentDisposition disp) {
 
-        final String msgPfx = CommunityDictEnum.RESTFUL_PRINT.getWord();
+        final String dispFileName =
+                StringUtils.defaultString(disp.getFileName());
+
+        final String msgPfx = String.format("%s of document [%s]",
+                CommunityDictEnum.RESTFUL_PRINT.getWord(), disp.getFileName());
 
         String userid = "";
 
         try {
-
-            final User user = isUserAuthenticated(authString, msgPfx, disp);
+            final User user = this.isUserAuthenticated(authString, msgPfx);
             userid = user.getUserId();
 
             if (disp.getFileName() == null) {
@@ -425,26 +350,26 @@ public final class RestDocumentsService implements IRestService {
             }
 
             final DocContentTypeEnum contentType =
-                    DocContent.getContentTypeFromFile(disp.getFileName());
+                    DocContent.getContentTypeFromFile(dispFileName);
             if (contentType == null) {
                 return printDocumentWarn(Response.Status.NOT_MODIFIED,
                         String.format(
-                                "%s of document [%s] for user [%s] failed: "
+                                "%s for user [%s] failed: "
                                         + "unknown content type.",
-                                msgPfx, disp.getFileName(), userid));
+                                msgPfx, userid));
             }
 
             final DocContentPrintReq docContentPrintReq =
                     new DocContentPrintReq();
 
             docContentPrintReq.setContentType(contentType);
-            docContentPrintReq.setFileName(disp.getFileName());
+            docContentPrintReq.setFileName(dispFileName);
             docContentPrintReq.setOriginatorEmail(null);
             docContentPrintReq
                     .setOriginatorIp(WebAppHelper.getClientIP(servletRequest));
             docContentPrintReq.setPreferredOutputFont(null);
             docContentPrintReq.setProtocol(DocLogProtocolEnum.HTTP);
-            docContentPrintReq.setTitle(disp.getFileName());
+            docContentPrintReq.setTitle(dispFileName);
 
             QUEUE_SERVICE.printDocContent(ReservedIppQueueEnum.WEBSERVICE,
                     user.getUserId(), docContentPrintReq, istr);
@@ -454,20 +379,15 @@ public final class RestDocumentsService implements IRestService {
                     e.getMessage());
         } catch (DocContentPrintException e) {
             return printDocumentWarn(Response.Status.INTERNAL_SERVER_ERROR,
-                    String.format(
-                            "%s of document [%s] for user [%s] failed: %s",
-                            msgPfx, disp.getFileName(), userid,
+                    String.format("%s for user [%s] failed: %s", msgPfx, userid,
                             e.getMessage()));
         } catch (UnavailableException e) {
             return printDocumentWarn(Response.Status.SERVICE_UNAVAILABLE,
-                    String.format(
-                            "%s of document [%s] for user [%s] failed: %s",
-                            msgPfx, disp.getFileName(), userid,
+                    String.format("%s for user [%s] failed: %s", msgPfx, userid,
                             e.getMessage()));
         }
 
-        final String msg = String.format("%s of document [%s] for user [%s]",
-                msgPfx, disp.getFileName(), userid);
+        final String msg = String.format("%s for user [%s]", msgPfx, userid);
         AdminPublisher.instance().publish(PubTopicEnum.WEB_SERVICE,
                 PubLevelEnum.INFO, msg);
         LOGGER.debug(msg);

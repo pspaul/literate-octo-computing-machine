@@ -41,9 +41,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.savapage.core.SpException;
+import org.savapage.core.cometd.AdminPublisher;
+import org.savapage.core.cometd.PubLevelEnum;
+import org.savapage.core.cometd.PubTopicEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.AccountDao;
-import org.savapage.core.dao.UserDao;
 import org.savapage.core.dao.helpers.AccountTrxPagerReq;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.User;
@@ -52,14 +54,10 @@ import org.savapage.core.reports.impl.ReportCreator;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.JsonHelper;
 import org.savapage.server.restful.RestAuthFilter;
-import org.savapage.server.restful.dto.AbstractRestDto;
 import org.savapage.server.restful.dto.AccountTrxReportReqDto;
+import org.savapage.server.restful.dto.RestResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * REST reports API.
@@ -68,7 +66,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @Path("/" + RestReportsService.PATH_MAIN)
-public class RestReportsService implements IRestService {
+public class RestReportsService extends AbstractRestService {
 
     /** */
     private static final Logger LOGGER =
@@ -81,37 +79,32 @@ public class RestReportsService implements IRestService {
     public static final String PATH_MAIN = "reports";
 
     /** */
-    private static final UserDao USER_DAO =
-            ServiceContext.getDaoContext().getUserDao();
-    /** */
     private static final AccountDao ACCOUNT_DAO =
             ServiceContext.getDaoContext().getAccountDao();
-
-    @JsonInclude(Include.NON_NULL)
-    private static class RspError extends AbstractRestDto {
-        /** */
-        @JsonProperty("error")
-        private String error;
-
-        public String getError() {
-            return error;
-        }
-
-        public void setError(String error) {
-            this.error = error;
-        }
-    }
 
     /**
      * Creates an error response.
      *
+     * @param prefix
+     *            Error prefix.
      * @param err
+     *            Error message.
      * @return Response
      * @throws IOException
      */
-    private static Response createErrorResponse(final String err) {
-        final RspError obj = new RspError();
+    private static Response createErrorResponse(final String prefix,
+            final String err) {
+
+        final String msg = String.format("%s : %s", prefix, err);
+
+        AdminPublisher.instance().publish(PubTopicEnum.WEB_SERVICE,
+                PubLevelEnum.WARN, msg);
+
+        LOGGER.warn(msg);
+
+        final RestResponseDto obj = new RestResponseDto();
         obj.setError(err);
+
         try {
             return Response.ok(obj.stringifyPrettyPrinted().concat("\n"))
                     .build();
@@ -135,6 +128,10 @@ public class RestReportsService implements IRestService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @RolesAllowed(RestAuthFilter.ROLE_ADMIN)
     public Response reportAccountTrx(final String jsonInput) {
+
+        final StringBuilder logMsg =
+                new StringBuilder(String.format("%s.reportAccountTrx",
+                        RestReportsService.class.getSimpleName()));
 
         final File tempExportFile = ConfigManager.createAppTmpFile("export-");
 
@@ -161,6 +158,10 @@ public class RestReportsService implements IRestService {
                 final String accountName =
                         requestIn.getSelect().getAccountName();
 
+                logMsg.append(String.format(": %s [%s]",
+                        requestIn.getSelect().getAccountType().name(),
+                        accountName));
+
                 switch (requestIn.getSelect().getAccountType()) {
                 case GROUP:
                 case SHARED:
@@ -170,8 +171,8 @@ public class RestReportsService implements IRestService {
                                     requestIn.getSelect().getAccountType());
                     if (account == null) {
                         accountIdKey = null;
-                        msgError = String.format("Account [%s] not found.",
-                                accountName);
+                        msgError =
+                                String.format("[%s] not found.", accountName);
                     } else {
                         accountIdKey = account.getId();
                     }
@@ -182,8 +183,8 @@ public class RestReportsService implements IRestService {
                             USER_DAO.findActiveUserByUserId(accountName);
                     if (user == null) {
                         userIdKey = null;
-                        msgError = String.format("User [%s] not found.",
-                                accountName);
+                        msgError =
+                                String.format("[%s] not found.", accountName);
                     } else {
                         userIdKey = user.getId();
                     }
@@ -199,8 +200,7 @@ public class RestReportsService implements IRestService {
                 if (msgError == null) {
                     msgError = "No user or account specified.";
                 }
-                LOGGER.warn(msgError);
-                return createErrorResponse(msgError);
+                return createErrorResponse(logMsg.toString(), msgError);
             }
 
             // Selection
@@ -255,14 +255,18 @@ public class RestReportsService implements IRestService {
                     }
                 }
             };
+
+            LOGGER.info(logMsg.toString());
+            AdminPublisher.instance().publish(PubTopicEnum.WEB_SERVICE,
+                    PubLevelEnum.INFO, logMsg.toString());
+
             return Response.ok(stream).build();
 
         } catch (Exception e) {
             if (tempExportFile != null && tempExportFile.exists()) {
                 tempExportFile.delete();
             }
-            LOGGER.warn(e.getMessage());
-            return createErrorResponse(e.getMessage());
+            return createErrorResponse(logMsg.toString(), e.getMessage());
         }
     }
 

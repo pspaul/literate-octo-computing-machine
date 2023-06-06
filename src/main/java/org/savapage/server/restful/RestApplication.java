@@ -28,6 +28,8 @@ import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.savapage.server.restful.services.RestDocumentsService;
+import org.savapage.server.restful.services.RestFinancialService;
+import org.savapage.server.restful.services.RestReportsService;
 import org.savapage.server.restful.services.RestSystemService;
 import org.savapage.server.restful.services.RestTestService;
 
@@ -50,6 +52,8 @@ public final class RestApplication extends ResourceConfig {
     private static final Class<?>[] SERVICES_REGISTRY = new Class<?>[] { //
             RestSystemService.class, //
             RestDocumentsService.class, //
+            RestReportsService.class, //
+            RestFinancialService.class, //
             RestTestService.class //
     };
 

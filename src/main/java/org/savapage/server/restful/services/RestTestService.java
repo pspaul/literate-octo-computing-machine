@@ -85,7 +85,7 @@ import com.lowagie.text.pdf.PdfWriter;
  *
  */
 @Path("/" + RestTestService.PATH_MAIN)
-public final class RestTestService implements IRestService {
+public final class RestTestService extends AbstractRestService {
 
     /** */
     private static final Logger LOGGER =

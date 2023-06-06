@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Path("/" + RestSystemService.PATH_MAIN)
-public final class RestSystemService implements IRestService {
+public final class RestSystemService extends AbstractRestService {
 
     /** */
     private static final Logger LOGGER =
