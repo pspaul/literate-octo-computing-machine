@@ -435,17 +435,13 @@ public final class About extends AbstractAdminPage {
 
         final String liFormat = "<li><h3>%s</h3><div %s>%s</div></li>";
 
-        String htmlMembership = null;
+        String htmlMembership = String.format(liFormat,
+                CommunityDictEnum.MEMBER.getWord(getLocale()), styleInfo,
+                StringUtils.defaultString(memberCard.getMemberOrganization(),
+                        "-"));
 
         if (memberCard.hasMemberCardFile()) {
 
-            //
-            htmlMembership = String.format(liFormat,
-                    CommunityDictEnum.MEMBER.getWord(getLocale()), styleInfo,
-                    StringUtils.defaultString(
-                            memberCard.getMemberOrganisation(), "-"));
-
-            //
             htmlMembership += String.format(liFormat,
                     localized("membership-status"), styleInfo, txtStatus);
 
@@ -486,10 +482,8 @@ public final class About extends AbstractAdminPage {
                             styleInfo, memberCard.getMembershipVersion());
 
         } else {
-            //
-            htmlMembership = String.format(liFormat,
+            htmlMembership += String.format(liFormat,
                     localized("membership-status"), styleInfo, txtStatus);
-
         }
 
         add(new Label("membership-details", htmlMembership)

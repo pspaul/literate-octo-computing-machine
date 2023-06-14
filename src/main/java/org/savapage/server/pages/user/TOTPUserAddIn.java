@@ -138,7 +138,7 @@ public final class TOTPUserAddIn extends AbstractAuthPage {
 
         String issuer = cm.getConfigValue(Key.USER_TOTP_ISSUER);
         if (StringUtils.isBlank(issuer)) {
-            issuer = MemberCard.instance().getMemberOrganisation();
+            issuer = MemberCard.instance().getMemberOrganization();
         }
         if (StringUtils.isBlank(issuer)) {
             issuer = CommunityDictEnum.SAVAPAGE.getWord();

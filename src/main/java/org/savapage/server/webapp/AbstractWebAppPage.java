@@ -199,7 +199,7 @@ public abstract class AbstractWebAppPage extends AbstractPage
         title.append(CommunityDictEnum.SAVAPAGE.getWord());
 
         final String organisation =
-                MemberCard.instance().getMemberOrganisation();
+                MemberCard.instance().getMemberOrganization();
 
         if (StringUtils.isNotBlank(organisation)) {
             title.append(" :: ").append(organisation);

@@ -598,7 +598,7 @@ public final class SystemStatusPanel extends Panel {
                 String.format("%s %s", CommunityDictEnum.COMMUNITY.getWord(),
                         CommunityDictEnum.MEMBER.getWord().toLowerCase())));
         labelWrk =
-                new Label("membership-org", memberCard.getMemberOrganisation());
+                new Label("membership-org", memberCard.getMemberOrganization());
         labelWrk.add(new AttributeModifier(MarkupHelper.ATTR_CLASS, cssColor));
         add(labelWrk);
 

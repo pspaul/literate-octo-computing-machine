@@ -63,13 +63,13 @@ public final class CommunityStatusFooterPanel extends Panel {
 
         final Label labelOrg;
 
-        if (card.isVisitorCard()) {
+        if (card.isVisitorCard() && !card.isVisitorEdition()) {
             labelOrg = helper.encloseLabel("membership-org", memberStatus,
                     !cardDesirable);
         } else {
             labelOrg = helper.encloseLabel("membership-org",
-                    card.getMemberOrganisation(),
-                    StringUtils.isNotBlank(card.getMemberOrganisation()));
+                    card.getMemberOrganization(),
+                    StringUtils.isNotBlank(card.getMemberOrganization()));
         }
         MarkupHelper.appendLabelAttr(labelOrg, MarkupHelper.ATTR_CLASS,
                 CssClassEnum.SP_BTN_ABOUT_ORG.clazz());

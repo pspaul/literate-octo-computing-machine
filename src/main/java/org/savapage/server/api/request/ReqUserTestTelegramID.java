@@ -69,7 +69,7 @@ public final class ReqUserTestTelegramID extends ApiRequestMixin {
         if (TelegramHelper.sendMessage(telegramID, String.format(
                 "%s : %s [%s]", CommunityDictEnum.SAVAPAGE.getWord(),
                 StringUtils.defaultString(
-                        MemberCard.instance().getMemberOrganisation(), "-"),
+                        MemberCard.instance().getMemberOrganization(), "-"),
                 MemberCard.instance().getStatusUserText(getLocale())))) {
             this.setApiResult(ApiResultCodeEnum.OK, "msg-apply-ok");
         } else {
