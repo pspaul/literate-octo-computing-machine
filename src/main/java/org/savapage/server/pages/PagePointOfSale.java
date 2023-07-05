@@ -31,13 +31,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.config.OnOffEnum;
 import org.savapage.core.dto.PosSalesItemDto;
 import org.savapage.core.dto.PosSalesLabelDomainPartDto;
 import org.savapage.core.dto.PosSalesLocationDto;
@@ -50,6 +54,7 @@ import org.savapage.core.services.AccountingService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.account.UserAccountContextEnum;
 import org.savapage.core.services.helpers.account.UserAccountContextFactory;
+import org.savapage.server.api.UserAgentHelper;
 import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.session.SpSession;
 
@@ -124,6 +129,32 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
     protected abstract HtmlButtonEnum buttonBack();
 
     /**
+     * @return {@code true} if card swipe is captured in visible password input
+     *         field.
+     */
+    private boolean isCardAsPassword() {
+
+        final OnOffEnum pwEnumValue = ConfigManager.instance().getConfigEnum(
+                OnOffEnum.class, Key.FINANCIAL_POS_SALES_CARD_AS_PASSWORD);
+
+        switch (pwEnumValue) {
+        case AUTO:
+            final UserAgentHelper helper = new UserAgentHelper(
+                    (HttpServletRequest) this.getRequestCycle().getRequest()
+                            .getContainerRequest());
+            return helper.isMobileBrowser();
+        case OFF:
+            return false;
+        case ON:
+            return true;
+        default:
+            throw new SpException(String.format("Unhandled %s.%s value.",
+                    pwEnumValue.getClass().getSimpleName(),
+                    pwEnumValue.toString()));
+        }
+    }
+
+    /**
      * @param parameters
      *            Page parameters.
      */
@@ -149,6 +180,15 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
             helper.addLabel("txt-activate-reader",
                     PhraseEnum.ACTIVATE_CARD_READER);
             helper.addLabel("txt-swipe-card", PhraseEnum.SWIPE_CARD);
+
+            final String swipeCardInputType;
+            if (this.isCardAsPassword()) {
+                swipeCardInputType = MarkupHelper.ATTR_TYPE_PASSWORD;
+            } else {
+                swipeCardInputType = MarkupHelper.ATTR_TYPE_HIDDEN;
+            }
+            helper.addModifyLabelAttr("input-swipe-card",
+                    MarkupHelper.ATTR_TYPE, swipeCardInputType);
 
             this.addAccountContext(cm, helper);
             this.addPosSalesLabels(cm, helper);

@@ -3376,7 +3376,7 @@
                     if (_collectStartTime) {
                         collectTimeElapsed = new Date().getTime() - _collectStartTime;
                         _collectStartTime = null;
-                        if (collectTimeElapsed > maxMsecs) {
+                        if (maxMsecs > 0 && collectTimeElapsed > maxMsecs) {
                             return false;
                         }
                     }

@@ -46,7 +46,7 @@
      * Constructor
      */
     _ns.PagePointOfSale = function(_i18n, _view, _model, _api, isMain,
-        _salesLocation, _salesShop) {
+        _salesLocation, _salesShop, _salesCardAsPassword) {
         var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale",
             (isMain ? "PagePointOfSaleMain" : "PagePointOfSalePage")),
             _self = _ns.derive(_page),
@@ -357,7 +357,21 @@
          */
         $(_self.id()).on('pagecreate', function(event) {
 
-            var sel, filterableDateTime = $("#sp-pos-quickdate-filter");
+            var sel, filterableDateTime = $("#sp-pos-quickdate-filter"),
+                selUserCardNumber = $('#sp-login-card-local-number'),
+                isUserCardNumberAsEntryField;
+
+            if (_salesCardAsPassword !== undefined) {
+                if (_salesCardAsPassword) {
+                    selUserCardNumber.attr('type', 'password');
+                } else {
+                    selUserCardNumber.attr('type', 'hidden');
+                    // hide jQuery enhancement
+                    selUserCardNumber.parent().hide();
+                }
+            }
+
+            isUserCardNumberAsEntryField = selUserCardNumber.attr('type') !== 'hidden';
 
             $(this).on('click', '#sp-pos-button-deposit', null, function() {
                 _onDeposit();
@@ -454,7 +468,8 @@
 
             _quickUserSearch.onCreate($(this), 'sp-pos-userid-filter', 'user-quick-search', null, _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser, _onQuickSearchUserBefore);
 
-            _ns.KeyboardLogger.setCallback($('#sp-pos-sales-user-card-local-group'), _model.cardLocalMaxMsecs,
+            _ns.KeyboardLogger.setCallback($('#sp-pos-sales-user-card-local-group'),
+                (isUserCardNumberAsEntryField ? 0 : _model.cardLocalMaxMsecs),
                 //
                 function() {// focusIn
                     $('#sp-pos-sales-user-card-local-focusout').hide();
@@ -462,6 +477,9 @@
                     $('#sp-pos-sales-user-card-local-group').parent().css('background-color', 'lightgreen');
                     $("#sp-pos-sales-amount-main").css('background-color', 'lightgreen');
                     $("#sp-pos-sales-amount-cents").css('background-color', 'lightgreen');
+                    if (isUserCardNumberAsEntryField && !selUserCardNumber.is(":focus")) {
+                        _view.asyncFocus(selUserCardNumber);
+                    }
                 }, function() {// focusOut
                     $('#sp-pos-sales-user-card-local-focusin').hide();
                     $('#sp-pos-sales-user-card-local-focusout').show();
@@ -469,6 +487,10 @@
                     $("#sp-pos-sales-amount-main").css('background-color', '');
                     $("#sp-pos-sales-amount-cents").css('background-color', '');
                 }, function(id) {
+                    if (isUserCardNumberAsEntryField) {
+                        id = selUserCardNumber.val();
+                        selUserCardNumber.val('');
+                    }
                     var res = _api.call({
                         request: 'usercard-quick-search',
                         dto: JSON.stringify({

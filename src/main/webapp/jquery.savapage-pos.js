@@ -405,8 +405,19 @@
             // WebApp URL parameters.
             URL_PARM = {
                 SALES_LOCATION: 'sp-sales-location',
-                SALES_SHOP: 'sp-sales-shop'
-            };
+                SALES_SHOP: 'sp-sales-shop',
+                SALES_CARD_AS_PASSWORD: 'sp-sales-card-as-password'
+            },
+            _salesCardAsPasswordParam = _ns.Utils.getUrlParam(URL_PARM.SALES_CARD_AS_PASSWORD),
+            _salesCardAsPassword;
+
+        if (_salesCardAsPasswordParam) {
+            if (_salesCardAsPasswordParam === 'AUTO') {
+                _salesCardAsPassword = _ns.Utils.isMobileOrTablet();
+            } else {
+                _salesCardAsPassword = (_salesCardAsPasswordParam === 'ON')
+            }
+        }
 
         _ns.commonWebAppInit();
 
@@ -415,7 +426,9 @@
             login: new _ns.PageLogin(_i18n, _view, _api),
             pointOfSale: new _ns.PagePointOfSale(_i18n, _view, _model, _api, true,
                 _ns.Utils.getUrlParam(URL_PARM.SALES_LOCATION),
-                _ns.Utils.getUrlParam(URL_PARM.SALES_SHOP))
+                _ns.Utils.getUrlParam(URL_PARM.SALES_SHOP),
+                _salesCardAsPassword
+            )
         };
 
         _ctrl = new _ns.Controller(_i18n, _model, _view, _api);

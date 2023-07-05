@@ -80,6 +80,7 @@ public final class MarkupHelper {
     public static final String ATTR_ID = "id";
     public static final String ATTR_FOR = "for";
     public static final String ATTR_TITLE = "title";
+    public static final String ATTR_TYPE = "type";
     public static final String ATTR_SRC = "src";
     public static final String ATTR_CLASS = "class";
     public static final String ATTR_STYLE = "style";
@@ -91,6 +92,9 @@ public final class MarkupHelper {
     public static final String ATTR_SLIDER_MAX = "max";
     public static final String ATTR_MAXLENGTH = "maxlength";
     public static final String ATTR_TABINDEX = "tabindex";
+
+    public static final String ATTR_TYPE_HIDDEN = "hidden";
+    public static final String ATTR_TYPE_PASSWORD = "password";
 
     public static final String ATTR_DATA_JQM_DATA_ON_TEXT = "data-on-text";
     public static final String ATTR_DATA_JQM_DATA_OFF_TEXT = "data-off-text";
