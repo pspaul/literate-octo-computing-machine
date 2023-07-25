@@ -47,7 +47,10 @@ import org.savapage.core.UnavailableException.State;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
+import org.savapage.core.i18n.NounEnum;
 import org.savapage.core.print.server.DocContentPrintException;
+import org.savapage.core.print.server.DocContentPrintRsp;
+import org.savapage.core.print.server.PrintInResultEnum;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.DateUtil;
 import org.savapage.core.util.JsonHelper;
@@ -189,6 +192,7 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
             }
 
             int nFileWlk = 0;
+            int nFileWlkFontWarning = 0;
 
             for (final FileItem fileItem : fileItemsAll) {
 
@@ -205,8 +209,21 @@ public final class WebPrintDropZoneFileResource extends AbstractResource {
                             NumberUtil.humanReadableByteCountSI(
                                     Locale.getDefault(), fileItem.getSize()));
                 }
-                WebPrintHelper.handleFileUpload(originatorIp, userId,
-                        new FileUpload(fileItem), selectedFont);
+                final DocContentPrintRsp rsp =
+                        WebPrintHelper.handleFileUpload(originatorIp, userId,
+                                new FileUpload(fileItem), selectedFont);
+
+                if (rsp.getResult() == PrintInResultEnum.FONT_WARNING) {
+                    final Locale locale = session.getLocale();
+                    nFileWlkFontWarning++;
+                    resultCode = ApiResultCodeEnum.INFO;
+                    resultText =
+                            String.format("%d %s : %s [%s]", nFileWlkFontWarning,
+                                    NounEnum.FILE.uiText(locale,
+                                            nFileWlkFontWarning > 1),
+                                    NounEnum.FONT.uiText(locale),
+                                    NounEnum.WARNING.uiText(locale, true));
+                }
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("WebPrint [{}] {}/{} [{}] ....uploaded [{}].",

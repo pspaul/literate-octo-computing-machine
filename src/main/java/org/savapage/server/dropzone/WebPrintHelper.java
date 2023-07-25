@@ -44,6 +44,7 @@ import org.savapage.core.doc.DocContentTypeEnum;
 import org.savapage.core.fonts.InternalFontFamilyEnum;
 import org.savapage.core.print.server.DocContentPrintException;
 import org.savapage.core.print.server.DocContentPrintReq;
+import org.savapage.core.print.server.DocContentPrintRsp;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
@@ -205,6 +206,7 @@ public final class WebPrintHelper {
      *            The uploaded file.
      * @param preferredFont
      *            The default PDF font for text files.
+     * @return {@link DocContentPrintRsp}
      * @throws DocContentPrintException
      *             When conversion to PDF failed.
      * @throws IOException
@@ -212,7 +214,7 @@ public final class WebPrintHelper {
      * @throws UnavailableException
      *             When service is unavailable.
      */
-    public static void handleFileUpload(final String originatorIp,
+    public static DocContentPrintRsp handleFileUpload(final String originatorIp,
             final String userId, final FileUpload uploadedFile,
             final InternalFontFamilyEnum preferredFont)
             throws DocContentPrintException, IOException, UnavailableException {
@@ -252,8 +254,8 @@ public final class WebPrintHelper {
             docContentPrintReq.setProtocol(DocLogProtocolEnum.HTTP);
             docContentPrintReq.setTitle(fileName);
 
-            QUEUE_SERVICE.printDocContent(ReservedIppQueueEnum.WEBPRINT, userId,
-                    docContentPrintReq, uploadedFile.getInputStream());
+            return QUEUE_SERVICE.printDocContent(ReservedIppQueueEnum.WEBPRINT,
+                    userId, docContentPrintReq, uploadedFile.getInputStream());
 
         } finally {
             // Close quietly.
