@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -32,9 +32,9 @@ the License, or (at your option) any later version.
 
 		<li data-role="list-divider">
 			<span><img class="sp-shared-account-edit" width="16"
-					height="16" wicket:id="sharedAccountImage" /> <img
-					class="sp-group-account-edit" width="16" height="16"
-					wicket:id="groupAccountImage" />&nbsp; </span> <span
+				height="16" wicket:id="sharedAccountImage" /> <img
+				class="sp-group-account-edit" width="16" height="16"
+				wicket:id="groupAccountImage" />&nbsp; </span> <span
 				class="sp-shared-account-edit"><wicket:message
 					key="label-account-name" /></span> <span class="sp-group-account-edit"
 				id="sp-group-account-name" />
@@ -47,9 +47,8 @@ the License, or (at your option) any later version.
 
 		<li class="sp-shared-account-edit" data-role="list-divider">
 			<span> <img width="16" height="16"
-					wicket:id="parentAccountImage" />&nbsp;&nbsp;
+				wicket:id="parentAccountImage" />&nbsp;&nbsp;
 			</span><span><wicket:message key="label-account-name-parent" /></span>
-
 		</li>
 		<li class="sp-shared-account-edit">
 			<input type="text" id="sp-shared-account-name-parent" value=""
@@ -72,7 +71,9 @@ the License, or (at your option) any later version.
 		class="sp-shared-account-edit">
 
 		<li data-role="list-divider">
-			<wicket:message key="header-access-control" />
+			<span> <img width="16" height="16"
+				wicket:id="accessControlImage" />&nbsp;&nbsp;
+			</span><span><wicket:message key="header-access-control" /></span>
 		</li>
 		<li>
 			<label class="sp-txt-wrap" for="sp-shared-account-group-access">
@@ -112,8 +113,8 @@ the License, or (at your option) any later version.
 	</button>
 
 	<a href="#" data-rel="back" data-direction="reverse"
-		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-			key="button-cancel" />
+		class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+		<wicket:message key="button-cancel" />
 	</a>
 
 </div>

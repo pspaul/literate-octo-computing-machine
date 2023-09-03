@@ -25,14 +25,13 @@
 package org.savapage.server.pages;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.wicket.markup.html.panel.Panel;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public abstract class ACLSummaryPanel extends Panel {
+public abstract class ACLSummaryPanel extends PageItemIconPanel {
 
     /** */
     private static final long serialVersionUID = 1L;
@@ -71,34 +70,13 @@ public abstract class ACLSummaryPanel extends Panel {
 
         final MarkupHelper helper = new MarkupHelper(this);
 
-        if (nRolesEnabled.intValue() == 0) {
-            helper.discloseLabel("enabled");
-        } else {
-            MarkupHelper.modifyComponentAttr(helper.addTransparant("enabled"),
-                    MarkupHelper.ATTR_TITLE, txtRolesEnabled.toString());
+        this.populate(helper, "enabled-count", nRolesEnabled.intValue(),
+                "enabled", txtRolesEnabled.toString(), "enabled-img",
+                this.imgSrcEnabled);
 
-            MarkupHelper.modifyComponentAttr(
-                    helper.addTransparant("enabled-img"), MarkupHelper.ATTR_SRC,
-                    this.imgSrcEnabled);
-
-            helper.addLabel("enabled-count",
-                    nRolesEnabled.toInteger().toString());
-        }
-
-        if (nRolesDisabled.intValue() == 0) {
-            helper.discloseLabel("disabled");
-        } else {
-            MarkupHelper.modifyComponentAttr(helper.addTransparant("disabled"),
-                    MarkupHelper.ATTR_TITLE, txtRolesDisabled.toString());
-
-            MarkupHelper.modifyComponentAttr(
-                    helper.addTransparant("disabled-img"),
-                    MarkupHelper.ATTR_SRC, this.imgSrcDisabled);
-
-            helper.addLabel("disabled-count",
-                    nRolesDisabled.toInteger().toString());
-        }
-
+        this.populate(helper, "disabled-count", nRolesDisabled.intValue(),
+                "disabled", txtRolesDisabled.toString(), "disabled-img",
+                this.imgSrcDisabled);
     }
 
 }

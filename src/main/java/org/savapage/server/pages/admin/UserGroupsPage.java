@@ -186,6 +186,14 @@ public final class UserGroupsPage extends AbstractAdminListPage {
             helper.addLabel("signal", String.valueOf(userCount));
 
             /*
+             * Shared accounts users of this group are allowed to use.
+             */
+            final SharedAccountSummaryPanel sharedAccPanel =
+                    new SharedAccountSummaryPanel("auth-shared-accounts");
+            sharedAccPanel.populate(userGroup);
+            item.add(sharedAccPanel);
+
+            /*
              * Roles
              */
             final ACLRoleSummaryPanel rolesPanel =

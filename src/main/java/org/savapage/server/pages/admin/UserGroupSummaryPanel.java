@@ -24,43 +24,53 @@
  */
 package org.savapage.server.pages.admin;
 
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.savapage.core.dao.enums.ACLOidEnum;
-import org.savapage.core.jpa.Account.AccountTypeEnum;
+import java.util.Iterator;
+import java.util.List;
+
+import org.savapage.core.jpa.Account;
+import org.savapage.core.jpa.UserGroupAccount;
 import org.savapage.server.pages.MarkupHelper;
+import org.savapage.server.pages.PageItemRelatedPanel;
 
 /**
  *
  * @author Rijk Ravestein
  *
  */
-public final class PageSharedAccount extends AbstractAdminPage {
+public final class UserGroupSummaryPanel extends PageItemRelatedPanel {
 
-    /**
-     * Version for serialization.
-     */
+    /** */
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param parameters
-     *            The page parameters.
+     *
+     * @param id
+     *            The non-null id of this component.
      */
-    public PageSharedAccount(final PageParameters parameters) {
+    public UserGroupSummaryPanel(final String id) {
+        super(id);
+    }
 
-        super(parameters, ACLOidEnum.A_ACCOUNTS, RequiredPermission.EDIT);
+    /**
+     * @param account
+     */
+    public void populate(final Account account) {
 
-        final MarkupHelper helper = new MarkupHelper(this);
+        final StringBuilder accString = new StringBuilder();
+        int groupCount = 0;
 
-        helper.addModifyLabelAttr("groupAccountImage", "", "src",
-                MarkupHelper.getImgUrlPath(AccountTypeEnum.GROUP));
+        final List<UserGroupAccount> accList = account.getMemberGroups();
+        for (Iterator<UserGroupAccount> iterator = accList.iterator(); iterator
+                .hasNext();) {
+            final UserGroupAccount userGroupAccount = iterator.next();
+            groupCount++;
+            if (accString.length() > 0) {
+                accString.append(", ");
+            }
+            accString.append(userGroupAccount.getUserGroup().getGroupName());
+        }
 
-        helper.addModifyLabelAttr("sharedAccountImage", "", "src",
-                MarkupHelper.getImgUrlPath(AccountTypeEnum.SHARED));
-
-        helper.addModifyLabelAttr("parentAccountImage", "", "src",
-                MarkupHelper.getImgUrlPath(AccountTypeEnum.SHARED));
-
-        helper.addModifyLabelAttr("accessControlImage", "", "src",
+        this.populate(groupCount, accString.toString(),
                 MarkupHelper.IMG_PATH_USER_PRIVILEGES);
     }
 

@@ -159,6 +159,14 @@ public final class AccountsPage extends AbstractAdminListPage {
             }
 
             /*
+             * Authorized user groups.
+             */
+            final UserGroupSummaryPanel sharedAccPanel =
+                    new UserGroupSummaryPanel("membergroups");
+            sharedAccPanel.populate(account);
+            item.add(sharedAccPanel);
+
+            /*
              * Image
              */
             final AccountTypeEnum accountType = EnumUtils
