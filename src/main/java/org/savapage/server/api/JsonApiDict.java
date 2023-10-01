@@ -34,6 +34,7 @@ import org.savapage.core.SpException;
 import org.savapage.core.concurrent.ReadLockObtainFailedException;
 import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
+import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.config.WebAppTypeEnum;
 import org.savapage.core.dao.enums.ACLRoleEnum;
 import org.savapage.server.api.request.ApiRequestHandler;
@@ -359,6 +360,8 @@ public final class JsonApiDict {
     public static final String REQ_USER_NOTIFY_ACCOUNT_CHANGE =
             "user-notify-account-change";
     public static final String REQ_USER_QUICK_SEARCH = "user-quick-search";
+    public static final String REQ_USER_QUICK_SEARCH_CREDIT_TRANSFER =
+            "user-quick-search-credit-transfer";
     public static final String REQ_USER_SET = "user-set";
     public static final String REQ_USER_SET_TELEGRAM_ID =
             "user-set-telegram-id";
@@ -919,7 +922,14 @@ public final class JsonApiDict {
         final Req req = dict.get(request);
 
         if (req.aclRolesRequired == null) {
-            return true;
+
+            switch (request) {
+            case REQ_USER_QUICK_SEARCH_CREDIT_TRANSFER:
+                return ConfigManager.instance().isConfigValue(
+                        Key.FINANCIAL_USER_TRANSFERS_USER_SEARCH_ENABLE);
+            default:
+                return true;
+            }
         }
 
         final Iterator<ACLRoleEnum> iter = req.aclRolesRequired.iterator();
@@ -1245,6 +1255,9 @@ public final class JsonApiDict {
                 EnumSet.of(ACLRoleEnum.WEB_CASHIER,
                         ACLRoleEnum.PRINT_SITE_OPERATOR,
                         ACLRoleEnum.JOB_TICKET_OPERATOR));
+
+        usr(REQ_USER_QUICK_SEARCH_CREDIT_TRANSFER, ReqUserQuickSearch.class,
+                DbClaim.READ, DbAccess.YES);
 
         acl(REQ_USERCARD_QUICK_SEARCH, ReqUserCardQuickSearch.class,
                 DbClaim.READ, DbAccess.YES,

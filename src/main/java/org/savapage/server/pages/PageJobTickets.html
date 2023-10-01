@@ -27,12 +27,16 @@ the License, or (at your option) any later version.
 
 		<div data-role="navbar">
 			<ul>
-				<li><a href="#sp-jobtickets-tab-open"
+				<li>
+					<a href="#sp-jobtickets-tab-open"
 						id="sp-jobtickets-tab-open-button" data-ajax="false"
-						wicket:id="tab-title-open" /></li>
-				<li><a href="#sp-jobtickets-tab-closed"
+						wicket:id="tab-title-open" />
+				</li>
+				<li>
+					<a href="#sp-jobtickets-tab-closed"
 						id="sp-jobtickets-tab-closed-button" data-ajax="false"
-						wicket:id="tab-title-closed" /></li>
+						wicket:id="tab-title-closed" />
+				</li>
 			</ul>
 		</div>
 
@@ -67,7 +71,8 @@ the License, or (at your option) any later version.
 							<wicket:message key="prompt-userid" />
 						</label>
 
-						<input tabindex="0" type="text" id="sp-jobticket-userid" value=""
+						<input wicket:id="sp-jobticket-userid" tabindex="0" type="text"
+							id="sp-jobticket-userid" value="" placeholder="LOCALIZE"
 							maxlength="128" autofocus data-type="search" autocomplete="off"
 							autocorrect="off" autocapitalize="off" spellcheck="false" />
 
@@ -82,10 +87,11 @@ the License, or (at your option) any later version.
 							<span class="sp-txt-wrap" wicket:id="prompt-ticket" />
 						</label>
 
-						<input type="text" id="sp-jobticket-search-ticket" value=""
-							placeholder="" maxlength="32" data-type="search"
-							autocomplete="off" autocorrect="off" autocapitalize="off"
-							spellcheck="false" data-clear-btn="true" />
+						<input wicket:id="sp-jobticket-search-ticket" type="text"
+							id="sp-jobticket-search-ticket" value="" placeholder="LOCALIZED"
+							maxlength="32" data-type="search" autocomplete="off"
+							autocorrect="off" autocapitalize="off" spellcheck="false"
+							data-clear-btn="true" />
 
 						<ul id="sp-jobticket-search-ticket-filter" data-role="listview"
 							data-filter="true" data-input="#sp-jobticket-search-ticket"
@@ -193,14 +199,13 @@ the License, or (at your option) any later version.
 						<label for="sp-doclog-select-userid">
 							<wicket:message key="prompt-userid" />
 						</label>
-						<input tabindex="0" type="text" id="sp-doclog-select-userid"
-							value="" maxlength="128" autofocus data-type="search"
-							autocomplete="off" autocorrect="off" autocapitalize="off"
-							spellcheck="false" />
+						<input wicket:id="sp-doclog-select-userid" tabindex="0"
+							type="text" id="sp-doclog-select-userid" value="" maxlength="128"
+							autofocus data-type="search" autocomplete="off" autocorrect="off"
+							autocapitalize="off" placeholder="LOCALIZE" spellcheck="false" />
 
 						<ul id="sp-doclog-select-userid-filter" data-role="listview"
 							data-filter="true" data-input="#sp-doclog-select-userid"
-							data-filter-placeholder="Find a User by ID..."
 							data-filter-theme="a" data-inset="true" style="float: right;" />
 					</div>
 				</li>

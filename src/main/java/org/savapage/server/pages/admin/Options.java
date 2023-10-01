@@ -637,10 +637,13 @@ public final class Options extends AbstractAdminPage {
 
         //
         labelledCheckbox("financial-user-transfer-enable",
-                IConfigProp.Key.FINANCIAL_USER_TRANSFER_ENABLE);
+                IConfigProp.Key.FINANCIAL_USER_TRANSFERS_ENABLE);
 
         labelledCheckbox("financial-user-transfer-enable-comments",
-                IConfigProp.Key.FINANCIAL_USER_TRANSFER_ENABLE_COMMENTS);
+                IConfigProp.Key.FINANCIAL_USER_TRANSFERS_ENABLE_COMMENTS);
+
+        labelledCheckbox("financial-user-transfer-enable-search",
+                IConfigProp.Key.FINANCIAL_USER_TRANSFERS_USER_SEARCH_ENABLE);
 
         /*
          * Report Font Family.

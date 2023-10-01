@@ -696,7 +696,7 @@
 
         _view.pages.admin.onApplyFinancialUserTransfers = function() {
             var props = {};
-            _fillConfigPropsYN(props, ['financial.user.transfers.enable', 'financial.user.transfers.enable-comments']);
+            _fillConfigPropsYN(props, ['financial.user.transfers.enable', 'financial.user.transfers.user-search.enable', 'financial.user.transfers.enable-comments']);
             _saveConfigProps(props);
         };
 

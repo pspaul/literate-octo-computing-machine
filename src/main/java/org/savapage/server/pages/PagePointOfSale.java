@@ -223,6 +223,10 @@ public abstract class PagePointOfSale extends AbstractAuthPage {
         helper.addLabel("currency-symbol-2", SpSession.getAppCurrencySymbol());
         helper.addLabel("decimal-separator-2", SpSession.getDecimalSeparator());
 
+        helper.addModifyLabelAttr("sp-pos-userid",
+                MarkupHelper.ATTR_PLACEHOLDER,
+                PhraseEnum.FIND_USER_BY_ID.uiText(getLocale()));
+
         /*
          * Option list: Payment types
          */

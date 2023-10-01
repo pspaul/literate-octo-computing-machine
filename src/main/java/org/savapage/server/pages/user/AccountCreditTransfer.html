@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-    <!--
+<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -54,9 +54,16 @@ the License, or (at your option) any later version.
 	<label for="money-credit-transfer-user">
 		<wicket:message key="prompt-to-user" />
 	</label>
-	<input type="text" id="money-credit-transfer-user" value=""
-		data-clear-btn="true" autocorrect="off" autocapitalize="off"
-		spellcheck="false" />
+	<input wicket:id="money-credit-transfer-user" type="text"
+		id="money-credit-transfer-user" value="" data-clear-btn="true"
+		placeholder="LOCALIZE" autocorrect="off"
+		autocapitalize="off" spellcheck="false" />
+	<wicket:enclosure child="money-credit-transfer-user-filter">
+		<ul wicket:id="money-credit-transfer-user-filter"
+			id="money-credit-transfer-user-filter" data-role="listview"
+			data-filter="true" data-input="#money-credit-transfer-user"
+			data-filter-theme="a" data-inset="true" />
+	</wicket:enclosure>
 
 	<wicket:enclosure child="prompt-comment">
 		<label wicket:id="prompt-comment" for="money-credit-transfer-comment" />
@@ -72,8 +79,8 @@ the License, or (at your option) any later version.
 		</button>
 
 		<a href="#" data-rel="back" data-direction="reverse"
-			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back"> <wicket:message
-				key="button-back" />
+			class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-back">
+			<wicket:message key="button-back" />
 		</a>
 	</div>
 

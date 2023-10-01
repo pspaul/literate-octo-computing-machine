@@ -252,7 +252,7 @@ public final class UserDashboardAddIn extends AbstractUserPage {
         // Credit transfer?
         final boolean enableTransferCredit = allowFinancialTrx
                 && dto.getStatus() == AccountDisplayInfoDto.Status.DEBIT
-                && cm.isConfigValue(Key.FINANCIAL_USER_TRANSFER_ENABLE);
+                && cm.isConfigValue(Key.FINANCIAL_USER_TRANSFERS_ENABLE);
 
         final Label labelTransferCredit = MarkupHelper.createEncloseLabel(
                 "button-transfer-credit", localized("button-transfer-to-user"),

@@ -105,6 +105,9 @@ public final class MarkupHelper {
     public static final String ATTR_DATA_SAVAPAGE_KEY = "data-savapage-key";
     public static final String ATTR_DATA_SAVAPAGE_TYPE = "data-savapage-type";
 
+    public static final String ATTR_DATA_TYPE = "data-type";
+    public static final String ATTR_DATA_TYPE_SEARCH = "search";
+
     public static final String CSS_AMOUNT_MIN = "sp-amount-min";
 
     public static final String CSS_TXT_ERROR = "sp-txt-error";

@@ -232,12 +232,12 @@ the License, or (at your option) any later version.
 				<label for="sp-pos-userid">
 					<wicket:message key="prompt-userid" />
 				</label>
-				<input tabindex="0" type="text" id="sp-pos-userid" value=""
-					maxlength="128" autofocus data-type="search" autocomplete="off"
+				<input wicket:id="sp-pos-userid" tabindex="0" type="text"
+					id="sp-pos-userid" value="" maxlength="128" autofocus
+					data-type="search" autocomplete="off" placeholder="LOCALIZE"
 					autocorrect="off" autocapitalize="off" spellcheck="false" />
 				<ul id="sp-pos-userid-filter" data-role="listview"
 					data-filter="true" data-input="#sp-pos-userid"
-					data-filter-placeholder="Find a User by ID..."
 					data-filter-theme="a" data-inset="true" />
 
 				<label for="sp-pos-amount">

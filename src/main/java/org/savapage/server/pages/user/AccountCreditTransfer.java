@@ -24,9 +24,11 @@
  */
 package org.savapage.server.pages.user;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -39,8 +41,16 @@ public class AccountCreditTransfer extends AbstractUserPage {
 
     private static final long serialVersionUID = 1L;
 
+    /** */
+    private static final String TRANSFER_USER = "money-credit-transfer-user";
+
+    /** */
+    private static final String TRANSFER_USER_FILTER =
+            "money-credit-transfer-user-filter";
+
     /**
-     *
+     * @param parameters
+     *            Page parameters.
      */
     public AccountCreditTransfer(final PageParameters parameters) {
 
@@ -54,7 +64,28 @@ public class AccountCreditTransfer extends AbstractUserPage {
 
         helper.encloseLabel("prompt-comment", localized("prompt-comment"),
                 ConfigManager.instance().isConfigValue(
-                        Key.FINANCIAL_USER_TRANSFER_ENABLE_COMMENTS));
+                        Key.FINANCIAL_USER_TRANSFERS_ENABLE_COMMENTS));
 
+        final boolean isUserFiler = ConfigManager.instance()
+                .isConfigValue(Key.FINANCIAL_USER_TRANSFERS_USER_SEARCH_ENABLE);
+
+        final String placeholder;
+        final String dataType;
+
+        if (isUserFiler) {
+            dataType = MarkupHelper.ATTR_DATA_TYPE_SEARCH;
+            placeholder = PhraseEnum.FIND_USER_BY_ID.uiText(getLocale());
+            helper.addTransparant(TRANSFER_USER_FILTER);
+        } else {
+            dataType = "";
+            placeholder = "";
+            helper.discloseLabel(TRANSFER_USER_FILTER);
+        }
+
+        final Label labelTransferUser = helper.addModifyLabelAttr(TRANSFER_USER,
+                MarkupHelper.ATTR_DATA_TYPE, dataType);
+
+        MarkupHelper.modifyLabelAttr(labelTransferUser,
+                MarkupHelper.ATTR_PLACEHOLDER, placeholder);
     }
 }

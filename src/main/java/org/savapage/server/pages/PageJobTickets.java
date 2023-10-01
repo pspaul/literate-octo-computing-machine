@@ -81,11 +81,22 @@ public final class PageJobTickets extends AbstractAuthPage {
         final ConfigManager cm = ConfigManager.instance();
         final MarkupHelper helper = new MarkupHelper(this);
 
+        final String placeholderFindUser =
+                PhraseEnum.FIND_USER_BY_ID.uiText(getLocale());
+
         //
         helper.addLabel("select-and-sort", PhraseEnum.SELECT_AND_SORT);
 
         helper.addLabel("tab-title-open", AdjectiveEnum.OPEN);
+        helper.addModifyLabelAttr("sp-jobticket-userid",
+                MarkupHelper.ATTR_PLACEHOLDER, placeholderFindUser);
+        helper.addModifyLabelAttr("sp-jobticket-search-ticket",
+                MarkupHelper.ATTR_PLACEHOLDER,
+                PhraseEnum.FIND_TICKET_BY_ID.uiText(getLocale()));
+
         helper.addLabel("tab-title-closed", AdjectiveEnum.CLOSED);
+        helper.addModifyLabelAttr("sp-doclog-select-userid",
+                MarkupHelper.ATTR_PLACEHOLDER, placeholderFindUser);
 
         helper.addLabel("prompt-expiration", NounEnum.EXPIRATION);
         helper.addLabel("sort-asc", AdjectiveEnum.ASCENDING);

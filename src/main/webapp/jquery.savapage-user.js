@@ -1835,12 +1835,39 @@
     /**
      *
      */
-    function PageCreditTransfer(_i18n, _view, _model) {
+    function PageCreditTransfer(_i18n, _view, _model, _api) {
         var _this = this,
             _selMain = '#money-credit-transfer-main',
-            _selCents = '#money-credit-transfer-cents';
+            _selCents = '#money-credit-transfer-cents',
+            _quickUserSelected,
+            _quickUserSearch = new _ns.QuickObjectSearch(_view, _api),
+            //
+            _onQuickSearchUserBefore = function() {
+                $.noop();
+            },
+            _onQuickSearchUserItemDisplay = function(item) {
+                return item.text + " &bull; " + (item.email || "&nbsp;");
+            },
+            _onSelectUser = function(quickUserSelected) {
+                var attr = "data-savapage",
+                    sel = $("#money-credit-transfer-user");
+
+                _quickUserSelected = quickUserSelected;
+
+                sel.attr(attr, quickUserSelected.key);
+                sel.val(quickUserSelected.text);
+
+                $("#money-credit-transfer-comment").focus();
+            },
+            _onClearUser = function() {
+                $.noop();
+            };
 
         $("#page-credit-transfer").on("pagecreate", function(event) {
+
+            _quickUserSearch.onCreate($(this), 'money-credit-transfer-user-filter', //
+                'user-quick-search-credit-transfer', null, //
+                _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser, _onQuickSearchUserBefore);
 
             $('#button-transfer-credit-ok').click(function() {
                 if (_this.onTransferCredit($('#money-credit-transfer-user').val(), $(_selMain).val(), $(_selCents).val(), $('#money-credit-transfer-comment').val())) {
@@ -7891,7 +7918,7 @@
             pagebrowser: new PageBrowser(_i18n, _view, _model, _api),
             pageDashboard: new PageDashboard(_i18n, _view, _model, _api),
             voucherRedeem: new PageVoucherRedeem(_i18n, _view, _model),
-            creditTransfer: new PageCreditTransfer(_i18n, _view, _model),
+            creditTransfer: new PageCreditTransfer(_i18n, _view, _model, _api),
             moneyTransfer: new PageMoneyTransfer(_i18n, _view, _model),
             pdfprop: new PagePdfProp(_i18n, _view, _model),
             main: new PageMain(_i18n, _view, _model, _api),
