@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
@@ -41,6 +42,7 @@ import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.UserService;
 import org.savapage.server.ipp.IppPrintServerUrlParms;
 import org.savapage.server.pages.AbstractAuthPage;
+import org.savapage.server.pages.CopyToClipBoardPanel;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
@@ -66,6 +68,9 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
 
     /** */
     private static final String WID_MAC_OS_ADDRESS = "macos-address";
+
+    /** */
+    private static final String WID_COPY_SUFFIX = "-copy";
 
     /**
      * @param parameters
@@ -114,9 +119,12 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
             }
         }
 
-        helper.addLabel("internet-printer-uri-cups", text);
-        helper.addLabel("internet-printer-uri-windows",
+        this.addLabelAndClipBoardCopy(helper, "internet-printer-uri-cups",
+                text);
+
+        this.addLabelAndClipBoardCopy(helper, "internet-printer-uri-windows",
                 StringUtils.replace(text, "ipps://", "https://"));
+
         helper.addLabel("windows-driver-msg", PhraseEnum.WINDOWS_DRIVER_MSG);
 
         //
@@ -144,7 +152,8 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
                 addr.append(":").append(port);
             }
 
-            helper.addLabel(WID_MAC_OS_ADDRESS, addr.toString());
+            this.addLabelAndClipBoardCopy(helper, WID_MAC_OS_ADDRESS,
+                    addr.toString());
 
             helper.addLabel("macos-protocol-prompt",
                     NounEnum.PROTOCOL.uiText(getLocale()));
@@ -153,18 +162,20 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
                     NounEnum.QUEUE.uiText(getLocale()));
 
             try {
-                helper.addLabel("macos-queue", StringUtils
+                this.addLabelAndClipBoardCopy(helper, "macos-queue", StringUtils
                         .removeStart(urlParms.asUri().getPath(), "/"));
             } catch (URISyntaxException e) {
-                //
+                // no code intended
             }
 
             //
             helper.addLabel("chrome-address-prompt",
                     NounEnum.ADDRESS.uiText(getLocale()));
 
-            helper.addLabel(WID_CHROME_ADDRESS, StringUtils.removeStart(
-                    StringUtils.removeStart(uriBase, "https://"), "http://"));
+            this.addLabelAndClipBoardCopy(helper, WID_CHROME_ADDRESS,
+                    StringUtils.removeStart(
+                            StringUtils.removeStart(uriBase, "https://"),
+                            "http://"));
 
             helper.addLabel("chrome-protocol-prompt",
                     NounEnum.PROTOCOL.uiText(getLocale()));
@@ -173,10 +184,11 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
                     NounEnum.QUEUE.uiText(getLocale()));
 
             try {
-                helper.addLabel("chrome-queue", StringUtils
-                        .removeStart(urlParms.asUri().getPath(), "/"));
+                this.addLabelAndClipBoardCopy(helper, "chrome-queue",
+                        StringUtils.removeStart(urlParms.asUri().getPath(),
+                                "/"));
             } catch (URISyntaxException e) {
-                //
+                // no code intended
             }
             helper.addLabel("chrome-manufacturer-prompt",
                     NounEnum.MANUFACTURER.uiText(getLocale()));
@@ -184,12 +196,38 @@ public final class InternetPrinterAddIn extends AbstractAuthPage {
                     NounEnum.MODEL.uiText(getLocale()));
 
             //
-            helper.addLabel(WID_FDROID_URL,
+            this.addLabelAndClipBoardCopy(helper, WID_FDROID_URL,
                     uriBase.replaceFirst("ipp", "http"));
+
             helper.addLabel("fdroid-user-prompt", NounEnum.USER);
-            helper.addLabel("fdroid-user", user.getUserId());
-            helper.addLabel("fdroid-uuid", userUuid);
+            this.addLabelAndClipBoardCopy(helper, "fdroid-user",
+                    user.getUserId());
+
+            this.addLabelAndClipBoardCopy(helper, "fdroid-uuid", userUuid);
         }
+    }
+
+    /**
+     * @param helper
+     *            Markup helper.
+     * @param wid
+     *            Wicket ID.
+     * @param text
+     *            Label text
+     */
+    private void addLabelAndClipBoardCopy(final MarkupHelper helper,
+            final String wid, final String text) {
+
+        final Label labelToCopy = helper.addLabel(wid, text);
+        final String panelId = wid + WID_COPY_SUFFIX;
+
+        final String uuid = UUID.randomUUID().toString();
+
+        MarkupHelper.modifyLabelAttr(labelToCopy, MarkupHelper.ATTR_ID, uuid);
+
+        final CopyToClipBoardPanel panel = new CopyToClipBoardPanel(panelId);
+        panel.populate(uuid);
+        add(panel);
     }
 
     @Override

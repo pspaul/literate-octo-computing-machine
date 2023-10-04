@@ -557,4 +557,8 @@ span.sp-ipp-icon {
 	margin: 0px;
 }
 
+td>div.sp-table-row-icon-margin-fix {
+    margin-top: 12px;
+}
+
 /* end-of-file */

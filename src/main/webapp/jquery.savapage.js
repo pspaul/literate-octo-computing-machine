@@ -32,6 +32,19 @@
  * NOTE: the *! comment blocks are part of the compressed version.
  */
 
+/** 
+ * Copies the inner HTML of a DOM element ID to the clipboard.
+ * NOTE: this function is used in Java Wicket !!
+ */
+function _copyHtmlToClipboard(elementID) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(elementID).html());
+    $temp.select();
+    document.execCommand("copy");
+    $temp.remove();
+};
+
 (function($, window, document, _ns) {
     "use strict";
 
