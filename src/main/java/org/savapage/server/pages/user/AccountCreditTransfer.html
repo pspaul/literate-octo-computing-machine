@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:remove>
-<!--
+	<!--
 This file is part of the SavaPage project <https://savapage.org>
 Copyright (c) 2020 Datraverse B.V. | Author: Rijk Ravestein 
 
@@ -53,16 +53,18 @@ the License, or (at your option) any later version.
 
 	<label for="money-credit-transfer-user">
 		<wicket:message key="prompt-to-user" />
+		<span class="sp-txt-valid" id="money-credit-transfer-user-fullname" />
 	</label>
 	<input wicket:id="money-credit-transfer-user" type="text"
 		id="money-credit-transfer-user" value="" data-clear-btn="true"
-		placeholder="LOCALIZE" autocorrect="off"
-		autocapitalize="off" spellcheck="false" />
+		placeholder="LOCALIZE" autocorrect="off" autocapitalize="off"
+		spellcheck="false" />
 	<wicket:enclosure child="money-credit-transfer-user-filter">
 		<ul wicket:id="money-credit-transfer-user-filter"
 			id="money-credit-transfer-user-filter" data-role="listview"
 			data-filter="true" data-input="#money-credit-transfer-user"
 			data-filter-theme="a" data-inset="true" />
+
 	</wicket:enclosure>
 
 	<wicket:enclosure child="prompt-comment">

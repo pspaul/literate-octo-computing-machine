@@ -1837,16 +1837,24 @@
      */
     function PageCreditTransfer(_i18n, _view, _model, _api) {
         var _this = this,
+            _selUserFullName = '#money-credit-transfer-user-fullname',
             _selMain = '#money-credit-transfer-main',
             _selCents = '#money-credit-transfer-cents',
             _quickUserSelected,
             _quickUserSearch = new _ns.QuickObjectSearch(_view, _api),
             //
+            _onUserFilterProps = function(props) {
+                // Java: QuickSearchFilterUserDto
+                props.filterExt = props.filter;
+                props.filter = undefined;
+                props.excludeRequester = true;
+                $(_selUserFullName).html('');
+            },
             _onQuickSearchUserBefore = function() {
                 $.noop();
             },
             _onQuickSearchUserItemDisplay = function(item) {
-                return item.text + " &bull; " + (item.email || "&nbsp;");
+                return item.text + " &bull; " + (item.fullName || "&nbsp;");
             },
             _onSelectUser = function(quickUserSelected) {
                 var attr = "data-savapage",
@@ -1857,16 +1865,18 @@
                 sel.attr(attr, quickUserSelected.key);
                 sel.val(quickUserSelected.text);
 
+                $(_selUserFullName).html(' • ' + quickUserSelected.fullName);
+
                 $("#money-credit-transfer-comment").focus();
             },
             _onClearUser = function() {
-                $.noop();
+                $(_selUserFullName).html('');
             };
 
         $("#page-credit-transfer").on("pagecreate", function(event) {
 
             _quickUserSearch.onCreate($(this), 'money-credit-transfer-user-filter', //
-                'user-quick-search-credit-transfer', null, //
+                'user-quick-search-credit-transfer', _onUserFilterProps, //
                 _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser, _onQuickSearchUserBefore);
 
             $('#button-transfer-credit-ok').click(function() {

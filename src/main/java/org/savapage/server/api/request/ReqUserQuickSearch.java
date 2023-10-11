@@ -28,9 +28,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.savapage.core.dao.UserDao;
 import org.savapage.core.dto.AbstractDto;
-import org.savapage.core.dto.QuickSearchFilterDto;
+import org.savapage.core.dto.QuickSearchFilterUserDto;
 import org.savapage.core.dto.QuickSearchItemDto;
 import org.savapage.core.dto.QuickSearchUserItemDto;
 import org.savapage.core.jpa.User;
@@ -71,28 +72,39 @@ public final class ReqUserQuickSearch extends ApiRequestMixin {
 
         final UserDao userDao = ServiceContext.getDaoContext().getUserDao();
 
-        final QuickSearchFilterDto dto = AbstractDto
-                .create(QuickSearchFilterDto.class, this.getParmValueDto());
+        final QuickSearchFilterUserDto dto = AbstractDto
+                .create(QuickSearchFilterUserDto.class, this.getParmValueDto());
 
         final String currencySymbol = SpSession.getAppCurrencySymbol();
 
         final UserDao.ListFilter filter = new UserDao.ListFilter();
 
-        filter.setContainingIdText(dto.getFilter());
+        if (dto.getFilterExt() == null) {
+            filter.setContainingIdText(dto.getFilter());
+        } else {
+            filter.setContainingNameOrIdText(dto.getFilterExt());
+        }
         filter.setDeleted(Boolean.FALSE);
         filter.setPerson(Boolean.TRUE);
 
         final List<QuickSearchItemDto> list = new ArrayList<>();
+        final boolean skipRequestingUser =
+                BooleanUtils.isTrue(dto.getExcludeRequester());
 
         QuickSearchUserItemDto itemWlk;
 
         for (final User user : userDao.getListChunk(filter, 0,
                 dto.getMaxResults(), UserDao.Field.USERID, true)) {
 
+            if (skipRequestingUser && user.getUserId().equals(requestingUser)) {
+                continue;
+            }
+
             itemWlk = new QuickSearchUserItemDto();
 
             itemWlk.setKey(user.getId());
             itemWlk.setText(user.getUserId());
+            itemWlk.setFullName(user.getFullName());
             itemWlk.setEmail(USER_SERVICE.getPrimaryEmailAddress(user));
 
             itemWlk.setBalance(
