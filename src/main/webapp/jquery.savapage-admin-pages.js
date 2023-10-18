@@ -773,6 +773,7 @@
             _page = new _ns.Page(_i18n, _view, '#page-device', 'admin/PageDevice'),
             _self = _ns.derive(_page),
             _onAuthModeEnabled,
+            _onAuthModeChange,
             _onProxyPrintEnabled,
             _onCustomAuthEnabled,
             _enableCardFormat,
@@ -853,6 +854,15 @@
             _view.visible($('#sp-group-device-auth-mode-default'), nMode > 1);
             _enableCardFormat(_model.editDevice.deviceType === 'CARD_READER' || authCardLocal);
 
+        };
+
+        _onAuthModeChange = function(authModeEnum) {
+            if (authModeEnum === 'FAST') {
+                // Clear printer group
+                $('#sp-device-proxy-print-printer-group').val('');
+            }
+            // Show/Hide printer group
+            _view.visible($('#sp-device-proxy-print-printer-group-div'), authModeEnum !== 'FAST');
         };
 
         _onProxyPrintEnabled = function(cb) {
@@ -1132,6 +1142,10 @@
 
             $(this).on('change', "#sp-group-device-auth-mode input:checkbox", null, function(e) {
                 _onAuthModeEnabled();
+            });
+
+            $(this).on('change', "[name='" + _PROXY_PRINT_AUTH_MODE + "']", null, function(e) {
+                _onAuthModeChange($('input[name="' + _PROXY_PRINT_AUTH_MODE + '"]:checked').val());
             });
 
             $(this).on('change', "#sp-device-function-proxy-print", null, function(e) {

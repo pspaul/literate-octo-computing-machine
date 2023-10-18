@@ -158,17 +158,18 @@ the License, or (at your option) any later version.
 				data-filter="true" data-input="#sp-device-proxy-print-printer"
 				data-filter-theme="a" data-inset="true" />
 
-			<label>
-				<wicket:message key="device-proxy-print-group" />
-			</label>
-			<input type="text" id="sp-device-proxy-print-printer-group" value=""
-				data-type="search" maxlength="255" autocomplete="off"
-				autocorrect="off" autocapitalize="off" spellcheck="false" />
-			<ul id="sp-device-proxy-print-printer-group-filter"
-				data-role="listview" data-filter="true"
-				data-input="#sp-device-proxy-print-printer-group"
-				data-filter-theme="a" data-inset="true" />
-
+			<div id="sp-device-proxy-print-printer-group-div">
+				<label>
+					<wicket:message key="device-proxy-print-group" />
+				</label>
+				<input type="text" id="sp-device-proxy-print-printer-group" value=""
+					data-type="search" maxlength="255" autocomplete="off"
+					autocorrect="off" autocapitalize="off" spellcheck="false" />
+				<ul id="sp-device-proxy-print-printer-group-filter"
+					data-role="listview" data-filter="true"
+					data-input="#sp-device-proxy-print-printer-group"
+					data-filter-theme="a" data-inset="true" />
+			</div>
 		</li>
 	</ul>
 
