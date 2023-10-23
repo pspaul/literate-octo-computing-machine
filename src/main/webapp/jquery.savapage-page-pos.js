@@ -50,17 +50,23 @@
         var _page = new _ns.Page(_i18n, _view, "#page-point-of-sale",
             (isMain ? "PagePointOfSaleMain" : "PagePointOfSalePage")),
             _self = _ns.derive(_page),
+            _selUserFullName = '#sp-pos-userid-fullname',
             _quickUserSelected,
             _quickUserSearch = new _ns.QuickObjectSearch(_view, _api),
             //
             _onQuickSearchUserBefore = function() {
                 $(".sp-pos-user-selected").hide();
             },
+            _onUserFilterProps = function(props) {
+                // Java: QuickSearchFilterUserDto
+                props.filterExt = props.filter;
+                props.filter = undefined;
+                $(_selUserFullName).html('');
+            },
             _onQuickSearchUserItemDisplay = function(item) {
-                return item.text + " &bull; " + (item.email || "&nbsp;");
+                return item.text + " &bull; " + (item.fullName || "&nbsp;");
             },
             _onSelectUser = function(quickUserSelected) {
-
                 var attr = "data-savapage",
                     sel = $("#sp-pos-userid");
 
@@ -73,10 +79,12 @@
                 $("#sp-pos-receipt-as-email-label").html(quickUserSelected.email || "&nbsp;");
                 $(".sp-pos-user-selected").show();
 
+                $(_selUserFullName).html(' • ' + quickUserSelected.fullName);
+
                 $("#sp-pos-amount-main").focus();
             },
             _onClearUser = function() {
-                $.noop();
+                $(_selUserFullName).html('');
             },
             _clearSales = function() {
                 $("#sp-pos-sales-amount-main").val("");
@@ -91,6 +99,7 @@
                 $("#sp-pos-comment").val("");
                 $("#sp-pos-amount-cents").val("00");
                 $(".sp-pos-user-selected").hide();
+                $(_selUserFullName).html('');
             },
             // 
             _onEnableSalesItems = function(locationID, shopID, itemID) {
@@ -466,7 +475,8 @@
                 return true;
             });
 
-            _quickUserSearch.onCreate($(this), 'sp-pos-userid-filter', 'user-quick-search', null, _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser, _onQuickSearchUserBefore);
+            _quickUserSearch.onCreate($(this), 'sp-pos-userid-filter', 'user-quick-search', //
+                _onUserFilterProps, _onQuickSearchUserItemDisplay, _onSelectUser, _onClearUser, _onQuickSearchUserBefore);
 
             _ns.KeyboardLogger.setCallback($('#sp-pos-sales-user-card-local-group'),
                 (isUserCardNumberAsEntryField ? 0 : _model.cardLocalMaxMsecs),
