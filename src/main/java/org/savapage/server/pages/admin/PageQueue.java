@@ -29,6 +29,7 @@ import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.IppRoutingEnum;
 import org.savapage.core.i18n.AdverbEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.server.helpers.HtmlButtonEnum;
 import org.savapage.server.pages.MarkupHelper;
 
 /**
@@ -42,6 +43,16 @@ public final class PageQueue extends AbstractAdminPage {
      * Version for serialization.
      */
     private static final long serialVersionUID = 1L;
+
+    /** */
+    private static final String WID_LABEL_IPP_ROUTING_TYPE_NONE =
+            "label-ipp-routing-type-none";
+    /** */
+    private static final String WID_LABEL_IPP_ROUTING_TYPE_TERMINAL =
+            "label-ipp-routing-type-terminal";
+    /** */
+    private static final String WID_LABEL_IPP_ROUTING_TYPE_PRINTER =
+            "label-ipp-routing-type-printer";
 
     /**
      * @param parameters
@@ -57,15 +68,24 @@ public final class PageQueue extends AbstractAdminPage {
 
         helper.addLabel("ipp-routing-prompt", "IPP Routing Options");
 
-        helper.addLabel("label-ipp-routing-type-none",
+        helper.addLabel(WID_LABEL_IPP_ROUTING_TYPE_NONE,
                 IppRoutingEnum.NONE.uiText(getLocale()));
         helper.addModifyLabelAttr("ipp-routing-type-none", "",
                 MarkupHelper.ATTR_VALUE, IppRoutingEnum.NONE.toString());
 
-        helper.addLabel("label-ipp-routing-type-terminal",
+        helper.addLabel(WID_LABEL_IPP_ROUTING_TYPE_TERMINAL,
                 IppRoutingEnum.TERMINAL.uiText(getLocale()));
         helper.addModifyLabelAttr("ipp-routing-type-terminal", "",
                 MarkupHelper.ATTR_VALUE, IppRoutingEnum.TERMINAL.toString());
+
+        helper.addLabel(WID_LABEL_IPP_ROUTING_TYPE_PRINTER,
+                IppRoutingEnum.PRINTER.uiText(getLocale()));
+        helper.addModifyLabelAttr("ipp-routing-type-printer", "",
+                MarkupHelper.ATTR_VALUE, IppRoutingEnum.PRINTER.toString());
+
+        helper.addModifyLabelAttr("queue-ipp-routing-printer-input",
+                MarkupHelper.ATTR_PLACEHOLDER,
+                HtmlButtonEnum.SEARCH.uiTextDottedSfx((getLocale())));
     }
 
 }

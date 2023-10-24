@@ -73,20 +73,39 @@ the License, or (at your option) any later version.
 		<li id="ipp-routing-prompt-section">
 			<legend wicket:id="ipp-routing-prompt" />
 
-			<fieldset class="ui-mini" data-role="controlgroup"
-				data-type="horizontal">
+			<div>
+				<fieldset class="ui-mini" data-role="controlgroup"
+					data-type="horizontal">
 
-				<label for="queue-ipp-routing-type-none"
-					wicket:id="label-ipp-routing-type-none" />
-				<input type="radio" name="queue-ipp-routing-type"
-					id="queue-ipp-routing-type-none" wicket:id="ipp-routing-type-none" />
+					<label for="queue-ipp-routing-type-none"
+						wicket:id="label-ipp-routing-type-none" />
+					<input type="radio" name="queue-ipp-routing-type"
+						id="queue-ipp-routing-type-none" wicket:id="ipp-routing-type-none" />
 
-				<label for="queue-ipp-routing-type-terminal"
-					wicket:id="label-ipp-routing-type-terminal" />
-				<input type="radio" name="queue-ipp-routing-type"
-					id="queue-ipp-routing-type-terminal"
-					wicket:id="ipp-routing-type-terminal" />
-			</fieldset>
+					<label for="queue-ipp-routing-type-terminal"
+						wicket:id="label-ipp-routing-type-terminal" />
+					<input type="radio" name="queue-ipp-routing-type"
+						id="queue-ipp-routing-type-terminal"
+						wicket:id="ipp-routing-type-terminal" />
+
+					<label for="queue-ipp-routing-type-printer"
+						wicket:id="label-ipp-routing-type-printer" />
+					<input type="radio" name="queue-ipp-routing-type"
+						id="queue-ipp-routing-type-printer"
+						wicket:id="ipp-routing-type-printer" />
+				</fieldset>
+			</div>
+			<div id="queue-ipp-routing-printer-select-div">
+				<input type="text" id="queue-ipp-routing-printer-select"
+					wicket:id="queue-ipp-routing-printer-input" value=""
+					data-type="search" maxlength="255" autocomplete="off"
+					placeholder="LOCALIZE" autocorrect="off" autocapitalize="off"
+					spellcheck="false" />
+				<ul id="queue-ipp-routing-printer-select-filter"
+					data-role="listview" data-filter="true"
+					data-input="#queue-ipp-routing-printer-select"
+					data-filter-theme="a" data-inset="true" />
+			</div>
 
 			<textarea id="queue-ipp-routing-options" value="" maxlength="1024" />
 		</li>

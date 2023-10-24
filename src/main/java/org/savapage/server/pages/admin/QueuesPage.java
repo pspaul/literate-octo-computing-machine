@@ -27,7 +27,9 @@ package org.savapage.server.pages.admin;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -41,17 +43,23 @@ import org.savapage.core.SpException;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.IppQueueDao;
+import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.ACLOidEnum;
 import org.savapage.core.dao.enums.IppQueueAttrEnum;
+import org.savapage.core.dao.enums.IppRoutingEnum;
+import org.savapage.core.dao.enums.ProxyPrintAuthModeEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.dao.helpers.AbstractPagerReq;
 import org.savapage.core.doc.store.DocStoreBranchEnum;
 import org.savapage.core.doc.store.DocStoreTypeEnum;
 import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.jpa.Device;
 import org.savapage.core.jpa.IppQueue;
+import org.savapage.core.jpa.Printer;
 import org.savapage.core.json.JsonRollingTimeSeries;
 import org.savapage.core.json.TimeSeriesInterval;
 import org.savapage.core.services.AccessControlService;
+import org.savapage.core.services.DeviceService;
 import org.savapage.core.services.DocStoreService;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
@@ -59,6 +67,7 @@ import org.savapage.core.util.InetUtils;
 import org.savapage.core.util.NumberUtil;
 import org.savapage.server.WebApp;
 import org.savapage.server.helpers.HtmlButtonEnum;
+import org.savapage.server.helpers.HtmlPrinterImgEnum;
 import org.savapage.server.helpers.SparklineHtml;
 import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
@@ -91,8 +100,16 @@ public final class QueuesPage extends AbstractAdminListPage {
             ServiceContext.getServiceFactory().getAccessControlService();
 
     /** */
+    private static final DeviceService DEVICE_SERVICE =
+            ServiceContext.getServiceFactory().getDeviceService();
+
+    /** */
     private static final DocStoreService DOC_STORE_SERVICE =
             ServiceContext.getServiceFactory().getDocStoreService();
+
+    /** */
+    private static final PrinterDao PRINTER_DAO =
+            ServiceContext.getDaoContext().getPrinterDao();
 
     /** */
     private static final QueueService QUEUE_SERVICE =
@@ -107,6 +124,10 @@ public final class QueuesPage extends AbstractAdminListPage {
 
     /** */
     private static final String WID_QUEUE_IPP_ROUTING_IMG = "ipp-routing-img";
+
+    /** */
+    private static final String WID_QUEUE_IPP_ROUTING_PRINTER_IMG =
+            "img-routing-printer-img";
 
     /**
      * Bean for mapping JSON page request.
@@ -352,9 +373,13 @@ public final class QueuesPage extends AbstractAdminListPage {
             Label labelWrk = null;
 
             //
+            final IppRoutingEnum ippRoutingEnum =
+                    QUEUE_SERVICE.getIppRouting(queue);
+
             final boolean isIppRouting = ConfigManager.instance()
                     .isConfigValue(Key.IPP_ROUTING_ENABLE)
-                    && QUEUE_SERVICE.isIppRoutingQueue(queue);
+                    && ippRoutingEnum != null
+                    && ippRoutingEnum != IppRoutingEnum.NONE;
 
             labelWrk = helper.encloseLabel(WID_QUEUE_IPP_ROUTING_IMG, "",
                     isIppRouting);
@@ -363,6 +388,9 @@ public final class QueuesPage extends AbstractAdminListPage {
                 MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_SRC,
                         String.format("%s/%s", WebApp.PATH_IMAGES,
                                 "printer-26x26.png"));
+                MarkupHelper.modifyLabelAttr(labelWrk, MarkupHelper.ATTR_TITLE,
+                        String.format("IPP Routing > %s",
+                                ippRoutingEnum.uiText(getLocale())));
             }
 
             //
@@ -460,10 +488,7 @@ public final class QueuesPage extends AbstractAdminListPage {
                 helper.discloseLabel("url-default");
                 helper.discloseLabel("url-windows");
             }
-
-            /*
-            *
-            */
+            //
             final StringBuilder reservedText = new StringBuilder();
 
             if (reservedQueue == null) {
@@ -475,19 +500,66 @@ public final class QueuesPage extends AbstractAdminListPage {
                     reservedText.append(" Port ")
                             .append(ConfigManager.getRawPrinterPort());
                 }
-
                 reservedText
                         .append(" (").append(getLocalizer()
                                 .getString("signal-reserved", this))
                         .append(")");
-
             }
+
+            if (isIppRouting && ippRoutingEnum == IppRoutingEnum.PRINTER) {
+
+                final Printer printer =
+                        PRINTER_DAO.findByName(QUEUE_SERVICE.getAttrValue(queue,
+                                IppQueueAttrEnum.IPP_ROUTING_PRINTER_NAME));
+                reservedText.append(" > ").append(printer.getPrinterName());
+
+                final Map<String, Device> terminalDevices = new HashMap<>();
+                final Map<String, Device> readerDevices = new HashMap<>();
+                final HtmlPrinterImgEnum printerImg =
+                        getImgSrc(printer, terminalDevices, readerDevices);
+
+                int nHoldModeReaders = 0;
+                if (!readerDevices.isEmpty()) {
+                    for (Map.Entry<String, Device> entry : readerDevices
+                            .entrySet()) {
+                        final Device device = entry.getValue();
+                        final ProxyPrintAuthModeEnum authMode = DEVICE_SERVICE
+                                .getProxyPrintAuthMode(device.getId());
+                        if (authMode.isHoldRelease()) {
+                            if (nHoldModeReaders == 0) {
+                                reservedText.append(" < ");
+                            } else {
+                                reservedText.append(", ");
+                            }
+                            nHoldModeReaders++;
+                            reservedText.append(entry.getKey());
+                        }
+                    }
+                }
+                final HtmlPrinterImgEnum printerImgShow;
+                if (nHoldModeReaders > 0
+                        || printerImg == HtmlPrinterImgEnum.JOBTICKET) {
+                    printerImgShow = printerImg;
+                } else {
+                    printerImgShow = HtmlPrinterImgEnum.NON_SECURE_ALLOWED;
+                }
+
+                MarkupHelper.modifyLabelAttr(
+                        helper.addModifyLabelAttr(
+                                WID_QUEUE_IPP_ROUTING_PRINTER_IMG,
+                                MarkupHelper.ATTR_SRC, //
+                                printerImgShow.urlPath()),
+                        MarkupHelper.ATTR_TITLE,
+                        printerImgShow.uiToolTip(getLocale()));
+
+            } else {
+                helper.discloseLabel(WID_QUEUE_IPP_ROUTING_PRINTER_IMG);
+            }
+
             helper.encloseLabel("reserved-queue", reservedText.toString(),
                     true);
 
-            /*
-             *
-             */
+            //
             item.add(new Label("ipAllowed"));
 
             /*
@@ -571,10 +643,8 @@ public final class QueuesPage extends AbstractAdminListPage {
             } else {
                 helper.discloseLabel(WID_BUTTON_EDIT);
             }
-
             helper.addTransparantInvisible("sect-buttons", !hasButtons);
         }
-
     }
 
     /**

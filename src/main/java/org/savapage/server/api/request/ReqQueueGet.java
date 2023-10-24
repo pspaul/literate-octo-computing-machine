@@ -79,7 +79,10 @@ public final class ReqQueueGet extends ApiRequestMixin {
         private String reserved;
         private String uiText;
         private boolean ippRoutingEnabled;
+        private boolean ippRoutingTerminalEnabled;
+        private boolean ippRoutingPrinterEnabled;
         private IppRoutingEnum ippRouting;
+        private String ippRoutingPrinterName;
         private String ippOptions;
 
         public Long getId() {
@@ -170,12 +173,38 @@ public final class ReqQueueGet extends ApiRequestMixin {
             this.ippRoutingEnabled = ippRoutingEnabled;
         }
 
+        public boolean isIppRoutingTerminalEnabled() {
+            return ippRoutingTerminalEnabled;
+        }
+
+        public void setIppRoutingTerminalEnabled(
+                boolean ippRoutingTerminalEnabled) {
+            this.ippRoutingTerminalEnabled = ippRoutingTerminalEnabled;
+        }
+
+        public boolean isIppRoutingPrinterEnabled() {
+            return ippRoutingPrinterEnabled;
+        }
+
+        public void
+                setIppRoutingPrinterEnabled(boolean ippRoutingPrinterEnabled) {
+            this.ippRoutingPrinterEnabled = ippRoutingPrinterEnabled;
+        }
+
         public IppRoutingEnum getIppRouting() {
             return ippRouting;
         }
 
         public void setIppRouting(IppRoutingEnum ippRouting) {
             this.ippRouting = ippRouting;
+        }
+
+        public String getIppRoutingPrinterName() {
+            return ippRoutingPrinterName;
+        }
+
+        public void setIppRoutingPrinterName(String ippRoutingPrinterName) {
+            this.ippRoutingPrinterName = ippRoutingPrinterName;
         }
 
         public String getIppOptions() {
@@ -277,6 +306,14 @@ public final class ReqQueueGet extends ApiRequestMixin {
                 ConfigManager.instance().isConfigValue(Key.IPP_ROUTING_ENABLE)
                         && !QUEUE_SERVICE.isReservedQueue(queue.getUrlPath()));
 
+        dtoRsp.setIppRoutingPrinterEnabled(ConfigManager.instance()
+                .isConfigValue(Key.IPP_ROUTING_PRINTER_ENABLE)
+                && dtoRsp.isIppRoutingEnabled());
+
+        dtoRsp.setIppRoutingTerminalEnabled(ConfigManager.instance()
+                .isConfigValue(Key.IPP_ROUTING_TERMIMAL_ENABLE)
+                && dtoRsp.isIppRoutingEnabled());
+
         IppRoutingEnum ippRouting = QUEUE_SERVICE.getIppRouting(queue);
 
         if (ippRouting == null) {
@@ -286,6 +323,11 @@ public final class ReqQueueGet extends ApiRequestMixin {
         dtoRsp.setIppRouting(ippRouting);
         dtoRsp.setIppOptions(QUEUE_SERVICE.getAttrValue(queue,
                 IppQueueAttrEnum.IPP_ROUTING_OPTIONS));
+
+        if (ippRouting == IppRoutingEnum.PRINTER) {
+            dtoRsp.setIppRoutingPrinterName(QUEUE_SERVICE.getAttrValue(queue,
+                    IppQueueAttrEnum.IPP_ROUTING_PRINTER_NAME));
+        }
     }
 
     /**

@@ -31,11 +31,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.config.IConfigProp.Key;
 import org.savapage.core.dao.IppQueueDao;
+import org.savapage.core.dao.PrinterDao;
 import org.savapage.core.dao.enums.IppQueueAttrEnum;
 import org.savapage.core.dao.enums.IppRoutingEnum;
 import org.savapage.core.doc.store.DocStoreBranchEnum;
 import org.savapage.core.doc.store.DocStoreTypeEnum;
+import org.savapage.core.i18n.NounEnum;
+import org.savapage.core.i18n.PhraseEnum;
 import org.savapage.core.jpa.IppQueue;
+import org.savapage.core.jpa.Printer;
 import org.savapage.core.jpa.User;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.util.InetUtils;
@@ -51,6 +55,12 @@ import org.savapage.core.util.JsonHelper;
  *
  */
 public final class ReqQueueSet extends ApiRequestMixin {
+
+    /**
+     * .
+     */
+    private static final PrinterDao PRINTER_DAO =
+            ServiceContext.getDaoContext().getPrinterDao();
 
     @Override
     protected void onRequest(final String requestingUser, final User lockedUser)
@@ -187,6 +197,30 @@ public final class ReqQueueSet extends ApiRequestMixin {
                     setApiResultText(ApiResultCodeEnum.ERROR,
                             "Invalid option map (must be JSON format).");
                     return;
+                }
+
+                if (dtoReq.getIppRouting() == IppRoutingEnum.PRINTER) {
+
+                    final String printerName = StringUtils
+                            .defaultString(dtoReq.getIppRoutingPrinterName())
+                            .toUpperCase();
+
+                    final Printer printer = PRINTER_DAO.findByName(printerName);
+
+                    if (printer == null) {
+                        setApiResultText(ApiResultCodeEnum.ERROR, String.format(
+                                "%s \"%s\" : %s",
+                                NounEnum.PRINTER.uiText(getLocale()),
+                                printerName,
+                                PhraseEnum.NOT_FOUND.uiText(getLocale())));
+                        return;
+                    }
+                    QUEUE_SERVICE.setQueueAttrValue(jpaQueue,
+                            IppQueueAttrEnum.IPP_ROUTING_PRINTER_NAME,
+                            printerName);
+                } else {
+                    QUEUE_SERVICE.deleteQueueAttrValue(jpaQueue,
+                            IppQueueAttrEnum.IPP_ROUTING_PRINTER_NAME);
                 }
 
                 QUEUE_SERVICE.setQueueAttrValue(jpaQueue,

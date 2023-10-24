@@ -1194,6 +1194,7 @@
             if (sel.length > 0) {
                 _model.editQueue.ippRouting = _view.getRadioValue('queue-ipp-routing-type');
                 _model.editQueue.ippOptions = sel.val();
+                _model.editQueue.ippRoutingPrinterName = $('#queue-ipp-routing-printer-select').val();
             }
 
             res = _api.call({
@@ -1786,7 +1787,7 @@
             userGroupsAddRemove: new _ns.PageUserGroupsAddRemove(_i18n, _view, _model),
             userPwReset: new _ns.PageUserPasswordReset(_i18n, _view, _model),
             configProp: new _ns.PageConfigProp(_i18n, _view, _model),
-            queue: new _ns.PageQueue(_i18n, _view, _model),
+            queue: new _ns.PageQueue(_i18n, _view, _model, _api),
             printer: new _ns.PagePrinter(_i18n, _view, _model),
             device: new _ns.PageDevice(_i18n, _view, _model, _api),
             voucherCreate: new _ns.PageAccountVoucherCreate(_i18n, _view, _model)

@@ -55,6 +55,7 @@ import org.savapage.core.doc.DocContent;
 import org.savapage.core.doc.DocContentTypeEnum;
 import org.savapage.core.jpa.IppQueue;
 import org.savapage.core.print.server.DocContentPrintProcessor;
+import org.savapage.core.print.server.PostScriptFilter;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
@@ -423,10 +424,6 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         String title = null;
         String userid = null;
 
-        final String PFX_TITLE = "%%Title: ";
-        final String PFX_USERID = "%%For: ";
-        final String PFX_BEGIN_PROLOG = "%%BeginProlog";
-
         final String originatorIp = socket.getInetAddress().getHostAddress();
 
         /*
@@ -502,18 +499,20 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
                 headerLines.add(strline);
 
-                if (strline.startsWith(PFX_BEGIN_PROLOG)) {
+                if (strline.startsWith(PostScriptFilter.PFX_BEGIN_PROLOG)) {
                     break;
                 }
 
-                if (title == null && strline.startsWith(PFX_TITLE)) {
-                    title = stripParentheses(
-                            StringUtils.removeStart(strline, PFX_TITLE));
+                if (title == null
+                        && strline.startsWith(PostScriptFilter.PFX_TITLE)) {
+                    title = PostScriptFilter.stripParentheses(StringUtils
+                            .removeStart(strline, PostScriptFilter.PFX_TITLE));
                 }
 
-                if (userid == null && strline.startsWith(PFX_USERID)) {
-                    userid = stripParentheses(
-                            StringUtils.removeStart(strline, PFX_USERID));
+                if (userid == null
+                        && strline.startsWith(PostScriptFilter.PFX_USERID)) {
+                    userid = PostScriptFilter.stripParentheses(StringUtils
+                            .removeStart(strline, PostScriptFilter.PFX_USERID));
                 }
 
                 strline = readLine(istr, bos);
@@ -527,9 +526,9 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
             consumeWithoutProcessing(istr);
 
-            throw new IOException(
-                    "IP Print job from [" + originatorIp + "] has no ["
-                            + PFX_TITLE + "] and/or [" + PFX_USERID + "]");
+            throw new IOException("IP Print job from [" + originatorIp
+                    + "] has no [" + PostScriptFilter.PFX_TITLE + "] and/or ["
+                    + PostScriptFilter.PFX_USERID + "]");
         }
 
         // Mantis #503
@@ -675,18 +674,6 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
 
         PerformanceLogger.log(this.getClass(), "readAndPrint", perfStartTime,
                 userid);
-    }
-
-    /**
-     * Strips leading/trailing parenthesis from a string.
-     *
-     * @param content
-     *            The string to strip.
-     * @return The stripped string.
-     */
-    private String stripParentheses(final String content) {
-        return StringUtils
-                .removeEnd(StringUtils.removeStart(content.trim(), "("), ")");
     }
 
     /**

@@ -1170,14 +1170,35 @@
     /**
      * Constructor
      */
-    _ns.PageQueue = function(_i18n, _view, _model) {
+    _ns.PageQueue = function(_i18n, _view, _model, _api) {
 
         var _page = new _ns.Page(_i18n, _view, '#page-queue', 'admin/PageQueue'),
-            _self = _ns.derive(_page)
+            _self = _ns.derive(_page),
             //
-            ,
+            _quickPrinterSearch = new _ns.QuickObjectSearch(_view, _api),
+            //
+            _onQuickSearchPrinterFilterProps = function(props) {
+                props.searchCupsName = true;
+            },
+            //
+            _onQuickSearchPrinterItemDisplay = function(item) {
+                var html = item.printer.name;
+                if (item.text !== item.printer.name) {
+                    html += " &bull; " + item.text;
+                }
+                if (item.printer.location) {
+                    html += " &bull; " + item.printer.location;
+                }
+                return html;
+            },
+            //
+            _onSelectPrinter = function(item) {
+                $("#queue-ipp-routing-printer-select").val(item.printer.name);
+            },
+            //
             _onChangeRoutingType = function(routing) {
                 _view.visible($('#queue-ipp-routing-options'), routing !== "NONE");
+                _view.visible($('#queue-ipp-routing-printer-select-div'), routing === "PRINTER");
             };
 
         $(_self.id()).on('pagecreate', function(event) {
@@ -1190,6 +1211,9 @@
             $(this).on('change', "input:radio[name='queue-ipp-routing-type']", null, function(e) {
                 _onChangeRoutingType($(this).val());
             });
+
+            _quickPrinterSearch.onCreate($(this), 'queue-ipp-routing-printer-select-filter', 'printer-quick-search-cups', //
+                _onQuickSearchPrinterFilterProps, _onQuickSearchPrinterItemDisplay, _onSelectPrinter);
 
         }).on("pagebeforeshow", function(event, ui) {
             var reserved = _model.editQueue.reserved,
@@ -1214,6 +1238,10 @@
                 sect.hide();
             }
 
+            $('#queue-ipp-routing-printer-select').val(_model.editQueue.ippRoutingPrinterName);
+
+            _view.visibleCheckboxRadio($('#queue-ipp-routing-type-terminal'), _model.editQueue.ippRoutingTerminalEnabled);
+            _view.visibleCheckboxRadio($('#queue-ipp-routing-type-printer'), _model.editQueue.ippRoutingPrinterEnabled);
             _view.visible($('#ipp-routing-prompt-section'), _model.editQueue.ippRoutingEnabled);
 
             if (selIppOpt.length > 0) {
