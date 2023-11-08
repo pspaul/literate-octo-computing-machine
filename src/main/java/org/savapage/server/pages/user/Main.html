@@ -358,6 +358,10 @@ POPUP with Page/Job info
 					class="sp-msg-popup-warn sp-txt-wrap" id="popup-job-info-drm" />
 			</legend>
 			<div id="sp-popup-job-info-fonts-addin" class="ui-mini" />
+			<wicket:enclosure child="main-popup-jobinfo-ipp">
+				<span id="popup-job-info-ipp" wicket:id="main-popup-jobinfo-ipp"
+					class="ui-mini sp-txt-info" />
+			</wicket:enclosure>
 		</li>
 
 		<li>
@@ -377,6 +381,7 @@ POPUP with Page/Job info
 				<label for="sp-popup-job-rotate">
 					<span wicket:id="prompt-job-rotate" /> <small>&nbsp;&nbsp;&#x21b7;</small>
 				</label>
+
 			</fieldset>
 
 			<div>

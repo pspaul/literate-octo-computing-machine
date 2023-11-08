@@ -63,6 +63,7 @@ import org.savapage.core.i18n.PrintOutVerbEnum;
 import org.savapage.core.ipp.IppJobStateEnum;
 import org.savapage.core.ipp.attribute.IppDictJobTemplateAttr;
 import org.savapage.core.ipp.helpers.IppOptionMap;
+import org.savapage.core.ipp.helpers.IppPrintInData;
 import org.savapage.core.jpa.Account;
 import org.savapage.core.jpa.Account.AccountTypeEnum;
 import org.savapage.core.jpa.AccountTrx;
@@ -74,6 +75,7 @@ import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.helpers.MailPrintData;
 import org.savapage.core.services.helpers.PrintSupplierData;
+import org.savapage.core.services.helpers.RawPrintInData;
 import org.savapage.core.util.BigDecimalUtil;
 import org.savapage.core.util.CurrencyUtil;
 import org.savapage.server.WebApp;
@@ -351,6 +353,58 @@ public class DocLogItemPanel extends Panel {
             add(panel);
         } else {
             helper.discloseLabel("extSupplierPanel");
+        }
+    }
+
+    /**
+     *
+     * @param helper
+     * @param mapVisible
+     * @param obj
+     * @param locale
+     */
+    private void populateExtSupplierPrintIn(final MarkupHelper helper,
+            final Map<String, String> mapVisible, final DocLogItem obj,
+            final Locale locale) {
+
+        if (obj.isExtSupplierPresent()) {
+
+            final String extText;
+
+            if (obj.getExtData() == null) {
+                extText = null;
+
+            } else if (ConfigManager.instance().isConfigValue(
+                    Key.PROXY_PRINT_FAST_INHERIT_PRINTIN_IPP_ENABLE)) {
+
+                final Map<String, String> ippOptions;
+                switch (obj.getExtSupplier()) {
+                case IPP_CLIENT:
+                    ippOptions = IppPrintInData.createFromData(obj.getExtData())
+                            .getAttrCreateJob();
+                    break;
+                case RAW_IP_PRINT:
+                    ippOptions = RawPrintInData.createFromData(obj.getExtData())
+                            .getIppAttr();
+                    break;
+                default:
+                    ippOptions = null;
+                    break;
+                }
+                if (ippOptions != null) {
+                    extText = PROXYPRINT_SERVICE.localizePrinterOptValue(
+                            getLocale(), IppDictJobTemplateAttr.ATTR_SIDES,
+                            ippOptions.get(IppDictJobTemplateAttr.ATTR_SIDES));
+                } else {
+                    extText = null;
+                }
+            } else {
+                extText = null;
+            }
+
+            if (extText != null) {
+                mapVisible.put("simplex", extText);
+            }
         }
     }
 
@@ -974,6 +1028,8 @@ public class DocLogItemPanel extends Panel {
                     this.populatePrintInDeniedReason(mapVisible, obj);
                 }
             }
+
+            this.populateExtSupplierPrintIn(helper, mapVisible, obj, locale);
 
         } else {
             // Not for now...

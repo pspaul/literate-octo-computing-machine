@@ -538,6 +538,9 @@ public class Main extends AbstractUserPage {
                 ":: ".concat(HtmlButtonEnum.PASTE.uiText(getLocale())));
 
         //
+        helper.encloseLabel("main-popup-jobinfo-ipp", "", cm.isConfigValue(
+                Key.PROXY_PRINT_FAST_INHERIT_PRINTIN_IPP_ENABLE));
+        //
         helper.addButton("button-continue", HtmlButtonEnum.CONTINUE);
     }
 

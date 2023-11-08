@@ -3292,6 +3292,11 @@
                 _view.checkCb("#sp-popup-job-undelete", false);
                 _view.checkCb("#sp-popup-job-rotate", (job.rotate !== '0'));
 
+                if (job.ippOptionsUi) {
+                    $('#popup-job-info-ipp').html(job.ippOptionsUi);
+                }
+                _view.visible($('#popup-job-info-ipp'), job.ippOptionsUi);
+
                 sel2 = $('#sp-popup-job-expiry');
 
                 if (page.expiryTime) {

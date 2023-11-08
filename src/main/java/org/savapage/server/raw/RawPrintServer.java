@@ -50,6 +50,8 @@ import org.savapage.core.concurrent.ReadWriteLockEnum;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.dao.IppQueueDao;
 import org.savapage.core.dao.enums.DocLogProtocolEnum;
+import org.savapage.core.dao.enums.ExternalSupplierEnum;
+import org.savapage.core.dao.enums.ExternalSupplierStatusEnum;
 import org.savapage.core.dao.enums.ReservedIppQueueEnum;
 import org.savapage.core.doc.DocContent;
 import org.savapage.core.doc.DocContentTypeEnum;
@@ -59,6 +61,8 @@ import org.savapage.core.print.server.PostScriptFilter;
 import org.savapage.core.services.QueueService;
 import org.savapage.core.services.ServiceContext;
 import org.savapage.core.services.ServiceEntryPoint;
+import org.savapage.core.services.helpers.ExternalSupplierInfo;
+import org.savapage.core.services.helpers.RawPrintInData;
 import org.savapage.core.users.AbstractUserSource;
 import org.savapage.core.util.IOHelper;
 import org.savapage.server.WebApp;
@@ -483,7 +487,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
          */
         if (!strline.startsWith(DocContent.HEADER_PS)) {
 
-            consumeWithoutProcessing(istr);
+            this.consumeWithoutProcessing(istr);
 
             throw new RawPrintException("IP Print data from [" + originatorIp
                     + "] is not PostScript. Header ["
@@ -491,32 +495,27 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
         }
 
         /*
-         * Search PostScript header for job and user name.
+         * Pre-read PostScript comment header to search for job and user name.
          */
-        if (title == null || userid == null) {
+        while (strline != null && (title == null || userid == null)) {
 
-            while (strline != null) {
+            headerLines.add(strline);
 
-                headerLines.add(strline);
-
-                if (strline.startsWith(PostScriptFilter.PFX_BEGIN_PROLOG)) {
-                    break;
-                }
-
-                if (title == null
-                        && strline.startsWith(PostScriptFilter.PFX_TITLE)) {
-                    title = PostScriptFilter.stripParentheses(StringUtils
-                            .removeStart(strline, PostScriptFilter.PFX_TITLE));
-                }
-
-                if (userid == null
-                        && strline.startsWith(PostScriptFilter.PFX_USERID)) {
-                    userid = PostScriptFilter.stripParentheses(StringUtils
-                            .removeStart(strline, PostScriptFilter.PFX_USERID));
-                }
-
-                strline = readLine(istr, bos);
+            if (PostScriptFilter.isEndOfCommentLine(strline)) {
+                break;
             }
+
+            if (title == null
+                    && strline.startsWith(PostScriptFilter.PFX_TITLE)) {
+                title = PostScriptFilter.parseTitleLine(strline);
+            }
+
+            if (userid == null
+                    && strline.startsWith(PostScriptFilter.PFX_USERID)) {
+                userid = PostScriptFilter.parseUserIdLine(strline);
+            }
+
+            strline = readLine(istr, bos);
         }
 
         if (title == null || userid == null) {
@@ -524,7 +523,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             warnHeaderLines("IP Print failed: title and/or user missing",
                     headerLines);
 
-            consumeWithoutProcessing(istr);
+            this.consumeWithoutProcessing(istr);
 
             throw new IOException("IP Print job from [" + originatorIp
                     + "] has no [" + PostScriptFilter.PFX_TITLE + "] and/or ["
@@ -623,9 +622,30 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
                         isAuthorized = processor.isAuthorized();
 
                         if (isAuthorized) {
-                            processor.process(istr, null,
+
+                            final RawPrintInData supplData =
+                                    new RawPrintInData();
+
+                            // Parse pre-read header lines for IPP options.
+                            supplData.setIppAttr(PostScriptFilter
+                                    .parseCommentLines(headerLines)
+                                    .getOptionValues());
+
+                            final ExternalSupplierInfo supplInfo =
+                                    new ExternalSupplierInfo();
+
+                            supplInfo.setSupplier(
+                                    ExternalSupplierEnum.RAW_IP_PRINT);
+                            supplInfo.setStatus(
+                                    ExternalSupplierStatusEnum.COMPLETED
+                                            .toString());
+                            supplInfo.setData(supplData);
+
+                            processor.process(istr, supplInfo,
                                     DocLogProtocolEnum.RAW, null,
                                     DocContentTypeEnum.PS, null);
+
+                            // headerLines
                         } else {
                             warn = String.format(
                                     "IP Print on queue /%s denied for "
@@ -664,7 +684,7 @@ public final class RawPrintServer extends Thread implements ServiceEntryPoint {
             if (isDbReadLock) {
                 ReadWriteLockEnum.DATABASE_READONLY.setReadLock(false);
             }
-            consumeWithoutProcessing(istr);
+            this.consumeWithoutProcessing(istr);
             ServiceContext.close();
         }
 

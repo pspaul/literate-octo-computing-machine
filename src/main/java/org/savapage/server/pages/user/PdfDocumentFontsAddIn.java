@@ -47,6 +47,7 @@ import org.savapage.server.pages.MarkupHelper;
 import org.savapage.server.session.SpSession;
 
 /**
+ * Note: Loaded from JavaScript.
  *
  * @author Rijk Ravestein
  *
