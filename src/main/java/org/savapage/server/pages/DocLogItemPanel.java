@@ -70,9 +70,11 @@ import org.savapage.core.jpa.AccountTrx;
 import org.savapage.core.jpa.PrintOut;
 import org.savapage.core.print.proxy.TicketJobSheetDto;
 import org.savapage.core.services.AccountingService;
+import org.savapage.core.services.InboxService;
 import org.savapage.core.services.JobTicketService;
 import org.savapage.core.services.ProxyPrintService;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.services.helpers.DocLogHelper;
 import org.savapage.core.services.helpers.MailPrintData;
 import org.savapage.core.services.helpers.PrintSupplierData;
 import org.savapage.core.services.helpers.RawPrintInData;
@@ -92,6 +94,9 @@ public class DocLogItemPanel extends Panel {
 
     private static final AccountingService ACCOUNTING_SERVICE =
             ServiceContext.getServiceFactory().getAccountingService();
+
+    private static final InboxService INBOX_SERVICE =
+            ServiceContext.getServiceFactory().getInboxService();
 
     private static final JobTicketService JOBTICKET_SERVICE =
             ServiceContext.getServiceFactory().getJobTicketService();
@@ -196,7 +201,7 @@ public class DocLogItemPanel extends Panel {
             "pageRotate180", "punch", "staple", "fold", "booklet",
             "jobcopy-options", "jobticket-tag-plain", "jobticket-media",
             "jobticket-copy", "jobticket-finishing-ext", "jobticket-custom-ext",
-            "landscape", "scaled" };
+            "landscape", "scaled", "printin-ipp-options" };
 
     /**
      *
@@ -367,45 +372,39 @@ public class DocLogItemPanel extends Panel {
             final Map<String, String> mapVisible, final DocLogItem obj,
             final Locale locale) {
 
-        if (obj.isExtSupplierPresent()) {
-
-            final String extText;
-
-            if (obj.getExtData() == null) {
-                extText = null;
-
-            } else if (ConfigManager.instance().isConfigValue(
-                    Key.PROXY_PRINT_FAST_INHERIT_PRINTIN_IPP_ENABLE)) {
-
-                final Map<String, String> ippOptions;
-                switch (obj.getExtSupplier()) {
-                case IPP_CLIENT:
-                    ippOptions = IppPrintInData.createFromData(obj.getExtData())
-                            .getAttrCreateJob();
-                    break;
-                case RAW_IP_PRINT:
-                    ippOptions = RawPrintInData.createFromData(obj.getExtData())
-                            .getIppAttr();
-                    break;
-                default:
-                    ippOptions = null;
-                    break;
-                }
-                if (ippOptions != null) {
-                    extText = PROXYPRINT_SERVICE.localizePrinterOptValue(
-                            getLocale(), IppDictJobTemplateAttr.ATTR_SIDES,
-                            ippOptions.get(IppDictJobTemplateAttr.ATTR_SIDES));
-                } else {
-                    extText = null;
-                }
-            } else {
-                extText = null;
-            }
-
-            if (extText != null) {
-                mapVisible.put("simplex", extText);
-            }
+        if (!obj.isExtSupplierPresent() || obj.getExtData() == null
+                || !ConfigManager.instance().isConfigValue(
+                        Key.PROXY_PRINT_FAST_INHERIT_PRINTIN_IPP_ENABLE)) {
+            return;
         }
+
+        final Map<String, String> ippOptions;
+
+        switch (obj.getExtSupplier()) {
+        case IPP_CLIENT:
+            ippOptions = IppPrintInData.createFromData(obj.getExtData())
+                    .getAttrCreateJob();
+            break;
+        case RAW_IP_PRINT:
+            ippOptions = RawPrintInData.createFromData(obj.getExtData())
+                    .getIppAttr();
+            break;
+        default:
+            ippOptions = null;
+            break;
+        }
+
+        if (ippOptions == null) {
+            return;
+        }
+
+        final String txt = DocLogHelper.createIppOptionsUi(
+                INBOX_SERVICE.getPrintinIppOptions(), ippOptions,
+                this.getLocale());
+        if (txt != null) {
+            mapVisible.put("printin-ipp-options", txt);
+        }
+
     }
 
     /**
