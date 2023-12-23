@@ -63,6 +63,7 @@ import org.savapage.core.config.IConfigProp;
 import org.savapage.core.doc.MimeTypeEnum;
 import org.savapage.core.dto.AbstractDto;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.InetUtils;
 import org.savapage.ext.print.IppRoutingDto;
 import org.savapage.ext.print.QrCodeAnchorEnum;
 import org.savapage.server.restful.RestApplication;
@@ -412,8 +413,11 @@ public final class RestTestService extends AbstractRestService {
                         cm.getConfigValue(
                                 IConfigProp.Key.API_RESTFUL_AUTH_PASSWORD));
 
+        final String serverHost = InetUtils.getServerHostNameLocal();
+
         final WebTarget webTarget = client
-                .target("https://localhost:" + ConfigManager.getServerSslPort())
+                .target("https://" + serverHost + ":"
+                        + ConfigManager.getServerSslPort())
                 .path(RestApplication.RESTFUL_URL_PATH).path(PATH_MAIN)
                 .path(PATH_SUB_UPLOAD);
 

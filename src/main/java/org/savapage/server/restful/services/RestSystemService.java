@@ -37,6 +37,7 @@ import javax.ws.rs.core.Response;
 import org.savapage.core.SpInfo;
 import org.savapage.core.config.ConfigManager;
 import org.savapage.core.services.ServiceContext;
+import org.savapage.core.util.InetUtils;
 import org.savapage.server.restful.RestApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,13 +83,15 @@ public final class RestSystemService extends AbstractRestService {
         final Client client = ServiceContext.getServiceFactory()
                 .getRestClientService().createClient();
 
+        final String serverHost = InetUtils.getServerHostNameLocal();
+
         final WebTarget[] webTargets = new WebTarget[] { //
-                client.target(
-                        "http://localhost:" + ConfigManager.getServerPort())
+                client.target("http://" + serverHost + ":"
+                        + ConfigManager.getServerPort())
                         .path(RestApplication.RESTFUL_URL_PATH).path(PATH_MAIN)
                         .path(PATH_SUB_VERSION), //
-                client.target(
-                        "https://localhost:" + ConfigManager.getServerSslPort())
+                client.target("https://" + serverHost + ":"
+                        + ConfigManager.getServerSslPort())
                         .path(RestApplication.RESTFUL_URL_PATH).path(PATH_MAIN)
                         .path(PATH_SUB_VERSION) };
 
