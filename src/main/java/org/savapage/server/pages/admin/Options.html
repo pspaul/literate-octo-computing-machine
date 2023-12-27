@@ -883,6 +883,15 @@ the License, or (at your option) any later version.
 							wicket:id="proxyprint-fast-expiry-mins" pattern="[0-9]*"
 							autocapitalize="off" />
 					</div>
+					<div>
+						<label for="proxyprint-fast-inherit-printin-enable"
+							wicket:id="proxyprint-fast-inherit-printin-enable-label" />
+						<input data-mini="true" type="checkbox"
+							id="proxyprint-fast-inherit-printin-enable" value="0"
+							wicket:id="proxyprint-fast-inherit-printin-enable" />
+					</div>
+				</li>
+				<li>
 					<h3>
 						<wicket:message key="cat-proxy-print-mode-hold" />
 					</h3>
@@ -895,6 +904,8 @@ the License, or (at your option) any later version.
 							wicket:id="proxyprint-hold-expiry-mins" pattern="[0-9]*"
 							autocapitalize="off" />
 					</div>
+				</li>
+				<li>
 					<h3>
 						<wicket:message key="cat-proxy-print-mode-direct" />
 					</h3>
@@ -917,7 +928,6 @@ the License, or (at your option) any later version.
 						<input type="checkbox" id="proxyprint-delegate-enable" value="0"
 							wicket:id="proxyprint-delegate-enable" />
 					</div>
-
 				</li>
 
 				<wicket:enclosure child="btn-apply-proxyprint">

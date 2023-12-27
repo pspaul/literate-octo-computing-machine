@@ -700,6 +700,9 @@ public final class Options extends AbstractAdminPage {
         labelledInput("proxyprint-fast-expiry-mins",
                 IConfigProp.Key.PROXY_PRINT_FAST_EXPIRY_MINS);
 
+        labelledCheckbox("proxyprint-fast-inherit-printin-enable",
+                IConfigProp.Key.PROXY_PRINT_FAST_INHERIT_PRINTIN_IPP_ENABLE);
+
         labelledInput("proxyprint-hold-expiry-mins",
                 IConfigProp.Key.PROXY_PRINT_HOLD_EXPIRY_MINS);
 
